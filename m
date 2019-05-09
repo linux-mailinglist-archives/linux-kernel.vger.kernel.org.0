@@ -2,98 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB1518D3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC3418D26
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfEIPnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 11:43:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726798AbfEIPnA (ORCPT
+        id S1726656AbfEIPm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 11:42:28 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46948 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726187AbfEIPm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 11:43:00 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49FcXpT094944
-        for <linux-kernel@vger.kernel.org>; Thu, 9 May 2019 11:42:59 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2scm8dgy8f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 11:42:59 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 9 May 2019 16:42:56 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 May 2019 16:42:50 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49FgnbS19333224
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 May 2019 15:42:50 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E031AAE058;
-        Thu,  9 May 2019 15:42:49 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8CD1AE055;
-        Thu,  9 May 2019 15:42:47 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.95.107])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 May 2019 15:42:47 +0000 (GMT)
-Subject: Re: [PATCH v10 02/12] PKCS#7: Refactor verify_pkcs7_signature()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date:   Thu, 09 May 2019 11:42:20 -0400
-In-Reply-To: <20190418035120.2354-3-bauerman@linux.ibm.com>
-References: <20190418035120.2354-1-bauerman@linux.ibm.com>
-         <20190418035120.2354-3-bauerman@linux.ibm.com>
+        Thu, 9 May 2019 11:42:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C2F998EE2F4;
+        Thu,  9 May 2019 08:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1557416547;
+        bh=MFzfvCr0ghlSwCqfMPN+3U/z7LPdQOpfgYAbwLhIp/s=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mI3ai4sUaDOITFli4oAi51bk6X9VCi1bBBwRf7j0NOq7QYPskHyAD1FgKe0XNQDMn
+         GYnRzV0Mln13+7JvwrGFBnYU4+UPrSGRjLYaN9QkzOgecwdMvEoBFhgge9m6cpI71s
+         X1LaIhSLodhbat/qaxnwA8MWdS7s+bpANUWat2V0=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rwh2OIwpaMgk; Thu,  9 May 2019 08:42:27 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1AE748EE101;
+        Thu,  9 May 2019 08:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1557416547;
+        bh=MFzfvCr0ghlSwCqfMPN+3U/z7LPdQOpfgYAbwLhIp/s=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mI3ai4sUaDOITFli4oAi51bk6X9VCi1bBBwRf7j0NOq7QYPskHyAD1FgKe0XNQDMn
+         GYnRzV0Mln13+7JvwrGFBnYU4+UPrSGRjLYaN9QkzOgecwdMvEoBFhgge9m6cpI71s
+         X1LaIhSLodhbat/qaxnwA8MWdS7s+bpANUWat2V0=
+Message-ID: <1557416545.4268.22.camel@HansenPartnership.com>
+Subject: Re: [PATCH] mptsas: fix undefined behaviour of a shift of an int by
+ more than 31 places
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Hannes Reinecke <hare@suse.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 09 May 2019 08:42:25 -0700
+In-Reply-To: <9b4c84b5-31eb-6068-57c2-80ededc21b43@suse.de>
+References: <20190504164010.24937-1-colin.king@canonical.com>
+         <1557027274.2821.2.camel@HansenPartnership.com>
+         <de7e3aaf-0155-5007-c228-510f0d0de428@canonical.com>
+         <1557325468.3196.2.camel@HansenPartnership.com>
+         <9b4c84b5-31eb-6068-57c2-80ededc21b43@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19050915-0012-0000-0000-00000319FC6F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050915-0013-0000-0000-0000215283C7
-Message-Id: <1557416540.10635.64.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905090090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
-> IMA will need to verify a PKCS#7 signature which has already been parsed.
-> For this reason, factor out the code which does that from
-> verify_pkcs7_signature() into a new function which takes a struct
-> pkcs7_message instead of a data buffer.
+On Thu, 2019-05-09 at 17:30 +0200, Hannes Reinecke wrote:
+> On 5/8/19 4:24 PM, James Bottomley wrote:
+> > On Wed, 2019-05-08 at 14:07 +0100, Colin Ian King wrote:
+> > > On 05/05/2019 04:34, James Bottomley wrote:
+> > > > On Sat, 2019-05-04 at 17:40 +0100, Colin King wrote:
+> > > > > From: Colin Ian King <colin.king@canonical.com>
+> > > > > 
+> > > > > Currently the shift of int value 1 by more than 31 places can
+> > > > > result in undefined behaviour. Fix this by making the 1 a ULL
+> > > > > value before the shift operation.
+> > > > 
+> > > > Fusion SAS is pretty ancient.  I thought the largest one ever
+> > > > produced had four phys, so how did you produce the overflow?
+> > > 
+> > > This was an issue found by static analysis with Coverity; so I
+> > > guess won't happen in the wild, in which case the patch could be
+> > > ignored.
+> > 
+> > The point I was more making is that if we thought this could ever
+> > happen in practice, we'd need more error handling than simply this:
+> > we'd be setting the phy_bitmap to zero which would be every bit as
+> > bad as some random illegal value.
+> > 
 > 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
+> Thing is, mptsas is used as the default emulation in VMWare, and
+> that does allow you to do some pretty weird configurations (I've
+> found myself  fixing a bug with SATA hotplug on mptsas once ...).
+> So I wouldn't discard this issue out of hand.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+I'm not, I'm just saying the proposed fix is no fix at all since it
+would just produce undefined behaviour in the driver.  I thought the
+issue might have been coming from VMWare, which is why I asked how the
+bug was seen.  The proper fix is probably to fail attachment if the phy
+number goes over a fixed value (16 sounds reasonable) but if it's never
+a problem in the field, I'm happy doing nothing because we have no real
+idea what the reasonable value is.
+
+James
 
