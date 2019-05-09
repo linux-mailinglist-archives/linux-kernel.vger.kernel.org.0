@@ -2,128 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5CF18C13
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7366418BFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfEIOjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:39:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48852 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726743AbfEIOjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:39:09 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B0E56308FF32;
-        Thu,  9 May 2019 14:39:08 +0000 (UTC)
-Received: from jlaw-desktop.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F24AC17AEA;
-        Thu,  9 May 2019 14:39:07 +0000 (UTC)
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCH v4 01/10] livepatch: Create and include UAPI headers
-Date:   Thu,  9 May 2019 10:38:50 -0400
-Message-Id: <20190509143859.9050-2-joe.lawrence@redhat.com>
-In-Reply-To: <20190509143859.9050-1-joe.lawrence@redhat.com>
-References: <20190509143859.9050-1-joe.lawrence@redhat.com>
+        id S1726721AbfEIOjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:39:04 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34379 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfEIOjD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:39:03 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p27so2278839eda.1;
+        Thu, 09 May 2019 07:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9t7aEDiITTttHmEroagFkepeymOccLvzdNzl0sxtB0Y=;
+        b=kc3H9lA0fD/2BVU7pcpJ8aO/xF8B9diKeKq1Np9zrH9xRCpslbFIyx6PeduDjYOIUa
+         +kaYfKZojmbRHptRHdfkFGYPdla5sjvWUMDqNiH7CbhUyL/hE9shgIxXVEbIiT7i7Tac
+         LNMbuvGLzUgqGCOxnH7xMLzKsGtjL0jKdp3zrYZ3LD7Rxq5gTyeiezQbRMHE8bYNihMn
+         f8cMd4qiCByXQYT4FjtGrmRrdHWc+AD1e32/VAkx6cIfbSCsg49LL0BpQJ0erjzqag4x
+         QxWy63YFHapBUTbGs5Y1EwN7H0KwTSIavAGHEsb0tcYpLs70BusdRUH5i+9XAIjAj/eM
+         K0Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9t7aEDiITTttHmEroagFkepeymOccLvzdNzl0sxtB0Y=;
+        b=iov6ubRf/VpFhiCP1BN9uYu8uwD/gejue4N2heHnpCIA9xWGOPWoHutc7za/OlxEfz
+         WpwmLq8R/QR6d8Pj3GKXIHw04uMKEiMFauaH6QoN/iHUc4OH3rHSh3TRgS9WEDTiAgnn
+         IfUtSYgOF3/7VUqH3xFOMisdqyiwRv6b3fvu4ygWIPin2mOtEVTpWcHoVp3kWythbQTL
+         AoOLAyzyDQ9GXK9TFs3Zsx2FhW8lmhfR/ijApjZvH7AV4q6AqqmVUk0imcM5OK6NaAht
+         1EknYW1PXw1Acu3IwBwMBG3EKEkDhTHpmMB8l8RzhUU+mVDPe2DMedH+mAuLmANa+IFv
+         XORw==
+X-Gm-Message-State: APjAAAV9b60Nw9i1HOF5gyHHCKrol6TJTNDTmbHgFD666FSrWZh35PQl
+        iEzqjRwt5oSNiepm3vQPUqP0yiK5X1S+WGRJr8A=
+X-Google-Smtp-Source: APXvYqyc5GrUMyW2UgdZHxlpNMrGzEye6QrDZqbGzBMUgpBeXmJ7pwyZ119oHVGaZx1mmB5PCGRWYFTm65kRgjbet2c=
+X-Received: by 2002:a17:906:7695:: with SMTP id o21mr3604110ejm.165.1557412741041;
+ Thu, 09 May 2019 07:39:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 09 May 2019 14:39:08 +0000 (UTC)
+References: <20190505130413.32253-1-masneyb@onstation.org> <20190505130413.32253-5-masneyb@onstation.org>
+ <20190507063902.GA2085@tuxbook-pro> <20190509021616.GA26228@basecamp>
+ <CAF6AEGsM382jB=h7oM3frhZ5fAp+qYUdgiiKSKo1RtR8+ffjrg@mail.gmail.com>
+ <20190509030047.GE2085@tuxbook-pro> <20190509071243.GA27143@basecamp>
+In-Reply-To: <20190509071243.GA27143@basecamp>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 9 May 2019 07:38:51 -0700
+Message-ID: <CAF6AEGvRQoVq-P8tXupDCauxuW9K0vVsOv5HMivRxDrXPdHERA@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/6] ARM: dts: msm8974: add display support
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+On Thu, May 9, 2019 at 12:12 AM Brian Masney <masneyb@onstation.org> wrote:
+>
+> On Wed, May 08, 2019 at 08:00:47PM -0700, Bjorn Andersson wrote:
+> > On Wed 08 May 19:25 PDT 2019, Rob Clark wrote:
+> >
+> > > On Wed, May 8, 2019 at 7:16 PM Brian Masney <masneyb@onstation.org> wrote:
+> > > >
+> > > > On Mon, May 06, 2019 at 11:39:02PM -0700, Bjorn Andersson wrote:
+> > > > > On Sun 05 May 06:04 PDT 2019, Brian Masney wrote:
+> > > > > > diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+> > > > > [..]
+> > > > > > +                           clocks = <&mmcc MDSS_MDP_CLK>,
+> > > > > > +                                    <&mmcc MDSS_AHB_CLK>,
+> > > > > > +                                    <&mmcc MDSS_AXI_CLK>,
+> > > > > > +                                    <&mmcc MDSS_BYTE0_CLK>,
+> > > > > > +                                    <&mmcc MDSS_PCLK0_CLK>,
+> > > > > > +                                    <&mmcc MDSS_ESC0_CLK>,
+> > > > > > +                                    <&mmcc MMSS_MISC_AHB_CLK>;
+> > > > > > +                           clock-names = "mdp_core",
+> > > > > > +                                         "iface",
+> > > > > > +                                         "bus",
+> > > > > > +                                         "byte",
+> > > > > > +                                         "pixel",
+> > > > > > +                                         "core",
+> > > > > > +                                         "core_mmss";
+> > > > >
+> > > > > Unless I enable MMSS_MMSSNOC_AXI_CLK and MMSS_S0_AXI_CLK I get some
+> > > > > underrun error from DSI. You don't see anything like this?
+> > > > >
+> > > > > (These clocks are controlled by msm_bus downstream and should be driven
+> > > > > by interconnect upstream)
+> > > > >
+> > > > >
+> > > > > Apart from this, I think this looks nice. Happy to see the progress.
+> > > >
+> > > > No, I'm not seeing an underrun errors from the DSI. I think the clocks
+> > > > are fine since I'm able to get this working with 4.17 using these same
+> > > > clocks. I just sent out v2 and the cover letter has some details, along
+> > > > with the full dmesg.
+> > >
+> > > since we don't have interconnect driver for 8974, I guess there is
+> > > some chance that things work or not based on how lk leaves things?
+> > >
+> >
+> > Right, I guess the bootloader on my device does not leave the busses
+> > ticking - perhaps there's a boot splash involved on Brian's device?
+> >
+> > Regardless, this works on Nexus 5 and allows Brian to make further
+> > progress so I'm all for merging it.
+>
+> There is a boot splash on the Nexus 5 and that may explain a behavior
+> that I observed. I attempted to add reset GPIO support to the simple
+> panel driver and the screen will clear but nothing will come on the
+> screen after a hard reset, even on 4.17. To be sure, I got the timing
+> information for how long to leave the GPIO high and low from the
+> downstream MSM 3.4 sources. That's when I had a script port all of the
+> ~400 panel on commands in the downstream device tree to a new panel
+> driver.
+>
+> With the latest kernel kernel having a delay showing the console text,
+> I observe a brief second where the boot splash is shown along with the
+> startup text from Linux. A full refresh is performed and the boot
+> splash goes away. I don't see this with the 4.17 kernel; perhaps maybe
+> the full refresh occurs quick enough that its not noticeable.
+>
+> Can you point me to where the interconnect API is in the downstream
+> MSM 3.4 sources? https://github.com/AICP/kernel_lge_hammerhead
+> It looks like its in drivers/interconnect/ in the upstream sources.
+>
 
-Define klp prefixes in include/uapi/linux/livepatch.h, and use them for
-replacing hard-coded values in kernel/livepatch/core.c.
+Looks like this is the thing:
 
-Update MAINTAINERS.
+https://github.com/AICP/kernel_lge_hammerhead/tree/n7.1/arch/arm/mach-msm/msm_bus
 
-Note: Add defines to uapi as these are also to be used by a newly
-introduced klp-convert script.
+(ahh, mach-msm... blast from the past..)
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Joao Moreira <jmoreira@suse.de>
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
----
- MAINTAINERS                    |  1 +
- include/linux/livepatch.h      |  1 +
- include/uapi/linux/livepatch.h | 15 +++++++++++++++
- kernel/livepatch/core.c        |  4 ++--
- 4 files changed, 19 insertions(+), 2 deletions(-)
- create mode 100644 include/uapi/linux/livepatch.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09f43f1bdd15..52842fa37261 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9016,6 +9016,7 @@ R:	Joe Lawrence <joe.lawrence@redhat.com>
- S:	Maintained
- F:	kernel/livepatch/
- F:	include/linux/livepatch.h
-+F:	include/uapi/linux/livepatch.h
- F:	arch/x86/include/asm/livepatch.h
- F:	arch/x86/kernel/livepatch.c
- F:	Documentation/livepatch/
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 53551f470722..16b48e8b29a2 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -25,6 +25,7 @@
- #include <linux/ftrace.h>
- #include <linux/completion.h>
- #include <linux/list.h>
-+#include <uapi/linux/livepatch.h>
- 
- #if IS_ENABLED(CONFIG_LIVEPATCH)
- 
-diff --git a/include/uapi/linux/livepatch.h b/include/uapi/linux/livepatch.h
-new file mode 100644
-index 000000000000..e19430918a07
---- /dev/null
-+++ b/include/uapi/linux/livepatch.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+/*
-+ * livepatch.h - Kernel Live Patching Core
-+ *
-+ * Copyright (C) 2016 Josh Poimboeuf <jpoimboe@redhat.com>
-+ */
-+
-+#ifndef _UAPI_LIVEPATCH_H
-+#define _UAPI_LIVEPATCH_H
-+
-+#define KLP_RELA_PREFIX		".klp.rela."
-+#define KLP_SYM_PREFIX		".klp.sym."
-+
-+#endif /* _UAPI_LIVEPATCH_H */
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index eb0ee10a1981..3d9ed895b252 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -235,7 +235,7 @@ static int klp_resolve_symbols(Elf_Shdr *relasec, struct module *pmod)
- 
- 		/* Format: .klp.sym.objname.symname,sympos */
- 		cnt = sscanf(strtab + sym->st_name,
--			     ".klp.sym.%55[^.].%127[^,],%lu",
-+			     KLP_SYM_PREFIX "%55[^.].%127[^,],%lu",
- 			     objname, symname, &sympos);
- 		if (cnt != 3) {
- 			pr_err("symbol %s has an incorrectly formatted name\n",
-@@ -281,7 +281,7 @@ static int klp_write_object_relocations(struct module *pmod,
- 		 * See comment in klp_resolve_symbols() for an explanation
- 		 * of the selected field width value.
- 		 */
--		cnt = sscanf(secname, ".klp.rela.%55[^.]", sec_objname);
-+		cnt = sscanf(secname, KLP_RELA_PREFIX "%55[^.]", sec_objname);
- 		if (cnt != 1) {
- 			pr_err("section %s has an incorrectly formatted name\n",
- 			       secname);
--- 
-2.20.1
-
+BR,
+-R
