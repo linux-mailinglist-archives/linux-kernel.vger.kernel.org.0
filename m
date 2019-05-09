@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C180D1909C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3421B191AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfEISqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:46:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
+        id S1728661AbfEIS7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:59:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727660AbfEISqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:46:43 -0400
+        id S1728128AbfEISwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:52:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8259B2182B;
-        Thu,  9 May 2019 18:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB61F204FD;
+        Thu,  9 May 2019 18:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427603;
-        bh=MOv2AaTh1w0/0TobC/dEXlg7Pdgap2FW3MINoZAneYU=;
+        s=default; t=1557427951;
+        bh=90tcU6lbo5qtFJjvews1rJ8yuN3aCTLEDfe3UJATu4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ho+mOrIN5Pk6KwYJ0A9+cC/az5Y9tvWDyoJEJYCL+3ZGnTunJZrarzicUEp9tigNz
-         IigufMwemH3VBt5ch06Gi/cQGsMGdsJrNMxBK91Zu9rofNxZfn80yx3HpZIDPwH6UD
-         nvEKSQggcnu65Ys52Cl4FeAbq//4DsjBpR9KFVqE=
+        b=0zigT9zPYiQCJJoeyHqkz2s+BTllvEr5s7fwYj6PTwObFv6ApfwE1zUD+EC0Tnp5l
+         YMv8nszk88rqkTzXXzpcA9pXGQ8HwXEj+/H/84gwGn0bMYRu4Z9O3T0+66AbP5wioB
+         9IdduyKJfI2F5lEX9VuD4Bmc0lctDqWZ3+hPRN6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 32/42] USB: serial: f81232: fix interrupt worker not stop
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 64/95] virtio-blk: limit number of hw queues by nr_cpu_ids
 Date:   Thu,  9 May 2019 20:42:21 +0200
-Message-Id: <20190509181259.118772686@linuxfoundation.org>
+Message-Id: <20190509181313.952622984@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ji-Ze Hong (Peter Hong) <hpeter@gmail.com>
+[ Upstream commit bf348f9b78d413e75bb079462751a1d86b6de36c ]
 
-commit 804dbee1e49774918339c1e5a87400988c0819e8 upstream.
+When tag_set->nr_maps is 1, the block layer limits the number of hw queues
+by nr_cpu_ids. No matter how many hw queues are used by virtio-blk, as it
+has (tag_set->nr_maps == 1), it can use at most nr_cpu_ids hw queues.
 
-The F81232 will use interrupt worker to handle MSR change.
-This patch will fix the issue that interrupt work should stop
-in close() and suspend().
+In addition, specifically for pci scenario, when the 'num-queues' specified
+by qemu is more than maxcpus, virtio-blk would not be able to allocate more
+than maxcpus vectors in order to have a vector for each queue. As a result,
+it falls back into MSI-X with one vector for config and one shared for
+queues.
 
-This also fixes line-status events being disabled after a suspend cycle
-until the port is re-opened.
+Considering above reasons, this patch limits the number of hw queues used
+by virtio-blk by nr_cpu_ids.
 
-Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
-[ johan: amend commit message ]
-Fixes: 87fe5adcd8de ("USB: f81232: implement read IIR/MSR with endpoint")
-Cc: stable <stable@vger.kernel.org>	# 4.1
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/f81232.c |   39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/block/virtio_blk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/serial/f81232.c
-+++ b/drivers/usb/serial/f81232.c
-@@ -560,9 +560,12 @@ static int f81232_open(struct tty_struct
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index b16a887bbd02a..29bede887237f 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -513,6 +513,8 @@ static int init_vq(struct virtio_blk *vblk)
+ 	if (err)
+ 		num_vqs = 1;
  
- static void f81232_close(struct usb_serial_port *port)
- {
-+	struct f81232_private *port_priv = usb_get_serial_port_data(port);
++	num_vqs = min_t(unsigned int, nr_cpu_ids, num_vqs);
 +
- 	f81232_port_disable(port);
- 	usb_serial_generic_close(port);
- 	usb_kill_urb(port->interrupt_in_urb);
-+	flush_work(&port_priv->interrupt_work);
- }
- 
- static void f81232_dtr_rts(struct usb_serial_port *port, int on)
-@@ -656,6 +659,40 @@ static int f81232_port_remove(struct usb
- 	return 0;
- }
- 
-+static int f81232_suspend(struct usb_serial *serial, pm_message_t message)
-+{
-+	struct usb_serial_port *port = serial->port[0];
-+	struct f81232_private *port_priv = usb_get_serial_port_data(port);
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(port->read_urbs); ++i)
-+		usb_kill_urb(port->read_urbs[i]);
-+
-+	usb_kill_urb(port->interrupt_in_urb);
-+
-+	if (port_priv)
-+		flush_work(&port_priv->interrupt_work);
-+
-+	return 0;
-+}
-+
-+static int f81232_resume(struct usb_serial *serial)
-+{
-+	struct usb_serial_port *port = serial->port[0];
-+	int result;
-+
-+	if (tty_port_initialized(&port->port)) {
-+		result = usb_submit_urb(port->interrupt_in_urb, GFP_NOIO);
-+		if (result) {
-+			dev_err(&port->dev, "submit interrupt urb failed: %d\n",
-+					result);
-+			return result;
-+		}
-+	}
-+
-+	return usb_serial_generic_resume(serial);
-+}
-+
- static struct usb_serial_driver f81232_device = {
- 	.driver = {
- 		.owner =	THIS_MODULE,
-@@ -679,6 +716,8 @@ static struct usb_serial_driver f81232_d
- 	.read_int_callback =	f81232_read_int_callback,
- 	.port_probe =		f81232_port_probe,
- 	.port_remove =		f81232_port_remove,
-+	.suspend =		f81232_suspend,
-+	.resume =		f81232_resume,
- };
- 
- static struct usb_serial_driver * const serial_drivers[] = {
+ 	vblk->vqs = kmalloc_array(num_vqs, sizeof(*vblk->vqs), GFP_KERNEL);
+ 	if (!vblk->vqs)
+ 		return -ENOMEM;
+-- 
+2.20.1
+
 
 
