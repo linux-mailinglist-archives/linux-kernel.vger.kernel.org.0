@@ -2,242 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A9D418488
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 06:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1497018495
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 06:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfEIE0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 00:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55352 "EHLO mail.kernel.org"
+        id S1726438AbfEIEiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 00:38:08 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58762 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfEIE0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 00:26:43 -0400
-Received: from localhost (unknown [106.200.210.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBC34216C4;
-        Thu,  9 May 2019 04:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557376001;
-        bh=BTFLcMlAore+8BPqJnH+mQxkkDWN3gE2tXUgHZgQ4vM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YNz/u8qqH3SBUlmOJtHHegFvP57qUsdB4GleSRyfOjH1Nm8YuxaRXU8yFHPpYbJ4U
-         p7KovupqvTuIB5w5DN6Il6iHBsbb6fcYTONbC/JhSPD1GlBGp/17XZJ4fxD3yQ7SmO
-         uUzJPV4fD/Hp6zKxok8X3OoABBdk9pZTWSXIKm9E=
-Date:   Thu, 9 May 2019 09:56:36 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org,
-        tiwai@suse.de, linux-kernel@vger.kernel.org,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com, joe@perches.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 1/7] soundwire: Add sysfs support for
- master(s)
-Message-ID: <20190509042636.GY16052@vkoul-mobl>
-References: <20190507052732.GD16052@vkoul-mobl>
- <20190507055432.GB17986@kroah.com>
- <20190507110331.GL16052@vkoul-mobl>
- <20190507111956.GB1092@kroah.com>
- <10fef156-7b01-7a08-77b4-ae3153eaaabc@linux.intel.com>
- <20190508074606.GV16052@vkoul-mobl>
- <20190508091628.GB1858@kroah.com>
- <c0161db3-69d7-0a76-f4bd-d5feb3529128@linux.intel.com>
- <20190508165945.GC6157@kroah.com>
- <0b8d5238-6894-e2b4-5522-28636e40dd63@linux.intel.com>
+        id S1725869AbfEIEiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 00:38:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 21:38:07 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 08 May 2019 21:38:06 -0700
+Cc:     baolu.lu@linux.intel.com, Christoph Hellwig <hch@infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
+Subject: Re: [PATCH v3 5/8] iommu/vt-d: Implement def_domain_type iommu ops
+ entry
+To:     Tom Murphy <tmurphy@arista.com>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-6-baolu.lu@linux.intel.com>
+ <20190429200338.GA8412@infradead.org>
+ <9c1d1e16-fdab-0494-8720-97ff20013da4@linux.intel.com>
+ <CAPL0++6UmAzVQCm0MBD056DsA-13qVTSK1x737tXXkFzooWzNA@mail.gmail.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <bb0122b9-9001-415d-807f-aa4f4dcf0b85@linux.intel.com>
+Date:   Thu, 9 May 2019 12:31:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b8d5238-6894-e2b4-5522-28636e40dd63@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAPL0++6UmAzVQCm0MBD056DsA-13qVTSK1x737tXXkFzooWzNA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-05-19, 15:57, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 5/8/19 11:59 AM, Greg KH wrote:
-> > On Wed, May 08, 2019 at 11:42:15AM -0500, Pierre-Louis Bossart wrote:
-> > > 
-> > > 
-> > > On 5/8/19 4:16 AM, Greg KH wrote:
-> > > > On Wed, May 08, 2019 at 01:16:06PM +0530, Vinod Koul wrote:
-> > > > > On 07-05-19, 17:49, Pierre-Louis Bossart wrote:
-> > > > > > 
-> > > > > > > > The model here is that Master device is PCI or Platform device and then
-> > > > > > > > creates a bus instance which has soundwire slave devices.
-> > > > > > > > 
-> > > > > > > > So for any attribute on Master device (which has properties as well and
-> > > > > > > > representation in sysfs), device specfic struct (PCI/platfrom doesn't
-> > > > > > > > help). For slave that is not a problem as sdw_slave structure takes care
-> > > > > > > > if that.
-> > > > > > > > 
-> > > > > > > > So, the solution was to create the psedo sdw_master device for the
-> > > > > > > > representation and have device-specific structure.
-> > > > > > > 
-> > > > > > > Ok, much like the "USB host controller" type device.  That's fine, make
-> > > > > > > such a device, add it to your bus, and set the type correctly.  And keep
-> > > > > > > a pointer to that structure in your device-specific structure if you
-> > > > > > > really need to get to anything in it.
-> > > > > > 
-> > > > > > humm, you lost me on the last sentence. Did you mean using
-> > > > > > set_drv/platform_data during the init and retrieving the bus information
-> > > > > > with get_drv/platform_data as needed later? Or something else I badly need
-> > > > > > to learn?
-> > > > > 
-> > > > > IIUC Greg meant we should represent a soundwire master device type and
-> > > > > use that here. Just like we have soundwire slave device type. Something
-> > > > > like:
-> > > > > 
-> > > > > struct sdw_master {
-> > > > >           struct device dev;
-> > > > >           struct sdw_master_prop *prop;
-> > > > >           ...
-> > > > > };
-> > > > > 
-> > > > > In show function you get master from dev (container of) and then use
-> > > > > that to access the master properties. So int.sdw.0 can be of this type.
-> > > > 
-> > > > Yes, you need to represent the master device type if you are going to be
-> > > > having an internal representation of it.
-> > > 
-> > > Humm, confused...In the existing code bus and master are synonyms, see e.g.
-> > > following code excerpts:
-> > > 
-> > >   * sdw_add_bus_master() - add a bus Master instance
-> > >   * @bus: bus instance
-> > >   *
-> > >   * Initializes the bus instance, read properties and create child
-> > >   * devices.
-> > > 
-> > > struct sdw_bus {
-> > > 	struct device *dev; <<< pointer here
-> > 
-> > That's the pointer to what?  The device that the bus is "attached to"
-> > (i.e. parent, like a platform device or a pci device)?
-> > 
-> > Why isn't this a "real" device in itself?
+Hi,
 
-Correct, I am revisiting this and I think I have a fair idea of
-expectations here (looking at usb and greybus model), will hack
-something up
+On 5/6/19 11:25 PM, Tom Murphy wrote:
+> It looks like there is a bug in this code.
+> 
+> The behavior before this patch in __intel_map_single was that
+> iommu_no_mapping would call remove the attached si_domain for 32 bit
+> devices  (in the  dmar_remove_one_dev_info(dev) call in
+> iommu_no_mapping) and then allocate a new domain in
+> get_valid_domain_for_dev
+> old:
+> if (iommu_no_mapping(dev))
+>     return paddr;
+> domain = get_valid_domain_for_dev(dev);
+> if (!domain)
+>     return DMA_MAPPING_ERROR;
+> 
+> but in the new code we remove the attached si_domain but we WON'T
+> allocate a new domain and instead just return an error when we call
+> find_domain
+> new:
+>          if (iommu_no_mapping(dev))
+>                  return paddr;
+> 
+>          domain = find_domain(dev);
+>          if (!domain)
+>                  return DMA_MAPPING_ERROR;
+> 
+> This is a bug, right?
 
-> Allow me to provide a bit of background. I am not trying to be pedantic but
-> make sure we are on the same page.
-> 
-> The SoundWire spec only defines a Master and Slaves attached to that Master.
-> 
-> In real applications, there is a need to have multiple links, which can
-> possibly operate in synchronized ways, so Intel came up with the concept of
-> Controller, which expose multiple Master interfaces that are in sync (two
-> streams can start at exactly the same clock edge of different links).
-> 
-> The Controller is exposed in ACPI as a child of the HDAudio controller (ACPI
-> companion of a PCI device). The controller exposes a 'master-count' and a
-> set of link-specific properties needed for bandwidth/clock scaling.
-> 
-> For some reason, our Windows friends did not want to have a device for each
-> Master interface, likely because they did not want to load a driver per
-> Master interface or have 'yellow bangs'.
-> 
-> So the net result is that we have the following hierarchy in ACPI
-> 
-> Device(HDAS) // HDaudio controller
->   Device(SNDW) // SoundWire Controller
->     Device(SDW0) { // Slave0
-> 	_ADR(link0, vendorX, partY...)
->     }
->     Device(SDW1) { // Slave0
-> 	_ADR(link0, vendorX, partY...)
->     }
->     Device(SDW2) { // Slave0
-> 	_ADR(link1, vendorX, partY...)
->     }
->     Device(SDWM) { // Slave0
-> 	_ADR(linkM, vendorX, partY...)
->     }
-> 
-> There is no master device represented in ACPI and the only way by which we
-> know to which Master a Slave device is attached by looking up the _ADR which
-> contains the link information.
-> 
-> So, coming back to the plot, when we parse the Controller properties, we
-> find out how many Master interfaces we have, create a platform_device for
-> each of them, then initialize all the bus stuff.
+When we use the old lazy creation of iommu domain, we can change the
+domain for a 32bit device from identity to dma by pulling it out of the
+si_domain and allocating a new one for it.
 
-So the idea here would be to go back and create a sdw_master device and
-use that in the bus instance. I think it should be doable..
+When we switch to default domain in iommu generic layer, we can't do
+this anymore. The logic in above code is if we find this case (32bit
+device using an identity domain), we simple return error for dma api
+and warn the user "hey, this is a 32bit device, don't use the default
+pass-through mode".
 
-> > I thought I asked that a long time ago when first reviewing these
-> > patches...
+I believe there should be better solutions, for example, how about
+letting pci core to call iommu_request_dma_map_for_dev() when it
+finds a 32bit device.
 
-Sorry my fault, I should have fixed it back then.
+Best regards,
+Lu Baolu
 
-> > 
-> > > 	unsigned int link_id;
-> > > 	struct list_head slaves;
-> > > 	DECLARE_BITMAP(assigned, SDW_MAX_DEVICES);
-> > > 	struct mutex bus_lock;
-> > > 	struct mutex msg_lock;
-> > > 	const struct sdw_master_ops *ops;
-> > > 	const struct sdw_master_port_ops *port_ops;
-> > > 	struct sdw_bus_params params;
-> > > 	struct sdw_master_prop prop;
-> > > 
-> > > The existing code creates a platform_device in
-> > > drivers/soundwire/intel_init.c, and it's assigned by the following code:
-> > 
-> > The core creates a platform device, don't assume you can "take it over"
-> > :)
-> > 
-> > That platform device lives on the platform bus, you need a "master"
-> > device that lives on your soundbus bus.
-> > 
-> > Again, look at how USB does this.  Or better yet, greybus, as that code
-> > is a lot smaller and simpler.
 > 
-> The learning curve is not small here...
+> On Tue, Apr 30, 2019 at 3:18 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>>
+>> Hi Christoph,
+>>
+>> On 4/30/19 4:03 AM, Christoph Hellwig wrote:
+>>>> @@ -3631,35 +3607,30 @@ static int iommu_no_mapping(struct device *dev)
+>>>>       if (iommu_dummy(dev))
+>>>>               return 1;
+>>>>
+>>>> -    if (!iommu_identity_mapping)
+>>>> -            return 0;
+>>>> -
+>>>
+>>> FYI, iommu_no_mapping has been refactored in for-next:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=x86/vt-d&id=48b2c937ea37a3bece0094b46450ed5267525289
+>>
+>> Oh, yes! Thanks for letting me know this. Will rebase the code.
+>>
+>>>
+>>>>       found = identity_mapping(dev);
+>>>>       if (found) {
+>>>> +            /*
+>>>> +             * If the device's dma_mask is less than the system's memory
+>>>> +             * size then this is not a candidate for identity mapping.
+>>>> +             */
+>>>> +            u64 dma_mask = *dev->dma_mask;
+>>>> +
+>>>> +            if (dev->coherent_dma_mask &&
+>>>> +                dev->coherent_dma_mask < dma_mask)
+>>>> +                    dma_mask = dev->coherent_dma_mask;
+>>>> +
+>>>> +            if (dma_mask < dma_get_required_mask(dev)) {
+>>>
+>>> I know this is mostly existing code moved around, but it really needs
+>>> some fixing.  For one dma_get_required_mask is supposed to return the
+>>> required to not bounce mask for the given device.  E.g. for a device
+>>> behind an iommu it should always just return 32-bit.  If you really
+>>> want to check vs system memory please call dma_direct_get_required_mask
+>>> without the dma_ops indirection.
+>>>
+>>> Second I don't even think we need to check the coherent_dma_mask,
+>>> dma_direct is pretty good at always finding memory even without
+>>> an iommu.
+>>>
+>>> Third this doesn't take take the bus_dma_mask into account.
+>>>
+>>> This probably should just be:
+>>>
+>>>                if (min(*dev->dma_mask, dev->bus_dma_mask) <
+>>>                    dma_direct_get_required_mask(dev)) {
+>>
+>> Agreed and will add this in the next version.
+>>
+>> Best regards,
+>> Lu Baolu
 > 
-> > > 
-> > > static int intel_probe(struct platform_device *pdev)
-> > > {
-> > > 	struct sdw_cdns_stream_config config;
-> > > 	struct sdw_intel *sdw;
-> > > 	int ret;
-> > > 
-> > > 	sdw = devm_kzalloc(&pdev->dev, sizeof(*sdw), GFP_KERNEL);
-> > > [snip]
-> > > 	sdw->cdns.dev = &pdev->dev;
-> > > 	sdw->cdns.bus.dev = &pdev->dev;
-> > 
-> > Gotta love the lack of reference counting :(
-> > 
-> > > I really don't see what you are hinting at, sorry, unless we are talking
-> > > about major surgery in the code.
-
-Not really we have object here which should contain a real device for
-master and need plumbing for it..
-
-> > It sounds like you need a device on your bus that represents the master,
-> > as you have attributes associated with it, and other things.  You can't
-> > put attributes on a random pci or platform device, as you do not "own"
-> > that device.
-> > 
-> > does that help?
-> 
-> Looks like we are doing things wrong at multiple levels.
-> 
-> It might be better to have a more 'self-contained' solution where the bus
-> initialization creates/registers a master device instead of having this
-> proxy platform_device. That would avoid all these refcount issues and make
-> the translation from device to bus straightforward.
-
-yes that is my thinking as well. We still need to link to
-platform/pci/whatever device you have and grab a refcount to that one.
-
-> Am I on the right track or still in the weeds?
-
-
--- 
-~Vinod
