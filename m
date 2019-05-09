@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2489119122
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B85C191A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfEISxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:53:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47836 "EHLO mail.kernel.org"
+        id S1728907AbfEIS6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:58:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbfEISxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:53:21 -0400
+        id S1728450AbfEISxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0B8020578;
-        Thu,  9 May 2019 18:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C7E620578;
+        Thu,  9 May 2019 18:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428000;
-        bh=AvzCBlu9b21RH+Bn5XnyCH1lsWQ02IjRZ9x6cTTvQXM=;
+        s=default; t=1557428002;
+        bh=K6Crj5qIPiEOEheoj0CX+J/8kS3zZBd/dhua6TODmiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AsQiJH2P/SXUMPAXICC+/P2de+u5V6kwquKa9c7oR5eeUOpbuccHpVFNUYE+co3rU
-         gYjBh+qAuxb2OD2piqqKkQnn9WqqqYT2ACG8n9XBUtgWRn2e0KmehYDv2BN7XGinuD
-         EK7hhW1cJer4SawfBfh9r3raeONS4z+UdsSrua3k=
+        b=KZaFLQRAvtBYAh0VdEFQPHnXbrSF/fzR2bEtCLqNXo/XY0kh5Dkn/6TQ8E14YSkt/
+         dG8tcuhTzbm+pFa586aWFeWV7/NVe6cvGOpoFWMIyrjp/V69wJGbeIlySa1EZVg4ba
+         OTVR84CPd1YJcZ5aZaTCx/w3ZmHDm8R6ScQ3agxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Vasquez <andrewv@marvell.com>,
+        stable@vger.kernel.org, Quinn Tran <qtran@marvell.com>,
         Himanshu Madhani <hmadhani@marvell.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.0 85/95] scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
-Date:   Thu,  9 May 2019 20:42:42 +0200
-Message-Id: <20190509181315.221891173@linuxfoundation.org>
+Subject: [PATCH 5.0 86/95] scsi: qla2xxx: Fix device staying in blocked state
+Date:   Thu,  9 May 2019 20:42:43 +0200
+Message-Id: <20190509181315.280012213@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
 References: <20190509181309.180685671@linuxfoundation.org>
@@ -44,45 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Vasquez <andrewv@marvell.com>
+From: Quinn Tran <qtran@marvell.com>
 
-commit 5cbdae10bf11f96e30b4d14de7b08c8b490e903c upstream.
+commit 2137490f2147a8d0799b72b9a1023efb012d40c7 upstream.
 
-Commit e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs
-code") incorrectly set 'optrom_region_size' to 'start+size', which can
-overflow option-rom boundaries when 'start' is non-zero.  Continue setting
-optrom_region_size to the proper adjusted value of 'size'.
+This patch fixes issue reported by some of the customers, who discovered
+that after cable pull scenario the devices disappear and path seems to
+remain in blocked state. Once the device reappears, driver does not seem to
+update path to online. This issue appears because of the defer flag
+creating race condition where the same session reappears.  This patch fixes
+this issue by indicating SCSI-ML of device lost when
+qlt_free_session_done() is called from qlt_unreg_sess().
 
-Fixes: e6f77540c067 ("scsi: qla2xxx: Fix an integer overflow in sysfs code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Vasquez <andrewv@marvell.com>
+Fixes: 41dc529a4602a ("qla2xxx: Improve RSCN handling in driver")
+Signed-off-by: Quinn Tran <qtran@marvell.com>
+Cc: stable@vger.kernel.org #4.19
 Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_attr.c |    4 ++--
+ drivers/scsi/qla2xxx/qla_target.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -364,7 +364,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -977,6 +977,8 @@ void qlt_free_session_done(struct work_s
+ 		sess->send_els_logo);
  
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
+ 	if (!IS_SW_RESV_ADDR(sess->d_id)) {
++		qla2x00_mark_device_lost(vha, sess, 0, 0);
++
+ 		if (sess->send_els_logo) {
+ 			qlt_port_logo_t logo;
  
- 		ha->optrom_state = QLA_SREADING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
-@@ -437,7 +437,7 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		}
+@@ -1157,8 +1159,6 @@ void qlt_unreg_sess(struct fc_port *sess
+ 	if (sess->se_sess)
+ 		vha->hw->tgt.tgt_ops->clear_nacl_from_fcport_map(sess);
  
- 		ha->optrom_region_start = start;
--		ha->optrom_region_size = start + size;
-+		ha->optrom_region_size = size;
- 
- 		ha->optrom_state = QLA_SWRITING;
- 		ha->optrom_buffer = vmalloc(ha->optrom_region_size);
+-	qla2x00_mark_device_lost(vha, sess, 0, 0);
+-
+ 	sess->deleted = QLA_SESS_DELETION_IN_PROGRESS;
+ 	sess->disc_state = DSC_DELETE_PEND;
+ 	sess->last_rscn_gen = sess->rscn_gen;
 
 
