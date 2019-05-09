@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E292190AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45F61906B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbfEISrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:47:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40358 "EHLO mail.kernel.org"
+        id S1727139AbfEISop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:44:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727874AbfEISrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:47:41 -0400
+        id S1727089AbfEISoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:44:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 091A2217D7;
-        Thu,  9 May 2019 18:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61DC22182B;
+        Thu,  9 May 2019 18:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427660;
-        bh=KcBNhjf5N9TzoKLJ8rSU60ZB8nQ2vfmXWLvk1pOJ5Jk=;
+        s=default; t=1557427483;
+        bh=MOZrTxGSqKnDh5cfgtBT8RTiA31Qm7MZwDzqMBAmq68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gRcdliTgGQNJ8VTa3m3gMCrsZOj7sYFAFO+nPe7gc1CV6y/OlP1p6w6HamFm9aSxl
-         SI0/UcuaibpbMG6TAhOQgwewxR1ciQ7rUNhwQIlOmJF+IzxU2Im1/622Pn2jNwY1aT
-         M1Qmc4q/xTqsrhYcDPG4rrVq+qNHEirj90kvtwX4=
+        b=HewspAQDTgcFZ594kgyaZjo0NjwYqX1ppw/I+lodmQQ1jBOTsGc9TkzbqHh7SR8rG
+         WGeIKD15XuELhIgIx8Yskv5EjHzW41OwqEuDPjm5KufNRaAjFpKP5cnFfiJbfSOw1P
+         Fafckz6uaXQTYv5BscYyWu6YOM9p8ZY1BT/4z/Do=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Jyri Sarha <jsarha@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/66] drm/omap: hdmi4_cec: Fix CEC clock handling for PM
+Subject: [PATCH 4.9 06/28] ASoC: cs4270: Set auto-increment bit for register writes
 Date:   Thu,  9 May 2019 20:41:58 +0200
-Message-Id: <20190509181304.343756327@linuxfoundation.org>
+Message-Id: <20190509181251.492224703@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,99 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 36a1da15b5df493241b0011d2185fdd724ac1ed1 ]
+[ Upstream commit f0f2338a9cfaf71db895fa989ea7234e8a9b471d ]
 
-If CONFIG_OMAP4_DSS_HDMI_CEC is enabled in .config, deeper SoC idle
-states are blocked because the CEC clock gets always enabled on init.
+The CS4270 does not by default increment the register address on
+consecutive writes. During normal operation it doesn't matter as all
+register accesses are done individually. At resume time after suspend,
+however, the regcache code gathers the biggest possible block of
+registers to sync and sends them one on one go.
 
-Let's fix the issue by moving the CEC clock handling to happen later in
-hdmi_cec_adap_enable() as suggested by Hans Verkuil <hverkuil@xs4all.nl>.
-This way the CEC clock gets only enabled when needed. This can be tested
-by doing cec-ctl --playback to enable the CEC, and doing cec-ctl --clear
-to disable it.
+To fix this, set the INCR bit in all cases.
 
-Let's also fix the typo for "divider" in the comments while at it.
-
-Fixes: 8d7f934df8d8 ("omapdrm: hdmi4_cec: add OMAP4 HDMI CEC support")
-Suggested-by: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Jyri Sarha <jsarha@ti.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190326151438.32414-1-tony@atomide.com
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c | 26 ++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ sound/soc/codecs/cs4270.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-index 340383150fb98..ebf9c96d43eee 100644
---- a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-+++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-@@ -175,6 +175,7 @@ static int hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
- 		REG_FLD_MOD(core->base, HDMI_CORE_SYS_INTR_UNMASK4, 0, 3, 3);
- 		hdmi_wp_clear_irqenable(core->wp, HDMI_IRQ_CORE);
- 		hdmi_wp_set_irqstatus(core->wp, HDMI_IRQ_CORE);
-+		REG_FLD_MOD(core->wp->base, HDMI_WP_CLK, 0, 5, 0);
- 		hdmi4_core_disable(core);
- 		return 0;
- 	}
-@@ -182,16 +183,24 @@ static int hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
- 	if (err)
- 		return err;
+diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
+index 84f86745c30e9..828bc615a1908 100644
+--- a/sound/soc/codecs/cs4270.c
++++ b/sound/soc/codecs/cs4270.c
+@@ -643,6 +643,7 @@ static const struct regmap_config cs4270_regmap = {
+ 	.reg_defaults =		cs4270_reg_defaults,
+ 	.num_reg_defaults =	ARRAY_SIZE(cs4270_reg_defaults),
+ 	.cache_type =		REGCACHE_RBTREE,
++	.write_flag_mask =	CS4270_I2C_INCR,
  
-+	/*
-+	 * Initialize CEC clock divider: CEC needs 2MHz clock hence
-+	 * set the divider to 24 to get 48/24=2MHz clock
-+	 */
-+	REG_FLD_MOD(core->wp->base, HDMI_WP_CLK, 0x18, 5, 0);
-+
- 	/* Clear TX FIFO */
- 	if (!hdmi_cec_clear_tx_fifo(adap)) {
- 		pr_err("cec-%s: could not clear TX FIFO\n", adap->name);
--		return -EIO;
-+		err = -EIO;
-+		goto err_disable_clk;
- 	}
- 
- 	/* Clear RX FIFO */
- 	if (!hdmi_cec_clear_rx_fifo(adap)) {
- 		pr_err("cec-%s: could not clear RX FIFO\n", adap->name);
--		return -EIO;
-+		err = -EIO;
-+		goto err_disable_clk;
- 	}
- 
- 	/* Clear CEC interrupts */
-@@ -236,6 +245,12 @@ static int hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
- 		hdmi_write_reg(core->base, HDMI_CEC_INT_STATUS_1, temp);
- 	}
- 	return 0;
-+
-+err_disable_clk:
-+	REG_FLD_MOD(core->wp->base, HDMI_WP_CLK, 0, 5, 0);
-+	hdmi4_core_disable(core);
-+
-+	return err;
- }
- 
- static int hdmi_cec_adap_log_addr(struct cec_adapter *adap, u8 log_addr)
-@@ -333,11 +348,8 @@ int hdmi4_cec_init(struct platform_device *pdev, struct hdmi_core_data *core,
- 		return ret;
- 	core->wp = wp;
- 
--	/*
--	 * Initialize CEC clock divider: CEC needs 2MHz clock hence
--	 * set the devider to 24 to get 48/24=2MHz clock
--	 */
--	REG_FLD_MOD(core->wp->base, HDMI_WP_CLK, 0x18, 5, 0);
-+	/* Disable clock initially, hdmi_cec_adap_enable() manages it */
-+	REG_FLD_MOD(core->wp->base, HDMI_WP_CLK, 0, 5, 0);
- 
- 	ret = cec_register_adapter(core->adap, &pdev->dev);
- 	if (ret < 0) {
+ 	.readable_reg =		cs4270_reg_is_readable,
+ 	.volatile_reg =		cs4270_reg_is_volatile,
 -- 
 2.20.1
 
