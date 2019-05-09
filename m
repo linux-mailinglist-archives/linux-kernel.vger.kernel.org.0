@@ -2,79 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10307188DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC38188E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfEILYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:24:22 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45664 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbfEILYV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:24:21 -0400
-Received: by mail-qk1-f193.google.com with SMTP id j1so1154221qkk.12
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dCnlS/Os4iGWNFisP3kaeJDg2CdWLlxOhgRwG4awIx4=;
-        b=KBD05kY1U/p8AkeRQqKt9DacXyP8UQYpamDfplN6tJcVhL/BskcqjpJI9Nopif++ln
-         bp1FlfXIu8sfMMqXBcXLve4fnRhSRUjJw/wPFLvYitGGT1+TRgYKozqzpubNShKAbV5P
-         9zIQes4kTP21dtL/wRF0nXGdfu5gTNqTuJKJs2UAz9QDlakBRfufoA1CAGd3JuwOpsiq
-         s2kn+hhcPuBieVnK+qRtC+5klBsrzieeJ+fqVhPKTL16hVVMQ2b6oIEDnALx0rwClPPz
-         J3TO+t9Jswjux3vYA0ITXSMbulWyT2Ba8FLklcVDli1sSV6a9Y8IyoRGs6AYClviOoo2
-         ffTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dCnlS/Os4iGWNFisP3kaeJDg2CdWLlxOhgRwG4awIx4=;
-        b=eOKFk7xQZ8dqLsclOlgpqp4+QOOt2z2+LM/QmVfDARnHwqZ2880FFwwDFoput+Z/Wz
-         mFWcIZj8UxKm9qBnQJmt7lkP6leAg2NXlZEWTaqeFiAbYVAvcArj48jvHS6ahoMT90hC
-         kWp2BAMieaO23di6YaN6cd8QFZdoXppLpJq86dsandMX+ouK9VOyUGe00nR2wXVRcBfc
-         f2Qb0rMF5mOw9AIgtXgzactAL32VTWi40boVfywcnrTxJ6B5GSpCM5cyXq4plg7bJAhI
-         xR8Ylym/xtz56o/ggAhDrV8RmuDVqtdO3gkGWR/XjN5o7xfZQyYSie/L2iT2KdjwEDky
-         v7Wg==
-X-Gm-Message-State: APjAAAVO7DKxGe3o67mIb7/gxSiMk+7toTkAlQZlmH7i3llvxbH0GVsu
-        ZkmnoSIqfIvypgwyymq/jB6UVPBjRgZym68IIBz4Ug==
-X-Google-Smtp-Source: APXvYqzwIaznoFAT/zWqbH4CeaZXP5SqI/lPwmVbnP/H/Hxa5P/Zsau6AOS0KHx/uOaaP009y/M2WPeFkeEbu4pxRZo=
-X-Received: by 2002:a37:f50c:: with SMTP id l12mr2768120qkk.175.1557401060787;
- Thu, 09 May 2019 04:24:20 -0700 (PDT)
+        id S1726557AbfEIL1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:27:34 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32927 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725872AbfEIL1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 07:27:33 -0400
+Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id EE505197B016B0870572;
+        Thu,  9 May 2019 12:27:31 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 9 May 2019 12:27:25 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
+        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
+        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 0/3] initramfs: add support for xattrs in the initial ram disk
+Date:   Thu, 9 May 2019 13:24:17 +0200
+Message-ID: <20190509112420.15671-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190503072146.49999-1-chiu@endlessm.com> <20190503072146.49999-3-chiu@endlessm.com>
- <CAD8Lp47_-6d2wCAs5QbuR6Mw2w91TyJ9W3kFiJHH4F_6dXqnHg@mail.gmail.com> <CAB4CAweQXz=wQGA5t7BwWYdwbRrHCji+BWc0G52SUcZFGc8Pnw@mail.gmail.com>
-In-Reply-To: <CAB4CAweQXz=wQGA5t7BwWYdwbRrHCji+BWc0G52SUcZFGc8Pnw@mail.gmail.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Thu, 9 May 2019 19:24:09 +0800
-Message-ID: <CAD8Lp46hcx0ZHFMUdXdR6unbeMQJsfyuEQ7hUFpHY2jU9R7Gcw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] rtl8xxxu: Add watchdog to update rate mask by
- signal strength
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 5:17 PM Chris Chiu <chiu@endlessm.com> wrote:
-> I need the vif because there's seems no easy way to get RSSI. Please
-> suggest if there's any better idea for this. I believe multiple vifs is for AP
-> mode (with more than 1 virtual AP/SSIDs) and the Station+AP coexist
-> mode. But the rtl8xxxu driver basically supports only Station mode.
+This patch set aims at solving the following use case: appraise files from
+the initial ram disk. To do that, IMA checks the signature/hash from the
+security.ima xattr. Unfortunately, this use case cannot be implemented
+currently, as the CPIO format does not support xattrs.
 
-Yes, the driver only lets you create station interfaces, but it lets
-you create several of them.
-I'm not sure if that is intentional (and meaningful), or if its a bug.
-Maybe you can experiment with multiple station interfaces and see if
-it works in a meaningful way?
+This proposal consists in marshaling pathnames and xattrs in a file called
+.xattr-list. They are unmarshaled by the CPIO parser after all files have
+been extracted.
 
-Daniel
+The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that all
+xattrs are stored in a single file and not per file (solves the file name
+limitation issue, as it is not necessary to add a suffix to files
+containing xattrs).
+
+The difference with another proposal
+(https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+included in an image without changing the image format, as opposed to
+defining a new one. As seen from the discussion, if a new format has to be
+defined, it should fix the issues of the existing format, which requires
+more time.
+
+To fulfill both requirements, adding support for xattrs in a short time and
+defining a new image format properly, this patch set takes an incremental
+approach: it introduces a parser of xattrs that can be used either if
+xattrs are in a regular file or directly added to the image (this patch set
+reuses patch 9/15 of the existing proposal); in addition, it introduces a
+wrapper of the xattr parser, to read xattrs from a file.
+
+The changes introduced by this patch set don't cause any compatibility
+issue: kernels without the xattr parser simply extracts .xattr-list and
+don't unmarshal xattrs; kernels with the xattr parser don't unmarshal
+xattrs if .xattr-list is not found in the image.
+
+From the kernel space perspective, backporting this functionality to older
+kernels should be very easy. It is sufficient to add a call to the new
+function do_readxattrs(). From the user space perspective, no change is
+required for the use case. A new dracut module (module-setup.sh) will
+execute:
+
+getfattr --absolute-names -d -P -R -e hex -m security.ima \
+    <file list> | xattr.awk -b > ${initdir}/.xattr-list
+
+where xattr.awk is the script that marshals xattrs (see patch 3/3). The
+same can be done with the initramfs-tools ram disk generator.
+
+Changelog
+
+v1:
+
+- move xattr unmarshaling to CPIO parser
+
+
+Mimi Zohar (1):
+  initramfs: set extended attributes
+
+Roberto Sassu (2):
+  fs: add ksys_lsetxattr() wrapper
+  initramfs: introduce do_readxattrs()
+
+ fs/xattr.c               |   9 ++-
+ include/linux/syscalls.h |   3 +
+ init/initramfs.c         | 152 ++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 161 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
