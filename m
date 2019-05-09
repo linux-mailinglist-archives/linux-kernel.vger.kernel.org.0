@@ -2,414 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED3E619506
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264B21950F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfEIWJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 18:09:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44205 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfEIWJh (ORCPT
+        id S1726992AbfEIWMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 18:12:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35806 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726964AbfEIWMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 18:09:37 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n134so2664451lfn.11;
-        Thu, 09 May 2019 15:09:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Cqxj3Us4XNCJxPZJKTLFD9+lFBvcLoAAs1I09WGFKIc=;
-        b=k2QsJGwD7GfnAL8nlZ6tryBWDeJM5DurbQh5t466dQbs62rPSV/ROy6oqKs1YCkXBo
-         bg9AnUXl1Lz25xuwpqeZIAgHD3rhpaLzsVYlDLPKrtiF2wGCFkWa1CZel3uijL5m98Qg
-         f2xifmk4eA+xPPgKkRLJaR6kXPt7glNL2MKabCnl7BawvDXH1TAUFT6UFAPImDdRizds
-         UmlCimp1x2F4pNO7CZvVtzCU4SIT1J0pvUhlxbvNnYl2xzqO1lYVkfbIJH4KJRknhUrV
-         wXfuv/5w1ETdLR5OgU4TpsLGI9e/lsnZ+RDazun8LtIrv1jXFkjIMHaStv0AtU9l9fnH
-         eXLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Cqxj3Us4XNCJxPZJKTLFD9+lFBvcLoAAs1I09WGFKIc=;
-        b=gqA56qHSrtDPW3o34Vh0ey38BoV4mZtpZ2mDZ+yizUtKwrbxwyemi9uqwCAPXGkRoH
-         nFr1B+q15xQ/Ul8Yay/wDTjGCbSKh+cts65Ix1nPIILRFNGlBuOIQ9VIu/yawzL2N4hu
-         FTDGNf6/0Z/odhIjGJOc2UMuO30ouwVcgeapbBUW0CzJjqiZlbX7ok8k5qu+BvaE4nyP
-         4G/k2avXxkepIJOLqtBuPrgyAlBYrFYgkH+Hj/Mp3NCEqcklUJuVh94C7fh4Ct0Km/7V
-         61ioT6mkaTWh/yLGVjpr40+z2HgD7zX/GibuG8aE4YGZZKOGWBmG5Vk/c0D9N3dpfSBt
-         BV+g==
-X-Gm-Message-State: APjAAAURWSqczPfok0tya7fO5+iDqE7HR+ezD1Xsg0PxoqBOBRf3eknz
-        rHe2tefbKUy8QtcprqN5SYd8wIEOYCc=
-X-Google-Smtp-Source: APXvYqyRTVCW6g7aaCx7yK6lc6ZkcQTLPyEfsMtT7MLJ9QWIe+UhelPnfn8oMeDUrGPhddx2wd/DxA==
-X-Received: by 2002:a19:97c8:: with SMTP id z191mr3715814lfd.167.1557439774043;
-        Thu, 09 May 2019 15:09:34 -0700 (PDT)
-Received: from z50.gdansk-morena.vectranet.pl (109241207190.gdansk.vectranet.pl. [109.241.207.190])
-        by smtp.gmail.com with ESMTPSA id k25sm631543lji.40.2019.05.09.15.09.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 15:09:33 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH] media: v4l2-subdev: Verify arguments of v4l2_subdev_call()
-Date:   Fri, 10 May 2019 00:09:01 +0200
-Message-Id: <20190509220901.19737-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 9 May 2019 18:12:34 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49MCYxs164791
+        for <linux-kernel@vger.kernel.org>; Thu, 9 May 2019 18:12:34 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2scuy5smw8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 18:12:33 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Thu, 9 May 2019 23:12:18 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 May 2019 23:12:16 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49MCFFK61145188
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 May 2019 22:12:15 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 30B3FA4054;
+        Thu,  9 May 2019 22:12:15 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A1BB9A405B;
+        Thu,  9 May 2019 22:12:14 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.145.181.188])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 May 2019 22:12:14 +0000 (GMT)
+Date:   Fri, 10 May 2019 00:12:12 +0200
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Cornelia Huck <cohuck@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "cjia@nvidia.com" <cjia@nvidia.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCHv2 08/10] vfio/mdev: Improve the create/remove sequence
+In-Reply-To: <eb34e9a3-32a3-98fe-e871-7d541d620b6e@linux.ibm.com>
+References: <20190430224937.57156-1-parav@mellanox.com>
+        <20190430224937.57156-9-parav@mellanox.com>
+        <20190508190957.673dd948.cohuck@redhat.com>
+        <VI1PR0501MB2271CFAFF2ACF145FDFD8E2ED1320@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+        <20190509110600.5354463c.cohuck@redhat.com>
+        <eb34e9a3-32a3-98fe-e871-7d541d620b6e@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050922-0016-0000-0000-0000027A1961
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050922-0017-0000-0000-000032D6D0DD
+Message-Id: <20190510001212.3e2bf5ea.pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905090126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correctness of format type (try or active) and pad number parameters
-passed to subdevice operation callbacks is now verified only for IOCTL
-calls.  However, those callbacks are also used by drivers, e.g., V4L2
-host interfaces.
+On Thu, 9 May 2019 18:26:59 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-Since both subdev_do_ioctl() and drivers are using v4l2_subdev_call()
-macro while calling subdevice operations, move those parameter checks
-from subdev_do_ioctl() to v4l2_subdev_call() so we can avoid
-reimplementing those checks inside drivers.
+> On 09/05/2019 11:06, Cornelia Huck wrote:
+> > [vfio-ap folks: find a question regarding removal further down]
+> > 
+> > On Wed, 8 May 2019 22:06:48 +0000
+> > Parav Pandit <parav@mellanox.com> wrote:
+> > 
+> >>> -----Original Message-----
+> >>> From: Cornelia Huck <cohuck@redhat.com>
+> >>> Sent: Wednesday, May 8, 2019 12:10 PM
+> >>> To: Parav Pandit <parav@mellanox.com>
+> >>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> >>> kwankhede@nvidia.com; alex.williamson@redhat.com; cjia@nvidia.com
+> >>> Subject: Re: [PATCHv2 08/10] vfio/mdev: Improve the create/remove
+> >>> sequence
+> >>>
+> >>> On Tue, 30 Apr 2019 17:49:35 -0500
+> >>> Parav Pandit <parav@mellanox.com> wrote:
+> >>>    
+> 
+> ...snip...
+> 
+> >>>> @@ -373,16 +330,15 @@ int mdev_device_remove(struct device *dev,
+> >>> bool force_remove)
+> >>>>   	mutex_unlock(&mdev_list_lock);
+> >>>>
+> >>>>   	type = to_mdev_type(mdev->type_kobj);
+> >>>> +	mdev_remove_sysfs_files(dev, type);
+> >>>> +	device_del(&mdev->dev);
+> >>>>   	parent = mdev->parent;
+> >>>> +	ret = parent->ops->remove(mdev);
+> >>>> +	if (ret)
+> >>>> +		dev_err(&mdev->dev, "Remove failed: err=%d\n", ret);
+> >>>
+> >>> I think carrying on with removal regardless of the return code of the
+> >>> ->remove callback makes sense, as it simply matches usual practice.
+> >>> However, are we sure that every vendor driver works well with that? I think
+> >>> it should, as removal from bus unregistration (vs. from the sysfs
+> >>> file) was always something it could not veto, but have you looked at the
+> >>> individual drivers?
+> >>>    
+> >> I looked at following drivers a little while back.
+> >> Looked again now.
+> >>
+> >> drivers/gpu/drm/i915/gvt/kvmgt.c which clears the handle valid in intel_vgpu_release(), which should finish first before remove() is invoked.
+> >>
+> >> s390 vfio_ccw_mdev_remove() driver drivers/s390/cio/vfio_ccw_ops.c remove() always returns 0.
+> >> s39 crypo fails the remove() once vfio_ap_mdev_release marks kvm null, which should finish before remove() is invoked.
+> > 
+> > That one is giving me a bit of a headache (the ->kvm reference is
+> > supposed to keep us from detaching while a vm is running), so let's cc:
+> > the vfio-ap maintainers to see whether they have any concerns.
+> > 
+> 
+> We are aware of this race and we did correct this in the IRQ patches for 
+> which it would have become a real issue.
+> We now increment/decrement the KVM reference counter inside open and 
+> release.
+> Should be right after this.
+> 
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- drivers/media/v4l2-core/v4l2-subdev.c | 121 +++-----------------------
- include/media/v4l2-subdev.h           |  79 +++++++++++++++++
- 2 files changed, 89 insertions(+), 111 deletions(-)
+Tony, what is your take on this? I don't have the bandwidth to think
+this through properly, but my intuition tells me: this might be more
+complicated than what Pierre's response suggests.
 
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index d75815ab0d7b..186749d31abf 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -121,53 +121,17 @@ static int subdev_close(struct file *file)
- }
- 
- #if defined(CONFIG_VIDEO_V4L2_SUBDEV_API)
--static int check_format(struct v4l2_subdev *sd,
--			struct v4l2_subdev_format *format)
-+void *v4l2_subdev_call_va_arg(int n, ...)
- {
--	if (format->which != V4L2_SUBDEV_FORMAT_TRY &&
--	    format->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--		return -EINVAL;
--
--	if (format->pad >= sd->entity.num_pads)
--		return -EINVAL;
--
--	return 0;
--}
--
--static int check_crop(struct v4l2_subdev *sd, struct v4l2_subdev_crop *crop)
--{
--	if (crop->which != V4L2_SUBDEV_FORMAT_TRY &&
--	    crop->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--		return -EINVAL;
--
--	if (crop->pad >= sd->entity.num_pads)
--		return -EINVAL;
--
--	return 0;
--}
--
--static int check_selection(struct v4l2_subdev *sd,
--			   struct v4l2_subdev_selection *sel)
--{
--	if (sel->which != V4L2_SUBDEV_FORMAT_TRY &&
--	    sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--		return -EINVAL;
--
--	if (sel->pad >= sd->entity.num_pads)
--		return -EINVAL;
--
--	return 0;
--}
--
--static int check_edid(struct v4l2_subdev *sd, struct v4l2_subdev_edid *edid)
--{
--	if (edid->pad >= sd->entity.num_pads)
--		return -EINVAL;
--
--	if (edid->blocks && edid->edid == NULL)
--		return -EINVAL;
--
--	return 0;
-+	va_list ap;
-+	int i;
-+	void *p;
-+
-+	va_start(ap, n);
-+	for (i = 9; i < n; i++)
-+		p = va_arg(ap, void *);
-+	va_end(ap);
-+	return p;
- }
- #endif
- 
-@@ -292,10 +256,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_G_FMT: {
- 		struct v4l2_subdev_format *format = arg;
- 
--		rval = check_format(sd, format);
--		if (rval)
--			return rval;
--
- 		memset(format->reserved, 0, sizeof(format->reserved));
- 		memset(format->format.reserved, 0, sizeof(format->format.reserved));
- 		return v4l2_subdev_call(sd, pad, get_fmt, subdev_fh->pad, format);
-@@ -304,10 +264,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_S_FMT: {
- 		struct v4l2_subdev_format *format = arg;
- 
--		rval = check_format(sd, format);
--		if (rval)
--			return rval;
--
- 		memset(format->reserved, 0, sizeof(format->reserved));
- 		memset(format->format.reserved, 0, sizeof(format->format.reserved));
- 		return v4l2_subdev_call(sd, pad, set_fmt, subdev_fh->pad, format);
-@@ -317,10 +273,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 		struct v4l2_subdev_crop *crop = arg;
- 		struct v4l2_subdev_selection sel;
- 
--		rval = check_crop(sd, crop);
--		if (rval)
--			return rval;
--
- 		memset(crop->reserved, 0, sizeof(crop->reserved));
- 		memset(&sel, 0, sizeof(sel));
- 		sel.which = crop->which;
-@@ -340,10 +292,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 		struct v4l2_subdev_selection sel;
- 
- 		memset(crop->reserved, 0, sizeof(crop->reserved));
--		rval = check_crop(sd, crop);
--		if (rval)
--			return rval;
--
- 		memset(&sel, 0, sizeof(sel));
- 		sel.which = crop->which;
- 		sel.pad = crop->pad;
-@@ -361,13 +309,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_ENUM_MBUS_CODE: {
- 		struct v4l2_subdev_mbus_code_enum *code = arg;
- 
--		if (code->which != V4L2_SUBDEV_FORMAT_TRY &&
--		    code->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--			return -EINVAL;
--
--		if (code->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		memset(code->reserved, 0, sizeof(code->reserved));
- 		return v4l2_subdev_call(sd, pad, enum_mbus_code, subdev_fh->pad,
- 					code);
-@@ -376,13 +317,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_ENUM_FRAME_SIZE: {
- 		struct v4l2_subdev_frame_size_enum *fse = arg;
- 
--		if (fse->which != V4L2_SUBDEV_FORMAT_TRY &&
--		    fse->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--			return -EINVAL;
--
--		if (fse->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		memset(fse->reserved, 0, sizeof(fse->reserved));
- 		return v4l2_subdev_call(sd, pad, enum_frame_size, subdev_fh->pad,
- 					fse);
-@@ -391,9 +325,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_G_FRAME_INTERVAL: {
- 		struct v4l2_subdev_frame_interval *fi = arg;
- 
--		if (fi->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		memset(fi->reserved, 0, sizeof(fi->reserved));
- 		return v4l2_subdev_call(sd, video, g_frame_interval, arg);
- 	}
-@@ -401,9 +332,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_S_FRAME_INTERVAL: {
- 		struct v4l2_subdev_frame_interval *fi = arg;
- 
--		if (fi->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		memset(fi->reserved, 0, sizeof(fi->reserved));
- 		return v4l2_subdev_call(sd, video, s_frame_interval, arg);
- 	}
-@@ -411,13 +339,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_ENUM_FRAME_INTERVAL: {
- 		struct v4l2_subdev_frame_interval_enum *fie = arg;
- 
--		if (fie->which != V4L2_SUBDEV_FORMAT_TRY &&
--		    fie->which != V4L2_SUBDEV_FORMAT_ACTIVE)
--			return -EINVAL;
--
--		if (fie->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		memset(fie->reserved, 0, sizeof(fie->reserved));
- 		return v4l2_subdev_call(sd, pad, enum_frame_interval, subdev_fh->pad,
- 					fie);
-@@ -426,10 +347,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_G_SELECTION: {
- 		struct v4l2_subdev_selection *sel = arg;
- 
--		rval = check_selection(sd, sel);
--		if (rval)
--			return rval;
--
- 		memset(sel->reserved, 0, sizeof(sel->reserved));
- 		return v4l2_subdev_call(
- 			sd, pad, get_selection, subdev_fh->pad, sel);
-@@ -438,10 +355,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_SUBDEV_S_SELECTION: {
- 		struct v4l2_subdev_selection *sel = arg;
- 
--		rval = check_selection(sd, sel);
--		if (rval)
--			return rval;
--
- 		memset(sel->reserved, 0, sizeof(sel->reserved));
- 		return v4l2_subdev_call(
- 			sd, pad, set_selection, subdev_fh->pad, sel);
-@@ -450,38 +363,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 	case VIDIOC_G_EDID: {
- 		struct v4l2_subdev_edid *edid = arg;
- 
--		rval = check_edid(sd, edid);
--		if (rval)
--			return rval;
--
- 		return v4l2_subdev_call(sd, pad, get_edid, edid);
- 	}
- 
- 	case VIDIOC_S_EDID: {
- 		struct v4l2_subdev_edid *edid = arg;
- 
--		rval = check_edid(sd, edid);
--		if (rval)
--			return rval;
--
- 		return v4l2_subdev_call(sd, pad, set_edid, edid);
- 	}
- 
- 	case VIDIOC_SUBDEV_DV_TIMINGS_CAP: {
- 		struct v4l2_dv_timings_cap *cap = arg;
- 
--		if (cap->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		return v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
- 	}
- 
- 	case VIDIOC_SUBDEV_ENUM_DV_TIMINGS: {
- 		struct v4l2_enum_dv_timings *dvt = arg;
- 
--		if (dvt->pad >= sd->entity.num_pads)
--			return -EINVAL;
--
- 		return v4l2_subdev_call(sd, pad, enum_dv_timings, dvt);
- 	}
- 
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index a7fa5b80915a..a0ad8c6f588b 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -1091,6 +1091,82 @@ void v4l2_subdev_free_pad_config(struct v4l2_subdev_pad_config *cfg);
- void v4l2_subdev_init(struct v4l2_subdev *sd,
- 		      const struct v4l2_subdev_ops *ops);
- 
-+#if defined(CONFIG_VIDEO_V4L2_SUBDEV_API)
-+void *v4l2_subdev_call_va_arg(int n, ...);
-+
-+#define v4l2_subdev_call_chk_args(sd, o, f, args...)			\
-+({									\
-+	__u32 __which = V4L2_SUBDEV_FORMAT_ACTIVE;			\
-+	__u32 __pad = 0;						\
-+	if ((void *)&sd->ops->o == &sd->ops->pad) {			\
-+		if ((void *)&sd->ops->o->f == &sd->ops->pad->get_fmt ||	\
-+		    (void *)&sd->ops->o->f == &sd->ops->pad->set_fmt) {	\
-+			struct v4l2_subdev_format *__fmt;		\
-+			__fmt = v4l2_subdev_call_va_arg(2, ##args);	\
-+			__which = __fmt->which;				\
-+			__pad = __fmt->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->enum_mbus_code) {	\
-+			struct v4l2_subdev_mbus_code_enum *__code;	\
-+			__code = v4l2_subdev_call_va_arg(2, ##args);	\
-+			__which = __code->which;			\
-+			__pad = __code->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->enum_frame_size) {	\
-+			struct v4l2_subdev_frame_size_enum *__fse;	\
-+			__fse = v4l2_subdev_call_va_arg(2, ##args);	\
-+			__which = __fse->which;				\
-+			__pad = __fse->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->enum_frame_interval) {\
-+			struct v4l2_subdev_frame_interval_enum *__fie;	\
-+			__fie = v4l2_subdev_call_va_arg(2, ##args);	\
-+			__which = __fie->which;				\
-+			__pad = __fie->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->get_selection ||	\
-+			   (void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->set_selection) {	\
-+			struct v4l2_subdev_selection *__sel;		\
-+			__sel = v4l2_subdev_call_va_arg(2, ##args);	\
-+			__which = __sel->which;				\
-+			__pad = __sel->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->get_edid ||		\
-+			   (void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->set_edid) {		\
-+			struct v4l2_subdev_edid *__edid;		\
-+			__edid = v4l2_subdev_call_va_arg(1, ##args);	\
-+			__pad = __edid->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->dv_timings_cap) {	\
-+			struct v4l2_dv_timings_cap *__cap;		\
-+			__cap = v4l2_subdev_call_va_arg(1, ##args);	\
-+			__pad = __cap->pad;				\
-+		} else if ((void *)&sd->ops->o->f ==			\
-+				   &sd->ops->pad->enum_dv_timings) {	\
-+			struct v4l2_enum_dv_timings *__dvt;		\
-+			__dvt = v4l2_subdev_call_va_arg(1, ##args);	\
-+			__pad = __dvt->pad;				\
-+		}							\
-+	} else if ((void *)&sd->ops->o == &sd->ops->video) {		\
-+		if ((void *)&sd->ops->o->f ==				\
-+			    &sd->ops->video->g_frame_interval ||	\
-+		    (void *)&sd->ops->o->f ==				\
-+			    &sd->ops->video->s_frame_interval) {	\
-+			struct v4l2_subdev_frame_interval *__fi;	\
-+			__fi = v4l2_subdev_call_va_arg(1, ##args);	\
-+			__pad = __fi->pad;				\
-+		}							\
-+	}								\
-+	(__which == V4L2_SUBDEV_FORMAT_ACTIVE ||			\
-+	 __which == V4L2_SUBDEV_FORMAT_TRY) &&				\
-+	__pad < (sd->entity.num_pads ? : 1) ? 0 : -EINVAL;		\
-+})
-+#else
-+#define v4l2_subdev_call_chk_args(sd, o, f, args...) 0
-+#endif
-+
- /**
-  * v4l2_subdev_call - call an operation of a v4l2_subdev.
-  *
-@@ -1112,6 +1188,9 @@ void v4l2_subdev_init(struct v4l2_subdev *sd,
- 			__result = -ENODEV;				\
- 		else if (!(__sd->ops->o && __sd->ops->o->f))		\
- 			__result = -ENOIOCTLCMD;			\
-+		else if (v4l2_subdev_call_chk_args(sd, o, f, ##args))	\
-+			__result = v4l2_subdev_call_chk_args(sd, o, f,	\
-+							     ##args);	\
- 		else							\
- 			__result = __sd->ops->o->f(__sd, ##args);	\
- 		__result;						\
--- 
-2.21.0
+Regards,
+Halil 
 
