@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D8419257
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99AF7190D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbfEITGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:06:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39088 "EHLO mail.kernel.org"
+        id S1728240AbfEIStc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:49:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727646AbfEISqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:46:40 -0400
+        id S1727783AbfEISta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:49:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D786921848;
-        Thu,  9 May 2019 18:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31C7E20578;
+        Thu,  9 May 2019 18:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427600;
-        bh=9tbsKffdPUc+3OwTLv/iHQ2quWGjUaoqMPorFu9sQZQ=;
+        s=default; t=1557427769;
+        bh=mESJRP+Mw6KkSs5rmMeYGTbvR9DiHjYe7Zp09k4ufj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fAOsUInQEbpoDuPKh591XiZNPHD6Wj4yYWc7a7pogIU2ElYTUm77GEzuCdhftpnBL
-         Yx2i9qIbFhndgJQ8cqinRArMt5WsokLulNOVVs9V3QhViwdYOLwZmC0mTNVpauYHS3
-         HORECqMWUyyaeM+OccCOy2gcz+VJfqRC2DP1WvGM=
+        b=NOOj/HH+EnwMpMCwbo1EhjV4hg7mIiTrgbeiF62FmrAhonU8nLCroQ8Jj0Pkc1q3i
+         +88I3M/rTx1D8uVU1g9CdcNwjOKwDcFO16q+WuGZBf3P2QY70ijboEUkd2aywV4fXn
+         aLjlK1C61YvemM1mPB8V5buzOeGYvwViNUaq07Ig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 31/42] usb: dwc3: Fix default lpm_nyet_threshold value
-Date:   Thu,  9 May 2019 20:42:20 +0200
-Message-Id: <20190509181258.968789081@linuxfoundation.org>
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 46/66] nvme-fc: correct csn initialization and increments on error
+Date:   Thu,  9 May 2019 20:42:21 +0200
+Message-Id: <20190509181306.657565576@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+[ Upstream commit 67f471b6ed3b09033c4ac77ea03f92afdb1989fe ]
 
-commit 8d791929b2fbdf7734c1596d808e55cb457f4562 upstream.
+This patch fixes a long-standing bug that initialized the FC-NVME
+cmnd iu CSN value to 1. Early FC-NVME specs had the connection starting
+with CSN=1. By the time the spec reached approval, the language had
+changed to state a connection should start with CSN=0.  This patch
+corrects the initialization value for FC-NVME connections.
 
-The max possible value for DCTL.LPM_NYET_THRES is 15 and not 255. Change
-the default value to 15.
+Additionally, in reviewing the transport, the CSN value is assigned to
+the new IU early in the start routine. It's possible that a later dma
+map request may fail, causing the command to never be sent to the
+controller.  Change the location of the assignment so that it is
+immediately prior to calling the lldd. Add a comment block to explain
+the impacts if the lldd were to additionally fail sending the command.
 
-Cc: stable@vger.kernel.org
-Fixes: 80caf7d21adc ("usb: dwc3: add lpm erratum support")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/fc.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1042,7 +1042,7 @@ static void dwc3_get_properties(struct d
- 	u8			hird_threshold;
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 9375fa705d829..67dec8860bf3c 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -1844,7 +1844,7 @@ nvme_fc_init_queue(struct nvme_fc_ctrl *ctrl, int idx)
+ 	memset(queue, 0, sizeof(*queue));
+ 	queue->ctrl = ctrl;
+ 	queue->qnum = idx;
+-	atomic_set(&queue->csn, 1);
++	atomic_set(&queue->csn, 0);
+ 	queue->dev = ctrl->dev;
  
- 	/* default to highest possible threshold */
--	lpm_nyet_threshold = 0xff;
-+	lpm_nyet_threshold = 0xf;
+ 	if (idx > 0)
+@@ -1886,7 +1886,7 @@ nvme_fc_free_queue(struct nvme_fc_queue *queue)
+ 	 */
  
- 	/* default to -3.5dB de-emphasis */
- 	tx_de_emphasis = 1;
+ 	queue->connection_id = 0;
+-	atomic_set(&queue->csn, 1);
++	atomic_set(&queue->csn, 0);
+ }
+ 
+ static void
+@@ -2182,7 +2182,6 @@ nvme_fc_start_fcp_op(struct nvme_fc_ctrl *ctrl, struct nvme_fc_queue *queue,
+ {
+ 	struct nvme_fc_cmd_iu *cmdiu = &op->cmd_iu;
+ 	struct nvme_command *sqe = &cmdiu->sqe;
+-	u32 csn;
+ 	int ret, opstate;
+ 
+ 	/*
+@@ -2197,8 +2196,6 @@ nvme_fc_start_fcp_op(struct nvme_fc_ctrl *ctrl, struct nvme_fc_queue *queue,
+ 
+ 	/* format the FC-NVME CMD IU and fcp_req */
+ 	cmdiu->connection_id = cpu_to_be64(queue->connection_id);
+-	csn = atomic_inc_return(&queue->csn);
+-	cmdiu->csn = cpu_to_be32(csn);
+ 	cmdiu->data_len = cpu_to_be32(data_len);
+ 	switch (io_dir) {
+ 	case NVMEFC_FCP_WRITE:
+@@ -2256,11 +2253,24 @@ nvme_fc_start_fcp_op(struct nvme_fc_ctrl *ctrl, struct nvme_fc_queue *queue,
+ 	if (!(op->flags & FCOP_FLAGS_AEN))
+ 		blk_mq_start_request(op->rq);
+ 
++	cmdiu->csn = cpu_to_be32(atomic_inc_return(&queue->csn));
+ 	ret = ctrl->lport->ops->fcp_io(&ctrl->lport->localport,
+ 					&ctrl->rport->remoteport,
+ 					queue->lldd_handle, &op->fcp_req);
+ 
+ 	if (ret) {
++		/*
++		 * If the lld fails to send the command is there an issue with
++		 * the csn value?  If the command that fails is the Connect,
++		 * no - as the connection won't be live.  If it is a command
++		 * post-connect, it's possible a gap in csn may be created.
++		 * Does this matter?  As Linux initiators don't send fused
++		 * commands, no.  The gap would exist, but as there's nothing
++		 * that depends on csn order to be delivered on the target
++		 * side, it shouldn't hurt.  It would be difficult for a
++		 * target to even detect the csn gap as it has no idea when the
++		 * cmd with the csn was supposed to arrive.
++		 */
+ 		opstate = atomic_xchg(&op->state, FCPOP_STATE_COMPLETE);
+ 		__nvme_fc_fcpop_chk_teardowns(ctrl, op, opstate);
+ 
+-- 
+2.20.1
+
 
 
