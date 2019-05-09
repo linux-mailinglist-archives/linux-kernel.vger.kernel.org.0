@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE0C1913B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA0319129
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfEISy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:54:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49126 "EHLO mail.kernel.org"
+        id S1728925AbfEISxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:53:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729054AbfEISyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:54:22 -0400
+        id S1727153AbfEISxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 637A1204FD;
-        Thu,  9 May 2019 18:54:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE6720578;
+        Thu,  9 May 2019 18:53:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428061;
-        bh=whVgiUWxByz3UDSxKvA60d0HPLOmjktW30Qs3hRuMIw=;
+        s=default; t=1557428010;
+        bh=vXxZdof0fj3EGo3Sl0TaM9lj10tLhaQcGMTDjVs0RdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pfx81zuKi2FhhufEzYMC3/8ejkP3KuJp6BCBhOPtfeNyZJ4Cwj2jJXGnQiR7bmaN+
-         A9PVTkpl7Z0vIrBfal9MlkMfX0kLXqCuep0qAUpkMKFERmIJt/94nXP85bqUyCvWip
-         lGPCAq8QgQ7v76qmdCgLe8DKBMJNiPB+T9WOiHZc=
+        b=xmOhlPNf+QgG4zAvxiijzGhojmKNlPquT4ZH/Q/9gUIUYAVSVm5nIDtkuTSZqANl7
+         yHyO22761u8l9hbX+CH1VVTmPbmQJvmdidAwxVSks2o2PcpYEfEmxSPUy9LKVL+KQ6
+         OwHZYf2Ey9T78av+iPyjs10ggzc0KU6XSfSm82ic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>, marc.zyngier@arm.com
-Subject: [PATCH 5.1 12/30] genirq: Prevent use-after-free and work list corruption
-Date:   Thu,  9 May 2019 20:42:44 +0200
-Message-Id: <20190509181253.320625162@linuxfoundation.org>
+        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Subject: [PATCH 5.0 88/95] Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
+Date:   Thu,  9 May 2019 20:42:45 +0200
+Message-Id: <20190509181315.406260301@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prasad Sodagudi <psodagud@codeaurora.org>
+From: Marcel Holtmann <marcel@holtmann.org>
 
-commit 59c39840f5abf4a71e1810a8da71aaccd6c17d26 upstream.
+commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
 
-When irq_set_affinity_notifier() replaces the notifier, then the
-reference count on the old notifier is dropped which causes it to be
-freed. But nothing ensures that the old notifier is not longer queued
-in the work list. If it is queued this results in a use after free and
-possibly in work list corruption.
+The minimum encryption key size for LE connections is 56 bits and to
+align LE with BR/EDR, enforce 56 bits of minimum encryption key size for
+BR/EDR connections as well.
 
-Ensure that the work is canceled before the reference is dropped.
-
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: marc.zyngier@arm.com
-Link: https://lkml.kernel.org/r/1553439424-6529-1-git-send-email-psodagud@codeaurora.org
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/manage.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/net/bluetooth/hci_core.h |    3 +++
+ net/bluetooth/hci_conn.c         |    8 ++++++++
+ 2 files changed, 11 insertions(+)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -357,8 +357,10 @@ irq_set_affinity_notifier(unsigned int i
- 	desc->affinity_notify = notify;
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -190,6 +190,9 @@ struct adv_info {
  
--	if (old_notify)
-+	if (old_notify) {
-+		cancel_work_sync(&old_notify->work);
- 		kref_put(&old_notify->kref, old_notify->release);
-+	}
+ #define HCI_MAX_SHORT_NAME_LENGTH	10
  
- 	return 0;
++/* Min encryption key size to match with SMP */
++#define HCI_MIN_ENC_KEY_SIZE		7
++
+ /* Default LE RPA expiry time, 15 minutes */
+ #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
+ 
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1276,6 +1276,14 @@ int hci_conn_check_link_mode(struct hci_
+ 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
+ 		return 0;
+ 
++	/* The minimum encryption key size needs to be enforced by the
++	 * host stack before establishing any L2CAP connections. The
++	 * specification in theory allows a minimum of 1, but to align
++	 * BR/EDR and LE transports, a minimum of 7 is chosen.
++	 */
++	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
++		return 0;
++
+ 	return 1;
  }
+ 
 
 
