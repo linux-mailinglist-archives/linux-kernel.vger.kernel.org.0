@@ -2,150 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75662190C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09EB19096
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfEISsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:48:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41796 "EHLO mail.kernel.org"
+        id S1727582AbfEISq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:46:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbfEISsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:48:45 -0400
+        id S1727578AbfEISqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:46:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8D6C2183E;
-        Thu,  9 May 2019 18:48:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0928C217F5;
+        Thu,  9 May 2019 18:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427724;
-        bh=uA4kEIfZo9TbnlF7NqgBQomYfFPlnVNdd7ai6kUB0o0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IKMeZpVzAe9qIqSfa93dpP8s9r4f1p/Wvur4xEst6SrRgKGqSGn5EqfJnan412/4E
-         bsqJAMBSY8taLRWMyImVEMiIvCBZ4vnWc3ojUQtQJjLKgaHvl/d+8hGNrO0A4sWOi1
-         TuHdzOZgbFlL4nWJD9JutKCO5ItmwiO9uFa1YNqM=
+        s=default; t=1557427584;
+        bh=34QExHLqEx7A/HvY9cxS8Iiun9yaNg1Eh70QXzOY9G0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tZ+lIgfkN6Shl1qyBmNbYfS6z2jHo+jscl9rvzl3DI/s4A+s1WT9SNNFk3xQ9yrDK
+         dkdMwWg4T5maC/T0+ia16EZ+KziUsmdvE9tHsdN3C3XqaWY01GwQbHBTtG7K+7V+hI
+         HBaaWC8QwQD6/OwnyZGhx9OKAtbGnqIvsZja+cm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hsu <KCHSU0@nuvoton.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 13/66] ASoC: nau8824: fix the issue of the widget with prefix name
-Date:   Thu,  9 May 2019 20:41:48 +0200
-Message-Id: <20190509181303.321193103@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 00/42] 4.14.118-stable review
+Date:   Thu,  9 May 2019 20:41:49 +0200
+Message-Id: <20190509181252.616018683@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
-User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.118-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.118-rc1
+X-KernelTest-Deadline: 2019-05-11T18:13+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 844a4a362dbec166b44d6b9b3dd45b08cb273703 ]
+This is the start of the stable review cycle for the 4.14.118 release.
+There are 42 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-The driver has two issues when machine add prefix name for codec.
-(1)The stream name of DAI can't find the AIF widgets.
-(2)The drivr can enable/disalbe the MICBIAS and SAR widgets.
+Responses should be made by Sat 11 May 2019 06:11:15 PM UTC.
+Anything received after that time might be too late.
 
-The patch will fix these issues caused by prefixed name added.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.118-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
 
-Signed-off-by: John Hsu <KCHSU0@nuvoton.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/codecs/nau8824.c | 46 +++++++++++++++++++++++++++++++-------
- 1 file changed, 38 insertions(+), 8 deletions(-)
+thanks,
 
-diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
-index 468d5143e2c4f..663a208c2f784 100644
---- a/sound/soc/codecs/nau8824.c
-+++ b/sound/soc/codecs/nau8824.c
-@@ -681,8 +681,8 @@ static const struct snd_soc_dapm_widget nau8824_dapm_widgets[] = {
- 	SND_SOC_DAPM_ADC("ADCR", NULL, NAU8824_REG_ANALOG_ADC_2,
- 		NAU8824_ADCR_EN_SFT, 0),
- 
--	SND_SOC_DAPM_AIF_OUT("AIFTX", "HiFi Capture", 0, SND_SOC_NOPM, 0, 0),
--	SND_SOC_DAPM_AIF_IN("AIFRX", "HiFi Playback", 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("AIFTX", "Capture", 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("AIFRX", "Playback", 0, SND_SOC_NOPM, 0, 0),
- 
- 	SND_SOC_DAPM_DAC("DACL", NULL, NAU8824_REG_RDAC,
- 		NAU8824_DACL_EN_SFT, 0),
-@@ -831,6 +831,36 @@ static void nau8824_int_status_clear_all(struct regmap *regmap)
- 	}
- }
- 
-+static void nau8824_dapm_disable_pin(struct nau8824 *nau8824, const char *pin)
-+{
-+	struct snd_soc_dapm_context *dapm = nau8824->dapm;
-+	const char *prefix = dapm->component->name_prefix;
-+	char prefixed_pin[80];
-+
-+	if (prefix) {
-+		snprintf(prefixed_pin, sizeof(prefixed_pin), "%s %s",
-+			 prefix, pin);
-+		snd_soc_dapm_disable_pin(dapm, prefixed_pin);
-+	} else {
-+		snd_soc_dapm_disable_pin(dapm, pin);
-+	}
-+}
-+
-+static void nau8824_dapm_enable_pin(struct nau8824 *nau8824, const char *pin)
-+{
-+	struct snd_soc_dapm_context *dapm = nau8824->dapm;
-+	const char *prefix = dapm->component->name_prefix;
-+	char prefixed_pin[80];
-+
-+	if (prefix) {
-+		snprintf(prefixed_pin, sizeof(prefixed_pin), "%s %s",
-+			 prefix, pin);
-+		snd_soc_dapm_force_enable_pin(dapm, prefixed_pin);
-+	} else {
-+		snd_soc_dapm_force_enable_pin(dapm, pin);
-+	}
-+}
-+
- static void nau8824_eject_jack(struct nau8824 *nau8824)
- {
- 	struct snd_soc_dapm_context *dapm = nau8824->dapm;
-@@ -839,8 +869,8 @@ static void nau8824_eject_jack(struct nau8824 *nau8824)
- 	/* Clear all interruption status */
- 	nau8824_int_status_clear_all(regmap);
- 
--	snd_soc_dapm_disable_pin(dapm, "SAR");
--	snd_soc_dapm_disable_pin(dapm, "MICBIAS");
-+	nau8824_dapm_disable_pin(nau8824, "SAR");
-+	nau8824_dapm_disable_pin(nau8824, "MICBIAS");
- 	snd_soc_dapm_sync(dapm);
- 
- 	/* Enable the insertion interruption, disable the ejection
-@@ -870,8 +900,8 @@ static void nau8824_jdet_work(struct work_struct *work)
- 	struct regmap *regmap = nau8824->regmap;
- 	int adc_value, event = 0, event_mask = 0;
- 
--	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
--	snd_soc_dapm_force_enable_pin(dapm, "SAR");
-+	nau8824_dapm_enable_pin(nau8824, "MICBIAS");
-+	nau8824_dapm_enable_pin(nau8824, "SAR");
- 	snd_soc_dapm_sync(dapm);
- 
- 	msleep(100);
-@@ -882,8 +912,8 @@ static void nau8824_jdet_work(struct work_struct *work)
- 	if (adc_value < HEADSET_SARADC_THD) {
- 		event |= SND_JACK_HEADPHONE;
- 
--		snd_soc_dapm_disable_pin(dapm, "SAR");
--		snd_soc_dapm_disable_pin(dapm, "MICBIAS");
-+		nau8824_dapm_disable_pin(nau8824, "SAR");
-+		nau8824_dapm_disable_pin(nau8824, "MICBIAS");
- 		snd_soc_dapm_sync(dapm);
- 	} else {
- 		event |= SND_JACK_HEADSET;
--- 
-2.20.1
+greg k-h
 
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.118-rc1
+
+Will Deacon <will.deacon@arm.com>
+    arm64: futex: Bound number of LDXR/STXR loops in FUTEX_WAKE_OP
+
+Will Deacon <will.deacon@arm.com>
+    locking/futex: Allow low-level atomic operations to return -EAGAIN
+
+Ross Zwisler <zwisler@chromium.org>
+    ASoC: Intel: avoid Oops if DMA setup fails
+
+Oliver Neukum <oneukum@suse.com>
+    UAS: fix alignment of scatter/gather segments
+
+Marcel Holtmann <marcel@holtmann.org>
+    Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
+
+Young Xiao <YangX92@hotmail.com>
+    Bluetooth: hidp: fix buffer overflow
+
+Andrew Vasquez <andrewv@marvell.com>
+    scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
+
+Alexander Shishkin <alexander.shishkin@linux.intel.com>
+    intel_th: pci: Add Comet Lake support
+
+Alan Stern <stern@rowland.harvard.edu>
+    usb-storage: Set virt_boundary_mask to avoid SG overflows
+
+Johan Hovold <johan@kernel.org>
+    USB: cdc-acm: fix unthrottle races
+
+Ji-Ze Hong (Peter Hong) <hpeter@gmail.com>
+    USB: serial: f81232: fix interrupt worker not stop
+
+Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+    usb: dwc3: Fix default lpm_nyet_threshold value
+
+Prasad Sodagudi <psodagud@codeaurora.org>
+    genirq: Prevent use-after-free and work list corruption
+
+Joerg Roedel <jroedel@suse.de>
+    iommu/amd: Set exclusion range correctly
+
+Stephen Boyd <sboyd@kernel.org>
+    platform/x86: pmc_atom: Drop __initconst on dmi table
+
+Dongli Zhang <dongli.zhang@oracle.com>
+    virtio-blk: limit number of hw queues by nr_cpu_ids
+
+Tzung-Bi Shih <tzungbi@google.com>
+    ASoC: Intel: kbl: fix wrong number of channels
+
+Wen Yang <wen.yang99@zte.com.cn>
+    drm/mediatek: fix possible object reference leak
+
+Varun Prakash <varun@chelsio.com>
+    scsi: csiostor: fix missing data copy in csio_scsi_err_handler()
+
+Kamal Heib <kamalheib1@gmail.com>
+    RDMA/vmw_pvrdma: Fix memory leak on pvrdma_pci_remove
+
+Longpeng <longpeng2@huawei.com>
+    virtio_pci: fix a NULL pointer reference in vp_del_vqs
+
+Qian Cai <cai@lca.pw>
+    slab: fix a crash by reading /proc/slab_allocators
+
+Sugar Zhang <sugar.zhang@rock-chips.com>
+    ASoC: rockchip: pdm: fix regmap_ops hang issue
+
+Max Filippov <jcmvbkbc@gmail.com>
+    xtensa: fix initialization of pt_regs::syscall in start_thread
+
+Jann Horn <jannh@google.com>
+    linux/kernel.h: Use parentheses around argument in u64_to_user_ptr()
+
+Peter Zijlstra <peterz@infradead.org>
+    perf/x86/intel: Initialize TFA MSR
+
+Stephane Eranian <eranian@google.com>
+    perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    drm/mediatek: Fix an error code in mtk_hdmi_dt_parse_pdata()
+
+Annaliese McDermond <nh6z@nh6z.net>
+    ASoC: tlv320aic32x4: Fix Common Pins
+
+Chong Qiao <qiaochong@loongson.cn>
+    MIPS: KGDB: fix kgdb support for SMP platforms.
+
+Kaike Wan <kaike.wan@intel.com>
+    IB/hfi1: Eliminate opcode tests on mr deref
+
+Daniel Mack <daniel@zonque.org>
+    ASoC: cs4270: Set auto-increment bit for register writes
+
+Charles Keepax <ckeepax@opensource.cirrus.com>
+    ASoC: wm_adsp: Add locking to wm_adsp2_bus_error
+
+Sylwester Nawrocki <s.nawrocki@samsung.com>
+    ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate
+
+John Hsu <KCHSU0@nuvoton.com>
+    ASoC: nau8810: fix the issue of widget with prefixed name
+
+John Hsu <KCHSU0@nuvoton.com>
+    ASoC: nau8824: fix the issue of the widget with prefix name
+
+Rander Wang <rander.wang@linux.intel.com>
+    ASoC:soc-pcm:fix a codec fixup issue in TDM case
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ASoC: hdmi-codec: fix S/PDIF DAI
+
+Johan Hovold <johan@kernel.org>
+    staging: greybus: power_supply: fix prop-descriptor request size
+
+Andrey Ryabinin <aryabinin@virtuozzo.com>
+    ubsan: Fix nasty -Wbuiltin-declaration-mismatch GCC-9 warnings
+
+Dexuan Cui <decui@microsoft.com>
+    Drivers: hv: vmbus: Remove the undesired put_cpu_ptr() in hv_synic_cleanup()
+
+Jason Yan <yanaijie@huawei.com>
+    scsi: libsas: fix a race condition when smp task timeout
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm64/include/asm/futex.h                     |  55 +++---
+ arch/mips/kernel/kgdb.c                            |   3 +-
+ arch/x86/events/intel/core.c                       |   8 +-
+ arch/xtensa/include/asm/processor.h                |  21 ++-
+ drivers/block/virtio_blk.c                         |   2 +
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |   2 +-
+ drivers/hv/hv.c                                    |   1 -
+ drivers/hwtracing/intel_th/pci.c                   |   5 +
+ drivers/infiniband/hw/hfi1/rc.c                    |   4 +-
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c     |   2 +
+ drivers/iommu/amd_iommu_init.c                     |   2 +-
+ drivers/platform/x86/pmc_atom.c                    |   2 +-
+ drivers/scsi/csiostor/csio_scsi.c                  |   5 +-
+ drivers/scsi/libsas/sas_expander.c                 |   9 +-
+ drivers/scsi/qla2xxx/qla_attr.c                    |   4 +-
+ drivers/staging/greybus/power_supply.c             |   2 +-
+ drivers/usb/class/cdc-acm.c                        |  32 +++-
+ drivers/usb/dwc3/core.c                            |   2 +-
+ drivers/usb/serial/f81232.c                        |  39 +++++
+ drivers/usb/storage/scsiglue.c                     |  26 ++-
+ drivers/usb/storage/uas.c                          |  35 ++--
+ drivers/virtio/virtio_pci_common.c                 |   8 +-
+ include/linux/kernel.h                             |   4 +-
+ include/net/bluetooth/hci_core.h                   |   3 +
+ kernel/futex.c                                     | 188 +++++++++++++--------
+ kernel/irq/manage.c                                |   4 +-
+ lib/ubsan.c                                        |  49 +++---
+ mm/slab.c                                          |   3 +-
+ net/bluetooth/hci_conn.c                           |   8 +
+ net/bluetooth/hidp/sock.c                          |   1 +
+ sound/soc/codecs/cs4270.c                          |   1 +
+ sound/soc/codecs/hdmi-codec.c                      | 118 ++++++-------
+ sound/soc/codecs/nau8810.c                         |   4 +-
+ sound/soc/codecs/nau8824.c                         |  46 ++++-
+ sound/soc/codecs/tlv320aic32x4.c                   |   2 +
+ sound/soc/codecs/wm_adsp.c                         |  11 +-
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |   2 +-
+ sound/soc/intel/common/sst-firmware.c              |   8 +-
+ sound/soc/rockchip/rockchip_pdm.c                  |   2 +
+ sound/soc/samsung/odroid.c                         |   4 +-
+ sound/soc/soc-pcm.c                                |   7 +-
+ 42 files changed, 471 insertions(+), 267 deletions(-)
 
 
