@@ -2,149 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9BF18738
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 10:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6491918759
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 11:01:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfEII73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 04:59:29 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:5184 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726788AbfEII71 (ORCPT
+        id S1726680AbfEIJBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 05:01:37 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53423 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfEIJBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 04:59:27 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x498wbLc026180;
-        Thu, 9 May 2019 10:59:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=mFZQPLDGPjKt70imPyAS0Iwmd9g1BKLzp4jIxeRFe/4=;
- b=mrJuxgmTRkKi6vXuuZE9IOnUgFyfeYBd1pho4OYRc0d+qYX5k653DNHiUPW5hbVGATEI
- ev2dw/HdIZtnKSQI3c3PqWmiXlB1/FKUzudDnzES1f2B+fsYz9jbNLKK9hxUEYST08n/
- FPLglL/YT+xJzkp/wIjgmRj1DtJBEixN4GRIELVwzllWC1pqWKOBZ8jJaUFr1j2/8yiS
- Ol5+GLrqmDx5KvPo72fxv1ew6mzdZ+tlvHQA/orsJ2ZysjZj4rb1wZ+2TT6CfMbpE7hd
- hPEICPgtRCVY8yLE7mcLaO5aM9UrwwCzPA4lISgIXDwv+XI483Loawk6V0pQOX5+qPck IA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sc9s4a9mb-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 09 May 2019 10:59:15 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C0E9A41;
-        Thu,  9 May 2019 08:59:14 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 975DB153B;
-        Thu,  9 May 2019 08:59:14 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 9 May 2019
- 10:59:14 +0200
-Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 9 May 2019 10:59:14 +0200
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v6 9/9] ARM: dts: stm32: add joystick support on stm32mp157c-ev1
-Date:   Thu, 9 May 2019 10:58:56 +0200
-Message-ID: <1557392336-28239-10-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
-References: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 9 May 2019 05:01:36 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 198so2190347wme.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 02:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nqLxdcgeFWH5aASAjEK5SKDiBhv2TdNPpRhOtK7qLSo=;
+        b=eQhWRaKwmJAUICbBbj5FYxykFD8I7hU+9tvLY6qzxwOrQl00QXBG/MYDrW02o3SK8p
+         FeDWGYr3u2EZp3f4mMERyC4EjNG2z4shFa33z+ozLsKptCJvGdVR2GQS0Fa6wjo0KL35
+         HDvgBVi7pOWckRLIbbaJj97/k6PpVCrgycW5ZH9k63tkxNwF514dD7Y5T/B88J7e1O5g
+         o8xu5jyFgapNeufIC8PpJ01rUH1C0lJyl96s6dOiihxCl1NaVkZlqGGstgzZX4nAaAnx
+         K6bJVXhaIHY99JsPzUWQ4UDoIbup1ewV3Bo6aVN6s7ismUkYbI5CvAst5fv2ktQtihdD
+         BSlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nqLxdcgeFWH5aASAjEK5SKDiBhv2TdNPpRhOtK7qLSo=;
+        b=odMTOvKNvVIif+On+0IIJ/ZQNLH1dGwpUdyoASRFn1OiD7SncJTTfvWovH8D0wX7S3
+         9raGVZ0DwHl8of2SZxF/cfoP9t9qsq1T21o0IDMn/5XBDHYNGRwik/tM45hPUPQfBmEH
+         N9IWJO/EFxfHE6joaeEbXuD7njBPSiSvIfZA33jmuLRuiT6+zQT9hx9OKF59yaRShyIv
+         MNIO8rX/buYSxh/KujZeGNuaTCZ2vjBabY5NDdTUhbsc0D70n1pmdaJ9mG7KG+CLUwfk
+         b5whbUpSTgQzw0uosILcD2RHqgdPHsaB9R682/+zRXxdEDAPtTBZ6EOXOEaq6NiGJ/Cq
+         YZDw==
+X-Gm-Message-State: APjAAAU49dWLWgaleKlMi+2WPNoA/oRk0Q1FhVJKJ9Np4b0XPBbM/a4q
+        3KggS8gd/tdaglNNe7c3jBs=
+X-Google-Smtp-Source: APXvYqymSht+gVaRpGyNWmr8RvtKFjssdPg5T1XwNwmkrkH8dqW7v9Ze3CEoWeOOwbN6OmbGCYtqLQ==
+X-Received: by 2002:a7b:ca42:: with SMTP id m2mr1980359wml.35.1557392494819;
+        Thu, 09 May 2019 02:01:34 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id s3sm1882325wre.97.2019.05.09.02.01.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 May 2019 02:01:33 -0700 (PDT)
+Date:   Thu, 9 May 2019 11:01:31 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Yury Norov <ynorov@marvell.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/mm: Clean up the __[PHYSICAL/VIRTUAL]_MASK_SHIFT
+ definitions a bit
+Message-ID: <20190509090131.GA130570@gmail.com>
+References: <20190508204411.13452-1-ynorov@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508204411.13452-1-ynorov@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The joystick (B1) on stm32mp157c-ev1 uses gpios on STMFX gpio expander.
-These gpios need a pin configuration (push-pull and bias-pull-down),
-described under stmfx_pinctrl node.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+* Yury Norov <yury.norov@gmail.com> wrote:
+
+> __VIRTUAL_MASK_SHIFT is defined twice to the same valie in
+> arch/x86/include/asm/page_32_types.h. Fix it.
+> 
+> Signed-off-by: Yury Norov <ynorov@marvell.com>
+> ---
+>  arch/x86/include/asm/page_32_types.h | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/page_32_types.h b/arch/x86/include/asm/page_32_types.h
+> index 0d5c739eebd7..9bfac5c80d89 100644
+> --- a/arch/x86/include/asm/page_32_types.h
+> +++ b/arch/x86/include/asm/page_32_types.h
+> @@ -28,6 +28,8 @@
+>  #define MCE_STACK 0
+>  #define N_EXCEPTION_STACKS 1
+>  
+> +#define __VIRTUAL_MASK_SHIFT	32
+> +
+>  #ifdef CONFIG_X86_PAE
+>  /*
+>   * This is beyond the 44 bit limit imposed by the 32bit long pfns,
+> @@ -36,11 +38,8 @@
+>   * The real limit is still 44 bits.
+>   */
+>  #define __PHYSICAL_MASK_SHIFT	52
+> -#define __VIRTUAL_MASK_SHIFT	32
+> -
+>  #else  /* !CONFIG_X86_PAE */
+>  #define __PHYSICAL_MASK_SHIFT	32
+> -#define __VIRTUAL_MASK_SHIFT	32
+>  #endif	/* CONFIG_X86_PAE */
+
+I think it's clearer to see them defined where the physical mask shift is 
+defined.
+
+How about the patch below? It does away with the weird formatting and 
+cleans up both the comments and the style of the definition:
+
+/*
+ * 52 bits on PAE is beyond the 44-bit limit imposed by the
+ * 32-bit long PFNs, but we need the full mask to make sure
+ * inverted PROT_NONE entries have all the host bits set
+ * in a guest. The real limit is still 44 bits.
+ */
+#ifdef CONFIG_X86_PAE
+# define __PHYSICAL_MASK_SHIFT	52
+# define __VIRTUAL_MASK_SHIFT	32
+#else
+# define __PHYSICAL_MASK_SHIFT	32
+# define __VIRTUAL_MASK_SHIFT	32
+#endif
+
+?
+
+Thanks,
+
+	Ingo
+
+===============>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Thu, 9 May 2019 10:59:44 +0200
+Subject: [PATCH] x86/mm: Clean up the __[PHYSICAL/VIRTUAL]_MASK_SHIFT definitions a bit
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 44 +++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/x86/include/asm/page_32_types.h | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index eec3c79..009f9d6 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -7,6 +7,7 @@
+diff --git a/arch/x86/include/asm/page_32_types.h b/arch/x86/include/asm/page_32_types.h
+index 565ad755c785..009e96d4b6d4 100644
+--- a/arch/x86/include/asm/page_32_types.h
++++ b/arch/x86/include/asm/page_32_types.h
+@@ -26,20 +26,19 @@
  
- #include "stm32mp157c-ed1.dts"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
+ #define N_EXCEPTION_STACKS	1
  
- / {
- 	model = "STMicroelectronics STM32MP157C eval daughter on eval mother";
-@@ -21,6 +22,43 @@
- 		ethernet0 = &ethernet0;
- 	};
+-#ifdef CONFIG_X86_PAE
+ /*
+- * This is beyond the 44 bit limit imposed by the 32bit long pfns,
+- * but we need the full mask to make sure inverted PROT_NONE
+- * entries have all the host bits set in a guest.
+- * The real limit is still 44 bits.
++ * 52 bits on PAE is beyond the 44-bit limit imposed by the
++ * 32-bit long PFNs, but we need the full mask to make sure
++ * inverted PROT_NONE entries have all the host bits set
++ * in a guest. The real limit is still 44 bits.
+  */
+-#define __PHYSICAL_MASK_SHIFT	52
+-#define __VIRTUAL_MASK_SHIFT	32
+-
+-#else  /* !CONFIG_X86_PAE */
+-#define __PHYSICAL_MASK_SHIFT	32
+-#define __VIRTUAL_MASK_SHIFT	32
+-#endif	/* CONFIG_X86_PAE */
++#ifdef CONFIG_X86_PAE
++# define __PHYSICAL_MASK_SHIFT	52
++# define __VIRTUAL_MASK_SHIFT	32
++#else
++# define __PHYSICAL_MASK_SHIFT	32
++# define __VIRTUAL_MASK_SHIFT	32
++#endif
  
-+	joystick {
-+		compatible = "gpio-keys";
-+		#size-cells = <0>;
-+		pinctrl-0 = <&joystick_pins>;
-+		pinctrl-names = "default";
-+		button-0 {
-+			label = "JoySel";
-+			linux,code = <KEY_ENTER>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <0 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-1 {
-+			label = "JoyDown";
-+			linux,code = <KEY_DOWN>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-2 {
-+			label = "JoyLeft";
-+			linux,code = <KEY_LEFT>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-3 {
-+			label = "JoyRight";
-+			linux,code = <KEY_RIGHT>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <3 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-4 {
-+			label = "JoyUp";
-+			linux,code = <KEY_UP>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <4 IRQ_TYPE_EDGE_RISING>;
-+		};
-+	};
-+
- 	panel_backlight: panel-backlight {
- 		compatible = "gpio-backlight";
- 		gpios = <&gpiod 13 GPIO_ACTIVE_LOW>;
-@@ -113,6 +151,12 @@
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
-+
-+			joystick_pins: joystick {
-+				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
-+				drive-push-pull;
-+				bias-pull-down;
-+			};
- 		};
- 	};
- };
--- 
-2.7.4
+ /*
+  * Kernel image size is limited to 512 MB (see in arch/x86/kernel/head_32.S)
 
