@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0835918F8B
+	by mail.lfdr.de (Postfix) with ESMTP id E11F718F8D
 	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfEIRrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:47:21 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42891 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfEIRrU (ORCPT
+        id S1726831AbfEIRr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:47:27 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41092 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfEIRrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:47:20 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j53so3480734qta.9
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 10:47:20 -0700 (PDT)
+        Thu, 9 May 2019 13:47:24 -0400
+Received: by mail-qk1-f193.google.com with SMTP id g190so1987002qkf.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 10:47:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cj0DlhFnSLAXH8ArFEaurqQD8JYO47YeBdLQtQ9/QVc=;
-        b=j0khjSsDQ+XotdNTQOii0x/GJROhNyKRcRxPjSoMJOawGSM/UPXykPs8Oa9AEw8OPn
-         KgqhrQY3t5ZWdcD63P8+nKWr4eBrtbactYWg23xPTtwa8xYR6Pze8KFJ7pTJqWVdx9dd
-         8oUTxuirKZOvFvKMPO4wcSlsYO35o6aiuw3ARSFFPv3MLtyWNF75Yfh+OQcORI3N0lVJ
-         wPsPP3RnHdxfGMyBLqdCDdvRqTOSa2Gh1cVoLiQrm5exIhoPUrYlrGx1SqKOm/xa2OxJ
-         08qITYXjQeAAy03bGUjdUIdbZa8kRyxXfSEHD9vQwWZPWXv8jHyE3VNownq2qkQV3432
-         P79A==
+        bh=dQe9Zkf+0yUTYC/ViEAV5j9gEyoYadU+fMjOcocTf+s=;
+        b=hO3AoZVIHWLRtmQsKIPN8pSDew0rD4iWCSoPcfVS9voJVbW1Be1n0S8EQjCgbPk86p
+         3yemyipPp1qt9vrFJMil9X6Pf7HR4hxyoeA9zv0XAEKL7MObkFRJ9ucjNw9/NGIxZqax
+         qAwN229FMIfkID9u9/THqJOEssHAfaS0Wbc8dWGq84lVEGZq3ouDS5RjyiV5fHViWx2s
+         6mcHBjC0KzuC6CugO2QPw8PNbdgapiznyEUF//lowvy5CK8FFn71JBOvMpntMEJIOejp
+         6UloN3wZgtDLWjZzVXb3yOKLOO1rFeKzVDAvOMU4JHWCfQgM5wTAkc6uBmVKvlPfLhKl
+         m/Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cj0DlhFnSLAXH8ArFEaurqQD8JYO47YeBdLQtQ9/QVc=;
-        b=hFFoSid92RgbLUdVBGqmQpU/c5UUTLdna5H/nw6OPu5qNCwQ9YmClpm0JVCFls34GI
-         Io/Lg5519eKCGybYQxrg4k6Pb940y3BQMQkPptaSD28N86zkxdEIxw3WjjtzZ89dYVEG
-         LBIYCdnpYiE3YibaBcLhacifNCnjjxSt6ZIDSVl4cpYYxZay389Q91ZGJXZaDJoAFsJy
-         EMVyj2teoApIaJ0aileB+am6EUiMGdg1NTxE4gp84jF45xeJW6HIj0Y2FbC/bP06Gj2D
-         Oi0r70SboPot3NCNsZX+yOmxw21liDhQmVcFy3Mjx0n7x8n/obQzKQAxAOOfllfO6Goj
-         rBRw==
-X-Gm-Message-State: APjAAAWy4IF68SnexvXvIQ+gxuAAqn1Q6ssUbrc2lM0vV0mBCj6Ek4JC
-        RaXzES68uW5s19bS7FIGkw==
-X-Google-Smtp-Source: APXvYqwi71S3G+Om9u0RA039UEkIPCqFUnw6Ct/YrWp/qlxyU4qXf8Q87zJH0XltypQpolL+PbApCQ==
-X-Received: by 2002:aed:3fa7:: with SMTP id s36mr5012741qth.124.1557424039826;
-        Thu, 09 May 2019 10:47:19 -0700 (PDT)
+        bh=dQe9Zkf+0yUTYC/ViEAV5j9gEyoYadU+fMjOcocTf+s=;
+        b=biAtDRujUhW58KeVMeGP5TybJVM3VGZmtNzOepw4aNg2Yb7CrMJffhZOE3BY7ox3V9
+         qwnIQW0aLjLqkDFN1YLj3GI5mGd42oiqsvhPH7RXHyqvS1L55svA8KKgEvXLkdyWn0ZF
+         pbHRdpLy+08aQuP7cXufNA4kyOgFRBPDRH5rOmmc2+fhdaVjrkJzbOKsTCOQSK2fR7dy
+         e71AC5yV5iLoDEHiar6tP0CICMS3HD3II480/ypOzAXKv7QcDljD+KHTsuCFpRgSDsu5
+         EXsOUROVpEez5V/mnU+RC+XNiTMSOMaUouPEf1wOLqUjKH1eJTtwnvBULckz+Nxyf8YE
+         K/lA==
+X-Gm-Message-State: APjAAAX3lruLYda/xAkUkWEpr4TnCJq7WHtrVwe+zk6irscYLOVpSf1d
+        DSk+RXhPcPyTEcv+743Tig==
+X-Google-Smtp-Source: APXvYqyiq550gIwP2D2u9mXWJ/wOk/QImo+XJYUAbr/uFPUQycBc/vwBUN3OW1vU1eCq0zbM2dfDYg==
+X-Received: by 2002:a37:404b:: with SMTP id n72mr4610366qka.98.1557424043688;
+        Thu, 09 May 2019 10:47:23 -0700 (PDT)
 Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z11sm1262953qki.95.2019.05.09.10.47.19
+        by smtp.gmail.com with ESMTPSA id z11sm1262953qki.95.2019.05.09.10.47.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 10:47:19 -0700 (PDT)
+        Thu, 09 May 2019 10:47:23 -0700 (PDT)
 From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
         Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] ktest: cleanup get_grub_index
-Date:   Thu,  9 May 2019 13:46:27 -0400
-Message-Id: <20190509174630.26713-3-msys.mizuma@gmail.com>
+Subject: [PATCH 3/5] ktest: introduce grub2bls REBOOT_TYPE option
+Date:   Thu,  9 May 2019 13:46:28 -0400
+Message-Id: <20190509174630.26713-4-msys.mizuma@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190509174630.26713-1-msys.mizuma@gmail.com>
 References: <20190509174630.26713-1-msys.mizuma@gmail.com>
@@ -62,79 +62,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-Cleanup get_grub_index().
+Fedora 30 introduces Boot Loader Specification (BLS),
+it changes around grub entry configuration.
+
+kernel entries aren't in grub.cfg. We can get the entries
+by "grubby --info=ALL" command.
+
+Introduce grub2bls as REBOOT_TYPE option for BLS.
 
 Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 ---
- tools/testing/ktest/ktest.pl | 50 +++++++++++-------------------------
- 1 file changed, 15 insertions(+), 35 deletions(-)
+ tools/testing/ktest/ktest.pl | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index 3862b23672f7..1255ea0d9df4 100755
+index 1255ea0d9df4..c910d7921f48 100755
 --- a/tools/testing/ktest/ktest.pl
 +++ b/tools/testing/ktest/ktest.pl
-@@ -1934,46 +1934,26 @@ sub get_grub2_index {
+@@ -64,6 +64,7 @@ my %default = (
+     "STOP_TEST_AFTER"		=> 600,
+     "MAX_MONITOR_WAIT"		=> 1800,
+     "GRUB_REBOOT"		=> "grub2-reboot",
++    "GRUB_BLS_GET"		=> "grubby --info=ALL",
+     "SYSLINUX"			=> "extlinux",
+     "SYSLINUX_PATH"		=> "/boot/extlinux",
+     "CONNECT_TIMEOUT"		=> 25,
+@@ -125,6 +126,7 @@ my $last_grub_menu;
+ my $grub_file;
+ my $grub_number;
+ my $grub_reboot;
++my $grub_bls_get;
+ my $syslinux;
+ my $syslinux_path;
+ my $syslinux_label;
+@@ -295,6 +297,7 @@ my %option_map = (
+     "GRUB_MENU"			=> \$grub_menu,
+     "GRUB_FILE"			=> \$grub_file,
+     "GRUB_REBOOT"		=> \$grub_reboot,
++    "GRUB_BLS_GET"		=> \$grub_bls_get,
+     "SYSLINUX"			=> \$syslinux,
+     "SYSLINUX_PATH"		=> \$syslinux_path,
+     "SYSLINUX_LABEL"		=> \$syslinux_label,
+@@ -440,7 +443,7 @@ EOF
+     ;
+ $config_help{"REBOOT_TYPE"} = << "EOF"
+  Way to reboot the box to the test kernel.
+- Only valid options so far are "grub", "grub2", "syslinux", and "script".
++ Only valid options so far are "grub", "grub2", "grub2bls", "syslinux", and "script".
  
- sub get_grub_index {
+  If you specify grub, it will assume grub version 1
+  and will search in /boot/grub/menu.lst for the title \$GRUB_MENU
+@@ -454,6 +457,8 @@ $config_help{"REBOOT_TYPE"} = << "EOF"
+  If you specify grub2, then you also need to specify both \$GRUB_MENU
+  and \$GRUB_FILE.
  
--    if ($reboot_type eq "grub2") {
--	get_grub2_index;
--	return;
--    }
--
--    if ($reboot_type ne "grub") {
--	return;
--    }
--    return if (defined($grub_number) && defined($last_grub_menu) &&
--	       $last_grub_menu eq $grub_menu && defined($last_machine) &&
--	       $last_machine eq $machine);
--
--    doprint "Find grub menu ... ";
--    $grub_number = -1;
-+    my $command;
-+    my $target;
-+    my $skip;
-+    my $grub_menu_qt;
- 
--    my $ssh_grub = $ssh_exec;
--    $ssh_grub =~ s,\$SSH_COMMAND,cat /boot/grub/menu.lst,g;
-+    return if ($reboot_type ne "grub") and ($reboot_type ne "grub2");
- 
--    open(IN, "$ssh_grub |")
--	or dodie "unable to get menu.lst";
--
--    my $found = 0;
--    my $grub_menu_qt = quotemeta($grub_menu);
-+    $grub_menu_qt = quotemeta($grub_menu);
- 
--    while (<IN>) {
--	if (/^\s*title\s+$grub_menu_qt\s*$/) {
--	    $grub_number++;
--	    $found = 1;
--	    last;
--	} elsif (/^\s*title\s/) {
--	    $grub_number++;
--	}
-+    if ($reboot_type eq "grub") {
-+	$command = "cat /boot/grub/menu.lst";
-+	$target = '^\s*title\s+' . $grub_menu_qt . '\s*$';
-+	$skip = '^\s*title\s';
-+    } elsif ($reboot_type eq "grub2") {
-+	$command = "cat $grub_file";
-+	$target = '^menuentry.*' . $grub_menu_qt;
-+	$skip = '^menuentry\s|^submenu\s';
++ If you specify grub2bls, then you also need to specify \$GRUB_MENU.
++
+  If you specify syslinux, then you may use SYSLINUX to define the syslinux
+  command (defaults to extlinux), and SYSLINUX_PATH to specify the path to
+  the syslinux install (defaults to /boot/extlinux). But you have to specify
+@@ -479,6 +484,9 @@ $config_help{"GRUB_MENU"} = << "EOF"
+  menu must be a non-nested menu. Add the quotes used in the menu
+  to guarantee your selection, as the first menuentry with the content
+  of \$GRUB_MENU that is found will be used.
++
++ For grub2bls, \$GRUB_MENU is searched on the result of \$GRUB_BLS_GET
++ command for the lines that begin with "title".
+ EOF
+     ;
+ $config_help{"GRUB_FILE"} = << "EOF"
+@@ -695,7 +703,7 @@ sub get_mandatory_configs {
+ 	}
      }
--    close(IN);
  
--    dodie "Could not find '$grub_menu' in /boot/grub/menu on $machine"
--	if (!$found);
--    doprint "$grub_number\n";
--    $last_grub_menu = $grub_menu;
--    $last_machine = $machine;
-+    _get_grub_index($command, $target, $skip);
- }
+-    if ($rtype eq "grub") {
++    if (($rtype eq "grub") or ($rtype eq "grub2bls")) {
+ 	get_mandatory_config("GRUB_MENU");
+     }
  
- sub wait_for_input
+@@ -1939,7 +1947,8 @@ sub get_grub_index {
+     my $skip;
+     my $grub_menu_qt;
+ 
+-    return if ($reboot_type ne "grub") and ($reboot_type ne "grub2");
++    return if ($reboot_type ne "grub") and ($reboot_type ne "grub2") and
++	($reboot_type ne "grub2bls");
+ 
+     $grub_menu_qt = quotemeta($grub_menu);
+ 
+@@ -1951,6 +1960,10 @@ sub get_grub_index {
+ 	$command = "cat $grub_file";
+ 	$target = '^menuentry.*' . $grub_menu_qt;
+ 	$skip = '^menuentry\s|^submenu\s';
++    } elsif ($reboot_type eq "grub2bls") {
++        $command = $grub_bls_get;
++        $target = '^title=.*' . $grub_menu_qt;
++        $skip = '^title=';
+     }
+ 
+     _get_grub_index($command, $target, $skip);
+@@ -4306,7 +4319,7 @@ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
+ 
+     if (!$buildonly) {
+ 	$target = "$ssh_user\@$machine";
+-	if ($reboot_type eq "grub") {
++	if (($reboot_type eq "grub") or ($reboot_type eq "grub2bls")) {
+ 	    dodie "GRUB_MENU not defined" if (!defined($grub_menu));
+ 	} elsif ($reboot_type eq "grub2") {
+ 	    dodie "GRUB_MENU not defined" if (!defined($grub_menu));
 -- 
 2.20.1
 
