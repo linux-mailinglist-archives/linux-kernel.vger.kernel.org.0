@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D33719140
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0679719135
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbfEISyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:54:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
+        id S1729030AbfEISyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:54:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728902AbfEISyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:54:44 -0400
+        id S1728749AbfEISyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:54:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 767AB204FD;
-        Thu,  9 May 2019 18:54:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 432DF2177E;
+        Thu,  9 May 2019 18:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428084;
-        bh=2+wJWHmZ26eV1OAXuax4U93r970Y/gDnqZQalH7tako=;
+        s=default; t=1557428047;
+        bh=k/TeH7BaKVX1u50l//zvo0KDlOFkKEQ+Vt+mzlbxyaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vb3qalCfJ6+cJB80cXlhOXXCJzYLhtW4Ek/vhJgyuAh2gyd5VLZAo5Xph3i3FIw1C
-         GOMWtkiBSLPh/T9REX1qeVYmk2qUbyQ//er9EZG1WJ0ZF/e63l/Sx9SZYJjPH4mGAy
-         vHHUpNdDzpJSj4ssTP8wJW2huDBxlyGnq9rTlEiA=
+        b=yKQqLticbjJAzqMEqmJ5E13XuMNUFZP3F4OFzq52x/J/VtuuasTF3F+XQ27acIlCc
+         JzivhFOpWQpcfschntm0bEV83ZyZNDovYjow5G0DSmQS3J0VqFlqF75DrzVmYnacjd
+         705XkVENIAiCx7VhP6PGEsqDCkXZn+OjHLYeEGFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH 5.1 02/30] ubsan: Fix nasty -Wbuiltin-declaration-mismatch GCC-9 warnings
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 5.0 77/95] USB: cdc-acm: fix unthrottle races
 Date:   Thu,  9 May 2019 20:42:34 +0200
-Message-Id: <20190509181250.929610761@linuxfoundation.org>
+Message-Id: <20190509181314.737330384@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,203 +43,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit f0996bc2978e02d2ea898101462b960f6119b18f upstream.
+commit 764478f41130f1b8d8057575b89e69980a0f600d upstream.
 
-Building lib/ubsan.c with gcc-9 results in a ton of nasty warnings like
-this one:
+Fix two long-standing bugs which could potentially lead to memory
+corruption or leave the port throttled until it is reopened (on weakly
+ordered systems), respectively, when read-URB completion races with
+unthrottle().
 
-    lib/ubsan.c warning: conflicting types for built-in function
-         ‘__ubsan_handle_negate_overflow’; expected ‘void(void *, void *)’ [-Wbuiltin-declaration-mismatch]
+First, the URB must not be marked as free before processing is complete
+to prevent it from being submitted by unthrottle() on another CPU.
 
-The kernel's declarations of __ubsan_handle_*() often uses 'unsigned
-long' types in parameters while GCC these parameters as 'void *' types,
-hence the mismatch.
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  process_urb();
+	  smp_mb__before_atomic();
+	  set_bit(i, free);		  if (test_and_clear_bit(i, free))
+						  submit_urb();
 
-Fix this by using 'void *' to match GCC's declarations.
+Second, the URB must be marked as free before checking the throttled
+flag to prevent unthrottle() on another CPU from failing to observe that
+the URB needs to be submitted if complete() sees that the throttled flag
+is set.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Fixes: c6d308534aef ("UBSAN: run-time undefined behavior sanity checker")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  set_bit(i, free);		  throttled = 0;
+	  smp_mb__after_atomic();	  smp_mb();
+	  if (throttled)		  if (test_and_clear_bit(i, free))
+		  return;			  submit_urb();
+
+Note that test_and_clear_bit() only implies barriers when the test is
+successful. To handle the case where the URB is still in use an explicit
+barrier needs to be added to unthrottle() for the second race condition.
+
+Also note that the first race was fixed by 36e59e0d70d6 ("cdc-acm: fix
+race between callback and unthrottle") back in 2015, but the bug was
+reintroduced a year later.
+
+Fixes: 1aba579f3cf5 ("cdc-acm: handle read pipe errors")
+Fixes: 088c64f81284 ("USB: cdc-acm: re-write read processing")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/ubsan.c |   49 +++++++++++++++++++++++--------------------------
- 1 file changed, 23 insertions(+), 26 deletions(-)
+ drivers/usb/class/cdc-acm.c |   32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
---- a/lib/ubsan.c
-+++ b/lib/ubsan.c
-@@ -86,11 +86,13 @@ static bool is_inline_int(struct type_de
- 	return bits <= inline_bits;
- }
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -470,12 +470,12 @@ static void acm_read_bulk_callback(struc
+ 	struct acm *acm = rb->instance;
+ 	unsigned long flags;
+ 	int status = urb->status;
++	bool stopped = false;
++	bool stalled = false;
  
--static s_max get_signed_val(struct type_descriptor *type, unsigned long val)
-+static s_max get_signed_val(struct type_descriptor *type, void *val)
- {
- 	if (is_inline_int(type)) {
- 		unsigned extra_bits = sizeof(s_max)*8 - type_bit_width(type);
--		return ((s_max)val) << extra_bits >> extra_bits;
-+		unsigned long ulong_val = (unsigned long)val;
-+
-+		return ((s_max)ulong_val) << extra_bits >> extra_bits;
+ 	dev_vdbg(&acm->data->dev, "got urb %d, len %d, status %d\n",
+ 		rb->index, urb->actual_length, status);
+ 
+-	set_bit(rb->index, &acm->read_urbs_free);
+-
+ 	if (!acm->dev) {
+ 		dev_dbg(&acm->data->dev, "%s - disconnected\n", __func__);
+ 		return;
+@@ -488,15 +488,16 @@ static void acm_read_bulk_callback(struc
+ 		break;
+ 	case -EPIPE:
+ 		set_bit(EVENT_RX_STALL, &acm->flags);
+-		schedule_work(&acm->work);
+-		return;
++		stalled = true;
++		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&acm->data->dev,
+ 			"%s - urb shutting down with status: %d\n",
+ 			__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	default:
+ 		dev_dbg(&acm->data->dev,
+ 			"%s - nonzero urb status received: %d\n",
+@@ -505,10 +506,24 @@ static void acm_read_bulk_callback(struc
  	}
  
- 	if (type_bit_width(type) == 64)
-@@ -99,15 +101,15 @@ static s_max get_signed_val(struct type_
- 	return *(s_max *)val;
+ 	/*
+-	 * Unthrottle may run on another CPU which needs to see events
+-	 * in the same order. Submission has an implict barrier
++	 * Make sure URB processing is done before marking as free to avoid
++	 * racing with unthrottle() on another CPU. Matches the barriers
++	 * implied by the test_and_clear_bit() in acm_submit_read_urb().
+ 	 */
+ 	smp_mb__before_atomic();
++	set_bit(rb->index, &acm->read_urbs_free);
++	/*
++	 * Make sure URB is marked as free before checking the throttled flag
++	 * to avoid racing with unthrottle() on another CPU. Matches the
++	 * smp_mb() in unthrottle().
++	 */
++	smp_mb__after_atomic();
++
++	if (stopped || stalled) {
++		if (stalled)
++			schedule_work(&acm->work);
++		return;
++	}
+ 
+ 	/* throttle device if requested by tty */
+ 	spin_lock_irqsave(&acm->read_lock, flags);
+@@ -842,6 +857,9 @@ static void acm_tty_unthrottle(struct tt
+ 	acm->throttle_req = 0;
+ 	spin_unlock_irq(&acm->read_lock);
+ 
++	/* Matches the smp_mb__after_atomic() in acm_read_bulk_callback(). */
++	smp_mb();
++
+ 	if (was_throttled)
+ 		acm_submit_read_urbs(acm, GFP_KERNEL);
  }
- 
--static bool val_is_negative(struct type_descriptor *type, unsigned long val)
-+static bool val_is_negative(struct type_descriptor *type, void *val)
- {
- 	return type_is_signed(type) && get_signed_val(type, val) < 0;
- }
- 
--static u_max get_unsigned_val(struct type_descriptor *type, unsigned long val)
-+static u_max get_unsigned_val(struct type_descriptor *type, void *val)
- {
- 	if (is_inline_int(type))
--		return val;
-+		return (unsigned long)val;
- 
- 	if (type_bit_width(type) == 64)
- 		return *(u64 *)val;
-@@ -116,7 +118,7 @@ static u_max get_unsigned_val(struct typ
- }
- 
- static void val_to_string(char *str, size_t size, struct type_descriptor *type,
--	unsigned long value)
-+			void *value)
- {
- 	if (type_is_int(type)) {
- 		if (type_bit_width(type) == 128) {
-@@ -163,8 +165,8 @@ static void ubsan_epilogue(unsigned long
- 	current->in_ubsan--;
- }
- 
--static void handle_overflow(struct overflow_data *data, unsigned long lhs,
--			unsigned long rhs, char op)
-+static void handle_overflow(struct overflow_data *data, void *lhs,
-+			void *rhs, char op)
- {
- 
- 	struct type_descriptor *type = data->type;
-@@ -191,8 +193,7 @@ static void handle_overflow(struct overf
- }
- 
- void __ubsan_handle_add_overflow(struct overflow_data *data,
--				unsigned long lhs,
--				unsigned long rhs)
-+				void *lhs, void *rhs)
- {
- 
- 	handle_overflow(data, lhs, rhs, '+');
-@@ -200,23 +201,21 @@ void __ubsan_handle_add_overflow(struct
- EXPORT_SYMBOL(__ubsan_handle_add_overflow);
- 
- void __ubsan_handle_sub_overflow(struct overflow_data *data,
--				unsigned long lhs,
--				unsigned long rhs)
-+				void *lhs, void *rhs)
- {
- 	handle_overflow(data, lhs, rhs, '-');
- }
- EXPORT_SYMBOL(__ubsan_handle_sub_overflow);
- 
- void __ubsan_handle_mul_overflow(struct overflow_data *data,
--				unsigned long lhs,
--				unsigned long rhs)
-+				void *lhs, void *rhs)
- {
- 	handle_overflow(data, lhs, rhs, '*');
- }
- EXPORT_SYMBOL(__ubsan_handle_mul_overflow);
- 
- void __ubsan_handle_negate_overflow(struct overflow_data *data,
--				unsigned long old_val)
-+				void *old_val)
- {
- 	unsigned long flags;
- 	char old_val_str[VALUE_LENGTH];
-@@ -237,8 +236,7 @@ EXPORT_SYMBOL(__ubsan_handle_negate_over
- 
- 
- void __ubsan_handle_divrem_overflow(struct overflow_data *data,
--				unsigned long lhs,
--				unsigned long rhs)
-+				void *lhs, void *rhs)
- {
- 	unsigned long flags;
- 	char rhs_val_str[VALUE_LENGTH];
-@@ -323,7 +321,7 @@ static void ubsan_type_mismatch_common(s
- }
- 
- void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
--				unsigned long ptr)
-+				void *ptr)
- {
- 	struct type_mismatch_data_common common_data = {
- 		.location = &data->location,
-@@ -332,12 +330,12 @@ void __ubsan_handle_type_mismatch(struct
- 		.type_check_kind = data->type_check_kind
- 	};
- 
--	ubsan_type_mismatch_common(&common_data, ptr);
-+	ubsan_type_mismatch_common(&common_data, (unsigned long)ptr);
- }
- EXPORT_SYMBOL(__ubsan_handle_type_mismatch);
- 
- void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
--				unsigned long ptr)
-+				void *ptr)
- {
- 
- 	struct type_mismatch_data_common common_data = {
-@@ -347,12 +345,12 @@ void __ubsan_handle_type_mismatch_v1(str
- 		.type_check_kind = data->type_check_kind
- 	};
- 
--	ubsan_type_mismatch_common(&common_data, ptr);
-+	ubsan_type_mismatch_common(&common_data, (unsigned long)ptr);
- }
- EXPORT_SYMBOL(__ubsan_handle_type_mismatch_v1);
- 
- void __ubsan_handle_vla_bound_not_positive(struct vla_bound_data *data,
--					unsigned long bound)
-+					void *bound)
- {
- 	unsigned long flags;
- 	char bound_str[VALUE_LENGTH];
-@@ -369,8 +367,7 @@ void __ubsan_handle_vla_bound_not_positi
- }
- EXPORT_SYMBOL(__ubsan_handle_vla_bound_not_positive);
- 
--void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data,
--				unsigned long index)
-+void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data, void *index)
- {
- 	unsigned long flags;
- 	char index_str[VALUE_LENGTH];
-@@ -388,7 +385,7 @@ void __ubsan_handle_out_of_bounds(struct
- EXPORT_SYMBOL(__ubsan_handle_out_of_bounds);
- 
- void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
--					unsigned long lhs, unsigned long rhs)
-+					void *lhs, void *rhs)
- {
- 	unsigned long flags;
- 	struct type_descriptor *rhs_type = data->rhs_type;
-@@ -439,7 +436,7 @@ void __ubsan_handle_builtin_unreachable(
- EXPORT_SYMBOL(__ubsan_handle_builtin_unreachable);
- 
- void __ubsan_handle_load_invalid_value(struct invalid_value_data *data,
--				unsigned long val)
-+				void *val)
- {
- 	unsigned long flags;
- 	char val_str[VALUE_LENGTH];
 
 
