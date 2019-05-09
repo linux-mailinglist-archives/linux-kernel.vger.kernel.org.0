@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F17A1911B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8220190D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfEISxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47514 "EHLO mail.kernel.org"
+        id S1728206AbfEISt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:49:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728819AbfEISxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:53:07 -0400
+        id S1727783AbfEIStZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:49:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 354802177E;
-        Thu,  9 May 2019 18:53:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00918217F9;
+        Thu,  9 May 2019 18:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427986;
-        bh=zxR1iS372/HBPbflDvjoOuYk9gDbDXGjCZR08oSYC7s=;
+        s=default; t=1557427764;
+        bh=8J2ek7vj1Ztw0cwOVrjW589wi/e/fWDGfafVoe4r+Zc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QwpQNjYzT4gp2fkE6On+A/qKg8epp4W2lhDu5jbvYqMIFO8gM5iAng198ld8uY90q
-         O+xZQtEL/yBhh9PbKF72xZzNs6VC3tX5ZetNHiJcQgf9tbNAaFvlylUVeeorcnSOJv
-         5iApZfi5iGuDbutLQ5ZdjzPFiJ/iz6q6oYCASoFs=
+        b=kedQqOtzpIAcIiFu+t9hTY+o/V6m0Ugr63rVRkepbBARqV7bXOaAbfGYLoZfbBKe5
+         PTxW7qoJoW5d61QAI4z+Qd0VGdeXyhcXYBNzwluZCIvibPF64NpRf6kb6c+dfyftQA
+         Kh1ONi921yaLT8oiiM9KAQCnLnyZbTYO6eXbpfss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.0 80/95] iio: adc: qcom-spmi-adc5: Fix of-based module autoloading
+        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Subject: [PATCH 4.19 62/66] Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
 Date:   Thu,  9 May 2019 20:42:37 +0200
-Message-Id: <20190509181314.914061989@linuxfoundation.org>
+Message-Id: <20190509181307.928060084@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Marcel Holtmann <marcel@holtmann.org>
 
-commit 447ccb4e0834a9f9f0dd5643e421c7f1a1649e6a upstream.
+commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
 
-The of_device_id table needs to be registered as module alias in order
-for automatic module loading to pick the kernel module based on the
-DeviceTree compatible. So add MODULE_DEVICE_TABLE() to make this happen.
+The minimum encryption key size for LE connections is 56 bits and to
+align LE with BR/EDR, enforce 56 bits of minimum encryption key size for
+BR/EDR connections as well.
 
-Fixes: e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/qcom-spmi-adc5.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/net/bluetooth/hci_core.h |    3 +++
+ net/bluetooth/hci_conn.c         |    8 ++++++++
+ 2 files changed, 11 insertions(+)
 
---- a/drivers/iio/adc/qcom-spmi-adc5.c
-+++ b/drivers/iio/adc/qcom-spmi-adc5.c
-@@ -664,6 +664,7 @@ static const struct of_device_id adc5_ma
- 	},
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, adc5_match_table);
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -182,6 +182,9 @@ struct adv_info {
  
- static int adc5_get_dt_data(struct adc5_chip *adc, struct device_node *node)
- {
+ #define HCI_MAX_SHORT_NAME_LENGTH	10
+ 
++/* Min encryption key size to match with SMP */
++#define HCI_MIN_ENC_KEY_SIZE		7
++
+ /* Default LE RPA expiry time, 15 minutes */
+ #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
+ 
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1276,6 +1276,14 @@ int hci_conn_check_link_mode(struct hci_
+ 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
+ 		return 0;
+ 
++	/* The minimum encryption key size needs to be enforced by the
++	 * host stack before establishing any L2CAP connections. The
++	 * specification in theory allows a minimum of 1, but to align
++	 * BR/EDR and LE transports, a minimum of 7 is chosen.
++	 */
++	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
++		return 0;
++
+ 	return 1;
+ }
+ 
 
 
