@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBB119149
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B346D1911E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfEISzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:55:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50250 "EHLO mail.kernel.org"
+        id S1728432AbfEISxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:53:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729190AbfEISzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:55:12 -0400
+        id S1728844AbfEISxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D8FF204FD;
-        Thu,  9 May 2019 18:55:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 892C6204FD;
+        Thu,  9 May 2019 18:53:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557428111;
-        bh=UXy7aui7yC9NiQsI/1El6Ml1ENsUM4xMnXKn11cKhM0=;
+        s=default; t=1557427992;
+        bh=qxNcQDxSh66X3XT1A9HlEwqB20CxHkhLaAHXQ69M1j4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ovq2cib8WtsXRdFrz60eIkKaInAjvBqrhwQMNpOplq76/3CfJfMBTnl8FKWW+MwxT
-         gei39FlYaWQm05Z0U1jtqvgVnEmdn2B2a50BbbpltH3D3QTgXMIMZLhgjz1pfBTfU7
-         VymqNMjzWzItt49aU4PqPy2J10P0zaB8R24V8R6Q=
+        b=ND2XEk6cRYf2A3huXYJ/OdoE6AEzZdD1t5v4cf1kXgqeeAMoD9k3rjIjva/J50PFY
+         EzysA24h04l85xu9lbb/7yRHDfm6XqahXZq4LXsd7Q33/Av/Jd8kzIBYeY8CDLmCUI
+         5uqhH/0D5Kl4TAlAZVSzPwj+ncS6JSTeVBayqM/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH 5.1 07/30] usb: dwc3: Allow building USB_DWC3_QCOM without EXTCON
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.0 82/95] ACPI / LPSS: Use acpi_lpss_* instead of acpi_subsys_* functions for hibernate
 Date:   Thu,  9 May 2019 20:42:39 +0200
-Message-Id: <20190509181252.205048287@linuxfoundation.org>
+Message-Id: <20190509181315.038135125@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-References: <20190509181250.417203112@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,44 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Gonzalez <marc.w.gonzalez@free.fr>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 77a4946516fe488b6a33390de6d749f934a243ba upstream.
+commit c8afd03486c26accdda4846e5561aa3f8e862a9d upstream.
 
-Keep EXTCON support optional, as some platforms do not need it.
+Commit 48402cee6889 ("ACPI / LPSS: Resume BYT/CHT I2C controllers from
+resume_noirq") makes acpi_lpss_{suspend_late,resume_early}() bail early
+on BYT/CHT as resume_from_noirq is set.
 
-Do the same for USB_DWC3_OMAP while we're at it.
+This means that on resume from hibernate dw_i2c_plat_resume() doesn't get
+called by the restore_early callback, acpi_lpss_resume_early(). Instead it
+should be called by the restore_noirq callback matching how things are done
+when resume_from_noirq is set and we are doing a regular resume.
 
-Fixes: 3def4031b3e3f ("usb: dwc3: add EXTCON dependency for qcom")
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc: stable <stable@vger.kernel.org>
+Change the restore_noirq callback to acpi_lpss_resume_noirq so that
+dw_i2c_plat_resume() gets properly called when resume_from_noirq is set
+and we are resuming from hibernate.
+
+Likewise also change the poweroff_noirq callback so that
+dw_i2c_plat_suspend gets called properly.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202139
+Fixes: 48402cee6889 ("ACPI / LPSS: Resume BYT/CHT I2C controllers from resume_noirq")
+Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Cc: 4.20+ <stable@vger.kernel.org> # 4.20+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/Kconfig |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/acpi_lpss.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -54,7 +54,8 @@ comment "Platform Glue Driver Support"
- 
- config USB_DWC3_OMAP
- 	tristate "Texas Instruments OMAP5 and similar Platforms"
--	depends on EXTCON && (ARCH_OMAP2PLUS || COMPILE_TEST)
-+	depends on ARCH_OMAP2PLUS || COMPILE_TEST
-+	depends on EXTCON || !EXTCON
- 	depends on OF
- 	default USB_DWC3
- 	help
-@@ -115,7 +116,8 @@ config USB_DWC3_ST
- 
- config USB_DWC3_QCOM
- 	tristate "Qualcomm Platform"
--	depends on EXTCON && (ARCH_QCOM || COMPILE_TEST)
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on EXTCON || !EXTCON
- 	depends on OF
- 	default USB_DWC3
- 	help
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -1142,8 +1142,8 @@ static struct dev_pm_domain acpi_lpss_pm
+ 		.thaw_noirq = acpi_subsys_thaw_noirq,
+ 		.poweroff = acpi_subsys_suspend,
+ 		.poweroff_late = acpi_lpss_suspend_late,
+-		.poweroff_noirq = acpi_subsys_suspend_noirq,
+-		.restore_noirq = acpi_subsys_resume_noirq,
++		.poweroff_noirq = acpi_lpss_suspend_noirq,
++		.restore_noirq = acpi_lpss_resume_noirq,
+ 		.restore_early = acpi_lpss_resume_early,
+ #endif
+ 		.runtime_suspend = acpi_lpss_runtime_suspend,
 
 
