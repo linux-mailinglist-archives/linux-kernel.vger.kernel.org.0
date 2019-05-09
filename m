@@ -2,172 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44C818B9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40CBA18B66
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfEIOXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:23:10 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51959 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfEIOXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:23:10 -0400
-Received: by mail-it1-f196.google.com with SMTP id s3so3861740itk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 07:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CJAJWMSbDRtZTT/lyH5+TR+lDyhkoQaqVk/vcm0z2Ao=;
-        b=Eh/JkVUpHB0z8bi9m3gkPcO82KpSIWF8E64gJiNt7GJbvEsn28SE6m7w1Al7JQ1PoV
-         VenQwAENtE7CyAHXvIK0JNFTnA7wp7FVEh2ihJSwLC4jhWMv95qLlsMziISprMSiOk6C
-         V8O/bD0lfn2AcmxtZNufi8B+skOcjemCRrFQ5In63YPA2op4xEUxm3n/DIP71xUilWg8
-         Nc+lz/lSy04aFkf9W078jbaarYlPWXx+vpKbNRbANDPjHd/dnrIzmwUwGozs9W3JHW6U
-         qy9EgmbVDCf7a2tRHcgDzNeIRzV+fAYyimV+8eMeKgk2FnGoE9kELfZw/86gONFRXIuQ
-         KuwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CJAJWMSbDRtZTT/lyH5+TR+lDyhkoQaqVk/vcm0z2Ao=;
-        b=CWCv5LAtcU0vTiErSHTqIuBT2D/8yq/JKmPNZo/43O1qUg1JfZptpxpHK0mmPIhl8G
-         A86Ih6ZAz5rad+XJyUBsWIX3GXMUTJB7ujCqApvJYBkvJwpdOfg9nzKtMRAxi1RS65cJ
-         IMIoYnKQYKNpo6MkjmSuYowRgoPFFsB6WSqxch1QCMV3Laln8w5nPoX9umPg3DORoQ4s
-         WOUwhw8CIpBOutijckXpbF7spXxHmK6mrjhNUmIj4/zo5ikgqbB8QJjkMAUiRasb5kfp
-         GU9JISUJwf3Pl+svKnbvHGjO1J9JmPgzxRZPpTSLyLc9C9z41lN+lGRIRoIxGM5zJEgI
-         KtyQ==
-X-Gm-Message-State: APjAAAVYcASdn2JYIf8mq7vMZqJFSwkuddIElYc/EfwNflrClwly+kie
-        jfCpl5+NXJ3B+OSEAUOYtTuzS177hYgx/IarFWa5TQ==
-X-Google-Smtp-Source: APXvYqxA41KpQLDZwMiuRZvoLLjanStXSNAuvVQvtDhC5A8eLBEix9KyEuJYsIQQW75bJz2uPEpO1bcu3xil346SB+g=
-X-Received: by 2002:a02:b88b:: with SMTP id p11mr3324967jam.82.1557411788929;
- Thu, 09 May 2019 07:23:08 -0700 (PDT)
+        id S1726963AbfEIOOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:14:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39442 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbfEIOOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:14:32 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E9858BD0E4808C833EF4;
+        Thu,  9 May 2019 22:14:28 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 9 May 2019 22:14:23 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        David Brown <david.brown@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH next v3] mfd: Use dev_get_drvdata()
+Date:   Thu, 9 May 2019 22:23:39 +0800
+Message-ID: <20190509142339.96276-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190509061443.GU31645@dell>
+References: <20190509061443.GU31645@dell>
 MIME-Version: 1.0
-References: <000000000000fb78720587d46fe9@google.com> <20190502023426.GA804@sol.localdomain>
- <CACT4Y+YHFH8GAhDaNdNNTVFFx6YfKSL19cLPx2vpP-YngzS6kQ@mail.gmail.com>
- <CACT4Y+biO9GEN16Rak_1F+UdvhTe3fUwVf_VWRup2xrgvr9WKA@mail.gmail.com> <20190509031849.GC693@sol.localdomain>
-In-Reply-To: <20190509031849.GC693@sol.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 9 May 2019 16:22:56 +0200
-Message-ID: <CACT4Y+bz-aFJ2PbqJKL7veWavZkLw5nq+RFnnTveXMowRMVY4Q@mail.gmail.com>
-Subject: Re: BUG: soft lockup in kvm_vm_ioctl
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+8d9bb6157e7b379f740e@syzkaller.appspotmail.com>,
-        KVM list <kvm@vger.kernel.org>, adrian.hunter@intel.com,
-        David Miller <davem@davemloft.net>,
-        Artem Bityutskiy <dedekind1@gmail.com>, jbaron@redhat.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rik van Riel <riel@surriel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > Can the KVM maintainers take a look at this?  This doesn't have anything to do
-> > > > with my commit that syzbot bisected it to.
-> > > >
-> > > > +Dmitry, statistics lession: if a crash occurs only 1 in 10 times, as was the
-> > > > case here, then often it will happen 0 in 10 times by chance.  syzbot needs to
-> > > > run the reproducer more times if it isn't working reliably.  Otherwise it ends
-> > > > up blaming some random commit.
-> > >
-> > > Added a note to https://github.com/google/syzkaller/issues/1051
-> > > Thanks
-> >
-> > As we increase number of instances, we increase chances of hitting
-> > unrelated bugs. E.g. take a look at the bisection log for:
-> > https://syzkaller.appspot.com/bug?extid=f14868630901fc6151d3
-> > What is the optimum number of tests is a good question. I suspect that
-> > the current 10 instances is close to optimum. If we use significantly
-> > more we may break every other bisection on unrelated bugs...
-> >
->
-> Only because syzbot is being super dumb in how it does the bisection.  AFAICS,
-> in the example you linked to, buggy kernels reliably crashed 10 out of 10 times
-> with the original crash signature, "WARNING in cgroup_exit".  Then at some point
-> it tested some kernel without the bug and got a different crash just 1 in 10
-> times, "WARNING: ODEBUG bug in netdev_freemem".
->
-> The facts that the crash frequency was very different, and the crash signature
-> was different, should be taken as a very strong signal that it's not the bug
-> being bisected for.  And this is something easily checked for in code.
->
-> BTW, I hope you're treating fixing this as a high priority, given that syzbot is
-> now sending bug reports to kernel developers literally selected at random.  This
-> is a great way to teach people to ignore syzbot reports.  (When I suggested
-> bisection originally, I had assumed you'd implement some basic sanity checks so
-> that only bisection results likely to be reliable would be mailed out.)
+Using dev_get_drvdata directly.
 
+Cc: David Brown <david.brown@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+v3:
+- fix build issue('dev' undeclared) in tc6393xb_nand_enable()
+v2:
+-use dev_get_drvdata() instead of to_ssbi()
 
+ drivers/mfd/ssbi.c     |  6 ++----
+ drivers/mfd/t7l66xb.c  | 12 ++++--------
+ drivers/mfd/tc6387xb.c | 12 ++++--------
+ drivers/mfd/tc6393xb.c | 23 ++++++++---------------
+ 4 files changed, 18 insertions(+), 35 deletions(-)
 
-While I believe we can get some quality improvement by shuffling
-numbers. I don't think we can get significant improvement overall and
-definitely not eliminate wrong bisection results entirely. It's easy
-to take a single wrong bisection and design a system around this
-scenario, but it's very hard to design a system that will handle all
-of them in all generality. For example, look at these bisection logs
-for cases where reproduction frequency varies from 1 to all, but
-that's still the same bug:
-https://syzkaller.appspot.com/x/bisect.txt?x=12df1ba3200000
-https://syzkaller.appspot.com/x/bisect.txt?x=10daff1b200000
-https://syzkaller.appspot.com/x/bisect.txt?x=1592b037200000
-https://syzkaller.appspot.com/x/bisect.txt?x=11c610a7200000
-https://syzkaller.appspot.com/x/bisect.txt?x=17affd1b200000
-You also refer to "a different crash". But that's not a predicate we
-can have. And definitely not something that is "easily checked for in
-code". Consider, a function rename anywhere in the range will lead to
-as if a different crash. If you look at all bisection logs you find
-lots of amusing cases where something that a program may consider a
-different bugs is actually the same bug, or the other way around. So
-if we increase number of tests and we don't have a way to distinguish
-crashes (which we don't), we will necessary increase incorrect results
-due to unrelated bugs.
+diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
+index 36b96fee4ce6..0ae27cd30268 100644
+--- a/drivers/mfd/ssbi.c
++++ b/drivers/mfd/ssbi.c
+@@ -80,8 +80,6 @@ struct ssbi {
+ 	int (*write)(struct ssbi *, u16 addr, const u8 *buf, int len);
+ };
+ 
+-#define to_ssbi(dev)	platform_get_drvdata(to_platform_device(dev))
+-
+ static inline u32 ssbi_readl(struct ssbi *ssbi, u32 reg)
+ {
+ 	return readl(ssbi->base + reg);
+@@ -243,7 +241,7 @@ ssbi_pa_write_bytes(struct ssbi *ssbi, u16 addr, const u8 *buf, int len)
+ 
+ int ssbi_read(struct device *dev, u16 addr, u8 *buf, int len)
+ {
+-	struct ssbi *ssbi = to_ssbi(dev);
++	struct ssbi *ssbi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -257,7 +255,7 @@ EXPORT_SYMBOL_GPL(ssbi_read);
+ 
+ int ssbi_write(struct device *dev, u16 addr, const u8 *buf, int len)
+ {
+-	struct ssbi *ssbi = to_ssbi(dev);
++	struct ssbi *ssbi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int ret;
+ 
+diff --git a/drivers/mfd/t7l66xb.c b/drivers/mfd/t7l66xb.c
+index 43d8683266de..e9cfb147345e 100644
+--- a/drivers/mfd/t7l66xb.c
++++ b/drivers/mfd/t7l66xb.c
+@@ -82,8 +82,7 @@ struct t7l66xb {
+ 
+ static int t7l66xb_mmc_enable(struct platform_device *mmc)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
++	struct t7l66xb *t7l66xb = dev_get_drvdata(mmc->dev.parent);
+ 	unsigned long flags;
+ 	u8 dev_ctl;
+ 	int ret;
+@@ -108,8 +107,7 @@ static int t7l66xb_mmc_enable(struct platform_device *mmc)
+ 
+ static int t7l66xb_mmc_disable(struct platform_device *mmc)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
++	struct t7l66xb *t7l66xb = dev_get_drvdata(mmc->dev.parent);
+ 	unsigned long flags;
+ 	u8 dev_ctl;
+ 
+@@ -128,16 +126,14 @@ static int t7l66xb_mmc_disable(struct platform_device *mmc)
+ 
+ static void t7l66xb_mmc_pwr(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
++	struct t7l66xb *t7l66xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_pwr(t7l66xb->scr + 0x200, 0, state);
+ }
+ 
+ static void t7l66xb_mmc_clk_div(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
++	struct t7l66xb *t7l66xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_clk_div(t7l66xb->scr + 0x200, 0, state);
+ }
+diff --git a/drivers/mfd/tc6387xb.c b/drivers/mfd/tc6387xb.c
+index 85fab3729102..f417c6fecfe2 100644
+--- a/drivers/mfd/tc6387xb.c
++++ b/drivers/mfd/tc6387xb.c
+@@ -80,16 +80,14 @@ static int tc6387xb_resume(struct platform_device *dev)
+ 
+ static void tc6387xb_mmc_pwr(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6387xb *tc6387xb = platform_get_drvdata(dev);
++	struct tc6387xb *tc6387xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_pwr(tc6387xb->scr + 0x200, 0, state);
+ }
+ 
+ static void tc6387xb_mmc_clk_div(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6387xb *tc6387xb = platform_get_drvdata(dev);
++	struct tc6387xb *tc6387xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_clk_div(tc6387xb->scr + 0x200, 0, state);
+ }
+@@ -97,8 +95,7 @@ static void tc6387xb_mmc_clk_div(struct platform_device *mmc, int state)
+ 
+ static int tc6387xb_mmc_enable(struct platform_device *mmc)
+ {
+-	struct platform_device *dev      = to_platform_device(mmc->dev.parent);
+-	struct tc6387xb *tc6387xb = platform_get_drvdata(dev);
++	struct tc6387xb *tc6387xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	clk_prepare_enable(tc6387xb->clk32k);
+ 
+@@ -110,8 +107,7 @@ static int tc6387xb_mmc_enable(struct platform_device *mmc)
+ 
+ static int tc6387xb_mmc_disable(struct platform_device *mmc)
+ {
+-	struct platform_device *dev      = to_platform_device(mmc->dev.parent);
+-	struct tc6387xb *tc6387xb = platform_get_drvdata(dev);
++	struct tc6387xb *tc6387xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	clk_disable_unprepare(tc6387xb->clk32k);
+ 
+diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
+index 0c9f0390e891..6943048a64c2 100644
+--- a/drivers/mfd/tc6393xb.c
++++ b/drivers/mfd/tc6393xb.c
+@@ -122,14 +122,13 @@ enum {
+ 
+ static int tc6393xb_nand_enable(struct platform_device *nand)
+ {
+-	struct platform_device *dev = to_platform_device(nand->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(nand->dev.parent);
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&tc6393xb->lock, flags);
+ 
+ 	/* SMD buffer on */
+-	dev_dbg(&dev->dev, "SMD buffer on\n");
++	dev_dbg(nand->dev.parent, "SMD buffer on\n");
+ 	tmio_iowrite8(0xff, tc6393xb->scr + SCR_GPI_BCR(1));
+ 
+ 	raw_spin_unlock_irqrestore(&tc6393xb->lock, flags);
+@@ -312,8 +311,7 @@ static int tc6393xb_fb_disable(struct platform_device *dev)
+ 
+ int tc6393xb_lcd_set_power(struct platform_device *fb, bool on)
+ {
+-	struct platform_device *dev = to_platform_device(fb->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(fb->dev.parent);
+ 	u8 fer;
+ 	unsigned long flags;
+ 
+@@ -334,8 +332,7 @@ EXPORT_SYMBOL(tc6393xb_lcd_set_power);
+ 
+ int tc6393xb_lcd_mode(struct platform_device *fb,
+ 					const struct fb_videomode *mode) {
+-	struct platform_device *dev = to_platform_device(fb->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(fb->dev.parent);
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&tc6393xb->lock, flags);
+@@ -351,8 +348,7 @@ EXPORT_SYMBOL(tc6393xb_lcd_mode);
+ 
+ static int tc6393xb_mmc_enable(struct platform_device *mmc)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_enable(tc6393xb->scr + 0x200, 0,
+ 		tc6393xb_mmc_resources[0].start & 0xfffe);
+@@ -362,8 +358,7 @@ static int tc6393xb_mmc_enable(struct platform_device *mmc)
+ 
+ static int tc6393xb_mmc_resume(struct platform_device *mmc)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_resume(tc6393xb->scr + 0x200, 0,
+ 		tc6393xb_mmc_resources[0].start & 0xfffe);
+@@ -373,16 +368,14 @@ static int tc6393xb_mmc_resume(struct platform_device *mmc)
+ 
+ static void tc6393xb_mmc_pwr(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_pwr(tc6393xb->scr + 0x200, 0, state);
+ }
+ 
+ static void tc6393xb_mmc_clk_div(struct platform_device *mmc, int state)
+ {
+-	struct platform_device *dev = to_platform_device(mmc->dev.parent);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
++	struct tc6393xb *tc6393xb = dev_get_drvdata(mmc->dev.parent);
+ 
+ 	tmio_core_mmc_clk_div(tc6393xb->scr + 0x200, 0, state);
+ }
+-- 
+2.20.1
 
-Bisection is a subtle process and the predicate, whatever logic it
-does internally, in the end need to produce a single yes/no. And a
-single wrong answer in the chain leads to a completely incorrect
-result. There are some fundamental reasons for wrong results:
- - hard to reproduce bugs (not fixable)
- - unrelated bugs/broken builds (fixable)
-While tuning numbers can pepper over these to some degree (maybe),
-these reasons will stay and will lead to incorrect results. Also I
-don't this tuning as something that is trivially to do as you suggest.
-For example, how exactly do you assess a crash as reliably happening
-vs episodically? How exactly do you choose number of tests for each
-case? Choosing too few tests will lead to incorrect results, choosing
-too many will lead to incorrect results. How exactly do you assess
-that something that was happening reliably now does not happen
-reliably? How do you assess that a crash is very different? Each of
-the choices have chances of producing more bad results, so one would
-need to rerun hundreds of bisections with old/new version, and then
-manually mark results and then estimate quality change (which most
-likely will be flaky or inconclusive in lots of cases). Tuning quality
-of heuristics-based algorithms is very time consuming, especially if
-each experiment takes weeks.
-
-There is another down-side for not "super dumb" algorithms. Which is
-explaining results. Consider that syzbot now mails a bisection where
-the crash happened and a developer sees that it's the same crash, but
-syzbot says "nope. did not crash". That will cause reasonable
-questions and somebody (who would that be?) will need to come and
-explain what happens and why, and how that counter-intuitive local
-result was shown to improve quality overall. Simpler algorithms are
-much easier to explain.
-
-I consider bisection as high priority, but unfortunately only among
-other high priority and very high priority work.
-Besides work on the fuzzer itself and bug detection tools, we now test
-15 kernels across 6 different OSes. Operational work can't be
-deprioritized because then nothing will work at all. Change reviews
-can't be deprioritized. Overseeing bug flow can't be deprioritized.
-Updating crash parsing in response to new kernel output can't be
-deprioritized. Answering all human emails can't be deprioritized.
