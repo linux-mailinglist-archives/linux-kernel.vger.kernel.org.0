@@ -2,72 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 216FD1840E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 05:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B7A18419
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 05:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfEIDUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 23:20:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43052 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbfEIDUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 23:20:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C8EC33092649;
-        Thu,  9 May 2019 03:20:22 +0000 (UTC)
-Received: from hp-dl380pg8-02.lab.eng.pek2.redhat.com (hp-dl380pg8-02.lab.eng.pek2.redhat.com [10.73.8.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B8E295C221;
-        Thu,  9 May 2019 03:20:20 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     yuehaibing@huawei.com, xiyou.wangcong@gmail.com,
-        weiyongjun1@huawei.com, eric.dumazet@gmail.com,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net V3 1/2] tuntap: fix dividing by zero in ebpf queue selection
-Date:   Wed,  8 May 2019 23:20:17 -0400
-Message-Id: <1557372018-18544-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 09 May 2019 03:20:22 +0000 (UTC)
+        id S1726806AbfEIDVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 23:21:45 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:60933 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726109AbfEIDVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 23:21:44 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x493KHVw012310
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 8 May 2019 23:20:19 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A3951420024; Wed,  8 May 2019 23:20:17 -0400 (EDT)
+Date:   Wed, 8 May 2019 23:20:17 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190509032017.GA29703@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
+        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
+ <20190507080119.GB28121@kroah.com>
+ <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
+ <20190509015856.GB7031@mit.edu>
+ <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need check if tun->numqueues is zero (e.g for the persist device)
-before trying to use it for modular arithmetic.
+On Wed, May 08, 2019 at 07:13:59PM -0700, Frank Rowand wrote:
+> > If you want to use vice grips as a hammer, screwdriver, monkey wrench,
+> > etc.  there's nothing stopping you from doing that.  But it's not fair
+> > to object to other people who might want to use better tools.
+> > 
+> > The reality is that we have a lot of testing tools.  It's not just
+> > kselftests.  There is xfstests for file system code, blktests for
+> > block layer tests, etc.   We use the right tool for the right job.
+> 
+> More specious arguments.
 
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Fixes: 96f84061620c6("tun: add eBPF based queue selection method")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/tun.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Well, *I* don't think they are specious; so I think we're going to
+have to agree to disagree.
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index e9ca1c0..dc62fc3 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -596,13 +596,18 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
- static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
- {
- 	struct tun_prog *prog;
-+	u32 numqueues;
- 	u16 ret = 0;
- 
-+	numqueues = READ_ONCE(tun->numqueues);
-+	if (!numqueues)
-+		return 0;
-+
- 	prog = rcu_dereference(tun->steering_prog);
- 	if (prog)
- 		ret = bpf_prog_run_clear_cb(prog->prog, skb);
- 
--	return ret % tun->numqueues;
-+	return ret % numqueues;
- }
- 
- static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
--- 
-1.8.3.1
+Cheers,
 
+						- Ted
