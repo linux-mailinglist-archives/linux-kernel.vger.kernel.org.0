@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B6F19299
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7690C191D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbfEITI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:08:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36110 "EHLO mail.kernel.org"
+        id S1728818AbfEITAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbfEISog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:36 -0400
+        id S1728011AbfEISvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:51:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DABB2183F;
-        Thu,  9 May 2019 18:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E63F217D7;
+        Thu,  9 May 2019 18:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427476;
-        bh=FeuoLYrKFjwXsEkDfYktpq5SL9o0dXT4W2nvFWAizQU=;
+        s=default; t=1557427880;
+        bh=PiO4JVTlllckNxCOroUiEq7Z+G49cXwehLEgPNZ8pus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=opkQmquclT/UPioY0E2sHtRDAcNo1EZmDsq/Hba5WAoOHLWAvoG+eaXf88Sqqx/gk
-         NMj5iHVegosI77t3DSvRkhyJyQur3t/lrBqk6aBCMdq0SlE2eiKIcmQZBnFINwhhxd
-         PNCZArCQakIfO+9YS7MVPY3ehaJH8MHCyvnHqdlA=
+        b=iKZv4pwxBWAPWGByrzkgrk58i23yu808qvZtZAXqwrpvAnCInnzqes3yPOKjTHuix
+         OOcI0c/IeRaRFkMDmdZ34STB6Ii4VLJcIrQo8wddMDlUv6AUUF4RkPKy5LPCw74+sV
+         rcaL4M+nHCFdUX52W0KcDunLxVf5QUrjh8IQZ8YU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>,
-        Johan Hovold <johan@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>
-Subject: [PATCH 4.9 03/28] staging: greybus: power_supply: fix prop-descriptor request size
-Date:   Thu,  9 May 2019 20:41:55 +0200
-Message-Id: <20190509181250.816103692@linuxfoundation.org>
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 39/95] iov_iter: Fix build error without CONFIG_CRYPTO
+Date:   Thu,  9 May 2019 20:41:56 +0200
+Message-Id: <20190509181312.077306094@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+[ Upstream commit 27fad74a5a77fe2e1f876db7bf27efcf2ec304b2 ]
 
-commit 47830c1127ef166af787caf2f871f23089610a7f upstream.
+If CONFIG_CRYPTO is not set or set to m,
+gcc building warn this:
 
-Since moving the message buffers off the stack, the dynamically
-allocated get-prop-descriptor request buffer is incorrectly sized due to
-using the pointer rather than request-struct size when creating the
-operation.
+lib/iov_iter.o: In function `hash_and_copy_to_iter':
+iov_iter.c:(.text+0x9129): undefined reference to `crypto_stats_get'
+iov_iter.c:(.text+0x9152): undefined reference to `crypto_stats_ahash_update'
 
-Fortunately, the pointer size is always larger than this one-byte
-request, but this could still cause trouble on the remote end due to the
-unexpected message size.
-
-Fixes: 9d15134d067e ("greybus: power_supply: rework get descriptors")
-Cc: stable <stable@vger.kernel.org>     # 4.9
-Cc: Rui Miguel Silva <rui.silva@linaro.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: d05f443554b3 ("iov_iter: introduce hash_and_copy_to_iter helper")
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/greybus/power_supply.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/iov_iter.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/staging/greybus/power_supply.c
-+++ b/drivers/staging/greybus/power_supply.c
-@@ -521,7 +521,7 @@ static int gb_power_supply_prop_descript
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index be4bd627caf06..a0d1cd88f903f 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1515,6 +1515,7 @@ EXPORT_SYMBOL(csum_and_copy_to_iter);
+ size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
+ 		struct iov_iter *i)
+ {
++#ifdef CONFIG_CRYPTO
+ 	struct ahash_request *hash = hashp;
+ 	struct scatterlist sg;
+ 	size_t copied;
+@@ -1524,6 +1525,9 @@ size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
+ 	ahash_request_set_crypt(hash, &sg, NULL, copied);
+ 	crypto_ahash_update(hash);
+ 	return copied;
++#else
++	return 0;
++#endif
+ }
+ EXPORT_SYMBOL(hash_and_copy_to_iter);
  
- 	op = gb_operation_create(connection,
- 				 GB_POWER_SUPPLY_TYPE_GET_PROP_DESCRIPTORS,
--				 sizeof(req), sizeof(*resp) + props_count *
-+				 sizeof(*req), sizeof(*resp) + props_count *
- 				 sizeof(struct gb_power_supply_props_desc),
- 				 GFP_KERNEL);
- 	if (!op)
+-- 
+2.20.1
+
 
 
