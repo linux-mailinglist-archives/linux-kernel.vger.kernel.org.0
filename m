@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D3519455
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC1A1943C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfEIVPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:15:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38595 "EHLO
+        id S1727397AbfEIVOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:14:39 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41894 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbfEIVOf (ORCPT
+        with ESMTP id S1727375AbfEIVOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id j26so1836436pgl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:35 -0700 (PDT)
+        Thu, 9 May 2019 17:14:36 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z3so1829562pgp.8
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lcz1eqcuD73T/NcdIkbFXLwMtkZSGY486wHQZ5MgZj0=;
-        b=Zfpt5xg3AxUyQfo8Abyg4ogJXok/St2aZrREtayCmA7BJtNKUrMRpzYLgQhVp8epax
-         8X6De6AkM85K2V9mwGPumIuJ4JxnQtMTvXU5RGjInwp3/9deUJM/NvREnuT/LzCF1y91
-         GofwX0UiSkq5Vx/fbHbbIFKCYEWUZ7+VXPRyg=
+        bh=IWgr+AhFO3OhKHAPV2m+8yh16a60wmBfWKOBXA4JWIU=;
+        b=l9AwUPGMjJlXTw3q/c4anvpEH7Apr8aszczxsz4koZlEjHGujT/XXlhrz3pf0+sgzP
+         dnAvEMxzsMC47BA4uHex5mnJOCBLJtL+VnX8D0Y0cQcuEDamqlpfp+YNaNNY8zeWE69c
+         jMjclChUoCUTXBkcR2S0aGhAvt5t3ntNQtaUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lcz1eqcuD73T/NcdIkbFXLwMtkZSGY486wHQZ5MgZj0=;
-        b=POZcndEbEi0aJd/kU2hD21V3uZSe1xD5yoPBa11SlZTtAuj7lbS3IcYvnFJO9z92N+
-         br9FVQ9oa0kzSZTG3SpeAsd/u0VVGgOCwLz1yCPq3POAngTDIPBd88R5rtD2FAxrjZcT
-         j6yR6kSCnCXydtA1/d5SboJ3XChwBCzX5xp8Z4m7nMIcp8XNkGeoqdYGm4dGdNmHB8c5
-         UOWT3x+6PoJX3rxuxfqJnT3GuqD2Q/ZDBIy1hrnhX4IVACCsNGo8kytEtc8tKWPYaiPD
-         Np/BTIt385p33Xt071xMifftBU8ZXIDB4NMRavCv+/1nellb4OAvoSM/X4dFdxewgylx
-         dRJw==
-X-Gm-Message-State: APjAAAXlbPqkPRQxRCo2o0EUBm2FbOgmSB6dt158uiWOkDZrjcipkhCa
-        tFjhVUu/LbruleDuke+TxNpqCg==
-X-Google-Smtp-Source: APXvYqz042zmYNJ4m/qpAeFzE/1gR0DwW34FrcjHP7YYL9ft7HjvOA7U92isJkKJvsl71wPm4dexyQ==
-X-Received: by 2002:a65:5941:: with SMTP id g1mr8699957pgu.51.1557436474785;
-        Thu, 09 May 2019 14:14:34 -0700 (PDT)
+        bh=IWgr+AhFO3OhKHAPV2m+8yh16a60wmBfWKOBXA4JWIU=;
+        b=EZrGwJJi5P8+PZddE+HiQ4U5I3YGIrZeLJ/+U8fO+7Jx9fw55fPrbxXlA7knJRJhj+
+         4OjZ1JNUkTUEaz1VdxzUJE5pZDIN+VFZpK73j6rwOopfhY1u/67D7deVhjFAcstaHtIh
+         i/GKCDJ2MZ8bWhbsYuAAtLGqR8JiLQLpuZd3Gdd2HtJ5mWwJ5k/6qm0cnpoiPI+K15kR
+         +KI0Yhuqh++8sGyWaKd9H4oy4JhMpvbAUaXnlVyDSoxp22Yk3mOJv+8F/zXgQPwk3CHX
+         iGk5aYQybiZPAqLmJi3pLU5PukKGkZw/E65nclMjIvItIX5bcMkQtRm15W3In05YKqFI
+         8zdQ==
+X-Gm-Message-State: APjAAAU7M6L/siP/vRgpYD3jBr8Oq7boUPzQzn/GdFpoz4VzOT27+Up/
+        R6xnQ0bFDVioZT1MKCGm5vlngcQiPbM=
+X-Google-Smtp-Source: APXvYqxbARVqhKLstd3ckJiRL7/+p2xHa3sntQBgb11XMfj7kEkYjGDv7msVASirpXtae93+FNtnGw==
+X-Received: by 2002:a63:1460:: with SMTP id 32mr8650708pgu.319.1557436476179;
+        Thu, 09 May 2019 14:14:36 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id e8sm5128546pfc.47.2019.05.09.14.14.33
+        by smtp.gmail.com with ESMTPSA id a17sm4854335pff.82.2019.05.09.14.14.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:34 -0700 (PDT)
+        Thu, 09 May 2019 14:14:35 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 21/30] mfd: cros_ec: Add Hibernate API
-Date:   Thu,  9 May 2019 14:13:44 -0700
-Message-Id: <20190509211353.213194-22-gwendal@chromium.org>
+Subject: [PATCH v3 22/30] mfd: cros_ec: Add Smart Battery Firmware update API
+Date:   Thu,  9 May 2019 14:13:45 -0700
+Message-Id: <20190509211353.213194-23-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,124 +62,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for controlling hibernation of the Embedded Controller.
+Add API to update battery firmware.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 72 +++++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 2 deletions(-)
+ include/linux/mfd/cros_ec_commands.h | 73 ++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index cc054a0a4c4c..7f98c6e63ad1 100644
+index 7f98c6e63ad1..49ea905cfd18 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -4045,6 +4045,40 @@ struct ec_params_dedicated_charger_limit {
- 	uint16_t voltage_lim; /* in mV */
- } __ec_align2;
- 
-+/*****************************************************************************/
-+/* Hibernate/Deep Sleep Commands */
-+
-+/* Set the delay before going into hibernation. */
-+#define EC_CMD_HIBERNATION_DELAY 0x00A8
-+
-+struct ec_params_hibernation_delay {
-+	/*
-+	 * Seconds to wait in G3 before hibernate.  Pass in 0 to read the
-+	 * current settings without changing them.
-+	 */
-+	uint32_t seconds;
-+} __ec_align4;
-+
-+struct ec_response_hibernation_delay {
-+	/*
-+	 * The current time in seconds in which the system has been in the G3
-+	 * state.  This value is reset if the EC transitions out of G3.
-+	 */
-+	uint32_t time_g3;
-+
-+	/*
-+	 * The current time remaining in seconds until the EC should hibernate.
-+	 * This value is also reset if the EC transitions out of G3.
-+	 */
-+	uint32_t time_remaining;
-+
-+	/*
-+	 * The current time in seconds that the EC should wait in G3 before
-+	 * hibernating.
-+	 */
-+	uint32_t hibernate_delay;
-+} __ec_align4;
-+
- /* Inform the EC when entering a sleep state */
- #define EC_CMD_HOST_SLEEP_EVENT 0x00A9
- 
-@@ -4052,7 +4086,9 @@ enum host_sleep_event {
- 	HOST_SLEEP_EVENT_S3_SUSPEND   = 1,
- 	HOST_SLEEP_EVENT_S3_RESUME    = 2,
- 	HOST_SLEEP_EVENT_S0IX_SUSPEND = 3,
--	HOST_SLEEP_EVENT_S0IX_RESUME  = 4
-+	HOST_SLEEP_EVENT_S0IX_RESUME  = 4,
-+	/* S3 suspend with additional enabled wake sources */
-+	HOST_SLEEP_EVENT_S3_WAKEABLE_SUSPEND = 5,
- };
- 
- struct ec_params_host_sleep_event {
-@@ -4116,6 +4152,36 @@ struct ec_response_host_sleep_event_v1 {
- 	};
+@@ -4243,6 +4243,79 @@ struct ec_response_battery_vendor_param {
+ 	uint32_t value;
  } __ec_align4;
  
 +/*****************************************************************************/
-+/* Device events */
-+#define EC_CMD_DEVICE_EVENT 0x00AA
++/*
++ * Smart Battery Firmware Update Commands
++ */
++#define EC_CMD_SB_FW_UPDATE 0x00B5
 +
-+enum ec_device_event {
-+	EC_DEVICE_EVENT_TRACKPAD,
-+	EC_DEVICE_EVENT_DSP,
-+	EC_DEVICE_EVENT_WIFI,
++enum ec_sb_fw_update_subcmd {
++	EC_SB_FW_UPDATE_PREPARE  = 0x0,
++	EC_SB_FW_UPDATE_INFO     = 0x1, /*query sb info */
++	EC_SB_FW_UPDATE_BEGIN    = 0x2, /*check if protected */
++	EC_SB_FW_UPDATE_WRITE    = 0x3, /*check if protected */
++	EC_SB_FW_UPDATE_END      = 0x4,
++	EC_SB_FW_UPDATE_STATUS   = 0x5,
++	EC_SB_FW_UPDATE_PROTECT  = 0x6,
++	EC_SB_FW_UPDATE_MAX      = 0x7,
 +};
 +
-+enum ec_device_event_param {
-+	/* Get and clear pending device events */
-+	EC_DEVICE_EVENT_PARAM_GET_CURRENT_EVENTS,
-+	/* Get device event mask */
-+	EC_DEVICE_EVENT_PARAM_GET_ENABLED_EVENTS,
-+	/* Set device event mask */
-+	EC_DEVICE_EVENT_PARAM_SET_ENABLED_EVENTS,
-+};
++#define SB_FW_UPDATE_CMD_WRITE_BLOCK_SIZE 32
++#define SB_FW_UPDATE_CMD_STATUS_SIZE 2
++#define SB_FW_UPDATE_CMD_INFO_SIZE 8
 +
-+#define EC_DEVICE_EVENT_MASK(event_code) BIT(event_code % 32)
-+
-+struct ec_params_device_event {
-+	uint32_t event_mask;
-+	uint8_t param;
-+} __ec_align_size1;
-+
-+struct ec_response_device_event {
-+	uint32_t event_mask;
++struct ec_sb_fw_update_header {
++	uint16_t subcmd;  /* enum ec_sb_fw_update_subcmd */
++	uint16_t fw_id;   /* firmware id */
 +} __ec_align4;
 +
++struct ec_params_sb_fw_update {
++	struct ec_sb_fw_update_header hdr;
++	union {
++		/* EC_SB_FW_UPDATE_PREPARE  = 0x0 */
++		/* EC_SB_FW_UPDATE_INFO     = 0x1 */
++		/* EC_SB_FW_UPDATE_BEGIN    = 0x2 */
++		/* EC_SB_FW_UPDATE_END      = 0x4 */
++		/* EC_SB_FW_UPDATE_STATUS   = 0x5 */
++		/* EC_SB_FW_UPDATE_PROTECT  = 0x6 */
++		/* Those have no args */
++
++		/* EC_SB_FW_UPDATE_WRITE    = 0x3 */
++		struct __ec_align4 {
++			uint8_t  data[SB_FW_UPDATE_CMD_WRITE_BLOCK_SIZE];
++		} write;
++	};
++} __ec_align4;
++
++struct ec_response_sb_fw_update {
++	union {
++		/* EC_SB_FW_UPDATE_INFO     = 0x1 */
++		struct __ec_align1 {
++			uint8_t data[SB_FW_UPDATE_CMD_INFO_SIZE];
++		} info;
++
++		/* EC_SB_FW_UPDATE_STATUS   = 0x5 */
++		struct __ec_align1 {
++			uint8_t data[SB_FW_UPDATE_CMD_STATUS_SIZE];
++		} status;
++	};
++} __ec_align1;
++
++/*
++ * Entering Verified Boot Mode Command
++ * Default mode is VBOOT_MODE_NORMAL if EC did not receive this command.
++ * Valid Modes are: normal, developer, and recovery.
++ */
++#define EC_CMD_ENTERING_MODE 0x00B6
++
++struct ec_params_entering_mode {
++	int vboot_mode;
++} __ec_align4;
++
++#define VBOOT_MODE_NORMAL    0
++#define VBOOT_MODE_DEVELOPER 1
++#define VBOOT_MODE_RECOVERY  2
++
  /*****************************************************************************/
- /* Smart battery pass-through */
- 
-@@ -4361,12 +4427,14 @@ enum ec_reboot_cmd {
- 	/* (command 3 was jump to RW-B) */
- 	EC_REBOOT_COLD = 4,          /* Cold-reboot */
- 	EC_REBOOT_DISABLE_JUMP = 5,  /* Disable jump until next reboot */
--	EC_REBOOT_HIBERNATE = 6      /* Hibernate EC */
-+	EC_REBOOT_HIBERNATE = 6,     /* Hibernate EC */
-+	EC_REBOOT_HIBERNATE_CLEAR_AP_OFF = 7, /* and clears AP_OFF flag */
- };
- 
- /* Flags for ec_params_reboot_ec.reboot_flags */
- #define EC_REBOOT_FLAG_RESERVED0      BIT(0)  /* Was recovery request */
- #define EC_REBOOT_FLAG_ON_AP_SHUTDOWN BIT(1)  /* Reboot after AP shutdown */
-+#define EC_REBOOT_FLAG_SWITCH_RW_SLOT BIT(2)  /* Switch RW slot */
- 
- struct ec_params_reboot_ec {
- 	uint8_t cmd;           /* enum ec_reboot_cmd */
+ /*
+  * HDMI CEC commands
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
