@@ -2,74 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5664A182F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 02:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B8618301
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 02:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfEIA6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 20:58:39 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:59227 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbfEIA6i (ORCPT
+        id S1726597AbfEIA7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 20:59:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34062 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfEIA7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 20:58:38 -0400
-Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x490w9KG001364;
-        Thu, 9 May 2019 09:58:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x490w9KG001364
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557363490;
-        bh=A0ah3OCkj+C/oYyV6jDmlhQW2a5VM8SUDJDCzq+gWyY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OoLkEMPfpOStVZh2DnAFwrv0o3LRz8rFvjKMyETx3vgP3vMCn0KpPCBCuVVJHuT5R
-         fYVrVGJQSk9tgrcV3tG4I2p0ndgbmppZu+FDBcfXhHI2cU42vUa+2lenJgg8FL55GH
-         737BPKEytBL/APVwR079DBJFW2bMp3cZQVdFFf8kD7gc2Y8Sv/JdbKGlrzZ265LEO5
-         tTfoa0W3S8QvAxGvthsCVQNsR8N+iWbA5EKGM48X43ZxxDxkUOE33O5a4g/J1hcRLH
-         ydbDUCkumhRgPelyN9EK9oA7vc7Zm3gq9kXby9ZuGnrH863Bo1SGx0pzJR+HRnAO8o
-         Dn2XVbe4ovsPw==
-X-Nifty-SrcIP: [126.125.154.139]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild: re-enable int-in-bool-context warning
-Date:   Thu,  9 May 2019 09:58:01 +0900
-Message-Id: <1557363481-27178-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 8 May 2019 20:59:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jF6l3iV1rXe+x0MwS+AXxE/3MQbA5vLmSrDtVx8hKJ0=; b=iDLjyMGHb2MtEiX7sNEsrIOc+
+        r555boyzgroaM/roefjfl/8sPXIlDAXxtafMFPJgts5KIWBA3q3sxMLL9Wjox7NuUoSN+lZsyGDWw
+        1YIQfXQ89Etqt/gh+FhXMlhdhbL9rncYRHCp1u5Ydd7sskuGKJOM6SqnvXr8Ix+x0A1cHoy/Pusmm
+        afAw4Qn3zKr+mSjjshNzlrS6rfxIYZK+kWmsANoEiID2eXPgmAt9+V8rVX6zZpa52fnCPoRfx1GZ/
+        Wu13zOk/d8d44/7sOxIazBgLErLk/FQfGqZzRDcPlEkhHnuFiQz1PmBOXDcuzYl28U3M+xDV4tosD
+        uSeh53laQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOXOb-0001bQ-J1; Thu, 09 May 2019 00:58:49 +0000
+Subject: Re: [PATCH v2 3/7] lib/hexdump.c: Optionally suppress lines of
+ repeated bytes
+To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     linux-fbdev@vger.kernel.org,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+        ath10k@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-fsdevel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Daniel Vetter <daniel@ffwll.ch>, netdev@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20190508070148.23130-1-alastair@au1.ibm.com>
+ <20190508070148.23130-4-alastair@au1.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dc093079-43a0-0a45-f5dd-88b20702fd93@infradead.org>
+Date:   Wed, 8 May 2019 17:58:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190508070148.23130-4-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This warning was disabled by commit bd664f6b3e37 ("disable new
-gcc-7.1.1 warnings for now") just because it was too noisy.
+On 5/8/19 12:01 AM, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> Some buffers may only be partially filled with useful data, while the rest
+> is padded (typically with 0x00 or 0xff).
+> 
+> This patch introduces a flag to allow the supression of lines of repeated
+> bytes, which are replaced with '** Skipped %u bytes of value 0x%x **'
+> 
+> An inline wrapper function is provided for backwards compatibility with
+> existing code, which maintains the original behaviour.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  include/linux/printk.h | 25 +++++++++---
+>  lib/hexdump.c          | 91 ++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 99 insertions(+), 17 deletions(-)
+> 
 
-Thanks to Arnd Bergmann, all warnings have been fixed. Now, we are
-ready to re-enable it.
+Hi,
+Did you do "make htmldocs" or something similar on this?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
+> diff --git a/lib/hexdump.c b/lib/hexdump.c
+> index 3943507bc0e9..d61a1e4f19fa 100644
+> --- a/lib/hexdump.c
+> +++ b/lib/hexdump.c
+> @@ -212,8 +212,44 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
+>  EXPORT_SYMBOL(hex_dump_to_buffer);
+>  
+>  #ifdef CONFIG_PRINTK
+> +
+> +/**
+> + * Check if a buffer contains only a single byte value
+> + * @buf: pointer to the buffer
+> + * @len: the size of the buffer in bytes
+> + * @val: outputs the value if if the bytes are identical
 
-Changes in v2:
-  - rebase
+Does this work without a function name?
+Documentation/doc-guide/kernel-doc.rst says the general format is:
 
- Makefile | 1 -
- 1 file changed, 1 deletion(-)
+  /**
+   * function_name() - Brief description of function.
+   * @arg1: Describe the first argument.
+   * @arg2: Describe the second argument.
+   *        One can provide multiple line descriptions
+   *        for arguments.
+   *
 
-diff --git a/Makefile b/Makefile
-index a61a95b..2896518 100644
---- a/Makefile
-+++ b/Makefile
-@@ -692,7 +692,6 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
- KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
--KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
- 
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+> + */
+
+>  /**
+> - * print_hex_dump - print a text hex dump to syslog for a binary blob of data
+> + * print_hex_dump_ext: dump a binary blob of data to syslog in hexadecimal
+
+Also not in the general documented format.
+
+>   * @level: kernel log level (e.g. KERN_DEBUG)
+>   * @prefix_str: string to prefix each line with;
+>   *  caller supplies trailing spaces for alignment if desired
+
+
 -- 
-2.7.4
-
+~Randy
