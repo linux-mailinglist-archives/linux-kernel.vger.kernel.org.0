@@ -2,99 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E4A818A44
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1A418A5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfEINFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 09:05:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58264 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfEINFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 09:05:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0BxG/P6nTaRHuqfrtLoIVS1BNNS5MjTMtFgzd0GUMd4=; b=BxSg29KQW/uKNfhjMWs5rtImU
-        8kmU1YHUsnPgLAdVsq7IajVexZeJhCQmXXFr4xSyw93bYdvLNKDtXaNRluD5dvJw6cLW8Bwcp0dgT
-        LxU2aHHRDS349X+b3z724lYmmmDfu8MQnJYG2Icn3+8YzFITQhpgbF+zVebP/wHIajnu6kaqY4qwG
-        5QChwJRn2PqG4xZlcjH1gpU8QXTCWBHwubaGzgMLDX4EiIV5TSe6sUrhdNCDBi/n/nDD+g0T2cfSC
-        Sij+nfh51Y9j9s/s4oS3COZ4ee/dxE2UNxG/Ixygrc7c8HkWIjOfomFA3j+X5IGFped/HqPYyET2X
-        EwxMimN9A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOijS-0003Ib-KB; Thu, 09 May 2019 13:05:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 28E9222158202; Thu,  9 May 2019 15:05:04 +0200 (CEST)
-Date:   Thu, 9 May 2019 15:05:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Petr Mladek <pmladek@suse.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        id S1726721AbfEINKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 09:10:21 -0400
+Received: from mga02.intel.com ([134.134.136.20]:37976 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726583AbfEINKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 09:10:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 May 2019 06:05:18 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga005.jf.intel.com with ESMTP; 09 May 2019 06:05:13 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hOijY-0006lB-3R; Thu, 09 May 2019 16:05:12 +0300
+Date:   Thu, 9 May 2019 16:05:12 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Michal Hocko <mhocko@suse.cz>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [Intel-gfx] [PATCH] RFC: console: hack up console_lock more v2
-Message-ID: <20190509130504.GW2623@hirez.programming.kicks-ass.net>
-References: <20190502141643.21080-1-daniel.vetter@ffwll.ch>
- <20190506074553.21464-1-daniel.vetter@ffwll.ch>
- <155739797736.28545.2942646931608459049@skylake-alporthouse-com>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, Russell Currey <ruscur@russell.cc>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Stephen Rothwell <sfr@ozlabs.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [PATCH] vsprintf: Do not break early boot with probing addresses
+Message-ID: <20190509130512.GS9224@smile.fi.intel.com>
+References: <20190509121923.8339-1-pmladek@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155739797736.28545.2942646931608459049@skylake-alporthouse-com>
+In-Reply-To: <20190509121923.8339-1-pmladek@suse.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 11:32:57AM +0100, Chris Wilson wrote:
-> Quoting Daniel Vetter (2019-05-06 08:45:53)
-> > +/**
-> > + * printk_safe_up - release the semaphore in console_unlock
-> > + * @sem: the semaphore to release
-> > + *
-> > + * Release the semaphore.  Unlike mutexes, up() may be called from any
-> > + * context and even by tasks which have never called down().
-> > + *
-> > + * NOTE: This is a special version of up() for console_unlock only. It is only
-> > + * safe if there are no killable, interruptible or timing out down() calls.
-> > + */
-> > +void printk_safe_up(struct semaphore *sem)
-> > +{
-> > +       unsigned long flags;
-> > +       struct semaphore_waiter *waiter = NULL;
-> > +
-> > +       raw_spin_lock_irqsave(&sem->lock, flags);
-> > +       if (likely(list_empty(&sem->wait_list))) {
-> > +               sem->count++;
-> > +       } else {
-> > +               waiter = list_first_entry(&sem->wait_list,
-> > +                                         struct semaphore_waiter, list);
-> > +               list_del(&waiter->list);
-> > +               waiter->up = true;
-> > +       }
-> > +       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > +
-> > +       if (waiter)
-> > +               wake_up_process(waiter->task);
+On Thu, May 09, 2019 at 02:19:23PM +0200, Petr Mladek wrote:
+> The commit 3e5903eb9cff70730 ("vsprintf: Prevent crash when dereferencing
+> invalid pointers") broke boot on several architectures. The common
+> pattern is that probe_kernel_read() is not working during early
+> boot because userspace access framework is not ready.
 > 
-> From comparing against __down_common() there's a risk here that as soon
-> as waiter->up == true, the waiter may complete and make the onstack
-> struct semaphore_waiter invalid. If you store waiter->task locally under
-> the spinlock that problem is resolved.
+> The check is only the best effort. Let's not rush with it during
+> the early boot.
 > 
-> Then there is the issue of an unprotected dereference of the task in
-> wake_up_process() -- I think you can wrap this function with
-> rcu_read_lock() to keep that safe, and wake_up_process() should be a
-> no-op if it races against process termination.
+> Details:
+> 
+> 1. Report on Power:
+> 
+> Kernel crashes very early during boot with with CONFIG_PPC_KUAP and
+> CONFIG_JUMP_LABEL_FEATURE_CHECK_DEBUG
+> 
+> The problem is the combination of some new code called via printk(),
+> check_pointer() which calls probe_kernel_read(). That then calls
+> allow_user_access() (PPC_KUAP) and that uses mmu_has_feature() too early
+> (before we've patched features). With the JUMP_LABEL debug enabled that
+> causes us to call printk() & dump_stack() and we end up recursing and
+> overflowing the stack.
+> 
+> Because it happens so early you don't get any output, just an apparently
+> dead system.
+> 
+> The stack trace (which you don't see) is something like:
+> 
+>   ...
+>   dump_stack+0xdc
+>   probe_kernel_read+0x1a4
+>   check_pointer+0x58
+>   string+0x3c
+>   vsnprintf+0x1bc
+>   vscnprintf+0x20
+>   printk_safe_log_store+0x7c
+>   printk+0x40
+>   dump_stack_print_info+0xbc
+>   dump_stack+0x8
+>   probe_kernel_read+0x1a4
+>   probe_kernel_read+0x19c
+>   check_pointer+0x58
+>   string+0x3c
+>   vsnprintf+0x1bc
+>   vscnprintf+0x20
+>   vprintk_store+0x6c
+>   vprintk_emit+0xec
+>   vprintk_func+0xd4
+>   printk+0x40
+>   cpufeatures_process_feature+0xc8
+>   scan_cpufeatures_subnodes+0x380
+>   of_scan_flat_dt_subnodes+0xb4
+>   dt_cpu_ftrs_scan_callback+0x158
+>   of_scan_flat_dt+0xf0
+>   dt_cpu_ftrs_scan+0x3c
+>   early_init_devtree+0x360
+>   early_setup+0x9c
+> 
+> 2. Report on s390:
+> 
+> vsnprintf invocations, are broken on s390. For example, the early boot
+> output now looks like this where the first (efault) should be
+> the linux_banner:
+> 
+> [    0.099985] (efault)
+> [    0.099985] setup: Linux is running as a z/VM guest operating system in 64-bit mode
+> [    0.100066] setup: The maximum memory size is 8192MB
+> [    0.100070] cma: Reserved 4 MiB at (efault)
+> [    0.100100] numa: NUMA mode: (efault)
+> 
+> The reason for this, is that the code assumes that
+> probe_kernel_address() works very early. This however is not true on
+> at least s390. Uaccess on KERNEL_DS works only after page tables have
+> been setup on s390, which happens with setup_arch()->paging_init().
+> 
+> Any probe_kernel_address() invocation before that will return -EFAULT.
+> 
 
-task_struct is not RCU protected, see task_rcu_dereference() for magic.
+It's seems as a good enough fix.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Though in all cases would be nice to distinguish error pointers as well.
+Something like
+
+if (IS_ERR(ptr))
+	return err_pointer_str(ptr);
+
+in check_pointer_msg().
+
+> Fixes: 3e5903eb9cff70730 ("vsprintf: Prevent crash when dereferencing invalid pointers")
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  lib/vsprintf.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 7b0a6140bfad..8b43a883be6b 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -640,8 +640,13 @@ static const char *check_pointer_msg(const void *ptr)
+>  	if (!ptr)
+>  		return "(null)";
+>  
+> -	if (probe_kernel_address(ptr, byte))
+> -		return "(efault)";
+> +	/* User space address handling is not ready during early boot. */
+> +	if (system_state <= SYSTEM_BOOTING) {
+> +		if ((unsigned long)ptr < PAGE_SIZE)
+> +			return "(efault)";
+> +	} else {
+> +		if (probe_kernel_address(ptr, byte))
+> +			return "(efault)";
+>  
+>  	return NULL;
+>  }
+> -- 
+> 2.16.4
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
