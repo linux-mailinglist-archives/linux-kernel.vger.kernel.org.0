@@ -2,157 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB83D19544
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC9E119552
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfEIWei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 18:34:38 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41484 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfEIWeh (ORCPT
+        id S1726784AbfEIWk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 18:40:59 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33999 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfEIWk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 18:34:37 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3BD88802A4; Fri, 10 May 2019 00:34:24 +0200 (CEST)
-Date:   Fri, 10 May 2019 00:34:37 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Drake <drake@endlessm.com>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 09/11] platform/x86: asus-wmi: Control RGB keyboard
- backlight
-Message-ID: <20190509223436.GB527@amd>
-References: <7acd57fe-604a-a96a-4ca2-a25bc88d6405@gmail.com>
- <c953b43b-6186-77e9-54b1-b1cd1d7d1eb6@gmail.com>
- <CAHp75Vf9uPG7_K0P26nHYCH0WB6LFX3wk8aJBpLWQ-r46kDw9w@mail.gmail.com>
- <20190508171229.GA22024@amd>
- <52e73640-9fbf-437b-537a-7b3dc167052f@gmail.com>
- <2f26dd9e-ada7-8e20-c810-a647854c338c@ti.com>
+        Thu, 9 May 2019 18:40:59 -0400
+Received: by mail-it1-f194.google.com with SMTP id p18so6107966itm.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 15:40:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+c2Z1tjGcCUP7qnZjAbhtnJOxApx0T1cMEm41uQaDmE=;
+        b=WXPgU5ADcyJlbRA5g99WKXjN12emhy7wvNhkVXj6LV+uUQ2g0bLmxf2jfXO2F4wu1X
+         GWnqbW6jVSPO8ccaxZVrWayTf97V8JS/XGyfLcknXAfPbIkM1xWZHQCTAjoLjza8PO+g
+         m5D+vKj+1IO9XWuBCkY1ruZ7RPWbvFG//v0sE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+c2Z1tjGcCUP7qnZjAbhtnJOxApx0T1cMEm41uQaDmE=;
+        b=DNUhuQE76MToWfO9ILY13ThKQ/RLoDVlwLbyghnrhnv4tuY88JT2xgd7qWEIlnad40
+         IFHGqjOc8uiM6R+/FqEVo5L2A41ATCE4gCD1M7NMz+IA0H3eQSFNO9atYk/pOHw/H7cO
+         gvdfrFbcVjcKRoW7rsRCHjUthwAkAUVbZW4fQik4xNfNUEZLtRzaOcm86g31YaJRsMLM
+         2wOCyus7eY8v9Az2Z4NTovBxRSZlxeB1Jx2vJT3cMuBLn1G7g5+YLHc4sqUl2HePGyuf
+         I4TGrRfskmBLnN6WWXbBZTThKKs285fn2C9BIZwRT2ed3W5l88IFxrd75okDOMVGToJ0
+         yWDA==
+X-Gm-Message-State: APjAAAUuczF2c1PqXBYL959aC/REsKGeWhwcDognsuKtaPaBbkhmrlwo
+        S6sDgVa01cx6Fwq3DpyZ6/DWWg==
+X-Google-Smtp-Source: APXvYqxMIWnH4z/8mfTvar+svk0lrRasK0Td8p6AI5iY6AsTpOwftDSabA89CDPcqRDna0Y8mne0pA==
+X-Received: by 2002:a24:3ce:: with SMTP id e197mr5240351ite.167.1557441658274;
+        Thu, 09 May 2019 15:40:58 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id j8sm1479790itk.0.2019.05.09.15.40.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 15:40:57 -0700 (PDT)
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.2-rc1
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        shuah <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, Shuah Khan <skhan@linuxfoundation.org>
+References: <9b434125-44b6-0e83-4f70-d1fd28752407@linuxfoundation.org>
+ <20190509222043.b4zn32kuohduzzzr@ast-mbp>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <dd983d42-d148-372d-3e57-b97c313d58b9@linuxfoundation.org>
+Date:   Thu, 9 May 2019 16:40:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
-Content-Disposition: inline
-In-Reply-To: <2f26dd9e-ada7-8e20-c810-a647854c338c@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190509222043.b4zn32kuohduzzzr@ast-mbp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/9/19 4:20 PM, Alexei Starovoitov wrote:
+> On Mon, May 06, 2019 at 10:56:56AM -0600, Shuah Khan wrote:
+>> Hi Linus,
+>>
+>> Please pull the following Kselftest update for Linux 5.2-rc1
+>>
+>> This Kselftest update for Linux 5.2-rc1 consists of
+>>
+>> - fixes to seccomp test, and kselftest framework
+>> - cleanups to remove duplicate header defines
+>> - fixes to efivarfs "make clean" target
+>> - cgroup cleanup path
+>> - Moving the IMA kexec_load selftest to selftests/kexec work from
+>>    Mimi Johar and Petr Vorel
+>> - A framework to kselftest for writing kernel test modules addition
+>>    from Tobin C. Harding
+>>
+>> diff is attached.
+>>
+>> thanks,
+>> -- Shuah
+>>
+>>
+>> ----------------------------------------------------------------
+>> The following changes since commit 15ade5d2e7775667cf191cf2f94327a4889f8b9d:
+>>
+>>    Linux 5.1-rc4 (2019-04-07 14:09:59 -1000)
+>>
+>> are available in the Git repository at:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+>> tags/linux-kselftest-5.2-rc1
+>>
+>> for you to fetch changes up to d917fb876f6eaeeea8a2b620d2a266ce26372f4d:
+>>
+>>    selftests: build and run gpio when output directory is the src dir
+>> (2019-04-22 17:02:26 -0600)
+>>
+>> ----------------------------------------------------------------
+>> linux-kselftest-5.2-rc1
+>>
+>> This Kselftest update for Linux 5.2-rc1 consists of
+>>
+>> - fixes to seccomp test, and kselftest framework
+>> - cleanups to remove duplicate header defines
+>> - fixes to efivarfs "make clean" target
+>> - cgroup cleanup path
+>> - Moving the IMA kexec_load selftest to selftests/kexec work from
+>>    Mimi Johar and Petr Vorel
+>> - A framework to kselftest for writing kernel test modules addition
+>>    from Tobin C. Harding
+>>
+>> ----------------------------------------------------------------
+>> Kees Cook (3):
+>>        selftests/seccomp: Handle namespace failures gracefully
+>>        selftests/harness: Add 30 second timeout per test
+>>        selftests/ipc: Fix msgque compiler warnings
+>>
+>> Mathieu Desnoyers (1):
+>>        rseq/selftests: Adapt number of threads to the number of detected cpus
+>>
+>> Mimi Zohar (9):
+>>        selftests/kexec: move the IMA kexec_load selftest to selftests/kexec
+>>        selftests/kexec: cleanup the kexec selftest
+>>        selftests/kexec: define a set of common functions
+>>        selftests/kexec: define common logging functions
+>>        selftests/kexec: define "require_root_privileges"
+>>        selftests/kexec: kexec_file_load syscall test
+>>        selftests/kexec: check kexec_load and kexec_file_load are enabled
+>>        selftests/kexec: make kexec_load test independent of IMA being enabled
+>>        selftests/kexec: update get_secureboot_mode
+>>
+>> Petr Vorel (1):
+>>        selftests/kexec: Add missing '=y' to config options
+>>
+>> Po-Hsu Lin (1):
+>>        selftests/efivarfs: clean up test files from test_create*()
+>>
+>> Roman Gushchin (1):
+>>        selftests: cgroup: fix cleanup path in test_memcg_subtree_control()
+>>
+>> Sabyasachi Gupta (4):
+>>        selftest/x86/mpx-dig.c: Remove duplicate header
+>>        selftest/timers: Remove duplicate header
+>>        selftest/rseq: Remove duplicate header
+>>        selftest/gpio: Remove duplicate header
+>>
+>> Shuah Khan (2):
+>>        selftests: fix headers_install circular dependency
+> 
+> Shuah,
+> 
+> the commit 8ce72dc32578 ("selftests: fix headers_install circular dependency")
+> broke our build/test workflow, since it added:
+>    ifneq ($(KBUILD_OUTPUT),)
+>            OUTPUT := $(KBUILD_OUTPUT)
+>    else
+> 
+> which means that all of selftests/bpf artifacts are now going into
+> main build directory cluttering it with all sorts of .o, generated files
+> and executables.
+> The end result is humans and scripts can no longer find tests.
+> 
+> For now I hacked it as:
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 5979fdc4f36c..caecec7aebde 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -6,12 +6,8 @@ ifeq (0,$(MAKELEVEL))
+>       ifneq ($(O),)
+>          OUTPUT := $(O)
+>       else
+> -       ifneq ($(KBUILD_OUTPUT),)
+> -               OUTPUT := $(KBUILD_OUTPUT)
+> -       else
+> -               OUTPUT := $(shell pwd)
+> -               DEFAULT_INSTALL_HDR_PATH := 1
+> -       endif
+> +       OUTPUT := $(shell pwd)
+> +       DEFAULT_INSTALL_HDR_PATH := 1
+>       endif
+>   endif
+> 
+> bpf developers are doing "cd tools/testing/selftests/bpf; make; ./test_verifier; ..."
+> while KBUILD_OUTPUT is also set.
+Sorry about that. I tested several use-cases, and missed this one. :(
+This patch was in next for a while before I sent the pull request.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I don't quite get this 'circular dependency' issue that your commit suppose to address
+> but please fix it differently, so bpf developer's workflow is restored and buildbots work again.
+> People and scripts depend on it.
+> It's even described in Documentation/bpf/bpf_devel_QA.rst
+> 
 
-Hi!
+You won't see the circular dependency with your use-case. I will try
+to get the fix in.
 
-> >> Yes, please. We have common interface for LED drivers; this needs to
-> >> use it.
-> >=20
-> > That is indeed a better option and I did in fact considered this first =
-and
-> > even did a test implementation. The discoveries were:
-> > 1. The WMI methods are write-only and only written all at once in a
-> > transaction manner (also invoking solely first RGB-interface method has=
- no
-> > effect until some other keyboard backlight method is called).
+thanks,
+-- Shuah
 
-Write-only is not a problem, right? Nor should be transaction. Just
-cache the values in kernel.
 
-> > 2. In addition to RGB there are several control values, which switch
-> > effects, speed and enable or disable the backlight under specific
-> > conditions or switch whether it is set temporarily or permanently (not =
-that
-> > these are critical functionalities, but for the sake of
-> > completeness).
 
-Yep, lets ignore that for now.
-
-> > 3. The EC is really slow
-> > # time bash -c "echo 1 > /sys/devices/platform/faustus/kbbl_set"
-> >=20
-> > real	0m0,691s
-> > user	0m0,000s
-> > sys	0m0,691s
-> >=20
-> > (please ignore the sysfs-path there, it's essentially the same code run=
-ning
-> > as in this patch). It is consistently same for both temporary and perma=
-nent
-> > configuration. Writing after every change would take about (6+)x of tha=
-t.
-> > Not that it's that unbearable though as it is not likely to be
-> > done often.
-
-Yup, this is quite ugly.
-
-What about simply ignoring changes as they happen, and then setting
-RGB channels when nothing changes for 10msec?
-
-> > I was not quite happy with that implementation so I opted for writing s=
-ort
-> > of sysfs wrapper instead that would allow same sort of transactions as
-> > provided by BIOS. I agree that it's non-standard solution.
-> >=20
-> > If I understood correctly, the typical current RGB led_class devices fr=
-om
-> > the Linux tree currently provide channels as separate LEDs. There are a=
-lso
-> > blink / pattern options present, I guess one could misuse them for sett=
-ing
-> > effects and speed. So one could make 3 devices for RGB + 3 for awake,
-> > sleep, boot modes + 1 for setting effect / speed.
-
-Take a look at "pattern" trigger. That should give you effect/speed
-options. .. for single channel.
-
-> > I'd guess the end solution might be also either something like combinat=
-ion
-> > of both approaches (RGB leds + separate sysfs interface) or some extens=
-ion
-> > of the led_class device interface. Dropping support of the non-essential
-> > features for the sake of uniformity of ABI would also be an option to
-> > consider (exposing just three RGB LEDs with brightness only), not happy=
- one
-> > though.
-> >=20
-> > In any case this looks like it might need some additional research,
-> > discussion, development, and a pair of iterations so I tend to separate
-> > this patch from the series and post it extra after the others are throu=
-gh
-> > to avoid dragging 10+ patches around.
-
-Separate patch certainly makes sense.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzUqvwACgkQMOfwapXb+vK90gCfa5VCwbhBeQ0RlMOZuDkqJBma
-raAAnj+RO123XbofMN8InUVu/ER8DTMR
-=EKgO
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
