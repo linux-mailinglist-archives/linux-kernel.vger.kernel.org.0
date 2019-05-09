@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB93819450
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2510F1945A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:16:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfEIVOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:14:34 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36686 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727318AbfEIVO3 (ORCPT
+        id S1727562AbfEIVPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:15:46 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42277 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbfEIVOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:29 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v80so1963768pfa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:29 -0700 (PDT)
+        Thu, 9 May 2019 17:14:31 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x15so1719175pln.9
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BA6nxer66GBmENOs0aI/8rHE+lNpwyhVsQAtDrFHwnE=;
-        b=Oq5Zt5pXXBhBa5qfIIuRxBfr9w0fqGToXsZdvP9UGx8Qw53++zEtPTjuGRO4NY6L5Y
-         UfQI9mCyOhL1U1IdVWgDksFl7c8EIvXA0JN3qbpXdz4zy+JndfokR2RiSDrbMmGwgPmF
-         UN4y3t4Hj084/MJx0DvjNmpHz0zxiA3oAqfN0=
+        bh=LdBQmcIdU0Rz/x8vcPlOves92mcg6yTCi+x1gfv5Pak=;
+        b=Bfd/Ekf2p/8ipmAOdUnSq+3U+hBLAtjV69d+L0A5aiqMeWrRbYXuREhAR3zxvuNnKY
+         XW4VfFk8dw/iEMnIEvtF82oVHKPtTcEuwAElg84/cOriyZyt4kGa8XtDzC4v/Y/0v92R
+         6kxrU3rQ+Ife1RHQCo35bkUNvd8mbc1xMJxnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BA6nxer66GBmENOs0aI/8rHE+lNpwyhVsQAtDrFHwnE=;
-        b=muojVumSqOY8iqRP5yXaUx5PSkBs3hUEX/qKF+1nqftPl8dvQh0dXNvQRdB4doU7Cm
-         xJLt9jjZZ7juZPvPjC642AiEVcntj+P7f6jNJ+uL7Fo8qStn7JORTRkt5vN8Hzvmau7d
-         PBQ5w7Q0DwRCR/qoIWi6z+Tu6codiQIgwe822vnJrzYWtsrfNJZqvl24v2RXnEpzWYw4
-         ceV8mDVP8uJaSUZQn3nQ/j3/2vgde2bcmoSjioX57YmGuUs6pwaKaYDU1l5oBOxyF1gc
-         iiWYmJ9UORmCfbgb8UvXX3H0S/8iBP7JmPi6RW7ANeyzd6wRzLrGfQN+OOltJrXQzSD0
-         PUVQ==
-X-Gm-Message-State: APjAAAUuna0yr6wEbkmYR130WDkifsH3SlQGKlgJurNBc3v5FL1VYtuc
-        oSwFbrG3fBN6nTXRqXE8dX63QQ==
-X-Google-Smtp-Source: APXvYqwcQs+/urXHKHgb1CDEjmYyDjXoe7r92gFjo7lVXhhKeh1fbrPg27K7X+1AhPRVEleKUhO5ow==
-X-Received: by 2002:a63:9dc8:: with SMTP id i191mr8490866pgd.91.1557436468948;
-        Thu, 09 May 2019 14:14:28 -0700 (PDT)
+        bh=LdBQmcIdU0Rz/x8vcPlOves92mcg6yTCi+x1gfv5Pak=;
+        b=VdESadbplFrg+f7OBdOid0cvm6udCcezRcuVtpG2Dn/5S1cAwnMZ0q6wLJV0AagVj/
+         U7I71C5xrI9q+S8mLaG26n6y+aKQrmBWryc1JlihHjkaYOFetTuI4MVwomc/RI53qcDf
+         sQg43iuM+Kud67mCr46fCcsuMw+7/QjWfdn2JTu/JZTwho6liOquuPp5xqAqYLG6Jqi3
+         JGlS6gRl5cybsfh925rnGnfAk46lSwY80HPYiL9tszeNE2QG3CbD9ibXHkwxJjjOIQG/
+         Lhhu0MMy0/l6dV2qHp1Z1BxnEGMEGEo8rkAlVFQe68nN9GBmQJ93smWq6WmJM8mqSoKy
+         /Ifw==
+X-Gm-Message-State: APjAAAWrth7X9YLw8dwqat8q9v4Kuf5SSWm+t2JFfLWnHQxo5O8C1BBM
+        xVapzsbas26HS6xSfHn0pfTLuw==
+X-Google-Smtp-Source: APXvYqxbJXdzA8oxT2Bn+g8DBr4t1WTxDT7A8NncOrsx+sD74nqvfLbZIIXeJW3uwslBJ+FXKtQ/AQ==
+X-Received: by 2002:a17:902:7247:: with SMTP id c7mr8290208pll.65.1557436470337;
+        Thu, 09 May 2019 14:14:30 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id y17sm4703860pfb.161.2019.05.09.14.14.27
+        by smtp.gmail.com with ESMTPSA id h189sm4414601pfc.125.2019.05.09.14.14.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:28 -0700 (PDT)
+        Thu, 09 May 2019 14:14:29 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 17/30] mfd: cros_ec: Add fingerprint API
-Date:   Thu,  9 May 2019 14:13:40 -0700
-Message-Id: <20190509211353.213194-18-gwendal@chromium.org>
+Subject: [PATCH v3 18/30] mfd: cros_ec: Fix temperature API
+Date:   Thu,  9 May 2019 14:13:41 -0700
+Message-Id: <20190509211353.213194-19-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,59 +62,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for fingerprint sensors managed by embedded controller.
+Improve API to retrieve temperature information.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 34 ++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ include/linux/mfd/cros_ec_commands.h | 64 +++++++++++++++++++++++++---
+ 1 file changed, 57 insertions(+), 7 deletions(-)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 51fe65170ce6..d5d07a9957ec 100644
+index d5d07a9957ec..9a84aad7475a 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -3339,6 +3339,40 @@ struct ec_response_get_next_event_v1 {
- #define EC_MKBP_TABLET_MODE	1
- #define EC_MKBP_BASE_ATTACHED	2
+@@ -2945,9 +2945,28 @@ enum ec_temp_thresholds {
+ /*
+  * Thermal configuration for one temperature sensor. Temps are in degrees K.
+  * Zero values will be silently ignored by the thermal task.
++ *
++ * Set 'temp_host' value allows thermal task to trigger some event with 1 degree
++ * hysteresis.
++ * For example,
++ *	temp_host[EC_TEMP_THRESH_HIGH] = 300 K
++ *	temp_host_release[EC_TEMP_THRESH_HIGH] = 0 K
++ * EC will throttle ap when temperature >= 301 K, and release throttling when
++ * temperature <= 299 K.
++ *
++ * Set 'temp_host_release' value allows thermal task has a custom hysteresis.
++ * For example,
++ *	temp_host[EC_TEMP_THRESH_HIGH] = 300 K
++ *	temp_host_release[EC_TEMP_THRESH_HIGH] = 295 K
++ * EC will throttle ap when temperature >= 301 K, and release throttling when
++ * temperature <= 294 K.
++ *
++ * Note that this structure is a sub-structure of
++ * ec_params_thermal_set_threshold_v1, but maintains its alignment there.
+  */
+ struct ec_thermal_config {
+ 	uint32_t temp_host[EC_TEMP_THRESH_COUNT]; /* levels of hotness */
++	uint32_t temp_host_release[EC_TEMP_THRESH_COUNT]; /* release levels */
+ 	uint32_t temp_fan_off;		/* no active cooling needed */
+ 	uint32_t temp_fan_max;		/* max active cooling needed */
+ } __ec_align4;
+@@ -2973,32 +2992,63 @@ struct ec_params_thermal_set_threshold_v1 {
+ /* Toggle automatic fan control */
+ #define EC_CMD_THERMAL_AUTO_FAN_CTRL 0x0052
  
-+/* Fingerprint events in 'fp_events' for EC_MKBP_EVENT_FINGERPRINT */
-+#define EC_MKBP_FP_RAW_EVENT(fp_events) ((fp_events) & 0x00FFFFFF)
-+#define EC_MKBP_FP_ERRCODE(fp_events)   ((fp_events) & 0x0000000F)
-+#define EC_MKBP_FP_ENROLL_PROGRESS_OFFSET 4
-+#define EC_MKBP_FP_ENROLL_PROGRESS(fpe) (((fpe) & 0x00000FF0) \
-+					 >> EC_MKBP_FP_ENROLL_PROGRESS_OFFSET)
-+#define EC_MKBP_FP_MATCH_IDX_OFFSET 12
-+#define EC_MKBP_FP_MATCH_IDX_MASK 0x0000F000
-+#define EC_MKBP_FP_MATCH_IDX(fpe) (((fpe) & EC_MKBP_FP_MATCH_IDX_MASK) \
-+					 >> EC_MKBP_FP_MATCH_IDX_OFFSET)
-+#define EC_MKBP_FP_ENROLL               BIT(27)
-+#define EC_MKBP_FP_MATCH                BIT(28)
-+#define EC_MKBP_FP_FINGER_DOWN          BIT(29)
-+#define EC_MKBP_FP_FINGER_UP            BIT(30)
-+#define EC_MKBP_FP_IMAGE_READY          BIT(31)
-+/* code given by EC_MKBP_FP_ERRCODE() when EC_MKBP_FP_ENROLL is set */
-+#define EC_MKBP_FP_ERR_ENROLL_OK               0
-+#define EC_MKBP_FP_ERR_ENROLL_LOW_QUALITY      1
-+#define EC_MKBP_FP_ERR_ENROLL_IMMOBILE         2
-+#define EC_MKBP_FP_ERR_ENROLL_LOW_COVERAGE     3
-+#define EC_MKBP_FP_ERR_ENROLL_INTERNAL         5
-+/* Can be used to detect if image was usable for enrollment or not. */
-+#define EC_MKBP_FP_ERR_ENROLL_PROBLEM_MASK     1
-+/* code given by EC_MKBP_FP_ERRCODE() when EC_MKBP_FP_MATCH is set */
-+#define EC_MKBP_FP_ERR_MATCH_NO                0
-+#define EC_MKBP_FP_ERR_MATCH_NO_INTERNAL       6
-+#define EC_MKBP_FP_ERR_MATCH_NO_TEMPLATES      7
-+#define EC_MKBP_FP_ERR_MATCH_NO_LOW_QUALITY    2
-+#define EC_MKBP_FP_ERR_MATCH_NO_LOW_COVERAGE   4
-+#define EC_MKBP_FP_ERR_MATCH_YES               1
-+#define EC_MKBP_FP_ERR_MATCH_YES_UPDATED       3
-+#define EC_MKBP_FP_ERR_MATCH_YES_UPDATE_FAILED 5
+-/* Get TMP006 calibration data */
++/* Version 1 of input params */
++struct ec_params_auto_fan_ctrl_v1 {
++	uint8_t fan_idx;
++} __ec_align1;
++
++/* Get/Set TMP006 calibration data */
+ #define EC_CMD_TMP006_GET_CALIBRATION 0x0053
++#define EC_CMD_TMP006_SET_CALIBRATION 0x0054
++
++/*
++ * The original TMP006 calibration only needed four params, but now we need
++ * more. Since the algorithm is nothing but magic numbers anyway, we'll leave
++ * the params opaque. The v1 "get" response will include the algorithm number
++ * and how many params it requires. That way we can change the EC code without
++ * needing to update this file. We can also use a different algorithm on each
++ * sensor.
++ */
+ 
++/* This is the same struct for both v0 and v1. */
+ struct ec_params_tmp006_get_calibration {
+ 	uint8_t index;
+ } __ec_align1;
+ 
+-struct ec_response_tmp006_get_calibration {
++/* Version 0 */
++struct ec_response_tmp006_get_calibration_v0 {
+ 	float s0;
+ 	float b0;
+ 	float b1;
+ 	float b2;
+ } __ec_align4;
+ 
+-/* Set TMP006 calibration data */
+-#define EC_CMD_TMP006_SET_CALIBRATION 0x0054
+-
+-struct ec_params_tmp006_set_calibration {
++struct ec_params_tmp006_set_calibration_v0 {
+ 	uint8_t index;
+-	uint8_t reserved[3];  /* Reserved; set 0 */
++	uint8_t reserved[3];
+ 	float s0;
+ 	float b0;
+ 	float b1;
+ 	float b2;
+ } __ec_align4;
+ 
++/* Version 1 */
++struct ec_response_tmp006_get_calibration_v1 {
++	uint8_t algorithm;
++	uint8_t num_params;
++	uint8_t reserved[2];
++	float val[0];
++} __ec_align4;
++
++struct ec_params_tmp006_set_calibration_v1 {
++	uint8_t index;
++	uint8_t algorithm;
++	uint8_t num_params;
++	uint8_t reserved;
++	float val[0];
++} __ec_align4;
 +
 +
- /*****************************************************************************/
- /* Temperature sensor commands */
+ /* Read raw TMP006 data */
+ #define EC_CMD_TMP006_GET_RAW 0x0055
  
 -- 
 2.21.0.1020.gf2820cf01a-goog
