@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7672F190FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C9A019095
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfEISva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:51:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45222 "EHLO mail.kernel.org"
+        id S1727585AbfEISqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:46:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728569AbfEISv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:51:26 -0400
+        id S1727572AbfEISqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:46:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1E142183E;
-        Thu,  9 May 2019 18:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40B0921848;
+        Thu,  9 May 2019 18:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427886;
-        bh=oyTjSecDC36hOUXR6U4y+GsvDs0eI8Nz8IgZeszoFVE=;
+        s=default; t=1557427581;
+        bh=b5xDG6mZ/aI0h7Sx6grFfqOyC+SdTpnFXfOMx54HGqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bFeKjP8kHScmtBjEFZpb5rps2+YQTsWEs+++LBvRq1gx1lz/02GxjU+BjDiHXYFXn
-         jLiNC0UmMakjf11SwI2KWZBuj5LT2C/vS8LkSyLya29Co1fd60dthiIFYZbTcTpNTy
-         iaEfZ7TupiIrE90EF+kdhq8Ngozg/s505lSypbc4=
+        b=02Eo+mQwWibtTnPp1H2tlr87czblMx64Xk0Gob/rS0BIKDeupKviFacCjEyLO6akE
+         rYXNbq1csRGUCn5j67DWeU9UfmACwVKmmAUsoad49f6XPOrMEHNsRJgviA2NEV/JUO
+         0/tZYhrKT6Hs+fnY/LHI3BnowHA3+TO4hdSn8mVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
+        stable@vger.kernel.org, JaeChul Lee <jcsing.lee@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 41/95] ASoC: rockchip: pdm: fix regmap_ops hang issue
+Subject: [PATCH 4.14 09/42] ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate
 Date:   Thu,  9 May 2019 20:41:58 +0200
-Message-Id: <20190509181312.254338219@linuxfoundation.org>
+Message-Id: <20190509181254.491618500@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
+References: <20190509181252.616018683@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c85064435fe7a216ec0f0238ef2b8f7cd850a450 ]
+[ Upstream commit 2b13bee3884926cba22061efa75bd315e871de24 ]
 
-This is because set_fmt ops maybe called when PD is off,
-and in such case, regmap_ops will lead system hang.
-enale PD before doing regmap_ops.
+After commit fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate
+handling") the audio root clock frequency is configured improperly for
+44100 sample rate. Due to clock rate rounding it's 20070401 Hz instead
+of 22579000 Hz. This results in a too low value of the PSR clock divider
+in the CPU DAI driver and too fast actual sample rate for fs=44100. E.g.
+1 kHz tone has actual 1780 Hz frequency (1 kHz * 20070401/22579000 * 2).
 
-Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+Fix this by increasing the correction passed to clk_set_rate() to take
+into account inaccuracy of the EPLL frequency properly.
+
+Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handling")
+Reported-by: JaeChul Lee <jcsing.lee@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/rockchip/rockchip_pdm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/samsung/odroid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_pdm.c b/sound/soc/rockchip/rockchip_pdm.c
-index 400e29edb1c9c..8a2e3bbce3a16 100644
---- a/sound/soc/rockchip/rockchip_pdm.c
-+++ b/sound/soc/rockchip/rockchip_pdm.c
-@@ -208,7 +208,9 @@ static int rockchip_pdm_set_fmt(struct snd_soc_dai *cpu_dai,
- 		return -EINVAL;
- 	}
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index 06a31a9585a05..32c9e197ca957 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -66,11 +66,11 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
  
-+	pm_runtime_get_sync(cpu_dai->dev);
- 	regmap_update_bits(pdm->regmap, PDM_CLK_CTRL, mask, val);
-+	pm_runtime_put(cpu_dai->dev);
+ 	/*
+-	 *  We add 1 to the rclk_freq value in order to avoid too low clock
++	 *  We add 2 to the rclk_freq value in order to avoid too low clock
+ 	 *  frequency values due to the EPLL output frequency not being exact
+ 	 *  multiple of the audio sampling rate.
+ 	 */
+-	rclk_freq = params_rate(params) * rfs + 1;
++	rclk_freq = params_rate(params) * rfs + 2;
  
- 	return 0;
- }
+ 	ret = clk_set_rate(priv->sclk_i2s, rclk_freq);
+ 	if (ret < 0)
 -- 
 2.20.1
 
