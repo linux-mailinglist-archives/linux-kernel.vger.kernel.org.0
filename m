@@ -2,193 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1BE18F9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E37218FB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfEIRth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:49:37 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:40866 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfEIRtg (ORCPT
+        id S1726773AbfEIRzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:55:09 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45058 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfEIRzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:49:36 -0400
-Received: by mail-vs1-f65.google.com with SMTP id c24so1964754vsp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 10:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EH7jEXZyZKvAtUeW6cCFcLL4FqSd/A3iJEXYx8OljIU=;
-        b=IC1oQNAgZo3s3zKgaeYt0VrxPg0DP7D9ABi+Y0c/SX6/j+DU3inX+z0u3eMq4e/XgD
-         s1HPa+Hqh91Idp8CDkOOeHEZqhCgOBisL+LpQdYBpELhBVaXQtQ4nXmXEh08UxjOvESZ
-         Z0TTApcW4S41vxjPV+EMwqg8y+k40csfLr2tlONgvTZImLLTzldbHGOYXDGLgKUdHyoO
-         dGD9PpkLS0o3aq3iXCq7eK5QFjXhREv81rTip4/m4zEfl6AdRIJhS5elKSQiz+yWWX1U
-         JszBEROnzPL0rgKTu0GIfWsSfuMFkYI3F7qCZQzHJbq8qwQoUVQ4PRc/RwI7bpMxRg77
-         oh2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EH7jEXZyZKvAtUeW6cCFcLL4FqSd/A3iJEXYx8OljIU=;
-        b=GVV83unpKRTHaJzs2VNVGYT2VTC/7YKHryECTXT4Ev33CDxQ0lPt08nbXDw/obi6Jf
-         vRD8+N6BnJImFSQamQkl+rCr9FTz2GrSflOLRjrdGrefKwCjlcBeLjRZ2yYnwtg9bzWf
-         eqEbhTXDKGIVqJxxdDYwIyUB2IK0ljE+2hOLUHD+w8cHxh533qVlUXvJEG1AQN3iqCLz
-         1Eg/o9m+CaOmLl0tSvQXR9FfE1xvFWlmqlwGfJkAWvhZQghkpiBK2iM4mbfcIygQ7ukR
-         K9Kq8bJsMRjG2YeaWPbyC+0Z0exgGOMrS2OkbBxvMw+tHgr8XX6W2HTkJ0zA+16VPX5t
-         1Vqg==
-X-Gm-Message-State: APjAAAXQ0dL9ChHklgIoc1Scft8GYTp6rdf9iO+/r+UEz+40b0RAusxK
-        50f4UYe+HkWZA4zW+TXIu+re3OghepDpvAK0NMNafA==
-X-Google-Smtp-Source: APXvYqzk8uFHBlgCSkOhIBS0yK9rrT6iZ4LP/5820HUukPinkRV2mrldiC+qqlUOq9IXMLlrVSZEtFfD7KiLoS332ic=
-X-Received: by 2002:a67:ad03:: with SMTP id t3mr2771101vsl.159.1557424174870;
- Thu, 09 May 2019 10:49:34 -0700 (PDT)
+        Thu, 9 May 2019 13:55:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49Hs1p3180463;
+        Thu, 9 May 2019 17:54:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=0cA+7TWrNg9bHBZMP9UFrAJLhzvcT2LzSfZo3KAUyJI=;
+ b=E7oT+8E/OzXlxrLrPwHFjVENhLH5dQ3xofj7DfjTiTDZIOxgcycY3MKHaCTF8U9rRUj1
+ CnnmzbzKDrpLhf50TDDHKmJaLxe3w/HTHl9y4XngDAzyz6TJIOsfV8/H6Ib0sp4lSVZ/
+ uE91j6apVRp+OPc1aboJ/0czdPL9Tn4mDfC7YGFJIRnOh3lC9rFwr1Gd0IIYRVqllsQS
+ oGSGQ26JwKhPkuQJfYlvaV+JPyZ3itVnSZvAL7GJuD1/7bshNeguA1QoK+jhvQIFPL4Q
+ AiGMHBu2WS8pHSOcb+eMfMgq3Hg0H2rGGmRDNFYPCNy1IZijbP1cVX4p1Ud5jAmaIW0p aQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2s94bgck8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 17:54:02 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49Hs0lI191807;
+        Thu, 9 May 2019 17:54:02 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2sagyvd06x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 17:54:02 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x49HrxSg005414;
+        Thu, 9 May 2019 17:53:59 GMT
+Received: from [10.132.91.213] (/10.132.91.213)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 09 May 2019 10:53:59 -0700
+Subject: Re: [RFC PATCH v2 11/17] sched: Basic tracking of matching tasks
+To:     Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1556025155.git.vpillai@digitalocean.com>
+ <2364f2b65bf50826d881c84d7634b6565dfee527.1556025155.git.vpillai@digitalocean.com>
+ <20190429061516.GA9796@aaronlu>
+ <6dfc392f-e24b-e641-2f7d-f336a90415fa@linux.intel.com>
+ <777b7674-4811-dac4-17df-29bd028d6b26@linux.intel.com>
+ <CAERHkrvU0nay-cG9equdOBejOZ5Ffdxo+67ZRp9q0L9BQkcAtQ@mail.gmail.com>
+ <eb9abb34-d946-c63c-750b-8f52ed842670@oracle.com>
+ <28fb6854-2772-5d29-087a-6a0cf6afe626@oracle.com>
+ <CAERHkrsavsBoEOR5Eq-nm6ADarS0zTi5Mu-T7TO6JoSUi7TRfQ@mail.gmail.com>
+ <8098b70b-2095-91ea-d4ad-9181829066c7@oracle.com>
+ <CAERHkrvKfvrSOKoJ5StYWENm9domgx1OkPyeKHacP9AGrgf8cg@mail.gmail.com>
+ <7671d3f0-ca07-7260-a855-473ab58d1c30@oracle.com>
+ <CAERHkrtw3jH1eWn52r+L75k84SeYuvw12A5cbmofiNjoJFhEsw@mail.gmail.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <b2b1b1f6-9790-73c7-8566-031ec28606a7@oracle.com>
+Date:   Thu, 9 May 2019 10:50:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190506193115.20909-1-niklas.cassel@linaro.org>
- <CAP245DXLHqU3tv5cii=Z1G4J5m=Emy7yiHP=zSTpY6GX02NKcg@mail.gmail.com> <20190508145600.GA26843@centauri>
-In-Reply-To: <20190508145600.GA26843@centauri>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Thu, 9 May 2019 23:19:23 +0530
-Message-ID: <CAHLCerN8L4np0WAY4hTjTnPXFtTK6EH0BXWLXzB-NiRaAnvcDA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add PSCI cpuidle support
-To:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAERHkrtw3jH1eWn52r+L75k84SeYuvw12A5cbmofiNjoJFhEsw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9252 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905090102
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9252 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905090103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Adding Lorenzo and Sudeep)
 
-On Wed, May 8, 2019 at 8:26 PM Niklas Cassel <niklas.cassel@linaro.org> wrote:
+>> select_task_rq_* seems to be unchanged. So the search logic to find a cpu
+>> to enqueue when a task becomes runnable is same as before and doesn't do
+>> any kind of cookie matching.
+> Okay, that's true in task wakeup path, and also load_balance seems to pull task
+> without checking cookie too. But my system is not over loaded when I tested this
+> patch, so there is none or only one task in rq and on the rq's rb
+> tree, so this patch
+> does not make a difference.
+I had same hypothesis for my tests.
 >
-> On Wed, May 08, 2019 at 02:48:19AM +0530, Amit Kucheria wrote:
-> > On Tue, May 7, 2019 at 1:01 AM Niklas Cassel <niklas.cassel@linaro.org> wrote:
-> > >
-> > > Add device bindings for CPUs to suspend using PSCI as the enable-method.
-> > >
-> > > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcs404.dtsi | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > > index ffedf9640af7..f9db9f3ee10c 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> > > @@ -31,6 +31,7 @@
-> > >                         reg = <0x100>;
-> > >                         enable-method = "psci";
-> > >                         next-level-cache = <&L2_0>;
-> > > +                       cpu-idle-states = <&CPU_PC>;
-> > >                 };
-> > >
-> > >                 CPU1: cpu@101 {
-> > > @@ -39,6 +40,7 @@
-> > >                         reg = <0x101>;
-> > >                         enable-method = "psci";
-> > >                         next-level-cache = <&L2_0>;
-> > > +                       cpu-idle-states = <&CPU_PC>;
-> > >                 };
-> > >
-> > >                 CPU2: cpu@102 {
-> > > @@ -47,6 +49,7 @@
-> > >                         reg = <0x102>;
-> > >                         enable-method = "psci";
-> > >                         next-level-cache = <&L2_0>;
-> > > +                       cpu-idle-states = <&CPU_PC>;
-> > >                 };
-> > >
-> > >                 CPU3: cpu@103 {
-> > > @@ -55,12 +58,24 @@
-> > >                         reg = <0x103>;
-> > >                         enable-method = "psci";
-> > >                         next-level-cache = <&L2_0>;
-> > > +                       cpu-idle-states = <&CPU_PC>;
-> > >                 };
-> > >
-> > >                 L2_0: l2-cache {
-> > >                         compatible = "cache";
-> > >                         cache-level = <2>;
-> > >                 };
-> > > +
-> > > +               idle-states {
-> >
-> > entry-method="psci" property goes here. I have a patch fixing it for 410c ;-)
-> >
-> > I don't think the psci_cpuidle_ops will even get called without this.
+> The question is, should we do cookie checking for task selecting CPU and load
+> balance CPU pulling task?
+The basic issue is keeping the CPUs busy. In case of overloaded system,
+the trivial new idle balancer should be able to find a matching task
+in case of forced idle. More problematic is the lower load scenario when
+there aren't any matching task to be found but there are runnable tasks of
+other groups. Also wake up code path tries to balance threads across cores
+(select_idle_core) first which is opposite of what core scheduling wants.
+I will re-run my tests with select_idle_core disabled, but the issue is
+on x86 Intel systems (my test rig) the CPU ids are interleaved across cores
+so even select_idle_cpu will balance across cores first. May be others have
+some better ideas?
 >
-> Hello Amit,
->
-> I added debug prints in psci_cpu_suspend_enter() and arm_cpuidle_suspend()
-> when verifying this patch, and psci_cpu_suspend_enter() is indeed called,
-> with the correct psci suspend parameter.
->
-> The output from:
-> grep "" /sys/bus/cpu/devices/cpu0/cpuidle/state?/*
-> also looks sane.
->
-> However, if 'entry-method="psci"' is required according to the DT binding,
-> perhaps you can send a 2/2 series that fixes both this patch and msm8916 ?
-
-Last time I discussed this with Lorenzo and Sudeep (on IRC), I pointed
-out that entry-method="psci" isn't checked for in code anywhere. Let's
-get their view on this for posterity.
-
-What does entry-method="psci" in the idle-states node achieve that
-enable-method="psci" in the cpu node doesn't achieve? (Note: enable-
-vs. entry-).
-
-The enable-method property is the one that sets up the
-psci_cpuidle_ops callbacks through the CPUIDLE_METHOD_OF_DECLARE
-macro.
-
-IOW, if we deprecated the entry-method property, everything would
-still work, wouldn't it?
-Do we expect to support PSCI platforms that might have a different
-entry-method for idle states?
-Should I whip up a patch removing entry-method? Since we don't check
-for it today, it won't break the old DTs either.
-
-Regards,
-Amit
-
-
-> > Did you see any changes in consumption with this patch? I was trying
-> > to measure that before sending this out.
->
-> I don't know of any way to measure the power consumption on this board,
-> so no, I haven't been able to verify that the firmware actually does
-> the right thing here.
->
->
-> Kind regards,
-> Niklas
->
-> >
-> > > +                       CPU_PC: pc {
-> > > +                               compatible = "arm,idle-state";
-> > > +                               arm,psci-suspend-param = <0x40000003>;
-> > > +                               entry-latency-us = <125>;
-> > > +                               exit-latency-us = <180>;
-> > > +                               min-residency-us = <595>;
-> > > +                               local-timer-stop;
-> > > +                       };
-> > > +               };
-> > >         };
-> > >
-> > >         firmware {
-> > > --
-> > > 2.21.0
-> > >
+> Thanks,
+> -Aubrey
