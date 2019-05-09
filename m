@@ -2,197 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7543E18326
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AC3182E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 02:45:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEIBPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 21:15:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41408 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfEIBPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 21:15:20 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z3so281395pgp.8;
-        Wed, 08 May 2019 18:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1+Jfl9iXviaxHbmbhnDjk1eQnpFz6l/2Nut9ww82zvo=;
-        b=a3KgZzLZ0y84UNUIY8RS+nYDRzFkAivRDtTwVjhJ1vYp+v2Z6HVSzmnnRowbVUedfI
-         93zPM5T0iF4iJCU1PddnaPwpC/nrCINNvHKs9PmQ0ayrLgURqYfh7EH67znRVZxTURN5
-         VsMO/ROT48Ly/mYey3OTt/dpawpdAk7DUuJetc8MAAQuinmU4P2PjwyMam4VRQGyIo8C
-         F5An8gjuExmDUN5kMRWiGJsQOqa4gz/Zgv9YpcjdE85z0otG8d1GXhf4e05Hdx2o8s1c
-         hn9kGYBDYT3L0e4JtQg2AhBurTKMtE9VNzBNe+yPm2LTyV/rg3Wp/BZ+nH8mhD2rC6M3
-         7+6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1+Jfl9iXviaxHbmbhnDjk1eQnpFz6l/2Nut9ww82zvo=;
-        b=a086WzWOF9zlpKfGBY4LodiG2Cqf1r78lIcu1kGog3yz0L8IXZX3AiX0Bm3K05j7UU
-         zFmvbNfY35LhML5kZ7dS0fRrhsbyrASjkP6idMqmIxkj8p+AZcj7fnrv2JqgM6i6r+A+
-         N6nKV0nuElLWf/e1MjnFkJYLwuAxJi++XY/wDHK654ADK4oQWqiN3aowMniqL7Q0KR2i
-         PCIhm5A8fEHp0Vcj/0r0ZumSDnO0d9OqH7nTiUjIvTuPEm+mkULak+uD3GkxtLL9/DQ2
-         RWZI+r6CyMa6Nq6Ra1ZcVFrKbGSEDg5OAsbcUTr2sMOotGJRRqmz615xO+V+DHzumOtc
-         ew+g==
-X-Gm-Message-State: APjAAAVnUsL4IZX+D6Com+KFV+QDYMijxJK67QglVIaqRDH8l8n3vztP
-        KBgRmvUYpzcEje71+1MWSUfPf+n1
-X-Google-Smtp-Source: APXvYqzW2wEIzqNsRgYl9IE5EX5P/24Mi1edBj4NYy1YPo+96Z3/rjpt+DtwN4pC4yu/pBUKvsKvyA==
-X-Received: by 2002:a65:628b:: with SMTP id f11mr1432751pgv.95.1557362619650;
-        Wed, 08 May 2019 17:43:39 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 63sm543120pfu.95.2019.05.08.17.43.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 17:43:38 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
-Date:   Wed, 8 May 2019 17:43:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726281AbfEIAoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 20:44:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:52175 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725778AbfEIAoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 20:44:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 44zvjq2vPlz9s9T;
+        Thu,  9 May 2019 10:44:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557362656;
+        bh=E5PK3FIJAaUYXh/Qems45knj53ul5dnBkP64mctbQQ4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CYo9Ys7u/h0sJJozCmzQi15g8eHz58nxiX5HVyq2KKgMP5Uazvuhmq0eMYxFcS+0Z
+         GD8Heu35p8fn4mpKa7DXK7Qr/NArW4uECoX2o+LdS9Pwivui3xBLNzvFSpa68D6jRE
+         tgm8gQGMsFPwv6Yclv6ILZ/X0nR1EJ3X4B4/ip1AC2J2TCX4ol0s85YlkvkNotq2Uh
+         v01gdop08KLGpJFH/bkt9gl0kfsFCxB/FRAWj1rZ8vb/8GQGzv9bH8HIlis27yzjoR
+         WvkkqO3iJ76nfbcT1jAV3jKhhplmW81rWuP6i5YxJhjC8kA7HPhHI28mLQc+p8et/2
+         8Vm2KVaAazuQQ==
+Date:   Thu, 9 May 2019 10:44:09 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Kitt <steve@sk2.org>, Ingo Molnar <mingo@kernel.org>,
+        Changbin Du <changbin.du@gmail.com>
+Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
+Message-ID: <20190509104409.68446da2@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190507080119.GB28121@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/y.FCpf7A_lHx=q1IALCGru4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/7/19 1:01 AM, Greg KH wrote:
-> On Mon, May 06, 2019 at 08:14:12PM -0700, Frank Rowand wrote:
->> On 5/1/19 4:01 PM, Brendan Higgins wrote:
->>> ## TLDR
->>>
->>> I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
->>> 5.2.
->>>
->>> Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
->>> we would merge through your tree when the time came? Am I remembering
->>> correctly?
->>>
->>> ## Background
->>>
->>> This patch set proposes KUnit, a lightweight unit testing and mocking
->>> framework for the Linux kernel.
->>>
->>> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
->>> it does not require installing the kernel on a test machine or in a VM
->>> and does not require tests to be written in userspace running on a host
->>> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
->>> can run several dozen tests in under a second. Currently, the entire
->>> KUnit test suite for KUnit runs in under a second from the initial
->>> invocation (build time excluded).
->>>
->>> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
->>> Googletest/Googlemock for C++. KUnit provides facilities for defining
->>> unit test cases, grouping related test cases into test suites, providing
->>> common infrastructure for running tests, mocking, spying, and much more.
->>
->> As a result of the emails replying to this patch thread, I am now
->> starting to look at kselftest.  My level of understanding is based
->> on some slide presentations, an LWN article, https://kselftest.wiki.kernel.org/
->> and a _tiny_ bit of looking at kselftest code.
->>
->> tl;dr; I don't really understand kselftest yet.
->>
->>
->> (1) why KUnit exists
->>
->>> ## What's so special about unit testing?
->>>
->>> A unit test is supposed to test a single unit of code in isolation,
->>> hence the name. There should be no dependencies outside the control of
->>> the test; this means no external dependencies, which makes tests orders
->>> of magnitudes faster. Likewise, since there are no external dependencies,
->>> there are no hoops to jump through to run the tests. Additionally, this
->>> makes unit tests deterministic: a failing unit test always indicates a
->>> problem. Finally, because unit tests necessarily have finer granularity,
->>> they are able to test all code paths easily solving the classic problem
->>> of difficulty in exercising error handling code.
->>
->> (2) KUnit is not meant to replace kselftest
->>
->>> ## Is KUnit trying to replace other testing frameworks for the kernel?
->>>
->>> No. Most existing tests for the Linux kernel are end-to-end tests, which
->>> have their place. A well tested system has lots of unit tests, a
->>> reasonable number of integration tests, and some end-to-end tests. KUnit
->>> is just trying to address the unit test space which is currently not
->>> being addressed.
->>
->> My understanding is that the intent of KUnit is to avoid booting a kernel on
->> real hardware or in a virtual machine.  That seems to be a matter of semantics
->> to me because isn't invoking a UML Linux just running the Linux kernel in
->> a different form of virtualization?
->>
->> So I do not understand why KUnit is an improvement over kselftest.
->>
->> It seems to me that KUnit is just another piece of infrastructure that I
->> am going to have to be familiar with as a kernel developer.  More overhead,
->> more information to stuff into my tiny little brain.
->>
->> I would guess that some developers will focus on just one of the two test
->> environments (and some will focus on both), splitting the development
->> resources instead of pooling them on a common infrastructure.
->>
->> What am I missing?
-> 
-> kselftest provides no in-kernel framework for testing kernel code
-> specifically.  That should be what kunit provides, an "easy" way to
-> write in-kernel tests for things.
+--Sig_/y.FCpf7A_lHx=q1IALCGru4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kselftest provides a mechanism for in-kernel tests via modules.  For
-example, see:
+Hi Jon,
 
-  tools/testing/selftests/vm/run_vmtests invokes:
-    tools/testing/selftests/vm/test_vmalloc.sh
-      loads module:
-        test_vmalloc
-        (which is built from lib/test_vmalloc.c if CONFIG_TEST_VMALLOC)
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-A very quick and dirty search (likely to miss some tests) finds modules:
+  Documentation/x86/x86_64/mm.txt
 
-  test_bitmap
-  test_bpf
-  test_firmware
-  test_printf
-  test_static_key_base
-  test_static_keys
-  test_user_copy
-  test_vmalloc
+between commit:
 
--Frank
+  89502a019790 ("x86/mm: Fix the 56-bit addresses memory map in Documentati=
+on/x86/x86_64/mm.txt")
 
-> 
-> Brendan, did I get it right?
-> 
-> thanks,
-> 
-> greg k-h
-> .
-> 
+from Linus' tree and commit:
 
+  b88679d2f2b9 ("Documentation: x86: convert x86_64/mm.txt to reST")
+
+from the jc_docs tree.
+
+I fixed it up (I deleted the file and added teh following patch) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 9 May 2019 10:39:31 +1000
+Subject: [PATCH] Documentation: x86: update for "x86/mm: Fix the 56-bit
+ addresses memory map in Documentation/x86/x86_64/mm.txt"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ Documentation/x86/x86_64/mm.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/x86/x86_64/mm.rst b/Documentation/x86/x86_64/mm.=
+rst
+index 52020577b8de..267fc4808945 100644
+--- a/Documentation/x86/x86_64/mm.rst
++++ b/Documentation/x86/x86_64/mm.rst
+@@ -78,7 +78,7 @@ Complete virtual memory map with 5-level page tables
+ .. note::
+=20
+  - With 56-bit addresses, user-space memory gets expanded by a factor of 5=
+12x,
+-   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PT st=
+arting
++   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PB st=
+arting
+    offset and many of the regions expand to support the much larger physic=
+al
+    memory supported.
+=20
+@@ -91,7 +91,7 @@ Complete virtual memory map with 5-level page tables
+    0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space=
+ virtual memory, different per mm
+   __________________|____________|__________________|_________|___________=
+________________________________________________
+                     |            |                  |         |
+-   0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, =
+still almost 64 bits wide hole of non-canonical
++   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, =
+still almost 64 bits wide hole of non-canonical
+                     |            |                  |         |     virtua=
+l memory addresses up to the -64 PB
+                     |            |                  |         |     starti=
+ng offset of kernel mappings.
+   __________________|____________|__________________|_________|___________=
+________________________________________________
+@@ -107,7 +107,7 @@ Complete virtual memory map with 5-level page tables
+    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused=
+ hole
+    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual me=
+mory map (vmemmap_base)
+    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused=
+ hole
+-   ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shad=
+ow memory
++   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
+ow memory
+   __________________|____________|__________________|_________|___________=
+_________________________________________________
+                                                               |
+                                                               | Identical =
+layout to the 47-bit one from here on:
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/y.FCpf7A_lHx=q1IALCGru4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTd9kACgkQAVBC80lX
+0GxfGAf7BBWJrE0RI4QacHN00po1z2E42QcpgQ+VqkgLIyMxjjU/CD+TUfalLoLR
+gsOH1/U5jhxsltyf4V04CGoBCGHMK3557doSJDL9b8MGXLgtT4mAsPgT0twQ10TA
+teYdpHvgdJNimsQCuuCc08Xj7cdGCQk9yQ4aOvQ1D6MjW9GtNkjSdJoSwthQlgtx
+mvoeJc08tAi6lfz3Ggv+4S5/PsMjuVIOIrbqC97GNmjovHVRHg2eZYAgCbfaEbfU
+9E5zknJHxT4alxlYql5SZd6hiP8WrLsuniHkqXhZC/1L17moV/y+ZfT9lDGfGCZi
+Jixvn+LIsR4PSX2z4nVUCaixqRmN4w==
+=MxAi
+-----END PGP SIGNATURE-----
+
+--Sig_/y.FCpf7A_lHx=q1IALCGru4--
