@@ -2,89 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227E118B3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B10418B4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfEIOJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:09:02 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:26127 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfEIOJC (ORCPT
+        id S1726835AbfEIONS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:13:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46918 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726653AbfEIONK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:09:02 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x49E8mVK014119;
-        Thu, 9 May 2019 23:08:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x49E8mVK014119
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557410929;
-        bh=EZMLary+S+9G6cLchLp//JUrbW4OA+W27VKESK3gpQQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mOhCkhFl5O8yiIT+wwl0Y92WkVEr496DrkVp96FpOjHU+bVqIEhGzEBJAKz477626
-         REEq0wRshE0LNDOq+e40XhyHP5Uxu9TUZT2fDHSawEHhyh9F6yKNe1QsEMZg8se4Fg
-         8hq+gaxSNRblDwzAzbLI6rCfFaWB+0kxbOrahHkKkz3TF8WAVO6YlyYCigEfD/rtXU
-         dRLfwPj80JvcmojwnWptihjUPX3e6p8LuQ08PHBV4IZSktNPShrJ6PSqvSsjjHcWrh
-         QNmGn6WJh/SNI3JByG7726vOALdFvnWosyvoaZVl/cmZoWyeeEXA0SqltXLocLdD5y
-         Ey2mL/VmTjJQA==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id o10so1467280vsp.12;
-        Thu, 09 May 2019 07:08:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAVHDx3AEvOARZwSKvJ9KmQN5iX0YgnWn93ah/3RCY0b9BCK0xmE
-        MCYJNR+mURXSaGJDC5O6HPUFCxJ3SkhEX75MmHw=
-X-Google-Smtp-Source: APXvYqyXqKJ3SsM3Ps8XtfCp7GyYivlSpdHI1xek9RndBNDO1WT3kBOSIoE8oM8e7mGqFya2uRNXk1RdUg629T6kvyw=
-X-Received: by 2002:a67:f109:: with SMTP id n9mr2198293vsk.181.1557410927513;
- Thu, 09 May 2019 07:08:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <1557146820-13059-1-git-send-email-krzk@kernel.org>
-In-Reply-To: <1557146820-13059-1-git-send-email-krzk@kernel.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 9 May 2019 23:08:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATFKHmgi+7LktGJg9FRJr3BoZb=r+OdPE4rf=q1WE0j3g@mail.gmail.com>
-Message-ID: <CAK7LNATFKHmgi+7LktGJg9FRJr3BoZb=r+OdPE4rf=q1WE0j3g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: kbuild: Add pattern for scripts/*vmlinux*
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 9 May 2019 10:13:10 -0400
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hOjnI-000121-Ek; Thu, 09 May 2019 15:13:08 +0100
+Received: from ben by deadeye with local (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hOjnI-0006Lo-8Y; Thu, 09 May 2019 15:13:08 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
+        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
+Date:   Thu, 09 May 2019 15:08:16 +0100
+Message-ID: <lsq.1557410896.171359878@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 00/10] 3.16.67-rc1 review
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 6, 2019 at 9:47 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> scripts/link-vmlinux.sh is part of kbuild so extend the pattern to match
-> any vmlinux related scripts.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This is the start of the stable review cycle for the 3.16.67 release.
+There are 10 patches in this series, which will be posted as responses
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Applied to linux-kbuild.
+Responses should be made by Sat May 11 14:08:16 UTC 2019.
+Anything received after that time might be too late.
 
-Thanks.
+All the patches have also been committed to the linux-3.16.y-rc branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-stable-rc.git .
+A shortlog and diffstat can be found below.
 
+Ben.
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c61c49dd3643..aa0a61c7736b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8523,6 +8523,7 @@ F:        scripts/Kbuild*
->  F:     scripts/Makefile*
->  F:     scripts/basic/
->  F:     scripts/mk*
-> +F:     scripts/*vmlinux*
->  F:     scripts/mod/
->  F:     scripts/package/
->
-> --
-> 2.7.4
->
+-------------
 
+Amit Klein (1):
+      inet: update the IP ID generation algorithm to higher standards.
+         [355b98553789b646ed97ad801a619ff898471b92]
+
+Arend Van Spriel (1):
+      brcmfmac: add length checks in scheduled scan result handler
+         [4835f37e3bafc138f8bfa3cbed2920dd56fed283]
+
+Ben Hutchings (3):
+      Revert "brcmfmac: assure SSID length from firmware is limited"
+         [not upstream; reverts incorrect backport]
+      timer/debug: Change /proc/timer_stats from 0644 to 0600
+         [not upstream; code was removed upstream]
+      vxlan: Fix big-endian declaration of VNI
+         [54bfd872bf16d40b61bd0cd9b769b2fef67dd272]
+
+David Herrmann (1):
+      fork: record start_time late
+         [7b55851367136b1efd84d98fea81ba57a98304cf]
+
+Eric Dumazet (1):
+      ipv4: fix a race in update_or_create_fnhe()
+         [caa415270c732505240bb60171c44a7838c555e8]
+
+Joerg Roedel (1):
+      KVM: VMX: Fix x2apic check in  vmx_msr_bitmap_mode()
+         [not upstream; fixes incorrect backport]
+
+Matteo Croce (1):
+      percpu: stop printing kernel addresses
+         [00206a69ee32f03e6f40837684dcbe475ea02266]
+
+Nick Krause (1):
+      spi: omap-100k: Remove unused definitions
+         [9f5b8b4f56dd194fd33021810636879036d2acdd]
+
+ Makefile                                              |  4 ++--
+ arch/x86/kvm/vmx.c                                    |  4 +++-
+ drivers/net/vxlan.c                                   |  2 +-
+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 16 +++++++++++-----
+ drivers/spi/spi-omap-100k.c                           |  4 ----
+ include/net/ip_fib.h                                  |  2 +-
+ kernel/fork.c                                         | 15 ++++++++++++---
+ kernel/time/timer_stats.c                             |  2 +-
+ mm/percpu.c                                           |  8 ++++----
+ net/ipv4/fib_semantics.c                              |  8 +++++---
+ net/ipv4/route.c                                      | 10 ++++++----
+ net/ipv6/ip6_output.c                                 |  3 +++
+ 12 files changed, 49 insertions(+), 29 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+Ben Hutchings
+Any sufficiently advanced bug is indistinguishable from a feature.
+
