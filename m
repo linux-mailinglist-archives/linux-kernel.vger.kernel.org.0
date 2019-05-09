@@ -2,187 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4552E18AF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AA018B05
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfEINrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 09:47:37 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:51592 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726087AbfEINrh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 09:47:37 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49DhibE006545;
-        Thu, 9 May 2019 06:47:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=ohBojUMaUhvn01/pKXZleZDJ6DsKSzIYXAyGvc2CfLY=;
- b=jumJcAckPPjoupJ6yp+p1s4hvzsGCkXCuPFHkeoltwE5dtiSbsLc1OyGtEEJBbnSo1JF
- Gn4abMEGsVHcLtOtZAURYrko43Di9njwkhmTfn9w9UzTrDIx9XKfFOXTn8OP68Gqcv2k
- pjfievoCWiRsfLQJdlV3v8PxpkBwlcr4jlY= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sca9w9us8-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 09 May 2019 06:47:25 -0700
-Received: from ash-exhub202.TheFacebook.com (2620:10d:c0a8:83::6) by
- ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 9 May 2019 06:47:23 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 9 May 2019 06:47:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ohBojUMaUhvn01/pKXZleZDJ6DsKSzIYXAyGvc2CfLY=;
- b=OuRyXcdPTwF+j1sB3cdYK+DiAiwDdYR2+p0JvkcxcOzNlh60EBm7rH57OLPcPtNOo2SZ4/WgkHH3O8l2LxiiHRdwWutXuXl1ZNtMb63dy5xCrLfnSC529objHWIpYyup68tXD33fuqkn9CLy8GWE7EiP+QUzbVmeJp1dpLJODpM=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1839.namprd15.prod.outlook.com (10.174.255.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.11; Thu, 9 May 2019 13:47:22 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::85b5:614:bc49:8a15]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::85b5:614:bc49:8a15%11]) with mapi id 15.20.1856.012; Thu, 9 May 2019
- 13:47:22 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: Re: [PATCH v2] perf: allow non-privileged uprobe for user processes
-Thread-Topic: [PATCH v2] perf: allow non-privileged uprobe for user processes
-Thread-Index: AQHVBPAjOV4IrrhQe0KNd0XfOUkTh6Zi0ZEA
-Date:   Thu, 9 May 2019 13:47:21 +0000
-Message-ID: <00FF6475-45B9-49B6-B434-A5F7BD884A87@fb.com>
-References: <20190507161545.788381-1-songliubraving@fb.com>
-In-Reply-To: <20190507161545.788381-1-songliubraving@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.8)
-x-originating-ip: [2620:10d:c090:180::fb1a]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a3150842-acd7-471c-d2d4-08d6d484dc8a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MWHPR15MB1839;
-x-ms-traffictypediagnostic: MWHPR15MB1839:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MWHPR15MB1839C6CAD87D49B2CC2FB6B4B3330@MWHPR15MB1839.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 003245E729
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(346002)(376002)(199004)(189003)(8676002)(6506007)(53546011)(14454004)(81166006)(81156014)(6436002)(6116002)(102836004)(2616005)(305945005)(11346002)(478600001)(68736007)(99286004)(82746002)(8936002)(71190400001)(71200400001)(486006)(966005)(476003)(83716004)(50226002)(76176011)(446003)(33656002)(25786009)(36756003)(6512007)(53936002)(86362001)(229853002)(5024004)(54906003)(6306002)(7736002)(6246003)(5660300002)(316002)(110136005)(76116006)(66476007)(66556008)(64756008)(66446008)(73956011)(66946007)(186003)(4326008)(256004)(6486002)(57306001)(6636002)(46003)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1839;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: j2XAzzPPa7pnNEelvvUDTQUhkuCpdOMa/tx9BksKAHA4PI/XkM1KuTmdhJG2Fclr6oXcWiKplUFoHqtQS8da1wfipj+tJBDOjzdiznk1EbdkIXi/E1jJFRp16Iqi2eQELh+v1eUc9Eqe2uDa/ES1oRGpm/8aypEZhkP6DMQIJ8PCFtpcuC00cUPoMTMUm1BXhZCefJMQZGzqsw3JaxRkU7nDYh8lDyvjqp13K8dczAnyw8acpb+cn8zP22Blw6+MWHreZVVxLajv0puGAthdtIOOfUWHNMCSzkJoe3mF7J226QIo+TU83nm5IVDyAEKv4A2c5nFkyQzRgNKZaRe3dJPZIKyGw1xxcWZVk7rhA1ex6vtVHCmk+HESd/4EouYfoAfYtC4bunINjx+dot1qpwsTxfgWo9+uyam8CTfSiTo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B09B18B2F2CBB746BAB7E492316B2459@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726686AbfEINyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 09:54:49 -0400
+Received: from mga11.intel.com ([192.55.52.93]:28319 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726192AbfEINyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 09:54:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 May 2019 06:54:48 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga001.fm.intel.com with ESMTP; 09 May 2019 06:54:49 -0700
+Date:   Thu, 9 May 2019 07:49:17 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     Maxim Levitsky <mlevitsk@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Fam Zheng <fam@euphon.net>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jens Axboe <axboe@fb.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Amnon Ilan <ailan@redhat.com>, John Ferlan <jferlan@redhat.com>
+Subject: Re: [PATCH v2 00/10] RFC: NVME MDEV
+Message-ID: <20190509134917.GC8365@localhost.localdomain>
+References: <20190502114801.23116-1-mlevitsk@redhat.com>
+ <20190503121838.GA21041@lst.de>
+ <e8f6981863bdbba89adcba1c430083e68546ac1a.camel@redhat.com>
+ <20190509091255.GB15331@stefanha-x1.localdomain>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3150842-acd7-471c-d2d4-08d6d484dc8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 13:47:21.8099
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1839
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905090083
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190509091255.GB15331@stefanha-x1.localdomain>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,=20
+On Thu, May 09, 2019 at 02:12:55AM -0700, Stefan Hajnoczi wrote:
+> On Mon, May 06, 2019 at 12:04:06PM +0300, Maxim Levitsky wrote:
+> > On top of that, it is expected that newer hardware will support the PASID based
+> > device subdivision, which will allow us to _directly_ pass through the
+> > submission queues of the device and _force_ us to use the NVME protocol for the
+> > frontend.
+> 
+> I don't understand the PASID argument.  The data path will be 100%
+> passthrough and this driver won't be necessary.
 
-> On May 7, 2019, at 9:15 AM, Song Liu <songliubraving@fb.com> wrote:
->=20
-> Currently, non-privileged user could only use uprobe with
->=20
->    kernel.perf_event_paranoid =3D -1
->=20
-> However, setting perf_event_paranoid to -1 leaks other users' processes t=
-o
-> non-privileged uprobes.
->=20
-> To introduce proper permission control of uprobes, we are building the
-> following system:
->  A daemon with CAP_SYS_ADMIN is in charge to create uprobes via tracefs;
->  Users asks the daemon to create uprobes;
->  Then user can attach uprobe only to processes owned by the user.
->=20
-> This patch allows non-privileged user to attach uprobe to processes owned
-> by the user.
->=20
-> The following example shows how to use uprobe with non-privileged user.
-> This is based on Brendan's blog post [1]
->=20
-> 1. Create uprobe with root:
->  sudo perf probe -x 'readline%return +0($retval):string'
->=20
-> 2. Then non-root user can use the uprobe as:
->  perf record -vvv -e probe_bash:readline__return -p <pid> sleep 20
->  perf script
->=20
-> [1] http://www.brendangregg.com/blog/2015-06-28/linux-ftrace-uprobe.html
->=20
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> ---
-> kernel/events/core.c        | 4 ++--
-> kernel/trace/trace_uprobe.c | 2 +-
-> 2 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index abbd4b3b96c2..3005c80f621d 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8532,9 +8532,9 @@ static int perf_tp_event_match(struct perf_event *e=
-vent,
-> 	if (event->hw.state & PERF_HES_STOPPED)
-> 		return 0;
-> 	/*
-> -	 * All tracepoints are from kernel-space.
-> +	 * If exclude_kernel, only trace user-space tracepoints (uprobes)
-> 	 */
-> -	if (event->attr.exclude_kernel)
-> +	if (event->attr.exclude_kernel && !user_mode(regs))
-> 		return 0;
->=20
-> 	if (!perf_tp_filter_match(event, data))
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index be78d99ee6bc..bfd3040b4cfb 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -1304,7 +1304,7 @@ static inline void init_trace_event_call(struct tra=
-ce_uprobe *tu,
-> 	call->event.funcs =3D &uprobe_funcs;
-> 	call->class->define_fields =3D uprobe_event_define_fields;
->=20
-> -	call->flags =3D TRACE_EVENT_FL_UPROBE;
-> +	call->flags =3D TRACE_EVENT_FL_UPROBE | TRACE_EVENT_FL_CAP_ANY;
-> 	call->class->reg =3D trace_uprobe_register;
-> 	call->data =3D tu;
-> }
-> --=20
-> 2.17.1
->=20
-
-Could you please share your feedback on this version?
-
-Thanks,
-Song
-
+We still need a non-passthrough component to handle slow path,
+non-doorbell controller registers and admin queue. That doesn't
+necessarily need to be a kernel driver, though.
