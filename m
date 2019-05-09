@@ -2,80 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E95E418CF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4D118CE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:23:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfEIPam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 11:30:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42548 "EHLO mx1.suse.de"
+        id S1726764AbfEIPXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 11:23:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46436 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726187AbfEIPal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 11:30:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 75D39ACE3;
-        Thu,  9 May 2019 15:30:40 +0000 (UTC)
-Subject: Re: [PATCH] mptsas: fix undefined behaviour of a shift of an int by
- more than 31 places
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190504164010.24937-1-colin.king@canonical.com>
- <1557027274.2821.2.camel@HansenPartnership.com>
- <de7e3aaf-0155-5007-c228-510f0d0de428@canonical.com>
- <1557325468.3196.2.camel@HansenPartnership.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <9b4c84b5-31eb-6068-57c2-80ededc21b43@suse.de>
-Date:   Thu, 9 May 2019 17:30:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726187AbfEIPXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 11:23:24 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B6E4FAADCA029062E2BF;
+        Thu,  9 May 2019 23:23:22 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 9 May 2019 23:23:14 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Yana Esina <yana.esina@aquantia.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] net: aquantia: fix undefined devm_hwmon_device_register_with_info reference
+Date:   Thu, 9 May 2019 23:32:35 +0800
+Message-ID: <20190509153235.103441-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1557325468.3196.2.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/19 4:24 PM, James Bottomley wrote:
-> On Wed, 2019-05-08 at 14:07 +0100, Colin Ian King wrote:
->> On 05/05/2019 04:34, James Bottomley wrote:
->>> On Sat, 2019-05-04 at 17:40 +0100, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Currently the shift of int value 1 by more than 31 places can
->>>> result in undefined behaviour. Fix this by making the 1 a ULL
->>>> value before the shift operation.
->>>
->>> Fusion SAS is pretty ancient.  I thought the largest one ever
->>> produced had four phys, so how did you produce the overflow?
->>
->> This was an issue found by static analysis with Coverity; so I guess
->> won't happen in the wild, in which case the patch could be ignored.
-> 
-> The point I was more making is that if we thought this could ever
-> happen in practice, we'd need more error handling than simply this:
-> we'd be setting the phy_bitmap to zero which would be every bit as bad
-> as some random illegal value.
-> 
-Thing is, mptsas is used as the default emulation in VMWare, and that 
-does allow you to do some pretty weird configurations (I've found myself 
-fixing a bug with SATA hotplug on mptsas once ...).
-So I wouldn't discard this issue out of hand.
+drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.o: In function `aq_drvinfo_init':
+aq_drvinfo.c:(.text+0xe8): undefined reference to `devm_hwmon_device_register_with_info'
 
-Cheers,
+Fix it by using #if IS_REACHABLE(CONFIG_HWMON).
 
-Hannes
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.c b/drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.c
+index f5a92b2a5cd6..adad6a7acabe 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_drvinfo.c
+@@ -13,6 +13,7 @@
+ 
+ #include "aq_drvinfo.h"
+ 
++#if IS_REACHABLE(CONFIG_HWMON)
+ static int aq_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+ 			 u32 attr, int channel, long *value)
+ {
+@@ -123,3 +124,7 @@ int aq_drvinfo_init(struct net_device *ndev)
+ 
+ 	return err;
+ }
++
++#else
++int aq_drvinfo_init(struct net_device *ndev) { return 0; }
++#endif
 -- 
-Dr. Hannes Reinecke            Teamlead Storage & Networking
-hare@suse.de                              +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+2.20.1
+
