@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 454261924E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB3C19125
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbfEITGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:06:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
+        id S1728903AbfEISxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:53:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727248AbfEISq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:46:56 -0400
+        id S1728897AbfEISx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:53:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5670F2183E;
-        Thu,  9 May 2019 18:46:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76321217F9;
+        Thu,  9 May 2019 18:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427615;
-        bh=m5v/VQDEu53kIn8smOqM7gN/gtLhfkr4W9EBM+BYU1s=;
+        s=default; t=1557428007;
+        bh=O9PomuJkP140PHP9gtPkB3f9C32wLIzisqMz+jqkS80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOWtoGmz9WhE0xqlHXRHkJz7Xvsc9VGQngE2Y19CMpe2NtmJSTW3AQHb10af5wCjr
-         JHZ0vvCXWlRJd1KAu8rC8p+siCtQUD5t8FB148NeFN6SDxmWUp6cNvKt3QFxKlTXCd
-         BufKwLPFPFg0GMSuEYfH6LSG4ASRVwBFvg67lHcg=
+        b=C4zOgqmlKfFldiP64G4CMWiN9znZQMytNcFP+ZY5pB+jh6ddeS6kxctAP2/J4e1hw
+         SDx2XBalHfmbGxVwTQwWWu0GaqrNwOij6RrHnZj5/XHBxir1lLrqhMvA+biTBmhjwj
+         6fgPstBUlde7u3PyVut5G9By87srMbVkhrAXhPj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.14 37/42] Bluetooth: hidp: fix buffer overflow
-Date:   Thu,  9 May 2019 20:42:26 +0200
-Message-Id: <20190509181259.896495485@linuxfoundation.org>
+        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 70/95] NFSv4.1 fix incorrect return value in copy_file_range
+Date:   Thu,  9 May 2019 20:42:27 +0200
+Message-Id: <20190509181314.342811653@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Young Xiao <YangX92@hotmail.com>
+[ Upstream commit 0769663b4f580566ef6cdf366f3073dbe8022c39 ]
 
-commit a1616a5ac99ede5d605047a9012481ce7ff18b16 upstream.
+According to the NFSv4.2 spec if the input and output file is the
+same file, operation should fail with EINVAL. However, linux
+copy_file_range() system call has no such restrictions. Therefore,
+in such case let's return EOPNOTSUPP and allow VFS to fallback
+to doing do_splice_direct(). Also when copy_file_range is called
+on an NFSv4.0 or 4.1 mount (ie., a server that doesn't support
+COPY functionality), we also need to return EOPNOTSUPP and
+fallback to a regular copy.
 
-Struct ca is copied from userspace. It is not checked whether the "name"
-field is NULL terminated, which allows local users to obtain potentially
-sensitive information from kernel stack memory, via a HIDPCONNADD command.
+Fixes xfstest generic/075, generic/091, generic/112, generic/263
+for all NFSv4.x versions.
 
-This vulnerability is similar to CVE-2011-1079.
-
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/hidp/sock.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/nfs42proc.c | 3 ---
+ fs/nfs/nfs4file.c  | 4 +++-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/bluetooth/hidp/sock.c
-+++ b/net/bluetooth/hidp/sock.c
-@@ -76,6 +76,7 @@ static int hidp_sock_ioctl(struct socket
- 			sockfd_put(csock);
- 			return err;
- 		}
-+		ca.name[sizeof(ca.name)-1] = 0;
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index fed06fd9998d3..94f98e190e632 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -329,9 +329,6 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+ 	};
+ 	ssize_t err, err2;
  
- 		err = hidp_connection_add(&ca, csock, isock);
- 		if (!err && copy_to_user(argp, &ca, sizeof(ca)))
+-	if (!nfs_server_capable(file_inode(dst), NFS_CAP_COPY))
+-		return -EOPNOTSUPP;
+-
+ 	src_lock = nfs_get_lock_context(nfs_file_open_context(src));
+ 	if (IS_ERR(src_lock))
+ 		return PTR_ERR(src_lock);
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 45b2322e092d2..00d17198ee12a 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -133,8 +133,10 @@ static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				    struct file *file_out, loff_t pos_out,
+ 				    size_t count, unsigned int flags)
+ {
++	if (!nfs_server_capable(file_inode(file_out), NFS_CAP_COPY))
++		return -EOPNOTSUPP;
+ 	if (file_inode(file_in) == file_inode(file_out))
+-		return -EINVAL;
++		return -EOPNOTSUPP;
+ 	return nfs42_proc_copy(file_in, pos_in, file_out, pos_out, count);
+ }
+ 
+-- 
+2.20.1
+
 
 
