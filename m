@@ -2,75 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21ED182F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 02:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5664A182F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 02:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfEIAup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 20:50:45 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43041 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfEIAuo (ORCPT
+        id S1726426AbfEIA6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 20:58:39 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:59227 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfEIA6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 20:50:44 -0400
-Received: by mail-qt1-f193.google.com with SMTP id r3so615050qtp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 17:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lKvoil9HNmhPTazHRMwHsi/uN0UT2qVv1DkSDyE5wNI=;
-        b=nCaYi6iHEA7hQ1jIirrfxGV70xswo9YyTlLCCgAFsuHfLf508F5YXDdbB9sIgejKev
-         7veAZxRHNO9B90/XpblNZSADBG/QxxHHZpq4RC5bQ5QM6/dsHKUtjIVHDf4GqAXqxfKn
-         t/JhZqVwkgX+pqxg6IVCeym11pNYAYyn/l2fOs4Mj7KYoQWsrKirufk1pNRNQLl1jE0A
-         LEHdGg0oiRIiV7M6Z2a8i5xFLz6Y7geqSUmlqXd4lercuVt4eTnbVZP69w0wwGBVYvr8
-         OWowW79Y60AHoJxj4flsDRDrgvHa1Tgo+7jlAriOkhzpPPtRlb1xeeRYqFteelzufNU2
-         L6yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lKvoil9HNmhPTazHRMwHsi/uN0UT2qVv1DkSDyE5wNI=;
-        b=h/+yMTN5PhGw9DITiMCW3eudUVkMG9TVW0oEnyJUd7gnWqJwr0TFApbp+GRuB+UWlO
-         8gyvFGpoBeCN0JYVE7/4asvT4J8huLINq5G8ehMmprOLEh7lsX9n3cbXv/vjF0QAfuDH
-         J8G0X4qekHl95z0COWbo4U7UAzRhxpYr68dfIruhHqyx5ZzCDkjLle5U+Xhs+iwhilF9
-         RyZ0rnqHMAc4ecTgUzC8YJpDz5U5zJbDmqEXp+iLr+rILAN1RwzAmcWim8INhN4kbVt3
-         pMLdjUH6IFQmZL7TLbpyvLWJ30KtD2iTlt6zwKwRw1Un5heF6nMzRXDvUr0q4AJUnBak
-         pXnw==
-X-Gm-Message-State: APjAAAWLrdXRKl2hInIpmiI0BQpTikEmAD+FHu14qs6OirmqS/h/oM0j
-        bGwpis/S40UKI39EP7LwttdZTE2yjVXLI8gkHDw=
-X-Google-Smtp-Source: APXvYqxTwsZy+bJni+WylRu8HA3AbMT28j61hBkmVSyWhZAw6QgZwsR168c/rxJwU/kb6sFEQtKl+D4GY2n7S3xKi1k=
-X-Received: by 2002:a0c:8832:: with SMTP id 47mr1062767qvl.88.1557363044051;
- Wed, 08 May 2019 17:50:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190506081939.74287-1-duyuyang@gmail.com> <20190508085548.GA2606@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190508085548.GA2606@hirez.programming.kicks-ass.net>
-From:   Yuyang Du <duyuyang@gmail.com>
-Date:   Thu, 9 May 2019 08:50:30 +0800
-Message-ID: <CAHttsrbJ_jHdQnWESXBf6V-fzrUA6WKAKRcdoLOgLsw+qarvig@mail.gmail.com>
-Subject: Re: [PATCH v2 00/23] locking/lockdep: Small improvements
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     will.deacon@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
-        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 8 May 2019 20:58:38 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x490w9KG001364;
+        Thu, 9 May 2019 09:58:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x490w9KG001364
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557363490;
+        bh=A0ah3OCkj+C/oYyV6jDmlhQW2a5VM8SUDJDCzq+gWyY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OoLkEMPfpOStVZh2DnAFwrv0o3LRz8rFvjKMyETx3vgP3vMCn0KpPCBCuVVJHuT5R
+         fYVrVGJQSk9tgrcV3tG4I2p0ndgbmppZu+FDBcfXhHI2cU42vUa+2lenJgg8FL55GH
+         737BPKEytBL/APVwR079DBJFW2bMp3cZQVdFFf8kD7gc2Y8Sv/JdbKGlrzZ265LEO5
+         tTfoa0W3S8QvAxGvthsCVQNsR8N+iWbA5EKGM48X43ZxxDxkUOE33O5a4g/J1hcRLH
+         ydbDUCkumhRgPelyN9EK9oA7vc7Zm3gq9kXby9ZuGnrH863Bo1SGx0pzJR+HRnAO8o
+         Dn2XVbe4ovsPw==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kbuild: re-enable int-in-bool-context warning
+Date:   Thu,  9 May 2019 09:58:01 +0900
+Message-Id: <1557363481-27178-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you so much.
+This warning was disabled by commit bd664f6b3e37 ("disable new
+gcc-7.1.1 warnings for now") just because it was too noisy.
 
-On Wed, 8 May 2019 at 16:56, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, May 06, 2019 at 04:19:16PM +0800, Yuyang Du wrote:
-> > Hi Peter,
-> >
-> > Let me post these small bits first while waiting for Frederic's patches
-> > to be merged.
-> >
->
-> They apply nicely and should show up in tip after the merge window
-> closes or thereabout.
->
-> Thanks!
+Thanks to Arnd Bergmann, all warnings have been fixed. Now, we are
+ready to re-enable it.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+
+Changes in v2:
+  - rebase
+
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index a61a95b..2896518 100644
+--- a/Makefile
++++ b/Makefile
+@@ -692,7 +692,6 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+-KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
+ 
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+-- 
+2.7.4
+
