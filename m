@@ -2,108 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B9918359
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9542B1834A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 03:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfEIBpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 21:45:44 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43465 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725832AbfEIBpo (ORCPT
+        id S1726549AbfEIBo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 21:44:27 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41149 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfEIBo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 21:45:44 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x491i7RW019749
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 8 May 2019 21:44:09 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9759E420024; Wed,  8 May 2019 21:44:07 -0400 (EDT)
-Date:   Wed, 8 May 2019 21:44:07 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190509014407.GA7031@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
-        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
- <20190507172256.GB5900@mit.edu>
- <4d963cdc-1cbb-35a3-292c-552f865ed1f7@gmail.com>
+        Wed, 8 May 2019 21:44:27 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y10so665438oia.8
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2019 18:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QSowrtvBxHuy+9EtWeAofxxOlDhK9Glv13XxPGgRs0g=;
+        b=FTGotLa6Bju72vqFYtTwvrZTvNQYiOOMZ8o54hYAiqK0uOAsAPU6VON80aO9vkjLYa
+         3p36iyGFyGMmdjmtWezMbuNGmm4PJZc7fgr4OxSLHOoXPBTIpg7sCURZt1/+XMeYKRBR
+         NGTKH6iXjpRw5d3JMYy9oQ3EtG87RB7qukZhTndr+vz7FUeOQKjWGooGsi73ybtKST9J
+         FwJbyJmujVUKKizeBjDd4ax7kwcNa2SInbgwCc0gYSRif97Lmpo4JHO9kOyF5dPD0THU
+         WoFQdJk0wAxMYuWmVJY7aOrQppqlhYN3ghgKHjohHV1AMNO+bWx0fwuSn+a8d4VUM2Yd
+         Qs1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QSowrtvBxHuy+9EtWeAofxxOlDhK9Glv13XxPGgRs0g=;
+        b=IACqKzQKDblXH6APNvqJeHfUqxSR1YmWMsS+yiOKbIDc7X1bD5Nmyp5NDm9lMhgerW
+         TJWnuDoc1bQ06GnhRXm79iZRS67CcLBWPCe2DekhXriIti5zGe3MWD6Tafgysui4fHFn
+         GW93nWI8284DZBLwerPWsunmYpq1RIj7b5ZuzV0FqAKvQZEv6sMKkKP09RpY/lwvTF7o
+         ww15tbyjsmC7am0n5etDb00GoRBrk/W1zgeEG6CWZwV+flG5cphhwnWiBGKSK8RTTrvu
+         BOq9hhCus5Tep9SG8cn8NgHYOCvsWJfbHYjrIXA4h3djCQz9vFRuSx6+neUQqJCQBZrR
+         wzkA==
+X-Gm-Message-State: APjAAAVsUdRvTyXbV3sV2xiLqlaOFEkamkIKINZBb5R2uIgFjFcjAKwR
+        zOn/SxzJdfw46ajWyRHyCZ3kunF6gDwYieHfOxk0vw==
+X-Google-Smtp-Source: APXvYqzeAfiNSljb+terykWDGmzDf8vkicYkCQIEsAaSxE2qpBV2t5nSNufIAYmBBr/EXFEAH0HCtdLqIeY8uZ0KA/A=
+X-Received: by 2002:aca:61c3:: with SMTP id v186mr569894oib.27.1557366266348;
+ Wed, 08 May 2019 18:44:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d963cdc-1cbb-35a3-292c-552f865ed1f7@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1557206859.git.baolin.wang@linaro.org> <1ddb1abe8722154dd546d265d5c4536480a24a87.1557206859.git.baolin.wang@linaro.org>
+ <8746a913-0014-7036-7fab-4e0dfab04e1b@gmail.com>
+In-Reply-To: <8746a913-0014-7036-7fab-4e0dfab04e1b@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 9 May 2019 09:44:15 +0800
+Message-ID: <CAMz4kuJaP2UGiqCRrRX=cwwyqfnmiJ0CG-BXBkTpwKE825xKsQ@mail.gmail.com>
+Subject: Re: [PATCH 2/8] soc: tegra: fuse: Change to the correct
+ __dma_request_channel() prototype
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Zubair.Kakakhel@imgtec.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        jroedel@suse.de, Vincent Guittot <vincent.guittot@linaro.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 05:58:49PM -0700, Frank Rowand wrote:
-> 
-> If KUnit is added to the kernel, and a subsystem that I am submitting
-> code for has chosen to use KUnit instead of kselftest, then yes, I do
-> *have* to use KUnit if my submission needs to contain a test for the
-> code unless I want to convince the maintainer that somehow my case
-> is special and I prefer to use kselftest instead of KUnittest.
+On Wed, 8 May 2019 at 23:15, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 07.05.2019 9:09, Baolin Wang =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Since we've introduced one device node parameter for __dma_request_chan=
+nel(),
+> > thus change to the correct function prototype.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> >  drivers/soc/tegra/fuse/fuse-tegra20.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/=
+fuse/fuse-tegra20.c
+> > index 49ff017..e2571b6 100644
+> > --- a/drivers/soc/tegra/fuse/fuse-tegra20.c
+> > +++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+> > @@ -110,7 +110,7 @@ static int tegra20_fuse_probe(struct tegra_fuse *fu=
+se)
+> >       dma_cap_zero(mask);
+> >       dma_cap_set(DMA_SLAVE, mask);
+> >
+> > -     fuse->apbdma.chan =3D __dma_request_channel(&mask, dma_filter, NU=
+LL);
+> > +     fuse->apbdma.chan =3D __dma_request_channel(&mask, dma_filter, NU=
+LL, NULL);
+> >       if (!fuse->apbdma.chan)
+> >               return -EPROBE_DEFER;
+> >
+> >
+>
+> 1) Kernel should be kept bisect'able by not having intermediate patches
+> that break compilation. Hence you should squash the changes into a
+> single patch.
+>
+> 2) Better to replace __dma_request_channel() with dma_request_channel()
+> since they are equal.
 
-That's going to be between you and the maintainer.  Today, if you want
-to submit a substantive change to xfs or ext4, you're going to be
-asked to create test for that new feature using xfstests.  It doesn't
-matter that xfstests isn't in the kernel --- if that's what is
-required by the maintainer.
+Good point. I'll change to use dma_request_channel() in next version
+if no other objections. Thanks.
 
-> > supposed to be a simple way to run a large number of small tests that
-> > for specific small components in a system.
-> 
-> kselftest also supports running a subset of tests.  That subset of tests
-> can also be a large number of small tests.  There is nothing inherent
-> in KUnit vs kselftest in this regard, as far as I am aware.
-
-The big difference is that kselftests are driven by a C program that
-runs in userspace.  Take a look at tools/testing/selftests/filesystem/dnotify_test.c
-it has a main(int argc, char *argv) function.
-
-In contrast, KUnit are fragments of C code which run in the kernel;
-not in userspace.  This allows us to test internal functions inside
-complex file system (such as the block allocator in ext4) directly.
-This makes it *fundamentally* different from kselftest.
-
-Cheers,
-
-						- Ted
+--=20
+Baolin Wang
+Best Regards
