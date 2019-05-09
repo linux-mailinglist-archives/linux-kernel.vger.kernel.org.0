@@ -2,68 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 370C519523
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C2D19526
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 00:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfEIWTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 18:19:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726824AbfEIWTC (ORCPT
+        id S1727610AbfEIWUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 18:20:00 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:39878 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727597AbfEIWT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 18:19:02 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49MGXNh071428
-        for <linux-kernel@vger.kernel.org>; Thu, 9 May 2019 18:19:01 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2scsufxpa4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 18:19:01 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 9 May 2019 23:19:00 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 9 May 2019 23:18:58 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49MIvk928508228
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 May 2019 22:18:57 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53C80B2068;
-        Thu,  9 May 2019 22:18:57 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3813AB2065;
-        Thu,  9 May 2019 22:18:57 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  9 May 2019 22:18:57 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9DE2A16C5DD8; Thu,  9 May 2019 15:18:57 -0700 (PDT)
-Date:   Thu, 9 May 2019 15:18:57 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Re: [rcu:peterz.2019.05.09a 2/5] ERROR: "tracing_stop"
- [kernel/rcu/rcutorture.ko] undefined!
-Reply-To: paulmck@linux.ibm.com
-References: <201905100531.n2nODfWZ%lkp@intel.com>
+        Thu, 9 May 2019 18:19:58 -0400
+Received: from pps.filterd (m0170397.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49MErZa025743;
+        Thu, 9 May 2019 18:19:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=K9cqzmRV2uaZUgOsZ4hzM/AFUcjgV9eO8YboIz/FZao=;
+ b=datqtN+7mHmjm2u/DNkcoS6M4f7iV6b470ZMKWB4R5Rlli1AW0370VH0PTy13r+qPuTY
+ TS7+u6ORwUnqZMumJtLLAjvWLsLRNvDeulY5Z6nzh3TKhp+R4Jqs/Z5SUcxDIhVWc2lL
+ wytlaq3LFh3kwUItxVGMcIdiM1bApslPymeBTJoPCL+2jaDhXSTCNopPPJOAFo3fLYN/
+ Dembf2xp9omP8sDcViGg5HN44lk1iA0Qj/+YIpjGHaSRHYSetsyErc0FVUZ91zQNUoOn
+ 1VIIOe4rr4vhnqnTgkc9qSkQIUSfbCGiqx8eUdOz+RIzHLX2giuCqlGukPqYa9+VUBgI RQ== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2sc9gvbyxk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 May 2019 18:19:56 -0400
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49MI0PL067949;
+        Thu, 9 May 2019 18:19:56 -0400
+Received: from ausxippc101.us.dell.com (ausxippc101.us.dell.com [143.166.85.207])
+        by mx0b-00154901.pphosted.com with ESMTP id 2scp1dex7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 18:19:56 -0400
+X-LoopCount0: from 10.166.132.127
+X-IronPort-AV: E=Sophos;i="5.60,346,1549951200"; 
+   d="scan'208";a="1233931848"
+From:   <Mario.Limonciello@dell.com>
+To:     <kbusch@kernel.org>
+CC:     <kai.heng.feng@canonical.com>, <hch@lst.de>, <axboe@fb.com>,
+        <sagi@grimberg.me>, <rafael@kernel.org>,
+        <linux-pm@vger.kernel.org>, <rafael.j.wysocki@intel.com>,
+        <linux-kernel@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <keith.busch@intel.com>
+Subject: RE: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Topic: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+Thread-Index: AQHVBdBS/xizqbOjGUOY5SKUREVH6KZh7T4AgAAD4gD//6zksIAAWSuA//+yBvCAAPthgIAACiqAgAAmlACAAAnmAIAAA8eAgAAJFgCAAADiAIAAGKaA///lboAAEvm1AAAGPtNA///21YCAAFIOcA==
+Date:   Thu, 9 May 2019 22:19:53 +0000
+Message-ID: <495d76c66aec41a8bfbbf527820f8eb9@AUSX13MPC101.AMER.DELL.COM>
+References: <064701C3-2BD4-4D93-891D-B7FBB5040FC4@canonical.com>
+ <CAJZ5v0ggMwpJt=XWXu4gU51o8y4BpJ4KZ5RKzfk3+v8GGb-QbQ@mail.gmail.com>
+ <A4DD2E9F-054E-4D4B-9F77-D69040EBE120@canonical.com>
+ <20190509095601.GA19041@lst.de>
+ <225CF4F7-C8E1-4C66-B362-97E84596A54E@canonical.com>
+ <20190509103142.GA19550@lst.de>
+ <AB325926-0D77-4851-8E8A-A10599756BF9@canonical.com>
+ <31b7d7959bf94c15a04bab0ced518444@AUSX13MPC101.AMER.DELL.COM>
+ <20190509192807.GB9675@localhost.localdomain>
+ <7a002851c435481593f8629ec9193e40@AUSX13MPC101.AMER.DELL.COM>
+ <20190509215409.GD9675@localhost.localdomain>
+In-Reply-To: <20190509215409.GD9675@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905100531.n2nODfWZ%lkp@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19050922-0072-0000-0000-0000042A1ABD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011079; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000285; SDB=6.01201013; UDB=6.00630212; IPR=6.00981904;
- MB=3.00026819; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-09 22:18:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050922-0073-0000-0000-00004C28E167
-Message-Id: <20190509221857.GN3923@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -71,31 +80,96 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorit
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1905090127
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905090127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 05:47:32AM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git peterz.2019.05.09a
-> head:   9aaf2ab4ea3d421a1efa413020bbd5c30ecb5f86
-> commit: 88437e0ce11d4b74d9606e2c587cdebbdfb41cf3 [2/5] EXP rcutorture: Test setup for sched_setaffinity()
-> config: x86_64-lkp (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         git checkout 88437e0ce11d4b74d9606e2c587cdebbdfb41cf3
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ERROR: "tracing_stop" [kernel/rcu/rcutorture.ko] undefined!
+> -----Original Message-----
+> From: Keith Busch <kbusch@kernel.org>
+> Sent: Thursday, May 9, 2019 4:54 PM
+> To: Limonciello, Mario
+> Cc: kai.heng.feng@canonical.com; hch@lst.de; axboe@fb.com;
+> sagi@grimberg.me; rafael@kernel.org; linux-pm@vger.kernel.org;
+> rafael.j.wysocki@intel.com; linux-kernel@vger.kernel.org; linux-
+> nvme@lists.infradead.org; keith.busch@intel.com
+> Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of=
+ D3 on
+> Suspend-to-Idle
+>=20
+>=20
+> [EXTERNAL EMAIL]
+>=20
+> On Thu, May 09, 2019 at 09:37:58PM +0000, Mario.Limonciello@dell.com wrot=
+e:
+> > > +int nvme_set_power(struct nvme_ctrl *ctrl, unsigned npss)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&ctrl->scan_lock);
+> > > +	nvme_start_freeze(ctrl);
+> > > +	nvme_wait_freeze(ctrl);
+> > > +	ret =3D nvme_set_features(ctrl, NVME_FEAT_POWER_MGMT, npss, NULL, 0=
+,
+> > > +				NULL);
+> > > +	nvme_unfreeze(ctrl);
+> > > +	mutex_unlock(&ctrl->scan_lock);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(nvme_set_power);
+> >
+> > I believe without memory barriers at the end disks with HMB this will
+> > still kernel panic (Such as Toshiba BG3).
+>=20
+> Well, the mutex has an implied memory barrier, but your HMB explanation
+> doesn't make much sense to me anyway. The "mb()" in this thread's origina=
+l
+> patch is a CPU memory barrier, and the CPU had better not be accessing
+> HMB memory. Is there something else going on here?
 
-Apologies, this is an experimental commit not intended for mainline.
-So it only works when rcutorture is built in.
+Kai Heng will need to speak up a bit in his time zone as he has this disk o=
+n hand,
+but what I recall from our discussion was that DMA operation MemRd after
+resume was the source of the hang.
 
-							Thanx, Paul
+>=20
+> > This still allows D3 which we found at least failed to go into deepest =
+state and
+> blocked
+> > platform s0ix for the following SSDs (maybe others):
+> > Hynix PC601
+> > LiteOn CL1
+>=20
+> We usually write features to spec first, then quirk non-compliant
+> devices after.
 
+NVME spec doesn't talk about a relationship between SetFeatures w/
+NVME_FEAT_POWER_MGMGT and D3 support, nor order of events.
+
+This is why we opened a dialog with storage vendors, including contrasting =
+the behavior
+of Microsoft Windows inbox NVME driver and Intel's Windows RST driver.
+
+Those two I mention that come to mind immediately because they were most re=
+cently
+tested to fail.  Our discussion with storage vendors overwhelmingly request=
+ed
+that we don't use D3 under S2I because their current firmware architecture =
+won't
+support it.
+
+For example one vendor told us with current implementation that receiving D=
+3hot
+after NVME shutdown will prevent being able to enter L1.2.  D3hot entry was=
+ supported
+by an IRQ handler that isn't serviced in NVME shutdown state.
+
+Another vendor told us that with current implementation it's impossible to =
+transition
+to PS4 (at least via APST) while L1.2 D3hot is active.
