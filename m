@@ -2,170 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5B918A81
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7849A18A91
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 15:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfEINYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 09:24:45 -0400
-Received: from mail-eopbgr730086.outbound.protection.outlook.com ([40.107.73.86]:38299
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726192AbfEINYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 09:24:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwdgdbBjIlUqjveA77m91csMkiU8CycMHUbz3zGIzz8=;
- b=X8XA47k/dHpakSol4r4PPYa+oOFlhlwUuAkLebzZx9xkQdUx3/orZ0TLL8YTc+gDfOR66P4DTpz392IP4P9QThStpg7HEXiBtJb1I2zVXhFuwZghxhUEtcZ8IcOQNkyj3vliFp2SkSYNTZ7Z7f4UHfAH8bT1n/WhvIWMhf4SPVA=
-Received: from SN6PR12MB2734.namprd12.prod.outlook.com (52.135.107.25) by
- SN6PR12MB2701.namprd12.prod.outlook.com (52.135.103.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.21; Thu, 9 May 2019 13:24:02 +0000
-Received: from SN6PR12MB2734.namprd12.prod.outlook.com
- ([fe80::e104:f933:eac3:17e1]) by SN6PR12MB2734.namprd12.prod.outlook.com
- ([fe80::e104:f933:eac3:17e1%3]) with mapi id 15.20.1856.016; Thu, 9 May 2019
- 13:24:01 +0000
-From:   "Kirkendall, Garrett" <Garrett.Kirkendall@amd.com>
-To:     "nstange@suse.de" <nstange@suse.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs when
- PIC is not configured by BIOS before kernel is launched.
-Thread-Topic: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs
- when PIC is not configured by BIOS before kernel is launched.
-Thread-Index: AdUGZ4c7BUF+pyITRvC/KjOnIn2XoQAAqFTg
-Date:   Thu, 9 May 2019 13:24:01 +0000
-Message-ID: <SN6PR12MB2734B49FDFEAC6CE5D93687185330@SN6PR12MB2734.namprd12.prod.outlook.com>
-References: <SN6PR12MB2734813FB27C43E06F5B4E3D85330@SN6PR12MB2734.namprd12.prod.outlook.com>
-In-Reply-To: <SN6PR12MB2734813FB27C43E06F5B4E3D85330@SN6PR12MB2734.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Garrett.Kirkendall@amd.com; 
-x-originating-ip: [135.26.38.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 681aad6b-7b36-46d3-d65e-08d6d4819a0b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2701;
-x-ms-traffictypediagnostic: SN6PR12MB2701:
-x-ms-exchange-purlcount: 19
-x-microsoft-antispam-prvs: <SN6PR12MB27015F7610335B3582E64DE085330@SN6PR12MB2701.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3631;
-x-forefront-prvs: 003245E729
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(396003)(376002)(39860400002)(346002)(136003)(189003)(199004)(2906002)(4326008)(5660300002)(186003)(26005)(102836004)(478600001)(446003)(11346002)(53936002)(966005)(72206003)(476003)(14454004)(6306002)(9686003)(2501003)(486006)(25786009)(3846002)(8676002)(81156014)(81166006)(6116002)(68736007)(99286004)(71190400001)(2201001)(6436002)(110136005)(33656002)(7736002)(305945005)(74316002)(55016002)(76116006)(2940100002)(8936002)(86362001)(316002)(71200400001)(64756008)(66556008)(66476007)(76176011)(73956011)(66946007)(66446008)(6506007)(256004)(52536014)(7696005)(66066001)(18886065003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2701;H:SN6PR12MB2734.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: T1Y87jiccy3yYqk4/GWrDxa2212h34SQIezwTDYaorap94PZH+Z1L9T79pimWeAeS3j7cTSUnvb59cypxoWojecJLfGmuUj6UWllPaH9k2KOA54mMkBcH7vatoSILrSGCtPXBFpugs55+VSOeyLmiSUc90+I+x9eCmraHKtnyiQrjXzxFcG2Og++P8DjTjCIBg8BEt8LLAecnrWL3jZ9e5mrAo22aLFi32WzJrsmOv4S7x0ZGqY/107TkDri7HN8TENEUPwpA/DeojJwXSIKZNRTfqPh/RuM4/3gB2aoQjFqdTnKwPrIO64/JzaSRrDdGVv7NYWQr8e3HFYEaIlTPJqUUOSI+W1QJ3UzsQNR2tpSmS0T1gCa/mwgu1pDavodfKqxPSbCbgzQ2S2nj9NxqlWMoq44gd+GhV62QOeOGkg=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726597AbfEIN2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 09:28:08 -0400
+Received: from sonic302-2.consmr.mail.bf2.yahoo.com ([74.6.135.41]:38306 "EHLO
+        sonic302-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726415AbfEIN2H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 09:28:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1557408486; bh=M+2BQM2x3GSy/dmtDG0o07y3ZYWK28QOQCLRz1DcS2Q=; h=Date:From:Reply-To:Subject:References:From:Subject; b=oV8WDxSR1hMfS2M+rvD+0F64UE9K+2QuIcRqYAgHCZU8EZ2czKFGS8+8vays+Md9nn7dBP1IK8z9iVDm3xlpmy8YSZptUz8iPxqqDwHKuQuCcqn/f4yF9QWpp8fCdS4q4XDwc9gtpJw7Tfkr1IGxMqa2kLEZAG5PZQk+ZZW5pBaIm2TgyyVsGbBC05YXKSaZeCYnjIW/PCksKgHksMeR0PaRQj/UDiyrfvDDqGV4YlUtCEyR4u7bE96cSrHJTDU0kkGWKjeYiUOfY3dzZwMzRdl1XfdM13lqRqhjOeM/Hw1q0kHMyTJRP6dK5U8cUtYC2vv2l4MocRvciuXS0+u4CA==
+X-YMail-OSG: i_wzu_YVM1nC9k6Hp.cuagygbAqGpjX9DNt2a6S3es3eErcSlAFGn8LEsTB2.wz
+ cqf1m7gq_pBpSpy.Iijvc3REvwvm7w0CSxzbkZXTMFrFkgm2.DtJXy_8O0VK1g3sRfIS0VD6thIz
+ bYBsd9MpwMlWBQX6qNOwJD7Z7Q_.WEwU9Y.PYbeIE0L6a39K2uiFQ0rvm5XTfgrde5LaAkTj9atF
+ HpjRHqHTxfWHMo.9FpRS_mic_WtVHhvlOCON1SFNnCZyjhNcQauwvtG3BhcD89RDESLQSHbme0y3
+ 2hFa_Ds6IG9aS2m9i0lwdaROSwVBCl0QOq9CPggRUlta.DRwpsrcFKz1Ea0uBXskQ.XgkfCL2YFS
+ RwAzRbVHVuU2DFwUojESa39DkHdBOf3wTKAMa3ot7IYSbHTM1LuASCGO_K5gvuPb3t.vtyzFJcTq
+ gvrId8bMdP_Fr.8pPDercSs.yRFwZzgHjQWKR0MqJs0b_u13ykW6xXuiYXZxKPOYvmkZTO1N3rPc
+ U5ooIyWOzN9n6E0045oPoIWrtjxDoY0SsnNptRn.I1iph17fbO1M95v15Gvnc4GKCmaLY30wPBXv
+ i6tjaAJo9HJ7WHEaayK_49ytwbsBmbvY66494IrTKcqOGlGwcVmV8RE0rCOougQ9r2GuMJnlqCxi
+ Od.cLN.ULZh4o7nl3EYciEmccONajiYeFfOUQTjQHr1L95ZSxtCiPE63vVhAZn3rahisboZPhOgt
+ PazHgCoGI714sHiSgEazo7Bnby38xSMt1s2F_oNRSIWaUl9BTOVKpGF.opPMBNTS9mVMvS9og0gE
+ npQBMigxabDLnkBqcmg4l68N.PrflM.Wy9nrl.w4DoBGFhbpbZ2Cipr9f.kP3ALZEyHiykgu.AFl
+ wag7nuxW9jTJVGVPAD2mZEHSnqmVGvtwkpWqUwyHTfiFaN9cUIm86WNfk6eo3mgc0pnoXqtO8e9o
+ 2S6NPAyD9iwEhJMSz92P7_Kq5iSQyv3VQ9RiCcH1dP8QA.0rCheY4R9NVlQftEern72hIcYuD6ix
+ k2BdNnGcxeFuxuI3xyQOW4_t4m2_hLGtsvt34itjqED_2g2orUSOr2gJLK.hS8TPiMUeG8xRqVq7
+ 4l5JWy1AdRxC5E2IBDErWx83w6zlyz.rkCcv4Jo0p7obTuS_njmvaMl_fPVBdh9CM
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Thu, 9 May 2019 13:28:06 +0000
+Date:   Thu, 9 May 2019 13:28:05 +0000 (UTC)
+From:   Aisha Gaddafi <aishagaddafi721@aol.com>
+Reply-To: Aisha Gaddafi <gaisha983@gmail.com>
+Message-ID: <1076440513.2039102.1557408485465@mail.yahoo.com>
+Subject: Hello My Beloved One, i need your assistance
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 681aad6b-7b36-46d3-d65e-08d6d4819a0b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 13:24:01.8849
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2701
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1076440513.2039102.1557408485465.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13583 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:66.0) Gecko/20100101 Firefox/66.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, resending as plain text for linux-kernel@vger.kernel.org
+Dear Friend,
 
-I am trying to boot a UEFI BIOS with minimal legacy hardware support.=A0 Th=
-e Linux kernel soft hangs when the PIC is not configured by the BIOS becaus=
-e it is using IOAPIC.=A0 Hopefully, this provides enough information.
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-Observed under Ubuntu Server Linux 18.04 LTS with kernel 4.15.0, and with k=
-ernel compiled from source tag v5.0
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
-Where it hangs:
-Soft hang occurs in calibrate_APIC_clock(): https://github.com/torvalds/lin=
-ux/blob/v5.0/arch/x86/kernel/apic/apic.c#L805
-specific location of soft hang waiting for interrupts: https://github.com/t=
-orvalds/linux/blob/v5.0/arch/x86/kernel/apic/apic.c#L854
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
 
-How it gets to the hang:
-If 8259A PIC is not configured before kernel is launched, HPET IRQ 0 regist=
-ration fails because probe_8259A returns PIC as not available and therefore=
- interrupt descriptors 0-15 are not allocated.=A0 This happens when BIOS do=
-es not configure 8259A PIC because it uses IOAPIC.
+Your Urgent Reply Will Be Appreciated.
 
-This sequence prevents allocating interrupts 0-15 unless PIC is configured =
-before kernel starts.=A0 legacy_pic.init =3D init_8259A is not called befor=
-e early_irq_init():
-=A0 early_irq_init(): https://github.com/torvalds/linux/blob/v5.0/init/main=
-.c#L642
-=A0=A0=A0 initcnt =3D arch_probe_nr_irqs(): https://github.com/torvalds/lin=
-ux/blob/v5.0/kernel/irq/irqdesc.c#L512
-=A0=A0=A0=A0=A0 return legacy_pic->probe(): https://github.com/torvalds/lin=
-ux/blob/v5.0/arch/x86/kernel/apic/vector.c#L656
-=A0=A0=A0=A0=A0=A0=A0 default_legacy_pic.probe: https://github.com/torvalds=
-/linux/blob/v5.0/arch/x86/kernel/i8259.c#L418
-=A0=A0=A0=A0=A0=A0=A0=A0=A0 probe_8259A(): https://github.com/torvalds/linu=
-x/blob/v5.0/arch/x86/kernel/i8259.c#L301
-=A0=A0=A0 interrupt 0-15 descriptors not allocated and prevents IOAPIC inte=
-rrupts 0-15:=A0 https://github.com/torvalds/linux/blob/v5.0/kernel/irq/irqd=
-esc.c#L525
-
-In this call is where init_8259A is called and PIC is initialized.=A0 Howev=
-er, interrupt descriptors for 0-15 were not allocated in early_irq_init() s=
-equence, so descriptors are not available later.
-=A0 init_IRQ() : https://github.com/torvalds/linux/blob/v5.0/init/main.c#L6=
-43
-
-This sequence tries to register the HPET to irq0, but irq0 descriptor is no=
-t allocated by early_irq_init() sequence:
-=A0 late_time_init(): https://github.com/torvalds/linux/blob/v5.0/init/main=
-.c#L703
-=A0=A0=A0 late_time_init =3D x86_late_time_init: https://github.com/torvald=
-s/linux/blob/v5.0/arch/x86/kernel/time.c#L107
-=A0=A0=A0=A0=A0 x86_init.timers.timer_init(): https://github.com/torvalds/l=
-inux/blob/v5.0/arch/x86/kernel/time.c#L92
-=A0=A0=A0 =A0=A0=A0=A0x86_init.timers.timer_init =3D hpet_time_init: https:=
-//github.com/torvalds/linux/blob/v5.0/arch/x86/kernel/x86_init.c#L75
-=A0=A0=A0=A0=A0=A0=A0=A0=A0 setup_default_timer_irq(): https://github.com/t=
-orvalds/linux/blob/v5.0/arch/x86/kernel/time.c#L83
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (setup_irq(0, &irq0)): https://github.=
-com/torvalds/linux/blob/v5.0/arch/x86/kernel/time.c#L78
-
-This gets called at some point after the above sequences, I couldn't track =
-it all the way back to main.c easily:
-=A0 x86_init.timers.setup_percpu_clockev =3D setup_boot_APIC_clock: https:/=
-/github.com/torvalds/linux/blob/v5.0/arch/x86/kernel/x86_init.c#L74
-=A0=A0 =A0https://github.com/torvalds/linux/blob/v5.0/arch/x86/kernel/apic/=
-apic.c#L961
-=A0=A0=A0=A0=A0 *** soft hang in calibrate_APIC_clock(): https://github.com=
-/torvalds/linux/blob/v5.0/arch/x86/kernel/apic/apic.c#L854
-
-
-
-Why I directly emailed people:
-$ perl scripts/get_maintainer.pl arch/x86/kernel/i8259.c:
-Nicolai Stange <mailto:nstange@suse.de> (commit_signer:1/1=3D100%,authored:=
-1/1=3D100%,added_lines:1/1=3D100%)
-Thomas Gleixner <mailto:tglx@linutronix.de> (commit_signer:1/1=3D100%)
-
-$ perl scripts/get_maintainer.pl arch/x86/kernel/time.c
-Thomas Gleixner <mailto:tglx@linutronix.de> (commit_signer:4/4=3D100%,autho=
-red:2/4=3D50%,added_lines:22/24=3D92%)
-Andy Lutomirski <mailto:luto@kernel.org> (commit_signer:2/4=3D50%)
-Nathan Chancellor <mailto:natechancellor@gmail.com> (commit_signer:1/4=3D25=
-%,authored:1/4=3D25%,removed_lines:1/1=3D100%)
-Nicolai Stange <mailto:nstange@suse.de> (commit_signer:1/4=3D25%,authored:1=
-/4=3D25%)
-
-GARRETT KIRKENDALL
-SMTS Firmware Engineer | CTE
-7171 Southwest Parkway, Austin, TX 78735 USA=20
-AMD=A0=A0 https://www.facebook.com/AMD=A0 |=A0 http://www.amd.com/
-
+Best Regards
+Mrs Aisha Gaddafi
