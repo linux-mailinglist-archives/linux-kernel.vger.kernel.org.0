@@ -2,196 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5736219075
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EEF19191
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfEISo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:44:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36484 "EHLO mail.kernel.org"
+        id S1728486AbfEISwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:52:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbfEISoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:44:55 -0400
+        id S1728334AbfEISwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:52:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00A20217D6;
-        Thu,  9 May 2019 18:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 354FB2177E;
+        Thu,  9 May 2019 18:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427494;
-        bh=Z0f0+ZL3QQynnqexc86HmoG4yQE4cBDUZPRGIe1voHM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lVsu8Zlt/mPQ8Euo2oDX7AKcrvNA7ctqCkpCFjyBTPe5wTY+SgBOYsenWDNkOAu2u
-         3ttz2+0Go2jiDs8/3IdOvoKymtoz5Nlg1IREuWrjnngQDlWGxQF/tWl6vqy12hvsfG
-         lndCwnRS0OqRHBr+H2RgVdC71A1jMrE3hT54qV5A=
+        s=default; t=1557427968;
+        bh=bAL8kjRN4RC2lhZGCofR/JGu5vg/0k3sxbHAr5YsJRQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mZnU3IUw18gDh3IaxVQsapxMA28QfVXfUssVwNsFicXVbjouVMP8E8WLGko02ksNU
+         iA1vWo3vRE/ZuR4++rZJbyY09UuWfER8muYGsnIkJ/14afCY1RUb3egpd+tmK48WI4
+         9AzcC/yu6x1vVhgO5MzKOpTLtBuvrJ2G3s8IU/AA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/28] 4.9.175-stable review
-Date:   Thu,  9 May 2019 20:41:52 +0200
-Message-Id: <20190509181247.647767531@linuxfoundation.org>
+        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, kan.liang@intel.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 36/95] perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS
+Date:   Thu,  9 May 2019 20:41:53 +0200
+Message-Id: <20190509181311.821760144@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.175-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.175-rc1
-X-KernelTest-Deadline: 2019-05-11T18:12+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.175 release.
-There are 28 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+[ Upstream commit 583feb08e7f7ac9d533b446882eb3a54737a6dbb ]
 
-Responses should be made by Sat 11 May 2019 06:11:12 PM UTC.
-Anything received after that time might be too late.
+When an event is programmed with attr.wakeup_events=N (N>0), it means
+the caller is interested in getting a user level notification after
+N samples have been recorded in the kernel sampling buffer.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.175-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+With precise events on Intel processors, the kernel uses PEBS.
+The kernel tries minimize sampling overhead by verifying
+if the event configuration is compatible with multi-entry PEBS mode.
+If so, the kernel is notified only when the buffer has reached its threshold.
+Other PEBS operates in single-entry mode, the kenrel is notified for each
+PEBS sample.
 
-thanks,
+The problem is that the current implementation look at frequency
+mode and event sample_type but ignores the wakeup_events field. Thus,
+it may not be possible to receive a notification after each precise event.
 
-greg k-h
+This patch fixes this problem by disabling multi-entry PEBS if wakeup_events
+is non-zero.
 
--------------
-Pseudo-Shortlog of commits:
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: kan.liang@intel.com
+Link: https://lkml.kernel.org/r/20190306195048.189514-1-eranian@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/events/intel/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.175-rc1
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 470d7daa915d9..77353555d491a 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3184,7 +3184,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		return ret;
+ 
+ 	if (event->attr.precise_ip) {
+-		if (!event->attr.freq) {
++		if (!(event->attr.freq || event->attr.wakeup_events)) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+ 			if (!(event->attr.sample_type &
+ 			      ~intel_pmu_large_pebs_flags(event)))
+-- 
+2.20.1
 
-Ben Hutchings <ben@decadent.org.uk>
-    timer/debug: Change /proc/timer_stats from 0644 to 0600
-
-Ross Zwisler <zwisler@chromium.org>
-    ASoC: Intel: avoid Oops if DMA setup fails
-
-Oliver Neukum <oneukum@suse.com>
-    UAS: fix alignment of scatter/gather segments
-
-Marcel Holtmann <marcel@holtmann.org>
-    Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
-
-Young Xiao <YangX92@hotmail.com>
-    Bluetooth: hidp: fix buffer overflow
-
-Andrew Vasquez <andrewv@marvell.com>
-    scsi: qla2xxx: Fix incorrect region-size setting in optrom SYSFS routines
-
-Alan Stern <stern@rowland.harvard.edu>
-    usb-storage: Set virt_boundary_mask to avoid SG overflows
-
-Ji-Ze Hong (Peter Hong) <hpeter@gmail.com>
-    USB: serial: f81232: fix interrupt worker not stop
-
-Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-    usb: dwc3: Fix default lpm_nyet_threshold value
-
-Prasad Sodagudi <psodagud@codeaurora.org>
-    genirq: Prevent use-after-free and work list corruption
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    ARM: 8680/1: boot/compressed: fix inappropriate Thumb2 mnemonic for __nop
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    mm: add 'try_get_page()' helper function
-
-Joerg Roedel <jroedel@suse.de>
-    iommu/amd: Set exclusion range correctly
-
-Dongli Zhang <dongli.zhang@oracle.com>
-    virtio-blk: limit number of hw queues by nr_cpu_ids
-
-Wen Yang <wen.yang99@zte.com.cn>
-    drm/mediatek: fix possible object reference leak
-
-Varun Prakash <varun@chelsio.com>
-    scsi: csiostor: fix missing data copy in csio_scsi_err_handler()
-
-Max Filippov <jcmvbkbc@gmail.com>
-    xtensa: fix initialization of pt_regs::syscall in start_thread
-
-Jann Horn <jannh@google.com>
-    linux/kernel.h: Use parentheses around argument in u64_to_user_ptr()
-
-Stephane Eranian <eranian@google.com>
-    perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    drm/mediatek: Fix an error code in mtk_hdmi_dt_parse_pdata()
-
-Annaliese McDermond <nh6z@nh6z.net>
-    ASoC: tlv320aic32x4: Fix Common Pins
-
-Kaike Wan <kaike.wan@intel.com>
-    IB/hfi1: Eliminate opcode tests on mr deref
-
-Daniel Mack <daniel@zonque.org>
-    ASoC: cs4270: Set auto-increment bit for register writes
-
-John Hsu <KCHSU0@nuvoton.com>
-    ASoC: nau8810: fix the issue of widget with prefixed name
-
-Rander Wang <rander.wang@linux.intel.com>
-    ASoC:soc-pcm:fix a codec fixup issue in TDM case
-
-Johan Hovold <johan@kernel.org>
-    staging: greybus: power_supply: fix prop-descriptor request size
-
-Andrey Ryabinin <aryabinin@virtuozzo.com>
-    ubsan: Fix nasty -Wbuiltin-declaration-mismatch GCC-9 warnings
-
-Jason Yan <yanaijie@huawei.com>
-    scsi: libsas: fix a race condition when smp task timeout
-
-
--------------
-
-Diffstat:
-
- Makefile                               |  4 +--
- arch/arm/boot/compressed/efi-header.S  |  3 ++-
- arch/x86/events/intel/core.c           |  2 +-
- arch/xtensa/include/asm/processor.h    | 21 ++++++++-------
- drivers/block/virtio_blk.c             |  2 ++
- drivers/gpu/drm/mediatek/mtk_hdmi.c    |  2 +-
- drivers/infiniband/hw/hfi1/rc.c        |  4 +--
- drivers/iommu/amd_iommu_init.c         |  2 +-
- drivers/scsi/csiostor/csio_scsi.c      |  5 +++-
- drivers/scsi/libsas/sas_expander.c     |  9 +++----
- drivers/scsi/qla2xxx/qla_attr.c        |  4 +--
- drivers/staging/greybus/power_supply.c |  2 +-
- drivers/usb/dwc3/core.c                |  2 +-
- drivers/usb/serial/f81232.c            | 39 +++++++++++++++++++++++++++
- drivers/usb/storage/scsiglue.c         | 26 +++++++++---------
- drivers/usb/storage/uas.c              | 35 +++++++++++++++---------
- include/linux/kernel.h                 |  4 +--
- include/linux/mm.h                     |  9 +++++++
- include/net/bluetooth/hci_core.h       |  3 +++
- kernel/irq/manage.c                    |  4 ++-
- kernel/time/timer_stats.c              |  2 +-
- lib/ubsan.c                            | 49 ++++++++++++++++------------------
- net/bluetooth/hci_conn.c               |  8 ++++++
- net/bluetooth/hidp/sock.c              |  1 +
- sound/soc/codecs/cs4270.c              |  1 +
- sound/soc/codecs/nau8810.c             |  4 +--
- sound/soc/codecs/tlv320aic32x4.c       |  2 ++
- sound/soc/intel/common/sst-firmware.c  |  8 ++++--
- sound/soc/soc-pcm.c                    |  7 +++--
- 29 files changed, 174 insertions(+), 90 deletions(-)
 
 
