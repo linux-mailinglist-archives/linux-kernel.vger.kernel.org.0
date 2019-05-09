@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3936190A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A573919215
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfEISrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:47:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39892 "EHLO mail.kernel.org"
+        id S1727787AbfEITDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:03:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727769AbfEISrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:47:19 -0400
+        id S1728123AbfEISs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61AFA2184B;
-        Thu,  9 May 2019 18:47:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1622217D7;
+        Thu,  9 May 2019 18:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427638;
-        bh=L7LiBg8b87YxHI+ehl0PGs0I5NZhj7bgJrz5e0yXmDE=;
+        s=default; t=1557427737;
+        bh=tn/Owjpp3Jru80bpgmicmEK6vh4fN5P+SJ+VHX4bfv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ltfGF4xv9cuIRF4TvDEGt0nWTLgFg5LMxN+aZQULGEFA+Zd567fk+WguT4+BX1rky
-         yDS4/f/jGeOO0QhOCQcsRUAGpCfpKnfQZSeU5tp6klCJBBYioYpUj438KKaT5CLoRK
-         IwuxBdI8ESYlJjxea2qWfxkQgv+um03YN+6HJAYQ=
+        b=rUaWfVhutvxrMAc0KOYPDIcgmx/4tFsT5UqubDLeF108EG7ZAxUcZVJhu492Cc/5x
+         E0+w4yqXNqkg0umIHiAj4onJKg4+15emqBuwBH/Sx8CjkLVOQdDPg/jAI/on/cnSg8
+         ncn4hloQofF+2OB0cxuPpt4xSIIJmoox1mDOP7xc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Philipp Puschmann <philipp.puschmann@emlix.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Jyri Sarha <jsarha@ti.com>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 07/66] ASoC: tlv320aic3x: fix reset gpio reference counting
-Date:   Thu,  9 May 2019 20:41:42 +0200
-Message-Id: <20190509181302.623871892@linuxfoundation.org>
+Subject: [PATCH 4.19 08/66] ASoC: hdmi-codec: fix S/PDIF DAI
+Date:   Thu,  9 May 2019 20:41:43 +0200
+Message-Id: <20190509181302.758132382@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
 References: <20190509181301.719249738@linuxfoundation.org>
@@ -45,66 +44,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 82ad759143ed77673db0d93d53c1cde7b99917ee ]
+[ Upstream commit 2e95f984aae4cf0608d0ba2189c756f2bd50b44a ]
 
-This patch fixes a bug that prevents freeing the reset gpio on unloading
-the module.
+When using the S/PDIF DAI, there is no requirement to call
+snd_soc_dai_set_fmt() as there is no DAI format definition that defines
+S/PDIF.  In any case, S/PDIF does not have separate clocks, this is
+embedded into the data stream.
 
-aic3x_i2c_probe is called when loading the module and it calls list_add
-with a probably uninitialized list entry aic3x->list (next = prev = NULL)).
-So even if list_del is called it does nothing and in the end the gpio_reset
-is not freed. Then a repeated module probing fails silently because
-gpio_request fails.
+Consequently, when attempting to use TDA998x in S/PDIF mode, the attempt
+to configure TDA998x via the hw_params callback fails as the
+hdmi_codec_daifmt is left initialised to zero.
 
-When moving INIT_LIST_HEAD to aic3x_i2c_probe we also have to move
-list_del to aic3x_i2c_remove because aic3x_remove may be called
-multiple times without aic3x_i2c_remove being called which leads to
-a NULL pointer dereference.
+Since the S/PDIF DAI will only be used by S/PDIF, prepare the
+hdmi_codec_daifmt structure for this format.
 
-Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Jyri Sarha <jsarha@ti.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/tlv320aic3x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 118 +++++++++++++++++-----------------
+ 1 file changed, 59 insertions(+), 59 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
-index 6a271e6e6b8fc..6c0a3dad44b89 100644
---- a/sound/soc/codecs/tlv320aic3x.c
-+++ b/sound/soc/codecs/tlv320aic3x.c
-@@ -1599,7 +1599,6 @@ static int aic3x_probe(struct snd_soc_component *component)
- 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
- 	int ret, i;
- 
--	INIT_LIST_HEAD(&aic3x->list);
- 	aic3x->component = component;
- 
- 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++) {
-@@ -1682,7 +1681,6 @@ static void aic3x_remove(struct snd_soc_component *component)
- 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
- 	int i;
- 
--	list_del(&aic3x->list);
- 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++)
- 		regulator_unregister_notifier(aic3x->supplies[i].consumer,
- 					      &aic3x->disable_nb[i].nb);
-@@ -1880,6 +1878,7 @@ static int aic3x_i2c_probe(struct i2c_client *i2c,
- 	if (ret != 0)
- 		goto err_gpio;
- 
-+	INIT_LIST_HEAD(&aic3x->list);
- 	list_add(&aic3x->list, &reset_list);
- 
- 	return 0;
-@@ -1896,6 +1895,8 @@ static int aic3x_i2c_remove(struct i2c_client *client)
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index e5b6769b97977..d5f73c8372817 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -529,73 +529,71 @@ static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
  {
- 	struct aic3x_priv *aic3x = i2c_get_clientdata(client);
+ 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
+ 	struct hdmi_codec_daifmt cf = { 0 };
+-	int ret = 0;
  
-+	list_del(&aic3x->list);
+ 	dev_dbg(dai->dev, "%s()\n", __func__);
+ 
+-	if (dai->id == DAI_ID_SPDIF) {
+-		cf.fmt = HDMI_SPDIF;
+-	} else {
+-		switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-		case SND_SOC_DAIFMT_CBM_CFM:
+-			cf.bit_clk_master = 1;
+-			cf.frame_clk_master = 1;
+-			break;
+-		case SND_SOC_DAIFMT_CBS_CFM:
+-			cf.frame_clk_master = 1;
+-			break;
+-		case SND_SOC_DAIFMT_CBM_CFS:
+-			cf.bit_clk_master = 1;
+-			break;
+-		case SND_SOC_DAIFMT_CBS_CFS:
+-			break;
+-		default:
+-			return -EINVAL;
+-		}
++	if (dai->id == DAI_ID_SPDIF)
++		return 0;
 +
- 	if (gpio_is_valid(aic3x->gpio_reset) &&
- 	    !aic3x_is_shared_reset(aic3x)) {
- 		gpio_set_value(aic3x->gpio_reset, 0);
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBM_CFM:
++		cf.bit_clk_master = 1;
++		cf.frame_clk_master = 1;
++		break;
++	case SND_SOC_DAIFMT_CBS_CFM:
++		cf.frame_clk_master = 1;
++		break;
++	case SND_SOC_DAIFMT_CBM_CFS:
++		cf.bit_clk_master = 1;
++		break;
++	case SND_SOC_DAIFMT_CBS_CFS:
++		break;
++	default:
++		return -EINVAL;
++	}
+ 
+-		switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+-		case SND_SOC_DAIFMT_NB_NF:
+-			break;
+-		case SND_SOC_DAIFMT_NB_IF:
+-			cf.frame_clk_inv = 1;
+-			break;
+-		case SND_SOC_DAIFMT_IB_NF:
+-			cf.bit_clk_inv = 1;
+-			break;
+-		case SND_SOC_DAIFMT_IB_IF:
+-			cf.frame_clk_inv = 1;
+-			cf.bit_clk_inv = 1;
+-			break;
+-		}
++	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
++	case SND_SOC_DAIFMT_NB_NF:
++		break;
++	case SND_SOC_DAIFMT_NB_IF:
++		cf.frame_clk_inv = 1;
++		break;
++	case SND_SOC_DAIFMT_IB_NF:
++		cf.bit_clk_inv = 1;
++		break;
++	case SND_SOC_DAIFMT_IB_IF:
++		cf.frame_clk_inv = 1;
++		cf.bit_clk_inv = 1;
++		break;
++	}
+ 
+-		switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+-		case SND_SOC_DAIFMT_I2S:
+-			cf.fmt = HDMI_I2S;
+-			break;
+-		case SND_SOC_DAIFMT_DSP_A:
+-			cf.fmt = HDMI_DSP_A;
+-			break;
+-		case SND_SOC_DAIFMT_DSP_B:
+-			cf.fmt = HDMI_DSP_B;
+-			break;
+-		case SND_SOC_DAIFMT_RIGHT_J:
+-			cf.fmt = HDMI_RIGHT_J;
+-			break;
+-		case SND_SOC_DAIFMT_LEFT_J:
+-			cf.fmt = HDMI_LEFT_J;
+-			break;
+-		case SND_SOC_DAIFMT_AC97:
+-			cf.fmt = HDMI_AC97;
+-			break;
+-		default:
+-			dev_err(dai->dev, "Invalid DAI interface format\n");
+-			return -EINVAL;
+-		}
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		cf.fmt = HDMI_I2S;
++		break;
++	case SND_SOC_DAIFMT_DSP_A:
++		cf.fmt = HDMI_DSP_A;
++		break;
++	case SND_SOC_DAIFMT_DSP_B:
++		cf.fmt = HDMI_DSP_B;
++		break;
++	case SND_SOC_DAIFMT_RIGHT_J:
++		cf.fmt = HDMI_RIGHT_J;
++		break;
++	case SND_SOC_DAIFMT_LEFT_J:
++		cf.fmt = HDMI_LEFT_J;
++		break;
++	case SND_SOC_DAIFMT_AC97:
++		cf.fmt = HDMI_AC97;
++		break;
++	default:
++		dev_err(dai->dev, "Invalid DAI interface format\n");
++		return -EINVAL;
+ 	}
+ 
+ 	hcp->daifmt[dai->id] = cf;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int hdmi_codec_digital_mute(struct snd_soc_dai *dai, int mute)
+@@ -792,8 +790,10 @@ static int hdmi_codec_probe(struct platform_device *pdev)
+ 		i++;
+ 	}
+ 
+-	if (hcd->spdif)
++	if (hcd->spdif) {
+ 		hcp->daidrv[i] = hdmi_spdif_dai;
++		hcp->daifmt[DAI_ID_SPDIF].fmt = HDMI_SPDIF;
++	}
+ 
+ 	dev_set_drvdata(dev, hcp);
+ 
 -- 
 2.20.1
 
