@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9DFB191E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 848D4190EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbfEITBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44186 "EHLO mail.kernel.org"
+        id S1728478AbfEISum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:50:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbfEISuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:50:37 -0400
+        id S1728447AbfEISuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:50:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 526A820578;
-        Thu,  9 May 2019 18:50:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF88E2177E;
+        Thu,  9 May 2019 18:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427836;
-        bh=mrCCDWM23VSfbpq4cOeRulv0rY0o3uBxCNGWwpjI4rY=;
+        s=default; t=1557427840;
+        bh=RBIgf2JVStOFrPQJlrAZn1a5G/Tyuy9fTFEE+q3i9BM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pRTCyQNRfCMkc2ynaK66iZpu3cgMABlTBff55vHQFS2dTy3NGODTggGHLqF5EaHgJ
-         3w5ENiKp0tdijNMyWQvFon3hbED98JVCIi3jTDnrLk9hP2LTyq5Srg+vyPwqJFZ9sp
-         TSxW0bwHEq3Osh6UEZVFmX3NUiXvU2rqtXcjLZzA=
+        b=aVzoI5zSdzm1S2+56V334I6nRz+O+xK1JTe3XwQ7L05cAsHJcVaWlQZnqDFaMryly
+         NiB/cDdtY+LEBQyUP1qnm43fUy6RQHuTYTnzmaETbfgQr2ArAYTydFEBAU90riCAI9
+         88cTrYg1Dj0VBcE2XIlWC3vm+Pt0j6H4KxAf2BF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuming Fan <shumingf@realtek.com>,
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 22/95] ASoC: rt5682: recording has no sound after booting
-Date:   Thu,  9 May 2019 20:41:39 +0200
-Message-Id: <20190509181310.884855118@linuxfoundation.org>
+Subject: [PATCH 5.0 23/95] ASoC: wm_adsp: Add locking to wm_adsp2_bus_error
+Date:   Thu,  9 May 2019 20:41:40 +0200
+Message-Id: <20190509181310.952468258@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
 References: <20190509181309.180685671@linuxfoundation.org>
@@ -44,60 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1c5b6a27e432e4fe170a924c8b41012271496a4c ]
+[ Upstream commit a2225a6d155fcb247fe4c6d87f7c91807462966d ]
 
-If ASRC turns on, HW will use clk_dac as the reference clock
-whether recording or playback.
-Both of clk_dac and clk_adc should set proper clock while using ASRC.
+Best to lock across handling the bus error to ensure the DSP doesn't
+change power state as we are reading the status registers.
 
-Signed-off-by: Shuming Fan <shumingf@realtek.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/rt5682.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ sound/soc/codecs/wm_adsp.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
-index 9331c13d2017a..72ef2a0f6387d 100644
---- a/sound/soc/codecs/rt5682.c
-+++ b/sound/soc/codecs/rt5682.c
-@@ -1202,7 +1202,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
- 	struct snd_soc_component *component =
- 		snd_soc_dapm_to_component(w->dapm);
- 	struct rt5682_priv *rt5682 = snd_soc_component_get_drvdata(component);
--	int ref, val, reg, sft, mask, idx = -EINVAL;
-+	int ref, val, reg, idx = -EINVAL;
- 	static const int div_f[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
- 	static const int div_o[] = {1, 2, 4, 6, 8, 12, 16, 24, 32, 48};
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index 0600e4404f908..eb5b1be77c479 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -3821,11 +3821,13 @@ irqreturn_t wm_adsp2_bus_error(struct wm_adsp *dsp)
+ 	struct regmap *regmap = dsp->regmap;
+ 	int ret = 0;
  
-@@ -1216,15 +1216,10 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
- 
- 	idx = rt5682_div_sel(rt5682, ref, div_f, ARRAY_SIZE(div_f));
- 
--	if (w->shift == RT5682_PWR_ADC_S1F_BIT) {
-+	if (w->shift == RT5682_PWR_ADC_S1F_BIT)
- 		reg = RT5682_PLL_TRACK_3;
--		sft = RT5682_ADC_OSR_SFT;
--		mask = RT5682_ADC_OSR_MASK;
--	} else {
-+	else
- 		reg = RT5682_PLL_TRACK_2;
--		sft = RT5682_DAC_OSR_SFT;
--		mask = RT5682_DAC_OSR_MASK;
--	}
- 
- 	snd_soc_component_update_bits(component, reg,
- 		RT5682_FILTER_CLK_DIV_MASK, idx << RT5682_FILTER_CLK_DIV_SFT);
-@@ -1236,7 +1231,8 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
++	mutex_lock(&dsp->pwr_lock);
++
+ 	ret = regmap_read(regmap, dsp->base + ADSP2_LOCK_REGION_CTRL, &val);
+ 	if (ret) {
+ 		adsp_err(dsp,
+ 			"Failed to read Region Lock Ctrl register: %d\n", ret);
+-		return IRQ_HANDLED;
++		goto error;
  	}
  
- 	snd_soc_component_update_bits(component, RT5682_ADDA_CLK_1,
--		mask, idx << sft);
-+		RT5682_ADC_OSR_MASK | RT5682_DAC_OSR_MASK,
-+		(idx << RT5682_ADC_OSR_SFT) | (idx << RT5682_DAC_OSR_SFT));
+ 	if (val & ADSP2_WDT_TIMEOUT_STS_MASK) {
+@@ -3844,7 +3846,7 @@ irqreturn_t wm_adsp2_bus_error(struct wm_adsp *dsp)
+ 			adsp_err(dsp,
+ 				 "Failed to read Bus Err Addr register: %d\n",
+ 				 ret);
+-			return IRQ_HANDLED;
++			goto error;
+ 		}
  
- 	return 0;
+ 		adsp_err(dsp, "bus error address = 0x%x\n",
+@@ -3857,7 +3859,7 @@ irqreturn_t wm_adsp2_bus_error(struct wm_adsp *dsp)
+ 			adsp_err(dsp,
+ 				 "Failed to read Pmem Xmem Err Addr register: %d\n",
+ 				 ret);
+-			return IRQ_HANDLED;
++			goto error;
+ 		}
+ 
+ 		adsp_err(dsp, "xmem error address = 0x%x\n",
+@@ -3870,6 +3872,9 @@ irqreturn_t wm_adsp2_bus_error(struct wm_adsp *dsp)
+ 	regmap_update_bits(regmap, dsp->base + ADSP2_LOCK_REGION_CTRL,
+ 			   ADSP2_CTRL_ERR_EINT, ADSP2_CTRL_ERR_EINT);
+ 
++error:
++	mutex_unlock(&dsp->pwr_lock);
++
+ 	return IRQ_HANDLED;
  }
+ EXPORT_SYMBOL_GPL(wm_adsp2_bus_error);
 -- 
 2.20.1
 
