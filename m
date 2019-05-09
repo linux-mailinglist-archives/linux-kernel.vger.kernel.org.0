@@ -2,96 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A28518394
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C930C183AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbfEICMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 22:12:40 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:42732 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725842AbfEICMk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 22:12:40 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TRDJ4vp_1557367904;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TRDJ4vp_1557367904)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 09 May 2019 10:11:50 +0800
-Date:   Thu, 9 May 2019 10:11:44 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Julien Desfossez <jdesfossez@digitalocean.com>
-Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Phil Auld <pauld@redhat.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v2 00/17] Core scheduling v2
-Message-ID: <20190509021144.GA24577@aaronlu>
-References: <20190423180238.GG22260@pauld.bos.csb>
- <20190423184527.6230-1-vpillai@digitalocean.com>
- <20190429035320.GB128241@aaronlu>
- <20190506193937.GA10264@sinkpad>
- <20190508023009.GA89792@aaronlu>
- <20190508174909.GA18516@sinkpad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190508174909.GA18516@sinkpad>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1726666AbfEICUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 22:20:04 -0400
+Received: from www.osadl.org ([62.245.132.105]:60498 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfEICUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 22:20:03 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x492JcKg005420;
+        Thu, 9 May 2019 04:19:38 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Alessandro Zummo <a.zummo@towertech.it>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] rtc: ds2404: use hw endiannes variable
+Date:   Thu,  9 May 2019 04:13:55 +0200
+Message-Id: <1557368035-6787-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
+X-Spam-Status: No, score=-4.2 required=6.0 tests=BAYES_00,RCVD_IN_DNSWL_MED
+        autolearn=ham version=3.3.1
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on www.osadl.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 01:49:09PM -0400, Julien Desfossez wrote:
-> On 08-May-2019 10:30:09 AM, Aaron Lu wrote:
-> > On Mon, May 06, 2019 at 03:39:37PM -0400, Julien Desfossez wrote:
-> > > On 29-Apr-2019 11:53:21 AM, Aaron Lu wrote:
-> > > > This is what I have used to make sure no two unmatched tasks being
-> > > > scheduled on the same core: (on top of v1, I thinks it's easier to just
-> > > > show the diff instead of commenting on various places of the patches :-)
-> > > 
-> > > We imported this fix in v2 and made some small changes and optimizations
-> > > (with and without Peter’s fix from https://lkml.org/lkml/2019/4/26/658)
-> > > and in both cases, the performance problem where the core can end up
-> > 
-> > By 'core', do you mean a logical CPU(hyperthread) or the entire core?
-> No I really meant the entire core.
-> 
-> I’m sorry, I should have added a little bit more context. This relates
-> to a performance issue we saw in v1 and discussed here:
-> https://lore.kernel.org/lkml/20190410150116.GI2490@worktop.programming.kicks-ass.net/T/#mb9f1f54a99bac468fc5c55b06a9da306ff48e90b
-> 
-> We proposed a fix that solved this, Peter came up with a better one
-> (https://lkml.org/lkml/2019/4/26/658), but if we add your isolation fix
-> as posted above, the same problem reappears. Hope this clarifies your
-> ask.
+Converting from hardware to host endiannes was done using reassignment
+to the same variable which makes sparse unhappy as it can not verify
+the endiannes handling properly. To allow sparse to verify endiannes
+handling an explicit __le32 is introduced. Note that this patch does
+not change the generated binary (x86_64 and ppc64 binary diff).
 
-It's clear now, thanks.
-I don't immediately see how my isolation fix would make your fix stop
-working, will need to check. But I'm busy with other stuffs so it will
-take a while.
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+---
 
-> 
-> I hope that we did not miss anything crucial while integrating your fix
-> on top of v2 + Peter’s fix. The changes are conceptually similar, but we
-> refactored it slightly to make the logic clear. Please have a look and
-> let us know
+Problem located by an experimental coccinelle script to locate
+patters that make sparse unhappy (false positives):
 
-I suppose you already have a branch that have all the bits there? I
-wonder if you can share that branch somewhere so I can start working on
-top of it to make sure we are on the same page?
+on little-endian x86_64 sparse complains about:
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+on big-endian ppc64 sparse complains about
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
+drivers/rtc/rtc-ds2404.c:187:16: warning: cast to restricted __le32
 
-Also, it would be good if you can share the workload, cmdline options,
-how many workers need to start etc. to reproduce this issue.
+Patch was compiletested with:
+ x86_64_defconfig + RTC_DRV_DS2404=m
+ ppc64_defconfig + RTC_DRV_DS2404=m
 
-Thanks.
+in both cases applying the patch has no impact on the generated binary.
+
+Patch is against 5.1 (localversion-next is next-20190508)
+
+ drivers/rtc/rtc-ds2404.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-ds2404.c b/drivers/rtc/rtc-ds2404.c
+index 1e9f429..9df0c44 100644
+--- a/drivers/rtc/rtc-ds2404.c
++++ b/drivers/rtc/rtc-ds2404.c
+@@ -182,9 +182,10 @@ static void ds2404_enable_osc(struct device *dev)
+ static int ds2404_read_time(struct device *dev, struct rtc_time *dt)
+ {
+ 	unsigned long time = 0;
++	__le32 hw_time = 0;
+ 
+-	ds2404_read_memory(dev, 0x203, 4, (u8 *)&time);
+-	time = le32_to_cpu(time);
++	ds2404_read_memory(dev, 0x203, 4, (u8 *)&hw_time);
++	time = le32_to_cpu(hw_time);
+ 
+ 	rtc_time64_to_tm(time, dt);
+ 	return 0;
+-- 
+2.1.4
+
