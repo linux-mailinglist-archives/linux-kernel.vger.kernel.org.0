@@ -2,101 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1782188EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEBF188FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbfEIL17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:27:59 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:28430 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbfEIL17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 07:27:59 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 450B0X4Z0Xz9v114;
-        Thu,  9 May 2019 13:27:56 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=SY9KuSHm; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id YU_cHU7ABhH9; Thu,  9 May 2019 13:27:56 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 450B0X3SDxz9v10f;
-        Thu,  9 May 2019 13:27:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1557401276; bh=te5Ea9Nu7fIuisOgqijviIon2+QUqVw422cO21j19e8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SY9KuSHmnrVh2Yoqk8T/eCt5yHV5/NpWi6CRNnujTHOhKVF3ddsxyof+YRlucevjn
-         mr1IY0uPe088P/n1iLq5V2QRJNuJEKH+pB3Tlgi5VPekRTQxWYuE9ncek1jbTFYkQN
-         pjBh+r7J8axOCTugpg+JoO8Bz7BmjLyEbLqTcTE0=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C265E8B913;
-        Thu,  9 May 2019 13:27:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id OYNhdwwfftva; Thu,  9 May 2019 13:27:57 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5555E8B90D;
-        Thu,  9 May 2019 13:27:57 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/ftrace: Enable C Version of recordmcount
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <4464516c0b6835b42acc65e088b6d7f88fe886f2.1557235811.git.christophe.leroy@c-s.fr>
- <87ef59wz8n.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <1a731776-2b9f-ae62-c858-cfd22923f03a@c-s.fr>
-Date:   Thu, 9 May 2019 13:27:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <87ef59wz8n.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1726771AbfEIL30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:29:26 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34633 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfEIL30 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 07:29:26 -0400
+Received: by mail-pf1-f195.google.com with SMTP id n19so1187653pfa.1;
+        Thu, 09 May 2019 04:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=AQRCsjoCj+KrwazrHzM9n93IVCjTIj3cFygvptfqjiM=;
+        b=GiAanJqiIpWrs6LuqUKeJ/IgQylEYFq0xa7F/AvprcC0nQmevkQdUooOdbshL07mbi
+         eiW6jkQej8ANOw8/AsgYBefUJaDXe5aEU5J32Ltn3qL3BaksrPAAtbvTA1d+LOmwRQH/
+         zqOEgp6FukKJai5Hd5iGASpk9D2Yay8DIkkhXZlJAE7K48JBw7PeeKVtNXcqpH1T3EM9
+         c3gFwb90SKOVxRQ4sndM6rXmNe2Vt8yud5PGigRWvlNKudq1wrAuzdb+IgjIOL5/pcef
+         mcqCf2Bb+v0GDDEy67cRNO8YA2oQSdCeKznryQo4J5gqqWb19vqE6pdj3tYhBTagO4sR
+         fwMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AQRCsjoCj+KrwazrHzM9n93IVCjTIj3cFygvptfqjiM=;
+        b=AWm/DiN0m6Pq2DDE8GPvYdrVtnC147mk/S/quWegrDJSBupPolqubm1hqlDqQdCmwa
+         cPgdwVam6cireCzig9XwTc7a0ExthkBKay12mLkv07DnH9jxzsA6GcVstwzateTGSXkb
+         cYT/hymCp/3pcpFSvY5iX7xVacuytBm3EaOdouIjFS6QbIG6EWOwoJ/MQiDCnEl7EpXj
+         T19faSc1xF5MotPX3i260BHrkCFsn5tAUvwc9A2x1eVI+cNzBEnmd716iZgN8z4IEx/8
+         lPsBtNMK7TNtro4EwW9OZ4Y7wjwiHIE17LXaAyR1sQYJ99djTYZJCOuzObF3AqC4yh10
+         pwrQ==
+X-Gm-Message-State: APjAAAV1IjuSW1Ncp5fSIt2h7bMGmSrY4WnmQHHJOGibxMsRnlrfCmg+
+        oFeo9KzeIHXi28a62WC8yXeqdsse
+X-Google-Smtp-Source: APXvYqyM9c/bKuPq/jsNLoE14zoNM3/4FTquvtrHMMTZTIJmHaDtROGQ084L8WoWMtlXYWCSGl/k/w==
+X-Received: by 2002:a65:554d:: with SMTP id t13mr4638517pgr.171.1557401365682;
+        Thu, 09 May 2019 04:29:25 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id j10sm2762002pfa.37.2019.05.09.04.29.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 09 May 2019 04:29:25 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 0/3] KVM: LAPIC: Optimize timer latency further
+Date:   Thu,  9 May 2019 19:29:18 +0800
+Message-Id: <1557401361-3828-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Advance lapic timer tries to hidden the hypervisor overhead between host 
+timer fires and the guest awares the timer is fired. However, it just hidden 
+the time between apic_timer_fn/handle_preemption_timer -> wait_lapic_expire, 
+instead of the real position of vmentry which is mentioned in the orignial 
+commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline hrtimer 
+expiration"). There is 700+ cpu cycles between the end of wait_lapic_expire 
+and before world switch on my haswell desktop, it will be 2400+ cycles if 
+vmentry_l1d_flush is tuned to always. 
 
+This patchset tries to narrow the last gap, it measures the time between 
+the end of wait_lapic_expire and before world switch, we take this 
+time into consideration when busy waiting, otherwise, the guest still 
+awares the latency between wait_lapic_expire and world switch, we also 
+consider this when adaptively tuning the timer advancement. The patch 
+can reduce 50% latency (~1600+ cycles to ~800+ cycles on a haswell 
+desktop) for kvm-unit-tests/tscdeadline_latency when testing busy waits.
 
-Le 08/05/2019 à 02:45, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> Selects HAVE_C_RECORDMCOUNT to use the C version of the recordmcount
->> intead of the old Perl Version of recordmcount.
->>
->> This should improve build time. It also seems like the old Perl Version
->> misses some calls to _mcount that the C version finds.
-> 
-> That would make this a bug fix possibly for stable even.
-> 
-> Any more details on what the difference is, is it just some random
-> subset of functions or some pattern?
+Wanpeng Li (3):
+  KVM: LAPIC: Extract adaptive tune timer advancement logic
+  KVM: LAPIC: Fix lapic_timer_advance_ns parameter overflow
+  KVM: LAPIC: Optimize timer latency further
 
-I have not been able to identify any pattern. Will add a few details in 
-the 'issue' on github.
+ arch/x86/kvm/lapic.c   | 78 ++++++++++++++++++++++++++++++++++----------------
+ arch/x86/kvm/lapic.h   |  8 ++++++
+ arch/x86/kvm/vmx/vmx.c |  2 ++
+ arch/x86/kvm/x86.c     |  2 +-
+ 4 files changed, 64 insertions(+), 26 deletions(-)
 
-Christophe
+-- 
+2.7.4
 
-> 
-> cheers
-> 
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 2711aac24621..d87de4f9da61 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -180,6 +180,7 @@ config PPC
->>   	select HAVE_ARCH_NVRAM_OPS
->>   	select HAVE_ARCH_SECCOMP_FILTER
->>   	select HAVE_ARCH_TRACEHOOK
->> +	select HAVE_C_RECORDMCOUNT
->>   	select HAVE_CBPF_JIT			if !PPC64
->>   	select HAVE_STACKPROTECTOR		if PPC64 && $(cc-option,-mstack-protector-guard=tls -mstack-protector-guard-reg=r13)
->>   	select HAVE_STACKPROTECTOR		if PPC32 && $(cc-option,-mstack-protector-guard=tls -mstack-protector-guard-reg=r2)
->> -- 
->> 2.13.3
