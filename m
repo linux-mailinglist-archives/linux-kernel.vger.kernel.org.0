@@ -2,105 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB84118410
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 05:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D4018426
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 05:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfEIDU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 23:20:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41160 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbfEIDUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 23:20:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69F688665F;
-        Thu,  9 May 2019 03:20:25 +0000 (UTC)
-Received: from hp-dl380pg8-02.lab.eng.pek2.redhat.com (hp-dl380pg8-02.lab.eng.pek2.redhat.com [10.73.8.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 48A355C221;
-        Thu,  9 May 2019 03:20:23 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     yuehaibing@huawei.com, xiyou.wangcong@gmail.com,
-        weiyongjun1@huawei.com, eric.dumazet@gmail.com,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net V3 2/2] tuntap: synchronize through tfiles array instead of tun->numqueues
-Date:   Wed,  8 May 2019 23:20:18 -0400
-Message-Id: <1557372018-18544-2-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1557372018-18544-1-git-send-email-jasowang@redhat.com>
-References: <1557372018-18544-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 09 May 2019 03:20:25 +0000 (UTC)
+        id S1726733AbfEID24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 23:28:56 -0400
+Received: from smtp01-new-4.daemonmail.net ([216.104.162.149]:42218 "EHLO
+        smtp01-new-4.daemonmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726251AbfEID24 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 23:28:56 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 23:28:56 EDT
+Received: from mxw-out01.daemonmail.net (mxw-out01.daemonmail.net [216.104.161.15])
+        by smtp01-new-4.daemonmail.net (Postfix) with ESMTP id 5566C43A63;
+        Wed,  8 May 2019 20:21:39 -0700 (PDT)
+X-Best-Tracker: georgekwame@deeardema.com
+Received: from localhost (localhost [127.0.0.1])
+        by mxw-out01.daemonmail.net (Postfix) with ESMTP id 09C223E956;
+        Wed,  8 May 2019 20:21:39 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at mxw-out01.daemonmail.net
+X-Spam-Flag: NO
+X-Spam-Score: -0.555
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.555 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, FREEMAIL_FORGED_REPLYTO=2.095,
+        FREEMAIL_REPLYTO_END_DIGIT=0.25] autolearn=no autolearn_force=no
+Received: from mxw-out01.daemonmail.net ([127.0.0.1])
+        by localhost (mxw-out01.daemonmail.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id tGf009rdPWxj; Wed,  8 May 2019 20:21:37 -0700 (PDT)
+Received: from wmw02.tierra.net (wmw02.tierra.net [10.1.0.62])
+        by mxw-out01.daemonmail.net (Postfix) with ESMTP id 72A223EC5E;
+        Wed,  8 May 2019 20:21:35 -0700 (PDT)
+Received: from webmail.tierra.net (localhost [127.0.0.1])
+        by wmw02.tierra.net (Postfix) with ESMTP id C56D53EB13;
+        Wed,  8 May 2019 20:21:34 -0700 (PDT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 May 2019 23:21:34 -0400
+From:   George Kwame <georgekwame@deeardema.com>
+To:     undisclosed-recipients:;
+Subject: Gold Bars Purchase/Investment!!
+Reply-To: georgekwame481@gmail.com
+Mail-Reply-To: georgekwame481@gmail.com
+Message-ID: <4862a90477d6300ebbaa9d57682e3acc@deeardema.com>
+X-Sender: georgekwame@deeardema.com
+User-Agent: Roundcube Webmail/1.2.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a queue(tfile) is detached through __tun_detach(), we move the
-last enabled tfile to the position where detached one sit but don't
-NULL out last position. We expect to synchronize the datapath through
-tun->numqueues. Unfortunately, this won't work since we're lacking
-sufficient mechanism to order or synchronize the access to
-tun->numqueues.
+Greetings
 
-To fix this, NULL out the last position during detaching and check
-RCU protected tfile against NULL instead of checking tun->numqueues in
-datapath.
+My name is Mr. George Kwame from Odikro Royal Family Bolgatanga Upper 
+East Region Northern Ghana. We are a group of local gold Miners and end 
+sellers we are looking for a direct buyer or an agent who will help us 
+look for buyer on Commission basis.
 
-Cc: YueHaibing <yuehaibing@huawei.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: weiyongjun (A) <weiyongjun1@huawei.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Fixes: c8d68e6be1c3b ("tuntap: multiqueue support")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
-Changes from V2:
-- resample during detach in tun_xdp_xmit()
-Changes from V1:
-- keep the check in tun_xdp_xmit()
----
- drivers/net/tun.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+The Purity of our gold is 93%  and 22Carats Plus and our price per kilo 
+is affordable. We have 350 Kilos in Stock and we are looking for a buyer 
+or an investor who will partner with us to invest in other of our 
+2Concessions. Kindly contact me for me details if you are interested to 
+work with us.
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index dc62fc3..f4c933a 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -705,6 +705,8 @@ static void __tun_detach(struct tun_file *tfile, bool clean)
- 				   tun->tfiles[tun->numqueues - 1]);
- 		ntfile = rtnl_dereference(tun->tfiles[index]);
- 		ntfile->queue_index = index;
-+		rcu_assign_pointer(tun->tfiles[tun->numqueues - 1],
-+				   NULL);
- 
- 		--tun->numqueues;
- 		if (clean) {
-@@ -1087,7 +1089,7 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 	tfile = rcu_dereference(tun->tfiles[txq]);
- 
- 	/* Drop packet if interface is not attached */
--	if (txq >= tun->numqueues)
-+	if (!tfile)
- 		goto drop;
- 
- 	if (!rcu_dereference(tun->steering_prog))
-@@ -1310,6 +1312,7 @@ static int tun_xdp_xmit(struct net_device *dev, int n,
- 
- 	rcu_read_lock();
- 
-+resample:
- 	numqueues = READ_ONCE(tun->numqueues);
- 	if (!numqueues) {
- 		rcu_read_unlock();
-@@ -1318,6 +1321,8 @@ static int tun_xdp_xmit(struct net_device *dev, int n,
- 
- 	tfile = rcu_dereference(tun->tfiles[smp_processor_id() %
- 					    numqueues]);
-+	if (unlikely(!tfile))
-+		goto resample;
- 
- 	spin_lock(&tfile->tx_ring.producer_lock);
- 	for (i = 0; i < n; i++) {
--- 
-1.8.3.1
+Hoping to hear from you.
 
+Regards
+George Kwame
