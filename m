@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F5C188BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C5E188B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 13:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfEILLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 07:11:48 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46200 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbfEILLn (ORCPT
+        id S1726816AbfEILLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 07:11:53 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34418 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfEILLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 May 2019 07:11:43 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r7so1824236wrr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:41 -0700 (PDT)
+Received: by mail-wr1-f68.google.com with SMTP id f7so2490497wrq.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 04:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LvXnZafEYce3eQKqHnoNFRM0UdhTjWak2LbszgnoCDw=;
-        b=nVNkiLZZnD0l0mljltaU+TL2K/INQVTmvo6L6LxI4KN1XdK8+rV4sSWsBWCDaI0v2u
-         4MV/gdQ/dH//yjmesEhgh7co8VVsOg9SGz0aNJi3RMSiZNJN3uhnXNWjqYPg3i+7NE9g
-         P9UG4KP4Wkn+o3i52xoJSa4mp90sh1Cu0F0XUfRXvhkjojFuWq5usvUFwTVVZxktGnz4
-         m9sdKKS5d9WX3FDpvhMfwERGRJm8Pc8S0w6keRmjiXlVF9SkrEQHLO6oHpBUtHiHzZTU
-         s8pidw8/Xl2K9ntFRohkonecIOKkLuZCK8UKelRWP563YP6k8Qe0pLvW9rMEC6F1mIAb
-         n1mg==
+        bh=UqB421RDZrmI+ZkHu7BcjtNVEU1ZDEYv3yb1vRTJinE=;
+        b=FGNyjK32xMkhdBSlyAsZbwrfAZB8J+kCwspE8uIxSD/faC2u5BR/dh7S4oBmUfL4eu
+         dtYytfPQhXcdi/oGgONY+LLd7ig76ahnAH2+cm0mFvCCfCdN5LMcUyifRvIyDUKyCFJn
+         //Z4+NQ5Vr3mYU3hkdRKUKl+xCpJi5KqOfiZPic9+Q1K+skd2UcV8UWbJVnrL5q1WZ2i
+         jIjNSXyf9VGDmzp4TYb/cxSDrx8pL5sN00RFyCfB4c1VmnzW04sZh7gTSaGS4m4IxjIg
+         66YMxbUPhUfcsNIEu+arAHs0NfP3qeClxVkPgNSDapCxMcz2mtKWBxliZF7h0m0yVwkQ
+         hWnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LvXnZafEYce3eQKqHnoNFRM0UdhTjWak2LbszgnoCDw=;
-        b=MT2MTPY7OJaUSUl/pY1abi2zv962TH5VnWqXGw9Fz5rTbTYkLsQ/kF8wwEuKDEJmZ/
-         r+GIJTroTJMeUAouLq2FadLXnPOP/h5N+sTWXLLmM3iCHb4Ew8IxfHGoyJCm1ScwK+q6
-         u6frq7+Zgt6SHp/rfY/GBiG90Nt84l4NsoYK13FtPt9YzPvkS6z9f4/SiwMLRlspBDhv
-         SmKKfJqkMdMpwteGFgtcFSPxfUGGk0UDS23PV4PEToqIv7SnmN8acAGClCXEgrcUQ8tc
-         yyW3ddBy2bvHy1dsKhypsrhMrRRLdVzUw0MiQ6MuM9Y8d0dck2R0bbERqJcVRRMMWB0r
-         nVSg==
-X-Gm-Message-State: APjAAAUsxCq8QXStGan2xzWbemo0up3BRTRDAJup5AApHQxPaZxJP3Nm
-        rBHTc+WSLts8jbEmasHvMi/AQA==
-X-Google-Smtp-Source: APXvYqz/tfg0kvd52vftBvhMXj5rBnbW/SfA92OndwT53A//UUiNej0enl6FDxrI74BMaCHgrSeBmg==
-X-Received: by 2002:adf:f108:: with SMTP id r8mr814863wro.221.1557400301093;
-        Thu, 09 May 2019 04:11:41 -0700 (PDT)
+        bh=UqB421RDZrmI+ZkHu7BcjtNVEU1ZDEYv3yb1vRTJinE=;
+        b=Ltg7dArUmw7VzZ0gJW3lXUOEeb0sCwxyaaMVxc0Byek2ORVq8QOKon67CT6K/pJKDo
+         NXDiXwhiYoEQUQVb+SuVid6A4NymG0d2tVvY1j4V/veneRGXQll32cKakfUX8HYt21YF
+         BaplguNYp5nxlYA2q38UpGCRevUE/fsU1uCDTwFTEjlh9qOIJOSH5x4oNplX07G/fQqo
+         +vhcEAFxijw9/92iq4OputY9pNgJGHAowbNJCByZ/afUu6nCQ0QHDES3N5YFeGDRswhJ
+         x8Rne6PRGDHRQH+SlDdEDMMoaqX+wRYjLULsPFuaYqh1kZknvvLop3YaWIh5kb5ISsRm
+         +VIw==
+X-Gm-Message-State: APjAAAUGhwKGgVJ2NbcLmTuXJaX/f42kx8+1Q5SfD1WGqYAAogYV0WWK
+        crmTOSnatHSb0km1R3G8WvIszw==
+X-Google-Smtp-Source: APXvYqwWBNC6sjUiGkfMAQ4dNFuB5MYf06Vf/1gQLYImEOdWZ71VuN3MKOjabuWQJ7BcZTqGJat26w==
+X-Received: by 2002:adf:94a5:: with SMTP id 34mr2536002wrr.275.1557400302307;
+        Thu, 09 May 2019 04:11:42 -0700 (PDT)
 Received: from mai.irit.fr ([141.115.39.235])
-        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.40
+        by smtp.gmail.com with ESMTPSA id z7sm2299778wme.26.2019.05.09.04.11.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 04:11:40 -0700 (PDT)
+        Thu, 09 May 2019 04:11:41 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 11/15] clocksource/drivers/tcb_clksrc: Move Kconfig option
-Date:   Thu,  9 May 2019 13:10:44 +0200
-Message-Id: <20190509111048.11151-11-daniel.lezcano@linaro.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 12/15] clocksource/drivers/timer-atmel-pit: Rework Kconfig option
+Date:   Thu,  9 May 2019 13:10:45 +0200
+Message-Id: <20190509111048.11151-12-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190509111048.11151-1-daniel.lezcano@linaro.org>
 References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
@@ -64,60 +62,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Move the ATMEL_TCB_CLKSRC option to drivers/clocksource and make it silent
-if COMPILE_TEST is not selected.
+Allow building the PIT driver when COMPILE_TEST is enabled. Also remove its
+default value so it can be disabled.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/Kconfig |  7 +++++++
- drivers/misc/Kconfig        | 14 --------------
- 2 files changed, 7 insertions(+), 14 deletions(-)
+ drivers/clocksource/Kconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index ede5d20299b9..eb1560187434 100644
+index eb1560187434..2137f672a12f 100644
 --- a/drivers/clocksource/Kconfig
 +++ b/drivers/clocksource/Kconfig
-@@ -410,6 +410,13 @@ config ATMEL_ST
- 	help
- 	  Support for the Atmel ST timer.
+@@ -399,8 +399,11 @@ config ARMV7M_SYSTICK
+ 	  This options enables support for the ARMv7M system timer unit
  
-+config ATMEL_TCB_CLKSRC
-+	bool "Atmel TC Block timer driver" if COMPILE_TEST
+ config ATMEL_PIT
++	bool "Atmel PIT support" if COMPILE_TEST
 +	depends on HAS_IOMEM
-+	select TIMER_OF if OF
+ 	select TIMER_OF if OF
+-	def_bool SOC_AT91SAM9 || SOC_SAMA5
 +	help
-+	  Support for Timer Counter Blocks on Atmel SoCs.
-+
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
- 	depends on ARM || ARM64
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 268a01d3d6f3..c84033909395 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -59,20 +59,6 @@ config ATMEL_TCLIB
- 	  blocks found on many Atmel processors.  This facilitates using
- 	  these blocks by different drivers despite processor differences.
++	  Support for the Periodic Interval Timer found on Atmel SoCs.
  
--config ATMEL_TCB_CLKSRC
--	bool "TC Block Clocksource"
--	depends on ARCH_AT91
--	select TIMER_OF if OF
--	default y
--	help
--	  Select this to get a high precision clocksource based on a
--	  TC block with a 5+ MHz base clock rate.  Two timer channels
--	  are combined to make a single 32-bit timer.
--
--	  When GENERIC_CLOCKEVENTS is defined, the third timer channel
--	  may be used as a clock event device supporting oneshot mode
--	  (delays of up to two seconds) based on the 32 KiHz clock.
--
- config DUMMY_IRQ
- 	tristate "Dummy IRQ handler"
- 	default n
+ config ATMEL_ST
+ 	bool "Atmel ST timer support" if COMPILE_TEST
 -- 
 2.17.1
 
