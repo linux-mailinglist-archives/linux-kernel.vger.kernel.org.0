@@ -2,51 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75846191AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D24BB19092
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbfEIS6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47184 "EHLO mail.kernel.org"
+        id S1727544AbfEISqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:46:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbfEISwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:52:54 -0400
+        id S1726736AbfEISqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:46:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44C95217D7;
-        Thu,  9 May 2019 18:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D49F21850;
+        Thu,  9 May 2019 18:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427973;
-        bh=0VqV0jJX90eYH8l9rKoIsmKTEX47Oti3YPtNJj6Ig/s=;
+        s=default; t=1557427573;
+        bh=TPjDDS2oJthnp6FFNC0qXvO0doyjzqJaqEzQ9xj6jbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPO1gznbFLZg9dNkyFJokq7xinXr5cdFzXX9P+EJ7xnmKdvNt2GKK0PkyEG4PfV1U
-         JcjwLbxXrWkMkrEb6Hv+HdDeO9Az3BfkkUFn4DwxNeKKDmxas86cQHQS8CusFeeTtm
-         u05a8v0mUkc2Y47430p46U4khQ5zzSEaY7BAzs5s=
+        b=ObaKEUJQLFnQUgj7mtsJgHEglRwRlDZ4hKUVAEN0tmXJEuQstyomJxnrtRmGBSFJ1
+         bOj/7rveptBuHCiihMWmPoLPKr1AYFOc3JPxGImNZ/+NBdjk6EoqkLU9LWAIR1zHey
+         2AjtHxR084uiz2IH4YRyWWzbG6kAigBm+yQg8Qhg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Borislav Petkov <bp@suse.de>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        NeilBrown <neilb@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Qiaowei Ren <qiaowei.ren@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org, Rander Wang <rander.wang@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 38/95] linux/kernel.h: Use parentheses around argument in u64_to_user_ptr()
+Subject: [PATCH 4.14 06/42] ASoC:soc-pcm:fix a codec fixup issue in TDM case
 Date:   Thu,  9 May 2019 20:41:55 +0200
-Message-Id: <20190509181311.994204612@linuxfoundation.org>
+Message-Id: <20190509181253.975596819@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
+References: <20190509181252.616018683@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,67 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a0fe2c6479aab5723239b315ef1b552673f434a3 ]
+[ Upstream commit 570f18b6a8d1f0e60e8caf30e66161b6438dcc91 ]
 
-Use parentheses around uses of the argument in u64_to_user_ptr() to
-ensure that the cast doesn't apply to part of the argument.
+On HDaudio platforms, if playback is started when capture is working,
+there is no audible output.
 
-There are existing uses of the macro of the form
+This can be root-caused to the use of the rx|tx_mask to store an HDaudio
+stream tag.
 
-  u64_to_user_ptr(A + B)
+If capture is stared before playback, rx_mask would be non-zero on HDaudio
+platform, then the channel number of playback, which is in the same codec
+dai with the capture, would be changed by soc_pcm_codec_params_fixup based
+on the tx_mask at first, then overwritten by this function based on rx_mask
+at last.
 
-which expands to
+According to the author of tx|rx_mask, tx_mask is for playback and rx_mask
+is for capture. And stream direction is checked at all other references of
+tx|rx_mask in ASoC, so here should be an error. This patch checks stream
+direction for tx|rx_mask for fixup function.
 
-  (void __user *)(uintptr_t)A + B
+This issue would affect not only HDaudio+ASoC, but also I2S codecs if the
+channel number based on rx_mask is not equal to the one for tx_mask. It could
+be rarely reproduecd because most drivers in kernel set the same channel number
+to tx|rx_mask or rx_mask is zero.
 
-(the cast applies to the first operand of the addition, the addition
-is a pointer addition). This happens to still work as intended, the
-semantic difference doesn't cause a difference in behavior.
+Tested on all platforms using stream_tag & HDaudio and intel I2S platforms.
 
-But I want to use u64_to_user_ptr() with a ternary operator in the
-argument, like so:
-
-  u64_to_user_ptr(A ? B : C)
-
-This currently doesn't work as intended.
-
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Andrei Vagin <avagin@openvz.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jani Nikula <jani.nikula@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: NeilBrown <neilb@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qiaowei Ren <qiaowei.ren@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190329214652.258477-1-jannh@google.com
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/kernel.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/soc-pcm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 8f0e68e250a76..fd827b2400596 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -73,8 +73,8 @@
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 6fc85199ac737..584b7ffe78f52 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -894,10 +894,13 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 		codec_params = *params;
  
- #define u64_to_user_ptr(x) (		\
- {					\
--	typecheck(u64, x);		\
--	(void __user *)(uintptr_t)x;	\
-+	typecheck(u64, (x));		\
-+	(void __user *)(uintptr_t)(x);	\
- }					\
- )
+ 		/* fixup params based on TDM slot masks */
+-		if (codec_dai->tx_mask)
++		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
++		    codec_dai->tx_mask)
+ 			soc_pcm_codec_params_fixup(&codec_params,
+ 						   codec_dai->tx_mask);
+-		if (codec_dai->rx_mask)
++
++		if (substream->stream == SNDRV_PCM_STREAM_CAPTURE &&
++		    codec_dai->rx_mask)
+ 			soc_pcm_codec_params_fixup(&codec_params,
+ 						   codec_dai->rx_mask);
  
 -- 
 2.20.1
