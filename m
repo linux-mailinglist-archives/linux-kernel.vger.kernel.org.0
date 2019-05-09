@@ -2,294 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD4A1930B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56E3419332
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 22:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfEITtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:49:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbfEITtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 15:49:06 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69E1E21744;
-        Thu,  9 May 2019 19:49:03 +0000 (UTC)
-Date:   Thu, 9 May 2019 15:49:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>
-Subject: [RFC][PATCH] ftrace/x86: Remove mcount support
-Message-ID: <20190509154902.34ea14f8@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727024AbfEIUK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 16:10:59 -0400
+Received: from mout1.fh-giessen.de ([212.201.18.42]:58512 "EHLO
+        mout1.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfEIUK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 16:10:59 -0400
+X-Greylist: delayed 1143 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 May 2019 16:10:57 EDT
+Received: from mx1.fh-giessen.de ([212.201.18.40])
+        by mout1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hOp57-00086y-Lh; Thu, 09 May 2019 21:51:53 +0200
+Received: from mailgate-2.its.fh-giessen.de ([212.201.18.14])
+        by mx1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hOp57-009hEs-GK; Thu, 09 May 2019 21:51:53 +0200
+Received: from p2e56130f.dip0.t-ipconnect.de ([46.86.19.15] helo=zwei.fritz.box)
+        by mailgate-2.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hOp57-000F2O-5i; Thu, 09 May 2019 21:51:53 +0200
+From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
+To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@kernel.org
+Cc:     Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
+Subject: [PATCH] drivers/media/dvb-frontends: Implement probe/remove for stv6110x
+Date:   Thu,  9 May 2019 21:51:18 +0200
+Message-Id: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Refactor out the common parts of stv6110x_probe() and stv6110x_attach() into
+separate functions.
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+This provides the needed functionality to use dvb_module_probe() instead of
+dvb_attach()!
 
-There's two methods of enabling function tracing in Linux on x86. One is
-with just "gcc -pg" and the other is "gcc -pg -mfentry". The former will use
-calls to a special function "mcount" after the frame is set up in all C
-functions. The latter will add calls to a special function called "fentry"
-as the very first instruction of all C functions.
-
-At compile time, there is a check to see if gcc supports, -mfentry, and if
-it does, it will use that, because it is more versatile and less error prone
-for function tracing.
-
-Starting with v4.19, the minimum gcc supported to build the Linux kernel,
-was raised to version 4.6. That also happens to be the first gcc version to
-support -mfentry. Since on x86, using gcc versions from 4.6 and beyond will
-unconditionally enable the -mfentry, it will no longer use mcount as the
-method for inserting calls into the C functions of the kernel. This means
-that there is no point in continuing to maintain mcount in x86.
-
-Remove support for using mcount. This makes the code less complex, and will
-also allow it to be simplified in the future.
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
 ---
- arch/x86/include/asm/ftrace.h    |  8 +++----
- arch/x86/include/asm/livepatch.h |  3 ---
- arch/x86/kernel/ftrace_32.S      | 36 +++++---------------------------
- arch/x86/kernel/ftrace_64.S      | 28 +------------------------
- 4 files changed, 9 insertions(+), 66 deletions(-)
+ drivers/media/dvb-frontends/stv6110x.c      | 125 ++++++++++++++++----
+ drivers/media/dvb-frontends/stv6110x.h      |   3 +
+ drivers/media/dvb-frontends/stv6110x_priv.h |   3 +-
+ 3 files changed, 109 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index cf350639e76d..287f1f7b2e52 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -3,12 +3,10 @@
- #define _ASM_X86_FTRACE_H
- 
- #ifdef CONFIG_FUNCTION_TRACER
--#ifdef CC_USING_FENTRY
--# define MCOUNT_ADDR		((unsigned long)(__fentry__))
--#else
--# define MCOUNT_ADDR		((unsigned long)(mcount))
--# define HAVE_FUNCTION_GRAPH_FP_TEST
-+#ifndef CC_USING_FENTRY
-+# error Compiler does not support fentry?
- #endif
-+# define MCOUNT_ADDR		((unsigned long)(__fentry__))
- #define MCOUNT_INSN_SIZE	5 /* sizeof mcount call */
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
-diff --git a/arch/x86/include/asm/livepatch.h b/arch/x86/include/asm/livepatch.h
-index ed80003ce3e2..2f2bdf0662f8 100644
---- a/arch/x86/include/asm/livepatch.h
-+++ b/arch/x86/include/asm/livepatch.h
-@@ -26,9 +26,6 @@
- 
- static inline int klp_check_compiler_support(void)
- {
--#ifndef CC_USING_FENTRY
--	return 1;
--#endif
- 	return 0;
+diff --git a/drivers/media/dvb-frontends/stv6110x.c b/drivers/media/dvb-frontends/stv6110x.c
+index 82c002d3833a..17bc7adf3771 100644
+--- a/drivers/media/dvb-frontends/stv6110x.c
++++ b/drivers/media/dvb-frontends/stv6110x.c
+@@ -345,6 +345,33 @@ static void stv6110x_release(struct dvb_frontend *fe)
+ 	kfree(stv6110x);
  }
  
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..79dcfdf9e96a 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -10,22 +10,12 @@
- #include <asm/ftrace.h>
- #include <asm/nospec-branch.h>
- 
--#ifdef CC_USING_FENTRY
- # define function_hook	__fentry__
- EXPORT_SYMBOL(__fentry__)
--#else
--# define function_hook	mcount
--EXPORT_SYMBOL(mcount)
--#endif
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
--/* mcount uses a frame pointer even if CONFIG_FRAME_POINTER is not set */
--#if !defined(CC_USING_FENTRY) || defined(CONFIG_FRAME_POINTER)
--# define USING_FRAME_POINTER
--#endif
--
--#ifdef USING_FRAME_POINTER
-+#ifdef CONFIG_FRAME_POINTER
- # define MCOUNT_FRAME			1	/* using frame = true  */
- #else
- # define MCOUNT_FRAME			0	/* using frame = false */
-@@ -37,8 +27,7 @@ END(function_hook)
- 
- ENTRY(ftrace_caller)
- 
--#ifdef USING_FRAME_POINTER
--# ifdef CC_USING_FENTRY
-+#ifdef CONFIG_FRAME_POINTER
- 	/*
- 	 * Frame pointers are of ip followed by bp.
- 	 * Since fentry is an immediate jump, we are left with
-@@ -49,7 +38,7 @@ ENTRY(ftrace_caller)
- 	pushl	%ebp
- 	movl	%esp, %ebp
- 	pushl	2*4(%esp)			/* function ip */
--# endif
++void st6110x_init_regs(struct stv6110x_state *stv6110x)
++{
++	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
 +
- 	/* For mcount, the function ip is directly above */
- 	pushl	%ebp
- 	movl	%esp, %ebp
-@@ -59,7 +48,7 @@ ENTRY(ftrace_caller)
- 	pushl	%edx
- 	pushl	$0				/* Pass NULL as regs pointer */
- 
--#ifdef USING_FRAME_POINTER
-+#ifdef CONFIG_FRAME_POINTER
- 	/* Load parent ebp into edx */
- 	movl	4*4(%esp), %edx
- #else
-@@ -82,13 +71,11 @@ ftrace_call:
- 	popl	%edx
- 	popl	%ecx
- 	popl	%eax
--#ifdef USING_FRAME_POINTER
-+#ifdef CONFIG_FRAME_POINTER
- 	popl	%ebp
--# ifdef CC_USING_FENTRY
- 	addl	$4,%esp				/* skip function ip */
- 	popl	%ebp				/* this is the orig bp */
- 	addl	$4, %esp			/* skip parent ip */
--# endif
- #endif
- .Lftrace_ret:
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-@@ -133,11 +120,7 @@ ENTRY(ftrace_regs_caller)
- 
- 	movl	12*4(%esp), %eax		/* Load ip (1st parameter) */
- 	subl	$MCOUNT_INSN_SIZE, %eax		/* Adjust ip */
--#ifdef CC_USING_FENTRY
- 	movl	15*4(%esp), %edx		/* Load parent ip (2nd parameter) */
--#else
--	movl	0x4(%ebp), %edx			/* Load parent ip (2nd parameter) */
--#endif
- 	movl	function_trace_op, %ecx		/* Save ftrace_pos in 3rd parameter */
- 	pushl	%esp				/* Save pt_regs as 4th parameter */
- 
-@@ -215,13 +198,8 @@ ENTRY(ftrace_graph_caller)
- 	pushl	%edx
- 	movl	3*4(%esp), %eax
- 	/* Even with frame pointers, fentry doesn't have one here */
--#ifdef CC_USING_FENTRY
- 	lea	4*4(%esp), %edx
- 	movl	$0, %ecx
--#else
--	lea	0x4(%ebp), %edx
--	movl	(%ebp), %ecx
--#endif
- 	subl	$MCOUNT_INSN_SIZE, %eax
- 	call	prepare_ftrace_return
- 	popl	%edx
-@@ -234,11 +212,7 @@ END(ftrace_graph_caller)
- return_to_handler:
- 	pushl	%eax
- 	pushl	%edx
--#ifdef CC_USING_FENTRY
- 	movl	$0, %eax
--#else
--	movl	%ebp, %eax
--#endif
- 	call	ftrace_return_to_handler
- 	movl	%eax, %ecx
- 	popl	%edx
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 75f2b36b41a6..10eb2760ef2c 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -13,22 +13,12 @@
- 	.code64
- 	.section .entry.text, "ax"
- 
--#ifdef CC_USING_FENTRY
- # define function_hook	__fentry__
- EXPORT_SYMBOL(__fentry__)
--#else
--# define function_hook	mcount
--EXPORT_SYMBOL(mcount)
--#endif
- 
- #ifdef CONFIG_FRAME_POINTER
--# ifdef CC_USING_FENTRY
- /* Save parent and function stack frames (rip and rbp) */
- #  define MCOUNT_FRAME_SIZE	(8+16*2)
--# else
--/* Save just function stack frame (rip and rbp) */
--#  define MCOUNT_FRAME_SIZE	(8+16)
--# endif
- #else
- /* No need to save a stack frame */
- # define MCOUNT_FRAME_SIZE	0
-@@ -75,17 +65,13 @@ EXPORT_SYMBOL(mcount)
- 	 * fentry is called before the stack frame is set up, where as mcount
- 	 * is called afterward.
- 	 */
--#ifdef CC_USING_FENTRY
++	memcpy(stv6110x->regs, default_regs, 8);
++}
 +
- 	/* Save the parent pointer (skip orig rbp and our return address) */
- 	pushq \added+8*2(%rsp)
- 	pushq %rbp
- 	movq %rsp, %rbp
- 	/* Save the return address (now skip orig rbp, rbp and parent) */
- 	pushq \added+8*3(%rsp)
--#else
--	/* Can't assume that rip is before this (unless added was zero) */
--	pushq \added+8(%rsp)
--#endif
- 	pushq %rbp
- 	movq %rsp, %rbp
- #endif /* CONFIG_FRAME_POINTER */
-@@ -113,12 +99,7 @@ EXPORT_SYMBOL(mcount)
- 	movq %rdx, RBP(%rsp)
++void stv6110x_setup_divider(struct stv6110x_state *stv6110x)
++{
++	switch (stv6110x->config->clk_div) {
++	default:
++	case 1:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
++		break;
++	case 2:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
++		break;
++	case 4:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
++		break;
++	case 8:
++	case 0:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
++		break;
++	}
++}
++
+ static const struct dvb_tuner_ops stv6110x_ops = {
+ 	.info = {
+ 		.name		  = "STV6110(A) Silicon Tuner",
+@@ -354,7 +381,7 @@ static const struct dvb_tuner_ops stv6110x_ops = {
+ 	.release		= stv6110x_release
+ };
  
- 	/* Copy the parent address into %rsi (second parameter) */
--#ifdef CC_USING_FENTRY
- 	movq MCOUNT_REG_SIZE+8+\added(%rsp), %rsi
--#else
--	/* %rdx contains original %rbp */
--	movq 8(%rdx), %rsi
--#endif
+-static const struct stv6110x_devctl stv6110x_ctl = {
++static struct stv6110x_devctl stv6110x_ctl = {
+ 	.tuner_init		= stv6110x_init,
+ 	.tuner_sleep		= stv6110x_sleep,
+ 	.tuner_set_mode		= stv6110x_set_mode,
+@@ -368,39 +395,77 @@ static const struct stv6110x_devctl stv6110x_ctl = {
+ 	.tuner_get_status	= stv6110x_get_status,
+ };
  
- 	 /* Move RIP to its proper location */
- 	movq MCOUNT_REG_SIZE+\added(%rsp), %rdi
-@@ -303,15 +284,8 @@ ENTRY(ftrace_graph_caller)
- 	/* Saves rbp into %rdx and fills first parameter  */
- 	save_mcount_regs
++void stv6110x_set_frontend_opts(struct stv6110x_state *stv6110x)
++{
++	stv6110x->frontend->tuner_priv		= stv6110x;
++	stv6110x->frontend->ops.tuner_ops	= stv6110x_ops;
++}
++
++static struct stv6110x_devctl *stv6110x_get_devctl(struct i2c_client *client)
++{
++	struct stv6110x_state *stv6110x = i2c_get_clientdata(client);
++
++	dev_dbg(&client->dev, "\n");
++
++	return stv6110x->devctl;
++}
++
++static int stv6110x_probe(struct i2c_client *client,
++			const struct i2c_device_id *id)
++{
++	struct stv6110x_config *config = client->dev.platform_data;
++
++	struct stv6110x_state *stv6110x;
++
++	stv6110x = kzalloc(sizeof(struct stv6110x_state), GFP_KERNEL);
++	if (!stv6110x)
++		return -ENOMEM;
++
++	stv6110x->frontend	= config->frontend;
++	stv6110x->i2c		= client->adapter;
++	stv6110x->config	= config;
++	stv6110x->devctl	= &stv6110x_ctl;
++
++	st6110x_init_regs(stv6110x);
++	stv6110x_setup_divider(stv6110x);
++	stv6110x_set_frontend_opts(stv6110x);
++
++	printk(KERN_INFO "%s: Probed STV6110x\n", __func__);
++
++	i2c_set_clientdata(client, stv6110x);
++
++	/* setup callbacks */
++	config->get_devctl = stv6110x_get_devctl;
++
++	return 0;
++}
++
++static int stv6110x_remove(struct i2c_client *client)
++{
++	struct stv6110x_state *stv6110x = i2c_get_clientdata(client);
++
++	stv6110x_release(stv6110x->frontend);
++	return 0;
++}
++
+ const struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
+ 					const struct stv6110x_config *config,
+ 					struct i2c_adapter *i2c)
+ {
+ 	struct stv6110x_state *stv6110x;
+-	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
  
--#ifdef CC_USING_FENTRY
- 	leaq MCOUNT_REG_SIZE+8(%rsp), %rsi
- 	movq $0, %rdx	/* No framepointers needed */
--#else
--	/* Save address of the return address of traced function */
--	leaq 8(%rdx), %rsi
--	/* ftrace does sanity checks against frame pointers */
--	movq (%rdx), %rdx
--#endif
- 	call	prepare_ftrace_return
+-	stv6110x = kzalloc(sizeof (struct stv6110x_state), GFP_KERNEL);
++	stv6110x = kzalloc(sizeof(struct stv6110x_state), GFP_KERNEL);
+ 	if (!stv6110x)
+ 		return NULL;
  
- 	restore_mcount_regs
++	stv6110x->frontend	= fe;
+ 	stv6110x->i2c		= i2c;
+ 	stv6110x->config	= config;
+ 	stv6110x->devctl	= &stv6110x_ctl;
+-	memcpy(stv6110x->regs, default_regs, 8);
+ 
+-	/* setup divider */
+-	switch (stv6110x->config->clk_div) {
+-	default:
+-	case 1:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
+-		break;
+-	case 2:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
+-		break;
+-	case 4:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
+-		break;
+-	case 8:
+-	case 0:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
+-		break;
+-	}
++	st6110x_init_regs(stv6110x);
++	stv6110x_setup_divider(stv6110x);
++	stv6110x_set_frontend_opts(stv6110x);
+ 
+ 	fe->tuner_priv		= stv6110x;
+ 	fe->ops.tuner_ops	= stv6110x_ops;
+@@ -410,6 +475,24 @@ const struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
+ }
+ EXPORT_SYMBOL(stv6110x_attach);
+ 
++static const struct i2c_device_id stv6110x_id_table[] = {
++	{"stv6110x", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, stv6110x_id_table);
++
++static struct i2c_driver stv6110x_driver = {
++	.driver = {
++		.name	= "stv6110x",
++		.suppress_bind_attrs = true,
++	},
++	.probe		= stv6110x_probe,
++	.remove		= stv6110x_remove,
++	.id_table	= stv6110x_id_table,
++};
++
++module_i2c_driver(stv6110x_driver);
++
+ MODULE_AUTHOR("Manu Abraham");
+ MODULE_DESCRIPTION("STV6110x Silicon tuner");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/dvb-frontends/stv6110x.h b/drivers/media/dvb-frontends/stv6110x.h
+index 696b6e5b9e7b..7714adea5242 100644
+--- a/drivers/media/dvb-frontends/stv6110x.h
++++ b/drivers/media/dvb-frontends/stv6110x.h
+@@ -27,6 +27,9 @@ struct stv6110x_config {
+ 	u8	addr;
+ 	u32	refclk;
+ 	u8	clk_div; /* divisor value for the output clock */
++	struct dvb_frontend		*frontend;
++
++	struct stv6110x_devctl* (*get_devctl)(struct i2c_client *);
+ };
+ 
+ enum tuner_mode {
+diff --git a/drivers/media/dvb-frontends/stv6110x_priv.h b/drivers/media/dvb-frontends/stv6110x_priv.h
+index 109dfaf4ba42..383549d25268 100644
+--- a/drivers/media/dvb-frontends/stv6110x_priv.h
++++ b/drivers/media/dvb-frontends/stv6110x_priv.h
+@@ -66,11 +66,12 @@
+ #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
+ 
+ struct stv6110x_state {
++	struct dvb_frontend		*frontend;
+ 	struct i2c_adapter		*i2c;
+ 	const struct stv6110x_config	*config;
+ 	u8				regs[8];
+ 
+-	const struct stv6110x_devctl	*devctl;
++	struct stv6110x_devctl	*devctl;
+ };
+ 
+ #endif /* __STV6110x_PRIV_H */
 -- 
-2.20.1
+2.21.0
 
