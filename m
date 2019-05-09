@@ -2,164 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5C9183BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0975183B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfEIC2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 22:28:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55337 "EHLO mga01.intel.com"
+        id S1726561AbfEICXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 22:23:37 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:58977 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbfEIC2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 22:28:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 19:28:34 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 08 May 2019 19:28:32 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ashok Raj <ashok.raj@intel.com>, jacob.jun.pan@intel.com,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        James Sewart <jamessewart@arista.com>,
-        Dmitry Safonov <dima@arista.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain
- type
-To:     Tom Murphy <tmurphy@arista.com>
-References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
- <20190429020925.18136-2-baolu.lu@linux.intel.com>
- <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <4a21bf25-bde5-3248-2f41-17c5c8803c5f@linux.intel.com>
-Date:   Thu, 9 May 2019 10:22:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725842AbfEICXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 22:23:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=BLdUxRrkwpbfMypNuHs1fW3qzt5NUxqZanuMvnX1EIM=; b=vu0NFRT9a7FhbMaiTIdR8jrxM+
+        UljmNAEVWm4ywYA69TC01Y2ntK1Ozzi49VjWGqq8Axff70XUsDWUtgZGBAhX/eNj9rU9dUsxz0tUo
+        wkUnRlsy/iv+FRmoEPkwZ5nlnd/nqV3tP+b0BKUMa+s8KsgoPN0SCPFj2tEkY+HZ6qyM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hOYiY-0006iY-9w; Thu, 09 May 2019 04:23:30 +0200
+Date:   Thu, 9 May 2019 04:23:30 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH net-next 10/11] net: stmmac: Introduce selftests support
+Message-ID: <20190509022330.GA23758@lunn.ch>
+References: <cover.1557300602.git.joabreu@synopsys.com>
+ <be9099bbf8783b210dc9034a8b82219984f03250.1557300602.git.joabreu@synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be9099bbf8783b210dc9034a8b82219984f03250.1557300602.git.joabreu@synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+> +static int stmmac_test_eee(struct stmmac_priv *priv)
+> +{
+> +	struct stmmac_extra_stats *initial, *final;
+> +	int timeout = 100;
+> +	int ret;
+> +
+> +	ret = stmmac_test_loopback(priv);
+> +	if (ret)
+> +		goto out_free_final;
+> +
+> +	/* We have no traffic in the line so, sooner or later it will go LPI */
+> +	while (--timeout) {
+> +		memcpy(final, &priv->xstats, sizeof(*final));
+> +
+> +		if (final->irq_tx_path_in_lpi_mode_n >
+> +		    initial->irq_tx_path_in_lpi_mode_n)
+> +			break;
+> +		msleep(100);
+> +	}
+> +
+> +	if (!timeout) {
+> +		ret = -ETIMEDOUT;
+> +		goto out_free_final;
+> +	}
 
-On 5/6/19 11:32 PM, Tom Murphy wrote:
-> The AMD driver already solves this problem and uses the generic
-> iommu_request_dm_for_dev function. It seems like both drivers have the
-> same problem and could use the same solution. Is there any reason we
-> can't have use the same solution for the intel and amd driver?
+Retries would be a better name than timeout.
 
-The iommu_request_dm_for_dev() works for vt-d driver as well. But it's
-insufficient. Another case is the default domain type is IDENTITY, but
-the iommu driver can only support DMA type. Is it possible to add an
-iommu_request_dma_map_for_dev() for this purpose?
+Also, 100 * 100 ms seems like a long time.
 
-> 
-> Could we just  copy the implementation of the AMD driver? It would be
-> nice to have the same behavior across both drivers especially as we
-> move to make both drivers use more generic code.
+> +static int stmmac_filter_check(struct stmmac_priv *priv)
+> +{
+> +	if (!(priv->dev->flags & IFF_PROMISC))
+> +		return 0;
+> +
+> +	netdev_warn(priv->dev, "Test can't be run in promiscuous mode!\n");
+> +	return 1;
 
-Yes, agreed.
+Maybe return EOPNOTSUPP here,
 
-Best regards,
-Lu Baolu
+> +}
+> +
+> +static int stmmac_test_hfilt(struct stmmac_priv *priv)
+> +{
+> +	unsigned char gd_addr[ETH_ALEN] = {0x01, 0x0c, 0xcd, 0x04, 0x00, 0x00};
+> +	unsigned char bd_addr[ETH_ALEN] = {0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b};
 
-> 
-> On Mon, Apr 29, 2019 at 3:16 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
->>
->> This adds an optional ops entry to query the default domain
->> types supported by the iommu driver for  a specific device.
->> This is necessary in cases where the iommu driver can only
->> support a specific type of default domain for a device. In
->> normal cases, this ops will return IOMMU_DOMAIN_ANY which
->> indicates that the iommu driver supports both IOMMU_DOMAIN_DMA
->> and IOMMU_DOMAIN_IDENTITY, hence the static default domain
->> type will be used.
->>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/iommu.c | 13 ++++++++++---
->>   include/linux/iommu.h | 11 +++++++++++
->>   2 files changed, 21 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index acd6830e6e9b..1ad9a1f2e078 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -1097,15 +1097,22 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
->>           * IOMMU driver.
->>           */
->>          if (!group->default_domain) {
->> +               unsigned int domain_type = IOMMU_DOMAIN_ANY;
->>                  struct iommu_domain *dom;
->>
->> -               dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
->> -               if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
->> +               if (ops->def_domain_type)
->> +                       domain_type = ops->def_domain_type(dev);
->> +
->> +               if (domain_type == IOMMU_DOMAIN_ANY)
->> +                       domain_type = iommu_def_domain_type;
->> +
->> +               dom = __iommu_domain_alloc(dev->bus, domain_type);
->> +               if (!dom && domain_type != IOMMU_DOMAIN_DMA) {
->>                          dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
->>                          if (dom) {
->>                                  dev_warn(dev,
->>                                           "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
->> -                                        iommu_def_domain_type);
->> +                                        domain_type);
->>                          }
->>                  }
->>
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 8239ece9fdfc..ba9a5b996a63 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -79,12 +79,16 @@ struct iommu_domain_geometry {
->>    *     IOMMU_DOMAIN_DMA        - Internally used for DMA-API implementations.
->>    *                               This flag allows IOMMU drivers to implement
->>    *                               certain optimizations for these domains
->> + *     IOMMU_DOMAIN_ANY        - All domain types defined here
->>    */
->>   #define IOMMU_DOMAIN_BLOCKED   (0U)
->>   #define IOMMU_DOMAIN_IDENTITY  (__IOMMU_DOMAIN_PT)
->>   #define IOMMU_DOMAIN_UNMANAGED (__IOMMU_DOMAIN_PAGING)
->>   #define IOMMU_DOMAIN_DMA       (__IOMMU_DOMAIN_PAGING |        \
->>                                   __IOMMU_DOMAIN_DMA_API)
->> +#define IOMMU_DOMAIN_ANY       (IOMMU_DOMAIN_IDENTITY |        \
->> +                                IOMMU_DOMAIN_UNMANAGED |       \
->> +                                IOMMU_DOMAIN_DMA)
->>
->>   struct iommu_domain {
->>          unsigned type;
->> @@ -196,6 +200,11 @@ enum iommu_dev_features {
->>    * @dev_feat_enabled: check enabled feature
->>    * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
->>    * @aux_get_pasid: get the pasid given an aux-domain
->> + * @def_domain_type: get per-device default domain type that the IOMMU
->> + *             driver is able to support. Valid returns values:
->> + *             - IOMMU_DOMAIN_DMA: only suports non-identity domain
->> + *             - IOMMU_DOMAIN_IDENTITY: only supports identity domain
->> + *             - IOMMU_DOMAIN_ANY: supports all
->>    * @pgsize_bitmap: bitmap of all possible supported page sizes
->>    */
->>   struct iommu_ops {
->> @@ -251,6 +260,8 @@ struct iommu_ops {
->>          void (*aux_detach_dev)(struct iommu_domain *domain, struct device *dev);
->>          int (*aux_get_pasid)(struct iommu_domain *domain, struct device *dev);
->>
->> +       int (*def_domain_type)(struct device *dev);
->> +
->>          unsigned long pgsize_bitmap;
->>   };
->>
->> --
->> 2.17.1
->>
-> 
+What does gd and bd mean?
+
+> +	struct stmmac_packet_attrs attr = { };
+> +	int ret;
+> +
+> +	if (stmmac_filter_check(priv))
+> +		return -EOPNOTSUPP;
+
+and just return the error code from the call.
+
+> +
+> +	ret = dev_mc_add(priv->dev, gd_addr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	attr.dst = gd_addr;
+> +
+> +	/* Shall receive packet */
+> +	ret = __stmmac_test_loopback(priv, &attr);
+> +	if (ret)
+> +		goto cleanup;
+> +
+> +	attr.dst = bd_addr;
+> +
+> +	/* Shall NOT receive packet */
+> +	ret = __stmmac_test_loopback(priv, &attr);
+> +	ret = !ret;
+
+What is this test testing? gd is a multicast, where as bd is not.  I
+expect the hardware treats multicast different to unicast. So it would
+make more sense to test two different multicast addresses, one which
+has been added via dev_mc_addr, and one that has not?
+
+> +
+> +cleanup:
+> +	dev_mc_del(priv->dev, gd_addr);
+> +	return ret;
+> +}
+> +
+> +static int stmmac_test_pfilt(struct stmmac_priv *priv)
+> +{
+> +	unsigned char gd_addr[ETH_ALEN] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+> +	unsigned char bd_addr[ETH_ALEN] = {0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b};
+> +	struct stmmac_packet_attrs attr = { };
+> +	int ret;
+> +
+> +	if (stmmac_filter_check(priv))
+> +		return -EOPNOTSUPP;
+> +
+> +	ret = dev_uc_add(priv->dev, gd_addr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	attr.dst = gd_addr;
+> +
+> +	/* Shall receive packet */
+> +	ret = __stmmac_test_loopback(priv, &attr);
+> +	if (ret)
+> +		goto cleanup;
+
+gb is a multicast address. Does dev_uc_add() return an error? If it
+does not we should not expect it to actually work, since a multicast
+address should not match a unicast address?
+
+You also seem to be missing a test for adding a unicast address via
+dev_uc_add() and receiving packets for that address, but not receiving
+multicast packets.
+
+> +static const struct stmmac_test {
+> +	char name[ETH_GSTRING_LEN];
+> +	int lb;
+> +	int (*fn)(struct stmmac_priv *priv);
+> +} stmmac_selftests[] = {
+> +	{
+> +		.name = "MAC Loopback         ",
+> +		.lb = STMMAC_LOOPBACK_MAC,
+> +		.fn = stmmac_test_loopback,
+
+stmmac_test_mac_loopback might be a better name.
+
+> +	}, {
+> +		.name = "PHY Loopback         ",
+> +		.lb = STMMAC_LOOPBACK_PHY,
+> +		.fn = stmmac_test_phy_loopback,
+> +	}, {
+
+  Andrew
