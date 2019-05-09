@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951341943B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D3519455
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 23:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfEIVOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 17:14:36 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41102 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfEIVOd (ORCPT
+        id S1727553AbfEIVPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 17:15:31 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38595 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbfEIVOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 17:14:33 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l132so1948735pfc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:33 -0700 (PDT)
+        Thu, 9 May 2019 17:14:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id j26so1836436pgl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 14:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VWvAY4K5cYu5xkAR+mJg2cVJek8r16jFV7NVls6qS9c=;
-        b=JpW4Ryw8tqmPFPFAchXp1X9VT4fU2cbiQ0yBmM7ndRPotHYeBOZKfsSPNorkN5JNj/
-         0KOUSxFVFO9NUTZwpAc+eWHb8oeSW2rxjUaX84f4sJrZLr4cf3xKCyVnTY72YV6/ZKoZ
-         aJSIj+srJzho+5meGrzG3KMT73SBpeJy3StIQ=
+        bh=lcz1eqcuD73T/NcdIkbFXLwMtkZSGY486wHQZ5MgZj0=;
+        b=Zfpt5xg3AxUyQfo8Abyg4ogJXok/St2aZrREtayCmA7BJtNKUrMRpzYLgQhVp8epax
+         8X6De6AkM85K2V9mwGPumIuJ4JxnQtMTvXU5RGjInwp3/9deUJM/NvREnuT/LzCF1y91
+         GofwX0UiSkq5Vx/fbHbbIFKCYEWUZ7+VXPRyg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VWvAY4K5cYu5xkAR+mJg2cVJek8r16jFV7NVls6qS9c=;
-        b=WSNkS6vPvml65oue11I86Z3SMdy5f6y/+zwb2sR2Q1Y3BkeQ0x/T7zYrP1bSfIMSOP
-         hWS7wq+oCgZdkpDCw/udWy0EqQVRWmoT6m8i9kCMA2jKQCgBLZe2/j9jV65NsE7TMjKY
-         NQIeiVfLwtn5w5RBC0PL5VWjVre+LSZZukSCKy1mYGcgKVat+iC8cZFb0cWqke8mm/JX
-         KtVLhibZ5JjOdkuN3soIY3DqJtL2tDyQ2hPJC8PAXy8AjRTjEZ7W6CxvMhyNWpwaNS/Z
-         ClwCAYpEkYv6YSNOiBIJ/UCOWO1SY7YCcIFjSSdfAOkdrWHc0NH8Xo9Kko10CrkXcrRZ
-         KXKg==
-X-Gm-Message-State: APjAAAUhoOlm75CinDzx1bwcelkmHGlSHSzvjg8v+C+Bh5B0uUu3x69R
-        7C3UovOQQlK+BG8eKZsSQRfLoQ==
-X-Google-Smtp-Source: APXvYqx1Iq1e/sNoyrlAeNXcTzecx8lWKa66VICbey3qV9o32uy+N6ac81klOjDvLhAs0TAsGCsmhA==
-X-Received: by 2002:aa7:8096:: with SMTP id v22mr8570279pff.94.1557436473285;
-        Thu, 09 May 2019 14:14:33 -0700 (PDT)
+        bh=lcz1eqcuD73T/NcdIkbFXLwMtkZSGY486wHQZ5MgZj0=;
+        b=POZcndEbEi0aJd/kU2hD21V3uZSe1xD5yoPBa11SlZTtAuj7lbS3IcYvnFJO9z92N+
+         br9FVQ9oa0kzSZTG3SpeAsd/u0VVGgOCwLz1yCPq3POAngTDIPBd88R5rtD2FAxrjZcT
+         j6yR6kSCnCXydtA1/d5SboJ3XChwBCzX5xp8Z4m7nMIcp8XNkGeoqdYGm4dGdNmHB8c5
+         UOWT3x+6PoJX3rxuxfqJnT3GuqD2Q/ZDBIy1hrnhX4IVACCsNGo8kytEtc8tKWPYaiPD
+         Np/BTIt385p33Xt071xMifftBU8ZXIDB4NMRavCv+/1nellb4OAvoSM/X4dFdxewgylx
+         dRJw==
+X-Gm-Message-State: APjAAAXlbPqkPRQxRCo2o0EUBm2FbOgmSB6dt158uiWOkDZrjcipkhCa
+        tFjhVUu/LbruleDuke+TxNpqCg==
+X-Google-Smtp-Source: APXvYqz042zmYNJ4m/qpAeFzE/1gR0DwW34FrcjHP7YYL9ft7HjvOA7U92isJkKJvsl71wPm4dexyQ==
+X-Received: by 2002:a65:5941:: with SMTP id g1mr8699957pgu.51.1557436474785;
+        Thu, 09 May 2019 14:14:34 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id n15sm6777740pfb.111.2019.05.09.14.14.32
+        by smtp.gmail.com with ESMTPSA id e8sm5128546pfc.47.2019.05.09.14.14.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 14:14:32 -0700 (PDT)
+        Thu, 09 May 2019 14:14:34 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     enric.balletbo@collabora.com, bleung@chromium.org,
         groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
@@ -49,9 +49,9 @@ To:     enric.balletbo@collabora.com, bleung@chromium.org,
 Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 20/30] mfd: cros_ec: Add API for keyboard testing
-Date:   Thu,  9 May 2019 14:13:43 -0700
-Message-Id: <20190509211353.213194-21-gwendal@chromium.org>
+Subject: [PATCH v3 21/30] mfd: cros_ec: Add Hibernate API
+Date:   Thu,  9 May 2019 14:13:44 -0700
+Message-Id: <20190509211353.213194-22-gwendal@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 References: <20190509211353.213194-1-gwendal@chromium.org>
@@ -62,51 +62,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add command to allow keyboard testing in factory.
+Add support for controlling hibernation of the Embedded Controller.
 
 Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ include/linux/mfd/cros_ec_commands.h | 72 +++++++++++++++++++++++++++-
+ 1 file changed, 70 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index e05cdcb12481..cc054a0a4c4c 100644
+index cc054a0a4c4c..7f98c6e63ad1 100644
 --- a/include/linux/mfd/cros_ec_commands.h
 +++ b/include/linux/mfd/cros_ec_commands.h
-@@ -3142,6 +3142,17 @@ struct ec_params_mkbp_simulate_key {
- 	uint8_t pressed;
- } __ec_align1;
+@@ -4045,6 +4045,40 @@ struct ec_params_dedicated_charger_limit {
+ 	uint16_t voltage_lim; /* in mV */
+ } __ec_align2;
  
-+#define EC_CMD_GET_KEYBOARD_ID 0x0063
++/*****************************************************************************/
++/* Hibernate/Deep Sleep Commands */
 +
-+struct ec_response_keyboard_id {
-+	uint32_t keyboard_id;
++/* Set the delay before going into hibernation. */
++#define EC_CMD_HIBERNATION_DELAY 0x00A8
++
++struct ec_params_hibernation_delay {
++	/*
++	 * Seconds to wait in G3 before hibernate.  Pass in 0 to read the
++	 * current settings without changing them.
++	 */
++	uint32_t seconds;
 +} __ec_align4;
 +
-+enum keyboard_id {
-+	KEYBOARD_ID_UNSUPPORTED = 0,
-+	KEYBOARD_ID_UNREADABLE = 0xffffffff,
++struct ec_response_hibernation_delay {
++	/*
++	 * The current time in seconds in which the system has been in the G3
++	 * state.  This value is reset if the EC transitions out of G3.
++	 */
++	uint32_t time_g3;
++
++	/*
++	 * The current time remaining in seconds until the EC should hibernate.
++	 * This value is also reset if the EC transitions out of G3.
++	 */
++	uint32_t time_remaining;
++
++	/*
++	 * The current time in seconds that the EC should wait in G3 before
++	 * hibernating.
++	 */
++	uint32_t hibernate_delay;
++} __ec_align4;
++
+ /* Inform the EC when entering a sleep state */
+ #define EC_CMD_HOST_SLEEP_EVENT 0x00A9
+ 
+@@ -4052,7 +4086,9 @@ enum host_sleep_event {
+ 	HOST_SLEEP_EVENT_S3_SUSPEND   = 1,
+ 	HOST_SLEEP_EVENT_S3_RESUME    = 2,
+ 	HOST_SLEEP_EVENT_S0IX_SUSPEND = 3,
+-	HOST_SLEEP_EVENT_S0IX_RESUME  = 4
++	HOST_SLEEP_EVENT_S0IX_RESUME  = 4,
++	/* S3 suspend with additional enabled wake sources */
++	HOST_SLEEP_EVENT_S3_WAKEABLE_SUSPEND = 5,
+ };
+ 
+ struct ec_params_host_sleep_event {
+@@ -4116,6 +4152,36 @@ struct ec_response_host_sleep_event_v1 {
+ 	};
+ } __ec_align4;
+ 
++/*****************************************************************************/
++/* Device events */
++#define EC_CMD_DEVICE_EVENT 0x00AA
++
++enum ec_device_event {
++	EC_DEVICE_EVENT_TRACKPAD,
++	EC_DEVICE_EVENT_DSP,
++	EC_DEVICE_EVENT_WIFI,
 +};
 +
- /* Configure keyboard scanning */
- #define EC_CMD_MKBP_SET_CONFIG 0x0064
- #define EC_CMD_MKBP_GET_CONFIG 0x0065
-@@ -3390,6 +3401,13 @@ struct ec_response_get_next_event_v1 {
- #define EC_MKBP_TABLET_MODE	1
- #define EC_MKBP_BASE_ATTACHED	2
++enum ec_device_event_param {
++	/* Get and clear pending device events */
++	EC_DEVICE_EVENT_PARAM_GET_CURRENT_EVENTS,
++	/* Get device event mask */
++	EC_DEVICE_EVENT_PARAM_GET_ENABLED_EVENTS,
++	/* Set device event mask */
++	EC_DEVICE_EVENT_PARAM_SET_ENABLED_EVENTS,
++};
++
++#define EC_DEVICE_EVENT_MASK(event_code) BIT(event_code % 32)
++
++struct ec_params_device_event {
++	uint32_t event_mask;
++	uint8_t param;
++} __ec_align_size1;
++
++struct ec_response_device_event {
++	uint32_t event_mask;
++} __ec_align4;
++
+ /*****************************************************************************/
+ /* Smart battery pass-through */
  
-+/* Run keyboard factory test scanning */
-+#define EC_CMD_KEYBOARD_FACTORY_TEST 0x0068
-+
-+struct ec_response_keyboard_factory_test {
-+	uint16_t shorted;	/* Keyboard pins are shorted */
-+} __ec_align2;
-+
- /* Fingerprint events in 'fp_events' for EC_MKBP_EVENT_FINGERPRINT */
- #define EC_MKBP_FP_RAW_EVENT(fp_events) ((fp_events) & 0x00FFFFFF)
- #define EC_MKBP_FP_ERRCODE(fp_events)   ((fp_events) & 0x0000000F)
+@@ -4361,12 +4427,14 @@ enum ec_reboot_cmd {
+ 	/* (command 3 was jump to RW-B) */
+ 	EC_REBOOT_COLD = 4,          /* Cold-reboot */
+ 	EC_REBOOT_DISABLE_JUMP = 5,  /* Disable jump until next reboot */
+-	EC_REBOOT_HIBERNATE = 6      /* Hibernate EC */
++	EC_REBOOT_HIBERNATE = 6,     /* Hibernate EC */
++	EC_REBOOT_HIBERNATE_CLEAR_AP_OFF = 7, /* and clears AP_OFF flag */
+ };
+ 
+ /* Flags for ec_params_reboot_ec.reboot_flags */
+ #define EC_REBOOT_FLAG_RESERVED0      BIT(0)  /* Was recovery request */
+ #define EC_REBOOT_FLAG_ON_AP_SHUTDOWN BIT(1)  /* Reboot after AP shutdown */
++#define EC_REBOOT_FLAG_SWITCH_RW_SLOT BIT(2)  /* Switch RW slot */
+ 
+ struct ec_params_reboot_ec {
+ 	uint8_t cmd;           /* enum ec_reboot_cmd */
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
