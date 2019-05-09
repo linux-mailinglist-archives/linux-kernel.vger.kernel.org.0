@@ -2,217 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB271864D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B0218657
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 09:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfEIHls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 03:41:48 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35015 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfEIHls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 03:41:48 -0400
-Received: by mail-oi1-f196.google.com with SMTP id a132so1206805oib.2;
-        Thu, 09 May 2019 00:41:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3KulEKizWIWmp7w/J6WXP00Agbtffv61w2wzB/s1EJA=;
-        b=c/bczytAdbCbHroPCVVFMW/CzLbxYECwIwdx4Rt1QFBjitJvRGIwdUHPPnfqE1+qi4
-         CVXL+vgY+AuEah8PVTANrFgquQQzSqyeZgeOzUa2vHKvy8EVXyvA8RHeOCYfFsHNAqOh
-         ZCS9NcYJZVlN+6fhvp6X1QtJrIFkaJyGBj/086WTXifB8CkYYQcZJKtegO8095a7ucrY
-         +dDp5Bs+YE+2XqfwV/vRCUmg17jY0u+suwu6eybhta70IVLFXKdT9jDDmfgDarXuxxy4
-         ytHg2gxPAcb0Mtuf22dOxxRfsdHeq2e6sf7mUnv30Aa8omaTReDGykFkeoMGBBrf+KVh
-         lSkA==
-X-Gm-Message-State: APjAAAVKdKyukCjbVP2qfjRkgWKP0566yKJebJnh55d5lQ2jPqWSExWj
-        qK6XzzwSacdA9LXF/NrtWIAwHN/hfkjNuO0203A=
-X-Google-Smtp-Source: APXvYqy8UbHR0TetuMPKUzgFolqlADKSIUxY1HI1z6VG4KO9XzUx91AMrAi8WJbhSGc8oVYNI2cA6noHBvMte/Q431s=
-X-Received: by 2002:aca:ba82:: with SMTP id k124mr642037oif.110.1557387706984;
- Thu, 09 May 2019 00:41:46 -0700 (PDT)
+        id S1726648AbfEIHqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 03:46:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbfEIHqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 03:46:22 -0400
+Received: from localhost (unknown [106.200.210.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1907208C3;
+        Thu,  9 May 2019 07:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557387980;
+        bh=KtcjRZP4ucm527TvlD27ppwZGdEIAwlIHfU35QQ0cDw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=th5eLfIda6Lrjes/LRLw7hScvlDhR110tr/U2Wl37eS5CTUBBx+MSz4XNCJpaxa3H
+         68OECXZiLQK39nYDA2ylG8E2YCoMXCw+JJhmvI6ihqV+up8uN5qBYZ6hCt1nrEd88R
+         EmZneXYSacytReywETVDH9XAKT4fbwG6iANIomgs=
+Date:   Thu, 9 May 2019 13:16:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine updates for v5.2-rc1
+Message-ID: <20190509074615.GB16052@vkoul-mobl>
 MIME-Version: 1.0
-References: <20190423233904.195842-1-furquan@google.com> <CAEGmHFEf4RTn5mrQ4pn+WPz=WnD5id9joEdGQnu==ibx+r1L8g@mail.gmail.com>
-In-Reply-To: <CAEGmHFEf4RTn5mrQ4pn+WPz=WnD5id9joEdGQnu==ibx+r1L8g@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 9 May 2019 09:41:33 +0200
-Message-ID: <CAJZ5v0ieonHdgFh_GQUSAEoUh3JyOj2rMp174Xvhsq_HHRNEHg@mail.gmail.com>
-Subject: Re: [PATCH] drivers/acpi: Turn off power resources while entering S5
-To:     Furquan Shaikh <furquan@google.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatja@google.com>,
-        Duncan Laurie <dlaurie@google.com>,
-        Todd Broch <tbroch@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 8:12 AM Furquan Shaikh <furquan@google.com> wrote:
->
-> On Tue, Apr 23, 2019 at 4:39 PM Furquan Shaikh <furquan@google.com> wrote:
-> >
-> > During boot-up, ACPI bus scan enables all power resources so that
-> > respective device drivers can talk to their device. This causes acpi
-> > ref_count for the power resource to be incremented to 1. When system
-> > suspends (S3/S0ix) or hibernates(S4), DPM is responsible for calling
-> > power off on all power resources whose ref_count is 1 i.e. no other
-> > user of this power resource and thus resulting in _OFF routine being
-> > called for it.
-> >
-> > However, in case of poweroff, DPM is not involved and so the power
-> > resources are left on when the system is entering S5. This results in
-> > the violation of power down sequencing for certain devices
-> > e.g. touchscreen or digitizer I2C devices. In order to ensure that the
-> > power down sequencing does the right thing, it is necessary for ACPI
-> > to disable all power resources while preparing for S5.
-> >
-> > This change updates the function acpi_turn_off_unused_power_resources
-> > to accept a parameter acpi_system_state, This function turns off power
-> > resources according to the targeted system ACPI state:
-> > 1. For S0: Unused power resources are turned off i.e. power resources
-> > whose ref_count is already 0.
-> > 2. For S5: ref_count is decremented first to undo the increment
-> > performed during ACPI bus scan and then power resources with ref_count
-> > 0 are turned off.
-> > 3. All other suspend/hibernate states: No action is required since DPM
-> > takes care of turning off power resources.
-> >
-> > This change should not affect the wake capable devices since:
-> > 1. If wake capable devices are enabled before this call, their
-> > refcount should be greater than 1. Thus, they won't be turned off.
-> > 2. If wake capable devices are not enabled yet when this call is made,
-> > they would eventually get turned on by call to
-> > acpi_enable_wakeup_devices.
-> >
-> > Signed-off-by: Furquan Shaikh <furquan@google.com>
-> > ---
-> >  drivers/acpi/power.c | 47 ++++++++++++++++++++++++++++++++++++++------
-> >  drivers/acpi/sleep.c |  5 ++++-
-> >  drivers/acpi/sleep.h |  2 +-
-> >  3 files changed, 46 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/acpi/power.c b/drivers/acpi/power.c
-> > index 665e93ca0b40f..945db762861a3 100644
-> > --- a/drivers/acpi/power.c
-> > +++ b/drivers/acpi/power.c
-> > @@ -889,10 +889,42 @@ void acpi_resume_power_resources(void)
-> >
-> >         mutex_unlock(&power_resource_list_lock);
-> >  }
-> > +#endif
-> >
-> > -void acpi_turn_off_unused_power_resources(void)
-> > +/**
-> > + * acpi_turn_off_power_resources: This function is used to turn off power
-> > + * resources in provided ACPI system state.
-> > + *
-> > + * Behavior differs based on the target system state:
-> > + * ACPI_STATE_S0: Turn off unused power resources i.e. turn off power resources
-> > + *                with ref_count zero.
-> > + * ACPI_STATE_S5: Decrement ref_count first and turn off power resources with
-> > + *                ref_count zero. This is done to ensure that the ref_count
-> > + *                incremented during ACPI bus scan is undone and any power
-> > + *                resources that are not required during S5 are turned off.
-> > + * ACPI_STATE_Sx: No action required. DPM is responsible for turning off power
-> > + *                resources while suspending/hibernating.
-> > + */
-> > +void acpi_turn_off_power_resources(int acpi_system_state)
-> >  {
-> >         struct acpi_power_resource *resource;
-> > +       int decrement;
-> > +
-> > +       if (acpi_system_state == ACPI_STATE_S0) {
-> > +               /*
-> > +                * In case of ACPI_STATE_S0, turn off only unused power
-> > +                * resources. So, no need to decrement ref_count.
-> > +                */
-> > +               decrement = 0;
-> > +       } else if (acpi_system_state == ACPI_STATE_S5) {
-> > +               /*
-> > +                * In case of ACPI_STATE_S5, ref_count needs to be decremented
-> > +                * first before checking if it is okay to power off the
-> > +                * resource.
-> > +                */
-> > +               decrement = 1;
-> > +       } else
-> > +               return;
-> >
-> >         mutex_lock(&power_resource_list_lock);
-> >
-> > @@ -907,10 +939,14 @@ void acpi_turn_off_unused_power_resources(void)
-> >                         continue;
-> >                 }
-> >
-> > -               if (state == ACPI_POWER_RESOURCE_STATE_ON
-> > -                   && !resource->ref_count) {
-> > -                       dev_info(&resource->device.dev, "Turning OFF\n");
-> > -                       __acpi_power_off(resource);
-> > +               if (state == ACPI_POWER_RESOURCE_STATE_ON) {
-> > +                       if (resource->ref_count)
-> > +                               resource->ref_count -= decrement;
-> > +
-> > +                       if (!resource->ref_count) {
-> > +                               dev_info(&resource->device.dev, "Turning OFF\n");
-> > +                               __acpi_power_off(resource);
-> > +                       }
-> >                 }
-> >
-> >                 mutex_unlock(&resource->resource_lock);
-> > @@ -918,4 +954,3 @@ void acpi_turn_off_unused_power_resources(void)
-> >
-> >         mutex_unlock(&power_resource_list_lock);
-> >  }
-> > -#endif
-> > diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-> > index 403c4ff153498..fb6b3ca0eeb91 100644
-> > --- a/drivers/acpi/sleep.c
-> > +++ b/drivers/acpi/sleep.c
-> > @@ -75,6 +75,9 @@ static int acpi_sleep_prepare(u32 acpi_state)
-> >         printk(KERN_INFO PREFIX "Preparing to enter system sleep state S%d\n",
-> >                 acpi_state);
-> >         acpi_enable_wakeup_devices(acpi_state);
-> > +
-> > +       acpi_turn_off_power_resources(acpi_state);
-> > +
-> >         acpi_enter_sleep_state_prep(acpi_state);
-> >         return 0;
-> >  }
-> > @@ -524,7 +527,7 @@ static void acpi_pm_start(u32 acpi_state)
-> >   */
-> >  static void acpi_pm_end(void)
-> >  {
-> > -       acpi_turn_off_unused_power_resources();
-> > +       acpi_turn_off_power_resources(ACPI_STATE_S0);
-> >         acpi_scan_lock_release();
-> >         /*
-> >          * This is necessary in case acpi_pm_finish() is not called during a
-> > diff --git a/drivers/acpi/sleep.h b/drivers/acpi/sleep.h
-> > index 41675d24a9bc0..a495c91e2bf3b 100644
-> > --- a/drivers/acpi/sleep.h
-> > +++ b/drivers/acpi/sleep.h
-> > @@ -7,7 +7,7 @@ extern struct list_head acpi_wakeup_device_list;
-> >  extern struct mutex acpi_device_lock;
-> >
-> >  extern void acpi_resume_power_resources(void);
-> > -extern void acpi_turn_off_unused_power_resources(void);
-> > +extern void acpi_turn_off_power_resources(int acpi_system_state);
-> >
-> >  static inline acpi_status acpi_set_waking_vector(u32 wakeup_address)
-> >  {
-> > --
-> > 2.21.0.593.g511ec345e18-goog
-> >
->
-> Hi Rafael,
->
-> Gentle ping. Just checking if you got a chance to look at this one. It
-> is actually causing problems in one of our devices since power off
-> sequencing is not honored when entering S5.
 
-I have looked at it and I didn't like it.
+--5I6of5zJg18YgZEa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll post my comments on this patch later.
+Hi Linus,
+
+Here is the updates to dmaengine subsystem for v5.2-rc1. Please pull to
+get following updates:
+
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-5.2-rc1
+
+for you to fetch changes up to f33e7bb3eb922618612a90f0a828c790e8880773:
+
+  dmaengine: tegra210-adma: restore channel status (2019-05-04 16:13:42 +05=
+30)
+
+----------------------------------------------------------------
+dmaengine updates for v5.2-rc1
+
+ - Updates to stm32 dma residue calculations
+ - Interleave dma capability to axi-dmac and
+   support for ZynqMP arch
+ - Rework of channel assignment for rcar dma
+ - Debugfs for pl330 driver
+ - Support for Tegra186/Tegra194, refactoring for new chips
+   and support for pause/resume
+ - Updates to axi-dmac, bcm2835, fsl-edma, idma64, imx-sdma,
+   rcar-dmac, stm32-dma etc
+ - dev_get_drvdata() updates on few drivers
+
+----------------------------------------------------------------
+Alexandru Ardelean (1):
+      dmaengine: axi-dmac: Don't check the number of frames for alignment
+
+Andy Shevchenko (2):
+      dmaengine: idma64: Use actual device for DMA transfers
+      dmaengine: idma64: Move driver name to the header
+
+Angus Ainslie (Purism) (1):
+      dmaengine: imx-sdma: Only check ratio on parts that support 1:1
+
+Arnaud Pouliquen (1):
+      dmaengine: stm32-dma: fix residue calculation in stm32-dma
+
+Colin Ian King (1):
+      dmaengine: xgene-dma: fix spelling mistake "descripto" -> "descriptor"
+
+Dan Carpenter (1):
+      dmaengine: at_xdmac: remove a stray bottom half unlock
+
+Dragos Bogdan (1):
+      dmaengine: axi-dmac: Enable DMA_INTERLEAVE capability
+
+Fabien Dessenne (1):
+      dmaengine: stm32-dma: use platform_get_irq()
+
+Hiroyuki Yokoyama (1):
+      dmaengine: rcar-dmac: Update copyright information
+
+Jean-Nicolas Graux (1):
+      dmaengine: pl08x: be fair when re-assigning physical channel
+
+Jeff Xie (1):
+      dmaengine: xgene-dma: move spin_lock_bh to spin_lock in tasklet
+
+Katsuhiro Suzuki (1):
+      dmaengine: pl330: introduce debugfs interface
+
+Kefeng Wang (2):
+      dmaengine: bcm-sba-raid: Use dev_get_drvdata()
+      dmaengine: nbpfaxi: Use dev_get_drvdata()
+
+Krzysztof Kozlowski (2):
+      dmaengine: fsl-edma: Fix typo in Vybrid name
+      dmaengine: fsl-edma: Adjust indentation
+
+Lars-Peter Clausen (2):
+      dmaengine: axi-dmac: Split too large segments
+      dmaengine: axi-dmac: Infer synthesis configuration parameters hardware
+
+Michael Hennerich (1):
+      dmaengine: axi-dmac: extend support for ZynqMP arch
+
+Michal Suchanek (1):
+      dmaengine: bcm2835: Drop duplicate capability setting.
+
+Nicolas Ferre (3):
+      dmaengine: at_xdmac: remove BUG_ON macro in tasklet
+      dmaengine: at_xdmac: enhance channel errors handling in tasklet
+      dmaengine: at_xdmac: only monitor overflow errors for peripheral xfer
+
+Sameer Pujar (8):
+      dmaengine: tegra210-adma: use devm_clk_*() helpers
+      dmaengine: tegra210-adma: update system sleep callbacks
+      dmaengine: tegra210-adma: prepare for supporting newer Tegra chips
+      Documentation: DT: Add compatibility binding for Tegra186
+      dmaengine: tegra210-adma: add support for Tegra186/Tegra194
+      dmaengine: tegra210-adma: add pause/resume support
+      dmaengine: tegra210-dma: free dma controller in remove()
+      dmaengine: tegra210-adma: restore channel status
+
+Sugar Zhang (1):
+      dmaengine: pl330: _stop: clear interrupt status
+
+Vinod Koul (1):
+      dmaengine: stm32-dma: Fix unsigned variable compared with zero
+
+ .../devicetree/bindings/dma/adi,axi-dmac.txt       |   4 +-
+ .../bindings/dma/nvidia,tegra210-adma.txt          |   4 +-
+ drivers/dma/Kconfig                                |   2 +-
+ drivers/dma/amba-pl08x.c                           |  22 +-
+ drivers/dma/at_xdmac.c                             |  67 ++++-
+ drivers/dma/bcm-sba-raid.c                         |   3 +-
+ drivers/dma/bcm2835-dma.c                          |   1 -
+ drivers/dma/dma-axi-dmac.c                         | 116 ++++++---
+ drivers/dma/fsl-edma-common.h                      |   2 +-
+ drivers/dma/fsl-edma.c                             |   6 +-
+ drivers/dma/idma64.c                               |  15 +-
+ drivers/dma/idma64.h                               |   2 +
+ drivers/dma/imx-sdma.c                             |  15 +-
+ drivers/dma/nbpfaxi.c                              |   4 +-
+ drivers/dma/pl330.c                                |  61 ++++-
+ drivers/dma/sh/rcar-dmac.c                         |   4 +-
+ drivers/dma/stm32-dma.c                            | 103 ++++++--
+ drivers/dma/tegra210-adma.c                        | 269 ++++++++++++++++-=
+----
+ drivers/dma/xgene-dma.c                            |   6 +-
+ drivers/mfd/intel-lpss.c                           |   4 +-
+ drivers/spi/spi-pxa2xx.c                           |   7 +-
+ drivers/tty/serial/8250/8250_dw.c                  |   4 +-
+ include/linux/dma/idma64.h                         |  14 ++
+ 23 files changed, 566 insertions(+), 169 deletions(-)
+ create mode 100644 include/linux/dma/idma64.h
+
+Thanks
+--=20
+~Vinod
+
+--5I6of5zJg18YgZEa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJc09rHAAoJEHwUBw8lI4NHifkP/1g+an09RrQmVnUxWz9emBO9
+Ea0i1xQYF7zg8p7MblRC3yQNBuphJ9Qhd51GlOHR/uy+4JP0Llg4RfAh4WhuVLCJ
+GlLk3BHwI2jb9okfe5dBFP09RRdG/XarBp5nl9qqcRIfyXg8iwADwBBvEabaXT1L
+vkvjyRpH6uGHRiTmP6ZPB1pRTF4OoiyJWLc4g2i40Xn0NMRGrMNUHYuTOHq7aDJO
+MK+WbCgL6KJFlPHnJt1rRCtp7EdY092pFNhyw79BMXE5uvwWnxihDB+ylf+eHgLL
+8mfnBYlUnKPkIPwGiaNb/uv9xKfXejN41ZK0FhC4GjkKU2tbwKAAJduVyLccwq9v
+KcrYcCvwyBXpAOlfWxNZ+97jQBqL4iG7fMq0OUViv96HXJNXc8ynu6r495rPX69I
+b/ZgJ5FmXkkR2Fl/wiE9Jdr6q83ASHNvaV+LXDHTsIj8OYxod+Z+qVBs31iUNlXL
+wHxVcn61edvfRZp4EOD+/dgEPCsNfRWOTmTCSdjlyj0fwr2qs40WjAOXC5f1uOHu
+QwetmVNvKg3d5WURUH89SDb+Xh/7DaLzkkgbyMqlBQDu+OHOTrJva2ekZczdIpIY
+CGdplxGz7tVD01JeswoRkBYyeuIXi9bjp6Eyda/qLfHL0ybAC2z00Y8HTFKYTE0U
+vF9uXW6yL7DAqfMmEOBq
+=WatB
+-----END PGP SIGNATURE-----
+
+--5I6of5zJg18YgZEa--
