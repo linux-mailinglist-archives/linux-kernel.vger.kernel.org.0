@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED8718EFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED2618EFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfEIR0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:26:40 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42406 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfEIR0i (ORCPT
+        id S1726996AbfEIR0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:26:18 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35414 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfEIR0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:26:38 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJOwV151549;
-        Thu, 9 May 2019 17:25:45 GMT
+        Thu, 9 May 2019 13:26:16 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HJW1Z169554;
+        Thu, 9 May 2019 17:25:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=UbPcnD6D6e3Eh92jCR1E4okj/kRSBROYdT8U3cfcw0w=;
- b=5VXqG9w6DSUZIaSV+vjgWmXpjbTmI6/CuLneUPjy8E0P0qoMdcSFEIKmp+acINNjpRnp
- ZjfHC6HnNognmTUhTZrqCoDctmiowR3WPJqjR5ctqHk1v5rzc2P4o7vrh7cS6jQJ1MxC
- gml3w17CnC2TJXLUlMCdb/PTvbPn6c2zRVlvETp8h5BIC9gbCkOV62a+7kLROqb8dVLY
- MChpLB277WR7eee63248zk7cn3N7wIpDDAzZzdCsxVfYi9kjJTwsToVsLdp3GRQ9BrTc
- 2dczzmK28KZS3ZG/DXj7sUsG5bfNW2fz7TrIAm7LJquxc9UF8GxG8aaoNWY1sr4CaaaK dg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2s94bgceek-1
+ bh=hqA9nnmc3aaCaD1vJvMN9O3t2wFzBAC7GiJ5+V+WkDU=;
+ b=lv2twt8jJxAoz/nULIzS29XNDCyzpIOgM6kAG0ACZt2NVyaUoxIP+g1iGzjRg4ZMsP8j
+ EeYnhFj/ZptM5Xttxh4IqzSAIw+m17bDU36ZmK3aXzivmTJ0r5Snet4MogQyPJ8dRk3M
+ TCACBPS34rkWcIGd+FB2bZBUOF3e5YViGROv8TqVwVMgs1ugZVAHVkoUvZ8BVTlEePSK
+ X7PiWFRvgI2CCmxSXveEV0FKa5MC0rr7pySNE3nPpVxDlJiqbRHVxZt09V6QJyoAIuPS
+ WCOIrB0BE3AxEx7fwGo3VSUulFaKhs4tjMIYSApJiG9pY0a2B8/3xXZ0QpshU6UVbRNy 0g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2s94b14e3k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 17:25:46 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HP7rC152344;
+        Thu, 9 May 2019 17:25:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2schvyy7ws-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 09 May 2019 17:25:45 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49HNxrG109635;
-        Thu, 9 May 2019 17:25:45 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2sagyvcg65-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 17:25:44 +0000
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x49HPi42013393;
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x49HPi4U011189;
         Thu, 9 May 2019 17:25:44 GMT
 Received: from aa1-ca-oracle-com.ca.oracle.com (/10.156.75.204)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 09 May 2019 10:25:43 -0700
+        with ESMTP ; Thu, 09 May 2019 10:25:44 -0700
 From:   Ankur Arora <ankur.a.arora@oracle.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 Cc:     jgross@suse.com, pbonzini@redhat.com, boris.ostrovsky@oracle.com,
         konrad.wilk@oracle.com, sstabellini@kernel.org,
         joao.m.martins@oracle.com, ankur.a.arora@oracle.com
-Subject: [RFC PATCH 11/16] xen/grant-table: make grant-table xenhost aware
-Date:   Thu,  9 May 2019 10:25:35 -0700
-Message-Id: <20190509172540.12398-12-ankur.a.arora@oracle.com>
+Subject: [RFC PATCH 12/16] xen/xenbus: support xenbus frontend/backend with xenhost_t
+Date:   Thu,  9 May 2019 10:25:36 -0700
+Message-Id: <20190509172540.12398-13-ankur.a.arora@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190509172540.12398-1-ankur.a.arora@oracle.com>
 References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
@@ -70,1743 +70,2515 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Largely mechanical changes: the exported grant table symbols now take
-xenhost_t * as a parameter. Also, move the grant table global state
-inside xenhost_t.
+As part of xenbus init, both frontend, backend interfaces need to talk
+on the correct xenbus. This might be a local xenstore (backend) or might
+be a XS_PV/XS_HVM interface (frontend) which needs to talk over xenbus
+with the remote xenstored. We bootstrap all of these with evtchn/gfn
+parameters from (*setup_xs)().
 
-If there's more than one xenhost, then initialize both.
+Given this we can do appropriate device discovery (in case of frontend)
+and device connectivity for the backend.
+Once done, we stash the xenhost_t * in xen_bus_type, xenbus_device or
+xenbus_watch and then the frontend and backend devices implicitly use
+the correct interface.
+
+The rest of patch is just changing the interfaces where needed.
 
 Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 ---
- arch/x86/xen/grant-table.c |  71 +++--
- drivers/xen/grant-table.c  | 611 +++++++++++++++++++++----------------
- include/xen/grant_table.h  |  72 ++---
- include/xen/xenhost.h      |  11 +
- 4 files changed, 443 insertions(+), 322 deletions(-)
+ drivers/block/xen-blkback/blkback.c        |  10 +-
+ drivers/net/xen-netfront.c                 |  14 +-
+ drivers/pci/xen-pcifront.c                 |   4 +-
+ drivers/xen/cpu_hotplug.c                  |   4 +-
+ drivers/xen/manage.c                       |  28 +--
+ drivers/xen/xen-balloon.c                  |   8 +-
+ drivers/xen/xenbus/xenbus.h                |  45 ++--
+ drivers/xen/xenbus/xenbus_client.c         |  32 +--
+ drivers/xen/xenbus/xenbus_comms.c          | 121 +++++-----
+ drivers/xen/xenbus/xenbus_dev_backend.c    |  30 ++-
+ drivers/xen/xenbus/xenbus_dev_frontend.c   |  22 +-
+ drivers/xen/xenbus/xenbus_probe.c          | 246 +++++++++++++--------
+ drivers/xen/xenbus/xenbus_probe_backend.c  |  19 +-
+ drivers/xen/xenbus/xenbus_probe_frontend.c |  65 +++---
+ drivers/xen/xenbus/xenbus_xs.c             | 188 +++++++++-------
+ include/xen/xen-ops.h                      |   3 +
+ include/xen/xenbus.h                       |  54 +++--
+ include/xen/xenhost.h                      |  20 ++
+ 18 files changed, 536 insertions(+), 377 deletions(-)
 
-diff --git a/arch/x86/xen/grant-table.c b/arch/x86/xen/grant-table.c
-index ecb0d5450334..8f4b071427f9 100644
---- a/arch/x86/xen/grant-table.c
-+++ b/arch/x86/xen/grant-table.c
-@@ -23,48 +23,54 @@
- 
- #include <asm/pgtable.h>
- 
--static struct gnttab_vm_area {
-+struct gnttab_vm_area {
- 	struct vm_struct *area;
- 	pte_t **ptes;
--} gnttab_shared_vm_area, gnttab_status_vm_area;
-+};
- 
--int arch_gnttab_map_shared(unsigned long *frames, unsigned long nr_gframes,
--			   unsigned long max_nr_gframes,
--			   void **__shared)
-+int arch_gnttab_map_shared(xenhost_t *xh, unsigned long *frames,
-+				unsigned long nr_gframes,
-+				unsigned long max_nr_gframes,
-+				void **__shared)
- {
- 	void *shared = *__shared;
- 	unsigned long addr;
- 	unsigned long i;
- 
- 	if (shared == NULL)
--		*__shared = shared = gnttab_shared_vm_area.area->addr;
-+		*__shared = shared = ((struct gnttab_vm_area *)
-+					xh->gnttab_shared_vm_area)->area->addr;
- 
- 	addr = (unsigned long)shared;
- 
- 	for (i = 0; i < nr_gframes; i++) {
--		set_pte_at(&init_mm, addr, gnttab_shared_vm_area.ptes[i],
--			   mfn_pte(frames[i], PAGE_KERNEL));
-+		set_pte_at(&init_mm, addr,
-+			((struct gnttab_vm_area *) xh->gnttab_shared_vm_area)->ptes[i],
-+			mfn_pte(frames[i], PAGE_KERNEL));
- 		addr += PAGE_SIZE;
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index fd1e19f1a49f..7ad4423c24b8 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -541,12 +541,12 @@ static void xen_vbd_resize(struct xen_blkif *blkif)
+ 	pr_info("VBD Resize: new size %llu\n", new_size);
+ 	vbd->size = new_size;
+ again:
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(dev->xh, &xbt);
+ 	if (err) {
+ 		pr_warn("Error starting transaction\n");
+ 		return;
+ 	}
+-	err = xenbus_printf(xbt, dev->nodename, "sectors", "%llu",
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "sectors", "%llu",
+ 			    (unsigned long long)vbd_sz(vbd));
+ 	if (err) {
+ 		pr_warn("Error writing new size\n");
+@@ -557,20 +557,20 @@ static void xen_vbd_resize(struct xen_blkif *blkif)
+ 	 * the front-end. If the current state is "connected" the
+ 	 * front-end will get the new size information online.
+ 	 */
+-	err = xenbus_printf(xbt, dev->nodename, "state", "%d", dev->state);
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "state", "%d", dev->state);
+ 	if (err) {
+ 		pr_warn("Error writing the state\n");
+ 		goto abort;
  	}
  
- 	return 0;
- }
- 
--int arch_gnttab_map_status(uint64_t *frames, unsigned long nr_gframes,
--			   unsigned long max_nr_gframes,
--			   grant_status_t **__shared)
-+int arch_gnttab_map_status(xenhost_t *xh, uint64_t *frames,
-+				unsigned long nr_gframes,
-+				unsigned long max_nr_gframes,
-+				grant_status_t **__shared)
- {
- 	grant_status_t *shared = *__shared;
- 	unsigned long addr;
- 	unsigned long i;
- 
- 	if (shared == NULL)
--		*__shared = shared = gnttab_status_vm_area.area->addr;
-+		*__shared = shared = ((struct gnttab_vm_area *)
-+					xh->gnttab_status_vm_area)->area->addr;
- 
- 	addr = (unsigned long)shared;
- 
- 	for (i = 0; i < nr_gframes; i++) {
--		set_pte_at(&init_mm, addr, gnttab_status_vm_area.ptes[i],
-+		set_pte_at(&init_mm, addr, ((struct gnttab_vm_area *)
-+				xh->gnttab_status_vm_area)->ptes[i],
- 			   mfn_pte(frames[i], PAGE_KERNEL));
- 		addr += PAGE_SIZE;
- 	}
-@@ -72,16 +78,17 @@ int arch_gnttab_map_status(uint64_t *frames, unsigned long nr_gframes,
- 	return 0;
- }
- 
--void arch_gnttab_unmap(void *shared, unsigned long nr_gframes)
-+void arch_gnttab_unmap(xenhost_t *xh, void *shared, unsigned long nr_gframes)
- {
- 	pte_t **ptes;
- 	unsigned long addr;
- 	unsigned long i;
- 
--	if (shared == gnttab_status_vm_area.area->addr)
--		ptes = gnttab_status_vm_area.ptes;
-+	if (shared == ((struct gnttab_vm_area *)
-+			xh->gnttab_status_vm_area)->area->addr)
-+		ptes = ((struct gnttab_vm_area *) xh->gnttab_status_vm_area)->ptes;
- 	else
--		ptes = gnttab_shared_vm_area.ptes;
-+		ptes = ((struct gnttab_vm_area *) xh->gnttab_shared_vm_area)->ptes;
- 
- 	addr = (unsigned long)shared;
- 
-@@ -112,14 +119,15 @@ static void arch_gnttab_vfree(struct gnttab_vm_area *area)
- 	kfree(area->ptes);
- }
- 
--int arch_gnttab_init(unsigned long nr_shared, unsigned long nr_status)
-+int arch_gnttab_init(xenhost_t *xh, unsigned long nr_shared, unsigned long nr_status)
- {
- 	int ret;
- 
- 	if (!xen_pv_domain())
- 		return 0;
- 
--	ret = arch_gnttab_valloc(&gnttab_shared_vm_area, nr_shared);
-+	ret = arch_gnttab_valloc((struct gnttab_vm_area *)
-+				xh->gnttab_shared_vm_area, nr_shared);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -127,13 +135,15 @@ int arch_gnttab_init(unsigned long nr_shared, unsigned long nr_status)
- 	 * Always allocate the space for the status frames in case
- 	 * we're migrated to a host with V2 support.
- 	 */
--	ret = arch_gnttab_valloc(&gnttab_status_vm_area, nr_status);
-+	ret = arch_gnttab_valloc((struct gnttab_vm_area *)
-+				xh->gnttab_status_vm_area, nr_status);
- 	if (ret < 0)
- 		goto err;
- 
- 	return 0;
- err:
--	arch_gnttab_vfree(&gnttab_shared_vm_area);
-+	arch_gnttab_vfree((struct gnttab_vm_area *)
-+				xh->gnttab_shared_vm_area);
- 	return -ENOMEM;
- }
- 
-@@ -142,16 +152,25 @@ int arch_gnttab_init(unsigned long nr_shared, unsigned long nr_status)
- #include <xen/xen-ops.h>
- static int __init xen_pvh_gnttab_setup(void)
- {
-+	xenhost_t **xh;
-+	int err;
-+
- 	if (!xen_pvh_domain())
- 		return -ENODEV;
- 
--	xen_auto_xlat_grant_frames.count = gnttab_max_grant_frames();
-+	for_each_xenhost(xh) {
-+		struct grant_frames *gf = (struct grant_frames *) (*xh)->auto_xlat_grant_frames;
- 
--	return xen_xlate_map_ballooned_pages(&xen_auto_xlat_grant_frames.pfn,
--					     &xen_auto_xlat_grant_frames.vaddr,
--					     xen_auto_xlat_grant_frames.count);
-+		gf->count = gnttab_max_grant_frames(*xh);
-+
-+		err = xen_xlate_map_ballooned_pages(&gf->pfn, &gf->vaddr, gf->count);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
- }
- /* Call it _before_ __gnttab_init as we need to initialize the
-- * xen_auto_xlat_grant_frames first. */
-+ * auto_xlat_grant_frames first. */
- core_initcall(xen_pvh_gnttab_setup);
- #endif
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index ec90769907a4..959b81ade113 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -72,21 +72,10 @@
- #define NR_RESERVED_ENTRIES 8
- #define GNTTAB_LIST_END 0xffffffff
- 
--static grant_ref_t **gnttab_list;
--static unsigned int nr_grant_frames;
--static int gnttab_free_count;
--static grant_ref_t gnttab_free_head;
- static DEFINE_SPINLOCK(gnttab_list_lock);
--struct grant_frames xen_auto_xlat_grant_frames;
- static unsigned int xen_gnttab_version;
- module_param_named(version, xen_gnttab_version, uint, 0);
- 
--static union {
--	struct grant_entry_v1 *v1;
--	union grant_entry_v2 *v2;
--	void *addr;
--} gnttab_shared;
--
- /*This is a structure of function pointers for grant table*/
- struct gnttab_ops {
- 	/*
-@@ -103,12 +92,12 @@ struct gnttab_ops {
- 	 * nr_gframes is the number of frames to map grant table. Returning
- 	 * GNTST_okay means success and negative value means failure.
- 	 */
--	int (*map_frames)(xen_pfn_t *frames, unsigned int nr_gframes);
-+	int (*map_frames)(xenhost_t *xh, xen_pfn_t *frames, unsigned int nr_gframes);
- 	/*
- 	 * Release a list of frames which are mapped in map_frames for grant
- 	 * entry status.
- 	 */
--	void (*unmap_frames)(void);
-+	void (*unmap_frames)(xenhost_t *xh);
- 	/*
- 	 * Introducing a valid entry into the grant table, granting the frame of
- 	 * this grant entry to domain for accessing or transfering. Ref
-@@ -116,7 +105,7 @@ struct gnttab_ops {
- 	 * granted domain, frame is the page frame to be granted, and flags is
- 	 * status of the grant entry to be updated.
- 	 */
--	void (*update_entry)(grant_ref_t ref, domid_t domid,
-+	void (*update_entry)(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 			     unsigned long frame, unsigned flags);
- 	/*
- 	 * Stop granting a grant entry to domain for accessing. Ref parameter is
-@@ -126,7 +115,7 @@ struct gnttab_ops {
- 	 * directly and don't tear down the grant access. Otherwise, stop grant
- 	 * access for this entry and return success(==1).
- 	 */
--	int (*end_foreign_access_ref)(grant_ref_t ref, int readonly);
-+	int (*end_foreign_access_ref)(xenhost_t *xh, grant_ref_t ref, int readonly);
- 	/*
- 	 * Stop granting a grant entry to domain for transfer. Ref parameter is
- 	 * reference of a grant entry whose grant transfer will be stopped. If
-@@ -134,14 +123,14 @@ struct gnttab_ops {
- 	 * failure(==0). Otherwise, wait for the transfer to complete and then
- 	 * return the frame.
- 	 */
--	unsigned long (*end_foreign_transfer_ref)(grant_ref_t ref);
-+	unsigned long (*end_foreign_transfer_ref)(xenhost_t *xh, grant_ref_t ref);
- 	/*
- 	 * Query the status of a grant entry. Ref parameter is reference of
- 	 * queried grant entry, return value is the status of queried entry.
- 	 * Detailed status(writing/reading) can be gotten from the return value
- 	 * by bit operations.
- 	 */
--	int (*query_foreign_access)(grant_ref_t ref);
-+	int (*query_foreign_access)(xenhost_t *xh, grant_ref_t ref);
- };
- 
- struct unmap_refs_callback_data {
-@@ -149,85 +138,105 @@ struct unmap_refs_callback_data {
- 	int result;
- };
- 
--static const struct gnttab_ops *gnttab_interface;
-+struct gnttab_private {
-+	const struct gnttab_ops *gnttab_interface;
-+	grant_status_t *grstatus;
-+	grant_ref_t gnttab_free_head;
-+	unsigned int nr_grant_frames;
-+	int gnttab_free_count;
-+	struct gnttab_free_callback *gnttab_free_callback_list;
-+	struct grant_frames auto_xlat_grant_frames;
-+	grant_ref_t **gnttab_list;
- 
--/* This reflects status of grant entries, so act as a global value. */
--static grant_status_t *grstatus;
-+	union {
-+		struct grant_entry_v1 *v1;
-+		union grant_entry_v2 *v2;
-+		void *addr;
-+	} gnttab_shared;
-+};
- 
--static struct gnttab_free_callback *gnttab_free_callback_list;
-+#define gt_priv(xh) ((struct gnttab_private *) (xh)->gnttab_private)
- 
--static int gnttab_expand(unsigned int req_entries);
-+static int gnttab_expand(xenhost_t *xh, unsigned int req_entries);
- 
- #define RPP (PAGE_SIZE / sizeof(grant_ref_t))
- #define SPP (PAGE_SIZE / sizeof(grant_status_t))
- 
--static inline grant_ref_t *__gnttab_entry(grant_ref_t entry)
-+static inline grant_ref_t *__gnttab_entry(xenhost_t *xh, grant_ref_t entry)
- {
--	return &gnttab_list[(entry) / RPP][(entry) % RPP];
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return &gt->gnttab_list[(entry) / RPP][(entry) % RPP];
- }
- /* This can be used as an l-value */
--#define gnttab_entry(entry) (*__gnttab_entry(entry))
-+#define gnttab_entry(xh, entry) (*__gnttab_entry(xh, entry))
- 
--static int get_free_entries(unsigned count)
-+static int get_free_entries(xenhost_t *xh, unsigned count)
- {
- 	unsigned long flags;
- 	int ref, rc = 0;
- 	grant_ref_t head;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
- 	spin_lock_irqsave(&gnttab_list_lock, flags);
- 
--	if ((gnttab_free_count < count) &&
--	    ((rc = gnttab_expand(count - gnttab_free_count)) < 0)) {
-+	if ((gt->gnttab_free_count < count) &&
-+	    ((rc = gnttab_expand(xh, count - gt->gnttab_free_count)) < 0)) {
- 		spin_unlock_irqrestore(&gnttab_list_lock, flags);
- 		return rc;
- 	}
- 
--	ref = head = gnttab_free_head;
--	gnttab_free_count -= count;
-+	ref = head = gt->gnttab_free_head;
-+	gt->gnttab_free_count -= count;
- 	while (count-- > 1)
--		head = gnttab_entry(head);
--	gnttab_free_head = gnttab_entry(head);
--	gnttab_entry(head) = GNTTAB_LIST_END;
-+		head = gnttab_entry(xh, head);
-+	gt->gnttab_free_head = gnttab_entry(xh, head);
-+	gnttab_entry(xh, head) = GNTTAB_LIST_END;
- 
- 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
- 
- 	return ref;
- }
- 
--static void do_free_callbacks(void)
-+static void do_free_callbacks(xenhost_t *xh)
- {
- 	struct gnttab_free_callback *callback, *next;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	callback = gnttab_free_callback_list;
--	gnttab_free_callback_list = NULL;
-+	callback = gt->gnttab_free_callback_list;
-+	gt->gnttab_free_callback_list = NULL;
- 
- 	while (callback != NULL) {
- 		next = callback->next;
--		if (gnttab_free_count >= callback->count) {
-+		if (gt->gnttab_free_count >= callback->count) {
- 			callback->next = NULL;
- 			callback->fn(callback->arg);
- 		} else {
--			callback->next = gnttab_free_callback_list;
--			gnttab_free_callback_list = callback;
-+			callback->next = gt->gnttab_free_callback_list;
-+			gt->gnttab_free_callback_list = callback;
- 		}
- 		callback = next;
- 	}
- }
- 
--static inline void check_free_callbacks(void)
-+static inline void check_free_callbacks(xenhost_t *xh)
- {
--	if (unlikely(gnttab_free_callback_list))
--		do_free_callbacks();
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	if (unlikely(gt->gnttab_free_callback_list))
-+		do_free_callbacks(xh);
- }
- 
--static void put_free_entry(grant_ref_t ref)
-+static void put_free_entry(xenhost_t *xh, grant_ref_t ref)
- {
- 	unsigned long flags;
-+	struct gnttab_private *gt = gt_priv(xh);
-+
- 	spin_lock_irqsave(&gnttab_list_lock, flags);
--	gnttab_entry(ref) = gnttab_free_head;
--	gnttab_free_head = ref;
--	gnttab_free_count++;
--	check_free_callbacks();
-+	gnttab_entry(xh, ref) = gt->gnttab_free_head;
-+	gt->gnttab_free_head = ref;
-+	gt->gnttab_free_count++;
-+	check_free_callbacks(xh);
- 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
- }
- 
-@@ -242,72 +251,85 @@ static void put_free_entry(grant_ref_t ref)
-  *  3. Write memory barrier (WMB).
-  *  4. Write ent->flags, inc. valid type.
-  */
--static void gnttab_update_entry_v1(grant_ref_t ref, domid_t domid,
-+static void gnttab_update_entry_v1(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 				   unsigned long frame, unsigned flags)
- {
--	gnttab_shared.v1[ref].domid = domid;
--	gnttab_shared.v1[ref].frame = frame;
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	gt->gnttab_shared.v1[ref].domid = domid;
-+	gt->gnttab_shared.v1[ref].frame = frame;
- 	wmb();
--	gnttab_shared.v1[ref].flags = flags;
-+	gt->gnttab_shared.v1[ref].flags = flags;
- }
- 
--static void gnttab_update_entry_v2(grant_ref_t ref, domid_t domid,
-+static void gnttab_update_entry_v2(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 				   unsigned long frame, unsigned int flags)
- {
--	gnttab_shared.v2[ref].hdr.domid = domid;
--	gnttab_shared.v2[ref].full_page.frame = frame;
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	gt->gnttab_shared.v2[ref].hdr.domid = domid;
-+	gt->gnttab_shared.v2[ref].full_page.frame = frame;
- 	wmb();	/* Hypervisor concurrent accesses. */
--	gnttab_shared.v2[ref].hdr.flags = GTF_permit_access | flags;
-+	gt->gnttab_shared.v2[ref].hdr.flags = GTF_permit_access | flags;
+-	err = xenbus_transaction_end(xbt, 0);
++	err = xenbus_transaction_end(dev->xh, xbt, 0);
+ 	if (err == -EAGAIN)
+ 		goto again;
+ 	if (err)
+ 		pr_warn("Error ending transaction\n");
+ 	return;
+ abort:
+-	xenbus_transaction_end(xbt, 1);
++	xenbus_transaction_end(dev->xh, xbt, 1);
  }
  
  /*
-  * Public grant-issuing interface functions
-  */
--void gnttab_grant_foreign_access_ref(grant_ref_t ref, domid_t domid,
-+void gnttab_grant_foreign_access_ref(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 				     unsigned long frame, int readonly)
- {
--	gnttab_interface->update_entry(ref, domid, frame,
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	gt->gnttab_interface->update_entry(xh, ref, domid, frame,
- 			   GTF_permit_access | (readonly ? GTF_readonly : 0));
- }
- EXPORT_SYMBOL_GPL(gnttab_grant_foreign_access_ref);
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 1cd0a2d2ba54..ee28e8b85406 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1336,9 +1336,9 @@ static struct net_device *xennet_create_dev(struct xenbus_device *dev)
  
--int gnttab_grant_foreign_access(domid_t domid, unsigned long frame,
-+int gnttab_grant_foreign_access(xenhost_t *xh, domid_t domid, unsigned long frame,
- 				int readonly)
- {
- 	int ref;
+ 	xenbus_switch_state(dev, XenbusStateInitialising);
+ 	wait_event(module_wq,
+-		   xenbus_read_driver_state(dev->otherend) !=
++		   xenbus_read_driver_state(dev, dev->otherend) !=
+ 		   XenbusStateClosed &&
+-		   xenbus_read_driver_state(dev->otherend) !=
++		   xenbus_read_driver_state(dev, dev->otherend) !=
+ 		   XenbusStateUnknown);
+ 	return netdev;
  
--	ref = get_free_entries(1);
-+	ref = get_free_entries(xh, 1);
- 	if (unlikely(ref < 0))
- 		return -ENOSPC;
+@@ -2145,19 +2145,19 @@ static int xennet_remove(struct xenbus_device *dev)
  
--	gnttab_grant_foreign_access_ref(ref, domid, frame, readonly);
-+	gnttab_grant_foreign_access_ref(xh, ref, domid, frame, readonly);
+ 	dev_dbg(&dev->dev, "%s\n", dev->nodename);
  
- 	return ref;
- }
- EXPORT_SYMBOL_GPL(gnttab_grant_foreign_access);
+-	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
++	if (xenbus_read_driver_state(dev, dev->otherend) != XenbusStateClosed) {
+ 		xenbus_switch_state(dev, XenbusStateClosing);
+ 		wait_event(module_wq,
+-			   xenbus_read_driver_state(dev->otherend) ==
++			   xenbus_read_driver_state(dev, dev->otherend) ==
+ 			   XenbusStateClosing ||
+-			   xenbus_read_driver_state(dev->otherend) ==
++			   xenbus_read_driver_state(dev, dev->otherend) ==
+ 			   XenbusStateUnknown);
  
--static int gnttab_query_foreign_access_v1(grant_ref_t ref)
-+static int gnttab_query_foreign_access_v1(xenhost_t *xh, grant_ref_t ref)
- {
--	return gnttab_shared.v1[ref].flags & (GTF_reading|GTF_writing);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return gt->gnttab_shared.v1[ref].flags & (GTF_reading|GTF_writing);
- }
- 
--static int gnttab_query_foreign_access_v2(grant_ref_t ref)
-+static int gnttab_query_foreign_access_v2(xenhost_t *xh, grant_ref_t ref)
- {
--	return grstatus[ref] & (GTF_reading|GTF_writing);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return gt->grstatus[ref] & (GTF_reading|GTF_writing);
- }
- 
--int gnttab_query_foreign_access(grant_ref_t ref)
-+int gnttab_query_foreign_access(xenhost_t *xh, grant_ref_t ref)
- {
--	return gnttab_interface->query_foreign_access(ref);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return gt->gnttab_interface->query_foreign_access(xh, ref);
- }
- EXPORT_SYMBOL_GPL(gnttab_query_foreign_access);
- 
--static int gnttab_end_foreign_access_ref_v1(grant_ref_t ref, int readonly)
-+static int gnttab_end_foreign_access_ref_v1(xenhost_t *xh, grant_ref_t ref, int readonly)
- {
-+	struct gnttab_private *gt = gt_priv(xh);
- 	u16 flags, nflags;
- 	u16 *pflags;
- 
--	pflags = &gnttab_shared.v1[ref].flags;
-+	pflags = &gt->gnttab_shared.v1[ref].flags;
- 	nflags = *pflags;
- 	do {
- 		flags = nflags;
-@@ -318,11 +340,13 @@ static int gnttab_end_foreign_access_ref_v1(grant_ref_t ref, int readonly)
- 	return 1;
- }
- 
--static int gnttab_end_foreign_access_ref_v2(grant_ref_t ref, int readonly)
-+static int gnttab_end_foreign_access_ref_v2(xenhost_t *xh, grant_ref_t ref, int readonly)
- {
--	gnttab_shared.v2[ref].hdr.flags = 0;
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	gt->gnttab_shared.v2[ref].hdr.flags = 0;
- 	mb();	/* Concurrent access by hypervisor. */
--	if (grstatus[ref] & (GTF_reading|GTF_writing)) {
-+	if (gt->grstatus[ref] & (GTF_reading|GTF_writing)) {
- 		return 0;
- 	} else {
- 		/*
-@@ -341,14 +365,16 @@ static int gnttab_end_foreign_access_ref_v2(grant_ref_t ref, int readonly)
- 	return 1;
- }
- 
--static inline int _gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly)
-+static inline int _gnttab_end_foreign_access_ref(xenhost_t *xh, grant_ref_t ref, int readonly)
- {
--	return gnttab_interface->end_foreign_access_ref(ref, readonly);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return gt->gnttab_interface->end_foreign_access_ref(xh, ref, readonly);
- }
- 
--int gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly)
-+int gnttab_end_foreign_access_ref(xenhost_t *xh, grant_ref_t ref, int readonly)
- {
--	if (_gnttab_end_foreign_access_ref(ref, readonly))
-+	if (_gnttab_end_foreign_access_ref(xh, ref, readonly))
- 		return 1;
- 	pr_warn("WARNING: g.e. %#x still in use!\n", ref);
- 	return 0;
-@@ -361,6 +387,7 @@ struct deferred_entry {
- 	bool ro;
- 	uint16_t warn_delay;
- 	struct page *page;
-+	xenhost_t *xh;
- };
- static LIST_HEAD(deferred_list);
- static void gnttab_handle_deferred(struct timer_list *);
-@@ -382,8 +409,8 @@ static void gnttab_handle_deferred(struct timer_list *unused)
- 			break;
- 		list_del(&entry->list);
- 		spin_unlock_irqrestore(&gnttab_list_lock, flags);
--		if (_gnttab_end_foreign_access_ref(entry->ref, entry->ro)) {
--			put_free_entry(entry->ref);
-+		if (_gnttab_end_foreign_access_ref(entry->xh, entry->ref, entry->ro)) {
-+			put_free_entry(entry->xh, entry->ref);
- 			if (entry->page) {
- 				pr_debug("freeing g.e. %#x (pfn %#lx)\n",
- 					 entry->ref, page_to_pfn(entry->page));
-@@ -411,7 +438,7 @@ static void gnttab_handle_deferred(struct timer_list *unused)
- 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
- }
- 
--static void gnttab_add_deferred(grant_ref_t ref, bool readonly,
-+static void gnttab_add_deferred(xenhost_t *xh, grant_ref_t ref, bool readonly,
- 				struct page *page)
- {
- 	struct deferred_entry *entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
-@@ -423,6 +450,7 @@ static void gnttab_add_deferred(grant_ref_t ref, bool readonly,
- 		entry->ref = ref;
- 		entry->ro = readonly;
- 		entry->page = page;
-+		entry->xh = xh;
- 		entry->warn_delay = 60;
- 		spin_lock_irqsave(&gnttab_list_lock, flags);
- 		list_add_tail(&entry->list, &deferred_list);
-@@ -437,46 +465,49 @@ static void gnttab_add_deferred(grant_ref_t ref, bool readonly,
- 	       what, ref, page ? page_to_pfn(page) : -1);
- }
- 
--void gnttab_end_foreign_access(grant_ref_t ref, int readonly,
-+void gnttab_end_foreign_access(xenhost_t *xh, grant_ref_t ref, int readonly,
- 			       unsigned long page)
- {
--	if (gnttab_end_foreign_access_ref(ref, readonly)) {
--		put_free_entry(ref);
-+	if (gnttab_end_foreign_access_ref(xh, ref, readonly)) {
-+		put_free_entry(xh, ref);
- 		if (page != 0)
- 			put_page(virt_to_page(page));
- 	} else
--		gnttab_add_deferred(ref, readonly,
-+		gnttab_add_deferred(xh, ref, readonly,
- 				    page ? virt_to_page(page) : NULL);
- }
- EXPORT_SYMBOL_GPL(gnttab_end_foreign_access);
- 
--int gnttab_grant_foreign_transfer(domid_t domid, unsigned long pfn)
-+int gnttab_grant_foreign_transfer(xenhost_t *xh, domid_t domid, unsigned long pfn)
- {
- 	int ref;
- 
--	ref = get_free_entries(1);
-+	ref = get_free_entries(xh, 1);
- 	if (unlikely(ref < 0))
- 		return -ENOSPC;
--	gnttab_grant_foreign_transfer_ref(ref, domid, pfn);
-+	gnttab_grant_foreign_transfer_ref(xh, ref, domid, pfn);
- 
- 	return ref;
- }
- EXPORT_SYMBOL_GPL(gnttab_grant_foreign_transfer);
- 
--void gnttab_grant_foreign_transfer_ref(grant_ref_t ref, domid_t domid,
-+void gnttab_grant_foreign_transfer_ref(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 				       unsigned long pfn)
- {
--	gnttab_interface->update_entry(ref, domid, pfn, GTF_accept_transfer);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	gt->gnttab_interface->update_entry(xh, ref, domid, pfn, GTF_accept_transfer);
- }
- EXPORT_SYMBOL_GPL(gnttab_grant_foreign_transfer_ref);
- 
--static unsigned long gnttab_end_foreign_transfer_ref_v1(grant_ref_t ref)
-+static unsigned long gnttab_end_foreign_transfer_ref_v1(xenhost_t *xh, grant_ref_t ref)
- {
-+	struct gnttab_private *gt = gt_priv(xh);
- 	unsigned long frame;
- 	u16           flags;
- 	u16          *pflags;
- 
--	pflags = &gnttab_shared.v1[ref].flags;
-+	pflags = &gt->gnttab_shared.v1[ref].flags;
- 
- 	/*
- 	 * If a transfer is not even yet started, try to reclaim the grant
-@@ -495,19 +526,20 @@ static unsigned long gnttab_end_foreign_transfer_ref_v1(grant_ref_t ref)
+ 		xenbus_switch_state(dev, XenbusStateClosed);
+ 		wait_event(module_wq,
+-			   xenbus_read_driver_state(dev->otherend) ==
++			   xenbus_read_driver_state(dev, dev->otherend) ==
+ 			   XenbusStateClosed ||
+-			   xenbus_read_driver_state(dev->otherend) ==
++			   xenbus_read_driver_state(dev, dev->otherend) ==
+ 			   XenbusStateUnknown);
  	}
  
- 	rmb();	/* Read the frame number /after/ reading completion status. */
--	frame = gnttab_shared.v1[ref].frame;
-+	frame = gt->gnttab_shared.v1[ref].frame;
- 	BUG_ON(frame == 0);
+diff --git a/drivers/pci/xen-pcifront.c b/drivers/pci/xen-pcifront.c
+index f894290e8b3a..4c7ef1e09ed7 100644
+--- a/drivers/pci/xen-pcifront.c
++++ b/drivers/pci/xen-pcifront.c
+@@ -860,7 +860,7 @@ static int pcifront_try_connect(struct pcifront_device *pdev)
  
- 	return frame;
- }
  
--static unsigned long gnttab_end_foreign_transfer_ref_v2(grant_ref_t ref)
-+static unsigned long gnttab_end_foreign_transfer_ref_v2(xenhost_t *xh, grant_ref_t ref)
- {
- 	unsigned long frame;
- 	u16           flags;
- 	u16          *pflags;
-+	struct gnttab_private *gt = gt_priv(xh);
+ 	/* Only connect once */
+-	if (xenbus_read_driver_state(pdev->xdev->nodename) !=
++	if (xenbus_read_driver_state(pdev->xdev, pdev->xdev->nodename) !=
+ 	    XenbusStateInitialised)
+ 		goto out;
  
--	pflags = &gnttab_shared.v2[ref].hdr.flags;
-+	pflags = &gt->gnttab_shared.v2[ref].hdr.flags;
- 
- 	/*
- 	 * If a transfer is not even yet started, try to reclaim the grant
-@@ -526,34 +558,39 @@ static unsigned long gnttab_end_foreign_transfer_ref_v2(grant_ref_t ref)
+@@ -871,7 +871,7 @@ static int pcifront_try_connect(struct pcifront_device *pdev)
+ 		goto out;
  	}
  
- 	rmb();  /* Read the frame number /after/ reading completion status. */
--	frame = gnttab_shared.v2[ref].full_page.frame;
-+	frame = gt->gnttab_shared.v2[ref].full_page.frame;
- 	BUG_ON(frame == 0);
+-	err = xenbus_scanf(XBT_NIL, pdev->xdev->otherend,
++	err = xenbus_scanf(pdev->xdev->xh, XBT_NIL, pdev->xdev->otherend,
+ 			   "root_num", "%d", &num_roots);
+ 	if (err == -ENOENT) {
+ 		xenbus_dev_error(pdev->xdev, err,
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index b1357aa4bc55..afeb94446d34 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -37,7 +37,7 @@ static int vcpu_online(unsigned int cpu)
+ 	char dir[16], state[16];
  
- 	return frame;
- }
+ 	sprintf(dir, "cpu/%u", cpu);
+-	err = xenbus_scanf(XBT_NIL, dir, "availability", "%15s", state);
++	err = xenbus_scanf(xh_default, XBT_NIL, dir, "availability", "%15s", state);
+ 	if (err != 1) {
+ 		if (!xen_initial_domain())
+ 			pr_err("Unable to read cpu state\n");
+@@ -90,7 +90,7 @@ static int setup_cpu_watcher(struct notifier_block *notifier,
+ 		.node = "cpu",
+ 		.callback = handle_vcpu_hotplug_event};
  
--unsigned long gnttab_end_foreign_transfer_ref(grant_ref_t ref)
-+unsigned long gnttab_end_foreign_transfer_ref(xenhost_t *xh, grant_ref_t ref)
- {
--	return gnttab_interface->end_foreign_transfer_ref(ref);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return gt->gnttab_interface->end_foreign_transfer_ref(xh, ref);
- }
- EXPORT_SYMBOL_GPL(gnttab_end_foreign_transfer_ref);
+-	(void)register_xenbus_watch(&cpu_watch);
++	(void)register_xenbus_watch(xh_default, &cpu_watch);
  
--unsigned long gnttab_end_foreign_transfer(grant_ref_t ref)
-+unsigned long gnttab_end_foreign_transfer(xenhost_t *xh, grant_ref_t ref)
- {
--	unsigned long frame = gnttab_end_foreign_transfer_ref(ref);
--	put_free_entry(ref);
-+	unsigned long frame = gnttab_end_foreign_transfer_ref(xh, ref);
-+
-+	put_free_entry(xh, ref);
-+
- 	return frame;
- }
- EXPORT_SYMBOL_GPL(gnttab_end_foreign_transfer);
- 
--void gnttab_free_grant_reference(grant_ref_t ref)
-+void gnttab_free_grant_reference(xenhost_t *xh, grant_ref_t ref)
- {
--	put_free_entry(ref);
-+	put_free_entry(xh, ref);
- }
- EXPORT_SYMBOL_GPL(gnttab_free_grant_reference);
- 
--void gnttab_free_grant_references(grant_ref_t head)
-+void gnttab_free_grant_references(xenhost_t *xh, grant_ref_t head)
- {
-+	struct gnttab_private *gt = gt_priv(xh);
- 	grant_ref_t ref;
- 	unsigned long flags;
- 	int count = 1;
-@@ -561,21 +598,21 @@ void gnttab_free_grant_references(grant_ref_t head)
+ 	for_each_possible_cpu(cpu) {
+ 		if (vcpu_online(cpu) == 0) {
+diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
+index 5bb01a62f214..9a69d955dd5c 100644
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -227,14 +227,14 @@ static void shutdown_handler(struct xenbus_watch *watch,
  		return;
- 	spin_lock_irqsave(&gnttab_list_lock, flags);
- 	ref = head;
--	while (gnttab_entry(ref) != GNTTAB_LIST_END) {
--		ref = gnttab_entry(ref);
-+	while (gnttab_entry(xh, ref) != GNTTAB_LIST_END) {
-+		ref = gnttab_entry(xh, ref);
- 		count++;
- 	}
--	gnttab_entry(ref) = gnttab_free_head;
--	gnttab_free_head = head;
--	gnttab_free_count += count;
--	check_free_callbacks();
-+	gnttab_entry(xh, ref) = gt->gnttab_free_head;
-+	gt->gnttab_free_head = head;
-+	gt->gnttab_free_count += count;
-+	check_free_callbacks(xh);
- 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
- }
- EXPORT_SYMBOL_GPL(gnttab_free_grant_references);
  
--int gnttab_alloc_grant_references(u16 count, grant_ref_t *head)
-+int gnttab_alloc_grant_references(xenhost_t *xh, u16 count, grant_ref_t *head)
- {
--	int h = get_free_entries(count);
-+	int h = get_free_entries(xh, count);
+  again:
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(xh_default, &xbt);
+ 	if (err)
+ 		return;
  
- 	if (h < 0)
- 		return -ENOSPC;
-@@ -586,40 +623,41 @@ int gnttab_alloc_grant_references(u16 count, grant_ref_t *head)
- }
- EXPORT_SYMBOL_GPL(gnttab_alloc_grant_references);
- 
--int gnttab_empty_grant_references(const grant_ref_t *private_head)
-+int gnttab_empty_grant_references(xenhost_t *xh, const grant_ref_t *private_head)
- {
- 	return (*private_head == GNTTAB_LIST_END);
- }
- EXPORT_SYMBOL_GPL(gnttab_empty_grant_references);
- 
--int gnttab_claim_grant_reference(grant_ref_t *private_head)
-+int gnttab_claim_grant_reference(xenhost_t *xh, grant_ref_t *private_head)
- {
- 	grant_ref_t g = *private_head;
- 	if (unlikely(g == GNTTAB_LIST_END))
- 		return -ENOSPC;
--	*private_head = gnttab_entry(g);
-+	*private_head = gnttab_entry(xh, g);
- 	return g;
- }
- EXPORT_SYMBOL_GPL(gnttab_claim_grant_reference);
- 
--void gnttab_release_grant_reference(grant_ref_t *private_head,
-+void gnttab_release_grant_reference(xenhost_t *xh, grant_ref_t *private_head,
- 				    grant_ref_t release)
- {
--	gnttab_entry(release) = *private_head;
-+	gnttab_entry(xh, release) = *private_head;
- 	*private_head = release;
- }
- EXPORT_SYMBOL_GPL(gnttab_release_grant_reference);
- 
--void gnttab_request_free_callback(struct gnttab_free_callback *callback,
-+void gnttab_request_free_callback(xenhost_t *xh, struct gnttab_free_callback *callback,
- 				  void (*fn)(void *), void *arg, u16 count)
- {
- 	unsigned long flags;
- 	struct gnttab_free_callback *cb;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
- 	spin_lock_irqsave(&gnttab_list_lock, flags);
- 
- 	/* Check if the callback is already on the list */
--	cb = gnttab_free_callback_list;
-+	cb = gt->gnttab_free_callback_list;
- 	while (cb) {
- 		if (cb == callback)
- 			goto out;
-@@ -629,21 +667,23 @@ void gnttab_request_free_callback(struct gnttab_free_callback *callback,
- 	callback->fn = fn;
- 	callback->arg = arg;
- 	callback->count = count;
--	callback->next = gnttab_free_callback_list;
--	gnttab_free_callback_list = callback;
--	check_free_callbacks();
-+	callback->next = gt->gnttab_free_callback_list;
-+	gt->gnttab_free_callback_list = callback;
-+	check_free_callbacks(xh);
- out:
- 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
- }
- EXPORT_SYMBOL_GPL(gnttab_request_free_callback);
- 
--void gnttab_cancel_free_callback(struct gnttab_free_callback *callback)
-+void gnttab_cancel_free_callback(xenhost_t *xh, struct gnttab_free_callback *callback)
- {
- 	struct gnttab_free_callback **pcb;
- 	unsigned long flags;
-+	struct gnttab_private *gt = gt_priv(xh);
-+
- 
- 	spin_lock_irqsave(&gnttab_list_lock, flags);
--	for (pcb = &gnttab_free_callback_list; *pcb; pcb = &(*pcb)->next) {
-+	for (pcb = &gt->gnttab_free_callback_list; *pcb; pcb = &(*pcb)->next) {
- 		if (*pcb == callback) {
- 			*pcb = callback->next;
- 			break;
-@@ -653,75 +693,78 @@ void gnttab_cancel_free_callback(struct gnttab_free_callback *callback)
- }
- EXPORT_SYMBOL_GPL(gnttab_cancel_free_callback);
- 
--static unsigned int gnttab_frames(unsigned int frames, unsigned int align)
-+static unsigned int gnttab_frames(xenhost_t *xh, unsigned int frames, unsigned int align)
- {
--	return (frames * gnttab_interface->grefs_per_grant_frame + align - 1) /
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	return (frames * gt->gnttab_interface->grefs_per_grant_frame + align - 1) /
- 	       align;
- }
- 
--static int grow_gnttab_list(unsigned int more_frames)
-+static int grow_gnttab_list(xenhost_t *xh, unsigned int more_frames)
- {
- 	unsigned int new_nr_grant_frames, extra_entries, i;
- 	unsigned int nr_glist_frames, new_nr_glist_frames;
- 	unsigned int grefs_per_frame;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	BUG_ON(gnttab_interface == NULL);
--	grefs_per_frame = gnttab_interface->grefs_per_grant_frame;
-+	BUG_ON(gt->gnttab_interface == NULL);
-+	grefs_per_frame = gt->gnttab_interface->grefs_per_grant_frame;
- 
--	new_nr_grant_frames = nr_grant_frames + more_frames;
-+	new_nr_grant_frames = gt->nr_grant_frames + more_frames;
- 	extra_entries = more_frames * grefs_per_frame;
- 
--	nr_glist_frames = gnttab_frames(nr_grant_frames, RPP);
--	new_nr_glist_frames = gnttab_frames(new_nr_grant_frames, RPP);
-+	nr_glist_frames = gnttab_frames(xh, gt->nr_grant_frames, RPP);
-+	new_nr_glist_frames = gnttab_frames(xh, new_nr_grant_frames, RPP);
- 	for (i = nr_glist_frames; i < new_nr_glist_frames; i++) {
--		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_ATOMIC);
--		if (!gnttab_list[i])
-+		gt->gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_ATOMIC);
-+		if (!gt->gnttab_list[i])
- 			goto grow_nomem;
+-	str = (char *)xenbus_read(xbt, "control", "shutdown", NULL);
++	str = (char *)xenbus_read(xh_default, xbt, "control", "shutdown", NULL);
+ 	/* Ignore read errors and empty reads. */
+ 	if (XENBUS_IS_ERR_READ(str)) {
+-		xenbus_transaction_end(xbt, 1);
++		xenbus_transaction_end(xh_default, xbt, 1);
+ 		return;
  	}
  
+@@ -245,9 +245,9 @@ static void shutdown_handler(struct xenbus_watch *watch,
  
--	for (i = grefs_per_frame * nr_grant_frames;
-+	for (i = grefs_per_frame * gt->nr_grant_frames;
- 	     i < grefs_per_frame * new_nr_grant_frames - 1; i++)
--		gnttab_entry(i) = i + 1;
-+		gnttab_entry(xh, i) = i + 1;
+ 	/* Only acknowledge commands which we are prepared to handle. */
+ 	if (idx < ARRAY_SIZE(shutdown_handlers))
+-		xenbus_write(xbt, "control", "shutdown", "");
++		xenbus_write(xh_default, xbt, "control", "shutdown", "");
  
--	gnttab_entry(i) = gnttab_free_head;
--	gnttab_free_head = grefs_per_frame * nr_grant_frames;
--	gnttab_free_count += extra_entries;
-+	gnttab_entry(xh, i) = gt->gnttab_free_head;
-+	gt->gnttab_free_head = grefs_per_frame * gt->nr_grant_frames;
-+	gt->gnttab_free_count += extra_entries;
+-	err = xenbus_transaction_end(xbt, 0);
++	err = xenbus_transaction_end(xh_default, xbt, 0);
+ 	if (err == -EAGAIN) {
+ 		kfree(str);
+ 		goto again;
+@@ -272,10 +272,10 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
+ 	int err;
  
--	nr_grant_frames = new_nr_grant_frames;
-+	gt->nr_grant_frames = new_nr_grant_frames;
+  again:
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(xh_default, &xbt);
+ 	if (err)
+ 		return;
+-	err = xenbus_scanf(xbt, "control", "sysrq", "%c", &sysrq_key);
++	err = xenbus_scanf(xh_default, xbt, "control", "sysrq", "%c", &sysrq_key);
+ 	if (err < 0) {
+ 		/*
+ 		 * The Xenstore watch fires directly after registering it and
+@@ -287,21 +287,21 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
+ 		if (err != -ENOENT && err != -ERANGE)
+ 			pr_err("Error %d reading sysrq code in control/sysrq\n",
+ 			       err);
+-		xenbus_transaction_end(xbt, 1);
++		xenbus_transaction_end(xh_default, xbt, 1);
+ 		return;
+ 	}
  
--	check_free_callbacks();
-+	check_free_callbacks(xh);
+ 	if (sysrq_key != '\0') {
+-		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
++		err = xenbus_printf(xh_default, xbt, "control", "sysrq", "%c", '\0');
+ 		if (err) {
+ 			pr_err("%s: Error %d writing sysrq in control/sysrq\n",
+ 			       __func__, err);
+-			xenbus_transaction_end(xbt, 1);
++			xenbus_transaction_end(xh_default, xbt, 1);
+ 			return;
+ 		}
+ 	}
+ 
+-	err = xenbus_transaction_end(xbt, 0);
++	err = xenbus_transaction_end(xh_default, xbt, 0);
+ 	if (err == -EAGAIN)
+ 		goto again;
+ 
+@@ -331,7 +331,7 @@ static int setup_shutdown_watcher(void)
+ #define FEATURE_PATH_SIZE (SHUTDOWN_CMD_SIZE + sizeof("feature-"))
+ 	char node[FEATURE_PATH_SIZE];
+ 
+-	err = register_xenbus_watch(&shutdown_watch);
++	err = register_xenbus_watch(xh_default, &shutdown_watch);
+ 	if (err) {
+ 		pr_err("Failed to set shutdown watcher\n");
+ 		return err;
+@@ -339,7 +339,7 @@ static int setup_shutdown_watcher(void)
+ 
+ 
+ #ifdef CONFIG_MAGIC_SYSRQ
+-	err = register_xenbus_watch(&sysrq_watch);
++	err = register_xenbus_watch(xh_default, &sysrq_watch);
+ 	if (err) {
+ 		pr_err("Failed to set sysrq watcher\n");
+ 		return err;
+@@ -351,7 +351,7 @@ static int setup_shutdown_watcher(void)
+ 			continue;
+ 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
+ 			 shutdown_handlers[idx].command);
+-		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
++		err = xenbus_printf(xh_default, XBT_NIL, "control", node, "%u", 1);
+ 		if (err) {
+ 			pr_err("%s: Error %d writing %s\n", __func__,
+ 				err, node);
+diff --git a/drivers/xen/xen-balloon.c b/drivers/xen/xen-balloon.c
+index 2acbfe104e46..d34d9b1af7a8 100644
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -63,7 +63,7 @@ static void watch_target(struct xenbus_watch *watch,
+ 	static bool watch_fired;
+ 	static long target_diff;
+ 
+-	err = xenbus_scanf(XBT_NIL, "memory", "target", "%llu", &new_target);
++	err = xenbus_scanf(xh_default, XBT_NIL, "memory", "target", "%llu", &new_target);
+ 	if (err != 1) {
+ 		/* This is ok (for domain0 at least) - so just return */
+ 		return;
+@@ -77,9 +77,9 @@ static void watch_target(struct xenbus_watch *watch,
+ 	if (!watch_fired) {
+ 		watch_fired = true;
+ 
+-		if ((xenbus_scanf(XBT_NIL, "memory", "static-max",
++		if ((xenbus_scanf(xh_default, XBT_NIL, "memory", "static-max",
+ 				  "%llu", &static_max) == 1) ||
+-		    (xenbus_scanf(XBT_NIL, "memory", "memory_static_max",
++		    (xenbus_scanf(xh_default, XBT_NIL, "memory", "memory_static_max",
+ 				  "%llu", &static_max) == 1))
+ 			static_max >>= PAGE_SHIFT - 10;
+ 		else
+@@ -103,7 +103,7 @@ static int balloon_init_watcher(struct notifier_block *notifier,
+ {
+ 	int err;
+ 
+-	err = register_xenbus_watch(&target_watch);
++	err = register_xenbus_watch(xh_default, &target_watch);
+ 	if (err)
+ 		pr_err("Failed to set balloon watcher\n");
+ 
+diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
+index 092981171df1..183c6e40bdaa 100644
+--- a/drivers/xen/xenbus/xenbus.h
++++ b/drivers/xen/xenbus/xenbus.h
+@@ -39,9 +39,11 @@
+ #define XEN_BUS_ID_SIZE			20
+ 
+ struct xen_bus_type {
++	xenhost_t *xh;
+ 	char *root;
+ 	unsigned int levels;
+-	int (*get_bus_id)(char bus_id[XEN_BUS_ID_SIZE], const char *nodename);
++	int (*get_bus_id)(struct xen_bus_type *bus, char bus_id[XEN_BUS_ID_SIZE],
++			  const char *nodename);
+ 	int (*probe)(struct xen_bus_type *bus, const char *type,
+ 		     const char *dir);
+ 	void (*otherend_changed)(struct xenbus_watch *watch, const char *path,
+@@ -49,13 +51,30 @@ struct xen_bus_type {
+ 	struct bus_type bus;
+ };
+ 
+-enum xenstore_init {
+-	XS_UNKNOWN,
+-	XS_PV,
+-	XS_HVM,
+-	XS_LOCAL,
++struct xenstore_private {
++	/* xenbus_comms.c */
++	struct work_struct probe_work;
++	struct wait_queue_head xb_waitq;
++	struct list_head xb_write_list;
++	struct task_struct *xenbus_task;
++	struct list_head reply_list;
++	int xenbus_irq;
++
++	/* xenbus_probe.c */
++	struct xenstore_domain_interface *store_interface;
++	struct blocking_notifier_head xenstore_chain;
++
++	enum xenstore_init domain_type;
++	xen_pfn_t store_gfn;
++	uint32_t store_evtchn;
++	int xenstored_ready;
++
++	/*  xenbus_xs.c */
++	struct list_head watches; /* xenhost local so we don't mix them up. */
+ };
+ 
++#define xs_priv(xh) ((struct xenstore_private *) (xh)->xenstore_private)
++
+ struct xs_watch_event {
+ 	struct list_head list;
+ 	unsigned int len;
+@@ -87,18 +106,14 @@ struct xb_req_data {
+ 	void *par;
+ };
+ 
+-extern enum xenstore_init xen_store_domain_type;
+ extern const struct attribute_group *xenbus_dev_groups[];
+ extern struct mutex xs_response_mutex;
+-extern struct list_head xs_reply_list;
+-extern struct list_head xb_write_list;
+-extern wait_queue_head_t xb_waitq;
+ extern struct mutex xb_write_mutex;
+ 
+-int xs_init(void);
+-int xb_init_comms(void);
+-void xb_deinit_comms(void);
+-int xs_watch_msg(struct xs_watch_event *event);
++int xs_init(xenhost_t *xh);
++int xb_init_comms(xenhost_t *xh);
++void xb_deinit_comms(xenhost_t *xh);
++int xs_watch_msg(xenhost_t *xh, struct xs_watch_event *event);
+ void xs_request_exit(struct xb_req_data *req);
+ 
+ int xenbus_match(struct device *_dev, struct device_driver *_drv);
+@@ -130,7 +145,7 @@ int xenbus_read_otherend_details(struct xenbus_device *xendev,
+ 
+ void xenbus_ring_ops_init(void);
+ 
+-int xenbus_dev_request_and_reply(struct xsd_sockmsg *msg, void *par);
++int xenbus_dev_request_and_reply(xenhost_t *xh, struct xsd_sockmsg *msg, void *par);
+ void xenbus_dev_queue_reply(struct xb_req_data *req);
+ 
+ #endif
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index 5748fbaf0238..e4f8ecb9490a 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -122,7 +122,7 @@ int xenbus_watch_path(struct xenbus_device *dev, const char *path,
+ 	watch->node = path;
+ 	watch->callback = callback;
+ 
+-	err = register_xenbus_watch(watch);
++	err = register_xenbus_watch(dev->xh, watch);
+ 
+ 	if (err) {
+ 		watch->node = NULL;
+@@ -206,17 +206,17 @@ __xenbus_switch_state(struct xenbus_device *dev,
+ again:
+ 	abort = 1;
+ 
+-	err = xenbus_transaction_start(&xbt);
++	err = xenbus_transaction_start(dev->xh, &xbt);
+ 	if (err) {
+ 		xenbus_switch_fatal(dev, depth, err, "starting transaction");
+ 		return 0;
+ 	}
+ 
+-	err = xenbus_scanf(xbt, dev->nodename, "state", "%d", &current_state);
++	err = xenbus_scanf(dev->xh, xbt, dev->nodename, "state", "%d", &current_state);
+ 	if (err != 1)
+ 		goto abort;
+ 
+-	err = xenbus_printf(xbt, dev->nodename, "state", "%d", state);
++	err = xenbus_printf(dev->xh, xbt, dev->nodename, "state", "%d", state);
+ 	if (err) {
+ 		xenbus_switch_fatal(dev, depth, err, "writing new state");
+ 		goto abort;
+@@ -224,7 +224,7 @@ __xenbus_switch_state(struct xenbus_device *dev,
+ 
+ 	abort = 0;
+ abort:
+-	err = xenbus_transaction_end(xbt, abort);
++	err = xenbus_transaction_end(dev->xh, xbt, abort);
+ 	if (err) {
+ 		if (err == -EAGAIN && !abort)
+ 			goto again;
+@@ -279,7 +279,7 @@ static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
+ 
+ 	path_buffer = kasprintf(GFP_KERNEL, "error/%s", dev->nodename);
+ 	if (path_buffer)
+-		xenbus_write(XBT_NIL, path_buffer, "error", printf_buffer);
++		xenbus_write(dev->xh, XBT_NIL, path_buffer, "error", printf_buffer);
+ 
+ 	kfree(printf_buffer);
+ 	kfree(path_buffer);
+@@ -363,7 +363,7 @@ int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
+ 	int i, j;
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+-		err = gnttab_grant_foreign_access(dev->otherend_id,
++		err = gnttab_grant_foreign_access(dev->xh, dev->otherend_id,
+ 						  virt_to_gfn(vaddr), 0);
+ 		if (err < 0) {
+ 			xenbus_dev_fatal(dev, err,
+@@ -379,7 +379,7 @@ int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
+ 
+ fail:
+ 	for (j = 0; j < i; j++)
+-		gnttab_end_foreign_access_ref(grefs[j], 0);
++		gnttab_end_foreign_access_ref(dev->xh, grefs[j], 0);
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(xenbus_grant_ring);
+@@ -399,7 +399,7 @@ int xenbus_alloc_evtchn(struct xenbus_device *dev, int *port)
+ 	alloc_unbound.dom = DOMID_SELF;
+ 	alloc_unbound.remote_dom = dev->otherend_id;
+ 
+-	err = HYPERVISOR_event_channel_op(EVTCHNOP_alloc_unbound,
++	err = hypervisor_event_channel_op(dev->xh, EVTCHNOP_alloc_unbound,
+ 					  &alloc_unbound);
+ 	if (err)
+ 		xenbus_dev_fatal(dev, err, "allocating event channel");
+@@ -421,7 +421,7 @@ int xenbus_free_evtchn(struct xenbus_device *dev, int port)
+ 
+ 	close.port = port;
+ 
+-	err = HYPERVISOR_event_channel_op(EVTCHNOP_close, &close);
++	err = hypervisor_event_channel_op(dev->xh, EVTCHNOP_close, &close);
+ 	if (err)
+ 		xenbus_dev_error(dev, err, "freeing event channel %d", port);
+ 
+@@ -478,7 +478,7 @@ static int __xenbus_map_ring(struct xenbus_device *dev,
+ 		handles[i] = INVALID_GRANT_HANDLE;
+ 	}
+ 
+-	gnttab_batch_map(map, i);
++	gnttab_batch_map(dev->xh, map, i);
+ 
+ 	for (i = 0; i < nr_grefs; i++) {
+ 		if (map[i].status != GNTST_okay) {
+@@ -503,7 +503,7 @@ static int __xenbus_map_ring(struct xenbus_device *dev,
+ 		}
+ 	}
+ 
+-	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, j))
++	if (hypervisor_grant_table_op(dev->xh, GNTTABOP_unmap_grant_ref, unmap, j))
+ 		BUG();
+ 
+ 	*leaked = false;
+@@ -761,7 +761,7 @@ static int xenbus_unmap_ring_vfree_pv(struct xenbus_device *dev, void *vaddr)
+ 		unmap[i].handle = node->handles[i];
+ 	}
+ 
+-	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, i))
++	if (hypervisor_grant_table_op(dev->xh, GNTTABOP_unmap_grant_ref, unmap, i))
+ 		BUG();
+ 
+ 	err = GNTST_okay;
+@@ -884,7 +884,7 @@ int xenbus_unmap_ring(struct xenbus_device *dev,
+ 		gnttab_set_unmap_op(&unmap[i], vaddrs[i],
+ 				    GNTMAP_host_map, handles[i]);
+ 
+-	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, i))
++	if (hypervisor_grant_table_op(dev->xh, GNTTABOP_unmap_grant_ref, unmap, i))
+ 		BUG();
+ 
+ 	err = GNTST_okay;
+@@ -910,10 +910,10 @@ EXPORT_SYMBOL_GPL(xenbus_unmap_ring);
+  * Return the state of the driver rooted at the given store path, or
+  * XenbusStateUnknown if no state can be read.
+  */
+-enum xenbus_state xenbus_read_driver_state(const char *path)
++enum xenbus_state xenbus_read_driver_state(struct xenbus_device *dev, const char *path)
+ {
+ 	enum xenbus_state result;
+-	int err = xenbus_gather(XBT_NIL, path, "state", "%d", &result, NULL);
++	int err = xenbus_gather(dev->xh, XBT_NIL, path, "state", "%d", &result, NULL);
+ 	if (err)
+ 		result = XenbusStateUnknown;
+ 
+diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
+index acbc366c1717..2494ae1a0a7e 100644
+--- a/drivers/xen/xenbus/xenbus_comms.c
++++ b/drivers/xen/xenbus/xenbus_comms.c
+@@ -43,31 +43,21 @@
+ #include <xen/page.h>
+ #include "xenbus.h"
+ 
+-/* A list of replies. Currently only one will ever be outstanding. */
+-LIST_HEAD(xs_reply_list);
+-
+-/* A list of write requests. */
+-LIST_HEAD(xb_write_list);
+-DECLARE_WAIT_QUEUE_HEAD(xb_waitq);
+ DEFINE_MUTEX(xb_write_mutex);
+ 
+ /* Protect xenbus reader thread against save/restore. */
+ DEFINE_MUTEX(xs_response_mutex);
+ 
+-static int xenbus_irq;
+-static struct task_struct *xenbus_task;
+-
+-static DECLARE_WORK(probe_work, xenbus_probe);
+-
+-
+-static irqreturn_t wake_waiting(int irq, void *unused)
++static irqreturn_t wake_waiting(int irq, void *_xs)
+ {
+-	if (unlikely(xenstored_ready == 0)) {
+-		xenstored_ready = 1;
+-		schedule_work(&probe_work);
++	struct xenstore_private *xs = (struct xenstore_private *) _xs;
++
++	if (unlikely(xs->xenstored_ready == 0)) {
++			xs->xenstored_ready = 1;
++			schedule_work(&xs->probe_work);
+ 	}
+ 
+-	wake_up(&xb_waitq);
++	wake_up(&xs->xb_waitq);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -96,24 +86,26 @@ static const void *get_input_chunk(XENSTORE_RING_IDX cons,
+ 	return buf + MASK_XENSTORE_IDX(cons);
+ }
+ 
+-static int xb_data_to_write(void)
++static int xb_data_to_write(struct xenstore_private *xs)
+ {
+-	struct xenstore_domain_interface *intf = xen_store_interface;
++	struct xenstore_domain_interface *intf = xs->store_interface;
+ 
+ 	return (intf->req_prod - intf->req_cons) != XENSTORE_RING_SIZE &&
+-		!list_empty(&xb_write_list);
++		!list_empty(&xs->xb_write_list);
+ }
+ 
+ /**
+  * xb_write - low level write
++ * @xh: xenhost to send to
+  * @data: buffer to send
+  * @len: length of buffer
+  *
+  * Returns number of bytes written or -err.
+  */
+-static int xb_write(const void *data, unsigned int len)
++static int xb_write(xenhost_t *xh, const void *data, unsigned int len)
+ {
+-	struct xenstore_domain_interface *intf = xen_store_interface;
++	struct xenstore_private *xs = xs_priv(xh);
++	struct xenstore_domain_interface *intf = xs->store_interface;
+ 	XENSTORE_RING_IDX cons, prod;
+ 	unsigned int bytes = 0;
+ 
+@@ -128,7 +120,7 @@ static int xb_write(const void *data, unsigned int len)
+ 			intf->req_cons = intf->req_prod = 0;
+ 			return -EIO;
+ 		}
+-		if (!xb_data_to_write())
++		if (!xb_data_to_write(xs))
+ 			return bytes;
+ 
+ 		/* Must write data /after/ reading the consumer index. */
+@@ -151,21 +143,22 @@ static int xb_write(const void *data, unsigned int len)
+ 
+ 		/* Implies mb(): other side will see the updated producer. */
+ 		if (prod <= intf->req_cons)
+-			notify_remote_via_evtchn(xh_default, xen_store_evtchn);
++			notify_remote_via_evtchn(xh, xs->store_evtchn);
+ 	}
+ 
+ 	return bytes;
+ }
+ 
+-static int xb_data_to_read(void)
++static int xb_data_to_read(struct xenstore_private *xs)
+ {
+-	struct xenstore_domain_interface *intf = xen_store_interface;
++	struct xenstore_domain_interface *intf = xs->store_interface;
+ 	return (intf->rsp_cons != intf->rsp_prod);
+ }
+ 
+-static int xb_read(void *data, unsigned int len)
++static int xb_read(xenhost_t *xh, void *data, unsigned int len)
+ {
+-	struct xenstore_domain_interface *intf = xen_store_interface;
++	struct xenstore_private *xs = xs_priv(xh);
++	struct xenstore_domain_interface *intf = xs->store_interface;
+ 	XENSTORE_RING_IDX cons, prod;
+ 	unsigned int bytes = 0;
+ 
+@@ -204,14 +197,15 @@ static int xb_read(void *data, unsigned int len)
+ 
+ 		/* Implies mb(): other side will see the updated consumer. */
+ 		if (intf->rsp_prod - cons >= XENSTORE_RING_SIZE)
+-			notify_remote_via_evtchn(xh_default, xen_store_evtchn);
++			notify_remote_via_evtchn(xh, xs->store_evtchn);
+ 	}
+ 
+ 	return bytes;
+ }
+ 
+-static int process_msg(void)
++static int process_msg(xenhost_t *xh)
+ {
++	struct xenstore_private *xs = xs_priv(xh);
+ 	static struct {
+ 		struct xsd_sockmsg msg;
+ 		char *body;
+@@ -242,7 +236,7 @@ static int process_msg(void)
+ 		 */
+ 		mutex_lock(&xs_response_mutex);
+ 
+-		if (!xb_data_to_read()) {
++		if (!xb_data_to_read(xh->xenstore_private)) {
+ 			/* We raced with save/restore: pending data 'gone'. */
+ 			mutex_unlock(&xs_response_mutex);
+ 			state.in_msg = false;
+@@ -252,7 +246,7 @@ static int process_msg(void)
+ 
+ 	if (state.in_hdr) {
+ 		if (state.read != sizeof(state.msg)) {
+-			err = xb_read((void *)&state.msg + state.read,
++			err = xb_read(xh, (void *)&state.msg + state.read,
+ 				      sizeof(state.msg) - state.read);
+ 			if (err < 0)
+ 				goto out;
+@@ -281,7 +275,7 @@ static int process_msg(void)
+ 		state.read = 0;
+ 	}
+ 
+-	err = xb_read(state.body + state.read, state.msg.len - state.read);
++	err = xb_read(xh, state.body + state.read, state.msg.len - state.read);
+ 	if (err < 0)
+ 		goto out;
+ 
+@@ -293,11 +287,11 @@ static int process_msg(void)
+ 
+ 	if (state.msg.type == XS_WATCH_EVENT) {
+ 		state.watch->len = state.msg.len;
+-		err = xs_watch_msg(state.watch);
++		err = xs_watch_msg(xh, state.watch);
+ 	} else {
+ 		err = -ENOENT;
+ 		mutex_lock(&xb_write_mutex);
+-		list_for_each_entry(req, &xs_reply_list, list) {
++		list_for_each_entry(req, &xs->reply_list, list) {
+ 			if (req->msg.req_id == state.msg.req_id) {
+ 				list_del(&req->list);
+ 				err = 0;
+@@ -333,8 +327,9 @@ static int process_msg(void)
+ 	return err;
+ }
+ 
+-static int process_writes(void)
++static int process_writes(xenhost_t *xh)
+ {
++	struct xenstore_private *xs = xs_priv(xh);
+ 	static struct {
+ 		struct xb_req_data *req;
+ 		int idx;
+@@ -344,13 +339,13 @@ static int process_writes(void)
+ 	unsigned int len;
+ 	int err = 0;
+ 
+-	if (!xb_data_to_write())
++	if (!xb_data_to_write(xs))
+ 		return 0;
+ 
+ 	mutex_lock(&xb_write_mutex);
+ 
+ 	if (!state.req) {
+-		state.req = list_first_entry(&xb_write_list,
++		state.req = list_first_entry(&xs->xb_write_list,
+ 					     struct xb_req_data, list);
+ 		state.idx = -1;
+ 		state.written = 0;
+@@ -367,7 +362,7 @@ static int process_writes(void)
+ 			base = state.req->vec[state.idx].iov_base;
+ 			len = state.req->vec[state.idx].iov_len;
+ 		}
+-		err = xb_write(base + state.written, len - state.written);
++		err = xb_write(xh, base + state.written, len - state.written);
+ 		if (err < 0)
+ 			goto out_err;
+ 		state.written += err;
+@@ -380,7 +375,7 @@ static int process_writes(void)
+ 
+ 	list_del(&state.req->list);
+ 	state.req->state = xb_req_state_wait_reply;
+-	list_add_tail(&state.req->list, &xs_reply_list);
++	list_add_tail(&state.req->list, &xs->reply_list);
+ 	state.req = NULL;
+ 
+  out:
+@@ -406,42 +401,45 @@ static int process_writes(void)
+ 	return err;
+ }
+ 
+-static int xb_thread_work(void)
++static int xb_thread_work(struct xenstore_private *xs)
+ {
+-	return xb_data_to_read() || xb_data_to_write();
++	return xb_data_to_read(xs) || xb_data_to_write(xs);
+ }
+ 
+-static int xenbus_thread(void *unused)
++static int xenbus_thread(void *_xh)
+ {
++	xenhost_t *xh = (xenhost_t *)_xh;
++	struct xenstore_private *xs = xs_priv(xh);
+ 	int err;
+ 
+ 	while (!kthread_should_stop()) {
+-		if (wait_event_interruptible(xb_waitq, xb_thread_work()))
++		if (wait_event_interruptible(xs->xb_waitq, xb_thread_work(xs)))
+ 			continue;
+ 
+-		err = process_msg();
++		err = process_msg(xh);
+ 		if (err == -ENOMEM)
+ 			schedule();
+ 		else if (err)
+ 			pr_warn_ratelimited("error %d while reading message\n",
+ 					    err);
+ 
+-		err = process_writes();
++		err = process_writes(xh);
+ 		if (err)
+ 			pr_warn_ratelimited("error %d while writing message\n",
+ 					    err);
+ 	}
+ 
+-	xenbus_task = NULL;
++	xs->xenbus_task = NULL;
+ 	return 0;
+ }
+ 
+ /**
+  * xb_init_comms - Set up interrupt handler off store event channel.
+  */
+-int xb_init_comms(void)
++int xb_init_comms(xenhost_t *xh)
+ {
+-	struct xenstore_domain_interface *intf = xen_store_interface;
++	struct xenstore_private *xs = xs_priv(xh);
++	struct xenstore_domain_interface *intf = xs->store_interface;
+ 
+ 	if (intf->req_prod != intf->req_cons)
+ 		pr_err("request ring is not quiescent (%08x:%08x)!\n",
+@@ -455,34 +453,35 @@ int xb_init_comms(void)
+ 			intf->rsp_cons = intf->rsp_prod;
+ 	}
+ 
+-	if (xenbus_irq) {
++	if (xs->xenbus_irq) {
+ 		/* Already have an irq; assume we're resuming */
+-		rebind_evtchn_irq(xen_store_evtchn, xenbus_irq);
++		rebind_evtchn_irq(xs->store_evtchn, xs->xenbus_irq);
+ 	} else {
+ 		int err;
+ 
+-		err = bind_evtchn_to_irqhandler(xh_default, xen_store_evtchn, wake_waiting,
+-						0, "xenbus", &xb_waitq);
++		err = bind_evtchn_to_irqhandler(xh, xs->store_evtchn, wake_waiting,
++						0, "xenbus", xs);
+ 		if (err < 0) {
+ 			pr_err("request irq failed %i\n", err);
+ 			return err;
+ 		}
+ 
+-		xenbus_irq = err;
++		xs->xenbus_irq = err;
+ 
+-		if (!xenbus_task) {
+-			xenbus_task = kthread_run(xenbus_thread, NULL,
++		if (!xs->xenbus_task) {
++			xs->xenbus_task = kthread_run(xenbus_thread, xh,
+ 						  "xenbus");
+-			if (IS_ERR(xenbus_task))
+-				return PTR_ERR(xenbus_task);
++			if (IS_ERR(xs->xenbus_task))
++				return PTR_ERR(xs->xenbus_task);
+ 		}
+ 	}
  
  	return 0;
- 
- grow_nomem:
- 	while (i-- > nr_glist_frames)
--		free_page((unsigned long) gnttab_list[i]);
-+		free_page((unsigned long) gt->gnttab_list[i]);
- 	return -ENOMEM;
  }
  
--static unsigned int __max_nr_grant_frames(void)
-+static unsigned int __max_nr_grant_frames(xenhost_t *xh)
+-void xb_deinit_comms(void)
++void xb_deinit_comms(xenhost_t *xh)
  {
- 	struct gnttab_query_size query;
- 	int rc;
- 
- 	query.dom = DOMID_SELF;
- 
--	rc = HYPERVISOR_grant_table_op(GNTTABOP_query_size, &query, 1);
-+	rc = hypervisor_grant_table_op(xh, GNTTABOP_query_size, &query, 1);
- 	if ((rc < 0) || (query.status != GNTST_okay))
- 		return 4; /* Legacy max supported number of frames */
- 
- 	return query.max_nr_frames;
+-	unbind_from_irqhandler(xenbus_irq, &xb_waitq);
+-	xenbus_irq = 0;
++	struct xenstore_private *xs = xs_priv(xh);
++	unbind_from_irqhandler(xs->xenbus_irq, xs);
++	xs->xenbus_irq = 0;
  }
+diff --git a/drivers/xen/xenbus/xenbus_dev_backend.c b/drivers/xen/xenbus/xenbus_dev_backend.c
+index edba5fecde4d..211f1ce53d30 100644
+--- a/drivers/xen/xenbus/xenbus_dev_backend.c
++++ b/drivers/xen/xenbus/xenbus_dev_backend.c
+@@ -19,6 +19,8 @@
  
--unsigned int gnttab_max_grant_frames(void)
-+unsigned int gnttab_max_grant_frames(xenhost_t *xh)
+ #include "xenbus.h"
+ 
++static xenhost_t *xh;
++
+ static int xenbus_backend_open(struct inode *inode, struct file *filp)
  {
--	unsigned int xen_max = __max_nr_grant_frames();
-+	unsigned int xen_max = __max_nr_grant_frames(xh);
- 	static unsigned int boot_max_nr_grant_frames;
- 
- 	/* First time, initialize it properly. */
- 	if (!boot_max_nr_grant_frames)
--		boot_max_nr_grant_frames = __max_nr_grant_frames();
-+		boot_max_nr_grant_frames = __max_nr_grant_frames(xh);
- 
- 	if (xen_max > boot_max_nr_grant_frames)
- 		return boot_max_nr_grant_frames;
-@@ -729,14 +772,15 @@ unsigned int gnttab_max_grant_frames(void)
- }
- EXPORT_SYMBOL_GPL(gnttab_max_grant_frames);
- 
--int gnttab_setup_auto_xlat_frames(phys_addr_t addr)
-+int gnttab_setup_auto_xlat_frames(xenhost_t *xh, phys_addr_t addr)
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -31,6 +33,7 @@ static long xenbus_alloc(domid_t domid)
  {
-+	struct gnttab_private *gt = gt_priv(xh);
- 	xen_pfn_t *pfn;
--	unsigned int max_nr_gframes = __max_nr_grant_frames();
-+	unsigned int max_nr_gframes = __max_nr_grant_frames(xh);
- 	unsigned int i;
- 	void *vaddr;
+ 	struct evtchn_alloc_unbound arg;
+ 	int err = -EEXIST;
++	struct xenstore_private *xs = xs_priv(xh);
  
--	if (xen_auto_xlat_grant_frames.count)
-+	if (gt->auto_xlat_grant_frames.count)
+ 	xs_suspend();
+ 
+@@ -44,23 +47,23 @@ static long xenbus_alloc(domid_t domid)
+ 	 * unnecessarily complex for the intended use where xenstored is only
+ 	 * started once - so return -EEXIST if it's already running.
+ 	 */
+-	if (xenstored_ready)
++	if (xs->xenstored_ready)
+ 		goto out_err;
+ 
+-	gnttab_grant_foreign_access_ref(GNTTAB_RESERVED_XENSTORE, domid,
+-			virt_to_gfn(xen_store_interface), 0 /* writable */);
++	gnttab_grant_foreign_access_ref(xh, GNTTAB_RESERVED_XENSTORE, domid,
++			virt_to_gfn(xs->store_interface), 0 /* writable */);
+ 
+ 	arg.dom = DOMID_SELF;
+ 	arg.remote_dom = domid;
+ 
+-	err = HYPERVISOR_event_channel_op(EVTCHNOP_alloc_unbound, &arg);
++	err = hypervisor_event_channel_op(xh, EVTCHNOP_alloc_unbound, &arg);
+ 	if (err)
+ 		goto out_err;
+ 
+-	if (xen_store_evtchn > 0)
+-		xb_deinit_comms();
++	if (xs->store_evtchn > 0)
++		xb_deinit_comms(xh);
+ 
+-	xen_store_evtchn = arg.port;
++	xs->store_evtchn = arg.port;
+ 
+ 	xs_resume();
+ 
+@@ -74,13 +77,15 @@ static long xenbus_alloc(domid_t domid)
+ static long xenbus_backend_ioctl(struct file *file, unsigned int cmd,
+ 				 unsigned long data)
+ {
++	struct xenstore_private *xs = xs_priv(xh);
++
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	switch (cmd) {
+ 	case IOCTL_XENBUS_BACKEND_EVTCHN:
+-		if (xen_store_evtchn > 0)
+-			return xen_store_evtchn;
++		if (xs->store_evtchn > 0)
++			return xs->store_evtchn;
+ 		return -ENODEV;
+ 	case IOCTL_XENBUS_BACKEND_SETUP:
+ 		return xenbus_alloc(data);
+@@ -92,6 +97,7 @@ static long xenbus_backend_ioctl(struct file *file, unsigned int cmd,
+ static int xenbus_backend_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	size_t size = vma->vm_end - vma->vm_start;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+@@ -100,7 +106,7 @@ static int xenbus_backend_mmap(struct file *file, struct vm_area_struct *vma)
  		return -EINVAL;
  
- 	vaddr = xen_remap(addr, XEN_PAGE_SIZE * max_nr_gframes);
-@@ -753,24 +797,26 @@ int gnttab_setup_auto_xlat_frames(phys_addr_t addr)
- 	for (i = 0; i < max_nr_gframes; i++)
- 		pfn[i] = XEN_PFN_DOWN(addr) + i;
+ 	if (remap_pfn_range(vma, vma->vm_start,
+-			    virt_to_pfn(xen_store_interface),
++			    virt_to_pfn(xs->store_interface),
+ 			    size, vma->vm_page_prot))
+ 		return -EAGAIN;
  
--	xen_auto_xlat_grant_frames.vaddr = vaddr;
--	xen_auto_xlat_grant_frames.pfn = pfn;
--	xen_auto_xlat_grant_frames.count = max_nr_gframes;
-+	gt->auto_xlat_grant_frames.vaddr = vaddr;
-+	gt->auto_xlat_grant_frames.pfn = pfn;
-+	gt->auto_xlat_grant_frames.count = max_nr_gframes;
+@@ -125,6 +131,10 @@ static int __init xenbus_backend_init(void)
  
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(gnttab_setup_auto_xlat_frames);
+ 	if (!xen_initial_domain())
+ 		return -ENODEV;
++	/*
++	 * Backends shouldn't have any truck with the remote xenhost.
++	 */
++	xh = xh_default;
  
--void gnttab_free_auto_xlat_frames(void)
-+void gnttab_free_auto_xlat_frames(xenhost_t *xh)
- {
--	if (!xen_auto_xlat_grant_frames.count)
-+	struct gnttab_private *gt = gt_priv(xh);
+ 	err = misc_register(&xenbus_backend_dev);
+ 	if (err)
+diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
+index c3e201025ef0..d6e0c397c6a0 100644
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -58,10 +58,14 @@
+ 
+ #include <xen/xenbus.h>
+ #include <xen/xen.h>
++#include <xen/interface/xen.h>
++#include <xen/xenhost.h>
+ #include <asm/xen/hypervisor.h>
+ 
+ #include "xenbus.h"
+ 
++static xenhost_t *xh;
 +
-+	if (!gt->auto_xlat_grant_frames.count)
- 		return;
--	kfree(xen_auto_xlat_grant_frames.pfn);
--	xen_unmap(xen_auto_xlat_grant_frames.vaddr);
-+	kfree(gt->auto_xlat_grant_frames.pfn);
-+	xen_unmap(gt->auto_xlat_grant_frames.vaddr);
- 
--	xen_auto_xlat_grant_frames.pfn = NULL;
--	xen_auto_xlat_grant_frames.count = 0;
--	xen_auto_xlat_grant_frames.vaddr = NULL;
-+	gt->auto_xlat_grant_frames.pfn = NULL;
-+	gt->auto_xlat_grant_frames.count = 0;
-+	gt->auto_xlat_grant_frames.vaddr = NULL;
- }
- EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
- 
-@@ -800,17 +846,17 @@ EXPORT_SYMBOL_GPL(gnttab_pages_set_private);
-  * @nr_pages: number of pages to alloc
-  * @pages: returns the pages
-  */
--int gnttab_alloc_pages(int nr_pages, struct page **pages)
-+int gnttab_alloc_pages(xenhost_t *xh, int nr_pages, struct page **pages)
- {
- 	int ret;
- 
--	ret = alloc_xenballooned_pages(xh_default, nr_pages, pages);
-+	ret = alloc_xenballooned_pages(xh, nr_pages, pages);
- 	if (ret < 0)
- 		return ret;
- 
- 	ret = gnttab_pages_set_private(nr_pages, pages);
- 	if (ret < 0)
--		gnttab_free_pages(nr_pages, pages);
-+		gnttab_free_pages(xh, nr_pages, pages);
- 
- 	return ret;
- }
-@@ -836,10 +882,10 @@ EXPORT_SYMBOL_GPL(gnttab_pages_clear_private);
-  * @nr_pages; number of pages to free
-  * @pages: the pages
-  */
--void gnttab_free_pages(int nr_pages, struct page **pages)
-+void gnttab_free_pages(xenhost_t *xh, int nr_pages, struct page **pages)
- {
- 	gnttab_pages_clear_private(nr_pages, pages);
--	free_xenballooned_pages(xh_default, nr_pages, pages);
-+	free_xenballooned_pages(xh, nr_pages, pages);
- }
- EXPORT_SYMBOL_GPL(gnttab_free_pages);
- 
-@@ -848,12 +894,15 @@ EXPORT_SYMBOL_GPL(gnttab_free_pages);
-  * gnttab_dma_alloc_pages - alloc DMAable pages suitable for grant mapping into
-  * @args: arguments to the function
-  */
--int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args)
-+int gnttab_dma_alloc_pages(xenhost_t *xh, struct gnttab_dma_alloc_args *args)
- {
- 	unsigned long pfn, start_pfn;
- 	size_t size;
- 	int i, ret;
- 
-+	if (xh->type != xenhost_r1)
-+		return -EINVAL;
-+
- 	size = args->nr_pages << PAGE_SHIFT;
- 	if (args->coherent)
- 		args->vaddr = dma_alloc_coherent(args->dev, size,
-@@ -903,11 +952,14 @@ EXPORT_SYMBOL_GPL(gnttab_dma_alloc_pages);
-  * gnttab_dma_free_pages - free DMAable pages
-  * @args: arguments to the function
-  */
--int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
-+int gnttab_dma_free_pages(xenhost_t *xh, struct gnttab_dma_alloc_args *args)
- {
- 	size_t size;
- 	int i, ret;
- 
-+	if (xh->type != xenhost_r1)
-+		return -EINVAL;
-+
- 	gnttab_pages_clear_private(args->nr_pages, args->pages);
- 
- 	for (i = 0; i < args->nr_pages; i++)
-@@ -939,13 +991,13 @@ EXPORT_SYMBOL_GPL(gnttab_dma_free_pages);
- /* Handling of paged out grant targets (GNTST_eagain) */
- #define MAX_DELAY 256
- static inline void
--gnttab_retry_eagain_gop(unsigned int cmd, void *gop, int16_t *status,
-+gnttab_retry_eagain_gop(xenhost_t *xh, unsigned int cmd, void *gop, int16_t *status,
- 						const char *func)
- {
- 	unsigned delay = 1;
- 
- 	do {
--		BUG_ON(HYPERVISOR_grant_table_op(cmd, gop, 1));
-+		BUG_ON(hypervisor_grant_table_op(xh, cmd, gop, 1));
- 		if (*status == GNTST_eagain)
- 			msleep(delay++);
- 	} while ((*status == GNTST_eagain) && (delay < MAX_DELAY));
-@@ -956,28 +1008,28 @@ gnttab_retry_eagain_gop(unsigned int cmd, void *gop, int16_t *status,
- 	}
- }
- 
--void gnttab_batch_map(struct gnttab_map_grant_ref *batch, unsigned count)
-+void gnttab_batch_map(xenhost_t *xh, struct gnttab_map_grant_ref *batch, unsigned count)
- {
- 	struct gnttab_map_grant_ref *op;
- 
--	if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, batch, count))
-+	if (hypervisor_grant_table_op(xh, GNTTABOP_map_grant_ref, batch, count))
- 		BUG();
- 	for (op = batch; op < batch + count; op++)
- 		if (op->status == GNTST_eagain)
--			gnttab_retry_eagain_gop(GNTTABOP_map_grant_ref, op,
-+			gnttab_retry_eagain_gop(xh, GNTTABOP_map_grant_ref, op,
- 						&op->status, __func__);
- }
- EXPORT_SYMBOL_GPL(gnttab_batch_map);
- 
--void gnttab_batch_copy(struct gnttab_copy *batch, unsigned count)
-+void gnttab_batch_copy(xenhost_t *xh, struct gnttab_copy *batch, unsigned count)
- {
- 	struct gnttab_copy *op;
- 
--	if (HYPERVISOR_grant_table_op(GNTTABOP_copy, batch, count))
-+	if (hypervisor_grant_table_op(xh, GNTTABOP_copy, batch, count))
- 		BUG();
- 	for (op = batch; op < batch + count; op++)
- 		if (op->status == GNTST_eagain)
--			gnttab_retry_eagain_gop(GNTTABOP_copy, op,
-+			gnttab_retry_eagain_gop(xh, GNTTABOP_copy, op,
- 						&op->status, __func__);
- }
- EXPORT_SYMBOL_GPL(gnttab_batch_copy);
-@@ -1030,13 +1082,13 @@ void gnttab_foreach_grant(struct page **pages,
- 	}
- }
- 
--int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
-+int gnttab_map_refs(xenhost_t *xh, struct gnttab_map_grant_ref *map_ops,
- 		    struct gnttab_map_grant_ref *kmap_ops,
- 		    struct page **pages, unsigned int count)
- {
- 	int i, ret;
- 
--	ret = HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, map_ops, count);
-+	ret = hypervisor_grant_table_op(xh, GNTTABOP_map_grant_ref, map_ops, count);
- 	if (ret)
- 		return ret;
- 
-@@ -1059,7 +1111,7 @@ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
- 
- 		case GNTST_eagain:
- 			/* Retry eagain maps */
--			gnttab_retry_eagain_gop(GNTTABOP_map_grant_ref,
-+			gnttab_retry_eagain_gop(xh, GNTTABOP_map_grant_ref,
- 						map_ops + i,
- 						&map_ops[i].status, __func__);
- 			/* Test status in next loop iteration. */
-@@ -1075,14 +1127,14 @@ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
- }
- EXPORT_SYMBOL_GPL(gnttab_map_refs);
- 
--int gnttab_unmap_refs(struct gnttab_unmap_grant_ref *unmap_ops,
-+int gnttab_unmap_refs(xenhost_t *xh, struct gnttab_unmap_grant_ref *unmap_ops,
- 		      struct gnttab_unmap_grant_ref *kunmap_ops,
- 		      struct page **pages, unsigned int count)
- {
- 	unsigned int i;
- 	int ret;
- 
--	ret = HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap_ops, count);
-+	ret = hypervisor_grant_table_op(xh, GNTTABOP_unmap_grant_ref, unmap_ops, count);
- 	if (ret)
- 		return ret;
- 
-@@ -1122,7 +1174,7 @@ static void __gnttab_unmap_refs_async(struct gntab_unmap_queue_data* item)
- 		}
- 	}
- 
--	ret = gnttab_unmap_refs(item->unmap_ops, item->kunmap_ops,
-+	ret = gnttab_unmap_refs(item->xh, item->unmap_ops, item->kunmap_ops,
- 				item->pages, item->count);
- 	item->done(ret, item);
- }
-@@ -1159,37 +1211,43 @@ int gnttab_unmap_refs_sync(struct gntab_unmap_queue_data *item)
- }
- EXPORT_SYMBOL_GPL(gnttab_unmap_refs_sync);
- 
--static unsigned int nr_status_frames(unsigned int nr_grant_frames)
-+static unsigned int nr_status_frames(xenhost_t *xh, unsigned int nr_grant_frames)
- {
--	BUG_ON(gnttab_interface == NULL);
--	return gnttab_frames(nr_grant_frames, SPP);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	BUG_ON(gt->gnttab_interface == NULL);
-+	return gnttab_frames(xh, nr_grant_frames, SPP);
- }
- 
--static int gnttab_map_frames_v1(xen_pfn_t *frames, unsigned int nr_gframes)
-+static int gnttab_map_frames_v1(xenhost_t *xh, xen_pfn_t *frames, unsigned int nr_gframes)
- {
- 	int rc;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	rc = arch_gnttab_map_shared(frames, nr_gframes,
--				    gnttab_max_grant_frames(),
--				    &gnttab_shared.addr);
-+	rc = arch_gnttab_map_shared(xh, frames, nr_gframes,
-+				    gnttab_max_grant_frames(xh),
-+				    &gt->gnttab_shared.addr);
- 	BUG_ON(rc);
- 
- 	return 0;
- }
- 
--static void gnttab_unmap_frames_v1(void)
-+static void gnttab_unmap_frames_v1(xenhost_t *xh)
- {
--	arch_gnttab_unmap(gnttab_shared.addr, nr_grant_frames);
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	arch_gnttab_unmap(xh, gt->gnttab_shared.addr, gt->nr_grant_frames);
- }
- 
--static int gnttab_map_frames_v2(xen_pfn_t *frames, unsigned int nr_gframes)
-+static int gnttab_map_frames_v2(xenhost_t *xh, xen_pfn_t *frames, unsigned int nr_gframes)
- {
- 	uint64_t *sframes;
- 	unsigned int nr_sframes;
- 	struct gnttab_get_status_frames getframes;
- 	int rc;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	nr_sframes = nr_status_frames(nr_gframes);
-+	nr_sframes = nr_status_frames(xh, nr_gframes);
- 
- 	/* No need for kzalloc as it is initialized in following hypercall
- 	 * GNTTABOP_get_status_frames.
-@@ -1202,7 +1260,7 @@ static int gnttab_map_frames_v2(xen_pfn_t *frames, unsigned int nr_gframes)
- 	getframes.nr_frames  = nr_sframes;
- 	set_xen_guest_handle(getframes.frame_list, sframes);
- 
--	rc = HYPERVISOR_grant_table_op(GNTTABOP_get_status_frames,
-+	rc = hypervisor_grant_table_op(xh, GNTTABOP_get_status_frames,
- 				       &getframes, 1);
- 	if (rc == -ENOSYS) {
- 		kfree(sframes);
-@@ -1211,38 +1269,41 @@ static int gnttab_map_frames_v2(xen_pfn_t *frames, unsigned int nr_gframes)
- 
- 	BUG_ON(rc || getframes.status);
- 
--	rc = arch_gnttab_map_status(sframes, nr_sframes,
--				    nr_status_frames(gnttab_max_grant_frames()),
--				    &grstatus);
-+	rc = arch_gnttab_map_status(xh, sframes, nr_sframes,
-+				    nr_status_frames(xh, gnttab_max_grant_frames(xh)),
-+				    &gt->grstatus);
- 	BUG_ON(rc);
- 	kfree(sframes);
- 
--	rc = arch_gnttab_map_shared(frames, nr_gframes,
--				    gnttab_max_grant_frames(),
--				    &gnttab_shared.addr);
-+	rc = arch_gnttab_map_shared(xh, frames, nr_gframes,
-+				    gnttab_max_grant_frames(xh),
-+				    &gt->gnttab_shared.addr);
- 	BUG_ON(rc);
- 
- 	return 0;
- }
- 
--static void gnttab_unmap_frames_v2(void)
-+static void gnttab_unmap_frames_v2(xenhost_t *xh)
- {
--	arch_gnttab_unmap(gnttab_shared.addr, nr_grant_frames);
--	arch_gnttab_unmap(grstatus, nr_status_frames(nr_grant_frames));
-+	struct gnttab_private *gt = gt_priv(xh);
-+
-+	arch_gnttab_unmap(xh, gt->gnttab_shared.addr, gt->nr_grant_frames);
-+	arch_gnttab_unmap(xh, gt->grstatus, nr_status_frames(xh, gt->nr_grant_frames));
- }
- 
--static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
-+static int gnttab_map(xenhost_t *xh, unsigned int start_idx, unsigned int end_idx)
- {
- 	struct gnttab_setup_table setup;
- 	xen_pfn_t *frames;
- 	unsigned int nr_gframes = end_idx + 1;
-+	struct gnttab_private *gt = gt_priv(xh);
- 	int rc;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+	if (__xen_feature(xh, XENFEAT_auto_translated_physmap)) {
- 		struct xen_add_to_physmap xatp;
- 		unsigned int i = end_idx;
- 		rc = 0;
--		BUG_ON(xen_auto_xlat_grant_frames.count < nr_gframes);
-+		BUG_ON(gt->auto_xlat_grant_frames.count < nr_gframes);
- 		/*
- 		 * Loop backwards, so that the first hypercall has the largest
- 		 * index, ensuring that the table will grow only once.
-@@ -1251,8 +1312,8 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
- 			xatp.domid = DOMID_SELF;
- 			xatp.idx = i;
- 			xatp.space = XENMAPSPACE_grant_table;
--			xatp.gpfn = xen_auto_xlat_grant_frames.pfn[i];
--			rc = HYPERVISOR_memory_op(XENMEM_add_to_physmap, &xatp);
-+			xatp.gpfn = gt->auto_xlat_grant_frames.pfn[i];
-+			rc = hypervisor_memory_op(xh, XENMEM_add_to_physmap, &xatp);
- 			if (rc != 0) {
- 				pr_warn("grant table add_to_physmap failed, err=%d\n",
- 					rc);
-@@ -1274,7 +1335,7 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
- 	setup.nr_frames  = nr_gframes;
- 	set_xen_guest_handle(setup.frame_list, frames);
- 
--	rc = HYPERVISOR_grant_table_op(GNTTABOP_setup_table, &setup, 1);
-+	rc = hypervisor_grant_table_op(xh, GNTTABOP_setup_table, &setup, 1);
- 	if (rc == -ENOSYS) {
- 		kfree(frames);
- 		return -ENOSYS;
-@@ -1282,7 +1343,7 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
- 
- 	BUG_ON(rc || setup.status);
- 
--	rc = gnttab_interface->map_frames(frames, nr_gframes);
-+	rc = gt->gnttab_interface->map_frames(xh, frames, nr_gframes);
- 
- 	kfree(frames);
- 
-@@ -1313,13 +1374,13 @@ static const struct gnttab_ops gnttab_v2_ops = {
- 	.query_foreign_access		= gnttab_query_foreign_access_v2,
- };
- 
--static bool gnttab_need_v2(void)
-+static bool gnttab_need_v2(xenhost_t *xh)
- {
- #ifdef CONFIG_X86
- 	uint32_t base, width;
- 
- 	if (xen_pv_domain()) {
--		base = xenhost_cpuid_base(xh_default);
-+		base = xenhost_cpuid_base(xh);
- 		if (cpuid_eax(base) < 5)
- 			return false;	/* Information not available, use V1. */
- 		width = cpuid_ebx(base + 5) &
-@@ -1330,12 +1391,13 @@ static bool gnttab_need_v2(void)
- 	return !!(max_possible_pfn >> 32);
- }
- 
--static void gnttab_request_version(void)
-+static void gnttab_request_version(xenhost_t *xh)
- {
- 	long rc;
- 	struct gnttab_set_version gsv;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	if (gnttab_need_v2())
-+	if (gnttab_need_v2(xh))
- 		gsv.version = 2;
- 	else
- 		gsv.version = 1;
-@@ -1344,139 +1406,162 @@ static void gnttab_request_version(void)
- 	if (xen_gnttab_version >= 1 && xen_gnttab_version <= 2)
- 		gsv.version = xen_gnttab_version;
- 
--	rc = HYPERVISOR_grant_table_op(GNTTABOP_set_version, &gsv, 1);
-+	rc = hypervisor_grant_table_op(xh, GNTTABOP_set_version, &gsv, 1);
- 	if (rc == 0 && gsv.version == 2)
--		gnttab_interface = &gnttab_v2_ops;
-+		gt->gnttab_interface = &gnttab_v2_ops;
- 	else
--		gnttab_interface = &gnttab_v1_ops;
-+		gt->gnttab_interface = &gnttab_v1_ops;
-+
- 	pr_info("Grant tables using version %d layout\n",
--		gnttab_interface->version);
-+		gt->gnttab_interface->version);
- }
- 
--static int gnttab_setup(void)
-+static int gnttab_setup(xenhost_t *xh)
- {
- 	unsigned int max_nr_gframes;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	max_nr_gframes = gnttab_max_grant_frames();
--	if (max_nr_gframes < nr_grant_frames)
-+	max_nr_gframes = gnttab_max_grant_frames(xh);
-+	if (max_nr_gframes < gt->nr_grant_frames)
- 		return -ENOSYS;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap) && gnttab_shared.addr == NULL) {
--		gnttab_shared.addr = xen_auto_xlat_grant_frames.vaddr;
--		if (gnttab_shared.addr == NULL) {
-+	if (__xen_feature(xh, XENFEAT_auto_translated_physmap) && gt->gnttab_shared.addr == NULL) {
-+		gt->gnttab_shared.addr = gt->auto_xlat_grant_frames.vaddr;
-+		if (gt->gnttab_shared.addr == NULL) {
- 			pr_warn("gnttab share frames (addr=0x%08lx) is not mapped!\n",
--				(unsigned long)xen_auto_xlat_grant_frames.vaddr);
-+				(unsigned long)gt->auto_xlat_grant_frames.vaddr);
- 			return -ENOMEM;
- 		}
- 	}
--	return gnttab_map(0, nr_grant_frames - 1);
-+	return gnttab_map(xh, 0, gt->nr_grant_frames - 1);
- }
- 
- int gnttab_resume(void)
- {
--	gnttab_request_version();
--	return gnttab_setup();
-+	xenhost_t **xh;
-+	for_each_xenhost(xh) {
-+		int err;
-+
-+		gnttab_request_version(*xh);
-+		err = gnttab_setup(*xh);
-+		if (err)
-+			return err;
-+	}
-+	return 0;
- }
- 
- int gnttab_suspend(void)
- {
--	if (!xen_feature(XENFEAT_auto_translated_physmap))
--		gnttab_interface->unmap_frames();
-+	xenhost_t **xh;
-+	struct gnttab_private *gt;
-+	
-+	for_each_xenhost(xh) {
-+		gt = gt_priv(*xh);
-+
-+		if (!__xen_feature((*xh), XENFEAT_auto_translated_physmap))
-+			gt->gnttab_interface->unmap_frames(*xh);
-+		return 0;
-+	}
- 	return 0;
- }
- 
--static int gnttab_expand(unsigned int req_entries)
-+static int gnttab_expand(xenhost_t *xh, unsigned int req_entries)
- {
- 	int rc;
- 	unsigned int cur, extra;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	BUG_ON(gnttab_interface == NULL);
--	cur = nr_grant_frames;
--	extra = ((req_entries + gnttab_interface->grefs_per_grant_frame - 1) /
--		 gnttab_interface->grefs_per_grant_frame);
--	if (cur + extra > gnttab_max_grant_frames()) {
-+	BUG_ON(gt->gnttab_interface == NULL);
-+	cur = gt->nr_grant_frames;
-+	extra = ((req_entries + gt->gnttab_interface->grefs_per_grant_frame - 1) /
-+		 gt->gnttab_interface->grefs_per_grant_frame);
-+	if (cur + extra > gnttab_max_grant_frames(xh)) {
- 		pr_warn_ratelimited("xen/grant-table: max_grant_frames reached"
- 				    " cur=%u extra=%u limit=%u"
- 				    " gnttab_free_count=%u req_entries=%u\n",
--				    cur, extra, gnttab_max_grant_frames(),
--				    gnttab_free_count, req_entries);
-+				    cur, extra, gnttab_max_grant_frames(xh),
-+				    gt->gnttab_free_count, req_entries);
- 		return -ENOSPC;
- 	}
- 
--	rc = gnttab_map(cur, cur + extra - 1);
-+	rc = gnttab_map(xh, cur, cur + extra - 1);
- 	if (rc == 0)
--		rc = grow_gnttab_list(extra);
-+		rc = grow_gnttab_list(xh, extra);
- 
- 	return rc;
- }
- 
--int gnttab_init(void)
-+int gnttab_init(xenhost_t *xh)
- {
- 	int i;
- 	unsigned long max_nr_grant_frames;
- 	unsigned int max_nr_glist_frames, nr_glist_frames;
- 	unsigned int nr_init_grefs;
- 	int ret;
-+	struct gnttab_private *gt = gt_priv(xh);
- 
--	gnttab_request_version();
--	max_nr_grant_frames = gnttab_max_grant_frames();
--	nr_grant_frames = 1;
-+	gnttab_request_version(xh);
-+	max_nr_grant_frames = gnttab_max_grant_frames(xh);
-+	gt->nr_grant_frames = 1;
- 
- 	/* Determine the maximum number of frames required for the
- 	 * grant reference free list on the current hypervisor.
+ /*
+  * An element of a list of outstanding transactions, for which we're
+  * still waiting a reply.
+@@ -312,13 +316,13 @@ static void xenbus_file_free(struct kref *kref)
  	 */
--	BUG_ON(gnttab_interface == NULL);
-+	BUG_ON(gt->gnttab_interface == NULL);
- 	max_nr_glist_frames = (max_nr_grant_frames *
--			       gnttab_interface->grefs_per_grant_frame / RPP);
-+			       gt->gnttab_interface->grefs_per_grant_frame / RPP);
  
--	gnttab_list = kmalloc_array(max_nr_glist_frames,
-+	gt->gnttab_list = kmalloc_array(max_nr_glist_frames,
- 				    sizeof(grant_ref_t *),
- 				    GFP_KERNEL);
--	if (gnttab_list == NULL)
-+	if (gt->gnttab_list == NULL)
- 		return -ENOMEM;
- 
--	nr_glist_frames = gnttab_frames(nr_grant_frames, RPP);
-+	nr_glist_frames = gnttab_frames(xh, gt->nr_grant_frames, RPP);
- 	for (i = 0; i < nr_glist_frames; i++) {
--		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_KERNEL);
--		if (gnttab_list[i] == NULL) {
-+		gt->gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_KERNEL);
-+		if (gt->gnttab_list[i] == NULL) {
- 			ret = -ENOMEM;
- 			goto ini_nomem;
- 		}
+ 	list_for_each_entry_safe(trans, tmp, &u->transactions, list) {
+-		xenbus_transaction_end(trans->handle, 1);
++		xenbus_transaction_end(xh, trans->handle, 1);
+ 		list_del(&trans->list);
+ 		kfree(trans);
  	}
  
--	ret = arch_gnttab_init(max_nr_grant_frames,
--			       nr_status_frames(max_nr_grant_frames));
-+	ret = arch_gnttab_init(xh, max_nr_grant_frames,
-+			       nr_status_frames(xh, max_nr_grant_frames));
- 	if (ret < 0)
- 		goto ini_nomem;
+ 	list_for_each_entry_safe(watch, tmp_watch, &u->watches, list) {
+-		unregister_xenbus_watch(&watch->watch);
++		unregister_xenbus_watch(xh, &watch->watch);
+ 		list_del(&watch->list);
+ 		free_watch_adapter(watch);
+ 	}
+@@ -450,7 +454,7 @@ static int xenbus_write_transaction(unsigned msg_type,
+ 		   (!strcmp(msg->body, "T") || !strcmp(msg->body, "F"))))
+ 		return xenbus_command_reply(u, XS_ERROR, "EINVAL");
  
--	if (gnttab_setup() < 0) {
-+	if (gnttab_setup(xh) < 0) {
- 		ret = -ENODEV;
- 		goto ini_nomem;
+-	rc = xenbus_dev_request_and_reply(&msg->hdr, u);
++	rc = xenbus_dev_request_and_reply(xh, &msg->hdr, u);
+ 	if (rc && trans) {
+ 		list_del(&trans->list);
+ 		kfree(trans);
+@@ -489,7 +493,7 @@ static int xenbus_write_watch(unsigned msg_type, struct xenbus_file_priv *u)
+ 		watch->watch.callback = watch_fired;
+ 		watch->dev_data = u;
+ 
+-		err = register_xenbus_watch(&watch->watch);
++		err = register_xenbus_watch(xh, &watch->watch);
+ 		if (err) {
+ 			free_watch_adapter(watch);
+ 			rc = err;
+@@ -500,7 +504,7 @@ static int xenbus_write_watch(unsigned msg_type, struct xenbus_file_priv *u)
+ 		list_for_each_entry(watch, &u->watches, list) {
+ 			if (!strcmp(watch->token, token) &&
+ 			    !strcmp(watch->watch.node, path)) {
+-				unregister_xenbus_watch(&watch->watch);
++				unregister_xenbus_watch(xh, &watch->watch);
+ 				list_del(&watch->list);
+ 				free_watch_adapter(watch);
+ 				break;
+@@ -618,8 +622,9 @@ static ssize_t xenbus_file_write(struct file *filp,
+ static int xenbus_file_open(struct inode *inode, struct file *filp)
+ {
+ 	struct xenbus_file_priv *u;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+-	if (xen_store_evtchn == 0)
++	if (xs->store_evtchn == 0)
+ 		return -ENOENT;
+ 
+ 	nonseekable_open(inode, filp);
+@@ -687,6 +692,11 @@ static int __init xenbus_init(void)
+ 	if (!xen_domain())
+ 		return -ENODEV;
+ 
++	if (xen_driver_domain() && xen_nested())
++		xh = xh_remote;
++	else
++		xh = xh_default;
++
+ 	err = misc_register(&xenbus_dev);
+ 	if (err)
+ 		pr_err("Could not register xenbus frontend device\n");
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 049bd511f36e..bd90ba00d64c 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -65,20 +65,6 @@
+ 
+ #include "xenbus.h"
+ 
+-
+-int xen_store_evtchn;
+-EXPORT_SYMBOL_GPL(xen_store_evtchn);
+-
+-struct xenstore_domain_interface *xen_store_interface;
+-EXPORT_SYMBOL_GPL(xen_store_interface);
+-
+-enum xenstore_init xen_store_domain_type;
+-EXPORT_SYMBOL_GPL(xen_store_domain_type);
+-
+-static unsigned long xen_store_gfn;
+-
+-static BLOCKING_NOTIFIER_HEAD(xenstore_chain);
+-
+ /* If something in array of ids matches this device, return it. */
+ static const struct xenbus_device_id *
+ match_device(const struct xenbus_device_id *arr, struct xenbus_device *dev)
+@@ -112,7 +98,7 @@ static void free_otherend_details(struct xenbus_device *dev)
+ static void free_otherend_watch(struct xenbus_device *dev)
+ {
+ 	if (dev->otherend_watch.node) {
+-		unregister_xenbus_watch(&dev->otherend_watch);
++		unregister_xenbus_watch(dev->xh, &dev->otherend_watch);
+ 		kfree(dev->otherend_watch.node);
+ 		dev->otherend_watch.node = NULL;
+ 	}
+@@ -145,7 +131,7 @@ static int watch_otherend(struct xenbus_device *dev)
+ int xenbus_read_otherend_details(struct xenbus_device *xendev,
+ 				 char *id_node, char *path_node)
+ {
+-	int err = xenbus_gather(XBT_NIL, xendev->nodename,
++	int err = xenbus_gather(xendev->xh, XBT_NIL, xendev->nodename,
+ 				id_node, "%i", &xendev->otherend_id,
+ 				path_node, NULL, &xendev->otherend,
+ 				NULL);
+@@ -156,7 +142,7 @@ int xenbus_read_otherend_details(struct xenbus_device *xendev,
+ 		return err;
+ 	}
+ 	if (strlen(xendev->otherend) == 0 ||
+-	    !xenbus_exists(XBT_NIL, xendev->otherend, "")) {
++	    !xenbus_exists(xendev->xh, XBT_NIL, xendev->otherend, "")) {
+ 		xenbus_dev_fatal(xendev, -ENOENT,
+ 				 "unable to read other end from %s.  "
+ 				 "missing or inaccessible.",
+@@ -186,7 +172,7 @@ void xenbus_otherend_changed(struct xenbus_watch *watch,
+ 		return;
  	}
  
--	nr_init_grefs = nr_grant_frames *
--			gnttab_interface->grefs_per_grant_frame;
-+	nr_init_grefs = gt->nr_grant_frames *
-+			gt->gnttab_interface->grefs_per_grant_frame;
+-	state = xenbus_read_driver_state(dev->otherend);
++	state = xenbus_read_driver_state(dev, dev->otherend);
  
- 	for (i = NR_RESERVED_ENTRIES; i < nr_init_grefs - 1; i++)
--		gnttab_entry(i) = i + 1;
-+		gnttab_entry(xh, i) = i + 1;
+ 	dev_dbg(&dev->dev, "state is %d, (%s), %s, %s\n",
+ 		state, xenbus_strstate(state), dev->otherend_watch.node, path);
+@@ -439,7 +425,11 @@ int xenbus_probe_node(struct xen_bus_type *bus,
+ 	size_t stringlen;
+ 	char *tmpstring;
  
--	gnttab_entry(nr_init_grefs - 1) = GNTTAB_LIST_END;
--	gnttab_free_count = nr_init_grefs - NR_RESERVED_ENTRIES;
--	gnttab_free_head  = NR_RESERVED_ENTRIES;
-+	gnttab_entry(xh, nr_init_grefs - 1) = GNTTAB_LIST_END;
-+	gt->gnttab_free_count = nr_init_grefs - NR_RESERVED_ENTRIES;
-+	gt->gnttab_free_head  = NR_RESERVED_ENTRIES;
+-	enum xenbus_state state = xenbus_read_driver_state(nodename);
++	enum xenbus_state state;
++
++	err = xenbus_gather(bus->xh, XBT_NIL, nodename, "state", "%d", &state, NULL);
++	if (err)
++		state = XenbusStateUnknown;
  
- 	printk("Grant table initialized\n");
- 	return 0;
+ 	if (state != XenbusStateInitialising) {
+ 		/* Device is not new, so ignore it.  This can happen if a
+@@ -465,10 +455,11 @@ int xenbus_probe_node(struct xen_bus_type *bus,
+ 	xendev->devicetype = tmpstring;
+ 	init_completion(&xendev->down);
  
-  ini_nomem:
- 	for (i--; i >= 0; i--)
--		free_page((unsigned long)gnttab_list[i]);
--	kfree(gnttab_list);
-+		free_page((unsigned long)gt->gnttab_list[i]);
-+	kfree(gt->gnttab_list);
++	xendev->xh = bus->xh;
+ 	xendev->dev.bus = &bus->bus;
+ 	xendev->dev.release = xenbus_dev_release;
+ 
+-	err = bus->get_bus_id(devname, xendev->nodename);
++	err = bus->get_bus_id(bus, devname, xendev->nodename);
+ 	if (err)
+ 		goto fail;
+ 
+@@ -496,7 +487,7 @@ static int xenbus_probe_device_type(struct xen_bus_type *bus, const char *type)
+ 	unsigned int dir_n = 0;
+ 	int i;
+ 
+-	dir = xenbus_directory(XBT_NIL, bus->root, type, &dir_n);
++	dir = xenbus_directory(bus->xh, XBT_NIL, bus->root, type, &dir_n);
+ 	if (IS_ERR(dir))
+ 		return PTR_ERR(dir);
+ 
+@@ -516,7 +507,7 @@ int xenbus_probe_devices(struct xen_bus_type *bus)
+ 	char **dir;
+ 	unsigned int i, dir_n;
+ 
+-	dir = xenbus_directory(XBT_NIL, bus->root, "", &dir_n);
++	dir = xenbus_directory(bus->xh, XBT_NIL, bus->root, "", &dir_n);
+ 	if (IS_ERR(dir))
+ 		return PTR_ERR(dir);
+ 
+@@ -564,7 +555,7 @@ void xenbus_dev_changed(const char *node, struct xen_bus_type *bus)
+ 	if (char_count(node, '/') < 2)
+ 		return;
+ 
+-	exists = xenbus_exists(XBT_NIL, node, "");
++	exists = xenbus_exists(bus->xh, XBT_NIL, node, "");
+ 	if (!exists) {
+ 		xenbus_cleanup_devices(node, &bus->bus);
+ 		return;
+@@ -660,47 +651,61 @@ int xenbus_dev_cancel(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(xenbus_dev_cancel);
+ 
+-/* A flag to determine if xenstored is 'ready' (i.e. has started) */
+-int xenstored_ready;
+-
+-
+-int register_xenstore_notifier(struct notifier_block *nb)
++int register_xenstore_notifier(xenhost_t *xh, struct notifier_block *nb)
+ {
+ 	int ret = 0;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+-	if (xenstored_ready > 0)
++	if (xs->xenstored_ready > 0)
+ 		ret = nb->notifier_call(nb, 0, NULL);
+ 	else
+-		blocking_notifier_chain_register(&xenstore_chain, nb);
++		blocking_notifier_chain_register(&xs->xenstore_chain, nb);
+ 
  	return ret;
  }
- EXPORT_SYMBOL_GPL(gnttab_init);
+ EXPORT_SYMBOL_GPL(register_xenstore_notifier);
  
- static int __gnttab_init(void)
+-void unregister_xenstore_notifier(struct notifier_block *nb)
++void unregister_xenstore_notifier(xenhost_t *xh, struct notifier_block *nb)
+ {
+-	blocking_notifier_chain_unregister(&xenstore_chain, nb);
++	struct xenstore_private *xs = xs_priv(xh);
++
++	blocking_notifier_chain_unregister(&xs->xenstore_chain, nb);
+ }
+ EXPORT_SYMBOL_GPL(unregister_xenstore_notifier);
+ 
+-void xenbus_probe(struct work_struct *unused)
++/* Needed by platform-pci */
++void __xenbus_probe(void *_xs)
+ {
+-	xenstored_ready = 1;
++	struct xenstore_private *xs = (struct xenstore_private *) _xs;
++	xs->xenstored_ready = 1;
+ 
+ 	/* Notify others that xenstore is up */
+-	blocking_notifier_call_chain(&xenstore_chain, 0, NULL);
++	blocking_notifier_call_chain(&xs->xenstore_chain, 0, NULL);
++}
++EXPORT_SYMBOL_GPL(__xenbus_probe);
++
++void xenbus_probe(struct work_struct *w)
++{
++	struct xenstore_private *xs = container_of(w,
++			struct xenstore_private, probe_work);
++
++	__xenbus_probe(xs);
+ }
+-EXPORT_SYMBOL_GPL(xenbus_probe);
+ 
+ static int __init xenbus_probe_initcall(void)
  {
 +	xenhost_t **xh;
-+	int err;
 +
  	if (!xen_domain())
  		return -ENODEV;
  
-@@ -1484,8 +1569,14 @@ static int __gnttab_init(void)
- 	if (xen_hvm_domain() && !xen_pvh_domain())
+ 	if (xen_initial_domain() || xen_hvm_domain())
  		return 0;
  
--	return gnttab_init();
+-	xenbus_probe(NULL);
 +	for_each_xenhost(xh) {
-+		err = gnttab_init(*xh);
++		struct xenstore_private *xs = xs_priv(*xh);
++		xenbus_probe(&xs->probe_work);
++	}
+ 	return 0;
+ }
+ 
+@@ -709,30 +714,31 @@ device_initcall(xenbus_probe_initcall);
+ /* Set up event channel for xenstored which is run as a local process
+  * (this is normally used only in dom0)
+  */
+-static int __init xenstored_local_init(void)
++static int __init xenstored_local_init(xenhost_t *xh)
+ {
+ 	int err = -ENOMEM;
+ 	unsigned long page = 0;
+ 	struct evtchn_alloc_unbound alloc_unbound;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+ 	/* Allocate Xenstore page */
+ 	page = get_zeroed_page(GFP_KERNEL);
+ 	if (!page)
+ 		goto out_err;
+ 
+-	xen_store_gfn = virt_to_gfn((void *)page);
++	xs->store_gfn = virt_to_gfn((void *)page);
+ 
+ 	/* Next allocate a local port which xenstored can bind to */
+ 	alloc_unbound.dom        = DOMID_SELF;
+ 	alloc_unbound.remote_dom = DOMID_SELF;
+ 
+-	err = HYPERVISOR_event_channel_op(EVTCHNOP_alloc_unbound,
++	err = hypervisor_event_channel_op(xh, EVTCHNOP_alloc_unbound,
+ 					  &alloc_unbound);
+ 	if (err == -ENOSYS)
+ 		goto out_err;
+ 
+ 	BUG_ON(err);
+-	xen_store_evtchn = alloc_unbound.port;
++	xs->store_evtchn = alloc_unbound.port;
+ 
+ 	return 0;
+ 
+@@ -746,18 +752,24 @@ static int xenbus_resume_cb(struct notifier_block *nb,
+ 			    unsigned long action, void *data)
+ {
+ 	int err = 0;
++	xenhost_t **xh;
+ 
+-	if (xen_hvm_domain()) {
+-		uint64_t v = 0;
++	for_each_xenhost(xh) {
++		struct xenstore_private *xs = xs_priv(*xh);
+ 
+-		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
+-		if (!err && v)
+-			xen_store_evtchn = v;
+-		else
+-			pr_warn("Cannot update xenstore event channel: %d\n",
+-				err);
+-	} else
+-		xen_store_evtchn = xen_start_info->store_evtchn;
++		/* FIXME xh->resume_xs()? */
++		if (xen_hvm_domain()) {
++			uint64_t v = 0;
++
++			err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
++			if (!err && v)
++				xs->store_evtchn = v;
++			else
++				pr_warn("Cannot update xenstore event channel: %d\n",
++					err);
++		} else
++			xs->store_evtchn = xen_start_info->store_evtchn;
++	}
+ 
+ 	return err;
+ }
+@@ -766,67 +778,115 @@ static struct notifier_block xenbus_resume_nb = {
+ 	.notifier_call = xenbus_resume_cb,
+ };
+ 
+-static int __init xenbus_init(void)
++int xenbus_setup(xenhost_t *xh)
+ {
++	struct xenstore_private *xs = xs_priv(xh);
+ 	int err = 0;
+-	uint64_t v = 0;
+-	xen_store_domain_type = XS_UNKNOWN;
+ 
+-	if (!xen_domain())
+-		return -ENODEV;
++	BUG_ON(xs->domain_type == XS_UNKNOWN);
+ 
+-	xenbus_ring_ops_init();
+-
+-	if (xen_pv_domain())
+-		xen_store_domain_type = XS_PV;
+-	if (xen_hvm_domain())
+-		xen_store_domain_type = XS_HVM;
+-	if (xen_hvm_domain() && xen_initial_domain())
+-		xen_store_domain_type = XS_LOCAL;
+-	if (xen_pv_domain() && !xen_start_info->store_evtchn)
+-		xen_store_domain_type = XS_LOCAL;
+-	if (xen_pv_domain() && xen_start_info->store_evtchn)
+-		xenstored_ready = 1;
+-
+-	switch (xen_store_domain_type) {
++	switch (xs->domain_type) {
+ 	case XS_LOCAL:
+-		err = xenstored_local_init();
++		err = xenstored_local_init(xh);
+ 		if (err)
+-			goto out_error;
+-		xen_store_interface = gfn_to_virt(xen_store_gfn);
++			goto out;
++		xs->store_interface = gfn_to_virt(xs->store_gfn);
+ 		break;
+ 	case XS_PV:
+-		xen_store_evtchn = xen_start_info->store_evtchn;
+-		xen_store_gfn = xen_start_info->store_mfn;
+-		xen_store_interface = gfn_to_virt(xen_store_gfn);
++		xs->store_interface = gfn_to_virt(xs->store_gfn);
++		xs->xenstored_ready = 1;
+ 		break;
+ 	case XS_HVM:
+-		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
+-		if (err)
+-			goto out_error;
+-		xen_store_evtchn = (int)v;
+-		err = hvm_get_parameter(HVM_PARAM_STORE_PFN, &v);
+-		if (err)
+-			goto out_error;
+-		xen_store_gfn = (unsigned long)v;
+-		xen_store_interface =
+-			xen_remap(xen_store_gfn << XEN_PAGE_SHIFT,
++		xs->store_interface =
++			xen_remap(xs->store_gfn << XEN_PAGE_SHIFT,
+ 				  XEN_PAGE_SIZE);
+ 		break;
+ 	default:
+ 		pr_warn("Xenstore state unknown\n");
+ 		break;
+ 	}
++out:
++	return err;
++}
+ 
+-	/* Initialize the interface to xenstore. */
+-	err = xs_init();
+-	if (err) {
+-		pr_warn("Error initializing xenstore comms: %i\n", err);
+-		goto out_error;
++int xen_hvm_setup_xs(xenhost_t *xh)
++{
++	uint64_t v = 0;
++	int err = 0;
++	struct xenstore_private *xs = xs_priv(xh);
++
++	if (xen_initial_domain()) {
++		xs->domain_type = XS_LOCAL;
++		xs->store_evtchn = 0;
++		xs->store_gfn = 0;
++	} else { /* Frontend */
++		xs->domain_type = XS_HVM;
++		err = hvm_get_parameter(HVM_PARAM_STORE_EVTCHN, &v);
++		if (err)
++			goto out;
++		xs->store_evtchn = (int) v;
++
++		err = hvm_get_parameter(HVM_PARAM_STORE_PFN, &v);
++		if (err)
++			goto out;
++		xs->store_gfn = (int) v;
++	}
++
++out:
++	return err;
++}
++
++int xen_pv_setup_xs(xenhost_t *xh)
++{
++	struct xenstore_private *xs = xs_priv(xh);
++
++	if (xen_initial_domain()) {
++		xs->domain_type = XS_LOCAL;
++		xs->store_evtchn = 0;
++		xs->store_gfn = 0;
++	} else { /* Frontend */
++		xs->domain_type = XS_PV;
++		xs->store_evtchn = xen_start_info->store_evtchn;
++		xs->store_gfn = xen_start_info->store_mfn;
++	}
++
++	return 0;
++}
++
++static int __init xenbus_init(void)
++{
++	int err = 0;
++	struct xenstore_private *xs;
++	xenhost_t **xh;
++	int notifier = 0;
++
++	if (!xen_domain())
++		return -ENODEV;
++
++	xenbus_ring_ops_init();
++
++	for_each_xenhost(xh) {
++		(*xh)->xenstore_private = kzalloc(sizeof(*xs), GFP_KERNEL);
++		xenhost_setup_xs(*xh);
++		err = xenbus_setup(*xh);
++		if (err)
++			goto out_error;
++
++		/* Initialize the interface to xenstore. */
++		err = xs_init(*xh);
++		if (err) {
++			pr_warn("Error initializing xenstore comms: %i\n", err);
++			goto out_error;
++		}
++
++		xs = xs_priv(*xh);
++
++		if ((xs->domain_type != XS_LOCAL) &&
++		    (xs->domain_type != XS_UNKNOWN))
++		    notifier++;
+ 	}
+ 
+-	if ((xen_store_domain_type != XS_LOCAL) &&
+-	    (xen_store_domain_type != XS_UNKNOWN))
++	if (notifier)
+ 		xen_resume_notifier_register(&xenbus_resume_nb);
+ 
+ #ifdef CONFIG_XEN_COMPAT_XENFS
+diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+index d3c53a9db5e3..f030d6ab3c31 100644
+--- a/drivers/xen/xenbus/xenbus_probe_backend.c
++++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+@@ -57,7 +57,8 @@
+ #include "xenbus.h"
+ 
+ /* backend/<type>/<fe-uuid>/<id> => <type>-<fe-domid>-<id> */
+-static int backend_bus_id(char bus_id[XEN_BUS_ID_SIZE], const char *nodename)
++static int backend_bus_id(struct xen_bus_type *bus, char bus_id[XEN_BUS_ID_SIZE],
++			  const char *nodename)
+ {
+ 	int domid, err;
+ 	const char *devid, *type, *frontend;
+@@ -73,14 +74,14 @@ static int backend_bus_id(char bus_id[XEN_BUS_ID_SIZE], const char *nodename)
+ 
+ 	devid = strrchr(nodename, '/') + 1;
+ 
+-	err = xenbus_gather(XBT_NIL, nodename, "frontend-id", "%i", &domid,
++	err = xenbus_gather(bus->xh, XBT_NIL, nodename, "frontend-id", "%i", &domid,
+ 			    "frontend", NULL, &frontend,
+ 			    NULL);
+ 	if (err)
+ 		return err;
+ 	if (strlen(frontend) == 0)
+ 		err = -ERANGE;
+-	if (!err && !xenbus_exists(XBT_NIL, frontend, ""))
++	if (!err && !xenbus_exists(bus->xh, XBT_NIL, frontend, ""))
+ 		err = -ENOENT;
+ 	kfree(frontend);
+ 
+@@ -165,7 +166,7 @@ static int xenbus_probe_backend(struct xen_bus_type *bus, const char *type,
+ 	if (!nodename)
+ 		return -ENOMEM;
+ 
+-	dir = xenbus_directory(XBT_NIL, nodename, "", &dir_n);
++	dir = xenbus_directory(bus->xh, XBT_NIL, nodename, "", &dir_n);
+ 	if (IS_ERR(dir)) {
+ 		kfree(nodename);
+ 		return PTR_ERR(dir);
+@@ -189,6 +190,7 @@ static void frontend_changed(struct xenbus_watch *watch,
+ 
+ static struct xen_bus_type xenbus_backend = {
+ 	.root = "backend",
++	.xh = NULL,		/* Filled at xenbus_probe_backend_init() */
+ 	.levels = 3,		/* backend/type/<frontend>/<id> */
+ 	.get_bus_id = backend_bus_id,
+ 	.probe = xenbus_probe_backend,
+@@ -224,7 +226,7 @@ static int read_frontend_details(struct xenbus_device *xendev)
+ 
+ int xenbus_dev_is_online(struct xenbus_device *dev)
+ {
+-	return !!xenbus_read_unsigned(dev->nodename, "online", 0);
++	return !!xenbus_read_unsigned(dev->xh, dev->nodename, "online", 0);
+ }
+ EXPORT_SYMBOL_GPL(xenbus_dev_is_online);
+ 
+@@ -244,7 +246,7 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
+ {
+ 	/* Enumerate devices in xenstore and watch for changes. */
+ 	xenbus_probe_devices(&xenbus_backend);
+-	register_xenbus_watch(&be_watch);
++	register_xenbus_watch(xenbus_backend.xh,&be_watch);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -258,12 +260,15 @@ static int __init xenbus_probe_backend_init(void)
+ 
+ 	DPRINTK("");
+ 
++	/* Backends always talk to default xenhost */
++	xenbus_backend.xh = xh_default;
++
+ 	/* Register ourselves with the kernel bus subsystem */
+ 	err = bus_register(&xenbus_backend.bus);
+ 	if (err)
+ 		return err;
+ 
+-	register_xenstore_notifier(&xenstore_notifier);
++	register_xenstore_notifier(xenbus_backend.xh, &xenstore_notifier);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/xen/xenbus/xenbus_probe_frontend.c b/drivers/xen/xenbus/xenbus_probe_frontend.c
+index 3edab7cc03c3..fa2f733d1f1e 100644
+--- a/drivers/xen/xenbus/xenbus_probe_frontend.c
++++ b/drivers/xen/xenbus/xenbus_probe_frontend.c
+@@ -20,6 +20,7 @@
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+ #include <xen/interface/xen.h>
++#include <xen/xenhost.h>
+ #include <asm/xen/hypervisor.h>
+ #include <xen/xenbus.h>
+ #include <xen/events.h>
+@@ -33,7 +34,8 @@
+ 
+ 
+ /* device/<type>/<id> => <type>-<id> */
+-static int frontend_bus_id(char bus_id[XEN_BUS_ID_SIZE], const char *nodename)
++static int frontend_bus_id(struct xen_bus_type *bus, char bus_id[XEN_BUS_ID_SIZE],
++				const char *nodename)
+ {
+ 	nodename = strchr(nodename, '/');
+ 	if (!nodename || strlen(nodename + 1) >= XEN_BUS_ID_SIZE) {
+@@ -101,13 +103,13 @@ static void xenbus_frontend_delayed_resume(struct work_struct *w)
+ 
+ static int xenbus_frontend_dev_resume(struct device *dev)
+ {
++	struct xenbus_device *xdev = to_xenbus_device(dev);
++	struct xenstore_private *xs = xs_priv(xdev->xh);
+ 	/*
+ 	 * If xenstored is running in this domain, we cannot access the backend
+ 	 * state at the moment, so we need to defer xenbus_dev_resume
+ 	 */
+-	if (xen_store_domain_type == XS_LOCAL) {
+-		struct xenbus_device *xdev = to_xenbus_device(dev);
+-
++	if (xs->domain_type == XS_LOCAL) {
+ 		schedule_work(&xdev->work);
+ 
+ 		return 0;
+@@ -118,8 +120,10 @@ static int xenbus_frontend_dev_resume(struct device *dev)
+ 
+ static int xenbus_frontend_dev_probe(struct device *dev)
+ {
+-	if (xen_store_domain_type == XS_LOCAL) {
+-		struct xenbus_device *xdev = to_xenbus_device(dev);
++	struct xenbus_device *xdev = to_xenbus_device(dev);
++	struct xenstore_private *xs = xs_priv(xdev->xh);
++
++	if (xs->domain_type == XS_LOCAL) {
+ 		INIT_WORK(&xdev->work, xenbus_frontend_delayed_resume);
+ 	}
+ 
+@@ -136,6 +140,7 @@ static const struct dev_pm_ops xenbus_pm_ops = {
+ 
+ static struct xen_bus_type xenbus_frontend = {
+ 	.root = "device",
++	.xh = NULL, 	/* initializd in xenbus_probe_frontend_init() */
+ 	.levels = 2,		/* device/type/<id> */
+ 	.get_bus_id = frontend_bus_id,
+ 	.probe = xenbus_probe_frontend,
+@@ -242,7 +247,7 @@ static int print_device_status(struct device *dev, void *data)
+ 	} else if (xendev->state < XenbusStateConnected) {
+ 		enum xenbus_state rstate = XenbusStateUnknown;
+ 		if (xendev->otherend)
+-			rstate = xenbus_read_driver_state(xendev->otherend);
++			rstate = xenbus_read_driver_state(xendev, xendev->otherend);
+ 		pr_warn("Timeout connecting to device: %s (local state %d, remote state %d)\n",
+ 			xendev->nodename, xendev->state, rstate);
+ 	}
+@@ -335,7 +340,7 @@ static int backend_state;
+ static void xenbus_reset_backend_state_changed(struct xenbus_watch *w,
+ 					const char *path, const char *token)
+ {
+-	if (xenbus_scanf(XBT_NIL, path, "", "%i",
++	if (xenbus_scanf(xenbus_frontend.xh, XBT_NIL, path, "", "%i",
+ 			 &backend_state) != 1)
+ 		backend_state = XenbusStateUnknown;
+ 	printk(KERN_DEBUG "XENBUS: backend %s %s\n",
+@@ -373,26 +378,27 @@ static void xenbus_reset_frontend(char *fe, char *be, int be_state)
+ 	backend_state = XenbusStateUnknown;
+ 
+ 	pr_info("triggering reconnect on %s\n", be);
+-	register_xenbus_watch(&be_watch);
++	register_xenbus_watch(xenbus_frontend.xh, &be_watch);
+ 
+ 	/* fall through to forward backend to state XenbusStateInitialising */
+ 	switch (be_state) {
+ 	case XenbusStateConnected:
+-		xenbus_printf(XBT_NIL, fe, "state", "%d", XenbusStateClosing);
++		xenbus_printf(xenbus_frontend.xh, XBT_NIL, fe,
++				"state", "%d", XenbusStateClosing);
+ 		xenbus_reset_wait_for_backend(be, XenbusStateClosing);
+ 		/* fall through */
+ 
+ 	case XenbusStateClosing:
+-		xenbus_printf(XBT_NIL, fe, "state", "%d", XenbusStateClosed);
++		xenbus_printf(xenbus_frontend.xh, XBT_NIL, fe, "state", "%d", XenbusStateClosed);
+ 		xenbus_reset_wait_for_backend(be, XenbusStateClosed);
+ 		/* fall through */
+ 
+ 	case XenbusStateClosed:
+-		xenbus_printf(XBT_NIL, fe, "state", "%d", XenbusStateInitialising);
++		xenbus_printf(xenbus_frontend.xh, XBT_NIL, fe, "state", "%d", XenbusStateInitialising);
+ 		xenbus_reset_wait_for_backend(be, XenbusStateInitWait);
+ 	}
+ 
+-	unregister_xenbus_watch(&be_watch);
++	unregister_xenbus_watch(xenbus_frontend.xh, &be_watch);
+ 	pr_info("reconnect done on %s\n", be);
+ 	kfree(be_watch.node);
+ }
+@@ -406,7 +412,7 @@ static void xenbus_check_frontend(char *class, char *dev)
+ 	if (!frontend)
+ 		return;
+ 
+-	err = xenbus_scanf(XBT_NIL, frontend, "state", "%i", &fe_state);
++	err = xenbus_scanf(xenbus_frontend.xh, XBT_NIL, frontend, "state", "%i", &fe_state);
+ 	if (err != 1)
+ 		goto out;
+ 
+@@ -415,10 +421,10 @@ static void xenbus_check_frontend(char *class, char *dev)
+ 	case XenbusStateClosed:
+ 		printk(KERN_DEBUG "XENBUS: frontend %s %s\n",
+ 				frontend, xenbus_strstate(fe_state));
+-		backend = xenbus_read(XBT_NIL, frontend, "backend", NULL);
++		backend = xenbus_read(xenbus_frontend.xh, XBT_NIL, frontend, "backend", NULL);
+ 		if (!backend || IS_ERR(backend))
+ 			goto out;
+-		err = xenbus_scanf(XBT_NIL, backend, "state", "%i", &be_state);
++		err = xenbus_scanf(xenbus_frontend.xh, XBT_NIL, backend, "state", "%i", &be_state);
+ 		if (err == 1)
+ 			xenbus_reset_frontend(frontend, backend, be_state);
+ 		kfree(backend);
+@@ -430,18 +436,18 @@ static void xenbus_check_frontend(char *class, char *dev)
+ 	kfree(frontend);
+ }
+ 
+-static void xenbus_reset_state(void)
++static void xenbus_reset_state(xenhost_t *xh)
+ {
+ 	char **devclass, **dev;
+ 	int devclass_n, dev_n;
+ 	int i, j;
+ 
+-	devclass = xenbus_directory(XBT_NIL, "device", "", &devclass_n);
++	devclass = xenbus_directory(xh, XBT_NIL, "device", "", &devclass_n);
+ 	if (IS_ERR(devclass))
+ 		return;
+ 
+ 	for (i = 0; i < devclass_n; i++) {
+-		dev = xenbus_directory(XBT_NIL, "device", devclass[i], &dev_n);
++		dev = xenbus_directory(xh, XBT_NIL, "device", devclass[i], &dev_n);
+ 		if (IS_ERR(dev))
+ 			continue;
+ 		for (j = 0; j < dev_n; j++)
+@@ -453,14 +459,14 @@ static void xenbus_reset_state(void)
+ 
+ static int frontend_probe_and_watch(struct notifier_block *notifier,
+ 				   unsigned long event,
+-				   void *data)
++				   void *xh)
+ {
+ 	/* reset devices in Connected or Closed state */
+ 	if (xen_hvm_domain())
+-		xenbus_reset_state();
++		xenbus_reset_state((xenhost_t *)xh);
+ 	/* Enumerate devices in xenstore and watch for changes. */
+ 	xenbus_probe_devices(&xenbus_frontend);
+-	register_xenbus_watch(&fe_watch);
++	register_xenbus_watch(xh, &fe_watch);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -475,12 +481,19 @@ static int __init xenbus_probe_frontend_init(void)
+ 
+ 	DPRINTK("");
+ 
++	if (xen_driver_domain() && xen_nested())
++		xenbus_frontend.xh = xh_remote;
++	else
++		xenbus_frontend.xh = xh_default;
++
+ 	/* Register ourselves with the kernel bus subsystem */
+-	err = bus_register(&xenbus_frontend.bus);
+-	if (err)
+-		return err;
++	if (xenbus_frontend.xh) {
++		err = bus_register(&xenbus_frontend.bus);
 +		if (err)
 +			return err;
+ 
+-	register_xenstore_notifier(&xenstore_notifier);
++		register_xenstore_notifier(xenbus_frontend.xh, &xenstore_notifier);
 +	}
-+	
-+	return 0;
+ 
+ 	return 0;
  }
- /* Starts after core_initcall so that xen_pvh_gnttab_setup can be called
-- * beforehand to initialize xen_auto_xlat_grant_frames. */
-+ * beforehand to initialize auto_xlat_grant_frames. */
- core_initcall_sync(__gnttab_init);
-diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
-index 9bc5bc07d4d3..827b790199fb 100644
---- a/include/xen/grant_table.h
-+++ b/include/xen/grant_table.h
-@@ -74,15 +74,16 @@ struct gntab_unmap_queue_data
- 	struct gnttab_unmap_grant_ref *unmap_ops;
- 	struct gnttab_unmap_grant_ref *kunmap_ops;
- 	struct page **pages;
-+	xenhost_t *xh;
- 	unsigned int count;
- 	unsigned int age;
- };
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 74c2b9416b88..35c771bea9b6 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -76,8 +76,6 @@ static DECLARE_WAIT_QUEUE_HEAD(xs_state_enter_wq);
+ /* Wait queue for suspend handling waiting for critical region being empty. */
+ static DECLARE_WAIT_QUEUE_HEAD(xs_state_exit_wq);
  
--int gnttab_init(void);
-+int gnttab_init(xenhost_t *xh);
- int gnttab_suspend(void);
- int gnttab_resume(void);
+-/* List of registered watches, and a lock to protect it. */
+-static LIST_HEAD(watches);
+ static DEFINE_SPINLOCK(watches_lock);
  
--int gnttab_grant_foreign_access(domid_t domid, unsigned long frame,
-+int gnttab_grant_foreign_access(xenhost_t *xh, domid_t domid, unsigned long frame,
- 				int readonly);
+ /* List of pending watch callback events, and a lock to protect it. */
+@@ -166,9 +164,9 @@ static int get_error(const char *errorstring)
+ 	return xsd_errors[i].errnum;
+ }
  
- /*
-@@ -90,7 +91,7 @@ int gnttab_grant_foreign_access(domid_t domid, unsigned long frame,
-  * longer in use.  Return 1 if the grant entry was freed, 0 if it is still in
-  * use.
-  */
--int gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly);
-+int gnttab_end_foreign_access_ref(xenhost_t *xh, grant_ref_t ref, int readonly);
- 
- /*
-  * Eventually end access through the given grant reference, and once that
-@@ -98,49 +99,49 @@ int gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly);
-  * immediately iff the grant entry is not in use, otherwise it will happen
-  * some time later.  page may be 0, in which case no freeing will occur.
-  */
--void gnttab_end_foreign_access(grant_ref_t ref, int readonly,
-+void gnttab_end_foreign_access(xenhost_t *xh, grant_ref_t ref, int readonly,
- 			       unsigned long page);
- 
--int gnttab_grant_foreign_transfer(domid_t domid, unsigned long pfn);
-+int gnttab_grant_foreign_transfer(xenhost_t *xh, domid_t domid, unsigned long pfn);
- 
--unsigned long gnttab_end_foreign_transfer_ref(grant_ref_t ref);
--unsigned long gnttab_end_foreign_transfer(grant_ref_t ref);
-+unsigned long gnttab_end_foreign_transfer_ref(xenhost_t *xh, grant_ref_t ref);
-+unsigned long gnttab_end_foreign_transfer(xenhost_t *xh, grant_ref_t ref);
- 
--int gnttab_query_foreign_access(grant_ref_t ref);
-+int gnttab_query_foreign_access(xenhost_t *xh, grant_ref_t ref);
- 
- /*
-  * operations on reserved batches of grant references
-  */
--int gnttab_alloc_grant_references(u16 count, grant_ref_t *pprivate_head);
-+int gnttab_alloc_grant_references(xenhost_t *xh, u16 count, grant_ref_t *pprivate_head);
- 
--void gnttab_free_grant_reference(grant_ref_t ref);
-+void gnttab_free_grant_reference(xenhost_t *xh, grant_ref_t ref);
- 
--void gnttab_free_grant_references(grant_ref_t head);
-+void gnttab_free_grant_references(xenhost_t *xh, grant_ref_t head);
- 
--int gnttab_empty_grant_references(const grant_ref_t *pprivate_head);
-+int gnttab_empty_grant_references(xenhost_t *xh, const grant_ref_t *pprivate_head);
- 
--int gnttab_claim_grant_reference(grant_ref_t *pprivate_head);
-+int gnttab_claim_grant_reference(xenhost_t *xh, grant_ref_t *pprivate_head);
- 
--void gnttab_release_grant_reference(grant_ref_t *private_head,
-+void gnttab_release_grant_reference(xenhost_t *xh, grant_ref_t *private_head,
- 				    grant_ref_t release);
- 
--void gnttab_request_free_callback(struct gnttab_free_callback *callback,
-+void gnttab_request_free_callback(xenhost_t *xh, struct gnttab_free_callback *callback,
- 				  void (*fn)(void *), void *arg, u16 count);
--void gnttab_cancel_free_callback(struct gnttab_free_callback *callback);
-+void gnttab_cancel_free_callback(xenhost_t *xh, struct gnttab_free_callback *callback);
- 
--void gnttab_grant_foreign_access_ref(grant_ref_t ref, domid_t domid,
-+void gnttab_grant_foreign_access_ref(xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 				     unsigned long frame, int readonly);
- 
- /* Give access to the first 4K of the page */
- static inline void gnttab_page_grant_foreign_access_ref_one(
--	grant_ref_t ref, domid_t domid,
-+	xenhost_t *xh, grant_ref_t ref, domid_t domid,
- 	struct page *page, int readonly)
+-static bool xenbus_ok(void)
++static bool xenbus_ok(struct xenstore_private *xs)
  {
--	gnttab_grant_foreign_access_ref(ref, domid, xen_page_to_gfn(page),
-+	gnttab_grant_foreign_access_ref(xh, ref, domid, xen_page_to_gfn(page),
- 					readonly);
+-	switch (xen_store_domain_type) {
++	switch (xs->domain_type) {
+ 	case XS_LOCAL:
+ 		switch (system_state) {
+ 		case SYSTEM_POWER_OFF:
+@@ -190,9 +188,9 @@ static bool xenbus_ok(void)
+ 	return false;
  }
  
--void gnttab_grant_foreign_transfer_ref(grant_ref_t, domid_t domid,
-+void gnttab_grant_foreign_transfer_ref(xenhost_t *xh, grant_ref_t, domid_t domid,
- 				       unsigned long pfn);
+-static bool test_reply(struct xb_req_data *req)
++static bool test_reply(struct xenstore_private *xs, struct xb_req_data *req)
+ {
+-	if (req->state == xb_req_state_got_reply || !xenbus_ok())
++	if (req->state == xb_req_state_got_reply || !xenbus_ok(xs))
+ 		return true;
  
- static inline void
-@@ -174,29 +175,28 @@ gnttab_set_unmap_op(struct gnttab_unmap_grant_ref *unmap, phys_addr_t addr,
- 	unmap->dev_bus_addr = 0;
+ 	/* Make sure to reread req->state each time. */
+@@ -201,12 +199,12 @@ static bool test_reply(struct xb_req_data *req)
+ 	return false;
  }
  
--int arch_gnttab_init(unsigned long nr_shared, unsigned long nr_status);
--int arch_gnttab_map_shared(xen_pfn_t *frames, unsigned long nr_gframes,
-+int arch_gnttab_init(xenhost_t *xh, unsigned long nr_shared, unsigned long nr_status);
-+int arch_gnttab_map_shared(xenhost_t *xh, xen_pfn_t *frames, unsigned long nr_gframes,
- 			   unsigned long max_nr_gframes,
- 			   void **__shared);
--int arch_gnttab_map_status(uint64_t *frames, unsigned long nr_gframes,
-+int arch_gnttab_map_status(xenhost_t *xh, uint64_t *frames, unsigned long nr_gframes,
- 			   unsigned long max_nr_gframes,
- 			   grant_status_t **__shared);
--void arch_gnttab_unmap(void *shared, unsigned long nr_gframes);
-+void arch_gnttab_unmap(xenhost_t *xh, void *shared, unsigned long nr_gframes);
+-static void *read_reply(struct xb_req_data *req)
++static void *read_reply(struct xenstore_private *xs, struct xb_req_data *req)
+ {
+ 	while (req->state != xb_req_state_got_reply) {
+-		wait_event(req->wq, test_reply(req));
++		wait_event(req->wq, test_reply(xs, req));
  
- struct grant_frames {
- 	xen_pfn_t *pfn;
- 	unsigned int count;
- 	void *vaddr;
- };
--extern struct grant_frames xen_auto_xlat_grant_frames;
--unsigned int gnttab_max_grant_frames(void);
--int gnttab_setup_auto_xlat_frames(phys_addr_t addr);
--void gnttab_free_auto_xlat_frames(void);
-+unsigned int gnttab_max_grant_frames(xenhost_t *xh);
-+int gnttab_setup_auto_xlat_frames(xenhost_t *xh, phys_addr_t addr);
-+void gnttab_free_auto_xlat_frames(xenhost_t *xh);
+-		if (!xenbus_ok())
++		if (!xenbus_ok(xs))
+ 			/*
+ 			 * If we are in the process of being shut-down there is
+ 			 * no point of trying to contact XenBus - it is either
+@@ -222,9 +220,10 @@ static void *read_reply(struct xb_req_data *req)
+ 	return req->body;
+ }
  
- #define gnttab_map_vaddr(map) ((void *)(map.host_virt_addr))
+-static void xs_send(struct xb_req_data *req, struct xsd_sockmsg *msg)
++static void xs_send(xenhost_t *xh, struct xb_req_data *req, struct xsd_sockmsg *msg)
+ {
+ 	bool notify;
++	struct xenstore_private *xs = xs_priv(xh);
  
--int gnttab_alloc_pages(int nr_pages, struct page **pages);
--void gnttab_free_pages(int nr_pages, struct page **pages);
-+int gnttab_alloc_pages(xenhost_t *xh, int nr_pages, struct page **pages);
-+void gnttab_free_pages(xenhost_t *xh, int nr_pages, struct page **pages);
+ 	req->msg = *msg;
+ 	req->err = 0;
+@@ -236,19 +235,19 @@ static void xs_send(struct xb_req_data *req, struct xsd_sockmsg *msg)
+ 	req->msg.req_id = xs_request_enter(req);
  
- #ifdef CONFIG_XEN_GRANT_DMA_ALLOC
- struct gnttab_dma_alloc_args {
-@@ -212,17 +212,17 @@ struct gnttab_dma_alloc_args {
- 	dma_addr_t dev_bus_addr;
- };
+ 	mutex_lock(&xb_write_mutex);
+-	list_add_tail(&req->list, &xb_write_list);
+-	notify = list_is_singular(&xb_write_list);
++	list_add_tail(&req->list, &xs->xb_write_list);
++	notify = list_is_singular(&xs->xb_write_list);
+ 	mutex_unlock(&xb_write_mutex);
  
--int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args);
--int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args);
-+int gnttab_dma_alloc_pages(xenhost_t *xh, struct gnttab_dma_alloc_args *args);
-+int gnttab_dma_free_pages(xenhost_t *xh, struct gnttab_dma_alloc_args *args);
- #endif
+ 	if (notify)
+-		wake_up(&xb_waitq);
++		wake_up(&xs->xb_waitq);
+ }
  
- int gnttab_pages_set_private(int nr_pages, struct page **pages);
- void gnttab_pages_clear_private(int nr_pages, struct page **pages);
+-static void *xs_wait_for_reply(struct xb_req_data *req, struct xsd_sockmsg *msg)
++static void *xs_wait_for_reply(struct xenstore_private *xs, struct xb_req_data *req, struct xsd_sockmsg *msg)
+ {
+ 	void *ret;
  
--int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
-+int gnttab_map_refs(xenhost_t *xh, struct gnttab_map_grant_ref *map_ops,
- 		    struct gnttab_map_grant_ref *kmap_ops,
- 		    struct page **pages, unsigned int count);
--int gnttab_unmap_refs(struct gnttab_unmap_grant_ref *unmap_ops,
-+int gnttab_unmap_refs(xenhost_t *xh, struct gnttab_unmap_grant_ref *unmap_ops,
- 		      struct gnttab_unmap_grant_ref *kunmap_ops,
- 		      struct page **pages, unsigned int count);
- void gnttab_unmap_refs_async(struct gntab_unmap_queue_data* item);
-@@ -238,8 +238,8 @@ int gnttab_unmap_refs_sync(struct gntab_unmap_queue_data *item);
-  * Return value in each iand every status field of the batch guaranteed
-  * to not be GNTST_eagain.
+-	ret = read_reply(req);
++	ret = read_reply(xs, req);
+ 
+ 	xs_request_exit(req);
+ 
+@@ -271,7 +270,7 @@ static void xs_wake_up(struct xb_req_data *req)
+ 	wake_up(&req->wq);
+ }
+ 
+-int xenbus_dev_request_and_reply(struct xsd_sockmsg *msg, void *par)
++int xenbus_dev_request_and_reply(xenhost_t *xh, struct xsd_sockmsg *msg, void *par)
+ {
+ 	struct xb_req_data *req;
+ 	struct kvec *vec;
+@@ -289,14 +288,15 @@ int xenbus_dev_request_and_reply(struct xsd_sockmsg *msg, void *par)
+ 	req->cb = xenbus_dev_queue_reply;
+ 	req->par = par;
+ 
+-	xs_send(req, msg);
++	xs_send(xh, req, msg);
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL(xenbus_dev_request_and_reply);
+ 
+ /* Send message to xs, get kmalloc'ed reply.  ERR_PTR() on error. */
+-static void *xs_talkv(struct xenbus_transaction t,
++static void *xs_talkv(xenhost_t *xh,
++		      struct xenbus_transaction t,
+ 		      enum xsd_sockmsg_type type,
+ 		      const struct kvec *iovec,
+ 		      unsigned int num_vecs,
+@@ -307,6 +307,7 @@ static void *xs_talkv(struct xenbus_transaction t,
+ 	void *ret = NULL;
+ 	unsigned int i;
+ 	int err;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+ 	req = kmalloc(sizeof(*req), GFP_NOIO | __GFP_HIGH);
+ 	if (!req)
+@@ -323,9 +324,9 @@ static void *xs_talkv(struct xenbus_transaction t,
+ 	for (i = 0; i < num_vecs; i++)
+ 		msg.len += iovec[i].iov_len;
+ 
+-	xs_send(req, &msg);
++	xs_send(xh, req, &msg);
+ 
+-	ret = xs_wait_for_reply(req, &msg);
++	ret = xs_wait_for_reply(xs, req, &msg);
+ 	if (len)
+ 		*len = msg.len;
+ 
+@@ -348,7 +349,7 @@ static void *xs_talkv(struct xenbus_transaction t,
+ }
+ 
+ /* Simplified version of xs_talkv: single message. */
+-static void *xs_single(struct xenbus_transaction t,
++static void *xs_single(xenhost_t *xh, struct xenbus_transaction t,
+ 		       enum xsd_sockmsg_type type,
+ 		       const char *string,
+ 		       unsigned int *len)
+@@ -357,7 +358,7 @@ static void *xs_single(struct xenbus_transaction t,
+ 
+ 	iovec.iov_base = (void *)string;
+ 	iovec.iov_len = strlen(string) + 1;
+-	return xs_talkv(t, type, &iovec, 1, len);
++	return xs_talkv(xh, t, type, &iovec, 1, len);
+ }
+ 
+ /* Many commands only need an ack, don't care what it says. */
+@@ -415,7 +416,7 @@ static char **split(char *strings, unsigned int len, unsigned int *num)
+ 	return ret;
+ }
+ 
+-char **xenbus_directory(struct xenbus_transaction t,
++char **xenbus_directory(xenhost_t *xh, struct xenbus_transaction t,
+ 			const char *dir, const char *node, unsigned int *num)
+ {
+ 	char *strings, *path;
+@@ -425,7 +426,7 @@ char **xenbus_directory(struct xenbus_transaction t,
+ 	if (IS_ERR(path))
+ 		return (char **)path;
+ 
+-	strings = xs_single(t, XS_DIRECTORY, path, &len);
++	strings = xs_single(xh, t, XS_DIRECTORY, path, &len);
+ 	kfree(path);
+ 	if (IS_ERR(strings))
+ 		return (char **)strings;
+@@ -435,13 +436,13 @@ char **xenbus_directory(struct xenbus_transaction t,
+ EXPORT_SYMBOL_GPL(xenbus_directory);
+ 
+ /* Check if a path exists. Return 1 if it does. */
+-int xenbus_exists(struct xenbus_transaction t,
++int xenbus_exists(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node)
+ {
+ 	char **d;
+ 	int dir_n;
+ 
+-	d = xenbus_directory(t, dir, node, &dir_n);
++	d = xenbus_directory(xh, t, dir, node, &dir_n);
+ 	if (IS_ERR(d))
+ 		return 0;
+ 	kfree(d);
+@@ -453,7 +454,7 @@ EXPORT_SYMBOL_GPL(xenbus_exists);
+  * Returns a kmalloced value: call free() on it after use.
+  * len indicates length in bytes.
   */
--void gnttab_batch_map(struct gnttab_map_grant_ref *batch, unsigned count);
--void gnttab_batch_copy(struct gnttab_copy *batch, unsigned count);
-+void gnttab_batch_map(xenhost_t *xh, struct gnttab_map_grant_ref *batch, unsigned count);
-+void gnttab_batch_copy(xenhost_t *xh, struct gnttab_copy *batch, unsigned count);
+-void *xenbus_read(struct xenbus_transaction t,
++void *xenbus_read(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node, unsigned int *len)
+ {
+ 	char *path;
+@@ -463,7 +464,7 @@ void *xenbus_read(struct xenbus_transaction t,
+ 	if (IS_ERR(path))
+ 		return (void *)path;
  
+-	ret = xs_single(t, XS_READ, path, len);
++	ret = xs_single(xh, t, XS_READ, path, len);
+ 	kfree(path);
+ 	return ret;
+ }
+@@ -472,7 +473,7 @@ EXPORT_SYMBOL_GPL(xenbus_read);
+ /* Write the value of a single file.
+  * Returns -err on failure.
+  */
+-int xenbus_write(struct xenbus_transaction t,
++int xenbus_write(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node, const char *string)
+ {
+ 	const char *path;
+@@ -488,14 +489,14 @@ int xenbus_write(struct xenbus_transaction t,
+ 	iovec[1].iov_base = (void *)string;
+ 	iovec[1].iov_len = strlen(string);
  
- struct xen_page_foreign {
+-	ret = xs_error(xs_talkv(t, XS_WRITE, iovec, ARRAY_SIZE(iovec), NULL));
++	ret = xs_error(xs_talkv(xh, t, XS_WRITE, iovec, ARRAY_SIZE(iovec), NULL));
+ 	kfree(path);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(xenbus_write);
+ 
+ /* Create a new directory. */
+-int xenbus_mkdir(struct xenbus_transaction t,
++int xenbus_mkdir(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node)
+ {
+ 	char *path;
+@@ -505,14 +506,14 @@ int xenbus_mkdir(struct xenbus_transaction t,
+ 	if (IS_ERR(path))
+ 		return PTR_ERR(path);
+ 
+-	ret = xs_error(xs_single(t, XS_MKDIR, path, NULL));
++	ret = xs_error(xs_single(xh, t, XS_MKDIR, path, NULL));
+ 	kfree(path);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(xenbus_mkdir);
+ 
+ /* Destroy a file or directory (directories must be empty). */
+-int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node)
++int xenbus_rm(xenhost_t *xh,struct xenbus_transaction t, const char *dir, const char *node)
+ {
+ 	char *path;
+ 	int ret;
+@@ -521,7 +522,7 @@ int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node)
+ 	if (IS_ERR(path))
+ 		return PTR_ERR(path);
+ 
+-	ret = xs_error(xs_single(t, XS_RM, path, NULL));
++	ret = xs_error(xs_single(xh, t, XS_RM, path, NULL));
+ 	kfree(path);
+ 	return ret;
+ }
+@@ -530,11 +531,11 @@ EXPORT_SYMBOL_GPL(xenbus_rm);
+ /* Start a transaction: changes by others will not be seen during this
+  * transaction, and changes will not be visible to others until end.
+  */
+-int xenbus_transaction_start(struct xenbus_transaction *t)
++int xenbus_transaction_start(xenhost_t *xh, struct xenbus_transaction *t)
+ {
+ 	char *id_str;
+ 
+-	id_str = xs_single(XBT_NIL, XS_TRANSACTION_START, "", NULL);
++	id_str = xs_single(xh, XBT_NIL, XS_TRANSACTION_START, "", NULL);
+ 	if (IS_ERR(id_str))
+ 		return PTR_ERR(id_str);
+ 
+@@ -547,7 +548,7 @@ EXPORT_SYMBOL_GPL(xenbus_transaction_start);
+ /* End a transaction.
+  * If abandon is true, transaction is discarded instead of committed.
+  */
+-int xenbus_transaction_end(struct xenbus_transaction t, int abort)
++int xenbus_transaction_end(xenhost_t *xh, struct xenbus_transaction t, int abort)
+ {
+ 	char abortstr[2];
+ 
+@@ -556,19 +557,19 @@ int xenbus_transaction_end(struct xenbus_transaction t, int abort)
+ 	else
+ 		strcpy(abortstr, "T");
+ 
+-	return xs_error(xs_single(t, XS_TRANSACTION_END, abortstr, NULL));
++	return xs_error(xs_single(xh, t, XS_TRANSACTION_END, abortstr, NULL));
+ }
+ EXPORT_SYMBOL_GPL(xenbus_transaction_end);
+ 
+ /* Single read and scanf: returns -errno or num scanned. */
+-int xenbus_scanf(struct xenbus_transaction t,
++int xenbus_scanf(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node, const char *fmt, ...)
+ {
+ 	va_list ap;
+ 	int ret;
+ 	char *val;
+ 
+-	val = xenbus_read(t, dir, node, NULL);
++	val = xenbus_read(xh, t, dir, node, NULL);
+ 	if (IS_ERR(val))
+ 		return PTR_ERR(val);
+ 
+@@ -584,13 +585,13 @@ int xenbus_scanf(struct xenbus_transaction t,
+ EXPORT_SYMBOL_GPL(xenbus_scanf);
+ 
+ /* Read an (optional) unsigned value. */
+-unsigned int xenbus_read_unsigned(const char *dir, const char *node,
++unsigned int xenbus_read_unsigned(xenhost_t *xh, const char *dir, const char *node,
+ 				  unsigned int default_val)
+ {
+ 	unsigned int val;
+ 	int ret;
+ 
+-	ret = xenbus_scanf(XBT_NIL, dir, node, "%u", &val);
++	ret = xenbus_scanf(xh, XBT_NIL, dir, node, "%u", &val);
+ 	if (ret <= 0)
+ 		val = default_val;
+ 
+@@ -599,7 +600,7 @@ unsigned int xenbus_read_unsigned(const char *dir, const char *node,
+ EXPORT_SYMBOL_GPL(xenbus_read_unsigned);
+ 
+ /* Single printf and write: returns -errno or 0. */
+-int xenbus_printf(struct xenbus_transaction t,
++int xenbus_printf(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node, const char *fmt, ...)
+ {
+ 	va_list ap;
+@@ -613,7 +614,7 @@ int xenbus_printf(struct xenbus_transaction t,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	ret = xenbus_write(t, dir, node, buf);
++	ret = xenbus_write(xh, t, dir, node, buf);
+ 
+ 	kfree(buf);
+ 
+@@ -622,7 +623,7 @@ int xenbus_printf(struct xenbus_transaction t,
+ EXPORT_SYMBOL_GPL(xenbus_printf);
+ 
+ /* Takes tuples of names, scanf-style args, and void **, NULL terminated. */
+-int xenbus_gather(struct xenbus_transaction t, const char *dir, ...)
++int xenbus_gather(xenhost_t *xh, struct xenbus_transaction t, const char *dir, ...)
+ {
+ 	va_list ap;
+ 	const char *name;
+@@ -634,7 +635,7 @@ int xenbus_gather(struct xenbus_transaction t, const char *dir, ...)
+ 		void *result = va_arg(ap, void *);
+ 		char *p;
+ 
+-		p = xenbus_read(t, dir, name, NULL);
++		p = xenbus_read(xh, t, dir, name, NULL);
+ 		if (IS_ERR(p)) {
+ 			ret = PTR_ERR(p);
+ 			break;
+@@ -651,7 +652,7 @@ int xenbus_gather(struct xenbus_transaction t, const char *dir, ...)
+ }
+ EXPORT_SYMBOL_GPL(xenbus_gather);
+ 
+-static int xs_watch(const char *path, const char *token)
++static int xs_watch(xenhost_t *xh, const char *path, const char *token)
+ {
+ 	struct kvec iov[2];
+ 
+@@ -660,11 +661,11 @@ static int xs_watch(const char *path, const char *token)
+ 	iov[1].iov_base = (void *)token;
+ 	iov[1].iov_len = strlen(token) + 1;
+ 
+-	return xs_error(xs_talkv(XBT_NIL, XS_WATCH, iov,
++	return xs_error(xs_talkv(xh, XBT_NIL, XS_WATCH, iov,
+ 				 ARRAY_SIZE(iov), NULL));
+ }
+ 
+-static int xs_unwatch(const char *path, const char *token)
++static int xs_unwatch(xenhost_t *xh, const char *path, const char *token)
+ {
+ 	struct kvec iov[2];
+ 
+@@ -673,24 +674,25 @@ static int xs_unwatch(const char *path, const char *token)
+ 	iov[1].iov_base = (char *)token;
+ 	iov[1].iov_len = strlen(token) + 1;
+ 
+-	return xs_error(xs_talkv(XBT_NIL, XS_UNWATCH, iov,
++	return xs_error(xs_talkv(xh, XBT_NIL, XS_UNWATCH, iov,
+ 				 ARRAY_SIZE(iov), NULL));
+ }
+ 
+-static struct xenbus_watch *find_watch(const char *token)
++static struct xenbus_watch *find_watch(xenhost_t *xh, const char *token)
+ {
+ 	struct xenbus_watch *i, *cmp;
++	struct xenstore_private *xs = xs_priv(xh);
+ 
+ 	cmp = (void *)simple_strtoul(token, NULL, 16);
+ 
+-	list_for_each_entry(i, &watches, list)
++	list_for_each_entry(i, &xs->watches, list)
+ 		if (i == cmp)
+ 			return i;
+ 
+ 	return NULL;
+ }
+ 
+-int xs_watch_msg(struct xs_watch_event *event)
++int xs_watch_msg(xenhost_t *xh, struct xs_watch_event *event)
+ {
+ 	if (count_strings(event->body, event->len) != 2) {
+ 		kfree(event);
+@@ -700,7 +702,7 @@ int xs_watch_msg(struct xs_watch_event *event)
+ 	event->token = (const char *)strchr(event->body, '\0') + 1;
+ 
+ 	spin_lock(&watches_lock);
+-	event->handle = find_watch(event->token);
++	event->handle = find_watch(xh, event->token);
+ 	if (event->handle != NULL) {
+ 		spin_lock(&watch_events_lock);
+ 		list_add_tail(&event->list, &watch_events);
+@@ -719,7 +721,7 @@ int xs_watch_msg(struct xs_watch_event *event)
+  * so if we are running on anything older than 4 do not attempt to read
+  * control/platform-feature-xs_reset_watches.
+  */
+-static bool xen_strict_xenbus_quirk(void)
++static bool xen_strict_xenbus_quirk(xenhost_t *xh)
+ {
+ #ifdef CONFIG_X86
+ 	uint32_t eax, ebx, ecx, edx, base;
+@@ -733,42 +735,44 @@ static bool xen_strict_xenbus_quirk(void)
+ 	return false;
+ 
+ }
+-static void xs_reset_watches(void)
++static void xs_reset_watches(xenhost_t *xh)
+ {
+ 	int err;
+ 
+ 	if (!xen_hvm_domain() || xen_initial_domain())
+ 		return;
+ 
+-	if (xen_strict_xenbus_quirk())
++	if (xen_strict_xenbus_quirk(xh))
+ 		return;
+ 
+-	if (!xenbus_read_unsigned("control",
++	if (!xenbus_read_unsigned(xh, "control",
+ 				  "platform-feature-xs_reset_watches", 0))
+ 		return;
+ 
+-	err = xs_error(xs_single(XBT_NIL, XS_RESET_WATCHES, "", NULL));
++	err = xs_error(xs_single(xh, XBT_NIL, XS_RESET_WATCHES, "", NULL));
+ 	if (err && err != -EEXIST)
+ 		pr_warn("xs_reset_watches failed: %d\n", err);
+ }
+ 
+ /* Register callback to watch this node. */
+-int register_xenbus_watch(struct xenbus_watch *watch)
++int register_xenbus_watch(xenhost_t *xh, struct xenbus_watch *watch)
+ {
+ 	/* Pointer in ascii is the token. */
+ 	char token[sizeof(watch) * 2 + 1];
++	struct xenstore_private *xs = xs_priv(xh);
+ 	int err;
+ 
+ 	sprintf(token, "%lX", (long)watch);
++	watch->xh = xh;
+ 
+ 	down_read(&xs_watch_rwsem);
+ 
+ 	spin_lock(&watches_lock);
+-	BUG_ON(find_watch(token));
+-	list_add(&watch->list, &watches);
++	BUG_ON(find_watch(xh, token));
++	list_add(&watch->list, &xs->watches);
+ 	spin_unlock(&watches_lock);
+ 
+-	err = xs_watch(watch->node, token);
++	err = xs_watch(xh, watch->node, token);
+ 
+ 	if (err) {
+ 		spin_lock(&watches_lock);
+@@ -782,7 +786,7 @@ int register_xenbus_watch(struct xenbus_watch *watch)
+ }
+ EXPORT_SYMBOL_GPL(register_xenbus_watch);
+ 
+-void unregister_xenbus_watch(struct xenbus_watch *watch)
++void unregister_xenbus_watch(xenhost_t *xh, struct xenbus_watch *watch)
+ {
+ 	struct xs_watch_event *event, *tmp;
+ 	char token[sizeof(watch) * 2 + 1];
+@@ -793,11 +797,11 @@ void unregister_xenbus_watch(struct xenbus_watch *watch)
+ 	down_read(&xs_watch_rwsem);
+ 
+ 	spin_lock(&watches_lock);
+-	BUG_ON(!find_watch(token));
++	BUG_ON(!find_watch(xh, token));
+ 	list_del(&watch->list);
+ 	spin_unlock(&watches_lock);
+ 
+-	err = xs_unwatch(watch->node, token);
++	err = xs_unwatch(xh, watch->node, token);
+ 	if (err)
+ 		pr_warn("Failed to release watch %s: %i\n", watch->node, err);
+ 
+@@ -831,24 +835,29 @@ void xs_suspend(void)
+ 	mutex_lock(&xs_response_mutex);
+ }
+ 
+-void xs_resume(void)
++void xs_resume()
+ {
+ 	struct xenbus_watch *watch;
+ 	char token[sizeof(watch) * 2 + 1];
++	xenhost_t **xh;
+ 
+-	xb_init_comms();
++	for_each_xenhost(xh) {
++		struct xenstore_private *xs = xs_priv(*xh);
+ 
+-	mutex_unlock(&xs_response_mutex);
++		xb_init_comms(*xh);
+ 
+-	xs_suspend_exit();
++		mutex_unlock(&xs_response_mutex);
+ 
+-	/* No need for watches_lock: the xs_watch_rwsem is sufficient. */
+-	list_for_each_entry(watch, &watches, list) {
+-		sprintf(token, "%lX", (long)watch);
+-		xs_watch(watch->node, token);
++		xs_suspend_exit();
++
++		/* No need for watches_lock: the xs_watch_rwsem is sufficient. */
++		list_for_each_entry(watch, &xs->watches, list) {
++			sprintf(token, "%lX", (long)watch);
++			xs_watch(*xh, watch->node, token);
++		}
++
++		up_write(&xs_watch_rwsem);
+ 	}
+-
+-	up_write(&xs_watch_rwsem);
+ }
+ 
+ void xs_suspend_cancel(void)
+@@ -905,13 +914,18 @@ static int xs_reboot_notify(struct notifier_block *nb,
+ 			    unsigned long code, void *unused)
+ {
+ 	struct xb_req_data *req;
++	xenhost_t **xh;
+ 
+-	mutex_lock(&xb_write_mutex);
+-	list_for_each_entry(req, &xs_reply_list, list)
+-		wake_up(&req->wq);
+-	list_for_each_entry(req, &xb_write_list, list)
+-		wake_up(&req->wq);
+-	mutex_unlock(&xb_write_mutex);
++	for_each_xenhost(xh) {
++		struct xenstore_private *xs = xs_priv(*xh);
++
++		mutex_lock(&xb_write_mutex);
++		list_for_each_entry(req, &xs->reply_list, list)
++			wake_up(&req->wq);
++		list_for_each_entry(req, &xs->xb_write_list, list)
++			wake_up(&req->wq);
++		mutex_unlock(&xb_write_mutex);
++	}
+ 	return NOTIFY_DONE;
+ }
+ 
+@@ -919,15 +933,17 @@ static struct notifier_block xs_reboot_nb = {
+ 	.notifier_call = xs_reboot_notify,
+ };
+ 
+-int xs_init(void)
++int xs_init(xenhost_t *xh)
+ {
+ 	int err;
+ 	struct task_struct *task;
+ 
+-	register_reboot_notifier(&xs_reboot_nb);
++	if (xh->type != xenhost_r2)
++		/* Needs to be moved out */
++		register_reboot_notifier(&xs_reboot_nb);
+ 
+ 	/* Initialize the shared memory rings to talk to xenstored */
+-	err = xb_init_comms();
++	err = xb_init_comms(xh);
+ 	if (err)
+ 		return err;
+ 
+@@ -936,7 +952,7 @@ int xs_init(void)
+ 		return PTR_ERR(task);
+ 
+ 	/* shutdown watches for kexec boot */
+-	xs_reset_watches();
++	xs_reset_watches(xh);
+ 
+ 	return 0;
+ }
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index 75be9059893f..3ba2f6b1e196 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -204,6 +204,9 @@ int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
+ int xen_xlate_map_ballooned_pages(xen_pfn_t **pfns, void **vaddr,
+ 				  unsigned long nr_grant_frames);
+ 
++int xen_hvm_setup_xs(xenhost_t *xh);
++int xen_pv_setup_xs(xenhost_t *xh);
++
+ bool xen_running_on_version_or_later(unsigned int major, unsigned int minor);
+ 
+ efi_status_t xen_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc);
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 869c816d5f8c..8f8c39008e15 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -43,6 +43,7 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <xen/interface/xen.h>
++#include <xen/xenhost.h>
+ #include <xen/interface/grant_table.h>
+ #include <xen/interface/io/xenbus.h>
+ #include <xen/interface/io/xs_wire.h>
+@@ -58,6 +59,8 @@ struct xenbus_watch
+ 
+ 	/* Path being watched. */
+ 	const char *node;
++	/* On xenhost. */
++	xenhost_t *xh;
+ 
+ 	/* Callback (executed in a process context with no locks held). */
+ 	void (*callback)(struct xenbus_watch *,
+@@ -70,6 +73,7 @@ struct xenbus_device {
+ 	const char *devicetype;
+ 	const char *nodename;
+ 	const char *otherend;
++	xenhost_t *xh;
+ 	int otherend_id;
+ 	struct xenbus_watch otherend_watch;
+ 	struct device dev;
+@@ -78,6 +82,13 @@ struct xenbus_device {
+ 	struct work_struct work;
+ };
+ 
++enum xenstore_init {
++	XS_UNKNOWN,
++	XS_PV,
++	XS_HVM,
++	XS_LOCAL,
++};
++
+ static inline struct xenbus_device *to_xenbus_device(struct device *dev)
+ {
+ 	return container_of(dev, struct xenbus_device, dev);
+@@ -133,52 +144,51 @@ struct xenbus_transaction
+ /* Nil transaction ID. */
+ #define XBT_NIL ((struct xenbus_transaction) { 0 })
+ 
+-char **xenbus_directory(struct xenbus_transaction t,
++char **xenbus_directory(xenhost_t *xh, struct xenbus_transaction t,
+ 			const char *dir, const char *node, unsigned int *num);
+-void *xenbus_read(struct xenbus_transaction t,
++void *xenbus_read(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node, unsigned int *len);
+-int xenbus_write(struct xenbus_transaction t,
++int xenbus_write(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node, const char *string);
+-int xenbus_mkdir(struct xenbus_transaction t,
++int xenbus_mkdir(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node);
+-int xenbus_exists(struct xenbus_transaction t,
++int xenbus_exists(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node);
+-int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node);
+-int xenbus_transaction_start(struct xenbus_transaction *t);
+-int xenbus_transaction_end(struct xenbus_transaction t, int abort);
++int xenbus_rm(xenhost_t *xh, struct xenbus_transaction t, const char *dir, const char *node);
++int xenbus_transaction_start(xenhost_t *xh, struct xenbus_transaction *t);
++int xenbus_transaction_end(xenhost_t *xh, struct xenbus_transaction t, int abort);
+ 
+ /* Single read and scanf: returns -errno or num scanned if > 0. */
+-__scanf(4, 5)
+-int xenbus_scanf(struct xenbus_transaction t,
++__scanf(5, 6)
++int xenbus_scanf(xenhost_t *xh, struct xenbus_transaction t,
+ 		 const char *dir, const char *node, const char *fmt, ...);
+ 
+ /* Read an (optional) unsigned value. */
+-unsigned int xenbus_read_unsigned(const char *dir, const char *node,
++unsigned int xenbus_read_unsigned(xenhost_t *xh, const char *dir, const char *node,
+ 				  unsigned int default_val);
+ 
+ /* Single printf and write: returns -errno or 0. */
+-__printf(4, 5)
+-int xenbus_printf(struct xenbus_transaction t,
++__printf(5, 6)
++int xenbus_printf(xenhost_t *xh, struct xenbus_transaction t,
+ 		  const char *dir, const char *node, const char *fmt, ...);
+ 
+ /* Generic read function: NULL-terminated triples of name,
+  * sprintf-style type string, and pointer. Returns 0 or errno.*/
+-int xenbus_gather(struct xenbus_transaction t, const char *dir, ...);
++int xenbus_gather(xenhost_t *xh, struct xenbus_transaction t, const char *dir, ...);
+ 
+ /* notifer routines for when the xenstore comes up */
+-extern int xenstored_ready;
+-int register_xenstore_notifier(struct notifier_block *nb);
+-void unregister_xenstore_notifier(struct notifier_block *nb);
++int register_xenstore_notifier(xenhost_t *xh, struct notifier_block *nb);
++void unregister_xenstore_notifier(xenhost_t *xh, struct notifier_block *nb);
+ 
+-int register_xenbus_watch(struct xenbus_watch *watch);
+-void unregister_xenbus_watch(struct xenbus_watch *watch);
++int register_xenbus_watch(xenhost_t *xh, struct xenbus_watch *watch);
++void unregister_xenbus_watch(xenhost_t *xh, struct xenbus_watch *watch);
+ void xs_suspend(void);
+ void xs_resume(void);
+ void xs_suspend_cancel(void);
+ 
+ struct work_struct;
+ 
+-void xenbus_probe(struct work_struct *);
++void __xenbus_probe(void *xs);
+ 
+ #define XENBUS_IS_ERR_READ(str) ({			\
+ 	if (!IS_ERR(str) && strlen(str) == 0) {		\
+@@ -218,7 +228,7 @@ int xenbus_unmap_ring(struct xenbus_device *dev,
+ int xenbus_alloc_evtchn(struct xenbus_device *dev, int *port);
+ int xenbus_free_evtchn(struct xenbus_device *dev, int port);
+ 
+-enum xenbus_state xenbus_read_driver_state(const char *path);
++enum xenbus_state xenbus_read_driver_state(struct xenbus_device *dev, const char *path);
+ 
+ __printf(3, 4)
+ void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+@@ -230,7 +240,5 @@ int xenbus_dev_is_online(struct xenbus_device *dev);
+ int xenbus_frontend_closed(struct xenbus_device *dev);
+ 
+ extern const struct file_operations xen_xenbus_fops;
+-extern struct xenstore_domain_interface *xen_store_interface;
+-extern int xen_store_evtchn;
+ 
+ #endif /* _XEN_XENBUS_H */
 diff --git a/include/xen/xenhost.h b/include/xen/xenhost.h
-index 9e08627a9e3e..acee0c7872b6 100644
+index acee0c7872b6..91574ecaad6c 100644
 --- a/include/xen/xenhost.h
 +++ b/include/xen/xenhost.h
-@@ -129,6 +129,17 @@ typedef struct {
- 		const struct evtchn_ops *evtchn_ops;
- 		int **evtchn_to_irq;
+@@ -140,6 +140,9 @@ typedef struct {
+ 		void *gnttab_status_vm_area;
+ 		void *auto_xlat_grant_frames;
  	};
 +
-+	/* grant table private state */
-+	struct {
-+		/* private to drivers/xen/grant-table.c */
-+		void *gnttab_private;
-+
-+		/* x86/xen/grant-table.c */
-+		void *gnttab_shared_vm_area;
-+		void *gnttab_status_vm_area;
-+		void *auto_xlat_grant_frames;
-+	};
++	/* xenstore private state */
++	void *xenstore_private;
  } xenhost_t;
  
  typedef struct xenhost_ops {
+@@ -228,6 +231,17 @@ typedef struct xenhost_ops {
+ 	int (*alloc_ballooned_pages)(xenhost_t *xh, int nr_pages, struct page **pages);
+ 	void (*free_ballooned_pages)(xenhost_t *xh, int nr_pages, struct page **pages);
+ 
++	/*
++	 * xenbus: as part of xenbus-init, frontend/backend need to talk to the
++	 * correct xenbus.  This might be a local xenstore (backend) or might
++	 * be a XS_PV/XS_HVM interface (frontend). We bootstrap these with
++	 * evtchn/gfn parameters from (*setup_xs)().
++	 *
++	 * Once done, stash the xenhost_t * in xen_bus_type, xenbus_device or
++	 * xenbus_watch and then the frontend and backend devices implicitly
++	 * use the correct interface.
++	 */
++	int (*setup_xs)(xenhost_t *xh);
+ } xenhost_ops_t;
+ 
+ extern xenhost_t *xh_default, *xh_remote;
+@@ -279,4 +293,10 @@ static inline void xenhost_probe_vcpu_id(xenhost_t *xh, int cpu)
+ 	(xh->ops->probe_vcpu_id)(xh, cpu);
+ }
+ 
++static inline void xenhost_setup_xs(xenhost_t *xh)
++{
++	if (xh)
++		(xh->ops->setup_xs)(xh);
++}
++
+ #endif /* __XENHOST_H */
 -- 
 2.20.1
 
