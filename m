@@ -2,39 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29A619080
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10BCF19055
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfEISp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:45:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
+        id S1726857AbfEISoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:44:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbfEISpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:45:23 -0400
+        id S1726620AbfEISoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:44:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0BB62183E;
-        Thu,  9 May 2019 18:45:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D4F217F9;
+        Thu,  9 May 2019 18:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427523;
-        bh=aunbj7sVZYdk5uShv0beEqqx7aXlJ8EvIbMw5RVle4U=;
+        s=default; t=1557427439;
+        bh=LGAhb0XVNpNAqY9HlBgh795ngOO2fOLQnYlsqo+okTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XxwrJSurtG2YA62hASCbGIFTMjV8bM4LSSukQ2vR6je3HLKAtZMPU/SN+HqrUI4eC
-         2mkHJb7rRZwAV7fStH9KPeu1k6SAIV229LL7POtOC0CbloMgfpa5OWo7fECGXbRfYj
-         xk3HwZXaDp0mk7FZxiEcp0JUOX+dWCvWLIZsL/zM=
+        b=oXrOpiw/jptYk8e71H0rabtYUwpSJPohXcxOeDS/e8P4J76GNEl7NyNOcTaZ6fY/X
+         tZUbEu+N+soXakmPm6JLkMqkcn1cQZEd2Qh9o7Hm6JVNq5lim9NkI1ilJIG6RFPNO0
+         WsQnpdbJ9m+FFebSFNoe/95z/dUEjBdkd8XMr2gs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Annaliese McDermond <nh6z@nh6z.net>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        NeilBrown <neilb@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Qiaowei Ren <qiaowei.ren@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 14/42] ASoC: tlv320aic32x4: Fix Common Pins
+Subject: [PATCH 4.9 11/28] linux/kernel.h: Use parentheses around argument in u64_to_user_ptr()
 Date:   Thu,  9 May 2019 20:42:03 +0200
-Message-Id: <20190509181255.515469856@linuxfoundation.org>
+Message-Id: <20190509181252.610186026@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +56,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c63adb28f6d913310430f14c69f0a2ea55eed0cc ]
+[ Upstream commit a0fe2c6479aab5723239b315ef1b552673f434a3 ]
 
-The common pins were mistakenly not added to the DAPM graph.
-Adding these pins will allow valid graphs to be created.
+Use parentheses around uses of the argument in u64_to_user_ptr() to
+ensure that the cast doesn't apply to part of the argument.
 
-Signed-off-by: Annaliese McDermond <nh6z@nh6z.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+There are existing uses of the macro of the form
+
+  u64_to_user_ptr(A + B)
+
+which expands to
+
+  (void __user *)(uintptr_t)A + B
+
+(the cast applies to the first operand of the addition, the addition
+is a pointer addition). This happens to still work as intended, the
+semantic difference doesn't cause a difference in behavior.
+
+But I want to use u64_to_user_ptr() with a ternary operator in the
+argument, like so:
+
+  u64_to_user_ptr(A ? B : C)
+
+This currently doesn't work as intended.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: NeilBrown <neilb@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Qiaowei Ren <qiaowei.ren@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190329214652.258477-1-jannh@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/tlv320aic32x4.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/kernel.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
-index e694f5f04eb90..628621fc3386c 100644
---- a/sound/soc/codecs/tlv320aic32x4.c
-+++ b/sound/soc/codecs/tlv320aic32x4.c
-@@ -462,6 +462,8 @@ static const struct snd_soc_dapm_widget aic32x4_dapm_widgets[] = {
- 	SND_SOC_DAPM_INPUT("IN2_R"),
- 	SND_SOC_DAPM_INPUT("IN3_L"),
- 	SND_SOC_DAPM_INPUT("IN3_R"),
-+	SND_SOC_DAPM_INPUT("CM_L"),
-+	SND_SOC_DAPM_INPUT("CM_R"),
- };
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 61054f12be7cf..d83fc669eeac7 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -55,8 +55,8 @@
  
- static const struct snd_soc_dapm_route aic32x4_dapm_routes[] = {
+ #define u64_to_user_ptr(x) (		\
+ {					\
+-	typecheck(u64, x);		\
+-	(void __user *)(uintptr_t)x;	\
++	typecheck(u64, (x));		\
++	(void __user *)(uintptr_t)(x);	\
+ }					\
+ )
+ 
 -- 
 2.20.1
 
