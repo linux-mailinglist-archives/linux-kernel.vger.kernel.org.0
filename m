@@ -2,82 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C50818FAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E0018FBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 19:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfEIRyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 13:54:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34887 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfEIRyt (ORCPT
+        id S1726764AbfEIR5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 13:57:14 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39992 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfEIR5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 13:54:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t87so1714126pfa.2;
-        Thu, 09 May 2019 10:54:48 -0700 (PDT)
+        Thu, 9 May 2019 13:57:14 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d31so1588019pgl.7;
+        Thu, 09 May 2019 10:57:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NPJnsmnbbtxrDZHRLqJxmq/pGvnzWodzxoeaAVrrx0w=;
-        b=csRbYuV/YQoG/m+PWbg4GM2ZtJqNIUV1JifY7zPrpNQY6L65J49DjbipxYbSTdvFxA
-         bY25ECdIsv4bwlI5FCFEqrBuj9JVQFhGCNdjZf0XAGLsxQzeifRXrwv/9KLzW0wO4RxY
-         xS6AOzTlPRwOtj/11JTMhtd2h1owlF4aLdMROQCnZLvUQcx79HI4PhDHPNwrkT8iiSsu
-         iR1STNen+iOJaGlvePjFIPQKJQ1C+rzEuXq+Kq9peARyZhn8oK74z3+NDJP39P6LKVkw
-         3DY3++WOl6NFmXT1bfXq1VTScsts1uz+v7xEVOolsBO0IX4N7ZaoGRZ+D1WVfePOPVs+
-         9SPQ==
+        bh=2/Ojxz6R9uaL2KTgaEJOCwL4nXhymGztvuWe0n46Oas=;
+        b=sqyPOTbmHW6d3BX5lQrXfvRvmVT8Vhf37Zr+ifzy1/AgKiStiC9VncCPXw53Es650A
+         o5ff9frbPDhp/mEsQfUpU1WVYwKXl1VyWBxUrh34SoAXBFueb9AmKn0EYOFI3WkecKmc
+         4m7bI1fs0aZtf1cckpad1DGFyfIbfTSL8ZwtCLnTbVxp/qJEARtpbyeqPH0M74Uur9RN
+         MrUQQaPCrDhOVJhLA5Xf9SpFspA9IdMg4l6f4F9cgHQ7iwGzzRdTQTAmZkA91yJ9lKBg
+         uu5SiC0pNRlwvSLyh92gOYpw+eg0QJd49eTZrnNyipIzxP3D2p51UUsLWOEUihg+ThZl
+         Lylg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NPJnsmnbbtxrDZHRLqJxmq/pGvnzWodzxoeaAVrrx0w=;
-        b=aRkQ5TIf/iJJ+7Y/YwN/lwMqVzpqSqcx2NataWUB0Ub1f0CsKEnXr+9Ot0Ncnv36Aq
-         Y963ZhIiJO/wsotk5QRZRbbVkE+zSKITLAotvABREB0oBpPPoBw1arEuzfRwVt+TMAYr
-         uV7LgB1lYn+FVXg3sysNj74qfC2iOTHXEiOxzAtRom6OlAwDjDqGWTnaj6xJPOr0S0Ky
-         Gma4kcLz9oPMdLCynP1m8DU6tql95i+UTSv51bNqrH7X2zObiU//sb+F6qCceRjM6jrD
-         iqTeZP4kYrBy73D8TT1JNLxGfFMSO4sYOgUi2B+r61izkYtBj6p4fQlYXU4FIy6bDW16
-         EAHw==
-X-Gm-Message-State: APjAAAWwWeQnMfv/k5r00rPZJ2MiL/+7EEXbEfdu55ADt3PRLl7qoz2m
-        q3gQ7B20ujeCqzZ6lyKZcvpZSwYj9DXcxO8QMCA=
-X-Google-Smtp-Source: APXvYqwi1wPIqbmZZ9yHN2HPLzSr760OaYUZkEDUjbE+SNIJqkqSVqtC/yTzd1bmML7aQj9bce4FOj2UjbfvcnTVTx4=
-X-Received: by 2002:a63:8e4b:: with SMTP id k72mr7533301pge.428.1557424488139;
- Thu, 09 May 2019 10:54:48 -0700 (PDT)
+        bh=2/Ojxz6R9uaL2KTgaEJOCwL4nXhymGztvuWe0n46Oas=;
+        b=eqp3xJqkySTq2Hw5VKtY8x/f4HxSX5DZmE32KIriTBZPXT2teuAWS2iTcBFZ0phlrW
+         canUwrxqZX0qxWwgq3U2cvrrdidn+ZZI8UE6gFIPPg0maWN3JGnq5gVCbSdfb/gKSnvY
+         VdwGOYonkxN5xAiQ5/FMicDYtdscwnXfW5FQq8t9vX8WzpzkgBjuAsdj0Dcw4zbtgNAa
+         XW7xj9bRq8bwtlACdtzcaZ5IwLoEysnsD+dX3WjXxRvIGDgZuEjM3KyHEx2SHzQbQ3oU
+         rbbliitFnVz8eG9VeNFaFv261Yd9FVKJL8QyVJwWTqh7iUR9+PwdqfCdS3nW0My5V4RV
+         Auxg==
+X-Gm-Message-State: APjAAAUu+XaSC6qhn/9oLAyUbQMu8VALSLP2RMfDLmm4vKmpofLJewGt
+        MH1DkTey8LVvujE41XOLs9uYBIfpeLkKgnLjdDQ=
+X-Google-Smtp-Source: APXvYqyrrXc8pqDrg9zaDFCNTR+gfH90uQMsb+/u8yUKI37oLarx+6vUJYbsY8E+vLUwj2oLEHjksfwOgak9JFyzC3k=
+X-Received: by 2002:aa7:8212:: with SMTP id k18mr7162450pfi.50.1557424633583;
+ Thu, 09 May 2019 10:57:13 -0700 (PDT)
 MIME-Version: 1.0
 References: <7acd57fe-604a-a96a-4ca2-a25bc88d6405@gmail.com>
- <7595c4f0-3dbb-2fe5-4daf-4b9a266f67d7@gmail.com> <CAHp75VdE7MBjyLj=9bS6oc5jc8+BC_hftWUJgZGG02iDd=saiQ@mail.gmail.com>
- <0d7f6a9e-d508-65ba-9646-39f1d1a42a13@gmail.com>
-In-Reply-To: <0d7f6a9e-d508-65ba-9646-39f1d1a42a13@gmail.com>
+ <d6ee51cc-eb0f-2bb9-fef9-f8b4bf849076@gmail.com> <CAHp75VfMXAyUpWTrEHnv1NcQcHch+RHehWYTjk6KMTbXbtppPg@mail.gmail.com>
+ <CAD8Lp46tCfi3ZCmmXZv3-ZDbon+6P8qC4GPR9Bt3uFFr=Sn4Cw@mail.gmail.com> <92518192-8cf0-7529-0c05-4b3e44ce04b7@gmail.com>
+In-Reply-To: <92518192-8cf0-7529-0c05-4b3e44ce04b7@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 9 May 2019 20:54:36 +0300
-Message-ID: <CAHp75VcgjF7uQAbdA74vivBaVvdto+1PXRX2_QZA=Gwu0BsAdA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/11] platform/x86: asus-wmi: Enhance detection of
- thermal data
+Date:   Thu, 9 May 2019 20:57:02 +0300
+Message-ID: <CAHp75Vdo80jfFt5s6KWK1dPJFAEa7BrQS_tcKLx6GPUrpQm+ag@mail.gmail.com>
+Subject: Re: [PATCH v3 04/11] platform/x86: asus-wmi: Improve DSTS WMI method
+ ID detection
 To:     Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>
-Cc:     Corentin Chary <corentin.chary@gmail.com>,
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
-        Daniel Drake <drake@endlessm.com>,
         acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 8:49 PM Yurii Pavlovskyi
+On Thu, May 9, 2019 at 8:29 PM Yurii Pavlovskyi
 <yurii.pavlovskyi@gmail.com> wrote:
-> On 08.05.19 15:58, Andy Shevchenko wrote:
+> On 08.05.19 15:36, Andy Shevchenko wrote:> On Fri, Apr 19, 2019 at 1:08 PM
+> Yurii Pavlovskyi
+> > <yurii.pavlovskyi@gmail.com> wrote:
+> >>         int rv;
+> >> +       char *wmi_uid;
+> >
+> > Keep them in reversed spruce order.
+>
+> What do you mean by that? Do you mean like this?
 
-> Yes, looking at this patch now I'd guess the refactoring there is really
-> misguided as it adds a lot more code than it removes, will drop it
-> completely and just add a new condition to the current check instead in
-> next version:
-> -               /* If value is zero, something is clearly wrong */
-> -               if (!value)
-> +               if (!value || value == 1)
+> + char *wmi_uid;
+> int rv;
 
-Perhaps here makes sense to explicitly show value == 0.
+Yes.
+
+> int err;
+
+Don't see this in the above, though.
+
+> >> +#define ASUS_WMI_METHODID_DSTS         0x53544344 /* Device STatuS
+> (DCTS) */
+> >
+> > It's not clear from the description what 'C' stands for.
+> > Is there any specification which describes the difference and actual
+> > abbreviations?
+> >
+> Not that I know of. Daniel had written some research in the previous
+> version thread regarding where it is used, but as I understand from current
+> implementation the functional difference is not really there, as it serves
+> the same purpose as DSTS, just for another hardware.
+>
+> On 09.05.19 08:08, Daniel Drake wrote:
+> > For clarity I think the constants could be renamed as
+> > ASUS_WMI_METHODID_DCTS and ASUS_WMI_METHODID_DSTS.
+> >
+> Agree, that'll be better.
+
+Also makes sense, but then fix up capitalization in the comment
+(perhaps "Device status" would be good in both cases).
 
 -- 
 With Best Regards,
