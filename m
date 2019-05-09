@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A512190AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F787190F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbfEISrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:47:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
+        id S1728510AbfEISuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:50:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727812AbfEISrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:47:24 -0400
+        id S1727484AbfEISuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:50:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95E38217D7;
-        Thu,  9 May 2019 18:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AD912177E;
+        Thu,  9 May 2019 18:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427644;
-        bh=NjlHdrYD8SEIGp3Pv0nvCnU+4Dwgg6GDZ3nj/qIUb2g=;
+        s=default; t=1557427851;
+        bh=7YSVyEHR9cbz+EdC4WPtdFFJbGSeC6z/9Zzn4FDvP2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E7tMIj+I8AlZhTn9RDBfu2Hp5YsRQrHhqyx5mvdmQ3j55vTRg0KF6zbrAlIddiZJ2
-         s7O8b5rNpcwR2eQI8zo5xiR+AuMxNGyYLNzsq67MWYfC6upWXyszuMTcaelHyOLHR1
-         w7VsgMDRZ1I6PyzadzPkQXp6sazG+1CjVHRZIb5Q=
+        b=vX/0eR5Yk9lvripiHPhe2CPazRbqBeNO2ph1nA8K/FJhTZrr3jsmD1lsZynKlmL+y
+         w1xBI0EPONKxOtSPmGYJXlHWh5Dp7M2JgQ+KQBhzNSiZfISgm5mhCjwdeL99ily4yl
+         jqEqOHCfq/+z1Kd9EWGVOkRpIRp5Ple3bdsEH4f0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olivier Moysan <olivier.moysan@st.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 09/66] ASoC: stm32: sai: fix iec958 controls indexation
+Subject: [PATCH 5.0 27/95] ASoC: cs4270: Set auto-increment bit for register writes
 Date:   Thu,  9 May 2019 20:41:44 +0200
-Message-Id: <20190509181302.872416549@linuxfoundation.org>
+Message-Id: <20190509181311.208741542@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5f8a1000c3e630c3ac06f1d664eeaa755bce8823 ]
+[ Upstream commit f0f2338a9cfaf71db895fa989ea7234e8a9b471d ]
 
-Allow indexation of sai iec958 controls according
-to device id.
+The CS4270 does not by default increment the register address on
+consecutive writes. During normal operation it doesn't matter as all
+register accesses are done individually. At resume time after suspend,
+however, the regcache code gathers the biggest possible block of
+registers to sync and sends them one on one go.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+To fix this, set the INCR bit in all cases.
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/codecs/cs4270.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 85c4b6d8e89db..e8df3cc341b5e 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -96,7 +96,7 @@
-  * @slot_mask: rx or tx active slots mask. set at init or at runtime
-  * @data_size: PCM data width. corresponds to PCM substream width.
-  * @spdif_frm_cnt: S/PDIF playback frame counter
-- * @snd_aes_iec958: iec958 data
-+ * @iec958: iec958 data
-  * @ctrl_lock: control lock
-  */
- struct stm32_sai_sub_data {
-@@ -888,11 +888,12 @@ static int stm32_sai_pcm_new(struct snd_soc_pcm_runtime *rtd,
- 			     struct snd_soc_dai *cpu_dai)
- {
- 	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
-+	struct snd_kcontrol_new knew = iec958_ctls;
+diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
+index 33d74f163bd75..793a14d586672 100644
+--- a/sound/soc/codecs/cs4270.c
++++ b/sound/soc/codecs/cs4270.c
+@@ -642,6 +642,7 @@ static const struct regmap_config cs4270_regmap = {
+ 	.reg_defaults =		cs4270_reg_defaults,
+ 	.num_reg_defaults =	ARRAY_SIZE(cs4270_reg_defaults),
+ 	.cache_type =		REGCACHE_RBTREE,
++	.write_flag_mask =	CS4270_I2C_INCR,
  
- 	if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
- 		dev_dbg(&sai->pdev->dev, "%s: register iec controls", __func__);
--		return snd_ctl_add(rtd->pcm->card,
--				   snd_ctl_new1(&iec958_ctls, sai));
-+		knew.device = rtd->pcm->device;
-+		return snd_ctl_add(rtd->pcm->card, snd_ctl_new1(&knew, sai));
- 	}
- 
- 	return 0;
+ 	.readable_reg =		cs4270_reg_is_readable,
+ 	.volatile_reg =		cs4270_reg_is_volatile,
 -- 
 2.20.1
 
