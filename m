@@ -2,81 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2569918DC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE9018DBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfEIQLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 12:11:55 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36779 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfEIQLk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 12:11:40 -0400
-Received: by mail-vs1-f68.google.com with SMTP id c76so1778473vsd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 09:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SGvBfOsWL3Wi+dnFRPgL2CSHV9bM5eevOaTWbHZZuDE=;
-        b=nzz1DnJ9BjEj1kg7AW6KUgUZlu7zGHA9FSRGd+vLU/L8x1Ifys0nieltpWrVOTytwS
-         EiyrtldcK6DQKdtKFp5okPwfl1DFhaKke1rI9Vb381WUOwsV9+l0ZKYix9zjra7pv/ON
-         nxoU2ZAcc9KIgPu90LxZfOub19uzYZ98Qy1Ss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SGvBfOsWL3Wi+dnFRPgL2CSHV9bM5eevOaTWbHZZuDE=;
-        b=Hfa7CrSI4udHJmYEp7f7ortaRz5/FjeIVOsGkixsx8vnKd9fr+niWMVOTJ4kGxejqh
-         BcHGOPWMmqMQvG/Z7qa6pjXE1t9p+0inTXMs0SdC+FJSy1pIoCX9n/Z/TOuFbG52hGmr
-         Vo9jfvlP+4vzt+DpGnTbynSucmpnUXBblhaJrsBEmgIWHRE7RJYNmq/Ye4q0a9CIY+bV
-         b86LMy0Af6gPM7n6Kz7SrmVj7Oosj/SV20iHZ19pMmaqu827MT2qnK+dKxYFJGbeddw1
-         de68fsj1+FSOIrwTtKeMmzBtWf5aPefaq55G42McAfBIbAO8fT3W5Hle2yvz+yWop5VD
-         cuVw==
-X-Gm-Message-State: APjAAAWyN3nh3wq4ZOUpRcnkjEFWuOUZK846PZkrehaRLaZiaN/gS6UR
-        /tl9r7VPEfSxkhjlturQ/CbAu1yZDBw=
-X-Google-Smtp-Source: APXvYqyYZVaVLgBzF9Nofvn6MUw92aUAh9foSdRyWctAk8BAttk4j1uhdYsWZ2XrBeM8+LnMP/Ktvg==
-X-Received: by 2002:a67:f849:: with SMTP id b9mr2889342vsp.188.1557418298523;
-        Thu, 09 May 2019 09:11:38 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id k128sm1365788vkb.54.2019.05.09.09.11.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 09:11:37 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id l17so722534vke.7
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 09:11:37 -0700 (PDT)
-X-Received: by 2002:a1f:9710:: with SMTP id z16mr2186751vkd.92.1557418296626;
- Thu, 09 May 2019 09:11:36 -0700 (PDT)
+        id S1726865AbfEIQLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 12:11:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45454 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbfEIQLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 12:11:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47635374;
+        Thu,  9 May 2019 09:11:46 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC37C3F6C4;
+        Thu,  9 May 2019 09:11:44 -0700 (PDT)
+Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain
+ type
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Tom Murphy <tmurphy@arista.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-2-baolu.lu@linux.intel.com>
+ <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+ <bba1f327-21b7-ed3c-8fd4-217ad97a6a7c@arm.com>
+ <3e0da076-4916-1a02-615c-927c1b3528b8@linux.intel.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <56205a21-c72f-a460-77a2-4bb4f46f6e08@arm.com>
+Date:   Thu, 9 May 2019 17:11:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190509064549.1302-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190509064549.1302-1-yamada.masahiro@socionext.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 9 May 2019 09:11:25 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKDELCthqEcnL3TvC8DtMnfoWnOd14wrKpcReUxubdMCg@mail.gmail.com>
-Message-ID: <CAGXu5jKDELCthqEcnL3TvC8DtMnfoWnOd14wrKpcReUxubdMCg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: add -Wvla flag unconditionally
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux@googlegroups.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3e0da076-4916-1a02-615c-927c1b3528b8@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 8, 2019 at 11:46 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> This flag is documented in the GCC 4.6 manual, and recognized by
-> Clang as well. Let's rip off the cc-option switch.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 09/05/2019 03:30, Lu Baolu wrote:
+> Hi Robin,
+> 
+> On 5/7/19 6:28 PM, Robin Murphy wrote:
+>> On 06/05/2019 16:32, Tom Murphy via iommu wrote:
+>>> The AMD driver already solves this problem and uses the generic
+>>> iommu_request_dm_for_dev function. It seems like both drivers have the
+>>> same problem and could use the same solution. Is there any reason we
+>>> can't have use the same solution for the intel and amd driver?
+>>>
+>>> Could we just  copy the implementation of the AMD driver? It would be
+>>> nice to have the same behavior across both drivers especially as we
+>>> move to make both drivers use more generic code.
+>>
+>> TBH I don't think the API really needs to be involved at all here. 
+>> Drivers can already not provide the requested default domain type if 
+>> they don't support it, so as long as the driver can ensure that the 
+>> device ends up with IOMMU or direct DMA ops as appropriate, I don't 
+>> see any great problem with drivers just returning a passthrough domain 
+>> when a DMA domain was requested, or vice versa (and logging a message 
+>> that the requested type was overridden). The only type that we really 
+>> do have to honour strictly is non-default (i.e. unmanaged) domains.
+> 
+> I agree with you that we only have to honor strictly the non-default
+> domains. But domain type saved in iommu_domain is consumed in iommu.c
+> and exposed to user through sysfs. It's not clean if the iommu driver
+> silently replace the default domain.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Right, I did get a bit ahead of myself there - the implicit step before 
+that is to fix default domain allocation so that the core actually 
+passes the relevant device which it has to hand, such that the IOMMU 
+drivers *can* make the right decision up-front.
 
--- 
-Kees Cook
+Robin.
