@@ -2,113 +2,348 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E899A18BF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CEE18C10
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfEIOiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:38:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56980 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbfEIOiV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:38:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BD3A960779; Thu,  9 May 2019 14:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557412699;
-        bh=m/9MIbexuBdPxCFPr6oX4nJ8E4mDFLipijNpmR33xf0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EJX8j9RinsUzb5V1hvPYqVOPERp2yIR1uT/0HBSVR0Q+O6CI0LwmKwYLq0rKQ4ies
-         zGVXpsPJRiso66Ua8hTfNohOiDKOVE8jhxX3gZ3wJ3mbNjHr2fSOS1Zb7OUpvuUkBI
-         Xt2uYLXIwmn05nTC5BwCkI2TIq8o8q0yazTOrfbQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from [10.204.78.109] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726783AbfEIOjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:39:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726187AbfEIOjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:39:08 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: gkohli@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9491D6016D;
-        Thu,  9 May 2019 14:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557412698;
-        bh=m/9MIbexuBdPxCFPr6oX4nJ8E4mDFLipijNpmR33xf0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KVLMA6xnVzPYMMB8pD2qrzzyV4Ipd559Wuq/B/1f73knIZWmE0yQ3DBOJxGoFNIz8
-         PcGr67buW45zYJd+Hi9O/tZuj7J0sKHqYyxJxSxSZgaXyJl25MdQLz0eLBFB6kqPO0
-         hUp/EkRKZzI8FDXFHswA4oppfmczHonEPG+nM4tc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9491D6016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH] driver core: Fix use-after-free and double free on glue
- directory
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Muchun Song <smuchun@gmail.com>
-Cc:     rafael@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        zhaowuyun@wingtech.com, linux-arm-msm@vger.kernel.org
-References: <20190423143258.96706-1-smuchun@gmail.com>
- <24b0fff3775147c04b006282727d94fea7f408b4.camel@kernel.crashing.org>
- <CAPSr9jHhwASv7=83hU+81mC0JJyuyt2gGxLmyzpCOfmc9vKgGQ@mail.gmail.com>
- <a37e7a49c3e7fa6ece2be2b76798fef3e51ade4e.camel@kernel.crashing.org>
- <CAPSr9jHCVCHNK+AmKkUBgs4dPC0UC5KdYKqMinkauyL3OL6qrQ@mail.gmail.com>
- <79fbc203bc9fa09d88ab2c4bff8635be4c293d49.camel@kernel.crashing.org>
- <CAPSr9jHw9hgAZo2TuDAKdSLEG1c6EtJG005MWxsxfnbsk1AXow@mail.gmail.com>
- <20190504153440.GB19654@kroah.com>
-From:   Gaurav Kohli <gkohli@codeaurora.org>
-Message-ID: <e79201c2-a00b-d226-adc2-62769ae1ad81@codeaurora.org>
-Date:   Thu, 9 May 2019 20:08:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mx1.redhat.com (Postfix) with ESMTPS id CB0DB18DF7C;
+        Thu,  9 May 2019 14:39:07 +0000 (UTC)
+Received: from jlaw-desktop.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B1F75DF4B;
+        Thu,  9 May 2019 14:39:05 +0000 (UTC)
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Subject: [PATCH v4 00/10] klp-convert livepatch build tooling
+Date:   Thu,  9 May 2019 10:38:49 -0400
+Message-Id: <20190509143859.9050-1-joe.lawrence@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190504153440.GB19654@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 09 May 2019 14:39:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi ,
+Hi all,
 
-Last patch will serialize the addition of child to parent directory, 
-won't it affect performance.
+Thanks for the feedback to v3, I've incorporated a few more bug fixes
+and style/spelling nitpicks for the series.  v4 is a bit of a resting
+place to collect loose ends before considering some heavier future work,
+namely arch-specific special section support.  See the TODO section
+below for more details.
 
-Regards
-Gaurav
 
-On 5/4/2019 9:04 PM, Greg KH wrote:
-> On Sat, May 04, 2019 at 10:47:07PM +0800, Muchun Song wrote:
->> Benjamin Herrenschmidt <benh@kernel.crashing.org> 于2019年5月2日周四 下午2:25写道：
->>
->>>>> The basic idea yes, the whole bool *locked is horrid though.
->>>>> Wouldn't it
->>>>> work to have a get_device_parent_locked that always returns with
->>>>> the mutex held,
->>>>> or just move the mutex to the caller or something simpler like this
->>>>> ?
->>>>>
->>>>
->>>> Greg and Rafael, do you have any suggestions for this? Or you also
->>>> agree with Ben?
->>>
->>> Ping guys ? This is worth fixing...
->>
->> I also agree with you. But Greg and Rafael seem to be high latency right now.
-> 
-> It's in my list of patches to get to, sorry, hopefully will dig out of
-> that next week with the buffer that the merge window provides me.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Previous versions
+-----------------
+
+RFC:
+  https://lore.kernel.org/lkml/cover.1477578530.git.jpoimboe@redhat.com/
+v2:
+  https://lore.kernel.org/lkml/f52d29f7-7d1b-ad3d-050b-a9fa8878faf2@redhat.com/
+v3:
+  https://lore.kernel.org/lkml/20190410155058.9437-1-joe.lawrence@redhat.com/
+
+
+Summary
+-------
+
+Livepatches may use symbols which are not contained in its own scope,
+and, because of that, may end up compiled with relocations that will
+only be resolved during module load. Yet, when the referenced symbols are
+not exported, solving this relocation requires information on the object
+that holds the symbol (either vmlinux or modules) and its position inside
+the object, as an object may contain multiple symbols with the same name.
+Providing such information must be done accordingly to what is specified
+in Documentation/livepatch/module-elf-format.txt.
+
+Currently, there is no trivial way to embed the required information as
+requested in the final livepatch elf object. klp-convert solves this
+problem in two different forms: (i) by relying on a symbol map, which is
+built during kernel compilation, to automatically infer the relocation
+targeted symbol, and, when such inference is not possible (ii) by using
+annotations in the elf object to convert the relocation accordingly to
+the specification, enabling it to be handled by the livepatch loader.
+
+Given the above, add support for symbol mapping in the form of
+Symbols.list file; add klp-convert tool; integrate klp-convert tool into
+kbuild; make livepatch modules discernible during kernel compilation
+pipeline; add data-structure and macros to enable users to annotate
+livepatch source code; make modpost stage compatible with livepatches;
+update livepatch-sample and update documentation.
+
+The patch was tested under three use-cases:
+
+use-case 1: There is a relocation in the lp that can be automatically
+resolved by klp-convert.  For example. see the saved_command_line
+variable in lib/livepatch/test_klp_convert2.c.
+
+use-case 2: There is a relocation in the lp that cannot be automatically
+resolved, as the name of the respective symbol appears in multiple
+objects. The livepatch contains an annotation to enable a correct
+relocation.  See the KLP_MODULE_RELOC / KLP_SYMPOS annotation sections
+in lib/livepatch/test_klp_convert{1,2}.c.
+
+use-case 3: There is a relocation in the lp that cannot be automatically
+resolved similarly as 2, but no annotation was provided in the
+livepatch, triggering an error during compilation.  Reproducible by
+removing the KLP_MODULE_RELOC / KLP_SYMPOS annotation sections in
+lib/livepatch/test_klp_convert{1,2}.c.
+
+
+Branches
+--------
+
+For review purposes, I posted two branches up to github:
+
+  1 - an expanded branch with changes separate from the original
+  https://github.com/joe-lawrence/linux/tree/klp-convert-v4-expanded
+
+  2 - a squashed branch of (1) that comprises v4:
+  https://github.com/joe-lawrence/linux/tree/klp-convert-v4
+
+Non-trivial commits in the expanded branch have some extra commentary
+and details for debugging in the commit message that were dropped when
+squashing into their respective parent commits.
+
+
+TODO
+----
+
+Summarized from the v3 thread, thanks to Miroslav, Joao and Josh for
+feedback and parsing my long braindumps.
+
+- Special (architecture specific) section support:
+
+  .altinstructions, .altinst_replacement
+  .parainstructions
+   __jump_table
+
+  We want to apply livepatch relocations *before* these sections are
+  processed.  Or more precisely, the special section data structures
+  entries which directly or indirectly involve livepatch relocations.
+  Those need to be extracted into "klp.arch" sections, a corresponding
+  rela section generated, and the kernel needs supporting code to handle
+  deferred processing.
+
+  Note that there is already x86-arch code present for handling
+  .altinstruction and .parainstructions sections in
+  arch/x86/kernel/livepatch.c.
+
+- Support for multiple homonym <object, name> symbols with unique
+  <position> values.  Consider a target module with symbol table that
+  looks like:
+
+     29: ... FILE    LOCAL  DEFAULT      ABS test_klp_convert_mod_a.c
+     32: ... FUNC    LOCAL  DEFAULT        3 get_homonym_string
+     33: ... OBJECT  LOCAL  DEFAULT        5 homonym_string
+     37: ... FILE    LOCAL  DEFAULT      ABS test_klp_convert_mod_b.c
+     38: ... FUNC    LOCAL  DEFAULT        3 get_homonym_string
+     39: ... OBJECT  LOCAL  DEFAULT       11 homonym_string
+
+- The BFD library is incapable of handling two rela sections with
+  identical sh_info values *as relocation sections*.  This affects
+  binutils and related programs like gdb, objdump, crash utility, etc.
+  which fail to process klp-converted .ko files.
+
+  https://sourceware.org/bugzilla/show_bug.cgi?id=24456
+  https://sourceware.org/ml/binutils/2019-04/msg00194.html
+
+
+Changelogs
+----------
+
+livepatch: Create and include UAPI headers
+  v2:
+  - jmoreira: split up and changelog
+  v3:
+  - joe: convert to SPDX license tags
+  v4:
+  - joe: from Masahiro, update UAPI headers with "GPL-2.0 WITH
+    Linux-syscall-note"
+  - joe: from Masahiro, types.h isn't needed by UAPI header
+
+kbuild: Support for Symbols.list creation
+  v3:
+  - jmoreira: adjust for multiobject livepatch
+  - joe: add klpclean to PHONY
+  - joe: align KLP prefix
+  - joe: update all in-tree livepatches with LIVEPATCH_* modinfo flag
+  v4:
+  - joe: from Miroslav, update the samples and self-test Makefiles with
+    the LIVEPATCH_ build prefix.
+  - joe: from Artem, use $(SLIST) in klpclean and $(call cmd,livepatch)
+    instead of $(call cmd_livepatch)
+
+livepatch: Add klp-convert tool
+  v2:
+  - khlebnikov: use HOSTLOADLIBES_ instead of HOSTLDFLAGS: -lelf must be
+    at the end
+  - jmoreira: add support to automatic relocation conversion in
+    klp-convert.c, changelog
+  v3:
+  - joe: convert to SPDX license tags
+  - jmoreira: add rela symbol name to WARNs
+  - jmoreira: ignore relocations to .TOC and symbols with index 0
+  - joe: separate and fix valid_sympos() sympos=0 and sympos=1..n checks
+  - joe: fix symbol use-after-frees
+  - joe: fix remaining valgrind leak complaints (non-error paths only)
+  - joe: checkpatch nits
+  v4:
+  - joe: spelling nits s/Insuficient/Insufficient and s/clasic/classic
+  - joe: from Miroslav, tweak klp-convert usage msg
+  - joe: don't move multiple list elements in convert_rela() 
+  - joe: relax duplicate user symbol check
+
+livepatch: Add klp-convert annotation helpers
+  v2:
+  - jmoreira: split up: move KLP_MODULE_RELOC from previous patch to
+    here, add KLP_SYMPOS, move macros from include/uapi/livepatch.h to
+    include/linux/livepatch.h
+  v3:
+  - joe: from Josh, KLP_MODULE_RELOC macro should 4-byte align
+    klp_module_reloc structures
+  v4:
+  - joe: remove the ',' struct array delimiter from KLP_SYMPOS
+
+modpost: Integrate klp-convert
+  v2:
+  - khlebnikov: save cmd_ld_ko_o into .module.cmd, if_changed_rule
+    doesn't do that.f
+  - khlebnikov: fix bashisms for debian where /bin/sh is a symlink to
+    /bin/dash
+  - khlebnikov: rename rule_link_module to rule_ld_ko_o, otherwise
+    arg-check inside if_changed_rule compares cmd_link_module and
+    cmd_ld_ko_o.
+  - khlebnikov: check modinfo -F livepatch only if CONFIG_LIVEPATCH is
+    true.
+  - mbenes: remove modinfo call. LIVEPATCH_ in Makefile
+  - jmoreira: split up: move the .livepatch file-based scheme for
+    identifying livepatches to a previous patch, as it was required for
+    correctly building Symbols.list there.
+  v3:
+  - joe: adjust rule_ld_ko_o to call echo-cmd
+  - joe: rebase for v5.1
+  - joe: align KLP prefix
+  v4:
+  - joe: rule_ld_ko_o should include $(Q) to honor build verbosity
+
+modpost: Add modinfo flag to livepatch modules
+  v2:
+  - jmoreira: fix modpost.c (add_livepatch_flag) to update module
+    structure with livepatch flag and prevent modpost from breaking due to
+    unresolved symbols
+  v3:
+  - joe: adjust modpost.c::get_modinfo() call for v5.0 version
+  - joe: from Miroslav: remove MODULE_INFO(livepatch, "Y") from samples
+
+livepatch: Add sample livepatch module
+  v2:
+  - jmoreira: update module to use KLP_SYMPOS
+  - jmoreira: Comments on symbol resolution scheme
+  - jmoreira: Update Makefile
+  - jmoreira: Remove MODULE_INFO statement
+  - jmoreira: Changelog
+  v3:
+  - joe: rebase for v5.1
+  - joe: code shuffle to better match original source file
+
+documentation: Update on livepatch elf format
+  v3:
+  - joe: clarify sympos=0 and sympos=1..n
+
+livepatch/selftests: add klp-convert
+  v3 (new)
+  v4:
+  - joe: Add a ',' struct array delimiter after KLP_SYMPOS
+
+livepatch/klp-convert: abort on special sections
+  v4 (new)
+
+
+Git boilerplate
+---------------
+
+Joao Moreira (2):
+  kbuild: Support for Symbols.list creation
+  documentation: Update on livepatch elf format
+
+Joe Lawrence (2):
+  livepatch/selftests: add klp-convert
+  livepatch/klp-convert: abort on special sections
+
+Josh Poimboeuf (5):
+  livepatch: Create and include UAPI headers
+  livepatch: Add klp-convert tool
+  livepatch: Add klp-convert annotation helpers
+  modpost: Integrate klp-convert
+  livepatch: Add sample livepatch module
+
+Miroslav Benes (1):
+  modpost: Add modinfo flag to livepatch modules
+
+ .gitignore                                    |   1 +
+ Documentation/livepatch/livepatch.txt         |   3 +
+ Documentation/livepatch/module-elf-format.txt |  50 +-
+ MAINTAINERS                                   |   2 +
+ Makefile                                      |  30 +-
+ include/linux/livepatch.h                     |  13 +
+ include/uapi/linux/livepatch.h                |  20 +
+ kernel/livepatch/core.c                       |   4 +-
+ lib/livepatch/Makefile                        |  15 +
+ lib/livepatch/test_klp_atomic_replace.c       |   1 -
+ lib/livepatch/test_klp_callbacks_demo.c       |   1 -
+ lib/livepatch/test_klp_callbacks_demo2.c      |   1 -
+ lib/livepatch/test_klp_convert1.c             | 106 +++
+ lib/livepatch/test_klp_convert2.c             | 103 +++
+ lib/livepatch/test_klp_convert_mod_a.c        |  25 +
+ lib/livepatch/test_klp_convert_mod_b.c        |  13 +
+ lib/livepatch/test_klp_livepatch.c            |   1 -
+ samples/livepatch/Makefile                    |   6 +
+ .../livepatch/livepatch-annotated-sample.c    | 102 +++
+ samples/livepatch/livepatch-callbacks-demo.c  |   1 -
+ samples/livepatch/livepatch-sample.c          |   1 -
+ samples/livepatch/livepatch-shadow-fix1.c     |   1 -
+ samples/livepatch/livepatch-shadow-fix2.c     |   1 -
+ scripts/Kbuild.include                        |   4 +-
+ scripts/Makefile                              |   1 +
+ scripts/Makefile.build                        |   7 +
+ scripts/Makefile.modpost                      |  24 +-
+ scripts/livepatch/.gitignore                  |   1 +
+ scripts/livepatch/Makefile                    |   7 +
+ scripts/livepatch/elf.c                       | 753 ++++++++++++++++++
+ scripts/livepatch/elf.h                       |  73 ++
+ scripts/livepatch/klp-convert.c               | 731 +++++++++++++++++
+ scripts/livepatch/klp-convert.h               |  39 +
+ scripts/livepatch/list.h                      | 391 +++++++++
+ scripts/mod/modpost.c                         |  82 +-
+ scripts/mod/modpost.h                         |   1 +
+ .../selftests/livepatch/test-livepatch.sh     |  64 ++
+ 37 files changed, 2653 insertions(+), 26 deletions(-)
+ create mode 100644 include/uapi/linux/livepatch.h
+ create mode 100644 lib/livepatch/test_klp_convert1.c
+ create mode 100644 lib/livepatch/test_klp_convert2.c
+ create mode 100644 lib/livepatch/test_klp_convert_mod_a.c
+ create mode 100644 lib/livepatch/test_klp_convert_mod_b.c
+ create mode 100644 samples/livepatch/livepatch-annotated-sample.c
+ create mode 100644 scripts/livepatch/.gitignore
+ create mode 100644 scripts/livepatch/Makefile
+ create mode 100644 scripts/livepatch/elf.c
+ create mode 100644 scripts/livepatch/elf.h
+ create mode 100644 scripts/livepatch/klp-convert.c
+ create mode 100644 scripts/livepatch/klp-convert.h
+ create mode 100644 scripts/livepatch/list.h
 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.20.1
+
