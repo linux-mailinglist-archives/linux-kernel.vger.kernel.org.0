@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DBBE19185
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB441908F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbfEISwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:52:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46314 "EHLO mail.kernel.org"
+        id S1727491AbfEISqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:46:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727414AbfEISwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:52:18 -0400
+        id S1727474AbfEISqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:46:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B57172182B;
-        Thu,  9 May 2019 18:52:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 136412183F;
+        Thu,  9 May 2019 18:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427938;
-        bh=jjP8GWtlILrBRpdD3esKiF1H7/7VQZoK2gV4u4kBoAo=;
+        s=default; t=1557427560;
+        bh=jeZ0AcsDyNIgmsDK4DCsbg9/qtGgmB05LsiGMG5X+H4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vxzgR8G8u8cGZl8djERmTjKemfXzEc/6wlqbyZ5AqlUdD2EAVpY0jEtR4xHwgi5Dh
-         hUwhIYLjUrQkzFApSzLV8LuieVbm1ym+EjfkI3ZpadxxJKYiiViBKNwjC9zYxVJjUg
-         7HQyr0fbwMsU+0ieQbvZqRwSlP237frL/aGHb1YU=
+        b=NGPvu+qqEmVEUukKxaIOjTnQalJK80+YBjYNz+sp1TiTQR9fz95sBTWL+NOorvbB1
+         HJ9+bpNQRnD5jdGZWEG5fr0xA3Q3lxUP6dDVRSKA+y4zBsFDgAo+joPsS3BoI2nQSH
+         APOe2Ou7Y1wxGSltGC2wpbngtV9UEPvt77vCNjrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wangyan Wang <wangyan.wang@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 59/95] drm/mediatek: using new factor for tvdpll for MT2701 hdmi phy
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 27/42] virtio-blk: limit number of hw queues by nr_cpu_ids
 Date:   Thu,  9 May 2019 20:42:16 +0200
-Message-Id: <20190509181313.618384753@linuxfoundation.org>
+Message-Id: <20190509181258.110952471@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
-References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
+References: <20190509181252.616018683@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8eeb3946feeb00486ac0909e2309da87db8988a5 ]
+[ Upstream commit bf348f9b78d413e75bb079462751a1d86b6de36c ]
 
-This is the second step to make MT2701 HDMI stable.
-The factor depends on the divider of DPI in MT2701, therefore,
-we should fix this factor to the right and new one.
-Test: search ok
+When tag_set->nr_maps is 1, the block layer limits the number of hw queues
+by nr_cpu_ids. No matter how many hw queues are used by virtio-blk, as it
+has (tag_set->nr_maps == 1), it can use at most nr_cpu_ids hw queues.
 
-Signed-off-by: Wangyan Wang <wangyan.wang@mediatek.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+In addition, specifically for pci scenario, when the 'num-queues' specified
+by qemu is more than maxcpus, virtio-blk would not be able to allocate more
+than maxcpus vectors in order to have a vector for each queue. As a result,
+it falls back into MSI-X with one vector for config and one shared for
+queues.
+
+Considering above reasons, this patch limits the number of hw queues used
+by virtio-blk by nr_cpu_ids.
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/block/virtio_blk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 62a9d47df9487..9160c55769f8d 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -662,13 +662,11 @@ static unsigned int mt8173_calculate_factor(int clock)
- static unsigned int mt2701_calculate_factor(int clock)
- {
- 	if (clock <= 64000)
--		return 16;
--	else if (clock <= 128000)
--		return 8;
--	else if (clock <= 256000)
- 		return 4;
--	else
-+	else if (clock <= 128000)
- 		return 2;
-+	else
-+		return 1;
- }
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 68846897d2139..8767401f75e04 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -437,6 +437,8 @@ static int init_vq(struct virtio_blk *vblk)
+ 	if (err)
+ 		num_vqs = 1;
  
- static const struct mtk_dpi_conf mt8173_conf = {
++	num_vqs = min_t(unsigned int, nr_cpu_ids, num_vqs);
++
+ 	vblk->vqs = kmalloc_array(num_vqs, sizeof(*vblk->vqs), GFP_KERNEL);
+ 	if (!vblk->vqs)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
