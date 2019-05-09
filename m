@@ -2,236 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93E018E52
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F32F818E60
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 18:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfEIQn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 12:43:26 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54204 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfEIQn0 (ORCPT
+        id S1726766AbfEIQr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 12:47:26 -0400
+Received: from mail-ua1-f49.google.com ([209.85.222.49]:44570 "EHLO
+        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfEIQr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 12:43:26 -0400
-Received: by mail-it1-f193.google.com with SMTP id m141so3297596ita.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 09:43:25 -0700 (PDT)
+        Thu, 9 May 2019 12:47:26 -0400
+Received: by mail-ua1-f49.google.com with SMTP id p13so1035333uaa.11
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 09:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ri3CpftuIpT9d0s+IVfuoxut7FIO9KJuWpxsKIznmbU=;
-        b=KHEHVvclKxX3b4VEd9rqQSKIfc/VB1DG46AiuqoQO6MmdzqKPChzqIjaWeLi8WZuSN
-         qg3vWPQpJh8P12dR1aDpy55Qfcft4l5n6tx87xVhtWFaRWgJ0e6J78POHm0EgkWmRDZy
-         cpd6tWNs2OYEAKfYsXj+ATze0Cs/+Vxv485d4=
+        bh=TOD9m5ani8ZrZtUR06eegEmPqO4qUZMEv0GTuqKapM0=;
+        b=kkjYqCrQ5OGG+/hCecsHd/H7hfbb1ksW7F69CkE1T1fE/5SY4riNBHew4FB6VanXBT
+         0q34uNp/dmGT6m+bSTfegYUWOf+aomEL0P+nmoAMfj7VrtIzqqhT/mYv9AWZPbe/LuJR
+         8/tOJXs83BhT+kiebbDIUIoO5crI7NtpvWyTj6KBh7EBuf0ZV7vPJSwQftIYiGY+XxEy
+         ONdbfoYirAiggeNSGVmQq7Ab7YIrv7JEOHQ1o9QNkSZ1hnAXnfzSNj1typ+mnA63ouoo
+         e9i/zpLln4H5BtdPaqcvRDQC3RpJ2YGKaK4RH/AjZ4YVVaRKqxjFTPna9oCcbuq4Oocp
+         U3yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ri3CpftuIpT9d0s+IVfuoxut7FIO9KJuWpxsKIznmbU=;
-        b=MPqBIs9EDMfKycFQ+cQyLS//MIuyNUDepHE8WfrFKuMHfQpTekCSAWvl/xOIPya9X0
-         m0NCZS9uBSU7leGoRmOkkGw9WckM+uTEjCOD/wR0jmQ7KCI6D52/azZ3vDNWVdgegG2h
-         JzuQfmZblSBjXOf6ArscIFMZXf+gvewjgAGdT4CLntcXroxMdOcyJsnff9+3M6swKTC7
-         kOi0AUm4mEcnBXvhxUrGlxg3svr0yyb9CyDdwP0qimEo/2SGysjvg7QeOrJCHF8Zm6Cf
-         3+IuKPCY6VVMP8FmWtnxzjh2f1wzu74nzPAA5ceLXgQhLqLtO8hRjeTlk1fecZ6IUxxp
-         A5SA==
-X-Gm-Message-State: APjAAAVVRhXfc4MJSiFUNfx2JHgAqvWQnjFyzlvmbqfhqSuZDEugYOro
-        G6QBel20WQvuG0G4GGNdMHDAmwi2RYRL0IV++kYbzQ==
-X-Google-Smtp-Source: APXvYqzWDnGMynWy3va8bT/rHKkJudfLzib87wLjGrfcxNr6pxPcPCAai2WR2EI/XFW0Fo6VtG3+2XlryAQjvA9Beww=
-X-Received: by 2002:a05:660c:4d0:: with SMTP id v16mr3974611itk.62.1557420205267;
- Thu, 09 May 2019 09:43:25 -0700 (PDT)
+        bh=TOD9m5ani8ZrZtUR06eegEmPqO4qUZMEv0GTuqKapM0=;
+        b=avFJsUCwXPkhr0UYiN1OXffdcuzRoRTA8+p5KqL6+olNW4Lu/Tz46dAs859iWUS2pz
+         XrE09/h12F7yrkCd7AIPyj69LtqZXooGgKcQhmlHi98S045hwHq/bO4qV/2M1KBceI0C
+         EHv16BWsVEG5CZkPaeRtljI7+lLQNgs89s//axaEu3wWoGBap64fHTztUdK1Czeo6F9A
+         n3TfHw4ZzBuhOYxEr6CRRs7p/NNbz3vZ7Q8QCjLm9kMSttk4esFvtHURkjA6176rABb8
+         6FaQicBL3maX+VbAF06xS8l2kqXKMLE1bgaFHYLxA4nGEWgnlOCCSC8ev/FrQ/RTmcS8
+         5C4Q==
+X-Gm-Message-State: APjAAAXYfx7AZDRnToo8RE+Y53+4odm7KE9Tl4oXX2yfI7RicqhcTT+m
+        6WIuuzfhhn2z74n6DezWQ0Fvc6K+B19ypuiUzZbmfgdr
+X-Google-Smtp-Source: APXvYqzIZa4LzmjuxILdnDq1vkqq826kSC1u+DR9Z3NyiMKZfQXFRoCQ354oIVUkTTl9N6h7IJPL5vktO9I0O4rujQI=
+X-Received: by 2002:ab0:1410:: with SMTP id b16mr1999491uae.1.1557420445101;
+ Thu, 09 May 2019 09:47:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190509120903.28939-1-daniel.vetter@ffwll.ch> <20190509145620.2pjqko7copbxuzth@pathway.suse.cz>
-In-Reply-To: <20190509145620.2pjqko7copbxuzth@pathway.suse.cz>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 9 May 2019 18:43:12 +0200
-Message-ID: <CAKMK7uFTsr1F8nFExTvC7nWFQMcZ7ejh+k_X6E8EcMUaP3e29A@mail.gmail.com>
-Subject: Re: [PATCH] RFC: console: hack up console_lock more v3
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CACDBo57s_ZxmxjmRrCSwaqQzzO5r0SadzMhseeb9X0t0mOwJZA@mail.gmail.com>
+ <11029.1556774479@turing-police> <CACDBo54xXk-68MTsxw2K12gD0eGO0Xpq0rw60E3AX+2OEi3igw@mail.gmail.com>
+ <26e83e08-3249-e73f-2049-f36b44af8d8a@suse.cz>
+In-Reply-To: <26e83e08-3249-e73f-2049-f36b44af8d8a@suse.cz>
+From:   Pankaj Suryawanshi <pankajssuryawanshi@gmail.com>
+Date:   Thu, 9 May 2019 22:17:14 +0530
+Message-ID: <CACDBo56LBKsxqsHAi=Jd6ZJoZsSpFJ5a_DbwEx9h+=FJjr0rhw@mail.gmail.com>
+Subject: Re: Page Allocation Failure and Page allocation stalls
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernelnewbies@kernelnewbies.org, Michal Hocko <mhocko@kernel.org>,
+        minchan@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 4:56 PM Petr Mladek <pmladek@suse.com> wrote:
+On Mon, May 6, 2019 at 2:35 PM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
-> On Thu 2019-05-09 14:09:03, Daniel Vetter wrote:
-> > console_trylock, called from within printk, can be called from pretty
-> > much anywhere. Including try_to_wake_up. Note that this isn't common,
-> > usually the box is in pretty bad shape at that point already. But it
-> > really doesn't help when then lockdep jumps in and spams the logs,
-> > potentially obscuring the real backtrace we're really interested in.
-> > One case I've seen (slightly simplified backtrace):
+> On 5/3/19 7:44 PM, Pankaj Suryawanshi wrote:
+> >> First possibility that comes to mind is that a usermodehelper got launched, and
+> >> it then tried to fork with a very large active process image.  Do we have any
+> >> clues what was going on?  Did a device get hotplugged?
 > >
-> >  Call Trace:
-> >   <IRQ>
-> >   console_trylock+0xe/0x60
-> >   vprintk_emit+0xf1/0x320
-> >   printk+0x4d/0x69
-> >   __warn_printk+0x46/0x90
-> >   native_smp_send_reschedule+0x2f/0x40
-> >   check_preempt_curr+0x81/0xa0
-> >   ttwu_do_wakeup+0x14/0x220
-> >   try_to_wake_up+0x218/0x5f0
-> >   pollwake+0x6f/0x90
-> >   credit_entropy_bits+0x204/0x310
-> >   add_interrupt_randomness+0x18f/0x210
-> >   handle_irq+0x67/0x160
-> >   do_IRQ+0x5e/0x130
-> >   common_interrupt+0xf/0xf
-> >   </IRQ>
+> > Yes,The system is android and it tries to allocate memory for video
+> > player from CMA reserved memory using custom octl call for dma apis.
+>
+> The stacktrace doesn't look like a CMA allocation though. That would be
+> doing alloc_contig_range(), not kmalloc(). Could be some CMA area setup
+> issue?
+>
+I know cma uses alloc_contig_range() but using dma api it will uses
+many functions.
+the failure is coming from dma_common_contiguous_remap() for kmalloc ,
+and which is called by dma_alloc_attr for cma allocation.
+
+Please let me know, how to avoid page allocation stalls. any reason ?
+Cpu Utilization issue ? or I am running out of memory ?
+
+My System configuration is
+2GB RAM
+Memory Spilt 2G/2G
+vmalloc=1024M
+CMA=1024
+Max contiguous memory required 390M
+
+> > Please let me know how to overcome this issues, or how to reduce
+> > fragmentation of memory so that higher order allocation get suuceed ?
 > >
-> > This alone isn't a problem, but the spinlock in the semaphore is also
-> > still held while waking up waiters (up() -> __up() -> try_to_wake_up()
-> > callchain), which then closes the runqueue vs. semaphore.lock loop,
-> > and upsets lockdep, which issues a circular locking splat to dmesg.
-> > Worse it upsets developers, since we don't want to spam dmesg with
-> > clutter when the machine is dying already.
+> > Thanks
 > >
-> > Fix this by creating a prinkt_safe_up() which calls wake_up_process
-> > outside of the spinlock. This isn't correct in full generality, but
-> > good enough for console_lock:
-> >
-> > - console_lock doesn't use interruptible or killable or timeout down()
-> >   calls, hence an up() is the only thing that can wake up a process.
-> >   Hence the process can't get woken and killed and reaped while we try
-> >   to wake it up too.
-> >
-> > - semaphore.c always updates the waiter list while under the spinlock,
-> >   so there's no other races. Specifically another process that races
-> >   with a quick console_lock/unlock while we've dropped the spinlock
-> >   already won't see our own waiter.
-> >
-> > Note that we only have to break the recursion for the semaphore.lock
-> > spinlock of the console_lock. Recursion within various scheduler
-> > related locks is already prevented by the printk_safe_enter/exit pair
-> > in __up_console_sem().
 >
-> This is not fully true. printk_safe() helps only when
-> the first try_to_wake_up() is called from printk_safe() context.
->
-> > --- a/kernel/locking/semaphore.c
-> > +++ b/kernel/locking/semaphore.c
-> > @@ -197,6 +197,37 @@ struct semaphore_waiter {
-> >       bool up;
-> >  };
-> >
-> > +/**
-> > + * printk_safe_up - release the semaphore in console_unlock
-> > + * @sem: the semaphore to release
-> > + *
-> > + * Release the semaphore.  Unlike mutexes, up() may be called from any
-> > + * context and even by tasks which have never called down().
-> > + *
-> > + * NOTE: This is a special version of up() for console_unlock only. It is only
-> > + * safe if there are no killable, interruptible or timing out down() calls.
-> > + */
-> > +void printk_safe_up(struct semaphore *sem)
-> > +{
-> > +     unsigned long flags;
-> > +     struct semaphore_waiter *waiter = NULL;
-> > +
-> > +     raw_spin_lock_irqsave(&sem->lock, flags);
-> > +     if (likely(list_empty(&sem->wait_list))) {
-> > +             sem->count++;
-> > +     } else {
-> > +             waiter = list_first_entry(&sem->wait_list,
-> > +                                       struct semaphore_waiter, list);
-> > +             list_del(&waiter->list);
-> > +             waiter->up = true;
-> > +     }
-> > +     raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > +
-> > +     if (waiter) /* protected by being sole wake source */
-> > +             wake_up_process(waiter->task);
->
-> I still do not see how this could help. Let's take the above
-> backtrace as example:
->
->    <IRQ>
->    console_trylock+0xe/0x60
->    vprintk_emit+0xf1/0x320
->    printk+0x4d/0x69
->    __warn_printk+0x46/0x90
->    native_smp_send_reschedule +0x2f/0x40
->    check_preempt_curr+0x81/0xa0
->    ttwu_do_wakeup+0x14/0x220
->    try_to_wake_up+0x218/0x5f0
->    pollwake+0x6f/0x90
->    credit_entropy_bits+0x204/0x310
->    add_interrupt_randomness+0x18f/0x210
->    handle_irq+0x67/0x160
->    do_IRQ+0x5e/0x130
->    common_interrupt+0xf/0xf
->    </IRQ>
->
-> We have the following chain of calls:
->
->   + do_IRQ()
->     ...
->       + try_to_wake_up()    # takes p->pi_lock
->         + ttwu_remote()     # takes rq lock
->           + ttwu_do_wakeup()
->             + check_preempt_curr()
->               + native_smp_send_reschedule()
->                 + __warn_printk()
->                   + printk()
->                     + vprintk_emit()
->                       + console_trylock() # success
->                       + console_unlock()
->                         + up_console_sem()
->                           + up() # wait list in not empty
->                             + __up()
->                               + wake_up_process()
->                                 + try_to_wake_up()
->
-> !BANG! Deadlock on p->pi_lock.
-
-Hm right ... I only looked at this starting with console_unlock.
-
-> It does not matter if the nested try_to_wake_up() was called
-> under sem->lock or outside.
->
-> By other words. The patch removed one lockdep warning. But it just
-> just delayed the deadlock. It will not happen on sem->lock but
-> later on p->pi_lock.
->
-> I am repeating myself. But IMHO, the only solution is to introduce
-> printk deferred context and use it in WARN_DEFERRED().
-
-One thing to keep in mind is that the kernel is already dying, and
-things will come crashing down later on (I've seen this only in dmesg
-tails capture in pstore in our CI, i.e. the box died for good). I just
-want to make sure that the useful information isn't overwritten by
-more dmesg splats that happen as a consequence of us somehow trying to
-run things on an offline cpu. Once console_unlock has completed in
-your above backtrace and the important stuff has gone out I'm totally
-fine with the kernel just dying. Pulling the wake_up_process out from
-under the semaphore.lock is enough to prevent lockdep from dumping
-more stuff while we're trying to print the important things, and I
-think the untangling of the locking hiararchy is useful irrespective
-of this lockdep splat. Plus Peter doesn't sound like he likes to roll
-out more printk_deferred kind of things.
-
-But if you think I should do the printk_deferred thing too I can look
-into that. Just not quite sure what that's supposed to look like now.
--Daniel
-
-
-
-
-
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
