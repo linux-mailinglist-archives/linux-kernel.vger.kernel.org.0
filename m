@@ -2,78 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2CF18D1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6041A18D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 17:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfEIPkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 11:40:05 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46259 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfEIPkF (ORCPT
+        id S1726711AbfEIPmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 11:42:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52658 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726659AbfEIPme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 11:40:05 -0400
-Received: by mail-ot1-f65.google.com with SMTP id v17so2654978otp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 08:40:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xSzZV65JqCtXVXp3jlprv98tNwKpdM2hfn5arWFOHlQ=;
-        b=Wj8IycJkrri//lG167IMCLkpOF3P0RDxUTLSG3qf9PCTxjX6DB+bZDqLo2GKXYpIUf
-         94bR8IgO7nRPbkGSFYZHQVN0lU1j6cz8KrLDPTP3KwkFZqctJwA+D8F2qyn16FimrDmH
-         H5jjZi+ZDGieYHHhmUB29OScA2PIGo+DMzXF9jd/7XwemUkPWQKR1VryhTn6yT2eolZ6
-         QONFr619BXzyo+BPB4fPNS3KtX6h31ZRXuc1elagjPwt9M1Flreeam4G5G5vfbKRfSfy
-         Y+8ExhrjY6/TcnA9Fg9D4UQN9M0PcpY0mWTlGB3qfPw1Cq57BSZNqHdPIkJm3mV1j2T+
-         Tg1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xSzZV65JqCtXVXp3jlprv98tNwKpdM2hfn5arWFOHlQ=;
-        b=sB5IV5C6ObpJ45mv/6biPymqJoigohpldg+VD8fHyoJBqmZN0nMtCfFr8XGf79LNMl
-         XhM3PQCsdayni94s70ZnZQNQ+bOOwrS69T45E4HGsvOJdD/B1CRAl4+KsdHl8cwz6lqn
-         ezszK7jzl9YW/mKqJKy+DDzeeUbz+Ax3PDdhYrG21jbLpNZga601JnPTNyR1WCKncSGs
-         55RmU/HDwaQJe1MRF2iOhAVYmF9LZR5egyyu5iBygCNyj7clvaXlShLkYDenUvCd0XZf
-         k5S65pv0edc1PC9zhE3aSkOQ7Ap0eC+eMQEMpu6rTD61ODgrRXhKTiyH8IGVLr5lv6oe
-         CyHw==
-X-Gm-Message-State: APjAAAWAJbC5miTyIpH0TKPARaH4XhfKZr4KqZnI6tovdIjdtyhEcaDJ
-        lJajrWbYm35kkLO090k/AC06TQ==
-X-Google-Smtp-Source: APXvYqzhrR/B1Ofdn+/XkOJi4J9l1K72xcXghvK7Q4wTyN1HvQcy2LB9NlYNQ6igJr8sgEA2B0kobw==
-X-Received: by 2002:a9d:826:: with SMTP id 35mr3067127oty.114.1557416404417;
-        Thu, 09 May 2019 08:40:04 -0700 (PDT)
-Received: from brauner.io ([172.56.6.91])
-        by smtp.gmail.com with ESMTPSA id c131sm949673oif.33.2019.05.09.08.40.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 09 May 2019 08:40:03 -0700 (PDT)
-Date:   Thu, 9 May 2019 17:39:59 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] fsopen: use square brackets around "fscontext"
-Message-ID: <20190509153957.ahqqxwzipdvjxudo@brauner.io>
-References: <20190508152509.13336-1-christian@brauner.io>
- <20190508152509.13336-2-christian@brauner.io>
- <20190509153902.tqkoooxtviafrla5@brauner.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190509153902.tqkoooxtviafrla5@brauner.io>
-User-Agent: NeoMutt/20180716
+        Thu, 9 May 2019 11:42:34 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x49Fd4j4083570
+        for <linux-kernel@vger.kernel.org>; Thu, 9 May 2019 11:42:33 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2scn2sxkcn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 11:42:33 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 9 May 2019 16:42:30 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 9 May 2019 16:42:25 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x49FgOKc61472792
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 May 2019 15:42:24 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83835A4040;
+        Thu,  9 May 2019 15:42:24 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32B28A4055;
+        Thu,  9 May 2019 15:42:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.107])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 May 2019 15:42:22 +0000 (GMT)
+Subject: Re: [PATCH v10 01/12] MODSIGN: Export module signature definitions
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date:   Thu, 09 May 2019 11:42:08 -0400
+In-Reply-To: <20190418035120.2354-2-bauerman@linux.ibm.com>
+References: <20190418035120.2354-1-bauerman@linux.ibm.com>
+         <20190418035120.2354-2-bauerman@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050915-0008-0000-0000-000002E4F703
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050915-0009-0000-0000-000022517E40
+Message-Id: <1557416528.10635.62.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905090090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 05:39:02PM +0200, Christian Brauner wrote:
-> On Wed, May 08, 2019 at 05:25:09PM +0200, Christian Brauner wrote:
-> > Make the name of the anon inode fd "[fscontext]" instead of "fscontext".
-> > This is minor but most core-kernel anon inode fds carry square brackets
-> > around their name (cf. [1]). For the sake of consistency lets do the same
+On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
+> IMA will use the module_signature format for append signatures, so export
+> the relevant definitions and factor out the code which verifies that the
+> appended signature trailer is valid.
 > 
-> This "(cf. [1])" reference was supposed to point to the list below. But
-> since I rewrote the paragraph it can simply be dropped.  Sorry for the
-> oversight.
+> Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
+> and be able to use mod_check_sig() without having to depend on either
+> CONFIG_MODULE_SIG or CONFIG_MODULES.
+> 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
 
-I'll resend with the commit message fixed up.
+Just a couple minor questions/comments below.
 
-Christian
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+> ---
+
+< snip >
+
+
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 4592bf7997c0..a71019553ee1 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1906,7 +1906,7 @@ config MODULE_SRCVERSION_ALL
+>  config MODULE_SIG
+>  	bool "Module signature verification"
+>  	depends on MODULES
+> -	select SYSTEM_DATA_VERIFICATION
+> +	select MODULE_SIG_FORMAT
+>  	help
+>  	  Check modules for valid signatures upon load: the signature
+>  	  is simply appended to the module. For more information see
+> @@ -2036,6 +2036,10 @@ config TRIM_UNUSED_KSYMS
+>  
+>  endif # MODULES
+>  
+> +config MODULE_SIG_FORMAT
+> +	def_bool n
+> +	select SYSTEM_DATA_VERIFICATION
+
+Normally Kconfigs, in the same file, are defined before they are used.
+ I'm not sure if that is required or just a convention.
+
+
+>  config MODULES_TREE_LOOKUP
+>  	def_bool y
+>  	depends on PERF_EVENTS || TRACING
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 6c57e78817da..d2f2488f80ab 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -57,6 +57,7 @@ endif
+>  obj-$(CONFIG_UID16) += uid16.o
+>  obj-$(CONFIG_MODULES) += module.o
+>  obj-$(CONFIG_MODULE_SIG) += module_signing.o
+> +obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signature.o
+>  obj-$(CONFIG_KALLSYMS) += kallsyms.o
+>  obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
+>  obj-$(CONFIG_CRASH_CORE) += crash_core.o
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 985caa467aef..326ddeb364dd 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/export.h>
+>  #include <linux/extable.h>
+>  #include <linux/moduleloader.h>
+> +#include <linux/module_signature.h>
+>  #include <linux/trace_events.h>
+>  #include <linux/init.h>
+>  #include <linux/kallsyms.h>
+> diff --git a/kernel/module_signature.c b/kernel/module_signature.c
+> new file mode 100644
+> index 000000000000..6d5e59f27f55
+> --- /dev/null
+> +++ b/kernel/module_signature.c
+> @@ -0,0 +1,45 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Module signature checker
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/printk.h>
+> +#include <linux/module_signature.h>
+> +#include <asm/byteorder.h>
+> +
+> +/**
+> + * mod_check_sig - check that the given signature is sane
+> + *
+> + * @ms:		Signature to check.
+> + * @file_len:	Size of the file to which @ms is appended.
+
+"name" is missing.
+
+Mimi
+
+> + */
+
