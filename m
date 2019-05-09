@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB82118B54
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8E118B4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfEIONO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:13:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46928 "EHLO
+        id S1726817AbfEIONP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:13:15 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46932 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726686AbfEIONK (ORCPT
+        by vger.kernel.org with ESMTP id S1726687AbfEIONK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 May 2019 10:13:10 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-00012B-La; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-000125-H0; Thu, 09 May 2019 15:13:08 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hOjnI-0006MZ-Gw; Thu, 09 May 2019 15:13:08 +0100
+        id 1hOjnI-0006M5-Bm; Thu, 09 May 2019 15:13:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Matteo Croce" <mcroce@redhat.com>,
-        "Dennis Zhou" <dennis@kernel.org>
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Mark Brown" <broonie@linaro.org>,
+        "Nick Krause" <xerofoiffy@gmail.com>
 Date:   Thu, 09 May 2019 15:08:17 +0100
-Message-ID: <lsq.1557410897.661826111@decadent.org.uk>
+Message-ID: <lsq.1557410897.75263673@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 10/10] percpu: stop printing kernel addresses
+Subject: [PATCH 3.16 04/10] spi: omap-100k: Remove unused definitions
 In-Reply-To: <lsq.1557410896.171359878@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,50 +48,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matteo Croce <mcroce@redhat.com>
+From: Nick Krause <xerofoiffy@gmail.com>
 
-commit 00206a69ee32f03e6f40837684dcbe475ea02266 upstream.
+commit 9f5b8b4f56dd194fd33021810636879036d2acdd upstream.
 
-Since commit ad67b74d2469d9b8 ("printk: hash addresses printed with %p"),
-at boot "____ptrval____" is printed instead of actual addresses:
+Remove unused definition which cause the following warnings
 
-    percpu: Embedded 38 pages/cpu @(____ptrval____) s124376 r0 d31272 u524288
+drivers/spi/spi-omap-100k.c:73:0: warning: "WRITE" redefined [enabled by default]
+include/linux/fs.h:193:0: note: this is the location of the previous definition
+drivers/spi/spi-omap-100k.c:74:0: warning: "READ" redefined [enabled by default]
+include/linux/fs.h:192:0: note: this is the location of the previous definition
 
-Instead of changing the print to "%px", and leaking kernel addresses,
-just remove the print completely, cfr. e.g. commit 071929dbdd865f77
-("arm64: Stop printing the virtual memory layout").
-
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Nick Krause <xerofoiffy@gmail.com>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Mark Brown <broonie@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- mm/percpu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/spi/spi-omap-100k.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1716,8 +1716,8 @@ int __init pcpu_embed_first_chunk(size_t
- #endif
- 	}
+--- a/drivers/spi/spi-omap-100k.c
++++ b/drivers/spi/spi-omap-100k.c
+@@ -70,10 +70,6 @@
+ #define SPI_STATUS_WE                   (1UL << 1)
+ #define SPI_STATUS_RD                   (1UL << 0)
  
--	pr_info("PERCPU: Embedded %zu pages/cpu @%p s%zu r%zu d%zu u%zu\n",
--		PFN_DOWN(size_sum), base, ai->static_size, ai->reserved_size,
-+	pr_info("PERCPU: Embedded %zu pages/cpu s%zu r%zu d%zu u%zu\n",
-+		PFN_DOWN(size_sum), ai->static_size, ai->reserved_size,
- 		ai->dyn_size, ai->unit_size);
- 
- 	rc = pcpu_setup_first_chunk(ai, base);
-@@ -1830,8 +1830,8 @@ int __init pcpu_page_first_chunk(size_t
- 	}
- 
- 	/* we're ready, commit */
--	pr_info("PERCPU: %d %s pages/cpu @%p s%zu r%zu d%zu\n",
--		unit_pages, psize_str, vm.addr, ai->static_size,
-+	pr_info("PERCPU: %d %s pages/cpu s%zu r%zu d%zu\n",
-+		unit_pages, psize_str, ai->static_size,
- 		ai->reserved_size, ai->dyn_size);
- 
- 	rc = pcpu_setup_first_chunk(ai, vm.addr);
+-#define WRITE 0
+-#define READ  1
+-
+-
+ /* use PIO for small transfers, avoiding DMA setup/teardown overhead and
+  * cache operations; better heuristics consider wordsize and bitrate.
+  */
 
