@@ -2,82 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C28B183A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5C9183BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 04:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbfEICSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 8 May 2019 22:18:36 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38658 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfEICSf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 May 2019 22:18:35 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a59so327955pla.5;
-        Wed, 08 May 2019 19:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=67cKgHpKn5BasI4H9G5b29AFH8V2LHpBqBhNNX7AepI=;
-        b=IdWnqVyky2mloPBWQLjQqC3RNWwopYAaMClPvfqRz+kOE5FYbiQV2HYTeaz5LcNXRc
-         7wOeWEeAayPUpVKD8GVgH5tlHGjOMXoHfdDjtYENRb51HqJzXvqoIVPN/c8gSgI1A8Bd
-         27sn+YVD+VXjElLK8ki7xOEob0TJCp6WvbCU+Rl8BL3/htDMfD8jdKzGUvRX6k4w7lc7
-         Pf0CP6YbTC4sS274CsPgsIalQHztO9A4EhBK4Z9Lb7TnlcPn29QL3JvNlnhzeK+xhVUQ
-         HL6MkDTHh/MTo81DfiP0Voc8IagpScTcOZUNMy2+isvaJF7gRho5CMGYBOrvWGSA9sL6
-         4Tqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=67cKgHpKn5BasI4H9G5b29AFH8V2LHpBqBhNNX7AepI=;
-        b=rU5xxhg28CX4dohbXqqjMfNojO3iyfcG9Oe35Dz4Dv/IaUXM21z07xLY+ZBti6C+ib
-         83AzCqjoPsbmWD1TcaN+edxIWxWJ1a7sSgOcaf+4Tynw3dLYD2P+kUzavwfhl26qunk/
-         mUACrmRqm7+8KISD2a1LD/dE7sZi53CIrH9KNS2D8/QaBm+kTITf2+UzxDewXoKzeJ2s
-         u3maC3jM4XRNsEQz7y6Ycb3S0B6W9WHndP1Wuf3dwoU0Ne3DaAiCUXi2tQpeH7jzy65I
-         aWiUaywc+diGqndfXRUKN4RN+58IfQgy1ejuniKSKaSuBS1ULI3I1kFIQmMAOXiaswkC
-         mL6Q==
-X-Gm-Message-State: APjAAAVoyLV8NN0limvx4XOX+p/huq9SZOgKcF6VonI9xPrWEeKuqt3n
-        UTkvOQWbjH/zRpvotEAIHPA=
-X-Google-Smtp-Source: APXvYqxKONkqpvysOzcXsSL0stE2Fx1k07GjyXCU+F00vWxsMMPMatYsdoa5bWbRlxy93rTIbJhz0w==
-X-Received: by 2002:a17:902:8f82:: with SMTP id z2mr1716364plo.51.1557368314774;
-        Wed, 08 May 2019 19:18:34 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id r138sm777868pfr.2.2019.05.08.19.18.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 19:18:33 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com> <20190507172256.GB5900@mit.edu>
- <4d963cdc-1cbb-35a3-292c-552f865ed1f7@gmail.com>
- <20190509014407.GA7031@mit.edu>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <458dcb03-8dee-a005-97e1-7296a9e5bbfd@gmail.com>
-Date:   Wed, 8 May 2019 19:18:30 -0700
+        id S1726687AbfEIC2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 8 May 2019 22:28:36 -0400
+Received: from mga01.intel.com ([192.55.52.88]:55337 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726568AbfEIC2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 May 2019 22:28:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 May 2019 19:28:34 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 08 May 2019 19:28:32 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ashok Raj <ashok.raj@intel.com>, jacob.jun.pan@intel.com,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        James Sewart <jamessewart@arista.com>,
+        Dmitry Safonov <dima@arista.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain
+ type
+To:     Tom Murphy <tmurphy@arista.com>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-2-baolu.lu@linux.intel.com>
+ <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <4a21bf25-bde5-3248-2f41-17c5c8803c5f@linux.intel.com>
+Date:   Thu, 9 May 2019 10:22:04 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190509014407.GA7031@mit.edu>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,54 +46,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/19 6:44 PM, Theodore Ts'o wrote:
-> On Wed, May 08, 2019 at 05:58:49PM -0700, Frank Rowand wrote:
+Hi Tom,
+
+On 5/6/19 11:32 PM, Tom Murphy wrote:
+> The AMD driver already solves this problem and uses the generic
+> iommu_request_dm_for_dev function. It seems like both drivers have the
+> same problem and could use the same solution. Is there any reason we
+> can't have use the same solution for the intel and amd driver?
+
+The iommu_request_dm_for_dev() works for vt-d driver as well. But it's
+insufficient. Another case is the default domain type is IDENTITY, but
+the iommu driver can only support DMA type. Is it possible to add an
+iommu_request_dma_map_for_dev() for this purpose?
+
+> 
+> Could we just  copy the implementation of the AMD driver? It would be
+> nice to have the same behavior across both drivers especially as we
+> move to make both drivers use more generic code.
+
+Yes, agreed.
+
+Best regards,
+Lu Baolu
+
+> 
+> On Mon, Apr 29, 2019 at 3:16 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
 >>
->> If KUnit is added to the kernel, and a subsystem that I am submitting
->> code for has chosen to use KUnit instead of kselftest, then yes, I do
->> *have* to use KUnit if my submission needs to contain a test for the
->> code unless I want to convince the maintainer that somehow my case
->> is special and I prefer to use kselftest instead of KUnittest.
-> 
-> That's going to be between you and the maintainer.  Today, if you want
-> to submit a substantive change to xfs or ext4, you're going to be
-> asked to create test for that new feature using xfstests.  It doesn't
-> matter that xfstests isn't in the kernel --- if that's what is
-> required by the maintainer.
-
-Yes, that is exactly what I was saying.
-
-Please do not cut the pertinent parts of context that I am replying to.
-
-
->>> supposed to be a simple way to run a large number of small tests that
->>> for specific small components in a system.
+>> This adds an optional ops entry to query the default domain
+>> types supported by the iommu driver for  a specific device.
+>> This is necessary in cases where the iommu driver can only
+>> support a specific type of default domain for a device. In
+>> normal cases, this ops will return IOMMU_DOMAIN_ANY which
+>> indicates that the iommu driver supports both IOMMU_DOMAIN_DMA
+>> and IOMMU_DOMAIN_IDENTITY, hence the static default domain
+>> type will be used.
 >>
->> kselftest also supports running a subset of tests.  That subset of tests
->> can also be a large number of small tests.  There is nothing inherent
->> in KUnit vs kselftest in this regard, as far as I am aware.
-
-
-> The big difference is that kselftests are driven by a C program that
-> runs in userspace.  Take a look at tools/testing/selftests/filesystem/dnotify_test.c
-> it has a main(int argc, char *argv) function.
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/iommu.c | 13 ++++++++++---
+>>   include/linux/iommu.h | 11 +++++++++++
+>>   2 files changed, 21 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index acd6830e6e9b..1ad9a1f2e078 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1097,15 +1097,22 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
+>>           * IOMMU driver.
+>>           */
+>>          if (!group->default_domain) {
+>> +               unsigned int domain_type = IOMMU_DOMAIN_ANY;
+>>                  struct iommu_domain *dom;
+>>
+>> -               dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
+>> -               if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
+>> +               if (ops->def_domain_type)
+>> +                       domain_type = ops->def_domain_type(dev);
+>> +
+>> +               if (domain_type == IOMMU_DOMAIN_ANY)
+>> +                       domain_type = iommu_def_domain_type;
+>> +
+>> +               dom = __iommu_domain_alloc(dev->bus, domain_type);
+>> +               if (!dom && domain_type != IOMMU_DOMAIN_DMA) {
+>>                          dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
+>>                          if (dom) {
+>>                                  dev_warn(dev,
+>>                                           "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
+>> -                                        iommu_def_domain_type);
+>> +                                        domain_type);
+>>                          }
+>>                  }
+>>
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 8239ece9fdfc..ba9a5b996a63 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -79,12 +79,16 @@ struct iommu_domain_geometry {
+>>    *     IOMMU_DOMAIN_DMA        - Internally used for DMA-API implementations.
+>>    *                               This flag allows IOMMU drivers to implement
+>>    *                               certain optimizations for these domains
+>> + *     IOMMU_DOMAIN_ANY        - All domain types defined here
+>>    */
+>>   #define IOMMU_DOMAIN_BLOCKED   (0U)
+>>   #define IOMMU_DOMAIN_IDENTITY  (__IOMMU_DOMAIN_PT)
+>>   #define IOMMU_DOMAIN_UNMANAGED (__IOMMU_DOMAIN_PAGING)
+>>   #define IOMMU_DOMAIN_DMA       (__IOMMU_DOMAIN_PAGING |        \
+>>                                   __IOMMU_DOMAIN_DMA_API)
+>> +#define IOMMU_DOMAIN_ANY       (IOMMU_DOMAIN_IDENTITY |        \
+>> +                                IOMMU_DOMAIN_UNMANAGED |       \
+>> +                                IOMMU_DOMAIN_DMA)
+>>
+>>   struct iommu_domain {
+>>          unsigned type;
+>> @@ -196,6 +200,11 @@ enum iommu_dev_features {
+>>    * @dev_feat_enabled: check enabled feature
+>>    * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
+>>    * @aux_get_pasid: get the pasid given an aux-domain
+>> + * @def_domain_type: get per-device default domain type that the IOMMU
+>> + *             driver is able to support. Valid returns values:
+>> + *             - IOMMU_DOMAIN_DMA: only suports non-identity domain
+>> + *             - IOMMU_DOMAIN_IDENTITY: only supports identity domain
+>> + *             - IOMMU_DOMAIN_ANY: supports all
+>>    * @pgsize_bitmap: bitmap of all possible supported page sizes
+>>    */
+>>   struct iommu_ops {
+>> @@ -251,6 +260,8 @@ struct iommu_ops {
+>>          void (*aux_detach_dev)(struct iommu_domain *domain, struct device *dev);
+>>          int (*aux_get_pasid)(struct iommu_domain *domain, struct device *dev);
+>>
+>> +       int (*def_domain_type)(struct device *dev);
+>> +
+>>          unsigned long pgsize_bitmap;
+>>   };
+>>
+>> --
+>> 2.17.1
+>>
 > 
-> In contrast, KUnit are fragments of C code which run in the kernel;
-> not in userspace.  This allows us to test internal functions inside
-> complex file system (such as the block allocator in ext4) directly.
-> This makes it *fundamentally* different from kselftest.
-
-No, totally incorrect.  kselftests also supports in kernel modules as
-I mention in another reply to this patch.
-
-This is talking past each other a little bit, because your next reply
-is a reply to my email about modules.
-
--Frank
-
-> 
-> Cheers,
-> 
-> 						- Ted
-> 
-
