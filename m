@@ -2,48 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 180A819053
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18AC61926D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfEISnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:43:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34904 "EHLO mail.kernel.org"
+        id S1727519AbfEISqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:46:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfEISny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:43:54 -0400
+        id S1726975AbfEISqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:46:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 583F5217D6;
-        Thu,  9 May 2019 18:43:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C022B21848;
+        Thu,  9 May 2019 18:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427433;
-        bh=EMkLnOSZMMv4MZEje/xzNx+RTKH8T3X3TlZQylSguD4=;
+        s=default; t=1557427568;
+        bh=FeuoLYrKFjwXsEkDfYktpq5SL9o0dXT4W2nvFWAizQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7np3zoS8rBPT1P3eZryS1orGXOBDUx4m1HMLiQ2PXMVkFDPdfOZTCnq9CV72dWrf
-         Wrc4IUsUonvvyaDERQKLeo9mLrFn8YmtJv1zW0eaOW61cx/iIu4LPNOqrEy2fsgtP7
-         qNWcfIP3xHQ3AO217yMeWYdD7MkI7RM74XK0+TCE=
+        b=d7VKIaoh3cMYm7MpWVZ30SMxJtmtLQCq/Dbw/hCN8m7nThYyahKOA4ICFzzcjEz6n
+         TInYYwH2Yrf7FFUG5oTjtVaCxxYJdKE6vE3OhvnKXgI+sC023T7rLOQdIj7dQWMLq6
+         c1HXNYfjnploChknG2kOQe+Oh+1nw5ySGHSyvG+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, chenxiang <chenxiang66@hisilicon.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Ewan Milne <emilne@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Tomas Henzl <thenzl@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 01/28] scsi: libsas: fix a race condition when smp task timeout
+        stable@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>,
+        Johan Hovold <johan@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>
+Subject: [PATCH 4.14 04/42] staging: greybus: power_supply: fix prop-descriptor request size
 Date:   Thu,  9 May 2019 20:41:53 +0200
-Message-Id: <20190509181250.038627221@linuxfoundation.org>
+Message-Id: <20190509181253.319397217@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
-References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
+References: <20190509181252.616018683@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,65 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit b90cd6f2b905905fb42671009dc0e27c310a16ae upstream.
+commit 47830c1127ef166af787caf2f871f23089610a7f upstream.
 
-When the lldd is processing the complete sas task in interrupt and set the
-task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to be
-triggered at the same time. And smp_task_timedout() will complete the task
-wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may freed
-before lldd end the interrupt process. Thus a use-after-free will happen.
+Since moving the message buffers off the stack, the dynamically
+allocated get-prop-descriptor request buffer is incorrectly sized due to
+using the pointer rather than request-struct size when creating the
+operation.
 
-Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
-set. And remove the check of the return value of the del_timer(). Once the
-LLDD sets DONE, it must call task->done(), which will call
-smp_task_done()->complete() and the task will be completed and freed
-correctly.
+Fortunately, the pointer size is always larger than this one-byte
+request, but this could still cause trouble on the remote end due to the
+unexpected message size.
 
-Reported-by: chenxiang <chenxiang66@hisilicon.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Johannes Thumshirn <jthumshirn@suse.de>
-CC: Ewan Milne <emilne@redhat.com>
-CC: Christoph Hellwig <hch@lst.de>
-CC: Tomas Henzl <thenzl@redhat.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net
+Fixes: 9d15134d067e ("greybus: power_supply: rework get descriptors")
+Cc: stable <stable@vger.kernel.org>     # 4.9
+Cc: Rui Miguel Silva <rui.silva@linaro.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/libsas/sas_expander.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/staging/greybus/power_supply.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -47,17 +47,16 @@ static void smp_task_timedout(unsigned l
- 	unsigned long flags;
+--- a/drivers/staging/greybus/power_supply.c
++++ b/drivers/staging/greybus/power_supply.c
+@@ -521,7 +521,7 @@ static int gb_power_supply_prop_descript
  
- 	spin_lock_irqsave(&task->task_state_lock, flags);
--	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
-+	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
- 		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
-+		complete(&task->slow_task->completion);
-+	}
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
--
--	complete(&task->slow_task->completion);
- }
- 
- static void smp_task_done(struct sas_task *task)
- {
--	if (!del_timer(&task->slow_task->timer))
--		return;
-+	del_timer(&task->slow_task->timer);
- 	complete(&task->slow_task->completion);
- }
- 
+ 	op = gb_operation_create(connection,
+ 				 GB_POWER_SUPPLY_TYPE_GET_PROP_DESCRIPTORS,
+-				 sizeof(req), sizeof(*resp) + props_count *
++				 sizeof(*req), sizeof(*resp) + props_count *
+ 				 sizeof(struct gb_power_supply_props_desc),
+ 				 GFP_KERNEL);
+ 	if (!op)
 
 
