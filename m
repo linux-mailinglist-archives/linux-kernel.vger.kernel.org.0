@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02490190AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7672F190FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfEISrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:47:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40292 "EHLO mail.kernel.org"
+        id S1728575AbfEISva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:51:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbfEISrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:47:37 -0400
+        id S1728569AbfEISv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:51:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B82C217F9;
-        Thu,  9 May 2019 18:47:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1E142183E;
+        Thu,  9 May 2019 18:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427656;
-        bh=aD/N5gPsVhM0JlMNYj0g6pyBk36ukHSTrEyvxuYlAt8=;
+        s=default; t=1557427886;
+        bh=oyTjSecDC36hOUXR6U4y+GsvDs0eI8Nz8IgZeszoFVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ixcHbQeYMHXTtonhLqTEGvnouFwCROz/R5OWsdC1EoZoaOcPfR/pqBVJSZRWVEopd
-         Eh3atlheNSLK8us3uZMVOkKCf1JjSKBc2+OD08G1ptrd80ykBFhyk/9zcClKYo6wjE
-         3wrFRHkFPU0+BFbmhLcl1IyXUyOyb77ylK5wgDEk=
+        b=bFeKjP8kHScmtBjEFZpb5rps2+YQTsWEs+++LBvRq1gx1lz/02GxjU+BjDiHXYFXn
+         jLiNC0UmMakjf11SwI2KWZBuj5LT2C/vS8LkSyLya29Co1fd60dthiIFYZbTcTpNTy
+         iaEfZ7TupiIrE90EF+kdhq8Ngozg/s505lSypbc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        stable@vger.kernel.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/66] ASoC: dapm: Fix NULL pointer dereference in snd_soc_dapm_free_kcontrol
-Date:   Thu,  9 May 2019 20:41:57 +0200
-Message-Id: <20190509181304.226182023@linuxfoundation.org>
+Subject: [PATCH 5.0 41/95] ASoC: rockchip: pdm: fix regmap_ops hang issue
+Date:   Thu,  9 May 2019 20:41:58 +0200
+Message-Id: <20190509181312.254338219@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,34 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cacea3a90e211f0c111975535508d446a4a928d2 ]
+[ Upstream commit c85064435fe7a216ec0f0238ef2b8f7cd850a450 ]
 
-w_text_param can be NULL and it is being dereferenced without checking.
-Add the missing sanity check to prevent  NULL pointer dereference.
+This is because set_fmt ops maybe called when PD is off,
+and in such case, regmap_ops will lead system hang.
+enale PD before doing regmap_ops.
 
-Signed-off-by: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-dapm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/rockchip/rockchip_pdm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 9b78fb3daa7bb..2257b1b0151c4 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3847,6 +3847,10 @@ snd_soc_dapm_free_kcontrol(struct snd_soc_card *card,
- 	int count;
+diff --git a/sound/soc/rockchip/rockchip_pdm.c b/sound/soc/rockchip/rockchip_pdm.c
+index 400e29edb1c9c..8a2e3bbce3a16 100644
+--- a/sound/soc/rockchip/rockchip_pdm.c
++++ b/sound/soc/rockchip/rockchip_pdm.c
+@@ -208,7 +208,9 @@ static int rockchip_pdm_set_fmt(struct snd_soc_dai *cpu_dai,
+ 		return -EINVAL;
+ 	}
  
- 	devm_kfree(card->dev, (void *)*private_value);
-+
-+	if (!w_param_text)
-+		return;
-+
- 	for (count = 0 ; count < num_params; count++)
- 		devm_kfree(card->dev, (void *)w_param_text[count]);
- 	devm_kfree(card->dev, w_param_text);
++	pm_runtime_get_sync(cpu_dai->dev);
+ 	regmap_update_bits(pdm->regmap, PDM_CLK_CTRL, mask, val);
++	pm_runtime_put(cpu_dai->dev);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
