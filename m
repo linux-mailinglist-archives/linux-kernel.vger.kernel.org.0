@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF70E18C29
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 699E018C32
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfEIOlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:41:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59810 "EHLO mail.kernel.org"
+        id S1726821AbfEIOm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:42:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:47891 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726234AbfEIOlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:41:51 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726251AbfEIOm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:42:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898D42053B;
-        Thu,  9 May 2019 14:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557412910;
-        bh=N2vQy9JTK8LN7IWchKikRhEJ1xsEYEkPcuyuyxOaX88=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=faB1yoGJaYipGa3/KWKFQOxY5+j7FnG9QjqYccubTWIyYg4d36SGpo2eOvvxv6Z9/
-         iwHmyQBxcVA6wdEmhm5XJhOoWT4mCfP+FfOe++l68ufJnxSXY5Za1A1F/7p9IffZ03
-         xoUiVpOT/C4ZlNPVcn4mm+T9oHTw0OJeyKPtWqCA=
-Date:   Thu, 9 May 2019 23:41:43 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 450GKT2bqhz9s00;
+        Fri, 10 May 2019 00:42:53 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, Russell Currey <ruscur@russell.cc>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Stephen Rothwell <sfr@ozlabs.org>,
         linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Joel Fernandes <joel@joelfernandes.org>, yhs@fb.com
-Subject: Re: [PATCH v7 6/6] perf-probe: Add user memory access attribute
- support
-Message-Id: <20190509234143.d2f6cc6979daba4252ba410f@kernel.org>
-In-Reply-To: <20190509091735.GC90202@gmail.com>
-References: <155732230159.12756.15040196512285621636.stgit@devnote2>
-        <155732238071.12756.3969249515654160948.stgit@devnote2>
-        <20190509091735.GC90202@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Crashes in linux-next on powerpc with CONFIG_PPC_KUAP and CONFIG_JUMP_LABEL_FEATURE_CHECK_DEBUG
+In-Reply-To: <20190509092942.ei4myfzt5dczuptj@pathway.suse.cz>
+References: <87k1f2wc04.fsf@concordia.ellerman.id.au> <20190509092942.ei4myfzt5dczuptj@pathway.suse.cz>
+Date:   Fri, 10 May 2019 00:42:52 +1000
+Message-ID: <87woizvgcz.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 May 2019 11:17:35 +0200
-Ingo Molnar <mingo@kernel.org> wrote:
+Petr Mladek <pmladek@suse.com> writes:
+> On Wed 2019-05-08 00:54:51, Michael Ellerman wrote:
+>> Hi folks,
+>> 
+>> Just an FYI in case anyone else is seeing crashes very early in boot in
+>> linux-next with the above config options.
+>>
+>> The problem is the combination of some new code called via printk(),
+>> check_pointer() which calls probe_kernel_read(). That then calls 
+>> allow_user_access() (PPC_KUAP) and that uses mmu_has_feature() too early
+>> (before we've patched features). With the JUMP_LABEL debug enabled that
+>> causes us to call printk() & dump_stack() and we end up recursing and
+>> overflowing the stack.
+>
+> Sigh, the check_pointer() stuff is in Linus's tree now, see
+> the commit 3e5903eb9cff707301712 ("vsprintf: Prevent crash when
+> dereferencing invalid pointers").
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > --- a/tools/perf/util/probe-event.h
-> > +++ b/tools/perf/util/probe-event.h
-> > @@ -37,6 +37,7 @@ struct probe_trace_point {
-> >  struct probe_trace_arg_ref {
-> >  	struct probe_trace_arg_ref	*next;	/* Next reference */
-> >  	long				offset;	/* Offset value */
-> > +	bool				user;	/* User-memory access */
-> >  };
-> >  
-> >  /* kprobe-tracer and uprobe-tracer tracing argument */
-> > @@ -82,6 +83,7 @@ struct perf_probe_arg {
-> >  	char				*var;	/* Variable name */
-> >  	char				*type;	/* Type name */
-> >  	struct perf_probe_arg_field	*field;	/* Structure fields */
-> > +	bool				user;	/* User-memory */
-> 
-> Why did the 'access' qualifier get dropped from the second comment?
+No worries.
 
-Ah, it's my typo.
+>> Because it happens so early you don't get any output, just an apparently
+>> dead system.
+>> 
+>> The stack trace (which you don't see) is something like:
+>> 
+>>   ...
+>>   dump_stack+0xdc
+>>   probe_kernel_read+0x1a4
+>>   check_pointer+0x58
+>>   string+0x3c
+>>   vsnprintf+0x1bc
+>>   vscnprintf+0x20
+>>   printk_safe_log_store+0x7c
+>>   printk+0x40
+>>   dump_stack_print_info+0xbc
+>>   dump_stack+0x8
+>>   probe_kernel_read+0x1a4
+>>   probe_kernel_read+0x19c
+>>   check_pointer+0x58
+>>   string+0x3c
+>>   vsnprintf+0x1bc
+>>   vscnprintf+0x20
+>>   vprintk_store+0x6c
+>>   vprintk_emit+0xec
+>>   vprintk_func+0xd4
+>>   printk+0x40
+>>   cpufeatures_process_feature+0xc8
+>>   scan_cpufeatures_subnodes+0x380
+>>   of_scan_flat_dt_subnodes+0xb4
+>>   dt_cpu_ftrs_scan_callback+0x158
+>>   of_scan_flat_dt+0xf0
+>>   dt_cpu_ftrs_scan+0x3c
+>>   early_init_devtree+0x360
+>>   early_setup+0x9c
+>> 
+>> 
+>> The simple fix is to use early_mmu_has_feature() in allow_user_access(),
+>> but we'd rather not do that because it penalises all
+>> copy_to/from_users() for the life of the system with the cost of the
+>> runtime check vs the jump label. The irony is probe_kernel_read()
+>> shouldn't be allowing user access at all, because we're reading the
+>> kernel not userspace.
+>
+> I have tried to find a lightweight way for a safe reading of unknown
+> kernel pointer. But I have not succeeded so far. I see only variants
+> with user access. The user access is handled in arch-specific code
+> and I do not see any variant without it.
+>
+> I am not sure on which level it should get fixed.
 
-> Also, please name it and related parameters and local variables 
-> 'user_access' - in that case no comments are needed and it's all super 
-> clear. Only 'user' is ambiguous really.
+I sent a fix in powerpc code (sorry might have forgot to Cc you):
 
-Yes, that's a good idea! OK. I'll change it.
+  https://patchwork.ozlabs.org/patch/1097015/
 
-Thank you!
+I've merged that into the powerpc tree. I think it's too subtle for us
+to have an ordering requirement that deep in the user copy code, it was
+just a matter of time before it caused a problem, you were just unlucky
+it was your patch that did :)
 
-> 
-> Thanks,
-> 
-> 	ngo
+We'll eventually switch it back to using a jump label but make it safe
+to call early in boot before we've detected features.
 
+> Could you please send it to lkml to get a wider audience?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+I see you also sent a fix, that looks like a safe default to me.
+
+But as I said I'm happy with the powerpc fix, so there's no requirement
+from us that your fix get merged.
+
+cheers
