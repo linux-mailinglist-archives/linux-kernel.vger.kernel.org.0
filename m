@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2D6190A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A37B190EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfEISrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39744 "EHLO mail.kernel.org"
+        id S1728489AbfEISur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:50:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727769AbfEISrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:47:14 -0400
+        id S1728447AbfEISun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:50:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F6BB2184B;
-        Thu,  9 May 2019 18:47:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FEB120578;
+        Thu,  9 May 2019 18:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427633;
-        bh=AIFK3L+c1H4rIB8vBSH4Xb25UaW6efGxn2GKIhav6QI=;
+        s=default; t=1557427843;
+        bh=IvzcrKKjUaGhShNfGWas+gHJsnT1+Y7lxcLDpEGJ1kk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xUATGymAjFGBDMd13SqDq97eWR20GrbbQRm5lCGV/CbqpDd7SP/MxJRyzXSXAuWW9
-         WTE50eo0558mMHl1su3t/ac9/h6DCiIijvXkoOWU+JqQl+xLCWtr+0MHl4+XELmY3C
-         5QYyd7XwgFWsgqbkxTWzqYIWxK7UZZJF6hp0oyJ4=
+        b=MntGGDgDlREj3vxT74NVdB/QJga+Vx4bTUw5PnvGX0h3mjQElclj5C+HJQ6pxBjEo
+         ih/JMa5pZv3do9w1aLNvdJnbRK4L/tmPd/RV5lnlFnEDVBUUIsntDeFk5PFxcy1cZt
+         bAwKWn0wClot2Ba32XAjiU8KYpeZZvdmyLxBVNK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>,
-        Johan Hovold <johan@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>
-Subject: [PATCH 4.19 05/66] staging: greybus: power_supply: fix prop-descriptor request size
-Date:   Thu,  9 May 2019 20:41:40 +0200
-Message-Id: <20190509181302.358228702@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Jourdan <mjourdan@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 24/95] clk: meson-gxbb: round the vdec dividers to closest
+Date:   Thu,  9 May 2019 20:41:41 +0200
+Message-Id: <20190509181311.014770082@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-References: <20190509181301.719249738@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+[ Upstream commit 9b70c697e87286ade406e6a02091757307dd4b7c ]
 
-commit 47830c1127ef166af787caf2f871f23089610a7f upstream.
+We want the video decoder clocks to always round to closest. While the
+muxes are already using CLK_MUX_ROUND_CLOSEST, the corresponding
+CLK_DIVIDER_ROUND_CLOSEST was forgotten for the dividers.
 
-Since moving the message buffers off the stack, the dynamically
-allocated get-prop-descriptor request buffer is incorrectly sized due to
-using the pointer rather than request-struct size when creating the
-operation.
+Fix this by adding the flag to the two vdec dividers.
 
-Fortunately, the pointer size is always larger than this one-byte
-request, but this could still cause trouble on the remote end due to the
-unexpected message size.
-
-Fixes: 9d15134d067e ("greybus: power_supply: rework get descriptors")
-Cc: stable <stable@vger.kernel.org>     # 4.9
-Cc: Rui Miguel Silva <rui.silva@linaro.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: a565242eb9fc ("clk: meson: gxbb: add the video decoder clocks")
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20190319102537.2043-1-mjourdan@baylibre.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/greybus/power_supply.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/staging/greybus/power_supply.c
-+++ b/drivers/staging/greybus/power_supply.c
-@@ -520,7 +520,7 @@ static int gb_power_supply_prop_descript
- 
- 	op = gb_operation_create(connection,
- 				 GB_POWER_SUPPLY_TYPE_GET_PROP_DESCRIPTORS,
--				 sizeof(req), sizeof(*resp) + props_count *
-+				 sizeof(*req), sizeof(*resp) + props_count *
- 				 sizeof(struct gb_power_supply_props_desc),
- 				 GFP_KERNEL);
- 	if (!op)
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 65f2599e52434..08824b2cd1428 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -2213,6 +2213,7 @@ static struct clk_regmap gxbb_vdec_1_div = {
+ 		.offset = HHI_VDEC_CLK_CNTL,
+ 		.shift = 0,
+ 		.width = 7,
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vdec_1_div",
+@@ -2258,6 +2259,7 @@ static struct clk_regmap gxbb_vdec_hevc_div = {
+ 		.offset = HHI_VDEC2_CLK_CNTL,
+ 		.shift = 16,
+ 		.width = 7,
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vdec_hevc_div",
+-- 
+2.20.1
+
 
 
