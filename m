@@ -2,130 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB7618B76
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4419718B93
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 16:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfEIOPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 10:15:35 -0400
-Received: from mail-eopbgr740042.outbound.protection.outlook.com ([40.107.74.42]:28936
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727030AbfEIOPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 10:15:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7hnNrO125lpzhiWvAaCGJSX638Z9131exPQBZHnDy4Q=;
- b=PDzwodQ92FB6mnvMt3ssV9V6wYAtM3aN98ZTum/9VbVdZ2649VxljnFLLzLiTp5HQwbDPDUufx10+D+tCX834/sRxTZ5CiutBCSGOpmtFXX2BG2xELeGMOJWV+u0uCr5+ewJOVRBg7OSd4XzIFQNKaS3GknYL4BeEnqXQaSolCo=
-Received: from SN6PR12MB2734.namprd12.prod.outlook.com (52.135.107.25) by
- SN6PR12MB2814.namprd12.prod.outlook.com (52.135.107.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.21; Thu, 9 May 2019 14:15:16 +0000
-Received: from SN6PR12MB2734.namprd12.prod.outlook.com
- ([fe80::e104:f933:eac3:17e1]) by SN6PR12MB2734.namprd12.prod.outlook.com
- ([fe80::e104:f933:eac3:17e1%3]) with mapi id 15.20.1856.016; Thu, 9 May 2019
- 14:15:16 +0000
-From:   "Kirkendall, Garrett" <Garrett.Kirkendall@amd.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     "nstange@suse.de" <nstange@suse.de>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs
- when PIC is not configured by BIOS before kernel is launched.
-Thread-Topic: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs
- when PIC is not configured by BIOS before kernel is launched.
-Thread-Index: AdUGZ4c7BUF+pyITRvC/KjOnIn2XoQAAqFTgAABd0oAAANT3sA==
-Date:   Thu, 9 May 2019 14:15:16 +0000
-Message-ID: <SN6PR12MB2734370504CF4B89600C8FD885330@SN6PR12MB2734.namprd12.prod.outlook.com>
-References: <SN6PR12MB2734813FB27C43E06F5B4E3D85330@SN6PR12MB2734.namprd12.prod.outlook.com>
- <SN6PR12MB2734B49FDFEAC6CE5D93687185330@SN6PR12MB2734.namprd12.prod.outlook.com>
- <alpine.DEB.2.21.1905091526440.3139@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1905091526440.3139@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Garrett.Kirkendall@amd.com; 
-x-originating-ip: [135.26.38.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dd755cc1-fb55-42b4-dd51-08d6d488c26f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2814;
-x-ms-traffictypediagnostic: SN6PR12MB2814:
-x-microsoft-antispam-prvs: <SN6PR12MB281493355832AC83359A877B85330@SN6PR12MB2814.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 003245E729
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(366004)(376002)(346002)(13464003)(189003)(199004)(76116006)(74316002)(72206003)(478600001)(14454004)(66556008)(64756008)(66446008)(66476007)(305945005)(66946007)(73956011)(66066001)(316002)(99286004)(256004)(81166006)(55016002)(6436002)(52536014)(26005)(186003)(476003)(11346002)(486006)(9686003)(446003)(2906002)(5660300002)(229853002)(54906003)(6116002)(3846002)(68736007)(71190400001)(71200400001)(6916009)(86362001)(8676002)(81156014)(7736002)(8936002)(4326008)(25786009)(7696005)(33656002)(76176011)(6506007)(53546011)(102836004)(53936002)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2814;H:SN6PR12MB2734.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Azw1kkAiGzkHMLjIDSffPqU2NdYFIIJBukUX5y8sIGcd+hNk0Yx5H9eLpSqur4d70LqD8QP7Vc1PfDYTWpV6UrIALVIzvVELOT+IqDrB1r/S1h6fbKpP3blSwgg2nqy3MP0Od+lxAQnWb80c2wEX3jbmpkwEZQesK2XRCr5YQ3MMrjyCQ27SnR74jFFfA7rstxiqyOuKkvlifLswcHbdIcz4iwcax+URrsF5E/mYmzFGpkrzYWq21ArOXDAFPpIln5XaSHR3mtfQYSSwbmVWl+62QzD/51rOYoO9AUzMo5emb9gR8/w+K7KaQfH+h/6qArsJQXpZ+6npj0DQRbUeSFdOiZYZcZ5gKhVECUxnduvpeOXt+uyq6blD8Y26bWE+B0px2734Fck8rQOJlcaU2I4HCgDhcsKADCB7DRODKnc=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd755cc1-fb55-42b4-dd51-08d6d488c26f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2019 14:15:16.1094
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2814
+        id S1726680AbfEIOUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 10:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726449AbfEIOUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 10:20:22 -0400
+Received: from devnote2 (unknown [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53AC621479;
+        Thu,  9 May 2019 14:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557411621;
+        bh=728btKMpGcRm6QCpLxYuNAcXDFUi1xd2ev1v3qU4jzw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o72nheea6Q6avgAcoLCYAO1/oR8LxO3adI2SpbpGGaPk9DYaXr3296eLLkXkpg7UG
+         GXPfNjMFjJXpOmRet+BM9EOgZo1/gvwigaAWOykXeFfEva4Qi54FC4CcDpB0sEwVXI
+         qhEjVzzvk/uGeOYNbyn/8w9ej4TrOji+TPpvqTnk=
+Date:   Thu, 9 May 2019 23:20:04 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>,
+        Joel Fernandes <joel@joelfernandes.org>, yhs@fb.com
+Subject: Re: [PATCH v7 2/6] uaccess: Add non-pagefault user-space read
+ functions
+Message-Id: <20190509232004.7e354456abd654b225a3554a@kernel.org>
+In-Reply-To: <20190509091408.GA90202@gmail.com>
+References: <155732230159.12756.15040196512285621636.stgit@devnote2>
+        <155732233411.12756.16633189392389986702.stgit@devnote2>
+        <20190509091408.GA90202@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1.  Is it correct to probe the 8259 before it is initialized by the kernel?=
-  The 8259 will not respond properly to the probe unless it is properly ini=
-tialized.
-2.  Should IOAPIC interrupts 0-15 require the legacy PIC be available and i=
-nitialized by the BIOS?
-2.  The kernel will not boot if there is no legacy 8259 PIC even if all the=
- other factors stated are provided.
+Hi Ingo,
 
-I want to understand why a preinitialized 8259 is a requirement for a syste=
-m configured to use the IOAPIC?
+On Thu, 9 May 2019 11:14:08 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-GARRETT KIRKENDALL
-SMTS Firmware Engineer | CTE
-7171 Southwest Parkway, Austin, TX 78735 USA=20
-AMD=A0=A0 facebook=A0 |=A0 amd.com
+> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > +static __always_inline long
+> > +probe_read_common(void *dst, const void __user *src, size_t size)
+> > +{
+> > +	long ret;
+> > +
+> > +	pagefault_disable();
+> > +	ret = __copy_from_user_inatomic(dst, src, size);
+> > +	pagefault_enable();
+> > +
+> > +	return ret ? -EFAULT : 0;
+> > +}
+> 
+> Empty line before return statement: good.
+> 
+> > +long __weak probe_user_read(void *dst, const void __user *src, size_t size)
+> > +    __attribute__((alias("__probe_user_read")));
+> > +
+> > +long __probe_user_read(void *dst, const void __user *src, size_t size)
+> > +{
+> > +	long ret = -EFAULT;
+> > +	mm_segment_t old_fs = get_fs();
+> > +
+> > +	set_fs(USER_DS);
+> > +	if (access_ok(src, size))
+> > +		ret = probe_read_common(dst, src, size);
+> > +	set_fs(old_fs);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(probe_user_read);
+> 
+> No empty line before return statement: not good.
 
------Original Message-----
-From: Thomas Gleixner <tglx@linutronix.de>=20
-Sent: Thursday, May 9, 2019 8:32 AM
-To: Kirkendall, Garrett <Garrett.Kirkendall@amd.com>
-Cc: nstange@suse.de; luto@kernel.org; natechancellor@gmail.com; x86@kernel.=
-org; linux-kernel@vger.kernel.org
-Subject: Re: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs=
- when PIC is not configured by BIOS before kernel is launched.
+OK, I'll fix that.
 
-[CAUTION: External Email]
+> 
+> > +long strncpy_from_unsafe_user(char *dst, const void __user *unsafe_addr,
+> > +			      long count)
+> > +{
+> > +	mm_segment_t old_fs = get_fs();
+> > +	long ret;
+> > +
+> > +	if (unlikely(count <= 0))
+> > +		return 0;
+> > +
+> > +	set_fs(USER_DS);
+> > +	pagefault_disable();
+> > +	ret = strncpy_from_user(dst, unsafe_addr, count);
+> > +	pagefault_enable();
+> > +	set_fs(old_fs);
+> > +	if (ret >= count) {
+> > +		ret = count;
+> > +		dst[ret - 1] = '\0';
+> > +	} else if (ret > 0)
+> > +		ret++;
+> > +	return ret;
+> > +}
+> 
+> Ditto. Also unbalanced curly braces.
 
-On Thu, 9 May 2019, Kirkendall, Garrett wrote:
-> I am trying to boot a UEFI BIOS with minimal legacy hardware support.
-> The Linux kernel soft hangs when the PIC is not configured by the BIOS=20
-> because it is using IOAPIC.  Hopefully, this provides enough information.
->
-> Soft hang occurs in calibrate_APIC_clock():
+Yeah, thanks!
 
-...
+> 
+> > +
+> > +/**
+> > + * strnlen_unsafe_user: - Get the size of a user string INCLUDING final NUL.
+> > + * @unsafe_addr: The string to measure.
+> > + * @count: Maximum count (including NUL character)
+> > + *
+> > + * Get the size of a NUL-terminated string in user space without pagefault.
+> > + *
+> > + * Returns the size of the string INCLUDING the terminating NUL.
+> 
+> These phrases exist:
+> 
+>  'Terminating NULL'
+>  'NULL character'
+> 
+> And we also sometimes talk about 'nil' - but I don't think there's such 
+> thing as a 'NUL character'?
 
-> If 8259A PIC is not configured before kernel is launched, HPET IRQ 0=20
-> registration fails because probe_8259A returns PIC as not available=20
-> and therefore interrupt descriptors 0-15 are not allocated.  This=20
-> happens when BIOS does not configure 8259A PIC because it uses IOAPIC.
+OK, it should be "NUL" or "Null character" ( https://en.wikipedia.org/wiki/Null_character )
 
-Right. Works as designed.
+> 
+> I realize that this was probably cloned from existing lib/strnlen_user.c 
+> code, but still. ;-)
+> 
+> > + *
+> > + * If the string is too long, returns a number larger than @count. User
+> > + * has to check the return value against "> count".
+> > + * On exception (or invalid count), returns 0.
+> > + *
+> > + * Unlike strnlen_user, this can be used from IRQ handler etc. because
+> > + * it disables pagefaults.
+> 
+> 'can be used from IRQ handlers'
 
-There is not much we can do at that point, unless your platform has other m=
-eans to provide the TSC frequency (cpuid or MSR) along with the bus frequen=
-cy which is fed into the local apic timer.
+OK.
 
-Thanks,
+> 
+> > + */
+> > +long strnlen_unsafe_user(const void __user *unsafe_addr, long count)
+> > +{
+> > +	mm_segment_t old_fs = get_fs();
+> > +	int ret;
+> > +
+> > +	set_fs(USER_DS);
+> > +	pagefault_disable();
+> > +	ret = strnlen_user(unsafe_addr, count);
+> > +	pagefault_enable();
+> > +	set_fs(old_fs);
+> > +	return ret;
+> > +}
+> 
+> Same problem as before.
 
-        tglx
+OK, I'll fix that.
+
+Thank you!
+
+> 
+> Thanks,
+> 
+> 	Ingo
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
