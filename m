@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D1719087
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED06190BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 20:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfEISpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 14:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37714 "EHLO mail.kernel.org"
+        id S1728029AbfEISs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 14:48:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbfEISpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 14:45:44 -0400
+        id S1728001AbfEISsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 14:48:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3818E21848;
-        Thu,  9 May 2019 18:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2246120578;
+        Thu,  9 May 2019 18:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557427543;
-        bh=z6EV2YqeNqyzk6UyHzkUV9Ct71LipZFSYBUnn+0Bhao=;
+        s=default; t=1557427698;
+        bh=768g+G9BGAia/U51H5InFiVZGSab1b0jKwKZJNhW9oc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W2aeFfTcTG+NdkazBuxnfAQcPDchAExi8md8nkV4CYFfhx5FrMhHLwNeeBCspNiDu
-         jh225zk/mDsM3p9tGJy/PVUlv1Qb8sbCcvLyZdPecbX/SuekQ9SsFwykIsv2DCcc6V
-         701nK7sUZdGvOwRhS2qbk090FS74zzHppEkB00F0=
+        b=F49yDp+hp0PFni+SLEtmJDQ9xNydHb7/g+h9n35GZKyYNBOcMT4Cq0GPoGyY5TO7U
+         Tg8ebxVUXyrMdQkob4/iVnbU40SX6jed84cmwgxHzStHyXlMqsRem6LoiaEgM6O6ac
+         q8fSq66RU/+UuyCzqqtm85cMBHQnfJzmvmyFhHWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        "Tobin C. Harding" <tobin@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/42] slab: fix a crash by reading /proc/slab_allocators
-Date:   Thu,  9 May 2019 20:42:10 +0200
-Message-Id: <20190509181256.958774323@linuxfoundation.org>
+Subject: [PATCH 4.19 36/66] objtool: Add rewind_stack_do_exit() to the noreturn list
+Date:   Thu,  9 May 2019 20:42:11 +0200
+Message-Id: <20190509181305.815495611@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190509181252.616018683@linuxfoundation.org>
-References: <20190509181252.616018683@linuxfoundation.org>
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fcf88917dd435c6a4cb2830cb086ee58605a1d85 ]
+[ Upstream commit 4fa5ecda2bf96be7464eb406df8aba9d89260227 ]
 
-The commit 510ded33e075 ("slab: implement slab_root_caches list")
-changes the name of the list node within "struct kmem_cache" from "list"
-to "root_caches_node", but leaks_show() still use the "list" which
-causes a crash when reading /proc/slab_allocators.
+This fixes the following warning seen on GCC 7.3:
 
-You need to have CONFIG_SLAB=y and CONFIG_MEMCG=y to see the problem,
-because without MEMCG all slab caches are root caches, and the "list"
-node happens to be the right one.
+  arch/x86/kernel/dumpstack.o: warning: objtool: oops_end() falls through to next function show_regs()
 
-Fixes: 510ded33e075 ("slab: implement slab_root_caches list")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Tobin C. Harding <tobin@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/3418ebf5a5a9f6ed7e80954c741c0b904b67b5dc.1554398240.git.jpoimboe@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slab.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/objtool/check.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index f4658468b23e1..843ecea9e336b 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -4299,7 +4299,8 @@ static void show_symbol(struct seq_file *m, unsigned long address)
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 550f17611bd75..ef152daccc333 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -165,6 +165,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 		"fortify_panic",
+ 		"usercopy_abort",
+ 		"machine_real_restart",
++		"rewind_stack_do_exit",
+ 	};
  
- static int leaks_show(struct seq_file *m, void *p)
- {
--	struct kmem_cache *cachep = list_entry(p, struct kmem_cache, list);
-+	struct kmem_cache *cachep = list_entry(p, struct kmem_cache,
-+					       root_caches_node);
- 	struct page *page;
- 	struct kmem_cache_node *n;
- 	const char *name;
+ 	if (func->bind == STB_WEAK)
 -- 
 2.20.1
 
