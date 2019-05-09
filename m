@@ -2,378 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E145E191E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 438D5192B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2019 21:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfEITBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 15:01:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53224 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfEITBr (ORCPT
+        id S1726935AbfEITNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 15:13:53 -0400
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59793 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726749AbfEITNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 15:01:47 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g26so2647183wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 12:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uUWOdEXqtxWsNp1XjgcdfIolg6F8fuU4e1LPqNUI6mM=;
-        b=XlvCmfkoWxA/EEk+1X50BwGiEwCjQfgTMRUR7JE4mSCuNSQ1WEaKk8a2qTEbHTeoWN
-         3X0HojmPM9Z+UZTfRkKe/8YbEiTCIw6YmNM4mFecB3tlgPmN0TxHTXrdmQ+ncZiymBNV
-         bbGA+v1j6Yio2Fk3uQWtmGYvBWnNgEllRtqAk5yIBPK7280XpHlQJdrwy3SwkdKCRgne
-         UIXGf1powPeKuZvWs3Rg5HY6vx9+1oIXnzS6bFaCscBewt+StWNMNTixGnyOJ+gAqHRu
-         vop0MDovFaqgOo226o8hOJKbbVFsRVF+oS4FF6mw4/5Bqr9TF0l2M+NeTXlmakbKVMre
-         ZXPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uUWOdEXqtxWsNp1XjgcdfIolg6F8fuU4e1LPqNUI6mM=;
-        b=bRiqwDjSjV5cXBUZaC0RD8ev6YcUBoMJ3TuA+lppxWxdkjGaeLkzkl6Ou4/URyoTZj
-         C6Zmd+wr9pLe5n9Wbq4FNPewlOE7DJd5kNbGhIEV1eGRpoCN4KpJzUfBoIGWbWXGtSKB
-         /DHfjToMP98x9J5pvxpt8dFCLGfOJOxZUepBy4T8wOqL8PSgrRP3m8TI0OoOwxkLupWM
-         HuFC1q3cRgF/ec9ahV65A+JYOCj3jU+LczPG78/cG+RWqpjQtCvhpVl8EGO6u+B3m2Zb
-         7DHdgP9qis2UEiS2k1/YpuDOP8c64UJ06gUMCyFY4rR5gGfU+d+gxG1IQaAJyDeVZIGg
-         5sSg==
-X-Gm-Message-State: APjAAAWut+LUPcOsvMITj+426Wi2hzUuCLvfHzxd2bcN48HY7nrdu9Me
-        hVlweBOA0jRTLtV+dwzzJLcadXOq
-X-Google-Smtp-Source: APXvYqw8zu5zD8EF+VKoA8rph0OhaIgAq4J1wWN3b16GS5ccVARrpbKAhuinmrhMNSXmCNkDujwpFQ==
-X-Received: by 2002:a1c:cb48:: with SMTP id b69mr4191958wmg.109.1557428505386;
-        Thu, 09 May 2019 12:01:45 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j1sm2833671wrt.52.2019.05.09.12.01.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 12:01:44 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH 3/3] habanalabs: change polling functions to macros
-Date:   Thu,  9 May 2019 22:01:35 +0300
-Message-Id: <20190509190135.5634-3-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190509190135.5634-1-oded.gabbay@gmail.com>
-References: <20190509190135.5634-1-oded.gabbay@gmail.com>
+        Thu, 9 May 2019 15:13:53 -0400
+X-Greylist: delayed 565 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 May 2019 15:13:51 EDT
+Received: from [192.168.0.100] (pC19F56B0.dip0.t-ipconnect.de [193.159.86.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by smtp.math.uni-bielefeld.de (Postfix) with ESMTPSA id E19545F595;
+        Thu,  9 May 2019 21:04:23 +0200 (CEST)
+Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mans Rullgard <mans@mansr.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Chen <peter.chen@nxp.com>
+References: <yw1xpnotufti.fsf@mansr.com>
+ <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
+ <20190509084726.5405-1-m.szyprowski@samsung.com>
+From:   Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tjakobi@math.uni-bielefeld.de; prefer-encrypt=mutual; keydata=
+ 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
+ 24xKzP1yWf7TCvc+DT6gUl4T65RXUQyTeJ0=
+Message-ID: <bb437e5d-65b4-80b3-8112-76799c4dfbab@math.uni-bielefeld.de>
+Date:   Thu, 9 May 2019 21:04:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190509084726.5405-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes two polling functions to macros, in order to make their
-API the same as the standard readl_poll_timeout so we would be able to
-define the "condition for exit" when calling these macros.
+Hello Marek,
 
-This will simplify the code as it will eliminate the need to check both
-for timeout and for the (cond) in the calling function.
+I can confirm that this restores USB operation on my X2, so you can my Tested-by
+if you want.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/command_submission.c | 10 +--
- drivers/misc/habanalabs/device.c             | 89 --------------------
- drivers/misc/habanalabs/firmware_if.c        | 29 +++----
- drivers/misc/habanalabs/goya/goya.c          | 25 +++---
- drivers/misc/habanalabs/habanalabs.h         | 57 ++++++++++++-
- 5 files changed, 81 insertions(+), 129 deletions(-)
+With best wishes,
+Tobias
 
-diff --git a/drivers/misc/habanalabs/command_submission.c b/drivers/misc/habanalabs/command_submission.c
-index 6fe785e26859..6ad83d5ef4b0 100644
---- a/drivers/misc/habanalabs/command_submission.c
-+++ b/drivers/misc/habanalabs/command_submission.c
-@@ -682,14 +682,12 @@ int hl_cs_ioctl(struct hl_fpriv *hpriv, void *data)
- 		u32 tmp;
- 
- 		rc = hl_poll_timeout_memory(hdev,
--			(u64) (uintptr_t) &ctx->thread_ctx_switch_wait_token,
--			jiffies_to_usecs(hdev->timeout_jiffies),
--			&tmp);
-+			&ctx->thread_ctx_switch_wait_token, tmp, (tmp == 1),
-+			100, jiffies_to_usecs(hdev->timeout_jiffies));
- 
--		if (rc || !tmp) {
-+		if (rc == -ETIMEDOUT) {
- 			dev_err(hdev->dev,
--				"context switch phase didn't finish in time\n");
--			rc = -ETIMEDOUT;
-+				"context switch phase timeout (%d)\n", tmp);
- 			goto out;
- 		}
- 	}
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 8289cb7ea759..feedf4810430 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -1171,95 +1171,6 @@ void hl_device_fini(struct hl_device *hdev)
- 	pr_info("removed device successfully\n");
- }
- 
--/*
-- * hl_poll_timeout_memory - Periodically poll a host memory address
-- *                              until it is not zero or a timeout occurs
-- * @hdev: pointer to habanalabs device structure
-- * @addr: Address to poll
-- * @timeout_us: timeout in us
-- * @val: Variable to read the value into
-- *
-- * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-- * case, the last read value at @addr is stored in @val. Must not
-- * be called from atomic context if sleep_us or timeout_us are used.
-- *
-- * The function sleeps for 100us with timeout value of
-- * timeout_us
-- */
--int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr,
--				u32 timeout_us, u32 *val)
--{
--	/*
--	 * address in this function points always to a memory location in the
--	 * host's (server's) memory. That location is updated asynchronously
--	 * either by the direct access of the device or by another core
--	 */
--	u32 *paddr = (u32 *) (uintptr_t) addr;
--	ktime_t timeout;
--
--	/* timeout should be longer when working with simulator */
--	if (!hdev->pdev)
--		timeout_us *= 10;
--
--	timeout = ktime_add_us(ktime_get(), timeout_us);
--
--	might_sleep();
--
--	for (;;) {
--		/*
--		 * Flush CPU read/write buffers to make sure we read updates
--		 * done by other cores or by the device
--		 */
--		mb();
--		*val = *paddr;
--		if (*val)
--			break;
--		if (ktime_compare(ktime_get(), timeout) > 0) {
--			*val = *paddr;
--			break;
--		}
--		usleep_range((100 >> 2) + 1, 100);
--	}
--
--	return *val ? 0 : -ETIMEDOUT;
--}
--
--/*
-- * hl_poll_timeout_devicememory - Periodically poll a device memory address
-- *                                until it is not zero or a timeout occurs
-- * @hdev: pointer to habanalabs device structure
-- * @addr: Device address to poll
-- * @timeout_us: timeout in us
-- * @val: Variable to read the value into
-- *
-- * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-- * case, the last read value at @addr is stored in @val. Must not
-- * be called from atomic context if sleep_us or timeout_us are used.
-- *
-- * The function sleeps for 100us with timeout value of
-- * timeout_us
-- */
--int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
--				u32 timeout_us, u32 *val)
--{
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
--
--	might_sleep();
--
--	for (;;) {
--		*val = readl(addr);
--		if (*val)
--			break;
--		if (ktime_compare(ktime_get(), timeout) > 0) {
--			*val = readl(addr);
--			break;
--		}
--		usleep_range((100 >> 2) + 1, 100);
--	}
--
--	return *val ? 0 : -ETIMEDOUT;
--}
--
- /*
-  * MMIO register access helper functions.
-  */
-diff --git a/drivers/misc/habanalabs/firmware_if.c b/drivers/misc/habanalabs/firmware_if.c
-index de445a1d9f3d..0cbdfa0d7fba 100644
---- a/drivers/misc/habanalabs/firmware_if.c
-+++ b/drivers/misc/habanalabs/firmware_if.c
-@@ -117,33 +117,28 @@ int hl_fw_send_cpu_message(struct hl_device *hdev, u32 hw_queue_id, u32 *msg,
- 		goto out;
- 	}
- 
--	rc = hl_poll_timeout_memory(hdev, (u64) (uintptr_t) &pkt->fence,
--					timeout, &tmp);
-+	rc = hl_poll_timeout_memory(hdev, &pkt->fence, tmp,
-+				(tmp == ARMCP_PACKET_FENCE_VAL), 1000, timeout);
- 
- 	hl_hw_queue_inc_ci_kernel(hdev, hw_queue_id);
- 
- 	if (rc == -ETIMEDOUT) {
--		dev_err(hdev->dev, "Timeout while waiting for device CPU\n");
-+		dev_err(hdev->dev, "Device CPU packet timeout (0x%x)\n", tmp);
- 		hdev->device_cpu_disabled = true;
- 		goto out;
- 	}
- 
--	if (tmp == ARMCP_PACKET_FENCE_VAL) {
--		u32 ctl = le32_to_cpu(pkt->ctl);
-+	tmp = le32_to_cpu(pkt->ctl);
- 
--		rc = (ctl & ARMCP_PKT_CTL_RC_MASK) >> ARMCP_PKT_CTL_RC_SHIFT;
--		if (rc) {
--			dev_err(hdev->dev,
--				"F/W ERROR %d for CPU packet %d\n",
--				rc, (ctl & ARMCP_PKT_CTL_OPCODE_MASK)
-+	rc = (tmp & ARMCP_PKT_CTL_RC_MASK) >> ARMCP_PKT_CTL_RC_SHIFT;
-+	if (rc) {
-+		dev_err(hdev->dev, "F/W ERROR %d for CPU packet %d\n",
-+			rc,
-+			(tmp & ARMCP_PKT_CTL_OPCODE_MASK)
- 						>> ARMCP_PKT_CTL_OPCODE_SHIFT);
--			rc = -EINVAL;
--		} else if (result) {
--			*result = (long) le64_to_cpu(pkt->result);
--		}
--	} else {
--		dev_err(hdev->dev, "CPU packet wrong fence value\n");
--		rc = -EINVAL;
-+		rc = -EIO;
-+	} else if (result) {
-+		*result = (long) le64_to_cpu(pkt->result);
- 	}
- 
- out:
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index a2459cb106dd..ffc7997d4898 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -2844,14 +2844,14 @@ static int goya_send_job_on_qman0(struct hl_device *hdev, struct hl_cs_job *job)
- 		goto free_fence_ptr;
- 	}
- 
--	rc = hl_poll_timeout_memory(hdev, (u64) (uintptr_t) fence_ptr, timeout,
--					&tmp);
-+	rc = hl_poll_timeout_memory(hdev, fence_ptr, tmp,
-+				(tmp == GOYA_QMAN0_FENCE_VAL), 1000, timeout);
- 
- 	hl_hw_queue_inc_ci_kernel(hdev, GOYA_QUEUE_ID_DMA_0);
- 
--	if ((rc) || (tmp != GOYA_QMAN0_FENCE_VAL)) {
--		dev_err(hdev->dev, "QMAN0 Job hasn't finished in time\n");
--		rc = -ETIMEDOUT;
-+	if (rc == -ETIMEDOUT) {
-+		dev_err(hdev->dev, "QMAN0 Job timeout (0x%x)\n", tmp);
-+		goto free_fence_ptr;
- 	}
- 
- free_fence_ptr:
-@@ -2925,20 +2925,19 @@ int goya_test_queue(struct hl_device *hdev, u32 hw_queue_id)
- 		goto free_pkt;
- 	}
- 
--	rc = hl_poll_timeout_memory(hdev, (u64) (uintptr_t) fence_ptr,
--					GOYA_TEST_QUEUE_WAIT_USEC, &tmp);
-+	rc = hl_poll_timeout_memory(hdev, fence_ptr, tmp, (tmp == fence_val),
-+					1000, GOYA_TEST_QUEUE_WAIT_USEC);
- 
- 	hl_hw_queue_inc_ci_kernel(hdev, hw_queue_id);
- 
--	if ((!rc) && (tmp == fence_val)) {
--		dev_info(hdev->dev,
--			"queue test on H/W queue %d succeeded\n",
--			hw_queue_id);
--	} else {
-+	if (rc == -ETIMEDOUT) {
- 		dev_err(hdev->dev,
- 			"H/W queue %d test failed (scratch(0x%08llX) == 0x%08X)\n",
- 			hw_queue_id, (unsigned long long) fence_dma_addr, tmp);
--		rc = -EINVAL;
-+		rc = -EIO;
-+	} else {
-+		dev_info(hdev->dev, "queue test on H/W queue %d succeeded\n",
-+			hw_queue_id);
- 	}
- 
- free_pkt:
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index f09029339d5e..00b3339f4828 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -1065,6 +1065,59 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
- 	(cond) ? 0 : -ETIMEDOUT; \
- })
- 
-+/*
-+ * address in this macro points always to a memory location in the
-+ * host's (server's) memory. That location is updated asynchronously
-+ * either by the direct access of the device or by another core
-+ */
-+#define hl_poll_timeout_memory(hdev, addr, val, cond, sleep_us, timeout_us) \
-+({ \
-+	ktime_t __timeout; \
-+	/* timeout should be longer when working with simulator */ \
-+	if (hdev->pdev) \
-+		__timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	else \
-+		__timeout = ktime_add_us(ktime_get(), (timeout_us * 10)); \
-+	might_sleep_if(sleep_us); \
-+	for (;;) { \
-+		/* Verify we read updates done by other cores or by device */ \
-+		mb(); \
-+		(val) = *((u32 *) (uintptr_t) (addr)); \
-+		if (cond) \
-+			break; \
-+		if (timeout_us && ktime_compare(ktime_get(), __timeout) > 0) { \
-+			(val) = *((u32 *) (uintptr_t) (addr)); \
-+			break; \
-+		} \
-+		if (sleep_us) \
-+			usleep_range((sleep_us >> 2) + 1, sleep_us); \
-+	} \
-+	(cond) ? 0 : -ETIMEDOUT; \
-+})
-+
-+#define hl_poll_timeout_device_memory(hdev, addr, val, cond, sleep_us, \
-+					timeout_us) \
-+({ \
-+	ktime_t __timeout; \
-+	/* timeout should be longer when working with simulator */ \
-+	if (hdev->pdev) \
-+		__timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	else \
-+		__timeout = ktime_add_us(ktime_get(), (timeout_us * 10)); \
-+	might_sleep_if(sleep_us); \
-+	for (;;) { \
-+		(val) = readl(addr); \
-+		if (cond) \
-+			break; \
-+		if (timeout_us && ktime_compare(ktime_get(), __timeout) > 0) { \
-+			(val) = readl(addr); \
-+			break; \
-+		} \
-+		if (sleep_us) \
-+			usleep_range((sleep_us >> 2) + 1, sleep_us); \
-+	} \
-+	(cond) ? 0 : -ETIMEDOUT; \
-+})
- 
- #define HL_ENG_BUSY(buf, size, fmt, ...) ({ \
- 		if (buf) \
-@@ -1334,10 +1387,6 @@ int hl_device_set_debug_mode(struct hl_device *hdev, bool enable);
- int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
- 		enum hl_asic_type asic_type, int minor);
- void destroy_hdev(struct hl_device *hdev);
--int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
--				u32 *val);
--int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
--				u32 timeout_us, u32 *val);
- int hl_hw_queues_create(struct hl_device *hdev);
- void hl_hw_queues_destroy(struct hl_device *hdev);
- int hl_hw_queue_send_cb_no_cmpl(struct hl_device *hdev, u32 hw_queue_id,
--- 
-2.17.1
+
+Marek Szyprowski wrote:
+> Commit 69bec7259853 ("USB: core: let USB device know device node")
+> added support for attaching devicetree node for USB devices. The mentioned
+> commit however identifies the given USB device node only by the 'reg'
+> property in the host controller children nodes. The USB device node
+> however also has to have a 'compatible' property as described in
+> Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
+> 'compatible' property check might result in assigning a devicetree node,
+> which is not intended to be the proper node for the given USB device.
+> 
+> This is important especially when USB host controller has child-nodes for
+> other purposes. For example, Exynos EHCI and OHCI drivers already define
+> child-nodes for each physical root hub port and assigns respective PHY
+> controller and parameters for them. Those binding predates support for
+> USB devicetree nodes.
+> 
+> Checking for the proper compatibility string allows to mitigate the
+> conflict between USB device devicetree nodes and the bindings for USB
+> controllers with child nodes. It also fixes the side-effect of the other
+> commits, like 01fdf179f4b0 ("usb: core: skip interfaces disabled in
+> devicetree"), which incorrectly disables some devices on Exynos based
+> boards.
+> 
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v3:
+> - replaced ad hoc checks by proper test for proper value of the
+>   compatible string in drivers/usb/core/of.c
+> v2: https://lkml.org/lkml/2019/5/8/321
+> v1: https://lkml.org/lkml/2019/5/7/715
+> ---
+>  drivers/usb/core/hub.c |  3 +++
+>  drivers/usb/core/of.c  | 31 +++++++++++++++++++++++++++++++
+>  include/linux/usb/of.h |  2 ++
+>  3 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 2f94568ba385..6f2438522d09 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/usb.h>
+>  #include <linux/usbdevice_fs.h>
+>  #include <linux/usb/hcd.h>
+> +#include <linux/usb/of.h>
+>  #include <linux/usb/otg.h>
+>  #include <linux/usb/quirks.h>
+>  #include <linux/workqueue.h>
+> @@ -5023,6 +5024,8 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+>  		if (status < 0)
+>  			goto loop;
+>  
+> +		usb_of_validate_device_node(udev);
+> +
+>  		if (udev->quirks & USB_QUIRK_DELAY_INIT)
+>  			msleep(2000);
+>  
+> diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
+> index 651708d8c908..2b6f16753edc 100644
+> --- a/drivers/usb/core/of.c
+> +++ b/drivers/usb/core/of.c
+> @@ -30,6 +30,12 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+>  	for_each_child_of_node(hub->dev.of_node, node) {
+>  		if (of_property_read_u32(node, "reg", &reg))
+>  			continue;
+> +		/*
+> +		 * idVendor and idProduct are not yet known, so check only
+> +		 * a presence of the compatible property.
+> +		 */
+> +		if (!of_find_property(node, "compatible", NULL))
+> +			continue;
+>  
+>  		if (reg == port1)
+>  			return node;
+> @@ -39,6 +45,31 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+>  }
+>  EXPORT_SYMBOL_GPL(usb_of_get_device_node);
+>  
+> +/**
+> + * usb_of_validate_device_node() - validate dt node of the probed USB device
+> + * @udev: USB device
+> + *
+> + * Validate devicetree node for the USB device. Compatible string must match
+> + * device's idVendor and idProduct, otherwise the of_node will be put and set
+> + * to NULL.
+> + */
+> +void usb_of_validate_device_node(struct usb_device *udev)
+> +{
+> +	char compatible[13];
+> +
+> +	if (!udev->dev.of_node)
+> +		return;
+> +
+> +	snprintf(compatible, sizeof(compatible), "usb%x,%x",
+> +		 le16_to_cpu(udev->descriptor.idVendor),
+> +		 le16_to_cpu(udev->descriptor.idProduct));
+> +
+> +	if (of_device_is_compatible(udev->dev.of_node, compatible) == 0) {
+> +		of_node_put(udev->dev.of_node);
+> +		udev->dev.of_node = NULL;
+> +	}
+> +}
+> +
+>  /**
+>   * usb_of_has_combined_node() - determine whether a device has a combined node
+>   * @udev: USB device
+> diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+> index dba55ccb9b53..9969efda03ad 100644
+> --- a/include/linux/usb/of.h
+> +++ b/include/linux/usb/of.h
+> @@ -24,6 +24,7 @@ bool usb_of_has_combined_node(struct usb_device *udev);
+>  struct device_node *usb_of_get_interface_node(struct usb_device *udev,
+>  		u8 config, u8 ifnum);
+>  struct device *usb_of_get_companion_dev(struct device *dev);
+> +void usb_of_validate_device_node(struct usb_device *udev);
+>  #else
+>  static inline enum usb_dr_mode
+>  of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
+> @@ -57,6 +58,7 @@ static inline struct device *usb_of_get_companion_dev(struct device *dev)
+>  {
+>  	return NULL;
+>  }
+> +static inline void usb_of_validate_device_node(struct usb_device *udev) { }
+>  #endif
+>  
+>  #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
+> 
 
