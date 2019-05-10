@@ -2,95 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4971A56E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 00:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3041A57B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 01:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbfEJWpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 18:45:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42198 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727917AbfEJWpT (ORCPT
+        id S1728096AbfEJXDT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 10 May 2019 19:03:19 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53366 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfEJXDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 18:45:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 145so3657833pgg.9
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 15:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=d97YmyA/3LiD+Mv8la+sVqazB0Wi/v83PJRamaL8IZA=;
-        b=UEfBh7LHUprotWgJPz47HT61WOt99NIYruH7UVlYWzGp4leqNw7BqhT7vDvqv9kY05
-         FKyz/tgBrTPfjkcCh+21RVlmTBikMUeRlhdmfQi2wjrPwKMwMcKuqBtLEZeGcfxg905Q
-         kUq7k+hsUcLNGqIkhh0wrUlGl7hetNo3FVVXHaKarX2zcWMGTqkRnOvAKXvkvW4ZFFKV
-         WBPXBZAr93pQ3oHpHnxaTB2Dg0sPKef+ipSQ4xkc9mMH5hymm66nUugkVooCXyVjAtFl
-         WXsorAy2Z+x+GyF+wCZ8MmIxQvXHD4VC84TEeCHm9ezcB3cYMYi3E58GHtX/yygFUdaJ
-         5mVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=d97YmyA/3LiD+Mv8la+sVqazB0Wi/v83PJRamaL8IZA=;
-        b=j6zsBTpQ7NLWp5uyelvtw+YkdLjTFE6WFfIrFw/VTvXUZ+zCpb3sFV0SnnQRVMSx5B
-         w40tjF4DJSMEiEHF5lAJFr7dbtKhSrjwVZ1dcZZj3mj0hh9JnEgBEjijDB4DyVfrM7ZU
-         kw60pUI0Qi7b009p79Yf5Rle8sMwCSueS+rIVLGWWLyd2lEeOULfkz1F297aWC7YIMPa
-         ViLD9vhozNKfLrATlDXW1FTTYA+DYWtQpcwDm05hHtxpHqfFc78jSXheXlg5NNgbSK1l
-         yOVBbCilO4LRQMCFIYN4oC7TTfyDT6LF8Nhs5+s1zvm292hZevaYPxRJiswQPk6DBQYU
-         EnVw==
-X-Gm-Message-State: APjAAAWkiaUhzvpqgU7h3xLwuP6UXwuUuqWF7gVGXNPb0IWmDrouh4o+
-        3tsr6JRNWUgDYkNdOxMJDhfVfQ==
-X-Google-Smtp-Source: APXvYqxp0q0ql6/xwfvXB+jKs9bE8hhgTE2r8MIvm/sZG0/ChzNNxXC/9dZEpANHwGlx3k2JIC4I9Q==
-X-Received: by 2002:a62:56d9:: with SMTP id h86mr18128439pfj.195.1557528318502;
-        Fri, 10 May 2019 15:45:18 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:fd66:a9bc:7c2c:636a])
-        by smtp.googlemail.com with ESMTPSA id i3sm8675360pfa.90.2019.05.10.15.45.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 15:45:17 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: meson: sei510: add network support
-In-Reply-To: <20190510164940.13496-6-jbrunet@baylibre.com>
-References: <20190510164940.13496-1-jbrunet@baylibre.com> <20190510164940.13496-6-jbrunet@baylibre.com>
-Date:   Fri, 10 May 2019 15:45:16 -0700
-Message-ID: <7ho94ac4jn.fsf@baylibre.com>
+        Fri, 10 May 2019 19:03:18 -0400
+Received: from c-67-160-6-8.hsd1.wa.comcast.net ([67.160.6.8] helo=famine.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <jay.vosburgh@canonical.com>)
+        id 1hPEXq-0007TQ-89; Fri, 10 May 2019 23:03:14 +0000
+Received: by famine.localdomain (Postfix, from userid 1000)
+        id 9C4A664558; Fri, 10 May 2019 15:53:29 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+        by famine.localdomain (Postfix) with ESMTP id 95071A6E12;
+        Fri, 10 May 2019 15:53:29 -0700 (PDT)
+From:   Jay Vosburgh <jay.vosburgh@canonical.com>
+To:     Jarod Wilson <jarod@redhat.com>
+cc:     linux-kernel@vger.kernel.org, Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH] bonding: fix arp_validate toggling in active-backup mode
+In-reply-to: <20190510215709.19162-1-jarod@redhat.com>
+References: <20190510215709.19162-1-jarod@redhat.com>
+Comments: In-reply-to Jarod Wilson <jarod@redhat.com>
+   message dated "Fri, 10 May 2019 17:57:09 -0400."
+X-Mailer: MH-E 8.6+git; nmh 1.6; GNU Emacs 27.0.50
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <26674.1557528809.1@famine>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 10 May 2019 15:53:29 -0700
+Message-ID: <26675.1557528809@famine>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Jarod Wilson <jarod@redhat.com> wrote:
 
-> Enable the network interface of the SEI510 which use the internal PHY.
+>There's currently a problem with toggling arp_validate on and off with an
+>active-backup bond. At the moment, you can start up a bond, like so:
 >
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>modprobe bonding mode=1 arp_interval=100 arp_validate=0 arp_ip_targets=192.168.1.1
+>ip link set bond0 down
+>echo "ens4f0" > /sys/class/net/bond0/bonding/slaves
+>echo "ens4f1" > /sys/class/net/bond0/bonding/slaves
+>ip link set bond0 up
+>ip addr add 192.168.1.2/24 dev bond0
+>
+>Pings to 192.168.1.1 work just fine. Now turn on arp_validate:
+>
+>echo 1 > /sys/class/net/bond0/bonding/arp_validate
+>
+>Pings to 192.168.1.1 continue to work just fine. Now when you go to turn
+>arp_validate off again, the link falls flat on it's face:
+>
+>echo 0 > /sys/class/net/bond0/bonding/arp_validate
+>dmesg
+>...
+>[133191.911987] bond0: Setting arp_validate to none (0)
+>[133194.257793] bond0: bond_should_notify_peers: slave ens4f0
+>[133194.258031] bond0: link status definitely down for interface ens4f0, disabling it
+>[133194.259000] bond0: making interface ens4f1 the new active one
+>[133197.330130] bond0: link status definitely down for interface ens4f1, disabling it
+>[133197.331191] bond0: now running without any active interface!
+>
+>The problem lies in bond_options.c, where passing in arp_validate=0
+>results in bond->recv_probe getting set to NULL. This flies directly in
+>the face of commit 3fe68df97c7f, which says we need to set recv_probe =
+>bond_arp_recv, even if we're not using arp_validate. Said commit fixed
+>this in bond_option_arp_interval_set, but missed that we can get to that
+>same state in bond_option_arp_validate_set as well.
+>
+>One solution would be to universally set recv_probe = bond_arp_recv here
+>as well, but I don't think bond_option_arp_validate_set has any business
+>touching recv_probe at all, and that should be left to the arp_interval
+>code, so we can just make things much tidier here.
+>
+>Fixes: 3fe68df97c7f ("bonding: always set recv_probe to bond_arp_rcv in arp monitor")
 
-I tried testing this series on SEI510, but I must still be missing some
-defconfig options, as the default defconfig doesn't lead to a working
-interface.
+	Is the above Fixes: tag correct?  3fe68df97c7f is not the source
+of the erroneous logic being removed, which was introduced by
+
+commit 29c4948293bfc426e52a921f4259eb3676961e81
+Author: sfeldma@cumulusnetworks.com <sfeldma@cumulusnetworks.com>
+Date:   Thu Dec 12 14:10:38 2013 -0800
+
+    bonding: add arp_validate netlink support
+
+	Regardless of which Fixes: is correct, the patch itself looks
+fine to me:
+
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+
+	-J
 
 
-I tried adding this kconfig fragment[1], and the dwmac probes/inits but
-I must still be missing something, as the dwmac is still failing to find
-a PHY.  Boot log: https://termbin.com/ivf3
+>CC: Jay Vosburgh <j.vosburgh@gmail.com>
+>CC: Veaceslav Falico <vfalico@gmail.com>
+>CC: Andy Gospodarek <andy@greyhouse.net>
+>CC: "David S. Miller" <davem@davemloft.net>
+>CC: netdev@vger.kernel.org
+>Signed-off-by: Jarod Wilson <jarod@redhat.com>
+>---
+> drivers/net/bonding/bond_options.c | 7 -------
+> 1 file changed, 7 deletions(-)
+>
+>diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+>index da1fc17295d9..b996967af8d9 100644
+>--- a/drivers/net/bonding/bond_options.c
+>+++ b/drivers/net/bonding/bond_options.c
+>@@ -1098,13 +1098,6 @@ static int bond_option_arp_validate_set(struct bonding *bond,
+> {
+> 	netdev_dbg(bond->dev, "Setting arp_validate to %s (%llu)\n",
+> 		   newval->string, newval->value);
+>-
+>-	if (bond->dev->flags & IFF_UP) {
+>-		if (!newval->value)
+>-			bond->recv_probe = NULL;
+>-		else if (bond->params.arp_interval)
+>-			bond->recv_probe = bond_arp_rcv;
+>-	}
+> 	bond->params.arp_validate = newval->value;
+> 
+> 	return 0;
+>-- 
+>2.20.1
+>
 
-I have the same result testing on the u200.
-
-Kevin
-
-[1] amlogic network kconfig fragment
-CONFIG_STMMAC_ETH=y
-
-# following are needed, but automatically enabled if above is set
-#CONFIG_STMMAC_PLATFORM=m
-#CONFIG_DWMAC_MESON=m
-
-CONFIG_PHYLIB=y
-CONFIG_MICREL_PHY=y
-CONFIG_REALTEK_PHY=y
-
-CONFIG_MDIO_BUS_MUX_MESON_G12A=y
-CONFIG_MESON_GXL_PHY=y
+---
+	-Jay Vosburgh, jay.vosburgh@canonical.com
