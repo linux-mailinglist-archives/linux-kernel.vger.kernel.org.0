@@ -2,54 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDDD1A25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DDD1A265
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbfEJRfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 13:35:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57904 "EHLO mail.kernel.org"
+        id S1727964AbfEJRfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 13:35:41 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:52813 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbfEJRfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 13:35:20 -0400
-Subject: Re: [GIT PULL] fbdev changes for v5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557509720;
-        bh=Nt+CxcwvlJZTJMvBBI6S4qoFF8Qq5Gw7uU01tcOHhYc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bJARNUjYNF3fR2TSd4ds4M1sHWGTNu01rqgPdVRlr27h+NWqPjWTDoDF4GHOO0EP3
-         hpx/4/MUiiNDGBQOb/i07BRszoKDIIh6WFPdcnTukJElsM374tIg3giMf0MoIxzF9Q
-         hafUnUoCA0tEXqw1TbsWGoQ+tQafM6Hl4QPYFHzs=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <32ceb3b0-0bce-a585-8843-36e851b2a1aa@samsung.com>
-References: <CGME20190510165025eucas1p1158b6d87dde378cd9986a6e89125acf1@eucas1p1.samsung.com>
- <32ceb3b0-0bce-a585-8843-36e851b2a1aa@samsung.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <32ceb3b0-0bce-a585-8843-36e851b2a1aa@samsung.com>
-X-PR-Tracked-Remote: https://github.com/bzolnier/linux.git tags/fbdev-v5.2
-X-PR-Tracked-Commit-Id: d4a5611743a6f5d126f8cbfdbf29e12fd8d1b73f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cccd559e98c05b669bdc37b01802f920cff1d6dd
-Message-Id: <155750972027.27249.4763452749485963649.pr-tracker-bot@kernel.org>
-Date:   Fri, 10 May 2019 17:35:20 +0000
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+        id S1727670AbfEJRfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 13:35:40 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 450y6M3jtnz9v0v1;
+        Fri, 10 May 2019 19:35:39 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=kZKWCqAu; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id FMwJ20pNBoD4; Fri, 10 May 2019 19:35:39 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 450y6M2STLz9v0v0;
+        Fri, 10 May 2019 19:35:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1557509739; bh=ETIfNWdjheDxK6ulmt7rGhw92PhKDX8Ycxhn3WkzwA4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kZKWCqAuMvyQxiML6fLhAw5/0pfXItFjQa/WP8HryQoMo2SaXCx5RD90E1v1VJeD7
+         XtJInDqwjmZhGYl7KxtOiD84soq4bEeRxlsUH+Vmjaj/OOkkPD4puHedQLGBQsGrhT
+         4k2ym7p54S2XNtZMmeViLG0TrwciZq81wTIhMXy8=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4A2788B95A;
+        Fri, 10 May 2019 19:35:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id DBYHnOZ0LvOs; Fri, 10 May 2019 19:35:39 +0200 (CEST)
+Received: from [192.168.232.53] (unknown [192.168.232.53])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 777778B940;
+        Fri, 10 May 2019 19:35:38 +0200 (CEST)
+Subject: Re: [PATCH] vsprintf: Do not break early boot with probing addresses
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, Russell Currey <ruscur@russell.cc>,
+        Stephen Rothwell <sfr@ozlabs.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+References: <20190510081635.GA4533@jagdpanzerIV>
+ <20190510084213.22149-1-pmladek@suse.com>
+ <20190510122401.21a598f6@gandalf.local.home>
+From:   christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <daf4dfd1-7f4f-8b92-6866-437c3a2be28b@c-s.fr>
+Date:   Fri, 10 May 2019 19:35:29 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190510122401.21a598f6@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Avast (VPS 190510-2, 10/05/2019), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 10 May 2019 18:50:23 +0200:
 
-> https://github.com/bzolnier/linux.git tags/fbdev-v5.2
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cccd559e98c05b669bdc37b01802f920cff1d6dd
+Le 10/05/2019 à 18:24, Steven Rostedt a écrit :
+> On Fri, 10 May 2019 10:42:13 +0200
+> Petr Mladek <pmladek@suse.com> wrote:
+> 
+>>   static const char *check_pointer_msg(const void *ptr)
+>>   {
+>> -	char byte;
+>> -
+>>   	if (!ptr)
+>>   		return "(null)";
+>>   
+>> -	if (probe_kernel_address(ptr, byte))
+>> +	if ((unsigned long)ptr < PAGE_SIZE || IS_ERR_VALUE(ptr))
+>>   		return "(efault)";
+>>   
+> 
+> 
+> 	< PAGE_SIZE ?
+> 
+> do you mean: < TASK_SIZE ?
 
-Thank you!
+I guess not.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Usually, < PAGE_SIZE means NULL pointer dereference (via the member of a 
+struct)
+
+Christophe
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
