@@ -2,96 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD26519903
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D04F1990C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfEJHaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:30:55 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55152 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbfEJHaz (ORCPT
+        id S1727116AbfEJHh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:37:58 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44017 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbfEJHh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:30:55 -0400
-Received: by mail-it1-f194.google.com with SMTP id a190so7825882ite.4
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:30:54 -0700 (PDT)
+        Fri, 10 May 2019 03:37:58 -0400
+Received: by mail-qk1-f195.google.com with SMTP id z6so2244184qkl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=tPx4WWgKD5fMIHB8bGFbha+k6EVA9D8G5KNNwnNFOts=;
-        b=d3CGRCfUgt1wekx979HlBmcTfzlIkeNmVtfq21n2h+J2cWrI1iuyHGmJrFamFD3+I3
-         B8jOOgdg5dZXkn4mIQXxube+OtP3mx0DoJskklbQOoQAPVK6Pte0G6EKcU7yl2k6EmCW
-         Yt/4bqKw9GXsVNZl/vSNP05CskxpxTOLej4BGzaOBZArBZ0bM9BCh4m5TSpBDiU9CaZa
-         BDhFYNWnU8IpHblMeZjqpQOrm7a56VVSE6hLKmhMBEoCJg2ZJ+p8CPJgVXX3g+Ei5GTO
-         3LgRU/BWI68nsWD15k3EqVlmRxTg7a5PrCaexRcUuK0EIcQq2H18kFJQF7vdhcRTVWsz
-         /jIQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YPIdmEziEMHUxazGM82nUeKFs82CMeVb0svBlAIM9mc=;
+        b=YOQP0dtsuHdYUa3VJGsw06uyx6HBDRcu7CqZFjC6R74X5SCqFH/fbolbZ4NikUGBOB
+         01VRHlTKWDTKyNcqr0mx3OXaYA78NK/XUYGPfVgakaCkbsccPVHl+QvhvJFgRCvxbuDG
+         KJ3D9BUxmIMQh16Ljn7fZFKLA8Vj0mFGbYJho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=tPx4WWgKD5fMIHB8bGFbha+k6EVA9D8G5KNNwnNFOts=;
-        b=ac0ZuWF8I6LlihMZ1lb0q28pfDv6CmJ1ObbDL7wee+C0VkA3c3yYsqjVvPpG2E2pzQ
-         rsfyBM53gkDjsPYhH9SE1nT5XbvSQi5qwND388SgIrQnHEM0Xvd7NdYPMjKyRi7dLOZZ
-         qmbwakhiZdfQVmpZ7vXc7eIbox3BDA/8nezD67+LCdmkIO0iHbT1vHYU9fpTSFlqu5iN
-         Hs4mUa6zMMEUP2bpKNceimGAEs+o2A1Y2sMQd/qPl7zpntPVHT/OevEW9Lx3oshhXCdB
-         xQuqYUuhviKviSQbOkGk4Ufi00VbCX+MVEqkzUFX5M9AOJIehFucdpaCpNdlMlYT4hle
-         J2rg==
-X-Gm-Message-State: APjAAAUN6O5Ew1BeqLQXXne1qcCy3SfsRki7lLZ6En1DePiNJiaSA2LK
-        K+u1ubwTzdlLj9F13a4vI6En0g0186NVxHhJ3NI=
-X-Google-Smtp-Source: APXvYqwcGW2ugr017R+z4A1uYJBG9CeVuq1Hti0KvbMilmjAMjdatVVKN434nVhXD/nfUp3lEWKTh4l1d6sfmilxKJI=
-X-Received: by 2002:a24:97d2:: with SMTP id k201mr1625763ite.151.1557473454035;
- Fri, 10 May 2019 00:30:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YPIdmEziEMHUxazGM82nUeKFs82CMeVb0svBlAIM9mc=;
+        b=UVRD8JknDJVK+gNq8kVg+oaCAC/97ThLTM19biHKnyNa+N83KBl54EowrJFEMujFLK
+         OmO38nopW3g59yDdOtPK5HOrGEaAowlCKuDZTnG9Rg/7qmV2FdqTr+HXpaCALRdXcdDh
+         i35CWEn/E3twO372DTSljHhwXuc89DEXWG3Hy9T8RCX0yUePKj8zBTMq5Z4jenXp8KXb
+         IoDplnGFqxZDVUHGE4V3D6QLafZBfggWFufqEamh0CtrK+RFO1AXrl6rkgIvhja99qbY
+         sDVfJhz4fRhZ0VV6NiHI6R8WAyGe/rjW/D61kPedz02PhJx3KQp7YUHRkovi3t/3q5Dn
+         HUxw==
+X-Gm-Message-State: APjAAAXQVWF/jlW7w+iLU99DH8H6qXljYrbAyEOi7HC5k9pe6zQdedbO
+        zmQgjBxBENZWSWPGBi+ZZxJCZRCGBHNVrLyGESDjqA==
+X-Google-Smtp-Source: APXvYqw0oTMu+CovlvxeRY9ocZTmZNLydi0JE63J09a1MhVGCcjf777Api8V4IshlZIMqAkICDBwoldY3iKTtUIQcho=
+X-Received: by 2002:a05:620a:1585:: with SMTP id d5mr7444463qkk.212.1557473876989;
+ Fri, 10 May 2019 00:37:56 -0700 (PDT)
 MIME-Version: 1.0
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Fri, 10 May 2019 02:30:42 -0500
-Message-ID: <CABb+yY2cJiXMVaPX+r7TS_mFa=o-dj9HEOjZ2+8GEbs8kUX1Xw@mail.gmail.com>
-Subject: [GIT PULL] Mailbox changes for v5.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190507045433.542-1-hsinyi@chromium.org> <CAL_Jsq+rGeFKAPVmPvv_Z+G=BppKUK-tEUphBajZVxFtbRBJvQ@mail.gmail.com>
+ <CAJMQK-iVhScf0ybZ85kqP0B5_QPoYZ9PZt35jHRUh8FNHKvu7w@mail.gmail.com>
+ <CAL_JsqJZ+mOnrLWt0Cpo_Ybr_ohxwWom1qiyV8_EFocULde7=Q@mail.gmail.com>
+ <CAJMQK-jjzYwX3NZAKJ-8ypjcN75o-ZX4iOVD=84JecEd4qV1bA@mail.gmail.com>
+ <CAL_JsqLnmedF5cJYH+91U2Q_WX755O8TQs6Ue9mqtEiFKcjGWQ@mail.gmail.com>
+ <CAJMQK-hJUG855+TqX=droOjUfb-MKnU0n0FYtr_SW2KByKAW1w@mail.gmail.com> <36fab640-b98e-9781-f96f-0ed988a71077@rasmusvillemoes.dk>
+In-Reply-To: <36fab640-b98e-9781-f96f-0ed988a71077@rasmusvillemoes.dk>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Fri, 10 May 2019 15:37:31 +0800
+Message-ID: <CAJMQK-hpA7rkaznW2REYbO=6rOvEMfJOvo6xxPkNb9o1VNUqTA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: add support for rng-seed
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, May 10, 2019 at 2:14 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
 
-The following changes since commit 37624b58542fb9f2d9a70e6ea006ef8a5f66c30b:
+> So, why not just have the bootloader add whatever entropy it has via the
+> commandline, which already gets mixed in? That requires no kernel
+> changes, and works for all architectures.
+>
+> If anything, perhaps instead of just adding gobbledygook=abc123, make an
+> official command line parameter (there was talk about this at some
+> point), and have the kernel overwrite the value with xxx so it's not
+> visible in /proc/cmdline.
+>
+> Rasmus
 
-  Linux 5.1-rc7 (2019-04-28 17:04:13 -0700)
+For some arch, besides commandline, we also need to overwrite bootargs
+in fdt, otherwise it's still visible by
+/sys/firmware/devicetree/base/chosen/bootargs for example.
 
-are available in the Git repository at:
+Originally planned to land v2 as
 
-  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
-tags/mailbox-v5.2
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index de893c9616a1..96ea5eba9dd5 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -24,6 +24,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/serial_core.h>
+ #include <linux/sysfs.h>
++#include <linux/random.h>
 
-for you to fetch changes up to 8fbbfd966efa67ef9aec37cb4ff412f9f26e1e84:
+ #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+ #include <asm/page.h>
+@@ -1079,6 +1080,7 @@ int __init early_init_dt_scan_chosen(unsigned
+long node, const char *uname,
+ {
+        int l;
+        const char *p;
++       const void *rng_seed;
 
-  mailbox: Add support for Armada 37xx rWTM mailbox (2019-05-09 00:41:00 -0500)
+        pr_debug("search \"chosen\", depth: %d, uname: %s\n", depth, uname);
 
-----------------------------------------------------------------
-- New driver: Armada 37xx mailbox controller
-- Misc: Use devm_ api for imx and platform_get_irq for stm32
+@@ -1113,6 +1115,15 @@ int __init early_init_dt_scan_chosen(unsigned
+long node, const char *uname,
 
-----------------------------------------------------------------
-Anson Huang (1):
-      mailbox: imx: use devm_platform_ioremap_resource() to simplify code
+        pr_debug("Command line is: %s\n", (char*)data);
 
-Fabien Dessenne (1):
-      mailbox: stm32-ipcc: check invalid irq
++       rng_seed = of_get_flat_dt_prop(node, "rng-seed", &l);
++       if (!rng_seed || l == 0)
++               return 1;
++
++       /* try to clear seed so it won't be found. */
++        fdt_nop_property(initial_boot_params, node, "rng-seed");
++
++        add_device_randomness(rng_seed, l);
++
+        /* break now */
+        return 1;
+ }
 
-Marek Behun (2):
-      dt-bindings: mailbox: Document armada-3700-rwtm-mailbox binding
-      mailbox: Add support for Armada 37xx rWTM mailbox
+(For arm64 RW/RO issue, it will be done in other patch.)
 
- .../mailbox/marvell,armada-3700-rwtm-mailbox.txt   |  16 ++
- drivers/mailbox/Kconfig                            |  10 +
- drivers/mailbox/Makefile                           |   2 +
- drivers/mailbox/armada-37xx-rwtm-mailbox.c         | 225 +++++++++++++++++++++
- drivers/mailbox/imx-mailbox.c                      |   4 +-
- drivers/mailbox/stm32-ipcc.c                       |  13 +-
- include/linux/armada-37xx-rwtm-mailbox.h           |  23 +++
- 7 files changed, 285 insertions(+), 8 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/mailbox/marvell,armada-3700-rwtm-mailbox.txt
- create mode 100644 drivers/mailbox/armada-37xx-rwtm-mailbox.c
- create mode 100644 include/linux/armada-37xx-rwtm-mailbox.h
+If we add parameter into commandline, I think we probably also need to
+do similar changes here since there are fdt related overwrite.
