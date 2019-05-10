@@ -2,164 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80E21980E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 07:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F8E1981A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 07:36:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfEJF2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 01:28:34 -0400
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:35370 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726284AbfEJF2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 01:28:33 -0400
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4A5JucC001987;
-        Thu, 9 May 2019 22:28:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=yRSAAZ8zPYOyWv2F38sqsFclOq54MU1hjJ5zncj5hcI=;
- b=AvlL+Hws3YGPHOBGDlg8uUqDn6VFbCnhcCAtY6dLlFlffvstwO8neqf3Rsd18gsu2Rmm
- kvgS7s+ihGIxpxbcQeODeTtbPe24VG1iyJuROLxJfyXTWnhmITcPcQg/ci0gSrU/LV7+
- lGWmF8KRLqHOjvbb7yAYSZ3AnCuUc5TglGY/F3mRjzXzgpTQumnaFEHtTDxA7MwXrxxX
- 1nvD7M0ab2Gn8La9A/QNTKfpXahXUuCgIuXa2x23hy14GYWvOuiJiOc/dZ38XpT6oTSy
- jAJ+v7QXzpeobbVsMqvI4cf6phk7VIVVqrmQlwPQX5OiSm1QwcQPxeJ6gm5cCLjHpV7S PQ== 
-Received: from sc-exch01.marvell.com ([199.233.58.181])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2sd0p30ma7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 09 May 2019 22:28:26 -0700
-Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH01.marvell.com
- (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Thu, 9 May
- 2019 22:28:24 -0700
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.56) by
- SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Thu, 9 May 2019 22:28:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yRSAAZ8zPYOyWv2F38sqsFclOq54MU1hjJ5zncj5hcI=;
- b=IuPvjitVurljc3S9vSeKePMJENI+jI40ihv5cNELJ5wlSFGazPdWh9IuvvxC+U9lSX7LK7Rdtq1fyBOuCEsr9PYEv0VlLB8mmQjEThXOqSEFBEzawYu/daauuhjUic/Hz19YsArZDzjWk8B8i97e7AQZ7rnxoK2KYf+Kmks4lOA=
-Received: from BYAPR18MB2485.namprd18.prod.outlook.com (20.179.92.143) by
- BYAPR18MB2887.namprd18.prod.outlook.com (20.179.58.202) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.20; Fri, 10 May 2019 05:28:19 +0000
-Received: from BYAPR18MB2485.namprd18.prod.outlook.com
- ([fe80::c974:8e88:5b70:fcfc]) by BYAPR18MB2485.namprd18.prod.outlook.com
- ([fe80::c974:8e88:5b70:fcfc%5]) with mapi id 15.20.1878.022; Fri, 10 May 2019
- 05:28:19 +0000
-From:   Manish Rangankar <mrangankar@marvell.com>
-To:     Yue Haibing <yuehaibing@huawei.com>,
-        "QLogic-Storage-Upstream@cavium.com" 
-        <QLogic-Storage-Upstream@cavium.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: RE: [PATCH -next] scsi: qedi: remove set but not used variables
- 'cdev' and 'udev'
-Thread-Topic: [PATCH -next] scsi: qedi: remove set but not used variables
- 'cdev' and 'udev'
-Thread-Index: AQHU+nQ89AUI/NIlBkC1079Ec+hhQaZj7UWg
-Date:   Fri, 10 May 2019 05:28:18 +0000
-Message-ID: <BYAPR18MB248596EAD386EC09F380162DD80C0@BYAPR18MB2485.namprd18.prod.outlook.com>
-References: <20190424080256.30012-1-yuehaibing@huawei.com>
-In-Reply-To: <20190424080256.30012-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [114.143.185.87]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 80582d1a-d818-46c5-b337-08d6d5084f93
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR18MB2887;
-x-ms-traffictypediagnostic: BYAPR18MB2887:
-x-microsoft-antispam-prvs: <BYAPR18MB2887086E43D2BF2DB5B7810CD80C0@BYAPR18MB2887.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:74;
-x-forefront-prvs: 0033AAD26D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(376002)(39860400002)(346002)(13464003)(189003)(199004)(110136005)(54906003)(446003)(73956011)(76116006)(66946007)(229853002)(26005)(478600001)(256004)(305945005)(2906002)(186003)(71190400001)(14444005)(66066001)(99286004)(3846002)(52536014)(6116002)(5660300002)(71200400001)(66476007)(66556008)(64756008)(66446008)(25786009)(2201001)(9686003)(86362001)(6436002)(7696005)(486006)(81156014)(476003)(76176011)(14454004)(68736007)(11346002)(81166006)(8676002)(2501003)(7736002)(33656002)(6506007)(316002)(55016002)(53936002)(102836004)(53546011)(6246003)(74316002)(8936002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR18MB2887;H:BYAPR18MB2485.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2Tw1GXc/I6GP6qwjlQZTplA+sKnK45YBqjV5wgFWrqMXVRYW3EtNh+IXbTf0RBKFb6Pc4nVu9jwsdE3OzTS9PIw++YTCDj9YdVEOr8OZjo3E0MM7zCLJIq/zbwbuX7iXQqJxdpk3tVmeqOpMtlmFjj2tmCoyeK14rE3qq6OL0tK0gt/H7F0VrFP5W8bwTA34FZQQEcw6SZejI+g14AhjLD4K9UL/UaM0Uj+kGmqvK+BQAEYUR2nh2C1SD1n06mS0K1QhooqR/+3E85d8qsvonBKwTEDZc1AF2G26mz0IGta/F0VlkUtl7j3EMfSjsWOY9vk6KIMYLReybzb3oVD0nBzBJBKy5OaFQc24XJE3SCS0fWDyUVE0UuX76pVYLqggkSJ3p4MgNQNjEvNU1UkHMH5ffmzhslGLsZw3h1yAkB4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726978AbfEJFgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 01:36:02 -0400
+Received: from mga03.intel.com ([134.134.136.65]:1335 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbfEJFgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 01:36:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 May 2019 22:36:01 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 09 May 2019 22:35:59 -0700
+Cc:     baolu.lu@linux.intel.com, "Tian, Kevin" <kevin.tian@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v3 1/8] iommu: Add ops entry for supported default domain
+ type
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Tom Murphy <tmurphy@arista.com>
+References: <20190429020925.18136-1-baolu.lu@linux.intel.com>
+ <20190429020925.18136-2-baolu.lu@linux.intel.com>
+ <CAPL0++4Q7p7gWRUF5vG5sazLNCmSR--Px-=OEtj6vm_gEpB_ng@mail.gmail.com>
+ <bba1f327-21b7-ed3c-8fd4-217ad97a6a7c@arm.com>
+ <3e0da076-4916-1a02-615c-927c1b3528b8@linux.intel.com>
+ <56205a21-c72f-a460-77a2-4bb4f46f6e08@arm.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <6dbbfc10-3247-744c-ae8d-443a336e0c50@linux.intel.com>
+Date:   Fri, 10 May 2019 13:29:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80582d1a-d818-46c5-b337-08d6d5084f93
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 May 2019 05:28:18.9379
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR18MB2887
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
+In-Reply-To: <56205a21-c72f-a460-77a2-4bb4f46f6e08@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Robin,
 
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org <linux-scsi-
-> owner@vger.kernel.org> On Behalf Of Yue Haibing
-> Sent: Wednesday, April 24, 2019 1:33 PM
-> To: QLogic-Storage-Upstream@cavium.com; jejb@linux.ibm.com;
-> martin.petersen@oracle.com
-> Cc: linux-kernel@vger.kernel.org; linux-scsi@vger.kernel.org; YueHaibing
-> <yuehaibing@huawei.com>
-> Subject: [PATCH -next] scsi: qedi: remove set but not used variables 'cde=
-v'
-> and 'udev'
->=20
-> From: YueHaibing <yuehaibing@huawei.com>
->=20
-> Fixes gcc '-Wunused-but-set-variable' warning:
->=20
-> drivers/scsi/qedi/qedi_iscsi.c: In function 'qedi_ep_connect':
-> drivers/scsi/qedi/qedi_iscsi.c:813:23: warning: variable 'udev' set but n=
-ot
-> used [-Wunused-but-set-variable]
-> drivers/scsi/qedi/qedi_iscsi.c:812:18: warning: variable 'cdev' set but n=
-ot
-> used [-Wunused-but-set-variable]
->=20
-> They are never used since introduction.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/scsi/qedi/qedi_iscsi.c | 4 ----
->  1 file changed, 4 deletions(-)
->=20
-> diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscs=
-i.c
-> index e4391ee..688a6d8 100644
-> --- a/drivers/scsi/qedi/qedi_iscsi.c
-> +++ b/drivers/scsi/qedi/qedi_iscsi.c
-> @@ -809,8 +809,6 @@ qedi_ep_connect(struct Scsi_Host *shost, struct
-> sockaddr *dst_addr,
->  	struct qedi_endpoint *qedi_ep;
->  	struct sockaddr_in *addr;
->  	struct sockaddr_in6 *addr6;
-> -	struct qed_dev *cdev  =3D  NULL;
-> -	struct qedi_uio_dev *udev =3D NULL;
->  	struct iscsi_path path_req;
->  	u32 msg_type =3D ISCSI_KEVENT_IF_DOWN;
->  	u32 iscsi_cid =3D QEDI_CID_RESERVED;
-> @@ -830,8 +828,6 @@ qedi_ep_connect(struct Scsi_Host *shost, struct
-> sockaddr *dst_addr,
->  	}
->=20
->  	qedi =3D iscsi_host_priv(shost);
-> -	cdev =3D qedi->cdev;
-> -	udev =3D qedi->udev;
->=20
->  	if (test_bit(QEDI_IN_OFFLINE, &qedi->flags) ||
->  	    test_bit(QEDI_IN_RECOVERY, &qedi->flags)) {
-> --
-> 2.7.4
->=20
+On 5/10/19 12:11 AM, Robin Murphy wrote:
+> On 09/05/2019 03:30, Lu Baolu wrote:
+>> Hi Robin,
+>>
+>> On 5/7/19 6:28 PM, Robin Murphy wrote:
+>>> On 06/05/2019 16:32, Tom Murphy via iommu wrote:
+>>>> The AMD driver already solves this problem and uses the generic
+>>>> iommu_request_dm_for_dev function. It seems like both drivers have the
+>>>> same problem and could use the same solution. Is there any reason we
+>>>> can't have use the same solution for the intel and amd driver?
+>>>>
+>>>> Could we just  copy the implementation of the AMD driver? It would be
+>>>> nice to have the same behavior across both drivers especially as we
+>>>> move to make both drivers use more generic code.
+>>>
+>>> TBH I don't think the API really needs to be involved at all here. 
+>>> Drivers can already not provide the requested default domain type if 
+>>> they don't support it, so as long as the driver can ensure that the 
+>>> device ends up with IOMMU or direct DMA ops as appropriate, I don't 
+>>> see any great problem with drivers just returning a passthrough 
+>>> domain when a DMA domain was requested, or vice versa (and logging a 
+>>> message that the requested type was overridden). The only type that 
+>>> we really do have to honour strictly is non-default (i.e. unmanaged) 
+>>> domains.
+>>
+>> I agree with you that we only have to honor strictly the non-default
+>> domains. But domain type saved in iommu_domain is consumed in iommu.c
+>> and exposed to user through sysfs. It's not clean if the iommu driver
+>> silently replace the default domain.
+> 
+> Right, I did get a bit ahead of myself there - the implicit step before 
+> that is to fix default domain allocation so that the core actually 
+> passes the relevant device which it has to hand, such that the IOMMU 
+> drivers *can* make the right decision up-front.
+> 
 
-Thanks,
+Yes, passing the relevant device when allocating the default domain so
+that the IOMMU driver could make right decision seems to be a better
+solution. Somebody can come up with a patch set to bring this up for
+discussion. I won't include this in this patch set since it's not for
+that purpose. I will follow the existing mechanism that is using on amd
+and other iommu drivers.
 
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Best regards,
+Lu Baolu
