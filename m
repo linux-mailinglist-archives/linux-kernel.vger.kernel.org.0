@@ -2,61 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF271961B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 03:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583FC19624
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 03:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfEJBOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 21:14:37 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:49818 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726765AbfEJBOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 21:14:37 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 9FD1A7C416A3151C2A41;
-        Fri, 10 May 2019 09:14:34 +0800 (CST)
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 10 May 2019 09:14:34 +0800
-Received: from [10.134.22.195] (10.134.22.195) by
- dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 10 May 2019 09:14:33 +0800
-Subject: Re: [PATCH v5] f2fs: fix to avoid accessing xattr across the boundary
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Randall Huang <huangrandall@google.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20190411082646.169977-1-huangrandall@google.com>
- <20190509041535.GA62877@jaegeuk-macbookpro.roam.corp.google.com>
- <bdba5d01-4a31-d8f2-4805-81d167047c84@huawei.com>
- <20190509164814.GA79912@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <57a8cf36-af86-8d4b-856d-e7d70cf2d098@huawei.com>
-Date:   Fri, 10 May 2019 09:14:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726819AbfEJB1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 21:27:16 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37772 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfEJB1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 21:27:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a12so5554724wrn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 18:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=ftpViN5j8NFAV54qkkJMS7+epm3RTRKzoNYTV0PlOJg=;
+        b=YsbrPpzThe4ctLjXBEevMymgL7213QNtGRyA4NrhC/5eFu1pyt3lW/UZ9d17gTCDTe
+         cxjxY5wuZvYTvsPg63uXO6fb8U2qf2Z9W6szny5MPL+YlAgyy6ccdGA+ar7+cZFO9McZ
+         y41ypt9ziLd8y7qNcRXbWU2h/+PlgGG8U9JSGEoP9VByZ5Jyl2Z8f5aRP22ZUcSrvaRo
+         /yFeAYlKjku7bjVMt9rpSbt2hKQj3HXZ20RvInP61VxxC6RQan4LlMUzPdm3e7SIjr7A
+         UvGEb/rQyFNedzX+6b7nXTX7TtEWxDu6/K3yp8xoM/5TQBxrcICMrXxYsxTJTmtzLr2k
+         zc/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=ftpViN5j8NFAV54qkkJMS7+epm3RTRKzoNYTV0PlOJg=;
+        b=JCLV6AJu3A6MgI1+iqnPWepXWQAu1RO/cKtAzDxafK2e2Ediwo8KXF4bSK6nH7MWTn
+         ufthE3vsGBZudCgEwsWTMTj4dy8y4nS10NllfNPHuZULsbR2ZEsSK1cTHokz9f2n79RM
+         HRFR/32LDqC9//kGLqb/jcP64TnAhwYlN1gys52Mn+qmb5zG4Ukoynw35GNFg52PhDt8
+         juk+w1DDf7neoy1vC0rDfXteM4lCH9k7SOXHMpQfMzd6VQSvAbiCHJjVVYPPCa/aMB2+
+         VITajnbAylFdakT+1GT40X9gu19m9cTr9xOB/TZWJcfOgrUWeyJs2r53xZjvHfbsnnHs
+         82zg==
+X-Gm-Message-State: APjAAAUPQpwklmCwWAbqzf2XKfAjAIRYJKd1etQ3oxv56iRAshQrDr2J
+        uMiMPZAyVTvBzIuwXJ/ljqBswQdBq46dsw==
+X-Google-Smtp-Source: APXvYqyarNorOi0XwqzYDk1kJrd9ttGSJJRIcSk1u7eamncDsxys6dMt/bwjjnDvEdJygFoWQSRtPA==
+X-Received: by 2002:adf:83c6:: with SMTP id 64mr5627489wre.81.1557451634115;
+        Thu, 09 May 2019 18:27:14 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id x1sm493646wrp.35.2019.05.09.18.27.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 18:27:13 -0700 (PDT)
+Message-ID: <5cd4d371.1c69fb81.c575f.2868@mx.google.com>
+Date:   Thu, 09 May 2019 18:27:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190509164814.GA79912@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-ClientProxiedBy: dggeme764-chm.china.huawei.com (10.3.19.110) To
- dggeme763-chm.china.huawei.com (10.3.19.109)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Kernel: v4.9.174-29-g50bbfeb1e2a3
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/28] 4.9.175-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/5/10 0:48, Jaegeuk Kim wrote:
-> Okay, how about this?
-> 
->>From 2777e654371dd4207a3a7f4fb5fa39550053a080 Mon Sep 17 00:00:00 2001
-> From: Randall Huang <huangrandall@google.com>
-> Date: Thu, 11 Apr 2019 16:26:46 +0800
-> Subject: [PATCH] f2fs: fix to avoid accessing xattr across the boundary
+stable-rc/linux-4.9.y boot: 112 boots: 0 failed, 107 passed with 2 offline,=
+ 3 conflicts (v4.9.174-29-g50bbfeb1e2a3)
 
-Looks good to me, and more clean. :)
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.174-29-g50bbfeb1e2a3/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.174-29-g50bbfeb1e2a3/
 
-Thanks,
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.174-29-g50bbfeb1e2a3
+Git Commit: 50bbfeb1e2a357db99ff35681cfa95341b33103a
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 52 unique boards, 22 SoC families, 15 builds out of 197
+
+Boot Regressions Detected:
+
+arm:
+
+    omap2plus_defconfig:
+        gcc-8:
+          omap4-panda:
+              lab-baylibre: new failure (last pass: v4.9.174)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          meson-gxbb-p200:
+              lab-baylibre: new failure (last pass: v4.9.174)
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            stih410-b2120: 1 offline lab
+            tegra20-iris-512: 1 offline lab
+
+Conflicting Boot Failures Detected: (These likely are not failures as other=
+ labs are reporting PASS. Needs review.)
+
+arm:
+    omap2plus_defconfig:
+        omap4-panda:
+            lab-baylibre: FAIL (gcc-8)
+            lab-baylibre-seattle: PASS (gcc-8)
+
+    davinci_all_defconfig:
+        da850-lcdk:
+            lab-baylibre: PASS (gcc-8)
+            lab-baylibre-seattle: FAIL (gcc-8)
+
+arm64:
+    defconfig:
+        meson-gxbb-p200:
+            lab-baylibre: FAIL (gcc-8)
+            lab-baylibre-seattle: PASS (gcc-8)
+
+---
+For more info write to <info@kernelci.org>
