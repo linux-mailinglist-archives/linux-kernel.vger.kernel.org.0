@@ -2,121 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A863A19A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242D719AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfEJJ2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 05:28:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56372 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726992AbfEJJ2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 05:28:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEE65AD9D;
-        Fri, 10 May 2019 09:28:19 +0000 (UTC)
-Date:   Fri, 10 May 2019 11:28:19 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/locking/semaphore: use wake_q in up()
-Message-ID: <20190510092819.elu4b7fcojzcek2q@pathway.suse.cz>
-References: <20190509120903.28939-1-daniel.vetter@ffwll.ch>
- <20190509200633.19678-1-daniel.vetter@ffwll.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190509200633.19678-1-daniel.vetter@ffwll.ch>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1727289AbfEJJbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 05:31:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:41110 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726992AbfEJJbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 05:31:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85431A78;
+        Fri, 10 May 2019 02:31:13 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6C5A53F738;
+        Fri, 10 May 2019 02:31:12 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     mathieu.poirier@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 0/4] coresight: Do not call smp_processor_id from preemptible contexts
+Date:   Fri, 10 May 2019 10:30:59 +0100
+Message-Id: <1557480663-16759-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-05-09 22:06:33, Daniel Vetter wrote:
-> console_trylock, called from within printk, can be called from pretty
-> much anywhere. Including try_to_wake_up. Note that this isn't common,
-> usually the box is in pretty bad shape at that point already. But it
-> really doesn't help when then lockdep jumps in and spams the logs,
-> potentially obscuring the real backtrace we're really interested in.
-> One case I've seen (slightly simplified backtrace):
-> 
-> Fix this specific locking recursion by moving the wake_up_process out
-> from under the semaphore.lock spinlock, using wake_q as recommended by
-> Peter Zijlstra.
 
-It might make sense to mention also the optimization effect mentioned
-by Peter.
+We have a few places where we call smp_processor_id() from preemptible
+contexts during the perf buffer handling. We do this to figure out the
+numa node for the allocation in case the event is not CPU bound. Use
+numa_node_id() instead in such cases to avoid a splat.
 
-> diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
-> index 561acdd39960..7a6f33715688 100644
-> --- a/kernel/locking/semaphore.c
-> +++ b/kernel/locking/semaphore.c
-> @@ -169,6 +169,14 @@ int down_timeout(struct semaphore *sem, long timeout)
->  }
->  EXPORT_SYMBOL(down_timeout);
->  
-> +/* Functions for the contended case */
-> +
-> +struct semaphore_waiter {
-> +	struct list_head list;
-> +	struct task_struct *task;
-> +	bool up;
-> +};
-> +
->  /**
->   * up - release the semaphore
->   * @sem: the semaphore to release
-> @@ -179,24 +187,25 @@ EXPORT_SYMBOL(down_timeout);
->  void up(struct semaphore *sem)
->  {
->  	unsigned long flags;
-> +	struct semaphore_waiter *waiter;
-> +	DEFINE_WAKE_Q(wake_q);
+Suzuki K Poulose (4):
+  coresight: tmc-etr: Do not call smp_processor_id() from preemptible
+  coresight: tmc-etr: alloc_perf_buf: Do not call smp_processor_id from
+    preemptible
+  coresight: tmc-etf: Do not call smp_processor_id from preemptible
+  coresight: etb10: Do not call smp_processor_id from preemptible
 
-We need to call wake_q_init(&wake_q) to make sure that
-it is empty.
+ drivers/hwtracing/coresight/coresight-etb10.c   |  6 ++----
+ drivers/hwtracing/coresight/coresight-tmc-etf.c |  6 ++----
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 13 ++++---------
+ 3 files changed, 8 insertions(+), 17 deletions(-)
 
-Best Regards,
-Petr
+-- 
+2.7.4
 
->  	raw_spin_lock_irqsave(&sem->lock, flags);
-> -	if (likely(list_empty(&sem->wait_list)))
-> +	if (likely(list_empty(&sem->wait_list))) {
->  		sem->count++;
-> -	else
-> -		__up(sem);
-> +	} else {
-> +		waiter =  list_first_entry(&sem->wait_list,
-> +					   struct semaphore_waiter, list);
-> +		list_del(&waiter->list);
-> +		waiter->up = true;
-> +		wake_q_add(&wake_q, waiter->task);
-> +	}
->  	raw_spin_unlock_irqrestore(&sem->lock, flags);
-> +
-> +	wake_up_q(&wake_q);
->  }
->  EXPORT_SYMBOL(up);
->  
-> -/* Functions for the contended case */
-> -
-> -struct semaphore_waiter {
-> -	struct list_head list;
-> -	struct task_struct *task;
-> -	bool up;
-> -};
-> -
->  /*
->   * Because this function is inlined, the 'state' parameter will be
->   * constant, and thus optimised away by the compiler.  Likewise the
