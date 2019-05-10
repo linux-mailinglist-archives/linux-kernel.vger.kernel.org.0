@@ -2,71 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595AD19D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D31F19D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfEJMmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 08:42:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:51358 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727194AbfEJMl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 08:41:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 05:41:58 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga007.fm.intel.com with ESMTP; 10 May 2019 05:41:55 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] perf intel-pt: Fix sample timestamp wrt non-taken branches
-Date:   Fri, 10 May 2019 15:41:43 +0300
-Message-Id: <20190510124143.27054-4-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190510124143.27054-1-adrian.hunter@intel.com>
-References: <20190510124143.27054-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1727271AbfEJMng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 08:43:36 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53393 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbfEJMng (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 08:43:36 -0400
+X-Originating-IP: 109.213.220.252
+Received: from localhost (alyon-652-1-77-252.w109-213.abo.wanadoo.fr [109.213.220.252])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 6E4DEFF80B;
+        Fri, 10 May 2019 12:43:33 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Felipe Balbi <balbi@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        James Grant <james.grant@jci.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
+Date:   Fri, 10 May 2019 14:42:48 +0200
+Message-Id: <20190510124248.2430-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sample timestamp is updated to ensure that the timestamp represents
-the time of the sample and not a branch that the decoder is still
-walking towards. The sample timestamp is updated when the decoder
-returns, but the decoder does not return for non-taken branches. Update
-the sample timestamp then also.
+Gadget drivers may queue request in interrupt context. This would lead to
+a descriptor allocation in that context. In that case we would hit
+BUG_ON(in_interrupt()) in __get_vm_area_node.
 
-Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample timestamp")
-was also a stable fix and appears, for example, in v4.4 stable tree as
-commit a4ebb58fd124 ("perf intel-pt: Improve sample timestamp").
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Fixes: 3f04d98e972b ("perf intel-pt: Improve sample timestamp")
-Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/udc/lpc32xx_udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index 9cbd587489bf..f4c3c84b090f 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1318,8 +1318,11 @@ static int intel_pt_walk_tnt(struct intel_pt_decoder *decoder)
- 				return 0;
- 			}
- 			decoder->ip += intel_pt_insn.length;
--			if (!decoder->tnt.count)
-+			if (!decoder->tnt.count) {
-+				decoder->sample_timestamp = decoder->timestamp;
-+				decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
- 				return -EAGAIN;
-+			}
- 			decoder->tnt.payload <<= 1;
- 			continue;
- 		}
+diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+index d8f1c60793ed..b706d9c85a35 100644
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -938,7 +938,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
+ 	struct lpc32xx_usbd_dd_gad	*dd;
+ 
+ 	dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
+-			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
++			udc->dd_cache, (GFP_ATOMIC | GFP_DMA), &dma);
+ 	if (dd)
+ 		dd->this_dma = dma;
+ 
 -- 
-2.17.1
+2.21.0
 
