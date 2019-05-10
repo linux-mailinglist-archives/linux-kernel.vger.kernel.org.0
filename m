@@ -2,75 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D071C1A286
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4161A292
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:45:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfEJRlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 13:41:52 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60864 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbfEJRlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 13:41:52 -0400
-Received: from zn.tnic (p200300EC2F0F4000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:4000:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 72FF21EC09A3;
-        Fri, 10 May 2019 19:41:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1557510111;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=woBta16CIlbP3jCTjLLZyi/UgLJeGjPQxBvByWnfnQQ=;
-        b=ChcGxHz1mrje4YpxM4LjkKgIYuUb94lpj7SpJUBVWCchvxaFgy5t1XqHYhyDEfLKi2nTNN
-        0CW5gmdqsQ1Wmlhm0puOrAJlmKmAXUCGabNMvb7N5GWw1D3W2UkYjaJnJ+HG+0l6EhXodQ
-        /bNBuKfgezcbSE9pA/eUYjVmm8VSy/E=
-Date:   Fri, 10 May 2019 19:41:46 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Xiaochen Shen <xiaochen.shen@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Babu Moger <babu.moger@amd.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 02/13] selftests/resctrl: Add basic resctrl file
- system operations and data
-Message-ID: <20190510174146.GD29927@zn.tnic>
-References: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
- <1549767042-95827-3-git-send-email-fenghua.yu@intel.com>
+        id S1727657AbfEJRpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 13:45:43 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46831 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbfEJRpn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 13:45:43 -0400
+Received: by mail-qk1-f195.google.com with SMTP id a132so4100237qkb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 10:45:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ItAX23A+ZK4sf8NEwjAZtt+aMB/LmGzTQuo1uxHF1/0=;
+        b=UZvwaRGVooiEtYUjPSwbPs7eVZybRraJLgvYlOi0k35SuQGDZUkHZf7APdC1Qjzd4B
+         EqBwe1aUTbwQenoWSTevphHldt06e4HN6sHPScbtxE4JYfK3ERRsTwZ7QCUGw7C7+XNw
+         ir86MKPp+56ElMnBMtOjjm0kmXhBgAmeO+XL0h4tPr2TGi9+C8HmBvkwCdtqzX5igk95
+         eJlHnOZR+ywo4B2qdtDatZF6+srI3eEmnKNBfI0htR1CKA1tWR28ogNJRkEelP8ZOhm1
+         NJKqmM5z/pucOpfqUFY2LfS95KXwyOsbM9p5Btr+7iBStrSoETY0n1ryoJ7zHXc/SU5e
+         cgVA==
+X-Gm-Message-State: APjAAAUvb4Ll8xFkbb6N3DRwme/6MRZlZQHK464EMIfTT1MGBeSbbaoF
+        3Tl2p80OTgmOys8UbXHABQq0TDNxoVk=
+X-Google-Smtp-Source: APXvYqx1jICg7CS0UwHc52npH/Yny0UGKDM8v5+hee7gxDo8h3K94GlP6ro645dP+vmCXxSTHU2/Tw==
+X-Received: by 2002:a05:620a:1463:: with SMTP id j3mr10351073qkl.157.1557510342262;
+        Fri, 10 May 2019 10:45:42 -0700 (PDT)
+Received: from vitty.brq.redhat.com ([209.48.7.126])
+        by smtp.gmail.com with ESMTPSA id k53sm3528159qtb.65.2019.05.10.10.45.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 May 2019 10:45:41 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Michael Kelley <mikelley@microsoft.com>,
+        "m.maya.nakamura" <m.maya.nakamura@gmail.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal\@kernel.org" <sashal@kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/6] x86: hv: hv_init.c: Replace alloc_page() with kmem_cache_alloc()
+In-Reply-To: <BYAPR21MB1221962ED2DD7FEE19E7DAB6D70C0@BYAPR21MB1221.namprd21.prod.outlook.com>
+References: <cover.1554426039.git.m.maya.nakamura@gmail.com> <bdbacc872e369762a877af4415ad1b07054826db.1554426040.git.m.maya.nakamura@gmail.com> <87wok8it8p.fsf@vitty.brq.redhat.com> <20190412072401.GA69620@maya190131.isni1t2eisqetojrdim5hhf1se.xx.internal.cloudapp.net> <87mukvfynk.fsf@vitty.brq.redhat.com> <20190508064559.GA54416@maya190131.isni1t2eisqetojrdim5hhf1se.xx.internal.cloudapp.net> <87mujxro70.fsf@vitty.brq.redhat.com> <MN2PR21MB1232C6ABA5DAC847C8A910E1D70C0@MN2PR21MB1232.namprd21.prod.outlook.com> <87r296qwbk.fsf@vitty.brq.redhat.com> <BYAPR21MB1221962ED2DD7FEE19E7DAB6D70C0@BYAPR21MB1221.namprd21.prod.outlook.com>
+Date:   Fri, 10 May 2019 13:45:41 -0400
+Message-ID: <8736lmqk3e.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1549767042-95827-3-git-send-email-fenghua.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 06:50:31PM -0800, Fenghua Yu wrote:
-> From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> 
-> The basic resctrl file system operations and data are added for future
-> usage by resctrl selftest tool.
-> 
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
+Michael Kelley <mikelley@microsoft.com> writes:
 
-And while feedback from Andre is being addressed, you those SOB chains
-need to be fixed.
+> From: Vitaly Kuznetsov <vkuznets@redhat.com>  Sent: Friday, May 10, 2019 6:22 AM
+>> >>
+>> >> I think we can consider these allocations being DMA-like (because
+>> >> Hypervisor accesses this memory too) so you can probably take a look at
+>> >> dma_pool_create()/dma_pool_alloc() and friends.
+>> >>
+>> >
+>> > I've taken a look at dma_pool_create(), and it takes a "struct device"
+>> > argument with which the DMA pool will be associated.  That probably
+>> > makes DMA pools a bad choice for this usage.  Pages need to be allocated
+>> > pretty early during boot for Hyper-V communication, and even if the
+>> > device subsystem is initialized early enough to create a fake device,
+>> > such a dependency seems rather dubious.
+>> 
+>> We can probably use dma_pool_create()/dma_pool_alloc() from vmbus module
+>> but these 'early' allocations may not have a device to bind to indeed.
+>> 
+>> >
+>> > kmem_cache_create/alloc() seems like the only choice to get
+>> > guaranteed alignment.  Do you see any actual problem with
+>> > using kmem_cache_*, other than the naming?  It seems like these
+>> > kmem_cache_*  functions really just act as a sub-allocator for
+>> > known-size allocations, and "cache" is a common usage
+>> > pattern, but not necessarily the only usage pattern.
+>> 
+>> Yes, it's basically the name - it makes it harder to read the code and
+>> some future refactoring of kmem_cache_* may not take our use-case into
+>> account (as we're misusing the API). We can try renaming it to something
+>> generic of course and see what -mm people have to say :-)
+>> 
+>
+> This makes me think of creating Hyper-V specific alloc/free functions
+> that wrap whatever the backend allocator actually is.  So we have
+> hv_alloc_hyperv_page() and hv_free_hyperv_page().  That makes the
+> code very readable and the intent is super clear.
+>
+> As for the backend allocator, an alternative is to write our own simple
+> allocator.  It maintains a single free list.  If hv_alloc_hyperv_page() is
+> called, and the free list is empty, do alloc_page() and break it up into
+> Hyper-V sized pages to replenish the free list.  (On x86, these end up
+> being 1-for-1 operations.)  hv_free_hyperv_page() just puts the Hyper-V
+> page back on the free list.  Don't worry trying to combine and do
+> free_page() since there's very little free'ing done anyway.  And I'm
+> assuming GPF_KERNEL is all we need.
+>
+> If in the future Linux provides an alternate general-purpose allocator
+> that guarantees alignment, we can ditch the simple allocator and use
+> the new mechanism with some simple code changes in one place.
+>
+> Thoughts?
+>
 
-Thx.
++1 for adding wrappers and if the allocator turns out to be more-or-less
+trivial I think we can live with that for the time being.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Vitaly
