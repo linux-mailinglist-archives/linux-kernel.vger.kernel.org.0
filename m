@@ -2,168 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADBE1979A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 06:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B50A6197CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 06:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfEJEef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 00:34:35 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41832 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfEJEee (ORCPT
+        id S1727073AbfEJEu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 00:50:56 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43736 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726284AbfEJEu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 00:34:34 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l132so2498960pfc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 21:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iX3tMXHfmXAFXgezY0ndg+xouFZG1EouvpxfWVnQyEI=;
-        b=wPfwc2D5OF/jIrQh6ZiDhbghVvEWi/KSKgRlbqnjQdVSy1tBYJ/ow053Yrs0CJfGRH
-         0LybhQkgMUqXokj+6NjwjduqZqgutOyy0QX9GcL8zyspz4T+Bt9pGDhSF57RQaNGLY+M
-         cVLmvrlpp7Qz1hO6bALHejmw8tpzUXStqxX3W1Iip0hFVhB4z1p/1FS0J4Cy+nTbGJtP
-         lfaDV6tyBANfmTO3J8s0WwMFJEI3NfTxbXYbcKnwoJORsYhUVtHglzjpo6wJDiaxm/g6
-         Ajqb+Thj3C1/9Mn4zOaHND+I0qL1LYR3KXR5tkXTclDP4XRG/JML+XFhOFPhBrCsdjtw
-         Duow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iX3tMXHfmXAFXgezY0ndg+xouFZG1EouvpxfWVnQyEI=;
-        b=f+xCX6GOCpw7bgfrMXgQ0+d6RR5H0w7fOTsdVDDTgBWoVB2c/hlqj3VH9aF+jIGF0e
-         rMRIoJBMeDhngYZWOkHM8tO8QDempuE9ODXM7JLSDRaqK3bXS/vd09y28j+zg3aCUVhw
-         P6TuA8RfF4x3khBdscM9IUX4D0TC/9zeLPrfJ72714pHBn2qAduBs7dGXuE5jPFiTO5I
-         Iu3+eo5ncJBc0wXsYJ1/3M+eMF8GORv/Uv6vtg9UCw/LFJL5KhYNPePQV/iteQ/HtwZY
-         O1VKPqS7o6w9W/+9Pdl6PddK6pAvDH6KEXeDUKAt6s1gqsRigFduRMpFH8DF1mZgO+gO
-         KelA==
-X-Gm-Message-State: APjAAAUIBas2ARNrUCsQsRGGrXxXItoEbtOlBBCLA0wi7fgGk6VECATN
-        HbXDf+njsU4bLdRyMRCKjxI+JQ==
-X-Google-Smtp-Source: APXvYqz+VCrGwz0F1OeNQEiRJZyZwGUfV3b04q0MFLWKiNqRgZb4ye/bbEOX7ZRjTy+HIpkkBqHGmw==
-X-Received: by 2002:a63:ed03:: with SMTP id d3mr11006230pgi.7.1557462873882;
-        Thu, 09 May 2019 21:34:33 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s17sm4785317pfm.149.2019.05.09.21.34.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 21:34:33 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] arm64: dts: qcom: qcs404: Add fastrpc nodes
-Date:   Thu,  9 May 2019 21:34:21 -0700
-Message-Id: <20190510043421.31393-9-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190510043421.31393-1-bjorn.andersson@linaro.org>
-References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+        Fri, 10 May 2019 00:50:56 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4A4livR031694
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 May 2019 00:47:45 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 11AEE420024; Fri, 10 May 2019 00:47:44 -0400 (EDT)
+Date:   Fri, 10 May 2019 00:47:43 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, dan.j.williams@intel.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190510044743.GA6889@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
+        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+References: <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+ <20190509032017.GA29703@mit.edu>
+ <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
+ <20190509233043.GC20877@mit.edu>
+ <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Escande <thierry.escande@linaro.org>
+On Thu, May 09, 2019 at 05:40:48PM -0600, Logan Gunthorpe wrote:
+> 
+> Based on some of the other commenters, I was under the impression that
+> kselftests had in-kernel tests but I'm not sure where or if they exist. If
+> they do exists, it seems like it would make sense to convert those to kunit
+> and have Kunit tests run-able in a VM or baremetal instance.
 
-The ADSP fastrpc provides 3 context banks and are assigned to IOMMU
-context banks 23, 24 and 25; using SIDs 0x804, 0x805 and 0x806.  The
-CDSP fastrpc provides 5 context banks and are assigned to IOMMU context
-banks 5, 6, 7, 8 and 9; using SIDs 0x1001 through 0x1005. Add these to
-their respective remoteproc.
+There are kselftests tests which are shell scripts which load a
+module, and the module runs the in-kernel code.  However, I didn't see
+much infrastructure for the in-kernel test code; the one or two test
+modules called from kselftests looked pretty ad hoc to me.
 
-The lower 4 bits of the SID is used to identify the context bank when
-communicating with the fastrpc firmware, so this gives the reg values.
+That's why I used the "vise grips" analogy.  You can use a pair of
+vise grips like a monkey wrench; but it's not really a monkey wrench,
+and might not be the best tool to loosen or tighten nuts and bolts.
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-[bjorn: Added SMMU linkage and extend commit message]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 66 ++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index fcde4f0334c2..858a53160564 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -243,6 +243,45 @@
- 				mboxes = <&apcs_glb 12>;
- 
- 				label = "cdsp";
-+
-+				fastrpc_cdsp: fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "cdsp";
-+
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					cb@1 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <1>;
-+						iommus = <&apps_iommu 5>;
-+					};
-+
-+					cb@2 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <2>;
-+						iommus = <&apps_iommu 6>;
-+					};
-+
-+					cb@3 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <3>;
-+						iommus = <&apps_iommu 7>;
-+					};
-+
-+					cb@4 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <4>;
-+						iommus = <&apps_iommu 8>;
-+					};
-+
-+					cb@5 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <5>;
-+						iommus = <&apps_iommu 9>;
-+					};
-+				};
- 			};
- 		};
- 
-@@ -928,6 +967,33 @@
- 				mboxes = <&apcs_glb 8>;
- 
- 				label = "adsp";
-+
-+				fastrpc_adsp: fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "adsp";
-+
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					cb@4 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <4>;
-+						iommus = <&apps_iommu 23>;
-+					};
-+
-+					cb@5 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <5>;
-+						iommus = <&apps_iommu 24>;
-+					};
-+
-+					cb@6 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <6>;
-+						iommus = <&apps_iommu 25>;
-+					};
-+				};
- 			};
- 		};
- 	};
--- 
-2.18.0
-
+       	   	     	       	   - Ted
