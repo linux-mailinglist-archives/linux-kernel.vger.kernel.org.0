@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC401A2CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 20:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812B91A2BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:57:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbfEJSDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 14:03:23 -0400
-Received: from mx.ewheeler.net ([66.155.3.69]:53094 "EHLO mx.ewheeler.net"
+        id S1727796AbfEJR5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 13:57:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:18909 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbfEJSDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 14:03:23 -0400
-X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 May 2019 14:03:22 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 6279AA0692;
-        Fri, 10 May 2019 17:56:53 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id KZQof3t99O87; Fri, 10 May 2019 17:56:52 +0000 (UTC)
-Received: from el7-dev.ewi (unknown [209.180.175.76])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 359B3A067D;
-        Fri, 10 May 2019 17:56:52 +0000 (UTC)
-From:   Eric Wheeler <stable@lists.ewheeler.net>
-To:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org (open list:BFQ I/O SCHEDULER),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Eric Wheeler <bfq@linux.ewheeler.net>, stable@vger.kernel.org
-Subject: [PATCH] bfq: backport: update internal depth state when queue depth changes
-Date:   Fri, 10 May 2019 10:56:32 -0700
-Message-Id: <1557510992-18506-1-git-send-email-stable@lists.ewheeler.net>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727562AbfEJR5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 13:57:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 10:57:12 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 10 May 2019 10:57:12 -0700
+Received: from khbyers-mobl2.amr.corp.intel.com (unknown [10.251.29.37])
+        by linux.intel.com (Postfix) with ESMTP id CC36C580482;
+        Fri, 10 May 2019 10:57:11 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH] ASoC: SOF: Fix build error with
+ CONFIG_SND_SOC_SOF_NOCODEC=m
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org, rdunlap@infradead.org,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org
+References: <20190510023657.8960-1-yuehaibing@huawei.com>
+ <s5h7eayn5or.wl-tiwai@suse.de>
+ <73c6dd27-895a-adba-a4ef-2992266fcc48@linux.intel.com>
+ <s5hlfzempf0.wl-tiwai@suse.de>
+ <1e7e1908-a813-6c9b-5b88-122864d3a372@linux.intel.com>
+ <s5hbm0amnpl.wl-tiwai@suse.de> <s5h8svemn0u.wl-tiwai@suse.de>
+ <00aa3055-0b97-3ac4-f588-3665bfcb5811@linux.intel.com>
+ <s5h1s16memr.wl-tiwai@suse.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <75c3efb7-8057-0d4c-a53d-45f4527d90a1@linux.intel.com>
+Date:   Fri, 10 May 2019 12:56:51 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <s5h1s16memr.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
 
-commit 77f1e0a52d26242b6c2dba019f6ebebfb9ff701e upstream
+>>>> Yes, that would work.  OTOH, I see no merit to build an extra module
+>>>> for nocodec.  nocodec.c can be built together with sof-core stuff.
+>>
+>> the module has its benefits. Today nocodec includes all possible DAIs,
+>> I wanted to add module parameters to restrict things a bit for
+>> tests/debug. It'll be e.g. very helpful for SoundWire to avoid
+>> exposing the SSP DAIs.
+>>
+>> Also nocodec is incompatible with hdaudio/hdmi support at the moment,
+>> we had all sorts of issues with suspend/resume.
+> 
+> Well, in the case of SOF, the core code calls directly
+> soc_nocodec_setup(), hence it's rather a direct link.  So it makes
+> little sense to make the nocodec code split from sof-core, unless the
+> nocodec code is used / linked by components other than SOF.  I doubt
+> the possibility because the current DAI is clearly only for SOF...
+> 
+> The module option can be still be there; it'll be applied just to
+> sof-core instead of sof-nocodec.
 
-A previous commit moved the shallow depth and BFQ depth map calculations
-to be done at init time, moving it outside of the hotter IO path. This
-potentially causes hangs if the users changes the depth of the scheduler
-map, by writing to the 'nr_requests' sysfs file for that device.
+I see your point and this SOF core/nocodec dependency is a conceptual 
+miss on our side. Thanks for bringing our attention on this.
 
-Add a blk-mq-sched hook that allows blk-mq to inform the scheduler if
-the depth changes, so that the scheduler can update its internal state.
+The core is really supposed to be about the DSP side of things. It 
+shouldn't be burdened with machine driver stuff, but it unfortunately is 
+at two levels.
 
-Signed-off-by: Eric Wheeler <bfq@linux.ewheeler.net>
-Tested-by: Kai Krakow <kai@kaishome.de>
-Reported-by: Paolo Valente <paolo.valente@linaro.org>
-Fixes: f0635b8a416e ("bfq: calculate shallow depths at init time")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: stable@vger.kernel.org
----
- block/bfq-iosched.c      | 8 +++++++-
- block/blk-mq.c           | 2 ++
- include/linux/elevator.h | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+Initially the nocodec code was handled at the soc-acpi-dev or 
+soc-pci-dev level, and it's still there that the FORCE_CODEC mode is 
+handled, along with the calls to check the codec ACPI IDs. Now when we 
+enabled the HDaudio case, we somehow ended-up moving parts of the 
+nocodec support in the SOF core to simplify our life but created a 
+dependency that wasn't intentional at all. we collectively missed it 
+while we were struggling with nocodec/hdaudio compatibility.
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 653100f..0f7cdbc 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5223,7 +5223,7 @@ static unsigned int bfq_update_depths(struct bfq_data *bfqd,
- 	return min_shallow;
- }
- 
--static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
- {
- 	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
- 	struct blk_mq_tags *tags = hctx->sched_tags;
-@@ -5231,6 +5231,11 @@ static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
- 
- 	min_shallow = bfq_update_depths(bfqd, &tags->bitmap_tags);
- 	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, min_shallow);
-+}
-+
-+static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+{
-+	bfq_depth_updated(hctx);
- 	return 0;
- }
- 
-@@ -5653,6 +5658,7 @@ static ssize_t bfq_low_latency_store(struct elevator_queue *e,
- 		.requests_merged	= bfq_requests_merged,
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
-+		.depth_updated		= bfq_depth_updated,
- 		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e3c39ea..7a57368 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2878,6 +2878,8 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
- 		}
- 		if (ret)
- 			break;
-+		if (q->elevator && q->elevator->type->ops.mq.depth_updated)
-+			q->elevator->type->ops.mq.depth_updated(hctx);
- 	}
- 
- 	if (!ret)
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index a02deea..a2bf4a6 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -99,6 +99,7 @@ struct elevator_mq_ops {
- 	void (*exit_sched)(struct elevator_queue *);
- 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
- 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
-+	void (*depth_updated)(struct blk_mq_hw_ctx *);
- 
- 	bool (*allow_merge)(struct request_queue *, struct request *, struct bio *);
- 	bool (*bio_merge)(struct blk_mq_hw_ctx *, struct bio *);
--- 
-1.8.3.1
+The second issue is that we create a platform_device for the machine 
+driver in the SOF core. This is a shortcut that we took and that works 
+for Intel, but for DeviceTree-based platforms this will have to change.
+
+So long story short, I'd rather have a simple Kconfig fix to avoid 
+compilation issues for now and revisit all the machine driver support, 
+e.g. when the i.MX patches show up, than strengthen a dependency that we 
+introduced by accident rather than by design.
+
 
