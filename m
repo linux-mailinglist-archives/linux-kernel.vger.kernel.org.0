@@ -2,109 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7720619BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A312019B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfEJKfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 06:35:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48500 "EHLO mx1.redhat.com"
+        id S1727453AbfEJKVI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 10 May 2019 06:21:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:44463 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727251AbfEJKfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 06:35:09 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727053AbfEJKVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 06:21:07 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3467A85376;
-        Fri, 10 May 2019 10:35:09 +0000 (UTC)
-Received: from kasong-rh-laptop.pek2.redhat.com (wlc-trust-190.pek2.redhat.com [10.72.3.190])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E547600C7;
-        Fri, 10 May 2019 10:35:03 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        Kairui Song <kasong@redhat.com>
-Subject: [RFC PATCH] vmcore: Add a kernel cmdline device_dump_limit
-Date:   Fri, 10 May 2019 18:20:51 +0800
-Message-Id: <20190510102051.25647-1-kasong@redhat.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 450mSt2tmqz9sD4;
+        Fri, 10 May 2019 20:21:02 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Michal =?utf-8?Q?Such=C3=A1ne?= =?utf-8?Q?k'?= 
+        <msuchanek@suse.de>, Petr Mladek <pmladek@suse.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-arch\@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "linux-s390\@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Stephen Rothwell <sfr@ozlabs.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "linuxppc-dev\@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>
+Subject: RE: [PATCH] vsprintf: Do not break early boot with probing addresses
+In-Reply-To: <8ad8bb83b7034f7e92df12040fb8c2c2@AcuMS.aculab.com>
+References: <20190509121923.8339-1-pmladek@suse.com> <20190509153829.06319d0c@kitsune.suse.cz> <8ad8bb83b7034f7e92df12040fb8c2c2@AcuMS.aculab.com>
+Date:   Fri, 10 May 2019 20:21:02 +1000
+Message-ID: <87ef56vcdt.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 10 May 2019 10:35:09 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device dump allow drivers to add device related dump data to vmcore as
-they want. This have a potential issue, the data is stored in memory,
-drivers may append too much data and use too much memory. The vmcore is
-typically used in a kdump kernel which runs in a pre-reserved small
-chunk of memory. So as a result it will make kdump unusable at all due
-to OOM issues.
+David Laight <David.Laight@ACULAB.COM> writes:
+> From: Michal Suchánek
+>> Sent: 09 May 2019 14:38
+> ...
+>> > The problem is the combination of some new code called via printk(),
+>> > check_pointer() which calls probe_kernel_read(). That then calls
+>> > allow_user_access() (PPC_KUAP) and that uses mmu_has_feature() too early
+>> > (before we've patched features).
+>> 
+>> There is early_mmu_has_feature for this case. mmu_has_feature does not
+>> work before patching so parts of kernel that can run before patching
+>> must use the early_ variant which actually runs code reading the
+>> feature bitmap to determine the answer.
+>
+> Does the early_ variant get patched so the it is reasonably
+> efficient after the 'patching' is done?
 
-So introduce new device_dump_limit= kernel parameter, and set the
-default limit to 0, so device dump is not enabled unless user specify
-the accetable maxiam memory usage for device dump data. In this way user
-will also have the chance to adjust the kdump reserved memory
-accordingly.
+No they don't get patched ever. The name is a bit misleading I guess.
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- fs/proc/vmcore.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> Or should there be a third version which gets patched across?
 
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 3fe90443c1bb..e28695ef2439 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -53,6 +53,9 @@ static struct proc_dir_entry *proc_vmcore;
- /* Device Dump list and mutex to synchronize access to list */
- static LIST_HEAD(vmcoredd_list);
- static DEFINE_MUTEX(vmcoredd_mutex);
-+
-+/* Device Dump Limit */
-+static size_t vmcoredd_limit;
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
- 
- /* Device Dump Size */
-@@ -1465,6 +1468,11 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
- 	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
- 			    PAGE_SIZE);
- 
-+	if (vmcoredd_orig_sz + data_size >= vmcoredd_limit) {
-+		ret = -ENOMEM;
-+		goto out_err;
-+	}
-+
- 	/* Allocate buffer for driver's to write their dumps */
- 	buf = vmcore_alloc_buf(data_size);
- 	if (!buf) {
-@@ -1502,6 +1510,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
- 	return ret;
- }
- EXPORT_SYMBOL(vmcore_add_device_dump);
-+
-+static int __init parse_vmcoredd_limit(char *arg)
-+{
-+	char *end;
-+
-+	if (!arg)
-+		return -EINVAL;
-+	vmcoredd_limit = memparse(arg, &end);
-+	return end > arg ? 0 : -EINVAL;
-+
-+}
-+__setup("device_dump_limit=", parse_vmcoredd_limit);
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
- 
- /* Free all dumps in vmcore device dump list */
--- 
-2.20.1
+For a case like this it's entirely safe to just skip the code early in
+boot, so if it was a static_key_false everything would just work.
 
+Unfortunately the way the code is currently written we would have to
+change all MMU features to static_key_false and that risks breaking
+something else.
+
+We have a long standing TODO to rework all our feature logic and unify
+CPU/MMU/firmware/etc. features. Possibly as part of that we can come up
+with a scheme where the default value is per-feature bit.
+
+Having said all that, in this case the overhead of the test and branch
+is small compared to the cost of writing to the SPR which controls user
+access and then doing an isync, so it's all somewhat premature
+optimisation.
+
+cheers
