@@ -2,142 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94F819A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B03119B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfEJJCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 05:02:36 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14057 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbfEJJC3 (ORCPT
+        id S1727553AbfEJKSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 06:18:39 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:34258 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727053AbfEJKSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 05:02:29 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd53dfe0000>; Fri, 10 May 2019 02:01:50 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 10 May 2019 02:02:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 10 May 2019 02:02:27 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
- 2019 09:02:27 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
- 2019 09:02:27 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 10 May 2019 09:02:26 +0000
-Received: from jilin-desktop.nvidia.com (Not Verified[10.19.120.147]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cd53e210000>; Fri, 10 May 2019 02:02:26 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
-        <stern@rowland.harvard.edu>, <kai.heng.feng@canonical.com>,
-        <drinkcat@chromium.org>, <keescook@chromium.org>,
-        <nsaenzjulienne@suse.de>, <jflat@chromium.org>, <malat@debian.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jim Lin <jilin@nvidia.com>
-Subject: [PATCH v8 2/2] usb: xhci: Add Clear_TT_Buffer support
-Date:   Fri, 10 May 2019 17:02:17 +0800
-Message-ID: <1557478937-30486-3-git-send-email-jilin@nvidia.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1557478937-30486-1-git-send-email-jilin@nvidia.com>
-References: <1557478937-30486-1-git-send-email-jilin@nvidia.com>
+        Fri, 10 May 2019 06:18:39 -0400
+X-Greylist: delayed 4491 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 May 2019 06:18:38 EDT
+Received: from [109.168.11.45] (port=41190 helo=pc-ceresoli.dev.aim)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1hP1RO-00BW8N-TP; Fri, 10 May 2019 11:03:43 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-gpio@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] Documentation: gpio: remove duplicated lines
+Date:   Fri, 10 May 2019 11:03:39 +0200
+Message-Id: <20190510090339.17211-1-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557478910; bh=6KvCGIA3DsfNZQ5OldjPXEU/o9P9J+I/XJEfrIShoHI=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:Content-Type;
-        b=lTC241SCoyjpWbO90T1k2+KAPbF/zTO5V9fw1JFBHXGIhTkXzPLwhclHyyHfxDqxe
-         bnYPZbIw52ZlPuTWx6u060aysfhui4AFMR193iSGrKEZ3fdubnrsMQDSknt1ZwUOXl
-         aveHSxcn6uk6m5QDUzSY1tA/ap+zQkVPy4kXrevoiapamcChLuRZa65cxTI8JTGV4Y
-         rRamyLz/5RODB1Djy2N1rdpmqRN+Zg/wI85YN5jbqlZIY3hN0UYvZQn68D76AuR8Yb
-         Etdcl/JYKfpy6pD3kUNTVBbS+G8pUyCuRrwmiv+FhL/PMfxXayG4n3KkJ+GATNf6/u
-         ffmEYZepW7mjQ==
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-processing for full-/low-speed endpoints connected via a TT, the host
-software must use the Clear_TT_Buffer request to the TT to ensure
-that the buffer is not in the busy state".
+The 'default (active high)' lines are repeated twice. Avoid people stare at
+their screens looking for differences.
 
-In our case, a full-speed speaker (ConferenceCam) is behind a high-
-speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-request we may continue to get STALL with the folllowing requests,
-like Set_Interface.
-
-Here we update udev->devaddr in address_device callback function
-(this USB device address is assigned by XHCI controller) and invoke
-usb_hub_clear_tt_buffer() to send Clear_TT_Buffer request to the hub
-of the device for the following Set_Interface requests to the device
-to get ACK successfully.
-
-Signed-off-by: Jim Lin <jilin@nvidia.com>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
-v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
-    , remove its claiming in xhci.h
-v3: Add description for clearing_tt (xhci.h)
-v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
-    to protect for Clear_TT_Buffer to be run serially.
-    Remove xhci_clear_tt_buffer_complete as it's not necessary.
-    Same reason as the above.
-    Extend usb_hub_clear_tt_buffer parameter
-v5: Not extending usb_hub_clear_tt_buffer parameter
-    Add description.
-v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
-v7: Add devaddr field in "struct usb_device"
-v8: split as two patches
+ Documentation/driver-api/gpio/consumer.rst | 2 --
+ 1 file changed, 2 deletions(-)
 
- drivers/usb/host/xhci-ring.c | 12 ++++++++++++
- drivers/usb/host/xhci.c      |  1 +
- 2 files changed, 13 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 9215a28dad40..739737faf752 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1786,6 +1786,17 @@ struct xhci_segment *trb_in_td(struct xhci_hcd *xhci,
- 	return NULL;
- }
- 
-+static void xhci_clear_hub_tt_buffer(struct xhci_hcd *xhci, struct xhci_td *td)
-+{
-+	/*
-+	 * As part of low/full-speed endpoint-halt processing
-+	 * we must clear the TT buffer (USB 2.0 specification 11.17.5).
-+	 */
-+	if (td->urb->dev->tt && !usb_pipeint(td->urb->pipe) &&
-+	    (td->urb->dev->tt->hub != xhci_to_hcd(xhci)->self.root_hub))
-+		usb_hub_clear_tt_buffer(td->urb);
-+}
-+
- static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 		unsigned int slot_id, unsigned int ep_index,
- 		unsigned int stream_id, struct xhci_td *td,
-@@ -1804,6 +1815,7 @@ static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
- 	if (reset_type == EP_HARD_RESET) {
- 		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
- 		xhci_cleanup_stalled_ring(xhci, ep_index, stream_id, td);
-+		xhci_clear_hub_tt_buffer(xhci, td);
- 	}
- 	xhci_ring_cmd_db(xhci);
- }
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 7fa58c99f126..68b393e5a453 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -4096,6 +4096,7 @@ static int xhci_setup_device(struct usb_hcd *hcd, struct usb_device *udev,
- 	/* Zero the input context control for later use */
- 	ctrl_ctx->add_flags = 0;
- 	ctrl_ctx->drop_flags = 0;
-+	udev->devaddr = (u8)(le32_to_cpu(slot_ctx->dev_state) & DEV_ADDR_MASK);
- 
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_address,
- 		       "Internal device address = %d",
+diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+index 5e4d8aa68913..23d68c321c5c 100644
+--- a/Documentation/driver-api/gpio/consumer.rst
++++ b/Documentation/driver-api/gpio/consumer.rst
+@@ -283,8 +283,6 @@ To summarize::
+   gpiod_set_value(desc, 1);          default (active high)  high
+   gpiod_set_value(desc, 0);          active low             high
+   gpiod_set_value(desc, 1);          active low             low
+-  gpiod_set_value(desc, 0);          default (active high)  low
+-  gpiod_set_value(desc, 1);          default (active high)  high
+   gpiod_set_value(desc, 0);          open drain             low
+   gpiod_set_value(desc, 1);          open drain             high impedance
+   gpiod_set_value(desc, 0);          open source            high impedance
 -- 
-2.1.4
+2.21.0
 
