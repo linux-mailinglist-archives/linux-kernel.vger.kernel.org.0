@@ -2,107 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE81A19B31
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42A619B56
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfEJKOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 06:14:51 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40089 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727424AbfEJKOu (ORCPT
+        id S1727679AbfEJKQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 06:16:33 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:47637 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbfEJKPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 06:14:50 -0400
-Received: by mail-ot1-f65.google.com with SMTP id w6so5075724otl.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 03:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZiHkOP2G2KBbMO/HwvwcUOiTAwVa4lhyxJmh7593C1E=;
-        b=ogX/j60kJFhWOj6V0oSFEwlDh/tPi8tp2P8nuLAish7AmQXvhIwXXEvRb8/i5hrTST
-         OSOHGtqMnxqRo3fIDJ+kuEsRKt6fzL1/3vA52js8Zv47WChTsY0Hjp53kqfFoY5GProz
-         ClRpFI8F9F7655kpqzYEzYb+veI5Ctj6O92ODEfDe1Qf/XP9zj3CRS31zu/7zRgOHxsm
-         BhKTPSbIEO43dKNh0sPjqq+gFmRejlvcrTIB/LDYo0kaOZ2TD28Qgf+ue/SOxvOImkt9
-         Gb8ayFu9YinSXscDdSLdb5RhcwG0s4HdIoazReYYFC/VKQCHUdx+X4z+ug0pweM5iE5t
-         hY1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZiHkOP2G2KBbMO/HwvwcUOiTAwVa4lhyxJmh7593C1E=;
-        b=HrKiD2tf228pzbCf73Yz/thxsxcVey2Tdza67cwrBGH66VU4+HKh7QJ60Quf81RM4b
-         uoymDOVwkCRzQKy1xlakI9vv6EnaEk4hdgNzKclZ9RwTPwfvuOAkHEJqdpfWdI+UM97T
-         Frky7ydAS4ifF3Stzh5TKjp77sjrD/a4yJjFdAqzSUWPJe9AvwW1CEJO/URz+EP+YAQh
-         37YPiGEp4qaU/ZqqPst3RHLkYM4ovOjfoDnyuTeFfFYdB6oDzGZI8YkXGRfe+67tWI4z
-         7OVKARtlDhHN4oQMwGOFWmD5wU3ENjhJYQ+BPLEiweBHhTTWiXwfCQ9qlKy0UbhtXTt9
-         cSZQ==
-X-Gm-Message-State: APjAAAVykkHXN7ZFQeBA2OUEHIlA32OOE0UtQwE5JlO1YmMGNN7DMVu8
-        T/8h4y0aVj/XVnoJkUW1Gx3DwrIfq5BG2xtxNPDN6A==
-X-Google-Smtp-Source: APXvYqw28ff46O+4bgP+wWCeMn27ZzW63vnMM0B1jLmjQwiWLVP8lilJV6fg1z45gaxRJ49HxCU9q5yFk/BbDc0Bdq8=
-X-Received: by 2002:a9d:12f5:: with SMTP id g108mr6418092otg.56.1557483290159;
- Fri, 10 May 2019 03:14:50 -0700 (PDT)
+        Fri, 10 May 2019 06:15:43 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CAABE891AD;
+        Fri, 10 May 2019 22:15:40 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1557483340;
+        bh=On8oRpSMr9n7y+jn0PyfMJc06liZSsVfOPwylqHrUoU=;
+        h=From:To:Cc:Subject:Date;
+        b=mDw/iZnvLKj+CSlmDMAnuGUoEwt1Q9shVT6hjsSdmnjp07GUxxIhxBEvPxVFxGjhk
+         FBpmAI27gvA1INf+JFE5dvzt9rsr/IkG5fwLWR68jueSgNzb9lh4y051WAxIXRiP28
+         VOd1L41QWEtgt5dj18puSqJHB4d/8YPRY9glwnFejPTKkf5D+RuaSoH8fZNrK7kCWV
+         XtEoAToY+BwVwhsFX/SnssGAL0hY9L61z8ucsvKK41d45zJPygNULwX6bQ2THPwarr
+         LAy11Zk4kQt1GrMlZ/oRD2ZSsdOhkBUurFGWhuI9jiyXmKsVxljpf6zSpJhjns9hIS
+         /i1a3XA1ICL0Q==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5cd54f4c0000>; Fri, 10 May 2019 22:15:41 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 896D913EEA0;
+        Fri, 10 May 2019 22:15:39 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 1B34B1E1D5B; Fri, 10 May 2019 22:15:39 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linux@armlinux.org.uk, bp@alien8.de, mark.rutland@arm.com,
+        robh+dt@kernel.org, mchehab@kernel.org, james.morse@arm.com,
+        jlu@pengutronix.de, gregory.clement@bootlin.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v8 0/9] EDAC drivers for Armada XP L2 and DDR
+Date:   Fri, 10 May 2019 22:15:27 +1200
+Message-Id: <20190510101536.6724-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190510095832.28233-1-colin.king@canonical.com>
-In-Reply-To: <20190510095832.28233-1-colin.king@canonical.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 10 May 2019 12:14:39 +0200
-Message-ID: <CAMpxmJWyVZ2hHE=1tu5NgSzEHZKD2pBo8KUXg1CLUaB-WX4KHQ@mail.gmail.com>
-Subject: Re: [PATCH][V2] reset: remove redundant null check on pointer dev
-To:     Colin King <colin.king@canonical.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 10 maj 2019 o 11:58 Colin King <colin.king@canonical.com> napisa=C5=82=
-(a):
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Pointer dev is being dereferenced when passed to the inlined
-> functon dev_name, however, dev is later being null checked
-> so at first this seems like a potential null pointer dereference.
->
-> In fact, _reset_control_get_from_lookup is only ever called from
-> __reset_control_get, right after checking dev->of_node hence
-> dev can never be null.  Clean this up by removing the redundant
-> null check.
->
-> Thanks to Philipp Zabel for spotting that dev can never be null.
->
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 6691dffab0ab ("reset: add support for non-DT systems")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->
-> V2: remove null check point, it is redundant.
->
-> ---
->  drivers/reset/core.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 81ea77cba123..921f4bbbad8a 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -694,9 +694,6 @@ __reset_control_get_from_lookup(struct device *dev, c=
-onst char *con_id,
->         const char *dev_id =3D dev_name(dev);
->         struct reset_control *rstc =3D NULL;
->
-> -       if (!dev)
-> -               return ERR_PTR(-EINVAL);
-> -
->         mutex_lock(&reset_lookup_mutex);
->
->         list_for_each_entry(lookup, &reset_lookup_list, list) {
-> --
-> 2.20.1
->
+The Reviews/Acks have been given so this should be good to go in via the =
+ARM
+tree as planned.
 
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-August/525561.=
+html
+
+This series adds drivers for the L2 cache and DDR RAM ECC functionality a=
+s
+found on the MV78230/MV78x60 SoCs. Jan has tested these changes with the
+MV78460 (on a custom board with a DDR3 ECC DIMM), Chris has tested these
+changes with 88F6820 and 98dx3236 (both a custom boards with fixed DDR3 +=
+ ECC).
+
+Also contained in this series is an additional debugfs wrapper.
+
+Compared to the previous v7 series this has been rebased against 5.1 requ=
+iring
+some changes in the devicetree binding documentation.
+
+Compared to the previous v6 series I've dropped the marvell,ecc-disable
+property.
+
+Compared to the previous v5 series I've split the dt-binding documentatio=
+n into
+its own patch and updated armada_xp_edac.c to use a SPDX license.
+
+Compared to the previous v4 series I've added my s-o-b to some of Jan's
+patches and rebased against v4.19.0.
+
+Compared to the previous v3 series, the following changes have been made:
+- Use shorter names for the AURORA ECC and parity registers
+- Numerous formatting changes to edac/armada_xp.c (as requested by Boris)
+- Added support for Armada-38x and 98dx3236 SoCs
+
+Compared to the previous v2 series, the following changes have been made:
+- Allocate EDAC structures later during probing and drop devres support
+  patches (requested by Boris)
+- Make drvdata->width usage consistent according to the comment (suggeste=
+d by
+  Chris)
+
+Compared to the previous v1 series, the following changes have been made:
+- Add the aurora-l2 register defines earlier in the series (suggested by
+  Russell King and Gregory CLEMENT )
+- Changed the DT vendor prefix from "arm" to "marvell" for the ecc-enable=
+/disable
+  properties on the aurora-l2 (suggested by Russell King)
+- Fix some warnings reported by checkpatch
+
+Compared to the original RFC series, the following changes have been made=
+:
+- Integrated Chris' patches for parity and ECC configuration via DT
+- Merged the DDR RAM and L2 cache drivers (as requested by Boris, analogo=
+us
+  to fsl_ddr_edac.c and mpc85xx_edac.c)
+- Added myself to MAINTAINERS (requested by Boris)
+- L2 cache: Track the msg size and use snprintf (review comment by Chris)
+- L2 cache: Split error injection from the check function (review comment=
+ by
+  Chris)
+- DDR RAM: Allow 16 bit width in addition to 32 and 64 bit (review commen=
+t by
+  Chris)
+- Use of_match_ptr() (review comments by Chris)
+- Minor checkpatch cleanups
+
+
+Chris Packham (4):
+  ARM: l2x0: support parity-enable/disable on aurora
+  dt-bindings: ARM: document marvell,ecc-enable binding
+  ARM: l2x0: add marvell,ecc-enable property for aurora
+  EDAC: armada_xp: Add support for more SoCs
+
+Jan Luebbe (5):
+  ARM: l2c: move cache-aurora-l2.h to asm/hardware
+  ARM: aurora-l2: add prefix to MAX_RANGE_SIZE
+  ARM: aurora-l2: add defines for parity and ECC registers
+  EDAC: Add missing debugfs_create_x32 wrapper
+  EDAC: Add driver for the Marvell Armada XP SDRAM and L2 cache ECC
+
+ .../devicetree/bindings/arm/l2c2x0.yaml       |   4 +
+ MAINTAINERS                                   |   6 +
+ .../asm/hardware}/cache-aurora-l2.h           |  50 +-
+ arch/arm/mm/cache-l2x0.c                      |  18 +-
+ drivers/edac/Kconfig                          |   7 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/armada_xp_edac.c                 | 635 ++++++++++++++++++
+ drivers/edac/debugfs.c                        |  11 +
+ drivers/edac/edac_module.h                    |   5 +
+ 9 files changed, 733 insertions(+), 4 deletions(-)
+ rename arch/arm/{mm =3D> include/asm/hardware}/cache-aurora-l2.h (50%)
+ create mode 100644 drivers/edac/armada_xp_edac.c
+
+--=20
+2.21.0
+
