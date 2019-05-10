@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E65119F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 520B219F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfEJOZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 10:25:45 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:11580 "EHLO
+        id S1727953AbfEJOUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 10:20:50 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48948 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727790AbfEJOZp (ORCPT
+        by vger.kernel.org with ESMTP id S1727889AbfEJOUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 10:25:45 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AE1s09030708;
-        Fri, 10 May 2019 16:20:33 +0200
+        Fri, 10 May 2019 10:20:48 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AE1mfP025399;
+        Fri, 10 May 2019 16:20:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
  date : message-id : in-reply-to : references : mime-version : content-type
  : content-transfer-encoding; s=STMicroelectronics;
- bh=98w/OussyxuOrcLWSMqRtFhnLM+xTLnhKVGbTHyMH+g=;
- b=1iDvh+RspI3I9R7djaQ6BAUvhMdBdC/10L5C4kP699I2iYf98qBnOS8hsWQp8VD8nTvS
- h9CdTHpg/QIxJG0IRtNr+tMWs+tk61GoNmus7in9fKUTQwFboYHuDXBj/mgqsySIMMDf
- fQvjFItf2PHJCmjiPAfxfEjDxdFMuZv4z+nUeuK4MzKwIwu1H/PluAb58ByvJIaiTWYL
- Kqj5xlCaADMMKtztF+qwhwbzLBf7I7JSRnOAZx0KK0sFW3YQcberQ9ck2QvWmOQtq7t6
- idnAu6e7qco9PGJASJhH5DiK82my9XTgqlRNPwn9SebDspe1KoZDevMPxjRIpuIztH7T qQ== 
+ bh=ivD85ODEdVutRWfgtTPWNnPbQXujrje21LXvsEkrE2s=;
+ b=JCLpIIjlmoFRg8oC07A6kg6fAkRqd2GcEkLBdXkS9fpdH2IS/e/7v+BfKIYocB0AMfLv
+ UvhauRwirRMMsMYh7Vi9o6VgwaKKwQ5yME6Lu9WP+s2c4HVJxYk8rxJXs6cLDHBNT3a0
+ mv76HXNpWmOlO9WjTYhwuDfWAKk2wM8r7yWktSbKkjwyGPFAUfoIHuorppQBNeaw9ef0
+ rCaCkbZgIJ6UVKn+iCmlHc7mAnHRvWTtECfn0G4/vlPbI0qRZVwGfuURiJIpB6GW3jXh
+ lRIjRMxbjeyXKieq4/1dtinctzGTxm9Bg8YaStXQXaDltqKj5xj6q++TA69E3Vi/rsKJ Lw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sc9s4jwnw-1
+        by mx08-00178001.pphosted.com with ESMTP id 2scfv2s5w3-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 10 May 2019 16:20:33 +0200
+        Fri, 10 May 2019 16:20:35 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AB84E31;
-        Fri, 10 May 2019 14:20:31 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E2C5113A;
-        Fri, 10 May 2019 14:20:31 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 10 May
- 2019 16:20:31 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 93E8234;
+        Fri, 10 May 2019 14:20:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6FD32113A;
+        Fri, 10 May 2019 14:20:32 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May
+ 2019 16:20:32 +0200
 Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 16:20:30
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 16:20:32
  +0200
 From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
 To:     Yannick Fertre <yannick.fertre@st.com>,
@@ -55,9 +55,9 @@ To:     Yannick Fertre <yannick.fertre@st.com>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/3] drm/stm: dsi: add support of an optional regulator
-Date:   Fri, 10 May 2019 16:20:20 +0200
-Message-ID: <1557498023-10766-3-git-send-email-yannick.fertre@st.com>
+Subject: [PATCH v2 3/5] ARM: dts: stm32: add phy-dsi-supply property on stm32mp157c
+Date:   Fri, 10 May 2019 16:20:21 +0200
+Message-ID: <1557498023-10766-4-git-send-email-yannick.fertre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557498023-10766-1-git-send-email-yannick.fertre@st.com>
 References: <1557498023-10766-1-git-send-email-yannick.fertre@st.com>
@@ -72,125 +72,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of an optional regulator for the phy part of the DSI
-controller.
+The dsi physical layer is powered by the 1v8 power controller supply.
 
 Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
 ---
- drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 45 ++++++++++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-index 1bef73e..22bd095 100644
---- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-+++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-@@ -9,6 +9,7 @@
- #include <linux/clk.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
-+#include <linux/regulator/consumer.h>
- #include <drm/drmP.h>
- #include <drm/drm_mipi_dsi.h>
- #include <drm/bridge/dw_mipi_dsi.h>
-@@ -76,6 +77,7 @@ struct dw_mipi_dsi_stm {
- 	u32 hw_version;
- 	int lane_min_kbps;
- 	int lane_max_kbps;
-+	struct regulator *vdd_supply;
- };
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 2afeee6..6b14f1e 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -1156,6 +1156,7 @@
+ 			clock-names = "pclk", "ref", "px_clk";
+ 			resets = <&rcc DSI_R>;
+ 			reset-names = "apb";
++			phy-dsi-supply = <&reg18>;
+ 			status = "disabled";
+ 		};
  
- static inline void dsi_write(struct dw_mipi_dsi_stm *dsi, u32 reg, u32 val)
-@@ -318,17 +320,31 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi->base);
- 	}
- 
-+	dsi->vdd_supply = devm_regulator_get_optional(dev, "phy-dsi");
-+	if (IS_ERR(dsi->vdd_supply)) {
-+		ret = PTR_ERR(dsi->vdd_supply);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_ERROR("failed to request regulator: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = regulator_enable(dsi->vdd_supply);
-+	if (ret) {
-+		DRM_ERROR("failed to enable regulator: %d\n", ret);
-+		return ret;
-+	}
-+
- 	dsi->pllref_clk = devm_clk_get(dev, "ref");
- 	if (IS_ERR(dsi->pllref_clk)) {
- 		ret = PTR_ERR(dsi->pllref_clk);
--		dev_err(dev, "Unable to get pll reference clock: %d\n", ret);
--		return ret;
-+		DRM_ERROR("Unable to get pll reference clock: %d\n", ret);
-+		goto err_clk_get;
- 	}
- 
- 	ret = clk_prepare_enable(dsi->pllref_clk);
- 	if (ret) {
--		dev_err(dev, "%s: Failed to enable pllref_clk\n", __func__);
--		return ret;
-+		DRM_ERROR("%s: Failed to enable pllref_clk\n", __func__);
-+		goto err_clk_get;
- 	}
- 
- 	dw_mipi_dsi_stm_plat_data.base = dsi->base;
-@@ -339,11 +355,19 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
- 	dsi->dsi = dw_mipi_dsi_probe(pdev, &dw_mipi_dsi_stm_plat_data);
- 	if (IS_ERR(dsi->dsi)) {
- 		DRM_ERROR("Failed to initialize mipi dsi host\n");
--		clk_disable_unprepare(dsi->pllref_clk);
--		return PTR_ERR(dsi->dsi);
-+		ret = PTR_ERR(dsi->dsi);
-+		goto err_dsi_probe;
- 	}
- 
- 	return 0;
-+
-+err_dsi_probe:
-+	clk_disable_unprepare(dsi->pllref_clk);
-+err_clk_get:
-+	regulator_disable(dsi->vdd_supply);
-+
-+	return ret;
-+
- }
- 
- static int dw_mipi_dsi_stm_remove(struct platform_device *pdev)
-@@ -351,6 +375,7 @@ static int dw_mipi_dsi_stm_remove(struct platform_device *pdev)
- 	struct dw_mipi_dsi_stm *dsi = platform_get_drvdata(pdev);
- 
- 	clk_disable_unprepare(dsi->pllref_clk);
-+	regulator_disable(dsi->vdd_supply);
- 	dw_mipi_dsi_remove(dsi->dsi);
- 
- 	return 0;
-@@ -363,6 +388,7 @@ static int __maybe_unused dw_mipi_dsi_stm_suspend(struct device *dev)
- 	DRM_DEBUG_DRIVER("\n");
- 
- 	clk_disable_unprepare(dsi->pllref_clk);
-+	regulator_disable(dsi->vdd_supply);
- 
- 	return 0;
- }
-@@ -370,9 +396,16 @@ static int __maybe_unused dw_mipi_dsi_stm_suspend(struct device *dev)
- static int __maybe_unused dw_mipi_dsi_stm_resume(struct device *dev)
- {
- 	struct dw_mipi_dsi_stm *dsi = dw_mipi_dsi_stm_plat_data.priv_data;
-+	int ret;
- 
- 	DRM_DEBUG_DRIVER("\n");
- 
-+	ret = regulator_enable(dsi->vdd_supply);
-+	if (ret) {
-+		DRM_ERROR("failed to enable regulator: %d\n", ret);
-+		return ret;
-+	}
-+
- 	clk_prepare_enable(dsi->pllref_clk);
- 
- 	return 0;
 -- 
 2.7.4
 
