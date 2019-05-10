@@ -2,128 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F69919F0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 158A919F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbfEJOXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 10:23:21 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:47758 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727807AbfEJOXU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 10:23:20 -0400
-Received: (qmail 2214 invoked by uid 2102); 10 May 2019 10:23:19 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 10 May 2019 10:23:19 -0400
-Date:   Fri, 10 May 2019 10:23:19 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Jim Lin <jilin@nvidia.com>
-cc:     gregkh@linuxfoundation.org, <mathias.nyman@intel.com>,
-        <kai.heng.feng@canonical.com>, <drinkcat@chromium.org>,
-        <keescook@chromium.org>, <nsaenzjulienne@suse.de>,
-        <jflat@chromium.org>, <malat@debian.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 2/2] usb: xhci: Add Clear_TT_Buffer
-In-Reply-To: <1557491070-24715-3-git-send-email-jilin@nvidia.com>
-Message-ID: <Pine.LNX.4.44L0.1905101019520.1516-100000@iolanthe.rowland.org>
+        id S1728014AbfEJOeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 10:34:21 -0400
+Received: from mga14.intel.com ([192.55.52.115]:32461 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727248AbfEJOeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 10:34:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 07:34:16 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 10 May 2019 07:34:08 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hP6b9-0004Sg-Pc; Fri, 10 May 2019 17:34:07 +0300
+Date:   Fri, 10 May 2019 17:34:07 +0300
+From:   "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 03/16] lib,treewide: add new match_string() helper/macro
+Message-ID: <20190510143407.GA9224@smile.fi.intel.com>
+References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
+ <20190508112842.11654-5-alexandru.ardelean@analog.com>
+ <20190508131128.GL9224@smile.fi.intel.com>
+ <20190508131856.GB10138@kroah.com>
+ <b2440bc9485456a7a90a488c528997587b22088b.camel@analog.com>
+ <4df165bc4247e60aa4952fd55cb0c77e60712767.camel@analog.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4df165bc4247e60aa4952fd55cb0c77e60712767.camel@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 May 2019, Jim Lin wrote:
+On Fri, May 10, 2019 at 09:15:27AM +0000, Ardelean, Alexandru wrote:
+> On Wed, 2019-05-08 at 16:22 +0300, Alexandru Ardelean wrote:
+> > On Wed, 2019-05-08 at 15:18 +0200, Greg KH wrote:
+> > > On Wed, May 08, 2019 at 04:11:28PM +0300, Andy Shevchenko wrote:
+> > > > On Wed, May 08, 2019 at 02:28:29PM +0300, Alexandru Ardelean wrote:
 
-> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-> processing for full-/low-speed endpoints connected via a TT, the host
-> software must use the Clear_TT_Buffer request to the TT to ensure
-> that the buffer is not in the busy state".
+> > > > Can you split include/linux/ change from the rest?
+> > > 
+> > > That would break the build, why do you want it split out?  This makes
+> > > sense all as a single patch to me.
+> > > 
+> > 
+> > Not really.
+> > It would be just be the new match_string() helper/macro in a new commit.
+> > And the conversions of the simple users of match_string() (the ones using
+> > ARRAY_SIZE()) in another commit.
+> > 
 > 
-> In our case, a full-speed speaker (ConferenceCam) is behind a high-
-> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-> request we may continue to get STALL with the folllowing requests,
-> like Set_Interface.
-> 
-> Here we update udev->devaddr in address_device callback function
-> (this USB device address is assigned by XHCI controller) and invoke
-> usb_hub_clear_tt_buffer() to send Clear_TT_Buffer request to the hub
-> of the device for the following Set_Interface requests to the device
-> to get ACK successfully.
-> 
-> Signed-off-by: Jim Lin <jilin@nvidia.com>
-> ---
-> v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
->     , remove its claiming in xhci.h
-> v3: Add description for clearing_tt (xhci.h)
-> v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
->     to protect for Clear_TT_Buffer to be run serially.
->     Remove xhci_clear_tt_buffer_complete as it's not necessary.
->     Same reason as the above.
->     Extend usb_hub_clear_tt_buffer parameter
-> v5: Not extending usb_hub_clear_tt_buffer parameter
->     Add description.
-> v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
-> v7: Add devaddr field in "struct usb_device"
-> v8: split as two patches
-> v9: no change
-> 
->  drivers/usb/host/xhci-ring.c | 12 ++++++++++++
->  drivers/usb/host/xhci.c      |  1 +
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index 9215a28dad40..739737faf752 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -1786,6 +1786,17 @@ struct xhci_segment *trb_in_td(struct xhci_hcd *xhci,
->  	return NULL;
->  }
->  
-> +static void xhci_clear_hub_tt_buffer(struct xhci_hcd *xhci, struct xhci_td *td)
-> +{
-> +	/*
-> +	 * As part of low/full-speed endpoint-halt processing
-> +	 * we must clear the TT buffer (USB 2.0 specification 11.17.5).
-> +	 */
-> +	if (td->urb->dev->tt && !usb_pipeint(td->urb->pipe) &&
-> +	    (td->urb->dev->tt->hub != xhci_to_hcd(xhci)->self.root_hub))
-> +		usb_hub_clear_tt_buffer(td->urb);
-> +}
-> +
->  static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
->  		unsigned int slot_id, unsigned int ep_index,
->  		unsigned int stream_id, struct xhci_td *td,
-> @@ -1804,6 +1815,7 @@ static void xhci_cleanup_halted_endpoint(struct xhci_hcd *xhci,
->  	if (reset_type == EP_HARD_RESET) {
->  		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
->  		xhci_cleanup_stalled_ring(xhci, ep_index, stream_id, td);
-> +		xhci_clear_hub_tt_buffer(xhci, td);
->  	}
->  	xhci_ring_cmd_db(xhci);
->  }
+> I should have asked in my previous reply.
+> Leave this as-is or re-formulate in 2 patches ?
 
-How come there's no clear_tt_buffer_complete() callback?  Without it,
-xhci-hcd won't know when the TT buffer has been cleared, and so it
-won't know when to restart the endpoint ring for the halted endpoint.  
+Depends on on what you would like to spend your time: collecting Acks for all
+pieces in treewide patch or send new API first followed up by per driver /
+module update in next cycle.
 
-Note: Restarting the endpoint ring before the TT buffer has been 
-cleared is not safe.
+I also have no strong preference.
+And I think it's good to add Heikki Krogerus to Cc list for both patch series,
+since he is the author of sysfs variant and may have something to comment on
+the rest.
 
-Alan Stern
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 7fa58c99f126..68b393e5a453 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -4096,6 +4096,7 @@ static int xhci_setup_device(struct usb_hcd *hcd, struct usb_device *udev,
->  	/* Zero the input context control for later use */
->  	ctrl_ctx->add_flags = 0;
->  	ctrl_ctx->drop_flags = 0;
-> +	udev->devaddr = (u8)(le32_to_cpu(slot_ctx->dev_state) & DEV_ADDR_MASK);
->  
->  	xhci_dbg_trace(xhci, trace_xhci_dbg_address,
->  		       "Internal device address = %d",
-> 
 
