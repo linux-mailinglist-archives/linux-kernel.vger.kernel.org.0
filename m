@@ -2,146 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E76F519D1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A018B19D24
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfEJMSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 08:18:14 -0400
-Received: from mga17.intel.com ([192.55.52.151]:46346 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbfEJMSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 08:18:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 05:18:13 -0700
-X-ExtLoop1: 1
-Received: from xxx.igk.intel.com ([10.237.93.170])
-  by orsmga004.jf.intel.com with ESMTP; 10 May 2019 05:18:11 -0700
-From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH] ALSA: hda: Fix race between creating and refreshing sysfs entries
-Date:   Fri, 10 May 2019 14:21:41 +0200
-Message-Id: <20190510122141.8802-1-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727374AbfEJMXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 08:23:49 -0400
+Received: from mail-eopbgr50076.outbound.protection.outlook.com ([40.107.5.76]:57678
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727071AbfEJMXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 08:23:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=47VyM5IIrni7gGQiqmFicQJhymnzHX6UsANSagCiw8I=;
+ b=FlmlGncgysB636DPY3KuGJ181FGRwPb286kyDYNb8fKVomqecO6KXO/TP1XNGGivSs5k2Dn13UhLtuZoEwL2QXx3cXwojcf6vPLfqC1JEHobskVLd7t8t+cPNZ9NQj3RYpGzC4YOdLtCe2nfI+P0GwEMy/9/QpnjKH2pq1HmvNY=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3676.eurprd04.prod.outlook.com (52.134.70.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.22; Fri, 10 May 2019 12:23:42 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d%2]) with mapi id 15.20.1878.022; Fri, 10 May 2019
+ 12:23:42 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "otavio@ossystems.com.br" <otavio@ossystems.com.br>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "schnitzeltony@gmail.com" <schnitzeltony@gmail.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "jan.tuerk@emtrion.com" <jan.tuerk@emtrion.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH RESEND] ARM: imx_v6_v7_defconfig: Enable
+ CONFIG_THERMAL_STATISTICS
+Thread-Topic: [PATCH RESEND] ARM: imx_v6_v7_defconfig: Enable
+ CONFIG_THERMAL_STATISTICS
+Thread-Index: AQHVBys0pgK+lXcoZEiiNPClktUsIw==
+Date:   Fri, 10 May 2019 12:23:42 +0000
+Message-ID: <1557490722-21657-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0P153CA0041.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:17::29) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 31c58436-945e-44dd-1554-08d6d54256f0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3676;
+x-ms-traffictypediagnostic: DB3PR0402MB3676:
+x-microsoft-antispam-prvs: <DB3PR0402MB367666D21B105115E2E74F3BF50C0@DB3PR0402MB3676.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 0033AAD26D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(39860400002)(396003)(366004)(199004)(189003)(7416002)(53936002)(4744005)(81156014)(36756003)(6512007)(186003)(2906002)(6116002)(14454004)(3846002)(6506007)(386003)(256004)(486006)(5660300002)(2501003)(2616005)(476003)(102836004)(26005)(66066001)(99286004)(8936002)(110136005)(50226002)(68736007)(478600001)(52116002)(2201001)(81166006)(8676002)(25786009)(6486002)(6436002)(305945005)(4326008)(7736002)(73956011)(316002)(71190400001)(71200400001)(66946007)(66476007)(66556008)(64756008)(66446008)(86362001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3676;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: wT2IXin/uio7WxC3PLP0a/XEPawSTJ9v0ohdbJ5lPc7bfw7CsJtqHtVR8LzcdWndpJBLLoI+hKUvhWWNh4L7FuvsGtANGaj7uK6350B/70oFOmhfqDkKnCDVb2Ltg30ogiNmZ9tNyL718uBubq4JmxkV7rGu4+QjRhZLIIoM9oRRiKUmr3LICeuBsSXpcutNr5JpcUgg8EWtbxtT/ys31dDd368YEuPDiZqp8gvT40/R+6y4zwu/3PRn+n8hmEVTd+YKSV+/r6yLgG2ed2TFxvGYIMbY0fuKn+qL5l4tikkHFkQDs/4TqrCCygAhY19O8iTAd7or5EhXbzu8QaUM1yw3GhqiJMuuuQq9399PJYjPSphl+7i8Gfa5/e+KnRlf5KaHSBURwRTVOADU2n6DhmbnTc2UsvEsdL25JH5p5BM=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <7C0940655F6B3F449B316FA894F688D8@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31c58436-945e-44dd-1554-08d6d54256f0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 May 2019 12:23:42.6789
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3676
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hda_widget_sysfs_reinit() can free underlying codec->widgets structure
-on which widget_tree_create() operates. Add locking to prevent such
-issues from happening.
+Enable CONFIG_THERMAL_STATISTICS to extend the sysfs interface
+for thermal cooling devices and expose some useful statistics.
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=110382
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- include/sound/hdaudio.h   |  1 +
- sound/hda/hdac_sysfs.c    | 22 +++++++++++++++++++---
- sound/pci/hda/hda_codec.c |  2 ++
- 3 files changed, 22 insertions(+), 3 deletions(-)
+no change, just fix the base64 encoding issue.
+---
+ arch/arm/configs/imx_v6_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
-index 45f944d57982..85835d0c33cc 100644
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -81,6 +81,7 @@ struct hdac_device {
- 	atomic_t in_pm;		/* suspend/resume being performed */
- 
- 	/* sysfs */
-+	struct mutex widget_lock;
- 	struct hdac_widget_tree *widgets;
- 
- 	/* regmap */
-diff --git a/sound/hda/hdac_sysfs.c b/sound/hda/hdac_sysfs.c
-index fb2aa344981e..5352e5db814c 100644
---- a/sound/hda/hdac_sysfs.c
-+++ b/sound/hda/hdac_sysfs.c
-@@ -399,21 +399,28 @@ int hda_widget_sysfs_init(struct hdac_device *codec)
- {
- 	int err;
- 
--	if (codec->widgets)
-+	mutex_lock(&codec->widget_lock);
-+	if (codec->widgets) {
-+		mutex_unlock(&codec->widget_lock);
- 		return 0; /* already created */
-+	}
- 
- 	err = widget_tree_create(codec);
- 	if (err < 0) {
- 		widget_tree_free(codec);
-+		mutex_unlock(&codec->widget_lock);
- 		return err;
- 	}
- 
-+	mutex_unlock(&codec->widget_lock);
- 	return 0;
- }
- 
- void hda_widget_sysfs_exit(struct hdac_device *codec)
- {
-+	mutex_lock(&codec->widget_lock);
- 	widget_tree_free(codec);
-+	mutex_unlock(&codec->widget_lock);
- }
- 
- int hda_widget_sysfs_reinit(struct hdac_device *codec,
-@@ -424,16 +431,23 @@ int hda_widget_sysfs_reinit(struct hdac_device *codec,
- 	hda_nid_t nid;
- 	int i;
- 
--	if (!codec->widgets)
-+	mutex_lock(&codec->widget_lock);
-+
-+	if (!codec->widgets) {
-+		mutex_unlock(&codec->widget_lock);
- 		return hda_widget_sysfs_init(codec);
-+	}
- 
- 	tree = kmemdup(codec->widgets, sizeof(*tree), GFP_KERNEL);
--	if (!tree)
-+	if (!tree) {
-+		mutex_unlock(&codec->widget_lock);
- 		return -ENOMEM;
-+	}
- 
- 	tree->nodes = kcalloc(num_nodes + 1, sizeof(*tree->nodes), GFP_KERNEL);
- 	if (!tree->nodes) {
- 		kfree(tree);
-+		mutex_unlock(&codec->widget_lock);
- 		return -ENOMEM;
- 	}
- 
-@@ -460,5 +474,7 @@ int hda_widget_sysfs_reinit(struct hdac_device *codec,
- 	codec->widgets = tree;
- 
- 	kobject_uevent(tree->root, KOBJ_CHANGE);
-+
-+	mutex_unlock(&codec->widget_lock);
- 	return 0;
- }
-diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
-index 701a69d856f5..a5746df5c94b 100644
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -870,6 +870,8 @@ static int snd_hda_codec_device_init(struct hda_bus *bus, struct snd_card *card,
- 	if (!codec)
- 		return -ENOMEM;
- 
-+	mutex_init(&codec->widget_lock);
-+
- 	sprintf(name, "hdaudioC%dD%d", card->number, codec_addr);
- 	err = snd_hdac_device_init(&codec->core, &bus->core, name, codec_addr);
- 	if (err < 0) {
--- 
-2.17.1
+diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6=
+_v7_defconfig
+index 765003a..ea387cb 100644
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -225,6 +225,7 @@ CONFIG_POWER_SUPPLY=3Dy
+ CONFIG_SENSORS_MC13783_ADC=3Dy
+ CONFIG_SENSORS_GPIO_FAN=3Dy
+ CONFIG_SENSORS_IIO_HWMON=3Dy
++CONFIG_THERMAL_STATISTICS=3Dy
+ CONFIG_THERMAL_WRITABLE_TRIPS=3Dy
+ CONFIG_CPU_THERMAL=3Dy
+ CONFIG_IMX_THERMAL=3Dy
+--=20
+2.7.4
 
