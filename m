@@ -2,70 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C5D198DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15012198E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfEJHSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:18:53 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7738 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726855AbfEJHSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:18:52 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6A9479CB491DD3E1EA86;
-        Fri, 10 May 2019 15:18:48 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 10 May 2019
- 15:18:40 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <sre@kernel.org>, <andrew.smirnov@gmail.com>,
-        <sebastian.reichel@collabora.com>, <enric.balletbo@collabora.com>,
-        <linux@roeck-us.net>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] power: supply: ucs1002: Fix build error without CONFIG_REGULATOR
-Date:   Fri, 10 May 2019 15:18:23 +0800
-Message-ID: <20190510071823.2984-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727196AbfEJHV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:21:29 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37010 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfEJHV2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 03:21:28 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c1so1749589qkk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:21:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qkp3uN3JmIP+V4STFBMw4M1itzMyk7qqDLAq1F6TTQI=;
+        b=GjkLfSJVj2Ed4Dth/vTbrupIdXHvfVxVbpZsi+q6L2SQP0bd/fR4RkKnU7bYDUQLHL
+         tYK+nwMHpCVEKVGcceqizz11yWTfW7DF2LgxylD8NoocJ6oDZQBuO1mIP5lRYeVgT6Fk
+         jyNluntZ+PPzKYS57wszdjggejYD6RmlGDe0B2mlzsqCzGQf4BHS7sO+yndRjMp8MgKt
+         avLes4GhWwQ4W4lw//9hkuLm3YIv5c+lpTFDsdk1z+BTWFPgleqCDKRA8jFRbMOD+xtH
+         r8seWpVOTmB2h6CGyWvH+zDZCgo+pWnG/lZbDnqJi319bzZihhPI3sUfVxWFMlMlxv0y
+         pGXw==
+X-Gm-Message-State: APjAAAUfpQG83saWBVa37vPBW+pDqKavIvHHiWI0Ia9fHkOeSiG09qyD
+        IznFLpfvZjqmRVh63U9ZS/cVH9aeqBT1ZA==
+X-Google-Smtp-Source: APXvYqxQmGrUW/No6yN8KlnGJEV4Aj+h/RJzKqJ9tg+pnXf3scxoRahou77rSE4Udu+LioHkCbnimQ==
+X-Received: by 2002:a37:a216:: with SMTP id l22mr7397641qke.282.1557472887500;
+        Fri, 10 May 2019 00:21:27 -0700 (PDT)
+Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id t57sm521405qtt.7.2019.05.10.00.21.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 May 2019 00:21:26 -0700 (PDT)
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Aaron Tomlin <atomlin@redhat.com>, linux-mm@kvack.org
+Subject: [PATCH RFC 0/4] mm/ksm: add option to automerge VMAs
+Date:   Fri, 10 May 2019 09:21:21 +0200
+Message-Id: <20190510072125.18059-1-oleksandr@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix gcc build error while CONFIG_REGULATOR is not set
+By default, KSM works only on memory that is marked by madvise(). And the
+only way to get around that is to either:
 
-drivers/power/supply/ucs1002_power.o: In function `ucs1002_probe':
-drivers/power/supply/ucs1002_power.c:593: undefined reference to `devm_regulator_register'
-drivers/power/supply/ucs1002_power.o:(.rodata+0x3b8): undefined reference to `regulator_enable_regmap'
-drivers/power/supply/ucs1002_power.o:(.rodata+0x3c0): undefined reference to `regulator_disable_regmap'
-drivers/power/supply/ucs1002_power.o:(.rodata+0x3c8): undefined reference to `regulator_is_enabled_regmap'
+  * use LD_PRELOAD; or
+  * patch the kernel with something like UKSM or PKSM.
 
-Add Kconfig dependency to CONFIG_REGULATOR.
+Instead, lets implement a so-called "always" mode, which allows marking
+VMAs as mergeable on do_anonymous_page() call automatically.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 9a2688e42638 ("power: supply: Add driver for Microchip UCS1002")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/power/supply/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+The submission introduces a new sysctl knob as well as kernel cmdline option
+to control which mode to use. The default mode is to maintain old
+(madvise-based) behaviour.
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index ef36bd2..26dacda 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -682,6 +682,7 @@ config CHARGER_UCS1002
- 	tristate "Microchip UCS1002 USB Port Power Controller"
- 	depends on I2C
- 	depends on OF
-+	depends on REGULATOR
- 	select REGMAP_I2C
- 	help
- 	  Say Y to enable support for Microchip UCS1002 Programmable
+Due to security concerns, this submission also introduces VM_UNMERGEABLE
+vmaflag for apps to explicitly opt out of automerging. Because of adding
+a new vmaflag, the whole work is available for 64-bit architectures only.
+
+This patchset is based on earlier Timofey's submission [1], but it doesn't
+use dedicated kthread to walk through the list of tasks/VMAs.
+
+For my laptop it saves up to 300 MiB of RAM for usual workflow (browser,
+terminal, player, chats etc). Timofey's submission also mentions
+containerised workload that benefits from automerging too.
+
+Open questions:
+
+  * once "always" mode is activated, should re-scan of all VMAs be
+    triggered to find eligible ones for automerging?
+
+Thanks.
+
+[1] https://lore.kernel.org/patchwork/patch/1012142/
+
+Oleksandr Natalenko (4):
+  mm/ksm: introduce ksm_enter() helper
+  mm/ksm: introduce VM_UNMERGEABLE
+  mm/ksm: allow anonymous memory automerging
+  mm/ksm: add automerging documentation
+
+ .../admin-guide/kernel-parameters.txt         |   7 +
+ Documentation/admin-guide/mm/ksm.rst          |   7 +
+ fs/proc/task_mmu.c                            |   3 +
+ include/linux/ksm.h                           |   5 +
+ include/linux/mm.h                            |   6 +
+ include/trace/events/mmflags.h                |   7 +
+ mm/ksm.c                                      | 142 ++++++++++++++----
+ mm/memory.c                                   |   6 +
+ 8 files changed, 157 insertions(+), 26 deletions(-)
+
 -- 
-2.7.4
-
+2.21.0
 
