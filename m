@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FC21A3AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7F61A3AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:03:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfEJUCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 16:02:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
+        id S1728093AbfEJUDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 16:03:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727905AbfEJUBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 16:01:10 -0400
+        id S1727907AbfEJUBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 16:01:09 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C685E21881;
-        Fri, 10 May 2019 20:01:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04AD121873;
+        Fri, 10 May 2019 20:01:09 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hPBhb-0006jt-VP; Fri, 10 May 2019 16:01:07 -0400
-Message-Id: <20190510200107.857252818@goodmis.org>
+        id 1hPBhc-0006kN-4l; Fri, 10 May 2019 16:01:08 -0400
+Message-Id: <20190510200108.042164597@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 10 May 2019 15:56:19 -0400
+Date:   Fri, 10 May 2019 15:56:20 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -29,7 +29,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 13/27] tools/lib/traceevent: Man pages for registering print function
+Subject: [PATCH 14/27] tools/lib/traceevent: Man page for tep_read_number()
 References: <20190510195606.537643615@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -40,32 +40,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Create man pages for libtraceevent APIs:
-  tep_register_print_function()
-  tep_unregister_print_function()
+Create man page for tep_read_number() libtraceevent API.
 
-Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-13-tstoyanov@vmware.com
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-14-tstoyanov@vmware.com
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../libtraceevent-reg_print_func.txt          | 155 ++++++++++++++++++
- 1 file changed, 155 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-reg_print_func.txt
+ .../libtraceevent-endian_read.txt             | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-endian_read.txt
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-reg_print_func.txt b/tools/lib/traceevent/Documentation/libtraceevent-reg_print_func.txt
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-endian_read.txt b/tools/lib/traceevent/Documentation/libtraceevent-endian_read.txt
 new file mode 100644
-index 000000000000..708dce91ebd8
+index 000000000000..e64851b6e189
 --- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-reg_print_func.txt
-@@ -0,0 +1,155 @@
++++ b/tools/lib/traceevent/Documentation/libtraceevent-endian_read.txt
+@@ -0,0 +1,78 @@
 +libtraceevent(3)
 +================
 +
 +NAME
 +----
-+tep_register_print_function,tep_unregister_print_function -
-+Registers / Unregisters a helper function.
++tep_read_number - Reads a number from raw data.
 +
 +SYNOPSIS
 +--------
@@ -73,109 +70,37 @@ index 000000000000..708dce91ebd8
 +--
 +*#include <event-parse.h>*
 +
-+enum *tep_func_arg_type* {
-+	TEP_FUNC_ARG_VOID,
-+	TEP_FUNC_ARG_INT,
-+	TEP_FUNC_ARG_LONG,
-+	TEP_FUNC_ARG_STRING,
-+	TEP_FUNC_ARG_PTR,
-+	TEP_FUNC_ARG_MAX_TYPES
-+};
-+
-+typedef unsigned long long (*pass:[*]tep_func_handler*)(struct trace_seq pass:[*]s, unsigned long long pass:[*]args);
-+
-+int *tep_register_print_function*(struct tep_handle pass:[*]_tep_, tep_func_handler _func_, enum tep_func_arg_type _ret_type_, char pass:[*]_name_, _..._);
-+int *tep_unregister_print_function*(struct tep_handle pass:[*]_tep_, tep_func_handler _func_, char pass:[*]_name_);
++unsigned long long *tep_read_number*(struct tep_handle pass:[*]_tep_, const void pass:[*]_ptr_, int _size_);
 +--
 +
 +DESCRIPTION
 +-----------
-+Some events may have helper functions in the print format arguments.
-+This allows a plugin to dynamically create a way to process one of
-+these functions.
-+
-+The _tep_register_print_function()_ registers such helper function. The _tep_
-+argument is the trace event parser context. The _func_ argument  is a pointer
-+to the helper function. The _ret_type_ argument is  the return type of the
-+helper function, value from the _tep_func_arg_type_ enum. The _name_ is the name
-+of the helper function, as seen in the print format arguments. The _..._ is a
-+variable list of _tep_func_arg_type_ enums, the _func_ function arguments.
-+This list must end with _TEP_FUNC_ARG_VOID_. See 'EXAMPLE' section.
-+
-+The _tep_unregister_print_function()_ unregisters a helper function, previously
-+registered with _tep_register_print_function()_. The _tep_ argument is the
-+trace event parser context. The _func_ and _name_ arguments are the same, used
-+when the helper function was registered.
-+
-+The _tep_func_handler_ is the type of the helper function. The _s_ argument is
-+the trace sequence, it can be used to create a custom string.
-+The _args_  is a list of arguments, defined when the helper function was
-+registered.
++The _tep_read_number()_ function reads an integer from raw data, taking into
++account the endianness of the raw data and the current host. The _tep_ argument
++is the trace event parser context. The _ptr_ is a pointer to the raw data, where
++the integer is, and the _size_ is the size of the integer.
 +
 +RETURN VALUE
 +------------
-+The _tep_register_print_function()_ function returns 0 in case of success.
-+In case of an error, TEP_ERRNO_... code is returned.
-+
-+The _tep_unregister_print_function()_ returns 0 in case of success, or -1 in
-+case of an error.
++The _tep_read_number()_ function returns the integer in the byte order of
++the current host. In case of an error, 0 is returned.
 +
 +EXAMPLE
 +-------
-+Some events have internal functions calls, that appear in the print format
-+output. For example "tracefs/events/i915/g4x_wm/format" has:
-+[source,c]
-+--
-+print fmt: "pipe %c, frame=%u, scanline=%u, wm %d/%d/%d, sr %s/%d/%d/%d, hpll %s/%d/%d/%d, fbc %s",
-+	    ((REC->pipe) + 'A'), REC->frame, REC->scanline, REC->primary,
-+	    REC->sprite, REC->cursor, yesno(REC->cxsr), REC->sr_plane,
-+	    REC->sr_cursor, REC->sr_fbc, yesno(REC->hpll), REC->hpll_plane,
-+	    REC->hpll_cursor, REC->hpll_fbc, yesno(REC->fbc)
-+--
-+Notice the call to function _yesno()_ in the print arguments. In the kernel
-+context, this function has the following implementation:
-+[source,c]
-+--
-+static const char *yesno(int x)
-+{
-+	static const char *yes = "yes";
-+	static const char *no = "no";
-+
-+	return x ? yes : no;
-+}
-+--
-+The user space event parser has no idea how to handle this _yesno()_ function.
-+The _tep_register_print_function()_ API can be used to register a user space
-+helper function, mapped to the kernel's _yesno()_:
 +[source,c]
 +--
 +#include <event-parse.h>
-+#include <trace-seq.h>
 +...
 +struct tep_handle *tep = tep_alloc();
 +...
-+static const char *yes_no_helper(int x)
++void process_record(struct tep_record *record)
 +{
-+	return x ? "yes" : "no";
++	int offset = 24;
++	int data = tep_read_number(tep, record->data + offset, 4);
++
++	/* Read the 4 bytes at the offset 24 of data as an integer */
 +}
 +...
-+	if ( tep_register_print_function(tep,
-+				    yes_no_helper,
-+				    TEP_FUNC_ARG_STRING,
-+				    "yesno",
-+				    TEP_FUNC_ARG_INT,
-+				    TEP_FUNC_ARG_VOID) != 0) {
-+		/* Failed to register yes_no_helper function */
-+	}
-+
-+/*
-+   Now, when the event parser encounters this yesno() function, it will know
-+   how to handle it.
-+*/
-+...
-+	if (tep_unregister_print_function(tep, yes_no_helper, "yesno") != 0) {
-+		/* Failed to unregister yes_no_helper function */
-+	}
 +--
 +
 +FILES
@@ -184,10 +109,6 @@ index 000000000000..708dce91ebd8
 +--
 +*event-parse.h*
 +	Header file to include in order to have access to the library APIs.
-+*trace-seq.h*
-+	Header file to include in order to have access to trace sequences
-+	related APIs. Trace sequences are used to allow a function to call
-+	several other functions to create a string of data to use.
 +*-ltraceevent*
 +	Linker switch to add when building a program that uses the library.
 +--
