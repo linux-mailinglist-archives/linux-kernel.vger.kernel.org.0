@@ -2,65 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B511019E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 15:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30CC19E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 15:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfEJNgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 09:36:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43750 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbfEJNgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 09:36:45 -0400
-Received: by mail-pl1-f196.google.com with SMTP id n8so2859265plp.10;
-        Fri, 10 May 2019 06:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kt9FPFDpjFPjc6XHDzkaEMg/CJSFoG6/sggF3HB6EQQ=;
-        b=OHyIZElzc6hUOnDTCKmPJOBRGsinYylt9gw5Jy1a/G1St7BjMOEsv+/Om7kCCZ7fQT
-         oTecW84/Xr+JI1oUbkq451vNSYlAQVaNj76WQkYJPrM5WHOt5jC6gLTL9umKZoIQ9GOe
-         /CSbvFDkp1LElYjggSsGijAs8RrMchndBRInZKwsArSGI06gs8CtUxXQFiy0Mg1YsyDY
-         HX05IVooz+jxnjf+L2ohVwr474vbrswBA/pAfDe1o08joXWEzC9y/5AHyE+EfXncxLPq
-         ublGQ/e3GU1+238TXbYMnQgxmwOsSmCkxFGdTuwXqElf7B3auSknPjxevKWAZncXspxA
-         gu5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kt9FPFDpjFPjc6XHDzkaEMg/CJSFoG6/sggF3HB6EQQ=;
-        b=gjyBjSWRnyjIvDVDjkatLN9vbCfAg2co+9eD1kGUPtUWnqH7YiSMGbc6g4sC0v9SAk
-         yIknC1KUtblih9SostMIvBrGWH5Uj+kPVfXEqRwDhBEqsqPXbmhNfKON68VKkwJ8OPF/
-         6xuXUWWcl9iXYOJlxXgUi5AW86pyz1eFQy7hAU99aJTR7xnOqNyPGfEKmnOoAiG8i/aq
-         sRL3A6IUTPCMU3gw/SLkqgkNROOIVciYkJbd/sGySa3fvz/hK7gijQ5kYjHTw0oUzEy1
-         BUohYp81PcPp7N06ADYR9JaQz+L79U9fColAjISh+17Z1HkVd0bELAVUPwI2Qhe7sf+b
-         Uvgg==
-X-Gm-Message-State: APjAAAVwj44EHELScp/Wn1vJymLlZ3zbukvzpZPPyl5CkdvH4y5TNHdL
-        JO29L9UsoAPoNcRyc1bigC9akJ35
-X-Google-Smtp-Source: APXvYqwUWds51Bswk4inzGav4X7yQsA9fbIM68QAgKcLhKIUc4a9NAzPW/4r8WsoCtKp8VmqzIhAlg==
-X-Received: by 2002:a17:902:76c5:: with SMTP id j5mr13115742plt.337.1557495405069;
-        Fri, 10 May 2019 06:36:45 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s85sm8897102pfa.23.2019.05.10.06.36.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2019 06:36:44 -0700 (PDT)
-Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20190509181309.180685671@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <411e19b0-7f02-a1e3-e1b6-1ff9ca4e1145@roeck-us.net>
-Date:   Fri, 10 May 2019 06:36:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727824AbfEJNhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 09:37:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:39945 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727258AbfEJNhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 09:37:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 May 2019 06:37:20 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 10 May 2019 06:37:19 -0700
+Received: from khbyers-mobl2.amr.corp.intel.com (unknown [10.251.29.37])
+        by linux.intel.com (Postfix) with ESMTP id 700A5580482;
+        Fri, 10 May 2019 06:37:18 -0700 (PDT)
+Subject: Re: [PATCH V2] ASoC: SOF: Fix build error with
+ CONFIG_SND_SOC_SOF_NOCODEC=m
+To:     YueHaibing <yuehaibing@huawei.com>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        rdunlap@infradead.org
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20190510023657.8960-1-yuehaibing@huawei.com>
+ <20190510132940.28184-1-yuehaibing@huawei.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <9284cd65-98e3-5f7e-1427-8245dd84edcd@linux.intel.com>
+Date:   Fri, 10 May 2019 08:36:56 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190510132940.28184-1-yuehaibing@huawei.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,19 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/19 11:41 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.0.15 release.
-> There are 95 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 5/10/19 8:29 AM, YueHaibing wrote:
+> Fix gcc build error while CONFIG_SND_SOC_SOF_NOCODEC=m
 > 
-> Responses should be made by Sat 11 May 2019 06:11:22 PM UTC.
-> Anything received after that time might be too late.
+> sound/soc/sof/core.o: In function `snd_sof_device_probe':
+> core.c:(.text+0x4af): undefined reference to `sof_nocodec_setup'
+> 
+> Change IS_ENABLED to IS_REACHABLE to fix this.
+
+this just hides the issue instead of fixing it.
+please send the config+sha1 so that we can check.
+
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Suggested-by: Takashi Iwai <tiwai@suse.de>
+> Fixes: c16211d6226d ("ASoC: SOF: Add Sound Open Firmware driver core")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> V2: use IS_REACHABLE
+> ---
+>   sound/soc/sof/core.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/sof/core.c b/sound/soc/sof/core.c
+> index 32105e0..38e22f4 100644
+> --- a/sound/soc/sof/core.c
+> +++ b/sound/soc/sof/core.c
+> @@ -259,7 +259,7 @@ int snd_sof_create_page_table(struct snd_sof_dev *sdev,
+>   static int sof_machine_check(struct snd_sof_dev *sdev)
+>   {
+>   	struct snd_sof_pdata *plat_data = sdev->pdata;
+> -#if IS_ENABLED(CONFIG_SND_SOC_SOF_NOCODEC)
+> +#if IS_REACHABLE(CONFIG_SND_SOC_SOF_NOCODEC)
+>   	struct snd_soc_acpi_mach *machine;
+>   	int ret;
+>   #endif
+> @@ -267,7 +267,7 @@ static int sof_machine_check(struct snd_sof_dev *sdev)
+>   	if (plat_data->machine)
+>   		return 0;
+>   
+> -#if !IS_ENABLED(CONFIG_SND_SOC_SOF_NOCODEC)
+> +#if !IS_REACHABLE(CONFIG_SND_SOC_SOF_NOCODEC)
+>   	dev_err(sdev->dev, "error: no matching ASoC machine driver found - aborting probe\n");
+>   	return -ENODEV;
+>   #else
 > 
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 349 pass: 349 fail: 0
-
-Guenter
