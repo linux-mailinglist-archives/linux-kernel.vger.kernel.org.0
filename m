@@ -2,100 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46FDB196C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 04:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2B8196AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 04:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfEJCjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 22:39:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:22061 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfEJCjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 22:39:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 May 2019 19:39:54 -0700
-X-ExtLoop1: 1
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga008.jf.intel.com with ESMTP; 09 May 2019 19:39:52 -0700
-Date:   Fri, 10 May 2019 10:23:29 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Alan Tull <atull@kernel.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>,
-        Ananda Ravuri <ananda.ravuri@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v2 17/18] fpga: dfl: fme: add global error reporting
- support
-Message-ID: <20190510022329.GA12617@hao-dev>
-References: <1556528151-17221-1-git-send-email-hao.wu@intel.com>
- <1556528151-17221-18-git-send-email-hao.wu@intel.com>
- <CANk1AXRpBe=8Jh+_ZMfARSdXZmrQaN3jc0AfxoX2nP5sLESv2A@mail.gmail.com>
+        id S1726896AbfEJCZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 22:25:27 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:55585 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726810AbfEJCZ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 22:25:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TRIa4cz_1557455120;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TRIa4cz_1557455120)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 10 May 2019 10:25:23 +0800
+Subject: Re: [PATCH] mm: vmscan: correct nr_reclaimed for THP
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     hannes@cmpxchg.org, mhocko@suse.com, mgorman@techsingularity.net,
+        kirill.shutemov@linux.intel.com, hughd@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1557447392-61607-1-git-send-email-yang.shi@linux.alibaba.com>
+ <87y33fjbvr.fsf@yhuang-dev.intel.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <1fb73973-f409-1411-423b-c48895d3dde8@linux.alibaba.com>
+Date:   Thu, 9 May 2019 19:25:20 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANk1AXRpBe=8Jh+_ZMfARSdXZmrQaN3jc0AfxoX2nP5sLESv2A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87y33fjbvr.fsf@yhuang-dev.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 11:27:36AM -0500, Alan Tull wrote:
-> On Mon, Apr 29, 2019 at 4:13 AM Wu Hao <hao.wu@intel.com> wrote:
-> 
-> Hi Hao,
-> 
-> The changes look good.  There's one easy to fix thing that Greg has
-> pointed out recently on another patch (below).
-> 
-> >
-> > This patch adds support for global error reporting for FPGA
-> > Management Engine (FME), it introduces sysfs interfaces to
-> > report different error detected by the hardware, and allow
-> > user to clear errors or inject error for testing purpose.
-> >
-> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > Signed-off-by: Ananda Ravuri <ananda.ravuri@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> 
-> Acked-by: Alan Tull <atull@kernel.org>
-> 
-> > ---
-> > v2: fix issues found in sysfs doc.
-> >     fix returned error code issues for writable sysfs interfaces.
-> >     (use -EINVAL if input doesn't match error code)
-> >     reorder the sysfs groups in code.
-> 
-> > +static ssize_t revision_show(struct device *dev, struct device_attribute *attr,
-> > +                            char *buf)
-> > +{
-> > +       struct device *err_dev = dev->parent;
-> > +       void __iomem *base;
-> > +
-> > +       base = dfl_get_feature_ioaddr_by_id(err_dev, FME_FEATURE_ID_GLOBAL_ERR);
-> > +
-> > +       return scnprintf(buf, PAGE_SIZE, "%u\n", dfl_feature_revision(base));
-> 
-> Greg is discouraging use of scnprintf for sysfs attributes where it's
-> not needed [1].
-> 
-> Please fix this up the attributes added in this patchset.  Besides
-> that, looks good, I added my Ack.
 
-Sure, will fix them in the next patchset.
 
-thanks a lot!
+On 5/9/19 7:12 PM, Huang, Ying wrote:
+> Yang Shi <yang.shi@linux.alibaba.com> writes:
+>
+>> Since commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after
+>> swapped out"), THP can be swapped out in a whole.  But, nr_reclaimed
+>> still gets inc'ed by one even though a whole THP (512 pages) gets
+>> swapped out.
+>>
+>> This doesn't make too much sense to memory reclaim.  For example, direct
+>> reclaim may just need reclaim SWAP_CLUSTER_MAX pages, reclaiming one THP
+>> could fulfill it.  But, if nr_reclaimed is not increased correctly,
+>> direct reclaim may just waste time to reclaim more pages,
+>> SWAP_CLUSTER_MAX * 512 pages in worst case.
+>>
+>> This change may result in more reclaimed pages than scanned pages showed
+>> by /proc/vmstat since scanning one head page would reclaim 512 base pages.
+>>
+>> Cc: "Huang, Ying" <ying.huang@intel.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>> I'm not quite sure if it was the intended behavior or just omission. I tried
+>> to dig into the review history, but didn't find any clue. I may miss some
+>> discussion.
+>>
+>>   mm/vmscan.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index fd9de50..7e026ec 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -1446,7 +1446,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>>   
+>>   		unlock_page(page);
+>>   free_it:
+>> -		nr_reclaimed++;
+>> +		/*
+>> +		 * THP may get swapped out in a whole, need account
+>> +		 * all base pages.
+>> +		 */
+>> +		nr_reclaimed += (1 << compound_order(page));
+>>   
+>>   		/*
+>>   		 * Is there need to periodically free_page_list? It would
+> Good catch!  Thanks!
+>
+> How about to change this to
+>
+>
+>          nr_reclaimed += hpage_nr_pages(page);
 
-Hao
+Either is fine to me. Is this faster than "1 << compound_order(page)"?
 
-> 
-> Alan
-> 
-> > +}
-> > +static DEVICE_ATTR_RO(revision);
-> 
-> [1] https://lkml.org/lkml/2019/4/25/1050
+>
+> Best Regards,
+> Huang, Ying
+
