@@ -2,118 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A16B198E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC6F19913
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:42:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfEJHT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:19:27 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:13087 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfEJHT0 (ORCPT
+        id S1727157AbfEJHme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:42:34 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:34274 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbfEJHme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:19:26 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x4A7JHt6076937;
-        Fri, 10 May 2019 15:19:17 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     bbrezillon@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com,
-        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        linux-mtd@lists.infradead.org
-Cc:     juliensu@mxic.com.tw, masonccyang@mxic.com.tw
-Subject: [PATCH v1] mtd: rawnand: Add Macronix NAND read retry support
-Date:   Fri, 10 May 2019 15:41:02 +0800
-Message-Id: <1557474062-4949-1-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-X-MAIL: TWHMLLG4.macronix.com x4A7JHt6076937
+        Fri, 10 May 2019 03:42:34 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x4A7gN4u014009;
+        Fri, 10 May 2019 16:42:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4A7gN4u014009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557474144;
+        bh=YlQFpWyCF4koFxUrKwNjn9H1imLHQlb49VlUA4xXZYA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WzgJ7Yz1c7/4fkDz1D+HsayXrwITF0XMEAY848HkwsJMmnuAMqIZx69WNu/4WgGnC
+         vWYSCLoFk5S2GgliRGQt3XIV26v3dcvm7e7XGdSKYhNzpWAyfIVJbQFoCz3StMTdm/
+         B/SPJcKTj9JAo3XyGjlYA0a6MRqTk02/XsxjeF8Cx0Xl1w8qq2T6osT3E5UDUWTx91
+         IP8ABVG/ZTWW7XGk9YaVrmsG+wh8gpqZzUahPG79x30Rd7V1Tsurf2DG1iwk175njQ
+         PDa+Rg5p4LMrStnFE2V4KSPQKzzaTh7qIt/Uritu+1Tf1k++zpT7qqON8vHe0z8lRL
+         fMwDoRLGkFQ1w==
+X-Nifty-SrcIP: [209.85.160.169]
+Received: by mail-qt1-f169.google.com with SMTP id m32so2493131qtf.0;
+        Fri, 10 May 2019 00:42:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAXqtqTn3wDc3IpqzAxxcIMos+q2DAKSvVmwhjfXluzX3K5ZqocX
+        iatYbiKjukMyH7snxq+J0qpDOUAIpCb9DGL4jGY=
+X-Google-Smtp-Source: APXvYqyZrf0UJsSJQxKmr/G7lbAJz0M5TQd1WU9tqtsIKF7oJDZhaP7rRJBT58gVBjUgizNiZhcXwK2kt8XYVfcY7fQ=
+X-Received: by 2002:aed:258a:: with SMTP id x10mr8156329qtc.380.1557474143345;
+ Fri, 10 May 2019 00:42:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190510061205.28753-1-yamada.masahiro@socionext.com>
+ <20190510061205.28753-2-yamada.masahiro@socionext.com> <CAMuHMdVmgZjyGxz0F=Akz+3egFtGMppGg6TRAnRhd=KZv5ADdg@mail.gmail.com>
+ <20190510070354.GA2193@ravnborg.org>
+In-Reply-To: <20190510070354.GA2193@ravnborg.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 10 May 2019 16:41:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS56NOTdmAmHdi9Kk23HjbQXDmEJEySSU0c=+eTQF5nEw@mail.gmail.com>
+Message-ID: <CAK7LNAS56NOTdmAmHdi9Kk23HjbQXDmEJEySSU0c=+eTQF5nEw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kconfig: do not write .config if the content is the same
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for Macronix NAND read retry.
+Hi Sam, Geert,
 
-Macronix NAND supports specfical read for data recovery and enabled
-it by Set Feature.
-Driver check byte 167 of Vendor Blocks in ONFI parameter page table
-to see if this high reliability function is support or not.
+On Fri, May 10, 2019 at 4:04 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Geert/Masahiro.
+>
+> On Fri, May 10, 2019 at 08:46:35AM +0200, Geert Uytterhoeven wrote:
+> > Hi Yamada-san,
+> >
+> > On Fri, May 10, 2019 at 8:14 AM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> > > Kconfig updates the .config when it exits even if its content is
+> > > exactly the same as before. Since its timestamp becomes newer than
+> > > that of other build artifacts, additional processing is invoked,
+> > > which is annoying.
+> > >
+> > > - syncconfig is invoked to update include/config/auto.conf, etc.
+> > >
+> > > - kernel/config.o is recompiled if CONFIG_IKCONFIG is enabled,
+> > >   then vmlinux is relinked as well.
+> > >
+> > > If the .config is not changed at all, we do not have to even
+> > > touch it. Just bail out showing "No change to .config".
+> It would be preferable that if nothing changed no output is generated.
+> Like we do not tell that we did not build a .o file because the .c file
+> had not changed.
+> Less noise for a kernel build where nothings happens.
+>
+> > This causes a semantic change for the meaning of ".config.old", which is
+> > no longer updated if .config has not changed.
+> > Hence its contents may no longer correspond to the previous config, but to
+> > an arbitrary older version.
+> This semantic change is good.
+> So we now have a .config.old that correspond to the state before
+> the last change. Also after several kernel builds.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- drivers/mtd/nand/raw/nand_macronix.c | 52 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-index 47d8cda..5cd1e5f 100644
---- a/drivers/mtd/nand/raw/nand_macronix.c
-+++ b/drivers/mtd/nand/raw/nand_macronix.c
-@@ -17,6 +17,57 @@
- 
- #include "internals.h"
- 
-+#define MACRONIX_READ_RETRY_BIT BIT(0)
-+#define MACRONIX_READ_RETRY_MODE 5
-+
-+struct nand_onfi_vendor_macronix {
-+	u8 reserved[1];
-+	u8 reliability_func;
-+} __packed;
-+
-+static int macronix_nand_setup_read_retry(struct nand_chip *chip, int mode)
-+{
-+	u8 feature[ONFI_SUBFEATURE_PARAM_LEN] = {0};
-+	int ret;
-+
-+	if (mode > MACRONIX_READ_RETRY_MODE)
-+		mode = MACRONIX_READ_RETRY_MODE;
-+
-+	feature[0] = mode;
-+	ret =  nand_set_features(chip, ONFI_FEATURE_ADDR_READ_RETRY, feature);
-+	if (ret)
-+		pr_err("set feature failed to read retry moded:%d\n", mode);
-+
-+	ret =  nand_get_features(chip, ONFI_FEATURE_ADDR_READ_RETRY, feature);
-+	if (ret || feature[0] != mode)
-+		pr_err("get feature failed to read retry moded:%d(%d)\n",
-+		       mode, feature[0]);
-+
-+	return ret;
-+}
-+
-+static void macronix_nand_onfi_init(struct nand_chip *chip)
-+{
-+	struct nand_parameters *p = &chip->parameters;
-+
-+	if (p->onfi) {
-+		struct nand_onfi_vendor_macronix *mxic =
-+				(void *)p->onfi->vendor;
-+
-+		if (mxic->reliability_func & MACRONIX_READ_RETRY_BIT) {
-+			chip->read_retries = MACRONIX_READ_RETRY_MODE + 1;
-+			chip->setup_read_retry =
-+				 macronix_nand_setup_read_retry;
-+			if (p->supports_set_get_features) {
-+				set_bit(ONFI_FEATURE_ADDR_READ_RETRY,
-+					p->set_feature_list);
-+				set_bit(ONFI_FEATURE_ADDR_READ_RETRY,
-+					p->get_feature_list);
-+			}
-+		}
-+	}
-+}
-+
- /*
-  * Macronix AC series does not support using SET/GET_FEATURES to change
-  * the timings unlike what is declared in the parameter page. Unflag
-@@ -65,6 +116,7 @@ static int macronix_nand_init(struct nand_chip *chip)
- 		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
- 
- 	macronix_nand_fix_broken_get_timings(chip);
-+	macronix_nand_onfi_init(chip);
- 
- 	return 0;
- }
--- 
-1.9.1
+I agree.
 
+When there is no change in the configuration,
+Kconfig will not even attempt to output anything.
+
+Updating only .config.old is strange.
+
+Thanks.
+
+
+
+--
+Best Regards
+Masahiro Yamada
