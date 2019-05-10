@@ -2,119 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 396ED19846
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A78141984B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfEJGOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 02:14:06 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36671 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfEJGOF (ORCPT
+        id S1726961AbfEJGVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 02:21:15 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:21908 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfEJGVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 02:14:05 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y10so3284037lfl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:14:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wcoCn9aET8ENDUMb5kZFQY4rPTMs5oVxV7wArQjOIBo=;
-        b=OBoy5jFwq7rwO6rQvfRJjzjUxv5hh15DMppI5VJRgrtBPPvNHy3xN3DS9UhKYbdjg2
-         x4th2Lp7uXVK/Q+3WelH6KnB3Xzx5iDF0au91UTqihiFLCAIk9+ctrLUnNOF6paggLUR
-         iehK957Lt3Jw4wMEOGI1tIRKyCMykJlJy6Hug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wcoCn9aET8ENDUMb5kZFQY4rPTMs5oVxV7wArQjOIBo=;
-        b=pFOOi3mhbNoUSawlVGyRd870cXJtb63o543rXPd/KMto17+9F4lPvsFPHy7WSEXZ3R
-         ztSjIqiFHWSHQYiVrr5h2m4x12ThzBgl2YNr3FAyTPRcm4TKZ2IFNX4KDc1kTEHOSVPw
-         OfVvBudfkLFfwBGhb69Pnzg+BowcPrS1lXCeARBpsWTIIippgTgt9cUv3iDlqEHh+Fg/
-         Q9P9EnzsthEUcOtr1XqrAXonoRDuUWne/fnaY8TmiZmAETRV2kTPJM2a1b1AeXAVpFuy
-         bRRo7F6hvo6RGT6Ae/y+Xty65pbIm6Zd85JJNicAaLfvXqY5KWjNbKms9bAPXzyRdspI
-         Lt+w==
-X-Gm-Message-State: APjAAAWRA9YAuualRe3ut6of2OpTw3pXVJjLpe1dATI75oUfyyEhM6pM
-        2lILIdwC/8wT8Iz2/1ukM3nIiw==
-X-Google-Smtp-Source: APXvYqxjq3SwLXsYD1FL12FSPs1z8AbTUxVH50KLsWdg3JeNkzbWs8UtasTLQvTkgAAB7vhwEhVrpA==
-X-Received: by 2002:ac2:43cf:: with SMTP id u15mr4755854lfl.67.1557468843494;
-        Thu, 09 May 2019 23:14:03 -0700 (PDT)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id f4sm1025869ljm.80.2019.05.09.23.14.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 23:14:02 -0700 (PDT)
-Subject: Re: [PATCH] arm64: add support for rng-seed
-To:     Hsin-Yi Wang <hsinyi@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        Kees Cook <keescook@chromium.org>
-References: <20190507045433.542-1-hsinyi@chromium.org>
- <CAL_Jsq+rGeFKAPVmPvv_Z+G=BppKUK-tEUphBajZVxFtbRBJvQ@mail.gmail.com>
- <CAJMQK-iVhScf0ybZ85kqP0B5_QPoYZ9PZt35jHRUh8FNHKvu7w@mail.gmail.com>
- <CAL_JsqJZ+mOnrLWt0Cpo_Ybr_ohxwWom1qiyV8_EFocULde7=Q@mail.gmail.com>
- <CAJMQK-jjzYwX3NZAKJ-8ypjcN75o-ZX4iOVD=84JecEd4qV1bA@mail.gmail.com>
- <CAL_JsqLnmedF5cJYH+91U2Q_WX755O8TQs6Ue9mqtEiFKcjGWQ@mail.gmail.com>
- <CAJMQK-hJUG855+TqX=droOjUfb-MKnU0n0FYtr_SW2KByKAW1w@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <36fab640-b98e-9781-f96f-0ed988a71077@rasmusvillemoes.dk>
-Date:   Fri, 10 May 2019 08:14:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 10 May 2019 02:21:14 -0400
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x4A6L4l3009238
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 15:21:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4A6L4l3009238
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557469265;
+        bh=RfshYBEawlaUrELiRcm1azT4/5cCoz/xlPLRX8HpZ6I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iVsglhasHCMUQ2gTfrrTQ9SA+2qlLIJLIgGVSrvPFJCyyso0I6t8SKcqGsDj6Yx87
+         VMH36aRqji1lhQU4TsBO8+3Cv25iAzR/FhUu7KgB0T0Bq5nMjhfwTVOkgHaXaZ/i21
+         bb/TsUnKm75RMjKlLSDlLaCJAX5wB8lC/Lf1e6si5/mR9G7eYbhN3FAbj2YqWwVRRh
+         WclVbITM5CMzu2urKnMnyLP2WlnALR4CwuFuY38ci3ilr3/HBNg4eGf9vw1hwALU2g
+         fW4DAPi14b7emn6waDPmSaS3IV6I50VnJn5D1bLDCrq0h7ofj9dkKqlXIlF2CmtbVQ
+         3NALgOJXSgSZw==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id o187so1210636vkg.4
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:21:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAV7ZyqZZLqmLAEUuwbCeuEseWOA6j8LdU7EYSNEt6KJCNRwZGGL
+        +yWpDq2tDxR0eQDKYuH73zbz+HQhljVxJVHEamM=
+X-Google-Smtp-Source: APXvYqwru5xCITeIP3IDzXSiJdp/KtT+NW5kB4jgvyTrzGgF89HhvyXc3U41UDxZXmkplPVI3cWbBuu0U8mXmBp2XCY=
+X-Received: by 2002:a1f:b297:: with SMTP id b145mr4163622vkf.74.1557469263784;
+ Thu, 09 May 2019 23:21:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJMQK-hJUG855+TqX=droOjUfb-MKnU0n0FYtr_SW2KByKAW1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190507175912.GA11709@kroah.com> <CAHk-=wh=Uscp=yO1p===JjH3x9NS-ez+wrk64Z0pw7EGfWvVTA@mail.gmail.com>
+In-Reply-To: <CAHk-=wh=Uscp=yO1p===JjH3x9NS-ez+wrk64Z0pw7EGfWvVTA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 10 May 2019 15:20:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQd5+-+fcmy3PMH1V6eDckXaeibv_vVgP5GX5L7j-2nEw@mail.gmail.com>
+Message-ID: <CAK7LNAQd5+-+fcmy3PMH1V6eDckXaeibv_vVgP5GX5L7j-2nEw@mail.gmail.com>
+Subject: Re: [GIT PULL] Driver core patches for 5.2-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2019 10.00, Hsin-Yi Wang wrote:
->>>> Why do you need to clear it? That wasn't necessary for kaslr-seed.
->>> I think it's for security purpose. If we know the random seed, it's
->>> more likely we can predict randomness.
->>> Currently on arm64, kaslr-seed will be wiped out (in
->>> arch/arm64/kernel/kaslr.c#get_kaslr_seed(), it's set to 0) so we can't
->>> read from sysfs (eg. /sys/firmware/devicetree/.../kaslr-seed)
->>> I'm not sure on other arch if it will be wiped out.
->>
->> The difference is if I have the kaslr seed, I can calculate the kernel
->> base address.
->>
->> In your case, you are feeding an RNG which continually has entropy
->> added to it. I can't see that knowing one piece of the entropy data is
->> a security hole. It looks more like you've just copied what what done
->> for kaslr-seed.
-> +Kees who can probably explain this better.
-> 
-> This early added entropy is also going to be used for stack canary. At
-> the time it's created there's not be much entropy (before
-> boot_init_stack_canary(), there's only add_latent_entropy() and
-> command_line).
+Hi Linus,
 
-So, why not just have the bootloader add whatever entropy it has via the
-commandline, which already gets mixed in? That requires no kernel
-changes, and works for all architectures.
 
-If anything, perhaps instead of just adding gobbledygook=abc123, make an
-official command line parameter (there was talk about this at some
-point), and have the kernel overwrite the value with xxx so it's not
-visible in /proc/cmdline.
+On Fri, May 10, 2019 at 5:50 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> [ Ok, this may look irrelevant to people, but I actually notice this
+> because I do quick rebuilds *all* the time, so the 30s vs 41s
+> difference is actually something I reacted to and then tried to figure
+> out... ]
+>
+> On Tue, May 7, 2019 at 10:59 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > Joel Fernandes (Google) (2):
+> >       Provide in-kernel headers to make extending kernel easier
+>
+> Joel and Masahiro,
+>  this commit does annoying things. It's a small thing, but it ends up
+> grating on my kernel rebuild times, so I hope somebody can take a look
+> at it..
+>
+> Try building a kernel with no changes, and it shouldn't re-link.
+>
+> HOWEVER.
+>
+> If you re-make the config in between, the kernel/kheaders_data.tar.xz
+> is re-generated too. I think it checks timestamps despite having that
+> "CHK" phase that should verify just contents.
+>
+> I think the kernel/config_data.gz rules do the same thing, judging by
+> the output.
+>
+> I use "make allmodconfig" to re-generate the same kernel config, which
+> triggers this. The difference between "nothing changed" and "rerun
+> 'make allmodconfig' and nothing _still_ should have changed" is quite
+> stark:
 
-Rasmus
+Yeah, I have had this in my mind for a while.
+
+If you run "make *config" and it happens to be creating
+the exactly the same .config, Kconfig should not overwrite
+it at all.
+
+If you apply the following two,
+I hope you will get the behavior you like.
+
+https://patchwork.kernel.org/patch/10938255/
+https://patchwork.kernel.org/patch/10938253/
+
+(1/2 is just a cleanup because I am touching the
+same hunk.)
+
+Because I have not sent a Kconfig pull request yet
+in the current MW, I will consider to merge them.
+
+Thanks.
+
+
+> - nothing changed: rebuild in less than 30s
+>
+>     [torvalds@i7 linux]$ time make -j32
+>       DESCEND  objtool
+>       CALL    scripts/atomic/check-atomics.sh
+>       CALL    scripts/checksyscalls.sh
+>       CHK     include/generated/compile.h
+>       CHK     kernel/kheaders_data.tar.xz
+>       Building modules, stage 2.
+>     Kernel: arch/x86/boot/bzImage is ready  (#9)
+>       MODPOST 7282 modules
+>
+>     real        0m29.379s
+>     user        1m50.586s
+>     sys 0m41.047s
+>
+> - do (the same) "make allmodconfig" in between, now rebuild time is
+> just over 41s:
+>
+>     [torvalds@i7 linux]$ make allmodconfig
+>
+>     [torvalds@i7 linux]$ time make -j32
+>     scripts/kconfig/conf  --syncconfig Kconfig
+>       DESCEND  objtool
+>       CALL    scripts/atomic/check-atomics.sh
+>       CALL    scripts/checksyscalls.sh
+>       CHK     include/generated/compile.h
+>       GZIP    kernel/config_data.gz
+>       CHK     kernel/kheaders_data.tar.xz
+>       CC [M]  kernel/configs.o
+>       GEN     kernel/kheaders_data.tar.xz
+>       CC [M]  kernel/kheaders.o
+>       Building modules, stage 2.
+>     Kernel: arch/x86/boot/bzImage is ready  (#9)
+>       MODPOST 7282 modules
+>       LD [M]  kernel/configs.ko
+>       LD [M]  kernel/kheaders.ko
+>
+>     real        0m41.326s
+>     user        2m17.822s
+>     sys 0m54.561s
+>
+> No, this isn't the end of the world, but if somebody sees a simple
+> solution to avoid that extra ten seconds, I'd appreciate it.
+>
+>                   Linus
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
