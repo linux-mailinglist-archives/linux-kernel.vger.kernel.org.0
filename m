@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 468831A53E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 00:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5920A1A549
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 00:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfEJWcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 18:32:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41788 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfEJWcp (ORCPT
+        id S1728003AbfEJWfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 18:35:12 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46687 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfEJWfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 18:32:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3so3649415pgp.8;
-        Fri, 10 May 2019 15:32:45 -0700 (PDT)
+        Fri, 10 May 2019 18:35:12 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t187so3638851pgb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 15:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RKmOBQf5IncjEXCWsVLHLC0KbVC3GdgkUervdoFVPcA=;
-        b=V/5bCc1jNN11FgSQ6PXDu16MySi4h9zjlLPsMQBuyaGNZv2vO3QLKd5B71zdftRIFf
-         TWkFHD4JIbrM2wZJxvv28RVzSrxx1A6FdlyDtESPEKUmjWq+HHHz1GuHbFqxxjHIhMkL
-         WLzjn/WQzrqv1wjNJQzrze9qFCPSVysgQrQjJWaTl5Y2UgGv7zSJXqBrSiaL0iyIuCzK
-         omhDk1jb69/T8VieGuzgZL33YHaNHQ5uzAQ3lC5c9DXYUxhnrOZ0YielK1+RX8LHoq0C
-         +IvtCkEmVxMCCSbP1uZeVzqHY7m80KUciviHsYZoZdBLrxih1USJRiGn0Rq6xOGUSDIU
-         FWwA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WUHTu2iWYOnQ+FG1Jw9nXlKv7Z2ExyMTaZIZxvh4N1A=;
+        b=hCrHuZS+46Po1sU6nnIKOLhIcano3vwfug8LQFQRcGVzUvhpAF+0tf28VytjzxOZqL
+         Xl6JpsSL0vwxBpq7m+OZgEVIfWzalVEsf1aKQE9B6FEjYE8k3jMMYsejs2mvuqS9M7cn
+         XASxVqZcO9nuQktMTgSgSLhuOrzwq+jc/LIXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RKmOBQf5IncjEXCWsVLHLC0KbVC3GdgkUervdoFVPcA=;
-        b=atBvqQcYoyzgyRzMVEhR92D/+dAD4xS7fwwywjrEB/Iw6NWkNl5UQ+2197a9G0tbXX
-         NTjpjK6hS8nuG+IHL5AZiWul/D1lqxuxVI4lQIbQfx2kCwWDKkubNCPd8kTRw3jmlNk1
-         6U8/ZMHxTQ7nivy6KsMyddn4W8k/7xvFXkLdZZVlTW2iXHT7LoYPJsQ/q8JvewxvlnY2
-         sQYZuuKLiQdILAjNayKYnB9Yz7HGkxKiveK4t3vhzuMy41H+PBCZTHF/d98BNIkn3wFz
-         jKVwbQyMtTiGt2hX4BKLID11JIoKN65LztFxMXdJYtOcm1p2SykcbA8bDt+1klmFdn70
-         zk1Q==
-X-Gm-Message-State: APjAAAUiXK9fuVy02LVQFeLKoWreWchIg0mI9UFPsqbq9W5Mc+0HlY/W
-        on3ceBRKFnbemtruVJ7uU6bp6qK3nn0=
-X-Google-Smtp-Source: APXvYqxJTHGwD0t57MAis7J0+KT+YNo/NTvosz7eoJLCzQ1JxTt1BSJ2Cl0Qxuy5U2QG9WWobQ3vYw==
-X-Received: by 2002:a62:6444:: with SMTP id y65mr17653467pfb.148.1557527564828;
-        Fri, 10 May 2019 15:32:44 -0700 (PDT)
-Received: from prsriva-linux.corp.microsoft.com ([2001:4898:80e8:a:1d1b:db59:93e9:eab5])
-        by smtp.gmail.com with ESMTPSA id g72sm16907374pfg.63.2019.05.10.15.32.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WUHTu2iWYOnQ+FG1Jw9nXlKv7Z2ExyMTaZIZxvh4N1A=;
+        b=mkf4mgPQYOZNTGJKtWN+a5zS8yy6KtZD8qtqWBmUjjHDZkygi2Yom0kGw57DEhjbOV
+         TqNl9l19NQXkTJGJontdE1peOcvU2YqGZO6yZbbcIalVXI6iHRylykCzp+DDisU52tkx
+         IACpFj4AZ0KqStTsm+iNM/IOtUM+WTp/I5zKJJq0T+bN+2mjYaoigBk4SZZ60+6BLHeb
+         UeV8VnsdH1agzJbrvFwDgd4K47q19l8tZEM+VMrqsUVOT/H0n9IzXTHehiFmJI7VMQci
+         kec7ChVLzwlFbbNhvNe4Msejp97zMoXSAKvrp+8vtQKilRx63GrgBzZaudeLsDA1B8uk
+         Pk1A==
+X-Gm-Message-State: APjAAAVbX5bbMLp59lJMoxe9dInsG3/f+X8d7IfOn2Qkulzqt0PSd6Tf
+        BAVVBciX+J5nozI3mSsmm7SK3w==
+X-Google-Smtp-Source: APXvYqyOeodYctuSbplQTqoU+d4nsO/QhEglv7cTdPcZH4nSpAWNrFBF8kqyyKdVfa8CLgtxbAjBHw==
+X-Received: by 2002:a63:f315:: with SMTP id l21mr16528352pgh.417.1557527711448;
+        Fri, 10 May 2019 15:35:11 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id j6sm7689393pfe.107.2019.05.10.15.35.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2019 15:32:44 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-X-Google-Original-From: Prakhar Srivastava
-To:     linux-integrity@vger.kernel.org,
-        inux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, ebiederm@xmission.com, vgoyal@redhat.com,
-        prsriva@microsoft.com, Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH 3/3 v5] call ima_kexec_cmdline from kexec_file_load path
-Date:   Fri, 10 May 2019 15:32:28 -0700
-Message-Id: <20190510223228.9966-4-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190510223228.9966-1-prsriva02@gmail.com>
-References: <20190510223228.9966-1-prsriva02@gmail.com>
+        Fri, 10 May 2019 15:35:11 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
+        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
+        mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH 0/4] spi: A better solution for cros_ec_spi reliability
+Date:   Fri, 10 May 2019 15:34:33 -0700
+Message-Id: <20190510223437.84368-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,26 +61,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prakhar Srivastava <prsriva02@gmail.com>
+This series is a much better solution for getting the Chrome OS EC to
+talk reliably and replaces commit 37a186225a0c ("platform/chrome:
+cros_ec_spi: Transfer messages at high priority").
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
----
- kernel/kexec_file.c | 2 ++
- 1 file changed, 2 insertions(+)
+Note that the cros_ec bits can't land until the SPI bits are
+somewhere.  If the SPI bits look OK to land it might be convenient if
+they could be placed somewhere with a stable git hash?
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index f1d0e00a3971..e779bcf674a0 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -241,6 +241,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		ima_kexec_cmdline(image->cmdline_buf, image->cmdline_buf_len - 1);
- 	}
- 
- 	/* Call arch image load handlers */
+Special thanks to Guenter Roeck for pointing out the "realtime"
+feature of the SPI framework so I didn't re-invent the wheel.  I have
+no idea how I missed it.  :-/
+
+
+Douglas Anderson (4):
+  spi: For controllers that need realtime always use the pump thread
+  spi: Allow SPI devices to specify that they are timing sensitive
+  platform/chrome: cros_ec_spi: Set ourselves as timing sensitive
+  Revert "platform/chrome: cros_ec_spi: Transfer messages at high
+    priority"
+
+ drivers/platform/chrome/cros_ec_spi.c | 81 +++------------------------
+ drivers/spi/spi.c                     | 41 +++++++++++---
+ include/linux/spi/spi.h               |  3 +
+ 3 files changed, 43 insertions(+), 82 deletions(-)
+
 -- 
-2.20.1
+2.21.0.1020.gf2820cf01a-goog
 
