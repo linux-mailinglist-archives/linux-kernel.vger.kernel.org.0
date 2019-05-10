@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A9D819FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D38C19FC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfEJPDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 11:03:20 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:28940 "EHLO
+        id S1727631AbfEJPDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 11:03:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:28986 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727346AbfEJPDT (ORCPT
+        by vger.kernel.org with ESMTP id S1727545AbfEJPDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 11:03:19 -0400
+        Fri, 10 May 2019 11:03:33 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AErgJP004964;
-        Fri, 10 May 2019 17:03:09 +0200
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AErvPO005029;
+        Fri, 10 May 2019 17:03:23 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
  date : message-id : mime-version : content-type :
  content-transfer-encoding; s=STMicroelectronics;
- bh=WEEddrwDkIHLSmRlPP82HL8Zh6nr2g7bNKK4fLQdDyM=;
- b=y9+Lix1ZuXzL5a9DeIi/XePgAd7t9QEb1DElD58ROp5opc6t8id9Mh3aiFqHrUZRlWCG
- 6QoABaK9EwTN9ic6cACvXC9QaBPqrV9c6DKUceqVH7lDJEo0Y6jQln+cWOB6TU+2EQ/g
- e+XkNkYamNYwneMZ4ToZQ/xAFxDVsRc2rjW2P3G9Jdi8Zgkcw0nw9XUqlfdDRtQKDL3U
- Ixyxk2Pn8gKIx29sOeopNOrj/n9sWPlKsw6JiRC6NxnDFj/GhX0YILSYAPyrqVWxVY5s
- 5abTGLkevqZn7rnF9pOZksOjcREH2PYxQGj9k3VuUq2TWF1JzOpW6dgkqxJXT3v4VLru NA== 
+ bh=JVoxbgxa8NXBZqIYaDfKlj5ecVvDm4yDrgscf7mPaSA=;
+ b=mcYefJHbsTucP8ibCTTp45khN/3G5jE9jIn5cX/yU+Qh/nm5pf7hDl7S4MuJSxDTBS/V
+ Kgdm40nE+3q+Wtf6FgJMHqH2w0kYPTWC7ZU0Tx30AMBYxKypAqE7sdvXF4vxOfHSPIR9
+ w+3LRDCblFiocJZZHuFJjUmVPk9ZNMrF05HB0NOb7VdpUxc/fW3BtCfsz+k6UXb+s8IY
+ zjPOLQLUeFy2Ie8Akr5wACqvdVs125QYNbKAMa/jDERqfwChKAqUQGG0kdW2l6MjU7Pr
+ feEpTJo94+ejVm4jsYzFTAgOUf+f7Y2GmmEyylBe8Pj8keSqcuCiIBkf5iYKkK+QJGe7 Og== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sc9s4k49q-1
+        by mx08-00178001.pphosted.com with ESMTP id 2sc9s4k4b1-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 10 May 2019 17:03:09 +0200
+        Fri, 10 May 2019 17:03:23 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9473F34;
-        Fri, 10 May 2019 15:03:08 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7252B2AB8;
-        Fri, 10 May 2019 15:03:08 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May
- 2019 17:03:08 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CAF1634;
+        Fri, 10 May 2019 15:03:22 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AF54E2AB9;
+        Fri, 10 May 2019 15:03:22 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 10 May
+ 2019 17:03:22 +0200
 Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 17:03:07
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 17:03:21
  +0200
 From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
 To:     Yannick Fertre <yannick.fertre@st.com>,
@@ -53,9 +53,9 @@ To:     Yannick Fertre <yannick.fertre@st.com>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/stm: dsi: check hardware version
-Date:   Fri, 10 May 2019 17:02:59 +0200
-Message-ID: <1557500579-19720-1-git-send-email-yannick.fertre@st.com>
+Subject: [PATCH] drm/stm: ltdc: remove clk_round_rate comment
+Date:   Fri, 10 May 2019 17:03:20 +0200
+Message-ID: <1557500600-19771-1-git-send-email-yannick.fertre@st.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
@@ -68,62 +68,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check version of DSI hardware IP. Only versions 1.30 & 1.31
-are supported.
+Clk_round_rate returns rounded clock without changing
+the hardware in any way.
+This function couldn't replace set_rate/get_rate calls.
+Todo comment has been removed & a new log inserted.
 
 Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
 ---
- drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/stm/ltdc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-index 22bd095..29105e9 100644
---- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-+++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-@@ -227,7 +227,6 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, const struct drm_display_mode *mode,
- 	u32 val;
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index 97912e2..2f8aa2e 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -507,20 +507,16 @@ static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
+ 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
+ 	int rate = mode->clock * 1000;
  
- 	/* Update lane capabilities according to hw version */
--	dsi->hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
- 	dsi->lane_min_kbps = LANE_MIN_KBPS;
- 	dsi->lane_max_kbps = LANE_MAX_KBPS;
- 	if (dsi->hw_version == HWVER_131) {
-@@ -306,6 +305,7 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct dw_mipi_dsi_stm *dsi;
-+	struct clk *pclk;
- 	struct resource *res;
- 	int ret;
- 
-@@ -347,6 +347,28 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
- 		goto err_clk_get;
+-	/*
+-	 * TODO clk_round_rate() does not work yet. When ready, it can
+-	 * be used instead of clk_set_rate() then clk_get_rate().
+-	 */
+-
+-	clk_disable(ldev->pixel_clk);
+ 	if (clk_set_rate(ldev->pixel_clk, rate) < 0) {
+ 		DRM_ERROR("Cannot set rate (%dHz) for pixel clk\n", rate);
+ 		return false;
  	}
+-	clk_enable(ldev->pixel_clk);
  
-+	pclk = devm_clk_get(dev, "pclk");
-+	if (IS_ERR(pclk)) {
-+		ret = PTR_ERR(pclk);
-+		DRM_ERROR("Unable to get peripheral clock: %d\n", ret);
-+		goto err_dsi_probe;
-+	}
+ 	adjusted_mode->clock = clk_get_rate(ldev->pixel_clk) / 1000;
+ 
++	DRM_DEBUG_DRIVER("requested clock %dkHz, adjusted clock %dkHz\n",
++			 mode->clock, adjusted_mode->clock);
 +
-+	ret = clk_prepare_enable(pclk);
-+	if (ret) {
-+		DRM_ERROR("%s: Failed to enable peripheral clk\n", __func__);
-+		goto err_dsi_probe;
-+	}
-+
-+	dsi->hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
-+	clk_disable_unprepare(pclk);
-+
-+	if (dsi->hw_version != HWVER_130 && dsi->hw_version != HWVER_131) {
-+		ret = -ENODEV;
-+		DRM_ERROR("bad dsi hardware version\n");
-+		goto err_dsi_probe;
-+	}
-+
- 	dw_mipi_dsi_stm_plat_data.base = dsi->base;
- 	dw_mipi_dsi_stm_plat_data.priv_data = dsi;
+ 	return true;
+ }
  
 -- 
 2.7.4
