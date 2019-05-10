@@ -2,60 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F000019610
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 03:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE26519604
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfEJBAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 21:00:12 -0400
-Received: from mail4.zut.edu.pl ([212.14.26.10]:47199 "EHLO mail4.zut.edu.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfEJBAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 21:00:12 -0400
-X-Greylist: delayed 1835 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 May 2019 21:00:10 EDT
-Received: from mail.zut.edu.pl (mail2.zut.edu.pl [212.14.26.8])
-        by mail4.zut.edu.pl (8.14.4/8.14.4/Debian-4+deb7u1) with ESMTP id x4A0RFnJ102349;
-        Fri, 10 May 2019 02:27:15 +0200
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail4.zut.edu.pl x4A0RFnJ102349
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zut.edu.pl;
-        s=mail4_zut_020322017; t=1557448035;
-        bh=ihRNt03KfxuHWgfvQyCcleeArBe98kw0dNY6ULeD4Ao=;
-        h=Date:From:To:Subject;
-        b=WN1KzB3UT+aGGls0OchLHmgd/JSGWx2xtm5Nx0tXKjfNrY4JZUWeuBHczQlQGEvF1
-         gIgb90Bkl9eEe813mXueHyncNDC+/2MvdOFLxZGaYfEsaYZt388/RHKHKwm/eHzFSZ
-         vYR9VVkFqmEjPser2veAUzCwQZTg8Xp/2U+fAPgLpaieKAq6gzcZ/1j8hMdwSRxDiI
-         /QRpU32rh747/yO7+6l/XhWYtbf2aopsAhy2UpmxprOHF9opFW0k0T/JT8TsMlXLV5
-         il7keoMZ6RXkxQjd6yfsbaUj0Ui9qe49OzNrjHjQ1huHw1nh3KvpxKu8zDh9ihpWCq
-         q316MP7Rhc4ag==
-Received: from webmail.zut.edu.pl (webmail2.zut.edu.pl [212.14.18.199])
-        (authenticated bits=0)
-        by mail.zut.edu.pl (8.14.4/8.14.4/Debian-4+deb7u1) with ESMTP id x4A0R26q001777;
-        Fri, 10 May 2019 02:27:03 +0200
+        id S1726784AbfEJA1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 20:27:15 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33220 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfEJA1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 20:27:15 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e11so5441596wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 17:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=yAAyy3BHNM/31FkJFRTkcNx30RMpdg86sV/KQ+dR8UU=;
+        b=MC1VMYh/rizm4a41+EsnpnBAlqZGhsP0RklmlfREZYU/JT7jWJ1q2PvFNqFW9ytrkc
+         O3ImL9X428DgBNaSfxUPUOhA2Tixd0mcVYDZF+BE+24zuvIsIreDEghgaSMrtKvv4LGW
+         t+ghAOXnd45PAg6+jar4eByS3AQnw4tpmlGdv3pck/EB0S+RR0I+KbvorYyl/RywK9Bg
+         tevrrHQQZTOlFzVtFSLuPW/mlLa9oQZYhM+b5mDJNn/M2vdswbhNBEM58uNHtvHB1PmT
+         jNrJIE2UfyKFZQgBfHfVZ7zpBqJdMOYk9xfQltsXde2wR/aUaQkmj/dO0vGqj2PnjUFx
+         V0FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=yAAyy3BHNM/31FkJFRTkcNx30RMpdg86sV/KQ+dR8UU=;
+        b=QkPJulXUk7KSmEek0a0IWiBHYz1nY3OoBCF11sAhYK9JprnI12tJjZ6WaiqeLvInEA
+         iWK9OyDLlhWCUXxEVUkYbscXvGfGiVzkaw8LFKqFUChvLh5hpzmPk/wI3ZOwpKb5WRmr
+         jd+rACalu8i5mq81ei0NqdVTXmSBolIDOn6eD5Xz22bmsru3BnM4Wc31BxUUFdR75umt
+         v8Mja3lF/F3WbTnxVBUYzpifioq9avsHSQw6tHtbwiU63Qvg090hUcTno9f8M4++dAkP
+         c0VmDiTIBoR2gl/vDp4lg8Tf9J/m0kFfrht6Gq2uQAC3mUtx4GufYKcdEas8wL1AIj2d
+         s3tw==
+X-Gm-Message-State: APjAAAWCGBnv/KnazcytRrgI9RCEAUqlYjcYENrGl4t0JVYYx9ehExe9
+        ZVudKH40L9FziCjzgUConthZdQ==
+X-Google-Smtp-Source: APXvYqyY/HwMu9+Kps9zzh6CuB0NRqAMs2vSMIz6L+iKWb/4LHH4IiEXeM8bf5yzXj/pK5WpBWnevg==
+X-Received: by 2002:adf:b64e:: with SMTP id i14mr5445877wre.72.1557448033689;
+        Thu, 09 May 2019 17:27:13 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id a125sm6286229wmc.47.2019.05.09.17.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 17:27:13 -0700 (PDT)
+Message-ID: <5cd4c561.1c69fb81.ca185.0137@mx.google.com>
+Date:   Thu, 09 May 2019 17:27:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 10 May 2019 02:27:02 +0200
-From:   Natalia Wojtasiak <wn24763@zut.edu.pl>
-To:     undisclosed-recipients:;
-Subject: Help Desk
-Message-ID: <a0ca23bfd6c214c2c83c5f948b1727ac@zut.edu.pl>
-X-Sender: wn24763@zut.edu.pl
-User-Agent: Zut Webmail System
-X-Originating-IP: 41.203.72.220
-X-Virus-Scanned: clamav-milter 0.99.4 at mail4
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-5.0.y
+X-Kernelci-Kernel: v5.0.14-96-gdf1376651d49
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181309.180685671@linuxfoundation.org>
+Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear  E-mail User.
-Your  EMAIL ACCOUNT PASSWORD Expires TODAY, and you are requested to
-UPGRADE it within 24 hours or else your  E-mail account will be disable
-to update.
+stable-rc/linux-5.0.y boot: 143 boots: 1 failed, 141 passed with 1 untried/=
+unknown (v5.0.14-96-gdf1376651d49)
 
-Please Click on the link (http://accesp.eu5.net/amin.php) and Follow 
-Instructions.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-5.0.y/kernel/v5.0.14-96-gdf1376651d49/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.0.y=
+/kernel/v5.0.14-96-gdf1376651d49/
 
-Help Desk Administrator.
-ADMIN TEAM
+Tree: stable-rc
+Branch: linux-5.0.y
+Git Describe: v5.0.14-96-gdf1376651d49
+Git Commit: df1376651d496484d341d374c3d2566a089b1969
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 77 unique boards, 25 SoC families, 15 builds out of 208
+
+Boot Failure Detected:
+
+arm:
+    multi_v7_defconfig:
+        gcc-8:
+            stih410-b2120: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
