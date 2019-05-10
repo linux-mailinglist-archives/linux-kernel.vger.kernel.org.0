@@ -2,167 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA5EF19A2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6ED319A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfEJJBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 05:01:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40778 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727009AbfEJJBj (ORCPT
+        id S1727240AbfEJJCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 05:02:30 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16138 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfEJJC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 05:01:39 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4A8tHPJ093359;
-        Fri, 10 May 2019 05:01:28 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sd468dn3y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 May 2019 05:01:28 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x4A333f2010291;
-        Fri, 10 May 2019 03:05:38 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma01dal.us.ibm.com with ESMTP id 2s92c47rvm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 May 2019 03:05:38 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4A91OnN36569210
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 May 2019 09:01:24 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E3E0AC05F;
-        Fri, 10 May 2019 09:01:24 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20120AC059;
-        Fri, 10 May 2019 09:01:24 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.124.35.248])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 10 May 2019 09:01:24 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 9C4EA2E3788; Fri, 10 May 2019 14:31:22 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH] powerpc/pseries: Fix cpu_hotplug_lock acquisition in resize_hpt
-Date:   Fri, 10 May 2019 14:31:11 +0530
-Message-Id: <1557478871-31808-1-git-send-email-ego@linux.vnet.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905100063
+        Fri, 10 May 2019 05:02:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cd53e290000>; Fri, 10 May 2019 02:02:33 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 10 May 2019 02:02:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 10 May 2019 02:02:25 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
+ 2019 09:02:25 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
+ 2019 09:02:22 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 10 May 2019 09:02:22 +0000
+Received: from jilin-desktop.nvidia.com (Not Verified[10.19.120.147]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5cd53e1c0001>; Fri, 10 May 2019 02:02:21 -0700
+From:   Jim Lin <jilin@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
+        <stern@rowland.harvard.edu>, <kai.heng.feng@canonical.com>,
+        <drinkcat@chromium.org>, <keescook@chromium.org>,
+        <nsaenzjulienne@suse.de>, <jflat@chromium.org>, <malat@debian.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jim Lin <jilin@nvidia.com>
+Subject: [PATCH v8 0/2] usb: xhci: Add Clear_TT_Buffer
+Date:   Fri, 10 May 2019 17:02:15 +0800
+Message-ID: <1557478937-30486-1-git-send-email-jilin@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1557478953; bh=HxriOMe6y8xvNiX0NWN/bUr/ReRy1w79NVMwymly0MA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=VCdDafDCkAE0TANIy9yVfoBY/mT9ofmg+pPwVNV4Ch2I8yyi9kALbSw45DZIajf5d
+         1Q7zayocTCtNAb8+3AL3guA1ypZ1xahJ0YSjt2UOkRe21aKS/d5gTiXUVq51e3OvTr
+         dO7Sd9FuK4mNKvoptoJntOJCOxGdn+EKPNR2ISzFiN/y1UPmhuG+UXaphTNiRd5sxr
+         DP6DSNU98tmKh961E6u07jO0g7+2pIRo+YcC7FyKthL6kgaV2SM/Q0L3JR70o+tRQ3
+         lTNQ6bfeTVdFa2YeSObyrTHRa91zwAvb5imLIfgpsCI7aJFYC0um9HA4nqeCesNLHp
+         ztnEziGJFWWQw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
+processing for full-/low-speed endpoints connected via a TT, the host
+software must use the Clear_TT_Buffer request to the TT to ensure
+that the buffer is not in the busy state".
 
-During a memory hotplug operations involving resizing of the HPT, we
-invoke a stop_machine() to perform the resizing. In this code path, we
-end up recursively taking the cpu_hotplug_lock, first in
-memory_hotplug_begin() and then subsequently in stop_machine(). This
-causes the system to hang. With lockdep enabled we get the following
-error message before the hang.
+In our case, a full-speed speaker (ConferenceCam) is behind a high-
+speed hub (ConferenceCam Connect), sometimes once we get STALL on a
+request we may continue to get STALL with the folllowing requests,
+like Set_Interface.
 
-  swapper/0/1 is trying to acquire lock:
-  (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: stop_machine+0x2c/0x60
+Solution is to invoke usb_hub_clear_tt_buffer() to send
+Clear_TT_Buffer request to the hub of the device for the following
+Set_Interface requests to the device to get ACK successfully.
 
-  but task is already holding lock:
-  (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: mem_hotplug_begin+0x20/0x50
+The Clear_TT_Buffer request sent to the hub includes the address of
+the LS/FS child device in wValue field. usb_hub_clear_tt_buffer()
+uses udev->devnum to set the address wValue. This won't work for
+devices connected to xHC.
 
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
+For other host controllers udev->devnum is the same as the address of
+the usb device, chosen and set by usb core. With xHC the controller
+hardware assigns the address, and won't be the same as devnum.
 
-         CPU0
-         ----
-    lock(cpu_hotplug_lock.rw_sem);
-    lock(cpu_hotplug_lock.rw_sem);
-
-   *** DEADLOCK ***
-
-Fix this issue by
-  1) Requiring all the calls to pseries_lpar_resize_hpt() be made
-     with cpu_hotplug_lock held.
-
-  2) In pseries_lpar_resize_hpt() invoke stop_machine_cpuslocked()
-     as a consequence of 1)
-
-  3) To satisfy 1), in hpt_order_set(), call mmu_hash_ops.resize_hpt()
-     with cpu_hotplug_lock held.
-
-Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- arch/powerpc/mm/hash_utils_64.c       | 9 ++++++++-
- arch/powerpc/platforms/pseries/lpar.c | 8 ++++++--
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-index 0a4f939..b05c79c 100644
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -37,6 +37,7 @@
- #include <linux/context_tracking.h>
- #include <linux/libfdt.h>
- #include <linux/pkeys.h>
-+#include <linux/cpu.h>
+Here we have two patches.
+One is to add devaddr in struct usb_device for
+usb_hub_clear_tt_buffer() to use.
+Another is to update devaddr in XHCI address_device callback
+function and invoke usb_hub_clear_tt_buffer() for halt processing.
  
- #include <asm/debugfs.h>
- #include <asm/processor.h>
-@@ -1890,10 +1891,16 @@ static int hpt_order_get(void *data, u64 *val)
- 
- static int hpt_order_set(void *data, u64 val)
- {
-+	int ret;
-+
- 	if (!mmu_hash_ops.resize_hpt)
- 		return -ENODEV;
- 
--	return mmu_hash_ops.resize_hpt(val);
-+	cpus_read_lock();
-+	ret = mmu_hash_ops.resize_hpt(val);
-+	cpus_read_unlock();
-+
-+	return ret;
- }
- 
- DEFINE_DEBUGFS_ATTRIBUTE(fops_hpt_order, hpt_order_get, hpt_order_set, "%llu\n");
-diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
-index f2a9f0a..65df95b 100644
---- a/arch/powerpc/platforms/pseries/lpar.c
-+++ b/arch/powerpc/platforms/pseries/lpar.c
-@@ -859,7 +859,10 @@ static int pseries_lpar_resize_hpt_commit(void *data)
- 	return 0;
- }
- 
--/* Must be called in user context */
-+/*
-+ * Must be called in user context. The caller should hold the
-+ * cpus_lock.
-+ */
- static int pseries_lpar_resize_hpt(unsigned long shift)
- {
- 	struct hpt_resize_state state = {
-@@ -911,7 +914,8 @@ static int pseries_lpar_resize_hpt(unsigned long shift)
- 
- 	t1 = ktime_get();
- 
--	rc = stop_machine(pseries_lpar_resize_hpt_commit, &state, NULL);
-+	rc = stop_machine_cpuslocked(pseries_lpar_resize_hpt_commit,
-+				     &state, NULL);
- 
- 	t2 = ktime_get();
- 
+Signed-off-by: Jim Lin <jilin@nvidia.com>
+
+Jim Lin (2):
+  usb: hub : Add devaddr in struct usb_device
+  usb: xhci: Add Clear_TT_Buffer support
+
+ drivers/usb/core/hub.c       |  4 +++-
+ drivers/usb/host/xhci-ring.c | 12 ++++++++++++
+ drivers/usb/host/xhci.c      |  1 +
+ include/linux/usb.h          |  2 ++
+ 4 files changed, 18 insertions(+), 1 deletion(-)
+
 -- 
-1.9.4
+2.1.4
 
