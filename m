@@ -2,165 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D344E19867
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D871986C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:36:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfEJGer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 02:34:47 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37197 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfEJGer (ORCPT
+        id S1727076AbfEJGg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 02:36:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44296 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfEJGgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 02:34:47 -0400
-Received: by mail-lj1-f196.google.com with SMTP id n4so4103930ljg.4
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:34:45 -0700 (PDT)
+        Fri, 10 May 2019 02:36:55 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z16so2495969pgv.11;
+        Thu, 09 May 2019 23:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BAEbwR8QRpMgjcJjAAVA2B4jt0AWF7IWj+Gsp1Up3jA=;
-        b=Wsf8MuELCRvBk4EVLunFK6oxmiTHv+0fZJHzT6xl7314UO2UmnFYBAkAwD3hwAMsxz
-         ZltavBvKemX/EUKsoR5C5SDVYsvL7fBL7dK1ZCSNKgE09ewByoK1OV6z70piqM/MQr/U
-         lyrX2hGJ2L/HLv8zZH3xYJ/pBvGgux9dHxVgCbSQ/GE/NhBokzVq0ciAdfUCImhbuDvy
-         D32QesRuRowtkVkZGgahXPYBFRvofvEN1uCnz1YtmNzb+cJ5kBdRFH48dY2JyudGl8l/
-         G6WtyPCF4HlUFlgTzL9V8F/zg242xGWA3agoqm+J7fI2vyN0UD/6RqVmvNgHOcIOnhMS
-         pnKg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=vT8J+5xe8+a83KFHodncMBgwSSqGKELQF/J0hFsWGtA=;
+        b=qw5fJbIGPWcA28KqHaWQHU/4N2mlSVKQW5V8JZ3jxW1bmtyoGCRFuE54VT++XfaTJk
+         ECxfJP3LMFFdmQKpmVSMTUFPSj7EQEhyrpUmvoWn/JXvQhhTXtoIPmM7IVQnrvIX4sGC
+         luQbTA0HnLqWm4CZGiDjuLFIht94D1/x4evanFtBzUyXK3HUy10849a4P5DDwa+tUzMm
+         DoYdzXrW0LGwGe+Jqc5v7SWv9BHbuNCuFUEYQwMhetftF7i5eySCSCclPrmkA4t0cNpI
+         kbUsdwY722an5VqZDnc9t9W0IB87r2MsZAstjN8j1nZ1EE/0htDpUiHwk4gyh8iio2s3
+         U9WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BAEbwR8QRpMgjcJjAAVA2B4jt0AWF7IWj+Gsp1Up3jA=;
-        b=dKElElJMVlrX6bNGLZd0ftNlzSgxrKuPczQnALkDLLT141bJ516nRaOStSrFhu75Hb
-         EAUXhvBs077qMfEpF2lDEuovIUDBvsYJEdCPXQetiNLx78fv9Qgcyz84TmK1EP4Rqjte
-         9yeIWBRiD/Q1ijtY+HdL/RxUpd5Ng9jhuUgum0IQxUbQe1JaLYqIsp6SvLPdgSlMgmDv
-         LJSEAlzWbKSQLy2KqvdhefE078spBSxDwOjYY6G/mHcqDb4OvUL+VnQVKdXA31GMFbJP
-         5tGo/9l0lmZcE3IYywGvnw9gUPF3UzrFteed9LgUpG9+JmtotYBQWaxr+KtFIvz5t1wy
-         Zi5w==
-X-Gm-Message-State: APjAAAXnkLtywQKLc+MI33uphXycJdGgWxzCAHCdcSRJxi+Q/rxLyl47
-        KnVfbvgMvOqG2fQ0pcBdWfyEf9W0+b1PpX3FjjFfqw==
-X-Google-Smtp-Source: APXvYqyqSG7veyoUigRuOnafdOxwB/aTbJK1YNxE3BCd2WT2SrMTyti3XYmHl5WYfP0Op6ThILiyoK/xNS1L9TPpMVA=
-X-Received: by 2002:a2e:9193:: with SMTP id f19mr4600756ljg.111.1557470084980;
- Thu, 09 May 2019 23:34:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190509181301.719249738@linuxfoundation.org>
-In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 10 May 2019 12:04:33 +0530
-Message-ID: <CA+G9fYsJQsTaeFGpHqO2EH=67TfXB5KaUTWcfuk=88Ma+bL07Q@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/66] 4.19.42-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vT8J+5xe8+a83KFHodncMBgwSSqGKELQF/J0hFsWGtA=;
+        b=JfQNZkXFzQutdtHDMWk2DIE0YH9/Yf5EC7v/NpxJ9aZLr9y8SCUyeNSkcBiPfkhEBJ
+         PZHInS0c/3y87g81XcK0mvOYliNBrVro/9yYlivT/DJQo6CCB6IzTOS8wZL5+s8bky8Z
+         qkw+WL/NmiVGXnB0VCKrP5kunyN62CAqLw0LnvN7C3tJXHnYyp73XfMToX44DRdoLtcy
+         N5P6HoeX4m8jpg57OhFC/w+owCiUMAmeoBWMiLxdz0FTtb90thFOdXIEW0YjOEpsjM9M
+         nsXJeLfusjv6Zs0PvacVLwdphMIBON/RumLMFj/hujnFCgTBS77PIhm2G8cupymF0z6+
+         jqiA==
+X-Gm-Message-State: APjAAAVFU77qHIgHL+fyu5KS+6kmlbDQJaj7B1iW/c1z6H0KG+IkaRYJ
+        UroImobV1RWP3nTsh7O/DRo=
+X-Google-Smtp-Source: APXvYqwSCNBXHSW4DyU7xEdjpK+/gp7Kt1cZx3ZbTpDXuFDJYS90bWQTn34/E72UI3GXTtUvVjOxaQ==
+X-Received: by 2002:aa7:9109:: with SMTP id 9mr11557887pfh.244.1557470214902;
+        Thu, 09 May 2019 23:36:54 -0700 (PDT)
+Received: from bridge.localdomain ([119.28.31.106])
+        by smtp.gmail.com with ESMTPSA id v6sm4469263pgi.88.2019.05.09.23.36.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 23:36:54 -0700 (PDT)
+From:   Wenbin Zeng <wenbin.zeng@gmail.com>
+X-Google-Original-From: Wenbin Zeng <wenbinzeng@tencent.com>
+To:     bfields@fieldses.org, viro@zeniv.linux.org.uk, davem@davemloft.net
+Cc:     jlayton@kernel.org, trond.myklebust@hammerspace.com,
+        anna.schumaker@netapp.com, wenbinzeng@tencent.com,
+        dsahern@gmail.com, nicolas.dichtel@6wind.com, willy@infradead.org,
+        edumazet@google.com, jakub.kicinski@netronome.com,
+        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH v2 0/3] auth_gss: netns refcount leaks when use-gss-proxy==1
+Date:   Fri, 10 May 2019 14:36:00 +0800
+Message-Id: <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
+References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 May 2019 at 00:35, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.42 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 11 May 2019 06:11:18 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.42-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+This patch series fixes an auth_gss bug that results in netns refcount
+leaks when use-gss-proxy is set to 1.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+The problem was found in privileged docker containers with gssproxy service
+enabled and /proc/net/rpc/use-gss-proxy set to 1, the corresponding
+struct net->count ends up at 2 after container gets killed, the consequence
+is that the struct net cannot be freed.
 
-Summary
-------------------------------------------------------------------------
+It turns out that write_gssp() called gssp_rpc_create() to create a rpc
+client, this increases net->count by 2; rpcsec_gss_exit_net() is supposed
+to decrease net->count but it never gets called because its call-path is:
+        net->count==0 -> cleanup_net -> ops_exit_list -> rpcsec_gss_exit_net
+Before rpcsec_gss_exit_net() gets called, net->count cannot reach 0, this
+is a deadlock situation.
 
-kernel: 4.19.42-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 82fd2fd59cffa3045f205da555c0defe8bb35912
-git describe: v4.19.41-67-g82fd2fd59cff
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.41-67-g82fd2fd59cff
+To fix the problem, we must break the deadlock, rpcsec_gss_exit_net()
+should move out of the put() path and find another chance to get called,
+I think nsfs_evict() is a good place to go, when netns inode gets evicted
+we call rpcsec_gss_exit_net() to free the rpc client, this requires a new
+callback i.e. evict to be added in struct proc_ns_operations, and add
+netns_evict() as one of netns_operations as well.
 
-No regressions (compared to build v4.19.41)
+v1->v2:
+ * in nsfs_evict(), move ->evict() in front of ->put()
 
-No fixes (compared to build v4.19.41)
+Wenbin Zeng (3):
+  nsfs: add evict callback into struct proc_ns_operations
+  netns: add netns_evict into netns_operations
+  auth_gss: fix deadlock that blocks rpcsec_gss_exit_net when
+    use-gss-proxy==1
 
-Ran 24988 total tests in the following environments and test suites.
+ fs/nsfs.c                      |  2 ++
+ include/linux/proc_ns.h        |  1 +
+ include/net/net_namespace.h    |  1 +
+ net/core/net_namespace.c       | 12 ++++++++++++
+ net/sunrpc/auth_gss/auth_gss.c |  9 ++++++---
+ 5 files changed, 22 insertions(+), 3 deletions(-)
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+-- 
+1.8.3.1
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* prep-tmp-disk
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
