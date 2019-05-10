@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B6919736
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 05:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6360B1973B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 05:42:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfEJDmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727066AbfEJDmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 9 May 2019 23:42:22 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60536 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbfEJDmW (ORCPT
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46324 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfEJDmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 23:42:22 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gIl0052819;
-        Thu, 9 May 2019 22:42:18 -0500
+        Thu, 9 May 2019 23:42:21 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gKqs054137;
+        Thu, 9 May 2019 22:42:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1557459738;
-        bh=9WENuppZV6fWDstTismJkuJrMr+VEXrDG+r1KBph3n8=;
+        s=ti-com-17Q1; t=1557459740;
+        bh=BGE0HgmawIDEddyLw38mLcYPatpeZ+CLQRhnqzTStVU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hHOxhui/mBfbONA26oipz0laI+Wal5TOAXlo1vzxpGI2cflayBjWgG6SiMwUQAZfz
-         lwtOw/geUZaTHNRyFyWBWaX7LgHLdiRy21I8x5hU0digCaVbmcc4gAgUINon+IfkL4
-         G31QF0qlZ/D4OF2xQaMiWT9dkSbVbCg9f4+TwSQA=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4A3gInp129524
+        b=B6VyycWFyK8GlciTphsyG/E7bdIfdxiV1PZBWeYGYY4Rch9hzqP5Tmiro+/Ro0wc6
+         A1QemXqs4nVsEsJ5lgHbQ77RWmxFdwgE5+muEzzrrK/VsQ0pVtL93K5AyDiJraoEoz
+         Ln+17jT9LB1DJ+eDTQpOesiitFBQHDNVYKMB3yq8=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4A3gKTc026064
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 May 2019 22:42:18 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 9 May 2019 22:42:20 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 9 May
- 2019 22:42:17 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 22:42:19 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 9 May 2019 22:42:17 -0500
+ Frontend Transport; Thu, 9 May 2019 22:42:19 -0500
 Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gD2p002845;
-        Thu, 9 May 2019 22:42:16 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gD2q002845;
+        Thu, 9 May 2019 22:42:18 -0500
 From:   Faiz Abbas <faiz_abbas@ti.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
 CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
         <faiz_abbas@ti.com>
-Subject: [PATCH v2 1/3] mmc: sdhci_am654: Improve line wrapping with regmap_*() calls
-Date:   Fri, 10 May 2019 09:12:26 +0530
-Message-ID: <20190510034228.32211-2-faiz_abbas@ti.com>
+Subject: [PATCH v2 2/3] mmc: sdhci_am654: Print error message if the DLL fails to lock
+Date:   Fri, 10 May 2019 09:12:27 +0530
+Message-ID: <20190510034228.32211-3-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190510034228.32211-1-faiz_abbas@ti.com>
 References: <20190510034228.32211-1-faiz_abbas@ti.com>
@@ -56,104 +56,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Line wrapping with the regmap_*() functions is way more conservative
-than required by the 80 character rule. Expand the function calls out to
-use less number of lines.
+Print an error message and return if DLL fails to lock.
 
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/mmc/host/sdhci_am654.c | 34 +++++++++++++---------------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
+ drivers/mmc/host/sdhci_am654.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index a91c0b45c48d..337c24b8f4a8 100644
+index 337c24b8f4a8..3ff949925127 100644
 --- a/drivers/mmc/host/sdhci_am654.c
 +++ b/drivers/mmc/host/sdhci_am654.c
-@@ -88,8 +88,7 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- 	int ret;
- 
- 	if (sdhci_am654->dll_on) {
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
--				   ENDLL_MASK, 0);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, ENDLL_MASK, 0);
- 
- 		sdhci_am654->dll_on = false;
- 	}
-@@ -101,8 +100,7 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- 		mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
- 		val = (1 << OTAPDLYENA_SHIFT) |
- 		      (sdhci_am654->otap_del_sel << OTAPDLYSEL_SHIFT);
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL4,
--				   mask, val);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, val);
- 		switch (clock) {
- 		case 200000000:
- 			sel50 = 0;
-@@ -120,8 +118,7 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- 		/* Configure PHY DLL frequency */
- 		mask = SEL50_MASK | SEL100_MASK;
- 		val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL5,
--				   mask, val);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL5, mask, val);
- 		/* Configure DLL TRIM */
- 		mask = DLL_TRIM_ICP_MASK;
- 		val = sdhci_am654->trm_icp << DLL_TRIM_ICP_SHIFT;
-@@ -129,20 +126,17 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
- 		/* Configure DLL driver strength */
- 		mask |= DR_TY_MASK;
- 		val |= sdhci_am654->drv_strength << DR_TY_SHIFT;
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
--				   mask, val);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, mask, val);
- 		/* Enable DLL */
--		regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
--				   ENDLL_MASK, 0x1 << ENDLL_SHIFT);
-+		regmap_update_bits(sdhci_am654->base, PHY_CTRL1, ENDLL_MASK,
-+				   0x1 << ENDLL_SHIFT);
- 		/*
- 		 * Poll for DLL ready. Use a one second timeout.
- 		 * Works in all experiments done so far
- 		 */
--		ret = regmap_read_poll_timeout(sdhci_am654->base,
--					 PHY_STAT1, val,
--					 val & DLLRDY_MASK,
--					 1000, 1000000);
--
-+		ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1,
-+					       val, val & DLLRDY_MASK, 1000,
-+					       1000000);
+@@ -137,6 +137,11 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
+ 		ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1,
+ 					       val, val & DLLRDY_MASK, 1000,
+ 					       1000000);
++		if (ret) {
++			dev_err(mmc_dev(host->mmc), "DLL failed to relock\n");
++			return;
++		}
++
  		sdhci_am654->dll_on = true;
  	}
- }
-@@ -208,8 +202,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
- 
- 	/* Reset OTAP to default value */
- 	mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
--	regmap_update_bits(sdhci_am654->base, PHY_CTRL4,
--				   mask, 0x0);
-+	regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, 0x0);
- 
- 	regmap_read(sdhci_am654->base, PHY_STAT1, &val);
- 	if (~val & CALDONE_MASK) {
-@@ -223,15 +216,14 @@ static int sdhci_am654_init(struct sdhci_host *host)
- 	}
- 
- 	/* Enable pins by setting IO mux to 0 */
--	regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
--			   IOMUX_ENABLE_MASK, 0);
-+	regmap_update_bits(sdhci_am654->base, PHY_CTRL1, IOMUX_ENABLE_MASK, 0);
- 
- 	/* Set slot type based on SD or eMMC */
- 	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
- 		ctl_cfg_2 = SLOTTYPE_EMBEDDED;
- 
--	regmap_update_bits(sdhci_am654->base, CTL_CFG_2,
--			   ctl_cfg_2, SLOTTYPE_MASK);
-+	regmap_update_bits(sdhci_am654->base, CTL_CFG_2, ctl_cfg_2,
-+			   SLOTTYPE_MASK);
- 
- 	return sdhci_add_host(host);
  }
 -- 
 2.19.2
