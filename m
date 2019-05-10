@@ -2,84 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E867919733
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 05:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9410E19737
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 05:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfEJDlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 23:41:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726882AbfEJDlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 23:41:14 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A79E33082E5F;
-        Fri, 10 May 2019 03:41:13 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B12761A267;
-        Fri, 10 May 2019 03:41:07 +0000 (UTC)
-Date:   Fri, 10 May 2019 11:41:02 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 3/5] sbitmap: fix improper use of smp_mb__before_atomic()
-Message-ID: <20190510034101.GC27944@ming.t460p>
-References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1556568902-12464-4-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1727107AbfEJDmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 23:42:25 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:34660 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727073AbfEJDmX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 9 May 2019 23:42:23 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gGAh098185;
+        Thu, 9 May 2019 22:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1557459736;
+        bh=xGnnEs0VvLOau4salih9c7vlIkVrfDHhDl/ZUbqJ1Ik=;
+        h=From:To:CC:Subject:Date;
+        b=Q+DS1IZurs3128n2ebd/ure8y2h17FJzRdbq9nR7MWaL16bd/CbSm7IqThX5+ifBB
+         tPaqPt5dLtudcfT+XgstohSePRBwruydIH9WjfFhN+S3OI4x4StjSWws5dnWSg74aZ
+         PBiKW2nZ7j132t2GG0mDgmBwmnOdMNz1JwzBYU2w=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4A3gGJx129485
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 May 2019 22:42:16 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 9 May
+ 2019 22:42:15 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 9 May 2019 22:42:16 -0500
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4A3gD2o002845;
+        Thu, 9 May 2019 22:42:14 -0500
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH v2 0/3] Fix issues with phy configurations in am65x MMC driver
+Date:   Fri, 10 May 2019 09:12:25 +0530
+Message-ID: <20190510034228.32211-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556568902-12464-4-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 10 May 2019 03:41:13 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:14:59PM +0200, Andrea Parri wrote:
-> This barrier only applies to the read-modify-write operations; in
-> particular, it does not apply to the atomic_set() primitive.
-> 
-> Replace the barrier with an smp_mb().
-> 
-> Fixes: 6c0ca7ae292ad ("sbitmap: fix wakeup hang after sbq resize")
-> Cc: stable@vger.kernel.org
-> Reported-by: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> Reported-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Omar Sandoval <osandov@fb.com>
-> Cc: linux-block@vger.kernel.org
-> ---
->  lib/sbitmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-> index 155fe38756ecf..4a7fc4915dfc6 100644
-> --- a/lib/sbitmap.c
-> +++ b/lib/sbitmap.c
-> @@ -435,7 +435,7 @@ static void sbitmap_queue_update_wake_batch(struct sbitmap_queue *sbq,
->  		 * to ensure that the batch size is updated before the wait
->  		 * counts.
->  		 */
-> -		smp_mb__before_atomic();
-> +		smp_mb();
->  		for (i = 0; i < SBQ_WAIT_QUEUES; i++)
->  			atomic_set(&sbq->ws[i].wait_cnt, 1);
->  	}
-> -- 
-> 2.7.4
-> 
+The following patches fix issues with phy configurations for
+sdhci_am654 driver.
 
-sbitmap_queue_update_wake_batch() won't be called in fast path, and
-the fix is correct too, so:
+v2:
+1. Split patch 1 into 2 separate patches.
+2. Improved patch descriptions.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Faiz Abbas (3):
+  mmc: sdhci_am654: Improve line wrapping with regmap_*() calls
+  mmc: sdhci_am654: Print error message if the DLL fails to lock
+  mmc: sdhci_am654: Fix SLOTTYPE write
 
-thanks,
-Ming
+ drivers/mmc/host/sdhci_am654.c | 37 ++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
+
+-- 
+2.19.2
+
