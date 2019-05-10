@@ -2,98 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4FE19B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7720619BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfEJKSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 06:18:14 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1247 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfEJKSO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 06:18:14 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd54fed0000>; Fri, 10 May 2019 03:18:21 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 10 May 2019 03:18:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 10 May 2019 03:18:13 -0700
-Received: from [10.26.11.182] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
- 2019 10:18:09 +0000
-Subject: Re: [PATCH 5.1 00/30] 5.1.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190509181250.417203112@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <61c05635-32ea-cb62-cf3a-44d9c57836d7@nvidia.com>
-Date:   Fri, 10 May 2019 11:18:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727590AbfEJKfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 06:35:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48500 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727251AbfEJKfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 06:35:09 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3467A85376;
+        Fri, 10 May 2019 10:35:09 +0000 (UTC)
+Received: from kasong-rh-laptop.pek2.redhat.com (wlc-trust-190.pek2.redhat.com [10.72.3.190])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E547600C7;
+        Fri, 10 May 2019 10:35:03 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        Kairui Song <kasong@redhat.com>
+Subject: [RFC PATCH] vmcore: Add a kernel cmdline device_dump_limit
+Date:   Fri, 10 May 2019 18:20:51 +0800
+Message-Id: <20190510102051.25647-1-kasong@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190509181250.417203112@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557483501; bh=EHIaXWy07l2y+vYZHMO/8PoiOfNesW7mmbCh1xMUVmI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=LrXy4WKzyqVTZ68M2R11FdDX1JUMGUBA1Jian945X7wwIgL+Lus8cilcf4QTiwHhB
-         rJSyXj8ueDPx96gm1+RLECjFk+ZxByXILvYXuU6F3gCuAbRSFD5wS8KnyJfmZps69k
-         m3BqT/TcCuLQAozRSlTTvekfw6/Ch+NadEgg0SJSRdmRhHZ252PY0r6PgI5xWO5Mvk
-         /LpOtkeuPIR747qEWjR9gNGWICEYw9ieznBWMgAmuZ+ViqPOcV023K7c7YkvQ5YyKg
-         tNy1vq9Vx+TiCsBxX9na60SEKp92e8mH2dY7gHb98mz2m3vZ88nZThdnV8sH7RNG/9
-         zmElSATMhG5ew==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 10 May 2019 10:35:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Device dump allow drivers to add device related dump data to vmcore as
+they want. This have a potential issue, the data is stored in memory,
+drivers may append too much data and use too much memory. The vmcore is
+typically used in a kdump kernel which runs in a pre-reserved small
+chunk of memory. So as a result it will make kdump unusable at all due
+to OOM issues.
 
-On 09/05/2019 19:42, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.1 release.
-> There are 30 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 11 May 2019 06:11:35 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+So introduce new device_dump_limit= kernel parameter, and set the
+default limit to 0, so device dump is not enabled unless user specify
+the accetable maxiam memory usage for device dump data. In this way user
+will also have the chance to adjust the kdump reserved memory
+accordingly.
 
-All tests are passing for Tegra ...
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ fs/proc/vmcore.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
-
-Linux version:	5.1.1-rc1-ge4f05f7
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 3fe90443c1bb..e28695ef2439 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -53,6 +53,9 @@ static struct proc_dir_entry *proc_vmcore;
+ /* Device Dump list and mutex to synchronize access to list */
+ static LIST_HEAD(vmcoredd_list);
+ static DEFINE_MUTEX(vmcoredd_mutex);
++
++/* Device Dump Limit */
++static size_t vmcoredd_limit;
+ #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+ 
+ /* Device Dump Size */
+@@ -1465,6 +1468,11 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
+ 			    PAGE_SIZE);
+ 
++	if (vmcoredd_orig_sz + data_size >= vmcoredd_limit) {
++		ret = -ENOMEM;
++		goto out_err;
++	}
++
+ 	/* Allocate buffer for driver's to write their dumps */
+ 	buf = vmcore_alloc_buf(data_size);
+ 	if (!buf) {
+@@ -1502,6 +1510,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 	return ret;
+ }
+ EXPORT_SYMBOL(vmcore_add_device_dump);
++
++static int __init parse_vmcoredd_limit(char *arg)
++{
++	char *end;
++
++	if (!arg)
++		return -EINVAL;
++	vmcoredd_limit = memparse(arg, &end);
++	return end > arg ? 0 : -EINVAL;
++
++}
++__setup("device_dump_limit=", parse_vmcoredd_limit);
+ #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+ 
+ /* Free all dumps in vmcore device dump list */
 -- 
-nvpublic
+2.20.1
+
