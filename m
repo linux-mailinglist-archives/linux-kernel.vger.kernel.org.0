@@ -2,128 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F0819FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DC51A006
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:20:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfEJPTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 11:19:18 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39553 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbfEJPTR (ORCPT
+        id S1727674AbfEJPU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 11:20:28 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35139 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbfEJPU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 11:19:17 -0400
-Received: by mail-wm1-f66.google.com with SMTP id n25so7865305wmk.4
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 08:19:16 -0700 (PDT)
+        Fri, 10 May 2019 11:20:28 -0400
+Received: by mail-io1-f68.google.com with SMTP id p2so4803405iol.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 08:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hfI45TE1I5uwK0Bfe/252jb7t90fCE1bIelVOQNQaUM=;
-        b=hTSM6nL3NXhJDSGIenedVMXQCAahPRhCKQONbsUCkgElASVaWCoXoB/enwAMkt3HnW
-         9yW7IpAGGEd/XrkSdUn70qhMdE7GjAlOnzRjg9V0B9RBCLHYdS1lagxRofNG4pBt4BoQ
-         wxZtYN8A6k++tmlCAieXsGtjdnbtAm1xxlgrZyPrhQUAUmf9LQV/JlHzGLnGGIUTJiE/
-         RfrnhNIItnQj4F/hWUel5GJxlmSnfvE8SmepuANJA1AgPYAZ+ww99Wr2IKK2iEMyG7qS
-         WvhC3oaML3ks38p9YEBQQ7k2aT9F+QNw6j1UP3Q296UMFRpJJ6/wKAVIHkKOfq8/gm89
-         soJw==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BrbeovF+fjWSeVPTpilNjNVE8DYyqu+aTis0l/oYkL4=;
+        b=bc5Spi54huGVHztgDsdTF8soN5Lb8gcKIzqHvBSey/7ADIFfzvhOL5QJ5yDvBjJeVc
+         KAUUU71MlDw88D+naXb7K5FeXTVRxHTTgo/KsCWFU71JQfqVO52TZXz3wVmyYs+Ootx4
+         7F2Up23rhUJgrLKL9ACsI64nAWHP+/0NI+XwY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=hfI45TE1I5uwK0Bfe/252jb7t90fCE1bIelVOQNQaUM=;
-        b=h/Kyjfe3X+Zmibup9Dg5SyMIen+uAJQx0qvQ9guT/V0pZH4XtZ4eTF+PtMvr+mzBTP
-         iYkrus7XYAhwd+YsSrcHYIy9JJUjxNCsLLyi6fm1PUb9um9PL90sPO4UoIUaBNc7GT2F
-         pWMECHaVFLp+choBpR43sJaECJA6ifeTKt52FNwJWsYhWdL1UDR/EVSfwsg0lEpYabHn
-         RVGwEIwyllP25moyHz7SD5oT+9GdEd6QQVzuD74d46A9WsaPy97rbTX3pEGXG/xmV9F5
-         L3//LWy927dkgo9eMLc/pBtAEwNdxynTcpwWdbcjorRqUd0OyiIcE4KT3jszWSxHDPA6
-         tODA==
-X-Gm-Message-State: APjAAAVNMphIVkZ24goYhzTqyUKEFxSDc9n0jsT/p+lOpmEJh+pzmqEj
-        9hg1BTWsJ2j3Yc4Uzf3zdNeIcA==
-X-Google-Smtp-Source: APXvYqybXr+vcsOtoC6cNdTKe08GTN1LUn7gnJpq13Ga3bAoBaeBpdNLmgGY1GT+GtndyMTjIbD3zg==
-X-Received: by 2002:a1c:a008:: with SMTP id j8mr7652413wme.73.1557501556269;
-        Fri, 10 May 2019 08:19:16 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id c131sm6807619wma.31.2019.05.10.08.19.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 08:19:15 -0700 (PDT)
-Date:   Fri, 10 May 2019 16:19:12 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Amelie Delaunay <amelie.delaunay@st.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [GIT PULL v2] Immutable branch between MFD and Pinctrl due for the
- v5.2 merge window
-Message-ID: <20190510151912.GB4319@dell>
-References: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
- <20190510072314.GC7321@dell>
- <20190510151556.GA4319@dell>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BrbeovF+fjWSeVPTpilNjNVE8DYyqu+aTis0l/oYkL4=;
+        b=gT3K78r3iyK5ZZwF8uhV/a08DoRIWwrqOAgYvrc5zyegyUnKDwOli6S4114QgEvi2g
+         veQWikXPi3SpuhuQwNlBJhX8RDACVNUgBRfVG0IuqXA/wquaY4z8XhrXQkxuNVcKgbAS
+         exWpuQpQD98h2Xn7WgwyRXC1p0Nj9vpFFXUb/ipm3g4CcnuTX3801/lW6aQOPaJPzH7S
+         AzXomNdkxFMKQ0H4UZAOoPZyqgFaU+d5GHM4yhjADqt54GO16Sd3DcvM8osl1AP3ir5/
+         Hk0A8D5vyelPofSxCqndEK+8SbbDWF3CcvhkD71d337CG3pNOqS7kcQEmz8RFJf1rE/b
+         3TSA==
+X-Gm-Message-State: APjAAAU0T+Rvvh6xVvmxmldsPlsk7IGfZWyU4NhyBrreWGh1h+22TJPE
+        rnFwF+iXbXJ+HTkJ3wwxaC00dEasiqlNZ7SXjXCdkQ==
+X-Google-Smtp-Source: APXvYqyGy0QKq8RFEM2FhfJVX0s/4Ab+rOb+P2bBUoQMSnJ8RrYBJVX9LW7nbUglSVX5XIrzrc3uV91SJ4OQGoa2SJk=
+X-Received: by 2002:a6b:400a:: with SMTP id k10mr8036136ioa.291.1557501627148;
+ Fri, 10 May 2019 08:20:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190510151556.GA4319@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190509120903.28939-1-daniel.vetter@ffwll.ch>
+ <20190509200633.19678-1-daniel.vetter@ffwll.ch> <20190510092819.elu4b7fcojzcek2q@pathway.suse.cz>
+In-Reply-To: <20190510092819.elu4b7fcojzcek2q@pathway.suse.cz>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Fri, 10 May 2019 17:20:15 +0200
+Message-ID: <CAKMK7uEPAH82xv8r+8Rh3eQT1mTO00A-sFTEqQMwA=zFtWmfxQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel/locking/semaphore: use wake_q in up()
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change of subject line to v2:
+On Fri, May 10, 2019 at 11:28 AM Petr Mladek <pmladek@suse.com> wrote:
+>
+> On Thu 2019-05-09 22:06:33, Daniel Vetter wrote:
+> > console_trylock, called from within printk, can be called from pretty
+> > much anywhere. Including try_to_wake_up. Note that this isn't common,
+> > usually the box is in pretty bad shape at that point already. But it
+> > really doesn't help when then lockdep jumps in and spams the logs,
+> > potentially obscuring the real backtrace we're really interested in.
+> > One case I've seen (slightly simplified backtrace):
+> >
+> > Fix this specific locking recursion by moving the wake_up_process out
+> > from under the semaphore.lock spinlock, using wake_q as recommended by
+> > Peter Zijlstra.
+>
+> It might make sense to mention also the optimization effect mentioned
+> by Peter.
+>
+> > diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
+> > index 561acdd39960..7a6f33715688 100644
+> > --- a/kernel/locking/semaphore.c
+> > +++ b/kernel/locking/semaphore.c
+> > @@ -169,6 +169,14 @@ int down_timeout(struct semaphore *sem, long timeout)
+> >  }
+> >  EXPORT_SYMBOL(down_timeout);
+> >
+> > +/* Functions for the contended case */
+> > +
+> > +struct semaphore_waiter {
+> > +     struct list_head list;
+> > +     struct task_struct *task;
+> > +     bool up;
+> > +};
+> > +
+> >  /**
+> >   * up - release the semaphore
+> >   * @sem: the semaphore to release
+> > @@ -179,24 +187,25 @@ EXPORT_SYMBOL(down_timeout);
+> >  void up(struct semaphore *sem)
+> >  {
+> >       unsigned long flags;
+> > +     struct semaphore_waiter *waiter;
+> > +     DEFINE_WAKE_Q(wake_q);
+>
+> We need to call wake_q_init(&wake_q) to make sure that
+> it is empty.
 
-** Contains fix for i386 build breakage **
+DEFINE_WAKE_Q does that already, and if it didn't, I'd wonder how I
+managed to boot with this patch. console_lock is usally terribly
+contented because thanks to fbcon we must do a full display modeset
+while holding it, which takes forever. As long as anyone printks
+meanwhile (guaranteed while loading drivers really) you have
+contention.
+-Daniel
 
-Enjoy!
 
-The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
+> Best Regards,
+> Petr
+>
+> >       raw_spin_lock_irqsave(&sem->lock, flags);
+> > -     if (likely(list_empty(&sem->wait_list)))
+> > +     if (likely(list_empty(&sem->wait_list))) {
+> >               sem->count++;
+> > -     else
+> > -             __up(sem);
+> > +     } else {
+> > +             waiter =  list_first_entry(&sem->wait_list,
+> > +                                        struct semaphore_waiter, list);
+> > +             list_del(&waiter->list);
+> > +             waiter->up = true;
+> > +             wake_q_add(&wake_q, waiter->task);
+> > +     }
+> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
+> > +
+> > +     wake_up_q(&wake_q);
+> >  }
+> >  EXPORT_SYMBOL(up);
+> >
+> > -/* Functions for the contended case */
+> > -
+> > -struct semaphore_waiter {
+> > -     struct list_head list;
+> > -     struct task_struct *task;
+> > -     bool up;
+> > -};
+> > -
+> >  /*
+> >   * Because this function is inlined, the 'state' parameter will be
+> >   * constant, and thus optimised away by the compiler.  Likewise the
 
-  Linux 5.1 (2019-05-05 17:42:58 -0700)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-pinctrl-v5.2-1
-
-for you to fetch changes up to 9af2de7657f5a52f9e15aebb6f9348f9b8f250a6:
-
-  pinctrl: Kconfig: Fix STMFX GPIO expander Pinctrl/GPIO driver dependencies (2019-05-10 16:09:56 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD and Pinctrl due for the v5.2 merge window
-
-Contains fix for i386 build breakage
-
-----------------------------------------------------------------
-Amelie Delaunay (5):
-      dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
-      mfd: Add ST Multi-Function eXpander (STMFX) core driver
-      dt-bindings: pinctrl: document the STMFX pinctrl bindings
-      pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
-      pinctrl: Kconfig: Fix STMFX GPIO expander Pinctrl/GPIO driver dependencies
-
- Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 +
- .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   2 +-
- drivers/mfd/stmfx.c                                | 545 ++++++++++++++
- drivers/pinctrl/Kconfig                            |  14 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-stmfx.c                    | 820 +++++++++++++++++++++
- include/linux/mfd/stmfx.h                          | 123 ++++
- 9 files changed, 1661 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
- create mode 100644 drivers/mfd/stmfx.c
- create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
- create mode 100644 include/linux/mfd/stmfx.h
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
