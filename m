@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD77F19B3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8078119B51
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 12:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfEJKPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 06:15:51 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38388 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbfEJKPu (ORCPT
+        id S1727661AbfEJKQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 06:16:12 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1130 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727642AbfEJKQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 06:15:50 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s19so5087283otq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 03:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MA9DqZv2wVVvPaR3kSHR58gL6n2YL6qcCNc1pwmaEJI=;
-        b=TPks0ifDQZ3nT35liwRF+tK3sNIfDtgokD0iFfFhneEpB8FF7IX0OaTUv51YBB/1My
-         1kKYy72xwPUB9TmJiQqlsC0TP/b/eUnsoFwhxxW32vyeIlwJFG7UCeJ8CX2br0TEQ5yN
-         eWBzfjJsdtv0ysOFhSH3JKaOsBOdeDRGQB5VK8ahytERyAF65AirML9lBcYPub2SNMhq
-         yBcztr8DgQ0XzE0CIttJ2CC3dnutoyaCMp2WrKYr7VQNzXJ2blF3IiPLkpJqIra14GvO
-         tnNhn6IIQ/0sB2yZt+44koT3ubUI6AzjedfK+HN4LbkI264+jIze8+PFnFX4DQAfLGHU
-         Z14A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MA9DqZv2wVVvPaR3kSHR58gL6n2YL6qcCNc1pwmaEJI=;
-        b=ekZANWVqIvoyx/SE1nlFScVFfn/1YULCktIDeh+tWFo1zyib24hUlhW+Hia10F7va0
-         fDVwlJ9KMKTuYVzam7fGYZiuvvISSjI9l8b3Mn+qCz9G1E9It071mK0V7a47DIYFa738
-         xSQJ7xaaXTpw2mJN/UVmvu3cXemgOhaAfvaTt1Z3xt0vbiXM6SH72NKTnof8rlUuHm5u
-         PcEdXYO2ei+CwURoJZeSH2wlxJ4XmLIORdSZo7+f7oASC33WjLSQ+VFqyhwTXdLsNRss
-         lhN8yXjatNrzqn6RX6n9pYGbKc2wfBaGrW5V/+gB7v3kdQjC1KBUmk+/tnyLTX+qYDm/
-         Y6PQ==
-X-Gm-Message-State: APjAAAWwUy9OpvM2qYQNgLFElB0wYBBZcbGg+nEQtQFhiMPFnpeRQG5O
-        GbFvFvjKpgROn2M0LifRs+YHkll/B/h6O/xzM8uJXA==
-X-Google-Smtp-Source: APXvYqxpSXrCqItfrCcS2nSV9PIZRAscdLHolOCXw/vgl8E82wsBriT7/Di2HQIbCiqs8inoIakH2KH3C1u48B0drwA=
-X-Received: by 2002:a05:6830:20c4:: with SMTP id z4mr5843008otq.27.1557483349137;
- Fri, 10 May 2019 03:15:49 -0700 (PDT)
+        Fri, 10 May 2019 06:16:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cd54f710000>; Fri, 10 May 2019 03:16:17 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 10 May 2019 03:16:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 10 May 2019 03:16:09 -0700
+Received: from [10.26.11.182] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
+ 2019 10:16:05 +0000
+Subject: Re: [PATCH 4.9 00/28] 4.9.175-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190509181247.647767531@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <878d3a58-2d4d-ccd8-3446-e1ac3e94880e@nvidia.com>
+Date:   Fri, 10 May 2019 11:16:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190510090339.17211-1-luca@lucaceresoli.net>
-In-Reply-To: <20190510090339.17211-1-luca@lucaceresoli.net>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 10 May 2019 12:15:38 +0200
-Message-ID: <CAMpxmJVL3KLqgu9oRQOFmdAHq1jDbCCXxxq=cE1XyxX83zNgzg@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: gpio: remove duplicated lines
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-doc <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1557483377; bh=Lp9wSm9yPH2cc54i/KjT52SzZ/jFVRpvHRMgT0HFcPE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=CbDZxMyBhAzy8lzVn6lupsX7Egc4sCqcnwl+1I07Vaim8m7u/GiTj9rtZp1YSijQb
+         +ceDm0fEiLcB9vV8DpYEKIf3tJkSlEe2bXPIsoypn24XVmyKwnnOT6Gsl+zTlVwvE4
+         R+U2NlEdTqskuQIi0LQQA5TTb7g2CjrUsFflc6CH1wVGTFQ5Eh1qUT9Y/J+CMco8k1
+         D4gXCDbnBeOOlbDnaQVTpew1vhh2Z/0H+hDDll37c4Ny+2vZe9go5ZA26UQ+mU1mbo
+         hWV5dgB1VfKEWw1kxPStqi51lHdaGpeBxr7iXocN2wbDmwYWE2r3jxPVyMLgWxdmyd
+         3DxT/eF6iQksA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 10 maj 2019 o 11:03 Luca Ceresoli <luca@lucaceresoli.net> napisa=C5=82=
-(a):
->
-> The 'default (active high)' lines are repeated twice. Avoid people stare =
-at
-> their screens looking for differences.
->
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  Documentation/driver-api/gpio/consumer.rst | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/d=
-river-api/gpio/consumer.rst
-> index 5e4d8aa68913..23d68c321c5c 100644
-> --- a/Documentation/driver-api/gpio/consumer.rst
-> +++ b/Documentation/driver-api/gpio/consumer.rst
-> @@ -283,8 +283,6 @@ To summarize::
->    gpiod_set_value(desc, 1);          default (active high)  high
->    gpiod_set_value(desc, 0);          active low             high
->    gpiod_set_value(desc, 1);          active low             low
-> -  gpiod_set_value(desc, 0);          default (active high)  low
-> -  gpiod_set_value(desc, 1);          default (active high)  high
->    gpiod_set_value(desc, 0);          open drain             low
->    gpiod_set_value(desc, 1);          open drain             high impedan=
-ce
->    gpiod_set_value(desc, 0);          open source            high impedan=
-ce
-> --
-> 2.21.0
->
 
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 09/05/2019 19:41, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.175 release.
+> There are 28 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 11 May 2019 06:11:12 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.175-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.9.175-rc1-g50bbfeb
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
