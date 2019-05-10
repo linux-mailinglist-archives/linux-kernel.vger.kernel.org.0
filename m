@@ -2,97 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E261E19E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 15:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F7E19E7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 15:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbfEJNn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 09:43:56 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35927 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbfEJNnz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 09:43:55 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d21so2885576plr.3;
-        Fri, 10 May 2019 06:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=MFzl1fQrtuoWibRLm4kbP1gPY0qwI9/jaf8DipreLmU=;
-        b=FYO1NIM3BfCw7samzLgtsqQ6Hxc0Zs/Mect7gTZY53WxdLEJT9ZR3iVHx9Igtxm+vC
-         sRmUTUGr+GVlg9JfLen2l89m1CUMJYGyU59O2ByUzVA8XEgUNUedh5NJLckBZOD2oB4n
-         SMlTOo2q/3/yVEmUYQty3i/CU5PM00156BtYUyq29Hmh0DCW803Uw8EybXqyn/yRb0XJ
-         71+ZNG7jvAghM8vS7Oh245qCzwnvVzNLb+4/c4SKiDxrfSu1u+kQOz1daXeuaoOwl41M
-         pwMdvPaoercWhPlZqoRi8upa2xw6IJmwIHJDi0rTZ719L4R0aAPGZMZW5dxrKVHO8qiX
-         V37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=MFzl1fQrtuoWibRLm4kbP1gPY0qwI9/jaf8DipreLmU=;
-        b=mHBHTtpgsbD8rwqZAtwtW9GNu/zM1tn7ftZpj0PReidbNihq6kNSitsurQzXe6qxe2
-         gYXwU/fiRdh2crNVo/hiUjst7d7ka1YlfwDmZigwjk91wkiyQa+yaE8a8xv7oXGNw9Cv
-         cmwdfT2cRlA/jgaEha97TktT0hTg6JLlULN5EbXdqlQQ+nOwyUtlMWmHF/YaZRvqNFYy
-         JPUbHd1qM4+ZrJCO1w+khcbsQaa4lVKV694nousdZyesNT6gSEZGX2y12K9XNwcHOVZL
-         1bJ0RxHF4r8OfydE8ecAOVurA/dxBlNAPcjzsl2dr761U2rIlb1iDMcxRbo9dU4ngbwB
-         VFEg==
-X-Gm-Message-State: APjAAAU51J9jHk6t4audZ4bU6Y2t1UL4TYUOLjlJNnoxQh/vhxfXR3NT
-        aHCMlrrOWi6vCj+SsrAlNuk/dYTkblY=
-X-Google-Smtp-Source: APXvYqxU8iZXoP9Oe7KD13k+NmlIgobn7tMxDfpv2uoLmIkr4S+P8nO/mrutIjvEXYoEjrJ5O+PPdQ==
-X-Received: by 2002:a17:902:5ac9:: with SMTP id g9mr13074173plm.134.1557495830150;
-        Fri, 10 May 2019 06:43:50 -0700 (PDT)
-Received: from [192.168.1.7] ([117.248.70.207])
-        by smtp.gmail.com with ESMTPSA id x66sm7315309pfb.78.2019.05.10.06.43.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2019 06:43:49 -0700 (PDT)
-Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20190509181309.180685671@linuxfoundation.org>
- <411e19b0-7f02-a1e3-e1b6-1ff9ca4e1145@roeck-us.net>
-From:   Vandana BN <bnvandana@gmail.com>
-Message-ID: <58ff150d-31b6-a393-c3e4-77a8e72462b1@gmail.com>
-Date:   Fri, 10 May 2019 19:13:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727784AbfEJNwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 09:52:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51364 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727247AbfEJNwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 09:52:11 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EC27525E10A64F991FC1;
+        Fri, 10 May 2019 21:52:08 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 10 May 2019
+ 21:51:59 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <Matt.Sickler@daktronics.com>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] staging: kpc2000: Fix build error without CONFIG_UIO
+Date:   Fri, 10 May 2019 21:47:24 +0800
+Message-ID: <20190510134724.41052-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <411e19b0-7f02-a1e3-e1b6-1ff9ca4e1145@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix gcc build error while CONFIG_UIO is not set
 
-On 10/05/19 7:06 PM, Guenter Roeck wrote:
-> On 5/9/19 11:41 AM, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 5.0.15 release.
->> There are 95 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Sat 11 May 2019 06:11:22 PM UTC.
->> Anything received after that time might be too late.
->>
->
-> Build results:
->     total: 159 pass: 159 fail: 0
-> Qemu test results:
->     total: 349 pass: 349 fail: 0
->
-> Guenter
+ERROR: "uio_unregister_device" [drivers/staging/kpc2000/kpc2000/kpc2000.ko] undefined!
+ERROR: "__uio_register_device" [drivers/staging/kpc2000/kpc2000/kpc2000.ko] undefined!
 
-compiled booted and no regressions on my system.
+Add UIO Kconfig dependency to fix this.
 
-Thanks,
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/kpc2000/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-vandana
+diff --git a/drivers/staging/kpc2000/Kconfig b/drivers/staging/kpc2000/Kconfig
+index fb59229..febe4f8 100644
+--- a/drivers/staging/kpc2000/Kconfig
++++ b/drivers/staging/kpc2000/Kconfig
+@@ -3,6 +3,7 @@
+ config KPC2000
+ 	bool "Daktronics KPC Device support"
+ 	depends on PCI
++	depends on UIO
+ 	help
+ 	  Select this if you wish to use the Daktronics KPC PCI devices
+ 
+-- 
+2.7.4
+
 
