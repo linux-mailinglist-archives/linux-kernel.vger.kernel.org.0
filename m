@@ -2,91 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8061A24F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:32:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AC71A258
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfEJRcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 13:32:07 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39310 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727453AbfEJRcF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 13:32:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e24so6113677edq.6;
-        Fri, 10 May 2019 10:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7fV4hVAmAbFHfY0I1yQlpwpkvQ7JKHa98NLgnJBiZDY=;
-        b=LknVoO4tUQQjtIggBo/z1KGMKMS9lVmlRSLDduxaz2IEGKOAGot/nDYmGVDJqPEFjB
-         LI3cDUwXpOPOTn04X5/Qd5m1rLMbLyf7gRWIb4WTlS1/sonhA2fRyp4UbZPNyKPyiNRx
-         o1JRrS7aWOwvpiiQX/86zQJ+1/gIx1sIyU856MVVv0ETgz4wLsQgmvClhOA8jAb5G2kZ
-         E3o60yNHm1eIBc2WoGcEghCpDdemPiqLcJ+/Yb6SUQ3Gf9OphElXCgpVhpW42a0FiUew
-         7jeTPuFsICH9sQmVBXYbtZMjbc9P+Y5MzoBGCAeXYFWGhxoSnMey4yNGAvBrQPhBkl0U
-         Gfiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7fV4hVAmAbFHfY0I1yQlpwpkvQ7JKHa98NLgnJBiZDY=;
-        b=qVWLm1cqG5eKCxNPnDUPwzKSfAe6WgSdvLsJyeftA6rLT6esXySBhcB2cYWOpPKY34
-         W0M7RgAYLqDIpy/njrFG1olS+VO1OjvCxQseYc4nPRYsNJFjG0NvzRVPbjM716g5ErLx
-         tWB20klVfktA+C56zlprQl8N9JsgaS+ekBKKO9knZmJ6eLabDujJ0uFNp6LdprwZKdu9
-         FwNDY/TCG5svFQNam+JwD65cDBwTcVdMp0tZ3aWP3l9klbtQqSazZx7MBJlm7Gni8uZU
-         KWij1lJ294OumihjGexmmk3yFVqRF2meDSdCnPOeDB/IQJizT2D0OFQNHlaruX+J5b0R
-         /HKA==
-X-Gm-Message-State: APjAAAWdFU7v4jg7Ht5+FFhrEycpMW85lkFPkvUdxDEJaAv9pVqejmdW
-        BrFoh/BlbMz//uTOo9PVGdJwO4Ph
-X-Google-Smtp-Source: APXvYqwRhkB3mljJJBOeVkEFqSYiYAhAJbm6CP/YaoYopxarV4lEGAnieQB3w+eNnM5by0z1/qEGVQ==
-X-Received: by 2002:a17:906:cd27:: with SMTP id oz39mr3292112ejb.73.1557509523669;
-        Fri, 10 May 2019 10:32:03 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v16sm1599567edm.56.2019.05.10.10.32.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2019 10:32:03 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@broadcom.com, stefan.wahren@i2se.com,
-        wahrenst@gmx.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, mpm@selenic.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM IPROC ARM
-        ARCHITECTURE)
-Subject: [PATCH 2/2] hwrng: iproc-rng200: Add support for 7211
-Date:   Fri, 10 May 2019 10:31:11 -0700
-Message-Id: <20190510173112.2196-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190510173112.2196-1-f.fainelli@gmail.com>
-References: <20190510173112.2196-1-f.fainelli@gmail.com>
+        id S1727657AbfEJRfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 13:35:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727364AbfEJRfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 13:35:13 -0400
+Subject: Re: [GIT PULL] Mailbox changes for v5.2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557509713;
+        bh=3iDpQ0zrwJ51S/xQVUe7au2ThKA46IuvuXI7x+yUDLc=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=F7SDZPz3Ijnn68B//wBIrNQAEroaDl8Xszir5wTJjSkK/5a3gfRxXWyOG7SbyFEkM
+         BAJO6SrNQd0yy+RUP9itbJORDizd/uOXkfJIdybSQPFc7Xnqpwvu6Bha/f9AnkQPFR
+         F9VceTOcp0ceRuem1U/V+9bNBupMzMVVNjeIIqbI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CABb+yY2cJiXMVaPX+r7TS_mFa=o-dj9HEOjZ2+8GEbs8kUX1Xw@mail.gmail.com>
+References: <CABb+yY2cJiXMVaPX+r7TS_mFa=o-dj9HEOjZ2+8GEbs8kUX1Xw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CABb+yY2cJiXMVaPX+r7TS_mFa=o-dj9HEOjZ2+8GEbs8kUX1Xw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.linaro.org/landing-teams/working/fujitsu/integration.git
+ tags/mailbox-v5.2
+X-PR-Tracked-Commit-Id: 8fbbfd966efa67ef9aec37cb4ff412f9f26e1e84
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 15500c0a506e256976a81c858e33844bb0781e02
+Message-Id: <155750971311.27249.14786266789867232105.pr-tracker-bot@kernel.org>
+Date:   Fri, 10 May 2019 17:35:13 +0000
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BCM7211 features a RNG200 hardware random number generator block, add
-support for this chip by matching the chip-specific compatible string.
+The pull request you sent on Fri, 10 May 2019 02:30:42 -0500:
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/char/hw_random/iproc-rng200.c | 1 +
- 1 file changed, 1 insertion(+)
+> git://git.linaro.org/landing-teams/working/fujitsu/integration.git tags/mailbox-v5.2
 
-diff --git a/drivers/char/hw_random/iproc-rng200.c b/drivers/char/hw_random/iproc-rng200.c
-index 8b5a20b35293..92be1c0ab99f 100644
---- a/drivers/char/hw_random/iproc-rng200.c
-+++ b/drivers/char/hw_random/iproc-rng200.c
-@@ -220,6 +220,7 @@ static int iproc_rng200_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id iproc_rng200_of_match[] = {
-+	{ .compatible = "brcm,bcm7211-rng200", },
- 	{ .compatible = "brcm,bcm7278-rng200", },
- 	{ .compatible = "brcm,iproc-rng200", },
- 	{},
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/15500c0a506e256976a81c858e33844bb0781e02
+
+Thank you!
+
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
