@@ -2,117 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7444F19FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04EA19FC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbfEJO4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 10:56:55 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:35360 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfEJO4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 10:56:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F1D5B1A0040;
-        Fri, 10 May 2019 16:56:51 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E59971A00D0;
-        Fri, 10 May 2019 16:56:51 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 77957205ED;
-        Fri, 10 May 2019 16:56:51 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, marex@denx.de
-Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [RFC PATCH 3/3] usb: host: ohci-tmio: init genalloc for local memory
-Date:   Fri, 10 May 2019 17:56:46 +0300
-Message-Id: <20190510145646.10078-4-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190510145646.10078-1-laurentiu.tudor@nxp.com>
-References: <20190510145646.10078-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727667AbfEJPDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 11:03:45 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:39152 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727346AbfEJPDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 11:03:44 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AF1SGw024827;
+        Fri, 10 May 2019 17:03:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=lKyNfPMxjeNEOTVeoxdaJaRQWuSGzvXAvpttJx+3BqI=;
+ b=HTxwKAv4ORkCmeJ8x744pOg4vmUsTyoACZLbIgTRRUc7FzQJHUSPs60riHvLjRNHtGyp
+ vs/ubWMTnxeEg72laGrlehF8r/D0BZoWqfXz7Cn6bAzxCYdJlSHuVbK2277dZhWyry6z
+ KjnQB8TmYjDtLgD5nUT3yfC5g/6b+Q/PRrTw2F3wTjzyXyAnevFJeMAP3Dqqf9h+cb7D
+ rXj9Y4vWHsLFOjD6gZZZNfLUpDL+2d0qGVTE+DDUmnn8y43i6Gu7UlFtOgyghHkVKcSo
+ wrvTkyvwu2cp0kgIQAjPdmgw6ZfFPlGkO/C9ZI7kP/O0txxUkMjdpvb5L++XxBiBcZod pA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2scdjp9rnq-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 10 May 2019 17:03:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 401CE34;
+        Fri, 10 May 2019 15:03:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 191F92ABA;
+        Fri, 10 May 2019 15:03:07 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May
+ 2019 17:03:06 +0200
+Received: from localhost (10.48.0.131) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 17:03:06 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        xiang xiao <xiaoxiang781216@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: [PATCH v2 0/2] TTY: add rpmsg tty driver
+Date:   Fri, 10 May 2019 17:02:55 +0200
+Message-ID: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.131]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+This patch set introduces a TTY console on top of the RPMsg framework which
+enables the following use cases:
+- Provide a console to communicate easily with the remote processor
+  application.
+- Provide an interface to get the remote processor log traces without
+  ring buffer limitation.
+- Ease the migration from MPU + MCU processors to multi core processors
+  (MPU and MCU integrated in one processor)
 
-In preparation for dropping the existing "coherent" dma mem declaration
-APIs, replace the current dma_declare_coherent_memory() based mechanism
-with the creation of a genalloc pool that will be used in the OHCI
-subsystem as replacement for the DMA APIs.
+An alternative of this proposed solution would consist in using the virtio
+console:
+The drawback with that solution is that it requires a specific virtio buffer
+(in addition to the one already used for RPMsg) which does not fit with remote
+processors with little memory. The proposed solution allows to multiplex the
+console with the other rpmsg services, optimizing the memory.
 
-For context, see thread here: https://lkml.org/lkml/2019/4/22/357
+The first patch adds an API to the rpmsg framework ('get buffer size') and the
+second one is the rpmsg tty driver itself.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
----
- drivers/usb/host/ohci-tmio.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+History:
+-V1 to V2:
+	- modify message structure to allow to data transmission but also
+	flow control
+	- add documentation file to describe message structure for remote
+	  implementation. 
+	- add dtr/rts management
+	- disable termios modes that generates non optimized behavior on RPMsg
+	  transfers
+	- replace rpmsg_send by rpmsg_trysend to not block the write
+	- suppress useless spinlock on read.
+	- miscellaneous fixes to improve robustness
 
-diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-index f88a0370659f..16ff99b56fd3 100644
---- a/drivers/usb/host/ohci-tmio.c
-+++ b/drivers/usb/host/ohci-tmio.c
-@@ -30,6 +30,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/tmio.h>
- #include <linux/dma-mapping.h>
-+#include <linux/genalloc.h>
- 
- /*-------------------------------------------------------------------------*/
- 
-@@ -224,11 +225,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 		goto err_ioremap_regs;
- 	}
- 
--	ret = dma_declare_coherent_memory(&dev->dev, sram->start, sram->start,
--				resource_size(sram));
--	if (ret)
--		goto err_dma_declare;
--
- 	if (cell->enable) {
- 		ret = cell->enable(dev);
- 		if (ret)
-@@ -239,6 +235,20 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 	ohci = hcd_to_ohci(hcd);
- 	ohci_hcd_init(ohci);
- 
-+	ohci->localmem_pool = devm_gen_pool_create(&dev->dev, PAGE_SHIFT,
-+						   dev_to_node(&dev->dev),
-+						   "ohci-sm501");
-+	if (IS_ERR(ohci->localmem_pool)) {
-+		ret = PTR_ERR(ohci->localmem_pool);
-+		goto err_enable;
-+	}
-+	ret = gen_pool_add_virt(ohci->localmem_pool, sram->start, sram->start,
-+				resource_size(sram), dev_to_node(&dev->dev));
-+	if (ret < 0) {
-+		dev_err(&dev->dev, "failed to add to pool: %d\n", ret);
-+		goto err_enable;
-+	}
-+
- 	ret = usb_add_hcd(hcd, irq, 0);
- 	if (ret)
- 		goto err_add_hcd;
-@@ -254,8 +264,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 	if (cell->disable)
- 		cell->disable(dev);
- err_enable:
--	dma_release_declared_memory(&dev->dev);
--err_dma_declare:
- 	iounmap(hcd->regs);
- err_ioremap_regs:
- 	iounmap(tmio->ccr);
-@@ -276,7 +284,6 @@ static int ohci_hcd_tmio_drv_remove(struct platform_device *dev)
- 	tmio_stop_hc(dev);
- 	if (cell->disable)
- 		cell->disable(dev);
--	dma_release_declared_memory(&dev->dev);
- 	iounmap(hcd->regs);
- 	iounmap(tmio->ccr);
- 	usb_put_hcd(hcd);
+Arnaud Pouliquen (2):
+  rpmsg: core: add possibility to get message payload length
+  tty: add rpmsg driver
+
+ Documentation/serial/tty_rpmsg.txt |  38 +++
+ drivers/rpmsg/rpmsg_core.c         |  20 ++
+ drivers/rpmsg/rpmsg_internal.h     |   2 +
+ drivers/rpmsg/virtio_rpmsg_bus.c   |  11 +
+ drivers/tty/Kconfig                |   9 +
+ drivers/tty/Makefile               |   1 +
+ drivers/tty/rpmsg_tty.c            | 479 +++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h              |  10 +
+ 8 files changed, 570 insertions(+)
+ create mode 100644 Documentation/serial/tty_rpmsg.txt
+ create mode 100644 drivers/tty/rpmsg_tty.c
+
 -- 
-2.17.1
+2.7.4
 
