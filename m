@@ -2,131 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9507E19A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3827A19AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 11:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfEJJbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 05:31:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbfEJJbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 05:31:09 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 010852053B;
-        Fri, 10 May 2019 09:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557480668;
-        bh=Xv9qGx06byI692xx7gyUH4Fmjwova5eTCKAm6zQru7A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q1vT9AhIcjR5HqN+iWmw6daLaLyvwZktiv0/C9Mj+u2sV0EC9tY1XLDAJvG/wVV7D
-         QgKs8FJs7QUZbbmVdvsKWAP6hTEGShjkqBm1rrd2WGV7qjfjPVMVwhwgzJfiEhOaWJ
-         P/ehENGk2b0JJRzHVzJSOIIIblIa2BpUR59F2kBU=
-Date:   Fri, 10 May 2019 11:31:05 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jim Lin <jilin@nvidia.com>
-Cc:     mathias.nyman@intel.com, stern@rowland.harvard.edu,
-        kai.heng.feng@canonical.com, drinkcat@chromium.org,
-        keescook@chromium.org, nsaenzjulienne@suse.de, jflat@chromium.org,
-        malat@debian.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] usb: hub : Add devaddr in struct usb_device
-Message-ID: <20190510093105.GA9357@kroah.com>
-References: <1557478937-30486-1-git-send-email-jilin@nvidia.com>
- <1557478937-30486-2-git-send-email-jilin@nvidia.com>
-MIME-Version: 1.0
+        id S1727307AbfEJJeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 05:34:01 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:27146 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbfEJJeA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 05:34:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1557480836;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=C8WiZW1jjTfeo6DJEapxqioDf/xOovEO+bb4GmMWIpM=;
+        b=NAFJZAAnyxaBSg7NB3eS9fb6vja9PlGNJNfWaD9DKrgFIzZrWSrhk7hEpbYNJg249o
+        dSFT6QdW5ZYSdc+JLkAIcbTDH464X5ksycmz/PA5Afd4w11XrOKj1SBVb8A0Oenkmmwu
+        yD+1fLhaH0Ja02wC45PmvpYSAikGmXaJRQzg7SsLfykx9HdYnc51MwRjMWKTj8yNilCO
+        E3aBdMNbOZtxbW0sWwN1nGxjlODC5s6VCh0OXcGcu76uiJQmt+lalpbIXRSSM60RCKVi
+        Wr7F3A+8adkmcV778jXN98xWHBOkg84+JpJP3Rt1dWZ2TqdxB4feYtHOEWiSwRKdztjm
+        Nnpg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmMgw4Tt7w=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.18 DYNA|AUTH)
+        with ESMTPSA id j04dc1v4A9XQQRb
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 10 May 2019 11:33:26 +0200 (CEST)
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557478937-30486-2-git-send-email-jilin@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [RFC v2] iio: input-bridge: optionally bridge iio acceleometers to create a /dev/input interface
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <b5e40ab0d5aad247b7cb9539c198e04096c516c1.camel@hadess.net>
+Date:   Fri, 10 May 2019 11:33:26 +0200
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Eric Piel <eric.piel@tremplin-utc.net>,
+        linux-input@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7440F555-5A92-442C-B217-BE17EEF9EF68@goldelico.com>
+References: <195994ebff28de22eae872df134d086c761b83b8.1554026986.git.hns@goldelico.com> <20190407133037.0ad98897@archlinux> <CD44AFA0-6676-4842-9C80-61BB363DD556@goldelico.com> <20190414124029.1f1f6084@archlinux> <CD6219BE-61FF-4C38-9532-054C60A77F89@goldelico.com> <20190422152014.7c6637ab@archlinux> <b5e40ab0d5aad247b7cb9539c198e04096c516c1.camel@hadess.net>
+To:     Bastien Nocera <hadess@hadess.net>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 05:02:16PM +0800, Jim Lin wrote:
-> The Clear_TT_Buffer request sent to the hub includes the address of
-> the LS/FS child device in wValue field. usb_hub_clear_tt_buffer()
-> uses udev->devnum to set the address wValue. This won't work for
-> devices connected to xHC.
-> 
-> For other host controllers udev->devnum is the same as the address of
-> the usb device, chosen and set by usb core. With xHC the controller
-> hardware assigns the address, and won't be the same as devnum.
-> 
-> Here we add devaddr in "struct usb_device" for
-> usb_hub_clear_tt_buffer() to use.
-> 
-> Signed-off-by: Jim Lin <jilin@nvidia.com>
-> ---
-> v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
->     , remove its claiming in xhci.h
-> v3: Add description for clearing_tt (xhci.h)
-> v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
->     to protect for Clear_TT_Buffer to be run serially.
->     Remove xhci_clear_tt_buffer_complete as it's not necessary.
->     Same reason as the above.
->     Extend usb_hub_clear_tt_buffer parameter
-> v5: Not extending usb_hub_clear_tt_buffer parameter
->     Add description.
-> v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
-> v7: Add devaddr field in "struct usb_device"
-> v8: split as two patches, change type from int to u8 for devaddr.
-> 
->  drivers/usb/core/hub.c | 4 +++-
->  include/linux/usb.h    | 2 ++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 15a2934dc29d..078894023797 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -873,7 +873,7 @@ int usb_hub_clear_tt_buffer(struct urb *urb)
->  	/* info that CLEAR_TT_BUFFER needs */
->  	clear->tt = tt->multi ? udev->ttport : 1;
->  	clear->devinfo = usb_pipeendpoint (pipe);
-> -	clear->devinfo |= udev->devnum << 4;
-> +	clear->devinfo |= (u16) (udev->devaddr << 4);
->  	clear->devinfo |= usb_pipecontrol(pipe)
->  			? (USB_ENDPOINT_XFER_CONTROL << 11)
->  			: (USB_ENDPOINT_XFER_BULK << 11);
-> @@ -2125,6 +2125,8 @@ static void update_devnum(struct usb_device *udev, int devnum)
->  	/* The address for a WUSB device is managed by wusbcore. */
->  	if (!udev->wusb)
->  		udev->devnum = devnum;
-> +	if (!udev->devaddr)
-> +		udev->devaddr = (u8) devnum;
 
-Checkpatch did not complain here?  Or above?  Please don't put a space
-before the ) when casting.
+> Am 10.05.2019 um 10:57 schrieb Bastien Nocera <hadess@hadess.net>:
+>=20
+> On Mon, 2019-04-22 at 15:20 +0100, Jonathan Cameron wrote:
+>>> Different goals usually lead to different solution architectures.
+>>=20
+>> Indeed, but in this case we have your proposal which is a subset of
+>> what
+>> I am suggesting.  One architecture can fulfil both requirements.
+>>=20
+>> I'll leave it for the other thread, but Bastien has raised the case
+>> (that I'd forgotten) that there already userspace stacks that are
+>> capable of happily taking in both IIO and Input devices.  The
+>> confusion
+>> here is they will now discover 'both' without the existing userspace
+>> knowing that they are the same device.  We need to be very careful
+>> not
+>> to break those userspace programs.
+>>=20
+>> So this is an illustration of why the simplistic case doesn't work
+>> 'now'.
+>=20
+> I don't know what state the whole patch is, but, at the very least, =
+I'd
+> expect that patch to export the fact that it's exporting synthesised
+> data from another driver, so that it can be easily ignored in user-
+> space that already supports IIO devices.
+>=20
+
+It does through "Input device name:" starting with "iio-bridge:" as you =
+can see in the commit message of [RFC v3]:
+
+root@letux:~# evtest /dev/input/event5 | head -19
+Input driver version is 1.0.1
+Input device ID: bus 0x0 vendor 0x0 product 0x0 version 0x0
+Input device name: "iio-bridge: bmc150_accel"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 3 (EV_ABS)
+    Event code 0 (ABS_X)
+      Value      8
+      Min     -511
+      Max      511
+    Event code 1 (ABS_Y)
+      Value    -44
+      Min     -511
+      Max      511
+    Event code 2 (ABS_Z)
+      Value   -265
+      Min     -511
+      Max      511
 
 
->  }
->  
->  static void hub_free_dev(struct usb_device *udev)
-> diff --git a/include/linux/usb.h b/include/linux/usb.h
-> index 4229eb74bd2c..db38c13a6b1d 100644
-> --- a/include/linux/usb.h
-> +++ b/include/linux/usb.h
-> @@ -565,6 +565,7 @@ struct usb3_lpm_parameters {
->   * @tx_lanes: number of tx lanes in use, USB 3.2 adds dual-lane support
->   * @tt: Transaction Translator info; used with low/full speed dev, highspeed hub
->   * @ttport: device port on that tt hub
-> + * @devaddr: device address, XHCI: assigned by HW, others: same as devnum
->   * @toggle: one bit for each endpoint, with ([0] = IN, [1] = OUT) endpoints
->   * @parent: our hub, unless we're the root
->   * @bus: bus we're part of
-> @@ -641,6 +642,7 @@ struct usb_device {
->  
->  	struct usb_tt	*tt;
->  	int		ttport;
-> +	u8 devaddr;
 
-That's some horrible variable alignment :(
-
-Please use pahole to find a better place to put it.
-
-thanks,
-
-greg k-h
