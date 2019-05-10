@@ -2,116 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8067B1A494
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 23:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05FC91A4A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 23:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbfEJVdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 17:33:50 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35636 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728231AbfEJVdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 17:33:49 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p26so6978478edr.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 14:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mYLCrqAh6dGMRupORMTuLJWrL5feZF1QxoQSH4aJpzU=;
-        b=SmumuDGrcJ5bVetydA2yfkeXDt1Z2G2LIlYxvLnjke6Wg5kUBXXcNJrpUGHKusgmwE
-         kFJeBCfAGNRdUrFuqBTXEz4Ic5yc9HumCODEOzIUVLM4wpz1jB1Qwry3NgHtT0GfNvY8
-         hEELCbKgDlvLYvEnqJ7xfVDAacA4LStaGKQM3aCuez7I5adnI+YUK8qcHaLvi0kAdNJW
-         xAt4ic4PdsVnHHeYJJNUakl4IqWCjXsE3Mq5+g8aGQvZztKIPnLVa76Yhq6+57WwkaHb
-         r1ae7KbUmNyL0TkwxvZt46pVoXozcsc9QjHT1zGLG4Krw03zOYUplHe2CN0iYuT8y7N0
-         r1sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mYLCrqAh6dGMRupORMTuLJWrL5feZF1QxoQSH4aJpzU=;
-        b=tX6b6O/UtIPnfENmlZkI/oZpQcSqCnwwvhofKsUr7X43l4+LC51oAKbEaQjDtldnAY
-         EswvsDhdg4uWwpRdCYB1iLGguQlY2nEx0/cwZSvNDeJGvqShvwNQsf7kabkNOstRuHRN
-         BQDxJi81504yj2lF90F4/NY6i4lEKoTcbHz+Of4vbnOLAAz4Oo8c00mP+yfDTYqnVKaY
-         zQVlJLnQgcT5NytptKJbrlAPNhXRagvjcTnn5H9WmA+lXSbh5RcfcYlpt+Uquxr37Mfk
-         bN99YNFNPXLqn+zLytsG8s5Zx6v5hrdHlNfHe8nBOyKdZzrSloxtYMcRUjZw0U4Dwr9x
-         6KUA==
-X-Gm-Message-State: APjAAAW6VgOZqhFlWisYDGXGs/OeWBb5NwNftBxwh3T3Ft3aKmrpH/2z
-        AEPYUM6A91Xnfjj9oWSSXrY4Jg==
-X-Google-Smtp-Source: APXvYqxTcOeKakVkVnRfDKB1sEvVry5SidNNAA2MWQss03LCkkiMkN7HRPpSFVMnOe5Jy+0NFihqiA==
-X-Received: by 2002:a50:a495:: with SMTP id w21mr13800142edb.78.1557524027343;
-        Fri, 10 May 2019 14:33:47 -0700 (PDT)
-Received: from google.com ([2a00:79e0:1b:201:ee0a:cce3:df40:3ac5])
-        by smtp.gmail.com with ESMTPSA id 65sm1685486edm.60.2019.05.10.14.33.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 10 May 2019 14:33:46 -0700 (PDT)
-Date:   Fri, 10 May 2019 23:33:40 +0200
-From:   Jann Horn <jannh@google.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com
-Subject: Re: [PATCH v2 3/3] initramfs: introduce do_readxattrs()
-Message-ID: <20190510213340.GE253532@google.com>
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
- <20190509112420.15671-4-roberto.sassu@huawei.com>
+        id S1728226AbfEJVkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 17:40:06 -0400
+Received: from muru.com ([72.249.23.125]:48374 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbfEJVkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 17:40:06 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 6A0A7808C;
+        Fri, 10 May 2019 21:40:23 +0000 (UTC)
+Date:   Fri, 10 May 2019 14:40:02 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>, Tero Kristo <t-kristo@ti.com>
+Cc:     Lokesh Vutla <lokeshvutla@ti.com>,
+        YueHaibing <yuehaibing@huawei.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: arch_k3: Fix kconfig dependency warning
+Message-ID: <20190510214002.GV8007@atomide.com>
+References: <20190510035255.27568-1-yuehaibing@huawei.com>
+ <f7c420ec-ee4e-c17e-7650-353002bb81b9@ti.com>
+ <86o94acgdg.wl-marc.zyngier@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190509112420.15671-4-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <86o94acgdg.wl-marc.zyngier@arm.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 01:24:20PM +0200, Roberto Sassu wrote:
-> This patch adds support for an alternative method to add xattrs to files in
-> the rootfs filesystem. Instead of extracting them directly from the ram
-> disk image, they are extracted from a regular file called .xattr-list, that
-> can be added by any ram disk generator available today.
-[...]
-> +struct path_hdr {
-> +	char p_size[10]; /* total size including p_size field */
-> +	char p_data[];  /* <path>\0<xattrs> */
-> +};
-> +
-> +static int __init do_readxattrs(void)
-> +{
-> +	struct path_hdr hdr;
-> +	char str[sizeof(hdr.p_size) + 1];
-> +	unsigned long file_entry_size;
-> +	size_t size, name_buf_size, total_size;
-> +	struct kstat st;
-> +	int ret, fd;
-> +
-> +	ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	total_size = st.size;
-> +
-> +	fd = ksys_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-> +	if (fd < 0)
-> +		return fd;
-> +
-> +	while (total_size) {
-> +		size = ksys_read(fd, (char *)&hdr, sizeof(hdr));
-[...]
-> +	ksys_close(fd);
-> +
-> +	if (ret < 0)
-> +		error("Unable to parse xattrs");
-> +
-> +	return ret;
-> +}
+* Marc Zyngier <marc.zyngier@arm.com> [190510 18:30]:
+> On Fri, 10 May 2019 06:16:38 +0100,
+> Lokesh Vutla <lokeshvutla@ti.com> wrote:
+> > 
+> > 
+> > 
+> > On 10/05/19 9:22 AM, YueHaibing wrote:
+> > > Fix Kbuild warning when SOC_TI is not set
+> > > 
+> > > WARNING: unmet direct dependencies detected for TI_SCI_INTA_IRQCHIP
+> > >   Depends on [n]: TI_SCI_PROTOCOL [=y] && SOC_TI [=n]
+> > >   Selected by [y]:
+> > >   - ARCH_K3 [=y]
+> > > 
+> > > Fixes: 009669e74813 ("arm64: arch_k3: Enable interrupt controller drivers")
+> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > 
+> > Thanks for catching it.
+> > 
+> > Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
+> 
+> Tony, can you please route this patch via armsoc?
 
-Please use something like filp_open()+kernel_read()+fput() instead of
-ksys_open()+ksys_read()+ksys_close(). I understand that some of the init
-code needs to use the syscall wrappers because no equivalent VFS
-functions are available, but please use the VFS functions when that's
-easy to do.
+Thanks adding Tero to loop so he can queue it.
+
+Regards,
+
+Tony
