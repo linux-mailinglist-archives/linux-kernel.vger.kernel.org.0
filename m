@@ -2,60 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E41019C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF0919C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfEJLE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 07:04:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:43640 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbfEJLE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 07:04:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0585F374;
-        Fri, 10 May 2019 04:04:27 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BDA23F738;
-        Fri, 10 May 2019 04:04:26 -0700 (PDT)
-Date:   Fri, 10 May 2019 12:04:18 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Salman Qazi <sqazi@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: icache_is_aliasing and big.LITTLE
-Message-ID: <20190510110418.GA51370@lakrids.cambridge.arm.com>
-References: <CAKUOC8WxRnzeMEcS-vao-GOzXnF+FN+3uk8R6TspRj23V7kYJQ@mail.gmail.com>
- <20190509085004.GE64514@C02TF0J2HF1T.local>
+        id S1727249AbfEJLGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 07:06:41 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52788 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfEJLGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 07:06:41 -0400
+Received: by mail-it1-f196.google.com with SMTP id q65so8683307itg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 04:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
+        b=e+P6anFeXd8q5JrazOyjoRW6Z6R9u9YlIDY1wTMb30gtfSVz/Y6n3BiNP8tf7Tpya+
+         hUlTR+OoETFvFdvjbi4OPJ+oqaoDNptArPaXUmES/jqL9FjLzqAxh5L7iLm/U5wxERv2
+         isvmDJrSIBtsvIiZHhJlj1J1gqStuDPVYlhk0r7GvpURI0NKmHbWhoXBVMorUMJNjg28
+         cNFWThrvIwHYnLG9hjJA7jiuyKGk7lZwE9XF4UugBDl+cR7HVk7B6R7ZMgiWlWlKZEwo
+         xC/Kfh7dZpAmNeJrVMegA7qcmt6HMhyVwEw7fYl0rip2OOfxay2dxtz7z21rmPltFmLj
+         t5dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
+        b=XgItgoo6jRaFgFn3BadIVgU5oBqFqKcsWeW/S0TKLnR/dXMWEYDnrEI2Y+2dhUQ2MK
+         KL1PRxQUynbBh0rqbU9dzxFdLkMMuCpouYaytQ+pYT7Z+WbJpPV5H1es/SuVpTdQLi2+
+         KE79Zf5ro+6XIA9ck0WEa2HfM2h7bOTVSD6uU+f4rkB7QmLfSqryr5Ke5sJ/BGCynESw
+         /G2VVtXotnT7iRFKJqn+7ZIJ+fWtVqsT3D8MXtmX2FPZKMkCS5kw6H0ACRp4TqVvUA0K
+         zjTP2LdSCw28gXMmJ4byLsC/vbkBBbvcH7sDC98po9yXC+k1Dxms6y6+e62f2lmN3+xX
+         RXxQ==
+X-Gm-Message-State: APjAAAUHT5/96Bb7KZb+m0nEo9NOK4fW3YbLKfedzVjbblK3AiL0fj1G
+        h1dB7NrhsLDEHFsOanHqsEOIsh8NMN9BT0UKbL8=
+X-Google-Smtp-Source: APXvYqxsQtB0yvI6fwxYhwUXI66qcNEJLomL/Ttnwuy4zkiobm3g+Sk6FWUl7D29aqTYgHKr+ShscI2SdeYb/ILPY4M=
+X-Received: by 2002:a24:4585:: with SMTP id c5mr6294268itd.79.1557486400571;
+ Fri, 10 May 2019 04:06:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190509085004.GE64514@C02TF0J2HF1T.local>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Received: by 2002:a4f:cc8:0:0:0:0:0 with HTTP; Fri, 10 May 2019 04:06:40 -0700 (PDT)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <kouevigathk@gmail.com>
+Date:   Fri, 10 May 2019 13:06:40 +0200
+Message-ID: <CAMpCND10tD6Ov4ueaqwwL4fkZQtw2bSS67ufvN4ViF8YWeNjBw@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 09:50:04AM +0100, Catalin Marinas wrote:
-> Hi,
-> 
-> On Wed, May 08, 2019 at 11:45:03AM -0700, Salman Qazi wrote:
-> > What is the intention behind icache_is_aliasing on big.LITTLE systems
-> > where some icaches are VIPT and others are PIPT? Is it meant to be
-> > conservative in some sense or should it be made per-CPU?
-> 
-> It needs to cover the worst case scenario across all CPUs, i.e. aliasing
-> VIPT if one of the CPUs has this. We can't make it per-CPU because a
-> thread performing cache maintenance might be migrated to another CPU
-> with different cache policy (e.g. sync_icache_aliases()).
+Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
+nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
+dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
+laten.
 
-It's slightly more subtle than that -- for broadcast maintenance the
-policy of the CPU receiving the broadcast matters.
+Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
+vrouw
+en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
+voor jou zijn.
 
-So even if all i-cache maintenance were performed on a thread pinned to
-a CPU with PIPT caches, to correctly affect any VIPT i-caches in the
-system it would be necessary to perform maintenance as-if the CPU
-performing the maintenance had VIPT i-caches.
+Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
+eddywilliam0002@gmail.com
 
-Thanks,
-Mark.
+Bij voorbaat hartelijk dank,
+Eddy William,
+
+
+
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($14.2 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+
+Please contact my private email here for more details:eddywilliam0002@gmail=
+.com
+
+Many thanks in advance,
+Mr.Eddy William,
