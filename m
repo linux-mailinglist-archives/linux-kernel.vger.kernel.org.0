@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 350EF1A399
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2571A397
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfEJUBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 16:01:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
+        id S1728095AbfEJUBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 16:01:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728017AbfEJUBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 16:01:11 -0400
+        id S1728026AbfEJUBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 16:01:12 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AFE621855;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FEE321841;
         Fri, 10 May 2019 20:01:11 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hPBhe-0006pi-6f; Fri, 10 May 2019 16:01:10 -0400
-Message-Id: <20190510200110.093108279@goodmis.org>
+        id 1hPBhe-0006qC-Cz; Fri, 10 May 2019 16:01:10 -0400
+Message-Id: <20190510200110.284281830@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 10 May 2019 15:56:31 -0400
+Date:   Fri, 10 May 2019 15:56:32 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -29,7 +29,8 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 25/27] tools/lib/traceevent: Man page for tep_parse_header_page()
+Subject: [PATCH 26/27] tools/lib/traceevent: Man pages for APIs, used to extract common
+ fields from a record
 References: <20190510195606.537643615@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -40,29 +41,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Create man page for tep_parse_header_page() libtraceevent API.
+Create man pages for libtraceevent APIs:
+ tep_data_type(),
+ tep_data_pid(),
+ tep_data_preempt_count(),
+ tep_data_flags()
 
-Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-25-tstoyanov@vmware.com
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-26-tstoyanov@vmware.com
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+[ Fixed missing T in description of NOSUPPORT flag ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../libtraceevent-parse_head.txt              | 82 +++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-parse_head.txt
+ .../libtraceevent-record_parse.txt            | 137 ++++++++++++++++++
+ 1 file changed, 137 insertions(+)
+ create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-record_parse.txt
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-parse_head.txt b/tools/lib/traceevent/Documentation/libtraceevent-parse_head.txt
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-record_parse.txt b/tools/lib/traceevent/Documentation/libtraceevent-record_parse.txt
 new file mode 100644
-index 000000000000..c90f16c7d8e6
+index 000000000000..e9a69116c78b
 --- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-parse_head.txt
-@@ -0,0 +1,82 @@
++++ b/tools/lib/traceevent/Documentation/libtraceevent-record_parse.txt
+@@ -0,0 +1,137 @@
 +libtraceevent(3)
 +================
 +
 +NAME
 +----
-+tep_parse_header_page - Parses the data stored in the header page.
++tep_data_type, tep_data_pid,tep_data_preempt_count, tep_data_flags -
++Extract common fields from a record.
 +
 +SYNOPSIS
 +--------
@@ -70,25 +77,61 @@ index 000000000000..c90f16c7d8e6
 +--
 +*#include <event-parse.h>*
 +
-+int *tep_parse_header_page*(struct tep_handle pass:[*]_tep_, char pass:[*]_buf_, unsigned long _size_, int _long_size_);
++enum *trace_flag_type* {
++	_TRACE_FLAG_IRQS_OFF_,
++	_TRACE_FLAG_IRQS_NOSUPPORT_,
++	_TRACE_FLAG_NEED_RESCHED_,
++	_TRACE_FLAG_HARDIRQ_,
++	_TRACE_FLAG_SOFTIRQ_,
++};
++
++int *tep_data_type*(struct tep_handle pass:[*]_tep_, struct tep_record pass:[*]_rec_);
++int *tep_data_pid*(struct tep_handle pass:[*]_tep_, struct tep_record pass:[*]_rec_);
++int *tep_data_preempt_count*(struct tep_handle pass:[*]_tep_, struct tep_record pass:[*]_rec_);
++int *tep_data_flags*(struct tep_handle pass:[*]_tep_, struct tep_record pass:[*]_rec_);
 +--
 +
 +DESCRIPTION
 +-----------
-+The _tep_parse_header_page()_ function parses the header page data from _buf_,
-+and initializes the _tep_, trace event parser context, with it. The buffer
-+_buf_ is with _size_, and is supposed to be copied from
-+tracefs/events/header_page.
++This set of functions can be used to extract common fields from a record.
 +
-+Some old kernels do not have header page info, in this case the
-+_tep_parse_header_page()_ function  can be called with _size_ equal to 0. The
-+_tep_ context is initialized with default values. The _long_size_ can be used in
-+this use case, to set the size of a long integer to be used.
++The _tep_data_type()_ function gets the event id from the record _rec_.
++It reads the "common_type" field. The _tep_ argument is the trace event parser
++context.
++
++The _tep_data_pid()_ function gets the process id from the record _rec_.
++It reads the "common_pid" field. The _tep_ argument is the trace event parser
++context.
++
++The _tep_data_preempt_count()_ function gets the preemption count from the
++record _rec_. It reads the "common_preempt_count" field. The _tep_ argument is
++the trace event parser context.
++
++The _tep_data_flags()_ function gets the latency flags from the record _rec_.
++It reads the "common_flags" field. The _tep_ argument is the trace event parser
++context. Supported latency flags are:
++[verse]
++--
++	_TRACE_FLAG_IRQS_OFF_,		Interrupts are disabled.
++	_TRACE_FLAG_IRQS_NOSUPPORT_,	Reading IRQ flag is not supported by the architecture.
++	_TRACE_FLAG_NEED_RESCHED_,	Task needs rescheduling.
++	_TRACE_FLAG_HARDIRQ_,		Hard IRQ is running.
++	_TRACE_FLAG_SOFTIRQ_,		Soft IRQ is running.
++--
 +
 +RETURN VALUE
 +------------
-+The _tep_parse_header_page()_ function returns 0 in case of success, or -1
-+in case of an error.
++The _tep_data_type()_ function returns an integer, representing the event id.
++
++The _tep_data_pid()_ function returns an integer, representing the process id
++
++The _tep_data_preempt_count()_ function returns an integer, representing the
++preemption count.
++
++The _tep_data_flags()_ function returns an integer, representing the latency
++flags. Look at the _trace_flag_type_ enum for supported flags.
++
++All these functions in case of an error return a negative integer.
 +
 +EXAMPLE
 +-------
@@ -98,11 +141,29 @@ index 000000000000..c90f16c7d8e6
 +...
 +struct tep_handle *tep = tep_alloc();
 +...
-+char *buf;
-+int size;
-+buf = read_file("/sys/kernel/tracing/events/header_page", &size);
-+if (tep_parse_header_page(tep, buf, size, sizeof(unsigned long)) != 0) {
-+	/* Failed to parse the header page */
++void process_record(struct tep_record *record)
++{
++	int data;
++
++	data = tep_data_type(tep, record);
++	if (data >= 0) {
++		/* Got the ID of the event */
++	}
++
++	data = tep_data_pid(tep, record);
++	if (data >= 0) {
++		/* Got the process ID */
++	}
++
++	data = tep_data_preempt_count(tep, record);
++	if (data >= 0) {
++		/* Got the preemption count */
++	}
++
++	data = tep_data_flags(tep, record);
++	if (data >= 0) {
++		/* Got the latency flags */
++	}
 +}
 +...
 +--
