@@ -2,157 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4872B1A2A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396181A2B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 19:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfEJRu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 13:50:57 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12524 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbfEJRu4 (ORCPT
+        id S1727885AbfEJRyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 13:54:25 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46146 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbfEJRyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 13:50:56 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd5b9d80001>; Fri, 10 May 2019 10:50:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 10 May 2019 10:50:54 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 10 May 2019 10:50:54 -0700
-Received: from [10.25.74.39] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 May
- 2019 17:50:47 +0000
-Subject: Re: [PATCH V5 03/16] PCI: Export pcie_bus_config symbol
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Krishna Thota <kthota@nvidia.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        "sagar.tv@gmail.com" <sagar.tv@gmail.com>
-References: <20190424052004.6270-1-vidyas@nvidia.com>
- <20190424052004.6270-4-vidyas@nvidia.com> <20190503110732.GC32400@ulmo>
- <80616ff5-d7a5-84a4-a71b-569e340d128c@nvidia.com>
- <20190510164623.GI235064@google.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <484cd585-d576-e6c3-d222-0b2391b5a7fe@nvidia.com>
-Date:   Fri, 10 May 2019 23:20:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 10 May 2019 13:54:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y11so3592729pfm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 10:54:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I1itVqm/8wQC9SNWjeDa4dzSfWDqGRFaqod6eNBqWDE=;
+        b=vpi+7QDuHFbrhBBUyCBfSRPp4e/b18thnFfQ8bcFdB7+QYft6hvk/wzwmMbGMpNFAu
+         GodCgjxLULgCoExsd5PcNVG2XmpdO7y7RawmiDS2wwQLIyHAdVMvyLNvAEsl7rmZrne0
+         An8KJ8pFXq6AL9lBK2f996oSXS6Xtq0n7sBdak8TFvfS1fnLLeEopXok2YbfF+F3qbPF
+         i0HfP7omSqy2J2dzOFYpktJe1eppSYU4mLHoVldyHBicYpGZWAtaAWCK9NgM6Syc4BiA
+         PPCgbPV+ewXX4uCbfDhmIml5lZk8dQO4djXjpd/cHh0McCqcAU4Jy0PtE+qAa+IUybZJ
+         VMKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I1itVqm/8wQC9SNWjeDa4dzSfWDqGRFaqod6eNBqWDE=;
+        b=MinhzwbNbXHHU/TH4tp6iS6hirSjACVjiOFg8f/uGaBN415kzPJzpRrW/Vr4zpSBLi
+         LVQMx4qyM6N/xCfMdUoaKB1uo1KNjRR203ERICrmZg669pVaf1SdwwV4c2U6TnZkNKXg
+         hUtzwes9NHta5tygVoGO/4a73p945d1BGBK2LbF/WzABIxXp9mqV3sWJIMd3OIAd1lNj
+         cU6Qa4HF0q7vgJhK06n/HBHII/PFObsQj21dqOClamXYs/lyfr1ykyAw3cfTLZKlwUJh
+         23dL7Xr9FjWo3X1/G2r5wAMe5MuoOVbowjRl+YFelGFmHRVn+iYoLLUThZPLA3sNiBK3
+         CBGA==
+X-Gm-Message-State: APjAAAV+IPI1lIbRRmV64ITWP96pfeeexBuxSiQU2/uTtsYfKBo2PNT4
+        KLvAasojoW53Jucm9R4YBlf+ts3h5q3rfWGUPV2UPrdB
+X-Google-Smtp-Source: APXvYqzP8m3pUBu8UMfj1TGUem0MHgkYl98JB8CBT7FbIBwDvJmFqEL/4/iSOqEP7vpWgLOmbZ7LAxZ9mHAlN3Sy0r4=
+X-Received: by 2002:aa7:8096:: with SMTP id v22mr16300080pff.94.1557510862969;
+ Fri, 10 May 2019 10:54:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190510164623.GI235064@google.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557510617; bh=myxHy02oeX5AFakgSkoBUPpIXZQF5FReGyngp+QG/u0=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=LMcRy5S166FLGtxfqcO+toaJpYUnD4e+CrVuppvw4S+Dm/q83pCZNYDN80M1mJuEs
-         LHP0skMkOUQopt85C1oiICVHMZwQeHZ9+uDI/ofI0VyyfIwK7XJFP4jLQyKQuaeyBT
-         12M9svhEKJ1HHd2DtuqN1JkYHK2rwyOEH4ZjUlJU6hecw7kmw9Jl4ELXLQSf1KKfuZ
-         XKqocV0TQsFwz23Ygjdnu+AClov70ObYWrGPmnPFcvCM4TGSG3lepgKZ0bGmsNdnIo
-         ublwi58Ci9Pv3Iq4f4PSsXm8o+qm6C/xhu2dgNvg5hoecoMQuyaVpf6D6CI953czm5
-         cCtwW0U1kKmCg==
+References: <1557497409-18037-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1557497409-18037-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 10 May 2019 10:54:11 -0700
+Message-ID: <CAKwvOdmaBopTduxoicj204pkr=+Xbapcqx2JMctNxd0MeHonog@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: add all Clang-specific flags unconditionally
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/10/2019 10:16 PM, Bjorn Helgaas wrote:
-> Hi Vidya,
-> 
-> On Fri, May 10, 2019 at 11:51:24AM +0530, Vidya Sagar wrote:
->>> -----Original Message-----
->>> From: linux-pci-owner@vger.kernel.org <linux-pci-owner@vger.kernel.org> On
->>> Behalf Of Thierry Reding
->>> Sent: Friday, May 3, 2019 4:38 PM
->>> To: Vidya Sagar <vidyas@nvidia.com>
->>> On Wed, Apr 24, 2019 at 10:49:51AM +0530, Vidya Sagar wrote:
->>>> Export pcie_bus_config to enable host controller drivers setting it to
->>>> a specific configuration be able to build as loadable modules
->>>>
->>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> 
->>> It doesn't look to me like this is something that host controller drivers are
->>> supposed to change. This is set via the pci kernel command- line parameter,
->>> meaning it's a way of tuning the system configuration.
->>> Drivers should not be allowed to override this after the fact.
->>>
->>> Why do we need to set this?
->> Here is the reason I'm doing it.
->> First things first, Tegra194 supports MPS up to 256 bytes.
->> Assume there are two endpoints with MPS supported up to
->> a) 128 bytes (Ex:- Realtek NIC with 8168 controller)
->> b) 256 bytes (Ex:- Kingston NVMe drive)
->> Now, leaving "pcie_bus_config" untouched in the driver sets it to
->> PCIE_BUS_DEFAULT by default. With this setting, for both (a) and (b),
->> MPS is set to 128, which means, even though Tegra194 supports 256 MPS, it is not
->> set to 256 even in case of (b) thereby not using RP's 256 MPS feature.
->> If I explicitly set pcie_bus_config=PCIE_BUS_PERFORMACE in the code, then 256 MPS is set when
->> (b) is connected, but when (a) is connected, for root port MPS 256 is set and for
->> endpoint MPS 128 is set, because of which root port tries to send packets with 256
->> payload that breaks functionality of Realtek NIC card.
->> The best option I've found out is that when I set 256 in PCI_EXP_DEVCTL of root port
->> explicitly before link up and use pcie_bus_config=PCIE_BUS_SAFE, then, I get the best of both
->> PCIE_BUS_DEFAULT and PCIE_BUS_PERFORMANCE i.e. with (a) connected, MPS is set to 128 in both RP
->> and EP and with (b) connected, MPS is set to 256 in both RP and EP.
->>
->> So, is it like, pcie_bus_config shouldn't be set to anything explicitly in the driver and depending on the
->> platform and what is connected to root port, kernel parameter can be passed with appropriate setting?
-> 
-> Host controller drivers shouldn't change this unless there's some host
-> controller defect that means the generic code can't do the right
-> thing.  Even then, I'd prefer that the host controller driver merely
-> set a quirk bit that describes the defect, e.g., "mps_*_broken".  Then
-> the generic code could pay attention to that and we wouldn't have to
-> make "pcie_bus_config" a part of the ABI.
-> 
->  From your description, it sounds like there's nothing actually wrong
-> with the Tegra194 hardware, but the generic code isn't as smart about
-> setting MPS as it possibly could be.  My solution to that would be to
-> make the generic code smarter so everybody can benefit.
-> 
-> Bjorn
-Thanks Bjorn for your take on this. I'll drop this patch from the current series
-and make a note to optimize PCIE_BUS_DEFAULT to do a better job of setting
-MPS in the best possible way.
+On Fri, May 10, 2019 at 7:10 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> We do not support old Clang versions. Upgrade your clang version
+> if any of these flags is unsupported.
+>
+> Let's add all flags within ifdef CONFIG_CC_IS_CLANG unconditionally.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-> 
->>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c index
->>>> f5ff01dc4b13..731f78508601 100644
->>>> --- a/drivers/pci/pci.c
->>>> +++ b/drivers/pci/pci.c
->>>> @@ -94,6 +94,7 @@ unsigned long pci_hotplug_mem_size =
->>>> DEFAULT_HOTPLUG_MEM_SIZE;  unsigned long pci_hotplug_bus_size =
->>>> DEFAULT_HOTPLUG_BUS_SIZE;
->>>>
->>>>   enum pcie_bus_config_types pcie_bus_config = PCIE_BUS_DEFAULT;
->>>> +EXPORT_SYMBOL_GPL(pcie_bus_config);
->>>>
->>>>   /*
->>>>    * The default CLS is used if arch didn't set CLS explicitly and not
->>>> --
->>>> 2.17.1
->>>>
+Ack
 
+> ---
+>
+> Changes in v2:
+>   - Rebase on top of Nathan's patch
+>      https://patchwork.kernel.org/patch/10937055/
+>
+>  Makefile                   | 10 +++++-----
+>  scripts/Makefile.extrawarn | 12 ++++++------
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 914a3ad..1152fc4 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -731,15 +731,15 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
+>  KBUILD_CFLAGS += $(stackp-flags-y)
+>
+>  ifdef CONFIG_CC_IS_CLANG
+> -KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+> +KBUILD_CPPFLAGS += -Qunused-arguments
+> +KBUILD_CFLAGS += -Wno-format-invalid-specifier
+> +KBUILD_CFLAGS += -Wno-gnu
+>  # Quiet clang warning: comparison of unsigned expression < 0 is always false
+> -KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+> +KBUILD_CFLAGS += -Wno-tautological-compare
+>  # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+>  # source of a reference will be _MergedGlobals and not on of the whitelisted names.
+>  # See modpost pattern 2
+> -KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+> +KBUILD_CFLAGS += -mno-global-merge
+>  else
+>
+>  # These warnings generated too much noise in a regular build.
+> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> index 768306a..523c4ca 100644
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -66,11 +66,11 @@ KBUILD_CFLAGS += $(warning)
+>  else
+>
+>  ifdef CONFIG_CC_IS_CLANG
+> -KBUILD_CFLAGS += $(call cc-disable-warning, initializer-overrides)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-value)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
+> +KBUILD_CFLAGS += -Wno-initializer-overrides
+> +KBUILD_CFLAGS += -Wno-unused-value
+> +KBUILD_CFLAGS += -Wno-format
+> +KBUILD_CFLAGS += -Wno-sign-compare
+> +KBUILD_CFLAGS += -Wno-format-zero-length
+> +KBUILD_CFLAGS += -Wno-uninitialized
+>  endif
+>  endif
+> --
+> 2.7.4
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
