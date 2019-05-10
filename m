@@ -2,88 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 332AE198E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE8A198F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:23:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbfEJHVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:21:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37246 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727224AbfEJHVc (ORCPT
+        id S1727255AbfEJHXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:23:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:32995 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfEJHXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:21:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uwdIcBUmVfzWGoctVjnYH5rQgHvL0u+qnruw3GjdPnQ=; b=lNZ7a6pyI902Z6aRZzYeDPq0C
-        ogGK4N60ciJU0RpHq9y23wowsXTmw4T8f65owtYKg5qPv2FhCxNKTaZQCIDsXOBFKAJK9aa+ofjeG
-        02ywY6seKiw1eJG2CGOx7yzEhurAbHsdN2+B8DU24ZC0yCYhOhB14jC6UYk0EIYu/X4o5GJDCH7yh
-        egTsl2ZM+/ZIizCeUGYiOx6paEC6OXqlmOnZzMIEiiCWmgIfdpECmhYg/7G6shfflk4MnkLpwMmgE
-        ak8Ne95SMzCWbfFnn7OnCWfRFeHaQoIFiH63YHneljN2aMIgIrBnfSz8s5a5oi2Tsv21rVT8tfqAu
-        g5p5RFxLA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOzqS-0004cY-2M; Fri, 10 May 2019 07:21:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 07C83284B2F48; Fri, 10 May 2019 09:21:26 +0200 (CEST)
-Date:   Fri, 10 May 2019 09:21:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@linaro.org, chris.redpath@arm.com,
-        Dietmar.Eggemann@arm.com, linux-kernel@vger.kernel.org,
-        steven.sistare@oracle.com
-Subject: Re: [RFC V2 2/2] sched/fair: Fallback to sched-idle CPU if idle CPU
- isn't found
-Message-ID: <20190510072125.GG2623@hirez.programming.kicks-ass.net>
-References: <cover.1556182964.git.viresh.kumar@linaro.org>
- <59b37c56b8fcb834f7d3234e776eaeff74ad117f.1556182965.git.viresh.kumar@linaro.org>
+        Fri, 10 May 2019 03:23:18 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c66so652028wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=6IJvqYq4JZWD5aTcjw2ROgUsvIuulKVOwmPtVdRwUBw=;
+        b=MLfJXEMdZmKpvWHQlqIzfyImp6Wy+KcsU0p5YvE1otyh3zIOF+I1vvQ/PJnC4diJpY
+         sh7j6UBJ/0TsdJxDPFx15teFeEEP0QzxEIQEcUOhHwljvJCS2Tjkf/2mrXiP9/ZgNwHe
+         CH4EkBxMqLQgUUoLVvHev0mv2XVIeQZeRZWtqthsJGrx+ZQjGkna1+4trW4eI+KMpWg/
+         NqQgmANFTSZNHuEBAXzpXICTBex/HmPLIEN8E0Q2umUFYZfV9vf8qRqgiXOYJdB/lK+T
+         nasc2eF4kXFxaiNB/WjJeNwU3qb9R9VMtLpc1FhwexCo5vE8Uqiyx1kEp0G2RSSP1FIm
+         NJ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6IJvqYq4JZWD5aTcjw2ROgUsvIuulKVOwmPtVdRwUBw=;
+        b=CdRqsKee7HaJmn6I6wiIO1JOSvWXygcp3AV3TzMyioQg+uHugc/ZP8DSmJjnpe9kNm
+         4LTEjvYZJMLTNV8yc45wBdoTSuCc1Izbe2+kZUlXf9SShc9W7QlvPHg3GzVDkWpemCUh
+         hQJiyRvJB6DwdMK2IIz+XFYoLAq5nFhuU2TTpwfU11y3TNXq4gcfL2SZJ1ZZd91ySHjj
+         RtEaJc/WcHnBhrGodatMivnXGjD4xhQoeSiah3vpxEmALM0HOpZi8lqyI7u+0WKYVpxV
+         oM2UMEhyOWygt0vOyJDmgDiMjeiWAGgHTXUeDyVd83iTvJLyP858GTpjLrG8LlYFlIjb
+         bFiQ==
+X-Gm-Message-State: APjAAAUwtSk04J1Sog13RQ6oTPLZqfnZAmWCktXsrhUYy3MUOnEPbeJQ
+        6lt8ZE+CAim42D2rveZ+ckstvg==
+X-Google-Smtp-Source: APXvYqwFI/XoRqh3l4hbVHQYN4vuu2sgvGQIfc1CDZPFb5/hfW20fNRJaFM/GapMBIrdKush+zwVEw==
+X-Received: by 2002:a1c:7008:: with SMTP id l8mr5638463wmc.49.1557472996594;
+        Fri, 10 May 2019 00:23:16 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id n14sm1748514wrt.79.2019.05.10.00.23.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 10 May 2019 00:23:16 -0700 (PDT)
+Date:   Fri, 10 May 2019 08:23:14 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Amelie Delaunay <amelie.delaunay@st.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [GIT PULL] Immutable branch between MFD and Pinctrl due for the v5.2
+ merge window
+Message-ID: <20190510072314.GC7321@dell>
+References: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <59b37c56b8fcb834f7d3234e776eaeff74ad117f.1556182965.git.viresh.kumar@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 03:07:40PM +0530, Viresh Kumar wrote:
-> We target for an idle CPU in select_idle_sibling() to run the next task,
-> but in case we don't find idle CPUs it is better to pick a CPU which
-> will run the task the soonest, for performance reason. A CPU which isn't
-> idle but has only SCHED_IDLE activity queued on it should be a good
-> target based on this criteria as any normal fair task will most likely
-> preempt the currently running SCHED_IDLE task immediately. In fact,
-> choosing a SCHED_IDLE CPU shall give better results as it should be able
-> to run the task sooner than an idle CPU (which requires to be woken up
-> from an idle state).
-> 
-> This patch updates the fast path to fallback to a sched-idle CPU if the
-> idle CPU isn't found, the slow path can be updated separately later.
-> 
-> Following is the order in which select_idle_sibling() picks up next CPU
-> to run the task now:
-> 
-> 1. idle_cpu(target) OR sched_idle_cpu(target)
-> 2. idle_cpu(prev) OR sched_idle_cpu(prev)
-> 3. idle_cpu(recent_used_cpu) OR sched_idle_cpu(recent_used_cpu)
-> 4. idle core(sd)
-> 5. idle_cpu(sd)
-> 6. sched_idle_cpu(sd)
-> 7. idle_cpu(p) - smt
-> 8. sched_idle_cpu(p)- smt
-> 
-> Though the policy can be tweaked a bit if we want to have different
-> priorities.
+Enjoy!
 
-I don't hate his per se; but the whole select_idle_sibling() thing is
-something that needs looking at.
+The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-There was the task stealing thing from Steve that looked interesting and
-that would render your apporach unfeasible.
+  Linux 5.1 (2019-05-05 17:42:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-pinctrl-v5.2
+
+for you to fetch changes up to 1490d9f841b186664f9d3ca213dcfa4464a60680:
+
+  pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver (2019-05-10 08:21:31 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD and Pinctrl due for the v5.2 merge window
+
+----------------------------------------------------------------
+Amelie Delaunay (4):
+      dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
+      mfd: Add ST Multi-Function eXpander (STMFX) core driver
+      dt-bindings: pinctrl: document the STMFX pinctrl bindings
+      pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+
+ Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 +
+ .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   2 +-
+ drivers/mfd/stmfx.c                                | 545 ++++++++++++++
+ drivers/pinctrl/Kconfig                            |  12 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-stmfx.c                    | 820 +++++++++++++++++++++
+ include/linux/mfd/stmfx.h                          | 123 ++++
+ 9 files changed, 1659 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+ create mode 100644 drivers/mfd/stmfx.c
+ create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
+ create mode 100644 include/linux/mfd/stmfx.h
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
