@@ -2,106 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A75E1195E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBF4195E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfEJAAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 20:00:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40147 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfEJAAe (ORCPT
+        id S1726924AbfEJAAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 20:00:43 -0400
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:47303 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfEJAAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 20:00:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d31so2027984pgl.7;
-        Thu, 09 May 2019 17:00:33 -0700 (PDT)
+        Thu, 9 May 2019 20:00:41 -0400
+Received: by mail-oi1-f202.google.com with SMTP id 2so1674425oiy.14
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 17:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dChVqTviUJZkhAEyGEloPZUsbHeVi+nAadOc17lt/xI=;
-        b=F8YiX69wMj6uWvqG2gj8rKD+5JmXiGDvRhtfdWy7mtV4/+PV9t2Gswew4nGi+VrSMw
-         VP+qiGJpDxrx17QBJQYFkLDpPg6Fdd0PceCoPIXyh1/7Rkk9G65Nc3Fmd6a6/2WrtLja
-         N53kTp0zZWxOEAw0sTOGCrvxsng/iIjvQ521OoNTKoVdjLz8zsTHW/q0IkJZTZygapzj
-         govaj2K6lqprTecx4biOocaOEUBt/DaMXbNZ0R7UKsrVf4sr8UDCkjRTv7f+ZF6hly2M
-         atatsJ0iDQ4SSC06pbmOTDDFMtU1puaTBZp84W/FVFpOiKM6NgaTl6STaSR+5FULa9I5
-         XQyA==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=ZeoJmeVmdaLlUYqpdR4tYo7PLVche4+REuZ+a12ZbZ4=;
+        b=oA0+g3tEHKO5sSwmn2RXOjiy2/CqtildrTg4wIqr6a+JAKjsFi/eYYnp8icgip6s6z
+         g3omjogp4NWiMcXAluZo1YukLO4m8YphkZtr49cD/LZvSJpQOs89XdmFSQKn2pL7rYtX
+         8qcpUC0+gtRJw1C+z3Vnp7Uic/I4NCyOLMDfTQwDWc36+//7shA551ysxFoKWSGUMigd
+         HzrHBwUXjuQIi2n3SK5ZAlnjYkaxdG2Zc9l5FbuMRyKTts7/M4wRE7hAG+W5SfDtjE9M
+         lbLKeLKruke6SzEc3KBnKq59/RYHAQDcvSOi6+n2FMKQddqK6sdYN/CLCmxFa5frvUyb
+         njcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dChVqTviUJZkhAEyGEloPZUsbHeVi+nAadOc17lt/xI=;
-        b=LaHPBeqcmNAyt6DeRGaaH3IBkPJsH/22xbnrVNCllQ/nMUCO4UkgluGUDBVaYcITHL
-         A+bwZb1NzRUMs+4M7k/PlkpOCuA8aeBS0xKSdj6kXk95PGf79qTUOJ1NKyFNWUqF3H2v
-         MYPJXC08jRl7btl52+2tWA7rjVu7PzKHnyA1Vy8203X+JVp49tE5Pi7HdGAKcecd1lRp
-         19qzs3MEhpuKu/1GGYI4bXk827/YkWxfDxiCn4sgSQgn6nAGznz3T5p5kvq7fSRV8edJ
-         usnnjcNw++2Hx58JCq68+pIrKPnZfhbpIIA5zTGcbvBQT70gPKaGEO2bgCv5iCW7xmYC
-         M1Gg==
-X-Gm-Message-State: APjAAAVJs7qZFfdD1jjfhns1usXrySv8f1PQc3XXb7+aRyVcbWc1LSnN
-        GHJIXFF9MeI3kEokVT3xeIA=
-X-Google-Smtp-Source: APXvYqy/JgDoQjdsf4op7BILs++mEfq/winhdVwvj+maESKvfRaXlBFJOw539wdBqfKBpU78/4H/Rw==
-X-Received: by 2002:a63:1d05:: with SMTP id d5mr9280001pgd.157.1557446433356;
-        Thu, 09 May 2019 17:00:33 -0700 (PDT)
-Received: from ip-172-31-29-54.us-west-2.compute.internal (ec2-34-219-153-187.us-west-2.compute.amazonaws.com. [34.219.153.187])
-        by smtp.gmail.com with ESMTPSA id u7sm4342389pfu.157.2019.05.09.17.00.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 17:00:32 -0700 (PDT)
-Date:   Fri, 10 May 2019 00:00:30 +0000
-From:   Alakesh Haloi <alakesh.haloi@gmail.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests/bpf: Fix compile warning in bpf selftest
-Message-ID: <20190510000030.GA81841@ip-172-31-29-54.us-west-2.compute.internal>
-References: <20190507231224.GA3787@ip-172-31-29-54.us-west-2.compute.internal>
- <CAADnVQ+e6TW9cH6yDmRSG5pRHXJiZajcx_q9SoPQi1keDROh-g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQ+e6TW9cH6yDmRSG5pRHXJiZajcx_q9SoPQi1keDROh-g@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=ZeoJmeVmdaLlUYqpdR4tYo7PLVche4+REuZ+a12ZbZ4=;
+        b=hkVab/3z2HgWjtLQ5WbW+gn4ffDuUAQ8vE0Ug+sty6dOJAMKTo59LFbYLXQgruUjBh
+         NdxxZvKvkPT7Foemui5b5EzH7md3l8yAPSdVxugeaY/zfQXRrSHtJDsEXzV/fYvsQ0lL
+         QsifJ0EH2D76IXTvRQ0ifrCQgcejU13oD66I580++YEqAuPbnDsbv5yxPpj7B9cmN6dC
+         PR11OpkAx076PEj26BKavh22rd3inv2fWz7OF+B8voNTqgjgIqnYlxe+Q9muT0owKehK
+         0HncsKc6D83tcb+Gg5CTeK/nnvrftwiTi9IVGUYPC3d8S5x7K70gB+mfbfuVuKckzW3b
+         zNBA==
+X-Gm-Message-State: APjAAAW7Kwu8HoTlw+VIJ4ErRSNsKyaf+grDSniHDdTmRCVOEzM3u7Sx
+        WhHIM9lGEjl/yTdXdTyfV3ol8z47x4waCEUSWbIuyZrq7fDbHFppXb5YvI1rBO9sFPIGJKiV3Pb
+        Q88otSZAPgtaY2zrP9xegnw/ZQuf3J720LxX47lz7CRhKprZZnLKkgo5h/iv1xbTcz4E=
+X-Google-Smtp-Source: APXvYqzG6xLzpbiFMvx9NI0qwQGX5W5Vqzds/q7jeKS4RVpx2YMuk0v6g5xOIEd2iz26P4xRk0I2Lhh1Pw==
+X-Received: by 2002:aca:4f11:: with SMTP id d17mr2055944oib.9.1557446440191;
+ Thu, 09 May 2019 17:00:40 -0700 (PDT)
+Date:   Thu,  9 May 2019 17:00:31 -0700
+In-Reply-To: <20190510000032.40749-1-fengc@google.com>
+Message-Id: <20190510000032.40749-3-fengc@google.com>
+Mime-Version: 1.0
+References: <20190510000032.40749-1-fengc@google.com>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [dma-buf v3 2/3] dma-buf: add DMA_BUF_{GET,SET}_NAME ioctls
+From:   Chenbo Feng <fengc@google.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>, erickreyes@google.com,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 01:51:54PM -0700, Alexei Starovoitov wrote:
-> On Tue, May 7, 2019 at 4:12 PM Alakesh Haloi <alakesh.haloi@gmail.com> wrote:
-> >
-> > This fixes the following compile time warning
-> >
-> > flow_dissector_load.c: In function ‘detach_program’:
-> > flow_dissector_load.c:55:19: warning: format not a string literal and no format arguments [-Wformat-security]
-> >    error(1, errno, command);
-> >                    ^~~~~~~
-> > Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
-> > ---
-> >  tools/testing/selftests/bpf/flow_dissector_load.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/flow_dissector_load.c b/tools/testing/selftests/bpf/flow_dissector_load.c
-> > index 77cafa66d048..7136ab9ffa73 100644
-> > --- a/tools/testing/selftests/bpf/flow_dissector_load.c
-> > +++ b/tools/testing/selftests/bpf/flow_dissector_load.c
-> > @@ -52,7 +52,7 @@ static void detach_program(void)
-> >         sprintf(command, "rm -r %s", cfg_pin_path);
-> >         ret = system(command);
-> >         if (ret)
-> > -               error(1, errno, command);
-> > +               error(1, errno, "%s", command);
-> >  }
-> 
-> it was fixed month ago.
-The warning is seen in mainline. I did not try bpf tree. Looks like it
-is fixed there. 
+From: Greg Hackmann <ghackmann@google.com>
 
-Thanks
--Alakesh
+This patch adds complimentary DMA_BUF_SET_NAME and DMA_BUF_GET_NAME
+ioctls, which lets userspace processes attach a free-form name to each
+buffer.
+
+This information can be extremely helpful for tracking and accounting
+shared buffers.  For example, on Android, we know what each buffer will
+be used for at allocation time: GL, multimedia, camera, etc.  The
+userspace allocator can use DMA_BUF_SET_NAME to associate that
+information with the buffer, so we can later give developers a
+breakdown of how much memory they're allocating for graphics, camera,
+etc.
+
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Chenbo Feng <fengc@google.com>
+---
+ drivers/dma-buf/dma-buf.c    | 49 +++++++++++++++++++++++++++++++++---
+ include/linux/dma-buf.h      |  5 +++-
+ include/uapi/linux/dma-buf.h |  3 +++
+ 3 files changed, 53 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index ffd5a2ad7d6f..c1da5f9ce44d 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -48,8 +48,24 @@ struct dma_buf_list {
+ 
+ static struct dma_buf_list db_list;
+ 
++static char *dmabuffs_dname(struct dentry *dentry, char *buffer, int buflen)
++{
++	struct dma_buf *dmabuf;
++	char name[DMA_BUF_NAME_LEN];
++	size_t ret = 0;
++
++	dmabuf = dentry->d_fsdata;
++	mutex_lock(&dmabuf->lock);
++	if (dmabuf->name)
++		ret = strlcpy(name, dmabuf->name, DMA_BUF_NAME_LEN);
++	mutex_unlock(&dmabuf->lock);
++
++	return dynamic_dname(dentry, buffer, buflen, "/%s:%s",
++			     dentry->d_name.name, ret > 0 ? name : "");
++}
++
+ static const struct dentry_operations dma_buf_dentry_ops = {
+-	.d_dname = simple_dname,
++	.d_dname = dmabuffs_dname,
+ };
+ 
+ static struct vfsmount *dma_buf_mnt;
+@@ -297,6 +313,27 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+ 	return events;
+ }
+ 
++static long dma_buf_set_name(struct dma_buf *dmabuf, const char __user *buf)
++{
++	char *name = strndup_user(buf, DMA_BUF_NAME_LEN);
++	long ret = 0;
++
++	if (IS_ERR(name))
++		return PTR_ERR(name);
++
++	mutex_lock(&dmabuf->lock);
++	if (!list_empty(&dmabuf->attachments)) {
++		ret = -EBUSY;
++		goto out_unlock;
++	}
++	kfree(dmabuf->name);
++	dmabuf->name = name;
++
++out_unlock:
++	mutex_unlock(&dmabuf->lock);
++	return ret;
++}
++
+ static long dma_buf_ioctl(struct file *file,
+ 			  unsigned int cmd, unsigned long arg)
+ {
+@@ -335,6 +372,10 @@ static long dma_buf_ioctl(struct file *file,
+ 			ret = dma_buf_begin_cpu_access(dmabuf, direction);
+ 
+ 		return ret;
++
++	case DMA_BUF_SET_NAME:
++		return dma_buf_set_name(dmabuf, (const char __user *)arg);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -376,6 +417,7 @@ static struct file *dma_buf_getfile(struct dma_buf *dmabuf, int flags)
+ 		goto err_alloc_file;
+ 	file->f_flags = flags & (O_ACCMODE | O_NONBLOCK);
+ 	file->private_data = dmabuf;
++	file->f_path.dentry->d_fsdata = dmabuf;
+ 
+ 	return file;
+ 
+@@ -1082,12 +1124,13 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
+ 			continue;
+ 		}
+ 
+-		seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\n",
++		seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\t%s\n",
+ 				buf_obj->size,
+ 				buf_obj->file->f_flags, buf_obj->file->f_mode,
+ 				file_count(buf_obj->file),
+ 				buf_obj->exp_name,
+-				file_inode(buf_obj->file)->i_ino);
++				file_inode(buf_obj->file)->i_ino,
++				buf_obj->name ?: "");
+ 
+ 		robj = buf_obj->resv;
+ 		while (true) {
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index 58725f890b5b..582998e19df6 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -255,10 +255,12 @@ struct dma_buf_ops {
+  * @file: file pointer used for sharing buffers across, and for refcounting.
+  * @attachments: list of dma_buf_attachment that denotes all devices attached.
+  * @ops: dma_buf_ops associated with this buffer object.
+- * @lock: used internally to serialize list manipulation, attach/detach and vmap/unmap
++ * @lock: used internally to serialize list manipulation, attach/detach and
++ *        vmap/unmap, and accesses to name
+  * @vmapping_counter: used internally to refcnt the vmaps
+  * @vmap_ptr: the current vmap ptr if vmapping_counter > 0
+  * @exp_name: name of the exporter; useful for debugging.
++ * @name: userspace-provided name; useful for accounting and debugging.
+  * @owner: pointer to exporter module; used for refcounting when exporter is a
+  *         kernel module.
+  * @list_node: node for dma_buf accounting and debugging.
+@@ -286,6 +288,7 @@ struct dma_buf {
+ 	unsigned vmapping_counter;
+ 	void *vmap_ptr;
+ 	const char *exp_name;
++	const char *name;
+ 	struct module *owner;
+ 	struct list_head list_node;
+ 	void *priv;
+diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
+index d75df5210a4a..dbc7092e04b5 100644
+--- a/include/uapi/linux/dma-buf.h
++++ b/include/uapi/linux/dma-buf.h
+@@ -35,7 +35,10 @@ struct dma_buf_sync {
+ #define DMA_BUF_SYNC_VALID_FLAGS_MASK \
+ 	(DMA_BUF_SYNC_RW | DMA_BUF_SYNC_END)
+ 
++#define DMA_BUF_NAME_LEN	32
++
+ #define DMA_BUF_BASE		'b'
+ #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
++#define DMA_BUF_SET_NAME	_IOW(DMA_BUF_BASE, 1, const char *)
+ 
+ #endif
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
