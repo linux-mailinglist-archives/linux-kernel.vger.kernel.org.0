@@ -2,113 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA7719878
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 196A61986A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfEJGhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 02:37:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44810 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfEJGhN (ORCPT
+        id S1727036AbfEJGgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 02:36:20 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44934 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbfEJGgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 02:37:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g9so2662609pfo.11;
-        Thu, 09 May 2019 23:37:12 -0700 (PDT)
+        Fri, 10 May 2019 02:36:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id e13so4074013ljl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tZpDbbxPQIQaiTEJ/QF3eG59ACeQtX21Wr99/jZNM7o=;
-        b=r59rDHqtOd7p+7W9lwVnV5p8DCUR6qGWm1fA+Se52beD9X8hdi5gXvUCA/jU5nhPDl
-         WF3brRF3Y+iKrRQCfzoL7srTYKFWGrF4/+JKPn2GZDDQMP4Y32QZVWgJ8fpzz4JHDC/j
-         UxJliP3I3+QfBu346rmvtNAiw8aEa1KrCRxRBDErVdos5adye4rfGww0oten6Smdy2Cj
-         oRf6DSnhVd+Y6RzhNRsT2Nb/KrQ6xDm+2pd9qCCNTDMNtvZgf8j7kRKGEcMUqsJRXHGV
-         /FycWZVKTUm+USwcg0lSigbRGpnzCfKUYsrXV5HD2U4o1IWUz3kIm9Cr1Z6V51X6yv0X
-         4HPg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jdn1fB5jK2H9U7klv9WLYai3MkQ8jjCmQ0uyEZntdqE=;
+        b=QbhMpmEZ8IEj071UOyImUxcupm/StXph+T9Z8knKJ4PpktNB98llcx9Wuxs9WKxIyN
+         Sq8dbRU7UrZeIgoWGzDr5klJN3ykYw2hcmu2v667LBcIrKFLkPDxP5E4MZwXzOrCdrIr
+         UjTSP++617UkcCA8B627dZ/xakGdZod/QE+WPiuzZK6ZZ4Sr8dhMoz7UABabRgK0eVvS
+         D4e8sbFGoYf0PPjq2i5YQr5fllJx7Tudie1dRo119xUOIi+5M7oodFN1jJsuFZJvqxyg
+         tnWfe+ySBKNDV18HWw27XNjnTrVTO6hLab0u5i+/9Bmx557KXnBKGPRCzrbsPOt/VReh
+         6cZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tZpDbbxPQIQaiTEJ/QF3eG59ACeQtX21Wr99/jZNM7o=;
-        b=o8qNj3xgEwnmTliR1dgcmSsIgabDiB48PR/bKu3qYkeqqrP3S7DqY4ekTsZWbtwDaU
-         3SHTjplOcRo4lp2nOLaMnxafxuMREZRcHfTrvQMK84xJc+rHCyyker/ONZfnuvZEOzOs
-         JgcwslPXGLoWPdGzmlokmrLOKfGVMRrmMnPn/EgOl9ICTaGBJQBSvCkZyVvG89+UHK0w
-         GBoYkgQ+rrJwsulm2tDwuPV5WMeeTwtJSRUHScX+F0RHVaTBgBWqRy9ypCCeeFtFQnu7
-         xGR1j7qPmPoK87kcH9oZ+xKijpFDya2bDuw/k4m3igXSAcPtkPBkzrTPjU/tDi/pUh+l
-         4+lw==
-X-Gm-Message-State: APjAAAVbfGLXmDEeaWxM1ERhu366o6KIDMqeqGS8NpctOzZKVLPH/4qQ
-        cZl0aS7tsDnvthd8m7YpMs8=
-X-Google-Smtp-Source: APXvYqyTPtOYvxSUX3bbrvCZ4KxRbJM8QDJZj2fhpRLkLZL3C4WBC0szcESYnw8qQPdTbioxaatmIw==
-X-Received: by 2002:a63:2124:: with SMTP id h36mr11608289pgh.186.1557470232308;
-        Thu, 09 May 2019 23:37:12 -0700 (PDT)
-Received: from bridge.localdomain ([119.28.31.106])
-        by smtp.gmail.com with ESMTPSA id v6sm4469263pgi.88.2019.05.09.23.37.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 23:37:11 -0700 (PDT)
-From:   Wenbin Zeng <wenbin.zeng@gmail.com>
-X-Google-Original-From: Wenbin Zeng <wenbinzeng@tencent.com>
-To:     bfields@fieldses.org, viro@zeniv.linux.org.uk, davem@davemloft.net
-Cc:     jlayton@kernel.org, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, wenbinzeng@tencent.com,
-        dsahern@gmail.com, nicolas.dichtel@6wind.com, willy@infradead.org,
-        edumazet@google.com, jakub.kicinski@netronome.com,
-        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v2 3/3] auth_gss: fix deadlock that blocks rpcsec_gss_exit_net when use-gss-proxy==1
-Date:   Fri, 10 May 2019 14:36:03 +0800
-Message-Id: <1557470163-30071-4-git-send-email-wenbinzeng@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
- <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jdn1fB5jK2H9U7klv9WLYai3MkQ8jjCmQ0uyEZntdqE=;
+        b=nKqC30PLVx1GiBJh82lNkS/MsThCBwvmp4/+oc2GAxMA+e3F3OeLIKeRS4yyylMJg9
+         7hmlbKgzgGBg+W+7MFIHVmQJtNOQ3DirZGxqmMJDiuhqlulQ2Bdox7LXsCDoqJT0Yz3U
+         r3wq/2b3uZeNtkcAgp/qcoYxPWyYHdKa6kjRsDLiKVLoXLCMyOZKBmueBki+1CyrIM5r
+         myGgPwSPkN3nJAhDY+ro/W0/O6ZbkTodtJvIwSSHXwZjTS9lFjump3tCMMXLJuVBKFeA
+         T+2dDQJ1ROl0fjKVDRPOVgcgQI5C5m7Gf94gH8vospG0Y3s6YBPSoaoMZQPx2247LMRE
+         +L9A==
+X-Gm-Message-State: APjAAAXjkOz8QMcDx6tL3CuwaOyDW4CVu2pQfjd9jaLiZKDdNMzNFRMN
+        WIRNbOVk/+GxKgS0mRpv6htv1UvwOlSGIaiJUpwX+w==
+X-Google-Smtp-Source: APXvYqwovU9fCF8YmwMEJZhh0/PzADcVGKOIy7Ujk0rMuR4qjDtBbQDRUvCXHyWDfeona9Ck+tqMBnfgl0018FSX1Wc=
+X-Received: by 2002:a2e:9193:: with SMTP id f19mr4604787ljg.111.1557470178310;
+ Thu, 09 May 2019 23:36:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190509181309.180685671@linuxfoundation.org>
+In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 10 May 2019 12:06:07 +0530
+Message-ID: <CA+G9fYvKNb-WD+0govE2NWzjHisdJXiRRioTQGZKHP0gvO9WKw@mail.gmail.com>
+Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When use-gss-proxy is set to 1, write_gssp() creates a rpc client in
-gssp_rpc_create(), this increases netns refcount by 2, these refcounts are
-supposed to be released in rpcsec_gss_exit_net(), but it will never happen
-because rpcsec_gss_exit_net() is triggered only when netns refcount gets
-to 0, specifically:
-    refcount=0 -> cleanup_net() -> ops_exit_list -> rpcsec_gss_exit_net
-It is a deadlock situation here, refcount will never get to 0 unless
-rpcsec_gss_exit_net() is called.
+On Fri, 10 May 2019 at 00:21, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.0.15 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat 11 May 2019 06:11:22 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.0.15-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.0.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-This fix introduced a new callback i.e. evict in struct proc_ns_operations,
-which is called in nsfs_evict. Moving rpcsec_gss_exit_net to evict path
-gives it a chance to get called and avoids the above deadlock situation.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Signed-off-by: Wenbin Zeng <wenbinzeng@tencent.com>
----
- net/sunrpc/auth_gss/auth_gss.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Summary
+------------------------------------------------------------------------
 
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index 3fd56c0..3e6bd59 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -2136,14 +2136,17 @@ static __net_init int rpcsec_gss_init_net(struct net *net)
- 	return gss_svc_init_net(net);
- }
- 
--static __net_exit void rpcsec_gss_exit_net(struct net *net)
-+static void rpcsec_gss_evict_net(struct net *net)
- {
--	gss_svc_shutdown_net(net);
-+	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
-+
-+	if (sn->gssp_clnt)
-+		gss_svc_shutdown_net(net);
- }
- 
- static struct pernet_operations rpcsec_gss_net_ops = {
- 	.init = rpcsec_gss_init_net,
--	.exit = rpcsec_gss_exit_net,
-+	.evict = rpcsec_gss_evict_net,
- };
- 
- /*
--- 
-1.8.3.1
+kernel: 5.0.15-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-5.0.y
+git commit: df1376651d496484d341d374c3d2566a089b1969
+git describe: v5.0.14-96-gdf1376651d49
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.0-oe/bui=
+ld/v5.0.14-96-gdf1376651d49
 
+No regressions (compared to build v5.0.14)
+
+No fixes (compared to build v5.0.14)
+
+
+Ran 24978 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
