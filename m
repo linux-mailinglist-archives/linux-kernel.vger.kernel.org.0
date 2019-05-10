@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD4C198E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E47C198EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfEJHVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:21:32 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35804 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfEJHVa (ORCPT
+        id S1727285AbfEJHVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:21:48 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44513 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbfEJHVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:21:30 -0400
-Received: by mail-qk1-f196.google.com with SMTP id c15so3092133qkl.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:21:30 -0700 (PDT)
+        Fri, 10 May 2019 03:21:33 -0400
+Received: by mail-qk1-f195.google.com with SMTP id w25so3047870qkj.11
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 00:21:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qzOAoH/TNvXjcpwg8Oz/fc8MXlS07T4EqVnD2ZBjw6A=;
-        b=A0KYrft1OCnl5OcsAOo9h1AxVu+oBfn/0hSqwsIjP05X/D35h8rl5F24hweAQl9X6L
-         +PMvq6MqWjYapj8iGqmCrpmi92o7hTWGV73YL935T1jw+IPQLawXBduXaEtXeEt89ZV+
-         E2XIn5ycOiOr/GSFgudPExOKT1UJWttikvjKibfeXkqQtdWYLhiqsPDuxXpLOEY5yr1Y
-         AVIsYYQ6iP0GZQrT+GnDMvLrIbihhBk53Imnz93SWJIjGb/4p42Pw0lGX65FXbLConCd
-         /m/f0Oq2B2JycUOIEcylqWKRRq++YY+AR8aHAg2Zz/ekzzIcCJaeuJqXS60rqZre/U5Q
-         NGXg==
-X-Gm-Message-State: APjAAAXYiBKZjw53mgUpQGDTLA0cCRybRWiVJ5O/CZhcym/ZPxi9wqlW
-        APzUQXXKejbkb5FSwcequ0Od+p0tjTg5hw==
-X-Google-Smtp-Source: APXvYqwKpqIkvTy6CiBwHKtkH71OJTdUzb+Ov2Uf7B01EGgr+mZM24+4w2juFKcB1sGHGd3S+eq7hw==
-X-Received: by 2002:a37:648d:: with SMTP id y135mr7656118qkb.237.1557472889756;
-        Fri, 10 May 2019 00:21:29 -0700 (PDT)
+        bh=vOejBc1QN8TJ6K5lhz+Yvn4+87eApSQ46e32YrdputU=;
+        b=stPIaAE8WyGUcWExUKY5n+2KdfzMooZZxhMx8Gug7jNnArJ8wM1rdLBwlpf+Zomb5e
+         oiwelU+5cXoz+SZRfxRNm7TGY77vj6X+ebaMTXKy1WFHUEDjqEECGZzGZ1NZOMATbUnu
+         B99AcwBRn1KCWUuKWN6jpu59dovZzAC/grAjxpxPT/QfRUdinXsyMSiBBXKBAexZhVtH
+         ixYlVfXUTOgh9wW3prp5h42iucGZ1N+3Qp9SS2D9/YcbXX844Q1kC9KX3V7/yzq8EUSD
+         8z1XqpWbdWjk7lf0DGRWB8Sd3lTuxaQI5p4/YjgWKPCa/mnCcnxivC4YDs76z5XoFmu/
+         6YIA==
+X-Gm-Message-State: APjAAAVJ7u2657XF9+alQysVG4MkTeF6WaHUM3k9lzI0LnmYtcMEqDJD
+        bZgM305j6cDNNedy2ygBXn0XJsaK1co2rQ==
+X-Google-Smtp-Source: APXvYqzPe26b8EbsZNX43wXIk/ZJMwyIsrlo41vyylWWI/zUIYOTf4fWR2vuKOPN9vH/HO0FjC5SPg==
+X-Received: by 2002:a37:5444:: with SMTP id i65mr7490671qkb.263.1557472892023;
+        Fri, 10 May 2019 00:21:32 -0700 (PDT)
 Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id i92sm2579667qtb.44.2019.05.10.00.21.28
+        by smtp.gmail.com with ESMTPSA id y18sm2145077qty.78.2019.05.10.00.21.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 00:21:29 -0700 (PDT)
+        Fri, 10 May 2019 00:21:31 -0700 (PDT)
 From:   Oleksandr Natalenko <oleksandr@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -43,9 +43,9 @@ Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
         Timofey Titovets <nefelim4ag@gmail.com>,
         Aaron Tomlin <atomlin@redhat.com>, linux-mm@kvack.org
-Subject: [PATCH RFC 1/4] mm/ksm: introduce ksm_enter() helper
-Date:   Fri, 10 May 2019 09:21:22 +0200
-Message-Id: <20190510072125.18059-2-oleksandr@redhat.com>
+Subject: [PATCH RFC 2/4] mm/ksm: introduce VM_UNMERGEABLE
+Date:   Fri, 10 May 2019 09:21:23 +0200
+Message-Id: <20190510072125.18059-3-oleksandr@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190510072125.18059-1-oleksandr@redhat.com>
 References: <20190510072125.18059-1-oleksandr@redhat.com>
@@ -56,114 +56,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move MADV_MERGEABLE part of ksm_madvise() into a dedicated helper since
-it will be further used in do_anonymous_page().
+Add separate vmaflag to allow applications to opt out of automatic VMAs
+merging due to (possible) security concerns.
 
-This does not bring any functional changes.
+Since vmaflags are tight on free bits, this flag is available on 64-bit
+architectures only. Thus, subsequently, KSM "always" mode will be
+available for 64-bit architectures only as well.
 
 Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
 ---
- include/linux/ksm.h |  2 ++
- mm/ksm.c            | 66 ++++++++++++++++++++++++++-------------------
- 2 files changed, 41 insertions(+), 27 deletions(-)
+ fs/proc/task_mmu.c             |  3 +++
+ include/linux/mm.h             |  6 ++++++
+ include/trace/events/mmflags.h |  7 +++++++
+ mm/ksm.c                       | 13 +++++++++++++
+ 4 files changed, 29 insertions(+)
 
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index e48b1e453ff5..bc13f228e2ed 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -21,6 +21,8 @@ struct mem_cgroup;
- #ifdef CONFIG_KSM
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags);
-+int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
-+		unsigned long *vm_flags);
- int __ksm_enter(struct mm_struct *mm);
- void __ksm_exit(struct mm_struct *mm);
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 95ca1fe7283c..19cc246000e8 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -648,6 +648,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_MIXEDMAP)]	= "mm",
+ 		[ilog2(VM_HUGEPAGE)]	= "hg",
+ 		[ilog2(VM_NOHUGEPAGE)]	= "nh",
++#ifdef VM_UNMERGEABLE
++		[ilog2(VM_UNMERGEABLE)]	= "ug",
++#endif
+ 		[ilog2(VM_MERGEABLE)]	= "mg",
+ 		[ilog2(VM_UFFD_MISSING)]= "um",
+ 		[ilog2(VM_UFFD_WP)]	= "uw",
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6b10c21630f5..114cdb882cdd 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -252,11 +252,13 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_BIT_2	34	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
++#define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+ #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+ #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+ #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
++#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
  
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -272,6 +274,10 @@ extern unsigned int kobjsize(const void *objp);
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
+ 
++#ifdef VM_HIGH_ARCH_5
++#define VM_UNMERGEABLE	VM_HIGH_ARCH_5	/* Opt-out for KSM "always" mode */
++#endif /* VM_HIGH_ARCH_5 */
++
+ #if defined(CONFIG_X86)
+ # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+index a1675d43777e..717e0fd9d2ef 100644
+--- a/include/trace/events/mmflags.h
++++ b/include/trace/events/mmflags.h
+@@ -130,6 +130,12 @@ IF_HAVE_PG_IDLE(PG_idle,		"idle"		)
+ #define IF_HAVE_VM_SOFTDIRTY(flag,name)
+ #endif
+ 
++#ifdef VM_UNMERGEABLE
++#define IF_HAVE_VM_UNMERGEABLE(flag,name) {flag, name },
++#else
++#define IF_HAVE_VM_UNMERGEABLE(flag,name)
++#endif
++
+ #define __def_vmaflag_names						\
+ 	{VM_READ,			"read"		},		\
+ 	{VM_WRITE,			"write"		},		\
+@@ -161,6 +167,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,	"softdirty"	)		\
+ 	{VM_MIXEDMAP,			"mixedmap"	},		\
+ 	{VM_HUGEPAGE,			"hugepage"	},		\
+ 	{VM_NOHUGEPAGE,			"nohugepage"	},		\
++IF_HAVE_VM_UNMERGEABLE(VM_UNMERGEABLE,	"unmergeable"	)		\
+ 	{VM_MERGEABLE,			"mergeable"	}		\
+ 
+ #define show_vma_flags(flags)						\
 diff --git a/mm/ksm.c b/mm/ksm.c
-index fc64874dc6f4..a6b0788a3a22 100644
+index a6b0788a3a22..0fb5f850087a 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -2450,33 +2450,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+@@ -2450,12 +2450,18 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
  
  	switch (advice) {
  	case MADV_MERGEABLE:
--		/*
--		 * Be somewhat over-protective for now!
--		 */
--		if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
--				 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
--				 VM_HUGETLB | VM_MIXEDMAP))
--			return 0;		/* just ignore the advice */
--
--		if (vma_is_dax(vma))
--			return 0;
--
--#ifdef VM_SAO
--		if (*vm_flags & VM_SAO)
--			return 0;
--#endif
--#ifdef VM_SPARC_ADI
--		if (*vm_flags & VM_SPARC_ADI)
--			return 0;
--#endif
--
--		if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
--			err = __ksm_enter(mm);
--			if (err)
--				return err;
--		}
--
--		*vm_flags |= VM_MERGEABLE;
-+		err = ksm_enter(mm, vma, vm_flags);
-+		if (err)
-+			return err;
++#ifdef VM_UNMERGEABLE
++		*vm_flags &= ~VM_UNMERGEABLE;
++#endif
+ 		err = ksm_enter(mm, vma, vm_flags);
+ 		if (err)
+ 			return err;
  		break;
  
  	case MADV_UNMERGEABLE:
-@@ -2496,6 +2472,42 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 	return 0;
- }
++#ifdef VM_UNMERGEABLE
++		*vm_flags |= VM_UNMERGEABLE;
++#endif
+ 		if (!(*vm_flags & VM_MERGEABLE))
+ 			return 0;		/* just ignore the advice */
  
-+int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
-+		unsigned long *vm_flags)
-+{
-+	int err;
-+
-+	/*
-+	 * Be somewhat over-protective for now!
-+	 */
-+	if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
-+			 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
-+			 VM_HUGETLB | VM_MIXEDMAP))
-+		return 0;		/* just ignore the advice */
-+
-+	if (vma_is_dax(vma))
-+		return 0;
-+
-+#ifdef VM_SAO
-+	if (*vm_flags & VM_SAO)
+@@ -2496,6 +2502,10 @@ int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	if (*vm_flags & VM_SPARC_ADI)
+ 		return 0;
+ #endif
++#ifdef VM_UNMERGEABLE
++	if (*vm_flags & VM_UNMERGEABLE)
 +		return 0;
 +#endif
-+#ifdef VM_SPARC_ADI
-+	if (*vm_flags & VM_SPARC_ADI)
-+		return 0;
+ 
+ 	if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
+ 		err = __ksm_enter(mm);
+@@ -3173,6 +3183,9 @@ static ssize_t full_scans_show(struct kobject *kobj,
+ KSM_ATTR_RO(full_scans);
+ 
+ static struct attribute *ksm_attrs[] = {
++#ifdef VM_UNMERGEABLE
++	&mode_attr.attr,
 +#endif
-+
-+	if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
-+		err = __ksm_enter(mm);
-+		if (err)
-+			return err;
-+	}
-+
-+	*vm_flags |= VM_MERGEABLE;
-+
-+	return 0;
-+}
-+
- int __ksm_enter(struct mm_struct *mm)
- {
- 	struct mm_slot *mm_slot;
+ 	&sleep_millisecs_attr.attr,
+ 	&pages_to_scan_attr.attr,
+ 	&run_attr.attr,
 -- 
 2.21.0
 
