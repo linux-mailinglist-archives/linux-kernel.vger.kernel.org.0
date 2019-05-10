@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 520B219F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA62119EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 16:21:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbfEJOUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 10:20:50 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48948 "EHLO
+        id S1727967AbfEJOUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 10:20:51 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48950 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727889AbfEJOUs (ORCPT
+        by vger.kernel.org with ESMTP id S1727891AbfEJOUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 10 May 2019 10:20:48 -0400
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AE1mfP025399;
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AE1mfQ025399;
         Fri, 10 May 2019 16:20:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
  date : message-id : in-reply-to : references : mime-version : content-type
  : content-transfer-encoding; s=STMicroelectronics;
- bh=ivD85ODEdVutRWfgtTPWNnPbQXujrje21LXvsEkrE2s=;
- b=JCLpIIjlmoFRg8oC07A6kg6fAkRqd2GcEkLBdXkS9fpdH2IS/e/7v+BfKIYocB0AMfLv
- UvhauRwirRMMsMYh7Vi9o6VgwaKKwQ5yME6Lu9WP+s2c4HVJxYk8rxJXs6cLDHBNT3a0
- mv76HXNpWmOlO9WjTYhwuDfWAKk2wM8r7yWktSbKkjwyGPFAUfoIHuorppQBNeaw9ef0
- rCaCkbZgIJ6UVKn+iCmlHc7mAnHRvWTtECfn0G4/vlPbI0qRZVwGfuURiJIpB6GW3jXh
- lRIjRMxbjeyXKieq4/1dtinctzGTxm9Bg8YaStXQXaDltqKj5xj6q++TA69E3Vi/rsKJ Lw== 
+ bh=/XRL/cLbUyuiOX7oZ//xMTlD4EbxIiDLjZE+ThQcnls=;
+ b=PTQbnLjW+4cIwTlZRJQ7M0JJ7VWQbIjead4RnKIdGrVSe9FJJQ8PnLpnJSm/Qr32Czxg
+ hgrSy9SitxnMH9jMvP0ClqBFdU2LVSPBfYufiyTj24AyQQ4NrGs5dWtTt4b2qcJlfIYt
+ TPzmiyWddvuHizI++YI5XvYZj1ytzxVnKHzWs2oryLmk2vK0+8bmlMLqK4isEMLICTKM
+ uUdjt+CCaOXjHzT/F4Anv9raBFZIU622NfqrtAdW5KXuFgMtA1/06K868iJleupRSndk
+ S91rnNrtYH73E1HpwdqAfSbFHYAZn8Kzdf/kq6U+KWpmStGDdfMVFIAej9vaukOhGKr7 Xw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2scfv2s5w3-1
+        by mx08-00178001.pphosted.com with ESMTP id 2scfv2s5w5-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
         Fri, 10 May 2019 16:20:35 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 93E8234;
-        Fri, 10 May 2019 14:20:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6FD32113A;
-        Fri, 10 May 2019 14:20:32 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May
- 2019 16:20:32 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 958323D;
+        Fri, 10 May 2019 14:20:33 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 754F5113A;
+        Fri, 10 May 2019 14:20:33 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May
+ 2019 16:20:33 +0200
 Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
  with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 10 May 2019 16:20:32
  +0200
@@ -55,9 +55,9 @@ To:     Yannick Fertre <yannick.fertre@st.com>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/5] ARM: dts: stm32: add phy-dsi-supply property on stm32mp157c
-Date:   Fri, 10 May 2019 16:20:21 +0200
-Message-ID: <1557498023-10766-4-git-send-email-yannick.fertre@st.com>
+Subject: [PATCH v2 4/5] ARM: dts: stm32: move fixe regulators reg11 & reg18
+Date:   Fri, 10 May 2019 16:20:22 +0200
+Message-ID: <1557498023-10766-5-git-send-email-yannick.fertre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557498023-10766-1-git-send-email-yannick.fertre@st.com>
 References: <1557498023-10766-1-git-send-email-yannick.fertre@st.com>
@@ -72,25 +72,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dsi physical layer is powered by the 1v8 power controller supply.
+Move regulators reg11 & reg18 from device-tree files stm32mp157c-ed1.dts
+& stm32mp157c-dk2.dts to file stm32mp157c.dtsi.
 
 Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/stm32mp157c-dk2.dts |  8 --------
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 16 ----------------
+ arch/arm/boot/dts/stm32mp157c.dtsi    | 16 ++++++++++++++++
+ 3 files changed, 16 insertions(+), 24 deletions(-)
 
+diff --git a/arch/arm/boot/dts/stm32mp157c-dk2.dts b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+index 20ea601..020ea0f 100644
+--- a/arch/arm/boot/dts/stm32mp157c-dk2.dts
++++ b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+@@ -11,14 +11,6 @@
+ / {
+ 	model = "STMicroelectronics STM32MP157C-DK2 Discovery Board";
+ 	compatible = "st,stm32mp157c-dk2", "st,stm32mp157";
+-
+-	reg18: reg18 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "reg18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-always-on;
+-	};
+ };
+ 
+ &dsi {
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index 62a8c78..f41189c 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -27,22 +27,6 @@
+ 		serial0 = &uart4;
+ 	};
+ 
+-	reg11: reg11 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "reg11";
+-		regulator-min-microvolt = <1100000>;
+-		regulator-max-microvolt = <1100000>;
+-		regulator-always-on;
+-	};
+-
+-	reg18: reg18 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "reg18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-always-on;
+-	};
+-
+ 	sd_switch: regulator-sd_switch {
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "sd_switch";
 diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 2afeee6..6b14f1e 100644
+index 6b14f1e..aaac51cd 100644
 --- a/arch/arm/boot/dts/stm32mp157c.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -1156,6 +1156,7 @@
- 			clock-names = "pclk", "ref", "px_clk";
- 			resets = <&rcc DSI_R>;
- 			reset-names = "apb";
-+			phy-dsi-supply = <&reg18>;
- 			status = "disabled";
- 		};
+@@ -11,6 +11,22 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
  
++	reg11: reg11 {
++		compatible = "regulator-fixed";
++		regulator-name = "reg11";
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1100000>;
++		regulator-always-on;
++	};
++
++	reg18: reg18 {
++		compatible = "regulator-fixed";
++		regulator-name = "reg18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.7.4
 
