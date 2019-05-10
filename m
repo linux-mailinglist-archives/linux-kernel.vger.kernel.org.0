@@ -2,119 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0411A192
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FA81A1A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfEJQdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 12:33:14 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35978 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727697AbfEJQdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 12:33:12 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4AGMUNk068320
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 12:33:11 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sdb9xmc7p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 12:33:10 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 10 May 2019 17:33:08 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 May 2019 17:33:02 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4AGX1jq47186160
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 May 2019 16:33:01 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00ED642052;
-        Fri, 10 May 2019 16:33:01 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63DF54203F;
-        Fri, 10 May 2019 16:33:00 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.145.32.174])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 10 May 2019 16:33:00 +0000 (GMT)
-Date:   Fri, 10 May 2019 18:32:58 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, Russell Currey <ruscur@russell.cc>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@ozlabs.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-arch@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH] vsprintf: Do not break early boot with probing
- addresses
-In-Reply-To: <20190510122401.21a598f6@gandalf.local.home>
-References: <20190510081635.GA4533@jagdpanzerIV>
-        <20190510084213.22149-1-pmladek@suse.com>
-        <20190510122401.21a598f6@gandalf.local.home>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19051016-0016-0000-0000-0000027A67E3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051016-0017-0000-0000-000032D72460
-Message-Id: <20190510183258.1f6c4153@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=870 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905100111
+        id S1727771AbfEJQil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 12:38:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727496AbfEJQil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 12:38:41 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D817021479;
+        Fri, 10 May 2019 16:38:40 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hP8Xf-0004lt-VX; Fri, 10 May 2019 12:38:39 -0400
+Message-Id: <20190510163519.794235443@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 10 May 2019 12:35:19 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        live-patching@vger.kernel.org, x86@kernel.org,
+        Borislav Petkov <bp@alien8.de>
+Subject: [RFC][PATCH 0/2 v2] tracing/x86_32: Remove non DYNAMIC_FTRACE and mcount support
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 May 2019 12:24:01 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+There's no need to support either DYNAMIC_FTRACE=n or mcount (non fentry)
+in x86_32. As the static tracing (DYNAMIC_FTRACE=n) does not support
+fentry, we can just remove it, as the static tracing is only around to
+test the static tracing in generic code as other architectures have it
+but not DYNAMIC_FTRACE.
 
-> On Fri, 10 May 2019 10:42:13 +0200
-> Petr Mladek <pmladek@suse.com> wrote:
-> 
-> >  static const char *check_pointer_msg(const void *ptr)
-> >  {
-> > -	char byte;
-> > -
-> >  	if (!ptr)
-> >  		return "(null)";
-> >  
-> > -	if (probe_kernel_address(ptr, byte))
-> > +	if ((unsigned long)ptr < PAGE_SIZE || IS_ERR_VALUE(ptr))
-> >  		return "(efault)";
-> >    
-> 
-> 
-> 	< PAGE_SIZE ?
-> 
-> do you mean: < TASK_SIZE ?
+This will allow also allow us to remove klp_check_compiler_support()
+in later patches.
 
-The check with < TASK_SIZE would break on s390. The 'ptr' is
-in the kernel address space, *not* in the user address space.
-Remember s390 has two separate address spaces for kernel/user
-the check < TASK_SIZE only makes sense with a __user pointer.
+Steven Rostedt (VMware) (2):
+      ftrace/x86_32: Remove support for non DYNAMIC_FTRACE
+      ftrace/x86: Remove mcount support
 
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+----
+ arch/x86/Kconfig                 | 11 ++++++
+ arch/x86/include/asm/ftrace.h    |  8 ++---
+ arch/x86/include/asm/livepatch.h |  3 --
+ arch/x86/kernel/ftrace_32.S      | 75 +++-------------------------------------
+ arch/x86/kernel/ftrace_64.S      | 28 +--------------
+ 5 files changed, 20 insertions(+), 105 deletions(-)
