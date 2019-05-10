@@ -2,109 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84223195E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F95D195F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:07:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfEJAAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 20:00:46 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:53331 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfEJAAo (ORCPT
+        id S1726776AbfEJAHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 20:07:16 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33750 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfEJAHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 20:00:44 -0400
-Received: by mail-vk1-f202.google.com with SMTP id g12so1679315vkf.20
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 17:00:43 -0700 (PDT)
+        Thu, 9 May 2019 20:07:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e11so5396997wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 17:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=qD8P7476YfiQtjv1E6lcuRrJ6WjHMdxq7Sq+F+HQQEQ=;
-        b=IaPLSmzKORGLubRZrX1/p4t4QHdGUfNfnAEmoGdLAHRQoPsbSW6uDDBJOb9f3LXHek
-         sk+DwsYhcfhq+7j7K45imBSSCNuSDwLYpIRvzQc8+Nu5EJrX/tI4imfG8SYqs9ghzmuM
-         EWqHxg0TO7vL6iRBOVhbxCQr9Frq6HSfIio/r8BFcFG3YqICHmpbYug5nLJyKSSuIZnm
-         4z9JtbJZ6F/gyewF5ZKdOLsVPObowxwUPTH8fP2+Jab1Q4XT5XJSoLn509G7HlSfKNux
-         OQ1pHDC1iRC+lLM1SfCg3g+mij6MB0TAg6QuSwiXXC4ZX3CoHijLVAdRnvhmiGsvI+j4
-         5Aow==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=x/CXGRp80IRiXeAmAwY4ABp5f377aFe0bLcL5F214gE=;
+        b=zm7hjnBWdxRz8c7snZRskGOs1vLkqvVfnT0vVKjhAKFq8NC62YJR+yasZjfxGLV6UT
+         UCyUOOFzTMbYBWfsDD+Zr9K6/iX3IEvrmpxobfIYO1jjB24JPxulhwOQfpMBjcuixMLY
+         fIaVNiX1YPChBlGvKvLl9lO21Uv1o1JJCDJxTZtbTIalLy4vLXzUvm9neO+p5T9YVXsg
+         sPOHOIfewBUcanaEOnzU+I+LIiKf/QYjw2NPEifXmDeZG2ad4IqZ37py2m2a7Nq2TcaP
+         3eeh6if3CU0BktRmj1YsLN8DXwg2zuuLwf3332LUca6TopfLZMOdGOi00dGDYkZmA3Q+
+         ndAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=qD8P7476YfiQtjv1E6lcuRrJ6WjHMdxq7Sq+F+HQQEQ=;
-        b=An/s+uapit1gRN1lNYbpdMN+cMvqA543cWkh3svMTarPBZc0LC0Mw/Omb2j/GJUWD/
-         N9iipvle3ALX8lhPgZHrNBajrDFO9yJbXqLwqhMaA1TRKDook+/dVBA6ZSfcUnS5PZTD
-         LP6xCIAAYIsoKqAOVPHFNhDf605rEsxKeQukzl16Ibny4Ds+8MrxSXukQRpcDzz9PdrM
-         h+R0M38H5ZkKHlc5zzjafC0n8V0Jkdnc9lYV8aHfOkNhRMfJS3+hupmWFbKNjA/IKv5t
-         ZCPjBVyU7pW9j2LvVQugqjCAJ+Kj33yCZLfCRl7AkENawY/iCg8cKj39ayHi9Ph2FOkE
-         IeIA==
-X-Gm-Message-State: APjAAAVAP1J89CA5xI0NEPW4w1J6B00dghULFI01z3EFdsSu2FQxBdcH
-        woQn1H4h0VgYlnJrTCkeoN/LNBnt1q/ACJGDLG1AuAGiD1/F9ipVm9W3jLK1N1+2T9oXXVhypab
-        mEm2Sxvdei67Rds6FV44Iu55khuszCGT42dx+PSvYJcY6OBmxsqMGfVW7nocFzK7iAdU=
-X-Google-Smtp-Source: APXvYqyQxj4h5EKFqbJwstNLfU5pFLcxwQyE6tubj5ad3UX+SHoN3VqGEtU8yaujXV/3yBwO0e+/NOKcuw==
-X-Received: by 2002:a67:79ca:: with SMTP id u193mr3938693vsc.20.1557446442991;
- Thu, 09 May 2019 17:00:42 -0700 (PDT)
-Date:   Thu,  9 May 2019 17:00:32 -0700
-In-Reply-To: <20190510000032.40749-1-fengc@google.com>
-Message-Id: <20190510000032.40749-4-fengc@google.com>
-Mime-Version: 1.0
-References: <20190510000032.40749-1-fengc@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [dma-buf v3 3/3] dma-buf: add show_fdinfo handler
-From:   Chenbo Feng <fengc@google.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>, erickreyes@google.com,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=x/CXGRp80IRiXeAmAwY4ABp5f377aFe0bLcL5F214gE=;
+        b=cYo7UB1fT5KnTPuvLFLRgG+KePxXCg6mcqD2h3SZPCCaGXVCAFaVISTpkcxeTCcaEP
+         oDV9SbRsW/ytt2Ou/E+pkVaIVRChs9M73jiRhAFoSS+RBIqEHT7lQ86QQeWUO4MGvqCi
+         YGP9+TZY80RsDQ3W6B6jt7cZWzyyt4fFA1Jv2iwK1GEC8SH1MgGLC+vJeQbpali9xAhY
+         Hg/0+2zl2kS5fNudADKUjQf/r9vhoce0h69o/vRsChZGMHKevJP/MqX2gFSMqsiEdcU2
+         MjHodQaEaIIIa/q3nyzWWXLwyuJ+PsioYZ7xTqRiWa+TX17j21/btRy3u6DZE4NqNXAA
+         1RsA==
+X-Gm-Message-State: APjAAAWumnydnxu296MWCFIyp6/qijw5PzJEKHNaASNbu74TuSVeCk/L
+        nfQbXkt6i/kU/1x5A2PuOCmT4A==
+X-Google-Smtp-Source: APXvYqw8TyNbsxwv8pfcxINOYbZZdRhwzpvv30ozame/EW/8EJOBSC5fqlVypo8Zm1YUlheuC2LpRA==
+X-Received: by 2002:a5d:4d46:: with SMTP id a6mr5503966wru.142.1557446834027;
+        Thu, 09 May 2019 17:07:14 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id g10sm2273532wrq.2.2019.05.09.17.07.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 17:07:13 -0700 (PDT)
+Message-ID: <5cd4c0b1.1c69fb81.2bb79.a649@mx.google.com>
+Date:   Thu, 09 May 2019 17:07:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.19.y
+X-Kernelci-Kernel: v4.19.41-67-g82fd2fd59cff
+In-Reply-To: <20190509181301.719249738@linuxfoundation.org>
+References: <20190509181301.719249738@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 00/66] 4.19.42-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Hackmann <ghackmann@google.com>
+stable-rc/linux-4.19.y boot: 135 boots: 1 failed, 132 passed with 2 conflic=
+ts (v4.19.41-67-g82fd2fd59cff)
 
-The show_fdinfo handler exports the same information available through
-debugfs on a per-buffer basis.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.19.y/kernel/v4.19.41-67-g82fd2fd59cff/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
+y/kernel/v4.19.41-67-g82fd2fd59cff/
 
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Chenbo Feng <fengc@google.com>
+Tree: stable-rc
+Branch: linux-4.19.y
+Git Describe: v4.19.41-67-g82fd2fd59cff
+Git Commit: 82fd2fd59cffa3045f205da555c0defe8bb35912
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 71 unique boards, 25 SoC families, 15 builds out of 206
+
+Boot Regressions Detected:
+
+arm:
+
+    omap2plus_defconfig:
+        gcc-8:
+          omap4-panda:
+              lab-baylibre: failing since 1 day (last pass: v4.19.40-100-gf=
+897c76a347c - first fail: v4.19.41)
+
+x86_64:
+
+    x86_64_defconfig:
+        gcc-8:
+          qemu:
+              lab-collabora: new failure (last pass: v4.19.41-56-g487b15502=
+665)
+
+Boot Failure Detected:
+
+arm:
+    multi_v7_defconfig:
+        gcc-8:
+            stih410-b2120: 1 failed lab
+
+Conflicting Boot Failures Detected: (These likely are not failures as other=
+ labs are reporting PASS. Needs review.)
+
+x86_64:
+    x86_64_defconfig:
+        qemu:
+            lab-baylibre: PASS (gcc-8)
+            lab-mhart: PASS (gcc-8)
+            lab-drue: PASS (gcc-8)
+            lab-collabora: FAIL (gcc-8)
+
+arm:
+    omap2plus_defconfig:
+        omap4-panda:
+            lab-baylibre: FAIL (gcc-8)
+            lab-baylibre-seattle: PASS (gcc-8)
+
 ---
- drivers/dma-buf/dma-buf.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index c1da5f9ce44d..c4efc272fc34 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -381,6 +381,20 @@ static long dma_buf_ioctl(struct file *file,
- 	}
- }
- 
-+static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
-+{
-+	struct dma_buf *dmabuf = file->private_data;
-+
-+	seq_printf(m, "size:\t%zu\n", dmabuf->size);
-+	/* Don't count the temporary reference taken inside procfs seq_show */
-+	seq_printf(m, "count:\t%ld\n", file_count(dmabuf->file) - 1);
-+	seq_printf(m, "exp_name:\t%s\n", dmabuf->exp_name);
-+	mutex_lock(&dmabuf->lock);
-+	if (dmabuf->name)
-+		seq_printf(m, "name:\t%s\n", dmabuf->name);
-+	mutex_unlock(&dmabuf->lock);
-+}
-+
- static const struct file_operations dma_buf_fops = {
- 	.release	= dma_buf_release,
- 	.mmap		= dma_buf_mmap_internal,
-@@ -390,6 +404,7 @@ static const struct file_operations dma_buf_fops = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= dma_buf_ioctl,
- #endif
-+	.show_fdinfo	= dma_buf_show_fdinfo,
- };
- 
- /*
--- 
-2.21.0.1020.gf2820cf01a-goog
-
+For more info write to <info@kernelci.org>
