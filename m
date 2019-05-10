@@ -2,111 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 042AD1990F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:42:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB791991C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfEJHmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 03:42:04 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:19786 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfEJHmE (ORCPT
+        id S1727245AbfEJHmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:42:50 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10722 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727010AbfEJHmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 03:42:04 -0400
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x4A7fxCC015622;
-        Fri, 10 May 2019 16:42:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x4A7fxCC015622
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557474120;
-        bh=YlQFpWyCF4koFxUrKwNjn9H1imLHQlb49VlUA4xXZYA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oFRNmm+TGe1qy/v7ZQw+y6pRKAh6pVDPwP//JL/BaDHT2vhWR/TzwA5xDb/hHwkb5
-         gztwZV3FFOqDLuF1mKUAlK+/C+M6lf63xPplpUSW1/3rGRzETVPcWBhdeEGfmIk2Yc
-         VNdg3hBwozenPzDfu+54czxfhT5bGcBVsHmeM6hvmnlNwEC7+aWFXk2rDWHOi/tas7
-         uvQFbI7l5Yz+IqGzXK9kLelaWezffJvTwh3FBpRTPVZCvbbkRNkDDsH34DV24k9puo
-         tpVEU+5b6P5d1gcRTpSAqcXXRcp2VrjVi3kn8M05boKkFFcBgvz7JFOsNSQEg0+85P
-         yh5JhVgka6Axw==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id g127so3075453vsd.6;
-        Fri, 10 May 2019 00:42:00 -0700 (PDT)
-X-Gm-Message-State: APjAAAVLiR7jSksHdoQPGA4+aZB4z6ckvz50hUPRTmwm2K6+sXNxqarM
-        EbQ201Lg4B1qhg1033gNzFKY07sWsg9cAVsYjTo=
-X-Google-Smtp-Source: APXvYqyb54JevkNf9JGs+zEb+MQYiroUyACgsvaXHMXV6/bGlgqBtrjellKiAZxjNFSuKKJ/q25aW+wrj3Zj17pa8/E=
-X-Received: by 2002:a67:f443:: with SMTP id r3mr5034549vsn.179.1557474119142;
- Fri, 10 May 2019 00:41:59 -0700 (PDT)
+        Fri, 10 May 2019 03:42:43 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4A7cYSq028701;
+        Fri, 10 May 2019 09:42:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=N1v+zxTZE44tr6xZHlbxMHCvWy6h3ciCGaY/rbHViTk=;
+ b=a3QCQoY3R8nEO8Y32dWwA5wH5/dpmNaO2RWr6VTmU7jIFh7vyzTNByjPUx4/8sSFFo0v
+ dUAUkMCoQ7Abuptg4YLoUf7Icw2NDODJs4UH/o7Sy+whdv7qTsWtYUJvBQgkz0BYx2kl
+ yih3y6T17fxLnL96mLWfALBw7a/4WvR9ANOzySz1AZgK6NdWOiUFodUIepPWGnFuwoZw
+ PowJnbuKFkqqrGk+c+oFRxSf79vCD3VmlIaHsVPsjCDda7jWNU06NduMlwo5R8vThEIM
+ UspZc+xoPOeUAJ5XTEARNg+F0eSZ26/Vy9nqcOFPiLDgQUDYnyPhabkKjyc94GYy6sZU KA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sc9s4gpn3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 10 May 2019 09:42:37 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 07FFA3A;
+        Fri, 10 May 2019 07:42:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B752A15AD;
+        Fri, 10 May 2019 07:42:35 +0000 (GMT)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 10 May 2019 09:42:35
+ +0200
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <alexandre.torgue@st.com>
+Subject: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
+Date:   Fri, 10 May 2019 09:42:28 +0200
+Message-ID: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190510061205.28753-1-yamada.masahiro@socionext.com>
- <20190510061205.28753-2-yamada.masahiro@socionext.com> <CAMuHMdVmgZjyGxz0F=Akz+3egFtGMppGg6TRAnRhd=KZv5ADdg@mail.gmail.com>
- <20190510070354.GA2193@ravnborg.org>
-In-Reply-To: <20190510070354.GA2193@ravnborg.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 10 May 2019 16:41:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS56NOTdmAmHdi9Kk23HjbQXDmEJEySSU0c=+eTQF5nEw@mail.gmail.com>
-Message-ID: <CAK7LNAS56NOTdmAmHdi9Kk23HjbQXDmEJEySSU0c=+eTQF5nEw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kconfig: do not write .config if the content is the same
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam, Geert,
+During power sequence, GPIO hardware registers could be lost if the power
+supply is switched off. Each device using pinctrl API is in charge of
+managing pins during suspend/resume sequences. But for pins used as gpio or
+irq stm32 pinctrl driver has to save the hardware configuration.
+Each register will be saved at runtime and restored during resume sequence.
 
-On Fri, May 10, 2019 at 4:04 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Geert/Masahiro.
->
-> On Fri, May 10, 2019 at 08:46:35AM +0200, Geert Uytterhoeven wrote:
-> > Hi Yamada-san,
-> >
-> > On Fri, May 10, 2019 at 8:14 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> > > Kconfig updates the .config when it exits even if its content is
-> > > exactly the same as before. Since its timestamp becomes newer than
-> > > that of other build artifacts, additional processing is invoked,
-> > > which is annoying.
-> > >
-> > > - syncconfig is invoked to update include/config/auto.conf, etc.
-> > >
-> > > - kernel/config.o is recompiled if CONFIG_IKCONFIG is enabled,
-> > >   then vmlinux is relinked as well.
-> > >
-> > > If the .config is not changed at all, we do not have to even
-> > > touch it. Just bail out showing "No change to .config".
-> It would be preferable that if nothing changed no output is generated.
-> Like we do not tell that we did not build a .o file because the .c file
-> had not changed.
-> Less noise for a kernel build where nothings happens.
->
-> > This causes a semantic change for the meaning of ".config.old", which is
-> > no longer updated if .config has not changed.
-> > Hence its contents may no longer correspond to the previous config, but to
-> > an arbitrary older version.
-> This semantic change is good.
-> So we now have a .config.old that correspond to the state before
-> the last change. Also after several kernel builds.
+Regards
+Alex
 
 
-I agree.
+Alexandre Torgue (2):
+  pinctrl: stm32: add suspend/resume management
+  pinctrl: stm32: Enable suspend/resume for stm32mp157c SoC
 
-When there is no change in the configuration,
-Kconfig will not even attempt to output anything.
+ drivers/pinctrl/stm32/pinctrl-stm32.c      | 132 +++++++++++++++++++++++++++++
+ drivers/pinctrl/stm32/pinctrl-stm32.h      |   2 +
+ drivers/pinctrl/stm32/pinctrl-stm32mp157.c |   5 ++
+ 3 files changed, 139 insertions(+)
 
-Updating only .config.old is strange.
+-- 
+2.7.4
 
-Thanks.
-
-
-
---
-Best Regards
-Masahiro Yamada
