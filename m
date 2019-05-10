@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E2E1A1E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:50:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B14F1A1E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfEJQuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 12:50:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35719 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbfEJQtu (ORCPT
+        id S1727909AbfEJQty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 12:49:54 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38187 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbfEJQtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 12:49:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w12so8688845wrp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 09:49:49 -0700 (PDT)
+        Fri, 10 May 2019 12:49:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f2so8189976wmj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 09:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JZfQcIBiz1i3SRmrwc/arntEPv+nCMO6l3LE883zetw=;
-        b=th74W3D0yD8uI176CqzEb333lOWfbdmCBjoHDt+lqvRtWMu0u/G3SmHA041wAkDQdd
-         mTNSJvCzxFr5oTxFjpjCnCm+TcUskdfBp9oRn0uzDRRdl8qrfRHXv1AVL6+ZgJ6bXIxw
-         +ECZilXHGJ9JcQP4jTlgjC3o3eiEl2RBUZnUQaDvI5f2g7lb9kJI9GqLpNG/dmekomAn
-         dIH6UXQIisXE1GVn8C0r1bfC8vZvAbRdDqUfpQJ2INF1S7ax3LlxL2sPu4wdcSVJGOdL
-         taxuT0PWtDhfFyiu1pwcwiV8mLLkMHEpuOgn8YEcw5o7yxCSkucuIb9bHvUtp8FsXc1N
-         g78g==
+        bh=0BDD3hmUAw1/iP5j6nwICYc72W1cM/z0tCme8wuLJEM=;
+        b=UGuWEwh+n7QT3eNyNvwq+0cJsZpDzpWwk7FnpGGJzka745/PRluZ87wATPr+YIhf5X
+         NIbdGp9PkKLuCsnVK8imrw+fnf3/VN/dgzhdB0stTpRHOv4PE73NDcLnrlRt7kScNDzi
+         BJEf2aNfJJlqZK+A48FwJAFtZa+qbuqUe2kdrJb/96Ztx6acYNSgeGtccr9ajHYBH4hl
+         +kMA6aloAG37PoAZdi1P9Cw0OLX37bw0uU2j4upttKDVzvLG/Ww1SP1FMiGddkmV0z98
+         2bYqDDscoIPwAIdURSlGiU2BQtg0drPV1OQ1Q3gcsMCDWxHHqRt4mDum78Y3LuJLAYbs
+         p9Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JZfQcIBiz1i3SRmrwc/arntEPv+nCMO6l3LE883zetw=;
-        b=bKEd3OE5FeUSooCohRu75EoPIsi1/w8GBEevgfWWvp0q584iyRMGmw7kVH8fkmYYl0
-         4Lfbky46r4TLDjtxkM3ffrrx33IGHKqIaVNbfQl6U4pgqddtQYk9xL99XZeTjvVvAJyh
-         d/RdYNpucTrKvfkNZxr7TOdUmisGmGSrYu0u/ABTtU3I0lBehfWBNUBUlBXuH5qH+ghP
-         1Cb4lIIZxQmMLA2iIQ5eeqolPe87Kez9OY2bOAvlhKiotXpoEyE3kuV+v6gnpKJEoK2F
-         5ioFFdS6Gvrya8flOPG5i0QUfc1gqfnRNsrdMYgTFbdmA+cwE9naRVRfchgYOOJt2Aza
-         tTqg==
-X-Gm-Message-State: APjAAAXp6ydpE6hEYlh6acrvD3LlN/qp0oXN3sT2XkuzeioTpJiYdXpj
-        p9sH7PtqBww2K4kKMXTgggJE+A==
-X-Google-Smtp-Source: APXvYqyhBIUntAhXx/YaGyCbZND/bim7HJ1XT0IIdj+NqZiauxARKtqXAsvMcQvRqufVAAGZ8Nny6w==
-X-Received: by 2002:adf:82b2:: with SMTP id 47mr9001609wrc.76.1557506989230;
-        Fri, 10 May 2019 09:49:49 -0700 (PDT)
+        bh=0BDD3hmUAw1/iP5j6nwICYc72W1cM/z0tCme8wuLJEM=;
+        b=QTPQxdwikYNqoUOtyCjUFdv06NMJxux92+Y2YxlG3BqbxcwRRj/no5MIaNW2sh14Qf
+         VcEF1DCLh/5DuW2Y1sFDCo3V5L43F4k4jxECHT/n9TddlJgSiOk/uAnXQY+mR9aAtIGy
+         utQuMzUOb0PQmxVYguvhzN1ZYPTBcCi286lIY0KH1JilIF3KkEQ38DpXhmEE6rvYYHA/
+         wfAJ4dsm+XE8EPvZojCGGgfNYyrSIqzpxiZc5uL/NQvfH9CqxObl1DN9X5MCNXUS0bIZ
+         0MKzD6FdHLwFCUdiPdCubxRY/Hi/NyKuEYhIiZQ6SQI/ORddhIrwtiMolKiyUkuqllQk
+         PjQw==
+X-Gm-Message-State: APjAAAX0rAxRWoeXw1ujdNA/XypGvNYx84yNenQEdgW2iKUXXwERn+ZX
+        42SRbIjmAMbufF+YcK2gXgxECmLiRoM=
+X-Google-Smtp-Source: APXvYqye0FKsYqlWU/uVGSz/EJZu+vBKxrCEygY8OeyP0/V5umSe5NGclz0nWvUHmQTkQqn4VuSmWQ==
+X-Received: by 2002:a1c:a550:: with SMTP id o77mr3275926wme.28.1557506990139;
+        Fri, 10 May 2019 09:49:50 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id q26sm5114308wmq.25.2019.05.10.09.49.48
+        by smtp.googlemail.com with ESMTPSA id q26sm5114308wmq.25.2019.05.10.09.49.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 09:49:48 -0700 (PDT)
+        Fri, 10 May 2019 09:49:49 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 4/5] arm64: dts: meson: u200: add internal network
-Date:   Fri, 10 May 2019 18:49:39 +0200
-Message-Id: <20190510164940.13496-5-jbrunet@baylibre.com>
+Subject: [PATCH 5/5] arm64: dts: meson: sei510: add network support
+Date:   Fri, 10 May 2019 18:49:40 +0200
+Message-Id: <20190510164940.13496-6-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190510164940.13496-1-jbrunet@baylibre.com>
 References: <20190510164940.13496-1-jbrunet@baylibre.com>
@@ -63,21 +63,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The u200 is the main mother board for the S905D2. It can provide
-both the internal and external network. However, by default the
-resistance required for the external RGMII bus are not fitted, so
-enable the internal PHY.
+Enable the network interface of the SEI510 which use the internal PHY.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts | 7 +++++++
+ arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-index 7cc3e2d6a4f1..c2221eb4549e 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-@@ -15,6 +15,7 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+index 61fb30047d7f..4a785b17c1af 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+@@ -29,6 +29,7 @@
  
  	aliases {
  		serial0 = &uart_AO;
@@ -85,7 +82,7 @@ index 7cc3e2d6a4f1..c2221eb4549e 100644
  	};
  
  	chosen {
-@@ -145,6 +146,12 @@
+@@ -144,6 +145,12 @@
  	};
  };
  
