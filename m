@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAA01A083
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF321A087
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 17:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfEJPu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 11:50:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58750 "EHLO mail.kernel.org"
+        id S1727650AbfEJPvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 11:51:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfEJPuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 11:50:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727144AbfEJPvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 11:51:46 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9FA20881;
-        Fri, 10 May 2019 15:50:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADF5320881;
+        Fri, 10 May 2019 15:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557503455;
-        bh=1BVvOWCjoaFQDVl6i/Zn1Sw6NKesESpsYSrv+0kFYWY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rRM4nRWfRRZ40yQKb+fRWhQlHDrHcrQCb1c+k5tnCZ7vPnorUA4P6onuV3zIqD0Iz
-         VhSxVSlofoJN5bL2mtZjd/nuxj2oajHeV9C69FhUZqxIgYNHqV0jYe3OOJNdtPoeeB
-         Asgcg7shiKvSW+bUS4mBTC4CJFD/4YN1DILDA9+4=
-Date:   Fri, 10 May 2019 17:50:51 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
-Message-ID: <20190510155051.GC2209@kroah.com>
-References: <20190509181309.180685671@linuxfoundation.org>
- <CA+G9fYvKNb-WD+0govE2NWzjHisdJXiRRioTQGZKHP0gvO9WKw@mail.gmail.com>
+        s=default; t=1557503505;
+        bh=jjJN9MCI2/bJQYJD0A6H8bv3bdJi3Q/PurxoIoi1bLc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LFbRHLkQumOEJR0QML+NE/Dlx3jQ6C6mXckZ6o/H18WK018Tm7s1TH9ZiRjkY6qxC
+         AvIQg21IbE7EAgEdM3O+kbiHPqqnhHQW7WuXCaEPtJ5nDJlnMMqS+fkyrgHNjngC+W
+         V79pPqZ162SsEPoNUPJia0lru3wFAdbrvl66Xn2A=
+Received: by mail-qt1-f182.google.com with SMTP id j53so7104703qta.9;
+        Fri, 10 May 2019 08:51:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAU2Ln94eWk3ajQkjWtO+vcr3GHq8pA/9kJaXe6BlXXakeCx/wz5
+        cY/sivEAh4itksZMztT+ZexDqgEF8Tr9pRSxBQ==
+X-Google-Smtp-Source: APXvYqzCtiDrvSidyJ1Y6HHqXiZAob0e8QJkkwye5sqCJHrQXA7SekK8d+4LASnRxReen63o7QlSe27+zyjO89A4fJs=
+X-Received: by 2002:a0c:fe65:: with SMTP id b5mr9797177qvv.106.1557503504974;
+ Fri, 10 May 2019 08:51:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYvKNb-WD+0govE2NWzjHisdJXiRRioTQGZKHP0gvO9WKw@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190507045433.542-1-hsinyi@chromium.org> <CAL_Jsq+rGeFKAPVmPvv_Z+G=BppKUK-tEUphBajZVxFtbRBJvQ@mail.gmail.com>
+ <CAJMQK-i-0RgdQEniqaKubdjF-dpd1JOCWy7DOPDfN33EqgL5iA@mail.gmail.com>
+In-Reply-To: <CAJMQK-i-0RgdQEniqaKubdjF-dpd1JOCWy7DOPDfN33EqgL5iA@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 10 May 2019 10:51:33 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLHGobOQg-j=8e=ivCBWh6f+xy43zTzdXBQ-U86AOg-6w@mail.gmail.com>
+Message-ID: <CAL_JsqLHGobOQg-j=8e=ivCBWh6f+xy43zTzdXBQ-U86AOg-6w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: add support for rng-seed
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 12:06:07PM +0530, Naresh Kamboju wrote:
-> On Fri, 10 May 2019 at 00:21, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+On Thu, May 9, 2019 at 11:27 PM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
+>
+> On Wed, May 8, 2019 at 3:47 AM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> > >  Documentation/devicetree/bindings/chosen.txt | 14 +++++++++
 > >
-> > This is the start of the stable review cycle for the 5.0.15 release.
-> > There are 95 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+> > Actually, this file has been converted to json-schema and lives
+> > here[1]. I need to remove this one (or leave it with a reference to
+> > the new one).
 > >
-> > Responses should be made by Sat 11 May 2019 06:11:22 PM UTC.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.15-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> >
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+>
+> Hi Rob,
+> I can't find where the new document is. Can you help point it again? Thanks.
 
-Thanks for testing 4 of these (no 5.1?) and letting me know.
+Sorry, forgot to add that:
 
-greg k-h
+https://github.com/devicetree-org/dt-schema/blob/master/schemas/chosen.yaml
+
+Rob
