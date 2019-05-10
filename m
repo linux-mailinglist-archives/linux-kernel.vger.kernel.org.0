@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 073561A392
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603D11A395
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 22:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfEJUBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 16:01:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
+        id S1728075AbfEJUBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 16:01:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727820AbfEJUBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 16:01:09 -0400
+        id S1727823AbfEJUBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 16:01:10 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32CC2218B0;
+        by mail.kernel.org (Postfix) with ESMTPSA id 587CF218C3;
         Fri, 10 May 2019 20:01:08 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hPBhb-0006hw-AY; Fri, 10 May 2019 16:01:07 -0400
-Message-Id: <20190510200107.218173559@goodmis.org>
+        id 1hPBhb-0006iQ-Fm; Fri, 10 May 2019 16:01:07 -0400
+Message-Id: <20190510200107.371692630@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 10 May 2019 15:56:15 -0400
+Date:   Fri, 10 May 2019 15:56:16 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -29,7 +29,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 09/27] tools/lib/traceevent: Man page for page size APIs
+Subject: [PATCH 10/27] tools/lib/traceevent: Man page for tep_strerror()
 References: <20190510195606.537643615@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -40,32 +40,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Create man pages for libtraceevent APIs:
-  tep_get_page_size()
-  tep_set_page_size()
+Create man page for tep_strerror() libtraceevent API.
 
-Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-9-tstoyanov@vmware.com
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-10-tstoyanov@vmware.com
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+[ Added "always" to state it doesn't matter if it is POSIX or GNU ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../Documentation/libtraceevent-page_size.txt | 82 +++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-page_size.txt
+ .../Documentation/libtraceevent-strerror.txt  | 85 +++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+ create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-strerror.txt
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-page_size.txt b/tools/lib/traceevent/Documentation/libtraceevent-page_size.txt
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-strerror.txt b/tools/lib/traceevent/Documentation/libtraceevent-strerror.txt
 new file mode 100644
-index 000000000000..452c0cfa1822
+index 000000000000..ee4062a00c9f
 --- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-page_size.txt
-@@ -0,0 +1,82 @@
++++ b/tools/lib/traceevent/Documentation/libtraceevent-strerror.txt
+@@ -0,0 +1,85 @@
 +libtraceevent(3)
 +================
 +
 +NAME
 +----
-+tep_get_page_size, tep_set_page_size - Get / set the size of a memory page on
-+the machine, where the trace is generated
++tep_strerror - Returns a string describing regular errno and tep error number.
 +
 +SYNOPSIS
 +--------
@@ -73,40 +71,44 @@ index 000000000000..452c0cfa1822
 +--
 +*#include <event-parse.h>*
 +
-+int *tep_get_page_size*(struct tep_handle pass:[*]_tep_);
-+void *tep_set_page_size*(struct tep_handle pass:[*]_tep_, int _page_size_);
-+--
++int *tep_strerror*(struct tep_handle pass:[*]_tep_, enum tep_errno _errnum_, char pass:[*]_buf_, size_t _buflen_);
 +
++--
 +DESCRIPTION
 +-----------
-+The _tep_get_page_size()_ function returns the size of a memory page on
-+the machine, where the trace is generated. The _tep_ argument is trace
-+event parser context.
++The _tep_strerror()_ function converts tep error number into a human
++readable string.
++The _tep_ argument is trace event parser context. The _errnum_ is a regular
++errno, defined in errno.h, or a tep error number. The string, describing this
++error number is copied in the _buf_ argument. The _buflen_ argument is
++the size of the _buf_.
 +
-+The _tep_set_page_size()_ function stores in the _tep_ context the size of a
-+memory page on the machine, where the trace is generated.
-+The _tep_ argument is trace event parser context.
-+The _page_size_ argument is the size of a memory page, in bytes.
++It as a thread safe wrapper around strerror_r(). The library function has two
++different behaviors - POSIX and GNU specific. The _tep_strerror()_ API always
++behaves as the POSIX version - the error string is copied in the user supplied
++buffer.
 +
 +RETURN VALUE
 +------------
-+The _tep_get_page_size()_ function returns size of the memory page, in bytes.
++The _tep_strerror()_ function returns 0, if a valid _errnum_ is passed and the
++string is copied into _buf_. If _errnum_ is not a valid error number,
++-1 is returned and _buf_ is not modified.
 +
 +EXAMPLE
 +-------
 +[source,c]
 +--
-+#include <unistd.h>
 +#include <event-parse.h>
 +...
 +struct tep_handle *tep = tep_alloc();
 +...
-+	int page_size = getpagesize();
-+
-+	tep_set_page_size(tep, page_size);
-+
-+	printf("The page size for this machine is %d\n", tep_get_page_size(tep));
-+
++char buf[32];
++char *pool = calloc(1, 128);
++if (tep == NULL) {
++	tep_strerror(tep, TEP_ERRNO__MEM_ALLOC_FAILED, buf, 32);
++	printf ("The pool is not initialized, %s", buf);
++}
++...
 +--
 +
 +FILES
