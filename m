@@ -2,104 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF541A148
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA79B1A152
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727663AbfEJQUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 12:20:40 -0400
-Received: from mail-it1-f180.google.com ([209.85.166.180]:54137 "EHLO
-        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbfEJQUj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 12:20:39 -0400
-Received: by mail-it1-f180.google.com with SMTP id m141so8888150ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 09:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=12k3jWQ0JutayB4pYTFiifF3qbZAFod36oxGbGWYTL4=;
-        b=DM1MD4xkQL6qZVNRbFsqulgRFd7kcuZeaaF1otjmrfxY6P35bMMGBmFNpP7uuyqu59
-         LCrtr60OPM+MIvJ8mTs8SDvfWBzsNDFJkN0t+7jXf5pF4Q/7jCXHV7iCb9Gc8R++k5Ch
-         SIdl8H6o5ZUlkE7RC3C0sQ1cBXoitSI+t9w/ai3+C3OMG3+fs5pfuAoww4+2ksl/M41i
-         qLbdVqhmFcQjYCBgmOy9FOBJHwNt31GzIddfg6oQ/36kLgUabQWBdKqFnUcdknD5am9E
-         LHTd1oRI+8T58ABXPcrSQOXM6RUm28+CIQW1I3EaH0LLwMmJEGtdEwVxmGjIPTXzz760
-         2JEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=12k3jWQ0JutayB4pYTFiifF3qbZAFod36oxGbGWYTL4=;
-        b=kyo33LZL41fyR7U/kToNFSqJx/05/QgSSMASHXy2A9DvmeaGlP435JPU1Qf37AtWT8
-         UUlZF+lzeI5hesOoRrGVh3zy7haABqLZ+DQp9LERTqq1t+8PxAF64MDJ4tKWdiabT9kF
-         BVWW9dCmAOdBGaD6NwUVesEINf/gI/nBckFMBP8u6Nk53D1VORODJG+QJs+rb0H7yhYj
-         2/VTSpeRmQbaphWHL7PV9zMpxuOvy9r0ZDSYk2RLwpz2EKypy4txoz7c602tLKGaLU28
-         alxX0tfbmX0DsufPyTC5Rhwiq+R0jDkw13imzpwzeSX01KO47xmdUoZzIOgujM48P8Wb
-         9Zcg==
-X-Gm-Message-State: APjAAAXvQsynOuBT+TajncexN+9pVt6+/snzXsRXjkZ9qlO7+IB3fHMl
-        wR8A1NcBualrbubxbWvsxSdbNFMONDGq54LTH/QE6g==
-X-Google-Smtp-Source: APXvYqy6r4u/9FxZ/sqXyVZnJLhaLccKOai9l9fDW51iJ7io13Qgg+/BFMRaQhJVVdqUgo52HfdHzZtLHjbIJcT/gz0=
-X-Received: by 2002:a02:1986:: with SMTP id b128mr8973936jab.136.1557505238682;
- Fri, 10 May 2019 09:20:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190411094944.12245-1-brgl@bgdev.pl> <20190411094944.12245-5-brgl@bgdev.pl>
- <CAFLxGvwb8YzNiXCXru8Tw9pxH9qoc7gAO4sk0MXK1Xmp7fm-2g@mail.gmail.com>
- <0e8fbdf3-c40d-e4e8-6235-c744ec7317c3@cambridgegreys.com> <684874198.48863.1557299587958.JavaMail.zimbra@nod.at>
- <CAMRc=MdsA7A1DdS1ZJ8NS8xtuCjgc_7WZD1797H3oZ=2w+fOBA@mail.gmail.com>
-In-Reply-To: <CAMRc=MdsA7A1DdS1ZJ8NS8xtuCjgc_7WZD1797H3oZ=2w+fOBA@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 10 May 2019 18:20:27 +0200
-Message-ID: <CAMRc=McCxvwHgk-3wYE0e+qxJNoHK0AmpJWjNsOZBmGF2yFT6Q@mail.gmail.com>
-Subject: Re: [RESEND PATCH 4/4] um: irq: don't set the chip for all irqs
-To:     Richard Weinberger <richard@nod.at>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-um@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727753AbfEJQW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 12:22:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727346AbfEJQW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 12:22:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4B74308FC20;
+        Fri, 10 May 2019 16:22:27 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.phx2.redhat.com [10.3.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 197BB5D6A9;
+        Fri, 10 May 2019 16:22:13 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
+        omosnace@redhat.com, eparis@parisplace.org, ebiederm@xmission.com,
+        oleg@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak111 V2] audit: deliver signal_info regarless of syscall
+Date:   Fri, 10 May 2019 12:21:49 -0400
+Message-Id: <67828806f9d2bf0f1e98e24afa58af55c8c8678f.1557358701.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 10 May 2019 16:22:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 10 maj 2019 o 11:16 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
-):
->
-> =C5=9Br., 8 maj 2019 o 09:13 Richard Weinberger <richard@nod.at> napisa=
-=C5=82(a):
-> >
-> > ----- Urspr=C3=BCngliche Mail -----
-> > >> Can you please check?
-> > >> This patch is already queued in -next. So we need to decide whether =
-to
-> > >> revert or fix it now.
-> > >>
-> > > I am looking at it. It passed tests in my case (I did the usual round=
-).
-> >
-> > It works here too. That's why I never noticed.
-> > Yesterday I noticed just because I looked for something else in the ker=
-nel logs.
-> >
-> > Thanks,
-> > //richard
->
-> Hi,
->
-> sorry for the late reply - I just came back from vacation.
->
-> I see it here too, I'll check if I can find the culprit and fix it today.
->
-> Bart
+When a process signals the audit daemon (shutdown, rotate, resume,
+reconfig) but syscall auditing is not enabled, we still want to know the
+identity of the process sending the signal to the audit daemon.
 
-Hi Richard, Anton,
+Move audit_signal_info() out of syscall auditing to general auditing but
+create a new function audit_signal_info_syscall() to take care of the
+syscall dependent parts for when syscall auditing is enabled.
 
-I'm not sure yet what this is caused by. It doesn't seem to break
-anything for me but since it's a new error message I guess it's best
-to revert this patch (others are good) and revisit it for v5.3.
+Please see the github kernel audit issue
+https://github.com/linux-audit/audit-kernel/issues/111
 
-Bart
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+Changelog:
+v2:
+- change patch title to avoid siginfo_t confusion
+- change return value to "0" from AUDIT_OFF
+- use dummy functions instead of macros in header files
+
+Compile/boot/test auditsyscall enable/disable, audit disable,
+auditsyscall enable/selinux disable.
+
+ include/linux/audit.h |  9 +++++++++
+ kernel/audit.c        | 27 +++++++++++++++++++++++++++
+ kernel/audit.h        |  8 ++++++--
+ kernel/auditsc.c      | 19 +++----------------
+ kernel/signal.c       |  2 +-
+ 5 files changed, 46 insertions(+), 19 deletions(-)
+
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 43a23e28ba23..b4078560cb73 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -196,6 +196,9 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+ }
+ 
+ extern u32 audit_enabled;
++
++extern int audit_signal_info(int sig, struct task_struct *t);
++
+ #else /* CONFIG_AUDIT */
+ static inline __printf(4, 5)
+ void audit_log(struct audit_context *ctx, gfp_t gfp_mask, int type,
+@@ -249,6 +252,12 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+ }
+ 
+ #define audit_enabled AUDIT_OFF
++
++static inline int audit_signal_info(int sig, struct task_struct *t)
++{
++	return 0;
++}
++
+ #endif /* CONFIG_AUDIT */
+ 
+ #ifdef CONFIG_AUDIT_COMPAT_GENERIC
+diff --git a/kernel/audit.c b/kernel/audit.c
+index b96bf69183f4..67399ff72d43 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2274,6 +2274,33 @@ int audit_set_loginuid(kuid_t loginuid)
+ }
+ 
+ /**
++ * audit_signal_info - record signal info for shutting down audit subsystem
++ * @sig: signal value
++ * @t: task being signaled
++ *
++ * If the audit subsystem is being terminated, record the task (pid)
++ * and uid that is doing that.
++ */
++int audit_signal_info(int sig, struct task_struct *t)
++{
++	kuid_t uid = current_uid(), auid;
++
++	if (auditd_test_task(t) &&
++	    (sig == SIGTERM || sig == SIGHUP ||
++	     sig == SIGUSR1 || sig == SIGUSR2)) {
++		audit_sig_pid = task_tgid_nr(current);
++		auid = audit_get_loginuid(current);
++		if (uid_valid(auid))
++			audit_sig_uid = auid;
++		else
++			audit_sig_uid = uid;
++		security_task_getsecid(current, &audit_sig_sid);
++	}
++
++	return audit_signal_info_syscall(t);
++}
++
++/**
+  * audit_log_end - end one audit record
+  * @ab: the audit_buffer
+  *
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 958d5b8fc1b3..e5df0c125e2d 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -299,7 +299,7 @@ extern bool audit_tree_match(struct audit_chunk *chunk,
+ extern void audit_put_tree(struct audit_tree *tree);
+ extern void audit_kill_trees(struct audit_context *context);
+ 
+-extern int audit_signal_info(int sig, struct task_struct *t);
++extern int audit_signal_info_syscall(struct task_struct *t);
+ extern void audit_filter_inodes(struct task_struct *tsk,
+ 				struct audit_context *ctx);
+ extern struct list_head *audit_killed_trees(void);
+@@ -330,7 +330,11 @@ extern void audit_filter_inodes(struct task_struct *tsk,
+ #define audit_tree_path(rule) ""	/* never called */
+ #define audit_kill_trees(context) BUG()
+ 
+-#define audit_signal_info(s, t) AUDIT_DISABLED
++static inline int audit_signal_info_syscall(struct task_struct *t)
++{
++	return 0;
++}
++
+ #define audit_filter_inodes(t, c) AUDIT_DISABLED
+ #endif /* CONFIG_AUDITSYSCALL */
+ 
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 5371b59bde36..3209640df2cb 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2360,30 +2360,17 @@ void __audit_ptrace(struct task_struct *t)
+ }
+ 
+ /**
+- * audit_signal_info - record signal info for shutting down audit subsystem
+- * @sig: signal value
++ * audit_signal_info_syscall - record signal info for syscalls
+  * @t: task being signaled
+  *
+  * If the audit subsystem is being terminated, record the task (pid)
+  * and uid that is doing that.
+  */
+-int audit_signal_info(int sig, struct task_struct *t)
++int audit_signal_info_syscall(struct task_struct *t)
+ {
+ 	struct audit_aux_data_pids *axp;
+ 	struct audit_context *ctx = audit_context();
+-	kuid_t uid = current_uid(), auid, t_uid = task_uid(t);
+-
+-	if (auditd_test_task(t) &&
+-	    (sig == SIGTERM || sig == SIGHUP ||
+-	     sig == SIGUSR1 || sig == SIGUSR2)) {
+-		audit_sig_pid = task_tgid_nr(current);
+-		auid = audit_get_loginuid(current);
+-		if (uid_valid(auid))
+-			audit_sig_uid = auid;
+-		else
+-			audit_sig_uid = uid;
+-		security_task_getsecid(current, &audit_sig_sid);
+-	}
++	kuid_t t_uid = task_uid(t);
+ 
+ 	if (!audit_signals || audit_dummy_context())
+ 		return 0;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index b7953934aa99..73db5dfa797d 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -43,6 +43,7 @@
+ #include <linux/compiler.h>
+ #include <linux/posix-timers.h>
+ #include <linux/livepatch.h>
++#include <linux/audit.h>	/* audit_signal_info() */
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/signal.h>
+@@ -52,7 +53,6 @@
+ #include <asm/unistd.h>
+ #include <asm/siginfo.h>
+ #include <asm/cacheflush.h>
+-#include "audit.h"	/* audit_signal_info() */
+ 
+ /*
+  * SLAB caches for signal bits.
+-- 
+1.8.3.1
+
