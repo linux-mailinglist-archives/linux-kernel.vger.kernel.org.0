@@ -2,213 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B41919983
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 10:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF64199AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 10:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfEJIXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 04:23:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33662 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727266AbfEJIXd (ORCPT
+        id S1727397AbfEJIY3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 10 May 2019 04:24:29 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40369 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfEJIXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 04:23:33 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4A8NKOE078515
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 04:23:33 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sd41cc7ws-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 04:23:31 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Fri, 10 May 2019 09:22:44 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 10 May 2019 09:22:40 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4A8McNk58851378
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 May 2019 08:22:38 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C1D2DAE051;
-        Fri, 10 May 2019 08:22:38 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AA27AE045;
-        Fri, 10 May 2019 08:22:38 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.145.187.238])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 10 May 2019 08:22:38 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     sebott@linux.vnet.ibm.com
-Cc:     gerald.schaefer@de.ibm.com, pasic@linux.vnet.ibm.com,
-        borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-Subject: [PATCH 4/4] vfio: vfio_iommu_type1: implement VFIO_IOMMU_INFO_CAPABILITIES
-Date:   Fri, 10 May 2019 10:22:35 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557476555-20256-1-git-send-email-pmorel@linux.ibm.com>
-References: <1557476555-20256-1-git-send-email-pmorel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19051008-0016-0000-0000-0000027A405B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051008-0017-0000-0000-000032D6F9DC
-Message-Id: <1557476555-20256-5-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=950 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905100059
+        Fri, 10 May 2019 04:23:23 -0400
+Received: by mail-oi1-f196.google.com with SMTP id r136so3927228oie.7;
+        Fri, 10 May 2019 01:23:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eIUgkS+i8V9ActI1SeEXEkTwiVQDtHGpqTfQg2cf+/g=;
+        b=mEWLIxqn6I5DlZbjmsrf01CVXwkAJKT4ygApDIME18LAx1d0YFIIBlgJdJebw2TGko
+         oNvH92G54XCS1tu/vXXuK0YXfr6PPA4QL6ZKWnNkOiiWcKfZVCoMrttnmFeEPlFkkcmi
+         szUYpFhCphzOT2dceD7m5fKl5KKh3kg3LaJT99BEeKIXjzXXuIBob/AF5UrIBzda3Qbs
+         +w8NK9TvI2wd//7X325AqR1WAOL6TQjyKE9TZXfiO66DhsUbRJLTvRSAb3G7mXCE62Q5
+         gLQxSykXy1ebLnFDTdyN14jzgbXnVgozB4iKQdTjJtlI7QGLMzgmUJxjCamgohKIZx3a
+         7qQw==
+X-Gm-Message-State: APjAAAXmNKGe8sJGLaiQFhvPq2C+6TmuDu4YUFUOfTXZgF6UKXL4oYYR
+        HS7VBdpRqj5WHuZDzf6DLmeHKkUl56KOP6J1410=
+X-Google-Smtp-Source: APXvYqw4OwqPYcfkamYLebY3WJAizsj0tZym0rvql+8y1B5WyAXw2UsRIh9SpfWm9DS5lDtVu0hOR5Ykw8XKEatVjHo=
+X-Received: by 2002:aca:b841:: with SMTP id i62mr4611198oif.103.1557476602612;
+ Fri, 10 May 2019 01:23:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <064701C3-2BD4-4D93-891D-B7FBB5040FC4@canonical.com>
+ <CAJZ5v0ggMwpJt=XWXu4gU51o8y4BpJ4KZ5RKzfk3+v8GGb-QbQ@mail.gmail.com>
+ <A4DD2E9F-054E-4D4B-9F77-D69040EBE120@canonical.com> <20190509095601.GA19041@lst.de>
+ <225CF4F7-C8E1-4C66-B362-97E84596A54E@canonical.com> <20190509103142.GA19550@lst.de>
+ <AB325926-0D77-4851-8E8A-A10599756BF9@canonical.com> <31b7d7959bf94c15a04bab0ced518444@AUSX13MPC101.AMER.DELL.COM>
+ <20190509192807.GB9675@localhost.localdomain> <7a002851c435481593f8629ec9193e40@AUSX13MPC101.AMER.DELL.COM>
+ <20190509215409.GD9675@localhost.localdomain> <495d76c66aec41a8bfbbf527820f8eb9@AUSX13MPC101.AMER.DELL.COM>
+ <BC5EB1D0-8718-48B3-ACAB-F7E5571D821D@canonical.com>
+In-Reply-To: <BC5EB1D0-8718-48B3-ACAB-F7E5571D821D@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 10 May 2019 10:23:11 +0200
+Message-ID: <CAJZ5v0jAcX-Q2twygKoKvmx2H6tneHWimmH+c2GsYitHK5-knw@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead of D3
+ on Suspend-to-Idle
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Keith Busch <keith.busch@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We implement a capability intercafe for VFIO_IOMMU_GET_INFO and add the
-first capability: VFIO_IOMMU_INFO_CAPABILITIES.
+On Fri, May 10, 2019 at 8:08 AM Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+>
+> at 06:19, <Mario.Limonciello@dell.com> <Mario.Limonciello@dell.com> wrote:
+>
+> >> -----Original Message-----
+> >> From: Keith Busch <kbusch@kernel.org>
+> >> Sent: Thursday, May 9, 2019 4:54 PM
+> >> To: Limonciello, Mario
+> >> Cc: kai.heng.feng@canonical.com; hch@lst.de; axboe@fb.com;
+> >> sagi@grimberg.me; rafael@kernel.org; linux-pm@vger.kernel.org;
+> >> rafael.j.wysocki@intel.com; linux-kernel@vger.kernel.org; linux-
+> >> nvme@lists.infradead.org; keith.busch@intel.com
+> >> Subject: Re: [PATCH] nvme-pci: Use non-operational power state instead
+> >> of D3 on
+> >> Suspend-to-Idle
+> >>
+> >>
+> >> [EXTERNAL EMAIL]
+> >>
+> >> On Thu, May 09, 2019 at 09:37:58PM +0000, Mario.Limonciello@dell.com
+> >> wrote:
+> >>>> +int nvme_set_power(struct nvme_ctrl *ctrl, unsigned npss)
+> >>>> +{
+> >>>> +  int ret;
+> >>>> +
+> >>>> +  mutex_lock(&ctrl->scan_lock);
+> >>>> +  nvme_start_freeze(ctrl);
+> >>>> +  nvme_wait_freeze(ctrl);
+> >>>> +  ret = nvme_set_features(ctrl, NVME_FEAT_POWER_MGMT, npss, NULL, 0,
+> >>>> +                          NULL);
+> >>>> +  nvme_unfreeze(ctrl);
+> >>>> +  mutex_unlock(&ctrl->scan_lock);
+> >>>> +
+> >>>> +  return ret;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(nvme_set_power);
+> >>>
+> >>> I believe without memory barriers at the end disks with HMB this will
+> >>> still kernel panic (Such as Toshiba BG3).
+> >>
+> >> Well, the mutex has an implied memory barrier, but your HMB explanation
+> >> doesn't make much sense to me anyway. The "mb()" in this thread's original
+> >> patch is a CPU memory barrier, and the CPU had better not be accessing
+> >> HMB memory. Is there something else going on here?
+> >
+> > Kai Heng will need to speak up a bit in his time zone as he has this disk
+> > on hand,
+> > but what I recall from our discussion was that DMA operation MemRd after
+> > resume was the source of the hang.
+>
+> Yes, that’ what I was told by the NVMe vendor, so all I know is to impose a
+> memory barrier.
+> If mb() shouldn’t be used here, what’s the correct variant to use in this
+> context?
+>
+> >
+> >>> This still allows D3 which we found at least failed to go into deepest
+> >>> state and
+> >> blocked
+> >>> platform s0ix for the following SSDs (maybe others):
+> >>> Hynix PC601
+> >>> LiteOn CL1
+> >>
+> >> We usually write features to spec first, then quirk non-compliant
+> >> devices after.
+> >
+> > NVME spec doesn't talk about a relationship between SetFeatures w/
+> > NVME_FEAT_POWER_MGMGT and D3 support, nor order of events.
+> >
+> > This is why we opened a dialog with storage vendors, including
+> > contrasting the behavior
+> > of Microsoft Windows inbox NVME driver and Intel's Windows RST driver.
+> >
+> > Those two I mention that come to mind immediately because they were most
+> > recently
+> > tested to fail.  Our discussion with storage vendors overwhelmingly
+> > requested
+> > that we don't use D3 under S2I because their current firmware
+> > architecture won't
+> > support it.
+> >
+> > For example one vendor told us with current implementation that receiving
+> > D3hot
+> > after NVME shutdown will prevent being able to enter L1.2.  D3hot entry
+> > was supported
+> > by an IRQ handler that isn't serviced in NVME shutdown state.
+> >
+> > Another vendor told us that with current implementation it's impossible
+> > to transition
+> > to PS4 (at least via APST) while L1.2 D3hot is active.
+>
+> I tested the patch from Keith and it has two issues just as simply skipping
+> nvme_dev_disable():
+> 1) It consumes more power in S2I
+> 2) System freeze after resume
 
-When calling the ioctl, the user must specify
-VFIO_IOMMU_INFO_CAPABILITIES to retrieve the capabilities and must check
-in the answer if capabilities are supported.
-Older kernel will not check nor set the VFIO_IOMMU_INFO_CAPABILITIES in
-the flags of vfio_iommu_type1_info.
-
-The iommu get_attr callback will be called to retrieve the specific
-attributes and fill the capabilities, VFIO_IOMMU_INFO_CAP_QFN for the
-PCI query function attributes and VFIO_IOMMU_INFO_CAP_QGRP for the
-PCI query function group.
-
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
----
- drivers/vfio/vfio_iommu_type1.c | 95 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 94 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index d0f731c..f7f8120 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1658,6 +1658,70 @@ static int vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
- 	return ret;
- }
- 
-+int vfio_iommu_type1_caps(struct vfio_iommu *iommu, struct vfio_info_cap *caps,
-+			  size_t size)
-+{
-+	struct vfio_domain *d;
-+	struct vfio_iommu_type1_info_block *info_fn;
-+	struct vfio_iommu_type1_info_block *info_grp;
-+	unsigned long total_size, fn_size, grp_size;
-+	int ret;
-+
-+	d = list_first_entry(&iommu->domain_list, struct vfio_domain, next);
-+	if (!d)
-+		return -ENODEV;
-+	/* The size of these capabilities are device dependent */
-+	fn_size = iommu_domain_get_attr(d->domain,
-+					DOMAIN_ATTR_ZPCI_FN_SIZE, NULL);
-+	if (fn_size < 0)
-+		return fn_size;
-+	fn_size +=  sizeof(struct vfio_info_cap_header);
-+	total_size = fn_size;
-+
-+	grp_size = iommu_domain_get_attr(d->domain,
-+					 DOMAIN_ATTR_ZPCI_GRP_SIZE, NULL);
-+	if (grp_size < 0)
-+		return grp_size;
-+	grp_size +=  sizeof(struct vfio_info_cap_header);
-+	total_size += grp_size;
-+
-+	/* Tell caller to call us with a greater buffer */
-+	if (total_size > size) {
-+		caps->size = total_size;
-+		return 0;
-+	}
-+
-+	info_fn = kzalloc(fn_size, GFP_KERNEL);
-+	if (!info_fn)
-+		return -ENOMEM;
-+	ret = iommu_domain_get_attr(d->domain,
-+				    DOMAIN_ATTR_ZPCI_FN, &info_fn->data);
-+	if (ret < 0)
-+		return ret;
-+
-+	info_fn->header.id = VFIO_IOMMU_INFO_CAP_QFN;
-+
-+	ret = vfio_info_add_capability(caps, &info_fn->header, fn_size);
-+	if (ret)
-+		goto err_fn;
-+
-+	info_grp = kzalloc(grp_size, GFP_KERNEL);
-+	if (!info_grp)
-+		goto err_fn;
-+	ret = iommu_domain_get_attr(d->domain,
-+				    DOMAIN_ATTR_ZPCI_GRP, &info_grp->data);
-+	if (ret < 0)
-+		goto err_grp;
-+	info_grp->header.id = VFIO_IOMMU_INFO_CAP_QGRP;
-+	ret = vfio_info_add_capability(caps, &info_grp->header, grp_size);
-+
-+err_grp:
-+	kfree(info_grp);
-+err_fn:
-+	kfree(info_fn);
-+	return ret;
-+}
-+
- static long vfio_iommu_type1_ioctl(void *iommu_data,
- 				   unsigned int cmd, unsigned long arg)
- {
-@@ -1679,6 +1743,8 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
- 		}
- 	} else if (cmd == VFIO_IOMMU_GET_INFO) {
- 		struct vfio_iommu_type1_info info;
-+		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
-+		int ret;
- 
- 		minsz = offsetofend(struct vfio_iommu_type1_info, iova_pgsizes);
- 
-@@ -1688,7 +1754,34 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
- 		if (info.argsz < minsz)
- 			return -EINVAL;
- 
--		info.flags = VFIO_IOMMU_INFO_PGSIZES;
-+		if (info.flags & VFIO_IOMMU_INFO_CAPABILITIES) {
-+			minsz = offsetofend(struct vfio_iommu_type1_info,
-+					    cap_offset);
-+			if (info.argsz < minsz)
-+				return -EINVAL;
-+			ret = vfio_iommu_type1_caps(iommu, &caps,
-+						    info.argsz - sizeof(info));
-+			if (ret)
-+				return ret;
-+		}
-+		if (caps.size) {
-+			if (info.argsz < sizeof(info) + caps.size) {
-+				info.argsz = sizeof(info) + caps.size;
-+				info.cap_offset = 0;
-+			} else {
-+				if (copy_to_user((void __user *)arg +
-+						 sizeof(info), caps.buf,
-+						 caps.size)) {
-+					kfree(caps.buf);
-+					return -EFAULT;
-+				}
-+
-+				info.cap_offset = sizeof(info);
-+			}
-+			kfree(caps.buf);
-+		}
-+
-+		info.flags |= VFIO_IOMMU_INFO_PGSIZES;
- 
- 		info.iova_pgsizes = vfio_pgsize_bitmap(iommu);
- 
--- 
-2.7.4
-
+Well, the Keith's patch doesn't prevent pci_pm_suspend_noirq() from
+asking for D3 and both of the symptoms above may be consequences of
+that in principle.
