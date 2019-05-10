@@ -2,138 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088BF195DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 01:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA04195EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 02:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfEIX7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 19:59:47 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:53444 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726701AbfEIX7r (ORCPT
+        id S1726878AbfEJAAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 20:00:39 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:43807 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfEJAAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 9 May 2019 19:59:47 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 1DA2DC00D0;
-        Thu,  9 May 2019 23:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557446390; bh=EnqrzmpzPbj+nGgnpyTF6VzPxqLccG3bhMGQETJ3X8c=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=Mwm1+mM2RVhLnJUa6D1AJx3dhWWhijAAloSjByMrWk0GErXdoZcGJgIvqxb04DICq
-         4Rd8dHDIf+eUdbZTU/S6yP3HNZlbHbwibdu5L8p83z+LT9GYKw7chIaRKA1vto5trE
-         yM+dNdFMW0qnGR7rLSK+WEjYrAzSD898OoDpaun3KVo9DXfP/eATtMQRk8RNIx9d2G
-         sbaiHMMrlT2/vmSsITdWIQ44RwsifsAp/mmqpusjPXgIy+rz2pf7lVIuvblZKs2mea
-         GMtQbSkfRHvlw3hl6h3TAAzl6VawULLss2hQpwZc+b1hEzH446Wh56q1Vgi1o/F866
-         WA3d2nrj3UX5w==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 936DFA005D;
-        Thu,  9 May 2019 23:59:45 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.223]) by
- US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
- 9 May 2019 16:59:45 -0700
-From:   Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Felipe Balbi" <balbi@kernel.org>,
-        "Claus H. Stovgaard" <cst@phaseone.com>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
-Subject: Re: [PATCH v2 3/3] usb: dwc3: gadget: Add support for disabling U1
- and U2 entries
-Thread-Topic: [PATCH v2 3/3] usb: dwc3: gadget: Add support for disabling U1
- and U2 entries
-Thread-Index: AQHVBXNg9QMnfODDx0qS+2/7kcKJQQ==
-Date:   Thu, 9 May 2019 23:59:43 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639E9E8F@us01wembx1.internal.synopsys.com>
-References: <1557302091-7455-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1557302091-7455-4-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <30102591E157244384E984126FC3CB4F639E9823@us01wembx1.internal.synopsys.com>
- <BL0PR02MB5587B28B6CCAC0FD790F8335A7330@BL0PR02MB5587.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.19]
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 9 May 2019 20:00:38 -0400
+Received: by mail-qt1-f202.google.com with SMTP id q32so4436936qtk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 17:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=M35jpHh+HUdAc93UKOjDO7JbyHiHSckhQH2gYDGobXY=;
+        b=tSZ3t6N4Z1hNAMYvgS92eIL566ndUhmt5xsPPoUSXPzweWrogmxc+KJ10EVf3pttkF
+         merVBSZHG0xLznvz4TKUL7L/GZ2cjBzn9Uqwa07TqFu+hek4xO0PQZfpn+9AYYxEqHRe
+         iG61HVtIimI9EQNzmCMq2HhMo1YFeWooHmUb1dCm4Km/pTzPbAhRn7WUXoNAQprfpOYl
+         KpalQjheFynt2AC8LlfdwPcJT2Dd9exlL1kqGHdpBmSVkj/RAc0c7GLZHzWoZStRx/DU
+         OVyvgiKkjGPP01EUrs0iwK5npCTDem8hdHBbtbZEpi9IcUifRkYzYt5ron+RYMbsxchS
+         oAYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=M35jpHh+HUdAc93UKOjDO7JbyHiHSckhQH2gYDGobXY=;
+        b=bOMphADQCPN2fUDeqQeOxcCeTkOZqZkuWNfYZ3xUsusnw0qFqntBWWP8WIGMIkgAM2
+         TxhCgsqzzvdVbOnwo0kBxKdkU4sV0ToIG+TxqgXao8O/9kypOEaomWewUzGHrHh8m8g5
+         2jJA/GGaNmnL/4j9EYFSlCAdN5igDs17ZPUT4XLLGHBqE6krtEydJB30RNmB0FREoTO3
+         TcfRbOucStMduwt2BV1RJJXMBOkWyTnnwzg6Er/TqHexhJP45/LzsK97wL0/xzg3cFdo
+         HmSbq0niUMfBinh22kfbPv9W/3guZiLbV4nCXBzZN/9+xiOav4gLX5zp1dgwQ55eJJ0l
+         0TSQ==
+X-Gm-Message-State: APjAAAXEIJW3rjAjpnRmheixQWkagktIqUdPXEuQL2hXXN11Gj8HgGa4
+        lufgFDGUuy9biUb5rpSJsza9PZa7vF+1x87H8lf36YfF+8WOfbmy01YPYmbyGMfFJsMQliw9HTs
+        SqbFdvhEOLo9UG3U9xsJ8x1geF+fskWaFJ6WWDp2p86EbLh1zAeeI0DjaT+QQl0RYfqQ=
+X-Google-Smtp-Source: APXvYqxnWMeG08te3Sc05EXGTxd8eHwJqSeZWK3/hm9AqvlKOJ36EdgmCBMpQKg7lKin0TXW98MNSIkgsQ==
+X-Received: by 2002:ac8:29af:: with SMTP id 44mr6461067qts.352.1557446435276;
+ Thu, 09 May 2019 17:00:35 -0700 (PDT)
+Date:   Thu,  9 May 2019 17:00:29 -0700
+Message-Id: <20190510000032.40749-1-fengc@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [dma-buf v3 0/3] Improve the dma-buf tracking
+From:   Chenbo Feng <fengc@google.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>, erickreyes@google.com,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anurag,=0A=
-=0A=
-Anurag Kumar Vulisha wrote:=0A=
->>> +		return -EINVAL;=0A=
->>>=0A=
->>>  	reg =3D dwc3_readl(dwc->regs, DWC3_DCTL);=0A=
->>>  	if (set)=0A=
->>> @@ -626,7 +630,10 @@ static int dwc3_ep0_set_config(struct dwc3 *dwc, s=
-truct=0A=
->> usb_ctrlrequest *ctrl)=0A=
->>>  			 * nothing is pending from application.=0A=
->>>  			 */=0A=
->>>  			reg =3D dwc3_readl(dwc->regs, DWC3_DCTL);=0A=
->>> -			reg |=3D (DWC3_DCTL_ACCEPTU1ENA |=0A=
->> DWC3_DCTL_ACCEPTU2ENA);=0A=
->>> +			if (!dwc->dis_u1_entry_quirk)=0A=
->>> +				reg |=3D DWC3_DCTL_ACCEPTU1ENA;=0A=
->>> +			if (!dwc->dis_u2_entry_quirk)=0A=
->>> +				reg |=3D DWC3_DCTL_ACCEPTU2ENA;=0A=
->>>  			dwc3_writel(dwc->regs, DWC3_DCTL, reg);=0A=
->>>  		}=0A=
->>>  		break;=0A=
->>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c=0A=
->>> index e293400..f2d3112 100644=0A=
->>> --- a/drivers/usb/dwc3/gadget.c=0A=
->>> +++ b/drivers/usb/dwc3/gadget.c=0A=
->>> @@ -2073,6 +2073,24 @@ static int dwc3_gadget_stop(struct usb_gadget *g=
-)=0A=
->>>  	return 0;=0A=
->>>  }=0A=
->>>=0A=
->>> +static void dwc3_gadget_config_params(struct usb_gadget *g,=0A=
->>> +				      struct usb_dcd_config_params *params)=0A=
->>> +{=0A=
->>> +	struct dwc3		*dwc =3D gadget_to_dwc(g);=0A=
->>> +=0A=
->>> +	/* U1 Device exit Latency */=0A=
->>> +	if (dwc->dis_u1_entry_quirk)=0A=
->>> +		params->bU1devExitLat =3D 0;=0A=
->> It doesn't make sense to have exit latency of 0. Rejecting=0A=
->> SET_FEATURE(enable U1/U2) should already let the host know that the=0A=
->> device doesn't support U1/U2.=0A=
->>=0A=
-> I am okay to remove this, but I feel that it is better to report zero val=
-ue instead=0A=
-> of a non-zero value in exit latency of BOS when U1 or U2 entries are not =
-supported. =0A=
-> Advantage of reporting 0 is that some hosts doesn't even send SET_FEATURE=
-(U1/U2)=0A=
-> requests on seeing zero value in BOS descriptor. Also there can be cases =
-where U1 is=0A=
-> disabled and U2 entry is allowed or vice versa, for these kind of cases t=
-he driver can=0A=
-> set zero exit latency value for U1 and non-zero exit latency value for U2=
- . Based on this=0A=
-> I think it would be better to report 0 when U1/U2 states are not enabled.=
- Please provide=0A=
-> your opinion on this.=0A=
-=0A=
-Hm... I assume you're testing against linux usb stack and xhci host. If=0A=
-that's the case, it looks like host will still request the device to=0A=
-enter U1/U2 despite the device rejecting SET_FEATURE(enable U1/U2). This=0A=
-needs to be fixed. I think what you have is fine to workaround this issue.=
-=0A=
-=0A=
-Thanks,=0A=
-Thinh=0A=
+Currently, all dma-bufs share the same anonymous inode. While we can count
+how many dma-buf fds or mappings a process has, we can't get the size of
+the backing buffers or tell if two entries point to the same dma-buf. And
+in debugfs, we can get a per-buffer breakdown of size and reference count,
+but can't tell which processes are actually holding the references to each
+buffer.
+
+To resolve the issue above and provide better method for userspace to track
+the dma-buf usage across different processes, the following changes are
+proposed in dma-buf kernel side. First of all, replace the singleton inode
+inside the dma-buf subsystem with a mini-filesystem, and assign each
+dma-buf a unique inode out of this filesystem.  With this change, calling
+stat(2) on each entry gives the caller a unique ID (st_ino), the buffer's
+size (st_size), and even the number of pages assigned to each dma-buffer.
+Secoundly, add the inode information to /sys/kernel/debug/dma_buf/bufinfo
+so in the case where a buffer is mmap()ed into a process=E2=80=99s address =
+space
+but all remaining fds have been closed, we can still get the dma-buf
+information and try to accociate it with the process by searching the
+proc/pid/maps and looking for the corresponding inode number exposed in
+dma-buf debug fs. Thirdly, created an ioctl to assign names to dma-bufs
+which lets userspace assign short names (e.g., "CAMERA") to buffers. This
+information can be extremely helpful for tracking and accounting shared
+buffers based on their usage and original purpose. Last but not least, add
+dma-buf information to /proc/pid/fdinfo by adding a show_fdinfo() handler
+to dma_buf_file_operations. The handler will print the file_count and name
+of each buffer.
+
+Change in v2:
+* Add a check to prevent changing dma-buf name when it is attached to
+  devices.
+* Fixed some compile warnings
+
+Change in v3:
+* Removed the GET_DMA_BUF_NAME ioctls, add the dma_buf pointer to dentry
+  d_fsdata so the name can be displayed in proc/pid/maps and
+  proc/pid/map_files.
+
+Greg Hackmann (3):
+  dma-buf: give each buffer a full-fledged inode
+  dma-buf: add DMA_BUF_{GET,SET}_NAME ioctls
+  dma-buf: add show_fdinfo handler
+
+ drivers/dma-buf/dma-buf.c    | 122 +++++++++++++++++++++++++++++++++--
+ include/linux/dma-buf.h      |   5 +-
+ include/uapi/linux/dma-buf.h |   3 +
+ include/uapi/linux/magic.h   |   1 +
+ 4 files changed, 124 insertions(+), 7 deletions(-)
+
+--=20
+2.21.0.1020.gf2820cf01a-goog
+
