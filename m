@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFFD196D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 04:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30C1196D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 04:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfEJCyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 9 May 2019 22:54:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58084 "EHLO huawei.com"
+        id S1726992AbfEJCyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 9 May 2019 22:54:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58082 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726864AbfEJCyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726944AbfEJCyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 9 May 2019 22:54:09 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E457EF57247D1671A9A1;
+        by Forcepoint Email with ESMTP id E06B1C6B32C2F792A9C6;
         Fri, 10 May 2019 10:54:06 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 10 May 2019 10:53:57 +0800
+ 14.3.439.0; Fri, 10 May 2019 10:53:58 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Miloslav Trmac <mitr@volny.cz>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        <linux-input@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH 2/3] Input: wistron_btns: avoid panic if ioreamp fails
-Date:   Fri, 10 May 2019 11:03:19 +0800
-Message-ID: <20190510030320.109154-2-wangkefeng.wang@huawei.com>
+        Jean Delvare <jdelvare@suse.com>,
+        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH 3/3] i2c: i801: avoid panic if ioreamp fails
+Date:   Fri, 10 May 2019 11:03:20 +0800
+Message-ID: <20190510030320.109154-3-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190510030320.109154-1-wangkefeng.wang@huawei.com>
 References: <20190510030320.109154-1-wangkefeng.wang@huawei.com>
@@ -46,32 +45,31 @@ in check_signature().
 
 Fix it by check the return value of ioremap.
 
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Miloslav Trmac <mitr@volny.cz>
+Cc: Jean Delvare <jdelvare@suse.com>
 Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-input@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/input/misc/wistron_btns.c | 5 ++++-
+ drivers/i2c/busses/i2c-i801.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/misc/wistron_btns.c b/drivers/input/misc/wistron_btns.c
-index 43e67f546366..a82ec3d102b4 100644
---- a/drivers/input/misc/wistron_btns.c
-+++ b/drivers/input/misc/wistron_btns.c
-@@ -107,7 +107,10 @@ static int __init map_bios(void)
- 	ssize_t offset;
- 	u32 entry_point;
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index 679c6c41f64b..fc6ccb8aba17 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1068,7 +1068,10 @@ static void __init input_apanel_init(void)
+ 	void __iomem *bios;
+ 	const void __iomem *p;
  
--	base = ioremap(0xF0000, 0x10000); /* Can't fail */
-+	base = ioremap(0xF0000, 0x10000);
+-	bios = ioremap(0xF0000, 0x10000); /* Can't fail */
++	bios = ioremap(0xF0000, 0x10000);
 +	if (!base)
 +		return -ENOMEM;
 +
- 	offset = locate_wistron_bios(base);
- 	if (offset < 0) {
- 		printk(KERN_ERR "wistron_btns: BIOS entry point not found\n");
+ 	p = bios_signature(bios);
+ 	if (p) {
+ 		/* just use the first address */
 -- 
 2.20.1
 
