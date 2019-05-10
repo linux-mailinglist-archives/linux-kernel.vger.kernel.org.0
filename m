@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB421A1DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A45651A1E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfEJQtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 12:49:51 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35109 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbfEJQts (ORCPT
+        id S1727962AbfEJQuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 12:50:10 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41545 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbfEJQtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 12:49:48 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q15so4185933wmj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 09:49:46 -0700 (PDT)
+        Fri, 10 May 2019 12:49:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d12so8643315wrm.8
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 09:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Is7gD3yeObgU922o5rXJFDawZvTxttvDjfnW9eFtyrw=;
-        b=fBkrLJ1E5OA+08cH9MslvzFXxoKtzBq2o6KYAEOStp1jVLEwYxnEGZ5LY773CCHu1N
-         e1feqfn5tkpY51KyGEPTgYBIHFRrpWN/7s7eaQMOzChMnoq0eRDSklFUQLC5DUHOFAKx
-         uKG9NUhPFBVoLbo1O9nR8gFEckRBstGu0uUVchZnQdzHcsmGc1Pl4UQCVZBjkbEOAY0z
-         UgJ5zuHRK3jsilfgLJRH3IFTWyPvuNUNajH2I6VaBJKDoQZb9viLbNhLjHFjv/qsr0G3
-         hnPhCTicU9Z9eAIZlj8r1zspYcXdNnRZ2H91rYQqjzP6RqpBsU8C2am/2h6cPbsRArXj
-         JNAQ==
+        bh=ymMWA7qGWKTKg4sjga2JHa1g3AkDQJanr/hpUl4TY20=;
+        b=VD9DKzz95+nkF7M2qPqLJnLBiyRHTWMc45ShguOvHFsS+EbnWctH6q8qU2PaWi+MH2
+         3DngXRS+8cYv2kTg4Yw8kJZRL2SGdgZLBo1a5DuSE1HN+qglmY++uOR02Abm+c5mlK1t
+         wwPKvXg7TRDc8Dq5Ip+lyC8r4zF+jmDXLlIJ0OSrcIxbzQjxboRH/8yfM/mx1RdugAAj
+         z17GQCVWWdsPK2DstD09KmUPn/E4jjb4WN4CrRjC1mq0/VqGTV7KnVcEjZIYHUAbTX5H
+         ATm4YXxTJqEu/vy4UEJwmolN1lLDuDsmVs9dZnehUYhAmWdsphVJXAcaPaPNthAKmlHu
+         W36g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Is7gD3yeObgU922o5rXJFDawZvTxttvDjfnW9eFtyrw=;
-        b=bcqFioVvBnpk7BNDIGw0UIJVrJWrUV2IL5+N7+TBQB8WqbYj5GsZ+Lp6ZBp9Q+hVLH
-         JERafarh6c8YjRx2b28KbTnSxjobbMenSKeI4eqBZfHKsAm4Q1US979Y1TvbCh/lmvHc
-         0zlouaYqEDixIHF7UuO3+6m/sVO/0yljHz9qg3wqm9R8Swsow892smK4CjNT1bhU5A7K
-         /wYN6xmTOgMnwjHB6B4dmdW+iwdNY+6zb4RRo9oLf10cEvyuv7nx1fjigcBMeMTRZbRG
-         eraTxoir18ZRXjHcwyMSb8QTDGuLxEb3gmLyy4QGMn59rLcbwsWOgPWKoHV3ek++shP4
-         MrsA==
-X-Gm-Message-State: APjAAAX336jnd42JSNwc2+Fbh6tZCh3I5UyMeUBDrrsojZcL6657UnGN
-        lIBLZg5FixqcqSbP5bsTfIfagw==
-X-Google-Smtp-Source: APXvYqwMuN/bOnJi5zVCfLtc6oWWWxdwzjc1a80rDT+920MwLAt+4SZyEIccA37+vnMs1aIt2Rev3Q==
-X-Received: by 2002:a1c:1d4:: with SMTP id 203mr8178833wmb.76.1557506986314;
-        Fri, 10 May 2019 09:49:46 -0700 (PDT)
+        bh=ymMWA7qGWKTKg4sjga2JHa1g3AkDQJanr/hpUl4TY20=;
+        b=LksGJ1af/3bD00dZnUS+vcDlQlAWT9rAxQWjJ3LoTN8O8OURRQmWH7UUYhWOi+gMfh
+         cF5EqVv7LPdqRTl+TQo5eTi7xo7mj+Xk2uGuZlD36VvPQcl2xCTCya7ZZgFXPfTzLSoS
+         /g+YMLoQD0pSjlnLfkiB0nErHw36Lka8vSEaaCg1fUTBAH5pssUh5yTIFwRQyrDZujxK
+         uB/Z9iq7ScErdtBV28BQCcg3gnWZ258mphq+4L/OZ9y5qzngbTpOt/+qRFKXxRXMyVv6
+         bfOFVth+wcvUmHK5svkU1kY501vY8kAQwnu/R/5zEBAjowyOyD0mjBmLVA/Bi3XlxPWv
+         pqKQ==
+X-Gm-Message-State: APjAAAV1AYlSE4xJ3OkepjSbgpek8N9gEvrBpQkK/vTPyQgzQ/oSvQRH
+        2OHUrC1okfMRe6dBiSiYrLQasg==
+X-Google-Smtp-Source: APXvYqzCTtFAhIiU7kp0M3POS//+ppjzgKaLXZ9pNB/HF4k19/83k7W5+CFc2VFcbAQUZbJnYoPQvw==
+X-Received: by 2002:adf:e8c4:: with SMTP id k4mr8969231wrn.9.1557506987191;
+        Fri, 10 May 2019 09:49:47 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id q26sm5114308wmq.25.2019.05.10.09.49.45
+        by smtp.googlemail.com with ESMTPSA id q26sm5114308wmq.25.2019.05.10.09.49.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 09:49:45 -0700 (PDT)
+        Fri, 10 May 2019 09:49:46 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 1/5] arm64: dts: meson: g12a: add ethernet mac controller
-Date:   Fri, 10 May 2019 18:49:36 +0200
-Message-Id: <20190510164940.13496-2-jbrunet@baylibre.com>
+Subject: [PATCH 2/5] arm64: dts: meson: g12a: add ethernet pinctrl definitions
+Date:   Fri, 10 May 2019 18:49:37 +0200
+Message-Id: <20190510164940.13496-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190510164940.13496-1-jbrunet@baylibre.com>
 References: <20190510164940.13496-1-jbrunet@baylibre.com>
@@ -63,45 +63,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the synopsys ethernet mac controller embedded in the g12a SoC family.
+Add the ethernet pinctrl settings for RMII, RGMII and internal phy leds
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 37 +++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index 2f4f4dd54cba..a32db09809f7 100644
+index a32db09809f7..fe0f73730525 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -102,6 +102,27 @@
- 		#size-cells = <2>;
- 		ranges;
+@@ -206,6 +206,43 @@
+ 						};
+ 					};
  
-+		ethmac: ethernet@ff3f0000 {
-+			compatible = "amlogic,meson-axg-dwmac",
-+				     "snps,dwmac-3.70a",
-+				     "snps,dwmac";
-+			reg = <0x0 0xff3f0000 0x0 0x10000
-+			       0x0 0xff634540 0x0 0x8>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			clocks = <&clkc CLKID_ETH>,
-+				 <&clkc CLKID_FCLK_DIV2>,
-+				 <&clkc CLKID_MPLL2>;
-+			clock-names = "stmmaceth", "clkin0", "clkin1";
-+			status = "disabled";
++					eth_leds_pins: eth-leds {
++						mux {
++							groups = "eth_link_led",
++								 "eth_act_led";
++							function = "eth";
++							bias-disable;
++						};
++					};
 +
-+			mdio0: mdio {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				compatible = "snps,dwmac-mdio";
-+			};
-+		};
++					eth_rmii_pins: eth-rmii {
++						mux {
++							groups = "eth_mdio",
++								 "eth_mdc",
++								 "eth_rgmii_rx_clk",
++								 "eth_rx_dv",
++								 "eth_rxd0",
++								 "eth_rxd1",
++								 "eth_txen",
++								 "eth_txd0",
++								 "eth_txd1";
++							function = "eth";
++							bias-disable;
++						};
++					};
 +
- 		apb: bus@ff600000 {
- 			compatible = "simple-bus";
- 			reg = <0x0 0xff600000 0x0 0x200000>;
++					eth_rgmii_pins: eth-rgmii {
++						mux {
++							groups = "eth_rxd2_rgmii",
++								 "eth_rxd3_rgmii",
++								 "eth_rgmii_tx_clk",
++								 "eth_txd2_rgmii",
++								 "eth_txd3_rgmii";
++							function = "eth";
++							bias-disable;
++						};
++					};
++
+ 					hdmitx_ddc_pins: hdmitx_ddc {
+ 						mux {
+ 							groups = "hdmitx_sda",
 -- 
 2.20.1
 
