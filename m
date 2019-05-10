@@ -2,160 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C24B19844
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7831198ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 09:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfEJGNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 02:13:15 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:49735 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbfEJGNP (ORCPT
+        id S1727306AbfEJHV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 03:21:58 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:60041 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727289AbfEJHV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 02:13:15 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x4A6C8eU029885;
-        Fri, 10 May 2019 15:12:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x4A6C8eU029885
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557468730;
-        bh=Zz5IFdzVMzJDlwRPqiFlRYTAt3VGP5hkTJyDL3fFG1U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=taCcs/K6j9GCIzR4TXiWlEwzuDBA7PJsUpoHNoSZW7DhpqNQ03j1oSrzmV3M10s8X
-         Nn1f4EOsAI2/fFcX0yQruU5wcVLkIZ9Fc1Zn3Wl2icRv4QikUNAmLgdQNOpIHPTCnB
-         pgIa8h7I3qOWU6zt9Trg3RktjLu7F2CSPsHUK1i4hZOPoy/GGh7bEJG9KgWa4eECRt
-         RRonuBVrsJTx5yiRMNKawa8U2DsYVT6UD0EmpisLLr/ckaC3wP5Bmi5CEJC8v9BXgI
-         b1+JFDEA8C0c8OlOBG21n8E8Ktty3799t1V+1S7mlYoTIXWf2V10Yr0LrMtvfSfKmD
-         vI/fBduZV8A6A==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] kconfig: do not write .config if the content is the same
-Date:   Fri, 10 May 2019 15:12:05 +0900
-Message-Id: <20190510061205.28753-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190510061205.28753-1-yamada.masahiro@socionext.com>
-References: <20190510061205.28753-1-yamada.masahiro@socionext.com>
+        Fri, 10 May 2019 03:21:58 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190510072155epoutp02d0ef514dffc4f5af2574458e622d5b61~dQV1-M_zv0207702077epoutp02k
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 07:21:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190510072155epoutp02d0ef514dffc4f5af2574458e622d5b61~dQV1-M_zv0207702077epoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1557472916;
+        bh=0GHg7hg1JH/Hx2kxrbu6qAah08w35aybr4V9aViVsPs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=bYXJGAYT85TwR7MMryABJh+YY5gqdJBzz2lYzSlZpIgAWShlcbDxKpbQQW7CSCG4z
+         08r2MaKwxExPvVXl9YcWVukd7YvVR973XhAuz/BKlrO46kl/FTRQVKT9Qx8rpSDTG/
+         3iyiWVcVZBGz8uRCsZMHeWxAIBDTE7K5lUZJdrP4=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.40.193]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20190510072154epcas5p109db6ea89ab70e5b214436f6dff7fca6~dQV0USwuU3047530475epcas5p1E;
+        Fri, 10 May 2019 07:21:54 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2D.BB.04067.29625DC5; Fri, 10 May 2019 16:21:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1~dPazciaV32280722807epcas5p3V;
+        Fri, 10 May 2019 06:14:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190510061418epsmtrp14aaaf105d4d2f8ab03548bbbe07e9a1d~dPazbvThh0714207142epsmtrp1J;
+        Fri, 10 May 2019 06:14:18 +0000 (GMT)
+X-AuditID: b6c32a4b-78bff70000000fe3-59-5cd526922ef3
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        35.36.03692.AB615DC5; Fri, 10 May 2019 15:14:18 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.135]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190510061416epsmtip290cabd8939c2be6a25e4ab8ae7a48a7f~dPaxVZ6e51223912239epsmtip2h;
+        Fri, 10 May 2019 06:14:16 +0000 (GMT)
+From:   Maninder Singh <maninder1.s@samsung.com>
+To:     terrelln@fb.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        keescook@chromium.org, gustavo@embeddedor.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+Subject: [PATCH 2/2] zstd: use U16 data type for rankPos
+Date:   Fri, 10 May 2019 11:43:59 +0530
+Message-Id: <1557468839-3388-1-git-send-email-maninder1.s@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUhUURTHufPeLC5Tj2k7WcrwcII0bcaa6VYuUSED+kEIKmLKXnoZpdl4
+        b8a2D01llkpZttBimlSUFi2mZprlVtFie5YNWpAVmU2omIUUzfMl9e13/ud/7v9y71FRmmF5
+        mCrb4Sa8g7OximC6tnVmVEzxjJcWve+BEj9tILjkcS6Na27ocGHvdPyw0I7fdv+U4ef1JQrc
+        WpZH4+6+Ghnu/d2hwC33TqBFIebj3qe0ubqiU2a+2Kwz79/hV5prm3TmvdWVyDxYFZGmXGWL
+        zyJcJuG1xJHhzMx2WBPYlGXpS9KNJr0hxjAfz2O1Ds5OEtilqWkxydm2wPVYbQ5n8wSkNE4Q
+        2NmJ8bzT4ybaLKfgTmCJK9PmMsS5YgXOLngc1tgMp32BQa+PMwaca21ZHeXn5a6CoI0/hr20
+        F/kVBUilAmYu1DQuLEBBKg3TgMBbCBIPIPB/tBSg4AB/R+ArG0Jj/r6etZLeGPCUtiulYgjB
+        heP5CnFawcRCZf0NWuSJTA6cvH5TLpoopgnBkP8KJTYmMBi2595RikwzOhh4tkcpJqiZZGiv
+        2CLKwERA56N8SpwF5oICzua3UVJjKXTknZZJPAF671YrJQ6Dz0V5SmlgF4JXRztoqTiIIP9b
+        xV9XErx7fXs0jWJmwqX62ZIcDofuXxw9lGLGwZ6Rnr8BaqgrHWMd5HZelks8DQb7+2mJzTDQ
+        OCITj9Qwq6G1K2kfCj/2L+AkQpVoKnEJdisRjK45DrLh/2+qQqNLF5VSh6oepbYgRoXYUDUe
+        /8KikXM5wiZ7CwIVxU5U87MCkjqT27SZ8M503mMjQgsyBh5wPxU2KcMZWGGHO91gjDOZ9PP1
+        xjnYZGCnqIvlLy0axsq5yXpCXIQfm5OpgsK8aEX8lp3njnxIjWhLrQtvuNZsfTeyMzF6utWZ
+        VF882B69JrF86wY33Ipe/mvz7+5Pa6Kujkw2FfUslr1fpz0aen0bHl45tw+fjuwKfdMVsrI2
+        5olr997Sj4bmrudffXRw05lTh48cKOtnfMgyrTw55M6P5i9FjfN4/+uUyEhfKfG8aWNpIYsz
+        RFG8wP0BRZI6t4oDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMLMWRmVeSWpSXmKPExsWy7bCSvO4usasxBhuea1hc3J1qMed8C4vF
+        1j2qFt2vZCzOdOda3L/3k8ni8q45bBaH57exWNx7s5XJ4tW/a2wWh07OZXTg9pjdcJHFY8vK
+        m0we6w6qekxsfsfuse2AqkffllWMHp83yQWwR3HZpKTmZJalFunbJXBlXFu4mrWgi7Pix/cG
+        lgbGd2xdjBwcEgImEm+eJHQxcnEICexmlFi7/ghrFyMnUFxa4ue/9ywQtrDEyn/P2SGKPjNK
+        HNqwlxkkwSagJ7Fq1x6wIhGBGom2f0fZQIqYBY4xSmxYcJ0RJCEsYCHR1HKMHcRmEVCV+HSp
+        lx1kM6+Am8TZldUQC+Qkbp7rZJ7AyLOAkWEVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7u
+        JkZw0Glp7mC8vCT+EKMAB6MSD68F/5UYIdbEsuLK3EOMEhzMSiK8RTpAId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rxP845FCgmkJ5akZqemFqQWwWSZODilGhgFUxbP0zjBdlo3bWvDiZJ3f47J
+        di1ZXv5MedejS8H7ZB1Wyi6NCD5W7tuW9HHV9MLwI0t+HRaol5u/UmxLkWeZxBvLuYpVe9VX
+        W1WWXbRfy9vgdK9hprjCyV/erzW+Nik/qlBYxDmHZ2fUssfvvvf/SlPqf9K8mUNwaufsWy8X
+        XRQ88Lc717NTiaU4I9FQi7moOBEA0G2ajDYCAAA=
+X-CMS-MailID: 20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1
+References: <CGME20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kconfig updates the .config when it exits even if its content is
-exactly the same as before. Since its timestamp becomes newer than
-that of other build artifacts, additional processing is invoked,
-which is annoying.
+rankPos structure variables value can not be more than 512.
+So it can easily be declared as U16 rather than U32.
 
-- syncconfig is invoked to update include/config/auto.conf, etc.
+It will reduce stack usage of HUF_sort from 256 bytes to 128 bytes
 
-- kernel/config.o is recompiled if CONFIG_IKCONFIG is enabled,
-  then vmlinux is relinked as well.
+original:
+e92ddbf0        push    {r4, r5, r6, r7, r8, r9, fp, ip, lr, pc}
+e24cb004        sub     fp, ip, #4
+e24ddc01        sub     sp, sp, #256    ; 0x100
 
-If the .config is not changed at all, we do not have to even
-touch it. Just bail out showing "No change to .config".
+changed:
+e92ddbf0        push    {r4, r5, r6, r7, r8, r9, fp, ip, lr, pc}
+e24cb004        sub     fp, ip, #4
+e24dd080        sub     sp, sp, #128    ; 0x80
 
-  $ make allmodconfig
-  scripts/kconfig/conf  --allmodconfig Kconfig
-  #
-  # configuration written to .config
-  #
-  $ make allmodconfig
-  scripts/kconfig/conf  --allmodconfig Kconfig
-  #
-  # No change to .config
-  #
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Vaneet Narang <v.narang@samsung.com>
 ---
+ lib/zstd/huf_compress.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- scripts/kconfig/confdata.c | 54 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
-
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 9fd6430c93d2..399973e35533 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-  */
- 
-+#include <sys/mman.h>
- #include <sys/stat.h>
- #include <ctype.h>
- #include <errno.h>
-@@ -36,6 +37,52 @@ static bool is_dir(const char *path)
- 	return S_ISDIR(st.st_mode);
+diff --git a/lib/zstd/huf_compress.c b/lib/zstd/huf_compress.c
+index e727812..2203124 100644
+--- a/lib/zstd/huf_compress.c
++++ b/lib/zstd/huf_compress.c
+@@ -382,8 +382,8 @@ static U32 HUF_setMaxHeight(nodeElt *huffNode, U32 lastNonNull, U32 maxNbBits)
  }
  
-+/* return true if the given two files are the same, false otherwise */
-+static bool is_same(const char *file1, const char *file2)
-+{
-+	int fd1, fd2;
-+	struct stat st1, st2;
-+	void *map1, *map2;
-+	bool ret = false;
-+
-+	fd1 = open(file1, O_RDONLY);
-+	if (fd1 < 0)
-+		return ret;
-+
-+	fd2 = open(file2, O_RDONLY);
-+	if (fd2 < 0)
-+		goto close1;
-+
-+	ret = fstat(fd1, &st1);
-+	if (ret)
-+		goto close2;
-+	ret = fstat(fd2, &st2);
-+	if (ret)
-+		goto close2;
-+
-+	if (st1.st_size != st2.st_size)
-+		goto close2;
-+
-+	map1 = mmap(NULL, st1.st_size, PROT_READ, MAP_PRIVATE, fd1, 0);
-+	if (map1 == MAP_FAILED)
-+		goto close2;
-+
-+	map2 = mmap(NULL, st2.st_size, PROT_READ, MAP_PRIVATE, fd2, 0);
-+	if (map2 == MAP_FAILED)
-+		goto close2;
-+
-+	if (bcmp(map1, map2, st1.st_size))
-+		goto close2;
-+
-+	ret = true;
-+close2:
-+	close(fd2);
-+close1:
-+	close(fd1);
-+
-+	return ret;
-+}
-+
- /*
-  * Create the parent directory of the given path.
-  *
-@@ -888,6 +935,13 @@ int conf_write(const char *name)
- 	fclose(out);
+ typedef struct {
+-	U32 base;
+-	U32 curr;
++	U16 base;
++	U16 curr;
+ } rankPos;
  
- 	if (*tmpname) {
-+		if (is_same(name, tmpname)) {
-+			conf_message("No change to %s", name);
-+			unlink(tmpname);
-+			sym_set_change_count(0);
-+			return 0;
-+		}
-+
- 		snprintf(oldname, sizeof(oldname), "%s.old", name);
- 		rename(name, oldname);
- 		if (rename(tmpname, name))
+ static void HUF_sort(nodeElt *huffNode, const U32 *count, U32 maxSymbolValue)
 -- 
-2.17.1
+2.7.4
 
