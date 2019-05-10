@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 196A61986A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2BD11987D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 08:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfEJGgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 02:36:20 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44934 "EHLO
+        id S1727178AbfEJGhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 02:37:20 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44030 "EHLO
         mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbfEJGgU (ORCPT
+        with ESMTP id S1726873AbfEJGhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 02:36:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id e13so4074013ljl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:36:19 -0700 (PDT)
+        Fri, 10 May 2019 02:37:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z5so4084133lji.10
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2019 23:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=Jdn1fB5jK2H9U7klv9WLYai3MkQ8jjCmQ0uyEZntdqE=;
-        b=QbhMpmEZ8IEj071UOyImUxcupm/StXph+T9Z8knKJ4PpktNB98llcx9Wuxs9WKxIyN
-         Sq8dbRU7UrZeIgoWGzDr5klJN3ykYw2hcmu2v667LBcIrKFLkPDxP5E4MZwXzOrCdrIr
-         UjTSP++617UkcCA8B627dZ/xakGdZod/QE+WPiuzZK6ZZ4Sr8dhMoz7UABabRgK0eVvS
-         D4e8sbFGoYf0PPjq2i5YQr5fllJx7Tudie1dRo119xUOIi+5M7oodFN1jJsuFZJvqxyg
-         tnWfe+ySBKNDV18HWw27XNjnTrVTO6hLab0u5i+/9Bmx557KXnBKGPRCzrbsPOt/VReh
-         6cZQ==
+        bh=dDjtLoV+g4xy2332cvIu8FDNJxtwUQ2tO38cCGm0YQY=;
+        b=TDn9BDTgqTF18lV6Y9Q/zpvWXhjJXDjRAtDmEBLF0uOlgxK3GaUm3gPif2kaAIkWh2
+         iVzCGcgHQ75L8bwIcFHzPaLfpN8b+0UPC5Q19E3IxnRgqlCcnE+0maeNbOUznXrjknZf
+         s7AQwJ/Gno/TVHopsap+uSg0GkfB6QgOvfpBCAZGysWKedZeDyV0f6yWK9dOOnVT9v+3
+         6XgmXbdUbYQX8ao8jBxEO/VC0tdHfoTwkS6IeylriOcIAvbPpGQWDAbuzgr+oYvhH6GQ
+         uIH67wVNY2FAjg1Dsb/r0h81ghpxlteIVDGLtkax5kIa3KtQi/WWUkF43koYoUijEekN
+         f0mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Jdn1fB5jK2H9U7klv9WLYai3MkQ8jjCmQ0uyEZntdqE=;
-        b=nKqC30PLVx1GiBJh82lNkS/MsThCBwvmp4/+oc2GAxMA+e3F3OeLIKeRS4yyylMJg9
-         7hmlbKgzgGBg+W+7MFIHVmQJtNOQ3DirZGxqmMJDiuhqlulQ2Bdox7LXsCDoqJT0Yz3U
-         r3wq/2b3uZeNtkcAgp/qcoYxPWyYHdKa6kjRsDLiKVLoXLCMyOZKBmueBki+1CyrIM5r
-         myGgPwSPkN3nJAhDY+ro/W0/O6ZbkTodtJvIwSSHXwZjTS9lFjump3tCMMXLJuVBKFeA
-         T+2dDQJ1ROl0fjKVDRPOVgcgQI5C5m7Gf94gH8vospG0Y3s6YBPSoaoMZQPx2247LMRE
-         +L9A==
-X-Gm-Message-State: APjAAAXjkOz8QMcDx6tL3CuwaOyDW4CVu2pQfjd9jaLiZKDdNMzNFRMN
-        WIRNbOVk/+GxKgS0mRpv6htv1UvwOlSGIaiJUpwX+w==
-X-Google-Smtp-Source: APXvYqwovU9fCF8YmwMEJZhh0/PzADcVGKOIy7Ujk0rMuR4qjDtBbQDRUvCXHyWDfeona9Ck+tqMBnfgl0018FSX1Wc=
-X-Received: by 2002:a2e:9193:: with SMTP id f19mr4604787ljg.111.1557470178310;
- Thu, 09 May 2019 23:36:18 -0700 (PDT)
+        bh=dDjtLoV+g4xy2332cvIu8FDNJxtwUQ2tO38cCGm0YQY=;
+        b=L0bqFf41gveOyOfmEZz4PV52leHuf9IB6VfYpt1SDRt7dQVTxlkmXWi5hAGvN1rzDa
+         sPvGIeGodQiO9G7krQs0PrZ24MYnvROv8am/pnzq3p/rx2YoQ0/fNNw2PDZlgtD3SwzO
+         IR4R3r90U2Lm9F7qMio/iHnpprpg7k6jkMG6v6P8Wu4wgKAaZt17L2Q2ZfzaDa5qYdwk
+         +XvdABwo6ghBwkVCrMwALqlUSAMbCvOZQvHw7BPM5nndDkoOoToNekez5jKVThtvCuhg
+         22eDUo4+yat704IDy8xcyHEwEsUJZ4LT60UToSJwPQMakaiPMUXHpJdNTgw3tUpF2N6y
+         Ug7w==
+X-Gm-Message-State: APjAAAXkZKhNVDkY3rGWaY101P/fgNSmz14DxmcsZwG3InL+vGPkwk2O
+        kqoUDlYcfHZtK5lI0pByrYpoK43VU2W97iCG6oKQlw==
+X-Google-Smtp-Source: APXvYqwWe7ViNXHczZrFZNkQUdAzrCiLGv/nAdovj6i7neR/CCUcE6e69I3OUd+Bt0eZruHLMWQOIDUsU9hkCNs3SV4=
+X-Received: by 2002:a2e:568d:: with SMTP id k13mr4712010lje.194.1557470237752;
+ Thu, 09 May 2019 23:37:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190509181309.180685671@linuxfoundation.org>
-In-Reply-To: <20190509181309.180685671@linuxfoundation.org>
+References: <20190509181247.647767531@linuxfoundation.org>
+In-Reply-To: <20190509181247.647767531@linuxfoundation.org>
 From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 10 May 2019 12:06:07 +0530
-Message-ID: <CA+G9fYvKNb-WD+0govE2NWzjHisdJXiRRioTQGZKHP0gvO9WKw@mail.gmail.com>
-Subject: Re: [PATCH 5.0 00/95] 5.0.15-stable review
+Date:   Fri, 10 May 2019 12:07:06 +0530
+Message-ID: <CA+G9fYvCwWPpF8MaKWkOhmV9nZR1p3MQeUhjF7QWa9rabcGfaA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/28] 4.9.175-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -64,29 +64,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 May 2019 at 00:21, Greg Kroah-Hartman
+On Fri, 10 May 2019 at 00:14, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
-> This is the start of the stable review cycle for the 5.0.15 release.
-> There are 95 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.9.175 release.
+> There are 28 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 >
-> Responses should be made by Sat 11 May 2019 06:11:22 PM UTC.
+> Responses should be made by Sat 11 May 2019 06:11:12 PM UTC.
 > Anything received after that time might be too late.
 >
 > The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.0.15-rc1.gz
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.175-rc1.gz
 > or in the git tree and branch at:
 >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.0.y
+-rc.git linux-4.9.y
 > and the diffstat can be found below.
 >
 > thanks,
 >
 > greg k-h
->
 
 Results from Linaro=E2=80=99s test farm.
 No regressions on arm64, arm, x86_64, and i386.
@@ -94,41 +93,39 @@ No regressions on arm64, arm, x86_64, and i386.
 Summary
 ------------------------------------------------------------------------
 
-kernel: 5.0.15-rc1
+kernel: 4.9.175-rc1
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
 le-rc.git
-git branch: linux-5.0.y
-git commit: df1376651d496484d341d374c3d2566a089b1969
-git describe: v5.0.14-96-gdf1376651d49
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.0-oe/bui=
-ld/v5.0.14-96-gdf1376651d49
+git branch: linux-4.9.y
+git commit: 50bbfeb1e2a357db99ff35681cfa95341b33103a
+git describe: v4.9.174-29-g50bbfeb1e2a3
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.174-29-g50bbfeb1e2a3
 
-No regressions (compared to build v5.0.14)
+No regressions (compared to build v4.9.174)
 
-No fixes (compared to build v5.0.14)
+No fixes (compared to build v4.9.174)
 
-
-Ran 24978 total tests in the following environments and test suites.
+Ran 22312 total tests in the following environments and test suites.
 
 Environments
 --------------
-- dragonboard-410c
-- hi6220-hikey
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
 - i386
-- juno-r2
+- juno-r2 - arm64
 - qemu_arm
 - qemu_arm64
 - qemu_i386
 - qemu_x86_64
-- x15
-- x86
+- x15 - arm
+- x86_64
 
 Test Suites
 -----------
 * build
 * install-android-platform-tools-r2600
 * kselftest
-* libgpiod
 * libhugetlbfs
 * ltp-cap_bounds-tests
 * ltp-commands-tests
@@ -138,6 +135,7 @@ Test Suites
 * ltp-dio-tests
 * ltp-fcntl-locktests-tests
 * ltp-filecaps-tests
+* ltp-fs-tests
 * ltp-fs_bind-tests
 * ltp-fs_perms_simple-tests
 * ltp-fsx-tests
@@ -155,7 +153,6 @@ Test Suites
 * perf
 * spectre-meltdown-checker-test
 * v4l2-compliance
-* ltp-fs-tests
 * ltp-open-posix-tests
 * kvm-unit-tests
 * kselftest-vsyscall-mode-native
