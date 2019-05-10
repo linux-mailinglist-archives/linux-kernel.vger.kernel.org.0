@@ -2,170 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD791A567
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 00:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D12E1A572
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 00:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbfEJWke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 18:40:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfEJWkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 18:40:33 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A45FB217D6;
-        Fri, 10 May 2019 22:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557528031;
-        bh=sjg797I3Ege8CH2yMEKO3LN7YMxSK0+Tf/Ul0+K1ZmU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2BQZd867VQk7T/6xVDuphNMg8PT5izoOPVjRH879mo5UuHee3+ME5We5UOp8oRApd
-         iNSg0CMTjRLx+00A9EkpzztyQHHRMInm04SGcjFY0N6Ai1ssRwJbeHEvYjgtLq3o/8
-         Wx03509gNXFgIf1KQaGDcBNEhhyg+soHiT3IF6pM=
-Received: by mail-qk1-f175.google.com with SMTP id c1so3365531qkk.4;
-        Fri, 10 May 2019 15:40:31 -0700 (PDT)
-X-Gm-Message-State: APjAAAW4lI9YZcdBQOHTUO12vKApasFtUEa37qKOlUhFHw63XY3DrNho
-        Z4MY0Q3mcIdVCFavI5lHXsb3A24Yv0TtGLIEow==
-X-Google-Smtp-Source: APXvYqzfUsXjKG+F9pb5KnYx61JOP50q/a8ljf0lZ3E6IZXXHNgJGxcJf1n0r9rKoC1VBQNTKS7hmCXklLDer5hjE7Q=
-X-Received: by 2002:a37:c42:: with SMTP id 63mr10276099qkm.326.1557528030863;
- Fri, 10 May 2019 15:40:30 -0700 (PDT)
+        id S1728190AbfEJWpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 18:45:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46930 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727917AbfEJWpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 18:45:33 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4AMiYvu139156;
+        Fri, 10 May 2019 22:45:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=bf8P4q788pObPSRhE2yikT3tYYSQpmCfY0xoTw+mRbc=;
+ b=tJDg3KFbDYIWEVqN4zRx/qTj/SM3kNWXyLq8DekKk43DPTy4EJHOJoil4dQOslSkD0Fq
+ 8iunHzoBxOxSlelf6JLFmdzQj8nXkCwduTFP+mohuZ+4V+/7WVXDuCxhJrPY1cft9uTr
+ VA5djX2Z2BfHHiFh2M0+dgE6PGwYX3rNP04HmZlOrNHmOWNZXxfBJumAOJDD5eVF04g6
+ XPVd8mPBJD+Ad9RnRpO5yydcWexPYUKDqDWwZvF7uDkbGFCegZTnQpN+9FxA5Ch0syFd
+ ikPpnIjYazDAUp4v/QAMiW7CUYHo9JQkntMVr4FFPQkiTysvRcYATetsKTdoJc9xBSWY Xg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2s94bgkuj5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 May 2019 22:45:12 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4AMhSbp190646;
+        Fri, 10 May 2019 22:45:12 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2s94ahm8f7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 May 2019 22:45:11 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4AMj5kX031257;
+        Fri, 10 May 2019 22:45:05 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 10 May 2019 15:45:05 -0700
+Subject: Re: [PATCH, RFC 2/2] Implement sharing/unsharing of PMDs for FS/DAX
+To:     Larry Bassel <larry.bassel@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     dan.j.williams@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
+ <1557417933-15701-3-git-send-email-larry.bassel@oracle.com>
+ <20190509164914.GA3862@bombadil.infradead.org>
+ <20190510161607.GB27674@ubuette>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <af218b46-ece3-1189-e43c-209ec5cf1022@oracle.com>
+Date:   Fri, 10 May 2019 15:45:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190507203749.3384-1-ilina@codeaurora.org> <20190507203749.3384-5-ilina@codeaurora.org>
-In-Reply-To: <20190507203749.3384-5-ilina@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 10 May 2019 17:40:19 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKXN2ye49HGEf+vLD0xaysp6kDqsZfFXX9BssK+TUh5SA@mail.gmail.com>
-Message-ID: <CAL_JsqKXN2ye49HGEf+vLD0xaysp6kDqsZfFXX9BssK+TUh5SA@mail.gmail.com>
-Subject: Re: [PATCH v5 04/11] of: irq: document properties for wakeup
- interrupt parent
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190510161607.GB27674@ubuette>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9253 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905100144
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9253 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905100144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 7, 2019 at 3:41 PM Lina Iyer <ilina@codeaurora.org> wrote:
->
-> Some interrupt controllers in a SoC, are always powered on and have a
-> select interrupts routed to them, so that they can wakeup the SoC from
-> suspend. Add wakeup-parent DT property to refer to these interrupt
-> controllers.
->
-> If the interrupts routed to the wakeup parent are not sequential, than a
-> map needs to exist to associate the same interrupt line on multiple
-> interrupt controllers. Providing this map in every driver is cumbersome.
-> Let's add this in the device tree and document the properties to map the
-> interrupt specifiers
->
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
-> Changes in v5:
->         - Update documentation to describe masks in the example
-> Changes in v4:
->         - Added this documentation
-> ---
->  .../interrupt-controller/interrupts.txt       | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-> index 8a3c40829899..e3e43f5d5566 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-> @@ -108,3 +108,57 @@ commonly used:
->                         sensitivity = <7>;
->                 };
->         };
-> +
-> +3) Interrupt wakeup parent
-> +--------------------------
-> +
-> +Some interrupt controllers in a SoC, are always powered on and have a select
-> +interrupts routed to them, so that they can wakeup the SoC from suspend. These
-> +interrupt controllers do not fall into the category of a parent interrupt
-> +controller and can be specified by the "wakeup-parent" property and contain a
-> +single phandle referring to the wakeup capable interrupt controller.
-> +
-> +   Example:
-> +       wakeup-parent = <&pdc_intc>;
-> +
-> +
-> +4) Interrupt mapping
-> +--------------------
-> +
-> +Sometimes interrupts may be detected by more than one interrupt controller
-> +(depending on which controller is active). The interrupt controllers may not
-> +be in hierarchy and therefore the interrupt controller driver is required to
-> +establish the relationship between the same interrupt at different interrupt
-> +controllers. If these interrupts are not sequential then a map needs to be
-> +specified to help identify these interrupts.
-> +
-> +Mapping the interrupt specifiers in the device tree can be done using the
-> +"irqdomain-map" property. The property contains interrupt specifier at the
-> +current interrupt controller followed by the interrupt specifier at the mapped
-> +interrupt controller.
-> +
-> +   irqdomain-map = <incoming-interrupt-specifier mapped-interrupt-specifier>
+On 5/10/19 9:16 AM, Larry Bassel wrote:
+> On 09 May 19 09:49, Matthew Wilcox wrote:
+>> On Thu, May 09, 2019 at 09:05:33AM -0700, Larry Bassel wrote:
+>>> This is based on (but somewhat different from) what hugetlbfs
+>>> does to share/unshare page tables.
+>>
+>> Wow, that worked out far more cleanly than I was expecting to see.
+> 
+> Yes, I was pleasantly surprised. As I've mentioned already, I 
+> think this is at least partially due to the nature of DAX.
 
-I'm wondering why we need a new map property rather than just using
-interrupt-map? Contrary to what Linus said, it is not PCI only.
+I have not looked in detail to make sure this is indeed all the places you
+need to hook and special case for sharing/unsharing.  Since this scheme is
+somewhat like that used for hugetlb, I just wanted to point out some nasty
+bugs related to hugetlb PMD sharing that were fixed last year.
 
-It would be an extension of the current behavior. It's generally used
-to map each interrupt to different parents or swizzle the routing (in
-the PCI case). Generally, a node would be either an
-'interrupt-controller' or an 'interrupt-map' node. The interrupt
-parsing code (for the kernel at least) prioritizes
-'interrupt-controller' path, so adding 'interrupt-map' could be done
-without changing behavior.
+5e41540c8a0f hugetlbfs: fix kernel BUG at fs/hugetlbfs/inode.c:444!
+dff11abe280b hugetlb: take PMD sharing into account when flushing tlb/caches
+017b1660df89 mm: migration: fix migration of huge PMD shared pages
 
-Another concern I have with this is it only solves the problem of an
-IRQ routed to multiple parents for the case of 2 parents. What happens
-when we have an IRQ routed to 3 different parents? Maybe the solution
-is the incoming-interrupt-specifier can be listed more than once. Marc
-already expressed concerns with the scalability of interrupt-map
-property, so that's maybe not an ideal solution.
-
-> +
-> +The optional properties "irqdomain-map-mask" and "irqdomain-map-pass-thru" may
-> +be provided to help interpret the valid bits of the incoming and mapped
-> +interrupt specifiers respectively.
-> +
-> +   Example:
-> +       intc: interrupt-controller@17a00000 {
-> +               #interrupt-cells = <3>;
-
-The phandle doesn't count as a cell, so this should be 2.
-
-> +       };
-> +
-> +       pinctrl@3400000 {
-> +               #interrupt-cells = <2>;
-> +               irqdomain-map = <22 0 &intc 36 0>, <24 0 &intc 37 0>;
-> +               irqdomain-map-mask = <0xff 0>;
-> +               irqdomain-map-pass-thru = <0 0xff>;
-> +       };
-> +
-> +In the above example, the input interrupt specifier map-mask <0xff 0> applied
-> +on the incoming interrupt specifier of the map <22 0>, <24 0>, returns the
-> +input interrupt 22, 24 etc. The second argument being irq type is immaterial
-> +from the map and is used from the incoming request instead. The pass-thru
-> +specifier parses the output interrupt specifier from the rest of the unparsed
-> +argments from the map <&intc 36 0>, <&intc 37 0> etc to return the output
-> +interrupt 36, 37 etc.
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+The common issue in these is that when unmapping a page with a shared PMD
+mapping you need to flush the entire shared range and not just the unmapped
+page.  The above changes were hugetlb specific.  I do not know if any of
+this applies in the case of DAX.
+-- 
+Mike Kravetz
