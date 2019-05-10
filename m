@@ -2,218 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B050119D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7639019D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 14:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfEJM3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 08:29:51 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40151 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbfEJM3v (ORCPT
+        id S1727454AbfEJMcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 08:32:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38244 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727276AbfEJMcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 08:29:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id d15so4937460ljc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 05:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eOLJW9/rZojjpBgthZDgv9XT0Wqubt+l+UgduLBDd9c=;
-        b=AJOwqWfnkRuAcTK2NNILnCY9nulpYpiG4KYbi2iRLLW+E+uVovUBH/qVdS1D/PWmKf
-         Vk5LWm50Hb07SytgYij0y3u3Xlasuj8/zM8hJsyyf6zhWDFYwop+4GAmLIiQxs2rh4M5
-         GqYrcWVI18eSKMTUS2XuFqzEjFW4ilXaelHvVZyPpgx1vLlvXTw9ZAz8RpUm8c0ltEGM
-         6gGMt5mo2zJpVXEASZb6pOFKMsjnCH8LWqYYwQaxTRZzdZsi0JxfonV30+mgaIbwTNUf
-         DXQd6sikdzQUu6r2LH7GI/xKhX0OGbBH6BvxVJSBEp1vdCLbZ2KKFMk4pf6UcTiYZH5Z
-         g0vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eOLJW9/rZojjpBgthZDgv9XT0Wqubt+l+UgduLBDd9c=;
-        b=tu2qUMNUGdnCTDclxwcUt+nLKXfBas1B4UrfaItezZjEL3iANWzIcaV9b5YSgLKjqi
-         JmbCnBDcs1uC8jBoJ3gwI6Wr6ZOVHbG7fe6ZUX4TEldyi7tWMXkc73PEPF4+yjUwHGBS
-         ym2hY1R3CatwCrAuJ2d7D9M3ltaooA2TlaBxRFu+5SPYVCh6n1IVsVX/hNPxaLTyPHwc
-         KPz78cA3GjOfirdgaCve5B9RCNfB5XKGHS3ZbTGo0a4afn7KGuF2PW6SspBs0k+0yDwx
-         3wX+duLRvOxcLMO3DS9WreeIIp53q3nM/I1ZpXgX5iottR5G0kNG6j8g08NoRBiM9h8z
-         TQUA==
-X-Gm-Message-State: APjAAAWvDA7vsllOXcUuDjmbj8wv0NOpeOCe/qyiIwuCVCsOEKo8ojBF
-        VdJMFpruGX4oUqxwAPdxJbU3/p8o4gbw9hD74g10qQ==
-X-Google-Smtp-Source: APXvYqyAGGO8dkcCPhpU/sOYlipDEaeZ/r64xSPHIpN7i9zx1SRmZRK2kSpTvrMiTaEucpLX5Wk7yv6LqprGkIWDvsA=
-X-Received: by 2002:a2e:730c:: with SMTP id o12mr1580530ljc.61.1557491388364;
- Fri, 10 May 2019 05:29:48 -0700 (PDT)
+        Fri, 10 May 2019 08:32:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CJ/RgzG6/23EoFY4Hg/6HnLzf+zlaDTQsjadNt+mqsc=; b=u0ZEekF/39iPW4i1B4OoREnhB
+        LveLsEtgqTkR9onnpN5dQph4/uGjda6xOD3siFjtuQ0ZUfcu5UfEY2Q0HXj9HR4LpDNBk/BX3CJDA
+        VJPgJy6qpCwNNmS2gLm8FF9EK6/OS/pcMyp8BFP88usSnY95qgJAsig6MAXoKkW3dJE+HYn9GsZwI
+        48fuuMh+m7gCMgD8pCO2shRAhQsW0eG2uNQ+8VC+4di2fbbIGXsVpwemHS/YVwv1jR+jswrFG9+D7
+        NT7mPNgSsHRy4C3MG3nsUoeAsfxunqeetUYvtJiBPNUr08JsKhhGjOFq6s7377MT4uvyPFWrPfOVc
+        /eoDUpefg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hP4gW-0005dv-Uw; Fri, 10 May 2019 12:31:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 94E2D2029F1F3; Fri, 10 May 2019 14:31:31 +0200 (CEST)
+Date:   Fri, 10 May 2019 14:31:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/4] x86/kprobes: Fix frame pointer annotations
+Message-ID: <20190510123131.GU2589@hirez.programming.kicks-ass.net>
+References: <20190508115416.nblx7c2kocidpytm@treble>
+ <20190508120416.GL2589@hirez.programming.kicks-ass.net>
+ <20190508124248.u5ukpbhnh4wpiccq@treble>
+ <20190508153907.GM2589@hirez.programming.kicks-ass.net>
+ <20190508184848.qerg3flv3ej3xsev@treble>
+ <20190509102030.dfa62e058f09d0d8cbdd6053@kernel.org>
+ <20190509081431.GO2589@hirez.programming.kicks-ass.net>
+ <20190509230106.3551b08553440d125e437f66@kernel.org>
+ <20190509171416.GY2623@hirez.programming.kicks-ass.net>
+ <20190510135831.c4ad309c68fc254f819194fc@kernel.org>
 MIME-Version: 1.0
-References: <cover.1556182964.git.viresh.kumar@linaro.org> <CAPhsuW6QXn9HfGN31=1w037mLhc7eSZCOSK-Lor7OWRxg8Ct7A@mail.gmail.com>
-In-Reply-To: <CAPhsuW6QXn9HfGN31=1w037mLhc7eSZCOSK-Lor7OWRxg8Ct7A@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 10 May 2019 14:29:37 +0200
-Message-ID: <CAKfTPtArZqEv_=ojA8O7BC6fXB=Q5qTDqFO8xbVOyUSj57kUWg@mail.gmail.com>
-Subject: Re: [RFC V2 0/2] sched/fair: Fallback to sched-idle CPU for better performance
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Todd Kjos <tkjos@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190510135831.c4ad309c68fc254f819194fc@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Song,
+On Fri, May 10, 2019 at 01:58:31PM +0900, Masami Hiramatsu wrote:
+> On Thu, 9 May 2019 19:14:16 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 
-On Thu, 9 May 2019 at 23:54, Song Liu <liu.song.a23@gmail.com> wrote:
->
-> On Thu, Apr 25, 2019 at 5:38 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > Hi,
-> >
-> > Here is another attempt to get some benefit out of the sched-idle
-> > policy. The previous version [1] focused on getting better power numbers
-> > and this version tries to get better performance or lower response time
-> > for the tasks.
-> >
-> > The first patch is unchanged from v1 and accumulates
-> > information about sched-idle tasks per CPU.
-> >
-> > The second patch changes the way the target CPU is selected in the fast
-> > path. Currently, we target for an idle CPU in select_idle_sibling() to
-> > run the next task, but in case we don't find idle CPUs it is better to
-> > pick a CPU which will run the task the soonest, for performance reason.
-> > A CPU which isn't idle but has only SCHED_IDLE activity queued on it
-> > should be a good target based on this criteria as any normal fair task
-> > will most likely preempt the currently running SCHED_IDLE task
-> > immediately. In fact, choosing a SCHED_IDLE CPU shall give better
-> > results as it should be able to run the task sooner than an idle CPU
-> > (which requires to be woken up from an idle state).
-> >
-> > Basic testing is done with the help of rt-app currently to make sure the
-> > task is getting placed correctly.
->
-> I run some test with this set on our (Facebook's) web service (main job)
-> and ffmpeg (side job). The result looks promising.
->
-> For all the tests below, I run the web service with same load level; and
-> the side job with SCHED_IDLE. I presented schedule latency distribution
-> of the main job. The latency distribution is measured with the runqlat tool:
->      https://github.com/iovisor/bpftrace/blob/master/tools/runqlat.bt
->
-> I modified the tool to only track wake up latency of the main job.
->
-> 4 cases are compared here:
->
-> 1. w/o this set, w/o side job;
-> 2. w/ this set, w/o side job;
-> 3. w/o this set, w/ side job;
-> 4. w/ this set, w/ side job;
->
->
-> Case #1. w/o this set, w/o side job
-> @usecs:
-> [1]                 1705 |                                                    |
-> [2, 4)           1102086 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [4, 8)            329160 |@@@@@@@@@@@@@@@                                     |
-> [8, 16)            34135 |@                                                   |
-> [16, 32)           37466 |@                                                   |
-> [32, 64)           15700 |                                                    |
-> [64, 128)           8759 |                                                    |
-> [128, 256)          5714 |                                                    |
-> [256, 512)          3718 |                                                    |
-> [512, 1K)           2152 |                                                    |
-> [1K, 2K)             882 |                                                    |
-> [2K, 4K)             256 |                                                    |
-> [4K, 8K)              48 |                                                    |
-> [8K, 16K)              2 |                                                    |
->
-> Case #2. w/ this set, w/o side job;
-> @usecs:
-> [1]                 2121 |                                                    |
-> [2, 4)           1251877 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [4, 8)            401517 |@@@@@@@@@@@@@@@@                                    |
-> [8, 16)            64325 |@@                                                  |
-> [16, 32)           74352 |@@@                                                 |
-> [32, 64)           40583 |@                                                   |
-> [64, 128)          26129 |@                                                   |
-> [128, 256)         18612 |                                                    |
-> [256, 512)         12863 |                                                    |
-> [512, 1K)           8304 |                                                    |
-> [1K, 2K)            4072 |                                                    |
-> [2K, 4K)            1569 |                                                    |
-> [4K, 8K)             411 |                                                    |
-> [8K, 16K)             70 |                                                    |
-> [16K, 32K)             1 |                                                    |
->
-> From #1 and #2, we see this set probably adds a little overhead to
-> scheduling when there is no side job. But the overhead is clearly very
-> small.
->
->
-> Case #3. w/o this set, w/ side job;
-> @usecs:
-> [1]                 1282 |                                                    |
-> [2, 4)            260977 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      |
-> [4, 8)            446120 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [8, 16)           136927 |@@@@@@@@@@@@@@@                                     |
-> [16, 32)          148758 |@@@@@@@@@@@@@@@@@                                   |
-> [32, 64)          160291 |@@@@@@@@@@@@@@@@@@                                  |
-> [64, 128)         177292 |@@@@@@@@@@@@@@@@@@@@                                |
-> [128, 256)        184573 |@@@@@@@@@@@@@@@@@@@@@                               |
-> [256, 512)        173405 |@@@@@@@@@@@@@@@@@@@@                                |
-> [512, 1K)         149662 |@@@@@@@@@@@@@@@@@                                   |
-> [1K, 2K)          120217 |@@@@@@@@@@@@@@                                      |
-> [2K, 4K)           80275 |@@@@@@@@@                                           |
-> [4K, 8K)           36108 |@@@@                                                |
-> [8K, 16K)          11121 |@                                                   |
-> [16K, 32K)           736 |                                                    |
-> [32K, 64K)            19 |                                                    |
->
-> Case #4. w/ this set, w/ side job;
-> @usecs:
-> [1]                  407 |                                                    |
-> [2, 4)            535378 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  |
-> [4, 8)            795526 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [8, 16)            93032 |@@@@@@                                              |
-> [16, 32)           89890 |@@@@@                                               |
-> [32, 64)           82775 |@@@@@                                               |
-> [64, 128)          84413 |@@@@@                                               |
-> [128, 256)         84413 |@@@@@                                               |
-> [256, 512)         77202 |@@@@@                                               |
-> [512, 1K)          66043 |@@@@                                                |
-> [1K, 2K)           49276 |@@@                                                 |
-> [2K, 4K)           30114 |@                                                   |
-> [4K, 8K)           11145 |                                                    |
-> [8K, 16K)           2328 |                                                    |
-> [16K, 32K)            88 |                                                    |
->
-> #3 and #4 clearly showed the benefit of this set. With this set, we see
-> significantly fewer latency values in the 8usecs+ ranges.
->
+> > Ideally also the optimized kprobe trampoline, but I've not managed to
+> > fully comprehend that one.
+> 
+> As you pointed in other reply, save/restore can be a macro, but
+> each trampoline code is slightly different. Optprobe template has
+> below parts
+> 
+> (jumped from probed address)
+> [store regs]
+> [setup function arguments (pt_regs and probed address)]
+> [handler call]
+> [restore regs]
+> [execute copied instruction]
 
-Thanks for running tests with this patchset, your results looks goods
-with a significant decrease of long wakeup latency.
+ instruction_s_ ?
 
-Vincent
+The JMP to this trampoline is likely 5 bytes and could have clobbered
+multiple instructions, we'd then have to place them all here, and
 
-> Thanks,
-> Song
->
-> >
-> > --
-> > viresh
-> >
-> > Viresh Kumar (2):
-> >   sched: Start tracking SCHED_IDLE tasks count in cfs_rq
-> >   sched/fair: Fallback to sched-idle CPU if idle CPU isn't found
-> >
-> >  kernel/sched/fair.c  | 42 +++++++++++++++++++++++++++++++++---------
-> >  kernel/sched/sched.h |  2 ++
-> >  2 files changed, 35 insertions(+), 9 deletions(-)
-> >
-> > --
-> > 2.21.0.rc0.269.g1a574e7a288b
-> >
-> > [1] https://lore.kernel.org/lkml/cover.1543229820.git.viresh.kumar@linaro.org/
+> [jump back to probed address]
+
+jump to after whatever instructions were clobbered by the JMP.
+
+> Note that there is a limitation that if it is optiomized probe, user
+> handler can not change regs->ip. (we can not use "ret" after executed
+> a copied instruction, which must run on same stack)
+
+Changing regs->ip in this case is going to be massively dodgy indeed :-)
+But so would changing much else; changing stack layout would also be
+somewhat tricky.
