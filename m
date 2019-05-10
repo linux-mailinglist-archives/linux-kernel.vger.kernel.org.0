@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF0919C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2652C19C31
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfEJLGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 07:06:41 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52788 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfEJLGl (ORCPT
+        id S1727264AbfEJLI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 07:08:57 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:49983 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfEJLI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 07:06:41 -0400
-Received: by mail-it1-f196.google.com with SMTP id q65so8683307itg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 04:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=e+P6anFeXd8q5JrazOyjoRW6Z6R9u9YlIDY1wTMb30gtfSVz/Y6n3BiNP8tf7Tpya+
-         hUlTR+OoETFvFdvjbi4OPJ+oqaoDNptArPaXUmES/jqL9FjLzqAxh5L7iLm/U5wxERv2
-         isvmDJrSIBtsvIiZHhJlj1J1gqStuDPVYlhk0r7GvpURI0NKmHbWhoXBVMorUMJNjg28
-         cNFWThrvIwHYnLG9hjJA7jiuyKGk7lZwE9XF4UugBDl+cR7HVk7B6R7ZMgiWlWlKZEwo
-         xC/Kfh7dZpAmNeJrVMegA7qcmt6HMhyVwEw7fYl0rip2OOfxay2dxtz7z21rmPltFmLj
-         t5dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=XgItgoo6jRaFgFn3BadIVgU5oBqFqKcsWeW/S0TKLnR/dXMWEYDnrEI2Y+2dhUQ2MK
-         KL1PRxQUynbBh0rqbU9dzxFdLkMMuCpouYaytQ+pYT7Z+WbJpPV5H1es/SuVpTdQLi2+
-         KE79Zf5ro+6XIA9ck0WEa2HfM2h7bOTVSD6uU+f4rkB7QmLfSqryr5Ke5sJ/BGCynESw
-         /G2VVtXotnT7iRFKJqn+7ZIJ+fWtVqsT3D8MXtmX2FPZKMkCS5kw6H0ACRp4TqVvUA0K
-         zjTP2LdSCw28gXMmJ4byLsC/vbkBBbvcH7sDC98po9yXC+k1Dxms6y6+e62f2lmN3+xX
-         RXxQ==
-X-Gm-Message-State: APjAAAUHT5/96Bb7KZb+m0nEo9NOK4fW3YbLKfedzVjbblK3AiL0fj1G
-        h1dB7NrhsLDEHFsOanHqsEOIsh8NMN9BT0UKbL8=
-X-Google-Smtp-Source: APXvYqxsQtB0yvI6fwxYhwUXI66qcNEJLomL/Ttnwuy4zkiobm3g+Sk6FWUl7D29aqTYgHKr+ShscI2SdeYb/ILPY4M=
-X-Received: by 2002:a24:4585:: with SMTP id c5mr6294268itd.79.1557486400571;
- Fri, 10 May 2019 04:06:40 -0700 (PDT)
+        Fri, 10 May 2019 07:08:57 -0400
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 462351C000D;
+        Fri, 10 May 2019 11:08:52 +0000 (UTC)
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v2 1/6] drm/rockchip: Change the scl_vop_cal_scl_fac to pass drm_format_info
+Date:   Fri, 10 May 2019 13:08:46 +0200
+Message-Id: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1557486447.git-series.maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Received: by 2002:a4f:cc8:0:0:0:0:0 with HTTP; Fri, 10 May 2019 04:06:40 -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <kouevigathk@gmail.com>
-Date:   Fri, 10 May 2019 13:06:40 +0200
-Message-ID: <CAMpCND10tD6Ov4ueaqwwL4fkZQtw2bSS67ufvN4ViF8YWeNjBw@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
-nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
-dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
-laten.
+The Rockchip VOP driver has a function, scl_vop_cal_scl_fac, that will
+lookup the drm_format_info structure from the fourcc passed to it by its
+caller.
 
-Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
-vrouw
-en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
-voor jou zijn.
+However, its only caller already derefences the drm_format_info structure
+it has access to to retrieve that fourcc. Change the prototype of that
+function to pass the drm_format_info structure directly, removing the need
+for an extra lookup.
 
-Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
-eddywilliam0002@gmail.com
+Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Bij voorbaat hartelijk dank,
-Eddy William,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 20a9c296d027..9c0d6b367709 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -315,14 +315,13 @@ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
+ 
+ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+ 			     uint32_t src_w, uint32_t src_h, uint32_t dst_w,
+-			     uint32_t dst_h, uint32_t pixel_format)
++			     uint32_t dst_h, const struct drm_format_info *info)
+ {
+ 	uint16_t yrgb_hor_scl_mode, yrgb_ver_scl_mode;
+ 	uint16_t cbcr_hor_scl_mode = SCALE_NONE;
+ 	uint16_t cbcr_ver_scl_mode = SCALE_NONE;
+-	int hsub = drm_format_horz_chroma_subsampling(pixel_format);
+-	int vsub = drm_format_vert_chroma_subsampling(pixel_format);
+-	const struct drm_format_info *info;
++	int hsub = drm_format_horz_chroma_subsampling(info->format);
++	int vsub = drm_format_vert_chroma_subsampling(info->format);
+ 	bool is_yuv = false;
+ 	uint16_t cbcr_src_w = src_w / hsub;
+ 	uint16_t cbcr_src_h = src_h / vsub;
+@@ -331,8 +330,6 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+ 	uint32_t val;
+ 	int vskiplines;
+ 
+-	info = drm_format_info(pixel_format);
+-
+ 	if (info->is_yuv)
+ 		is_yuv = true;
+ 
+@@ -856,7 +853,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+ 	if (win->phy->scl)
+ 		scl_vop_cal_scl_fac(vop, win, actual_w, actual_h,
+ 				    drm_rect_width(dest), drm_rect_height(dest),
+-				    fb->format->format);
++				    fb->format);
+ 
+ 	VOP_WIN_SET(vop, win, act_info, act_info);
+ 	VOP_WIN_SET(vop, win, dsp_info, dsp_info);
 
-
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-
-Please contact my private email here for more details:eddywilliam0002@gmail=
-.com
-
-Many thanks in advance,
-Mr.Eddy William,
+base-commit: a802303934b3bd4df6e2fc8bf2e4ebced1c37556
+-- 
+git-series 0.9.1
