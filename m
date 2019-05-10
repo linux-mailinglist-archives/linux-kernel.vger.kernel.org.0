@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D205D19CC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5AA19CC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 13:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfEJLcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 07:32:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44570 "EHLO
+        id S1727605AbfEJLc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 07:32:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44584 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbfEJLcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 07:32:46 -0400
+        id S1727573AbfEJLcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 07:32:47 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9950219BF;
-        Fri, 10 May 2019 04:32:45 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4D5D1A25;
+        Fri, 10 May 2019 04:32:47 -0700 (PDT)
 Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C9FD3F6C4;
-        Fri, 10 May 2019 04:32:42 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D75113F6C4;
+        Fri, 10 May 2019 04:32:45 -0700 (PDT)
 From:   Qais Yousef <qais.yousef@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -28,9 +28,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Quentin Perret <quentin.perret@arm.com>,
         Qais Yousef <qais.yousef@arm.com>
-Subject: [PATCH v2 6/7] sched: Add sched_overutilized tracepoint
-Date:   Fri, 10 May 2019 12:30:12 +0100
-Message-Id: <20190510113013.1193-7-qais.yousef@arm.com>
+Subject: [PATCH v2 7/7] sched: export the newly added tracepoints
+Date:   Fri, 10 May 2019 12:30:13 +0100
+Message-Id: <20190510113013.1193-8-qais.yousef@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190510113013.1193-1-qais.yousef@arm.com>
 References: <20190510113013.1193-1-qais.yousef@arm.com>
@@ -39,67 +39,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new tracepoint allows us to track the changes in overutilized
-status.
-
-Overutilized status is associated with EAS. It indicates that the system
-is in high performance state. EAS is disabled when the system is in this
-state since there's not much energy savings while high performance tasks
-are pushing the system to the limit and it's better to default to the
-spreading behavior of the scheduler.
-
-This tracepoint helps understanding and debugging the conditions under
-which this happens.
+So that external modules can hook into them and extract the info they
+need. Since these new tracepoints have no events associated with them
+exporting these tracepoints make them useful for external modules to
+perform testing and debugging. There's no other way otherwise to access
+them.
 
 Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 ---
- include/trace/events/sched.h | 4 ++++
- kernel/sched/fair.c          | 7 ++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index cbcb47972232..0cf42d13d6c4 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -600,6 +600,10 @@ DECLARE_TRACE(pelt_se,
- 	TP_PROTO(int cpu, const char *path, struct sched_entity *se),
- 	TP_ARGS(cpu, path, se));
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 4778c48a7fda..0f16e445cca1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -22,6 +22,14 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/sched.h>
  
-+DECLARE_TRACE(sched_overutilized,
-+	TP_PROTO(int overutilized),
-+	TP_ARGS(overutilized));
++/*
++ * Export tracepoints that act as a bare tracehook (ie: have no trace event
++ * associated with them) to allow external modules to probe them.
++ */
++EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_rq);
++EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_se);
++EXPORT_TRACEPOINT_SYMBOL_GPL(sched_overutilized);
 +
- #endif /* _TRACE_SCHED_H */
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
  
- /* This part must be outside protection */
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 81036c34fd29..494032220fe7 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4965,8 +4965,10 @@ static inline bool cpu_overutilized(int cpu)
- 
- static inline void update_overutilized_status(struct rq *rq)
- {
--	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
-+	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
- 		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-+		trace_sched_overutilized(1);
-+	}
- }
- #else
- static inline void update_overutilized_status(struct rq *rq) { }
-@@ -8330,8 +8332,11 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 
- 		/* Update over-utilization (tipping point, U >= 0) indicator */
- 		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-+
-+		trace_sched_overutilized(!!(sg_status & SG_OVERUTILIZED));
- 	} else if (sg_status & SG_OVERUTILIZED) {
- 		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
-+		trace_sched_overutilized(1);
- 	}
- }
- 
+ #if defined(CONFIG_SCHED_DEBUG) && defined(CONFIG_JUMP_LABEL)
 -- 
 2.17.1
 
