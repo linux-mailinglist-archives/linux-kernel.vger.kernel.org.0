@@ -2,92 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6C71A6C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 08:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA321A6CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 08:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfEKGCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 02:02:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54554 "EHLO mail.kernel.org"
+        id S1728342AbfEKGEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 02:04:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbfEKGCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 02:02:06 -0400
+        id S1725990AbfEKGEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 02:04:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61012173B;
-        Sat, 11 May 2019 06:02:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8E5C2173B;
+        Sat, 11 May 2019 06:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557554525;
-        bh=p/HRiT9yqHlg2V7XNH8WpqZb2zm5DrER+cqskPbJ7+s=;
+        s=default; t=1557554663;
+        bh=kYzDwn15QrIEi6kXFnvZYfsdIVkmI+/O0EqDSXyCmSg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ktm0kz52FhtprAmfDKfRf0+t/ACR967wBlZo/njpZyLTvdvQQcZE/JHEG0mPhwMnS
-         fSPu28p3h+yTt9jEZ2bBD58kVUAHRLZfIuy79u26uItO5gMpvcOkRhorvGTs7CSDs1
-         MdDsjOpnTitVkTfxOZTdc+qoCez/9OEhX6dWx0xE=
-Date:   Sat, 11 May 2019 08:02:03 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adrian Ratiu <adrian.ratiu@collabora.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        atish patra <atishp04@gmail.com>, bpf@vger.kernel.org,
-        Brendan Gregg <bgregg@netflix.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        duyuchao <yuchao.du@unisoc.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Manjo Raja Rao <linux@manojrajarao.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        =?utf-8?Q?Micha=C5=82?= Gregorczyk <michalgr@fb.com>,
-        Michal Gregorczyk <michalgr@live.com>,
-        Mohammad Husain <russoue@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Srinivas Ramana <sramana@codeaurora.org>,
-        Tamir Carmeli <carmeli.tamir@gmail.com>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH 3/3] kheaders: Make it depend on sysfs
-Message-ID: <20190511060203.GA18650@kroah.com>
-References: <20190510210243.152808-1-joel@joelfernandes.org>
- <20190510210243.152808-4-joel@joelfernandes.org>
- <CAK7LNATeJqmE29M=Y1Vexg8nnRdr3qUDkq1BejN7t2_106PgVg@mail.gmail.com>
+        b=r358BJeyRxcCtBNBrUDqEsD1Lu0ZUdSgloe9OMEQRhu3Lhiv2mi+3a9Jgy97rzwvY
+         eZX0GfPpnKiRbBR8wt6+4lfD29VBrdjGym2nauPRvsq7QNOAwKoMMPDs59y/g1awM3
+         SF/Ss6jw49/OvWZITHDbvjXIeq2Ux5Khk/z5qes4=
+Date:   Sat, 11 May 2019 08:04:20 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vandana BN <bnvandana@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org
+Subject: Re: [PATCH] Staging: kpc2000: kpc_dma: resolve checkpath errors and
+ warnings
+Message-ID: <20190511060420.GA18755@kroah.com>
+References: <20190510193833.1051-1-bnvandana@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATeJqmE29M=Y1Vexg8nnRdr3qUDkq1BejN7t2_106PgVg@mail.gmail.com>
+In-Reply-To: <20190510193833.1051-1-bnvandana@gmail.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 09:52:04AM +0900, Masahiro Yamada wrote:
-> On Sat, May 11, 2019 at 6:05 AM Joel Fernandes (Google)
-> <joel@joelfernandes.org> wrote:
-> >
-> > The kheaders archive is exposed through SYSFS in /sys/kernel/. Make it
-> > depend on SYSFS as it makes no sense to enable this feature without it.
+On Sat, May 11, 2019 at 01:08:33AM +0530, Vandana BN wrote:
+> This patch resolves coding style errors and warnings reported by chechpatch
 > 
+> ERROR: "(foo*)" should be "(foo *)"
+> ERROR: trailing whitespace
+> ERROR: space required before the open brace '{'
+> ERROR: "foo * bar" should be "foo *bar"
+> ERROR: space prohibited after that '!' (ctx:BxW)
+> ERROR: space prohibited after that open parenthesis '('
+> ERROR: switch and case should be at the same indent
+> ERROR: trailing statements should be on next line
+> ERROR: Macros with complex values should be enclosed in parentheses
+> ERROR: "foo __init  bar" should be "foo __init bar"
+> ERROR: "foo __exit  bar" should be "foo __exit bar"
+> WARNING: Missing a blank line after declarations
+> WARNING: Prefer using '"%s...", __func__' to using function's name, in a string
+> WARNING: braces {} are not necessary for any arm of this statement
+> WARNING: unnecessary cast may hide bugs
+> WARNING: braces {} are not necessary for single statement
+> WARNING: struct file_operations should normally be const
+> WARNING: labels should not be indented
+> Signed-off-by: Vandana BN <bnvandana@gmail.com>
+> ---
+>  drivers/staging/kpc2000/kpc_dma/dma.c         | 137 +++++------
+>  drivers/staging/kpc2000/kpc_dma/fileops.c     | 220 +++++++++---------
+>  .../staging/kpc2000/kpc_dma/kpc_dma_driver.c  | 121 +++++-----
+>  .../staging/kpc2000/kpc_dma/kpc_dma_driver.h  |  32 +--
+>  4 files changed, 265 insertions(+), 245 deletions(-)
 > 
-> And, it also makes no sense to break the feature by 1/3,
-> then fix it by 3/3.
-> 
-> 
-> Why don't you squash this?
 
-I agree, this belongs in patch 1/3.
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
