@@ -2,59 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1881A5BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 02:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548371A8A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 19:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfEKASg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 20:18:36 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:46646 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbfEKASg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 20:18:36 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id A17EE5C05AC; Sat, 11 May 2019 02:17:39 +0200 (CEST)
-Date:   Sat, 11 May 2019 02:17:39 +0200
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     David Miller <davem@davemloft.net>
-Cc:     hofrat@osadl.org, aneela@codeaurora.org,
-        gregkh@linuxfoundation.org, anshuman.khandual@arm.com,
-        david@redhat.com, arnd@arndb.de, johannes.berg@intel.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: qrtr: use protocol endiannes variable
-Message-ID: <20190511001739.GA6185@osadl.at>
-References: <1557450533-9321-1-git-send-email-hofrat@osadl.org>
- <20190510.132800.1971158293891484440.davem@davemloft.net>
+        id S1727941AbfEKRTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 13:19:48 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47200 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727620AbfEKRTo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 13:19:44 -0400
+Received: from callcc.thunk.org (rrcs-67-53-55-100.west.biz.rr.com [67.53.55.100])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4BHJa9A030276
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 11 May 2019 13:19:38 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id D21C0420026; Fri, 10 May 2019 20:18:40 -0400 (EDT)
+Date:   Fri, 10 May 2019 20:18:40 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Chengguang Xu <cgxu519@gmail.com>
+Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] jbd2: fix potential double free
+Message-ID: <20190511001840.GC2534@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Chengguang Xu <cgxu519@gmail.com>, jack@suse.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1557484608-23514-1-git-send-email-cgxu519@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190510.132800.1971158293891484440.davem@davemloft.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1557484608-23514-1-git-send-email-cgxu519@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 01:28:00PM -0700, David Miller wrote:
-> From: Nicholas Mc Guire <hofrat@osadl.org>
-> Date: Fri, 10 May 2019 03:08:53 +0200
+On Fri, May 10, 2019 at 06:36:48PM +0800, Chengguang Xu wrote:
+> When fail from creating cache jbd2_inode_cache, we will
+> destroy previously created cache jbd2_handle_cache twice.
+> This patch fixes it by sperating each cache
+> initialization/destruction to individual function.
 > 
-> > diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-> > index dd0e97f..c90edaa 100644
-> > --- a/net/qrtr/qrtr.c
-> > +++ b/net/qrtr/qrtr.c
-> > @@ -733,7 +733,8 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
-> >  	struct qrtr_node *node;
-> >  	struct sk_buff *skb;
-> >  	size_t plen;
-> > -	u32 type = QRTR_TYPE_DATA;
-> > +	u32 type = 0;
-> > +	__le32 qrtr_type = cpu_to_le32(QRTR_TYPE_DATA);
-> >  	int rc;
-> 
-> Please try to preserve as much of the reverse chrimstas tree here rather
-> than making it worse.
->
-sorry - did not really think about that at all  - will re-order the declarations and resend
+> Signed-off-by: Chengguang Xu <cgxu519@gmail.com>
 
-thx!
-hofrat 
+Thanks, applied.
+
+					- Ted
