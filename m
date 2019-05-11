@@ -2,92 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFB61A968
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 22:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0426D1A961
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 22:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfEKU20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 16:28:26 -0400
-Received: from narfation.org ([79.140.41.39]:34156 "EHLO v3-1039.vlinux.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfEKU20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 16:28:26 -0400
-Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1480:f1fc::4065])
-        by v3-1039.vlinux.de (Postfix) with ESMTPSA id C6A3C11012A;
-        Sat, 11 May 2019 22:19:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1557605972; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:autocrypt;
-        bh=d8Jl+aESyorlbKSD9+hm1B07d7adsmKXPXVlOeQAHlY=;
-        b=osvXv0Imcz74BTqOBSQl7mfqJYJ3w8l1hnVLAacXo6XN0O9LXshy/nysO+Ft50BJHjhhvy
-        0SS92rRPvNr8eXxJ1XOMVtCwmsOelc5zyRw7hzBt5og/rtiz2yz8mBg1SaCnhVocZq4ncN
-        tsLEzzKqmeseO2m91nhrL5iMJZDVHYQ=
-From:   Sven Eckelmann <sven@narfation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Sven Eckelmann <sven@narfation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 2/2] scripts/spdxcheck.py: Add dual license subdirectory
-Date:   Sat, 11 May 2019 22:19:17 +0200
-Message-Id: <20190511201917.20828-2-sven@narfation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190511201917.20828-1-sven@narfation.org>
-References: <20190511201917.20828-1-sven@narfation.org>
+        id S1726303AbfEKUWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 16:22:25 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36386 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfEKUWZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 16:22:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v80so5029672pfa.3;
+        Sat, 11 May 2019 13:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rLgXhVsDP/RzKSE+JdEI3qNT7K7MffBqtup5zZ8tHdc=;
+        b=aM7dbPPsnspFks6phirtx9698Y0IsGto7C9UDT80WCowD101CpiPlyueVSOOSS4CfY
+         rdUXmIGf4U5p2oHyI40ORwkVJPk6jMXUTME3sGn3ON5ZQ+XFLYiVN+Eu/fi6/9uZvkj5
+         zRXR0e0BIzU6PM4HHEoI9hzRCtbvzL2zjiChylaRXSgxQw0UUV9NEL0sT1Ni0VDzhobJ
+         BDqJEqRykfDS+779cLnXsMw+PlrBrlnoS7Ky8uYGGxYLiZNAtOfz2pMnhxNYIcuuAilI
+         PQ+w3eqQj1Ju11J8TzECeV+wFqWMtZNpKrJ5OyEZHqZkmn3Zg70vXcdBYXtIItkdSiHv
+         kJ3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rLgXhVsDP/RzKSE+JdEI3qNT7K7MffBqtup5zZ8tHdc=;
+        b=AvwmIQAvqFlXEyyGIOwzYVR85k57i2URi1/62y0H5FhadpBp4dVtdje1yS9Pyn2xao
+         dVwrBGRd0pJFPFqSk1vYt6DXY2IzjuVia5L6ogM4ApMmM4z1jtbkOGkH9JceiJ15Im8Y
+         c1pXyY6aViS2OXWEJeuRKARHW26PiHSZydjTTryw4ZAShiLrzRNXtTOILEISqgHL0h4w
+         /V8jC2RfsPViO8rImFk/3M39kF/8Suaxzd2EbcgDAIGZMlgbBPgNBdUvS06PTUuuVgTM
+         jwFVKEJPBOlU/hv+LgLf2Kao1ifCOD4y878bCW/eWC1STlIxuZJSLaHxP5QoD7OcbUhL
+         9Q7Q==
+X-Gm-Message-State: APjAAAXLEz5fCfX5Egk0f46knCVobNQyNwulEbyYwMW6BWWgfzbqcDjz
+        +5ftafxDJ+zCDAo0TP5jEJQ=
+X-Google-Smtp-Source: APXvYqw7yzV+NDnCGKPsyV6bDr4MyF9Eb869MU13gsl+ZlVdT1mderC/okBMSyIxf8Ec3QlKhM5xhQ==
+X-Received: by 2002:a65:6658:: with SMTP id z24mr22907719pgv.323.1557606144344;
+        Sat, 11 May 2019 13:22:24 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c23sm22145201pfp.0.2019.05.11.13.22.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 11 May 2019 13:22:22 -0700 (PDT)
+Subject: Re: [PATCH 1/6] thermal: Introduce
+ devm_thermal_of_cooling_device_register
+To:     Eduardo Valentin <edubezval@gmail.com>
+Cc:     linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-pm@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <1555617500-10862-1-git-send-email-linux@roeck-us.net>
+ <1555617500-10862-2-git-send-email-linux@roeck-us.net>
+ <20190511190415.GA22816@localhost.localdomain>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4be54a9c-ccc9-5489-6938-c66229d361b3@roeck-us.net>
+Date:   Sat, 11 May 2019 13:22:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1557605972; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:autocrypt;
-        bh=d8Jl+aESyorlbKSD9+hm1B07d7adsmKXPXVlOeQAHlY=;
-        b=lDugwnakkrXMNpsOpm+UuTkBRTN+Fnf2hk6UVazoCwwFrjvZRa9PBrVqYcAl1aEE7Svmfc
-        2jR3VVnvmj48eIHjIe9QgRWBI43nZAYmhkLOHYP9LxBl2v83RlRnNcA0oo2uVNaGIQi95z
-        kT7CKO8qPagtdQ1LwvKJbIVh5uNIY9Q=
-ARC-Seal: i=1; s=20121; d=narfation.org; t=1557605972; a=rsa-sha256;
-        cv=none;
-        b=iT19LE3/sKcpgocZeRtPf/fCNwofhwreIMeEuHgAmxSvmxQZzFfiZthumVs9Fh4+lN596H
-        juwQX6J8R49iHztnhOVbAsQT9Xjh7rpTrxYb0P10d0LYaigSo4L8oZ3yTGseL6XMm66SzU
-        lbO4Qr8M33kOWp6NDlOZaJGmK2tRuQo=
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=sven smtp.mailfrom=sven@narfation.org
+In-Reply-To: <20190511190415.GA22816@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The licenses from the other directory were partially moved to the dual
-directory in commit 99871f2f9a4d ("scripts/spdxcheck.py: Fix path to
-deprecated licenses"). checkpatch therefore rejected files like
-drivers/staging/android/ashmem.h with
+Hi Eduardo,
 
-  WARNING: 'SPDX-License-Identifier: GPL-2.0 OR Apache-2.0 */' is not supported in LICENSES/...
-  #1: FILE: drivers/staging/android/ashmem.h:1:
-  +/* SPDX-License-Identifier: GPL-2.0 OR Apache-2.0 */
+On 5/11/19 12:04 PM, Eduardo Valentin wrote:
+> Hello Guenter,
+> 
+> On Thu, Apr 18, 2019 at 12:58:15PM -0700, Guenter Roeck wrote:
+>> thermal_of_cooling_device_register() and thermal_cooling_device_register()
+>> are typically called from driver probe functions, and
+>> thermal_cooling_device_unregister() is called from remove functions. This
+>> makes both a perfect candidate for device managed functions.
+>>
+>> Introduce devm_thermal_of_cooling_device_register(). This function can
+>> also be used to replace thermal_cooling_device_register() by passing a NULL
+>> pointer as device node. The new function requires both struct device *
+>> and struct device_node * as parameters since the struct device_node *
+>> parameter is not always identical to dev->of_node.
+>>
+>> Don't introduce a device managed remove function since it is not needed
+>> at this point.
+> 
+> I don't have any objection on adding this API. Only a minor thing below:
+> 
+> 
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>>   drivers/thermal/thermal_core.c | 49 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/thermal.h        |  5 +++++
+>>   2 files changed, 54 insertions(+)
+>>
+>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+>> index 6590bb5cb688..e0b530603db6 100644
+>> --- a/drivers/thermal/thermal_core.c
+>> +++ b/drivers/thermal/thermal_core.c
+>> @@ -1046,6 +1046,55 @@ thermal_of_cooling_device_register(struct device_node *np,
+>>   }
+>>   EXPORT_SYMBOL_GPL(thermal_of_cooling_device_register);
+>>   
+>> +static void thermal_cooling_device_release(struct device *dev, void *res)
+>> +{
+>> +	thermal_cooling_device_unregister(
+>> +				*(struct thermal_cooling_device **)res);
+>> +}
+>> +
+>> +/**
+>> + * devm_thermal_of_cooling_device_register() - register an OF thermal cooling
+>> + *					       device
+>> + * @dev:	a valid struct device pointer of a sensor device.
+>> + * @np:		a pointer to a device tree node.
+>> + * @type:	the thermal cooling device type.
+>> + * @devdata:	device private data.
+>> + * @ops:	standard thermal cooling devices callbacks.
+>> + *
+>> + * This function will register a cooling device with device tree node reference.
+>> + * This interface function adds a new thermal cooling device (fan/processor/...)
+>> + * to /sys/class/thermal/ folder as cooling_device[0-*]. It tries to bind itself
+>> + * to all the thermal zone devices registered at the same time.
+>> + *
+>> + * Return: a pointer to the created struct thermal_cooling_device or an
+>> + * ERR_PTR. Caller must check return value with IS_ERR*() helpers.
+>> + */
+>> +struct thermal_cooling_device *
+>> +devm_thermal_of_cooling_device_register(struct device *dev,
+>> +				struct device_node *np,
+>> +				char *type, void *devdata,
+>> +				const struct thermal_cooling_device_ops *ops)
+>> +{
+>> +	struct thermal_cooling_device **ptr, *tcd;
+>> +
+>> +	ptr = devres_alloc(thermal_cooling_device_release, sizeof(*ptr),
+>> +			   GFP_KERNEL);
+>> +	if (!ptr)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	tcd = __thermal_cooling_device_register(np, type, devdata, ops);
+>> +	if (IS_ERR(tcd)) {
+>> +		devres_free(ptr);
+>> +		return tcd;
+>> +	}
+>> +
+>> +	*ptr = tcd;
+>> +	devres_add(dev, ptr);
+>> +
+>> +	return tcd;
+>> +}
+>> +EXPORT_SYMBOL_GPL(devm_thermal_of_cooling_device_register);
+>> +
+>>   static void __unbind(struct thermal_zone_device *tz, int mask,
+>>   		     struct thermal_cooling_device *cdev)
+>>   {
+>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+>> index 5f4705f46c2f..43cf4fdd71d4 100644
+>> --- a/include/linux/thermal.h
+>> +++ b/include/linux/thermal.h
+>> @@ -447,6 +447,11 @@ struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
+>>   struct thermal_cooling_device *
+>>   thermal_of_cooling_device_register(struct device_node *np, char *, void *,
+>>   				   const struct thermal_cooling_device_ops *);
+>> +struct thermal_cooling_device *
+>> +devm_thermal_of_cooling_device_register(struct device *dev,
+>> +				struct device_node *np,
+>> +				char *type, void *devdata,
+>> +				const struct thermal_cooling_device_ops *ops);
+> 
+> We need to stub this in case thermal is not selected.
+> 
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Christoph Hellwig <hch@lst.de>
-Fixes: 99871f2f9a4d ("scripts/spdxcheck.py: Fix path to deprecated licenses")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
----
- scripts/spdxcheck.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes. Sorry, that completely slipped my mind.
 
-diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-index 1a39b34588b7..33df646618e2 100755
---- a/scripts/spdxcheck.py
-+++ b/scripts/spdxcheck.py
-@@ -32,7 +32,7 @@ class SPDXdata(object):
- def read_spdxdata(repo):
- 
-     # The subdirectories of LICENSES in the kernel source
--    license_dirs = [ "preferred", "deprecated", "exceptions" ]
-+    license_dirs = [ "preferred", "deprecated", "exceptions", "dual" ]
-     lictree = repo.head.commit.tree['LICENSES']
- 
-     spdx = SPDXdata()
--- 
-2.20.1
+>>   void thermal_cooling_device_unregister(struct thermal_cooling_device *);
+>>   struct thermal_zone_device *thermal_zone_get_zone_by_name(const char *name);
+>>   int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+> 
+> Something like:
+> 
+> 
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index 43cf4fd..9b1b365 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -508,6 +508,14 @@ static inline struct thermal_cooling_device *
+>   thermal_of_cooling_device_register(struct device_node *np,
+>          char *type, void *devdata, const struct thermal_cooling_device_ops *ops)
+>   { return ERR_PTR(-ENODEV); }
+> +struct thermal_cooling_device *
+> +devm_thermal_of_cooling_device_register(struct device *dev,
+> +                               struct device_node *np,
+> +                               char *type, void *devdata,
+> +                               const struct thermal_cooling_device_ops *ops)
+> +{
+> +       return ERR_PTR(-ENODEV);
+> +}
+>   static inline void thermal_cooling_device_unregister(
+>          struct thermal_cooling_device *cdev)
+>   { }
+> ~
+> 
+> 
+> If you want I can amend this to your patch and apply it.
+> 
+Please do.
 
+> Also, do you prefer me to collect only this patch and you would collect hwmon changes,
+> or are you ok if I collect all the series?
+> 
+
+Please go ahead and collect the entire series.
+
+Thanks,
+Guenter
