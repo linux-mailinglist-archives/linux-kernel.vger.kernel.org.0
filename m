@@ -2,73 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DC41A959
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 22:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85BD11A969
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 22:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbfEKUNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 16:13:49 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:38626 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfEKUNs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 16:13:48 -0400
-Received: by mail-wr1-f50.google.com with SMTP id v11so11180134wru.5
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 13:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/ip4RZx0TTO3E1HLKVBRw8YK0+0l2BEgCp16M3P2qMU=;
-        b=ot0McPrcsF11QNsWBy5WBrZ0wrLdsbznu40hGrZl6C9CsoKLZMOLdCvn8NEJdQnmXg
-         9nnFdAwMQ1S25AaAAqStsSlmK++CxzfIcMFkbjPcsO3GInTfTw2RpqSo/1djxiEDogey
-         VJ7Ww+7EgD6DsMWPAgiOPeUqbq9M1Rzm+gHlzjxUG8cTEilcIGgy03RCGNiIjONH8xFH
-         vnJiPhrUwZh1x31LP0fElyDKrZfLj3Crm2E1c8Jxj01n/uNVBsTMqtp0wnGMJAik+aFd
-         ipMwnLQtNT3Pjtv9YkhcvLRkQgkkL2EBXjN2XMPQES/El824LyIhYTt+NtTF1LqrmgI9
-         dNxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/ip4RZx0TTO3E1HLKVBRw8YK0+0l2BEgCp16M3P2qMU=;
-        b=qgYjZejIg6P/KbvyoHx5qewpkLe8E0jJn080cNgt/JTPNWrzVRM4xrNwkqBJviCLo9
-         lmIRwcB5azR4TLcb8yLWDk2XbFRd/elvy5XVrukYX9/OUhlEfS/P9aU1TchJ77S0lgx/
-         PDQtAaHqteHTeouxhCQ3BZI20vvmQlMevizVrG6PwQcDIByQIP3Hnn/E5ABpLXh+4cN2
-         GC3cE/88LEy65P+1qBXT8zIjiL/otqRCL/WZklgik3zCJks5VI/blQjPZS/FPWh5I3q9
-         X5t/MBA5fw51xFUBZWtR+deG25F4jS3NKoojdDpIPvYk9FLwpSx2NxFuKSiX4U/WaUez
-         OtVw==
-X-Gm-Message-State: APjAAAXlhFJ7xqVi6yeBWJVY5HP8kdW4e7F4U7GT9Sk+vadlbgo8RL1f
-        pj/ZMUbATE8tDFSt3BU5yOCFoNE=
-X-Google-Smtp-Source: APXvYqwoM7+/NQL5XXhUKbpuRlAQZfHydOKcroLab3HC/s+zlsVZ62nINXrUPPK8EBH/eErut2hfnQ==
-X-Received: by 2002:adf:e686:: with SMTP id r6mr1786806wrm.90.1557605626712;
-        Sat, 11 May 2019 13:13:46 -0700 (PDT)
-Received: from avx2 ([46.53.254.98])
-        by smtp.gmail.com with ESMTPSA id e16sm8880686wrw.24.2019.05.11.13.13.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 May 2019 13:13:46 -0700 (PDT)
-Date:   Sat, 11 May 2019 23:13:44 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
+        id S1726383AbfEKU2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 16:28:25 -0400
+Received: from narfation.org ([79.140.41.39]:34154 "EHLO v3-1039.vlinux.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfEKU2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 16:28:25 -0400
+X-Greylist: delayed 534 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 May 2019 16:28:24 EDT
+Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1480:f1fc::4065])
+        by v3-1039.vlinux.de (Postfix) with ESMTPSA id 44A201100D9;
+        Sat, 11 May 2019 22:19:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+        s=20121; t=1557605968; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references:openpgp:autocrypt;
+        bh=7w4hc+IcRext4UXbUarhDzyKL3rDHUZzGOnD6LexJ18=;
+        b=pQNNebF3QrUxQPUOvgWNO4PhvNG3fNe2eguAwUwV23jReO0FEQ45DXxNgs71I5xshCDgAv
+        QRyCT2oeLXDr+ikLTNs3hHFFxnduadcUWvxorMNgASk+nFuuZdoa5Hv6EQ9NDj72LyxB9M
+        Ru+u4R1UE2bnM0UD39ZLWDYYZJynRss=
+From:   Sven Eckelmann <sven@narfation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org
-Subject: FYI -ffreestanding shrinks kernel by 2% on x86_64
-Message-ID: <20190511201344.GA11535@avx2>
-References: <20190511200223.GA14143@avx2>
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] scripts/spdxcheck.py: Fix path to deprecated licenses
+Date:   Sat, 11 May 2019 22:19:16 +0200
+Message-Id: <20190511201917.20828-1-sven@narfation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190511200223.GA14143@avx2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+        s=20121; t=1557605968; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references:openpgp:autocrypt;
+        bh=7w4hc+IcRext4UXbUarhDzyKL3rDHUZzGOnD6LexJ18=;
+        b=pkt8sH9FGWCnY1byVoTeJ/4W3OcPspWWgHAwKrYlW5F0iA7EeV5bAwQptbk9P5Sni42rgv
+        UdDLkEBWwNzU2rFFwWIiDZoZZb70oCglVjMjfXUYKvFH9Mmqf8JQdr8EctC/c48z1Z89xw
+        i/lZ+AdThayEw0KXaLS0TDFZKT9Puys=
+ARC-Seal: i=1; s=20121; d=narfation.org; t=1557605968; a=rsa-sha256;
+        cv=none;
+        b=zEv1csVNyBD1jnOIa6gCxq+smzkcaGHujyvJuXYRC86ejMPOuwSkN6vCpXS8cxuGCXPzSP
+        06Wxw+AZvpa08SB1UG4QR9qgsftqwZsmxxcRbjM2G0+wbpz17l2qHjhP57KM76CqsjOxbM
+        HOjy4SZh9p0LAj/6SiLt6c4aLdU4yrI=
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=sven smtp.mailfrom=sven@narfation.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 11:02:24PM +0300, Alexey Dobriyan wrote:
-> I compiled current F29 kernel config on x86_64 (5.0.13-200.fc29.x86_64)
-> with -ffreestanding. The results are interesting :^):
-> 
-> 	add/remove: 30/22 grow/shrink: 1290/46867 up/down: 33658/-1778055 (-1744397)
-> 	Total: Before=83298859, After=81554462, chg -2.09% (!)
-> 
-> That's original config with modules compiled built-in.
+The directory name for other licenses was changed to "deprecated" in 
+commit 62be257e986d ("LICENSES: Rename other to deprecated"). But it was
+not changed for spdxcheck.py. As result, checkpatch failed with
 
-Argh, it's the other way: adding -ffreestanding shrinks kernel by 2%.
+  FAIL: "Blob or Tree named 'other' not found"
+  Traceback (most recent call last):
+    File "scripts/spdxcheck.py", line 240, in <module>
+      spdx = read_spdxdata(repo)
+    File "scripts/spdxcheck.py", line 41, in read_spdxdata
+      for el in lictree[d].traverse():
+    File "/usr/lib/python2.7/dist-packages/git/objects/tree.py", line 298, in __getitem__
+      return self.join(item)
+    File "/usr/lib/python2.7/dist-packages/git/objects/tree.py", line 244, in join
+      raise KeyError(msg % file)
+  KeyError: "Blob or Tree named 'other' not found"
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Christoph Hellwig <hch@lst.de>
+Fixes: 62be257e986d ("LICENSES: Rename other to deprecated")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+ scripts/spdxcheck.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 4fe392e507fb..1a39b34588b7 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -32,7 +32,7 @@ class SPDXdata(object):
+ def read_spdxdata(repo):
+ 
+     # The subdirectories of LICENSES in the kernel source
+-    license_dirs = [ "preferred", "other", "exceptions" ]
++    license_dirs = [ "preferred", "deprecated", "exceptions" ]
+     lictree = repo.head.commit.tree['LICENSES']
+ 
+     spdx = SPDXdata()
+-- 
+2.20.1
+
