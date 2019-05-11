@@ -2,60 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0B21A8A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 19:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07081A647
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 04:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfEKRTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 13:19:44 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47196 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726787AbfEKRTn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 13:19:43 -0400
-Received: from callcc.thunk.org (rrcs-67-53-55-100.west.biz.rr.com [67.53.55.100])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4BHJauK030273
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 11 May 2019 13:19:38 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 51DC2420030; Fri, 10 May 2019 22:09:30 -0400 (EDT)
-Date:   Fri, 10 May 2019 22:09:30 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ext4: fix two cases where a u32 is being checked
- for a less than zero error return
-Message-ID: <20190511020930.GG2534@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Colin King <colin.king@canonical.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190426220908.12790-1-colin.king@canonical.com>
+        id S1728299AbfEKCSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 22:18:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7191 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728194AbfEKCSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 10 May 2019 22:18:22 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5B88A99C3A03DAD11F8E;
+        Sat, 11 May 2019 10:18:20 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Sat, 11 May 2019
+ 10:18:11 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <fatemeh.darbehani@amd.com>
+CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <amd-gfx@lists.freedesktop.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] drm/amd/display: Make two functions static
+Date:   Sat, 11 May 2019 10:17:37 +0800
+Message-ID: <20190511021737.8796-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190426220908.12790-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 11:09:08PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two cases where u32 variables n and err are being checked
-> for less than zero error values, the checks is always false because
-> the variables are not signed. Fix this by making the variables ints.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fix sparse warning:
 
-Thanks, applied.
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_clk_mgr.c:260:5:
+ warning: symbol 'dcn10_set_dispclk' was not declared. Should it be static?
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_clk_mgr.c:286:5:
+ warning: symbol 'dcn10_set_dprefclk' was not declared. Should it be static?
 
-					- Ted
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_clk_mgr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_clk_mgr.c
+index 9f2ffce..ae8c40c 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_clk_mgr.c
+@@ -257,7 +257,8 @@ static void dcn1_update_clocks(struct clk_mgr *clk_mgr,
+ #define VBIOSSMC_MSG_SetDispclkFreq           0x4
+ #define VBIOSSMC_MSG_SetDprefclkFreq          0x5
+ 
+-int dcn10_set_dispclk(struct clk_mgr *clk_mgr_base, int requested_dispclk_khz)
++static int dcn10_set_dispclk(struct clk_mgr *clk_mgr_base,
++			     int requested_dispclk_khz)
+ {
+ 	int actual_dispclk_set_khz = -1;
+ 	struct dce_clk_mgr *clk_mgr_dce = TO_DCE_CLK_MGR(clk_mgr_base);
+@@ -283,7 +284,7 @@ int dcn10_set_dispclk(struct clk_mgr *clk_mgr_base, int requested_dispclk_khz)
+ 
+ }
+ 
+-int dcn10_set_dprefclk(struct clk_mgr *clk_mgr_base)
++static int dcn10_set_dprefclk(struct clk_mgr *clk_mgr_base)
+ {
+ 	int actual_dprefclk_set_khz = -1;
+ 	struct dce_clk_mgr *clk_mgr_dce = TO_DCE_CLK_MGR(clk_mgr_base);
+-- 
+2.7.4
+
+
