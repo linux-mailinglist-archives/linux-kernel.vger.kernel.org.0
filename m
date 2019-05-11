@@ -2,88 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C92711A73C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 10:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80FCF1A73E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 10:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfEKI43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 04:56:29 -0400
-Received: from shell.v3.sk ([90.176.6.54]:51860 "EHLO shell.v3.sk"
+        id S1728501AbfEKI7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 04:59:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbfEKI43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 04:56:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3E9C8104088;
-        Sat, 11 May 2019 10:56:25 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SgZ03tkjHUY6; Sat, 11 May 2019 10:56:20 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E5B9E104101;
-        Sat, 11 May 2019 10:56:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id u9iqiHrguB1a; Sat, 11 May 2019 10:56:19 +0200 (CEST)
-Received: from furthur.local (g-server-2.ign.cz [91.219.240.2])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id CC94C104088;
-        Sat, 11 May 2019 10:56:18 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH] power: supply: olpc_battery: force the le/be casts
-Date:   Sat, 11 May 2019 10:56:14 +0200
-Message-Id: <20190511085614.29677-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.21.0
+        id S1725887AbfEKI7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 04:59:01 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8774B2173B;
+        Sat, 11 May 2019 08:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557565141;
+        bh=5s2XQhrQ5uHBzuS+eMKK8ZKQY0sdCYlC5UD1yK8Cgpk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=xJZzuoFd1fg6ay0cmrpoc8I09WwzLxErCcIZoWfmJr5pDq1HiCXs2DaNHYKQ65yYz
+         WXyJixqbVu9jRecU74cCJhyQPd4yeEwWHYzADTAYwId6alLTAJa9M9DG435CBk5l5a
+         UQnH6kwpvnTvnZf+JMn1ustDMXw4s8bjZiQ1WjvM=
+Date:   Sat, 11 May 2019 09:58:55 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH] iio: dummy_evgen: check iio_evgen in
+ iio_dummy_evgen_free()
+Message-ID: <20190511095855.1aaf056b@archlinux>
+In-Reply-To: <20190509020447.20243-1-wangkefeng.wang@huawei.com>
+References: <20190509020447.20243-1-wangkefeng.wang@huawei.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The endianness of data returned from the EC depends on the particular EC
-version determined at run time. Cast from little/big endian explicitey
-in the routine that flips endianness to the native one to make sparse
-happy.
+On Thu, 9 May 2019 10:04:47 +0800
+Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: 76311b9a3295 ("power: supply: olpc_battery: Add OLPC XO 1.75 suppo=
-rt")
----
- drivers/power/supply/olpc_battery.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> if iio_dummy_evgen_create() fails, iio_evgen should be NULL, when call
+> iio_evgen_release() to cleanup, it throws some warning and could cause
+> double free.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Hi Kefeng,
 
-diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
-lpc_battery.c
-index 4ccd242fcf72..066ec9a11153 100644
---- a/drivers/power/supply/olpc_battery.c
-+++ b/drivers/power/supply/olpc_battery.c
-@@ -326,9 +326,9 @@ static int olpc_bat_get_voltage_max_design(union powe=
-r_supply_propval *val)
- static u16 ecword_to_cpu(struct olpc_battery_data *data, u16 ec_word)
- {
- 	if (data->little_endian)
--		return le16_to_cpu(ec_word);
-+		return le16_to_cpu((__force __le16)ec_word);
- 	else
--		return be16_to_cpu(ec_word);
-+		return be16_to_cpu((__force __be16)ec_word);
- }
-=20
- /*********************************************************************
-@@ -340,7 +340,7 @@ static int olpc_bat_get_property(struct power_supply =
-*psy,
- {
- 	struct olpc_battery_data *data =3D power_supply_get_drvdata(psy);
- 	int ret =3D 0;
--	__be16 ec_word;
-+	u16 ec_word;
- 	uint8_t ec_byte;
- 	__be64 ser_buf;
-=20
---=20
-2.21.0
+I'm not seeing a path to be able to trigger this.
+iio_dummy_evgen_create is called only in the module_init.
+If it fails, then the init fails before the device
+initialization call is made.
+
+How would we then be running the device release call
+in order to end up freeing this again?
+
+So I think this is a false positive but perhaps there is
+a path that I am missing.
+
+Jonathan
+
+> ---
+>  drivers/iio/dummy/iio_dummy_evgen.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/iio/dummy/iio_dummy_evgen.c b/drivers/iio/dummy/iio_dummy_evgen.c
+> index c6033e341963..2327b5f52086 100644
+> --- a/drivers/iio/dummy/iio_dummy_evgen.c
+> +++ b/drivers/iio/dummy/iio_dummy_evgen.c
+> @@ -58,6 +58,7 @@ static int iio_dummy_evgen_create(void)
+>  	ret = irq_sim_init(&iio_evgen->irq_sim, IIO_EVENTGEN_NO);
+>  	if (ret < 0) {
+>  		kfree(iio_evgen);
+> +		iio_evgen = NULL;
+>  		return ret;
+>  	}
+>  
+> @@ -118,6 +119,9 @@ EXPORT_SYMBOL_GPL(iio_dummy_evgen_get_regs);
+>  
+>  static void iio_dummy_evgen_free(void)
+>  {
+> +	if (!iio_evgen)
+> +		return;
+> +
+>  	irq_sim_fini(&iio_evgen->irq_sim);
+>  	kfree(iio_evgen);
+>  }
 
