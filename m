@@ -2,70 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D42A81A85C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 18:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C16B51A805
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 15:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfEKQSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 12:18:49 -0400
-Received: from smtpsalv.cc.upv.es ([158.42.249.11]:58762 "EHLO smtpsalv.upv.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfEKQSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 12:18:49 -0400
-X-Greylist: delayed 8748 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 May 2019 12:18:47 EDT
-Received: from smtpx.upv.es (smtpxv.cc.upv.es [158.42.249.46])
-        by smtpsalv.upv.es (8.14.7/8.14.7) with ESMTP id x4BDniTL022290
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 11 May 2019 15:49:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upv.es; s=default;
-        t=1557582589; bh=UOb3qPk8mmTuSnqvf+w0PkAqwLicO+fezPPBKNy6Rc4=;
-        h=Date:From:To:Subject:Reply-to:From;
-        b=fjdfF2gFTU1PYEtw6jZfyVh9sbSe8zVymin23nJmXte+WCCTvqvYwWBC2phdZLEGk
-         9FmdSG3327mpySICufc6sMjm85UOmgxFa9IOk5D9TIOzekupqAmER8iP1T9TH4Jz2z
-         SdboWa8XcypsW3Ck0q87G7KBUX571giDqymdfjRDurktKswiRMh2jz6mpjLEluLq0e
-         ArON/NMXDLYlPf8b5t1/gfxUnOtAlCb/LZ+7E/zVul5vzrGiqhlcd6qrOSgqGe2Ear
-         eeeSOI9LTKJiStJPTn/zkWxzyLMQhN+Body1eIyNKxO3N2j78EP9EecEve3o/EdWTQ
-         2gpeAxKNm8fJQ==
-Received: from smtp.upv.es (smtpv.cc.upv.es [158.42.249.16])
-        by smtpx.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnSqO031905;
-        Sat, 11 May 2019 15:49:28 +0200
-Received: from wm2.cc.upv.es (wm2.cc.upv.es [158.42.249.57])
-        by smtp.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnKgZ029951
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 11 May 2019 15:49:20 +0200
-Received: from wm2.cc.upv.es (localhost [127.0.0.1])
-        by wm2.cc.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnJ9o030457;
-        Sat, 11 May 2019 15:49:19 +0200
-Received: (from apache@localhost)
-        by wm2.cc.upv.es (8.14.7/8.14.7/Submit) id x4BDlBrd030335;
-        Sat, 11 May 2019 15:47:11 +0200
-Received: from [169.159.73.155] ([169.159.73.155]) by webmail.upv.es (Horde
- Framework) with HTTPS; Sat, 11 May 2019 15:47:11 +0200
-Date:   Sat, 11 May 2019 15:47:11 +0200
-Message-ID: <20190511154711.Horde.PqDDx2azzjnq9aOvQpg1K3a@webmail.upv.es>
-From:   "Mr Mikhail M. Fridman" <bosomad@posgrado.upv.es>
-Subject: Charity Gift !!!
-Reply-to: mikhail_fridman111@126.com
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        id S1728600AbfEKNsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 09:48:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35742 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbfEKNsV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 09:48:21 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hPSMH-0004ze-GL; Sat, 11 May 2019 13:48:13 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vc04_services: bcm2835-camera: remove redundant assignment to variable ret
+Date:   Sat, 11 May 2019 14:48:13 +0100
+Message-Id: <20190511134813.5645-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Disposition: inline
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable ret is being initialized however this is never read and later
+it is being reassigned to a new value. The initialization is redundant and
+hence can be removed.
 
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vc04_services/bcm2835-camera/controls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+index 9841c30450ce..74410fedffad 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+@@ -579,7 +579,7 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+ 			  struct v4l2_ctrl *ctrl,
+ 			  const struct bm2835_mmal_v4l2_ctrl *mmal_ctrl)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 	struct vchiq_mmal_port *control;
+ 
+ 	control = &dev->component[MMAL_COMPONENT_CAMERA]->control;
 -- 
-I, Mikhail Fridman have selected you specifically as one of my  
-beneficiaries for my Charitable Donation of $5 Million Dollars,
+2.20.1
 
-Check the link below for confirmation:
-
-https://www.rt.com/business/343781-mikhail-fridman-will-charity/
-
-I await your earliest response.
-
-Best Regards,
-Mikhail Fridman.
