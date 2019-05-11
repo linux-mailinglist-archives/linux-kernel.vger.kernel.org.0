@@ -2,85 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D701A7FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 15:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42A81A85C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 18:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfEKNlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 09:41:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40372 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbfEKNlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 09:41:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d31so4395329pgl.7
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 06:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=fMbhxbGSMg6IyfZVoXPipxwzBU2Akzjdq8jUr8r58Es=;
-        b=WjHMIV7z89eRvB7MKFxUJmzX14CLSFQdjYN/CWmy3f3zArIrZI4+3wlGNA6BSqdM9M
-         OZ036V09A0yaMcSuduAqBLdBqmXn9W30UcwbTN0PPDsPOHZpCvfB1rteWL5GCHUd3jLP
-         a8P39aksSv/X0jySZpPY1Hpo3OGyvActIE2iTLIre3nc7Ie1ilJLDGSa3LgnKKxQ+4xf
-         HxA/U/dxOgpVq75IILg57kMhwOeI3/u1TMzQi3vRzKiJRDTzLOzQdFoGtQJ80YDqiZCR
-         JUdVJjsMjnxS+CgnbTMK3zvOsw4H5hzjB/5GLJdx3zjDIbGfLdhrTIA8C4eH06Iuu2sc
-         jN7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=fMbhxbGSMg6IyfZVoXPipxwzBU2Akzjdq8jUr8r58Es=;
-        b=bxyP3/VRxg3JUFuwYteWz4d7JCUvGjkmfbqFMCy4WRk2gVjpKAP0cU6ujSHlpy4+ZZ
-         937b5xq8OTnRtyutp6H1CWVzz+/SovKE6R9bPhjeeIxApeyvyGaqRwhqpYGSOQ9EtZKi
-         S5zqdPJ5YqNbZZpYSPM4nWbO1h2dT359CkfaaE3jjh7cyQHgsID1yXCqng1GNkN3355m
-         0lMZI1facgFSDybbiPL8G5436tFvpXwIzmLMUQ99z6XwbbQrp/xg6ZBhcOE7pS+4+Djw
-         lGGxjyddSaRShRnlQje0FsCKjuJbFh257RM/dS3UtaI5pQ3RcYOfHyzoYnVv0JeNGS2b
-         P1AA==
-X-Gm-Message-State: APjAAAXQkQZHi19orRaItuNJI0z9cVLbtRCtnu0AfQs31JKYsjCCK87M
-        nhMy+YqARgTDhH9plc2bZfTgFDkW
-X-Google-Smtp-Source: APXvYqyQ2Q4LRWGH2zCQqkTNkeYBRTC9/zl1HH+gmEa+mh71EI2WR5NG+Gw0RgAsL44ne6CaNG0Xlg==
-X-Received: by 2002:a63:6fce:: with SMTP id k197mr21066887pgc.140.1557582083914;
-        Sat, 11 May 2019 06:41:23 -0700 (PDT)
-Received: from sabyasachi ([2405:205:6182:13c5:4c7b:e4f7:a66c:4459])
-        by smtp.gmail.com with ESMTPSA id 132sm9981863pga.79.2019.05.11.06.41.22
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 11 May 2019 06:41:22 -0700 (PDT)
-Message-ID: <5cd6d102.1c69fb81.b7df1.aae9@mx.google.com>
-X-Google-Original-Message-ID: <20190511134117.GA5069@sabyasachi.linux@gmail.com>
-Date:   Sat, 11 May 2019 19:11:17 +0530
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-To:     linux@armlinux.org.uk
-Cc:     jrdr.linux@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: Remove duplicate header
+        id S1728629AbfEKQSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 12:18:49 -0400
+Received: from smtpsalv.cc.upv.es ([158.42.249.11]:58762 "EHLO smtpsalv.upv.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726482AbfEKQSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 12:18:49 -0400
+X-Greylist: delayed 8748 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 May 2019 12:18:47 EDT
+Received: from smtpx.upv.es (smtpxv.cc.upv.es [158.42.249.46])
+        by smtpsalv.upv.es (8.14.7/8.14.7) with ESMTP id x4BDniTL022290
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 11 May 2019 15:49:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upv.es; s=default;
+        t=1557582589; bh=UOb3qPk8mmTuSnqvf+w0PkAqwLicO+fezPPBKNy6Rc4=;
+        h=Date:From:To:Subject:Reply-to:From;
+        b=fjdfF2gFTU1PYEtw6jZfyVh9sbSe8zVymin23nJmXte+WCCTvqvYwWBC2phdZLEGk
+         9FmdSG3327mpySICufc6sMjm85UOmgxFa9IOk5D9TIOzekupqAmER8iP1T9TH4Jz2z
+         SdboWa8XcypsW3Ck0q87G7KBUX571giDqymdfjRDurktKswiRMh2jz6mpjLEluLq0e
+         ArON/NMXDLYlPf8b5t1/gfxUnOtAlCb/LZ+7E/zVul5vzrGiqhlcd6qrOSgqGe2Ear
+         eeeSOI9LTKJiStJPTn/zkWxzyLMQhN+Body1eIyNKxO3N2j78EP9EecEve3o/EdWTQ
+         2gpeAxKNm8fJQ==
+Received: from smtp.upv.es (smtpv.cc.upv.es [158.42.249.16])
+        by smtpx.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnSqO031905;
+        Sat, 11 May 2019 15:49:28 +0200
+Received: from wm2.cc.upv.es (wm2.cc.upv.es [158.42.249.57])
+        by smtp.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnKgZ029951
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 11 May 2019 15:49:20 +0200
+Received: from wm2.cc.upv.es (localhost [127.0.0.1])
+        by wm2.cc.upv.es (8.14.7/8.14.7) with ESMTP id x4BDnJ9o030457;
+        Sat, 11 May 2019 15:49:19 +0200
+Received: (from apache@localhost)
+        by wm2.cc.upv.es (8.14.7/8.14.7/Submit) id x4BDlBrd030335;
+        Sat, 11 May 2019 15:47:11 +0200
+Received: from [169.159.73.155] ([169.159.73.155]) by webmail.upv.es (Horde
+ Framework) with HTTPS; Sat, 11 May 2019 15:47:11 +0200
+Date:   Sat, 11 May 2019 15:47:11 +0200
+Message-ID: <20190511154711.Horde.PqDDx2azzjnq9aOvQpg1K3a@webmail.upv.es>
+From:   "Mr Mikhail M. Fridman" <bosomad@posgrado.upv.es>
+Subject: Charity Gift !!!
+Reply-to: mikhail_fridman111@126.com
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove linux/tty.h which is included more than once
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
----
- arch/arm/mach-sa1100/hackkit.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-sa1100/hackkit.c b/arch/arm/mach-sa1100/hackkit.c
-index 643d5f2..0016d25 100644
---- a/arch/arm/mach-sa1100/hackkit.c
-+++ b/arch/arm/mach-sa1100/hackkit.c
-@@ -22,7 +22,6 @@
- #include <linux/serial_core.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
--#include <linux/tty.h>
- #include <linux/gpio.h>
- #include <linux/leds.h>
- #include <linux/platform_device.h>
 -- 
-2.7.4
+I, Mikhail Fridman have selected you specifically as one of my  
+beneficiaries for my Charitable Donation of $5 Million Dollars,
 
+Check the link below for confirmation:
+
+https://www.rt.com/business/343781-mikhail-fridman-will-charity/
+
+I await your earliest response.
+
+Best Regards,
+Mikhail Fridman.
