@@ -2,47 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015CD1A1F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2019 18:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8429D1A731
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 10:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfEJQwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 10 May 2019 12:52:21 -0400
-Received: from imcorp.com.vn ([118.69.230.116]:33701 "EHLO imc2.imcorp.com.vn"
+        id S1728464AbfEKIkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 04:40:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37374 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbfEJQwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 10 May 2019 12:52:21 -0400
-X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 May 2019 12:52:20 EDT
-Received: from User (103.207.39.104) by MBX1.imcorp.com.vn (192.168.109.34)
- with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 10 May 2019 23:45:16
- +0700
-Reply-To: <gordon992277@outlook.com>
-From:   Gordon Chang <chlee@myamts.net>
-Subject: 8/05/2019
-Date:   Sat, 11 May 2019 01:35:00 -0700
+        id S1725887AbfEKIkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 04:40:31 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4FA053092654;
+        Sat, 11 May 2019 08:40:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DAC1F27CC9;
+        Sat, 11 May 2019 08:40:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190509155801.8369-1-christian@brauner.io>
+References: <20190509155801.8369-1-christian@brauner.io>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fs: make all new mount api fds cloexec by default
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <417375f6518845fa95266fca11769bad@MBX1.imcorp.com.vn>
-To:     Undisclosed recipients:;
-X-ClientProxiedBy: CAS2.imcorp.com.vn (192.168.108.77) To MBX1.imcorp.com.vn
- (192.168.109.34)
-X-KSE-ServerInfo: MBX1.imcorp.com.vn, 9
-X-KSE-AntiSpam-Interceptor-Info: license violation
-X-KSE-Antivirus-Attachment-Filter-Interceptor-Info: license violation
-X-KSE-Antivirus-Attachment-Filter-Interceptor-Info: license violation
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9331.1557564029.1@warthog.procyon.org.uk>
+Date:   Sat, 11 May 2019 09:40:29 +0100
+Message-ID: <9333.1557564029@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Sat, 11 May 2019 08:40:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Christian Brauner <christian@brauner.io> wrote:
 
-I apologize if this email comes as a surprise to you. I have a business proposal that will be of great benefit to both of us.
-If you are willing to discuss further on this matter, I expect you reply promptly so that I will give you further details.
-Best Regards,
+> This makes all file descriptors returned from new syscalls of the new mount
+> api cloexec by default.
+> 
+> From a userspace perspective it is rarely the case that fds are supposed to
+> be inherited across exec. Having them not cloexec by default forces
+> userspace to remember to pass the <SPECIFIC>_CLOEXEC flag along or to
+> invoke fcntl() on the fd to prevent leaking it. And leaking the fd is a
+> much bigger issue than forgetting to remove the cloexec flag and failing to
+> inherit the fd.
+> For old fd types we can't break userspace. But for new ones we should
+> whenever reasonable make them cloexec by default (Examples of this policy
+> are the new seccomp notify fds and also pidfds.). If userspace wants to
+> inherit fds across exec they can remove the O_CLOEXEC flag and so opt in to
+> inheritance explicitly.
+> 
+> This patch also has the advantage that we can get rid of all the special
+> flags per file descriptor type for the new mount api. In total this lets us
+> remove 4 flags:
+> - FSMOUNT_CLOEXEC
+> - FSOPEN_CLOEXEC
+> - FSPICK_CLOEXEC
+> - OPEN_TREE_CLOEXEC
+> 
+> Signed-off-by: Christian Brauner <christian@brauner.io>
 
-Gordon
+Fine by me.
+
+Reviewed-by: David Howells <dhowells@redhat.com>
