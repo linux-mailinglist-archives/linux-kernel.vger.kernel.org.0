@@ -2,142 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9116A1A8BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 19:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB4671A8B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 19:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbfEKR2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 13:28:05 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39085 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfEKR2F (ORCPT
+        id S1727576AbfEKR0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 13:26:03 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40874 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfEKR0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 13:28:05 -0400
-Received: by mail-lj1-f194.google.com with SMTP id q10so7634824ljc.6
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 10:28:03 -0700 (PDT)
+        Sat, 11 May 2019 13:26:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h4so10951651wre.7
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 10:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/KXVrXCOoOJzYs9luHiRMdkROvz6GYngOgjcnMA4n3A=;
-        b=Hety9aPlucNn5YIwnDgl8T3xjH+kXuoGBPFuY/OFtMOJcXBxT9yY1dN0jhbCAtXCK0
-         Fa6aOPlBmmvU40A7F6POImQufHmWg9Vb9DX0ym6/HYmPb7jC+B4zImEGQr9edmzZr+8E
-         D7AZsufzimvvqZsX7ErQ2Z7DvHrgK4oj1AIJI=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=zGbXafpSb2HshgO2XMP6h8Y6gtWk2K/zGjC4Q7Aa/fg=;
+        b=sOceQQQ7FUjZUb9cq6RMY4OY0UtuWxXjBusFoTudXNPxeE/PaMGSOANxujMyfFCSLM
+         1MmHNbnE3b5nkHrr84AJOBPTlThBl6Mbdlr7MgbOf+YmyiLHSH+WVq3tuMap/Q3GWYo5
+         e+r5CvUmT38WroNUBTzKMimertVVCGaw4KkpvYITGmKEgM1CfOew3qI0+UrYDjHV7gWA
+         R6NNnosMK492+4YUMQwf5NVEeKk7diYUx2R2n92WtXJ1ZZzSBJsSg2tv4qLSfNpbVzH/
+         UyRHd0M9QM2mXz3eLJSRT1yZ5fHYcZTsupdmyr/f53gzHlHDhvojVzJSaMMsK6CZpRNK
+         viJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/KXVrXCOoOJzYs9luHiRMdkROvz6GYngOgjcnMA4n3A=;
-        b=tL59STHlG7KvxthADOomAYvJB4kUae69/1ayg///TD2z2nC8hNBQv3/KwCk6g/W0xs
-         q/FqxycDbiTNbjPqna07X9FLR9mT0G43kpeRGilRNR+/fYD4VFhEfq8dbc0vDnOrX4RB
-         KU65908uviUY72JjuYA/tDDnOWjcguv7Dcz0+b5MgCUaU1FgRsfA1oSRaywVyWypvFgT
-         T0zwLLF26tZIGFagVkFOX6Y1eTdItM1BliLZZD9HnOv65ZZNlQFwXDYqIFj5yR/NpZyd
-         vf2yiU1lOfQ7lO8Y+b/za9/UBrqvkJo01OtPs0qzypRTazVbbSgvbEhYwNhM5SzsIpOA
-         7nag==
-X-Gm-Message-State: APjAAAWHrnHIQCbXlKMUFIh+ug9JTPnd/cpXlpgqPQCRFB7MS6eFZZCd
-        FtirHJwbzRUEJlx8udY/BSKc6R7y+Ks=
-X-Google-Smtp-Source: APXvYqz+ZJWd7jdDD7+oFtJkTWk4TwOIH4Pwmav3jgzA2uXD4QU+hRbfz5xoosLcdDOvPHrOvOD/7A==
-X-Received: by 2002:a2e:801a:: with SMTP id j26mr9153479ljg.2.1557595682015;
-        Sat, 11 May 2019 10:28:02 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id w17sm1498713ljj.31.2019.05.11.10.28.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 May 2019 10:28:01 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id w1so5064263ljw.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 10:28:01 -0700 (PDT)
-X-Received: by 2002:a2e:9d86:: with SMTP id c6mr9078356ljj.135.1557595287924;
- Sat, 11 May 2019 10:21:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
- <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
- <20190510225527.GA59914@google.com> <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
-In-Reply-To: <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 11 May 2019 13:21:11 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
-Message-ID: <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=zGbXafpSb2HshgO2XMP6h8Y6gtWk2K/zGjC4Q7Aa/fg=;
+        b=ElBaoXRGCFNDg2cjMahgP6RE9vFxuIlJQQxB/aGz4fDyIbwB1R9TMyaFsnJisVhcXu
+         eA5GkNowkoBq5I5ZvvpvfjH0JKQPGDM7x5h1cmabv4tnirtYl/DN/mzP+Dkifv6VqU0L
+         sqCWE9TXy9mljoWdBHBcPTlqe0/Equ/b7aTKaPaXAGpKQGGybBcJu/ZavqpGXyxo9Rn5
+         cNW03eBhZd8Xiekf+UNXvw6cFkzXNPSPbH4pvZZxgTKZjpGcIBLWwLRuQCoHGTqxTC8q
+         5txH/H1jNpasS7TkflNSTZIoy+29ai+w8g5e4ALE7DKpg5JAa2d3HA3QEnWN45Lu8rsV
+         4vew==
+X-Gm-Message-State: APjAAAXdVIqIJRiINCOhTIgR14zVt5/JdeQkdFn01WL7LzD3gUPKaKRp
+        Qhsabu/jYU1nkmfkZrt4E7yZuA==
+X-Google-Smtp-Source: APXvYqxiNrIZ71M/NEU6SrK8ObcYzxQx6F/XwLVianmSstjOsoGpmQ5a6gJNvCIZA+XBpy8zwlMaPw==
+X-Received: by 2002:adf:a202:: with SMTP id p2mr11897591wra.166.1557595560934;
+        Sat, 11 May 2019 10:26:00 -0700 (PDT)
+Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id o8sm17856891wra.4.2019.05.11.10.25.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 11 May 2019 10:26:00 -0700 (PDT)
+Message-ID: <c474c55386dede7f541aaf8afd6c87b78ccd6577.camel@baylibre.com>
+Subject: Re: [PATCH 5/5] arm64: dts: meson: sei510: add network support
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 11 May 2019 19:25:58 +0200
+In-Reply-To: <CAFBinCDA3kqCK9riSkNAv9069ASN8E2ECdsffi+U7mYRqHrfJg@mail.gmail.com>
+References: <20190510164940.13496-1-jbrunet@baylibre.com>
+         <20190510164940.13496-6-jbrunet@baylibre.com> <7ho94ac4jn.fsf@baylibre.com>
+         <CAFBinCDA3kqCK9riSkNAv9069ASN8E2ECdsffi+U7mYRqHrfJg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 1:00 PM Andy Lutomirski <luto@amacapital.net> wrote=
-:
->
-> A better =E2=80=9Cspawn=E2=80=9D API should fix this.
+On Sat, 2019-05-11 at 19:16 +0200, Martin Blumenstingl wrote:
+> Hi Kevin,
+> 
+> On Sat, May 11, 2019 at 12:45 AM Kevin Hilman <khilman@baylibre.com> wrote:
+> > Jerome Brunet <jbrunet@baylibre.com> writes:
+> > 
+> > > Enable the network interface of the SEI510 which use the internal PHY.
+> > > 
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > 
+> > I tried testing this series on SEI510, but I must still be missing some
+> > defconfig options, as the default defconfig doesn't lead to a working
+> > interface.
+> > 
+> > 
+> > I tried adding this kconfig fragment[1], and the dwmac probes/inits but
+> > I must still be missing something, as the dwmac is still failing to find
+> > a PHY.  Boot log: https://termbin.com/ivf3
+> > 
+> > I have the same result testing on the u200.
+> I wonder if we're simply missing the pinctrl definitions in the ethmac node:
+>   pinctrl-0 = <&eth_rmii_pins>;
+>   pinctrl-names = "default";
+> 
+> I don't know how the SoC works internally but I am assuming that the
+> MDIO pins are routed to the "internal PHY" (within the chip).
+> also we need the eth_rmii_pins anyways for the RXD/TXD pins which are
+> connected to the physical Ethernet port on the board.
+> bonus question: while writing this email I'm surprised to see that on
+> GXL we don't use the rmii pins anywhere, why is Ethernet working fine
+> there?
 
-Andy, stop with the "spawn would be better".
+AFAIK, the pinmux is for the external pad Martin
+The internal phy does not use those pads.
 
-Spawn is garbage. It's garbage because it's fundamentally too
-inflexible, and it's garbage because it is quite complex to try to
-work around the inflexibility by having those complex "action pointer
-arrays" to make up for its failings.
+> 
+> 
+> Martin
 
-And spawn() would fundamentally have all the same permission issues
-that you now point to execve() as having, so it doesn't even *solve*
-anything.
 
-You've said this whole "spawn would fix things" thing before, and it's
-wrong. Spawn isn't better. Really. If fixes absolutely zero things,
-and the only reason for spawn existing is because VMS and NT had that
-broken and inflexible model.
-
-There's at least one paper from some MS people about how "spawn()" is
-wonderful, and maybe you bought into the garbage from that. But that
-paper is about how they hate fork(), not because of execve(). And if
-you hate fork, use "vfork()" instead (preferably with an immediate
-call to a non-returning function in the child to avoid the stack
-re-use issue that makes it so simple to screw up vfork() in hard to
-debug ways).
-
-execve() is a _fine_ model. That's not the problem in this whole issue
-at all - never was, and never will be.
-
-The problem in this discussion is (a) having privileges you shouldn't
-have and (b) having other interfaces that make it easyish to change
-the filesystem layout to confuse those entities with privileges.
-
-So the reason the open flags can be problematic is exactly because
-they effectively change filesystem layout. And no, it's not just
-AT_THIS_ROOT, although that's the obvious one. Things like "you can't
-follow symlinks" can also effectively change the layout: imagine if
-you have a PATH-like lookup model, and you end up having symlinks as
-part of the standard filesystem layout.. Now a "don't follow symlinks"
-can turn the *standard* executable into something that isn't found,
-and then you might end up executing something else instead (think root
-having '.' as the last entry in path, which some people used to
-suggest as the fix for the completely bad "first entry" case)..
-
-Notice? None of the real problems are about execve or would be solved
-by any spawn API. You just think that because you've apparently been
-talking to too many MS people that think fork (and thus indirectly
-execve()) is bad process management.
-
-                Linus
