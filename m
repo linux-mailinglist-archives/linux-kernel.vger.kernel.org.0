@@ -2,81 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8CE1A7D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 14:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DE11A7DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 14:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbfEKMj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 08:39:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfEKMj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 08:39:57 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D65D3208C0;
-        Sat, 11 May 2019 12:39:55 +0000 (UTC)
-Date:   Sat, 11 May 2019 08:39:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        linux-um@lists.infradead.org
-Subject: [PATCH] x86: Hide the int3_emulate_call/jmp functions from UML
-Message-ID: <20190511083954.23a60052@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728594AbfEKMlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 08:41:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35172 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfEKMli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 11 May 2019 08:41:38 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hPRJo-0008Us-2r; Sat, 11 May 2019 12:41:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/amd: remove redundant assignment to variable npages
+Date:   Sat, 11 May 2019 13:41:35 +0100
+Message-Id: <20190511124135.3635-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+The variable npages is being initialized however this is never read and
+later it is being reassigned to a new value. The initialization is
+redundant and hence can be removed.
 
-User Mode Linux does not have access to the ip or sp fields of the
-pt_regs, and accessing them causes UML to fail to build. Hide the
-int3_emulate_jmp() and int3_emulate_call() instructions from UML, as it
-doesn't need them anyway.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/iommu/amd_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[ I added this to my queue to test too ]
-
- arch/x86/include/asm/text-patching.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/text-patching.h
-b/arch/x86/include/asm/text-patching.h index 05861cc08787..0bbb07eaed6b
-100644 --- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -39,6 +39,7 @@ extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len,
-void *handler); extern int after_bootmem;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 09c9e45f7fa2..c0b5b9298e8e 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2609,7 +2609,7 @@ static void unmap_sg(struct device *dev, struct scatterlist *sglist,
+ 	struct protection_domain *domain;
+ 	struct dma_ops_domain *dma_dom;
+ 	unsigned long startaddr;
+-	int npages = 2;
++	int npages;
  
-+#ifndef CONFIG_UML_X86
- static inline void int3_emulate_jmp(struct pt_regs *regs, unsigned
-long ip) {
- 	regs->ip = ip;
-@@ -65,6 +66,7 @@ static inline void int3_emulate_call(struct pt_regs
-*regs, unsigned long func) int3_emulate_push(regs, regs->ip -
-INT3_INSN_SIZE + CALL_INSN_SIZE); int3_emulate_jmp(regs, func);
- }
--#endif
-+#endif /* CONFIG_X86_64 */
-+#endif /* !CONFIG_UML_X86 */
- 
- #endif /* _ASM_X86_TEXT_PATCHING_H */
+ 	domain = get_domain(dev);
+ 	if (IS_ERR(domain))
 -- 
 2.20.1
 
