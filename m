@@ -2,53 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548371A8A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 19:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 206A91A5C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 02:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbfEKRTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 13:19:48 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47200 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727620AbfEKRTo (ORCPT
+        id S1728139AbfEKAYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 10 May 2019 20:24:15 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:43669 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbfEKAYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 13:19:44 -0400
-Received: from callcc.thunk.org (rrcs-67-53-55-100.west.biz.rr.com [67.53.55.100])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4BHJa9A030276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 11 May 2019 13:19:38 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id D21C0420026; Fri, 10 May 2019 20:18:40 -0400 (EDT)
-Date:   Fri, 10 May 2019 20:18:40 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Chengguang Xu <cgxu519@gmail.com>
-Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] jbd2: fix potential double free
-Message-ID: <20190511001840.GC2534@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Chengguang Xu <cgxu519@gmail.com>, jack@suse.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1557484608-23514-1-git-send-email-cgxu519@gmail.com>
+        Fri, 10 May 2019 20:24:14 -0400
+Received: by mail-yw1-f67.google.com with SMTP id t5so222027ywf.10
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2019 17:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JodsC5+xYkGlp3C/I+zaQDr/2QyhiDeAmLITr9vbezE=;
+        b=cfj39WapNqsIpg4SRPEiKdu6YVkoIDrti4Loe/BNhVHWrN8pYYUaUijnAd3194jYps
+         KXpagcxbsXgKX/pFnmi2ulMJv2zBUzn4SEJxgQKvVI2ND6dKTavEnWDXKgcjo7r3OZu1
+         i2at/NxJebvdBcPRxR4tT1JrjXRcsm/vGv31X55e/J0Iq9qsy9Wv5jG2I1qtPghJpq8W
+         rvk04dQTARXwc6JwcIlIcAlSuZ6/B6aXmT7F+t4nbAflpc7VhdaD2Im/P3C7tvNjLwWq
+         GkUukhXU+VMXHBZm7C1k1Npn8/+hIky761Jy37yURog/C9zC7H23zHOZz8X7GNuKnVrn
+         K5FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JodsC5+xYkGlp3C/I+zaQDr/2QyhiDeAmLITr9vbezE=;
+        b=E2B1N1YlU8GH4RQiRqlpVQUJXQYPqhQwdDHdsaCvPVKh15A6Z0JuclN2zLyPMy3iMB
+         IA0jxdJEDr9t9gfdcHuBWdCrx5kmZNL/WP0Dm74+Y6w/tIqJk6QiN4qecA0upt0y2kMG
+         7HUy9Mz2/YowZSXU8+rNGTFm5V0FZberqdte0S0GtvqMNA+gdMSP0Y0ChF1PLJ3bEBTM
+         +cLcN1Iw5TLrgrT4GE3FsEr5QQmJY/60GygUgalsFf+Vc5oBlyg1IJfSHco1UXgBXgy0
+         fFzLofX20E5MEff6F43Vp+gQttMowO9tA3Veyz+vxrhPhpr9ASrnjoLB3g3DSIrt2HjQ
+         8e0Q==
+X-Gm-Message-State: APjAAAVhB0uE5aQPk76gpXYn05VecMLtGWi6Bk2EhcVUcbvA89G81Hei
+        yZAS9sJGkx+0LCx4gqaW+pn5CX/RYjgs6VqW3xE2bQ==
+X-Google-Smtp-Source: APXvYqxIsnyr4AxG2P4l7F9uO+kKc2KESM8Mvpv3iM6Jd8o8YMDiHtgcYyJoCntlXH20KOsKArfOPXXaURMw0bPKCqg=
+X-Received: by 2002:a81:5a0b:: with SMTP id o11mr6996411ywb.444.1557534253549;
+ Fri, 10 May 2019 17:24:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557484608-23514-1-git-send-email-cgxu519@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190510223437.84368-1-dianders@chromium.org> <20190510223437.84368-2-dianders@chromium.org>
+In-Reply-To: <20190510223437.84368-2-dianders@chromium.org>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Fri, 10 May 2019 17:24:02 -0700
+Message-ID: <CABXOdTfaei3A8VN_-v_BvOKJD7=GPfO7pPCMY+2duOxH4FoZvA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] spi: For controllers that need realtime always use
+ the pump thread
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 06:36:48PM +0800, Chengguang Xu wrote:
-> When fail from creating cache jbd2_inode_cache, we will
-> destroy previously created cache jbd2_handle_cache twice.
-> This patch fixes it by sperating each cache
-> initialization/destruction to individual function.
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@gmail.com>
+From: Douglas Anderson <dianders@chromium.org>
+Date: Fri, May 10, 2019 at 3:35 PM
+To: Mark Brown, Benson Leung, Enric Balletbo i Serra
+Cc: <linux-rockchip@lists.infradead.org>, <drinkcat@chromium.org>,
+Guenter Roeck, <briannorris@chromium.org>, <mka@chromium.org>, Douglas
+Anderson, <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>
 
-Thanks, applied.
+> If a controller specifies that it needs high priority for sending
+> messages we should always schedule our transfers on the thread.  If we
+> don't do this we'll do the transfer in the caller's context which
+> might not be very high priority.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-					- Ted
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+
+> ---
+>
+>  drivers/spi/spi.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 8eb7460dd744..0597f7086de3 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -1230,8 +1230,11 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
+>                 return;
+>         }
+>
+> -       /* If another context is idling the device then defer */
+> -       if (ctlr->idling) {
+> +       /*
+> +        * If another context is idling the device then defer.
+> +        * If we are high priority then the thread should do the transfer.
+> +        */
+> +       if (ctlr->idling || (ctlr->rt && !in_kthread)) {
+>                 kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
+>                 spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+>                 return;
+> --
+> 2.21.0.1020.gf2820cf01a-goog
+>
