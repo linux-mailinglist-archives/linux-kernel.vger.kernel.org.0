@@ -2,85 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15A4E1A979
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 22:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBCC21A996
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2019 23:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfEKU6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 16:58:45 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38340 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfEKU6p (ORCPT
+        id S1726454AbfEKVTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 17:19:38 -0400
+Received: from sonic316-54.consmr.mail.ne1.yahoo.com ([66.163.187.180]:34302
+        "EHLO sonic316-54.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726100AbfEKVTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 16:58:45 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a59so4448210pla.5
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 13:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=elwgxb8XYgTIriByBWF9deMUc6c8M6Y8MIlBqiZfHjU=;
-        b=mTZipGuTJpw81BLSTSjwcm1GDWw+WD8irR2clWCrQZGG6j0nz6y1H2cLsX4a//J5q+
-         Pagb/ezxSdc4YarsDh57XLMEKVmslPTc8/9BTs+RFwb43gaqLKTxhTIemfc2bcUT9C/6
-         iAoYQrOWqlT6NralpUW0Tc0xlOo4WWiaYyeNYubfFKoCmzr5XS5jT95VxbKYpdhhREbO
-         cYdXhCrP7eMT2zIkW9Gm5l5DSeUOFpr7GRqkTYAJ8rjsu97mwDwLUHb9jikhAyzuq/vN
-         MvzHBRTnf2pGCjZfRmRSShWJ0d202h1EPNtyqpGmdQQFglMXXp5boIcm50LIILir4gjV
-         +Qxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=elwgxb8XYgTIriByBWF9deMUc6c8M6Y8MIlBqiZfHjU=;
-        b=QnELY8f+hRuqq+ndzhKYrTodypHnLLKsSnCNn1B6lNiHnvfZC+gNGr2ajJbwp73RuK
-         UJL0gxBwCnlaAoNTb4pOPpPpX9/EqOZAPBnDkMa4la+wASWRR82Bl4hg53pmhQLahIWu
-         NpRXAIUCzmPdjBCt7G1cDec1BRUbdL2egvHU7gucoDKPDkRqClF5uLRGyH5rStm1en7+
-         mpl2pAnUg2M/l+RQooQYnnAsziUg/k651lYmbCIVcqlqWfZgGIF2GyIL/5hSCLDq0NOg
-         r/aGzOXzahDgVe/Ess7xMOwcLstM+LO38sUAGOJg5P7GjiaR0Ol5eDalrdwLR7FarY4b
-         +5Lg==
-X-Gm-Message-State: APjAAAXcWSMyZbxPjlSPpCsHdOZnVaOJjSstGIzHIZ3zI377I9LrGQKK
-        Ztx64k1SOjO2nwhXNP/l6ysJVoEHgwl674HrCthBOQ==
-X-Google-Smtp-Source: APXvYqy4MaRZEbjhD24D5CDbZW2mpGnc/vgQNNkixPgHTkwzNLc9bAL0OjtOXzd7w0ax4agEGGNIbUQ1gyI5gI+QgxE=
-X-Received: by 2002:a17:902:f215:: with SMTP id gn21mr22016322plb.194.1557608324468;
- Sat, 11 May 2019 13:58:44 -0700 (PDT)
+        Sat, 11 May 2019 17:19:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1557609576; bh=hm2eWSdcZt5qZGI06OGG2BnJIZ3Akb6O3ATKED243Uc=; h=Date:From:Reply-To:Subject:References:From:Subject; b=TADZuzB5POJexp/7WkMBkZQRbpOyztkRnWweiuCoYFhU4HpVPzhEFQ6CqcbnGfcf1EvGZZg0p8fj1AXaoj3T4goC2OFc3MzZKTNe/P2xjp9Oxl3y4RRyZPIZOo2AI8MqSPgmXBKBgjYmaPWS7c+T9hMRmC8ULFonDr3XGIo9YorQ1xQMqnI8sq3e6QJxNnx9izWfSOZ+pKiUbgNa31TAM8Pisvpo856fgdyukGvh5II/p4sCcUGndD+RtZZtZbWZ5kkHaItJ3B/77O8UjVtEYAtnc5v2l5D5zUxYeqqvfzP4FQkiOQnhniqV9i1BoaWH9VNiwIFPB6tCpAeQemtw5Q==
+X-YMail-OSG: ZUbkZyUVM1nzCPzlYbcR9yWStLJLAxPQd_cQdiiGxiwVch8ojG9kdCrAccncYSt
+ P.bXFKZLlnu0X3QmPKsxLG0fsE9SCgvW3OfIJtqpJmgFbv7aNCif1kkgKAoSPeiW6yA1DkKjZFkl
+ qbBqG32JLPNiOSRrJGy9INhjqp7b7SSCaDM2JTuMGqkb01yyAVEn_u7iJN6AkdiWXUVt6ySWypze
+ gcRWwn.Isz07ApBHIy6GVtpsR_UTmHvPvK00oBh1TZF.dETOP5uufupP.R2RA_PaPt5FXtoLOgAq
+ jElEuGJs2iOANefzjCm02JUpIJe6YYXsH8e1HFJY8m8ow8s8CAMb5bPLMfrKjhgLjdgCGVFIg7KY
+ 3fEO0qJCDOB4P_HGK62wP5WNMLisqtgPQmhhKwKTcUK9N6VnxnR8QCpFfB5qcRD1aZRkpNjBFuKx
+ 3keXOUKOcuHODc1rNNVKSB6sbsKtdaZWTrBmJdtDbAQDNBDjAElSCgoyE05wAFvhU2A_4lxvfcsI
+ GDAtELWh5CxocaW7t9fbZ08.0SWUvNmULyFzyVd2beq2zdJ4MoGUVrvufCbwNO6zQq1zOLNto3xR
+ VU1JB8UxsVpuoxSaFbgFEHIpU5OB07VCuNRj7G4pyTdDoeGPSnXnggGfQSO.0R4SZUJqRwWIa.fQ
+ 0ZR5at_Fi57oqmwfMq.OUmyDTANlwQ3BXgAAyHAnYJAxvq1oIBJf.kk32NGrrZlFjzT_eXbl0u5q
+ _V_AZ06DKlKbcMSvz2756FeMHhUz5BVmTufOsPZ9RuJrrHCeviOq6NplNaIHuMWqEZmO_sAGPaxs
+ 571cKy3qtGrnBFQk0jRQvxlHscvv_S1FUSduqiszAh0s3yRRNmGOGZgQBqbi3TwM_IS.VYRWSrdv
+ Y8JGGrPGOf9GV7oyxz0gCr_8FOIr9WLAuOJTXgvrPR0_NYIcr1d2I0RaxXjVTZo8mUyDW3CVa0Ew
+ kaf3M4uIyqXo9gJ3PAdLVaERRCxcyMqW.wuxh35LAEci2JYy7MVfdvENeUuAprdlCmm7LQc0QJB1
+ cBPaWcO2O2qJek29vTUyB1EjYmj9xj3Zoz0Yr7Q_1KI839mLbjpxI1ZGEFwXPwsRLmYko5nnUC8i
+ yFCocAz2706NNyh_pLU7AHW7e2ythNRNg2vBskRvpT9iPrdmmmYN8bjgDVU778Dmr6Jq36KkSNHW
+ 4QVxRzdVcurJJRthmtHYuFs2oGzJ8m.8MqVO6gDfne4o-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Sat, 11 May 2019 21:19:36 +0000
+Date:   Sat, 11 May 2019 21:17:35 +0000 (UTC)
+From:   Major Dennis Hornbeck <cd43@gamtm.online>
+Reply-To: Major Dennis Hornbeck <hornbeckmajordennis637@gmail.com>
+Message-ID: <1485784066.817036.1557609455556@mail.yahoo.com>
+Subject: 
 MIME-Version: 1.0
-References: <20190405163126.7278-1-jeffrin@rajagiritech.edu.in>
- <20190405164746.pfc6wxj4nrynjma4@breakpoint.cc> <CAG=yYwnN37OoL1DSN8qPeKWhzVJOcUFtR-7Q9fVT5AULk5S54w@mail.gmail.com>
- <c4660969-1287-0697-13c0-e598327551fb@kernel.org> <20190430100256.mfgerggoccagi2hc@breakpoint.cc>
- <20190430105225.bu5pil5fjxkltu4q@salvia>
-In-Reply-To: <20190430105225.bu5pil5fjxkltu4q@salvia>
-From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date:   Sun, 12 May 2019 02:28:07 +0530
-Message-ID: <CAG=yYw=YQzZQd-uyVXEgdTtLC9rpO5DE7SYW3hxQD3bVS8SD=g@mail.gmail.com>
-Subject: Re: [PATCH] selftests : netfilter: Wrote a error and exit code for a
- command which needed veth kernel module.
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Florian Westphal <fw@strlen.de>, shuah <shuah@kernel.org>,
-        linu-kselftest@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1485784066.817036.1557609455556.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pablo,
 
-Please follow up on the mail you sent.
-This is for my interest to see my patch upstream
+I am in the military unit here in Afghanistan, we have some amount of funds that we want to move out of the country. My partners and I need a good partner someone we can trust. It is risk free and legal. Reply to this email: hornbeckmajordennis637@gmail.com
 
-On Tue, Apr 30, 2019 at 4:22 PM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
->
-> Cc'ing netfilter-devel@vger.kernel.org
->
-> On Tue, Apr 30, 2019 at 12:02:56PM +0200, Florian Westphal wrote:
-> > shuah <shuah@kernel.org> wrote:
-> > > Would you like me to take this patch through ksleftest tree?
-> >
-> > Please do, this patch is neither in nf nor nf-next and it looks fine to
-> > me.
->
-> Indeed, thanks.
-
-
-
--- 
-software engineer
-rajagiri school of engineering and technology
+Regards,
+Major Dennis Hornbeck.
