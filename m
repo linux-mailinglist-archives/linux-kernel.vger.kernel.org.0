@@ -2,114 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3CF1AA35
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 06:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2138A1AA3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 06:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfELELr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 00:11:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59432 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfELELr (ORCPT
+        id S1726421AbfELENN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 00:13:13 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41122 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfELENN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 00:11:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=okCF2G2bDtULdDLlOPAao87uH7PkIsUp6GVlHHgydZ4=; b=dOYPVs5dvX8lEHg5muxxqJWqS
-        /xG2ZXX2IkLiYFXOYPm0Huc19L3yU4aCZIgQFRHUxCBV4LBYfFgRyTnCmzEIHsKGGSSTgq/Fhxmr6
-        K6lZERXbV2UvcE1awG3xBWu7fTQcDcoDFklJh/kgXo+sLdlhfw9a0eUIfLEOtRrWtFbQFBrEXWqGV
-        o6+vZUj1hZhJP9cd8RZpkp06mOndvxH698rVsoFicFOt02JUqRRqp5iPfojLVdTPMaOh1LnbQjUFn
-        6IUD6EtbtMfPK8dR+SvM7gNSYFXUGQvXSRU8vvE3LAIlDbDuRFZlC5wUp5u+k0uKI4pNEwABqvKXW
-        6xglXU9LA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hPfpv-0000Gh-1h; Sun, 12 May 2019 04:11:43 +0000
-Date:   Sat, 11 May 2019 21:11:42 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usercopy: Remove HARDENED_USERCOPY_PAGESPAN
-Message-ID: <20190512041142.GA24542@bombadil.infradead.org>
-References: <201905101341.A17DDD7@keescook>
- <ead5e4ad-d911-3680-04a4-ae98507ba48c@redhat.com>
- <201905111657.76FE0BDCEC@keescook>
+        Sun, 12 May 2019 00:13:13 -0400
+Received: by mail-io1-f65.google.com with SMTP id a17so7533458iot.8;
+        Sat, 11 May 2019 21:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fSYRW6EihL7Ktm8gIvRh8QznEhcOtxZGm5DrS5LcSqE=;
+        b=Li5bV64fgZXD35fWlJGgxhDJYKB+XhIXiJmsTqjCpffjjcyzMYTaInfRU1aSiKAhMj
+         nSsjcd1geDTlqY2VYlCKkhLGA8tzSn19V4Kt1I4OU1s76C7U9CqNbt7H7qCPmuYfX4RE
+         7ZXULc/kQcbE8D6MiPEI/VEH+eY/ijhuootZQzNscRJdI0Kv44f1fGchA7XUUc5QoLOI
+         wrMSmVzRatm8qmx6wvW481NqNDKD38YsBVOXkTpWMILLuPFX7oOFMxn8NaTaFQMXXYRP
+         p1WRkzV0UZg2/k0K/jQaVtGuBO827osckVrOu1LG1ZF29GtP978as5DpZl7NxwAITGcz
+         wlYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fSYRW6EihL7Ktm8gIvRh8QznEhcOtxZGm5DrS5LcSqE=;
+        b=aUAvh0SFoPSFwFy5Wn0XnxMdWhkIWAk0OYxtCRQIoJn/uOZAT6N1hyheUwjeBjMQ3G
+         INwI/ZNm8VVEf6BKVSb7FIz5q72PQwOmkDnCzhWdo/AHarujBmqvAUgquRc8QXGFXoRj
+         DO7hcyTlaKlLNDHGHugPJ0YphwS7wNCL8bE/lLpQuQg138NoQ2Rx22uGPYoHBuTg5Hma
+         tu9JozKlwX3qyjuyXo2EX+KdSug7PO5Vs28Dk/gqyhzXmYd1KKH2JxTqf/+eZEckC3Un
+         8x6P7cgwCVT91RbDmTLK3X7o2qaszZ5BWLA9ZymisK1XbjOYKK8vY1zS200ul1dgJD2A
+         kryg==
+X-Gm-Message-State: APjAAAW/pb1qYlBegprYCpWTAoHAPfYVw1AcxwY1kXh47rj4ctrM4DdR
+        Dv09AoMbrDdMx9rJBCJUc6U=
+X-Google-Smtp-Source: APXvYqzvFWn5MsXBuEOCw7n+mmg2x8HjUeiNd9/NuY1A/cW25q6DIu/4mJuOMrF/CFvhXd+bn3jXzg==
+X-Received: by 2002:a5d:91c7:: with SMTP id k7mr11535785ior.237.1557634392780;
+        Sat, 11 May 2019 21:13:12 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id r62sm704401ita.37.2019.05.11.21.13.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 11 May 2019 21:13:11 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     shuah@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kselftest@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Cc:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
+Subject: [PATCH] selftests: kvm: Add files generated when compiled to .gitignore
+Date:   Sat, 11 May 2019 22:12:35 -0600
+Message-Id: <20190512041235.29840-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905111657.76FE0BDCEC@keescook>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 05:03:08PM -0700, Kees Cook wrote:
-> On Fri, May 10, 2019 at 08:41:43PM -0400, Laura Abbott wrote:
-> > On 5/10/19 3:43 PM, Kees Cook wrote:
-> > > This feature continues to cause more problems than it solves[1]. Its
-> > > intention was to check the bounds of page-allocator allocations by using
-> > > __GFP_COMP, for which we would need to find all missing __GFP_COMP
-> > > markings. This work has been on hold and there is an argument[2]
-> > > that such markings are not even the correct signal for checking for
-> > > same-allocation pages. Instead of depending on BROKEN, this just removes
-> > > it entirely. It can be trivially reverted if/when a better solution for
-> > > tracking page allocator sizes is found.
-> > > 
-> > > [1] https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg37479.html
-> > > [2] https://lkml.kernel.org/r/20190415022412.GA29714@bombadil.infradead.org
-> > 
-> > I agree the page spanning is broken but is it worth keeping the
-> > checks against __rodata __bss etc.?
-> 
-> They're all just white-listing later checks (except RODATA which is
-> doing a cheap RO test which is redundant on any architecture with actual
-> rodata...) so they don't have any value in staying without the rest of
-> the page allocator logic.
-> 
-> > > -	/* Is the object wholly within one base page? */
-> > > -	if (likely(((unsigned long)ptr & (unsigned long)PAGE_MASK) ==
-> > > -		   ((unsigned long)end & (unsigned long)PAGE_MASK)))
-> > > -		return;
-> > > -
-> > > -	/* Allow if fully inside the same compound (__GFP_COMP) page. */
-> > > -	endpage = virt_to_head_page(end);
-> > > -	if (likely(endpage == page))
-> > > -		return;
-> 
-> We _could_ keep the mixed CMA/reserved/neither check if we really wanted
-> to, but that's such a corner case of a corner case, I'm not sure it's
-> worth doing the virt_to_head_page() across the whole span to figure
-> it out.
+The following files are generated in /selftests/kvm/ after compiling and
+should be added to /selftests/kvm/.gitignore:
 
-I'd delete that first check, because it's a subset of the second check,
+	- /x86_64/hyperv_cpuid
+	- /x86_64/smm_test
 
-	/* Is the object wholly within a single (base or compound) page? */
-	endpage = virt_to_head_page(end);
-	if (likely(endpage == page))
-		return;
+Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
+---
+ tools/testing/selftests/kvm/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	/*
-	 * If the start and end are more than MAX_ORDER apart, they must
-	 * be from separate allocations
-	 */
-	if (n >= (PAGE_SIZE << MAX_ORDER))
-		usercopy_abort("spans too many pages", NULL, to_user, 0, n);
+diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+index 2689d1ea6d7a..81e9cb775ab8 100644
+--- a/tools/testing/selftests/kvm/.gitignore
++++ b/tools/testing/selftests/kvm/.gitignore
+@@ -6,4 +6,6 @@
+ /x86_64/vmx_close_while_nested_test
+ /x86_64/vmx_tsc_adjust_test
+ /x86_64/state_test
++/x86_64/hyperv_cpuid
++/x86_64/smm_test
+ /dirty_log_test
+--
+2.20.1
 
-	/*
-	 * If neither page is compound, we can't tell if the object is
-	 * within a single allocation or not
-	 */
-	if (!PageCompound(page) && !PageCompound(endpage))
-		return;
-
-> I really wish we had size of allocation reliably held somewhere. We'll
-> need it for doing memory tagging of the page allocator too...
-
-I think we'll need to store those allocations in a separate data structure
-on the side.  As far as the rest of the kernel is concerned, those struct
-pages belong to them once the page allocator has given them.
