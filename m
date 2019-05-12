@@ -2,59 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77A221A9E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 03:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722F61A9E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 03:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfELBYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 21:24:36 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36288 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfELBYg (ORCPT
+        id S1726513AbfELBZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 21:25:29 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50264 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfELBZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 21:24:36 -0400
-Received: by mail-io1-f67.google.com with SMTP id e19so7430869iob.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 18:24:35 -0700 (PDT)
+        Sat, 11 May 2019 21:25:28 -0400
+Received: by mail-it1-f194.google.com with SMTP id i10so11318434ite.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 18:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=eZ3o6UuqkRFaN8DagJ+vsNDFRG6eauiOOgWSL92M590=;
-        b=kfl4/RahFG0TysM//3Jqo413xRAjTvGdKbsm4AZurfuBoTKLHtKj+8lR33kpzpXBsb
-         QShBDpraJ8r/fEPnJi0iaL4FcqOl7lDoQRtr2GgUR1RiBqgFA6zrpjbVW/xnr77nHjRU
-         SPEfFlwN4NP2QBZwND3zi33DOfjwAnqKQcLhWeTNmtvXvl7ao5F8hm+D8tYksJofFrAy
-         VjPuloAnWE9VL8imZlZPywV8XLj+cAJfoIi8fB/awpktS091inPQFzPAAES1Bh4W86GU
-         oW6XlFyt4bubaWLVN14IFrxZOKvEbG/0sNfQBGIiOeytm9eBOvXlQhtOKQMCng61o+La
-         GUJQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hIY61+72OuRAN3957lP5LhKCVDoCPp0jWpmduEMaRh4=;
+        b=P9Y0sCqobkC+s9Spr0dR3Sw5WvbI4yjuscRMI7xoLIxWsnmLWZVFqzZj78yDJHQQb3
+         BFBhe+mTZtyi16plFI46QZLZ24fd1nzCn2rk08nvuK0EXw1fnQXWmtUQEaskkvHOBPXi
+         5e95fV/WUvrjNrCr8w8LJWS8lBN5H2Ey/pfv1r7ExkPNlDZBThux4b8y7bXmNztBmq40
+         7zljySsIFelf5eUlYk94mcMNI0lkC6rUYv/e6AGfJ+dZLpRdLBuHR0o5Fw4lnqcAJk1Q
+         I6c4hHMfppHv3IPrOxZ+ROnBurdotII7CwIXf9KkPrbceS7gzjfg1PAK2qdnoKj4Us31
+         dfjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=eZ3o6UuqkRFaN8DagJ+vsNDFRG6eauiOOgWSL92M590=;
-        b=rx1PMH4mUAq8//OGOFHkieFnvn4Av4Exm7T+SEvjawjqEsfG1ktfES4l++dAlbOr2A
-         uEQ2Z3I1iXo7QiRZiLywnYCLw++qkuWp1IDlbXgPLmwNEe5Kn5GlQlW69X8OpVh2oiQs
-         sGPkrR9qYi2GZLMen1yilYKboehMb05dHsvU6ERfzWFDeEeqFAU6PfZgscf0QHeoE1oX
-         nN7Fd0dUEU9qdi4iYO6UpU1Sr7nLMYU9swAwHNLQW0vztdysGHswzzbT1b+wbWf8AblO
-         4EKrmGqQvKA+X46xpHlN+U/u1xg4F2FOTnukg0cYX7m/9N7kBAgXlhjgzbsZnVq0OJlE
-         KY/w==
-X-Gm-Message-State: APjAAAU/9ClYkRVhFgCYNXgQrCfDgkbAHBFn+LfYF7QrK0VuP33KksWQ
-        9YXOZjekbotjuRhkrkg68lQNuW2USH6Ai7/BOEI=
-X-Google-Smtp-Source: APXvYqydCWPbco8da3LJKak6k2W/3fnvouOD+LXPwRE3LW2qsLwGszuQUAc2co5eiZw+fTjWPupS5m+GEHBBmL4cA4A=
-X-Received: by 2002:a5d:8713:: with SMTP id u19mr1926576iom.222.1557624275600;
- Sat, 11 May 2019 18:24:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hIY61+72OuRAN3957lP5LhKCVDoCPp0jWpmduEMaRh4=;
+        b=UdVOvNF/R9ZLrgg3kVxCwdHA8HMuEmHViNQq21TD7GMLcmnCeZIXrOTp4gJxVylLYs
+         M0NFke1w9OA4VDrNv2LfUgzCO6qAmv2Ryk0C+N1ORlaTJj5iDlHqzbsiIcaRhDevprv8
+         yPdbcXAFMZ8f7nEWrrIk8fYvMhv5jTyTGRTQ05or9bn+681oTvrxkCIK7Gwb4PMGSSJH
+         LCuvcYRaVUQw1CbiV7SFI7tEYpgb3LNSCd46qJ7HZhKMTwXTL1sejB8ST0B/yn96AQBs
+         Z/liULRd3F3EnjiPDhhf6bA48ut8LQ6/j4T5h7i9ppzsF+A92n8RdvATGMWnKaAOIO7L
+         Xg1Q==
+X-Gm-Message-State: APjAAAUuvNGBaACQfcjywfLwg/dOuZbb88XW+foiQILlPEA9/0nstycY
+        1QFIV4D6qGtAYLrT+ghmyYyQ0g==
+X-Google-Smtp-Source: APXvYqzlN7JnkgSHzaDmBu8FHBSjixDGHoVfzppcLe54cOuUt4TO+cKqeMiYd4qGNmP6I/EOu9OuyQ==
+X-Received: by 2002:a24:1a07:: with SMTP id 7mr14461192iti.16.1557624327634;
+        Sat, 11 May 2019 18:25:27 -0700 (PDT)
+Received: from shibby.hil-lafwehx.chi.wayport.net (hampton-inn.wintek.com. [72.12.199.50])
+        by smtp.gmail.com with ESMTPSA id u134sm1579013itb.32.2019.05.11.18.25.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 11 May 2019 18:25:26 -0700 (PDT)
+From:   Alex Elder <elder@linaro.org>
+To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
+        ilias.apalodimas@linaro.org
+Cc:     syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
+        abhishek.esse@gmail.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/18] net: introduce Qualcomm IPA driver
+Date:   Sat, 11 May 2019 20:24:50 -0500
+Message-Id: <20190512012508.10608-1-elder@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:a4f:905:0:0:0:0:0 with HTTP; Sat, 11 May 2019 18:24:35 -0700 (PDT)
-Reply-To: ahmednuru@yandex.com
-From:   "Dr. Ahmed Nuru" <77225967ahmed@gmail.com>
-Date:   Sat, 11 May 2019 18:24:35 -0700
-Message-ID: <CAOb5B7YbpdHV=XAz=RNY49igwj7d0Vm9XkJ9owWrpyE9yFxFvA@mail.gmail.com>
-Subject: I NEED YOUR RESPOND
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series presents the driver for the Qualcomm IP Accelerator (IPA).
+The IPA is a component present in some Qualcomm SoCs that allows
+network functions such as aggregation, filtering, routing, and NAT
+to be performed without active involvement of the main application
+processor (AP).
+
+Initially, these advanced features are disabled; the IPA driver
+simply provides a network interface that makes the modem's LTE
+network available to the AP.  In addition, only support for the
+IPA found in the Qualcomm SDM845 SoC is provided.
+
+This code is derived from a driver developed internally by Qualcomm.
+A version of the original source can be seen here:
+  https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree
+in the "drivers/platform/msm/ipa" directory.  Many were involved in
+developing this, but the following individuals deserve explicit
+acknowledgement for their substantial contributions:
+
+    Abhishek Choubey
+    Ady Abraham
+    Chaitanya Pratapa
+    David Arinzon
+    Ghanim Fodi
+    Gidon Studinski
+    Ravi Gummadidala
+    Shihuan Liu
+    Skylar Chang
+
+A version of this code was posted in November 2018 as an RFC.
+  https://lore.kernel.org/lkml/20181107003250.5832-1-elder@linaro.org/
+Fixes addressing all feedback received have been implemented.  It
+has undergone considerable further rework since that time, and
+most of the "future work" described then has now been completed.
+
+This code (including its dependencies) is available in buildable
+form here, based on kernel v5.1:
+  remote: ssh://git@git.linaro.org/people/alex.elder/linux.git
+  branch: ipa-v1_kernel-v5.1
+    f5d4a676a981 arm64: defconfig: enable build of IPA code
+
+					-Alex
+
+Alex Elder (18):
+  bitfield.h: add FIELD_MAX() and field_max()
+  soc: qcom: create "include/soc/qcom/rmnet.h"
+  dt-bindings: soc: qcom: add IPA bindings
+  soc: qcom: ipa: main code
+  soc: qcom: ipa: configuration data
+  soc: qcom: ipa: clocking, interrupts, and memory
+  soc: qcom: ipa: GSI headers
+  soc: qcom: ipa: the generic software interface
+  soc: qcom: ipa: GSI transactions
+  soc: qcom: ipa: IPA interface to GSI
+  soc: qcom: ipa: IPA endpoints
+  soc: qcom: ipa: immediate commands
+  soc: qcom: ipa: IPA network device and microcontroller
+  soc: qcom: ipa: AP/modem communications
+  soc: qcom: ipa: support build of IPA code
+  MAINTAINERS: add entry for the Qualcomm IPA driver
+  arm64: dts: sdm845: add IPA information
+  arm64: defconfig: enable build of IPA code
+
+ .../devicetree/bindings/net/qcom,ipa.txt      |  164 ++
+ MAINTAINERS                                   |    6 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |   51 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/net/Kconfig                           |    2 +
+ drivers/net/Makefile                          |    1 +
+ .../ethernet/qualcomm/rmnet/rmnet_handlers.c  |    1 +
+ .../net/ethernet/qualcomm/rmnet/rmnet_map.h   |   24 -
+ .../qualcomm/rmnet/rmnet_map_command.c        |    1 +
+ .../ethernet/qualcomm/rmnet/rmnet_map_data.c  |    1 +
+ .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |    1 +
+ drivers/net/ipa/Kconfig                       |   16 +
+ drivers/net/ipa/Makefile                      |    7 +
+ drivers/net/ipa/gsi.c                         | 1741 +++++++++++++++++
+ drivers/net/ipa/gsi.h                         |  241 +++
+ drivers/net/ipa/gsi_private.h                 |  147 ++
+ drivers/net/ipa/gsi_reg.h                     |  376 ++++
+ drivers/net/ipa/gsi_trans.c                   |  604 ++++++
+ drivers/net/ipa/gsi_trans.h                   |  106 +
+ drivers/net/ipa/ipa.h                         |  131 ++
+ drivers/net/ipa/ipa_clock.c                   |  291 +++
+ drivers/net/ipa/ipa_clock.h                   |   52 +
+ drivers/net/ipa/ipa_cmd.c                     |  372 ++++
+ drivers/net/ipa/ipa_cmd.h                     |  116 ++
+ drivers/net/ipa/ipa_data-sdm845.c             |  245 +++
+ drivers/net/ipa/ipa_data.h                    |  267 +++
+ drivers/net/ipa/ipa_endpoint.c                | 1253 ++++++++++++
+ drivers/net/ipa/ipa_endpoint.h                |   96 +
+ drivers/net/ipa/ipa_gsi.c                     |   48 +
+ drivers/net/ipa/ipa_gsi.h                     |   49 +
+ drivers/net/ipa/ipa_interrupt.c               |  279 +++
+ drivers/net/ipa/ipa_interrupt.h               |   53 +
+ drivers/net/ipa/ipa_main.c                    |  920 +++++++++
+ drivers/net/ipa/ipa_mem.c                     |  237 +++
+ drivers/net/ipa/ipa_mem.h                     |   82 +
+ drivers/net/ipa/ipa_netdev.c                  |  250 +++
+ drivers/net/ipa/ipa_netdev.h                  |   24 +
+ drivers/net/ipa/ipa_qmi.c                     |  399 ++++
+ drivers/net/ipa/ipa_qmi.h                     |   35 +
+ drivers/net/ipa/ipa_qmi_msg.c                 |  583 ++++++
+ drivers/net/ipa/ipa_qmi_msg.h                 |  238 +++
+ drivers/net/ipa/ipa_reg.h                     |  279 +++
+ drivers/net/ipa/ipa_smp2p.c                   |  304 +++
+ drivers/net/ipa/ipa_smp2p.h                   |   47 +
+ drivers/net/ipa/ipa_uc.c                      |  208 ++
+ drivers/net/ipa/ipa_uc.h                      |   32 +
+ include/linux/bitfield.h                      |   14 +
+ include/soc/qcom/rmnet.h                      |   38 +
+ 48 files changed, 10409 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/qcom,ipa.txt
+ create mode 100644 drivers/net/ipa/Kconfig
+ create mode 100644 drivers/net/ipa/Makefile
+ create mode 100644 drivers/net/ipa/gsi.c
+ create mode 100644 drivers/net/ipa/gsi.h
+ create mode 100644 drivers/net/ipa/gsi_private.h
+ create mode 100644 drivers/net/ipa/gsi_reg.h
+ create mode 100644 drivers/net/ipa/gsi_trans.c
+ create mode 100644 drivers/net/ipa/gsi_trans.h
+ create mode 100644 drivers/net/ipa/ipa.h
+ create mode 100644 drivers/net/ipa/ipa_clock.c
+ create mode 100644 drivers/net/ipa/ipa_clock.h
+ create mode 100644 drivers/net/ipa/ipa_cmd.c
+ create mode 100644 drivers/net/ipa/ipa_cmd.h
+ create mode 100644 drivers/net/ipa/ipa_data-sdm845.c
+ create mode 100644 drivers/net/ipa/ipa_data.h
+ create mode 100644 drivers/net/ipa/ipa_endpoint.c
+ create mode 100644 drivers/net/ipa/ipa_endpoint.h
+ create mode 100644 drivers/net/ipa/ipa_gsi.c
+ create mode 100644 drivers/net/ipa/ipa_gsi.h
+ create mode 100644 drivers/net/ipa/ipa_interrupt.c
+ create mode 100644 drivers/net/ipa/ipa_interrupt.h
+ create mode 100644 drivers/net/ipa/ipa_main.c
+ create mode 100644 drivers/net/ipa/ipa_mem.c
+ create mode 100644 drivers/net/ipa/ipa_mem.h
+ create mode 100644 drivers/net/ipa/ipa_netdev.c
+ create mode 100644 drivers/net/ipa/ipa_netdev.h
+ create mode 100644 drivers/net/ipa/ipa_qmi.c
+ create mode 100644 drivers/net/ipa/ipa_qmi.h
+ create mode 100644 drivers/net/ipa/ipa_qmi_msg.c
+ create mode 100644 drivers/net/ipa/ipa_qmi_msg.h
+ create mode 100644 drivers/net/ipa/ipa_reg.h
+ create mode 100644 drivers/net/ipa/ipa_smp2p.c
+ create mode 100644 drivers/net/ipa/ipa_smp2p.h
+ create mode 100644 drivers/net/ipa/ipa_uc.c
+ create mode 100644 drivers/net/ipa/ipa_uc.h
+ create mode 100644 include/soc/qcom/rmnet.h
+
 -- 
-I NEED YOUR ASSISTANT FOR AN URGENT BUSINESS PROPOSAL OF $135 MILLION
-AND 767KG OF GOLD FOR INVESTMENT PLEASE KINDLY GET BACK TO ME IF YOU
-CAN HANDLE IT FOR MORE DETAILS.
+2.20.1
+
