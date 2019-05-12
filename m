@@ -2,108 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1771AB05
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F051AB16
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfELHed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 03:34:33 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33257 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfELHec (ORCPT
+        id S1726339AbfELHki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 03:40:38 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:45226 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725913AbfELHkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 03:34:32 -0400
-Received: by mail-io1-f67.google.com with SMTP id z4so7708815iol.0;
-        Sun, 12 May 2019 00:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yjV02L2Lg3a4KlZGcmCrXQyj1lmIeRP5Nl2cbSpRQtQ=;
-        b=ec7zXk/3kB5xKZFXO7ghYMObJD2vDhiie5L6wEyXGc5DPQ7HrdDFgNO7dAczlOhZgp
-         RknzyV0qdWHtXChfP7UxdEYrOhFaDnw38F2lsg2nU9Bt5ijzEUOK0q8EDlnLLKW+A9iQ
-         JTF7fd5p33kEff5F1C6JkcifgRglY2GXHuBSkOwBLHe6Px6od3/hd4aeZfbMeK8pk/Lz
-         a2kTXrHCC5ht0s5qKYsQ4i4KcaddBWvngjb40oiQ2tZSJT2P/FlPVxivfBk7o79VZVn5
-         QWsCfiDbKSJcnoN9r3ifkzA8CndClrNCF4L8y26/+HVue72bJJMyV51y3mTTGkj4n90w
-         nEZA==
+        Sun, 12 May 2019 03:40:37 -0400
+Received: from mr2.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x4C7eanD022301
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:40:36 -0400
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x4C7eV1J019325
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:40:36 -0400
+Received: by mail-qt1-f197.google.com with SMTP id l20so11104606qtq.21
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 00:40:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yjV02L2Lg3a4KlZGcmCrXQyj1lmIeRP5Nl2cbSpRQtQ=;
-        b=T2stuB9JhmsLD79sLA+OgiEVi6Werq8b9IA9AULRFBWrifIVViYdmpa+DxwU5BV8bw
-         rcbYrPQhLoabBRovFroawe0TTwniASUm6mu9+mMY2rTDwv/HMAw4ZdmXfK9PoOvIkd0a
-         LbyovrH+68BHdMc/6m6vM1PP/GQam28DHkQQf1NkfTuGOpjFN1q1SSTOANJz8j/HRHDX
-         2y2YizyiTBq1QYgP76MGK1qqhWgOZyGNNk+st2ntmn9g0MOznn4tdc+V43nLqtwWhcsl
-         eIja0930/Pn0tqTXt8ggNRPTkZxKWaJR/MuOUswM/wtkLJFMuKSth1Pe2VgUuVProXvF
-         oqRQ==
-X-Gm-Message-State: APjAAAUoeW7oq7+EIIJDFJu9e8t6i6X9Nra3sm9E2VVam57AmguzZwRx
-        I7skOsp4UPpvte6zXdqDdfc=
-X-Google-Smtp-Source: APXvYqyPZFH7bWLi/IU+f0IdofbSTKGIKNbMTby9HJW92Dh1CNAI3XYselYUqh8yG0gtiOVWp6+xmA==
-X-Received: by 2002:a5e:9518:: with SMTP id r24mr12103223ioj.218.1557646471624;
-        Sun, 12 May 2019 00:34:31 -0700 (PDT)
-Received: from asus (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id y62sm4833926ita.15.2019.05.12.00.34.30
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=4niML5CBEC30siYgDwkdqvWzedR5M8WeQePCBwOwTk0=;
+        b=M4mimFbKVyvTFcgUnz2SexFsNJqFewDUCdyuePrW8woSekGOfg4Zl0tGjwflyYXGLT
+         NYVGbPFnecC/d6mIa3sPxKzL7eNFt09fA8FUl8rbzGMD6yd0CDk4Go/yfUfbM8QOYS8U
+         oArgv5ljkWPzkGTSXoAT/vdO1VjLSkhk9FRmgoFyGOSBzZ+4yqy6DRjAxeRPm40ZkgYl
+         XzGzlG1vWiCtEH4Y22K5Ikap21Lbsmx9gmb0gFUj1cnpCyiC3Fsu4cAvI87i+SjQ7O2u
+         D16UAZ8wlzlFN+WN7zTWi1ud7Tw+VT3SmQpZjGbSGUlxaIDmCLEwFgN23t0uCvplSCYl
+         I8jw==
+X-Gm-Message-State: APjAAAXsBEKEAYJGsiVeacFtmtZOYckS1Ja1Ir2tdaZO+PHTVNiZIyNR
+        sIJyNpjoClIKENQ+AEhRsGjjYH8lm/vMjxCOcFES/XRu91ZVOf+3GzQfKV610rfBYXv16/4ITYj
+        JY9DZqnELFvEfPXuN9lfUu7EZhTh5lD+Qb1Q=
+X-Received: by 2002:ac8:298d:: with SMTP id 13mr17969933qts.174.1557646831376;
+        Sun, 12 May 2019 00:40:31 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyAe13v194yDiRZP16Zt0YhlISnTOc1dpB98yMzdZWCHtKpcG/mjwaobALtaHZHMtv44Qfdxw==
+X-Received: by 2002:ac8:298d:: with SMTP id 13mr17969915qts.174.1557646831127;
+        Sun, 12 May 2019 00:40:31 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::bf6])
+        by smtp.gmail.com with ESMTPSA id n36sm7215149qtk.9.2019.05.12.00.40.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 00:34:30 -0700 (PDT)
-Date:   Sun, 12 May 2019 01:34:29 -0600
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     Stanislav Fomichev <sdf@fomichev.me>
-Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests: bpf: Add files generated when compiled to
- .gitignore
-Message-ID: <20190512073427.GA10811@asus>
-References: <20190512035009.25451-1-skunberg.kelsey@gmail.com>
- <20190512062907.GL1247@mini-arch>
-MIME-Version: 1.0
+        Sun, 12 May 2019 00:40:29 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepak Mishra <linux.dkm@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jeremy Cline <jcline@redhat.com>
+cc:     linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
+Subject: [PATCH] scripts/spdxcheck.py - fix list of directories to check
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190512062907.GL1247@mini-arch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Sun, 12 May 2019 03:40:28 -0400
+Message-ID: <2008.1557646828@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 11:29:07PM -0700, Stanislav Fomichev wrote:
-> On 05/11, Kelsey Skunberg wrote:
-> > The following files are generated when /selftests/bpf/ is compiled and
-> > should be added to .gitignore:
-> > 
-> > 	- libbpf.pc
-> > 	- libbpf.so.0
-> > 	- libbpf.so.0.0.3
-> > 
-> > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> > ---
-> >  tools/testing/selftests/bpf/.gitignore | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
-> > index 41e8a689aa77..ceb11f98fe4f 100644
-> > --- a/tools/testing/selftests/bpf/.gitignore
-> > +++ b/tools/testing/selftests/bpf/.gitignore
-> > @@ -32,3 +32,6 @@ test_tcpnotify_user
-> >  test_libbpf
-> >  test_tcp_check_syncookie_user
-> >  alu32
-> > +libbpf.pc
-> 
-> [..]
-> > +libbpf.so.0
-> > +libbpf.so.0.0.3
-> How about libbpf.so.* so we don't have to update it on every release?
->
+After this commit:
 
-That seems logical. Updated in v2. I appreciate the feedback!
+commit 62be257e986dab439537b3e1c19ef746a13e1860
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Apr 30 06:51:30 2019 -0400
 
-Cheers,
-Kelsey
+    LICENSES: Rename other to deprecated
 
-> > --
-> > 2.20.1
-> > 
+checkpatch throws an error:
+
+[/usr/src/linux-next]2 scripts/checkpatch.pl -f drivers/staging/rtl8712/rtl871x_rf.h
+FAIL: "Blob or Tree named 'other' not found"
+Traceback (most recent call last):
+  File "scripts/spdxcheck.py", line 240, in <module>
+    spdx = read_spdxdata(repo)
+  File "scripts/spdxcheck.py", line 41, in read_spdxdata
+    for el in lictree[d].traverse():
+  File "/usr/lib/python2.7/site-packages/git/objects/tree.py", line 298, in __getitem__
+    return self.join(item)
+  File "/usr/lib/python2.7/site-packages/git/objects/tree.py", line 244, in join
+    raise KeyError(msg % file)
+KeyError: "Blob or Tree named 'other' not found"
+
+Fix directory search list. Pick up the new LICENSES/dual while we're there...
+
+Reported-by: Deepak Mishra <linux.dkm@gmail.com>
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 4fe392e507fb..7abd5f5cb14d 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -32,7 +32,7 @@ import os
+ def read_spdxdata(repo):
+ 
+     # The subdirectories of LICENSES in the kernel source
+-    license_dirs = [ "preferred", "other", "exceptions" ]
++    license_dirs = [ "preferred", "dual", "deprecated", "exceptions" ]
+     lictree = repo.head.commit.tree['LICENSES']
+ 
+     spdx = SPDXdata()
+
+
