@@ -2,99 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C39FC1AD95
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4CF11ADAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfELRq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:46:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35044 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbfELRqZ (ORCPT
+        id S1726899AbfELR4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:56:00 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36649 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbfELR4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:46:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w12so12735356wrp.2;
-        Sun, 12 May 2019 10:46:24 -0700 (PDT)
+        Sun, 12 May 2019 13:56:00 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j187so11570546wmj.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 10:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lb3IP/Hl9lXy/TNODmgqSdzhcHKCTOi5Q6K9F3iD6Yc=;
-        b=u24eCC2SgKLBkmO/LnDz2izzPhp4h023a+HZEvpM6YzgQ7pIzUHZItuuECjuW4vP60
-         E85x71N9IoxOKj5h+cTaH25KQ2NWmsQvioP3XzSdgZBXrg7CLYBHjlWO+zr/r5rnPZ7o
-         AJ5kguSwtuaoBFvZ0fpVvxWsAWn7HvTVWdhsyTPpIir82PdndXqLNSrYL8EWwJZPF07H
-         TI70oBn08Y/j8mgJdUPt4t8nBIHU7TTUFoK4NO6PQiiKtX3JwedlOTGCBCQLfkTKwxCZ
-         18Wxma2Ew8biSRB8zxUY25ZZ7P2x5171XH7oXs8gjEXcdlSdJ7DY6n3VNWzMj5Vjf6/+
-         hw2A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gyfaOU+RLkJUHaoaPmeqsA/Kgr0raXRSWBNZ4c2jFPg=;
+        b=hf+UKWxMT2pJh0EcyBKFCl9KZ34LK6b4xHvfegpzSXzOweoD067I0hJZpg0FpvrLus
+         otQ1fZK9bH85Y/MT52PesKI493W/jI99Y6ehzLn5g0rLH0Cgz4y1/1XTGmqi2REHenG4
+         WrQtnbmzmLZGvn3JWXuN4YdvK70WjqQU8kvVTmliLGaTaggVJfuYJuO+fTvxpUM8JSLt
+         e2GC4F0rRm6PmDzzgvel4zIqeC2ceIxKwo4BfChVc0BvBCaI8rAiPAjovD5/ofM8GM24
+         558RhS2qL44PhPT8uJz3Ph43QyIS32cnFWBtMeqKQqL2kzZJ17zjWhcOo60VWPMVChkv
+         EkbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lb3IP/Hl9lXy/TNODmgqSdzhcHKCTOi5Q6K9F3iD6Yc=;
-        b=CgNSUEpBdUK/Q9SnxIzDv3SoCnf/OhUelI4cJYxsOPRnHI8PG9fcHA8kkRrFagMJ0f
-         mgs8VjD4pzadal9lS4blOvhRkBIYFIQvT4RwdqYoUBFFCM9+IYGAK/R/xU9/6AOaxP5o
-         owTTzFGaJRG5lnhZDUSeoYt8e9COHYXrkEel77AqiZqpPCJHOD4nJmktEJ29umtFkxPs
-         nbuP4sn/ife7A020re4O5/T5sgVHwJ7pEV4SmqrXfiJDOQp5cGNDzybNODXuWeUnGYuY
-         5UoRrBRxqilwxOFBB0tdvvWbVqK6tMWkx7MoXd2gY/LUjg34zxT3y5ceuceLUU0K/2Sa
-         IY5Q==
-X-Gm-Message-State: APjAAAWjJ5DWh8bY7SWXptUJ+kzSsJFRXUn4EtpNa5iyHd5w4aEjUXP/
-        sf2uSCchi4M0eESSsrz1FRo=
-X-Google-Smtp-Source: APXvYqz/VewqOJnmZC2dZcKpaUrdwzIGnGakbHjHUF/LaI2SfDQMiogOyo/etrjKnneSrTsw/xi4RA==
-X-Received: by 2002:adf:f9c3:: with SMTP id w3mr5934677wrr.271.1557683184146;
-        Sun, 12 May 2019 10:46:24 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id d14sm9090558wre.78.2019.05.12.10.46.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gyfaOU+RLkJUHaoaPmeqsA/Kgr0raXRSWBNZ4c2jFPg=;
+        b=iAUDjB57P9NmYDF2mAcF8bl1qHMuOT7VXienwzLpwdQE5jnRlKgIYRInELtFTbu1qK
+         OLdyRl+qCe0cuuVtT28puBVyyMoHc0xqaHceC6dmjsysj8w1ZzCB5+OZ2KUcoZQV4B1z
+         mus4Ete8616vG8Ga8yr71u0L589pGBfeS01d8kVrqjDXIzF9TvFuLCBQH6J3YdXRFrmq
+         shfb1vgpbj77PsZNaAo/f/Wr8UPAkBpkFAbXjulghUVBr0FqeTg4vAON5YBLh5sffbSE
+         fxwd706EjoQZLqKk7UnJu2S6ijBpB/JnozmjQmn6AVjbuxArBfO6nWngpZGPf8L9tsaz
+         ZzIw==
+X-Gm-Message-State: APjAAAWvG9uJu2M+lAPL6qK82hpQRdDwGnz8kbTbUXXszUPRy3o8QYpT
+        RumDcTTyty2JU2sh4K0Quw==
+X-Google-Smtp-Source: APXvYqwUQDzS89IfGmFyMQB4tHQ5yaug5im3059aPpTvt7wIj2bKmtnAt0OL/gXN8cEEoMCbLIHy6w==
+X-Received: by 2002:a1c:c1c8:: with SMTP id r191mr11463298wmf.99.1557683757685;
+        Sun, 12 May 2019 10:55:57 -0700 (PDT)
+Received: from avx2 ([46.53.251.158])
+        by smtp.gmail.com with ESMTPSA id v18sm7833610wro.11.2019.05.12.10.55.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 10:46:23 -0700 (PDT)
-From:   peron.clem@gmail.com
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v4 8/8] arm64: dts: allwinner: Add mali GPU supply for OrangePi 3
-Date:   Sun, 12 May 2019 19:46:08 +0200
-Message-Id: <20190512174608.10083-9-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190512174608.10083-1-peron.clem@gmail.com>
-References: <20190512174608.10083-1-peron.clem@gmail.com>
+        Sun, 12 May 2019 10:55:56 -0700 (PDT)
+Date:   Sun, 12 May 2019 20:55:54 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: FYI -ffreestanding shrinks kernel by 2% on x86_64
+Message-ID: <20190512175554.GA10777@avx2>
+References: <20190511200223.GA14143@avx2>
+ <20190511201344.GA11535@avx2>
+ <20190512093228.GA8088@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190512093228.GA8088@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Clément Péron <peron.clem@gmail.com>
+On Sun, May 12, 2019 at 11:32:28AM +0200, Ingo Molnar wrote:
+> 
+> * Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> 
+> > On Sat, May 11, 2019 at 11:02:24PM +0300, Alexey Dobriyan wrote:
+> > > I compiled current F29 kernel config on x86_64 (5.0.13-200.fc29.x86_64)
+> > > with -ffreestanding. The results are interesting :^):
+> > > 
+> > > 	add/remove: 30/22 grow/shrink: 1290/46867 up/down: 33658/-1778055 (-1744397)
+> > > 	Total: Before=83298859, After=81554462, chg -2.09% (!)
+> > > 
+> > > That's original config with modules compiled built-in.
+> > 
+> > Argh, it's the other way: adding -ffreestanding shrinks kernel by 2%.
+> 
+> This is a very interesting finding, as we've seen numerous code 
+> generation artifacts from GCC assuming libgcc things.
+> 
+> Has anyone investigated by any chance where the -ffreestanding space 
+> savings come from mostly - is it mostly in cold paths, or does it make or 
+> hot codepaths more efficient as well?
+> 
+> If it's the latter then the kernel would be directly faster as well 
+> (fewer instructions executed), not just indirectly from better cache 
+> packing, I suppse?
 
-Enable and add supply to the Mali GPU node on the
-Orange Pi 3 board.
+Turns out -ffreestanding completely disables stack protector :-\
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+F29				83298859
+-ffreestanding			-1744397	-2.09%
+STACKPROTECTOR_STRONG=n		-1369949	-1.64%
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 17d496990108..d4c989cc92a7 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -58,6 +58,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&reg_dcdcc>;
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_cldo1>;
- 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
--- 
-2.17.1
-
+Builtin function are in noise, e.g -fno-builtin-sprintf is only -14KB.
