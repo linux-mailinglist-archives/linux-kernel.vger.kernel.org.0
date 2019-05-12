@@ -2,87 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533F31AC47
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 15:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5791AC4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 15:13:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfELNI1 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 12 May 2019 09:08:27 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:48785 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfELNI1 (ORCPT
+        id S1726753AbfELNNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 09:13:00 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:51983 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfELNM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 09:08:27 -0400
-Received: from xps13 (unknown [109.190.253.16])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 404E5240004;
-        Sun, 12 May 2019 13:08:10 +0000 (UTC)
-Date:   Sun, 12 May 2019 15:08:00 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, dwmw2@infradead.org, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        computersforpeace@gmail.com, paul.burton@mips.com, stefan@agner.ch,
-        christophe.kerello@st.com, liang.yang@amlogic.com,
-        geert@linux-m68k.org, devicetree@vger.kernel.org,
-        marcel.ziswiler@toradex.com, linux-mtd@lists.infradead.org,
-        richard@nod.at, juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v3 1/4]  mfd: Add Macronix MX25F0A MFD controller driver
-Message-ID: <20190512142835.4caddc8e@xps13>
-In-Reply-To: <1555320234-15802-2-git-send-email-masonccyang@mxic.com.tw>
-References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
-        <1555320234-15802-2-git-send-email-masonccyang@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Sun, 12 May 2019 09:12:59 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x4CDCNYm019598;
+        Sun, 12 May 2019 22:12:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x4CDCNYm019598
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557666743;
+        bh=xGIaCCBT4ZPJeA9PBYfwFyJ4Wf7xBW9XNsnG50FXtyE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CBgDSJEXSGBdAzI+bPa24iLifa6HwF8l4UnQIdxUMpdmSTozL8obiIJW7zts9Lrby
+         7NZ6egzFcXxL42+kkKblfpLssqnXTFwFQH6McABnD8nxioHa5Sf7xbu+wAfRQHA5L0
+         DIRYoaY013Frww8y3dj5zhHri2reQw8sGrSB3r1zpNf3Zm9cIHFjw2IhKJAtKbJlZD
+         gtK+cK2pwn4+ufSbV5gj29tyVYOY7uIHPE7MA8d2CdzMrtwnYmV4WjXIFNMViTXJxf
+         zTCUggVVOxzc7H6H7NUvX9yxwj7im47GdQkZVx7IA44inLJk7vFnzymC65UvXazH1T
+         XdOJawGXU4mNA==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Ley Foon Tan <lftan@altera.com>, nios2-dev@lists.rocketboards.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nios2: remove pointless second entry for CONFIG_TRACE_IRQFLAGS_SUPPORT
+Date:   Sun, 12 May 2019 22:12:13 +0900
+Message-Id: <1557666733-19527-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+Strangely enough, NIOS2 defines TRACE_IRQFLAGS_SUPPORT twice
+with different values, which is pointless and confusing.
 
-Mason Yang <masonccyang@mxic.com.tw> wrote on Mon, 15 Apr 2019 17:23:51
-+0800:
+[1] arch/nios2/Kconfig
 
-> Add a driver for Macronix MX25F0A multifunction device controller.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> ---
->  drivers/mfd/Kconfig              |   9 ++
->  drivers/mfd/Makefile             |   1 +
->  drivers/mfd/mxic-mx25f0a.c       |  84 +++++++++++++++++++
->  include/linux/mfd/mxic-mx25f0a.h | 175 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 269 insertions(+)
->  create mode 100644 drivers/mfd/mxic-mx25f0a.c
->  create mode 100644 include/linux/mfd/mxic-mx25f0a.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 26ad646..7e99e93 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -823,6 +823,15 @@ config MFD_MAX8998
->  	  additional drivers must be enabled in order to use the functionality
->  	  of the device.
->  
-> +config MFD_MXIC_MX25F0A
-> +	tristate "Macronix mx25f0a multifunction device support"
-> +	select MFD_CORE
-> +	help
-> +	  This supports for Macronix mx25f0a multifunction device controller
-> +	  for raw nand or spi. You have to select individual components like
+  config TRACE_IRQFLAGS_SUPPORT
+          def_bool n
 
-Please use upper case for acronyms in plain English: NAND, SPI
+[2] arch/nios2/Kconfig.debug
 
-> +	  raw nand controller or spi host controller under the corresponding
-> +	  menus.
-> +
->  config MFD_MT6397
->  	tristate "MediaTek MT6397 PMIC Support"
->  	select MFD_CORE
+  config TRACE_IRQFLAGS_SUPPORT
+          def_bool y
 
-Thanks,
-Miquèl
+[1] is included before [2]. In the Kconfig syntax, the first one
+is effective. So, TRACE_IRQFLAGS_SUPPORT is always 'n'.
+
+The second define in arch/nios2/Kconfig.debug is dead code.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/nios2/Kconfig.debug | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/nios2/Kconfig.debug b/arch/nios2/Kconfig.debug
+index f1da8a7..a8bc06e 100644
+--- a/arch/nios2/Kconfig.debug
++++ b/arch/nios2/Kconfig.debug
+@@ -1,8 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-config TRACE_IRQFLAGS_SUPPORT
+-	def_bool y
+-
+ config EARLY_PRINTK
+ 	bool "Activate early kernel debugging"
+ 	default y
+-- 
+2.7.4
+
