@@ -2,107 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3AE1AB65
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 11:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BD91AD67
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfELJAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 05:00:08 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35308 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfELJAI (ORCPT
+        id S1727165AbfELRGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:06:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49324 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfELRFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 05:00:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w12so11971198wrp.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 02:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j4B9AahyvgqRvxwaL6wD5cqfXHCYttglyJEYujL0qsQ=;
-        b=oU+ZcFt058u/TxK2MYqu/i0Mi722KKm6J4CTTnxt+/lczyY6tSF7dI1WSouc3NgXP2
-         49TjJZB2s6CVpQsjeOLqWfhk1oxEc9u6VWYYr7bkklLRaASu5mzHwpW12PeV6ZDTV5fj
-         3CmuDSeP9zOrRzKkDk7aCA1ZMe32lO/RalPYT2Xqe63aKPBVhfxuvqhFzMzETccvwuc1
-         jcX+ezeZnc4Fa4bE62PYeQSKuXstJs1NkVwN06Ppi/fLuLd/fbQKjkgPZ+DQABDn+ffL
-         Ckwzv1pI/HlAdS6eBtm+98Xo6W0DcW8WQrF9ASOVk0yJFsvs8ujl6dxYW+a/cCx63mOP
-         h6Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j4B9AahyvgqRvxwaL6wD5cqfXHCYttglyJEYujL0qsQ=;
-        b=BhSlI/RnUra8EAudtRUIHpnzQh2qCuaNf1W1LDfpn4Jmpb2NFNL8zecvxWITiHc4N3
-         ZGC41yu4PDCwpc6yu4lW1eQybIA8E146GbXGVFHiT3XZNnNFZl+QAFC/ZfEvTrjLgD9f
-         Cz879gclwJyGMbmEQTIj/5gbKTPPnU9X7smken/7pivhCMprsP8a/XG9qGxhvEPsehnc
-         xIeybyHGia8tUSkVQJYy1h/tI5WnCik361hHLTpOW8jaKCgTnN3s5QtRWs6fO2I2CBgc
-         O5B1IEngWuYPJ/JauSeG0GyZtEOIbwCDWC26T1jpRRmXM6OF80aLvWWH9yFD0qvyFSaB
-         NOgA==
-X-Gm-Message-State: APjAAAX81NkaET1v32nDtqEvglC6D4A1eZb6cOBM5kJpMiElMaFokFo7
-        RcPka3b4CJC8sVzfPUcYf2s8tw==
-X-Google-Smtp-Source: APXvYqyDp+8DRh3jRC8/N/1sFPEvCMjTC3q/iUoKwjrDJ2laaR0SdSTzwvWgw2C3FLL+7KEh30wRLg==
-X-Received: by 2002:adf:dfc4:: with SMTP id q4mr10542788wrn.201.1557651606071;
-        Sun, 12 May 2019 02:00:06 -0700 (PDT)
-Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id d14sm8310542wre.78.2019.05.12.02.00.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 02:00:05 -0700 (PDT)
-Date:   Sun, 12 May 2019 10:00:03 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Wenlin Kang <wenlin.kang@windriver.com>
-Cc:     jason.wessel@windriver.com, prarit@redhat.com,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: Fix bound check compiler warning
-Message-ID: <20190512090003.de52davu55rrg7kn@wychelm.lan>
-References: <1557280359-202637-1-git-send-email-wenlin.kang@windriver.com>
- <20190508081640.tvtnazr4tf5jijh7@holly.lan>
- <ac8af42c-e69d-6fd0-1d76-73a37e8a672c@windriver.com>
+        Sun, 12 May 2019 13:05:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g0o6QTLEOtgvR54hMzPmyJFqu/fIVI/i9nJj0DYc180=; b=NuYX5Xefn+tpSrY6feFiLvbNT
+        fe77L/itDkUAtYBI3Xih9ZXu9S5a+TbAO83cm9CaQ867LR9RZbuxs3YUZ56VyBOdk0lnk+21WRjKE
+        kh/h2lYBp+6kEmShmacXNlQ4sYS5dmr0ozRMbj2ZsQuBQCy1L7riwB7ayr0O9M4pgbR8M=;
+Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hPruu-00044p-9z; Sun, 12 May 2019 17:05:40 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 6A56044005F; Sun, 12 May 2019 10:04:46 +0100 (BST)
+Date:   Sun, 12 May 2019 18:04:46 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra30
+Message-ID: <20190512090446.GN21483@sirena.org.uk>
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-7-digetx@gmail.com>
+ <20190508075848.GX14916@sirena.org.uk>
+ <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="b/Q3JWIUAuLE0ZFy"
 Content-Disposition: inline
-In-Reply-To: <ac8af42c-e69d-6fd0-1d76-73a37e8a672c@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
+X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 10:56:03AM +0800, Wenlin Kang wrote:
-> On 5/8/19 4:16 PM, Daniel Thompson wrote:
-> > On Wed, May 08, 2019 at 09:52:39AM +0800, Wenlin Kang wrote:
-> > > The strncpy() function may leave the destination string buffer
-> > > unterminated, better use strlcpy() instead.
-> > > 
-> > > This fixes the following warning with gcc 8.2:
-> > > 
-> > > kernel/debug/kdb/kdb_io.c: In function 'kdb_getstr':
-> > > kernel/debug/kdb/kdb_io.c:449:3: warning: 'strncpy' specified bound 256 equals destination size [-Wstringop-truncation]
-> > >     strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> > >     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > 
-> > > Signed-off-by: Wenlin Kang <wenlin.kang@windriver.com>
-> > > ---
-> > >   kernel/debug/kdb/kdb_io.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-> > > index 6a4b414..7fd4513 100644
-> > > --- a/kernel/debug/kdb/kdb_io.c
-> > > +++ b/kernel/debug/kdb/kdb_io.c
-> > > @@ -446,7 +446,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
-> > >   char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
-> > >   {
-> > >   	if (prompt && kdb_prompt_str != prompt)
-> > > -		strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> > > +		strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> > Shouldn't that be strscpy?
-> 
-> 
-> Hi Daniel
-> 
-> I thought about strscpy, but I think strlcpy is better, because it only copy
-> the real number of characters if src string less than that size.
 
-Sorry, I'm confused by this. What behavior does strscpy() have that you
-consider undesirable in this case?
+--b/Q3JWIUAuLE0ZFy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Wed, May 08, 2019 at 04:27:42PM +0300, Dmitry Osipenko wrote:
 
-Daniel.
+> Constraints:
+
+> 1) The max-spread voltage is 300mV.
+
+> 2) CORE voltage must be higher than the CPU by at least N mV, where N
+> varies depending on the CPU voltage.
+
+Those seem like they should be doable in generic code, though the fact
+that the constraint is variable makes it annoying to specify - otherwise
+it'd just be a minimum and maximum spread.  I'm not really coming up
+with any great ideas right now, it's getting into OPP type territory but
+it sounds like there's more flexibility for ramping the core voltage so
+you'd end up with silly numbers of OPPs.
+
+> 3) There is a constraint on the maximum CORE voltage depending on
+> hardware model/revision (cpu_speedo_id) where a higher voltages
+> apparently may cause physical damage, so it's better to hardcode the
+> limitation in the code rather than to rely on a board's device-tree
+> description. This constraint is quite vaguely defined in the downstream
+> kernel, I'm not really sure if it's solely about the hardware safety.
+
+I'd expect this to be enforced by the cpufreq driver just not selecting
+higher voltages on affected parts.
+
+--b/Q3JWIUAuLE0ZFy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX4aoACgkQJNaLcl1U
+h9BiSAf+PlAvjLtCQwRR2XCmR5U+AAAivAT1sm0iqUlGmSdBNtuUBw609WkyoTmA
+KoNugG/GkOu80UcYui0jUCeRfvejDmWwCchaus32RReYk6Ba9PNDw0LMNpbQGIAq
+j0o+h0Sy/U7LZxRh/945sGUNmnrpRySwIfl1ethg7mlVUrJJfOoGwEIvLjGazE1i
+xrFjQzDWxP/8XXhBTecQN47o6giksCkvdr6FMF7EX//STlsEuZIFQsen0EM8P5QG
+QAN+aLmvrePr7FFBwxeVavmzdQZo5aRE5KQ/OYSIQD4FRBDGE6kmhapQa0+djsPv
+W5+GFDWNTOrCFEU7TJXZIl5Po5ijlw==
+=25S4
+-----END PGP SIGNATURE-----
+
+--b/Q3JWIUAuLE0ZFy--
