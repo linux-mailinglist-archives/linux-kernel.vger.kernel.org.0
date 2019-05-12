@@ -2,103 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BD91AD67
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742AF1AB68
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 11:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfELRGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:06:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49324 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfELRFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g0o6QTLEOtgvR54hMzPmyJFqu/fIVI/i9nJj0DYc180=; b=NuYX5Xefn+tpSrY6feFiLvbNT
-        fe77L/itDkUAtYBI3Xih9ZXu9S5a+TbAO83cm9CaQ867LR9RZbuxs3YUZ56VyBOdk0lnk+21WRjKE
-        kh/h2lYBp+6kEmShmacXNlQ4sYS5dmr0ozRMbj2ZsQuBQCy1L7riwB7ayr0O9M4pgbR8M=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPruu-00044p-9z; Sun, 12 May 2019 17:05:40 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 6A56044005F; Sun, 12 May 2019 10:04:46 +0100 (BST)
-Date:   Sun, 12 May 2019 18:04:46 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
- for Tegra30
-Message-ID: <20190512090446.GN21483@sirena.org.uk>
-References: <20190414175939.12368-1-digetx@gmail.com>
- <20190414175939.12368-7-digetx@gmail.com>
- <20190508075848.GX14916@sirena.org.uk>
- <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
+        id S1726541AbfELJIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 05:08:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7743 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726232AbfELJIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 05:08:05 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 595DCEB198AB1B5A4E50;
+        Sun, 12 May 2019 17:08:01 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Sun, 12 May 2019
+ 17:07:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <herbert@gondor.apana.org.au>
+CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <davem@davemloft.net>,
+        <linux@armlinux.org.uk>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] arm/sha512 - Make sha512_arm_final static
+Date:   Sun, 12 May 2019 17:05:40 +0800
+Message-ID: <20190512090540.36472-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="b/Q3JWIUAuLE0ZFy"
-Content-Disposition: inline
-In-Reply-To: <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix sparse warning:
 
---b/Q3JWIUAuLE0ZFy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+arch/arm/crypto/sha512-glue.c:40:5: warning:
+ symbol 'sha512_arm_final' was not declared. Should it be static?
 
-On Wed, May 08, 2019 at 04:27:42PM +0300, Dmitry Osipenko wrote:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/arm/crypto/sha512-glue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Constraints:
+diff --git a/arch/arm/crypto/sha512-glue.c b/arch/arm/crypto/sha512-glue.c
+index 86540cd..23fc381 100644
+--- a/arch/arm/crypto/sha512-glue.c
++++ b/arch/arm/crypto/sha512-glue.c
+@@ -37,7 +37,7 @@ int sha512_arm_update(struct shash_desc *desc, const u8 *data,
+ 		(sha512_block_fn *)sha512_block_data_order);
+ }
+ 
+-int sha512_arm_final(struct shash_desc *desc, u8 *out)
++static int sha512_arm_final(struct shash_desc *desc, u8 *out)
+ {
+ 	sha512_base_do_finalize(desc,
+ 		(sha512_block_fn *)sha512_block_data_order);
+-- 
+2.7.4
 
-> 1) The max-spread voltage is 300mV.
 
-> 2) CORE voltage must be higher than the CPU by at least N mV, where N
-> varies depending on the CPU voltage.
-
-Those seem like they should be doable in generic code, though the fact
-that the constraint is variable makes it annoying to specify - otherwise
-it'd just be a minimum and maximum spread.  I'm not really coming up
-with any great ideas right now, it's getting into OPP type territory but
-it sounds like there's more flexibility for ramping the core voltage so
-you'd end up with silly numbers of OPPs.
-
-> 3) There is a constraint on the maximum CORE voltage depending on
-> hardware model/revision (cpu_speedo_id) where a higher voltages
-> apparently may cause physical damage, so it's better to hardcode the
-> limitation in the code rather than to rely on a board's device-tree
-> description. This constraint is quite vaguely defined in the downstream
-> kernel, I'm not really sure if it's solely about the hardware safety.
-
-I'd expect this to be enforced by the cpufreq driver just not selecting
-higher voltages on affected parts.
-
---b/Q3JWIUAuLE0ZFy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX4aoACgkQJNaLcl1U
-h9BiSAf+PlAvjLtCQwRR2XCmR5U+AAAivAT1sm0iqUlGmSdBNtuUBw609WkyoTmA
-KoNugG/GkOu80UcYui0jUCeRfvejDmWwCchaus32RReYk6Ba9PNDw0LMNpbQGIAq
-j0o+h0Sy/U7LZxRh/945sGUNmnrpRySwIfl1ethg7mlVUrJJfOoGwEIvLjGazE1i
-xrFjQzDWxP/8XXhBTecQN47o6giksCkvdr6FMF7EX//STlsEuZIFQsen0EM8P5QG
-QAN+aLmvrePr7FFBwxeVavmzdQZo5aRE5KQ/OYSIQD4FRBDGE6kmhapQa0+djsPv
-W5+GFDWNTOrCFEU7TJXZIl5Po5ijlw==
-=25S4
------END PGP SIGNATURE-----
-
---b/Q3JWIUAuLE0ZFy--
