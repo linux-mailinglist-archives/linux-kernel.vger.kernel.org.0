@@ -2,57 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F0A61AD4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D12A1AB21
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 10:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfELRF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:05:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49684 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbfELRFv (ORCPT
+        id S1726472AbfELICw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 04:02:52 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34623 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfELICv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9RG2AODhAu0ddI6bREDEwdc3wqRcusF77Y1+ZDoUoqI=; b=Z5MaOZyQWC3c99sXzxJ2QgNM4
-        GhhJ95ow9EFGIB1Z3aBaNn0yZ0YLAVrYBDO8eZ4LpYM+zKWIN7545KbFXZEc1BQM45klI5sCGKxfH
-        p9MdXFRu9k9EqApl0snS8Md197flO+KVS0KtZLk7az3fDlQj3eg6eM2bbGhmgmSkEsarE=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPrut-00044V-N5; Sun, 12 May 2019 17:05:39 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id A1BE644003B; Sun, 12 May 2019 08:54:17 +0100 (BST)
-Date:   Sun, 12 May 2019 16:54:17 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Sun, 12 May 2019 04:02:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m20so9069038wmg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 01:02:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=az2NvBw/j6sKFx3ItUU3E4tKs04UFXT+eEsNSTjgcOk=;
+        b=MtG+xbcXBmHQ4IcxpcWKC11SCKZq+OSTqMHyXCPi3JpftuK38K7VD3qLs9v7st1HUT
+         KJslOQ3ydVQtYDnWPOnUn74A2rmXAspsgG4ef+88P39xZiYN/ow6lLsJOH5w3gMZY9Nj
+         gY3aNEThPCg8C+wk+VHUlSyLqq33JIrWrP7560qtrREcwChnxmckl5RJ4I8zMr4/GgNU
+         nYwGRjPdwu2BZ4ou5myfZIx1EWlV08tKcnX3BVPQ6Ac/pi6YYU0yP+FPO+PMvXDnFGTm
+         ieyt1XWOzRBdJpi6/4vBzXEcOr8KStrptVcwSmEj+bLl4j05vePYfEJURfCHNn3gqGGZ
+         bvQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=az2NvBw/j6sKFx3ItUU3E4tKs04UFXT+eEsNSTjgcOk=;
+        b=lGHtbnbFw9u+ZGu6+0dX1WntNOcZPCNWLUiHbL8PWhwyDzBYZGcBpCNaDIuTp2CVGc
+         RDsyjRh8JakbWWrq0WmvZiSbJ4oKJ9Wm5SI2v78375AlsveOasxnvQRlofIORqmcVW50
+         EBqZHDQ6uXO6by7+afw6TVhaXKtBpPGMkg+YtRSNA9IjVNBPnwVxNUUgOHlP2F8QnlLD
+         SfbP7MAD85NAX3j9p7RfxSj9TYrVH3REQMBv04Gwk6OqE9fr5O5sh2JL9v2RqiNvTmvG
+         Kg+1Junket1QZOA6NBNScHYm/8Bex6ror57/+GOIuiJG+QMNA1pQiGOq4ilCc71ZhUt+
+         A8HA==
+X-Gm-Message-State: APjAAAW+9sKMHsvDbQ1l6bmNe/LLnl6SWXZStiJsbuuXhP5tsJcQRva1
+        XadWAIoy/2S07w/ZHInyaUU=
+X-Google-Smtp-Source: APXvYqxVXN7MHSj6wajDWsQfPzO42N7IX3nfYdRVBUuuioVQgP5x4hpPPyK3lHc3ny/5d82FAfWrew==
+X-Received: by 2002:a1c:7f10:: with SMTP id a16mr11686869wmd.30.1557648169896;
+        Sun, 12 May 2019 01:02:49 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id l14sm7040797wrt.57.2019.05.12.01.02.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 May 2019 01:02:48 -0700 (PDT)
+Date:   Sun, 12 May 2019 10:02:45 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        David Laight <David.Laight@aculab.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>
-Subject: Re: [PATCH 1/2] ASoC: ak4458: rstn_control - return a non-zero on
- error only
-Message-ID: <20190512075417.GG21483@sirena.org.uk>
-References: <1557408607-25115-1-git-send-email-viorel.suman@nxp.com>
- <1557408607-25115-2-git-send-email-viorel.suman@nxp.com>
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+Message-ID: <20190512080245.GA7827@gmail.com>
+References: <2236FBA76BA1254E88B949DDB74E612BA4C6F523@IRSMSX102.ger.corp.intel.com>
+ <e4fbad8c51284a0583b98c52de4a207d@AcuMS.aculab.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C760A7@IRSMSX102.ger.corp.intel.com>
+ <20190508113239.GA33324@gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C762F7@IRSMSX102.ger.corp.intel.com>
+ <20190509055915.GA58462@gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C7741F@IRSMSX102.ger.corp.intel.com>
+ <20190509084352.GA96236@gmail.com>
+ <CALCETrV1067Es=KEjkz=CtdoT79a2EJg4dJDae6oGDiTaubL1A@mail.gmail.com>
+ <201905111703.5998DF5F@keescook>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RMedoP2+Pr6Rq0N2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557408607-25115-2-git-send-email-viorel.suman@nxp.com>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+In-Reply-To: <201905111703.5998DF5F@keescook>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,32 +91,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---RMedoP2+Pr6Rq0N2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Kees Cook <keescook@chromium.org> wrote:
 
-On Thu, May 09, 2019 at 01:30:36PM +0000, Viorel Suman wrote:
+> On Sat, May 11, 2019 at 03:45:19PM -0700, Andy Lutomirski wrote:
+> > ISTM maybe a better first step would be to make get_random_bytes() be
+> > much faster? :)
+> 
+> I'm not opposed to that, but I want to make sure we don't break it for
+> "real" crypto uses...
 
-> -	return ret;
-> +	/* Return a negative error code only. */
-> +	return (ret < 0 ? ret : 0);
+I'm quite sure Andy implied that.
 
-Please write normal conditional statements to help people who have to
-read the code.
+> I still think just using something very simply like rdtsc would be good 
+> enough.
+>
+> This isn't meant to be a perfect defense: it's meant to disrupt the 
+> ability to trivially predict (usually another thread's) stack offset. 
 
---RMedoP2+Pr6Rq0N2
-Content-Type: application/pgp-signature; name="signature.asc"
+But aren't most local kernel exploit attacks against the current task? 
+Are there any statistics about this?
 
------BEGIN PGP SIGNATURE-----
+> And any sufficiently well-positioned local attacker can defeat this no 
+> matter what the entropy source, given how small the number of bits 
+> actually ends up being, assuming they can just keep launching whatever 
+> they're trying to attack. (They can just hold still and try the same 
+> offset until the randomness aligns: but that comes back to us also 
+> needing a brute-force exec deterance, which is a separate subject...)
+> 
+> The entropy source bikeshedding doesn't seem helpful given how few bits 
+> we're dealing with.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX0SgACgkQJNaLcl1U
-h9Bpqgf/Z4TM2ROcn75WSzHPLXR43KHE2salosbyrC5M/Mg9blRgsevh8gtJwHCW
-e2IYJiCmHH80IKs6jMo2MOCXJZ4ib5XsvEd3ZUa1vAiajsIUEqUxJxBTgJY/8Lj6
-KvgIc6i7qfd+8gtgvwenOntPYH1vdcJvDlI2pgLtJX1mA8zA8WAqkv8kwbHddQQp
-c03uvUyOErkh0duoT4f5WBfsnky2kQh0oZWfREtPdLq4O/mck4zUCj+XJ5Ah0UMs
-HP09a4nkC21r+NyYb7tJ2kqs7Mf89F/UW3B2xEx9Xdi0IDsYnONIF95UfIberk5V
-jtLqEpVlKdRGgZxNUnqqpsIJmbrpUw==
-=G/aP
------END PGP SIGNATURE-----
+The low number of bits is still useful in terms of increasing the 
+probability of crashing the system if the attacker cannot guess the stack 
+offset.
 
---RMedoP2+Pr6Rq0N2--
+With 5 bits there's a ~96.9% chance of crashing the system in an attempt, 
+the exploit cannot be used for a range of attacks, including spear 
+attacks and fast-spreading worms, right? A crashed and inaccessible 
+system also increases the odds of leaving around unfinished attack code 
+and leaking a zero-day attack.
+
+Thanks,
+
+	Ingo
