@@ -2,92 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB581AC3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 14:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 533F31AC47
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 15:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbfELMxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 08:53:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726550AbfELMxK (ORCPT
+        id S1726707AbfELNI1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 12 May 2019 09:08:27 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:48785 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfELNI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 08:53:10 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4CCpYpg077580
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 08:53:09 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2seaev662c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 08:53:09 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 12 May 2019 13:53:06 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 12 May 2019 13:53:01 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4CCr0bW60817534
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 12 May 2019 12:53:00 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 786AE42047;
-        Sun, 12 May 2019 12:53:00 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83C6442041;
-        Sun, 12 May 2019 12:52:58 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.95.158])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 12 May 2019 12:52:58 +0000 (GMT)
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com
-Date:   Sun, 12 May 2019 08:52:47 -0400
-In-Reply-To: <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
-         <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19051212-0028-0000-0000-0000036CD1EF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051212-0029-0000-0000-0000242C5BDA
-Message-Id: <1557665567.10635.222.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-12_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=889 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905120097
+        Sun, 12 May 2019 09:08:27 -0400
+Received: from xps13 (unknown [109.190.253.16])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 404E5240004;
+        Sun, 12 May 2019 13:08:10 +0000 (UTC)
+Date:   Sun, 12 May 2019 15:08:00 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Mason Yang <masonccyang@mxic.com.tw>
+Cc:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, dwmw2@infradead.org, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        computersforpeace@gmail.com, paul.burton@mips.com, stefan@agner.ch,
+        christophe.kerello@st.com, liang.yang@amlogic.com,
+        geert@linux-m68k.org, devicetree@vger.kernel.org,
+        marcel.ziswiler@toradex.com, linux-mtd@lists.infradead.org,
+        richard@nod.at, juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 1/4]  mfd: Add Macronix MX25F0A MFD controller driver
+Message-ID: <20190512142835.4caddc8e@xps13>
+In-Reply-To: <1555320234-15802-2-git-send-email-masonccyang@mxic.com.tw>
+References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
+        <1555320234-15802-2-git-send-email-masonccyang@mxic.com.tw>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
-> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
-> > This proposal consists in marshaling pathnames and xattrs in a file called
-> > .xattr-list. They are unmarshaled by the CPIO parser after all files have
-> > been extracted.
+Hi Mason,
+
+Mason Yang <masonccyang@mxic.com.tw> wrote on Mon, 15 Apr 2019 17:23:51
++0800:
+
+> Add a driver for Macronix MX25F0A multifunction device controller.
 > 
-> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
-> be done equivalently by the initramfs' /init? Why is kernel involvement
-> actually required here?
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  drivers/mfd/Kconfig              |   9 ++
+>  drivers/mfd/Makefile             |   1 +
+>  drivers/mfd/mxic-mx25f0a.c       |  84 +++++++++++++++++++
+>  include/linux/mfd/mxic-mx25f0a.h | 175 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 269 insertions(+)
+>  create mode 100644 drivers/mfd/mxic-mx25f0a.c
+>  create mode 100644 include/linux/mfd/mxic-mx25f0a.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 26ad646..7e99e93 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -823,6 +823,15 @@ config MFD_MAX8998
+>  	  additional drivers must be enabled in order to use the functionality
+>  	  of the device.
+>  
+> +config MFD_MXIC_MX25F0A
+> +	tristate "Macronix mx25f0a multifunction device support"
+> +	select MFD_CORE
+> +	help
+> +	  This supports for Macronix mx25f0a multifunction device controller
+> +	  for raw nand or spi. You have to select individual components like
 
-It's too late.  The /init itself should be signed and verified.
+Please use upper case for acronyms in plain English: NAND, SPI
 
-Mimi
+> +	  raw nand controller or spi host controller under the corresponding
+> +	  menus.
+> +
+>  config MFD_MT6397
+>  	tristate "MediaTek MT6397 PMIC Support"
+>  	select MFD_CORE
 
+Thanks,
+Miquèl
