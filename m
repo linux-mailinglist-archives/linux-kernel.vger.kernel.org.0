@@ -2,200 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF021AB10
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F1771AB05
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfELHfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 03:35:00 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43030 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfELHe5 (ORCPT
+        id S1726510AbfELHed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 03:34:33 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33257 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfELHec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 03:34:57 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c6so5462227pfa.10
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 00:34:56 -0700 (PDT)
+        Sun, 12 May 2019 03:34:32 -0400
+Received: by mail-io1-f67.google.com with SMTP id z4so7708815iol.0;
+        Sun, 12 May 2019 00:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tJij42jMZNA/RCdgMXUgkIF3wZNG+3vGAUeH3k8Od1M=;
-        b=jluMCum4vO8FQf/7J8/CkknphoGKgcgI4VBYWDQsVhDgqpV+Too559TBFyjD7zgKfu
-         D/dlYX3Vnf5VANGEd5jbgwkCC5rZFEmiw6PFiOz0THlFzn+xs3oItl5V19YTeUM5gZVN
-         nt5Q0U3YiA3vbcQQB78/r/4/p3OOzUgQoB69iY8+Emg9soNLx4cTawwvY+x+nniwQnLO
-         ZOzUOBM0I4GprAO0P4XrZK6FBNcaW+/7nGE6v3DglLYvgJzYaRweXOW/fdcHg9SkEt8m
-         vjistPIYyz4TNNfTSfGr11muGKmZOTN58F9eic++xC9dbbSOQLhPMzX0JMuVa37TyzrA
-         43lw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yjV02L2Lg3a4KlZGcmCrXQyj1lmIeRP5Nl2cbSpRQtQ=;
+        b=ec7zXk/3kB5xKZFXO7ghYMObJD2vDhiie5L6wEyXGc5DPQ7HrdDFgNO7dAczlOhZgp
+         RknzyV0qdWHtXChfP7UxdEYrOhFaDnw38F2lsg2nU9Bt5ijzEUOK0q8EDlnLLKW+A9iQ
+         JTF7fd5p33kEff5F1C6JkcifgRglY2GXHuBSkOwBLHe6Px6od3/hd4aeZfbMeK8pk/Lz
+         a2kTXrHCC5ht0s5qKYsQ4i4KcaddBWvngjb40oiQ2tZSJT2P/FlPVxivfBk7o79VZVn5
+         QWsCfiDbKSJcnoN9r3ifkzA8CndClrNCF4L8y26/+HVue72bJJMyV51y3mTTGkj4n90w
+         nEZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tJij42jMZNA/RCdgMXUgkIF3wZNG+3vGAUeH3k8Od1M=;
-        b=aj7xmcs4BOZDLzaTP0uVTDBF6iQIhO3ndawpAxAQxnomfrZMuqwH1sSVMVlH+dd7tJ
-         PL/AFYQqubAsBc6YZdYGJBqG7VtwkJK1V9iD5+kZ4spJILl8Tu4BCjipP64Ic/YtYZWy
-         thhFjYTZS5TUJIjI5HJVMHwlSb+dlh2/GTcpk40Ob6+Clyt8l8ctKTraM606fA0Ot+Rl
-         x+CYa1Vsw22dU9X1NWda4t+Z/a2CPhQFS2P3T+zZnmdP5X7bTK+lJzscFsWh3fLr4wFz
-         +gY5r/DsFmeMHjySK1hAven5QWyQlS1crjA+bLgMQ6ivC0pdYISX9k1n4MpgpXVKH4i4
-         YU+Q==
-X-Gm-Message-State: APjAAAWcZcztcU6/N0BbZoOWIqwpoyZRU7dw7t3Bg3tiymyg1sei5qtK
-        xNDGw/ClfFdNRwkmjCHwbolNU/bNMW8=
-X-Google-Smtp-Source: APXvYqyXFF+l9d400wplio9bVT1xUhp00uJ5v9kGooX1hdRRHjXQl6akdG0V24q0/XfqeJ0du2xMHw==
-X-Received: by 2002:a65:42c3:: with SMTP id l3mr466019pgp.372.1557646496098;
-        Sun, 12 May 2019 00:34:56 -0700 (PDT)
-Received: from localhost.localdomain ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id e123sm5492242pgc.29.2019.05.12.00.34.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 00:34:55 -0700 (PDT)
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Minwoo Im <minwoo.im.dev@gmail.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>
-Subject: [PATCH V3 5/5] nvme-trace: Add tracing for req_comp in target
-Date:   Sun, 12 May 2019 16:34:13 +0900
-Message-Id: <20190512073413.32050-6-minwoo.im.dev@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190512073413.32050-1-minwoo.im.dev@gmail.com>
-References: <20190512073413.32050-1-minwoo.im.dev@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yjV02L2Lg3a4KlZGcmCrXQyj1lmIeRP5Nl2cbSpRQtQ=;
+        b=T2stuB9JhmsLD79sLA+OgiEVi6Werq8b9IA9AULRFBWrifIVViYdmpa+DxwU5BV8bw
+         rcbYrPQhLoabBRovFroawe0TTwniASUm6mu9+mMY2rTDwv/HMAw4ZdmXfK9PoOvIkd0a
+         LbyovrH+68BHdMc/6m6vM1PP/GQam28DHkQQf1NkfTuGOpjFN1q1SSTOANJz8j/HRHDX
+         2y2YizyiTBq1QYgP76MGK1qqhWgOZyGNNk+st2ntmn9g0MOznn4tdc+V43nLqtwWhcsl
+         eIja0930/Pn0tqTXt8ggNRPTkZxKWaJR/MuOUswM/wtkLJFMuKSth1Pe2VgUuVProXvF
+         oqRQ==
+X-Gm-Message-State: APjAAAUoeW7oq7+EIIJDFJu9e8t6i6X9Nra3sm9E2VVam57AmguzZwRx
+        I7skOsp4UPpvte6zXdqDdfc=
+X-Google-Smtp-Source: APXvYqyPZFH7bWLi/IU+f0IdofbSTKGIKNbMTby9HJW92Dh1CNAI3XYselYUqh8yG0gtiOVWp6+xmA==
+X-Received: by 2002:a5e:9518:: with SMTP id r24mr12103223ioj.218.1557646471624;
+        Sun, 12 May 2019 00:34:31 -0700 (PDT)
+Received: from asus (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id y62sm4833926ita.15.2019.05.12.00.34.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 May 2019 00:34:30 -0700 (PDT)
+Date:   Sun, 12 May 2019 01:34:29 -0600
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     Stanislav Fomichev <sdf@fomichev.me>
+Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] selftests: bpf: Add files generated when compiled to
+ .gitignore
+Message-ID: <20190512073427.GA10811@asus>
+References: <20190512035009.25451-1-skunberg.kelsey@gmail.com>
+ <20190512062907.GL1247@mini-arch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190512062907.GL1247@mini-arch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can have the common tracing code with different event entries.
-  - nvme_complete_rq
-  - nvmet_req_complete
+On Sat, May 11, 2019 at 11:29:07PM -0700, Stanislav Fomichev wrote:
+> On 05/11, Kelsey Skunberg wrote:
+> > The following files are generated when /selftests/bpf/ is compiled and
+> > should be added to .gitignore:
+> > 
+> > 	- libbpf.pc
+> > 	- libbpf.so.0
+> > 	- libbpf.so.0.0.3
+> > 
+> > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
+> > ---
+> >  tools/testing/selftests/bpf/.gitignore | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+> > index 41e8a689aa77..ceb11f98fe4f 100644
+> > --- a/tools/testing/selftests/bpf/.gitignore
+> > +++ b/tools/testing/selftests/bpf/.gitignore
+> > @@ -32,3 +32,6 @@ test_tcpnotify_user
+> >  test_libbpf
+> >  test_tcp_check_syncookie_user
+> >  alu32
+> > +libbpf.pc
+> 
+> [..]
+> > +libbpf.so.0
+> > +libbpf.so.0.0.3
+> How about libbpf.so.* so we don't have to update it on every release?
+>
 
-This patch updates existing TRACE_EVENT to a template to provide a
-common tracing interface.
+That seems logical. Updated in v2. I appreciate the feedback!
 
-We can have it as a common code because most of the fields need to be
-printed out for both host and target system.
+Cheers,
+Kelsey
 
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: James Smart <james.smart@broadcom.com>
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
----
- drivers/nvme/host/core.c   |  2 +-
- drivers/nvme/target/core.c |  3 +++
- drivers/nvme/trace.c       |  1 +
- drivers/nvme/trace.h       | 51 ++++++++++++++++++++++++++++++--------
- 4 files changed, 45 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 39e49e9948c3..f377ed039a83 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -260,7 +260,7 @@ void nvme_complete_rq(struct request *req)
- {
- 	blk_status_t status = nvme_error_status(req);
- 
--	trace_nvme_complete_rq(req);
-+	trace_nvme_complete_rq(NVME_TRACE_HOST, req);
- 
- 	if (nvme_req(req)->ctrl->kas)
- 		nvme_req(req)->ctrl->comp_seen = true;
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 10b3b3767f91..0f184abe432f 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -690,6 +690,9 @@ static void __nvmet_req_complete(struct nvmet_req *req, u16 status)
- 
- 	if (unlikely(status))
- 		nvmet_set_error(req, status);
-+
-+	trace_nvmet_req_complete(NVME_TRACE_TARGET, req);
-+
- 	if (req->ns)
- 		nvmet_put_namespace(req->ns);
- 	req->ops->queue_response(req);
-diff --git a/drivers/nvme/trace.c b/drivers/nvme/trace.c
-index 8fe2dcee6a42..8071b60ec71d 100644
---- a/drivers/nvme/trace.c
-+++ b/drivers/nvme/trace.c
-@@ -222,3 +222,4 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(nvme_async_event);
- EXPORT_TRACEPOINT_SYMBOL_GPL(nvme_sq);
- 
- EXPORT_TRACEPOINT_SYMBOL_GPL(nvmet_req_init);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(nvmet_req_complete);
-diff --git a/drivers/nvme/trace.h b/drivers/nvme/trace.h
-index afda9c2ab4a1..0674bb85ac66 100644
---- a/drivers/nvme/trace.h
-+++ b/drivers/nvme/trace.h
-@@ -181,9 +181,9 @@ DEFINE_EVENT(nvme__cmd_begin, nvmet_req_init,
- 	TP_ARGS(type, req, cmd)
- );
- 
--TRACE_EVENT(nvme_complete_rq,
--	    TP_PROTO(struct request *req),
--	    TP_ARGS(req),
-+DECLARE_EVENT_CLASS(nvme__cmd_end,
-+	    TP_PROTO(enum nvme_trace_type type, void *req),
-+	    TP_ARGS(type, req),
- 	    TP_STRUCT__entry(
- 		__array(char, disk, DISK_NAME_LEN)
- 		__field(int, ctrl_id)
-@@ -195,20 +195,49 @@ TRACE_EVENT(nvme_complete_rq,
- 		__field(u16, status)
- 	    ),
- 	    TP_fast_assign(
--		__entry->ctrl_id = nvme_req(req)->ctrl->instance;
--		__entry->qid = nvme_req_qid(req);
--		__entry->cid = req->tag;
--		__entry->result = le64_to_cpu(nvme_req(req)->result.u64);
--		__entry->retries = nvme_req(req)->retries;
--		__entry->flags = nvme_req(req)->flags;
--		__entry->status = nvme_req(req)->status;
--		__assign_disk_name(__entry->disk, req->rq_disk);
-+		if (type != NVME_TRACE_TARGET) {
-+			struct request *req = (struct request *) req;
-+
-+			__entry->ctrl_id = nvme_req(req)->ctrl->instance;
-+			__entry->qid = nvme_req_qid(req);
-+			__entry->cid = req->tag;
-+			__entry->result =
-+					le64_to_cpu(nvme_req(req)->result.u64);
-+			__entry->retries = nvme_req(req)->retries;
-+			__entry->flags = nvme_req(req)->flags;
-+			__entry->status = nvme_req(req)->status;
-+			__assign_disk_name(__entry->disk, req->rq_disk);
-+		} else {
-+			struct nvmet_ctrl *ctrl = nvmet_req_to_ctrl(req);
-+			struct nvmet_cq *cq = ((struct nvmet_req *) req)->cq;
-+			struct nvme_completion *cqe =
-+					((struct nvmet_req *) req)->cqe;
-+			struct nvmet_ns *ns = ((struct nvmet_req *) req)->ns;
-+
-+			__entry->ctrl_id = ctrl ? ctrl->cntlid : 0;
-+			__entry->qid = cq->qid;
-+			__entry->cid = cqe->command_id;
-+			__entry->result = cqe->result.u64;
-+			__entry->flags = 0;
-+			__entry->status = cqe->status >> 1;
-+			__assign_disk_name(__entry->disk, ns ?
-+						ns->bdev->bd_disk : NULL);
-+		}
- 	    ),
- 	    TP_printk("nvme%d: %sqid=%d, cmdid=%u, res=%llu, retries=%u, flags=0x%x, status=%u",
- 		      __entry->ctrl_id, __print_disk_name(__entry->disk),
- 		      __entry->qid, __entry->cid, __entry->result,
- 		      __entry->retries, __entry->flags, __entry->status)
-+);
-+
-+DEFINE_EVENT(nvme__cmd_end, nvme_complete_rq,
-+	TP_PROTO(enum nvme_trace_type type, void *req),
-+	TP_ARGS(type, req)
-+);
- 
-+DEFINE_EVENT(nvme__cmd_end, nvmet_req_complete,
-+	TP_PROTO(enum nvme_trace_type type, void *req),
-+	TP_ARGS(type, req)
- );
- 
- #define aer_name(aer) { aer, #aer }
--- 
-2.17.1
-
+> > --
+> > 2.20.1
+> > 
