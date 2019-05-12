@@ -2,96 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E021AD5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C26231AB70
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 11:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfELRGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:06:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49688 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbfELRFw (ORCPT
+        id S1726562AbfELJRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 05:17:51 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:35594 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfELJRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HJ4Nz4QDJVMZVMlbWigp8sZVqeUNyUAymIfvJkhfYhg=; b=MeeeXWmIcL9hI62OLLfsjDsEv
-        OhzhqSKfb9f8zaPhhToTB2o/4drYBReJW7ae1+HhKD08qSzQ2gXPbRX59ry13KVVU795DY3pwncQs
-        N2u3P8qtI6yH0j8GM4HYNAHw7vZqiJpnxUqgYE7gHCgDUkMS5PK2EYsq0J2/gWtYZ7Lmg=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPrut-00044R-N7; Sun, 12 May 2019 17:05:39 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id EF71E44006A; Sun, 12 May 2019 10:17:22 +0100 (BST)
-Date:   Sun, 12 May 2019 18:17:22 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "robh@kernel.org" <robh@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "plyatov@gmail.com" <plyatov@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 07/14] spi: imx: remove ERR009165 workaround on i.mx6ul
-Message-ID: <20190512091722.GQ21483@sirena.org.uk>
-References: <1557249513-4903-1-git-send-email-yibin.gong@nxp.com>
- <1557249513-4903-8-git-send-email-yibin.gong@nxp.com>
+        Sun, 12 May 2019 05:17:51 -0400
+Received: by isilmar-4.linta.de (Postfix, from userid 1000)
+        id D43142005B3; Sun, 12 May 2019 09:17:48 +0000 (UTC)
+Date:   Sun, 12 May 2019 11:17:48 +0200
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Message-ID: <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cnBsrynPgIOyCJkL"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557249513-4903-8-git-send-email-yibin.gong@nxp.com>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
+> This proposal consists in marshaling pathnames and xattrs in a file called
+> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> been extracted.
 
---cnBsrynPgIOyCJkL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Couldn't this parsing of the .xattr-list file and the setting of the xattrs
+be done equivalently by the initramfs' /init? Why is kernel involvement
+actually required here?
 
-On Tue, May 07, 2019 at 09:16:19AM +0000, Robin Gong wrote:
-> ERR009165 fixed on i.mx6ul/6ull/6sll. All other i.mx6/7 and
-> i.mx8m/8mm still need this errata. Please refer to nxp official
-> errata document from https://www.nxp.com/ .
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---cnBsrynPgIOyCJkL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX5KIACgkQJNaLcl1U
-h9C8+gf+KmYRm2L5VEF3eL4ork1xvAFHJtXfOjV/B1DR0Gie2THR7U8Jq6RYoxM3
-WiNuy0sL5QpNc6jpXplVGB0Zy2YS7FE5FEmNfcqk6WIqnN6oASqi6nUpe4J20w/2
-SH0NVyn4dI3aQwMPtYVm283OZYYnTjK8TXvqUQ5pdONcY1ApcuBfqhw3A3yIySoW
-CNafHUttb19MMiZg4A7OoGrNf8J1Xu8GNEESpYyKc7tFXb3pKnNx18mRPw4R8VLP
-lKd5jBdm3TmuZskVn45y9hEr+R2T96Vr5v/SHpTaNmMzDhStNOFLuKHes888Pz/C
-jyuAQnZRpNhrLu0wDPl/cIXRmGh4iw==
-=ccm6
------END PGP SIGNATURE-----
-
---cnBsrynPgIOyCJkL--
+Thanks,
+	Dominik
