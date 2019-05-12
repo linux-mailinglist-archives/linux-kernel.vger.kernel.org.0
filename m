@@ -2,70 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5871AC9D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 16:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC351AC9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 16:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfELOWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 10:22:18 -0400
-Received: from smtprelay0012.hostedemail.com ([216.40.44.12]:59433 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726442AbfELOWS (ORCPT
+        id S1726730AbfELObD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 10:31:03 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33409 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfELObC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 10:22:18 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 86C44182CF666;
-        Sun, 12 May 2019 14:22:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3351:3622:3865:3867:3868:3871:3872:4250:4321:5007:6119:6120:7514:7809:8957:10004:10400:10848:11232:11658:11914:12043:12114:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21433:21451:21619:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: skin28_8819c53057e61
-X-Filterd-Recvd-Size: 1760
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 12 May 2019 14:22:15 +0000 (UTC)
-Message-ID: <d00c1c42689e08df0ce7cd8b2c796eee5b9f5642.camel@perches.com>
-Subject: Re: [PATCH v4 07/12] Documentation: PCI: convert
- pci-error-recovery.txt to reST
-From:   Joe Perches <joe@perches.com>
-To:     Changbin Du <changbin.du@gmail.com>, bhelgaas@google.com,
-        corbet@lwn.net
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org
-Date:   Sun, 12 May 2019 07:22:13 -0700
-In-Reply-To: <20190512125009.32079-8-changbin.du@gmail.com>
-References: <20190512125009.32079-1-changbin.du@gmail.com>
-         <20190512125009.32079-8-changbin.du@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 12 May 2019 10:31:02 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y3so5105359plp.0;
+        Sun, 12 May 2019 07:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8MmPir51Pep1QquiMlNrOGRX1Y2TZtpKY9viaAkjkQI=;
+        b=rhWhYEal8pAMHfedEvpe/VBQbVlKLqFtXxiQi/XHXYuwxAEt9D0juekW4ZFobDtJXQ
+         44oh2TGhUvx6yE/t+ilpT/WGKb0/DTK+h2WOhXvxp8TTaIkkeW+cKK4y7p+dSW7tmY5o
+         ktiEfu0TC5Ll2KqXN1KEHgdtYaIzNAohjSs5RsxOiKeOjZjnust9Vn9J3p1V2q5GVsvD
+         vJM2pOAkNyUS7obCx76y1hN6YownFya1JANnazvaCz/y3t2hlyUv3z8uSoCOxwFr1Inr
+         f3Ef8OXBgVB+ArWaaaLwqXAjynxcN7FgSAr9r8xloN1WhGyu/+2QxvCUMkRMghxMcpoY
+         kuvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8MmPir51Pep1QquiMlNrOGRX1Y2TZtpKY9viaAkjkQI=;
+        b=GFlx3vGsWuytvd7/rw05rhhrYXzmRFn669qUi56o2/ZRP3XhH9SBTiOTfQrQmuIdzA
+         aWq/omnV31/pM5rEo950F8mkmcFjPxC4n2gEmVF3SIckpe4q2qHzEazUs9lRhgKK8Yfo
+         E2Vv2++F/58CswYIlIRGEgpWhHPcxgmrV0eJXnGRj5xZ4tS1HA9IkkWuukaseINxiLGd
+         U+/5v/ZlFyru4+Xo68ChdNUETw28+MlVEiEtRMlwMWeGAXO1KGb6VIsWC9PQard0OXX4
+         NkrYLfxjDUInzT5X4cYFRcKBPo6ymtOxBsErL9/gRiUdEnb06HHLlxLY/EJNb29lmjsd
+         sJ0Q==
+X-Gm-Message-State: APjAAAU/uiXkwXLa9nntENCncNRerlLOAT83FrttqIrsn3mpD3UHbeBg
+        5dbfDP36S467I6BhCZW+Xx4=
+X-Google-Smtp-Source: APXvYqyHv4eu6dOl7ANFLZc88b1efraMSjQavaCvSp5oLIBuxCMPX9SS9p4rYP6iiwoMUxxTzZ0OmQ==
+X-Received: by 2002:a17:902:7594:: with SMTP id j20mr25677961pll.78.1557671461643;
+        Sun, 12 May 2019 07:31:01 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id z187sm15546976pfb.132.2019.05.12.07.31.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 May 2019 07:31:00 -0700 (PDT)
+Date:   Sun, 12 May 2019 23:30:58 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        "hange-folder>?" <toggle-mailboxes@minwooim-desktop>
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+Message-ID: <20190512143056.GA7761@minwooim-desktop>
+References: <20190510212937.11661-1-keith.busch@intel.com>
+ <SN6PR04MB452735778FD952AA838E78C9860E0@SN6PR04MB4527.namprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SN6PR04MB452735778FD952AA838E78C9860E0@SN6PR04MB4527.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (ed9d7727) (2018-07-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-05-12 at 20:50 +0800, Changbin Du wrote:
-> This converts the plain text documentation to reStructuredText format and
-> add it to Sphinx TOC tree. No essential content change.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -12100,7 +12100,7 @@ M:	Sam Bobroff <sbobroff@linux.ibm.com>
->  M:	Oliver O'Halloran <oohall@gmail.com>
->  L:	linuxppc-dev@lists.ozlabs.org
->  S:	Supported
-> -F:	Documentation/PCI/pci-error-recovery.txt
-> +F:	Documentation/PCI/pci-error-recovery.rst
->  F:	drivers/pci/pcie/aer.c
->  F:	drivers/pci/pcie/dpc.c
->  F:	drivers/pci/pcie/err.c
+> > +	union nvme_result res;
+> > +	int ret;
+> > +
+> > +	if (!result)
+> > +		return -EINVAL;
+> > +
+> > +	memset(&c, 0, sizeof(c));
+> > +	c.features.opcode = nvme_admin_get_features;
+> > +	c.features.fid = cpu_to_le32(NVME_FEAT_POWER_MGMT);
+> > +
+> > +	ret = __nvme_submit_sync_cmd(ctrl->admin_q, &c, &res,
+> > +			NULL, 0, 0, NVME_QID_ANY, 0, 0, false);
+> > +	if (ret >= 0)
+> > +		*result = le32_to_cpu(res.u32);
+> May be add a check for result here in above if before deref pointer :-
+> 	if (ret >= 0 && result)
+> 
 
-There is another section to update as well:
-
-PCI ERROR RECOVERY
-M:	Linas Vepstas <linasvepstas@gmail.com>
-L:	linux-pci@vger.kernel.org
-S:	Supported
-F:	Documentation/PCI/pci-error-recovery.txt
-
-
+'result' already has been checked in a few lines above.
