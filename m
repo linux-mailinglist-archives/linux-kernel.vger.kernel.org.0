@@ -2,88 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C14B61AD64
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20BAD1AB35
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 10:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfELRFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:05:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49356 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfELRFn (ORCPT
+        id S1726650AbfELI16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 04:27:58 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35815 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbfELI15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i7AIbl3LuWCqd7OLDSbBZZ+JZVLRCdFPtZTLEmXFlX4=; b=YcPgH/wO+xi9sH9dzNiWeGDnh
-        aut8UScY9xKtjJf0ZSIy0pUP4FNY/xtfCuKYjbjLkdWva3AZvyNCnW35thx+T4VdaF0gkKNAJ8hpL
-        mwDObNGZGo8C0jJ0mQ50lzj40EZfdK0a1mK92z7NZLMISwwWGQ1OYGJCXiM1ccBafV3dA=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPrut-00044U-NA; Sun, 12 May 2019 17:05:39 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id EE2C5440056; Sun, 12 May 2019 09:27:26 +0100 (BST)
-Date:   Sun, 12 May 2019 17:27:26 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: Re: [PATCH v2 2/4] ASoC: hdmi-codec: remove reference to the current
- substream
-Message-ID: <20190512082726.GL21483@sirena.org.uk>
-References: <20190506095815.24578-1-jbrunet@baylibre.com>
- <20190506095815.24578-3-jbrunet@baylibre.com>
- <20190508070058.GQ14916@sirena.org.uk>
- <fd633a5597703f557d75e43c14213699efe295f0.camel@baylibre.com>
- <20190508085758.GE14916@sirena.org.uk>
- <5b677f1581565bd8c915a14cd91352ec4bcabdd7.camel@baylibre.com>
+        Sun, 12 May 2019 04:27:57 -0400
+Received: by mail-oi1-f196.google.com with SMTP id a132so7325663oib.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 01:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lucidpixels.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=DlXa4/IDAtqzy1BADwhitk4qAdknizi2RhvPYQe4tJw=;
+        b=VnNY2xBao0SNSTduZXwPtnr5p6UIiP/diuZw6CSI8//cvX0SP0aiRO+Okrk+LZ3A2X
+         zHQniQXRHqnPY+cXouzrfrxa9SPDum/pwFDH6GvmAZ0svm+WesPkRUfF0pUnHbeww2uN
+         /f429uWG7cTMUGg2plfgvV7LYcOEJuvI+pDyE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=DlXa4/IDAtqzy1BADwhitk4qAdknizi2RhvPYQe4tJw=;
+        b=Jukt2qP338EI0c76uYcsWKaYBiN4Sfo//bzzcpnsfmaDS+Z0ssAStFszB7W+mi1TfQ
+         7tqgnaIoh1XhCPGoaP5gJxfw912C1jIbMv1EKi2MUzxZJ2bMZhQRzrmBJyPMtU1ReLGU
+         Sje5uVFr66jKMR9xmN7QktRQ5FyWSoylvQkYLt+LXPYJWHUAbge+mlTc1eIHpE9IZqxA
+         TN3emHjT5+4OMC8UfR6LQ54XbP8R20Bi1K/fPx9lr3KgxG1yNPaWsRdFj7D0NST/347c
+         cZjZmpEHY4js4v32P9TrdsY3IWFk8imU+Cq5LSdSu/wG1MtoAXQSecpvJ/jVJgZ9GWn8
+         Rk5A==
+X-Gm-Message-State: APjAAAXE6hFXo2FR7crk2WwOROQyCO7r532HFrL1RdhoJ39leV8Yuo1I
+        S3DxckzhkNS6xwFhB5Ej8ewl8Vf31b3H/5zUL0oS8+Uxh4DCjA==
+X-Google-Smtp-Source: APXvYqy3E1/9sq5tTkY/wIh57Jd5injZb6ZolNwbejv9asXVuh++LZXOLnHGxbVpAVuqkNJqozoGLud+mwLu3ii4UJY=
+X-Received: by 2002:aca:a846:: with SMTP id r67mr10084000oie.104.1557649676637;
+ Sun, 12 May 2019 01:27:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="00hq2S6J2Jlg6EbK"
-Content-Disposition: inline
-In-Reply-To: <5b677f1581565bd8c915a14cd91352ec4bcabdd7.camel@baylibre.com>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Justin Piszcz <jpiszcz@lucidpixels.com>
+Date:   Sun, 12 May 2019 04:27:45 -0400
+Message-ID: <CAO9zADzXTQpv5cGp61BzsVPvWQz5xbSJv_N71jBa3zopr7CB=Q@mail.gmail.com>
+Subject: 5.1 and 5.1.1: BUG: unable to handle kernel paging request at ffffea0002030000
+To:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---00hq2S6J2Jlg6EbK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've turned off zram/zswap and I am still seeing the following during
+periods of heavy I/O, I am returning to 5.0.xx in the meantime.
 
-On Thu, May 09, 2019 at 10:11:48AM +0200, Jerome Brunet wrote:
-> On Wed, 2019-05-08 at 17:57 +0900, Mark Brown wrote:
+Kernel: 5.1.1
+Arch: x86_64
+Dist: Debian x86_64
 
-> > Probably using a mutex for the flag is clearer.  I'd rather keep things
-> > as simple as absolutely possible to avoid people making mistakes in
-> > future.
+[29967.019411] BUG: unable to handle kernel paging request at ffffea0002030000
+[29967.019414] #PF error: [normal kernel read fault]
+[29967.019415] PGD 103ffee067 P4D 103ffee067 PUD 103ffed067 PMD 0
+[29967.019417] Oops: 0000 [#1] SMP PTI
+[29967.019419] CPU: 10 PID: 77 Comm: khugepaged Tainted: G
+   T 5.1.1 #4
+[29967.019420] Hardware name: Supermicro X9SRL-F/X9SRL-F, BIOS 3.2 01/16/2015
+[29967.019424] RIP: 0010:isolate_freepages_block+0xb9/0x310
+[29967.019425] Code: 24 28 48 c1 e0 06 40 f6 c5 1f 48 89 44 24 20 49
+8d 45 79 48 89 44 24 18 44 89 f0 4d 89 ee 45 89 fd 41 89 c7 0f 84 ef
+00 00 00 <48> 8b 03 41 83 c4 01 a9 00 00 01 00 75 0c 48 8b 43 08 a8 01
+0f 84
+[29967.019426] RSP: 0018:ffffc900003a7860 EFLAGS: 00010246
+[29967.019427] RAX: 0000000000000000 RBX: ffffea0002030000 RCX: ffffc900003a7b69
+[29967.019428] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff828c4750
+[29967.019429] RBP: 0000000000080c00 R08: 0000000000000001 R09: 0000000000000000
+[29967.019429] R10: 0000000000000206 R11: ffffffff828c4390 R12: 0000000000000000
+[29967.019430] R13: 0000000000000000 R14: ffffc900003a7af0 R15: 0000000000000000
+[29967.019431] FS:  0000000000000000(0000) GS:ffff88903fa80000(0000)
+knlGS:0000000000000000
+[29967.019432] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[29967.019432] CR2: ffffea0002030000 CR3: 000000000280e001 CR4: 00000000001606e0
+[29967.019433] Call Trace:
+[29967.019436]  compaction_alloc+0x83d/0x8d0
+[29967.019439]  migrate_pages+0x30d/0x750
+[29967.019441]  ? isolate_migratepages_block+0xa10/0xa10
+[29967.019442]  ? __reset_isolation_suitable+0x110/0x110
+[29967.019443]  compact_zone+0x684/0xa70
+[29967.019445]  compact_zone_order+0x109/0x150
+[29967.019447]  ? schedule_timeout+0x1ba/0x290
+[29967.019461]  ? record_times+0x13/0xa0
+[29967.019462]  try_to_compact_pages+0x10d/0x220
+[29967.019465]  __alloc_pages_direct_compact+0x93/0x180
+[29967.019466]  __alloc_pages_nodemask+0x6c7/0xe20
+[29967.019469]  ? __wake_up_common_lock+0xb0/0xb0
+[29967.019470]  khugepaged+0x31f/0x19c0
+[29967.019472]  ? __wake_up_common_lock+0xb0/0xb0
+[29967.019473]  ? collapse_shmem.isra.4+0xc20/0xc20
+[29967.019476]  kthread+0x100/0x120
+[29967.019478]  ? __kthread_create_on_node+0x1b0/0x1b0
+[29967.019480]  ret_from_fork+0x35/0x40
+[29967.019481] CR2: ffffea0002030000
+[29967.019482] ---[ end trace 8a9801ed5e182a98 ]---
+[29967.019484] RIP: 0010:isolate_freepages_block+0xb9/0x310
+[29967.019484] Code: 24 28 48 c1 e0 06 40 f6 c5 1f 48 89 44 24 20 49
+8d 45 79 48 89 44 24 18 44 89 f0 4d 89 ee 45 89 fd 41 89 c7 0f 84 ef
+00 00 00 <48> 8b 03 41 83 c4 01 a9 00 00 01 00 75 0c 48 8b 43 08 a8 01
+0f 84
+[29967.019485] RSP: 0018:ffffc900003a7860 EFLAGS: 00010246
+[29967.019486] RAX: 0000000000000000 RBX: ffffea0002030000 RCX: ffffc900003a7b69
+[29967.019487] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff828c4750
+[29967.019487] RBP: 0000000000080c00 R08: 0000000000000001 R09: 0000000000000000
+[29967.019488] R10: 0000000000000206 R11: ffffffff828c4390 R12: 0000000000000000
+[29967.019489] R13: 0000000000000000 R14: ffffc900003a7af0 R15: 0000000000000000
+[29967.019489] FS:  0000000000000000(0000) GS:ffff88903fa80000(0000)
+knlGS:0000000000000000
+[29967.019490] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[29967.019491] CR2: ffffea0002030000 CR3: 000000000280e001 CR4: 00000000001606e0
 
-> I received a notification that you applied this patch.
-> Just to confirm, you expect a follow up patch to re-introduce the mutex, right ?
+Thanks,
 
-Right.
-
---00hq2S6J2Jlg6EbK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX2O4ACgkQJNaLcl1U
-h9DTqgf+PkO76Y2CBGrPX0MuFUXOjE2QlNeHbqPtBweMBUAI8bHZbVVwZzd4RWQc
-MO9Na+UlPDBKHaxlfkC8HqV5Tud6PMmAcXYj/qJCiGewOTwVI+C472JBLfsYfont
-dfAkAhqUE+XZ/WlF1MELpoXCWAY3AP/i8RLP7it1dD0Y58HZl3/ofjtB0eIXevAr
-HnPMmyv9VzSA9RmD7bEwzeuURho3714tlQs45grB3UtW6h39hDUWHanl8v+uet1u
-gyHtxg9tE90edoV83T8lkqwiRuO7Pd+V0XVKM1bvGpNVMEAgR6iAQ02UUgULBzh9
-qVZx8lrwwvTjCIQVH+VUw2B5NwV1Rw==
-=m9x5
------END PGP SIGNATURE-----
-
---00hq2S6J2Jlg6EbK--
+Justin.
