@@ -2,102 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0AD1AF28
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 05:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF611AA2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 05:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfEMDfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 23:35:22 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:39748 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbfEMDfW (ORCPT
+        id S1726447AbfELDul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 23:50:41 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54393 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfELDuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 23:35:22 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4D3YL17040258;
-        Mon, 13 May 2019 03:34:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=r32tubxsUXPdHsbPUXKPUehGznTQnk+IpyDTdJj3D7Q=;
- b=K3sxFPvX27NlUsM04jJx+vPeBVvEciwZnkM1PCKdWRXzOJZ2JYX5lFAT+uTS0z4u8M19
- f0qA13BJ0ZuqmIX51GQ6n6q+SN8T5/zRq4g3RdRNW2u0wk+5n4/pTP/97p/btMq4kOtZ
- sAEKvgGIA1/GZQnNnWeHzEkB8CpenMMBeCB3CcwJucuQW4fCgWhGrnOL+MmxBtIE6s7h
- k98ClGykoA2MS3VWIf/2W4MBss0yQ4Bu0wmnt1V0QtSvqqDEn1Ak+0ZDU9kAzyp0XPW+
- ZPluFctbNEf10mZOS8ldocEVRB1HPbjCVX1XXGh/3sg6P5igSDlygcBDsKFUixcl/1B5 dA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2sdkwdcatr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 03:34:21 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4D3Va3B145133;
-        Mon, 13 May 2019 03:32:21 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2sdnqhr439-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 03:32:20 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4D3WEw7025820;
-        Mon, 13 May 2019 03:32:14 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 12 May 2019 20:32:13 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     paulmck@linux.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, corbet@lwn.net, tglx@linutronix.de,
-        mingo@kernel.org, gregkh@linuxfoundation.org,
-        keescook@chromium.org, srinivas.eeda@oracle.com,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v2] doc: kernel-parameters.txt: fix documentation of nmi_watchdog parameter
-Date:   Sun, 12 May 2019 11:35:27 +0800
-Message-Id: <1557632127-16717-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9255 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905130023
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9255 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905130024
+        Sat, 11 May 2019 23:50:40 -0400
+Received: by mail-it1-f194.google.com with SMTP id a190so15384028ite.4;
+        Sat, 11 May 2019 20:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KOEOI6gIRHaf5FORd84rjIs4AdvD824fbBk5i+JcVC4=;
+        b=sp/d354XUziiUlWOFirNHHht+x2j4uJyHrHkiJTJu8duyD4CJ4hl+tBgzolY4WdYUF
+         FcN3Y3QiUHGNEO92Q2ivtn0quwPpEBkMtSvjeYlWzGZnnv1N9AvTQcZKg6SknS01X4dx
+         Zv3BH6yW12uflvYmJhS7YkA/tv0uMq3yb1pu06m7RnYq0KER7eRia2dQQw8QzUr/j22t
+         ugsphAV7bCJQm2Qb32Sth8zgpPI6hvBYiNBCPzppTlN3tIP65VdGvjt+cw59ndSZ5yrT
+         2SE2CnteyZD5tU32mLVZjH52PJU2xcSk6fhVtGDRAap3w1FmeqwVH+NY6TtgfcPIVaFG
+         JZDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KOEOI6gIRHaf5FORd84rjIs4AdvD824fbBk5i+JcVC4=;
+        b=JzEhZ/alnmzg9UV/EcWIwAayH2pNc4tJ5yqELWnTaya0HwE1YKn6Jq7wZkV+1CN5UN
+         9aBGEv51gVyFN/Lpa5QPmt8HEdpfCXBSQ5cOCfM+EH/axw3khhgBOpN+05urJ+GQImi8
+         4wGFLkIUmm+IshglGkKMVkrEOT0KSQ6oh+CN6ApMU3bNCc+6jiVQgOF1kuxEyAxAor91
+         vwlJL0cDEmFh2rXFjqrBSytuwVqBUMPxxj+uEoW5c/nLejGvhXd1TKPWgiPzmxJA4yrr
+         f1m51g65SuYLmUCovdYho20Fu+0hAFKMp/6TjcPWkTl4A+XdJU2bXL9EOt58W8TefWI+
+         646w==
+X-Gm-Message-State: APjAAAV2ykV4fJ8p925Z9nBaXrlTCa6cmRIfYEYNn50J6PDNVp0y0ehx
+        jxA7icrA/xK48lxiKq1EHuY=
+X-Google-Smtp-Source: APXvYqxtTdajmXEk7zEWki12uocFR3Eg8/Dsh5oU+jKO+JRTGnIwUcHTfehdKW27tlPY6Wv0Xkf4mw==
+X-Received: by 2002:a24:3f85:: with SMTP id d127mr13281932ita.38.1557633039846;
+        Sat, 11 May 2019 20:50:39 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id k76sm4248746ita.6.2019.05.11.20.50.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 11 May 2019 20:50:38 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Kelsey Skunberg <skunberg.kelsey@gmail.com>
+Subject: [PATCH] selftests: bpf: Add files generated when compiled to .gitignore
+Date:   Sat, 11 May 2019 21:50:09 -0600
+Message-Id: <20190512035009.25451-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default behavior of hardlockup depends on the config of
-CONFIG_BOOTPARAM_HARDLOCKUP_PANIC.
+The following files are generated when /selftests/bpf/ is compiled and
+should be added to .gitignore:
 
-Fix the description of nmi_watchdog to make it clear.
+	- libbpf.pc
+	- libbpf.so.0
+	- libbpf.so.0.0.3
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
 ---
- v2: fix description using words suggested by Steven Rostedt
+ tools/testing/selftests/bpf/.gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
 
- Documentation/admin-guide/kernel-parameters.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 08df588..b9d4358 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2805,8 +2805,9 @@
- 			0 - turn hardlockup detector in nmi_watchdog off
- 			1 - turn hardlockup detector in nmi_watchdog on
- 			When panic is specified, panic when an NMI watchdog
--			timeout occurs (or 'nopanic' to override the opposite
--			default). To disable both hard and soft lockup detectors,
-+			timeout occurs (or 'nopanic' to not panic on an NMI
-+			watchdog, if CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is set)
-+			To disable both hard and soft lockup detectors,
- 			please see 'nowatchdog'.
- 			This is useful when you use a panic=... timeout and
- 			need the box quickly up again.
--- 
-1.8.3.1
+diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+index 41e8a689aa77..ceb11f98fe4f 100644
+--- a/tools/testing/selftests/bpf/.gitignore
++++ b/tools/testing/selftests/bpf/.gitignore
+@@ -32,3 +32,6 @@ test_tcpnotify_user
+ test_libbpf
+ test_tcp_check_syncookie_user
+ alu32
++libbpf.pc
++libbpf.so.0
++libbpf.so.0.0.3
+--
+2.20.1
 
