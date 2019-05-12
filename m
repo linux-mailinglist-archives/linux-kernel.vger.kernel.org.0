@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D471AD51
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3EF1AB19
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfELRFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:05:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49572 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbfELRFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nbByTlVdvhd4cJtvH/Oei0P8BYeWA+j4hmBdzYBpl7U=; b=pgfyvM8VHeCIw0PFOvMa1wVNz
-        pACtyWMg0cyUO/qu4Flq2BvrCcyy8t/EE5J6W4F15cNzxWTmZcqYXjvApYtuc+LyyvihQzUkgglJO
-        NupuSyvoRjZKqJW/H5M3+J05bEwM3TkEB1r723hp+dbWCjw8u37MqR89rQy79X/WRtIao=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPruu-00044f-8V; Sun, 12 May 2019 17:05:40 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 939C8440034; Sun, 12 May 2019 08:45:38 +0100 (BST)
-Date:   Sun, 12 May 2019 16:45:38 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
-        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
-        mka@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] Revert "platform/chrome: cros_ec_spi: Transfer
- messages at high priority"
-Message-ID: <20190512074538.GE21483@sirena.org.uk>
-References: <20190510223437.84368-1-dianders@chromium.org>
- <20190510223437.84368-5-dianders@chromium.org>
+        id S1726427AbfELHpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 03:45:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbfELHpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 03:45:43 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 79CFC85541;
+        Sun, 12 May 2019 07:45:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E3DB5100164A;
+        Sun, 12 May 2019 07:45:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/2] afs: Fix incorrect error handling in afs_xattr_get_acl()
+From:   David Howells <dhowells@redhat.com>
+To:     colin.king@canonical.com
+Cc:     Joe Perches <joe@perches.com>, joe@perches.com,
+        jaltman@auristor.com, linux-afs@lists.infradead.org,
+        dhowells@redhat.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 12 May 2019 08:45:41 +0100
+Message-ID: <155764714099.24080.1233326575922058381.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Ns7jmDPpOpCD+GE/"
-Content-Disposition: inline
-In-Reply-To: <20190510223437.84368-5-dianders@chromium.org>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 12 May 2019 07:45:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix incorrect error handling in afs_xattr_get_acl() where there appears to
+be a redundant assignment before return, but in fact the return should be a
+goto to the error handling at the end of the function.
 
---Ns7jmDPpOpCD+GE/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 260f082bae6d ("afs: Get an AFS3 ACL as an xattr")
+Addresses-Coverity: ("Unused Value")
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Joe Perches <joe@perches.com>
+---
 
-On Fri, May 10, 2019 at 03:34:37PM -0700, Douglas Anderson wrote:
-> This reverts commit 37a186225a0c020516bafad2727fdcdfc039a1e4.
->=20
-> We have a better solution in the patch ("platform/chrome: cros_ec_spi:
-> Set ourselves as timing sensitive").  Let's revert the uglier and less
-> reliable solution.
+ fs/afs/xattr.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-It isn't clear to me that it's a bad thing to have this even with the
-SPI thread at realime priority.
+diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+index c81f85003fc7..b6c44e75b361 100644
+--- a/fs/afs/xattr.c
++++ b/fs/afs/xattr.c
+@@ -71,11 +71,10 @@ static int afs_xattr_get_acl(const struct xattr_handler *handler,
+ 	if (ret == 0) {
+ 		ret = acl->size;
+ 		if (size > 0) {
+-			ret = -ERANGE;
+-			if (acl->size > size)
+-				return -ERANGE;
+-			memcpy(buffer, acl->data, acl->size);
+-			ret = acl->size;
++			if (acl->size <= size)
++				memcpy(buffer, acl->data, acl->size);
++			else
++				ret = -ERANGE;
+ 		}
+ 		kfree(acl);
+ 	}
 
---Ns7jmDPpOpCD+GE/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzXzyEACgkQJNaLcl1U
-h9CZ8Af/Zx78PRk1JAMVQgIM9tFEJxhIQNOf2mVis4Ku5Pv89nRp1solLrhwReKo
-osAxMTDdLUOKuZxBJxBdshhCdHB04UXpwDnaPeX8jXeN43azdvv0jz8/UuUmhl69
-9KqCSjyH2hQ+zSCMcsZK2iN+44J4Q+Sv4Gr2R95Cpvo1kRqxz/LOfhOa3xoStb7X
-eFgjYaSmEA7yS5vt2sLunTzeH7YH1o9j9tG/L0QRpeHeJIqtwcUWUctr1PUjrNdE
-AXYJpaV8wrQnzFkcmf+wQt4I477pALXbx9OlmFj1tP6YgklHvFc65Z/eNNUlYePs
-D0koY+RVt8j06SujCyTf+c9I/89Wng==
-=4tri
------END PGP SIGNATURE-----
-
---Ns7jmDPpOpCD+GE/--
