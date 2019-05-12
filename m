@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B91C81A9E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 03:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 398FF1A9E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 03:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfELBZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 11 May 2019 21:25:33 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:56129 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfELBZb (ORCPT
+        id S1726607AbfELBZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 11 May 2019 21:25:36 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54083 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfELBZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 11 May 2019 21:25:31 -0400
-Received: by mail-it1-f194.google.com with SMTP id q132so15165932itc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 18:25:31 -0700 (PDT)
+        Sat, 11 May 2019 21:25:33 -0400
+Received: by mail-it1-f196.google.com with SMTP id m141so13818339ita.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2019 18:25:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZVycjHRBln996eRpk6k47CxqNjyaNSdSdKwD7DF2v4g=;
-        b=mwaQeNmWR9ZKIdVhlyKXSsaF91NBkAVwoudjrhGFawDHq1RUlZftn53OjELSg6B3QA
-         /8DUCt68ZXbY/0p/MwswJcClkwJfH3PDwHtvacduSPl9bnSB9JTh+DM6zTpZ3TEGY9nc
-         vg+mZ+Tm3YGxXyoJLRAJAczsp7BKK82rC00IEwRbyJuwJ+03mWpyQMBEPjUA5aNWZpIY
-         C1NgIxBDY1cSB31zt+kvwMCQJCCD0UHShTEeP7FEF9HufTuhH6wpdIY6Nbk+/pncxl6Y
-         L2HM+eIP5SO/Dm+ONM1iS3RIiKVmBenu1mYuTJZ6Ha5PLpc48mIjBIvo/B/yIEOhmmcp
-         eu9w==
+        bh=h9s9Psuy/E87ixvvmJRRBd63LEM82ud4Ysnws8m9DPo=;
+        b=AWXXSy/tHZxFMRnTUKsZJnn9/i8AXv0hS2HYZR6FQcrVjQrQ09I32/yoVtzsUR2uvV
+         7zFSuZ42IIityqAbgIch+MnZjykjf86pSvE3xK6T3DbJLy303eH3CTiokRPPw456N8xL
+         7rI3DRDo93kVQVqJEx4+iSJvkrcLeNnYP4jstVIDSaVJG+KMvmJzVubuadREOf9UCb8W
+         USnVNLzHRgNAXX2TjQLba4bBE2mOLm4VG47LigzSgco1g+vRs5H9TFKdWGAgoWbfuYl3
+         +Be+cvBJCbfwgeh+cHqB9JKmSpIV8MVT217A79khc94LPvZ/bvDo631/dJdIpWXfDX0V
+         7e+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZVycjHRBln996eRpk6k47CxqNjyaNSdSdKwD7DF2v4g=;
-        b=pRT7R4fo3nDWfswx8sfNiaTlb0jw4vDJyKw4WAe+MPPjxfLI9rNb+2VObWM8sHQ1/D
-         e/IbOQeiHYAvoxH1yXLijzfrd3W9IVuuPvR4MvO6lHR1ky2HXB1RzDFZLDmAGvHMlCBp
-         D0Zfu5migHOnTD/g37GlUuQy7NFnk1slGPVQ1j2RQ4/n34aYgAoXOH4GfFreQkRQeP5K
-         j9sefxBLRFVMRXVqLvSaq5whlnlANVdWJQWLg5zMFQucLBBWE7Co6NJWH0BmOpW9KYAU
-         FVpDJH/OkwXLY1Fy6/4gQKpQzDVlmr6UpJCQVV1k4yPDKDs2ftaPgCf02tONWQ9srJBE
-         KWiw==
-X-Gm-Message-State: APjAAAX47Db9RacHrXvgdBauVlQR6eX4tHb5jIntrj4Ddn4qpCT5eZuP
-        vPwBzYu2IM3LJM1HyLqn+Xz2ag==
-X-Google-Smtp-Source: APXvYqz0TKjYgBNtbCwWsQibvllsattvenxrEvd6vZRVHZatuGPQMqrMjGmfRu9K0Esns77RNsqZqA==
-X-Received: by 2002:a24:7f84:: with SMTP id r126mr11927200itc.99.1557624330598;
-        Sat, 11 May 2019 18:25:30 -0700 (PDT)
+        bh=h9s9Psuy/E87ixvvmJRRBd63LEM82ud4Ysnws8m9DPo=;
+        b=kw/zkTu7GiIm3fTCO6ox4HkPdNt7mNnGf0ubfAQq0fRJQq3ArK69NsdbTs/V6rZPub
+         KD0zB4JntQNtiujE4RkA28FMhmZRG/w1Dul4gkUAIWRJEP7M8fsSljx740k31rGYsqHC
+         j6zcVYmKI1A3NAeZmHwqdBZCaALq1myeIEURPjBzTAfgsQMCCr51Rk7TUGeLb0H5gwWz
+         uLOyzDOODxTfrqqgxALzhB450APsz5fzW+BXY8eXpIm+s1zG+oPZCDeZfS68NT7wsMIn
+         JwVAS1Y0P10KidbCS2tSbaAs1cRsMJW5dVRXevuMXRRzxyO/csqeCGhBhFs5Hi3PqKeI
+         1Jhg==
+X-Gm-Message-State: APjAAAV+prhSmMzCcqvnfZrYlOgHa/lZ+O0zritSqKOXQkYmoirNAsAo
+        l6VqqMI9N1BQocQT/xkpK/bEEg==
+X-Google-Smtp-Source: APXvYqy1xZlzYsZGq/MuafbqYG4Jy0s7IuPBsGBC5KHMhJtjd+vzZyh69aFdSxcJthEZRtMgn3iiiA==
+X-Received: by 2002:a24:56c1:: with SMTP id o184mr815571itb.123.1557624331932;
+        Sat, 11 May 2019 18:25:31 -0700 (PDT)
 Received: from shibby.hil-lafwehx.chi.wayport.net (hampton-inn.wintek.com. [72.12.199.50])
-        by smtp.gmail.com with ESMTPSA id u134sm1579013itb.32.2019.05.11.18.25.29
+        by smtp.gmail.com with ESMTPSA id u134sm1579013itb.32.2019.05.11.18.25.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 May 2019 18:25:29 -0700 (PDT)
+        Sat, 11 May 2019 18:25:31 -0700 (PDT)
 From:   Alex Elder <elder@linaro.org>
 To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
-        ilias.apalodimas@linaro.org, subashab@codeaurora.org,
-        stranche@codeaurora.org, yuehaibing@huawei.com, joe@perches.com
+        ilias.apalodimas@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org
 Cc:     syadagir@codeaurora.org, mjavid@codeaurora.org,
         evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
         abhishek.esse@gmail.com, linux-kernel@vger.kernel.org,
         Alex Elder <elder@linaro.org>
-Subject: [PATCH 02/18] soc: qcom: create "include/soc/qcom/rmnet.h"
-Date:   Sat, 11 May 2019 20:24:52 -0500
-Message-Id: <20190512012508.10608-3-elder@linaro.org>
+Subject: [PATCH 03/18] dt-bindings: soc: qcom: add IPA bindings
+Date:   Sat, 11 May 2019 20:24:53 -0500
+Message-Id: <20190512012508.10608-4-elder@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190512012508.10608-1-elder@linaro.org>
 References: <20190512012508.10608-1-elder@linaro.org>
@@ -66,149 +66,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IPA driver requires some (but not all) symbols defined in
-"drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h".  Create a new
-public header file "include/soc/qcom/rmnet.h" and move the needed
-definitions there.
+Add the binding definitions for the "qcom,ipa" device tree node.
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- .../ethernet/qualcomm/rmnet/rmnet_handlers.c  |  1 +
- .../net/ethernet/qualcomm/rmnet/rmnet_map.h   | 24 ------------
- .../qualcomm/rmnet/rmnet_map_command.c        |  1 +
- .../ethernet/qualcomm/rmnet/rmnet_map_data.c  |  1 +
- .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |  1 +
- include/soc/qcom/rmnet.h                      | 38 +++++++++++++++++++
- 6 files changed, 42 insertions(+), 24 deletions(-)
- create mode 100644 include/soc/qcom/rmnet.h
+ .../devicetree/bindings/net/qcom,ipa.txt      | 164 ++++++++++++++++++
+ 1 file changed, 164 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/qcom,ipa.txt
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-index 11167abe5934..3aa79b7ed539 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-@@ -17,6 +17,7 @@
- #include <linux/netdev_features.h>
- #include <linux/if_arp.h>
- #include <net/sock.h>
-+#include <soc/qcom/rmnet.h>
- #include "rmnet_private.h"
- #include "rmnet_config.h"
- #include "rmnet_vnd.h"
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-index 884f1f52dcc2..39d0be99a771 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-@@ -39,30 +39,6 @@ enum rmnet_map_commands {
- 	RMNET_MAP_COMMAND_ENUM_LENGTH
- };
- 
--struct rmnet_map_header {
--	u8  pad_len:6;
--	u8  reserved_bit:1;
--	u8  cd_bit:1;
--	u8  mux_id;
--	__be16 pkt_len;
--}  __aligned(1);
--
--struct rmnet_map_dl_csum_trailer {
--	u8  reserved1;
--	u8  valid:1;
--	u8  reserved2:7;
--	u16 csum_start_offset;
--	u16 csum_length;
--	__be16 csum_value;
--} __aligned(1);
--
--struct rmnet_map_ul_csum_header {
--	__be16 csum_start_offset;
--	u16 csum_insert_offset:14;
--	u16 udp_ip4_ind:1;
--	u16 csum_enabled:1;
--} __aligned(1);
--
- #define RMNET_MAP_GET_MUX_ID(Y) (((struct rmnet_map_header *) \
- 				 (Y)->data)->mux_id)
- #define RMNET_MAP_GET_CD_BIT(Y) (((struct rmnet_map_header *) \
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-index f6cf59aee212..54b86a8be570 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/netdevice.h>
-+#include <soc/qcom/rmnet.h>
- #include "rmnet_config.h"
- #include "rmnet_map.h"
- #include "rmnet_private.h"
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-index 57a9c314a665..e3fb4035820c 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-@@ -17,6 +17,7 @@
- #include <linux/ip.h>
- #include <linux/ipv6.h>
- #include <net/ip6_checksum.h>
-+#include <soc/qcom/rmnet.h>
- #include "rmnet_config.h"
- #include "rmnet_map.h"
- #include "rmnet_private.h"
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-index d11c16aeb19a..b8df36e827d4 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-@@ -17,6 +17,7 @@
- #include <linux/etherdevice.h>
- #include <linux/if_arp.h>
- #include <net/pkt_sched.h>
-+#include <soc/qcom/rmnet.h>
- #include "rmnet_config.h"
- #include "rmnet_handlers.h"
- #include "rmnet_private.h"
-diff --git a/include/soc/qcom/rmnet.h b/include/soc/qcom/rmnet.h
+diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.txt b/Documentation/devicetree/bindings/net/qcom,ipa.txt
 new file mode 100644
-index 000000000000..80dcd6e68c3d
+index 000000000000..2705e198f12e
 --- /dev/null
-+++ b/include/soc/qcom/rmnet.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/Documentation/devicetree/bindings/net/qcom,ipa.txt
+@@ -0,0 +1,164 @@
++Qualcomm IP Accelerator (IPA)
 +
-+/* Copyright (c) 2013-2018, The Linux Foundation. All rights reserved.
-+ * Copyright (C) 2018-2019 Linaro Ltd.
-+ */
-+#ifndef _SOC_QCOM_RMNET_H_
-+#define _SOC_QCOM_RMNET_H_
++This binding describes the Qualcomm IPA.  The IPA is capable of offloading
++certain network processing tasks (e.g. filtering, routing, and NAT) from
++the main processor.
 +
-+#include <linux/types.h>
++The IPA sits between multiple independent "execution environments,"
++including the Application Processor (AP) and the modem.  The IPA presents
++a Generic Software Interface (GSI) to each execution environment.
++The GSI is an integral part of the IPA, but it is logically isolated
++and has a distinct interrupt and a separately-defined address space.
 +
-+/* Header structure that precedes packets in ETH_P_MAP protocol */
-+struct rmnet_map_header {
-+	u8  pad_len		: 6;
-+	u8  reserved_bit	: 1;
-+	u8  cd_bit		: 1;
-+	u8  mux_id;
-+	__be16 pkt_len;
-+}  __aligned(1);
++	--------	     ---------
++	|      |	     |	     |
++	|  AP  +<---.	.----+ Modem |
++	|      +--. |	| .->+	     |
++	|      |  | |	| |  |	     |
++	--------  | |	| |  ---------
++		  v |	v |
++		--+-+---+-+--
++		|    GSI    |
++		|-----------|
++		|	    |
++		|    IPA    |
++		|	    |
++		-------------
 +
-+/* Checksum offload metadata header for outbound packets*/
-+struct rmnet_map_ul_csum_header {
-+	__be16 csum_start_offset;
-+	u16 csum_insert_offset	: 14;
-+	u16 udp_ip4_ind		: 1;
-+	u16 csum_enabled	: 1;
-+} __aligned(1);
++See also:
++  bindings/interrupt-controller/interrupts.txt
++  bindings/interconnect/interconnect.txt
++  bindings/soc/qcom/qcom,smp2p.txt
++  bindings/reserved-memory/reserved-memory.txt
++  bindings/clock/clock-bindings.txt
 +
-+/* Checksum offload metadata trailer for inbound packets */
-+struct rmnet_map_dl_csum_trailer {
-+	u8  reserved1;
-+	u8  valid		: 1;
-+	u8  reserved2		: 7;
-+	u16 csum_start_offset;
-+	u16 csum_length;
-+	__be16 csum_value;
-+} __aligned(1);
++All properties except "modem-init" defined below are required.
 +
-+#endif /* _SOC_QCOM_RMNET_H_ */
++- compatible:
++	Must be "qcom,sdm845-ipa".
++
++- modem-init:
++	This Boolean property is optional.  If present, it indicates that
++	the modem is responsible for performing early IPA initialization,
++	including loading and validating firwmare used by the GSI.  This
++	early initialization is performed by Trust Zone otherwise.
++
++- reg:
++	Resources specifying the physical address spaces of the IPA and GSI.
++
++- reg-names:
++	The names of the two address space ranges defined by the "reg"
++	property.  Must be:
++		"ipa-reg"
++		"ipa-shared"
++		"gsi"
++
++- interrupts:
++	Specifies the IRQs used by the IPA.  Four interrupts are required,
++	specifying: the IPA IRQ; the GSI IRQ; the clock query interrupt
++	from the modem; and the "ready for setup" interrupt from the modem.
++	The first two are hardware IRQs; the third and fourth are SMP2P
++	input interrupts.
++
++- interrupt-names:
++	The names of the interrupts defined by the "interrupts-extended"
++	property.  Must be:
++		"ipa"
++		"gsi"
++		"ipa-clock-query"
++		"ipa-setup-ready"
++
++- clocks:
++	Resource that defines the IPA core clock.
++
++- clock-names:
++	The name used for the IPA core clock.  Must be "core".
++
++- interconnects:
++	Specifies the interconnects used by the IPA.  Three interconnects
++	are required, specifying:  the path from the IPA to memory; from
++	IPA to internal (SoC resident) memory; and between the AP subsystem
++	and IPA for register access.
++
++- interconnect-names:
++	The names of the interconnects defined by the "interconnects"
++	property.  Must be:
++		"memory"
++		"imem"
++		"config"
++
++- qcom,smem-states
++	The state bits used for SMP2P output.  Two states must be specified.
++	The first indicates whether the value in the second bit is valid
++	(1 means valid).  The second, if valid, defines whether the IPA
++	clock is enabled (1 means enabled).
++
++- qcom,smem-state-names
++	The names of the state bits used for SMP2P output.  Must be:
++		"ipa-clock-enabled-valid"
++		"ipa-clock-enabled"
++
++- memory-region
++	A phandle for a reserved memory area that holds the firmware passed
++	to Trust Zone for authentication.  (Note, this is required
++	only when Trust Zone performs early initialization; that is,
++	it is required if "modem-init" is not defined.)
++
++= EXAMPLE
++
++The following example represents the IPA present in the SDM845 SoC.  It
++shows portions of the "modem-smp2p" node to indicate its relationship
++with the interrupts and SMEM states used by the IPA.
++
++	smp2p-mpss {
++		compatible = "qcom,smp2p";
++		. . .
++		ipa_smp2p_out: ipa-ap-to-modem {
++			qcom,entry-name = "ipa";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		ipa_smp2p_in: ipa-modem-to-ap {
++			qcom,entry-name = "ipa";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	ipa@1e40000 {
++		compatible = "qcom,sdm845-ipa";
++
++		modem-init;
++
++		reg = <0 0x1e40000 0 0x7000>,
++		      <0 0x1e47000 0 0x2000>,
++		      <0 0x1e04000 0 0x2c000>;
++		reg-names = "ipa-reg",
++			    "ipa-shared";
++			    "gsi";
++
++		interrupts-extended = <&intc 0 311 IRQ_TYPE_EDGE_RISING>,
++				      <&intc 0 432 IRQ_TYPE_LEVEL_HIGH>,
++				      <&ipa_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				      <&ipa_smp2p_in 1 IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "ipa",
++				   "gsi",
++				   "ipa-clock-query",
++				   "ipa-setup-ready";
++
++		clocks = <&rpmhcc RPMH_IPA_CLK>;
++		clock-names = "core";
++
++		interconnects =
++			<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_EBI1>,
++			<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_IMEM>,
++			<&rsc_hlos MASTER_APPSS_PROC &rsc_hlos SLAVE_IPA_CFG>;
++		interconnect-names = "memory",
++				     "imem",
++				     "config";
++
++		qcom,smem-states = <&ipa_smp2p_out 0>,
++				   <&ipa_smp2p_out 1>;
++		qcom,smem-state-names = "ipa-clock-enabled-valid",
++					"ipa-clock-enabled";
++	};
 -- 
 2.20.1
 
