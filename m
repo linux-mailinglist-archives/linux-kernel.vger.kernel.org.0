@@ -2,93 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBC61AD8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F631AD90
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfELRnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:43:14 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:35107 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726529AbfELRnN (ORCPT
+        id S1726785AbfELRqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:46:17 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36175 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfELRqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:43:13 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 6B9A42214E;
-        Sun, 12 May 2019 13:43:12 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 12 May 2019 13:43:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=1
-        Cfgoh86yXIhO1l3wHSjbNZkoYailjfwdznI6j24knQ=; b=DOUTb98QG6a6HyxD6
-        y2VpMKjSpjDU8eJWbZ4IjvNB7RKvx0MuJzptG8e3j990G1W0m78xUC/H+R4Bth0n
-        6IYedryREeNcp1JjUwCxbIVn16+6/hXO9fSxSGbhspEtlDvi8tDNMK4GRs3Z5D0R
-        0NJc16JnGGqr+S20KLPJ5NYZZM2elFSN/CQOUQJpa1qFtuv2p1lqRH7V7jwzfRSg
-        DFYz0fUYC9dr4l1gjoWwo/MwD56G8xrzY2x9juIn0J8/KXeOaY0C8VDA5oZ+RrXw
-        e1ttSCVe8vgY95sZv2UTtFHWEWvJUSUmZKPyCjJTuPVchzayNcD5nrYmnFUy83au
-        t8REA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=1Cfgoh86yXIhO1l3wHSjbNZkoYailjfwdznI6j24k
-        nQ=; b=PaRo/6qANqcqzETyFza2PkZklHstdSDrXbV/gPgmJyXAlYLrcdM3AgV5G
-        Ry9TAaOQcTI0xQPpx6WpaZqF8DbtggBrtsHIK7FkFBLgjfFTEmxs8qS2/n592kLb
-        bZr7dUTPqnqI+U6GMeFDCUTeb+6lK+cRwkWKoIWzYGBZnFFG/wyBoca2ZaQtaTZJ
-        ToGQHH0rFQrOVLgJ5q1TmT/kaYoRz74H51DITVHsKavnedp7fS3X0T9C0e6l7qqS
-        8dx48DsokfksV0Py0GG1HasOdGGqdusnTr9U04SlxW+Ph1/38jO2fUpPoxl74R6V
-        bekaO016p6gn0uQ2Zk3aPwwUYfJdA==
-X-ME-Sender: <xms:MFvYXCw827tw7RXqmIdoApjT5Bes2g1WmrMoKbAcRDBl3gIYkVEDbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrledvgdduudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukf
-    hppeejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgr
-    mhhuvghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:MFvYXJwt0Ou-mARw5gr1clJiD75ywLKZ3jof3e9ZkOLUEFsIcysGgw>
-    <xmx:MFvYXKVKHqzzw7lw9opI2b3Vrgvu3Rh1GZkl-8fm2j45dd2r3B1tkw>
-    <xmx:MFvYXGTbmZytg4AtXMJwxfHzT-2SjmBMTZ_u8J0ZydTf0x5E19_zcg>
-    <xmx:MFvYXN_OBeve-z4oe-TQwR-tim1FE7xBzyA4H7wYWnEAvkXbFvIjmQ>
-Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A997080060;
-        Sun, 12 May 2019 13:43:11 -0400 (EDT)
-Subject: Re: [PATCH 0/5] Misc Google coreboot driver fixes/cleanups
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-References: <20190510180151.115254-1-swboyd@chromium.org>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <b08e5d6e-7291-7b29-301a-6b0b3bd57a41@sholland.org>
-Date:   Sun, 12 May 2019 12:43:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sun, 12 May 2019 13:46:17 -0400
+Received: by mail-wm1-f68.google.com with SMTP id j187so11558733wmj.1;
+        Sun, 12 May 2019 10:46:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QVZfv1XrlSfCBKYSGVa1+qErP5NlTniZ7Uw0fXhDRsM=;
+        b=nBmE7w7P+u/frCbPSdZZa0Xz+mMQkcFFkWsU3I6Hta0YBTEF9DDgCHpCIVFXrcFstD
+         CEvhmQNCSykn2g8xZMk77WWw626Ia3fV1rSp5z1dYf6OVEkMUXY/QD5FRaZ2qY8VVstE
+         m5OJQirNJgPgxvv28WYnq8sJXVTdvAmynUI37JIyuZY8Sb/1XxRABptKzWNvbjmnJlnV
+         DOwj5L1QUQOvOzZarMkEh80NzOQX8/f1msKgmIyc/ms/1s2dhTxCPcptMh/feRm+rBsI
+         QpSQD6JEXJzk1T5/RbL472yHbo/VkcuOMhf15pXbJKuBPmBJ7uTDTF4QBpCLjtJbyZf9
+         iXzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QVZfv1XrlSfCBKYSGVa1+qErP5NlTniZ7Uw0fXhDRsM=;
+        b=o1XknW6Tzvr6gpMwQD6NJC18PzsOy8z8a1akUhRTXyGRAqdL1c//31lt5WZLVDCj3/
+         bYWCOt/wIJ5D6dwCTh8Ic3hRK7iC/+i2+7MBQvbHXgzrHMqRM7wABWT6Q98FewpZ9VMh
+         t3iMFGO/g30stb7jr84WpSEiOl7MMEo/UwLEIDpUqPyqRydGWsQDPkKJItToO297zHXI
+         yXOr8yKkBjNIsYEJgZJ/0F/N6QNkSPjAgs5m2V1c7+YpsVoImFtx1lqEWekk4z5Lg4Ho
+         nnEvTK2ccfN2jZm0pOSau0/UtqLaUPTCXrp9Bfemc46zE8tJZXZbE2L5LwLVDqOSo2z9
+         6i+g==
+X-Gm-Message-State: APjAAAWbh/KvSFAJAqhshAQ9zt+9RpYqMQayho8zSej8i0jQhPVZaS4H
+        hhUmFBDvpKcmXQcig+3zs7E=
+X-Google-Smtp-Source: APXvYqxhWeqE2lBh2k5a4dTcV7sEJ2M9qqkT8DQ/tBHx1rAhg4yUak6CGFAClz0i/26Aef9LHqGtXw==
+X-Received: by 2002:a05:600c:254e:: with SMTP id e14mr1830396wma.70.1557683175358;
+        Sun, 12 May 2019 10:46:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
+        by smtp.gmail.com with ESMTPSA id d14sm9090558wre.78.2019.05.12.10.46.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 May 2019 10:46:14 -0700 (PDT)
+From:   peron.clem@gmail.com
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v4 0/8] Allwinner H6 Mali GPU support
+Date:   Sun, 12 May 2019 19:46:00 +0200
+Message-Id: <20190512174608.10083-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20190510180151.115254-1-swboyd@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/10/19 1:01 PM, Stephen Boyd wrote:
-> Here's some minor fixes and cleanups for the Google coreboot drivers
-> that I've had lying around in my tree for a little bit. They
-> tighten up the code a bit and get rid of some boiler plate.
-> 
-> Stephen Boyd (5):
->   firmware: google: Add a module_coreboot_driver() macro and use it
->   firmware: google: memconsole: Use devm_memremap()
->   firmware: google: memconsole: Drop __iomem on memremap memory
->   firmware: google: memconsole: Drop global func pointer
->   firmware: google: coreboot: Drop unnecessary headers
+From: Clément Péron <peron.clem@gmail.com>
 
-With v2 of patch 2:
+Hi,
 
-Reviewed-by: Samuel Holland <samuel@sholland.org>
+The Allwinner H6 has a Mali-T720 MP2. The drivers are
+out-of-tree so this series only introduce the dt-bindings.
+
+The first patch is from Neil Amstrong and has been already
+merged in linux-amlogic. It is required for this series.
+
+The second patch is from Icenowy Zheng where I changed the
+order has required by Rob Herring.
+See: https://patchwork.kernel.org/patch/10699829/
+
+Thanks,
+Clément
+
+Changes in v4:
+ - Add Rob Herring reviewed-by tag
+ - Resent with correct Maintainers
+
+Changes in v3 (Thanks to Maxime Ripard):
+ - Reauthor Icenowy for her patch
+
+Changes in v2 (Thanks to Maxime Ripard):
+ - Drop GPU OPP Table
+ - Add clocks and clock-names in required
+
+Clément Péron (6):
+  dt-bindings: gpu: mali-midgard: Add H6 mali gpu compatible
+  arm64: dts: allwinner: Add ARM Mali GPU node for H6
+  arm64: dts: allwinner: Add mali GPU supply for Pine H64
+  arm64: dts: allwinner: Add mali GPU supply for Beelink GS1
+  arm64: dts: allwinner: Add mali GPU supply for OrangePi Boards
+  arm64: dts: allwinner: Add mali GPU supply for OrangePi 3
+
+Icenowy Zheng (1):
+  dt-bindings: gpu: add bus clock for Mali Midgard GPUs
+
+Neil Armstrong (1):
+  dt-bindings: gpu: mali-midgard: Add resets property
+
+ .../bindings/gpu/arm,mali-midgard.txt         | 27 +++++++++++++++++++
+ .../dts/allwinner/sun50i-h6-beelink-gs1.dts   |  5 ++++
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    |  5 ++++
+ .../dts/allwinner/sun50i-h6-orangepi.dtsi     |  5 ++++
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  5 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 14 ++++++++++
+ 6 files changed, 61 insertions(+)
+
+-- 
+2.17.1
+
