@@ -2,51 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861261AC44
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 15:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5931ABEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 13:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfELNBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 09:01:53 -0400
-Received: from sydney7.cnglobal.com.au ([182.160.167.150]:43878 "EHLO
-        sydney7.cnglobal.com.au" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726477AbfELNBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 09:01:52 -0400
-X-Greylist: delayed 3338 seconds by postgrey-1.27 at vger.kernel.org; Sun, 12 May 2019 09:01:51 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailboxesr-us.com.au; s=default; h=Message-ID:Subject:To:From:Date:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IHKMEDdNGmA9Pdgc9B7HQdaWw0UDqD6Dt1MbJsVGRG0=; b=LvSdGx/kh9pVj2D46dP8AveUU
-        /sJnH4Oj4UxuACIYhzETjzBK5umEoix31DdBKN2ZXeq8trjt+VFWnMGRBei0q9XgsIwwaMl+Xsgq7
-        U0EncUayQRMbjLokQ5i40Wi0PZZ77sGJpV9QcL1DDJJ7IZnSF0rjpDhMd8bnkRXZDJeIU=;
-Received: from [127.0.0.1] (port=34144 helo=sydney7.cnglobal.com.au)
-        by sydney7.cnglobal.com.au with esmtpa (Exim 4.91)
-        (envelope-from <sam@difava.com.au>)
-        id 1hPmF9-006nsi-TP; Sun, 12 May 2019 21:02:11 +1000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 12 May 2019 21:02:05 +1000
-From:   Sam Di Fava <sam@difava.com.au>
-To:     undisclosed-recipients:;
-Subject: Re:
-Message-ID: <0912a5b7db7d5bc7e7235fe7cd4ea474@difava.com.au>
-X-Sender: sam@difava.com.au
-User-Agent: Roundcube Webmail/1.3.7
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - sydney7.cnglobal.com.au
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - difava.com.au
-X-Get-Message-Sender-Via: sydney7.cnglobal.com.au: authenticated_id: mailboxesrus@mailboxesr-us.com.au
-X-Authenticated-Sender: sydney7.cnglobal.com.au: mailboxesrus@mailboxesr-us.com.au
+        id S1726618AbfELLFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 07:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfELLFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 07:05:12 -0400
+Subject: Re: [GIT PULL] chrome-platform changes for v5.2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557659112;
+        bh=HkYTfGAgPW2YJ00yz0r5CxOsTO7v3THFF8oQwyDSBto=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=y9ijwJTLT/bX0ewICiHHTOkc4KSLHu8ztmdROPtK6YBjlmdqHLyU1oH69S6c0S7e/
+         IJqqa5eE5290A7+oxsxngYhsaPJEJnw0M9uNfslwhvMaUjSB+4WzupSF0HVgCVutfW
+         kal6yba1bngPrOmkMSGegDW8KoQ7jl0S88izQCeA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190512041324.GA7523@google.com>
+References: <20190512041324.GA7523@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190512041324.GA7523@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
+ tags/tag-chrome-platform-for-v5.2
+X-PR-Tracked-Commit-Id: 58a2109f6eb46b2952e2ce3fe776ce02c0c540dd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47782361aca21a32ad4198f1b72f1655a7c9f7e5
+Message-Id: <155765911209.20287.8535606605448263850.pr-tracker-bot@kernel.org>
+Date:   Sun, 12 May 2019 11:05:12 +0000
+To:     Benson Leung <bleung@google.com>
+Cc:     torvalds@linux-foundation.org, bleung@chromium.org,
+        bleung@google.com, enric.balletbo@collabora.com,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-r
+The pull request you sent on Sat, 11 May 2019 21:13:24 -0700:
+
+> git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-for-v5.2
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47782361aca21a32ad4198f1b72f1655a7c9f7e5
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
