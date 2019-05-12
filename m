@@ -2,94 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E351AD3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F101AD6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfELRFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:05:19 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38237 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfELRFT (ORCPT
+        id S1727022AbfELRH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:07:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52418 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfELRH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:19 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u199so7719587oie.5
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 10:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
-        b=M1kb+HIzVOLjPCV4h6Pn4lve+FlnoRhh7JL/WOdRAHWhP7XRiXt2Sb1zCx+P73FWpH
-         KH+vO3XX2/+B76I47eV+x5dE3f6pnMgrTIJE7VNh4ZChznUcTJY9sLB9hecdROdExjmg
-         /JPQRL9+WNauQRy09PAuL4L+fpknOrj50gkModVL0BMNekoH7GBXdRdXfxoaLcWOG03L
-         Y+O3tl58C2QvVdDq9MUnLdKYMn7lI9M9GE8l5NKOH1AX/WldekcH2nLERHsnEiX4sVsK
-         tDUJ/uw9Na9lpPhy3YjlBknNgRsJ/+qzkinLg8HkU903BWLWhwIYA6J1YzU1WDzc0gEI
-         hjfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
-        b=WL9HWoF1PBIiEOK7gFwGJhHSf83frxUvlfWg8ju92sfIKTlrDf2HHD03lxBrBNGMHv
-         zEJr4wG4Nr/nfS4BJWFDlK5e9yWn/6JL1qTueMTMthzBzAGvikmO+sUAiJkkZG3K5Ql+
-         Nyc3nChvu5Ou6edOQgr3Pu0s62EY2TX+l9ppyA9HhkqKuFuab+R77OWvc+D2Za0fkZYN
-         4yidBrgrjZ7L1vFJMJSmSFPm8VaSIbmX/0rvGfr4nMngG9un/PjKPA5OTLnZMTO3OLbc
-         kRgWy7zcwvUB1V2a5NSbZniH9dLjvie0ijL/Y5TlBt2o2NbQzmBFAB1ATVluRmfWeW8n
-         cyIQ==
-X-Gm-Message-State: APjAAAWVZ6v9IVDNqYAdBrSPpL7m1qQZnRnb6EByCzJ1z0300YyfTt3C
-        h24j0uad1da0wV6Rdm/xtmiDAQ==
-X-Google-Smtp-Source: APXvYqyWbK23VrEkToZOwoQB+/N6sOOi7C92304sjVSrsw7En9uosUTt+tMWJRIvjnvIj1tmphPF2Q==
-X-Received: by 2002:aca:e594:: with SMTP id c142mr3854397oih.155.1557680718422;
-        Sun, 12 May 2019 10:05:18 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id w192sm4456571oiw.57.2019.05.12.10.05.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 10:05:17 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, james.w.mcmechan@gmail.com
-References: <20190509112420.15671-1-roberto.sassu@huawei.com>
- <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
- <1557665567.10635.222.camel@linux.ibm.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
-Date:   Sun, 12 May 2019 12:05:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sun, 12 May 2019 13:07:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G5xlJDa6zk0mg1D7OFpmjSf2+dxHmYsbAjbOgtF2WVI=; b=cl3dzex1TWMNPiBpesr65Eo7F
+        H9HVQq0TuFUpVsHX6kptGrMiUcMeHxfVc8fG3sNL3EIFW+VKSMfcpTBTeS+d5PLybyPfUyzr1fcXu
+        F1TQyTLbAcBSu8IXgsuB8MXptkbna1IYhHGmDBpkTI7Wcy5opdxLgWRyyN7+bHahNrssM=;
+Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hPrwV-00046h-5C; Sun, 12 May 2019 17:07:19 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 2298B44000C; Sun, 12 May 2019 18:07:17 +0100 (BST)
+Date:   Sun, 12 May 2019 18:07:17 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mallikarjun Kasoju <mkasoju@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/6] regulator: max77620: Support Maxim 77663
+Message-ID: <20190512170717.GS21483@sirena.org.uk>
+References: <20190505154325.30026-1-digetx@gmail.com>
+ <20190505154325.30026-7-digetx@gmail.com>
+ <f8f67e00-0544-c999-92e0-3998c2f70ee7@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1557665567.10635.222.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jo46wx5DSA4a/gWG"
+Content-Disposition: inline
+In-Reply-To: <f8f67e00-0544-c999-92e0-3998c2f70ee7@gmail.com>
+X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/12/19 7:52 AM, Mimi Zohar wrote:
-> On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
->> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
->>> This proposal consists in marshaling pathnames and xattrs in a file called
->>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
->>> been extracted.
->>
->> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
->> be done equivalently by the initramfs' /init? Why is kernel involvement
->> actually required here?
-> 
-> It's too late.  The /init itself should be signed and verified.
 
-If the initramfs cpio.gz image was signed and verified by the extractor, how is
-the init in it _not_ verified?
+--jo46wx5DSA4a/gWG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rob
+On Sun, May 12, 2019 at 05:08:15PM +0300, Dmitry Osipenko wrote:
+
+> Just want to get yours attention to that Lee picked up the patches into
+> the MFD tree, excluding this patch. I assume this one will have to go
+> via the regulator's tree.
+
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
+
+--jo46wx5DSA4a/gWG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzYUrwACgkQJNaLcl1U
+h9Av/Af6A7eNJJBMhZupsKDyFp3/A06DY0GmX/yFWFZsvWD8tC+lwGKriot3sRsO
+hgzEGPzGKHsPap5Co+eJMK5qju+hoCTxr0EXsJGz7jUV4yvNF9kVP9vjDFDdiB3q
+h7i54gvLBADsp9iaxm/1zlXsVtXoAeONz+g401sWi2tBo49EMSixuSZVuX6mEo3N
++UoZRX+jK87XBL10ewBMdtrYMqrr2h6X3Wd8WH9010x/ug49Iem7Oq7XgL18vnrt
+lyfJnNOKB7x2ebWfjrfh2vyk9F0zoRhH7Jn/6qzlAvEbSkTQNF8EaCYQEVJ3kujM
+a3UExN7W25SrNbX2yjcj0Z7+te8Z/Q==
+=est8
+-----END PGP SIGNATURE-----
+
+--jo46wx5DSA4a/gWG--
