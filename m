@@ -2,73 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3EA1AAFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D471AAEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 08:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfELHPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 03:15:31 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42528 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725913AbfELHPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 03:15:31 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A420E1A8D9F99BE6D38F;
-        Sun, 12 May 2019 15:15:28 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sun, 12 May 2019
- 15:15:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <Matt.Sickler@daktronics.com>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] staging: kpc2000: remove unused function kp2000_cdev_write
-Date:   Sun, 12 May 2019 14:46:15 +0800
-Message-ID: <20190512064615.7364-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726216AbfELGwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 02:52:04 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:12990
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725913AbfELGwE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 02:52:04 -0400
+X-IronPort-AV: E=Sophos;i="5.60,460,1549926000"; 
+   d="scan'208";a="305692769"
+Received: from static.kpn.net (HELO hadrien) ([193.173.13.127])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 May 2019 08:52:00 +0200
+Date:   Sun, 12 May 2019 08:51:59 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     =?ISO-8859-15?Q?Petr_=A6tetiar?= <ynezz@true.cz>
+cc:     Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
+        linux-kernel@vger.kernel.org, kbuild-all@01.org
+Subject: drivers/of/of_net.c:64:2-8: ERROR: missing put_device; call
+ of_find_device_by_node on line 57, but without a corresponding object release
+ within this function. (fwd)
+Message-ID: <alpine.DEB.2.21.1905120850400.3167@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/mixed; boundary="8323329-1139231484-1557643920=:3167"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no callers in tree, so can be removed.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+--8323329-1139231484-1557643920=:3167
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+Hello,
+
+You should drop the reference count on the value allocated with
+of_find_device_by_node on line 57.
+
+julia
+
+---------- Forwarded message ----------
+Date: Sun, 12 May 2019 10:20:42 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: drivers/of/of_net.c:64:2-8: ERROR: missing put_device; call
+    of_find_device_by_node on line 57,
+    but without a corresponding object release within this function.
+
+CC: kbuild-all@01.org
+CC: linux-kernel@vger.kernel.org
+TO: "Petr Štetiar" <ynezz@true.cz>
+CC: Felix Fietkau <nbd@nbd.name>
+CC: John Crispin <john@phrozen.org>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   8148c17b179d8acad190551fe0fb90d8f5193990
+commit: d01f449c008a3f41fa44c603e28a7452ab8f8e68 of_net: add NVMEM support to of_get_mac_address
+date:   6 days ago
+:::::: branch date: 11 hours ago
+:::::: commit date: 6 days ago
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+
+>> drivers/of/of_net.c:64:2-8: ERROR: missing put_device; call of_find_device_by_node on line 57, but without a corresponding object release within this function.
+   drivers/of/of_net.c:68:2-8: ERROR: missing put_device; call of_find_device_by_node on line 57, but without a corresponding object release within this function.
+   drivers/of/of_net.c:82:1-7: ERROR: missing put_device; call of_find_device_by_node on line 57, but without a corresponding object release within this function.
+   drivers/of/of_net.c:87:1-7: ERROR: missing put_device; call of_find_device_by_node on line 57, but without a corresponding object release within this function.
+
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d01f449c008a3f41fa44c603e28a7452ab8f8e68
+git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+git remote update linus
+git checkout d01f449c008a3f41fa44c603e28a7452ab8f8e68
+vim +64 drivers/of/of_net.c
+
+3eb46a1da Sergei Shtylyov 2015-03-18  51
+d01f449c0 Petr Štetiar    2019-05-03  52  static const void *of_get_mac_addr_nvmem(struct device_node *np)
+d01f449c0 Petr Štetiar    2019-05-03  53  {
+d01f449c0 Petr Štetiar    2019-05-03  54  	int ret;
+d01f449c0 Petr Štetiar    2019-05-03  55  	u8 mac[ETH_ALEN];
+d01f449c0 Petr Štetiar    2019-05-03  56  	struct property *pp;
+d01f449c0 Petr Štetiar    2019-05-03 @57  	struct platform_device *pdev = of_find_device_by_node(np);
+d01f449c0 Petr Štetiar    2019-05-03  58
+d01f449c0 Petr Štetiar    2019-05-03  59  	if (!pdev)
+d01f449c0 Petr Štetiar    2019-05-03  60  		return ERR_PTR(-ENODEV);
+d01f449c0 Petr Štetiar    2019-05-03  61
+d01f449c0 Petr Štetiar    2019-05-03  62  	ret = nvmem_get_mac_address(&pdev->dev, &mac);
+d01f449c0 Petr Štetiar    2019-05-03  63  	if (ret)
+d01f449c0 Petr Štetiar    2019-05-03 @64  		return ERR_PTR(ret);
+d01f449c0 Petr Štetiar    2019-05-03  65
+d01f449c0 Petr Štetiar    2019-05-03  66  	pp = devm_kzalloc(&pdev->dev, sizeof(*pp), GFP_KERNEL);
+d01f449c0 Petr Štetiar    2019-05-03  67  	if (!pp)
+d01f449c0 Petr Štetiar    2019-05-03  68  		return ERR_PTR(-ENOMEM);
+d01f449c0 Petr Štetiar    2019-05-03  69
+d01f449c0 Petr Štetiar    2019-05-03  70  	pp->name = "nvmem-mac-address";
+d01f449c0 Petr Štetiar    2019-05-03  71  	pp->length = ETH_ALEN;
+d01f449c0 Petr Štetiar    2019-05-03  72  	pp->value = devm_kmemdup(&pdev->dev, mac, ETH_ALEN, GFP_KERNEL);
+d01f449c0 Petr Štetiar    2019-05-03  73  	if (!pp->value) {
+d01f449c0 Petr Štetiar    2019-05-03  74  		ret = -ENOMEM;
+d01f449c0 Petr Štetiar    2019-05-03  75  		goto free;
+d01f449c0 Petr Štetiar    2019-05-03  76  	}
+d01f449c0 Petr Štetiar    2019-05-03  77
+d01f449c0 Petr Štetiar    2019-05-03  78  	ret = of_add_property(np, pp);
+d01f449c0 Petr Štetiar    2019-05-03  79  	if (ret)
+d01f449c0 Petr Štetiar    2019-05-03  80  		goto free;
+d01f449c0 Petr Štetiar    2019-05-03  81
+d01f449c0 Petr Štetiar    2019-05-03  82  	return pp->value;
+d01f449c0 Petr Štetiar    2019-05-03  83  free:
+d01f449c0 Petr Štetiar    2019-05-03  84  	devm_kfree(&pdev->dev, pp->value);
+d01f449c0 Petr Štetiar    2019-05-03  85  	devm_kfree(&pdev->dev, pp);
+d01f449c0 Petr Štetiar    2019-05-03  86
+d01f449c0 Petr Štetiar    2019-05-03  87  	return ERR_PTR(ret);
+d01f449c0 Petr Štetiar    2019-05-03  88  }
+d01f449c0 Petr Štetiar    2019-05-03  89
+
 ---
- drivers/staging/kpc2000/kpc2000/fileops.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/drivers/staging/kpc2000/kpc2000/fileops.c b/drivers/staging/kpc2000/kpc2000/fileops.c
-index b3b0b763fa1e..f8774d8f69b8 100644
---- a/drivers/staging/kpc2000/kpc2000/fileops.c
-+++ b/drivers/staging/kpc2000/kpc2000/fileops.c
-@@ -74,11 +74,6 @@ ssize_t  kp2000_cdev_read(struct file *filp, char __user *buf, size_t count, lof
- 	return count;
- }
- 
--ssize_t  kp2000_cdev_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos)
--{
--	return -EINVAL;
--}
--
- long  kp2000_cdev_ioctl(struct file *filp, unsigned int ioctl_num, unsigned long ioctl_param)
- {
- 	struct kp2000_device *pcard = filp->private_data;
-@@ -122,9 +117,6 @@ struct file_operations  kp2000_fops = {
- 	.open       = kp2000_cdev_open,
- 	.release    = kp2000_cdev_close,
- 	.read       = kp2000_cdev_read,
--	//.write      = kp2000_cdev_write,
--	//.poll       = kp2000_cdev_poll,
--	//.fasync     = kp2000_cdev_fasync,
- 	.llseek     = noop_llseek,
- 	.unlocked_ioctl = kp2000_cdev_ioctl,
- };
--- 
-2.20.1
-
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--8323329-1139231484-1557643920=:3167--
