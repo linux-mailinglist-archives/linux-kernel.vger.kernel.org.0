@@ -2,105 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB981ABE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 12:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3FF1ABD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 12:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfELKvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 06:51:09 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35882 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfELKvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 06:51:09 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z1so8510999ljb.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EBbnEnlSGI+YZhytxcBPyDwhUUf9hqUjJsyebbdCrcw=;
-        b=Bwee6W/aqjF3RtU9Pd++GRfF0phoAIMfmTwaL+3Nu8NDs6Et4DPm/F1C0PX7+IyOUI
-         fj41FT6ceV5M+P7SetVJPMyYDB7uFUcFKruvefh1bd2kvdataPMuobAmTp0v5Vb33/n5
-         WE2FQvUPk2ZhdYv1biJYsS7ilv3mBt2dX5GKU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EBbnEnlSGI+YZhytxcBPyDwhUUf9hqUjJsyebbdCrcw=;
-        b=E1gtHE97UI/btrCJ0ZlD8+Gx/H29+e23a835VCV0VqN7sQjdJoD6J+B7ayV6JrIhXh
-         symnBoAWSzwceMhRHsr4d8+xHpaHE/cx2qe6CsF6q5YUGav5pBCEZtLvbKdsfS+3qOtD
-         moJxEcH4jjwCBcxz2/Xk2Lsn4Gp5B3Xa1UUkUEkEVGHq3RQveUZGsOOlyXpQerGu7nlv
-         TBkf7udEKTHIDBo1PGU9KDWsJxzrxWo4HQHOIOGEXCufjC0R02TZcQjCq7YAp1239zUQ
-         ZTR2MpGyRxOH2IDQPGOCmaJ8sw/swXkDSE6uu1dHSW0HuNTA6CYmbqUuDrVmaovJluPi
-         i0mQ==
-X-Gm-Message-State: APjAAAUBQywZPdRtwZjMALhw9MsGrKrFMXt/OmGvKxHESc9WPPgBEpto
-        6HlTblr2pYnisTz8lMKbIBYqK2K0EJU=
-X-Google-Smtp-Source: APXvYqwcPvj2z+tEM66MYXyt5p+KRDOOf+EgVgfzsZ1/K+Kq1eA0LN9vE+o+ZBubeJZRbBILqHrw1w==
-X-Received: by 2002:a2e:980f:: with SMTP id a15mr10767269ljj.131.1557658266499;
-        Sun, 12 May 2019 03:51:06 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id k10sm2536822ljh.86.2019.05.12.03.51.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 03:51:06 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id y19so6995169lfy.5
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:51:06 -0700 (PDT)
-X-Received: by 2002:a19:ca02:: with SMTP id a2mr10604583lfg.88.1557657862375;
- Sun, 12 May 2019 03:44:22 -0700 (PDT)
+        id S1726594AbfELKtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 06:49:02 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:54142 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfELKtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 06:49:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 3D11BFB03;
+        Sun, 12 May 2019 12:48:57 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GpXnQVOhyJqT; Sun, 12 May 2019 12:48:52 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 7CE9947D5C; Sun, 12 May 2019 12:48:51 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH v11 0/2] Mixel MIPI DPHY support for NXPs i.MX8 SOCs
+Date:   Sun, 12 May 2019 12:48:49 +0200
+Message-Id: <cover.1557657814.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
- <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
- <20190510225527.GA59914@google.com> <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
- <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
- <CALCETrUOj=4VWp=B=QT0BQ8X_Ds_b+pt68oDwfjGb+K0StXmWA@mail.gmail.com>
- <CAHk-=wg3+3GfHsHdB4o78jNiPh_5ShrzxBuTN-Y8EZfiFMhCvw@mail.gmail.com> <9CD2B97D-A6BD-43BE-9040-B410D996A195@amacapital.net>
-In-Reply-To: <9CD2B97D-A6BD-43BE-9040-B410D996A195@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 12 May 2019 06:44:06 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wh3dT7=SMjvSZreXSu36Cg7gsfSipLhfTz5ioDKXV5uHg@mail.gmail.com>
-Message-ID: <CAHk-=wh3dT7=SMjvSZreXSu36Cg7gsfSipLhfTz5ioDKXV5uHg@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andrew Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 7:37 PM Andy Lutomirski <luto@amacapital.net> wrote:
->
-> I bet this will break something that already exists. An execveat() flag to turn off /proc/self/exe would do the trick, though.
+This adds initial support for the Mixel IP based mipi dphy as found on i.MX8
+processors.  It has support for the i.MX8MQ, support for other variants can be
+added - once the platform specific parts are in - via the provided devdata.
+The driver is somewhat based on what's found in NXPs BSP.
 
-Thinking more about it, I suspect it is (once again) wrong to let the
-thing that does the execve() control that bit.
+Public documentation on the DPHY's registers is currently thin in the i.MX8
+reference manuals (even on the i.MX8QXP form 11/18) so most of the values were
+taken from existing drivers. Newer NXP drivers have a bit more details so where
+possible the timings are calculated and validated.
 
-Generally, the less we allow people to affect the lifetime and
-environment of a suid executable, the better off we are.
+This was tested with the an initial version of a NWL MIPI DSI host
+controller driver
 
-But maybe we could limit /proc/*/exe to at least not honor suid'ness
-of the target? Or does chrome/runc depend on that too?
+    https://lists.freedesktop.org/archives/dri-devel/2019-March/209685.html
 
-             Linus
+and a forward ported DCSS driver on linux-next 20190506.
+
+Robert Chiras (the author of the corresponding driver in NXPs vendor
+tree) got this driver to work in his tree as well using mxsfb:
+
+    https://www.spinics.net/lists/arm-kernel/msg711950.html
+
+Changes from v10
+* Collect Reviewed-by: from Fabio Estevam
+* Collect Reviewed-by: from Sam Ravnborg
+* As per review comments from Sam Ravnborg
+  * Terminate all dev_{dbg,err} with '\n'
+  * Add more whitespace to CM/CN/CO macros
+  * Drop another non-ascii symbol in a debug message
+
+Changes from v9
+* As per review comments from Fabio Estevam
+  * Sort includes alphabetically
+  * Remove excessive new lines between functions
+  * Drop error message on devm_ioremap_resource, handled by
+    the core already.
+  * Don't default to it on i.MX8
+* As per review comments from Sam Ravnborg
+  * Use clearer variablenames:
+       struct regmap *regs -> regmap
+       void __iomem *regs -> base
+  * Use u32 for all parameters of get_best_ratio()
+  * Don't use non-ascii symbols in debug message
+  * Change MODULE_LICENSE to GPL
+* As per review comment from Andreas Färber
+  * Change co-authored-by: to co-developed-by:
+* Collect Signed-off-by from Robert Chiras
+
+Changes from v8
+* Collect Reviewed-by from Rob Herring
+* Fix {hs,clk}_prepare vs {hs,clk}_zero debug print out
+
+Changes from v7
+* As per review comments from Rob Herring
+  * Use fsl, as vendor prefix
+  * Drop changes to vendor-prefixes.txt due to that
+  * Shorten mixel_dphy to dphy in the example
+* Fix an indentation error noticed by checkpatch that got introduced in v6
+* Use lowercase letters in hex addresses in DT bindings example
+
+Changes from v6
+* Depend on HAS_IOMEM (fixes a build problem on UM spotted by kbuild)
+
+Changes from v5
+* Fix build problems on mips (spotted by the kbuild test robot) by using u32
+  consistently and long long for lp_t.
+
+Changes from v4
+* Build by default on ARCH_MXC && ARM64
+
+Changes form v3
+* Check correct variable after devm_ioremap_resource
+* Add Robert Chiras as Co-authored-by since he's the author
+  of the driver in NXPs BSP.
+
+Changes from v2
+* As per review comments from Fabio Estevam
+  * KConfig: select REGMAP_MMIO
+  * Drop phy_read
+  * Don't make phy_write inline
+  * Remove duplicate debugging output
+  * Comment style and typo fixes
+  * Add #defines's for PLL lock timing values
+  * Return correct error value when PLL fails to lock
+  * Check error when enabling clock
+  * Use devm_ioremap_resource
+* As per review comments from Robert Chiras
+  * Deassert PD_DPHY after PLL lock (as per mixel ref manual)
+  * Assert PD_{DPHY,PLL} before power on (as per mixel ref manual)manual
+* Add exit phy_op to reset CN/CM/CO
+
+Changes from v1
+* As per review comments from Fabio Estevam
+  * Kconfig: tristate mixel dphy support.
+  * Drop unused 'ret' in mixel_dphy_ref_power_off.
+  * Match values of DPHY_RXL{PRP,DRP} to those of
+    https://source.codeaurora.org/external/imx/linux-imx/log/?h=imx_4.14.78_1.0.0_ga
+    The previous values were based on 4.9.
+  * Use resource size on devm_ioremap, we have that in dt already.
+  * Use regmap so it's simple to dump the registers.
+  * Use regmap_read_poll_timeout instead of open coded loop.
+  * Add undocumented rxhs_settle register
+* As per review comments from Sam Ravnborg
+  * Move driver to d/phy/freescale/
+  * Move SPDX-License-Identifier to top of file.
+  * Drop '/* #define DEBUG 1 */'.
+  * Use GPL-2.0+ since the vendor driver uses that as well.
+  * Drop the mutex, register access is now protected by regmap.
+  * Fix various style / indentation issues.
+* Check for register read, write and ioremap errors
+* Improve phy timing calculations
+  * Use LP clock rate where sensible, check for errors
+  * Use ad hoc forumulas for timings involving hs clock
+* Switch from dphy_ops to devdata. Other i.MX8 variants
+  differ in register layout too
+* Add Mixel Inc to vendor-prefixes.txt
+
+Guido Günther (2):
+  dt-bindings: phy: Add documentation for mixel dphy
+  phy: Add driver for mixel mipi dphy found on NXP's i.MX8 SoCs
+
+ .../bindings/phy/mixel,mipi-dsi-phy.txt       |  29 +
+ drivers/phy/freescale/Kconfig                 |  10 +
+ drivers/phy/freescale/Makefile                |   1 +
+ .../phy/freescale/phy-fsl-imx8-mipi-dphy.c    | 500 ++++++++++++++++++
+ 4 files changed, 540 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/mixel,mipi-dsi-phy.txt
+ create mode 100644 drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
+
+-- 
+2.20.1
+
