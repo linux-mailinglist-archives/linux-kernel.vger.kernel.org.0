@@ -2,169 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664231AC99
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 16:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5871AC9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 16:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfELOR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 10:17:27 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:35000 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfELOR1 (ORCPT
+        id S1726740AbfELOWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 10:22:18 -0400
+Received: from smtprelay0012.hostedemail.com ([216.40.44.12]:59433 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726442AbfELOWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 10:17:27 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c15so6541333qkl.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 07:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=BmrvqU197F+Dlf6m942J19XSdvQ9nvAihmI1KdPxKsg=;
-        b=tj7YinBTPF4khoDVVYxxMKX/mXAEnJas+CrnGYwRqpa6rYr+aoK7WlgM7Sr0tSkVJB
-         s35dIh0RwekkqGgHgYLilpWGPUXK4rZwkDgPtiREhVNnJGHCF94wRPnatm0HXUrWg0K/
-         Xx2ZHlAw/8ixtnpewGLg3tvbNbAfezm4SPl7ntbVlU3FFjf+I+utuDM8e5CS1NFL+rod
-         pFfF1pa7Ix2krtl/mNUocjqTXa4iGf43pNhgowTKOhKyJrN1trvnKTe9LscZnOw/3Nun
-         a0VHfmzGOyao8u/8Rwia4vtsWNKx5mwVxXX+k8zVyOelRv5gX+pV0xYSvdpVWLqdMsI1
-         2ueg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=BmrvqU197F+Dlf6m942J19XSdvQ9nvAihmI1KdPxKsg=;
-        b=TzLEYb6kpheI1B7UwaV9behLS+ejd/Ze9goKca2vKpvte3qGT0GcAnJpvr6KMXmRjx
-         fqUfDVM3TMZg1ffKFRlfulUE/AOba6ckwt40Py5Pa0m+dZK9PNVctwnffTKRVgcWb03j
-         HJez13v2ysHkBECXM8wSgjAao3V1dIj2Rp6O56SAHROcxi4VyzehHzZJyaRPMTUI9ysJ
-         3PPzThYwqIhpE+7t18mO2ztwlFhza/I6OMVyYCM9E8a2AWdgj2oxIWhvjT595EB5JQSb
-         WJ3zbhKgeiaog2z9av+750Q4T0xo+jUgfyF/KyxwXs46tviVwNdTi9/bQx2PZRRZQMyf
-         ukTA==
-X-Gm-Message-State: APjAAAW6hlhYw6aXff7JM8cfhqXTSoH6sRXBOspjTeuW5j2PUARokkyC
-        m55c1+kgQeWQg6e2VKnIGBiJeQ==
-X-Google-Smtp-Source: APXvYqzY4n9aq+01MzU4lvnB4gNRd7bnnM119waLVcN7+WT6qHon0IXKdZf2ZbkxseK8oWlxYDBbLw==
-X-Received: by 2002:a37:e40f:: with SMTP id y15mr17786756qkf.61.1557670645847;
-        Sun, 12 May 2019 07:17:25 -0700 (PDT)
-Received: from skullcanyon ([2002:c0de:c115:0:481e:e17e:2f68:43f8])
-        by smtp.gmail.com with ESMTPSA id r47sm6278308qte.70.2019.05.12.07.17.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 12 May 2019 07:17:24 -0700 (PDT)
-Message-ID: <69c10fdd26566049c523d4c8cfb1b8c35018b738.camel@ndufresne.ca>
-Subject: Re: Hardware-accelerated video decoders used through a firmware
- instead of hardware registers
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>
-Date:   Sun, 12 May 2019 10:17:22 -0400
-In-Reply-To: <19804f842e80f1f8bd85b8eb49e75e149abf0062.camel@bootlin.com>
-References: <19804f842e80f1f8bd85b8eb49e75e149abf0062.camel@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1 (3.32.1-1.fc30) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 12 May 2019 10:22:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 86C44182CF666;
+        Sun, 12 May 2019 14:22:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3351:3622:3865:3867:3868:3871:3872:4250:4321:5007:6119:6120:7514:7809:8957:10004:10400:10848:11232:11658:11914:12043:12114:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21433:21451:21619:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: skin28_8819c53057e61
+X-Filterd-Recvd-Size: 1760
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 12 May 2019 14:22:15 +0000 (UTC)
+Message-ID: <d00c1c42689e08df0ce7cd8b2c796eee5b9f5642.camel@perches.com>
+Subject: Re: [PATCH v4 07/12] Documentation: PCI: convert
+ pci-error-recovery.txt to reST
+From:   Joe Perches <joe@perches.com>
+To:     Changbin Du <changbin.du@gmail.com>, bhelgaas@google.com,
+        corbet@lwn.net
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org
+Date:   Sun, 12 May 2019 07:22:13 -0700
+In-Reply-To: <20190512125009.32079-8-changbin.du@gmail.com>
+References: <20190512125009.32079-1-changbin.du@gmail.com>
+         <20190512125009.32079-8-changbin.du@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le dimanche 12 mai 2019 à 13:35 +0200, Paul Kocialkowski a écrit :
-> Hi,
-> 
-> With the work done on the media request API and the cedrus driver for
-> Allwinner ARM SoCs, we now have a kernel interface for exposing fixed-
-> hardware video decoding pipelines (currently MPEG-2 and H.264, with
-> H.265 on the way). Some work remains on the per-format interface and we
-> are looking to improve latency-related aspects, but we are all set to
-> have a nice interface here, that plays well with e.g. ffmpeg.
-> 
-> A specific situation came to my interest, which is apparently quite
-> common: some platforms have general-purpose microcontrollers embedded,
-> which can help with video decoding. They are however rarely to never
-> used to do the decoding itself (since they are general-purpose, not
-> DSPs) and just coordinate the decoding with the fixed-pipeline decoding
-> hardware block. The advantage is that the interface is just a simple
-> mailbox and the raw video bitstream from the file can be passed
-> directly without the need for userspace to do any parsing that the
-> codec requires.
-> 
-> One side-effect from this setup is that the actual hardware register
-> layout of the decoder is hidden away in a non-free piece of
-> microcontroller firmware, that's usually loaded at run-time.
-> 
-> With the recent developments on the media interface, we could interface
-> with these hardware decoders directly, which offers various advantages:
-> - we no longer need a 3rd party external non-free firmware, which just
->   makes distribution easier for everyone and allows support in fully-
->   free setups;
-> - all the usual advantages of having free code that can be fixed and
->   updated instead of an obscure binary that many not always be doing
->   the right thing;
-> - parsing of the slices is probably best done in userspace, and I
->   heard that ffmpeg does this threaded, so there could be a latency
->   advantage there as well, not to mention that it avoids the drag of
->   a mailbox interface altogether;
-> - the general-purpose micro-controller can then be reused for something
->   useful where it could actually make a performance difference.
-> 
-> As far as I understand, it seems that the video decoder for MT8173
-> fails in that category, where a MD32 general-purpose micro-controller
-> is used to only do the parsing. We even have device-tree nodes about
-> the decoder and encoder, but no register layout.
-> 
-> So I was wondering if the linux-media community should set some
-> boundaries here and push towards native implementations instead of
-> firmware-based ones. My opininon is that it definitely should.
-> 
-> It seems that other platforms (e.g. Tegra K1 and onwards) are in the
-> same situation, and I think the ChromiumOS downstream kernel uses an
-> obscure firmware on a general-purpose auxiliary ARM core (that's also
-> used at boot time IIRC).
+On Sun, 2019-05-12 at 20:50 +0800, Changbin Du wrote:
+> This converts the plain text documentation to reStructuredText format and
+> add it to Sphinx TOC tree. No essential content change.
+[]
+> diff --git a/MAINTAINERS b/MAINTAINERS
+[]
+> @@ -12100,7 +12100,7 @@ M:	Sam Bobroff <sbobroff@linux.ibm.com>
+>  M:	Oliver O'Halloran <oohall@gmail.com>
+>  L:	linuxppc-dev@lists.ozlabs.org
+>  S:	Supported
+> -F:	Documentation/PCI/pci-error-recovery.txt
+> +F:	Documentation/PCI/pci-error-recovery.rst
+>  F:	drivers/pci/pcie/aer.c
+>  F:	drivers/pci/pcie/dpc.c
+>  F:	drivers/pci/pcie/err.c
 
-I like the idea, but enforcing this now is likely going to prevent a
-lot of mainline usage of CODECs (which are proprietary by patents to
-start with). One thing to note, the CODEC accelerators may not be
-accessible from CPU. So to support such idea, we'd need to develop
-minimalist firmware to access these accelerators. That would require a
-lot of reverse engineering as the third party codec vendors (e.g.
-Chips&Media, Allegro etc.) don't document the accelerator or even the
-architecture of the micro-controller. Compilation of these firmware can
-also become tedious, specially if there is no Open Source compiler for
-the chosen micro-controller architecture.
+There is another section to update as well:
 
-I can comment on ChromeOS, current generation is mostly based on
-Rockchip SoC. The CODEC on Rockchip are just accelators, and this is
-what ChromeOS team implemented, and that's what the stateless you have
-done is based upon. The first generation was Samsung Exynos, this one
-uses a unknown source design that they call MFC. This runs on
-proprietary blob, I have not found any information about this blob.
+PCI ERROR RECOVERY
+M:	Linas Vepstas <linasvepstas@gmail.com>
+L:	linux-pci@vger.kernel.org
+S:	Supported
+F:	Documentation/PCI/pci-error-recovery.txt
 
-The early boot stage is not obscure, it's called CoreBoot. This code is
-meant to initialize your CPU when you CPU isn't started yet. Notably on
-Intel, there has been a lot of security concerns with this proprietary
-blob, CoreBoot effort includes reverse engineering and replacing this
-bit. At least on Intel blobs, the micro-controller is still running
-after your main CPU is loaded, giving attackers a place to run with
-true full access to your computer, without being detectable.
-
-On some platforms it can be even more complex. Think of the Xilinx
-ZynMP. Documentation is pretty sparse, it's clear the VCU is only
-accessible from the FPGA, and that's probably why we need a MicroBlaze
-firmware (micro blaze being a micro-controller architecture programmed
-into some part of a Xilinx FPGA) in order to use it. But then, it is
-not clear if the VCU is fully capable of decoding, or if the work is a
-mix of FPA and circuit. So replacing the firmware could be the same as
-rewriting the CODEC HW (or at least some bits of it).
-
-> 
-> What do you think?
-> 
-> Cheers,
-> 
-> Paul
-> 
 
