@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 469CB1AD60
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF671AB08
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfELRGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:06:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49570 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfELRFt (ORCPT
+        id S1726002AbfELHeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 03:34:37 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43817 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfELHef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:05:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JGyDpXs0z4qP/VLm+QIIvl6tLAm7ZejvyxnTMOgb8/o=; b=kPQ9K/GcuDxCVWrz7TmQZp9qq
-        uWbtRKu5SSeuFIwTtJ5d4MgiHwpuqoLAndskrb2iTEFu8Oy0KiEKGW9bJtjSm09or+/MMBizPkRjh
-        xZ80jRTm/E1gPRhYoiX0p7977HVfVdo76T9WcZCaiG+QNMAvdXQlpqpb2QcZ/OGfCksrw=;
-Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hPruu-00044g-9y; Sun, 12 May 2019 17:05:40 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 44E0644000C; Sun, 12 May 2019 08:33:01 +0100 (BST)
-Date:   Sun, 12 May 2019 16:33:01 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
-        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
-        mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH 1/4] spi: For controllers that need realtime always use
- the pump thread
-Message-ID: <20190512073301.GC21483@sirena.org.uk>
-References: <20190510223437.84368-1-dianders@chromium.org>
- <20190510223437.84368-2-dianders@chromium.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
-Content-Disposition: inline
-In-Reply-To: <20190510223437.84368-2-dianders@chromium.org>
-X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 12 May 2019 03:34:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t22so5109525pgi.10
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 00:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Tu8Fp/uz7bbeEJee+ohTniXikyB8jQpgmo0/F9wxQwc=;
+        b=YNLYvFTYhaxsJmvLOTdE3rBOjlFAOxqVXOVNH5vzzODcv1aKfd4SkTQxaX/ooQge54
+         x9GfsHqLMEQEXKQi3yIJnDCZGP3oBXw3kYUieHowaTudqliTKtFcAebmlsl7RllDJQVM
+         2GX2KRWnjDFGAt0sHDvkwCbXSNgnucVQG9Oz5sfK8SIdSxpqVJ9SD0LnFLDPFYpELjrm
+         72hQVLTGYZFgQyhAou1eyPKS2nbv7KEJKj3kY6Ga0keh8aryI9izaKCoQk2r9jmCJq8Y
+         OadxxA+PYkiiDeJ0JmckfhUZJ+liXiVM9/sgPtcLfXIpnGjlXCaetgLxVKWpc1ze+QAs
+         SV8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Tu8Fp/uz7bbeEJee+ohTniXikyB8jQpgmo0/F9wxQwc=;
+        b=qa+ts+fSD3LuDlMR30KwBEkgys6IKnnv96Wt6vb0Xz3BgsrxnBwe4p7Cnxuhe5ArH4
+         XfijjiI7RqrLdCWcqQPzmD7vJLuf1eqIjeddVc/WtNa7rCQoy5jO4yzVTs6PGVxSlprd
+         uF4WFKET5Jj95BN/3gluSojqZkP+3RQnE6tWPfcmdeE0OmOR35y8kb+shz5isTKuD6UD
+         ZCPOIrrOj/ZuRN0QmYMPy0R0mtB16JRIH+d7+bHbL1rnvHTNYSnB3AivglmTGXXdOalE
+         vCisu4POA7cT09AX68WcgeZDwGG0FE0qCxG9zD4o8StrQ9zknVTtJcO+A1h8TUDHzE26
+         g40Q==
+X-Gm-Message-State: APjAAAWsmtgteB26CCNMcfI9GRHj7rQ32r/jElJ9iGsuvbcxOHZhW80Z
+        Y+DmLLXnVrzg9bdWpGn4sBLdmAS7qs0=
+X-Google-Smtp-Source: APXvYqxv7TotCZPxzbi9TfWTIu4D0s3TjKk9zD0KzFT5XZp5TC85KF/D7Rjc4nKxwkLReEaD8QRBhw==
+X-Received: by 2002:a65:628b:: with SMTP id f11mr23776008pgv.95.1557646474151;
+        Sun, 12 May 2019 00:34:34 -0700 (PDT)
+Received: from localhost.localdomain ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id e123sm5492242pgc.29.2019.05.12.00.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 May 2019 00:34:33 -0700 (PDT)
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: [PATCH V3 0/5] nvme-trace: Add support for fabrics command
+Date:   Sun, 12 May 2019 16:34:08 +0900
+Message-Id: <20190512073413.32050-1-minwoo.im.dev@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---/e2eDi0V/xtL+Mc8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here's a third patchset to support fabrics command tracing.  The first
+patch updated host/trace module to a outside of it to provide common
+interfaces for host and target both.  The second one adds support for
+tracing fabrics command from host-side.  The third is a trivial clean-up
+for providing a helper function to figure out given command structure is
+for fabrics or not.
 
-On Fri, May 10, 2019 at 03:34:34PM -0700, Douglas Anderson wrote:
-> If a controller specifies that it needs high priority for sending
-> messages we should always schedule our transfers on the thread.  If we
-> don't do this we'll do the transfer in the caller's context which
-> might not be very high priority.
+The fourth and fifth are the major change points of this patchset.  4th
+patch adds request tracing from the target-side.  5th updated, of course,
+completion of given request.
 
-If performance is important you probably also want to avoid the context
-thrashing - executing in the calling context is generally a substantial
-performance boost.  I can see this causing problems further down the
-line when someone else turns up with a different requirement, perhaps in
-an application where the caller does actually have a raised priority
-themselves and just wanted to make sure that the thread wasn't lower
-than they are.  I guess it'd be nice if we could check what priority the
-calling thread has and make a decision based on that but there don't
-seem to be any facilities for doing that which I can see right now.
+Please review.
+Thanks,
 
---/e2eDi0V/xtL+Mc8
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes to V2:
+  - Provide a common code for both host and target. (Chaitanya)
+  - Add support for tracing requests in target-side (Chaitanya)
+  - Make it simple in trace.h without branch out from nvme core module
+    (Christoph)
 
------BEGIN PGP SIGNATURE-----
+Changes to V1:
+  - fabrics commands should also be decoded, not just showing that it's
+    a fabrics command. (Christoph)
+  - do not make it within nvme admin commands (Chaitanya)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzXzCcACgkQJNaLcl1U
-h9AjOAf+MXPHyjoQyfbJn08k/H8FZGylRFAxKaq4gxN0q4GV4ErRQ4izUJ80gQ5U
-sCbdavMU+2u2yZ8yl/uthfJzXlmpViMGmi/nnHwRcPunHFz1nBmA9sZ4/ODkIj8N
-cCWjLrCRxeE9e23yjIInTgiMkgg2DgSeA+0kVbtg4S0gyIM+POpLXtN6thC9bi0N
-+ZVukER12euMeuVoruZ9jAo52XBhVjj2tpFK18N+bbgIMKB1T2qrd1Fp2r3H6+ty
-GQsyEb/f1XN0NXaLDI5wunSFe0EiUe6P6rZuu4p9ZTyPhg663C+JsqU72Rj8EBXA
-qT+vCFKYWKPzapEj1LDuT9p+DyPnyg==
-=aJHR
------END PGP SIGNATURE-----
+Minwoo Im (5):
+  nvme: Make trace common for host and target both
+  nvme-trace: Support tracing fabrics commands from host-side
+  nvme: Introduce nvme_is_fabrics to check fabrics cmd
+  nvme-trace: Add tracing for req_init in trarget
+  nvme-trace: Add tracing for req_comp in target
 
---/e2eDi0V/xtL+Mc8--
+ MAINTAINERS                       |   2 +
+ drivers/nvme/Makefile             |   3 +
+ drivers/nvme/host/Makefile        |   1 -
+ drivers/nvme/host/core.c          |   7 +-
+ drivers/nvme/host/fabrics.c       |   2 +-
+ drivers/nvme/host/pci.c           |   2 +-
+ drivers/nvme/target/core.c        |   8 +-
+ drivers/nvme/target/fabrics-cmd.c |   2 +-
+ drivers/nvme/target/fc.c          |   2 +-
+ drivers/nvme/target/nvmet.h       |   9 ++
+ drivers/nvme/{host => }/trace.c   |  75 ++++++++++++++++
+ drivers/nvme/{host => }/trace.h   | 144 ++++++++++++++++++++++++------
+ include/linux/nvme.h              |   7 +-
+ 13 files changed, 227 insertions(+), 37 deletions(-)
+ rename drivers/nvme/{host => }/trace.c (65%)
+ rename drivers/nvme/{host => }/trace.h (59%)
+
+-- 
+2.17.1
+
