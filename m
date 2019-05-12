@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9548C1AB00
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 469CB1AD60
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfELHaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 03:30:08 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52097 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfELHaI (ORCPT
+        id S1727151AbfELRGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:06:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49570 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbfELRFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 03:30:08 -0400
-Received: by mail-it1-f196.google.com with SMTP id s3so15749067itk.1;
-        Sun, 12 May 2019 00:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xJcbnbRCFHDxn85Bix7DuDcwvbDnsag2TKw0s1y1+D4=;
-        b=ZvcDWa/0gaOmHTp40plWp6wHVhUZ7DaSbFt8LZNzuDKl3l71jmVY2RlIFPfItSsOh7
-         TlVHkOuk5kzvvvV9TwHnOw1ZThdsM3WgOKwfI9VpgXxa1kH8BAIvsYjGtt5tOf335gdr
-         mvsLJrmvrdL6AFXWbk4GLZvyub/5UJX6WilEOil0QILDbJ/6tROnN5s/mizRUmxJ+SV6
-         lq++vumR16y9hsV+eVKTk1DXecNTTzUMI3sfh5ymPAAz1lB6phjsoQu8gq0ILYKDqXzc
-         aT9JHaY2AXZKVMz7Otf3P3Gz8npw9FYIZlWIU8qRecBfz4urk9YBaUnqSKVNyH1Nvn6L
-         N/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xJcbnbRCFHDxn85Bix7DuDcwvbDnsag2TKw0s1y1+D4=;
-        b=FujfFvZPfjiortujoQ2OtGJOMASPBMBo5ovVEI+cLNNyZW2EWk1zjrbUf1X8SrcA+d
-         IjGDpB16RPkxa9l/P+I2laHkpa42GYUbtB2dMBtu5+Jc4oJuDNxpWPHTQ+4bWJo+Z9uj
-         hIsOUOGCMMsrz46H+oK5RKkGkObpmXfs1RJbwxlkAlOOovZGYF7MCy+O3rn5vxG+joXK
-         jgb6DKYTqh5ZqbznRRppOC1eH10i/T35Xydo4c5BsorOjXjDLnmR3ztFUP9ZaLH77iR1
-         xDrckDRfCd1JriJXQjhuAwJiz0q8vCN/r8q7f33E4Ibq6EldwOARaUap8RFthX3bg88W
-         Pwvg==
-X-Gm-Message-State: APjAAAUj6LqjbW6rS7M5BCytEjQy6VQFAQKfTBuYNPcgVZ3SXC+4qPKL
-        6qtJKg1YHd6vvTAXfLofkrs=
-X-Google-Smtp-Source: APXvYqxql4ZEzOTXhn8Q5t9SelqnaUHvHVKGVLbNYmd0+1u5x1CE1WwwYOXsl7BSQ2gjcnQLXPEZvg==
-X-Received: by 2002:a02:cc8d:: with SMTP id s13mr10962955jap.115.1557646207259;
-        Sun, 12 May 2019 00:30:07 -0700 (PDT)
-Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id k76sm4405065ita.6.2019.05.12.00.30.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 12 May 2019 00:30:06 -0700 (PDT)
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Cc:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
-Subject: [PATCH v2] selftests: bpf: Add files generated after build to .gitignore
-Date:   Sun, 12 May 2019 01:29:18 -0600
-Message-Id: <20190512072918.10736-1-skunberg.kelsey@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 12 May 2019 13:05:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JGyDpXs0z4qP/VLm+QIIvl6tLAm7ZejvyxnTMOgb8/o=; b=kPQ9K/GcuDxCVWrz7TmQZp9qq
+        uWbtRKu5SSeuFIwTtJ5d4MgiHwpuqoLAndskrb2iTEFu8Oy0KiEKGW9bJtjSm09or+/MMBizPkRjh
+        xZ80jRTm/E1gPRhYoiX0p7977HVfVdo76T9WcZCaiG+QNMAvdXQlpqpb2QcZ/OGfCksrw=;
+Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hPruu-00044g-9y; Sun, 12 May 2019 17:05:40 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 44E0644000C; Sun, 12 May 2019 08:33:01 +0100 (BST)
+Date:   Sun, 12 May 2019 16:33:01 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
+        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
+        mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH 1/4] spi: For controllers that need realtime always use
+ the pump thread
+Message-ID: <20190512073301.GC21483@sirena.org.uk>
+References: <20190510223437.84368-1-dianders@chromium.org>
+ <20190510223437.84368-2-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
+Content-Disposition: inline
+In-Reply-To: <20190510223437.84368-2-dianders@chromium.org>
+X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following files are generated after building /selftests/bpf/ and
-should be added to .gitignore:
 
-	- libbpf.pc
-	- libbpf.so.*
+--/e2eDi0V/xtL+Mc8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
----
-Change since v1:
-        - Add libbpf.so.* in replace of libbpf.so.0 and
-          libbpf.so.0.0.3
-        - Update commit log to reflect file change
+On Fri, May 10, 2019 at 03:34:34PM -0700, Douglas Anderson wrote:
+> If a controller specifies that it needs high priority for sending
+> messages we should always schedule our transfers on the thread.  If we
+> don't do this we'll do the transfer in the caller's context which
+> might not be very high priority.
 
- tools/testing/selftests/bpf/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
+If performance is important you probably also want to avoid the context
+thrashing - executing in the calling context is generally a substantial
+performance boost.  I can see this causing problems further down the
+line when someone else turns up with a different requirement, perhaps in
+an application where the caller does actually have a raised priority
+themselves and just wanted to make sure that the thread wasn't lower
+than they are.  I guess it'd be nice if we could check what priority the
+calling thread has and make a decision based on that but there don't
+seem to be any facilities for doing that which I can see right now.
 
-diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
-index 41e8a689aa77..a877803e4ba8 100644
---- a/tools/testing/selftests/bpf/.gitignore
-+++ b/tools/testing/selftests/bpf/.gitignore
-@@ -32,3 +32,5 @@ test_tcpnotify_user
- test_libbpf
- test_tcp_check_syncookie_user
- alu32
-+libbpf.pc
-+libbpf.so.*
---
-2.20.1
+--/e2eDi0V/xtL+Mc8
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzXzCcACgkQJNaLcl1U
+h9AjOAf+MXPHyjoQyfbJn08k/H8FZGylRFAxKaq4gxN0q4GV4ErRQ4izUJ80gQ5U
+sCbdavMU+2u2yZ8yl/uthfJzXlmpViMGmi/nnHwRcPunHFz1nBmA9sZ4/ODkIj8N
+cCWjLrCRxeE9e23yjIInTgiMkgg2DgSeA+0kVbtg4S0gyIM+POpLXtN6thC9bi0N
++ZVukER12euMeuVoruZ9jAo52XBhVjj2tpFK18N+bbgIMKB1T2qrd1Fp2r3H6+ty
+GQsyEb/f1XN0NXaLDI5wunSFe0EiUe6P6rZuu4p9ZTyPhg663C+JsqU72Rj8EBXA
+qT+vCFKYWKPzapEj1LDuT9p+DyPnyg==
+=aJHR
+-----END PGP SIGNATURE-----
+
+--/e2eDi0V/xtL+Mc8--
