@@ -2,106 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F051AB16
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 09:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFD61AD66
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfELHki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 03:40:38 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:45226 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725913AbfELHkh (ORCPT
+        id S1727139AbfELRGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:06:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49574 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbfELRFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 03:40:37 -0400
-Received: from mr2.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x4C7eanD022301
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:40:36 -0400
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x4C7eV1J019325
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 03:40:36 -0400
-Received: by mail-qt1-f197.google.com with SMTP id l20so11104606qtq.21
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 00:40:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
-         :message-id;
-        bh=4niML5CBEC30siYgDwkdqvWzedR5M8WeQePCBwOwTk0=;
-        b=M4mimFbKVyvTFcgUnz2SexFsNJqFewDUCdyuePrW8woSekGOfg4Zl0tGjwflyYXGLT
-         NYVGbPFnecC/d6mIa3sPxKzL7eNFt09fA8FUl8rbzGMD6yd0CDk4Go/yfUfbM8QOYS8U
-         oArgv5ljkWPzkGTSXoAT/vdO1VjLSkhk9FRmgoFyGOSBzZ+4yqy6DRjAxeRPm40ZkgYl
-         XzGzlG1vWiCtEH4Y22K5Ikap21Lbsmx9gmb0gFUj1cnpCyiC3Fsu4cAvI87i+SjQ7O2u
-         D16UAZ8wlzlFN+WN7zTWi1ud7Tw+VT3SmQpZjGbSGUlxaIDmCLEwFgN23t0uCvplSCYl
-         I8jw==
-X-Gm-Message-State: APjAAAXsBEKEAYJGsiVeacFtmtZOYckS1Ja1Ir2tdaZO+PHTVNiZIyNR
-        sIJyNpjoClIKENQ+AEhRsGjjYH8lm/vMjxCOcFES/XRu91ZVOf+3GzQfKV610rfBYXv16/4ITYj
-        JY9DZqnELFvEfPXuN9lfUu7EZhTh5lD+Qb1Q=
-X-Received: by 2002:ac8:298d:: with SMTP id 13mr17969933qts.174.1557646831376;
-        Sun, 12 May 2019 00:40:31 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyAe13v194yDiRZP16Zt0YhlISnTOc1dpB98yMzdZWCHtKpcG/mjwaobALtaHZHMtv44Qfdxw==
-X-Received: by 2002:ac8:298d:: with SMTP id 13mr17969915qts.174.1557646831127;
-        Sun, 12 May 2019 00:40:31 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::bf6])
-        by smtp.gmail.com with ESMTPSA id n36sm7215149qtk.9.2019.05.12.00.40.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 00:40:29 -0700 (PDT)
-From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepak Mishra <linux.dkm@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jeremy Cline <jcline@redhat.com>
-cc:     linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
-Subject: [PATCH] scripts/spdxcheck.py - fix list of directories to check
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Sun, 12 May 2019 03:40:28 -0400
-Message-ID: <2008.1557646828@turing-police>
+        Sun, 12 May 2019 13:05:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f61YpczbbTMv0calrg2aAD9rT2tVBXPGrc7DIwQXTro=; b=hHby0WejM3CuabDfv3c1pDZLf
+        9FuQRW5VhKm1rJjiEfCAiHgpTsOtAzbbPlzMOyPWHzWRPcQZGddpc41kDpqXuUWoZzYQ08RS9pvbM
+        e9u/glImqcaHzcBjbSo7H0BXJgWEm13FFpV0G2mdpmrpq8hiWBcc+TZuH2pfwI79PnxdQ=;
+Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hPrut-00044T-MU; Sun, 12 May 2019 17:05:39 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 0C9CB440017; Sun, 12 May 2019 08:42:53 +0100 (BST)
+Date:   Sun, 12 May 2019 16:42:53 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
+        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
+        mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/4] spi: Allow SPI devices to specify that they are
+ timing sensitive
+Message-ID: <20190512074252.GD21483@sirena.org.uk>
+References: <20190510223437.84368-1-dianders@chromium.org>
+ <20190510223437.84368-3-dianders@chromium.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+B+y8wtTXqdUj1xM"
+Content-Disposition: inline
+In-Reply-To: <20190510223437.84368-3-dianders@chromium.org>
+X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After this commit:
 
-commit 62be257e986dab439537b3e1c19ef746a13e1860
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Tue Apr 30 06:51:30 2019 -0400
+--+B+y8wtTXqdUj1xM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    LICENSES: Rename other to deprecated
+On Fri, May 10, 2019 at 03:34:35PM -0700, Douglas Anderson wrote:
 
-checkpatch throws an error:
+> + * @timing_sensitive: Transfers for this device are senstive to timing
+> + *	so we should do our transfer at high priority.
 
-[/usr/src/linux-next]2 scripts/checkpatch.pl -f drivers/staging/rtl8712/rtl871x_rf.h
-FAIL: "Blob or Tree named 'other' not found"
-Traceback (most recent call last):
-  File "scripts/spdxcheck.py", line 240, in <module>
-    spdx = read_spdxdata(repo)
-  File "scripts/spdxcheck.py", line 41, in read_spdxdata
-    for el in lictree[d].traverse():
-  File "/usr/lib/python2.7/site-packages/git/objects/tree.py", line 298, in __getitem__
-    return self.join(item)
-  File "/usr/lib/python2.7/site-packages/git/objects/tree.py", line 244, in join
-    raise KeyError(msg % file)
-KeyError: "Blob or Tree named 'other' not found"
+Not sure this is the best name.  Every device is timing sensitive to
+some extent and it's a bit wooly about what it's trying to accomplish,
+it's specifically about the timing involved in ensuring that the entire
+message goes out as quickly as possible AIUI.  I think if anything I'd
+just have the caller specifying a RT priority for the thread, but that's
+awkward as we might want to switch over to deadline at some point.  How
+about just calling the parameter rt the same as it is when the
+controller does the same configuration?
 
-Fix directory search list. Pick up the new LICENSES/dual while we're there...
+--+B+y8wtTXqdUj1xM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reported-by: Deepak Mishra <linux.dkm@gmail.com>
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-index 4fe392e507fb..7abd5f5cb14d 100755
---- a/scripts/spdxcheck.py
-+++ b/scripts/spdxcheck.py
-@@ -32,7 +32,7 @@ import os
- def read_spdxdata(repo):
- 
-     # The subdirectories of LICENSES in the kernel source
--    license_dirs = [ "preferred", "other", "exceptions" ]
-+    license_dirs = [ "preferred", "dual", "deprecated", "exceptions" ]
-     lictree = repo.head.commit.tree['LICENSES']
- 
-     spdx = SPDXdata()
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzXznkACgkQJNaLcl1U
+h9BbrAf/QuZJvvnzSN9f3YRIMrxOcWjPSXe8m7cpjjYwT8RgFk/K/D2EtHZqpPa8
+elj2mlHof5nWuPrCydyTZz4dV2Q7K49cprgr2q7oK+nifKWCIVDFZvB5NjIP165o
+dI34Xs1qOUui3KPVSl1CGed2W9d2y+5TEck0os5MsnjpL89b4NrMr/lq3z8zZ0dE
+6WfF7Tr49s10iLyo0g7QYPqvw1/nGoxKloIEGs2j2GALOqzDZgd6UjXOTig8UfgR
+VYCn8zQ3IO2FBFLnnS+jSqzNwacaKtqLIP+4oeKiQWCzIiw6HDvV/vMbOg6PvAUO
+cWErMjpY5aVcL/XP4BawO+V+ivVgVw==
+=Eybc
+-----END PGP SIGNATURE-----
 
-
+--+B+y8wtTXqdUj1xM--
