@@ -2,153 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8693E1AD86
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E4F1AD8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfELRkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 13:40:45 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:34489 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfELRkp (ORCPT
+        id S1726942AbfELRnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:43:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39365 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfELRnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 13:40:45 -0400
-X-Originating-IP: 46.193.9.130
-Received: from localhost (cust-west-pareq2-46-193-9-130.wb.wifirst.net [46.193.9.130])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 9D7A3C0006;
-        Sun, 12 May 2019 17:40:34 +0000 (UTC)
-Date:   Sun, 12 May 2019 19:40:33 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     "U.Mutlu" <um@mutluit.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Chen-Yu Tsai <wens@csie.org>,
-        linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        u-boot@lists.denx.de, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Pablo Greco <pgreco@centosproject.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Oliver Schinagl <oliver@schinagl.nl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        FUKAUMI Naoki <naobsd@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [RFC PATCH] drivers: ata: ahci_sunxi: Increased SATA/AHCI DMA
- TX/RX FIFOs
-Message-ID: <20190512174033.znvtaa5yvhpcmnna@flea>
-References: <20190510192550.17458-1-um@mutluit.com>
- <20190512121245.l3cvg4std6yanwix@flea>
- <5CD844F3.5080103@mutluit.com>
+        Sun, 12 May 2019 13:43:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id z26so5884673pfg.6;
+        Sun, 12 May 2019 10:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RpfQWsV4Cbteqis6flWSQny0WpQ+Omw4oCErU7z7boU=;
+        b=fjM1S5rHQqQcQd4WKjcxpSpf/RFROidSPqgD621jf1QPwRyL0r+h5EwLAMqv1Obsbq
+         CGGMdJweC0t63KEYmq6MWkdav2WloDvQoZN/SJxecAMgoOkQ/K7fAxBZ1pC9l/dPGndk
+         C4L/Jc9sIsCmgfqorFyGMPsz3wN+i/jthDI6dq0zfn61d4iJhN15CAPJD2vDiJht2+/1
+         JEcSDTmE/mtYq0qyn3NONfVE4e1IyE1/Azv6YEtO68QeCVlgg4DNNKKEILhpGrobLQD7
+         T2BgJHi0qQmeBhVNWv0iF5qX7FUdEBYgHpH56YzJ1+Xn4a3IBzxGpkzmh2Y4vA1pBH9v
+         29iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RpfQWsV4Cbteqis6flWSQny0WpQ+Omw4oCErU7z7boU=;
+        b=XknaEIH+x8U1+WW+XSVW4p52KoWDePrxymTLGOLg6XBU1fm9hIna3mNjkL54wpPRec
+         U3Ei6IjdHpgEk/WJtXhQ+9BL13kFJqNdlU6XewgNHLfaLbD9VrvgQ3piaAiQip4xV6sP
+         OiI+ZS1sjAno+sng7zBug5bVT0AYzcF8LBgIcJOJOATc7bazxOCrUcfTgQm+E6rUdXpw
+         4mMMABy7/1fnEQqVbiGtUXjEJlH+jyoQPU8JEFgrnPfAMd9NEfkPl1210k6kpHQwkmQI
+         xNcImoRy1hIUM+v68sBXqu5+NUw0eETvrg/1Cacgchzit8sxPpTt3jTCtJMh3oY2FzPG
+         zFzw==
+X-Gm-Message-State: APjAAAVwclL4qchHd62LMxWal3mJKqq5W14IucumH7BsEHI9ND53lBha
+        zTbk3JkoSjA5DatHa+artSRCoga5
+X-Google-Smtp-Source: APXvYqwA2JLRsVBcHD5XrPTOoDV9t5KwrAn9xuuMjj9Ou0loLok0YzAVyBhvlltiUo/rZLTLoCgOBA==
+X-Received: by 2002:a63:170a:: with SMTP id x10mr25927719pgl.355.1557683003371;
+        Sun, 12 May 2019 10:43:23 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id m6sm1125842pgr.18.2019.05.12.10.43.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 May 2019 10:43:22 -0700 (PDT)
+Subject: Re: [RFC PATCH v1 5/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra20
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-6-digetx@gmail.com>
+ <20190508075706.GW14916@sirena.org.uk>
+ <9756d8ca-0778-5185-5b6b-3168d63819ec@gmail.com>
+ <20190512090627.GO21483@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <586b4f29-1937-2d7b-3944-c29311502878@gmail.com>
+Date:   Sun, 12 May 2019 20:42:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5CD844F3.5080103@mutluit.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190512090627.GO21483@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+12.05.2019 12:06, Mark Brown пишет:
+> On Wed, May 08, 2019 at 04:10:58PM +0300, Dmitry Osipenko wrote:
+> 
+>> 1) CORE and RTC have max-spread voltage of 170mV.
+>> 2) CORE and RTC voltages must be higher than the CPU voltage by at least
+>> 120mV.
+> 
+> This seems like it should be easy enough to describe - we just need
+> minimum and maximum spreads between pairs of rails.
+> 
 
-On Sun, May 12, 2019 at 06:08:19PM +0200, U.Mutlu wrote:
-> Hi Maxime & Others,
->
-> what follows is a somewhat lengthy technical story behind this patch;
-> you can just skip it and jump to the end.
->
->
-> As can be seen in the ahci_sunxi.c, the port used in this patch
-> is this one (32bit):
->   #define AHCI_P0DMACR    0x0170
-> It's a so called "Vendor Specific Port" according to the SATA/AHCI specs by Intel.
-> The data behind it is actually a struct, consisting of 4 fields,
-> each 4bits long, plus a 16bits long field that is marked as Reserved
-> in secondary literature (see below):
->
-> struct AHCI_P0DMACR_t
-> {
->   unsigned TXTS  : 4,
->            RXTS  : 4,
->            TXABL : 4,
->            RXABL : 4,
->            Res1  : 16;
-> };
->
-> This struct is just my creation for my own tests as it's not part of the
-> driver source. The patch touches only the first 2 fields: TXTS and RXTS.
->
-> See this similar product documentation by Texas Instruments for the above struct:
-> https://www.ti.com/lit/ug/sprugj8c/sprugj8c.pdf
-> TMS320C674x/OMAP-L1x Processor, Serial ATA (SATA) Controller, User's Guide,
-> Literature Number: SPRUGJ8C, March 2011,
-> Page 68, Chapter 4.33 "Port DMA Control Register (P0DMACR)"
->
-> The above TI document describes the two fields as follows:
->
-> TXTS:
->   Transmit Transaction Size (TX_TRANSACTION_SIZE). This field defines the
-> DMA transaction size in
->   DWORDs for transmit (system bus read, device write) operation. [...]
->
-> RXTS:
->   Receive Transaction Size (RX_TRANSACTION_SIZE). This field defines the
-> Port DMA transaction size
->   in DWORDs for receive (system bus write, device read) operation. [...]
->
->
-> So, in my patch the fields TXTS and RXTS are set to 3 each.
-> Without the patch, these fields seem to have some random content
-> (I'vee seen 5 and 6, 4 and 4, and 0 and 0 on different devices),
-> as the previous code doesn't touch these 2 fields (ie. these two fields
-> are not within the used old mask of 0xff00; cf. ahci_sunxi.c, function
-> ahci_sunxi_start_engine(...)).
->
->
-> Some background story in my hunt for obtaining product documentation:
->
-> I couldn't find any product documentation for the SATA/AHCI
-> in these SoCs by Allwinner Technology (allwinnertech.com),
-> unlike with such products from other such companies.
->
-> I asked Allwinner, but they just said that the A20 of my SBC
-> would (allegedly) no more be actual and that the support for it
-> has ended (but this statement somehow cannot be true as the
-> A20 SoC is still continued being marketed at their website).
-> They instead sent me a bunch of really irrelevant PDFs which have
-> nothing to do with SATA/AHCI.
->
-> So, the company Allwinner Technology unfortunately was not cooperative
-> to provide me information on their SATA/AHCI-implementation in their SoCs :-(
-> Even the ports used in the actual ahci_sunxi.c in the linux tree are undocumented;
-> it is even commented with "/* This magic is from the original code */"
-> and below it many ports are used for which no documentation is available,
-> or at least I couldn't find any on the Internet. And the initial programmer
-> in 2014 and prior was Daniel Wang (danielwang@allwinnertech.com),
-> but email to that address bounces.
->
-> So, I was forced to research secondary literature from other vendors
-> like Texas Instruments (thanks TI !) and Intel, and also studying
-> very old source codes in the old Linux repositories (as it differs
-> much from the current version) going back to the year 2014, and had
-> to do many (blind) experiments until I found this solution.
->
-> The above given User's Guide by Texas Instruments (and their such
-> documents for their newer such products) helped me much to find the solution.
-> It's of course not really the correct documentation for the Allwinner SoCs,
-> but still better than nothing.
->
-> If I only had the right documentation, then I for sure could try
-> to further improve that already achieved result by this patch,
-> as with SATA-II upto 300 MiB/s is possible.
->
->
-> Yes, I'll resend the patch with some appropriate comments.
-
-That's awesome research and explanation, thanks! :)
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes, but the proper CORE/RTC minimum voltages shall be maintained until
+all drivers will get support for the voltage management, which likely to
+take a lot of time to get upstreamed. So I'd want to get at least some
+basics working for the start, later on it should be possible to consider
+generalization of the regulators coupling. Mark, are you okay with
+having the custom regulators coupler as an interim solution?
