@@ -2,118 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C6091AB2A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 10:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14B61AD64
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2019 19:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfELI0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 04:26:30 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42706 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfELI02 (ORCPT
+        id S1726964AbfELRFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 13:05:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49356 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfELRFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 04:26:28 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 13so5501188pfw.9;
-        Sun, 12 May 2019 01:26:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qI16oqs6X+YZXj2yLfBOsFJ0yl1UeyG9NZW0E4qFEjM=;
-        b=aNTi/o2B+xeystVa+Q3aNwsJJV+tvjZ2fAEK/aibVWkK9S6v+PEwnez16nUwBe1qS8
-         upiIjBaoImpcTzZmnd2zg+ZNfHl4G9Gtj9wJyx/MeMH4rvgv9jRjHDAHZKmjgaNCIoYt
-         ZhPCrUXvEAxzeOJBttD9d/nSYnwcgncT0lfVkCX/P9rHPTfvzH+mvOBGyYQeIZ08+/nt
-         E4wp+KD5lNwl2y/hcYcwzfFeoJB4i9BD21y1V5TjiL7xpZI54mI995MwBx7oRqjMPULL
-         cyYzBD/jHpXbPMm6CdpkN9Y09H5KG/zNuginFXcFDxhxiBW5TdnlbZPVboQYf9AZDKQX
-         +gTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qI16oqs6X+YZXj2yLfBOsFJ0yl1UeyG9NZW0E4qFEjM=;
-        b=cGdXjHqUn+V24QxEP8UVSiZptOaT5lwpYuMnhwi0QrYXWqDXM1vdJAMjdRLe6F9b4p
-         /KYRBmk/9l1jhEk38Dru3VjBnozDGOd8yHhvDIypwI2kilj7Ye2cfXzZ0UrfG/3Pe0fn
-         EdCjcQJS48qyOxcp/n+AAJNI1G4pnSASWN5rB5uCzErs5zs16UmIPtnbx3liM4h/g+9Z
-         2cnAIrbUraXikzuAU7roC9SZoSO4ND+wdFxlRLl18QD7l51FKYeOgMtfhCc5hDBvbXfF
-         iswvd7iiVlwoVFxccOEZFJOVoRyzPo6fOizb89hsZBfcaRc5aKqvqw/efiDGORhwj3J9
-         iUxQ==
-X-Gm-Message-State: APjAAAU8CKd4O+a6wPx1wFgM2qUji6qjgxISFe/JfhShyAIiaCg2vNpT
-        5yPmk8YzzJB3n4Js7CJv5oU=
-X-Google-Smtp-Source: APXvYqw0BUy0j28XMpYRMC1njFl6TsjR5ScQQirgG+92GPsuGEoaMq3sHF4jM3DGqBY3xKz/pGmRVQ==
-X-Received: by 2002:a63:8dc9:: with SMTP id z192mr24480707pgd.6.1557649588155;
-        Sun, 12 May 2019 01:26:28 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id l21sm14297789pff.40.2019.05.12.01.26.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 01:26:27 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     tiny.windzz@gmail.com, rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
-        Jonathan.Cameron@huawei.com, nicolas.ferre@microchip.com,
-        paulmck@linux.ibm.com, andy.gross@linaro.org, olof@lixom.net,
-        bjorn.andersson@linaro.org, jagan@amarulasolutions.com,
-        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
-        enric.balletbo@collabora.com
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: thermal: add binding document for h6 thermal controller
-Date:   Sun, 12 May 2019 04:26:14 -0400
-Message-Id: <20190512082614.9045-4-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190512082614.9045-1-tiny.windzz@gmail.com>
-References: <20190512082614.9045-1-tiny.windzz@gmail.com>
+        Sun, 12 May 2019 13:05:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=i7AIbl3LuWCqd7OLDSbBZZ+JZVLRCdFPtZTLEmXFlX4=; b=YcPgH/wO+xi9sH9dzNiWeGDnh
+        aut8UScY9xKtjJf0ZSIy0pUP4FNY/xtfCuKYjbjLkdWva3AZvyNCnW35thx+T4VdaF0gkKNAJ8hpL
+        mwDObNGZGo8C0jJ0mQ50lzj40EZfdK0a1mK92z7NZLMISwwWGQ1OYGJCXiM1ccBafV3dA=;
+Received: from [81.145.206.43] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hPrut-00044U-NA; Sun, 12 May 2019 17:05:39 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id EE2C5440056; Sun, 12 May 2019 09:27:26 +0100 (BST)
+Date:   Sun, 12 May 2019 17:27:26 +0900
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: Re: [PATCH v2 2/4] ASoC: hdmi-codec: remove reference to the current
+ substream
+Message-ID: <20190512082726.GL21483@sirena.org.uk>
+References: <20190506095815.24578-1-jbrunet@baylibre.com>
+ <20190506095815.24578-3-jbrunet@baylibre.com>
+ <20190508070058.GQ14916@sirena.org.uk>
+ <fd633a5597703f557d75e43c14213699efe295f0.camel@baylibre.com>
+ <20190508085758.GE14916@sirena.org.uk>
+ <5b677f1581565bd8c915a14cd91352ec4bcabdd7.camel@baylibre.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="00hq2S6J2Jlg6EbK"
+Content-Disposition: inline
+In-Reply-To: <5b677f1581565bd8c915a14cd91352ec4bcabdd7.camel@baylibre.com>
+X-Cookie: HOST SYSTEM RESPONDING, PROBABLY UP...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds binding document for allwinner h6 thermal controller.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- .../bindings/thermal/sun50i-thermal.txt       | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/sun50i-thermal.txt
+--00hq2S6J2Jlg6EbK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/thermal/sun50i-thermal.txt b/Documentation/devicetree/bindings/thermal/sun50i-thermal.txt
-new file mode 100644
-index 000000000000..67eda7794262
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/sun50i-thermal.txt
-@@ -0,0 +1,32 @@
-+Binding for Thermal Sensor of Allwinner SOC.
-+
-+This describes the device tree binding for the Allwinner thermal controller
-+which measures the on-SoC temperatures.
-+
-+Required properties:
-+- compatible:
-+  - "allwinner,sun50i-h6-ths" : For H6
-+- reg: Address range of the thermal controller
-+- clocks, clock-names: Clocks needed for the thermal controller.
-+		       The required clocks for h6 are: "bus".
-+- resets, reset-names: Reference to the reset controller controlling
-+		       the thermal controller.
-+- nvmem-cells: A phandle to the calibration data provided by a nvmem device. If
-+	       unspecified default values shall be used.
-+- nvmem-cell-names: Should be "calib"
-+- #thermal-sensor-cells : For H6 Should be 1.
-+			  See ./thermal.txt for a description.
-+
-+Example:
-+
-+	ths: ths@1c25000 {
-+		compatible = "allwinner,sun50i-h6-ths";
-+		reg = <0x05070400 0x100>;
-+		clocks = <&ccu CLK_BUS_THS>;
-+		clock-names = "bus";
-+		resets = <&ccu RST_BUS_THS>;
-+		reset-names = "bus";
-+		nvmem-cells = <&tsen_calib>;
-+		nvmem-cell-names = "calib";
-+		#thermal-sensor-cells = <1>;
-+	};
--- 
-2.17.0
+On Thu, May 09, 2019 at 10:11:48AM +0200, Jerome Brunet wrote:
+> On Wed, 2019-05-08 at 17:57 +0900, Mark Brown wrote:
 
+> > Probably using a mutex for the flag is clearer.  I'd rather keep things
+> > as simple as absolutely possible to avoid people making mistakes in
+> > future.
+
+> I received a notification that you applied this patch.
+> Just to confirm, you expect a follow up patch to re-introduce the mutex, right ?
+
+Right.
+
+--00hq2S6J2Jlg6EbK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzX2O4ACgkQJNaLcl1U
+h9DTqgf+PkO76Y2CBGrPX0MuFUXOjE2QlNeHbqPtBweMBUAI8bHZbVVwZzd4RWQc
+MO9Na+UlPDBKHaxlfkC8HqV5Tud6PMmAcXYj/qJCiGewOTwVI+C472JBLfsYfont
+dfAkAhqUE+XZ/WlF1MELpoXCWAY3AP/i8RLP7it1dD0Y58HZl3/ofjtB0eIXevAr
+HnPMmyv9VzSA9RmD7bEwzeuURho3714tlQs45grB3UtW6h39hDUWHanl8v+uet1u
+gyHtxg9tE90edoV83T8lkqwiRuO7Pd+V0XVKM1bvGpNVMEAgR6iAQ02UUgULBzh9
+qVZx8lrwwvTjCIQVH+VUw2B5NwV1Rw==
+=m9x5
+-----END PGP SIGNATURE-----
+
+--00hq2S6J2Jlg6EbK--
