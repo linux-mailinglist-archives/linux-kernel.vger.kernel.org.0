@@ -2,143 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 610191B465
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A111B47C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfEMLBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 07:01:33 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38135 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbfEMLBc (ORCPT
+        id S1729226AbfEMLEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 07:04:06 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54151 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbfEMLEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 07:01:32 -0400
-Received: by mail-vs1-f67.google.com with SMTP id v9so7725973vse.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3laysTfG58br9ekvMftLCflS2bw8W4QgtgThoJczg/k=;
-        b=OhBo05KGmUf9v7pWQWG2ym5VzciK3m8PAY7OCLMPlu6ajuOvl8hsdIR4ktGO+tfwZl
-         PjR20rgtE7om7EPFacQai80QmP6uZk5pby1EEaVmUXxjTt6Mz7+zzZ5iu8wW80qi5I9o
-         foT1oVXlmX9+sq/K74dm7TbFBOxgihNI3wwntlPd2t+8D5fEEMzj8h4LAzIy4n4C8WpB
-         Pkk6j/6qoX6yN6HEH/HV3Gq8tAJFDAHkw8W4a4a5qBsCHltyw120WKfvXocYBD+axxPZ
-         o6qfEGMerK6xUutpokiJ7Us7JSqUb3okCaB091vvHdYlJhe5MA/L98Zis5GlgN21VfPC
-         wEMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3laysTfG58br9ekvMftLCflS2bw8W4QgtgThoJczg/k=;
-        b=q58vm2rjd8JOkJEbL6WqYQzklfRimXXlvsWgNaiYP0EjBKV9lu/lglI1KVeYA2TgZf
-         pZG5wZDGbh+YY2H9L5eGa/OZFraLoNcurW130qgwNYCC+9C+fI0CSeN3h6j6ja3UjCyi
-         Ot2Sjb4JJ+iN61jULy5AwUEn0176BK6b62ZuPqwds9hewbnEtwqveu9o8fCsSdVAQo09
-         qiD7X5iIQ/bupaYeZZUepD9YK/QSKOMIjM8jTszNi5MLE2VjsBxXgjAnK2qSgMZV4Oev
-         G4utagmdaONRrLR7JFSATKQJOtzfwk4rL4SW8z473h0J1H8ICSpS7X0vgWj/DyYiJe0o
-         PsDQ==
-X-Gm-Message-State: APjAAAXwSmksrkQYFYFIy/x52j3uTuxa6g5pCVQe/O24kJ52NUq5pi0N
-        MaJq+Z6/xY9V3MJEunWauYj/y5ETbA+6/vf5nJhjEg==
-X-Google-Smtp-Source: APXvYqwV2DWLvk1wJJw3pvk0vpggagApxSMhez6K6Oy7eHi1sUKyejPrVUYCo8vRQVFz+4/5mCLluau/NDUjAhelBM0=
-X-Received: by 2002:a67:f48b:: with SMTP id o11mr4801333vsn.9.1557745291516;
- Mon, 13 May 2019 04:01:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190114184255.258318-1-mka@chromium.org>
-In-Reply-To: <20190114184255.258318-1-mka@chromium.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 13 May 2019 16:31:20 +0530
-Message-ID: <CAHLCerP+F9AP97+qVCMqwu-OMJXRhwZrXd33Wk-vj5eyyw-KyA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add CPU topology
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 13 May 2019 07:04:06 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4DB2aWk054153;
+        Mon, 13 May 2019 20:02:36 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Mon, 13 May 2019 20:02:36 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4DB2SWl054088
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 13 May 2019 20:02:36 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Liu Chuansheng" <chuansheng.liu@intel.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH] kernel/hung_task.c: Monitor killed tasks.
+Date:   Mon, 13 May 2019 20:02:11 +0900
+Message-Id: <1557745331-10367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:13 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> The 8 CPU cores of the SDM845 are organized in two clusters of 4 big
-> ("gold") and 4 little ("silver") cores. Add a cpu-map node to the DT
-> that describes this topology.
+syzbot's second top report is "no output from test machine" where the
+userspace process failed to spawn a new test process for 300 seconds
+for some reason. One of reasons which can result in this report is that
+an already spawned test process was unable to terminate (e.g. trapped at
+an unkillable retry loop due to some bug) after SIGKILL was sent to that
+process. Therefore, reporting when a thread is failing to terminate
+despite a fatal signal is pending would give us more useful information.
 
-This is partly true. There are two groups of gold and silver cores,
-but AFAICT they are in a single cluster, not two separate ones. SDM845
-is one of the early examples of ARM's Dynamiq architecture.
+This version shares existing sysctl settings (e.g. check interval,
+timeout, whether to panic) used for detecting TASK_UNINTERRUPTIBLE
+threads, for I don't know whether people want to use a new kernel
+config option and different sysctl settings for monitoring killed
+threads.
 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+---
+ include/linux/sched.h |  1 +
+ kernel/hung_task.c    | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-I noticed that this patch sneaked through for this merge window but
-perhaps we can whip up a quick fix for -rc2?
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a2cd1585..d42bdd7 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -850,6 +850,7 @@ struct task_struct {
+ #ifdef CONFIG_DETECT_HUNG_TASK
+ 	unsigned long			last_switch_count;
+ 	unsigned long			last_switch_time;
++	unsigned long			killed_time;
+ #endif
+ 	/* Filesystem information: */
+ 	struct fs_struct		*fs;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index f108a95..34e7b84 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -141,6 +141,47 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	touch_nmi_watchdog();
+ }
+ 
++static void check_killed_task(struct task_struct *t, unsigned long timeout)
++{
++	unsigned long stamp = t->killed_time;
++
++	/*
++	 * Ensure the task is not frozen.
++	 * Also, skip vfork and any other user process that freezer should skip.
++	 */
++	if (unlikely(t->flags & (PF_FROZEN | PF_FREEZER_SKIP)))
++		return;
++	/*
++	 * Skip threads which are already inside do_exit(), for exit_mm() etc.
++	 * might take many seconds.
++	 */
++	if (t->flags & PF_EXITING)
++		return;
++	if (!stamp) {
++		stamp = jiffies;
++		if (!stamp)
++			stamp++;
++		t->killed_time = stamp;
++		return;
++	}
++	if (time_is_after_jiffies(stamp + timeout * HZ))
++		return;
++	trace_sched_process_hang(t);
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_call_panic = true;
++	}
++	/*
++	 * This thread failed to terminate for more than
++	 * sysctl_hung_task_timeout_secs seconds, complain:
++	 */
++	pr_err("INFO: task %s:%d can't die for more than %ld seconds.\n",
++	       t->comm, t->pid, (jiffies - stamp) / HZ);
++	sched_show_task(t);
++	hung_task_show_lock = true;
++	touch_nmi_watchdog();
++}
++
+ /*
+  * To avoid extending the RCU grace period for an unbounded amount of time,
+  * periodically exit the critical section and enter a new one.
+@@ -192,6 +233,9 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 				goto unlock;
+ 			last_break = jiffies;
+ 		}
++		/* Check threads which are about to terminate. */
++		if (unlikely(fatal_signal_pending(t)))
++			check_killed_task(t, timeout);
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
+ 			check_hung_task(t, timeout);
+-- 
+1.8.3.1
 
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index c27cbd3bcb0a6..f6c0d87e663f3 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -192,6 +192,44 @@
->                                 next-level-cache = <&L3_0>;
->                         };
->                 };
-> +
-> +               cpu-map {
-> +                       cluster0 {
-> +                               core0 {
-> +                                       cpu = <&CPU0>;
-> +                               };
-> +
-> +                               core1 {
-> +                                       cpu = <&CPU1>;
-> +                               };
-> +
-> +                               core2 {
-> +                                       cpu = <&CPU2>;
-> +                               };
-> +
-> +                               core3 {
-> +                                       cpu = <&CPU3>;
-> +                               };
-> +                       };
-> +
-> +                       cluster1 {
-
-This shouldn't exist.
-
-> +                               core0 {
-
-Rename to core4, 5, etc...
-
-> +                                       cpu = <&CPU4>;
-> +                               };
-> +
-> +                               core1 {
-> +                                       cpu = <&CPU5>;
-> +                               };
-> +
-> +                               core2 {
-> +                                       cpu = <&CPU6>;
-> +                               };
-> +
-> +                               core3 {
-> +                                       cpu = <&CPU7>;
-> +                               };
-> +                       };
-> +               };
->         };
->
->         pmu {
-> --
-> 2.20.1.97.g81188d93c3-goog
->
