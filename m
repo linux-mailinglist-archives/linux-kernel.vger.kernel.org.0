@@ -2,163 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1949C1BDDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 21:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 471341BDFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 21:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfEMTZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 15:25:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46866 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbfEMTZ5 (ORCPT
+        id S1727367AbfEMTau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 15:30:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44815 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbfEMTas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 15:25:57 -0400
-Received: from localhost.localdomain (unknown [IPv6:2804:431:9719:d573:a076:d1fd:3417:b195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: koike)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C545F281DC5;
-        Mon, 13 May 2019 20:25:52 +0100 (BST)
-From:   Helen Koike <helen.koike@collabora.com>
-To:     dm-devel@redhat.com
-Cc:     kernel@collabora.com, Helen Koike <helen.koike@collabora.com>,
-        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>
-Subject: [PATCH] dm ioctl: fix hang in early create error condition
-Date:   Mon, 13 May 2019 16:25:30 -0300
-Message-Id: <20190513192530.1167-1-helen.koike@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 13 May 2019 15:30:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c5so16535434wrs.11
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 12:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UJJzPiFDm2FxE5LRCDGQodMfSb99kuLW2iaHmJKN+CA=;
+        b=Cciq7szMMk3GwQvboPZQ93QX6pGCfJCIy5Ivif2rUR+yvpK/ESTWGdHrkJhOQfxxjT
+         ghsXGQYhzXlhomAUr/6ivalENG/Y2G3A3XKpIZkvdl4osXUQ38jGOII4Gn4RUNft2WWS
+         5CASBVYG62R97+Oc7Z8XvmSA7Olj+RI7PHg8OWcB6tsXA+UlqMOE+vSYDJC1cv2tfZUP
+         PoR0d2urk/QuBLIHfuF+OUbvUHhN6XAX9duRHFErGdA9vhk8isJMG2wbNqEFvUVxS4Kz
+         HMTc/bcdBPHapE4qD9S5RusbEUKzsBAcw3XSoAaQ4o9tVdZIchsd+ncTvYzNqonkYJrp
+         Yc8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UJJzPiFDm2FxE5LRCDGQodMfSb99kuLW2iaHmJKN+CA=;
+        b=ftWw1KvkbOZg8ny8RBVfw8rjVnTAD8mqTk+aMy+sKP3o+saFyFrAFg+d3YU4qwJZs9
+         Ko0xDuX/5xlgH/CLHZz9X8DseTSPLU/qZTTCZVEUHlTQxUaYLACVU0VItAgnUatP4gn6
+         KP6II4PkOzZgzQXoeKFDmXRkOONw6gTsRh+mUdJMu4g5xcPC05zmcBXyyy+tjj2FHwvh
+         3giCQ4Exi2CBEkKSsVps/Jvmo2L3sTFIQotENJVTuKbR/IoX8+Qtn5piACiybFi9HwZW
+         JpaaMJFJ9Xg8Lwq6D52sPKKwaHIjzUzhKtLkM5Elkw8BD239h8dm2BF5WCAOhJwNE5Zv
+         9BWw==
+X-Gm-Message-State: APjAAAUT/PmRuW1+cA7b1Sj2ytwhYNpcRcJ3h6nMTyyvYhVrdeoZfpMi
+        676Wm4t1np4pNOerYD9d0x8=
+X-Google-Smtp-Source: APXvYqy4eLsR4APPaSYFA1Wz0qR5e+YrpXRkNOHWnU33HTsg05HEE02VXpm3O//sdEZFdgHcqvIKQA==
+X-Received: by 2002:a5d:4b0b:: with SMTP id v11mr18069022wrq.317.1557775846356;
+        Mon, 13 May 2019 12:30:46 -0700 (PDT)
+Received: from [10.67.49.52] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id c9sm9908542wrv.62.2019.05.13.12.30.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 12:30:45 -0700 (PDT)
+Subject: Re: [PATCH] perf vendor events arm64: Map Brahma-B53 CPUID to
+ cortex-a53 events
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "moderated list:ARM PMU PROFILING AND DEBUGGING" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190405165047.15847-1-f.fainelli@gmail.com>
+ <20190408162607.GB7872@fuggles.cambridge.arm.com>
+ <46ac3066-fa55-9fb8-dd54-32fb702030cb@gmail.com>
+ <20190502235725.GB22982@kernel.org>
+ <60f367b4-1c5b-0778-eaa6-1a78d58f33a1@gmail.com>
+ <20190513192224.GA2470@kernel.org>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <65e865be-8bca-c5c1-0272-ec15a91e93ee@gmail.com>
+Date:   Mon, 13 May 2019 12:30:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190513192224.GA2470@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dm_early_create() function (which deals with "dm-mod.create=" kernel
-command line option) calls dm_hash_insert() who gets an extra reference
-to the md object.
+On 5/13/19 12:22 PM, Arnaldo Carvalho de Melo wrote:
+> Em Mon, May 13, 2019 at 11:04:49AM -0700, Florian Fainelli escreveu:
+>> On 5/2/19 4:57 PM, Arnaldo Carvalho de Melo wrote:
+>>> Em Thu, May 02, 2019 at 02:28:02PM -0700, Florian Fainelli escreveu:
+>>>> On 4/8/19 9:26 AM, Will Deacon wrote:
+>>>>> Acked-by: Will Deacon <will.deacon@arm.com>
+> 
+>>>> Thanks! Can this be picked up?
+> 
+>>> Thanks, applied to perf/core.
+> 
+>> Thanks, I don't seem to be able to find it being pushed out to that tree
+>> or in linux-next.
+> 
+> What tree? acme/perf/core? That is the one I referred to, have you
+> looked instead at tip/perf/core? 
 
-In case of failure, this reference wasn't being released, causing
-dm_destroy() to hang, thus hanging the whole boot process.
+Yes that's the one I checked.
 
-Fix this by calling __hash_remove() in the error path.
+> That one still doesn't have it, as I
+> was in LSFMM/BPF and then vacation and haven't pushed that to Ingo yet,
+> look at:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=perf/core&id=c0c410e9c4f36972c393a4cc61368d92feb23d67
+> 
+> I can remove it and wait for your resubmit addressing the issues
+> discussed in that other message, ok?
 
-Fixes: 6bbc923dfcf57d ("dm: add support to directly boot to a mapped device")
-Cc: stable@vger.kernel.org
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-
----
-Hi,
-
-I tested this patch by adding a new test case in the following test
-script:
-
-https://gitlab.collabora.com/koike/dm-cmdline-test/commit/d2d7a0ee4a49931cdb59f08a837b516c2d5d743d
-
-This test was failing, but with this patch it works correctly.
-
-Thanks
-Helen
-
- drivers/md/dm-ioctl.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index c740153b4e52..31da18611a21 100644
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -205,7 +205,8 @@ static void free_cell(struct hash_cell *hc)
-  * The kdev_t and uuid of a device can never change once it is
-  * initially inserted.
-  */
--static int dm_hash_insert(const char *name, const char *uuid, struct mapped_device *md)
-+static struct hash_cell *dm_hash_insert(const char *name, const char *uuid,
-+					struct mapped_device *md)
- {
- 	struct hash_cell *cell, *hc;
- 
-@@ -214,7 +215,7 @@ static int dm_hash_insert(const char *name, const char *uuid, struct mapped_devi
- 	 */
- 	cell = alloc_cell(name, uuid, md);
- 	if (!cell)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	/*
- 	 * Insert the cell into both hash tables.
-@@ -243,12 +244,12 @@ static int dm_hash_insert(const char *name, const char *uuid, struct mapped_devi
- 	mutex_unlock(&dm_hash_cells_mutex);
- 	up_write(&_hash_lock);
- 
--	return 0;
-+	return cell;
- 
-  bad:
- 	up_write(&_hash_lock);
- 	free_cell(cell);
--	return -EBUSY;
-+	return ERR_PTR(-EBUSY);
- }
- 
- static struct dm_table *__hash_remove(struct hash_cell *hc)
-@@ -747,6 +748,7 @@ static int dev_create(struct file *filp, struct dm_ioctl *param, size_t param_si
- {
- 	int r, m = DM_ANY_MINOR;
- 	struct mapped_device *md;
-+	struct hash_cell *hc;
- 
- 	r = check_name(param->name);
- 	if (r)
-@@ -759,11 +761,11 @@ static int dev_create(struct file *filp, struct dm_ioctl *param, size_t param_si
- 	if (r)
- 		return r;
- 
--	r = dm_hash_insert(param->name, *param->uuid ? param->uuid : NULL, md);
--	if (r) {
-+	hc = dm_hash_insert(param->name, *param->uuid ? param->uuid : NULL, md);
-+	if (IS_ERR(hc)) {
- 		dm_put(md);
- 		dm_destroy(md);
--		return r;
-+		return PTR_ERR(hc);
- 	}
- 
- 	param->flags &= ~DM_INACTIVE_PRESENT_FLAG;
-@@ -2044,6 +2046,7 @@ int __init dm_early_create(struct dm_ioctl *dmi,
- 	int r, m = DM_ANY_MINOR;
- 	struct dm_table *t, *old_map;
- 	struct mapped_device *md;
-+	struct hash_cell *hc;
- 	unsigned int i;
- 
- 	if (!dmi->target_count)
-@@ -2062,14 +2065,14 @@ int __init dm_early_create(struct dm_ioctl *dmi,
- 		return r;
- 
- 	/* hash insert */
--	r = dm_hash_insert(dmi->name, *dmi->uuid ? dmi->uuid : NULL, md);
--	if (r)
-+	hc = dm_hash_insert(dmi->name, *dmi->uuid ? dmi->uuid : NULL, md);
-+	if (IS_ERR(hc))
- 		goto err_destroy_dm;
- 
- 	/* alloc table */
- 	r = dm_table_create(&t, get_mode(dmi), dmi->target_count, md);
- 	if (r)
--		goto err_destroy_dm;
-+		goto err_hash_remove;
- 
- 	/* add targets */
- 	for (i = 0; i < dmi->target_count; i++) {
-@@ -2116,6 +2119,8 @@ int __init dm_early_create(struct dm_ioctl *dmi,
- 
- err_destroy_table:
- 	dm_table_destroy(t);
-+err_hash_remove:
-+	__hash_remove(hc);
- err_destroy_dm:
- 	dm_put(md);
- 	dm_destroy(md);
+OK, let's do that then, thanks!
 -- 
-2.20.1
-
+Florian
