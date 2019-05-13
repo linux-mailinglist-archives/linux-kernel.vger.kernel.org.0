@@ -2,97 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF8F1B789
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 906661B799
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfEMN4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 09:56:40 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:45417 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727272AbfEMN4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 09:56:39 -0400
-Received: from [192.168.2.10] ([46.9.252.75])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id QBRShjPqt0YQeQBRVhdGfx; Mon, 13 May 2019 15:56:37 +0200
-Subject: Re: Format ioctls (Input 1) test Cropping failed: 4.19, 4.14, 4.9 and
- 4.4
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        linux-media@vger.kernel.org
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        paul.kocialkowski@bootlin.com, ezequiel@collabora.com,
-        treding@nvidia.com, niklas.soderlund+renesas@ragnatech.se,
-        sakari.ailus@linux.intel.com,
-        Hans Verkuil <hans.verkuil@cisco.com>, mchehab@kernel.org,
-        lkft-triage@lists.linaro.org
-References: <CA+G9fYv+M_8p99c6i=akmuhHSCW6MdF-29CPKrwDsd2EW_LsbQ@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <cc4b91e4-13f8-c489-e2ce-445770ddf876@xs4all.nl>
-Date:   Mon, 13 May 2019 15:56:34 +0200
+        id S1730277AbfEMOBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:01:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56722 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727272AbfEMOBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:01:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B729380D;
+        Mon, 13 May 2019 07:01:05 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0C743F71E;
+        Mon, 13 May 2019 07:01:02 -0700 (PDT)
+Subject: Re: [PATCH v7 14/23] iommu/smmuv3: Implement cache_invalidate
+To:     Auger Eric <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org,
+        vincent.stehle@arm.com
+References: <20190408121911.24103-1-eric.auger@redhat.com>
+ <20190408121911.24103-15-eric.auger@redhat.com>
+ <a53d72f5-c8a2-a9e9-eb0b-2fac65964caf@arm.com>
+ <edff2a6f-66e6-6d7e-49ca-3065e93a41a4@redhat.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a181689b-94b5-5ff6-9fec-66b3f319cbc4@arm.com>
+Date:   Mon, 13 May 2019 15:01:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CA+G9fYv+M_8p99c6i=akmuhHSCW6MdF-29CPKrwDsd2EW_LsbQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOJt+EMQhInEWS9jXag4ZCtTkSsqAUQJjnm8CAQqWK/QNYsj+Ujy5F68DvUKN3/pgZWiTaE42IbajxxMa6TEK8MFstYf0qfqIs5vG8GalZVz6tTd0PSd
- d4k85wfsG36O8iHu/aYwHuw9Z6uCuwQIXhvimkeEkH/eWRH4uGCxIgvd0ckka1pbsN3DkJ5Ig6ba3XLqvhC7+8K0V5ZiIJP0syEPNJbpBxMNB4+MF1p5u8rM
- vgnWp84A+ZraRmR6HNXCwqPSpwoAhAfBCZ+h3J1u2VqQbRFEC8seWmvRpAD0iYWRloHLO0ngm2FGviMD3NhfTZKgAHVGVPBLyJQuKwXCuxQHm1uKHoLk6H4T
- 9rjg0HMFdn1gw0GxEJaFgYMTLZKdEpSUHCN9QkVomBjIVFRSM9f7yL03kBDtHaLZGVKuOOXYGOaHSH/0JQiXrbkAXQ3NVmU/HK+FnSCoV7VXivrTVYbJQmeB
- AD1AiLx6RiI1+eQbBVBrDT7uG8GSkZqG3FQl5miHk8/8NlL8V1A0FYd14xSfx85o0v11+owoBgLSqZqJut1z66wWR81gbNJlUmPMqJAvFBdq7EkmmJu2ZiIv
- F3xbSVXWEhtz2JSP0DNOht6t
+In-Reply-To: <edff2a6f-66e6-6d7e-49ca-3065e93a41a4@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/13/19 3:36 PM, Naresh Kamboju wrote:
-> Format ioctls (Input 1) test Cropping failed on all devices running
-> 4.19, 4.14, 4.9 and 4.4 kernel branches.
+On 13/05/2019 13:16, Auger Eric wrote:
+> Hi Robin,
+> On 5/8/19 5:01 PM, Robin Murphy wrote:
+>> On 08/04/2019 13:19, Eric Auger wrote:
+>>> Implement domain-selective and page-selective IOTLB invalidations.
+>>>
+>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>
+>>> ---
+>>> v6 -> v7
+>>> - check the uapi version
+>>>
+>>> v3 -> v4:
+>>> - adapt to changes in the uapi
+>>> - add support for leaf parameter
+>>> - do not use arm_smmu_tlb_inv_range_nosync or arm_smmu_tlb_inv_context
+>>>     anymore
+>>>
+>>> v2 -> v3:
+>>> - replace __arm_smmu_tlb_sync by arm_smmu_cmdq_issue_sync
+>>>
+>>> v1 -> v2:
+>>> - properly pass the asid
+>>> ---
+>>>    drivers/iommu/arm-smmu-v3.c | 60 +++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 60 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>>> index 1486baf53425..4366921d8318 100644
+>>> --- a/drivers/iommu/arm-smmu-v3.c
+>>> +++ b/drivers/iommu/arm-smmu-v3.c
+>>> @@ -2326,6 +2326,65 @@ static void arm_smmu_detach_pasid_table(struct
+>>> iommu_domain *domain)
+>>>        mutex_unlock(&smmu_domain->init_mutex);
+>>>    }
+>>>    +static int
+>>> +arm_smmu_cache_invalidate(struct iommu_domain *domain, struct device
+>>> *dev,
+>>> +              struct iommu_cache_invalidate_info *inv_info)
+>>> +{
+>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>> +    struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>> +
+>>> +    if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
+>>> +        return -EINVAL;
+>>> +
+>>> +    if (!smmu)
+>>> +        return -EINVAL;
+>>> +
+>>> +    if (inv_info->version != IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
+>>> +        return -EINVAL;
+>>> +
+>>> +    if (inv_info->cache & IOMMU_CACHE_INV_TYPE_IOTLB) {
+>>> +        if (inv_info->granularity == IOMMU_INV_GRANU_PASID) {
+>>> +            struct arm_smmu_cmdq_ent cmd = {
+>>> +                .opcode = CMDQ_OP_TLBI_NH_ASID,
+>>> +                .tlbi = {
+>>> +                    .vmid = smmu_domain->s2_cfg.vmid,
+>>> +                    .asid = inv_info->pasid,
+>>> +                },
+>>> +            };
+>>> +
+>>> +            arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+>>> +            arm_smmu_cmdq_issue_sync(smmu);
+>>
+>> I'd much rather make arm_smmu_tlb_inv_context() understand nested
+>> domains than open-code commands all over the place.
 > 
-> Format ioctls (Input 1):
 > 
-> ...
-> test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-> fail: ../../../v4l-utils-1.16.0/utils/v4l2-compliance/v4l2-test-formats.cpp(1425):
-> doioctl(node, VIDIOC_CROPCAP, &cap)
-> fail: ../../../v4l-utils-1.16.0/utils/v4l2-compliance/v4l2-test-formats.cpp(1447):
-> testLegacyCrop(node)
-> test Cropping: FAIL
+>>
+>>> +
+>>> +        } else if (inv_info->granularity == IOMMU_INV_GRANU_ADDR) {
+>>> +            struct iommu_inv_addr_info *info = &inv_info->addr_info;
+>>> +            size_t size = info->nb_granules * info->granule_size;
+>>> +            bool leaf = info->flags & IOMMU_INV_ADDR_FLAGS_LEAF;
+>>> +            struct arm_smmu_cmdq_ent cmd = {
+>>> +                .opcode = CMDQ_OP_TLBI_NH_VA,
+>>> +                .tlbi = {
+>>> +                    .addr = info->addr,
+>>> +                    .vmid = smmu_domain->s2_cfg.vmid,
+>>> +                    .asid = info->pasid,
+>>> +                    .leaf = leaf,
+>>> +                },
+>>> +            };
+>>> +
+>>> +            do {
+>>> +                arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+>>> +                cmd.tlbi.addr += info->granule_size;
+>>> +            } while (size -= info->granule_size);
+>>> +            arm_smmu_cmdq_issue_sync(smmu);
+>>
+>> An this in particular I would really like to go all the way through
+>> io_pgtable_tlb_add_flush()/io_pgtable_sync() if at all possible. Hooking
+>> up range-based invalidations is going to be a massive headache if the
+>> abstraction isn't solid.
+> 
+> The concern is the host does not "own" the s1 config asid
+> (smmu_domain->s1_cfg.cd.asid is not set, practically). In our case the
+> asid only is passed by the userspace on CACHE_INVALIDATE ioctl call.
+> 
+> arm_smmu_tlb_inv_context and arm_smmu_tlb_inv_range_nosync use this field
 
-There is no easy patch you can backport to fix this and I wouldn't bother with this.
+Right, but that's not exactly hard to solve. Even just something like 
+the (untested, purely illustrative) refactoring below would be beneficial.
 
-> 
-> Test passes on mainline, -next and 5.0
-> Test failed on 4.19, 4.14, 4.9 and 4.4 for all devices
-> 
-> steps to reproduce:
-> 
->        # boot 4.19/4.14/4.9 kernel on x86_64 / Juno / hikey /  device
->        #  install v4l-utils package
->        # modprobe vivid.ko no_error_inj=1
->        # v4l2-compliance -v -d /dev/video0
-> 
-> Test results comparison on all branches,
-> https://qa-reports.linaro.org/_/comparetest/?project=22&project=6&project=58&project=135&project=40&project=23&project=159&suite=v4l2-compliance&test=Cropping
-> 
-> Test output log,
-> https://lkft.validation.linaro.org/scheduler/job/708755#L2236
-> 
-> Best regards
-> Naresh Kamboju
-> 
+Robin.
 
-Be aware that v4l2-compliance is meant to be compiled directly from the
-v4l-utils master repo, and run against the latest media-tree master
-repository. It's not meant to be backwards compatible with older kernels.
+----->8-----
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index d3880010c6cf..31ef703cf671 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -1423,11 +1423,9 @@ static void arm_smmu_tlb_inv_context(void *cookie)
+  	arm_smmu_cmdq_issue_sync(smmu);
+  }
 
-If you want to do regression testing with v4l2-compliance against older
-kernels, then it would actually be better to pick a v4l2-compliance version
-from around the time that kernel version was first released.
+-static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+-					  size_t granule, bool leaf, void *cookie)
++static void __arm_smmu_tlb_inv_range(struct arm_smmu_domain 
+*smmu_domain, u16 asid,
++		unsigned long iova, size_t size, size_t granule, bool leaf)
+  {
+-	struct arm_smmu_domain *smmu_domain = cookie;
+-	struct arm_smmu_device *smmu = smmu_domain->smmu;
+  	struct arm_smmu_cmdq_ent cmd = {
+  		.tlbi = {
+  			.leaf	= leaf,
+@@ -1437,18 +1435,27 @@ static void 
+arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
 
-Regards,
+  	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
+  		cmd.opcode	= CMDQ_OP_TLBI_NH_VA;
+-		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
++		cmd.tlbi.asid	= asid;
+  	} else {
+  		cmd.opcode	= CMDQ_OP_TLBI_S2_IPA;
+  		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
+  	}
 
-	Hans
+  	do {
+-		arm_smmu_cmdq_issue_cmd(smmu, &cmd);
++		arm_smmu_cmdq_issue_cmd(smmu_domain->smmu, &cmd);
+  		cmd.tlbi.addr += granule;
+  	} while (size -= granule);
+  }
+
++static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
++					  size_t granule, bool leaf, void *cookie)
++{
++	struct arm_smmu_domain *smmu_domain = cookie;
++
++	__arm_smmu_tlb_inv_range(smmu_domain, smmu_domain->s1_cfg.cd.asid, iova,
++			size, granule, leaf);
++}
++
+  static const struct iommu_gather_ops arm_smmu_gather_ops = {
+  	.tlb_flush_all	= arm_smmu_tlb_inv_context,
+  	.tlb_add_flush	= arm_smmu_tlb_inv_range_nosync,
