@@ -2,50 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BCDA1B5DF
+	by mail.lfdr.de (Postfix) with ESMTP id 75BF61B5E0
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfEMMaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 08:30:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56928 "EHLO
+        id S1729389AbfEMMax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 08:30:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57026 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbfEMMat (ORCPT
+        with ESMTP id S1729137AbfEMMau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 08:30:49 -0400
+        Mon, 13 May 2019 08:30:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=3dg4FwScEIcCqPU2mHWgY1X5dTD3ay7qM0L3mMRVCak=; b=AaPTPio6G/C9
-        9V2pdV9aCvSzXUGi7/Lk+Rsoj/6HwmmP6ykS2237Ml51rEvvnRorYPhEe5NMQMOQqyk1dPwRAjYKE
-        7qpwkZ3GxxWCCjGgnAmML9Hev92/wULqxdA7kfMp2/+I77+Si/PTOkuJJRvixVBTOXpy7s+p5M2hs
-        Fq59k=;
+        List-Archive; bh=kb1Z2URA6B9xUS5mqPgwhgx11+pmObIW0hPT5y8TU8I=; b=CmzCXhTABhRt
+        p51ENgvDM/Kr4qH+RiY6Oi4gUIESjD//644LkCQDrUzMo0E4dfLiHkj1mrK3GPLn++FVEVizEQDSX
+        872l5B1dAHHoy6pP+66WusSyUnCdbmrRv64mD1XpDJz8DPoO/NSUbwR4w9y/e6eCrjsgdomwzgEMK
+        wBXig=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hQA69-0006We-Rj; Mon, 13 May 2019 12:30:29 +0000
+        id 1hQA6A-0006Wf-8M; Mon, 13 May 2019 12:30:30 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4BF481129232; Mon, 13 May 2019 13:30:29 +0100 (BST)
+        id 821AB1129233; Mon, 13 May 2019 13:30:29 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Evan Green <evgreen@chromium.org>
 Cc:     alsa-devel@alsa-project.org, Ben Zhang <benzh@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Naveen M <naveen.m@intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Rajat Jain <rajatja@chromium.org>,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
         Sathya Prakash <sathya.prakash.m.r@intel.com>,
-        Takashi Iwai <tiwai@suse.com>, Yu Zhao <yuzhao@google.com>
-Subject: Applied "ASoC: Intel: Skylake: Add Cometlake PCI IDs" to the asoc tree
-In-Reply-To: <20190510223929.165569-3-evgreen@chromium.org>
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: SOF: Add Comet Lake PCI IDs" to the asoc tree
+In-Reply-To: <20190510223929.165569-2-evgreen@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190513123029.4BF481129232@debutante.sirena.org.uk>
+Message-Id: <20190513123029.821AB1129233@debutante.sirena.org.uk>
 Date:   Mon, 13 May 2019 13:30:29 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,7 +52,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: Skylake: Add Cometlake PCI IDs
+   ASoC: SOF: Add Comet Lake PCI IDs
 
 has been applied to the asoc tree at
 
@@ -79,94 +77,114 @@ to this mail.
 Thanks,
 Mark
 
-From 5f740b243014f54e503ea5aca0a90680b56d0134 Mon Sep 17 00:00:00 2001
+From 927ce5c76e485e9d6e98b6ca29199a593d013793 Mon Sep 17 00:00:00 2001
 From: Evan Green <evgreen@chromium.org>
-Date: Fri, 10 May 2019 15:39:29 -0700
-Subject: [PATCH] ASoC: Intel: Skylake: Add Cometlake PCI IDs
+Date: Fri, 10 May 2019 15:39:28 -0700
+Subject: [PATCH] ASoC: SOF: Add Comet Lake PCI IDs
 
-Add PCI IDs for Intel CometLake platforms, which from a software
-point of view are extremely similar to Cannonlake platforms.
+Add support for Intel Comet Lake platforms by adding a new Kconfig
+for CometLake and the appropriate PCI IDs.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/Kconfig                | 16 ++++++++++++++++
- sound/soc/intel/skylake/skl-messages.c | 16 ++++++++++++++++
- sound/soc/intel/skylake/skl.c          | 10 ++++++++++
- 3 files changed, 42 insertions(+)
+ sound/soc/sof/intel/Kconfig | 32 ++++++++++++++++++++++++++++++++
+ sound/soc/sof/sof-pci-dev.c | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index fc1396adde71..b089ed3bf77f 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -165,6 +165,22 @@ config SND_SOC_INTEL_CFL
- 	  If you have a Intel CoffeeLake platform with the DSP
- 	  enabled in the BIOS then enable this option by saying Y or m.
+diff --git a/sound/soc/sof/intel/Kconfig b/sound/soc/sof/intel/Kconfig
+index 32ee0fabab92..25c472e6bc22 100644
+--- a/sound/soc/sof/intel/Kconfig
++++ b/sound/soc/sof/intel/Kconfig
+@@ -24,6 +24,8 @@ config SND_SOC_SOF_INTEL_PCI
+ 	select SND_SOC_SOF_CANNONLAKE  if SND_SOC_SOF_CANNONLAKE_SUPPORT
+ 	select SND_SOC_SOF_COFFEELAKE  if SND_SOC_SOF_COFFEELAKE_SUPPORT
+ 	select SND_SOC_SOF_ICELAKE     if SND_SOC_SOF_ICELAKE_SUPPORT
++	select SND_SOC_SOF_COMETLAKE_LP if SND_SOC_SOF_COMETLAKE_LP_SUPPORT
++	select SND_SOC_SOF_COMETLAKE_H if SND_SOC_SOF_COMETLAKE_H_SUPPORT
+ 	help
+ 	  This option is not user-selectable but automagically handled by
+ 	  'select' statements at a higher level
+@@ -179,6 +181,36 @@ config SND_SOC_SOF_ICELAKE
+ 	  This option is not user-selectable but automagically handled by
+ 	  'select' statements at a higher level
  
-+config SND_SOC_INTEL_CML_H
-+	tristate "CometLake-H Platforms"
-+	depends on PCI && ACPI
-+	select SND_SOC_INTEL_SKYLAKE_FAMILY
++config SND_SOC_SOF_COMETLAKE_LP
++	tristate
++	select SND_SOC_SOF_HDA_COMMON
 +	help
-+	  If you have a Intel CometLake-H platform with the DSP
-+	  enabled in the BIOS then enable this option by saying Y or m.
++	  This option is not user-selectable but automagically handled by
++	  'select' statements at a higher level
 +
-+config SND_SOC_INTEL_CML_LP
-+	tristate "CometLake-LP Platforms"
-+	depends on PCI && ACPI
-+	select SND_SOC_INTEL_SKYLAKE_FAMILY
++config SND_SOC_SOF_COMETLAKE_LP_SUPPORT
++	bool "SOF support for CometLake-LP"
 +	help
-+	  If you have a Intel CometLake-LP platform with the DSP
-+	  enabled in the BIOS then enable this option by saying Y or m.
++	  This adds support for Sound Open Firmware for Intel(R) platforms
++	  using the Cometlake-LP processors.
++	  Say Y if you have such a device.
++	  If unsure select "N".
 +
- config SND_SOC_INTEL_SKYLAKE_FAMILY
++config SND_SOC_SOF_COMETLAKE_H
++	tristate
++	select SND_SOC_SOF_HDA_COMMON
++	help
++	  This option is not user-selectable but automagically handled by
++	  'select' statements at a higher level
++
++config SND_SOC_SOF_COMETLAKE_H_SUPPORT
++	bool "SOF support for CometLake-H"
++	help
++	  This adds support for Sound Open Firmware for Intel(R) platforms
++	  using the Cometlake-H processors.
++	  Say Y if you have such a device.
++	  If unsure select "N".
++
+ config SND_SOC_SOF_HDA_COMMON
  	tristate
- 	select SND_SOC_INTEL_SKYLAKE_COMMON
-diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
-index 4bf70b4429f0..df01dc952521 100644
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -255,6 +255,22 @@ static const struct skl_dsp_ops dsp_ops[] = {
- 		.init_fw = cnl_sst_init_fw,
- 		.cleanup = cnl_sst_dsp_cleanup
- 	},
-+	{
-+		.id = 0x02c8,
-+		.num_cores = 4,
-+		.loader_ops = bxt_get_loader_ops,
-+		.init = cnl_sst_dsp_init,
-+		.init_fw = cnl_sst_init_fw,
-+		.cleanup = cnl_sst_dsp_cleanup
-+	},
-+	{
-+		.id = 0x06c8,
-+		.num_cores = 4,
-+		.loader_ops = bxt_get_loader_ops,
-+		.init = cnl_sst_dsp_init,
-+		.init_fw = cnl_sst_init_fw,
-+		.cleanup = cnl_sst_dsp_cleanup
-+	},
+ 	select SND_SOC_SOF_INTEL_COMMON
+diff --git a/sound/soc/sof/sof-pci-dev.c b/sound/soc/sof/sof-pci-dev.c
+index b778dffb2d25..d736806c2e0d 100644
+--- a/sound/soc/sof/sof-pci-dev.c
++++ b/sound/soc/sof/sof-pci-dev.c
+@@ -129,6 +129,26 @@ static const struct sof_dev_desc cfl_desc = {
  };
+ #endif
  
- const struct skl_dsp_ops *skl_get_dsp_ops(int pci_id)
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index 4ed5b7e17d44..f864f7b3df3a 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -1166,6 +1166,16 @@ static const struct pci_device_id skl_ids[] = {
- 	/* CFL */
- 	{ PCI_DEVICE(0x8086, 0xa348),
- 		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
++#if IS_ENABLED(CONFIG_SND_SOC_SOF_COMETLAKE_LP) || \
++	IS_ENABLED(CONFIG_SND_SOC_SOF_COMETLAKE_H)
++
++static const struct sof_dev_desc cml_desc = {
++	.machines		= snd_soc_acpi_intel_cnl_machines,
++	.resindex_lpe_base	= 0,
++	.resindex_pcicfg_base	= -1,
++	.resindex_imr_base	= -1,
++	.irqindex_host_ipc	= -1,
++	.resindex_dma_base	= -1,
++	.chip_info = &cnl_chip_info,
++	.default_fw_path = "intel/sof",
++	.default_tplg_path = "intel/sof-tplg",
++	.nocodec_fw_filename = "sof-cnl.ri",
++	.nocodec_tplg_filename = "sof-cnl-nocodec.tplg",
++	.ops = &sof_cnl_ops,
++	.arch_ops = &sof_xtensa_arch_ops
++};
 +#endif
-+#if IS_ENABLED(CONFIG_SND_SOC_INTEL_CML_LP)
-+	/* CML-LP */
++
+ #if IS_ENABLED(CONFIG_SND_SOC_SOF_ICELAKE)
+ static const struct sof_dev_desc icl_desc = {
+ 	.machines               = snd_soc_acpi_intel_icl_machines,
+@@ -353,6 +373,14 @@ static const struct pci_device_id sof_pci_ids[] = {
+ #if IS_ENABLED(CONFIG_SND_SOC_SOF_ICELAKE)
+ 	{ PCI_DEVICE(0x8086, 0x34C8),
+ 		.driver_data = (unsigned long)&icl_desc},
++#endif
++#if IS_ENABLED(CONFIG_SND_SOC_SOF_COMETLAKE_LP)
 +	{ PCI_DEVICE(0x8086, 0x02c8),
-+		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
++		.driver_data = (unsigned long)&cml_desc},
 +#endif
-+#if IS_ENABLED(CONFIG_SND_SOC_INTEL_CML_H)
-+	/* CML-H */
++#if IS_ENABLED(CONFIG_SND_SOC_SOF_COMETLAKE_H)
 +	{ PCI_DEVICE(0x8086, 0x06c8),
-+		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
++		.driver_data = (unsigned long)&cml_desc},
  #endif
  	{ 0, }
  };
