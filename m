@@ -2,206 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE481B2BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 844C81B2C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbfEMJTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:19:24 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38105 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbfEMJTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:19:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s19so11065497otq.5;
-        Mon, 13 May 2019 02:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ujdVx8/hOHAXTn+/pwv56Do81M/Ae/T+j37v3szZuZA=;
-        b=r+7/Uj5OgiHJVo6bYPKFZntd8/2VvY01FDvmq94a5OmI7/EDko/mWs3R7zpIVFzQQP
-         q3THuGsvjz0uYA6obt5vr1XQJX0c556O3TL2ED9WIGp2pIwKF08tee53h+fFSI4XacqW
-         r/kfdp4bZckqQCwloqhwpagPU4QTsH3hAhrMlt5HP3af5BYaCjHyRzdbq/ybTEURP43y
-         gCzAv5R8tPF5ABx6gWQectJCPEmIr2wgHMPsafq9MAQ4GlYq+pXN6NTT6Scq/KT3QcuT
-         vXyWSoGbVVgBtz55/+NbMCFDwxd6fPsMZBAI5EUGIl1pZhFZNOQIpXu0kboMdKxMUH3l
-         I58g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ujdVx8/hOHAXTn+/pwv56Do81M/Ae/T+j37v3szZuZA=;
-        b=YO90CznyKh/iDvst1CwSVmss2ZCEzR1DIWbuq6AVl0aV93tH24t6cWuPPWxELEoIvC
-         nLmC34a3f1xYOFrHxODBGllMNn9A0i765kVDvitdxw5aTMoFkzvbO+ZEjTkXY6nyEt0K
-         VZgD83qD+uVqJZ+jnjw35Dahp68MvLdVxCVR0dQZVmlAPSckFAHZzR7J+zdIyOFyV8Ei
-         Gdo80utiu0l2y7zvtx8gPUA/bEWMbYKX73//ei0m1dEf2lrIewNPDSHyPu22QVMeygxy
-         A92zRFTAbyfohOtKVMHJeqNcpwqTt6atFT+gbvX/+doMGK3D6snF2748Kv5YipZd3drK
-         lEGA==
-X-Gm-Message-State: APjAAAVU1FemMp8FFm24jEdKEeGGzYzAro6VymSG3Ap9n0x4miWgifn/
-        hwd+b7mnBnpuKnEiSZXseJ+yV4bBn5wAZIr/mjE=
-X-Google-Smtp-Source: APXvYqygNFs08oY/relMZpc/d09rofQMTkf7ccwOd7iCguFZlNc7h56VryKgAP6n9gMXy3DbSMnkFlg0/vX11zr1TXE=
-X-Received: by 2002:a05:6830:1389:: with SMTP id d9mr30479otq.329.1557739162822;
- Mon, 13 May 2019 02:19:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190507185647.GA29409@amt.cnet>
-In-Reply-To: <20190507185647.GA29409@amt.cnet>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 13 May 2019 17:20:37 +0800
-Message-ID: <CANRm+Cx8zCDG6Oz1m9eukkmx_uVFYcQOdMwZrHwsQcbLm_kuPA@mail.gmail.com>
-Subject: Re: [PATCH] sched: introduce configurable delay before entering idle
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     kvm-devel <kvm@vger.kernel.org>,
+        id S1727925AbfEMJVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:21:05 -0400
+Received: from mail-eopbgr700076.outbound.protection.outlook.com ([40.107.70.76]:64172
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727305AbfEMJVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:21:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wpQenlchEVhV4euQXTFLGGQfIy3VwdfKzHdbshG8Jls=;
+ b=1xs1l8ip9XgGIbHrmiGznrt9OZMVA/nh7iinXKABA16dyA0aN6U17aRDSDBO+Ybv3g5rA3GsWTP47t1Bj9vOKj6M4zTKQ2guM6+7ncuevfCoGg4V8Bi+RStWfOHTfcnSIPzFCxio3OFGxxymaMUfdo6Y02NtqdpjCEq6DGNtbfM=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4360.namprd05.prod.outlook.com (52.135.202.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.14; Mon, 13 May 2019 09:21:01 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::b057:917a:f098:6098]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::b057:917a:f098:6098%7]) with mapi id 15.20.1900.010; Mon, 13 May 2019
+ 09:21:01 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Yang Shi <yang.shi@linux.alibaba.com>,
+        "jstancek@redhat.com" <jstancek@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Bandan Das <bsd@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
+ flush
+Thread-Topic: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
+ flush
+Thread-Index: AQHVBlNcdgyGQHvMg0ymTH6Y7O8srKZjDs8AgAANcoCAAAcZgIAABfcAgAAkYwCABXN1AIAACg2AgAACfYA=
+Date:   Mon, 13 May 2019 09:21:01 +0000
+Message-ID: <847D4C2F-BD26-4BE0-A5BA-3C690D11BF77@vmware.com>
+References: <1557264889-109594-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190509083726.GA2209@brain-police>
+ <20190509103813.GP2589@hirez.programming.kicks-ass.net>
+ <F22533A7-016F-4506-809A-7E86BAF24D5A@vmware.com>
+ <20190509182435.GA2623@hirez.programming.kicks-ass.net>
+ <04668E51-FD87-4D53-A066-5A35ABC3A0D6@vmware.com>
+ <20190509191120.GD2623@hirez.programming.kicks-ass.net>
+ <7DA60772-3EE3-4882-B26F-2A900690DA15@vmware.com>
+ <20190513083606.GL2623@hirez.programming.kicks-ass.net>
+ <20190513091205.GO2650@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190513091205.GO2650@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [50.204.119.4]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8037cc0d-71c9-443a-c2a0-08d6d78450e8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR05MB4360;
+x-ms-traffictypediagnostic: BYAPR05MB4360:
+x-microsoft-antispam-prvs: <BYAPR05MB4360448DF978D529BCC10D81D00F0@BYAPR05MB4360.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0036736630
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(346002)(376002)(39860400002)(136003)(366004)(189003)(199004)(53546011)(14454004)(6246003)(305945005)(8676002)(186003)(8936002)(6506007)(82746002)(68736007)(53936002)(81156014)(66066001)(4326008)(81166006)(102836004)(478600001)(3846002)(66446008)(66556008)(316002)(91956017)(2906002)(6116002)(76116006)(86362001)(73956011)(64756008)(6916009)(7736002)(66476007)(99286004)(66946007)(7416002)(5660300002)(54906003)(25786009)(76176011)(33656002)(83716004)(26005)(71200400001)(71190400001)(14444005)(256004)(229853002)(6512007)(446003)(11346002)(6436002)(476003)(2616005)(6486002)(36756003)(486006)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4360;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CelJo98N5BTvgBiCtmSEwR3SSuriFAV1AWdPS3GaWiwjgig3EQhZ3CyoLcbcj5z1hi5TD3MxaK+7aqwEGdasae4pADNL8lhEd6eB4jMrlCHoEVPe+xu27n5H1l2NdmTEXZTDSFAxePnHQ3/QgLyDcRJOFN/ZMHaxB4FrnZAIb5CpZRjz5ItTTSmWTweJXQYhNJE/XfMEuFj9Y3GrpzVzD4JAh92A5NHs5IVLzu+SXf8cciyV+nMFQfcK6ggYHs0dzSHfkTnUkOItkfH/oY4/s2YFf7OHevdw/R7rmnKK5NKBVJGcX8s1RUBurbwJnrGOBdG1vHRs1wSwHGizXfmlM1+fiO7Uw2iSu+Hm7k0IMy4YV6blEKppgyf3g8DzcDsUQ6vsELtdi8EDvarBfHdIhoLO6xa1WZg4R914HApNMXo=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2D5CBDD523036D4CB25AC81AC9005E04@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8037cc0d-71c9-443a-c2a0-08d6d78450e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2019 09:21:01.0171
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4360
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 May 2019 at 02:57, Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
->
-> Certain workloads perform poorly on KVM compared to baremetal
-> due to baremetal's ability to perform mwait on NEED_RESCHED
-> bit of task flags (therefore skipping the IPI).
+> On May 13, 2019, at 2:12 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Mon, May 13, 2019 at 10:36:06AM +0200, Peter Zijlstra wrote:
+>> On Thu, May 09, 2019 at 09:21:35PM +0000, Nadav Amit wrote:
+>>> It may be possible to avoid false-positive nesting indications (when th=
+e
+>>> flushes do not overlap) by creating a new struct mmu_gather_pending, wi=
+th
+>>> something like:
+>>>=20
+>>>  struct mmu_gather_pending {
+>>> 	u64 start;
+>>> 	u64 end;
+>>> 	struct mmu_gather_pending *next;
+>>>  }
+>>>=20
+>>> tlb_finish_mmu() would then iterate over the mm->mmu_gather_pending
+>>> (pointing to the linked list) and find whether there is any overlap. Th=
+is
+>>> would still require synchronization (acquiring a lock when allocating a=
+nd
+>>> deallocating or something fancier).
+>>=20
+>> We have an interval_tree for this, and yes, that's how far I got :/
+>>=20
+>> The other thing I was thinking of is trying to detect overlap through
+>> the page-tables themselves, but we have a distinct lack of storage
+>> there.
+>=20
+> We might just use some state in the pmd, there's still 2 _pt_pad_[12] in
+> struct page to 'use'. So we could come up with some tlb generation
+> scheme that would detect conflict.
 
-KVM supports expose mwait to the guest, if it can solve this?
+It is rather easy to come up with a scheme (and I did similar things) if yo=
+u
+flush the table while you hold the page-tables lock. But if you batch acros=
+s
+page-tables it becomes harder.
 
-Regards,
-Wanpeng Li
+Thinking about it while typing, perhaps it is simpler than I think - if you
+need to flush range that runs across more than a single table, you are very
+likely to flush a range of more than 33 entries, so anyhow you are likely t=
+o
+do a full TLB flush.
 
->
-> This patch introduces a configurable busy-wait delay before entering the
-> architecture delay routine, allowing wakeup IPIs to be skipped
-> (if the IPI happens in that window).
->
-> The real-life workload which this patch improves performance
-> is SAP HANA (by 5-10%) (for which case setting idle_spin to 30
-> is sufficient).
->
-> This patch improves the attached server.py and client.py example
-> as follows:
->
-> Host:                           31.814230202231556
-> Guest:                          38.17718765199993       (83 %)
-> Guest, idle_spin=50us:          33.317709898000004      (95 %)
-> Guest, idle_spin=220us:         32.27826551499999       (98 %)
->
-> Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
->
-> ---
->  kernel/sched/idle.c |   86 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
->
-> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> index f5516bae0c1b..bca7656a7ea0 100644
-> --- a/kernel/sched/idle.c
-> +++ b/kernel/sched/idle.c
-> @@ -216,6 +216,29 @@ static void cpuidle_idle_call(void)
->         rcu_idle_exit();
->  }
->
-> +static unsigned int spin_before_idle_us;
->
-> +static void do_spin_before_idle(void)
-> +{
-> +       ktime_t now, end_spin;
-> +
-> +       now = ktime_get();
-> +       end_spin = ktime_add_ns(now, spin_before_idle_us*1000);
-> +
-> +       rcu_idle_enter();
-> +       local_irq_enable();
-> +       stop_critical_timings();
-> +
-> +       do {
-> +               cpu_relax();
-> +               now = ktime_get();
-> +       } while (!tif_need_resched() && ktime_before(now, end_spin));
-> +
-> +       start_critical_timings();
-> +       rcu_idle_exit();
-> +       local_irq_disable();
-> +}
-> +
->  /*
->   * Generic idle loop implementation
->   *
-> @@ -259,6 +282,8 @@ static void do_idle(void)
->                         tick_nohz_idle_restart_tick();
->                         cpu_idle_poll();
->                 } else {
-> +                       if (spin_before_idle_us)
-> +                               do_spin_before_idle();
->                         cpuidle_idle_call();
->                 }
->                 arch_cpu_idle_exit();
-> @@ -465,3 +490,64 @@ const struct sched_class idle_sched_class = {
->         .switched_to            = switched_to_idle,
->         .update_curr            = update_curr_idle,
->  };
-> +
-> +
-> +static ssize_t store_idle_spin(struct kobject *kobj,
-> +                              struct kobj_attribute *attr,
-> +                              const char *buf, size_t count)
-> +{
-> +       unsigned int val;
-> +
-> +       if (kstrtouint(buf, 10, &val) < 0)
-> +               return -EINVAL;
-> +
-> +       if (val > USEC_PER_SEC)
-> +               return -EINVAL;
-> +
-> +       spin_before_idle_us = val;
-> +       return count;
-> +}
-> +
-> +static ssize_t show_idle_spin(struct kobject *kobj,
-> +                             struct kobj_attribute *attr,
-> +                             char *buf)
-> +{
-> +       ssize_t ret;
-> +
-> +       ret = sprintf(buf, "%d\n", spin_before_idle_us);
-> +
-> +       return ret;
-> +}
-> +
-> +static struct kobj_attribute idle_spin_attr =
-> +       __ATTR(idle_spin, 0644, show_idle_spin, store_idle_spin);
-> +
-> +static struct attribute *sched_attrs[] = {
-> +       &idle_spin_attr.attr,
-> +       NULL,
-> +};
-> +
-> +static const struct attribute_group sched_attr_group = {
-> +       .attrs = sched_attrs,
-> +};
-> +
-> +static struct kobject *sched_kobj;
-> +
-> +static int __init sched_sysfs_init(void)
-> +{
-> +       int error;
-> +
-> +       sched_kobj = kobject_create_and_add("sched", kernel_kobj);
-> +       if (!sched_kobj)
-> +               return -ENOMEM;
-> +
-> +       error = sysfs_create_group(sched_kobj, &sched_attr_group);
-> +       if (error)
-> +               goto err;
-> +       return 0;
-> +
-> +err:
-> +       kobject_put(sched_kobj);
-> +       return error;
-> +}
-> +postcore_initcall(sched_sysfs_init);
+So perhaps just avoiding the batching if only entries from a single table
+are flushed would be enough.
