@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8131B1BC6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A091BC6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:59:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732034AbfEMR7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:59:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732015AbfEMR7U (ORCPT
+        id S1732046AbfEMR7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:59:23 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38589 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732029AbfEMR7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:59:20 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h17so7167659pgv.0;
-        Mon, 13 May 2019 10:59:19 -0700 (PDT)
+        Mon, 13 May 2019 13:59:21 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y2so2144164pfg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 10:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=BK2WmqeIaTnF7dVEhLC6AktVLWES0Us9v9VW0JdEI+Q=;
-        b=LwgdPKNnJu5f/hrj2fjtiMo2UUY3WLqOaa/9j31VeG4FPeZh1EVd6cgHARZ2fQrfjy
-         sQeLZp3+gNDD/uAbRyYTA5CYQpO9ogCLIMp1WoonLu/Oxmy7gn6lb/BsJBYvNOnab0eo
-         Ndv8sYu9zEagpa/+CCTK1RUGucmwUDrht0yDEQFWetmpMD8w2I/QlXy8Xb+7Y5raG/jy
-         GNB6dp2EYgWFYnw+hEPqjT0Up/zXmEaeg+ToupIYWu36ayE+XlL9mDSpajpcCJ8LqMvk
-         T+sXNTgX7pyM/gMVc4Tkv6v8hhLhMruUnsw34G4M3h8lgnTr6dmDEbUPnefbP8RKVpI+
-         bJpg==
+        bh=yIImtsMNTtBSlvN1QNVma82QIGt0h9DTz+k1trYzhKw=;
+        b=NgxWf0cD8rKV/FIt1+SAehvjMKppD254dxK8k5PeEf4Q7dv6zM8/UQMZe9fpv3lljE
+         ur+q65soOJSCDvS+0AGuCbEFl4X7ttsoQ3SIJFzNkWXDeui3hdM1vPU7Ngfz+zXfkrD/
+         7m4GH1QmlZXJuUpB1rRjqrKlVnzHj68i+xsVdJVcWJiwdFafVSbEyjU0hdPz+RX1wHzb
+         bFUTRhXrehkdefyLbXsT9TbEp5p6e1bqZTC59QReY4DtmKMgEoAUa+urIPVHIGtt4RuE
+         LRgItPrArzJ69EF/iPxWGAd/IKBkLii4C2ARl4/2nkRKmz+9RA5gNUz6q5WQbkP3TQHS
+         BuIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=BK2WmqeIaTnF7dVEhLC6AktVLWES0Us9v9VW0JdEI+Q=;
-        b=Rw1Ie8LDz4vJIZvlFs2f+RbsyEVh7MKdjqiAVhOt4QsGZen+xcvYLB1astF2rTV2sU
-         ezipBcnWbbdMSoX0BzHPwkeshzn5Z9P4lVXUl6VFDcjKA5rthIhDqU6R62N8oq8gB6yR
-         9KfHX+WeGOjweXAGbxLem5/2OhIIjzQbCYKJlxv+r4aCK8O4aKHW1/46lzo4lwPQU3uj
-         3YP5EOjgrL3wmIPKDZN784+ZNajNmZmmxyaTTG01WVqiNc5SZ2QVUsGZ4VQhzRV/elbX
-         0svdqhCMvpf/gwNMbaPhNf9Lu6s6AjcebE/ktozolrXq35QZdsKB+xcsbXI4Y3//xlLE
-         dVyg==
-X-Gm-Message-State: APjAAAXxdeCTG76LnfsCIAipP1bV/uV6LWMsd7CNCbfbDv0W3uxwbIDE
-        SjohkJHkmF+Y+38VBNG7Nf8=
-X-Google-Smtp-Source: APXvYqzJoMn/c3biu55dwvU8DgrJokCwjsNcQwkgOmpuXE35TNDoPIUlTp+wH8A07peJ+722DD6efg==
-X-Received: by 2002:aa7:8083:: with SMTP id v3mr36301445pff.135.1557770359598;
-        Mon, 13 May 2019 10:59:19 -0700 (PDT)
+        bh=yIImtsMNTtBSlvN1QNVma82QIGt0h9DTz+k1trYzhKw=;
+        b=eLdU+h+m+dXh/T7kFZDZqsMCik0FhWrjKLq8kc/uMzVxaA3BquHUVxSJ9rzY/B7A+o
+         SlmQz0zYCGl3li6OVk4AhISOM/eNZ/wFqSQ78yGKUILYWzxJobSTa+OdPuixyepDdC+1
+         S8zv1w/C1igxFmG/QMBo2RbDin7LMMmX2uzu52g3N2/zw3Jn3QNoSuDEY7xsvk8W6eCV
+         +/+J5dLsceLxjLZaUe4fHL6PoLZskgBGoZgVoQxuVK9WuzG95j3vZcG3teWVTwi+VWrL
+         qY9CLSh8XFG6fKtBdVfufgEZbHgLzf58Sfy+oPZw+uQLwcRjIcJ52ngT1aSFRFD1BvTr
+         0i2g==
+X-Gm-Message-State: APjAAAXhH34vpLsbtbtjwcuJgJdCOs4NlyJ6swrFTaXt/ocv3/X+6Ui6
+        keqMIzAGSUzkG1HegMSWuY6TCJig
+X-Google-Smtp-Source: APXvYqwI7yL1rRtTECqv01BhvG0x4SGnUzzcwGky4wMGiQFklGsbuqEynXMVwTI5g6tpwe3cOfuksQ==
+X-Received: by 2002:a62:3381:: with SMTP id z123mr36371965pfz.42.1557770360877;
+        Mon, 13 May 2019 10:59:20 -0700 (PDT)
 Received: from localhost.localdomain ([96.79.124.202])
-        by smtp.gmail.com with ESMTPSA id s12sm9536266pfd.152.2019.05.13.10.59.18
+        by smtp.gmail.com with ESMTPSA id s12sm9536266pfd.152.2019.05.13.10.59.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 10:59:18 -0700 (PDT)
+        Mon, 13 May 2019 10:59:20 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-        linux-doc@vger.kernel.org
-Subject: [PATCH 03/19] cpu topology: Export die_id
-Date:   Mon, 13 May 2019 13:58:47 -0400
-Message-Id: <e7d1caaf4fbd24ee40db6d557ab28d7d83298900.1557769318.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+Subject: [PATCH 04/19] x86 topology: Define topology_die_id()
+Date:   Mon, 13 May 2019 13:58:48 -0400
+Message-Id: <6463bc422b1b05445a502dc505c1d7c6756bda6a.1557769318.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <7b23d2d26d717b8e14ba137c94b70943f1ae4b5c.1557769318.git.len.brown@intel.com>
 References: <7b23d2d26d717b8e14ba137c94b70943f1ae4b5c.1557769318.git.len.brown@intel.com>
@@ -64,93 +63,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Len Brown <len.brown@intel.com>
 
-Export die_id in cpu topology, for the benefit of hardware that
-has multiple-die/package.
+topology_die_id(cpu) is a simple macro for use inside the kernel
+to get the die_id associated with the given cpu.
 
 Signed-off-by: Len Brown <len.brown@intel.com>
-Cc: linux-doc@vger.kernel.org
 ---
- Documentation/cputopology.txt | 15 ++++++++++++---
- drivers/base/topology.c       |  4 ++++
- include/linux/topology.h      |  3 +++
- 3 files changed, 19 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/topology.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-index cb61277e2308..2ff8a1e9a2db 100644
---- a/Documentation/cputopology.txt
-+++ b/Documentation/cputopology.txt
-@@ -12,6 +12,12 @@ physical_package_id:
- 	socket number, but the actual value is architecture and platform
- 	dependent.
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index e0232f7042c3..3777dbe9c0ff 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -106,6 +106,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
  
-+die_id:
-+
-+	the CPU die ID of cpuX. Typically it is the hardware platform's
-+	identifier (rather than the kernel's).  The actual value is
-+	architecture and platform dependent.
-+
- core_id:
+ #define topology_logical_package_id(cpu)	(cpu_data(cpu).logical_proc_id)
+ #define topology_physical_package_id(cpu)	(cpu_data(cpu).phys_proc_id)
++#define topology_die_id(cpu)			(cpu_data(cpu).cpu_die_id)
+ #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
  
- 	the CPU core ID of cpuX. Typically it is the hardware platform's
-@@ -81,6 +87,7 @@ For an architecture to support this feature, it must define some of
- these macros in include/asm-XXX/topology.h::
- 
- 	#define topology_physical_package_id(cpu)
-+	#define topology_die_id(cpu)
- 	#define topology_core_id(cpu)
- 	#define topology_book_id(cpu)
- 	#define topology_drawer_id(cpu)
-@@ -99,9 +106,11 @@ provides default definitions for any of the above macros that are
- not defined by include/asm-XXX/topology.h:
- 
- 1) topology_physical_package_id: -1
--2) topology_core_id: 0
--3) topology_sibling_cpumask: just the given CPU
--4) topology_core_cpumask: just the given CPU
-+2) topology_die_id: -1
-+3) topology_core_id: 0
-+4) topology_sibling_cpumask: just the given CPU
-+5) topology_core_cpumask: just the given CPU
-+6) topology_die_cpumask: just the given CPU
- 
- For architectures that don't support books (CONFIG_SCHED_BOOK) there are no
- default definitions for topology_book_id() and topology_book_cpumask().
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 5fd9f167ecc1..50352cf96f85 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -43,6 +43,9 @@ static ssize_t name##_list_show(struct device *dev,			\
- define_id_show_func(physical_package_id);
- static DEVICE_ATTR_RO(physical_package_id);
- 
-+define_id_show_func(die_id);
-+static DEVICE_ATTR_RO(die_id);
-+
- define_id_show_func(core_id);
- static DEVICE_ATTR_RO(core_id);
- 
-@@ -72,6 +75,7 @@ static DEVICE_ATTR_RO(drawer_siblings_list);
- 
- static struct attribute *default_attrs[] = {
- 	&dev_attr_physical_package_id.attr,
-+	&dev_attr_die_id.attr,
- 	&dev_attr_core_id.attr,
- 	&dev_attr_thread_siblings.attr,
- 	&dev_attr_thread_siblings_list.attr,
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index cb0775e1ee4b..5cc8595dd0e4 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -184,6 +184,9 @@ static inline int cpu_to_mem(int cpu)
- #ifndef topology_physical_package_id
- #define topology_physical_package_id(cpu)	((void)(cpu), -1)
- #endif
-+#ifndef topology_die_id
-+#define topology_die_id(cpu)			((void)(cpu), -1)
-+#endif
- #ifndef topology_core_id
- #define topology_core_id(cpu)			((void)(cpu), 0)
- #endif
+ #ifdef CONFIG_SMP
 -- 
 2.18.0-rc0
 
