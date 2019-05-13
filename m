@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1571BC19
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 444831BC1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731844AbfEMRlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:41:10 -0400
-Received: from node.akkea.ca ([192.155.83.177]:42446 "EHLO node.akkea.ca"
+        id S1731867AbfEMRlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:41:14 -0400
+Received: from node.akkea.ca ([192.155.83.177]:42422 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731831AbfEMRlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731826AbfEMRlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 13 May 2019 13:41:07 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 571C44E205C;
-        Mon, 13 May 2019 17:41:07 +0000 (UTC)
+        by node.akkea.ca (Postfix) with ESMTP id EEDF74E2056;
+        Mon, 13 May 2019 17:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1557769267; bh=bLmus07ZtGpPjQkmnxTr8q/vrmMNTrER0QBD1MkZdFs=;
+        t=1557769266; bh=SfqX2EFJOvWCTClrRDpHw/tV94ED1IxtbtG2u/MWNBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=sDPhNugP7SzFHaRUQCzaIkd/FkUPqHQFhEUiJTsYo9WFS1nFQmdsOBNj4X9YuBQBS
-         +iim3OB5EI1P0Botzx3AfVTeS/rn6BFjZ3t8wa4Fc8+4UU0spJN9HRTWuYwQQaGCOm
-         k3y6gf/N1UsLteDSRGsrH1pGw8Dl07A+LLDWocRk=
+        b=xMH57FpVKbOPRJMQ/aOYfWAbHf+RQtfUKFy1l2Kc/AReh0dQ7DvLPD2fURm9qEHyg
+         g2Biu1UxUtUJbax0aYax3nosozu8KfdtpVGh0GGrFlgl3XyN5LQ/Ek0cs2FA4M40M0
+         yaj60NDJugQENm5BIiIpUewQy9qUBpwWtM+4LMTc=
 X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
 Received: from node.akkea.ca ([127.0.0.1])
         by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id m8b8jWUZ0Jgl; Mon, 13 May 2019 17:41:06 +0000 (UTC)
+        with ESMTP id cK3IV_30aGiW; Mon, 13 May 2019 17:41:06 +0000 (UTC)
 Received: from midas.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
-        by node.akkea.ca (Postfix) with ESMTPSA id 79A9F4E204D;
-        Mon, 13 May 2019 17:41:05 +0000 (UTC)
+        by node.akkea.ca (Postfix) with ESMTPSA id 19DA54E204E;
+        Mon, 13 May 2019 17:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1557769265; bh=bLmus07ZtGpPjQkmnxTr8q/vrmMNTrER0QBD1MkZdFs=;
+        t=1557769266; bh=SfqX2EFJOvWCTClrRDpHw/tV94ED1IxtbtG2u/MWNBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=wmDEdYsRfbv0K9xW5Tjrrn3s+JQ6GNOQY4TGbf3dQJYiNAubMnLJn4M74Y2EN+Xui
-         /2XdW4VZfaLVOKYIeunO6d3TJE6qF/SdrzJj07S5NMCWHNEj6stRyppsEJYdrdK+Lq
-         be8yU8c0VraDCgNziKXahLQTU4tArW9vO3gLedkI=
+        b=xMH57FpVKbOPRJMQ/aOYfWAbHf+RQtfUKFy1l2Kc/AReh0dQ7DvLPD2fURm9qEHyg
+         g2Biu1UxUtUJbax0aYax3nosozu8KfdtpVGh0GGrFlgl3XyN5LQ/Ek0cs2FA4M40M0
+         yaj60NDJugQENm5BIiIpUewQy9qUBpwWtM+4LMTc=
 From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
 To:     angus.ainslie@puri.sm
 Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
@@ -45,9 +45,9 @@ Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v10 3/4] dt-bindings: Add an entry for Purism SPC
-Date:   Mon, 13 May 2019 10:40:56 -0700
-Message-Id: <20190513174057.4410-4-angus@akkea.ca>
+Subject: [PATCH v10 4/4] dt-bindings: arm: fsl: Add the imx8mq boards
+Date:   Mon, 13 May 2019 10:40:57 -0700
+Message-Id: <20190513174057.4410-5-angus@akkea.ca>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190513174057.4410-1-angus@akkea.ca>
 References: <20190513174057.4410-1-angus@akkea.ca>
@@ -56,26 +56,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an entry for Purism, SPC
+Add an entry for imx8mq based boards
 
 Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index e9034a6c003a..64bb1fa1a4d5 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -333,6 +333,7 @@ poslab	Poslab Technology Co., Ltd.
- powervr	PowerVR (deprecated, use img)
- probox2	PROBOX2 (by W2COMP Co., Ltd.)
- pulsedlight	PulsedLight, Inc
-+purism	Purism, SPC
- qca	Qualcomm Atheros, Inc.
- qcom	Qualcomm Technologies, Inc
- qemu	QEMU, a generic and open source machine emulator and virtualizer
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 407138ebc0d0..41364b127200 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -177,6 +177,13 @@ properties:
+               - fsl,imx8mm-evk            # i.MX8MM EVK Board
+           - const: fsl,imx8mm
+ 
++      - description: i.MX8MQ based Boards
++        items:
++          - enum:
++              - fsl,imx8mq-evk            # i.MX8MQ EVK Board
++              - purism,librem5-devkit     # Purism Librem5 devkit
++          - const: fsl,imx8mq
++
+       - description: i.MX8QXP based Boards
+         items:
+           - enum:
 -- 
 2.17.1
 
