@@ -2,131 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA1D11B8DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F5E1B8E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730727AbfEMOnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:43:50 -0400
-Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:38390 "EHLO
-        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728203AbfEMOnt (ORCPT
+        id S1730255AbfEMOo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:44:59 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46974 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbfEMOo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:43:49 -0400
-Received: from pps.filterd (m0170395.ppops.net [127.0.0.1])
-        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4DEeRjw018478;
-        Mon, 13 May 2019 10:43:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=aImZ5J/Q/lhWgc1+GpSNxDkEPKzeyAmtinwTFVJFtQA=;
- b=lGtHMrTfFS94Yy/H4BjKhmjwkNzS9B3747GeyQ0+WmeU0LtpZT0H++KkBiTzSNJ5MRdY
- Vj1dBvpr5Uduopv0SFUW1pooTELJNO5651kdV6sKu4+wFiM8TJbilkCypJJnsBnxZ9hX
- cRbK/tu+3qeDwesX3ROcyWJxvmmzoW6MvfJhbdpNjhnwXopJFU9zt1Umn+aZ3oePugB+
- hzplAD0kJibeSjmQHN2jsHIGRZyJqcfsgmaqloQVarCwpxR2hrh80lRi9pRNsM8nHVAV
- E7t79OEpZVmkR35e4nqT5rZ2WwBM2CwqeCrdSZqDjX/MrMb7n99YykbdI6Mm+b7qbOgN GQ== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0b-00154904.pphosted.com with ESMTP id 2sdu2mmvu0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 May 2019 10:43:47 -0400
-Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4DEc9h0157401;
-        Mon, 13 May 2019 10:43:46 -0400
-Received: from ausxippc110.us.dell.com (AUSXIPPC110.us.dell.com [143.166.85.200])
-        by mx0a-00154901.pphosted.com with ESMTP id 2sf9411tj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 10:43:46 -0400
-X-LoopCount0: from 10.166.132.127
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="793587289"
-From:   <Mario.Limonciello@dell.com>
-To:     <hch@lst.de>
-CC:     <keith.busch@intel.com>, <sagi@grimberg.me>,
-        <linux-nvme@lists.infradead.org>, <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <kai.heng.feng@canonical.com>
-Subject: RE: [PATCH] nvme/pci: Use host managed power state for suspend
-Thread-Topic: [PATCH] nvme/pci: Use host managed power state for suspend
-Thread-Index: AQHVB3g9crBQ5iluoUuygL0xp1WIm6ZlFnpAgAQIfyCAAFi+gP//rRIQ
-Date:   Mon, 13 May 2019 14:43:43 +0000
-Message-ID: <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
-References: <20190510212937.11661-1-keith.busch@intel.com>
- <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
- <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
- <20190513143741.GA25500@lst.de>
-In-Reply-To: <20190513143741.GA25500@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 13 May 2019 10:44:58 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f37so17905183edb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 07:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oa11tgFM6isQYlc2/lSr8+dtL7dz0FGS2ImXszdei94=;
+        b=lkK1jfdXRSWG4EOPXpNEsgoMZb8lUzm2FfYavTsrFBTY7w3Z4FVJ9cp/fBcnbUD9bK
+         Frxw45KRQigXleUJaVccMl3gMpsrT0DKhj92T3OICo7PFH1ZWYiDKuhrJn4Bo6DXp0gB
+         BN+9OOpk6LCzBYskBvabimkY7bAvWM5tFDS84=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=oa11tgFM6isQYlc2/lSr8+dtL7dz0FGS2ImXszdei94=;
+        b=qRqRYy+0ftvCkBq3xbtFv3QLlQDG8l9+euTLqT2GS6GF7TQoTSvHE/PLgZuYcTO802
+         P+kia/YPwO2Bu2nI2z9FAiOZuJVx+a6Os0uRmuNJ/EP/dZhjXiAKg+rWIkDQPNrfWFCV
+         RX5TT29PIrnXu9kC0ydx8WEX3VPICs/Tahmlkq6mFq21XT03ChtN1rRUyDDxdoWWIdTg
+         xdmAjoLbu2CXGDZCi6Kduezlb4U0cs8/sAPGi1Y00RormEYj0X8Y4NhI3qnpsWLshMYh
+         jolixJe3t1RWX8QwbOsA1GIxNS8fJPl/srGjBaw4iodJMYd6l4YqHwDPSTYZoMfKTeoP
+         m6pQ==
+X-Gm-Message-State: APjAAAXxqpd+/rsMXFURT42uKjSUwTBOFO8Mwiq0V4eNO0i8WBj7iotd
+        0zGqfNvgm7FzZL6c6701EHPaxg==
+X-Google-Smtp-Source: APXvYqzazE/ARkr3DfLFYQv2UcXLE6AXccxEO07VmSzGlXapLczjo2jaDfA5V6TtDA06sVwBcw/rGw==
+X-Received: by 2002:a17:906:18b1:: with SMTP id c17mr22862891ejf.196.1557758696660;
+        Mon, 13 May 2019 07:44:56 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id ox15sm1844293ejb.52.2019.05.13.07.44.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 May 2019 07:44:55 -0700 (PDT)
+Date:   Mon, 13 May 2019 16:44:51 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, dan.j.williams@intel.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190513144451.GQ17751@phenom.ffwll.local>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
+        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+References: <20190509015856.GB7031@mit.edu>
+ <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+ <20190509032017.GA29703@mit.edu>
+ <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <80c72e64-2665-bd51-f78c-97f50f9a53ba@gmail.com>
+ <20190511173344.GA8507@mit.edu>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-13_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905130103
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905130103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190511173344.GA8507@mit.edu>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Christoph Hellwig <hch@lst.de>
-> Sent: Monday, May 13, 2019 9:38 AM
-> To: Limonciello, Mario
-> Cc: keith.busch@intel.com; hch@lst.de; sagi@grimberg.me; linux-
-> nvme@lists.infradead.org; rafael@kernel.org; linux-kernel@vger.kernel.org=
-; linux-
-> pm@vger.kernel.org; kai.heng.feng@canonical.com
-> Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Mon, May 13, 2019 at 02:24:41PM +0000, Mario.Limonciello@dell.com wrot=
-e:
-> > I've received the result that from one of my partners this patch doesn'=
-t
-> > work properly and the platform doesn't go into a lower power state.
->=20
-> Well, it sounds like your partners device does not work properly in this
-> case.  There is nothing in the NVMe spec that says queues should be
-> torn down for deep power states, and that whole idea seems rather
-> counter productive to low-latency suspend/resume cycles.
+On Sat, May 11, 2019 at 01:33:44PM -0400, Theodore Ts'o wrote:
+> On Fri, May 10, 2019 at 02:12:40PM -0700, Frank Rowand wrote:
+> > However, the reply is incorrect.  Kselftest in-kernel tests (which
+> > is the context here) can be configured as built in instead of as
+> > a module, and built in a UML kernel.  The UML kernel can boot,
+> > running the in-kernel tests before UML attempts to invoke the
+> > init process.
+> 
+> Um, Citation needed?
+> 
+> I don't see any evidence for this in the kselftest documentation, nor
+> do I see any evidence of this in the kselftest Makefiles.
+> 
+> There exists test modules in the kernel that run before the init
+> scripts run --- but that's not strictly speaking part of kselftests,
+> and do not have any kind of infrastructure.  As noted, the
+> kselftests_harness header file fundamentally assumes that you are
+> running test code in userspace.
 
-Well I've got a thought, quoting the NVME spec:
-"After a successful completion of a Set Features command for this feature, =
-the controller shall be in the
-Power State specified. If enabled, autonomous power state transitions conti=
-nue to occur from the new state."
+Yeah I really like the "no userspace required at all" design of kunit,
+while still collecting results in a well-defined way (unless the current
+self-test that just run when you load the module, with maybe some
+kselftest ad-hoc wrapper around to collect the results).
 
-If APST is enabled on this disk, what is to stop an autonomous  reverse
-transition from queue activity on the way down?
-
->=20
-> > This was not a disk with HMB, but with regard to the HMB I believe it
-> > needs to be removed during s0ix so that there isn't any mistake that SS=
-D
-> > thinks it can access HMB memory in s0ix.
->=20
-> There is no mistake - the device is allowed to use the HMB from the
-> point that we give it the memory range until the point where we either
-> disable it, or shut the controller down.  If something else requires the
-> device not to use the HMB after ->suspend is called we need to disable
-> the HMB, and we better have a good reason for that and document it in
-> the code.  Note that shutting down queues or having CPU memory barriers
-> is not going to help with any of that.
-
-So maybe the CPU memory barriers were probably just working around it in te=
-rms of
-timing.
+What I want to do long-term is to run these kernel unit tests as part of
+the build-testing, most likely in gitlab (sooner or later, for drm.git
+only ofc). So that people get their pull requests (and patch series, we
+have some ideas to tie this into patchwork) automatically tested for this
+super basic stuff.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
