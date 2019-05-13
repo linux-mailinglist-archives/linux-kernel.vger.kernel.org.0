@@ -2,55 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 183E21B98E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 555C01B979
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbfEMPKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:10:21 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60387 "EHLO mga01.intel.com"
+        id S1729455AbfEMPFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:05:43 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53099 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfEMPKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:10:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 08:10:20 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 13 May 2019 08:10:20 -0700
-Date:   Mon, 13 May 2019 09:04:58 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Mario.Limonciello@dell.com
-Cc:     hch@lst.de, keith.busch@intel.com, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        kai.heng.feng@canonical.com
-Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
-Message-ID: <20190513150458.GA15437@localhost.localdomain>
-References: <20190510212937.11661-1-keith.busch@intel.com>
- <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
- <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
- <20190513143741.GA25500@lst.de>
- <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
- <20190513145522.GA15421@localhost.localdomain>
- <d69ff7154191492eaa8f55535a7effa5@AUSX13MPC105.AMER.DELL.COM>
+        id S1727725AbfEMPFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:05:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 452kdx20Rcz9s4Y;
+        Tue, 14 May 2019 01:05:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557759941;
+        bh=tqS4kzx2hydYJAX+s68gQPYezEl4dU/R2ruoPAnE1RM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PrRpceaI+SqwnzTdPU1p3SiLf0xOKmZMGz885BgBNW7PjKFabzPHMZPOQojs6eZPR
+         PVdDEDsRa16DDQ7OpWbbzsEkwHAlc1FqaITIDlMt/HguHdemUqXkQjK3Vh3QdzFxis
+         nBzuZ5HpV25MrJ0KzsY3v4HfcLR4fqtmgIgif9g4Gw1SnLpVe6S34Bv/tQvW1UMYve
+         WyPUdnvcGJavoBaD4rypjWrPY/SXVQvzRIMMRlQDIOGGju55aPwS6kxxpCOE1CTDbx
+         JKmZkaspjH054reLgtaujRxSzDJ0yImOoKEq39vizbNMwoSD5qlpxcDg+ZLr8oi5gZ
+         zPuCxEFMUPYvA==
+Date:   Tue, 14 May 2019 01:05:40 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the kselftest tree
+Message-ID: <20190514010540.6fbe70e0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d69ff7154191492eaa8f55535a7effa5@AUSX13MPC105.AMER.DELL.COM>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/42zB5IixV86pkMF=x7h5+V1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 03:05:42PM +0000, Mario.Limonciello@dell.com wrote:
-> This system power state - suspend to idle is going to freeze threads.
-> But we're talking a multi threaded kernel.  Can't there be a timing problem going
-> on then too?  With a disk flush being active in one task and the other task trying
-> to put the disk into the deepest power state.  If you don't freeze the queues how
-> can you guarantee that didn't happen?
+--Sig_/42zB5IixV86pkMF=x7h5+V1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-But if an active data flush task is running, then we're not idle and
-shouldn't go to low power.
+Hi Shuah,
+
+In commit
+
+  e64ee1f5dc1a ("selftests: fix bpf build/test workflow regression when KBU=
+ILD_OUTPUT is set")
+
+Fixes tag
+
+  Fixes: commit 8ce72dc32578 ("selftests: fix headers_install circular depe=
+ndency")
+
+has these problem(s):
+
+  - leading word 'commit' unexpected
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/42zB5IixV86pkMF=x7h5+V1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzZh8QACgkQAVBC80lX
+0Gw33Af7BwLykcsFSxaJ4zhM0iYij121ix2a15JOsKMlKLJXEi8IGOd+8vw1CeWQ
+z65oEGTieWwIqp0j4YAXiDeRTVKYRV3X0ndcl3zLLW7bz4dKGcK7SRzfrs+nSVOH
+y+X/pHke+fQ63bful+d52Os3SSBdjslqq92AxtrJVqIKXkOnDxc2waZqqde/K8Jf
+LjlQ7KZ7cMZtLZWq1ZAcWg4LZVMWO7yzhbmnjIWeji+weIwHTYQyBFsLXKwe3ZVz
+UhIRDgfJ9WCUvaYai7VrT2jnxCAkxQ0YxKmZGhecfgSv5k04E8bxYQZF9qcnp9zD
+5JKQvhknM9OCkD5sM94JmO+MRxrE2Q==
+=SyBd
+-----END PGP SIGNATURE-----
+
+--Sig_/42zB5IixV86pkMF=x7h5+V1--
