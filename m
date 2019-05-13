@@ -2,69 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C7B1B9BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 621271B9D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731209AbfEMPQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:16:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56250 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfEMPQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:16:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fZCXLRK6siZkJzRThAZU41Qk9STzd0Ms+LwmndLzT4U=; b=dOoxRqeIU0IcG57wCspBazrWD
-        09pvLZ3B5B5JIvlkaPW2v9wmDfMD64eHIMMM9VvHovmSQKCVTDs7AE4x5WHR7JayzOyj0JrbYDzto
-        ib/qLZIhKW6+9A9vmS6HmBS/La4Q8rd9fYbZQHpxTGe4fty4HDIjEm12v3yGcwPrVPWKPQb5fN8J4
-        Sb8DsdDGSKgndaqMp41piHOpX3l/9BQxCbIIi+bigL7I/3SyPyENVxM/pguzcSVXd93Vsm7UtGVx8
-        wQyZBWobruR2cR6mtbgUMTPFk/d/d7NZw3IEuj7HoEUIK5wB4IyvT2P1fkqsaxnzVT2JIKk5vnAFX
-        I9EMq7JEw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQCgx-00083R-0e; Mon, 13 May 2019 15:16:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C83E22029F877; Mon, 13 May 2019 17:16:37 +0200 (CEST)
-Date:   Mon, 13 May 2019 17:16:37 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, kvm@vger.kernel.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
-        liran.alon@oracle.com, jwadams@google.com
-Subject: Re: [RFC KVM 25/27] kvm/isolation: implement actual KVM isolation
- enter/exit
-Message-ID: <20190513151637.GA2589@hirez.programming.kicks-ass.net>
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
- <1557758315-12667-26-git-send-email-alexandre.chartre@oracle.com>
+        id S1729220AbfEMPWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:22:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7085 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727458AbfEMPWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:22:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 08:22:14 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga002.jf.intel.com with ESMTP; 13 May 2019 08:22:13 -0700
+Date:   Mon, 13 May 2019 09:16:52 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mario.Limonciello@dell.com, keith.busch@intel.com,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        rafael@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, kai.heng.feng@canonical.com
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+Message-ID: <20190513151652.GB15437@localhost.localdomain>
+References: <20190510212937.11661-1-keith.busch@intel.com>
+ <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
+ <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
+ <20190513143754.GE15318@localhost.localdomain>
+ <7ab8274ef1ce46fcae54a50abc76ae4a@AUSX13MPC105.AMER.DELL.COM>
+ <20190513145708.GA25897@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557758315-12667-26-git-send-email-alexandre.chartre@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190513145708.GA25897@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 04:38:33PM +0200, Alexandre Chartre wrote:
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index a4db7f5..7ad5ad1 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -444,6 +444,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->  		switch_ldt(real_prev, next);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(switch_mm_irqs_off);
->  
->  /*
->   * Please ignore the name of this function.  It should be called
+On Mon, May 13, 2019 at 04:57:08PM +0200, Christoph Hellwig wrote:
+> On Mon, May 13, 2019 at 02:54:49PM +0000, Mario.Limonciello@dell.com wrote:
+> > And NVME spec made it sound to me that while in a low power state it shouldn't
+> > be available if the memory isn't available.
+> > 
+> > NVME spec in 8.9:
+> > 
+> > "Host software should request that the controller release the
+> > assigned ranges prior to a shutdown event, a Runtime D3 event, or any other event
+> > that requires host software to reclaim the assigned ranges."
+> 
+> The last part of the quoted text is the key - if the assigned range
+> is reclaimed, that is the memory is going to be used for something else,
+> we need to release the ranges.  But we do not release the ranges,
+> as we want to keep the memory in use so that we can quickly use it
+> again.
 
-NAK
+Yes, this. As far as I know, the host memory range is still accessible in
+the idle suspend state. If there are states in which host memory is not
+accessible, a reference explaining the requirement will be most helpful.
