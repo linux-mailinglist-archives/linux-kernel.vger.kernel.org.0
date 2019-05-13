@@ -2,124 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D620C1B7A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BB91B78D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbfEMOBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:01:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7639 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727272AbfEMOBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:01:48 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 183C2B7D0CAF378CE88;
-        Mon, 13 May 2019 21:52:55 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
- 21:52:44 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <agross@kernel.org>, <david.brown@linaro.org>,
-        <amit.kucheria@linaro.org>, <rui.zhang@intel.com>,
-        <edubezval@gmail.com>, <daniel.lezcano@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] thermal: tsens: Make some symbols static
-Date:   Mon, 13 May 2019 21:52:16 +0800
-Message-ID: <20190513135216.23540-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1730289AbfEMN56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 09:57:58 -0400
+Received: from mga06.intel.com ([134.134.136.31]:63895 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727272AbfEMN56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 09:57:58 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 06:57:57 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga008.jf.intel.com with ESMTP; 13 May 2019 06:57:56 -0700
+Date:   Mon, 13 May 2019 07:52:35 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Busch, Keith" <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        "Heitke, Kenneth" <kenneth.heitke@intel.com>
+Subject: Re: [PATCH v3 6/7] nvme-pci: trigger device coredump on command
+ timeout
+Message-ID: <20190513135235.GD15318@localhost.localdomain>
+References: <1557676457-4195-1-git-send-email-akinobu.mita@gmail.com>
+ <1557676457-4195-7-git-send-email-akinobu.mita@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557676457-4195-7-git-send-email-akinobu.mita@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warnings:
+On Sun, May 12, 2019 at 08:54:16AM -0700, Akinobu Mita wrote:
+> @@ -2536,6 +2539,9 @@ static void nvme_reset_work(struct work_struct *work)
+>  	if (result)
+>  		goto out;
+>  
+> +	nvme_coredump_logs(dev);
 
-drivers/thermal/qcom/tsens-v0_1.c:322:29: warning: symbol 'tsens_v0_1_feat' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v0_1.c:330:24: warning: symbol 'tsens_v0_1_regfields' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v1.c:147:29: warning: symbol 'tsens_v1_feat' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v1.c:155:24: warning: symbol 'tsens_v1_regfields' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v2.c:30:29: warning: symbol 'tsens_v2_feat' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v2.c:38:24: warning: symbol 'tsens_v2_regfields' was not declared. Should it be static?
+If you change nvme_coredump_logs to return an int, check it here for < 0
+and abandon the reset if true.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/thermal/qcom/tsens-v0_1.c | 4 ++--
- drivers/thermal/qcom/tsens-v1.c   | 4 ++--
- drivers/thermal/qcom/tsens-v2.c   | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/qcom/tsens-v0_1.c b/drivers/thermal/qcom/tsens-v0_1.c
-index b3a63d7..a319283 100644
---- a/drivers/thermal/qcom/tsens-v0_1.c
-+++ b/drivers/thermal/qcom/tsens-v0_1.c
-@@ -319,7 +319,7 @@ static int calibrate_8974(struct tsens_priv *priv)
- 
- /* v0.1: 8916, 8974 */
- 
--const struct tsens_features tsens_v0_1_feat = {
-+static const struct tsens_features tsens_v0_1_feat = {
- 	.ver_major	= VER_0_1,
- 	.crit_int	= 0,
- 	.adc		= 1,
-@@ -327,7 +327,7 @@ const struct tsens_features tsens_v0_1_feat = {
- 	.max_sensors	= 11,
- };
- 
--const struct reg_field tsens_v0_1_regfields[MAX_REGFIELDS] = {
-+static const struct reg_field tsens_v0_1_regfields[MAX_REGFIELDS] = {
- 	/* ----- SROT ------ */
- 	/* No VERSION information */
- 
-diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
-index a1221ef..10b595d 100644
---- a/drivers/thermal/qcom/tsens-v1.c
-+++ b/drivers/thermal/qcom/tsens-v1.c
-@@ -144,7 +144,7 @@ static int calibrate_v1(struct tsens_priv *priv)
- 
- /* v1.x: qcs404,405 */
- 
--const struct tsens_features tsens_v1_feat = {
-+static const struct tsens_features tsens_v1_feat = {
- 	.ver_major	= VER_1_X,
- 	.crit_int	= 0,
- 	.adc		= 1,
-@@ -152,7 +152,7 @@ const struct tsens_features tsens_v1_feat = {
- 	.max_sensors	= 11,
- };
- 
--const struct reg_field tsens_v1_regfields[MAX_REGFIELDS] = {
-+static const struct reg_field tsens_v1_regfields[MAX_REGFIELDS] = {
- 	/* ----- SROT ------ */
- 	/* VERSION */
- 	[VER_MAJOR] = REG_FIELD(SROT_HW_VER_OFF, 28, 31),
-diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-index 36fbfa6..1099069 100644
---- a/drivers/thermal/qcom/tsens-v2.c
-+++ b/drivers/thermal/qcom/tsens-v2.c
-@@ -27,7 +27,7 @@
- 
- /* v2.x: 8996, 8998, sdm845 */
- 
--const struct tsens_features tsens_v2_feat = {
-+static const struct tsens_features tsens_v2_feat = {
- 	.ver_major	= VER_2_X,
- 	.crit_int	= 1,
- 	.adc		= 0,
-@@ -35,7 +35,7 @@ const struct tsens_features tsens_v2_feat = {
- 	.max_sensors	= 16,
- };
- 
--const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
-+static const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
- 	/* ----- SROT ------ */
- 	/* VERSION */
- 	[VER_MAJOR] = REG_FIELD(SROT_HW_VER_OFF, 28, 31),
--- 
-2.7.4
-
-
+> +	nvme_coredump_complete(dev);
+> +
+>  	if (dev->ctrl.oacs & NVME_CTRL_OACS_SEC_SUPP) {
+>  		if (!dev->ctrl.opal_dev)
+>  			dev->ctrl.opal_dev =
