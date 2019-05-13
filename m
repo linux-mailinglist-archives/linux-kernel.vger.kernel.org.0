@@ -2,87 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CB21BB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8FA1BB3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730894AbfEMQqk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 May 2019 12:46:40 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:61776 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728347AbfEMQqj (ORCPT
+        id S1730874AbfEMQqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 12:46:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39898 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728347AbfEMQqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:46:39 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16543216-1500050 
-        for multiple; Mon, 13 May 2019 17:46:32 +0100
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Daniel Vetter <daniel@ffwll.ch>,
-        Steven Price <steven.price@arm.com>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <0b7f0b7f-3e14-f5bb-368a-08037c2a8529@arm.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-References: <20190513143244.16478-1-steven.price@arm.com>
- <20190513143921.GP17751@phenom.ffwll.local>
- <155775884217.2165.11223399053598674062@skylake-alporthouse-com>
- <0b7f0b7f-3e14-f5bb-368a-08037c2a8529@arm.com>
-Message-ID: <155776599144.2165.15056323416635154840@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH] drm/panfrost: Use drm_gem_dump_map_offset()
-Date:   Mon, 13 May 2019 17:46:31 +0100
+        Mon, 13 May 2019 12:46:33 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3747314E266A1;
+        Mon, 13 May 2019 09:46:33 -0700 (PDT)
+Date:   Mon, 13 May 2019 09:46:32 -0700 (PDT)
+Message-Id: <20190513.094632.2251179341102416171.davem@davemloft.net>
+To:     jay.vosburgh@canonical.com
+Cc:     jarod@redhat.com, linux-kernel@vger.kernel.org, vfalico@gmail.com,
+        andy@greyhouse.net, netdev@vger.kernel.org
+Subject: Re: [PATCH] bonding: fix arp_validate toggling in active-backup
+ mode
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <6720.1557765810@famine>
+References: <26675.1557528809@famine>
+        <2033e768-9e35-ac89-c526-4c28fc3f747e@redhat.com>
+        <6720.1557765810@famine>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 13 May 2019 09:46:33 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Steven Price (2019-05-13 16:14:01)
-> On 13/05/2019 15:47, Chris Wilson wrote:
-> > Quoting Daniel Vetter (2019-05-13 15:39:21)
-> >> On Mon, May 13, 2019 at 03:32:44PM +0100, Steven Price wrote:
-> >>> panfrost_ioctl_mmap_bo() contains a reimplementation of
-> >>> drm_gem_dump_map_offset() but with a bug - it allows mapping imported
-> >>> objects (without going through the exporter). Fix this by switching to
-> >>> use the generic drm_gem_dump_map_offset() function instead which has the
-> >>> bonus of simplifying the code.
-> >>
-> >> gem_dumb stuff is for kms drivers, panfrost is a render driver. We're
-> >> generally trying to separate these two worlds somewhat cleanly.
-> >>
-> >> I think it'd be good to have a non-dumb version of this in the core, and
-> >> use that. Or upgrade the dumb version to be that helper for everyone (and
-> >> drop the _dumb).
-> 
-> I'm slightly confused by what you think is the best course of action here.
-> 
-> I can create a patch dropping the '_dumb' from drm_gem_dump_map_offset()
-> if that's the objection. Or do you want a helper function with two
-> callers (the 'dump' and the 'shmem' versions)?
-> 
-> > More specifically, since panfrost is using the drm_gem_shmem helper and
-> > vm_ops, it too can provide the wrapper as it is the drm_gem_shmem layer
-> > that implies that trying to mmap an imported object is an issue as that
-> > is not a universal problem.
-> mmap'ing an imported object isn't a problem as such. But rather than
-> going behind the exporter's back we would need to call dma_buf_mmap() to
-> ensure that the exporter can do whatever is necessary.
-> 
-> I could add a wrapper in drm_gem_shmem_helper, but I'm not sure what the
-> benefit of a wrapper here is?
+From: Jay Vosburgh <jay.vosburgh@canonical.com>
+Date: Mon, 13 May 2019 09:43:30 -0700
 
-No, my point is that the pagefaulting is being provided by drm_gem_shmem
-and that is relying on direct access to struct page, hence that is
-imposing the restriction that it can only handle its own shmem objects.
-The driver should not guess the helper, but ask the helper if it can
-perform an mmap of this object, and since this object is not an shmem
-object it will say no.
+> 	That would be my preference, as the 29c4948293bf commit looks to
+> be the change actually being fixed.
 
-Different drivers can use their HW to fault in indirect access to dmabuf
-(treating the dmabuf as a conveyance of a sglist and not struct page)
-and so do not need to different/reject foreign objects from their
-specialised mmap routines and are oblivious to them.
--Chris
+Sorry I pushed the original commit message out :-(
+
+But isn't the Fixes: tag he choose the one where the logic actually
+causes problems?  That's kind of my real criteria for Fixes: tags.
