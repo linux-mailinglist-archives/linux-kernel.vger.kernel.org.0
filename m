@@ -2,77 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 470C91BA64
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0801BA66
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfEMPvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:51:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729558AbfEMPvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:51:19 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDAE9214C6
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 15:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557762678;
-        bh=VO5BWtK/NhFMUgfePe27x1pllPiG08W6xyS+rnVVOZ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fyu+eEytsVWPHDXWOsfR/TJPqHCmbiYlK1Fnjgm+jpYglv6rVvm/+qXEvZm5ZT01+
-         Y5BbMjwW0+hAE1oCsSINHifec3q/3FiaUs/zGMRfMHVEN4gqXnxNhy75utPulzWWZm
-         sbdTaN4z+XaFRnmavwNqVm51mR8QZNfjMl4l8AIg=
-Received: by mail-wr1-f42.google.com with SMTP id c5so15840316wrs.11
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 08:51:17 -0700 (PDT)
-X-Gm-Message-State: APjAAAWxeMxmA63vHV9V5n5jJNPuoeJyKR9f/we02NpK1zNY3AatMEPs
-        cVmyKaw9uuhNeSH5OoMf8nngHHe78F7EtXSUF3P/Fw==
-X-Google-Smtp-Source: APXvYqweIyAAst47IlG9+M3dW2MMDYappTrLz+EbgygcUMyvETKgI8UQlTIVNk0ihEUxrA0VUAbnkkOWJOGlHuc0t+0=
-X-Received: by 2002:adf:ec42:: with SMTP id w2mr17344670wrn.77.1557762676520;
- Mon, 13 May 2019 08:51:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com> <1557758315-12667-7-git-send-email-alexandre.chartre@oracle.com>
-In-Reply-To: <1557758315-12667-7-git-send-email-alexandre.chartre@oracle.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 13 May 2019 08:51:04 -0700
-X-Gmail-Original-Message-ID: <CALCETrUzAjUFGd=xZRmCbyLfvDgC_WbPYyXB=OznwTkcV-PKNw@mail.gmail.com>
-Message-ID: <CALCETrUzAjUFGd=xZRmCbyLfvDgC_WbPYyXB=OznwTkcV-PKNw@mail.gmail.com>
-Subject: Re: [RFC KVM 06/27] KVM: x86: Exit KVM isolation on IRQ entry
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Jonathan Adams <jwadams@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729758AbfEMPv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:51:26 -0400
+Received: from smtprelay0221.hostedemail.com ([216.40.44.221]:43016 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727983AbfEMPvW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:51:22 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id B7749100E86CA;
+        Mon, 13 May 2019 15:51:20 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:4250:4321:5007:6119:6691:7901:7903:8828:9108:10004:10400:10848:11232:11658:11914:12043:12663:12740:12760:12895:13069:13071:13161:13229:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21627:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:37,LUA_SUMMARY:none
+X-HE-Tag: paste52_62f1a3945021d
+X-Filterd-Recvd-Size: 2483
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 13 May 2019 15:51:19 +0000 (UTC)
+Message-ID: <a28b0616aca51aed38fd99fb85632628e6fd8d60.camel@perches.com>
+Subject: Re: [Proposal] end of file checks by checkpatch.pl
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Whitcroft <apw@canonical.com>
+Date:   Mon, 13 May 2019 08:51:18 -0700
+In-Reply-To: <CAK7LNAQxsUheo2dHn5E=4ACafcYL9zNubgiVkJkANuZkx2RgpA@mail.gmail.com>
+References: <CAK7LNAR5j1ygbq9TLqUhbJ+tkMdrtD3BgQoUWZErUrnEoWKYMw@mail.gmail.com>
+         <b5e2a4d9eb49290d6dc3449c90cdf07797b1aba6.camel@perches.com>
+         <CAK7LNAQxsUheo2dHn5E=4ACafcYL9zNubgiVkJkANuZkx2RgpA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
-<alexandre.chartre@oracle.com> wrote:
->
-> From: Liran Alon <liran.alon@oracle.com>
->
-> Next commits will change most of KVM #VMExit handlers to run
-> in KVM isolated address space. Any interrupt handler raised
-> during execution in KVM address space needs to switch back
-> to host address space.
->
-> This patch makes sure that IRQ handlers will run in full
-> host address space instead of KVM isolated address space.
+On Mon, 2019-05-13 at 19:11 +0900, Masahiro Yamada wrote:
+> Hi Joe,
 
-IMO this needs to be somewhere a lot more central.  What about NMI and
-MCE?  Or async page faults?  Or any other entry?
+Hello again.
 
---Andy
+> On Fri, May 10, 2019 at 2:20 AM Joe Perches <joe@perches.com> wrote:
+> > On Fri, 2019-05-10 at 00:27 +0900, Masahiro Yamada wrote:
+> > > Does it make sense to check the following
+> > > by checkpatch.pl ?
+> > > [1] blank line at end of file
+> > > [2] no new line at end of file
+> > 
+> > I'm pretty sure checkpatch does one this already.
+[]
+> Looks like the report depends on the file type.
+> 
+> scripts/checkpatch.pl  -f  arch/sparc/lib/NG4clear_page.S
+> scripts/checkpatch.pl  -f  tools/power/cpupower/bench/cpufreq-bench_plot.sh
+> 
+> reported it, but
+> 
+> scripts/checkpatch.pl  -f  drivers/media/dvb-frontends/cxd2880/Kconfig
+> scripts/checkpatch.pl  -f  drivers/parport/Makefile
+> 
+> did not.
+
+Yes, this check is after a test for filename extension.
+
+Currently the only file types it reports as missing an EOF
+newline are done on files with the following extensions:
+
+	.h
+	.c
+	.s
+	.S
+	.sh
+	.dtsi
+	.dts
+
+So the existing test is not done on many file types.
+The same file types are used for the proposed patch.
+
+It's possible to have the existing missing newline at EOF
+test and the proposed test for a blank line at EOF to be
+done on all file types.
+
+Is this reasonable or could it cause some other issue
+for any other file types?  Should _any_ file extension
+be excluded?
+
+I believe not, but perhaps it's best to ask.
+
+
