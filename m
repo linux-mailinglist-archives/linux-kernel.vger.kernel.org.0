@@ -2,86 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084351B42C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E101B432
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbfEMKl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:41:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55500 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbfEMKl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:41:27 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DAd2GA178407;
-        Mon, 13 May 2019 10:41:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=U49fQLHYOqmtPc0EpZSr4iexl3fi+WfNrduBT7mOqOI=;
- b=zVlr2NKEhYmH0lMooq0qd62v5XtBJeFLF7QQFdzs36yt15UY+f3b+ofTCQv4ysKRIVMZ
- 6q4MuHFVOtSxU38lRr9bVfDqeUM/ubnaoTP7XVM/bY2ZaAItmtQgqsuxUCIrV0n0+zFX
- 3AtmRyZcx72XscOi8PAMVrA1Y1vFtqbSIqHJdHQSzzsYMb7TVtqs4L9kaetLyNytV5L9
- iCBzR5MzcKemaPZG/sdU+uF7/6JgjEVt1GC314SY5aPckYncvXkklXkCgUDkKawkrpRb
- vzRM8c41OFBd554C9XGsCuDB2uODPugQLR+dkxQOx0e3zE84hZJvmOW4PmS+yqIFjgcz WA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2sdq1q5x64-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 10:41:18 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DAdbXn007284;
-        Mon, 13 May 2019 10:41:18 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2sdnqhvsq4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 10:41:18 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4DAfFLV013898;
-        Mon, 13 May 2019 10:41:15 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 May 2019 03:41:14 -0700
-Date:   Mon, 13 May 2019 13:41:05 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Emanuel Bennici <benniciemanuel78@gmail.com>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        viswanath.barenkala@gmail.com
-Subject: Re: [PATCH] drivers: staging :rtl8723bs :os_dep Remove Unneeded
- variable ret
-Message-ID: <20190513104104.GH18105@kadam>
-References: <20190512113245.GA2221@hari-Inspiron-1545>
+        id S1728816AbfEMKnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 06:43:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43768 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727272AbfEMKnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 06:43:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B88BAD04;
+        Mon, 13 May 2019 10:43:18 +0000 (UTC)
+Date:   Mon, 13 May 2019 12:43:18 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
+ reliable stacktrace support
+Message-ID: <20190513104318.5wt2hyg7jf5uikhl@pathway.suse.cz>
+References: <20190430091049.30413-1-pmladek@suse.com>
+ <20190430091049.30413-2-pmladek@suse.com>
+ <20190507004032.2fgddlsycyypqdsn@treble>
+ <20190507014332.l5pmvjyfropaiui2@treble>
+ <20190507112950.wejw6nmfwzmm3vaf@pathway.suse.cz>
+ <20190507120350.gpazr6xivzwvd3az@treble>
+ <20190507142847.pre7tvm4oysimfww@pathway.suse.cz>
+ <20190507212425.7gfqx5e3yc4fbdfy@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190512113245.GA2221@hari-Inspiron-1545>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9255 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=615
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905130077
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9255 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=662 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905130077
+In-Reply-To: <20190507212425.7gfqx5e3yc4fbdfy@treble>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please "drivers" out of the subject line.  We know it's drivers, so that
-doesn't add any information.  The "staging: " bit tells you which git
-tree this path is in, and the "rtl8723bs: " tells you which driver it
-is.
+On Tue 2019-05-07 16:24:25, Josh Poimboeuf wrote:
+> On Tue, May 07, 2019 at 04:28:47PM +0200, Petr Mladek wrote:
+> > > > > > Also this check is effectively the same as the klp_have_reliable_stack()
+> > > > > > check which is done in kernel/livepatch/core.c.  So I think it would be
+> > > > > > clearer and more consistent if the same check is done here:
+> > > > > > 
+> > > > > > 	if (!klp_have_reliable_stack())
+> > > > > > 		return -ENOSYS;
+> > > > 
+> > > > Huh, it smells with over engineering to me.
+> > > 
+> > > How so?  It makes the code more readable and the generated code should
+> > > be much better because it becomes a build-time check.
+> > 
+> > save_stack_trace_tsk_reliable() returns various error codes.
+> > We catch a specific one because otherwise the message below
+> > might be misleading.
+> > 
+> > I do not see why we should prevent this error by calling
+> > a custom hack: klp_have_reliable_stack()?
+> 
+> I wouldn't call it a hack.  It's a simple build-time check.
+> 
+> > Regarding reliability. If anyone changes semantic of
+> > save_stack_trace_tsk_reliable() error codes, they would likely
+> > check if all users (one at the moment) handle it correctly.
+> > 
+> > On the other hand, the dependency between the -ENOSYS
+> > return value and klp_have_reliable_stack() is far from
+> > obvious.
+> 
+> I don't follow your point.
 
-regards,
-dan carpenter
+We implement klp_have_reliable_stack() in livepatch subsystem.
+It checks config options that defines behavior of the
+stacktrace subsystem.
 
+We use the above livepatch-specific function to warn about
+that a function from stacktrace subsustem will not work.
+You even suggest to use it to ignore result from
+the stacktrace subsystem.
+
+OK, using klp_have_reliable_stack() on both locations
+would keep it consistent.
+
+My point is that the check itself is not reliable because
+it is "hard" to maintain.
+
+Instead, I suggest to remove klp_have_reliable_stack() and use
+the following in klp_enable_patch().
+
+
+	if (stack_trace_save_tsk_reliable(current, NULL, 0) == -ENOSYS) {
+		pr_warn("This architecture doesn't have support for the livepatch consistency model.\n");
+		pr_warn("The livepatch transition may never complete.\n");
+	}
+
+Also I suggest to remove the check in klp_check_stack() completely.
+We will always print that the stack is not reliable but only when
+the debug message is enabled. It is slightly misleading
+message for -ENOSYS. But I doubt that it could cause much
+troubles in reality. This situation should be really rare
+and easy to debug.
+
+
+> > If we want to discuss and fix this to the death. We should change
+> > the return value from -ENOSYS to -EOPNOTSUPP. The reason
+> > is the same as in the commit 375bfca3459db1c5596
+> > ("livepatch: core: Return EOPNOTSUPP instead of ENOSYS").
+> > 
+> > Note that EOPNOTSUPP is the same errno as ENOTSUP, see
+> > man 3 errno.
+> 
+> Sure, but that's a separate issue.
+
+I just wanted to show that we might spend even more time with
+making this code briliant.
+
+
+> > > But I think Miroslav's suggestion to revert 1d98a69e5cef would be even
+> > > better.
+> > 
+> > AFAIK, Miroslav wanted to point out that your opinion was inconsistent.
+> 
+> How is my opinion inconsistent?
+
+1. You have already acked the removal of WARN_ON() in
+   klp_have_reliable_stack(),
+   see https://lkml.kernel.org/r/20190424155154.h62wc3nt7ib2phdy@treble
+
+   You even suggested it, see
+   https://lkml.kernel.org/r/20190418135858.n3lzq2oxkj52m6bi@treble
+
+   But you suggest to put it back now.
+
+
+2. You suggested to remove the warning when klp_check_stack() because
+   it was superfluous. There was a discussion about keeping
+   the check for -ENOSYS there and you did not react, see
+   https://lkml.kernel.org/r/20190424155532.3uyxyxwm4c5dqsf5@treble
+
+   You even acked the commit 1d98a69e5cef3aeb68bcef ("livepatch:
+   Remove reliable stacktrace check in klp_try_switch_task()").
+
+   And you suddenly want to revert it.
+
+
+> Is there something wrong with the original approach, which was reverted
+> with
+> 
+>   1d98a69e5cef ("livepatch: Remove reliable stacktrace check in klp_try_switch_task()")
+> 
+> ?
+> 
+> As I mentioned, that has some advantages:
+> 
+> - The generated code is simpler/faster because it uses a build-time
+>   check.
+> 
+> - The code is more readable IMO.  Especially if the check is done higher
+>   up the call stack by reverting 1d98a69e5cef.  That way the arch
+>   support short-circuiting is done in the logical place, before doing
+>   any more unnecessary work.  It's faster, but also, more importantly,
+>   it's less surprising.
+> 
+> - It's also more consistent with other code, since the intent of this
+>   check is the same as the klp_have_reliable_stack() use in
+>   klp_enabled_patch().
+> 
+> If you disagree with those, please explain why.
+
+As I said. I think that it is less reliable because we check config
+options of an unrelated subsystem.
+
+Also I think that it is overengineered.
+save_stack_trace_tsk_reliable() is able to tell when it failed.
+This particular failure is superfast. IMHO, it is not worth such
+an optimization.
+
+In fact, it is a compile time check as well because the inline
+from include/linux/stacktrace.h
+
+
+> > PS: This is my last mail in the thread this week. I will eventually
+> > return to it with a clear head next week. It is all nitpicking from
+> > my POV and I have better things to do.
+> 
+> I don't think it's helpful to characterize it as nitpicking.  The
+> details of the code are important.
+
+1. You had issues with almost all my printk() messages, comments,
+   and commit messages. I know that my English is not perfect.
+   And that you might want to highlight another information.
+   But was is it really that bad?
+
+2. This entire patchset is about adding and removing messages
+   and checks. We have 3rd version and you are still not happy.
+   Not to say that you suggest something else each time.
+
+
+Frankly, I do mind too much about this code path, which and how
+many warnings are printed. I am not aware about any complains.
+IMHO, only people adding support for new architecture
+might go this way.
+
+I just wanted to switch the error to warning because Thomas
+Gleixner wondered about unused code on s390 when refactoring
+the stacktrace code.
+
+I really did not expect that I would spend hours/days on this.
+I do not think that it is worth it.
+
+I consider most of the requests as nitpicking because
+they requests extra work just because it looks like
+a good idea.
+
+My take is that we should accept changes when they improve
+the situation and go in the right direction. Further clean up
+might be done later by anyone who does not have anything
+more important on the plate or gets annoyed enough.
+
+Yes, you have many great ideas. But I am not a trained
+monkey. And I do not know how to stop this when it is
+looking endless.
+
+Best Regards,
+Petr
