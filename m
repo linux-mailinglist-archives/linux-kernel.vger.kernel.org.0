@@ -2,175 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6167A1BAD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE9B1BAD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbfEMQPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 12:15:03 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:42658 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727774AbfEMQPC (ORCPT
+        id S1729569AbfEMQSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 12:18:39 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:45444 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728954AbfEMQSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:15:02 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 26950C01BA;
-        Mon, 13 May 2019 16:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557764107; bh=1UIXnWpN2stn7OKWZRnkEbT0UgLrT0y/BoOBunS8G0I=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=j17T7Of/hBOrNK38ZO2r/ci079+xtrEsdfAlqhGAuuSt/+4uDUhVyKBJ0ZMru6zSr
-         y8gy6anSKZD6nLwxjyxUAeqcqvgpnO2z02fEkAuS6b7/Q4AjtTUcSrCIiroCuZkg5c
-         ymsYyOWqRQ/jGs2cOYJbwn9xFTzgHeO51hfsZ0mc8HfGBAqF3fPziBjdjIvSJNZFXQ
-         I0FT/qdnS7+RjhkcrSLsgCzcJSTYIxJzCOvmEXyAwwGpvF96lBcqOFkKJ7FLjyq2PW
-         Ob3troL7ZgtnN7f1BodE3J6Xp18I7PtOxV3gyVUWjUE/Lk6VZGgtCsyOnxXOfpB2Ia
-         rIZs/eooggzLg==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 130F9A006B;
-        Mon, 13 May 2019 16:15:01 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.22]) by
- us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon, 13
- May 2019 09:15:02 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH] ARC: Send SIGSEGV if userspace process accesses kernel
- virtual memory
-Thread-Topic: [PATCH] ARC: Send SIGSEGV if userspace process accesses kernel
- virtual memory
-Thread-Index: AQHVCZoEUnlBQBMrBkWcmOMjypie1w==
-Date:   Mon, 13 May 2019 16:15:01 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA2307501A2512567@us01wembx1.internal.synopsys.com>
-References: <20190513144153.6112-1-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.19]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 13 May 2019 12:18:37 -0400
+Received: by mail-ua1-f67.google.com with SMTP id n7so5019034uap.12
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 09:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=L3LU3ww7WrkzHMtYsuuf2zQt4k+sdxI7TqmkMgaJQWU=;
+        b=G5ldiDESrOvAWWdLZwcE9A08+emS6Z8k1ss9348TCBOVWo0b+kvZ33MIL8uwQFrWvB
+         NQBx7bOD2QELaIzDyc8VnPKPk1lg5TsWLykqG6uOl/t2SD8cBr3w5RgoO8CN0li4eUrc
+         K4lKdveXJgH9wFsSlk11ljnT2LZTAuYXihltQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=L3LU3ww7WrkzHMtYsuuf2zQt4k+sdxI7TqmkMgaJQWU=;
+        b=oey/y+r3ySFayYQ+OxJquNnIXCpuHeFa/IMU9BKex6crHiqNyijbjZbCsmDmDJ1UnU
+         DKK+Nbqx3kziC/TTBmoAfnmKFD0ie+XWO7qnQ90HC0zKJdR28iVMEPrf4Ut+ThGY7O5r
+         JlFey2mcnM2TaPokwEqtyKFtHlk3mkip3y5vhnD85MROWsN0cxcmIXIHUdHLum/AYazB
+         w++spRknZwkPZMp0QtoS6vGsmZo39qY9XceG2o2fqnfbzau1yb7HA1LFUivVocSVt0dJ
+         fawkJt/Heez/uGlypB8lEnXsw+6f9W2emYGXh7rExKQaQ6y9DQ8svwoZwLJQ4/05I+zd
+         BCvA==
+X-Gm-Message-State: APjAAAWQFuuJyslZMcoG08782lUui1j9ZMxyVdEh7xlx7PPnfzEJsfX3
+        rqCD6QrcqgEIwNC7+NukbpH+cI+ZK30=
+X-Google-Smtp-Source: APXvYqwhLczgLZ30WyCtHCFiwgsEc/9gkqSv6mVJ6nt3K/58QiAZvTDXEhl6YBl6CpdcC4rYskqecg==
+X-Received: by 2002:a9f:3731:: with SMTP id z46mr1773207uad.16.1557764315574;
+        Mon, 13 May 2019 09:18:35 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id v141sm7477090vsc.8.2019.05.13.09.18.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 09:18:34 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id g16so5035576uad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 09:18:34 -0700 (PDT)
+X-Received: by 2002:ab0:2709:: with SMTP id s9mr13325214uao.21.1557764314196;
+ Mon, 13 May 2019 09:18:34 -0700 (PDT)
 MIME-Version: 1.0
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 13 May 2019 09:18:23 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VOAjgdrvkK8YKPP-8zqwPpo39rA43JH2BCeYLB0UkgAQ@mail.gmail.com>
+Message-ID: <CAD=FV=VOAjgdrvkK8YKPP-8zqwPpo39rA43JH2BCeYLB0UkgAQ@mail.gmail.com>
+Subject: Problems caused by dm crypt: use WQ_HIGHPRI for the IO and crypt workqueues
+To:     Tim Murray <timmurray@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Guenter Roeck <groeck@chromium.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/13/19 7:41 AM, Eugeniy Paltsev wrote:=0A=
-> As of today if userspace process tries to access address which belongs=0A=
-> to kernel virtual memory area and kernel have mapping for this address=0A=
-> that process hangs instead of receiving SIGSEGV and being killed.=0A=
->=0A=
-> Steps to reproduce:=0A=
-> Create userspace application which reads from the beginning of=0A=
-> kernel-space virtual memory area (I.E. read from 0x7000_0000 on most=0A=
-> of existing platforms):=0A=
-> ------------------------>8-----------------=0A=
->  #include <stdlib.h>=0A=
->  #include <stdint.h>=0A=
->=0A=
->  int main(int argc, char *argv[])=0A=
->  {=0A=
->  	volatile uint32_t temp;=0A=
->=0A=
->  	temp =3D *(uint32_t *)(0x70000000);=0A=
->  }=0A=
-> ------------------------>8-----------------=0A=
-> That application hangs after such memory access.=0A=
->=0A=
-> Fix that by checking which access (user or kernel) caused the exception=
-=0A=
-> before handling kernel virtual address fault.=0A=
->=0A=
-> Cc: <stable@vger.kernel.org> # 4.20+=0A=
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
-> ---=0A=
->  arch/arc/mm/fault.c | 6 +++++-=0A=
->  1 file changed, 5 insertions(+), 1 deletion(-)=0A=
->=0A=
-> diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c=0A=
-> index 8df1638259f3..53fb4ba6cd08 100644=0A=
-> --- a/arch/arc/mm/fault.c=0A=
-> +++ b/arch/arc/mm/fault.c=0A=
-> @@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_reg=
-s *regs)=0A=
->  	struct vm_area_struct *vma =3D NULL;=0A=
->  	struct task_struct *tsk =3D current;=0A=
->  	struct mm_struct *mm =3D tsk->mm;=0A=
-> -	int si_code =3D 0;=0A=
-> +	int si_code =3D SEGV_ACCERR;=0A=
->  	int ret;=0A=
->  	vm_fault_t fault;=0A=
->  	int write =3D regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */=0A=
-> @@ -82,6 +82,10 @@ void do_page_fault(unsigned long address, struct pt_re=
-gs *regs)=0A=
->  	 * nothing more.=0A=
->  	 */=0A=
->  	if (address >=3D VMALLOC_START) {=0A=
-> +		/* Forbid userspace to access kernel-space virtual memory */=0A=
-> +		if (unlikely(user_mode(regs)))=0A=
-> +			goto bad_area_nosemaphore;=0A=
-> +=0A=
->  		ret =3D handle_kernel_vaddr_fault(address);=0A=
->  		if (unlikely(ret))=0A=
->  			goto bad_area_nosemaphore;=0A=
-=0A=
-LGTM. However I have an old patch as part of do_page_fault cleanup - the id=
-ea is=0A=
-to delete one label, but hopefully it will fix ur case too - can u please g=
-ive it=0A=
-a spin with ur test case and report here. I will update the changelog=0A=
-=0A=
----->=0A=
-From 942c55d1ccbd3db12409a3dcdb1d20747041862b Mon Sep 17 00:00:00 2001=0A=
-From: Vineet Gupta <vgupta@synopsys.com>=0A=
-Date: Mon, 10 Dec 2018 18:15:17 -0800=0A=
-Subject: [PATCH] ARC: mm: do_page_fault fixes #2: remove label=0A=
- bad_area_nosemaphore=0A=
-=0A=
-This is first step in untangling the code mess.=0A=
-=0A=
-VMALLOC_FAULT is only handled kernel mode so failure in its handling can=0A=
-assume kernel mode, thus we can use @no_context label, removing the need=0A=
-for @bad_area_nosemaphore=0A=
-=0A=
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>=0A=
----=0A=
- arch/arc/mm/fault.c | 5 ++---=0A=
- 1 file changed, 2 insertions(+), 3 deletions(-)=0A=
-=0A=
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c=0A=
-index 8df1638259f3..342c0820c9e3 100644=0A=
---- a/arch/arc/mm/fault.c=0A=
-+++ b/arch/arc/mm/fault.c=0A=
-@@ -81,10 +81,10 @@ void do_page_fault(unsigned long address, struct pt_reg=
-s *regs)=0A=
-      * only copy the information from the master page table,=0A=
-      * nothing more.=0A=
-      */=0A=
--    if (address >=3D VMALLOC_START) {=0A=
-+    if (address >=3D VMALLOC_START && !user_mode(regs)) {=0A=
-         ret =3D handle_kernel_vaddr_fault(address);=0A=
-         if (unlikely(ret))=0A=
--            goto bad_area_nosemaphore;=0A=
-+            goto no_context;=0A=
-         else=0A=
-             return;=0A=
-     }=0A=
-@@ -198,7 +198,6 @@ void do_page_fault(unsigned long address, struct pt_reg=
-s *regs)=0A=
- bad_area:=0A=
-     up_read(&mm->mmap_sem);=0A=
- =0A=
--bad_area_nosemaphore:=0A=
-     /* User mode accesses just cause a SIGSEGV */=0A=
-     if (user_mode(regs)) {=0A=
-         tsk->thread.fault_address =3D address;=0A=
--- =0A=
-2.7.4=0A=
-=0A=
+Hi,
+
+I wanted to jump on the bandwagon of people reporting problems with
+commit a1b89132dc4f ("dm crypt: use WQ_HIGHPRI for the IO and crypt
+workqueues").
+
+Specifically I've been tracking down communication errors when talking
+to our Embedded Controller (EC) over SPI.  I found that communication
+errors happened _much_ more frequently on newer kernels than older
+ones.  Using ftrace I managed to track the problem down to the dm
+crypt patch.  ...and, indeed, reverting that patch gets rid of the
+vast majority of my errors.
+
+If you want to see the ftrace of my high priority worker getting
+blocked for 7.5 ms, you can see:
+
+https://bugs.chromium.org/p/chromium/issues/attachmentText?aid=392715
+
+
+In my case I'm looking at solving my problems by bumping the CrOS EC
+transfers fully up to real time priority.  ...but given that there are
+other reports of problems with the dm-crypt priority (notably I found
+https://bugzilla.kernel.org/show_bug.cgi?id=199857) maybe we should
+also come up with a different solution for dm-crypt?
+
+
+Thanks!
+
+-Doug
