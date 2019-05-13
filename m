@@ -2,138 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F431B8D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D1B1B8C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbfEMOlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:41:25 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34575 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbfEMOlW (ORCPT
+        id S1730786AbfEMOmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:42:01 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:37628 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730772AbfEMOl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:41:22 -0400
-Received: by mail-qt1-f196.google.com with SMTP id h1so7188148qtp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 07:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AShDMcr6wP0O8DE+n5XbgpPJ5YloQ1/JdOPbCC8lARw=;
-        b=HkidcekKkBXgGOaNW72+pYp8w3VZS3ih8WWwPsmB/Ibu7CJs0yJAhBlEFyDteU5jD/
-         Ggoo0PZceRDrjWt0tLEYlbjYfSwyLT/alA67azusGTnakoNEqljeQPvLgsR43eR/k0dJ
-         hwQmGG4VdAGyHf6aGGvjhRmlPABjRvfA6qAmlY9QItuPNCGFEr0UGOx/SSuGMYaybjsX
-         e0RiJqx4nfZ+qUZeMz3KOL5ByyauTWA7X+lGpDwcVJ9iLMZEUAkVpM/syZlwxcrDStH7
-         3skFGnmq4XK5+6Jen+ktCVShwScLwsTp4uTSYT2sHTgh977o1y9tYN49jpYxV07QkqTx
-         VMng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AShDMcr6wP0O8DE+n5XbgpPJ5YloQ1/JdOPbCC8lARw=;
-        b=oofcbfTUxhJxguepQx2YPFiPcyPwKL6FUY+/GL5pdlTIeZ5U+yYQoCJVuatCDp3dax
-         l9A/tWq3lEfvZhO9dUjvYhYlzArnKmOr4PSNn/R3cP+cHr0sOzdHnr7o0fcMzUQXePcp
-         X6MD3NkHZaDzpuAb9TXfgLwExIcXeR6rA88ijlv1xryBBZgt0OkgFFJFwsyN3VH8bbzB
-         p0glWf8qxjR0MqeZBjac/Ogl8DnTD2mZpP6Z/HFJy4tD99GV+FV+wm16pSUrr5p/JGV7
-         h0V7FBpMYkQ+TgVIWobyphjOVduTcgmcKYYkiib4+/46SOcG4M/rRfIuaPnBbA+bURWp
-         /y4w==
-X-Gm-Message-State: APjAAAXRtYsY+cUXS5TAgfdBTYJwmM6WTMQOvPQzPnzZ/yLw7RT3Yfln
-        l4GMlATgr5tdGtmZqIiEGJLchw==
-X-Google-Smtp-Source: APXvYqykNJUXhSJgZA6vtUnxVCZWGlTPm+rCJaK1kqlt7UHvDAJRFjnm1qlB5I6AjuDJ8LtM1pVexg==
-X-Received: by 2002:ac8:3783:: with SMTP id d3mr21972886qtc.293.1557758481560;
-        Mon, 13 May 2019 07:41:21 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id o13sm6206257qtk.74.2019.05.13.07.41.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 07:41:20 -0700 (PDT)
-Date:   Mon, 13 May 2019 10:41:20 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/6] drm/rockchip: Change the scl_vop_cal_scl_fac to
- pass drm_format_info
-Message-ID: <20190513144120.GM17077@art_vandelay>
-References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1557486447.git-series.maxime.ripard@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1557486447.git-series.maxime.ripard@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 13 May 2019 10:41:57 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 32332C0161;
+        Mon, 13 May 2019 14:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1557758508; bh=Q4RwNBuD8FtLCQ9UQgg0ETBjXIo13TCHbTK17grz4lY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bxWpXWU/MCnS+mi6hZ8O3LDVNP667dIopzjPVf22P7/Otl8C1qtBdGdadJTe9Ur38
+         eoT3IFkJA7d3WG6IBfB8OKHbQ84RzY4Y5YtrmLjhebvKEWEAJdlaWXsZBeZyTl2mrF
+         KWOmN7SYBlqzZXBpjU8gLXO5X25c1U4k677uCw/jaoZm1MK0JijbxOE+V9bWUzv7qJ
+         6mQ0mLvbjd2PUvvxZGHG5gv3j3kG8ic+hYnEjzfBcTXCetaT5ARV9221nxnvcQyOTE
+         61c7NLlK6Ee3o/Xoh0oGGge7avtKuerJQWdZpei1N1giZkvju8/hwnv4jWwEuZ8skP
+         fq+OZWHIWp2ZQ==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.106])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B5A52A005A;
+        Mon, 13 May 2019 14:41:55 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] ARC: Send SIGSEGV if userspace process accesses kernel virtual memory
+Date:   Mon, 13 May 2019 17:41:53 +0300
+Message-Id: <20190513144153.6112-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 01:08:46PM +0200, Maxime Ripard wrote:
-> The Rockchip VOP driver has a function, scl_vop_cal_scl_fac, that will
-> lookup the drm_format_info structure from the fourcc passed to it by its
-> caller.
-> 
-> However, its only caller already derefences the drm_format_info structure
-> it has access to to retrieve that fourcc. Change the prototype of that
-> function to pass the drm_format_info structure directly, removing the need
-> for an extra lookup.
-> 
-> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+As of today if userspace process tries to access address which belongs
+to kernel virtual memory area and kernel have mapping for this address
+that process hangs instead of receiving SIGSEGV and being killed.
 
-Reviewed-by: Sean Paul <sean@poorly.run>
+Steps to reproduce:
+Create userspace application which reads from the beginning of
+kernel-space virtual memory area (I.E. read from 0x7000_0000 on most
+of existing platforms):
+------------------------>8-----------------
+ #include <stdlib.h>
+ #include <stdint.h>
 
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index 20a9c296d027..9c0d6b367709 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -315,14 +315,13 @@ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
->  
->  static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
->  			     uint32_t src_w, uint32_t src_h, uint32_t dst_w,
-> -			     uint32_t dst_h, uint32_t pixel_format)
-> +			     uint32_t dst_h, const struct drm_format_info *info)
->  {
->  	uint16_t yrgb_hor_scl_mode, yrgb_ver_scl_mode;
->  	uint16_t cbcr_hor_scl_mode = SCALE_NONE;
->  	uint16_t cbcr_ver_scl_mode = SCALE_NONE;
-> -	int hsub = drm_format_horz_chroma_subsampling(pixel_format);
-> -	int vsub = drm_format_vert_chroma_subsampling(pixel_format);
-> -	const struct drm_format_info *info;
-> +	int hsub = drm_format_horz_chroma_subsampling(info->format);
-> +	int vsub = drm_format_vert_chroma_subsampling(info->format);
->  	bool is_yuv = false;
->  	uint16_t cbcr_src_w = src_w / hsub;
->  	uint16_t cbcr_src_h = src_h / vsub;
-> @@ -331,8 +330,6 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
->  	uint32_t val;
->  	int vskiplines;
->  
-> -	info = drm_format_info(pixel_format);
-> -
->  	if (info->is_yuv)
->  		is_yuv = true;
->  
-> @@ -856,7 +853,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
->  	if (win->phy->scl)
->  		scl_vop_cal_scl_fac(vop, win, actual_w, actual_h,
->  				    drm_rect_width(dest), drm_rect_height(dest),
-> -				    fb->format->format);
-> +				    fb->format);
->  
->  	VOP_WIN_SET(vop, win, act_info, act_info);
->  	VOP_WIN_SET(vop, win, dsp_info, dsp_info);
-> 
-> base-commit: a802303934b3bd4df6e2fc8bf2e4ebced1c37556
-> -- 
-> git-series 0.9.1
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+ int main(int argc, char *argv[])
+ {
+ 	volatile uint32_t temp;
 
+ 	temp = *(uint32_t *)(0x70000000);
+ }
+------------------------>8-----------------
+That application hangs after such memory access.
+
+Fix that by checking which access (user or kernel) caused the exception
+before handling kernel virtual address fault.
+
+Cc: <stable@vger.kernel.org> # 4.20+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/mm/fault.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index 8df1638259f3..53fb4ba6cd08 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	struct vm_area_struct *vma = NULL;
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+-	int si_code = 0;
++	int si_code = SEGV_ACCERR;
+ 	int ret;
+ 	vm_fault_t fault;
+ 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+@@ -82,6 +82,10 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	 * nothing more.
+ 	 */
+ 	if (address >= VMALLOC_START) {
++		/* Forbid userspace to access kernel-space virtual memory */
++		if (unlikely(user_mode(regs)))
++			goto bad_area_nosemaphore;
++
+ 		ret = handle_kernel_vaddr_fault(address);
+ 		if (unlikely(ret))
+ 			goto bad_area_nosemaphore;
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.14.5
+
