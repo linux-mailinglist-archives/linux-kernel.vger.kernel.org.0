@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 325891BE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 22:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A9EE1BE8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 22:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfEMUU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 16:20:57 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43681 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfEMUUz (ORCPT
+        id S1726473AbfEMUVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 16:21:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35672 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbfEMUU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 16:20:55 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t22so7328584pgi.10
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 13:20:54 -0700 (PDT)
+        Mon, 13 May 2019 16:20:56 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g5so7036159plt.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 13:20:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=leVujDMTj0xRtIjTHni2T68vyCo9/+ZtwUA9W0h1xvg=;
-        b=TzBw3rm5Uzlf1eQN4ygDogRI9eCgK0tH/HrGQrbnDeENT/b5X7psVKXbzu/NIJ+8g5
-         43PEzYY9vLu/EPZL/Z3ZabchH0iW6ta9Tt4KwRgLtphg7iYzuTtKPNIxP2kcE5ct1buU
-         BL9zOBIYSrYI6/b1IdlQWPKdroztStJquwXjY=
+        bh=A0hIvZUUUL3EyRykGBdB7l1SOet5HjIbFD3tZy1lwZw=;
+        b=lP34r2NWD/uZoRd0AmHrnPVr3Iay5m0VNeOUlwc4hniFrGufSZMjFpfwGXk+W85GBs
+         NfDq9Njm4nXNu8kRznt9FC3BI+msSj8YszwBXIYYOhHJZFeJJqMuE8f0NIPFLskYUPGo
+         xPrwdOGYOlGlnFbS4SFxOBOcejh3pG8VoKSnw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=leVujDMTj0xRtIjTHni2T68vyCo9/+ZtwUA9W0h1xvg=;
-        b=a3GKbfmzJYAnAnD25qySRexOWUoEQa9ubkPHT5C3vo957B/xES+uQ3rTDbJ8KSsTje
-         WLkWK4NLlBguSITzwo3lWsvV8hbuKdlN7bwm1FjA7yHcIF5TxuXOz23NmW+t96yP8FeE
-         AjHIVuQSHzWSOVl0WAav5ws1dX2eRTPaItlfgDhF+3QQWwT5yfMvLe2kqenCXJPoyg8N
-         FVvIYB+5MRWKRYGIMgq0cKwGhLo5d9kOHz+qQQD/dB7XIg4bz4YpPWD0uIyavogxnjUz
-         9Zn58VoUoAif3bwPfuzUTAxKtVXemgvylm9fIW5Y+k1UmFHgbn6TJ2qmUM8EVEUYhHFt
-         VJMw==
-X-Gm-Message-State: APjAAAWK2RSrtem7ubTXFeU7BTgQgqiTjyYIEAihjypY6goRT7vvvwCF
-        eRujghwv1xp+CaxnwgYMmKa/9Q==
-X-Google-Smtp-Source: APXvYqypJfXRNBxFLFxlzzTNfhkd2BXv4vnyAkeLtglsBBqPuWU48fMWCiBiLWtiHvH8KpQxfCUl3w==
-X-Received: by 2002:a62:38cc:: with SMTP id f195mr36507159pfa.15.1557778853924;
-        Mon, 13 May 2019 13:20:53 -0700 (PDT)
+        bh=A0hIvZUUUL3EyRykGBdB7l1SOet5HjIbFD3tZy1lwZw=;
+        b=UM0SCgJz1sbKvV9mVUxmee6oSR8CHIiW1/Sei98vjRWlhkUYAlt2jWQ4G4UiJDTKY6
+         wwAenNHloAI9LcW6+LflCIemH12OOoSh7pf3G4/bUum8Xe+zNvqZWfi50x77K65QPU/h
+         s/de0O6OxEYm4eYpMVjmXq9qEOS9sop4GQJ6K09rkUVBMfu0DWblZl61NRfg1YkvrOm3
+         PCdXUkOUK29By1jNNKfFXKRUBHo83v/aULCjdsJHTM/rep2i0UNDKbsv+afv0g8sId1g
+         3L5X9rRUrqF0pchWOPsQnmD7nDs7StZschh+AcIwkCsYCq1UIOwfDhoaUDgGuFZwdGpw
+         lFUg==
+X-Gm-Message-State: APjAAAVTwqoEbMzoN2uEhxq3zDrey68hBjb4vkXhF//PPstqV64OZ/x+
+        Z2s0prXRdrH7yIal+ag7swKi1A==
+X-Google-Smtp-Source: APXvYqycX98I9RrS0+2PLISochd9e1uNzSdWwjsBuwDbWsmLVvAd8DTtC/KuAkigAeIT07A+gaSOGA==
+X-Received: by 2002:a17:902:7b8f:: with SMTP id w15mr33608247pll.314.1557778854816;
+        Mon, 13 May 2019 13:20:54 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id s198sm26356597pfs.34.2019.05.13.13.20.52
+        by smtp.gmail.com with ESMTPSA id s198sm26356597pfs.34.2019.05.13.13.20.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 13:20:53 -0700 (PDT)
+        Mon, 13 May 2019 13:20:54 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Mark Brown <broonie@kernel.org>,
         Benson Leung <bleung@chromium.org>,
@@ -49,10 +49,10 @@ To:     Mark Brown <broonie@kernel.org>,
 Cc:     linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
         Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
         mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [PATCH v2 1/3] spi: Allow SPI devices to force transfers on a realtime thread
-Date:   Mon, 13 May 2019 13:18:23 -0700
-Message-Id: <20190513201825.166969-2-dianders@chromium.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] platform/chrome: cros_ec_spi: Force transfers to realtime priority
+Date:   Mon, 13 May 2019 13:18:24 -0700
+Message-Id: <20190513201825.166969-3-dianders@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190513201825.166969-1-dianders@chromium.org>
 References: <20190513201825.166969-1-dianders@chromium.org>
@@ -63,163 +63,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For communication with some SPI devices it may be necessary (for
-correctness) not to get interrupted during a transfer.  One example is
-the EC (Embedded Controller) on Chromebooks.  The Chrome OS EC will
-drop a transfer if more than ~8ms passes between the chip select being
-asserted and the transfer finishing.
+All currently known ECs in the wild are very sensitive to timing.
+Specifically the ECs are known to drop a transfer if more than 8 ms
+passes from the assertion of the chip select until the transfer
+finishes.
 
-The best way to make transfers to devices like this succeed is to run
-the transfers at realtime priority.  ...but, since there is no easy
-way in the kernel to just temporarily bump the priority of the current
-thread the current best way to do this is to schedule work on another
-thread and give that thread a boosted priority.
+Let's use the new feature introduced in the patch ("spi: Allow SPI
+devices to force transfers on a realtime thread") to specify this and
+increase the success rate of our transfers.
 
-The SPI framework already has another thread and, in fact, that other
-thread is already made realtime priority in some cases.  Let's add an
-ability for a SPI device driver to request that this thread always be
-used and that it's realtime priority.
+NOTE: if future Chrome OS ECs ever fix themselves to be less sensitive
+then we could consider adding a property (or compatible string) to not
+set this property.  For now we need it across the board.
 
-NOTE: Forcing all transfers to the message pumping thread will add
-extra overhead to each transfer.  On some systems this may lower your
-overall bus throughput and may increase CPU utilization.  You only
-want to use this feature when it's important that a transfer not get
-interrupt once started.
+With this change we can revert the commit 37a186225a0c
+("platform/chrome: cros_ec_spi: Transfer messages at high priority").
+...and, in fact, transfers are _even more_ reliable than they were
+with that commit since the SPI framework will use a higher priority
+(realtime) and we no longer lose our priority when we get shunted over
+to the message pumping thread (because we now always get shunted and
+the thread is high priority).
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 ---
-Another option is to change this patch to allow a SPI device driver to
-request that the pumping thread be realtime but not to _force_ all
-messages onto that thread.  In the case of cros_ec this means a bunch
-of code duplication (we need to create a thread to do basically the
-same thing as the SPI core) but that would make sense if the SPI
-framework doesn't expect other use cases like this and doesn't want to
-carry the baggage in the SPI core.
 
 Changes in v2:
-- Now only force transfers to the thread for devices that want it.
-- Squashed patch #1 and #2 together.
 - Renamed variable to "force_rt_transfers".
 
- drivers/spi/spi.c       | 49 +++++++++++++++++++++++++++++++++--------
- include/linux/spi/spi.h |  5 +++++
- 2 files changed, 45 insertions(+), 9 deletions(-)
+ drivers/platform/chrome/cros_ec_spi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 8eb7460dd744..911961bb230d 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1217,6 +1217,7 @@ EXPORT_SYMBOL_GPL(spi_finalize_current_transfer);
-  */
- static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
- {
-+	struct spi_message *msg;
- 	unsigned long flags;
- 	bool was_busy = false;
- 	int ret;
-@@ -1276,10 +1277,16 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
- 		return;
- 	}
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 8e9451720e73..a2959365a870 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -703,6 +703,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
  
--	/* Extract head of queue */
--	ctlr->cur_msg =
--		list_first_entry(&ctlr->queue, struct spi_message, queue);
-+	/* If device for this message needs a realtime thread; queue it */
-+	msg = list_first_entry(&ctlr->queue, struct spi_message, queue);
-+	if (msg->spi->force_rt_transfers & !in_kthread) {
-+		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
-+		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
-+		return;
-+	}
- 
-+	/* Extract head of queue */
-+	ctlr->cur_msg = msg;
- 	list_del_init(&ctlr->cur_msg->queue);
- 	if (ctlr->busy)
- 		was_busy = true;
-@@ -1364,10 +1371,32 @@ static void spi_pump_messages(struct kthread_work *work)
- 	__spi_pump_messages(ctlr, true);
- }
- 
--static int spi_init_queue(struct spi_controller *ctlr)
-+/**
-+ * spi_set_thread_rt - set the controller to pump at realtime priority
-+ * @ctlr: controller to boost priority of
-+ *
-+ * This can be called because the controller requested realtime priority
-+ * (by setting the ->rt value before calling spi_register_controller()) or
-+ * because a device on the bus said that its transfers needed realtime
-+ * priority.
-+ *
-+ * NOTE: at the moment if any device on a bus says it needs realtime then
-+ * the thread will be at realtime priority for all transfers on that
-+ * controller.  If this eventually becomes a problem we may see if we can
-+ * find a way to boost the priority only temporarily during relevant
-+ * transfers.
-+ */
-+static void spi_set_thread_rt(struct spi_controller *ctlr)
- {
- 	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
- 
-+	dev_info(&ctlr->dev,
-+		"will run message pump with realtime priority\n");
-+	sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
-+}
-+
-+static int spi_init_queue(struct spi_controller *ctlr)
-+{
- 	ctlr->running = false;
- 	ctlr->busy = false;
- 
-@@ -1387,11 +1416,8 @@ static int spi_init_queue(struct spi_controller *ctlr)
- 	 * request and the scheduling of the message pump thread. Without this
- 	 * setting the message pump thread will remain at default priority.
- 	 */
--	if (ctlr->rt) {
--		dev_info(&ctlr->dev,
--			"will run message pump with realtime priority\n");
--		sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
--	}
-+	if (ctlr->rt)
-+		spi_set_thread_rt(ctlr);
- 
- 	return 0;
- }
-@@ -2982,6 +3008,11 @@ int spi_setup(struct spi_device *spi)
- 
- 	spi_set_cs(spi, false);
- 
-+	if (spi->force_rt_transfers && !spi->controller->rt) {
-+		spi->controller->rt = true;
-+		spi_set_thread_rt(spi->controller);
-+	}
-+
- 	dev_dbg(&spi->dev, "setup mode %d, %s%s%s%s%u bits/w, %u Hz max --> %d\n",
- 			(int) (spi->mode & (SPI_CPOL | SPI_CPHA)),
- 			(spi->mode & SPI_CS_HIGH) ? "cs_high, " : "",
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 053abd22ad31..4d6ea3366480 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -109,6 +109,10 @@ void spi_statistics_add_transfer_stats(struct spi_statistics *stats,
-  *	This may be changed by the device's driver, or left at the
-  *	default (0) indicating protocol words are eight bit bytes.
-  *	The spi_transfer.bits_per_word can override this for each transfer.
-+ * @force_rt_transfers: Transfers for this device should always be done
-+ *	at realtime priority. NOTE that this might add some latency in
-+ *	starting the transfer (since we may need to context switch) but
-+ *	once the transfer starts it will be done at high priority.
-  * @irq: Negative, or the number passed to request_irq() to receive
-  *	interrupts from this device.
-  * @controller_state: Controller's runtime state
-@@ -143,6 +147,7 @@ struct spi_device {
- 	u32			max_speed_hz;
- 	u8			chip_select;
- 	u8			bits_per_word;
-+	bool			force_rt_transfers;
- 	u32			mode;
- #define	SPI_CPHA	0x01			/* clock phase */
- #define	SPI_CPOL	0x02			/* clock polarity */
+ 	spi->bits_per_word = 8;
+ 	spi->mode = SPI_MODE_0;
++	spi->force_rt_transfers = true;
+ 	err = spi_setup(spi);
+ 	if (err < 0)
+ 		return err;
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
