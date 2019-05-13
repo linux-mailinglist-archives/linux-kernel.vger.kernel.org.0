@@ -2,72 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 426591B732
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594491B8BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbfEMNlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 09:41:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50576 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727413AbfEMNlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 09:41:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 76755AC38;
-        Mon, 13 May 2019 13:41:23 +0000 (UTC)
-Message-ID: <1557754110.2793.7.camel@suse.com>
-Subject: Re: KASAN: use-after-free Read in p54u_load_firmware_cb
-From:   Oliver Neukum <oneukum@suse.com>
-To:     syzbot <syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com>,
-        kvalo@codeaurora.org, davem@davemloft.net, andreyknvl@google.com,
-        syzkaller-bugs@googlegroups.com, chunkeey@googlemail.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Michael Wu <flamingice@sourmilk.net>
-Date:   Mon, 13 May 2019 15:28:30 +0200
-In-Reply-To: <00000000000073512b0588c24d09@google.com>
-References: <00000000000073512b0588c24d09@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1730757AbfEMOlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:41:40 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38791 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730733AbfEMOlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:41:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 07:41:35 -0700
+X-ExtLoop1: 1
+Received: from younghwa-mobl.amr.corp.intel.com (HELO [10.254.176.76]) ([10.254.176.76])
+  by fmsmga005.fm.intel.com with ESMTP; 13 May 2019 07:41:34 -0700
+Subject: Re: [alsa-devel] [PATCH] ASoC: max98090: remove 24-bit format support
+To:     Yu-Hsuan Hsu <yuhsuan@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        Jon Hunter <jonathanh@nvidia.com>, dgreid@chromium.org,
+        cychiang@chromium.org
+References: <20190510102559.76137-1-yuhsuan@chromium.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <bb4f797a-9719-ec77-629c-46622c6fc2ea@linux.intel.com>
+Date:   Mon, 13 May 2019 08:31:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190510102559.76137-1-yuhsuan@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2019-05-13 at 03:23 -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
+
+
+On 5/10/19 5:25 AM, Yu-Hsuan Hsu wrote:
+> Remove 24-bit format support because it doesn't work now. We can revert
+> this change after it really supports.
+> (https://patchwork.kernel.org/patch/10783561/)
 > 
-> HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16b64110a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
-> dashboard link: https://syzkaller.appspot.com/bug?extid=200d4bb11b23d929335f
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1634c900a00000
+> Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
+
+As discussed in the previous thread, the data sheet explicitly mentions 
+24 bit support for the input in RJ mode. It'd be odd to remove support 
+for 24 bits without clarifying in which modes it's not supported.
+
+Also you'd need to clarify which platform you tested on, there are known 
+issues with Maxim devices when using e.g. a 19.2 MHz clock and trailing 
+bits (25-bit slots with 24-bit data).
+
+> ---
+>   sound/soc/codecs/max98090.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com
+> diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+> index 7619ea31ab50..b25b7efa9118 100644
+> --- a/sound/soc/codecs/max98090.c
+> +++ b/sound/soc/codecs/max98090.c
+> @@ -2313,7 +2313,7 @@ int max98090_mic_detect(struct snd_soc_component *component,
+>   EXPORT_SYMBOL_GPL(max98090_mic_detect);
+>   
+>   #define MAX98090_RATES SNDRV_PCM_RATE_8000_96000
+> -#define MAX98090_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+> +#define MAX98090_FORMATS SNDRV_PCM_FMTBIT_S16_LE
+>   
+>   static const struct snd_soc_dai_ops max98090_dai_ops = {
+>   	.set_sysclk = max98090_dai_set_sysclk,
 > 
-> usb 1-1: config 0 descriptor??
-> usb 1-1: reset high-speed USB device number 2 using dummy_hcd
-> usb 1-1: device descriptor read/64, error -71
-> usb 1-1: Using ep0 maxpacket: 8
-> usb 1-1: Loading firmware file isl3887usb
-> usb 1-1: Direct firmware load for isl3887usb failed with error -2
-> usb 1-1: Firmware not found.
-> ==================================================================
-> BUG: KASAN: use-after-free in p54u_load_firmware_cb.cold+0x97/0x13a  
-> drivers/net/wireless/intersil/p54/p54usb.c:936
-> Read of size 8 at addr ffff88809803f588 by task kworker/1:0/17
-
-Hi,
-
-it looks to me as if refcounting is broken.
-You should have a usb_put_dev() in p54u_load_firmware_cb() or in
-p54u_disconnect(), but not both.
-
-	Regards
-		Oliver
-
