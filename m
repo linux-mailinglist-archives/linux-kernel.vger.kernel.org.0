@@ -2,165 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AF61B9D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 389471B9DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbfEMPXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:23:37 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:23602 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbfEMPXh (ORCPT
+        id S1729939AbfEMPXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:23:53 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34742 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbfEMPXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:23:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1557761016; x=1589297016;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=qOMlTtORDfEtXowtpsmMV4k9pulCLZtn0Ih/k7hdTaE=;
-  b=QL/DqE5C3tC+tDGp5rQhvPA7vHZ91LwtD0BlYHnoRdw6nJz6n69YGnbx
-   pGVm9L2F3N6AfZbr9dV1bXYIC4H2uBxrb0Sdxw19X3ejfPDgCoxK6lvL5
-   8cpaUoRSfeLK9/rNN/NXDapzJErefrBj42D7XKC53d4VQD2ZQSv/hAYpl
-   gQjbaTiFYx8KSGQ93u7eQ7jLJv6Wcp4kd6kHRLuhWuQ4G/F1Jv3pB1gee
-   iCet9fk37SSUx/WAdhsf2SsYuFVxca9n8YKJelK/zpdm1Ovg0PfTLpSgu
-   0LFepuwUual4eSL2Pa3r0hkle0QBZRcTEHCCiVDBy/y9INUvOTLl0K6sR
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.60,465,1549900800"; 
-   d="scan'208";a="214222742"
-Received: from mail-co1nam03lp2058.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([104.47.40.58])
-  by ob1.hgst.iphmx.com with ESMTP; 13 May 2019 23:23:35 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BaPm5V1BnOM41I7mPlHmTbZTWTom/NXNGwav3sHgddI=;
- b=Pe9G4XEE655HylhpyIHdI5gHGY2RCjNDYve0sfPAnJGE+78pCUc9UnZuLae7lYAWnFXyFQl8RCve9ZZE3D5eI0fY/4lRbAz8v0tmNZYActxdftzgF9KbOcZAP9gU4ZmtA0WkISnLZHe4DkoDL/5VhtrIbK28bd0/a3H/texnFMk=
-Received: from SN6PR04MB4527.namprd04.prod.outlook.com (52.135.120.25) by
- SN6PR04MB4944.namprd04.prod.outlook.com (52.135.114.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.22; Mon, 13 May 2019 15:23:32 +0000
-Received: from SN6PR04MB4527.namprd04.prod.outlook.com
- ([fe80::c4f:1604:178c:d974]) by SN6PR04MB4527.namprd04.prod.outlook.com
- ([fe80::c4f:1604:178c:d974%5]) with mapi id 15.20.1878.024; Mon, 13 May 2019
- 15:23:32 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     "minwoo.im@samsung.com" <minwoo.im@samsung.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Kenneth Heitke <kenneth.heitke@intel.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Jens Axboe <axboe@fb.com>, Minwoo Im <minwoo.im.dev@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 5/7] nvme-pci: add device coredump infrastructure
-Thread-Topic: [PATCH v3 5/7] nvme-pci: add device coredump infrastructure
-Thread-Index: AQHVCNsnTq1EcjR34keOomYpqyVeRw==
-Date:   Mon, 13 May 2019 15:23:32 +0000
-Message-ID: <SN6PR04MB4527DFC75838C3236F5D05B2860F0@SN6PR04MB4527.namprd04.prod.outlook.com>
-References: <1557676457-4195-6-git-send-email-akinobu.mita@gmail.com>
- <1557676457-4195-1-git-send-email-akinobu.mita@gmail.com>
- <CGME20190512155540epcas4p14c15eb86b08dcd281e9a93a4fc190800@epcms2p1>
- <20190513074601epcms2p12c0a32730a16be3b69b68e3c9d4d0b92@epcms2p1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
-x-originating-ip: [199.255.45.63]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c22052b7-3352-4936-2d36-08d6d7b6f5c6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB4944;
-x-ms-traffictypediagnostic: SN6PR04MB4944:
-x-ms-exchange-purlcount: 1
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <SN6PR04MB49443CE1CE7BE3B6A7A0DEED860F0@SN6PR04MB4944.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1247;
-x-forefront-prvs: 0036736630
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(136003)(39860400002)(346002)(199004)(189003)(486006)(186003)(54906003)(110136005)(66066001)(476003)(446003)(6436002)(26005)(305945005)(7736002)(33656002)(9686003)(99286004)(55016002)(6306002)(2906002)(316002)(68736007)(7416002)(73956011)(66946007)(66476007)(66556008)(64756008)(66446008)(53936002)(91956017)(76116006)(2501003)(229853002)(71200400001)(6246003)(81156014)(14454004)(5660300002)(72206003)(966005)(71190400001)(52536014)(81166006)(8676002)(76176011)(86362001)(4326008)(8936002)(25786009)(74316002)(7696005)(3846002)(6116002)(6506007)(256004)(53546011)(478600001)(102836004)(2201001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4944;H:SN6PR04MB4527.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lYaBlD+EQT1U6gK8Ey8NrcPX1dG0nHy0HQNIXzOwilYf6+fzohnAE0ViIAJOeas6lKmBWXg6zGvAb3BtiUwigvTpjh1MmpBNolLmGArCAXGBjTt6DxRzQfbekMpBcfkMkl9+uxYP4C9n/ow/JQXhZy34ZV3LKkfJ70P+uVuw0MtKIzVKtwNPj0cR71xtBKwV+Dk73rAMQYTWm8UW5gMYWMgj4SO6xKfDU6dSm9eab3fBK+IRLrMHPNvU3bOFxt9j97Rena6bPAa2/cbtgFJd4GWKSAlizpQb9rmZ1WCaR8/aGNlxr9dugpqOK7czCXL9yrg9IMdQxHkV2B/cAFSut38AtpgHoxm/YWUETyo/UadLgF7rqEndeoiInMDMpJN138hyTJcrWeUDjmgvTYPdwq5QFxwv8p4pVfSx+Mu3vaI=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 13 May 2019 11:23:52 -0400
+Received: by mail-oi1-f195.google.com with SMTP id v10so9643173oib.1;
+        Mon, 13 May 2019 08:23:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XfGOlUQQ0BR8c4BsoZfFHQRJzybAooAiYyp3hXARCkQ=;
+        b=kgcK5itGGd5QIo9mqSMTdU4gZgAJAcDAvn4Xaze/S55Kv5nj6KT6CbistSdJHxAaUb
+         CHEiQzbHuYhofBeKQkVblZEWhzpYN8NIpq20Y1X14Rka/1EZsG95MQfQlANOSa/29yB1
+         vxZ3KzkIk/YTJhlIdPxFtwxremyAiXNFHvawa4uEG4tLrflaVpM8/5SHmlTxP4/BiZRD
+         OOSeVCaI6Ac/aXR6r/t+vo2pi6UwYdGBEIVRLt7PLiL6vZGUiAqd9Fgr0oCtM3Oqr6Bd
+         xugET5I+dq3BB6hb0KI4W4pVdzy5yHfXrRIH87H8NMEz1T8fbBskx8Mgv6isIN7wEuz8
+         L8IQ==
+X-Gm-Message-State: APjAAAWldRAi1W1HGvjVRqL1ean2Z0bOeDKu6rsUTclF7BBGrxxD740o
+        La34wVNDUAcehnwLpQ1aXuyjKsc=
+X-Google-Smtp-Source: APXvYqwogXG9j5/7+ZY36riOYzWM8WHj5Fegta9WZGu25wuD9gOfHcK9nAeELOAXUnR4igtZg//L2Q==
+X-Received: by 2002:aca:309:: with SMTP id 9mr14046095oid.94.1557761030441;
+        Mon, 13 May 2019 08:23:50 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m203sm5419883oib.45.2019.05.13.08.23.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 May 2019 08:23:49 -0700 (PDT)
+Date:   Mon, 13 May 2019 10:23:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: remoteproc: Rename and amend Hexagon
+ v56 binding
+Message-ID: <20190513152349.GA23710@bogus>
+References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+ <20190510043421.31393-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c22052b7-3352-4936-2d36-08d6d7b6f5c6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2019 15:23:32.5348
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4944
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190510043421.31393-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/13/2019 12:46 AM, Minwoo Im wrote:=0A=
->> +static int nvme_get_telemetry_log_blocks(struct nvme_ctrl *ctrl, void *=
-buf,=0A=
->> +					 size_t bytes, loff_t offset)=0A=
->> +{=0A=
->> +	loff_t pos =3D 0;=0A=
->> +	u32 chunk_size;=0A=
->> +=0A=
->> +	if (check_mul_overflow(ctrl->max_hw_sectors, 512u, &chunk_size))=0A=
->> +		chunk_size =3D UINT_MAX;=0A=
->> +=0A=
->> +	while (pos < bytes) {=0A=
->> +		size_t size =3D min_t(size_t, bytes - pos, chunk_size);=0A=
->> +		int ret;=0A=
->> +=0A=
->> +		ret =3D nvme_get_log(ctrl, NVME_NSID_ALL,=0A=
->> NVME_LOG_TELEMETRY_CTRL,=0A=
->> +				   0, buf + pos, size, offset + pos);=0A=
->> +		if (ret)=0A=
->> +			return ret;=0A=
->> +=0A=
->> +		pos +=3D size;=0A=
->> +	}=0A=
->> +=0A=
->> +	return 0;=0A=
->> +}=0A=
->> +=0A=
->> +static int nvme_get_telemetry_log(struct nvme_ctrl *ctrl,=0A=
->> +				  struct sg_table *table, size_t bytes)=0A=
->> +{=0A=
->> +	int n =3D sg_nents(table->sgl);=0A=
->> +	struct scatterlist *sg;=0A=
->> +	size_t offset =3D 0;=0A=
->> +	int i;=0A=
->> +=0A=
-A little comment would be nice if you are using sg operations.=0A=
->> +	for_each_sg(table->sgl, sg, n, i) {=0A=
->> +		struct page *page =3D sg_page(sg);=0A=
->> +		size_t size =3D min_t(int, bytes - offset, sg->length);=0A=
->> +		int ret;=0A=
->> +=0A=
->> +		ret =3D nvme_get_telemetry_log_blocks(ctrl,=0A=
->> page_address(page),=0A=
->> +						    size, offset);=0A=
->> +		if (ret)=0A=
->> +			return ret;=0A=
->> +=0A=
->> +		offset +=3D size;=0A=
->> +	}=0A=
->> +=0A=
->> +	return 0;=0A=
->> +}=0A=
->=0A=
-> Can we have those two in nvme-core module instead of being in pci module?=
-=0A=
-=0A=
-Since they are based on the controller they should be moved next to =0A=
-nvme_get_log() in the ${KERN_DIR}/drivers/nvme/host/core.c.=0A=
-=0A=
->=0A=
-> _______________________________________________=0A=
-> Linux-nvme mailing list=0A=
-> Linux-nvme@lists.infradead.org=0A=
-> http://lists.infradead.org/mailman/listinfo/linux-nvme=0A=
->=0A=
-=0A=
+On Thu,  9 May 2019 21:34:14 -0700, Bjorn Andersson wrote:
+> The SDM845 Audio DSP peripheral image loader binding describes the
+> properties needed to load and boot firmware on a Hexagon v56. Rename the
+> file and add the Compute DSP (CDSP) found in QCS404 to the binding.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  ...qcom,adsp-pil.txt => qcom,hexagon-v56.txt} | 35 +++++++++++++------
+>  1 file changed, 25 insertions(+), 10 deletions(-)
+>  rename Documentation/devicetree/bindings/remoteproc/{qcom,adsp-pil.txt => qcom,hexagon-v56.txt} (74%)
+> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
