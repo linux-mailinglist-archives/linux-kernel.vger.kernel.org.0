@@ -2,208 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516A61B41F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F111B42E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbfEMKe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:34:56 -0400
-Received: from mutluit.com ([82.211.8.197]:56846 "EHLO mutluit.com"
+        id S1729109AbfEMKnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 06:43:12 -0400
+Received: from mx5.sophos.com ([195.171.192.119]:35977 "EHLO mx5.sophos.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728536AbfEMKe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:34:56 -0400
-Received: from [127.0.0.1] (s2.mutluit.com [82.211.8.197]:43978)
-        by mutluit.com (s2.mutluit.com [82.211.8.197]:50025) with ESMTP ([XMail 1.27 ESMTP Server])
-        id <S16FAD46> for <linux-kernel@vger.kernel.org> from <um@mutluit.com>;
-        Mon, 13 May 2019 06:34:52 -0400
-Subject: Re: [RFC PATCH v2 RESEND] drivers: ata: ahci_sunxi: Increased
- SATA/AHCI DMA TX/RX FIFOs
-To:     Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-ide@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Pablo Greco <pgreco@centosproject.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Oliver Schinagl <oliver@schinagl.nl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        FUKAUMI Naoki <naobsd@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Stefan Monnier <monnier@iro.umontreal.ca>
-References: <20190512205954.18435-1-um@mutluit.com>
- <413dcf9f-25a5-61f5-159f-a75e7b1f1522@redhat.com>
-From:   "U.Mutlu" <um@mutluit.com>
-Organization: mutluit.com
-Message-ID: <5CD94848.3090407@mutluit.com>
-Date:   Mon, 13 May 2019 12:34:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101
- Firefox/40.0 SeaMonkey/2.37a1
+        id S1727272AbfEMKnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 06:43:11 -0400
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 06:43:09 EDT
+Received: from mx5.sophos.com (localhost.localdomain [127.0.0.1])
+        by localhost (Postfix) with SMTP id BC1E5F38C8;
+        Mon, 13 May 2019 11:36:55 +0100 (BST)
+Received: from abn-exch5a.green.sophos (unknown [10.224.64.44])
+        by mx5.sophos.com (Postfix) with ESMTPS id 9D884F375D;
+        Mon, 13 May 2019 11:36:55 +0100 (BST)
+Received: from abn-exch4c.green.sophos (10.224.64.39) by
+ abn-exch5a.green.sophos (10.224.64.45) with Microsoft SMTP Server (TLS) id
+ 15.0.1293.2; Mon, 13 May 2019 11:36:54 +0100
+Received: from abn-exch5a.green.sophos (10.224.64.44) by
+ abn-exch4c.green.sophos (10.224.64.39) with Microsoft SMTP Server (TLS) id
+ 15.0.1293.2; Mon, 13 May 2019 11:36:52 +0100
+Received: from GBR01-CWL-obe.outbound.protection.outlook.com (104.47.20.52) by
+ abn-exch5a.green.sophos (10.224.64.44) with Microsoft SMTP Server (TLS) id
+ 15.0.1293.2 via Frontend Transport; Mon, 13 May 2019 11:36:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sophosapps.onmicrosoft.com; s=selector2-sophosapps-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ayMU9qBzLBcWoaFXnWug/xjIsNgYb4uRwNcwU8qXbSE=;
+ b=YEjvP2QY4yqhxzxG/HSeI/psqrnkrVvvEk8O/IM2UecFhdsKYBWOsFMFAXiabVL408xglCO0wlCNT70dpvVq1e/cEpWFI7fq+6A+kZM0FsRIs0h4rNTviMrhIqZHLiPCEHcktc/FiDeY4Ggn26L6L6HKv09dk9l/EKH48RwowkE=
+Received: from CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM (20.176.48.15) by
+ CWXP265MB0775.GBRP265.PROD.OUTLOOK.COM (10.166.155.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.21; Mon, 13 May 2019 10:36:51 +0000
+Received: from CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::11bf:3c6:d636:8591]) by CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::11bf:3c6:d636:8591%5]) with mapi id 15.20.1878.024; Mon, 13 May 2019
+ 10:36:51 +0000
+From:   Jagdish Motwani <Jagdish.Motwani@Sophos.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jagdish Motwani <j.k.motwani@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+        "coreteam@netfilter.org" <coreteam@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net] netfilter: nf_queue:fix reinject verdict handling
+Thread-Topic: [PATCH net] netfilter: nf_queue:fix reinject verdict handling
+Thread-Index: AQHVBcxgq4KNCrDWoUOMWqDhWMYmkaZozxeAgAARJ/A=
+Date:   Mon, 13 May 2019 10:36:51 +0000
+Message-ID: <CWXP265MB1464BCF96C61A8FD47619AE59E0F0@CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM>
+References: <20190508183114.7507-1-j.k.motwani@gmail.com>
+ <20190513092211.isxyzpytenvocbx2@salvia>
+In-Reply-To: <20190513092211.isxyzpytenvocbx2@salvia>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jagdish.Motwani@Sophos.com; 
+x-originating-ip: [125.19.12.178]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9a31426d-79aa-4dd0-6f4a-08d6d78ee911
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:CWXP265MB0775;
+x-ms-traffictypediagnostic: CWXP265MB0775:
+x-microsoft-antispam-prvs: <CWXP265MB0775674DCB638FE28708D73A9E0F0@CWXP265MB0775.GBRP265.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 0036736630
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(346002)(376002)(13464003)(199004)(189003)(51234002)(478600001)(6436002)(14444005)(68736007)(71200400001)(71190400001)(102836004)(7736002)(55016002)(305945005)(2906002)(66066001)(229853002)(52536014)(3846002)(6116002)(256004)(7696005)(81156014)(110136005)(8676002)(74316002)(53546011)(6506007)(54906003)(4326008)(81166006)(76176011)(9686003)(86362001)(476003)(14454004)(8936002)(25786009)(6246003)(486006)(99286004)(73956011)(446003)(26005)(5660300002)(33656002)(11346002)(64756008)(186003)(66446008)(66556008)(66946007)(66476007)(53936002)(76116006)(316002)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:CWXP265MB0775;H:CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: Sophos.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XW4qhJrjAsW6CsUO+QxlvLcBZ3XYujvPWdcKsA1S0ufUEb10Sj2vYZRWeOrdLBsxKvvohi5xZOCxjU4evj8eabL/etVukOZHLs7WO/3S4yQT0PlhZY84CLK9izQ2DCEh5lvn5IFJB1GGOc7uX5uYN3/3n0EGhyGS82rBrGW6TUhc1c8ZWqVdeI689tZCmmLVvZfO/BLdOri02K9U4C/5xZkM+MtSOIa05CMbIsd3KGVnEXU5uZGoagW/hKEklYW1rrHG1WzlYSP+4lQSipW/ZIG0oDkcbd/l985Z9cNXm/LCiT1mL54nsLvP6aSu9vYGNsyzVKCR+rd/jU2xU5Eo+AePwwLtIQzBdqVd+ot7TOYscCxQUgP96emknk6z3ZpnnaOnjGCnQkTVibSbfybxkcQDjDkz0sfOZBw5Uf9pCUU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <413dcf9f-25a5-61f5-159f-a75e7b1f1522@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a31426d-79aa-4dd0-6f4a-08d6d78ee911
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2019 10:36:51.4016
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 358a41ff-46d9-49d3-a297-370d894eae6a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB0775
+X-OriginatorOrg: sophos.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sophos.com; h=from:to:cc:subject:date:message-id:references:in-reply-to:content-type:content-transfer-encoding:mime-version; s=global; bh=ayMU9qBzLBcWoaFXnWug/xjIsNgYb4uRwNcwU8qXbSE=; b=VPKigIOPZArOA4gGzdTxf8p9pXioL4Qr2u4Vk+Kx5IN5VNatabFmvBTCkqn6MGztD5Bnem+I1ed9kbymkS3zBEZGGnCtPV5luAN6cqqfyVwfde5dMS/c3QIyK+ugZcUh/rrqEiRp3VcVTSwpzf22taXZwEcFfOdWNeYhM+6WnPA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans de Goede wrote on 05/13/2019 09:44 AM:
-> On 12-05-19 22:59, Uenal Mutlu wrote:
->> Increasing the SATA/AHCI DMA TX/RX FIFOs (P0DMACR.TXTS and .RXTS, ie.
->> TX_TRANSACTION_SIZE and RX_TRANSACTION_SIZE) from default 0x0 each
->> to 0x3 each, gives a write performance boost of 120 MiB/s to 132 MiB/s
->> from lame 36 MiB/s to 45 MiB/s previously.
->> Read performance is about 200 MiB/s.
->> [tested on SSD using dd bs=2K/4K/8K/12K/16K/24K/32K: peak-perf at 12K].
->>
->> Tested on the Banana Pi R1 (aka Lamobo R1) and Banana Pi M1 SBCs
->> with Allwinner A20 32bit-SoCs (ARMv7-a / arm-linux-gnueabihf).
->> These devices are RaspberryPi-like small devices.
->>
->> This problem of slow SATA write-speed with these small devices lasts now
->> for more than 5 years. Many commentators throughout the years wrongly
->> assumed the slow write speed was a hardware limitation. This patch finally
->> solves the problem, which in fact was just a hard-to-fix software problem
->> (b/c of lack of documentation by the SoC-maker Allwinner Technology).
->>
->> RFC: Since more than about 25 similar SBC/SoC models do use the
->> ahci_sunxi driver, users are encouraged to test it on all the
->> affected boards and give feedback
+Hi Pablo,
+
+The case I am referring to is : If there are more than 1  hooks returning N=
+F_QUEUE verdict.
+When the first queue reinjects the packet, 'nf_reinject' starts traversing =
+hooks with hook_index (i).
+However if it again receives a NF_QUEUE verdict (by some other netfilter ho=
+ok), it queue with the wrong hook_index.
+So, when the second queue reinjects the packet, it re-executes some hooks i=
+n between the first 2 hooks.
+
+Thanks, I will mark :  Fixes: 960632ece694 ("netfilter: convert hook list t=
+o an array") and update the description also.
+
+Regards,
+Jagdish
+-----Original Message-----
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Sent: Monday, May 13, 2019 2:52 PM
+To: Jagdish Motwani <j.k.motwani@gmail.com>
+Cc: netdev@vger.kernel.org; Jagdish Motwani <Jagdish.Motwani@Sophos.com>; J=
+ozsef Kadlecsik <kadlec@blackhole.kfki.hu>; Florian Westphal <fw@strlen.de>=
+; David S. Miller <davem@davemloft.net>; netfilter-devel@vger.kernel.org; c=
+oreteam@netfilter.org; linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nf_queue:fix reinject verdict handling
+
+Hi Jagdish,
+
+
+On Thu, May 09, 2019 at 12:01:14AM +0530, Jagdish Motwani wrote:
+> From: Jagdish Motwani <jagdish.motwani@sophos.com>
 >
-> The SATA controller on these boards is inside the A10/A20 SoC, the
-> A10 and A20 use the same controller, so it is the same on all the boards.
+> In case of more than 1 nf_queues, hooks between them are being
+> executed more than once.
 
-Ok, thanks for the clarification.
-This fact of course simplifies the whole issue.
+This refers to NF_REPEAT, correct?
 
-> IOW I don't see this only being tested on 1 board as a reason for the patch
-> to be RFC.
+I think this broke with 960632ece6949. If so, it would be good to add the f=
+ollowing tag to this patch then. It's useful for robots collecting fixes fo=
+r -stable kernels.
 
-I just wanted to be on the safe side :-) since I personally
-have only 2 of the 25+ affected systems here for testing.
-But I now understand that if it works on the tested two
-A20 systems, then it normally should work on all of the
-affected different boards/models as they all are using
-the same SATA/AHCI-IP-Core, much like you also stated.
+Fixes: 960632ece694 ("netfilter: convert hook list to an array")
 
-But of course I still wouldn't like it if someone loses data
-and possibly blames my patch or even me myself, as the issue
-is indeed a sensitive one where data loss (corruption of the
-filesystem, partition, or the partition table) can indeed happen.
-To be honest, it happened to me during my experiments with
-some wrong, too high, values.
-But I think the current version is mature and stable.
+> Signed-off-by: Jagdish Motwani <jagdish.motwani@sophos.com>
 
->> Lists of the affected sunxi and other boards and SoCs with SATA using
->> the ahci_sunxi driver:
->>    $ grep -i -e "^&ahci" arch/arm/boot/dts/sun*dts
->>    and http://linux-sunxi.org/SATA#Devices_with_SATA_ports
->>    See also http://linux-sunxi.org/Category:Devices_with_SATA_port
->>
->> Patch v2:
->>    - Commented the patch in-place in ahci_sunxi.c
->>    - With bs=12K and no conv=... passed to dd, the write performance
->>      rises further to 132 MiB/s
->>    - Changed MB/s to MiB/s
->>    - Posted the story behind the patch:
->>      http://lkml.iu.edu/hypermail/linux/kernel/1905.1/03506.html
->>    - Posted a dd test script to find optimal bs, and some results:
->>      https://bit.ly/2YoOzEM
->>
->> Patch v1:
->>    - States bs=4K for dd and a write performance of 120 MiB/s
->>
->> Signed-off-by: Uenal Mutlu <um@mutluit.com>
->> ---
->>   drivers/ata/ahci_sunxi.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 45 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
->> index 911710643305..ed19f19808c5 100644
->> --- a/drivers/ata/ahci_sunxi.c
->> +++ b/drivers/ata/ahci_sunxi.c
->> @@ -157,8 +157,51 @@ static void ahci_sunxi_start_engine(struct ata_port *ap)
->>       void __iomem *port_mmio = ahci_port_base(ap);
->>       struct ahci_host_priv *hpriv = ap->host->private_data;
->> -    /* Setup DMA before DMA start */
->> -    sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ff00, 0x00004400);
->> +    /* Setup DMA before DMA start
->> +     *
->> +     * NOTE: A similar SoC with SATA/AHCI by Texas Instruments documents
->> +     *   this Vendor Specific Port (P0DMACR, aka PxDMACR) in its
->> +     *   User's Guide document (TMS320C674x/OMAP-L1x Processor
->> +     *   Serial ATA (SATA) Controller, Literature Number: SPRUGJ8C,
->> +     *   March 2011, Chapter 4.33 Port DMA Control Register (P0DMACR),
->> +     *   p.68, https://www.ti.com/lit/ug/sprugj8c/sprugj8c.pdf)
->> +     *   as equivalent to the following struct:
->> +     *
->> +     *   struct AHCI_P0DMACR_t
->> +     *     {
->> +     *       unsigned TXTS     : 4,
->> +     *                RXTS     : 4,
->> +     *                TXABL    : 4,
->> +     *                RXABL    : 4,
->> +     *                Reserved : 16;
->> +     *     };
->> +     *
->> +     *   TXTS: Transmit Transaction Size (TX_TRANSACTION_SIZE).
->> +     *     This field defines the DMA transaction size in DWORDs for
->> +     *     transmit (system bus read, device write) operation. [...]
->> +     *
->> +     *   RXTS: Receive Transaction Size (RX_TRANSACTION_SIZE).
->> +     *     This field defines the Port DMA transaction size in DWORDs
->> +     *     for receive (system bus write, device read) operation. [...]
->> +     *
->> +     *   TXABL: Transmit Burst Limit.
->> +     *     This field allows software to limit the VBUSP master read
->> +     *     burst size. [...]
->> +     *
->> +     *   RXABL: Receive Burst Limit.
->> +     *     Allows software to limit the VBUSP master write burst
->> +     *     size. [...]
->> +     *
->> +     *   Reserved: Reserved.
->> +     *
->> +     *
->> +     * NOTE: According to the above document, the following alternative
->> +     *   to the code below could perhaps be a better option
->> +     *   (or preparation) for possible further improvements later:
->> +     *     sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ffff,
->> +     *        0x00000033);
->> +     */
->> +    sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ffff, 0x00004433);
->
-> Have you tried / benchmarked the 0x00000033 option?
+Thanks.
 
-Yes, I did, but not that extensively yet. So far I couldn't see any
-difference in the outcome.
-There is in the TI doc just the following statement regarding this:
+________________________________
 
-"Note that programming a burst size of greater than a transaction size,
-while not invalid, is meaningless because the DMA maximizes out at
-transaction size." (Ch. 3.4 DMA, p.15 in the TI doc).
+Sophos Technologies Private Limited Regd. Office: Sophos House, Saigulshan =
+Complex, Beside White House, Panchvati Cross Road, Ahmedabad - 380006, Guja=
+rat, India CIN: U72200GJ2006PTC047857
 
-I understand this as a neutral statement, ie. it doesn't hurt or make
-any difference in practice if one sets TXABL effectively higher than
-TXTS and/or RXABL effectively higher than RXTS,
-FYI: these value are just some index-values, ie. index-value x means real value y.
-0 for TXABL and/or RXABL means "Limit VBUSP burst size to 256 DWORDS",
-ie. to the highest possible value for Transmit Burst Limit (TXABL) and
-Receive Burst Limit (RXABL), respectively.
-
-I'll test this alternative version now extensively in my test series.
-
-But I could need an advice on what step I should take next in this
-issue regarding getting the patch merged into the mainline kernel.
-Shall I post a v3 of the patch with RFC removed, some more comments
-added, and switching to the above alternative function argument
-together with its test results, or shall I do these additions only
-after the current version has already been merged into the kernel?
-[actually I'm now unsure if patches with "RFC" flag ever get merged :-].
-
-Thx.
-
-> Regards,
->
-> Hans
+Sophos Ltd, a company registered in England and Wales number 2096520, The P=
+entagon, Abingdon Science Park, Abingdon, OX14 3YP, United Kingdom.
 
