@@ -2,121 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9963F1B2B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C55091B28F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfEMJRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:17:48 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:32973 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727747AbfEMJRr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:17:47 -0400
-Received: by mail-qt1-f196.google.com with SMTP id m32so10797282qtf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 02:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0TcyKMp5RYAO3Vmxht8Y8t9Cu1RXvH8j1oVgbu8WbE0=;
-        b=Gc2j7Ld5EOmCs5WXAmiJYgMs4MsvWQMCabwirwH+dQyYXmGfwXbVnnGaC5Rssz/FoX
-         91TCBdokTTTX7OaQtDOw3nqZc8FeGzA9gobMp/OErsWshyjTU4S5LvH7zp6KasihdBNN
-         J2jtXJbQ1h8mK6WJ8jn9qDAyPTucUOjRHyWKrJPRdDEar+YNvHR4V3Bwpep987TeQO2V
-         5Ot0zAjFUTSgoxWmB7s9818Z90dWrBFNDCjEBAJWcfAD+/OJevIAHe4W7wJwWoPVohRi
-         TiJOSQQ3+AHjP9sUhyww46Kg9m4fhHjCZIjWX7yyfrHvLbvLASUfaasVdDRjkhkt2sSp
-         NEnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0TcyKMp5RYAO3Vmxht8Y8t9Cu1RXvH8j1oVgbu8WbE0=;
-        b=PVzq9kzl1GeZiy/e0Vt1W4zBzTrE+MObTPPOehCLRFztko6q4a6Fug/7uRDnfisifU
-         ZNjgUUb/d3lQl8NYWt6ApffjE5V75mgk288uyjuZ5PU3GaunrFtGV6jCOw7f3BHsj849
-         RV78qOtu2uPHpKAlnx3jWS26zAxzzcgo2RPRJN5kL3btTCA+z1ekKZASO25VNgWTk8yZ
-         CrancQu55rE+e5jZOwtowx7pOtrWGz59NFWIABkwVb43D5GwUVfDhusmxf087kWIAigB
-         TgpwGQEBjj6JofSq2jmv7O6KuJsviQ3V87hse2XzfS3be9IfJk5akp7bdtCAozlRXms/
-         1Flg==
-X-Gm-Message-State: APjAAAVA2Vg+Jdh6OZ4h9n1yOokJMYYSxEhKAebiXkEfoX6HnYRmHG08
-        lG7hAR5I4ncW5b/bowLaF6xy2rleII/hOQ3dVUU=
-X-Google-Smtp-Source: APXvYqwTHUMRmmn3A5wZ2qGCq+HiH72Fh7pW5KJ6ySsIgngMj6HKmZw7cxBgZBs5ynz8jf2ayUazzc8Bhl5QAjgarqE=
-X-Received: by 2002:ac8:701:: with SMTP id g1mr6091063qth.327.1557739066697;
- Mon, 13 May 2019 02:17:46 -0700 (PDT)
+        id S1728823AbfEMJOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:14:35 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48372 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728718AbfEMJOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:14:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 02:14:32 -0700
+X-ExtLoop1: 1
+Received: from xxx.igk.intel.com ([10.237.93.170])
+  by fmsmga001.fm.intel.com with ESMTP; 13 May 2019 02:14:31 -0700
+From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+Subject: [PATCH v2] ALSA: hda: Fix race between creating and refreshing sysfs entries
+Date:   Mon, 13 May 2019 11:18:01 +0200
+Message-Id: <20190513091801.985-1-amadeuszx.slawinski@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190513091203.7299-1-duyuyang@gmail.com>
-In-Reply-To: <20190513091203.7299-1-duyuyang@gmail.com>
-From:   Yuyang Du <duyuyang@gmail.com>
-Date:   Mon, 13 May 2019 17:17:35 +0800
-Message-ID: <CAHttsrZkYHU5vejptty=nJs67F4R07JjBJUsY8e4vtzOhgXe2A@mail.gmail.com>
-Subject: Re: [PATCH 00/17] Support for read-write lock deadlock detection
-To:     Peter Zijlstra <peterz@infradead.org>, will.deacon@arm.com,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
-        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
-        Boqun Feng <boqun.feng@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, forgot to mention the patchset is based on my previous small
-improvements:
+hda_widget_sysfs_reinit() can free underlying codec->widgets structure
+on which widget_tree_create() operates. Add locking to prevent such
+issues from happening.
 
-[PATCH v2 00/23] locking/lockdep: Small improvements
-(https://lkml.org/lkml/2019/5/6/106).
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=110382
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+---
 
-On Mon, 13 May 2019 at 17:13, Yuyang Du <duyuyang@gmail.com> wrote:
->
-> Hi Peter and Ingo,
->
-> Historically, the read-write locks (recursive-read locks included) are not
-> well supported in lockdep. This patchset attempts to solve this problem
-> sound and complete.
->
-> The bulk of the algorithm is in patch #10, which is actually not complex at
-> all. Hopefully, it simply works.
->
-> Now that we have read-write locks suppported, we have all the 262 cases
-> passed, though I have to flip some cases which, I think, are wrong.
->
-> P.S. To Boqun, I haven't got time to read your patchset except that I did
-> carefully read your design doc and learnt from it a lot. It is helpful.
-> Please give this patchset at least a look.
->
-> Thanks,
-> Yuyang
->
-> --
->
-> Yuyang Du (17):
->   locking/lockdep: Add lock type enum to explicitly specify read or
->     write locks
->   locking/lockdep: Add read-write type for dependency
->   locking/lockdep: Add helper functions to operate on the searched path
->   locking/lockdep: Update direct dependency's read-write type if it
->     exists
->   locking/lockdep: Rename deadlock check functions
->   locking/lockdep: Adjust BFS algorithm to support multiple matches
->   locking/lockdep: Introduce mark_lock_unaccessed()
->   locking/lockdep: Introduce chain_hlocks_type for held lock's
->     read-write type
->   locking/lockdep: Hash held lock's read-write type into chain key
->   locking/lockdep: Support read-write lock's deadlock detection
->   locking/lockdep: Adjust lockdep selftest cases
->   locking/lockdep: Remove useless lock type assignment
->   locking/lockdep: Add nest lock type
->   locking/lockdep: Support recursive read locks
->   locking/lockdep: Adjust selftest case for recursive read lock
->   locking/lockdep: Add more lockdep selftest cases
->   locking/lockdep: Remove irq-safe to irq-unsafe read check
->
->  include/linux/lockdep.h            |   40 +-
->  kernel/locking/lockdep.c           |  454 +++++++++++----
->  kernel/locking/lockdep_internals.h |    4 +
->  lib/locking-selftest.c             | 1099 +++++++++++++++++++++++++++++++++++-
->  4 files changed, 1464 insertions(+), 133 deletions(-)
->
-> --
-> 1.8.3.1
->
+Changes since v1:
+ - Moved mutexes around the callers
+ - Added comments noting that functions should be called with mutex held
+
+---
+ include/sound/hdaudio.h | 1 +
+ sound/hda/hdac_device.c | 7 +++++++
+ sound/hda/hdac_sysfs.c  | 3 +++
+ 3 files changed, 11 insertions(+)
+
+diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+index 45f944d57982..85835d0c33cc 100644
+--- a/include/sound/hdaudio.h
++++ b/include/sound/hdaudio.h
+@@ -81,6 +81,7 @@ struct hdac_device {
+ 	atomic_t in_pm;		/* suspend/resume being performed */
+ 
+ 	/* sysfs */
++	struct mutex widget_lock;
+ 	struct hdac_widget_tree *widgets;
+ 
+ 	/* regmap */
+diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
+index 95b073ee4b32..4769f4c03e14 100644
+--- a/sound/hda/hdac_device.c
++++ b/sound/hda/hdac_device.c
+@@ -55,6 +55,7 @@ int snd_hdac_device_init(struct hdac_device *codec, struct hdac_bus *bus,
+ 	codec->bus = bus;
+ 	codec->addr = addr;
+ 	codec->type = HDA_DEV_CORE;
++	mutex_init(&codec->widget_lock);
+ 	pm_runtime_set_active(&codec->dev);
+ 	pm_runtime_get_noresume(&codec->dev);
+ 	atomic_set(&codec->in_pm, 0);
+@@ -141,7 +142,9 @@ int snd_hdac_device_register(struct hdac_device *codec)
+ 	err = device_add(&codec->dev);
+ 	if (err < 0)
+ 		return err;
++	mutex_lock(&codec->widget_lock);
+ 	err = hda_widget_sysfs_init(codec);
++	mutex_unlock(&codec->widget_lock);
+ 	if (err < 0) {
+ 		device_del(&codec->dev);
+ 		return err;
+@@ -158,7 +161,9 @@ EXPORT_SYMBOL_GPL(snd_hdac_device_register);
+ void snd_hdac_device_unregister(struct hdac_device *codec)
+ {
+ 	if (device_is_registered(&codec->dev)) {
++		mutex_lock(&codec->widget_lock);
+ 		hda_widget_sysfs_exit(codec);
++		mutex_unlock(&codec->widget_lock);
+ 		device_del(&codec->dev);
+ 		snd_hdac_bus_remove_device(codec->bus, codec);
+ 	}
+@@ -404,7 +409,9 @@ int snd_hdac_refresh_widgets(struct hdac_device *codec, bool sysfs)
+ 	}
+ 
+ 	if (sysfs) {
++		mutex_lock(&codec->widget_lock);
+ 		err = hda_widget_sysfs_reinit(codec, start_nid, nums);
++		mutex_unlock(&codec->widget_lock);
+ 		if (err < 0)
+ 			return err;
+ 	}
+diff --git a/sound/hda/hdac_sysfs.c b/sound/hda/hdac_sysfs.c
+index fb2aa344981e..909d5ef1179c 100644
+--- a/sound/hda/hdac_sysfs.c
++++ b/sound/hda/hdac_sysfs.c
+@@ -395,6 +395,7 @@ static int widget_tree_create(struct hdac_device *codec)
+ 	return 0;
+ }
+ 
++/* call with codec->widget_lock held */
+ int hda_widget_sysfs_init(struct hdac_device *codec)
+ {
+ 	int err;
+@@ -411,11 +412,13 @@ int hda_widget_sysfs_init(struct hdac_device *codec)
+ 	return 0;
+ }
+ 
++/* call with codec->widget_lock held */
+ void hda_widget_sysfs_exit(struct hdac_device *codec)
+ {
+ 	widget_tree_free(codec);
+ }
+ 
++/* call with codec->widget_lock held */
+ int hda_widget_sysfs_reinit(struct hdac_device *codec,
+ 			    hda_nid_t start_nid, int num_nodes)
+ {
+-- 
+2.17.1
+
