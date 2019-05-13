@@ -2,128 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3001B1BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4081B1BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbfEMIPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 04:15:38 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:36543 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbfEMIPg (ORCPT
+        id S1728250AbfEMIPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 04:15:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56524 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbfEMIPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 04:15:36 -0400
-Received: from [192.168.178.187] ([109.104.33.66]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MJn4B-1h66Hp0HGb-00K6ce; Mon, 13 May 2019 10:14:56 +0200
-Subject: Re: [PATCH 3/3] pinctrl: bcm2835: bcm7211: Add support for 7211
- pull-up functionality
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Al Cooper <alcooperx@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Eric Anholt <eric@anholt.net>, Doug Berger <opendmb@gmail.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Lukas Wunner <lukas@wunner.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190509205955.27842-1-f.fainelli@gmail.com>
- <20190509205955.27842-4-f.fainelli@gmail.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <eb73a935-3638-e7b5-c85e-7857d61a7511@i2se.com>
-Date:   Mon, 13 May 2019 10:14:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 13 May 2019 04:15:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KnyNPpS3/IuZil8Uli/e5qg23u6Dh+UGd1Izdvt9Xl4=; b=ryFblFXjlXk+SBg6r2yrKzeaE
+        oNV1g8kuLX0GcGWBlWRn4+AGoZfop572rLjUfVXK2G5b8+oF57G4YLNQ3nTamzPjdSky5aPd7q74f
+        855iziskHlTtfgJZVmHqUHQFgsUyUVLw6q/Rz5qQ0fHSGAyw6Gbx5AO9zyp4lOyz/M2y5ij6/71J+
+        KjEK3HOHjMa85n313NabRj9GoTRj9eTaZz8e637X50fcPmaMnC9cd934Yd1SnWb5uE+LNBz8t3z6O
+        zO/avz/svOREVoXFSULdd5XfrmuJtEvANn8pk6XeYKVJZgcolRn3KmkxR6V9uxMc8OZmZwNIeawR+
+        LCBLlT/tA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQ670-000470-DV; Mon, 13 May 2019 08:15:06 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DCF902029FD7A; Mon, 13 May 2019 10:15:03 +0200 (CEST)
+Date:   Mon, 13 May 2019 10:15:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/4] x86/kprobes: Fix frame pointer annotations
+Message-ID: <20190513081503.GK2623@hirez.programming.kicks-ass.net>
+References: <20190508124248.u5ukpbhnh4wpiccq@treble>
+ <20190508153907.GM2589@hirez.programming.kicks-ass.net>
+ <20190508184848.qerg3flv3ej3xsev@treble>
+ <20190509102030.dfa62e058f09d0d8cbdd6053@kernel.org>
+ <20190509081431.GO2589@hirez.programming.kicks-ass.net>
+ <20190509230106.3551b08553440d125e437f66@kernel.org>
+ <20190509171416.GY2623@hirez.programming.kicks-ass.net>
+ <20190510135831.c4ad309c68fc254f819194fc@kernel.org>
+ <20190510124054.GV2589@hirez.programming.kicks-ass.net>
+ <20190511095655.405147cde331cd1da539d0e8@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190509205955.27842-4-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:JTDUvpLHa55zi/Dt55qLS5DnQOpaKejjGcxYKJuoM3QMrg+B7VB
- Ju+vfuIH5aKRFYZw3Uv4K6D3655pRM1/ONqdhNQTFDyvu9HM1JoT34nKKiD5Hi6qOKcd7Ea
- D+HXoXJxGz0ZIUstZGYcUjC0U25iBgls+nm+kfvMqGbENikB+9ieM+pDQ+Z6gDUdTyX0hle
- DeQgMZt6X6SlwI8J3KFmQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Gw7Ftq56uJE=:92NT/03PgfE3f83odq3HvL
- dpxhCqrSNO7BiiIC7zrVKWY3Cn1vSQvVudmD24jW/ejbGXwCpqgG+yEsIQ3Q7oE4fin7aUjsd
- OBFK0ETfwUfzQ3XH8X4BLEC2UIzm/IUbRZZPRk2khHXAgDa2T8Vxlby897F0mfTcYH33SDSTt
- zlffYsv8CF8lOmeLDPL1u3zm663HbKLDKEp27yc2Ypz835O8A9ADNBzMmHRjcZiCAHzQrkZgf
- QseOxHcW5Wcc2oYLFgnBqR4V5Nrv/yuH/2MpmjAr7h2IgOkABPWEp9XqMb6Tb9SijqLYv/svX
- waOlE6thf453fwxYdACkHDYGmplXopB/66ytGOVvd/+VqDNUjgaRjNJ841sJg8KZ0G3YcZwlF
- fDKv2EVVJLnS9uJ9NZVUX08H+EgFM0QmqDdYzjrMrSrTQu96zVwuu9WPfpp+Az7XgAPVn2d4y
- iJsItBTET3Uzi3fvzKM/JreNrON9bbhEsJrdBh6bws14jyarfegmUBkZKQHB8F2bT9aIV0V+9
- WwMa4COsyZIXojuELWY6i73eSvJT3gHI1pCqXqLVanfPfYS1E6h1OipKAL4akrEQrwMhCZEpf
- UEbdpNY3CEzdcYwKGVMqUnHex+7tWJvAdOFh5c9fyRUSiO1SUkHbNLyfnIMQQ9xHAY7o6xi0B
- l0NXjJeFt37NWgGmfE5XqYqU7ZBHJP0sTFpRoeZIov66r+DSPgCOiRnkO8U8ssGLUhhaFaB1f
- 0DIBAf5L21lAwyKKKEqOoY6XdqNXeUzooClAbqx0+pCrwRnFPIiEklJm76c=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190511095655.405147cde331cd1da539d0e8@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Sat, May 11, 2019 at 09:56:55AM +0900, Masami Hiramatsu wrote:
+> On Fri, 10 May 2019 14:40:54 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Fri, May 10, 2019 at 01:58:31PM +0900, Masami Hiramatsu wrote:
+> > > On Thu, 9 May 2019 19:14:16 +0200
+> > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > > > --- a/arch/x86/kernel/kprobes/core.c
+> > > > > > +++ b/arch/x86/kernel/kprobes/core.c
+> > > > > > @@ -731,29 +731,8 @@ asm(
+> > > > > >  	".global kretprobe_trampoline\n"
+> > > > > >  	".type kretprobe_trampoline, @function\n"
+> > > > > >  	"kretprobe_trampoline:\n"
+> > 
+> > > > > Here, we need a gap for storing ret-ip, because kretprobe_trampoline is
+> > > > > the address which is returned from the target function. We have no 
+> > > > > "ret-ip" here at this point. So something like
+> > > > > 
+> > > > > +	"push $0\n"	/* This is a gap, will be filled with real return address*/
+> > > > 
+> > > > The trampoline already provides a gap, trampoline_handler() will need to
+> > > > use int3_emulate_push() if it wants to inject something on the return
+> > > > stack.
+> > > 
+> > > I guess you mean the int3 case. This trampoline is used as a return destination.
+> > 
+> > > When the target function is called, kretprobe interrupts the first instruction,
+> > > and replace the return address with this trampoline. When a "ret" instruction
+> > > is done, it returns to this trampoline. Thus the stack frame start with
+> > > previous context here. As you described above,
+> > 
+> > I would prefer to change that to inject an extra return address, instead
+> > of replacing it. With the new exception stuff we can actually do that.
+> > 
+> > So on entry we then go from:
+> > 
+> > 	<previous context>
+> > 	RET-IP
+> > 
+> > to
+> > 
+> > 	<previous context>
+> > 	RET-IP
+> > 	return-trampoline
+> > 
+> > So when the function returns, it falls into the trampoline instead.
+> 
+> Is that really possible? On x86-64, most parameters are passed by registers,
+> but x86-32 (and x86-64 in rare case) some parameters can be passed by stack.
+> If we change the stack layout in the function prologue, the code in
+> function body can not access those parameters on stack.
 
-On 09.05.19 22:59, Florian Fainelli wrote:
-> From: Al Cooper <alcooperx@gmail.com>
->
-> The 7211 has a new way of selecting the pull-up/pull-down setting
-> for a GPIO pin. The registers used for the bcm2837, GP_PUD and
-> GP_PUDCLKn0, are no longer connected. A new set of registers,
-> GP_GPIO_PUP_PDN_CNTRL_REGx must be used. This commit will add
-> a new compatible string "brcm,bcm7211-gpio" and the kernel
-> driver will use it to select which method is used to select
-> pull-up/pull-down.
->
-> Signed-off-by: Al Cooper <alcooperx@gmail.com>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 85 +++++++++++++++++++++++++--
->  1 file changed, 80 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index 183d1ffe6a75..35d9f9593000 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -57,15 +57,26 @@
->  #define GPAFEN0		0x88	/* Pin Async Falling Edge Detect */
->  #define GPPUD		0x94	/* Pin Pull-up/down Enable */
->  #define GPPUDCLK0	0x98	/* Pin Pull-up/down Enable Clock */
-> +#define GP_GPIO_PUP_PDN_CNTRL_REG0 0xe4 /* 7211 Pin Pull-up/down select */
->  
->  #define FSEL_REG(p)		(GPFSEL0 + (((p) / 10) * 4))
->  #define FSEL_SHIFT(p)		(((p) % 10) * 3)
->  #define GPIO_REG_OFFSET(p)	((p) / 32)
->  #define GPIO_REG_SHIFT(p)	((p) % 32)
->  
-> +#define PUD_7211_MASK		0x3
-> +#define PUD_7211_REG_OFFSET(p)	((p) / 16)
-> +#define PUD_7211_REG_SHIFT(p)	(((p) % 16) * 2)
-> +
->  /* argument: bcm2835_pinconf_pull */
->  #define BCM2835_PINCONF_PARAM_PULL	(PIN_CONFIG_END + 1)
->  
-> +enum bcm7211_pinconf_pull {
-> +	BCM7211_PINCONFIG_PULL_NONE,
-> +	BCM7211_PINCONFIG_PULL_UP,
-> +	BCM7211_PINCONFIG_PULL_DOWN,
-> +};
-
-unfortunately this not usable for DTS files.
-
-Please look at:
-include/dt-bindings/pinctrl/bcm2835.h
-
-Btw the meaning between BCM2835 and BCM7211 of pull down and up is
-different :(
-
+Ooh, I see what you mean... yes that might be trouble indeed. Damn..
