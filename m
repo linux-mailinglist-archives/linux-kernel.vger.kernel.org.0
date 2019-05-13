@@ -2,53 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 794581BC93
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CA81BC98
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbfEMSDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:03:47 -0400
-Received: from namei.org ([65.99.196.166]:38884 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfEMSDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:03:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x4DI3gcn003503;
-        Mon, 13 May 2019 18:03:42 GMT
-Date:   Tue, 14 May 2019 04:03:42 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] security subsystem: Tomoyo updates for v5.2
-In-Reply-To: <CAHk-=wh33PsgxtwXdzDgx13tARBnhzkPV9294L2g6OjOBeNvfA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1905140401320.14684@namei.org>
-References: <alpine.LRH.2.21.1905110801350.9392@namei.org> <CAHk-=wg8UFHD_KmTWF3LMnDf_VN7cv_pofpc4eOHmx_8kmMPWw@mail.gmail.com> <CAHC9VhSSwYk6isqz8N3nOO_O17C30E2EyCHKf5OqsdESeMoT7g@mail.gmail.com> <24d602d2-a1a7-7b1e-9035-a2d732cd822b@schaufler-ca.com>
- <CAHC9VhR-oqJwyvB2JhzTu2_nuZuENA=Y9f4rtfUrSGtLMnGZfw@mail.gmail.com> <CAHk-=wh33PsgxtwXdzDgx13tARBnhzkPV9294L2g6OjOBeNvfA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1732253AbfEMSEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:04:15 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43949 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729629AbfEMSEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 14:04:14 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t22so7148413pgi.10
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wpu18naFWlgtTqufqvjuipZH+1ZIKrnYEDY+wCZirDI=;
+        b=Su1DQ2NTL5anOFs65/rIBxXZTXEmw2eHtb7eiE+YTTvQST56qZuh6L+lUHM54HCHg6
+         wF17v5K5+kM0ua5oNZ6xvy5uvAm0PmxcGJ4qwqd3yy/PUy5S0hn6vJoOgakrwb/pvQZ9
+         WDcaGPYblYCjO/Nh/QPaa2f95xL2tzmtH05870FPj4yihzKn0jnKb75Z2S2jTECeIitq
+         rboKd2q9m7TXeuur6IJOrTWCl1NysaxceU30XbSe+iB3vRUw+YgdptfczQnNc2y5VTZT
+         KtcEaaIMJ2AsI/vdD88Jbr3SEaHmVdE7kojintJ8JAsG9Y5KjcFUshPfbV5S6vhAL4su
+         Q4EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wpu18naFWlgtTqufqvjuipZH+1ZIKrnYEDY+wCZirDI=;
+        b=Wew7YnVBqZ1hs3ztY6ukEwR087YFwCXJL3drpnQ+32zOjA1j63xdaGD9jq3z+ApO3R
+         5a0dnL2sjiT3b/f8XkrcnifHB/JG+ZKuSk82E7GEQk3Vh7E9LAOpgkrJxdXrycaofNgL
+         lLJLfT6PPCSPeciCuYpN5S4OBjotySKu1csHA5pKELdH79SFh+Qo1z3o/w/IqTB1brnx
+         giyyXDwQmR0JGn6+ynPD8I+la3rEos8BkGcb8tv678PdLOABvsB5pIfp2zAf+daHwNb5
+         EO3uisLVFDek9yZrm9d0F3/KRQVHcUvpAteyEKzOZxpMhyIzAt1S9Bj3VpFemGNClBvl
+         cR0g==
+X-Gm-Message-State: APjAAAWDVsX6h1R3vVcfhuDjHB/LTid+COe0wN07inpcSwUYoSWzThNe
+        9rG7POZnrsrwQLALtL3jgc5ubvj7QpA+n4l3cOazxA==
+X-Google-Smtp-Source: APXvYqwVTW8vU6JAo+j/Ntm2ce8nBdARuG8R4ZkpRgVCALqgjtx2IHw8MNIMajSW9V4Q7dDl4BaUNklwtBOUm3wHgco=
+X-Received: by 2002:a63:fd4a:: with SMTP id m10mr33504119pgj.302.1557770653814;
+ Mon, 13 May 2019 11:04:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190509201925.189615-1-ndesaulniers@google.com>
+ <20190511022458.GA7376@archlinux-i9> <CAK7LNARB_ds9-dF9n1jHD==JRWsnPYNGoKxLqb+FwKvTTC0bLQ@mail.gmail.com>
+In-Reply-To: <CAK7LNARB_ds9-dF9n1jHD==JRWsnPYNGoKxLqb+FwKvTTC0bLQ@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 13 May 2019 11:04:02 -0700
+Message-ID: <CAKwvOd=+h8oxyRwPPoHajXM_JicfZ3YV2rhw6Ee06xh5=82fEw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add script check for cross compilation utilities
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Hines <srhines@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 12 May 2019, Linus Torvalds wrote:
+On Sat, May 11, 2019 at 8:05 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Sat, May 11, 2019 at 11:25 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Few comments below but nothing major, this seems to work fine as is.
+> >
+> > On Thu, May 09, 2019 at 01:19:21PM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
+> > > When cross compiling via setting CROSS_COMPILE, if the prefixed tools
+> > > are not found, then the host utilities are often instead invoked, and
+> > > produce often difficult to understand errors.  This is most commonly the
+> > > case for developers new to cross compiling the kernel that have yet to
+> > > install the proper cross compilation toolchain. Rather than charge
+> > > headlong into a build that will fail obscurely, check that the tools
+> > > exist before starting to compile, and fail with a friendly error
+> > > message.
+> >
+> > This part of the commit message makes it sound like this is a generic
+> > problem when it is actually specific to clang. make will fail on its
+> > own when building with gcc if CROSS_COMPILE is not properly set (since
+> > gcc won't be found).
+> >
+> > On a side note, seems kind of odd that clang falls back to the host
+> > tools when a non-host --target argument is used... (how in the world is
+> > that expected to work?)
+>
+>
+> I agree.
+> Failure is much better than falling back to host tools.
 
-> >     My guess is that you are right and
-> > any *significant* changes to the LSM layer itself, e.g. security/*, is
-> > best sent via James' tree.  For smaller changes to the LSM layer I
-> > think it's okay if they go in via an individual LSM tree so long as
-> > all the other LSMs agree-on/ack the changes; which pretty much fits
-> > what we've been doing for some time now and it seems to work well
-> > enough.
-> 
-> Yeah, I think that's the sane model. And I think it's mostly been working.
-
-New LSMs also need to be guided in, as part of a community effort.
+It was probably assumed that the default case is usually not cross
+compilation.  But I think we can add a check to Clang's driver where
+`if target_triple != host_triple then don't invoke host tools`.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+Thanks,
+~Nick Desaulniers
