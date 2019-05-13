@@ -2,79 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3920F1B29C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFD61B2A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbfEMJPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:15:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727371AbfEMJPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:15:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 38569ACCE;
-        Mon, 13 May 2019 09:15:23 +0000 (UTC)
-Date:   Mon, 13 May 2019 11:15:22 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Weikang shi <swkhack@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Change count_mm_mlocked_page_nr return type
-Message-ID: <20190513091522.GA30100@dhcp22.suse.cz>
-References: <20190513023701.83056-1-swkhack@gmail.com>
+        id S1728085AbfEMJQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:16:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37783 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfEMJQA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:16:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e15so1941916wrs.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 02:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UzIz/OqhDW/aA2hwotioqmyYDuvBlglmy6CuzpgH6sA=;
+        b=sbkFKWThl7SS5AJ0CygWfFeJN0O3kIB0+t9Vbb1WtqGtQop4D5UImzY3w/2zHaMszb
+         i2J54jvYjY1fOlF5bA35RWmnT98jFKLSLvIVLSoO8PP7D/ve/VhZTo9Fimdobt4oUfxj
+         m3qq17QF4zEeIsIs6qRq8mwYn0tpc2oCkLBj67jRJQr0z3IsE0KK+xb/bLvr4OTQ25Yd
+         TQJIUmCvXxM0oUoDJa0Q6k8FlYO168/Gr9T74jKF2s0r9JAXBQ2YZGvd90GfTBMB+NwJ
+         5R9/9u5Rl+S6WAEuxnfUAfG+bb0Vhht4Z7X7nKNIvwjnhJSabOZHL5GqZ43vGh9ohjih
+         NK5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UzIz/OqhDW/aA2hwotioqmyYDuvBlglmy6CuzpgH6sA=;
+        b=m3A+V/Q/6U/EPe8NWx6Xv+Gy3IZ+Bz+A4NOTTUabGOCahysfaZJpmMaKzY744/t59H
+         bfoiVnCT0gTdH5ZJWi+7UxTBcc4rxOkI5Nlq8X6RZnHh5EJF6gKvndYDhI1HMhDN/6nx
+         yjQKuTJLrx6a/HtJ+lK1nlfDzFDMQpX59TMEYOSvjuVlbwgWHzt25AxeK/89ekuw54oE
+         P82t0K1Gj4xYex4KMTD3CD+MHJvpXEsH+TfqBjYcMw4fbKCi46FW0l7MOO44Zi9IIpMV
+         +No8UuEI+hZ+s6kdq/gsr+EGEcdjh4iOirVL89ZnAPT1yk7moxkYllUnVI8Ctn3RkcoC
+         BSKA==
+X-Gm-Message-State: APjAAAWx7RQ7t83ew3cWtW9vhckUCtD/SV6tUsOh1hrEOVXfYwORfFGt
+        KoszKU3Un1mkfN7dAhGGKniNKw==
+X-Google-Smtp-Source: APXvYqwNxZZ6JRa6sE/oBLQu/a8gQ1CyT8Fbo4TsPCi5L/1sJXP8vvCMf7wXzFjAVlU30do7KcyBFg==
+X-Received: by 2002:adf:f44b:: with SMTP id f11mr93972wrp.128.1557738958141;
+        Mon, 13 May 2019 02:15:58 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g10sm10795091wrq.2.2019.05.13.02.15.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 13 May 2019 02:15:57 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     ulf.hansson@linaro.org, khilman@baylibre.com
+Cc:     baylibre-upstreaming@groups.io,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-mmc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] mmc: meson-gx: add ddr-access-quirk support
+Date:   Mon, 13 May 2019 11:15:45 +0200
+Message-Id: <20190513091548.16674-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513023701.83056-1-swkhack@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 13-05-19 10:37:01, Weikang shi wrote:
-> From: swkhack <swkhack@gmail.com>
-> 
-> In 64-bit machine,the value of "vma->vm_end - vma->vm_start"
-> maybe negative in 32bit int and the "count >> PAGE_SHIFT"'s result
-> will be wrong.So change the local variable and return
-> value to unsigned long will fix the problem.
-> 
-> Signed-off-by: swkhack <swkhack@gmail.com>
+On the Amlogic G12A SoC family, (only) the SDIO controller fails to access
+the data from DDR, leading to a broken controller.
 
-Fixes: 0cf2f6f6dc60 ("mm: mlock: check against vma for actual mlock() size")
+Add the amlogic,ddr-access-quirk property so signal this particular
+controller has this bug and needs a quirk to work properly.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+But each MMC controller has 1,5KiB of SRAM after the registers, that can
+be used as bounce buffer to avoid direct DDR access from the integrated
+DMAs (this SRAM may be used by the boot ROM when DDR is not yet initialized).
 
-Most users probably never noticed because large mlocked areas are not
-allowed by default. So I am not really sure this is worth backporting to
-stable trees.
+The quirk is to disable the chained descriptor for this controller, and
+use this SRAM memory zone as buffer for the bounce buffer fallback mode.
 
-> ---
->  mm/mlock.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/mlock.c b/mm/mlock.c
-> index 080f3b364..d614163f5 100644
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -636,11 +636,11 @@ static int apply_vma_lock_flags(unsigned long start, size_t len,
->   * is also counted.
->   * Return value: previously mlocked page counts
->   */
-> -static int count_mm_mlocked_page_nr(struct mm_struct *mm,
-> +static unsigned long count_mm_mlocked_page_nr(struct mm_struct *mm,
->  		unsigned long start, size_t len)
->  {
->  	struct vm_area_struct *vma;
-> -	int count = 0;
-> +	unsigned long count = 0;
->  
->  	if (mm == NULL)
->  		mm = current->mm;
-> -- 
-> 2.17.1
+The performance hit hasn't been evaluated, but the fix has been tested
+using a WiFi AP6398S SDIO module, and the iperf3 Bandwidth measurement gave
+55.2 Mbits/sec over a 63 Hours long test, with the SDIO ios set as High-Speed
+at 50MHz clock. It gave around 170 Mbits/sec as SDR104 and 200MHz clock.
+
+Neil Armstrong (3):
+  dt-bindings: mmc: meson-gx: add ddr-access-quirk property
+  mmc: meson-gx: add ddr-access-quirk
+  arm64: dts: meson-g12a: add ddr-access-quirk property to SDIO
+    controller
+
+ .../bindings/mmc/amlogic,meson-gx.txt         |  4 ++
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |  1 +
+ drivers/mmc/host/meson-gx-mmc.c               | 65 +++++++++++++++----
+ 3 files changed, 57 insertions(+), 13 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.21.0
+
