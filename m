@@ -2,148 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF561AF3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 05:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E88BE1AF49
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 06:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfEMD7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 23:59:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45015 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbfEMD7Y (ORCPT
+        id S1726613AbfEMEID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 00:08:03 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42523 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfEMEID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 23:59:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d3so5740396plj.11
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 20:59:24 -0700 (PDT)
+        Mon, 13 May 2019 00:08:03 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j53so13173960qta.9;
+        Sun, 12 May 2019 21:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=F9QBOZtjHD3cvSHL8seit1ng6gf/KXanf0uSnR0dfOI=;
-        b=Xsc1FqfBOwy8bGWszVKy9eKAwN5fabSOCsyoyESVpaOJllyh8NWqBLwEigRo5L6Gtn
-         wnb/SLFTaPG3x0thYFka1ag/hw90I2iQSYo1tCuJb0mYPJNTIYFSg5syIRtkVDnh0+Ks
-         hv4eR4HqATvnVpOU7qQDzFp08ohYrnZgo+qG0ePDL/DHYcKUBRYk3SXaW+QN1woNIJwP
-         EXajKe5rRQyjIAHLrHRsi/XrFzAZoUdydcKzsAmBD92wZUZHl8ZXTuymRneC32JNt1Fy
-         5mSmrZ/GgTiyehLHkwbi1YgJeNTUe+5fhjZYdGLnyQFK+czO+4hqdpQKehFWymF2giup
-         215Q==
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sHEFKQfcGH4B+408DKFIloLlBCtwyujDF4yn5X+9N8Y=;
+        b=GRlwmvpttrX13Wq3NL4bJM2/T0tdFYpPf0TcDufLMccLLHQN3ysRCbtILt2rT06kOP
+         fqtL1PLihIvSZL7hwJocdCK/XDYa0MW98wRp/LS1osJrxRhr5Mj4k3FL0UG7jj/30n/5
+         JnyvqTT4SHw3TjO8wlBpPgs4yLB8l+6p8S1jg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=F9QBOZtjHD3cvSHL8seit1ng6gf/KXanf0uSnR0dfOI=;
-        b=D1vqn1N8QXwckajCgXSjdCrTedUZkdJMTz7JoFjvjB1pEkPx6v4Opula9aQQaVASe8
-         70q0evxWLbxPb/8qvHPAtSvCDwjlEzDiQlIIY2a039qGUVppSRilaL2TUQsDStpEepCy
-         /CVNnyJhDp1NlJyWIDGhiIFj3syAU1KXUOFS+R67lxuagMB3/DBCn2SQAyok+UMswWdV
-         Ljzo0vvneedT4xesMluIMwEepLJAV3HGVDqlNku8C+vR/JFA4Z8POYMz1mZlhQxt1zZD
-         TN6iUi5TTsg+FCIoDZ/b8GYpZMhAtMJJHj931gyLZsUl1K1Ufn+s5tFbtlnwxxFL65UF
-         gWgA==
-X-Gm-Message-State: APjAAAV0DvaIu9Ojvt4B7ZQH4USIm5ACo2hOC5CEa+SwHIN140YqvH1T
-        nkR+AhdQdHOoYnHTgzosMXU=
-X-Google-Smtp-Source: APXvYqyNX8YPKfwxKwTXESwWJea0905IwBlPHwMrvpJrp5+E3xFtZK2791xVKS08UbaHHZOStnse3g==
-X-Received: by 2002:a17:902:a405:: with SMTP id p5mr23101195plq.51.1557719963804;
-        Sun, 12 May 2019 20:59:23 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i17sm16042496pfo.103.2019.05.12.20.59.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 12 May 2019 20:59:23 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: vf610-zii-dev: Add QSPI node
-Date:   Sun, 12 May 2019 20:59:09 -0700
-Message-Id: <20190513035909.30460-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190513035909.30460-1-andrew.smirnov@gmail.com>
-References: <20190513035909.30460-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sHEFKQfcGH4B+408DKFIloLlBCtwyujDF4yn5X+9N8Y=;
+        b=NNmKZ3HeJ4j/P50vC6fPT78P/83YQ24WMDh1aWJJu6EcCO+SpOb2+eIJfBUk2mp9vq
+         09d7x6sJkZW5mBDoxpN2rrvVzjD1qUjlF/5EMdqTTdualRfHcNCMOpcF/YSyzfhwAsru
+         J5lmSfGvLWn6GJJn+0vvyWEG2fVvZzjjqdV1JfHAdaQb5O7EnZ1V8F2V5oz9jIzuSSzR
+         x+o1U1kcZs5AVDh7BFdWK+4xxwm/8qe0Nj4mQSRDA4o0oKcwCykFrjOdC77UTqV4jbij
+         U8Vd/1Iq0YlTN9f2hmy1ZB/x0/tujFkKpvXL7AQS3FwkLOoajVOrgfgaTdITTzlo0GSc
+         5wug==
+X-Gm-Message-State: APjAAAV3SpH+3D2yLkQxaAycZsvjtLOfEnDXJX4DLIcfo1zRDQMORTuj
+        YOKQbCIhBTiyC6TZFfQjLQrxq8a6+sa2Y85Gb5EbrQ==
+X-Google-Smtp-Source: APXvYqx5O7znBG/jSsiHQTMO3pSSVLvI1wIfQneskr2zV0XVxRUy69X1rL0fkPRSRFhamJGQugi6mm7IaMs2VD5z9uM=
+X-Received: by 2002:ac8:45da:: with SMTP id e26mr12608636qto.235.1557720482179;
+ Sun, 12 May 2019 21:08:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190509073555.15545-1-yamada.masahiro@socionext.com>
+ <CAK7LNARotATDnShT-80Ect9XvSM98wYEbQRKHdUTuQBtvxG8aw@mail.gmail.com>
+ <CACPK8XdVZHtCtHzv9vmt8C877SBbZNqRPxT9iUe0+8-o7X9W7g@mail.gmail.com> <CAK7LNAS71K4my-eyYryViy_uQ0LR5hbzyMjAwZUta99pU=0X9g@mail.gmail.com>
+In-Reply-To: <CAK7LNAS71K4my-eyYryViy_uQ0LR5hbzyMjAwZUta99pU=0X9g@mail.gmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Mon, 13 May 2019 04:07:50 +0000
+Message-ID: <CACPK8XediQp2mdbDNuJAJ8_tNoo91aFCaVsC1e_MQ46eonvihQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: terminate Kconfig when $(CC) or $(LD) is missing
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both rev C and rev B of the board come with two QSPI-NOR chips
-attached to the SoC. Add DT code describing all of this.
+On Mon, 13 May 2019 at 02:50, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> > $ CROSS_COMPILE=foo  make
+> > make: foogcc: Command not found
+> > scripts/kconfig/conf  --syncconfig Kconfig
+> > scripts/Kconfig.include:34: compiler 'foogcc' not found
+> > make[2]: *** [scripts/kconfig/Makefile:69: syncconfig] Error 1
+> > make[1]: *** [Makefile:557: syncconfig] Error 2
+> > make: Failed to remake makefile 'include/config/auto.conf'.
+> > You are building kernel with non-retpoline compiler.
+> > Please update your compiler.
+>
+>
+> I think you are seeing a different bug.
+>
+> Please test after applying this as well:
+> https://patchwork.kernel.org/patch/10939845/
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/boot/dts/vf610-zii-dev.dtsi | 48 ++++++++++++++++++++++++----
- 1 file changed, 42 insertions(+), 6 deletions(-)
+That did the trick. Thank you.
 
-diff --git a/arch/arm/boot/dts/vf610-zii-dev.dtsi b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-index 5246c75e848c..f63a470f78ce 100644
---- a/arch/arm/boot/dts/vf610-zii-dev.dtsi
-+++ b/arch/arm/boot/dts/vf610-zii-dev.dtsi
-@@ -177,6 +177,36 @@
- 	status = "okay";
- };
- 
-+&qspi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_qspi0>;
-+	status = "okay";
-+
-+	/*
-+	 * Attached MT25QL02 can go up to 90Mhz in DTR and 166 in SDR
-+	 * modes, so we limit spi-max-frequency to 90Mhz
-+	 */
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		spi-max-frequency = <90000000>;
-+		spi-rx-bus-width = <4>;
-+		reg = <0>;
-+		m25p,fast-read;
-+	};
-+
-+	flash@2 {
-+		compatible = "jedec,spi-nor";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		spi-max-frequency = <90000000>;
-+		spi-rx-bus-width = <4>;
-+		reg = <2>;
-+		m25p,fast-read;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart0>;
-@@ -360,12 +390,18 @@
- 
- 	pinctrl_qspi0: qspi0grp {
- 		fsl,pins = <
--			VF610_PAD_PTD7__QSPI0_B_QSCK	0x31c3
--			VF610_PAD_PTD8__QSPI0_B_CS0	0x31ff
--			VF610_PAD_PTD9__QSPI0_B_DATA3	0x31c3
--			VF610_PAD_PTD10__QSPI0_B_DATA2	0x31c3
--			VF610_PAD_PTD11__QSPI0_B_DATA1	0x31c3
--			VF610_PAD_PTD12__QSPI0_B_DATA0	0x31c3
-+			VF610_PAD_PTD0__QSPI0_A_QSCK	0x38c2
-+			VF610_PAD_PTD1__QSPI0_A_CS0	0x38c2
-+			VF610_PAD_PTD2__QSPI0_A_DATA3	0x38c3
-+			VF610_PAD_PTD3__QSPI0_A_DATA2	0x38c3
-+			VF610_PAD_PTD4__QSPI0_A_DATA1	0x38c3
-+			VF610_PAD_PTD5__QSPI0_A_DATA0	0x38c3
-+			VF610_PAD_PTD7__QSPI0_B_QSCK	0x38c2
-+			VF610_PAD_PTD8__QSPI0_B_CS0	0x38c2
-+			VF610_PAD_PTD9__QSPI0_B_DATA3	0x38c3
-+			VF610_PAD_PTD10__QSPI0_B_DATA2	0x38c3
-+			VF610_PAD_PTD11__QSPI0_B_DATA1	0x38c3
-+			VF610_PAD_PTD12__QSPI0_B_DATA0	0x38c3
- 		>;
- 	};
- 
--- 
-2.21.0
+Cheers,
 
+Joel
