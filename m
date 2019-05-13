@@ -2,109 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41141BBE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C641BBEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfEMR1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:27:03 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15524 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbfEMR1C (ORCPT
+        id S1731746AbfEMR2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:28:07 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:45364 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731719AbfEMR2E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:27:02 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cd9a8eb0000>; Mon, 13 May 2019 10:27:07 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 13 May 2019 10:27:00 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 13 May 2019 10:27:00 -0700
-Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 13 May
- 2019 17:27:00 +0000
-Subject: Re: [PATCH 0/5] mm/hmm: HMM documentation updates and code fixes
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190506232942.12623-1-rcampbell@nvidia.com>
- <20190512150832.GB4238@redhat.com>
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <89c6ce48-190b-65df-7c35-a0eb0f5d936f@nvidia.com>
-Date:   Mon, 13 May 2019 10:26:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
-MIME-Version: 1.0
-In-Reply-To: <20190512150832.GB4238@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557768427; bh=5iuLlyyOWz845CEoxjvFeDA6uM+p6rUh7ezrIXkoluc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=KYEYMqiaFUWGmzf3uqRTE3CKf0u6MxnNhKf5pI+pHFvjypeWF8KWQTzcVWwQoag93
-         qpf7d2eBgg04VrJm3elH3119s8dRSdNRlKdqgM09VPSBimQBSoJv+YmGxacQVs12uM
-         LgKZRNgZ4cPHJHS4bZE65PFWPmGH6ZKNSFXr06e0aa/UQbx/smyDqfKaCJl2Lhp75+
-         7H2GykDVlleOBe/rqdpKIPJ9dvuPOLZ25UNInI7ov+W1oRSzT2cMBYWxqhfWAVxjSJ
-         7BkwemDz5kvzrpPh/qt4BaQqoPPnpfKCPB5ILknioJxCGHsvmHaTKOaMLcOzLPdP/v
-         PyclKZ3YFaJrQ==
+        Mon, 13 May 2019 13:28:04 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id ECBD6C01BE;
+        Mon, 13 May 2019 17:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1557768475; bh=xuOs4qwSdffNeE4cSBsvtl4Yi23BFWFZxAfSB82nI1M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mH1hrvejYv/qBh+ZvZnGVo/Y2EgAw4cQN5pr+nC2j8vqY/JBjREeO4YRrcU0uQ/yE
+         qFmr9QeibhNm6XhcC0sb2OonJOey1p+mdpqH7W0s5ZFGw5bcDs5PQ+GXlF0m19Pv+i
+         eZxkGG4q44wqzaJEZVhafKDERsKIicbCCU2Aekm7w9aMUnF+Bm45pghzJ8/AMn8yfU
+         mS5qOHbx+IhA5yo3LUeYMGYUiAjvtUHZj9ynCVXr0b6aUMgEk8KaDdSaZ+q52iTj1A
+         uhnlpXxG4Fm/JJ1U0R8A4QLvy+0VAOw4AMsGZV+zcOA8bNwnd5r/4v5qG6Otgi1Q70
+         046cx5c0/a9lA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.106])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 66F75A005A;
+        Mon, 13 May 2019 17:28:02 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2] ARC: Send SIGSEGV if userspace process accesses kernel virtual memory
+Date:   Mon, 13 May 2019 20:28:00 +0300
+Message-Id: <20190513172800.27940-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As of today if userspace process tries to access address which belongs
+to kernel virtual memory area and kernel have mapping for this address
+that process hangs instead of receiving SIGSEGV and being killed.
 
+Steps to reproduce:
+Create userspace application which reads from the beginning of
+kernel-space virtual memory area (I.E. read from 0x7000_0000 on most
+of existing platforms):
+------------------------>8-----------------
+ #include <stdlib.h>
+ #include <stdint.h>
 
-On 5/12/19 8:08 AM, Jerome Glisse wrote:
-> On Mon, May 06, 2019 at 04:29:37PM -0700, rcampbell@nvidia.com wrote:
->> From: Ralph Campbell <rcampbell@nvidia.com>
->>
->> I hit a use after free bug in hmm_free() with KASAN and then couldn't
->> stop myself from cleaning up a bunch of documentation and coding style
->> changes. So the first two patches are clean ups, the last three are
->> the fixes.
->>
->> Ralph Campbell (5):
->>    mm/hmm: Update HMM documentation
->>    mm/hmm: Clean up some coding style and comments
->>    mm/hmm: Use mm_get_hmm() in hmm_range_register()
->>    mm/hmm: hmm_vma_fault() doesn't always call hmm_range_unregister()
->>    mm/hmm: Fix mm stale reference use in hmm_free()
->=20
-> This patchset does not seems to be on top of
-> https://cgit.freedesktop.org/~glisse/linux/log/?h=3Dhmm-5.2-v3
->=20
-> So here we are out of sync, on documentation and code. If you
-> have any fix for https://cgit.freedesktop.org/~glisse/linux/log/?h=3Dhmm-=
-5.2-v3
-> then please submit something on top of that.
->=20
-> Cheers,
-> J=C3=A9r=C3=B4me
->=20
->>
->>   Documentation/vm/hmm.rst | 139 ++++++++++++++++++-----------------
->>   include/linux/hmm.h      |  84 ++++++++++------------
->>   mm/hmm.c                 | 151 ++++++++++++++++-----------------------
->>   3 files changed, 174 insertions(+), 200 deletions(-)
->>
->> --=20
->> 2.20.1
+ int main(int argc, char *argv[])
+ {
+ 	volatile uint32_t temp;
 
-The patches are based on top of Andrew's mmotm tree
-git://git.cmpxchg.org/linux-mmotm.git v5.1-rc6-mmotm-2019-04-25-16-30.
-They apply cleanly to that git tag as well as your hmm-5.2-v3 branch
-so I guess I am confused where we are out of sync.
+ 	temp = *(uint32_t *)(0x70000000);
+ }
+------------------------>8-----------------
+That application hangs after such memory access.
+
+Fix that by checking which access (user or kernel) caused the exception
+before handling kernel virtual address fault.
+
+Fix that by checking that VMALLOC_FAULT was caused in kernel mode
+before trying to handle it.
+Thus we can use @no_context label, removing the need for
+@bad_area_nosemaphore and untangling the code mess a bit.
+
+Cc: <stable@vger.kernel.org> # 4.20+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/mm/fault.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index 8df1638259f3..6836095251ed 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	struct vm_area_struct *vma = NULL;
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+-	int si_code = 0;
++	int si_code = SEGV_MAPERR;
+ 	int ret;
+ 	vm_fault_t fault;
+ 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+@@ -81,16 +81,14 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	 * only copy the information from the master page table,
+ 	 * nothing more.
+ 	 */
+-	if (address >= VMALLOC_START) {
++	if (address >= VMALLOC_START && !user_mode(regs)) {
+ 		ret = handle_kernel_vaddr_fault(address);
+ 		if (unlikely(ret))
+-			goto bad_area_nosemaphore;
++			goto no_context;
+ 		else
+ 			return;
+ 	}
+ 
+-	si_code = SEGV_MAPERR;
+-
+ 	/*
+ 	 * If we're in an interrupt or have no user
+ 	 * context, we must not take the fault..
+@@ -198,7 +196,6 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ bad_area:
+ 	up_read(&mm->mmap_sem);
+ 
+-bad_area_nosemaphore:
+ 	/* User mode accesses just cause a SIGSEGV */
+ 	if (user_mode(regs)) {
+ 		tsk->thread.fault_address = address;
+-- 
+2.14.5
+
