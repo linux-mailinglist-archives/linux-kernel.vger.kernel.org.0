@@ -2,61 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3681B0D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 09:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C440C1B0E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 09:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfEMHJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 03:09:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49830 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbfEMHJL (ORCPT
+        id S1727597AbfEMHKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 03:10:51 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37060 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfEMHKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 03:09:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Cy0TUN/UYoKBRHbCakileFYBci2k3WMghvEhPXpB9dE=; b=PZEEb890+3R3o7Tj0hw5OGOqD
-        Nc+9VlVulxufzd2dcGgd7vgI4ABjj/dMAdLF5F/pDXjNu308qqb0U9r9DKVzFvQKBacciIYGwl30d
-        2272ABQ5/N/daZDrjhkalP0fBgmYhRbuMNDhIvHpBXGXoZLBY7ZoGSCn1sbgZRU0ieBeD1sT0gYPo
-        V2R3BqepaQGu6fTdYTsbUBQjJnj4rZPi1akhHk1+duz/vLFWUZ66LBo66DSr7e94rrjlCcwho64II
-        ST9qWVYtMemu9MnCCcvKejU3uTxUZpmYTAsad+h9fWxhkAPbVlI5nM+IqA7XjAyOHIYfgwmX02lOX
-        usiVtYYCw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQ556-0001pr-TY; Mon, 13 May 2019 07:09:04 +0000
-Date:   Mon, 13 May 2019 00:09:04 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ondrej Zary <linux@zary.sk>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fdomain: Add ISA bus support
-Message-ID: <20190513070904.GB31342@infradead.org>
-References: <20190510212335.14728-1-linux@zary.sk>
- <20190510212335.14728-2-linux@zary.sk>
+        Mon, 13 May 2019 03:10:51 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p15so5989026pll.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 00:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qMN/PlIc+xmZknm4ZqYo+axnKC9jbJCwqU2FWCmq5tE=;
+        b=TpA7ix/AxkIP//ju6JW85dhgRAha590VihGIGmoBF2SkyfAtmzH1DpkcuPdN/C1dkd
+         69Y/qYxUl4sToYu2B+lOUt4FOVICFz8JIdMeLonHnW6UDAx0L9i/dVqI7onkUmDn0Fn4
+         RFs+tlshjjkWIXEhNm8dxasP2DXPtAi4Zy4+FcTuAK/ykNTlhhS0t1RWQ/Yx3bARdjIp
+         k9tWzD4xq1aUC7FdMkImZbq5mzrTlqg56IF8ngufEKkTMCBvX0y08Urj9s9EwqI+yWa5
+         oXF3YM+psdEgoy7D2LcRCH9gv6IUoT7mMddWbwK7VCnmv58RFPcXJpTF4liZUOqZV9LF
+         XVqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qMN/PlIc+xmZknm4ZqYo+axnKC9jbJCwqU2FWCmq5tE=;
+        b=psFPzKAZwzgLv9eBmjkNmWABJBGFoeFKhY1aYpR7Ud0X7uBeouBdqIHLHuKI3fLuPq
+         9wJrwQLFms5TM1q38xOcN0LsvKH6pHaEH/9HjFk+dspaYsWFCmhA4QQOts9Kjo9W2MbN
+         NB8IBr8siwgYqD9aVbqNtKrTrqs9fwwDOQp4fvbfdOy7J4nFY0zNOxrHQ0/KqewSSVQL
+         jxJfPfEkgASQNTJc3rvLdZeuUancaS6fuwO/PpO3Lc8ez5qdlmBuRVnG7FgCxjRSRnGY
+         03F4LGb6mxYszJiKQYg5ogXAeCr3CcSoN2VCUDGRypCMeXsR+vdFbNESEMBAPVqtIacl
+         SV1w==
+X-Gm-Message-State: APjAAAWWl3WB7Z8gKBi5esJVdU7aPKSyz7iMsFWtBi6KPDQZKS2ylPsD
+        1BCfpeM2y2rNead6a5QpMPFDUQ==
+X-Google-Smtp-Source: APXvYqxYSXh4d9qVBzkIKRwNZleSCdZccazd+LCiWhQxXNw5jk9FFMd4MdJ98iVfPYIPkDFctdOwRg==
+X-Received: by 2002:a17:902:9a9:: with SMTP id 38mr29138342pln.10.1557731449961;
+        Mon, 13 May 2019 00:10:49 -0700 (PDT)
+Received: from localhost ([122.172.118.99])
+        by smtp.gmail.com with ESMTPSA id g72sm29732723pfg.63.2019.05.13.00.10.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 00:10:48 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: Update MAINTAINERS to include schedutil governor
+Date:   Mon, 13 May 2019 12:40:33 +0530
+Message-Id: <f2badd7ec3afa227410a9f57401bf5ce04aff692.1557731248.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190510212335.14728-2-linux@zary.sk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 11:23:35PM +0200, Ondrej Zary wrote:
-> Add Future Domain 16xx ISA SCSI support card support.
-> 
-> Tested on IBM 92F0330 card (18C50 chip) with v1.00 BIOS.
+List cpufreq maintainers as well for schedutil governor apart from
+scheduler maintainers.
 
-Where did you find that thing? :)
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Signed-off-by: Ondrej Zary <linux@zary.sk>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4244dd341eb7..7d4417d862a6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4093,7 +4093,9 @@ F:	Documentation/admin-guide/pm/intel_pstate.rst
+ F:	Documentation/cpu-freq/
+ F:	Documentation/devicetree/bindings/cpufreq/
+ F:	drivers/cpufreq/
++F:	kernel/sched/cpufreq*.c
+ F:	include/linux/cpufreq.h
++F:	include/linux/sched/cpufreq.h
+ F:	tools/testing/selftests/cpufreq/
+ 
+ CPU FREQUENCY DRIVERS - ARM BIG LITTLE
+-- 
+2.21.0.rc0.269.g1a574e7a288b
 
-The driver looks fine to me:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
