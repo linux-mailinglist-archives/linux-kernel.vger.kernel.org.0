@@ -2,92 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C821BA74
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC4C1BA79
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbfEMP5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:57:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46691 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfEMP5Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:57:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id r18so1929032pls.13;
-        Mon, 13 May 2019 08:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j2wzXAkeOJsbguPzhOmjwuMK8y0Jvfoc457XeYL4o8Q=;
-        b=GCuJzdA3RdBDfWUWlGh22lIZ35XxndDicYtRND1QyHkB99/+QdnDwC3nAEMZKvRzQe
-         mC5CbbfR0RFFiQrG4/vNUqG9VbnrlZWISUZdtTiGxMm6L3H/DtQeaj2tN3Mu0capLxZc
-         q+IvzdqSzATvqPa7Ry8/t5orwlZ3cGugy+i7ZEtwQPRvMrSNWwjvCwJBK7z6B33hHRbX
-         F3wjT1UKx9txWgFctUNXvdcU9kLyO8cLcixAJWlrAtqvh1dRQTaZo1L21ZxsLzRUNCsN
-         LdohbLbnMOr2+uka0TuuvcU9UR8jhckdm4QIeohzLBpOukgjSl9Ppmuleu8HzFHbtzY1
-         jiSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j2wzXAkeOJsbguPzhOmjwuMK8y0Jvfoc457XeYL4o8Q=;
-        b=njceUaeSym+Z5MWJaXCA+bitHrcZ9mmi/DpfCez2L4cp/ZKeWmePib+HUUtyISH926
-         dPe3Rz2U0+d6KmbNw3G/e6PaxG0BHlV+CE7Ujk5PPcKRZJjzTICGawzapz5HzdbrdZcR
-         WnfntiLp5eEqzfGJ6zshBw+l+0hDFT1OzpeyUS9yWyCKf5YUk8jmlBEd5IRFc5x4iZM3
-         p9y1d8YSj50rBeZ/VI7TTg8gv0OyaWCxN+GgGfkWZW/d7PLTKizjiTiHDrceYIczdgLf
-         eP8COX4Hxc/QGJz3uNHBBr8RGtjzUrQEQosKCx9DhBI3ykgcRLFfY0nBqGCLQBqpYYRs
-         WOLA==
-X-Gm-Message-State: APjAAAXqf4WFObNbXSpTmWyZCZiuBySYyMAHYDp5FwjXYj2i4jrNJj8l
-        qwFKm0aGhvd4FN85fDXoNPY=
-X-Google-Smtp-Source: APXvYqzv8PG3czWnmYiSe6VV1ZTPVoon1wkzDiNWCOD9j27OuhQGtzCcckDWG5cSv4n66LrF+SFB9g==
-X-Received: by 2002:a17:902:2ae6:: with SMTP id j93mr8288103plb.130.1557763043741;
-        Mon, 13 May 2019 08:57:23 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 125sm5961563pge.45.2019.05.13.08.57.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 08:57:22 -0700 (PDT)
-Date:   Mon, 13 May 2019 08:57:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
+        id S1730123AbfEMP6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:58:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728268AbfEMP6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:58:05 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF2E420873;
+        Mon, 13 May 2019 15:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557763085;
+        bh=MQrt7hk7GKWBs2p7TCVFsqZzTnTwmWoYq3R9MsShl68=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=o5R3D0mgAlkwf6pyaLHh/21/h1y/Hgyom3AFUlqLvzy5YFAFCaMJp0yOcluPpS7zs
+         ybL53+kCkAKr6SUdAOKet1cha5beD4qF4M0I1+o7mqEbNPNol11tLlEd1Qto8Qh5cN
+         JvYlVOVIgCp296Qw1xpE/ixu84Crj/SdCXyrtSGI=
+Subject: Re: linux-next: Fixes tag needs some work in the kselftest tree
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the thermal-soc tree
-Message-ID: <20190513155721.GA26559@roeck-us.net>
-References: <20190513110244.0a0dc431@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        shuah <shuah@kernel.org>
+References: <20190514010540.6fbe70e0@canb.auug.org.au>
+From:   shuah <shuah@kernel.org>
+Message-ID: <a4ecb5ac-86ec-ac8d-a250-7073351ad23b@kernel.org>
+Date:   Mon, 13 May 2019 09:57:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513110244.0a0dc431@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190514010540.6fbe70e0@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 11:02:44AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 5/13/19 9:05 AM, Stephen Rothwell wrote:
+> Hi Shuah,
 > 
-> After merging the thermal-soc tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> In commit
 > 
-> ld: drivers/infiniband/hw/cxgb4/cm.o: in function `.devm_thermal_of_cooling_device_register':
-> (.text+0x23f0): multiple definition of `.devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined here
-> ld: drivers/infiniband/hw/cxgb4/cm.o:(.opd+0x2e8): multiple definition of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device.o:(.opd+0x198): first defined here
+>    e64ee1f5dc1a ("selftests: fix bpf build/test workflow regression when KBUILD_OUTPUT is set")
+> 
+> Fixes tag
+> 
+>    Fixes: commit 8ce72dc32578 ("selftests: fix headers_install circular dependency")
+> 
+> has these problem(s):
+> 
+>    - leading word 'commit' unexpected
+> 
 
-[...]
+Sorry this is my bad. I will fix it.
 
-> @@ -508,7 +508,7 @@ static inline struct thermal_cooling_device *
->  thermal_of_cooling_device_register(struct device_node *np,
->  	char *type, void *devdata, const struct thermal_cooling_device_ops *ops)
->  { return ERR_PTR(-ENODEV); }
-> -struct thermal_cooling_device *
-> +static inline struct thermal_cooling_device *
->  devm_thermal_of_cooling_device_register(struct device *dev,
->  				struct device_node *np,
->  				char *type, void *devdata,
-
-Ah, I had wondered where that was coming from. Eduardo, can you pick up the
-fix, or even better merge it into the original patch ?
-
-Thanks,
-Guenter
+thanks,
+-- Shuah
