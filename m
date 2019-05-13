@@ -2,173 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F591B200
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A581B205
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfEMIli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 04:41:38 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34604 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727926AbfEMIlh (ORCPT
+        id S1728314AbfEMIm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 04:42:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38486 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727589AbfEMImZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 04:41:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p27so16416728eda.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 01:41:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OIf8haTF2Bfq6KgXaHObQw+4UkgBzPMbJonVONG6w/E=;
-        b=evybXtEmw+/FOsncHfbBm+SJ4lOlghT+NvwFpLLmaHB2uBVsv4dVyNEsgxVgoirevJ
-         dc5MEzqb4sUIvu/xWM/sQUr/NpVUasFDftBQb9bCqbTN6zuFHhrlVRbapfSkz3HRNqaW
-         7Fdf3xwcLzz2A7jPQwZBTI5ExTBOiQPVUCltFHKQbSJffF06Vs5dPwgME8TctRhdxrl8
-         eC/U4kqVtrym7rHCNZ8BvyojtXIVlqufeQhaX+iGwjK6gXFfKpsWJT0zz7HYSywH8Zqh
-         ZQFdJUd/B8Ig8/M8laH7bntm5/5T+QTlvp1xyQzj5tVoD0QGAM1OWh9DKa6U3Q+rQbQu
-         XdyA==
-X-Gm-Message-State: APjAAAVsXmqlPG3ROQaZFCa5yh5V2d8WAy6l05EM2atL5wRq5ygSeQPx
-        7p+CNJs8h1QAs6HjVgSNUSOXjLg/ZXw=
-X-Google-Smtp-Source: APXvYqyw6zYGJ5SdG1gyLVimaSc5xLNuRAxlCrhe8n0P2ptykCR4qceOwKjApolyfrsXKv87bAanHg==
-X-Received: by 2002:a17:906:948:: with SMTP id j8mr20805880ejd.240.1557736895160;
-        Mon, 13 May 2019 01:41:35 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id k57sm3588343ede.17.2019.05.13.01.41.34
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 01:41:34 -0700 (PDT)
-Subject: Re: [PATCH] ACPI / LPSS: Don't skip late system PM ops for hibernate
- on BYT/CHT
-To:     "Robert R. Howell" <RHowell@uwyo.edu>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190403054352.30120-1-kai.heng.feng@canonical.com>
- <eb1462c9-ebef-7bd6-c263-3f4f2e8ba63d@redhat.com>
- <b6cd67d7-a4de-0fab-4512-25d732190d17@uwyo.edu>
- <feb1808d-542c-83c2-5c70-9228473bb8d0@redhat.com>
- <0a770539-dfe9-2eb6-a90a-82f065a23a3f@uwyo.edu>
- <f6db39bc-b8d1-fda8-ad37-a8b050ef0027@redhat.com>
- <37aee883-1253-adad-82b4-4a578cc72825@uwyo.edu>
- <CAJZ5v0j9U20cFbRx6QKeQv6wyDg6nL71L0U_Rec5+W1JoD8-=w@mail.gmail.com>
- <144b56d4-54e6-bccd-4652-22303bcd9168@uwyo.edu>
- <CAJZ5v0jJEovXXiqs-tzPC7FsGjGL+qxfXCxbTrQZqAxSCv1oyQ@mail.gmail.com>
- <beab21cb-9f89-b934-e0a4-2fd85c69f4e6@uwyo.edu>
- <4fb5fc2e-e5af-6732-0228-8c73beed1afb@redhat.com>
- <c3dadc9d-bf3b-c992-f256-94a25fea570a@uwyo.edu>
- <1bb008bd-ae0d-d351-ef0c-303e23b0eca5@redhat.com>
- <cc1dacb5-ef0f-61c4-6187-99ee1da55d92@uwyo.edu>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <8e5b82ce-4120-4d81-fd8c-26a16cfe3381@redhat.com>
-Date:   Mon, 13 May 2019 10:41:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 13 May 2019 04:42:25 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4D8gMdC105466
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:42:24 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sf55rraj3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:42:23 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 13 May 2019 09:42:12 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 May 2019 09:42:07 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4D8g6bD45220054
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 08:42:06 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DE954C063;
+        Mon, 13 May 2019 08:42:06 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 819424C046;
+        Mon, 13 May 2019 08:42:04 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.235])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 13 May 2019 08:42:04 +0000 (GMT)
+Date:   Mon, 13 May 2019 11:42:02 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        boot-architecture@lists.linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH v2 1/2] fdt: add support for rng-seed
+References: <20190513003819.356-1-hsinyi@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <cc1dacb5-ef0f-61c4-6187-99ee1da55d92@uwyo.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513003819.356-1-hsinyi@chromium.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19051308-4275-0000-0000-00000334205C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051308-4276-0000-0000-000038439B18
+Message-Id: <20190513084201.GA9271@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905130063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
-
-On 09-05-19 20:09, Robert R. Howell wrote:
-> Hi Hans
+On Mon, May 13, 2019 at 08:38:18AM +0800, Hsin-Yi Wang wrote:
+> Introducing a chosen node, rng-seed, which is an entropy that can be
+> passed to kernel called very early to increase initial device
+> randomness. Bootloader should provide this entropy and the value is
+> read from /chosen/rng-seed in DT.
 > 
-> On 5/9/19 2:50 AM, Hans de Goede wrote:
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> ---
+> change log:
+> v1->v2:
+> * call function in early_init_dt_scan_chosen
+> * will add doc to devicetree-org/dt-schema on github if this is accepted
+> ---
+>  Documentation/devicetree/bindings/chosen.txt | 14 ++++++++++++++
+>  drivers/of/fdt.c                             | 11 +++++++++++
+>  2 files changed, 25 insertions(+)
 > 
->>
->> Hi,
->>
->> On 09-05-19 06:24, Robert R. Howell wrote:
->>> On 4/30/19 8:39 AM, Hans de Goede wrote:
->>>>
+> diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
+> index 45e79172a646..fef5c82672dc 100644
+> --- a/Documentation/devicetree/bindings/chosen.txt
+> +++ b/Documentation/devicetree/bindings/chosen.txt
+> @@ -28,6 +28,20 @@ mode) when EFI_RNG_PROTOCOL is supported, it will be overwritten by
+>  the Linux EFI stub (which will populate the property itself, using
+>  EFI_RNG_PROTOCOL).
+>  
+> +rng-seed
+> +-----------
+> +
+> +This property served as an entropy to add device randomness. It is parsed
+> +as a byte array, e.g.
+> +
+> +/ {
+> +	chosen {
+> +		rng-seed = <0x31 0x95 0x1b 0x3c 0xc9 0xfa 0xb3 ...>;
+> +	};
+> +};
+> +
+> +This random value should be provided by bootloader.
+> +
+>  stdout-path
+>  -----------
+>  
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index de893c9616a1..96ea5eba9dd5 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/serial_core.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/random.h>
+>  
+>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+>  #include <asm/page.h>
+> @@ -1079,6 +1080,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>  {
+>  	int l;
+>  	const char *p;
+> +	const void *rng_seed;
+>  
+>  	pr_debug("search \"chosen\", depth: %d, uname: %s\n", depth, uname);
+>  
+> @@ -1113,6 +1115,15 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>  
+>  	pr_debug("Command line is: %s\n", (char*)data);
+>  
+> +	rng_seed = of_get_flat_dt_prop(node, "rng-seed", &l);
+> +	if (!rng_seed || l == 0)
+> +		return 1;
+> +
+> +	/* try to clear seed so it won't be found. */
+> +        fdt_nop_property(initial_boot_params, node, "rng-seed");
+> +
+> +        add_device_randomness(rng_seed, l);
+
+Please fix the indentation. 
+
+> +
+>  	/* break now */
+>  	return 1;
+>  }
+> -- 
+> 2.20.1
 > 
->>>>
->>>> I've just tried to reproduce the "Error i2c_dw_xfer call while suspended" error
->>>> on suspend/resume on my own T100TA and I could not reproduce this.
->>>>
->>>> Can you try without the BT keyboard paired and waking up from suspend using the
->>>> tablet part's power-button ?
->>>>
->>>> Also do you still have the scripts to rmmod some modules before suspend ?
->>>>
->>>
->>> The T100TA keyboard is actually a hardwired connection rather than Bluetooth but I
->>> did physically disconnect the keyboard, and also unpaired all the actual Bluetooth
->>> devices (such as the mouse) and then powered down the T100TA bluetooth adapter.
->>> When I suspend, then resume using the tablet power button, I still get the
->>> i2c_dw_xfererror error during the resume.  But whatever causes this error isn't fatal,
->>> in the sense that after resume the sound and other i2c functions do still work OK.
->>>
->>> While I always get this i2c_dw_xfer error on resume from suspend or hibernation on the T100TA,
->>> I also have a T100TAM and curiously, it NEVER shows that error -- although all the
->>> other suspend and hibernate behavior seems similar.  I'm not sure if the following could
->>> be the difference, but the T100TA uses an i2c connected ATML1000 touchscreen controller
->>> while the T100TAM uses an i2c connected SIS0817 touchscreen controller.  Other than that
->>> the hardware seems almost identical.
->>
->> I've been testing on an actual T100TA, with the ATML1000 touchscreen controller.
->>
->> Maybe it is a difference in BIOS version, my T100TA is running the latest BIOS, what
->> is the output of:
->>
->> cat /sys/class/dmi/id/bios_version /sys/class/dmi/id/bios_date
->>
-> On the T100TA which shows the i2c_dw_xfer error the above cat reports:
-> T100TA.307
-> 05/09/2014
-> 
-> while the T100TA which does NOT show the i2c_dw_xfer error reports:
-> T100TAM.205
-> 07/25/2014
->>
->> Also do you perhaps have a microsd card inserted?  (I'm trying to figure out the
->> different between our setups so that I can hopefully reproduce the issue myself).
->>
-> I do have a microsd card inserted in both the T100TA and the T100TAM.
 
-Ah, ok I already suspected that and I think that is the difference between our
-2 setups. I will try to reproduce the suspend/resume problem again with a microsd
-card inserted and mounted.
-
->>> Regarding scripts, while I do still need a systemd hibernate script which removes the
->>> brcmfmac and the hci_uart (bluetooth related) drivers, I've found that I no longer need
->>> any script for suspend.
->>
->> Ok, so you are not doing any rmmod-s on suspend, right?
->>
-> Correct -- I am NOT using a script and am not doing any explicit rmmod's on suspend, just on hibernate.
->> Regards,
->>
->> Hans
-> 
-> All my previous tests were done using a 5.1.0-rc5, 5.1.0-rc3, or earlier kernel.
-> But I just compiled the released 5.1.0 kernel and the behavior has changed for the T100TA,
-> resulting in a different i2c error and a call trace.  (I still continue to NOT see any
-> suspend/resume errors on the T100TAM.)
-
-This is expected we changed / improved the code generating the:
-"i2c_designware 80860F41:00: Transfer while suspended"
-
-Warning to include a trace, so that we know which code initiated the transfer,
-which, as more or less expected, is the ACPI subsystem, like some power_on (_PS0)
-or off (_PS3) method.
-
-> Note that for all the tests described in this message I'm applying your patch
-> regarding .poweroff_noirq and .restore_noirq, and I'm applying my own patch removing the
-> DPM_FLAG_SMART_SUSPEND flag.  I haven't yet tried to explore varying those patches
-> for the 5.1.0 release as I did for the earlier rc's, as described in previous messages.
-
-Hmm, for future testing please leave out the patch removing the DPM_FLAG_SMART_SUSPEND
-flag. Usually when asking you to test something we assume you are using a pristine kernel.
-What does that patch attempt to fix and what happens during suspend/resume without it ?
-
-Regards,
-
-Hans
+-- 
+Sincerely yours,
+Mike.
 
