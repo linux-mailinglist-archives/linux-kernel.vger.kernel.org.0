@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC2A1B3D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95AC1B3EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbfEMKVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:21:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57030 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728995AbfEMKVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:21:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3C52061213; Mon, 13 May 2019 10:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557742859;
-        bh=pTxKfV7jnNhbs9G5OwbSExrYyay9CyzmkzVeVD+63gU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pg1ZmNckR2s1aT8dlG/91wAsaMvgOJUGLjirZuDQR/0k+1tUdmKyH5KZylJdMxaNu
-         QxkiAk4oLBbqjiDSsted/JDvMv8thGqVMLgr1wIuHHa2g5eG4rP4KqQtDvpjDfFjok
-         KNrcSs2gFqXfsEdNe0xAzBAxSUBubcJNFP5Alorw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 27AA4611CF;
-        Mon, 13 May 2019 10:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557742858;
-        bh=pTxKfV7jnNhbs9G5OwbSExrYyay9CyzmkzVeVD+63gU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dDDNsKgoUDKuhDDmM42TY2sLWiqaX435mMoOkd3zTf6rpOdA2GUa48CKQ8CN3obzT
-         KR8UaTQjKZPWdA91tI01NXAuq8ngPGtLe/FT9+AIys8KmOuu7SWEW4hsCv/812Vfr/
-         r91C5ZnfZvTlMD7UPDcrLvMfCEf4gdvDqDckHcjU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 27AA4611CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org
-Cc:     david.brown@linaro.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, rnayak@codeaurora.org,
-        marc.w.gonzalez@free.fr, Sibi Sankar <sibis@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 7/9] dt-bindings: power: Add rpm power domain bindings for msm8998
-Date:   Mon, 13 May 2019 15:50:13 +0530
-Message-Id: <20190513102015.26551-8-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190513102015.26551-1-sibis@codeaurora.org>
-References: <20190513102015.26551-1-sibis@codeaurora.org>
+        id S1729057AbfEMKVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 06:21:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37138 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728848AbfEMKUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 06:20:39 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B2A51795AEB80AF6238C;
+        Mon, 13 May 2019 18:20:35 +0800 (CST)
+Received: from [127.0.0.1] (10.142.68.147) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
+ 18:20:24 +0800
+Subject: Re: [RFC PATCH V2] kvm: arm64: export memory error recovery
+ capability to user space
+To:     Peter Maydell <peter.maydell@linaro.org>
+CC:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvm-devel <kvm@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>,
+        "Zheng Xiang" <zhengxiang9@huawei.com>
+References: <1557728917-49079-1-git-send-email-gengdongjiu@huawei.com>
+ <CAFEAcA-S6Kh8yUqVZVA8gtDdRscgVaTfC4CwxngoS2ZPt6K9ww@mail.gmail.com>
+From:   gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <da887bd0-75db-4ad8-cc7a-fa5df26c88fd@huawei.com>
+Date:   Mon, 13 May 2019 18:20:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFEAcA-S6Kh8yUqVZVA8gtDdRscgVaTfC4CwxngoS2ZPt6K9ww@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add RPM power domain bindings for the msm8998 family of SoC
+On 2019/5/13 17:44, Peter Maydell wrote:
+> On Mon, 13 May 2019 at 07:32, Dongjiu Geng <gengdongjiu@huawei.com> wrote:
+>>
+>> When user space do memory recovery, it will check whether KVM and
+>> guest support the error recovery, only when both of them support,
+>> user space will do the error recovery. This patch exports this
+>> capability of KVM to user space.
+>>
+>> Cc: Peter Maydell <peter.maydell@linaro.org>
+>> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+>> ---
+>> v1->v2:
+>> 1. check whether host support memory failure instead of RAS capability
+>>    https://patchwork.kernel.org/patch/10730827/
+>>
+>> v1:
+>> 1. User space needs to check this capability of host is suggested by Peter[1],
+>> this patch as RFC tag because user space patches are still under review,
+>> so this kernel patch is firstly sent out for review.
+>>
+>> [1]: https://patchwork.codeaurora.org/patch/652261/
+>> ---
+> 
+> I thought the conclusion of the thread on the v1 patch was that
+> userspace doesn't need to specifically ask the host kernel if
+> it has support for this -- if it does not, then the host kernel
+> will just never deliver userspace any SIGBUS with MCEERR code,
+> which is fine. Or am I still confused?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- .../devicetree/bindings/power/qcom,rpmpd.txt         |  1 +
- include/dt-bindings/power/qcom-rpmpd.h               | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+thanks Peter's quick reply.
+yes, I think so, if it does not support,  then the host kernel
+will just never deliver userspace any SIGBUS with MCEERR code.
 
-diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-index 172ccf940c5c..eb35b22f9e23 100644
---- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-+++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-@@ -6,6 +6,7 @@ which then translates it into a corresponding voltage on a rail
- Required Properties:
-  - compatible: Should be one of the following
- 	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
-+	* qcom,msm8998-rpmpd: RPM Power domain for the msm8998 family of SoC
- 	* qcom,qcs404-rpmpd: RPM Power domain for the qcs404 family of SoC
- 	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
-  - #power-domain-cells: number of cells in Power domain specifier
-diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
-index 450378662944..93e36d011527 100644
---- a/include/dt-bindings/power/qcom-rpmpd.h
-+++ b/include/dt-bindings/power/qcom-rpmpd.h
-@@ -36,6 +36,18 @@
- #define MSM8996_VDDSSCX		5
- #define MSM8996_VDDSSCX_VFC	6
- 
-+/* MSM8998 Power Domain Indexes */
-+#define MSM8998_VDDCX		0
-+#define MSM8998_VDDCX_AO	1
-+#define MSM8998_VDDCX_VFL	2
-+#define MSM8998_VDDMX		3
-+#define MSM8998_VDDMX_AO	4
-+#define MSM8998_VDDMX_VFL	5
-+#define MSM8998_SSCCX		6
-+#define MSM8998_SSCCX_VFL	7
-+#define MSM8998_SSCMX		8
-+#define MSM8998_SSCMX_VFL	9
-+
- /* QCS404 Power Domains */
- #define QCS404_VDDMX		0
- #define QCS404_VDDMX_AO		1
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+so maybe we do not need this patch.
+
+> 
+> thanks
+> -- PMM
+> .
+> 
 
