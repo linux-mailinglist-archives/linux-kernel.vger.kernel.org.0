@@ -2,60 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21A881B23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EFEA1B214
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:48:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfEMJC7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 May 2019 05:02:59 -0400
-Received: from mail2.ibb.gov.tr ([185.68.223.4]:29521 "EHLO
-        mailgateway3.ibb.gov.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfEMJC7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:02:59 -0400
-X-Greylist: delayed 963 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 05:02:57 EDT
-Received: from mailgateway3.ibb.gov.tr (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 862F1D06F9;
-        Mon, 13 May 2019 11:46:52 +0300 (+03)
-Received: from mailgateway3.ibb.gov.tr (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72524D0709;
-        Mon, 13 May 2019 11:46:52 +0300 (+03)
-Received: from CASHT1.ibb.gov.tr (unknown [10.1.9.63])
-        by mailgateway3.ibb.gov.tr (Postfix) with ESMTPS;
-        Mon, 13 May 2019 11:46:52 +0300 (+03)
-Received: from MBXNODE2.ibb.gov.tr ([fe80::8893:4d13:c032:5f02]) by
- CASHT1.ibb.gov.tr ([fe80::4810:76de:f19a:6f47%13]) with mapi id
- 14.03.0439.000; Mon, 13 May 2019 11:46:51 +0300
-From:   =?iso-8859-9?Q?Cengiz_Nurettin_=DD=DELER?= <nisler@ibb.gov.tr>
-To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
-Subject: A lot of your incoming messages has been suspended
-Thread-Topic: A lot of your incoming messages has been suspended
-Thread-Index: AdUJaGjMwVk8y/3SQ8u6U3YMw0NBeg==
-Date:   Mon, 13 May 2019 08:46:51 +0000
-Message-ID: <BDE81191C06B1149BB99DA1249BE51EB01D9576D56@MBXNODE2.ibb.gov.tr>
-Accept-Language: en-GB, tr-TR, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.16.16.4]
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean
-Content-Type: text/plain; charset="iso-8859-9"
-Content-Transfer-Encoding: 8BIT
+        id S1728330AbfEMIsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 04:48:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52088 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726103AbfEMIsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 04:48:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4E2BAECD;
+        Mon, 13 May 2019 08:48:51 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Yury Norov <ynorov@caviumnetworks.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        Alexander Graf <agraf@suse.de>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        James Morse <james.morse@arm.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Manuel Montezelo <manuel.montezelo@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Nathan_Lynch <Nathan_Lynch@mentor.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+        <20190508225900.GA14091@yury-thinkpad>
+X-Yow:  Is this ANYWHERE, USA?
+Date:   Mon, 13 May 2019 10:48:48 +0200
+In-Reply-To: <20190508225900.GA14091@yury-thinkpad> (Yury Norov's message of
+        "Wed, 8 May 2019 15:59:00 -0700")
+Message-ID: <mvmtvdyoi33.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is a problem with the stack size accounting during execve when
+there is no stack limit:
 
+$ ulimit -s
+8192
+$ ./hello.ilp32 
+Hello World!
+$ ulimit -s unlimited
+$ ./hello.ilp32 
+Segmentation fault
+$ strace ./hello.ilp32 
+execve("./hello.ilp32", ["./hello.ilp32"], 0xfffff10548f0 /* 77 vars */) = -1 ENOMEM (Cannot allocate memory)
++++ killed by SIGSEGV +++
+Segmentation fault (core dumped)
 
-MICROSOFT VERIFICATION NEEDED
+Andreas.
 
-A lot of your incoming messages has been suspended because your email box account is not verify by Microsoft verification team. In order to receive your messages do verify<https://vccccl.wixsite.com/mysite-1> now, We apologise for any inconvenience and appreciate your understanding.
-
-Thank You.
-
-Microsoft Verification Team
-
-Copyright © 2019 Webmail .Inc . All rights reserved.
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
