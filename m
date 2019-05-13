@@ -2,55 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF571BD1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86CA61BD0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfEMSVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:21:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10239 "EHLO mga01.intel.com"
+        id S1726505AbfEMSR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:17:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726370AbfEMSVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:21:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 11:21:40 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga007.jf.intel.com with ESMTP; 13 May 2019 11:21:40 -0700
-Date:   Mon, 13 May 2019 12:16:18 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     sagi@grimberg.me, rafael@kernel.org, linux-pm@vger.kernel.org,
-        Mario.Limonciello@dell.com, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, keith.busch@intel.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
-Message-ID: <20190513181618.GD15437@localhost.localdomain>
-References: <20190510212937.11661-1-keith.busch@intel.com>
- <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
- <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
- <20190513143754.GE15318@localhost.localdomain>
- <7ab8274ef1ce46fcae54a50abc76ae4a@AUSX13MPC105.AMER.DELL.COM>
- <20190513145708.GA25897@lst.de>
- <20190513151652.GB15437@localhost.localdomain>
- <9AE4A3E7-CDB8-4730-8B4E-43C93FC0C47F@canonical.com>
+        id S1726142AbfEMSR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 14:17:27 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2FB42168B
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 18:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557771447;
+        bh=lPPXPrlCXnec9ArL5Smn4WZ7XgjTRPHq0b2cg72c7do=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M73groKWN7tiM88HUylA0BevMADMrkXxMAX5GrLV+GI8cDdt8upEqFbWjtmTbBtWf
+         B1fbMLLC4Ig6Ha6q/7u8EsjeSgkgTLTRZg/th8dDdkCQSgF5F8U6hLZj14iprJmgc3
+         c3GN5DwMXPdaJcryEnpckEV58wfnaOyIRu/KMP3g=
+Received: by mail-wm1-f47.google.com with SMTP id x64so291169wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:17:26 -0700 (PDT)
+X-Gm-Message-State: APjAAAVN6Twft0DwaB/tm4RowrYa/wz11i6F2QtRFbTo2YY585CHlvgy
+        Ntk/Ydm7Ugxy65kKVaXIJNNP9CXH5pqAR4I7rj+ERg==
+X-Google-Smtp-Source: APXvYqx+EkWMgZAYXf7WLt7psTjiviAgkkYF4bdVHgGcH1wH1s9Zk+LiM9gHe43vF05EDuJif4nyuITlc2cZxxSsBDE=
+X-Received: by 2002:a1c:eb18:: with SMTP id j24mr17403247wmh.32.1557771445393;
+ Mon, 13 May 2019 11:17:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9AE4A3E7-CDB8-4730-8B4E-43C93FC0C47F@canonical.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+In-Reply-To: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 13 May 2019 11:17:14 -0700
+X-Gmail-Original-Message-ID: <CALCETrVhRt0vPgcun19VBqAU_sWUkRg1RDVYk4osY6vK0SKzgg@mail.gmail.com>
+Message-ID: <CALCETrVhRt0vPgcun19VBqAU_sWUkRg1RDVYk4osY6vK0SKzgg@mail.gmail.com>
+Subject: Re: [RFC KVM 00/27] KVM Address Space Isolation
+To:     Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Jonathan Adams <jwadams@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 01:16:22AM +0800, Kai-Heng Feng wrote:
-> Disabling HMB prior suspend makes my original patch work without memory
-> barrier.
-> 
-> However, using the same trick on this patch still freezes the system during
-> S2I.
+> I expect that the KVM address space can eventually be expanded to include
+> the ioctl syscall entries. By doing so, and also adding the KVM page table
+> to the process userland page table (which should be safe to do because the
+> KVM address space doesn't have any secret), we could potentially handle the
+> KVM ioctl without having to switch to the kernel pagetable (thus effectively
+> eliminating KPTI for KVM). Then the only overhead would be if a VM-Exit has
+> to be handled using the full kernel address space.
+>
 
-Could you post your code, please?
+In the hopefully common case where a VM exits and then gets re-entered
+without needing to load full page tables, what code actually runs?
+I'm trying to understand when the optimization of not switching is
+actually useful.
+
+Allowing ioctl() without switching to kernel tables sounds...
+extremely complicated.  It also makes the dubious assumption that user
+memory contains no secrets.
