@@ -2,139 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55091B28F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DC21B2B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfEMJOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:14:35 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48372 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfEMJOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:14:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 02:14:32 -0700
-X-ExtLoop1: 1
-Received: from xxx.igk.intel.com ([10.237.93.170])
-  by fmsmga001.fm.intel.com with ESMTP; 13 May 2019 02:14:31 -0700
-From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH v2] ALSA: hda: Fix race between creating and refreshing sysfs entries
-Date:   Mon, 13 May 2019 11:18:01 +0200
-Message-Id: <20190513091801.985-1-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728447AbfEMJSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:18:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43684 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbfEMJSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:18:10 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r4so14321242wro.10
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 02:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
+        b=nvsHSXebQ0UNHoxf0gRJ4+jB88usDq5bJWzqzfoKMHeAJlU/CuYIF6O/qEQOBXXxlA
+         et/wOAMmgkRgiDgYUXgin9KtQgAUVj+dm2mJkf7Awcim1sIw3hWnMFJ7X7oS3uD3wfr1
+         DCTY3TwaSlTjK8UM1SgbJvleQW9CY5ae4kENAmb2FRvh9vRP/C6u7Gha6kzze9tHQDqR
+         T8x2lFM01suwxpAFuWgQRwnEDTuwEcRkglSUHc+giFjDmRNAPb5Nsu2FfY25YRMyTqzu
+         aTLNtn2U3v38G1wCPwzjXgdBglNigkRmuM3OjODAOE8YDBEoC3Nw+cYEgHBeflKTHnQL
+         KUXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=XQMVZi5//3rMDhqHIdy7w3EyVwVaJ+ULF4VGfnvRPq8=;
+        b=EiyMOFrnkQau3AAZMhiJZGQAo5J9u0miv7+k7KdMP+NfThcMDnyIRv5fJxv7uq88hl
+         ZGaee91pwdDStSQqgxHnq0SY8mBjhr1ACCtg458d5Hjql6S/f6PoGkVf4jq1GFQnlp/X
+         irBICvkAVceBD7kXmykjtcJ31mPBiOxUHkcP9CAnrYwzUGubyVj5BwL7aoP25craIoH/
+         ImftC5bDCA4wywbJmgbE1UPq8itGtBpqpgo4MGIob1VxjGqNnKF6mE80AjjY0u1TzbGj
+         Qdb2yJTgsZ1ufK4QBFvSJ75Ofv4kzIFURMkB71fanKNPwylN/dh0ZSrJATzO3ftuD6Ke
+         8RDQ==
+X-Gm-Message-State: APjAAAW8JS724WHQMGo7prABWzbU65yLXJ7NkhEoaLJ/JusrETeEWwMQ
+        R6G2Lr899OTVRW7MIpSGR3luTw==
+X-Google-Smtp-Source: APXvYqyIECT6aJkOFzkPVJlDjoDZ2HcPpXHNHjaNT4bi/sI/WqgAo8On9LI2Ef1KnBcYaKn5thGi/g==
+X-Received: by 2002:a5d:4002:: with SMTP id n2mr17376466wrp.187.1557739088475;
+        Mon, 13 May 2019 02:18:08 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x4sm1815075wrn.41.2019.05.13.02.18.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 02:18:07 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: fix MPLL 50M binding id typo
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20190512205743.24131-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <44902731-313b-8e8c-669c-4f15c5b98a55@baylibre.com>
+Date:   Mon, 13 May 2019 11:18:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190512205743.24131-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hda_widget_sysfs_reinit() can free underlying codec->widgets structure
-on which widget_tree_create() operates. Add locking to prevent such
-issues from happening.
+On 12/05/2019 22:57, Jerome Brunet wrote:
+> MPLL_5OM (the capital letter o) should indeed be MPLL_50M (the number)
+> Fix this before it gets used.
+> 
+> Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Fixes: 25db146aa726 ("dt-bindings: clk: meson: add g12a periph clock controller bindings")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/g12a.c              | 4 ++--
+>  drivers/clk/meson/g12a.h              | 2 +-
+>  include/dt-bindings/clock/g12a-clkc.h | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 739f64fdf1e3..206fafd299ea 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -2734,8 +2734,8 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
+>  		[CLKID_MALI_1_DIV]		= &g12a_mali_1_div.hw,
+>  		[CLKID_MALI_1]			= &g12a_mali_1.hw,
+>  		[CLKID_MALI]			= &g12a_mali.hw,
+> -		[CLKID_MPLL_5OM_DIV]		= &g12a_mpll_50m_div.hw,
+> -		[CLKID_MPLL_5OM]		= &g12a_mpll_50m.hw,
+> +		[CLKID_MPLL_50M_DIV]		= &g12a_mpll_50m_div.hw,
+> +		[CLKID_MPLL_50M]		= &g12a_mpll_50m.hw,
+>  		[CLKID_SYS_PLL_DIV16_EN]	= &g12a_sys_pll_div16_en.hw,
+>  		[CLKID_SYS_PLL_DIV16]		= &g12a_sys_pll_div16.hw,
+>  		[CLKID_CPU_CLK_DYN0_SEL]	= &g12a_cpu_clk_premux0.hw,
+> diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+> index 39c41af70804..bcc05cd9882f 100644
+> --- a/drivers/clk/meson/g12a.h
+> +++ b/drivers/clk/meson/g12a.h
+> @@ -166,7 +166,7 @@
+>  #define CLKID_HDMI_DIV				167
+>  #define CLKID_MALI_0_DIV			170
+>  #define CLKID_MALI_1_DIV			173
+> -#define CLKID_MPLL_5OM_DIV			176
+> +#define CLKID_MPLL_50M_DIV			176
+>  #define CLKID_SYS_PLL_DIV16_EN			178
+>  #define CLKID_SYS_PLL_DIV16			179
+>  #define CLKID_CPU_CLK_DYN0_SEL			180
+> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+> index 82c9e0c020b2..e10470ed7c4f 100644
+> --- a/include/dt-bindings/clock/g12a-clkc.h
+> +++ b/include/dt-bindings/clock/g12a-clkc.h
+> @@ -130,7 +130,7 @@
+>  #define CLKID_MALI_1_SEL			172
+>  #define CLKID_MALI_1				174
+>  #define CLKID_MALI				175
+> -#define CLKID_MPLL_5OM				177
+> +#define CLKID_MPLL_50M				177
+>  #define CLKID_CPU_CLK				187
+>  #define CLKID_PCIE_PLL				201
+>  #define CLKID_VDEC_1				204
+> 
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=110382
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
----
-
-Changes since v1:
- - Moved mutexes around the callers
- - Added comments noting that functions should be called with mutex held
-
----
- include/sound/hdaudio.h | 1 +
- sound/hda/hdac_device.c | 7 +++++++
- sound/hda/hdac_sysfs.c  | 3 +++
- 3 files changed, 11 insertions(+)
-
-diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
-index 45f944d57982..85835d0c33cc 100644
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -81,6 +81,7 @@ struct hdac_device {
- 	atomic_t in_pm;		/* suspend/resume being performed */
- 
- 	/* sysfs */
-+	struct mutex widget_lock;
- 	struct hdac_widget_tree *widgets;
- 
- 	/* regmap */
-diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
-index 95b073ee4b32..4769f4c03e14 100644
---- a/sound/hda/hdac_device.c
-+++ b/sound/hda/hdac_device.c
-@@ -55,6 +55,7 @@ int snd_hdac_device_init(struct hdac_device *codec, struct hdac_bus *bus,
- 	codec->bus = bus;
- 	codec->addr = addr;
- 	codec->type = HDA_DEV_CORE;
-+	mutex_init(&codec->widget_lock);
- 	pm_runtime_set_active(&codec->dev);
- 	pm_runtime_get_noresume(&codec->dev);
- 	atomic_set(&codec->in_pm, 0);
-@@ -141,7 +142,9 @@ int snd_hdac_device_register(struct hdac_device *codec)
- 	err = device_add(&codec->dev);
- 	if (err < 0)
- 		return err;
-+	mutex_lock(&codec->widget_lock);
- 	err = hda_widget_sysfs_init(codec);
-+	mutex_unlock(&codec->widget_lock);
- 	if (err < 0) {
- 		device_del(&codec->dev);
- 		return err;
-@@ -158,7 +161,9 @@ EXPORT_SYMBOL_GPL(snd_hdac_device_register);
- void snd_hdac_device_unregister(struct hdac_device *codec)
- {
- 	if (device_is_registered(&codec->dev)) {
-+		mutex_lock(&codec->widget_lock);
- 		hda_widget_sysfs_exit(codec);
-+		mutex_unlock(&codec->widget_lock);
- 		device_del(&codec->dev);
- 		snd_hdac_bus_remove_device(codec->bus, codec);
- 	}
-@@ -404,7 +409,9 @@ int snd_hdac_refresh_widgets(struct hdac_device *codec, bool sysfs)
- 	}
- 
- 	if (sysfs) {
-+		mutex_lock(&codec->widget_lock);
- 		err = hda_widget_sysfs_reinit(codec, start_nid, nums);
-+		mutex_unlock(&codec->widget_lock);
- 		if (err < 0)
- 			return err;
- 	}
-diff --git a/sound/hda/hdac_sysfs.c b/sound/hda/hdac_sysfs.c
-index fb2aa344981e..909d5ef1179c 100644
---- a/sound/hda/hdac_sysfs.c
-+++ b/sound/hda/hdac_sysfs.c
-@@ -395,6 +395,7 @@ static int widget_tree_create(struct hdac_device *codec)
- 	return 0;
- }
- 
-+/* call with codec->widget_lock held */
- int hda_widget_sysfs_init(struct hdac_device *codec)
- {
- 	int err;
-@@ -411,11 +412,13 @@ int hda_widget_sysfs_init(struct hdac_device *codec)
- 	return 0;
- }
- 
-+/* call with codec->widget_lock held */
- void hda_widget_sysfs_exit(struct hdac_device *codec)
- {
- 	widget_tree_free(codec);
- }
- 
-+/* call with codec->widget_lock held */
- int hda_widget_sysfs_reinit(struct hdac_device *codec,
- 			    hda_nid_t start_nid, int num_nodes)
- {
--- 
-2.17.1
-
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
