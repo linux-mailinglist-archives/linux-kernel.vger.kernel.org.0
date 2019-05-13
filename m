@@ -2,161 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE3581BD0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF571BD1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfEMSPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:15:30 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33898 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfEMSPa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:15:30 -0400
-Received: by mail-wm1-f66.google.com with SMTP id j187so551860wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:15:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DMklEuq6jJfcpdLRrRDndcHFAX+tf+f2K3CXJmVTE5E=;
-        b=l/X0HDeHHcZgoN5AXz/Nk4f0b4WlB/sBoUTnj1x5e0gLc6gQG5cFzAiIDEFZuc4I3k
-         kv6u6xZyvvwYR0FsmyHHna25ClfE30CHaKmjheNOG+g8l4WXcu8f6YuluLvIPxbreb/w
-         BmJkc+vKGI9K0AvEozG+pYwvazU0V5U07RDJuXpoVifaJOnFLIoszh7mSZnUOKfUzcIo
-         SFZddn2TmOYaTq5z+eGLnCyk8fqEMX748hK0vmCvFZMi5HEfEBkFiMrP2CSfQU9z+84T
-         /E+1cOtyKKqgb0oi0IM10J3yfGTtSSF2vND2ksnBwcRMzMVWxFsxoZNXp4BhCgUWFMQc
-         /hfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DMklEuq6jJfcpdLRrRDndcHFAX+tf+f2K3CXJmVTE5E=;
-        b=RXpCk3aeunRgstl5Cgg7WNe1TeyoRUqs5ozVLzTuw3pR7k1RXE1BBnYrOHHRxNWZBf
-         PBeM8CLBvcRd00JEhTYL7/QAm4UFnquyf/yJuGyULfyC8GihTEhKEhiwCOHf2Ku8ImXQ
-         I0K46Kb5PP9gfOgV/PyRoxjJKUbJeyNK6QtN0GvN5W4h6R7z/P1ExC49AnGEHPlJu6ts
-         8+/1ELFCD2FCKH80bSmFT9U1zyelJK2za4vzcfFG54s06p1or0Exbe7FnaNrDtsfb6K4
-         rqJib0sfSXw9DP/7cPQhv7+c4vViAkGN2eIPaIWqMyS9d7W992HvHarFluFnX+ozc+G1
-         gGuA==
-X-Gm-Message-State: APjAAAVj4jlGgiyokIDR/ENWvuoUiduRvJNYteEO59iQJftk7S9J2myJ
-        LRBDeADNtf/I33XVEXY71tY=
-X-Google-Smtp-Source: APXvYqzlspmdxfffwTdM18e6oF3r5JHggAnrEJuiN84CiNjxFan3YOFVMG4n9pE4taLjYUHr7YP0Tw==
-X-Received: by 2002:a1c:65c3:: with SMTP id z186mr14122834wmb.93.1557771327593;
-        Mon, 13 May 2019 11:15:27 -0700 (PDT)
-Received: from localhost.localdomain (lfbn-1-3343-169.w90-127.abo.wanadoo.fr. [90.127.110.169])
-        by smtp.googlemail.com with ESMTPSA id n4sm381483wmb.22.2019.05.13.11.15.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 11:15:27 -0700 (PDT)
-From:   sterchelen <sterchelen@gmail.com>
-Cc:     sterchelen <sterchelen@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
-Subject: [PATCH] kernel: Fix acct coding style
-Date:   Mon, 13 May 2019 20:15:15 +0200
-Message-Id: <20190513181516.11131-1-sterchelen@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726621AbfEMSVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:21:41 -0400
+Received: from mga01.intel.com ([192.55.52.88]:10239 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfEMSVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 14:21:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 11:21:40 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga007.jf.intel.com with ESMTP; 13 May 2019 11:21:40 -0700
+Date:   Mon, 13 May 2019 12:16:18 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     sagi@grimberg.me, rafael@kernel.org, linux-pm@vger.kernel.org,
+        Mario.Limonciello@dell.com, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, keith.busch@intel.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+Message-ID: <20190513181618.GD15437@localhost.localdomain>
+References: <20190510212937.11661-1-keith.busch@intel.com>
+ <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
+ <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
+ <20190513143754.GE15318@localhost.localdomain>
+ <7ab8274ef1ce46fcae54a50abc76ae4a@AUSX13MPC105.AMER.DELL.COM>
+ <20190513145708.GA25897@lst.de>
+ <20190513151652.GB15437@localhost.localdomain>
+ <9AE4A3E7-CDB8-4730-8B4E-43C93FC0C47F@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9AE4A3E7-CDB8-4730-8B4E-43C93FC0C47F@canonical.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve readability by applying coding style
+On Tue, May 14, 2019 at 01:16:22AM +0800, Kai-Heng Feng wrote:
+> Disabling HMB prior suspend makes my original patch work without memory
+> barrier.
+> 
+> However, using the same trick on this patch still freezes the system during
+> S2I.
 
-Signed-off-by: Nicolas Sterchele <sterchelen@gmail.com>
----
- kernel/acct.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/acct.c b/kernel/acct.c
-index 81f9831a7859..7369960a9555 100644
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -111,6 +111,7 @@ static int check_free_space(struct bsd_acct_struct *acct)
- 
- 	if (acct->active) {
- 		u64 suspend = sbuf.f_blocks * SUSPEND;
-+
- 		do_div(suspend, 100);
- 		if (sbuf.f_bavail <= suspend) {
- 			acct->active = 0;
-@@ -118,6 +119,7 @@ static int check_free_space(struct bsd_acct_struct *acct)
- 		}
- 	} else {
- 		u64 resume = sbuf.f_blocks * RESUME;
-+
- 		do_div(resume, 100);
- 		if (sbuf.f_bavail >= resume) {
- 			acct->active = 1;
-@@ -170,6 +172,7 @@ static struct bsd_acct_struct *acct_get(struct pid_namespace *ns)
- static void acct_pin_kill(struct fs_pin *pin)
- {
- 	struct bsd_acct_struct *acct = to_acct(pin);
-+
- 	mutex_lock(&acct->lock);
- 	do_acct_process(acct);
- 	schedule_work(&acct->work);
-@@ -182,8 +185,12 @@ static void acct_pin_kill(struct fs_pin *pin)
- 
- static void close_work(struct work_struct *work)
- {
--	struct bsd_acct_struct *acct = container_of(work, struct bsd_acct_struct, work);
-+	struct bsd_acct_struct *acct = container_of(
-+			work,
-+			struct bsd_acct_struct,
-+			work);
- 	struct file *file = acct->file;
-+
- 	if (file->f_op->flush)
- 		file->f_op->flush(file, NULL);
- 	__fput_sync(file);
-@@ -389,8 +396,8 @@ static comp2_t encode_comp2_t(u64 value)
-  */
- static u32 encode_float(u64 value)
- {
--	unsigned exp = 190;
--	unsigned u;
-+	unsigned int exp = 190;
-+	unsigned int u;
- 
- 	if (value == 0)
- 		return 0;
-@@ -449,7 +456,7 @@ static void fill_ac(acct_t *ac)
- #endif
- 	do_div(elapsed, AHZ);
- 	ac->ac_btime = get_seconds() - elapsed;
--#if ACCT_VERSION==2
-+#if ACCT_VERSION == 2
- 	ac->ac_ahz = AHZ;
- #endif
- 
-@@ -505,8 +512,9 @@ static void do_acct_process(struct bsd_acct_struct *acct)
- 
- 		ac.ac_pid = task_tgid_nr_ns(current, ns);
- 		rcu_read_lock();
--		ac.ac_ppid = task_tgid_nr_ns(rcu_dereference(current->real_parent),
--					     ns);
-+		ac.ac_ppid = task_tgid_nr_ns(
-+			rcu_dereference(current->real_parent),
-+			ns);
- 		rcu_read_unlock();
- 	}
- #endif
-@@ -517,6 +525,7 @@ static void do_acct_process(struct bsd_acct_struct *acct)
- 	if (file_start_write_trylock(file)) {
- 		/* it's been opened O_APPEND, so position is irrelevant */
- 		loff_t pos = 0;
-+
- 		__kernel_write(file, &ac, sizeof(acct_t), &pos);
- 		file_end_write(file);
- 	}
-@@ -575,6 +584,7 @@ static void slow_acct_process(struct pid_namespace *ns)
- {
- 	for ( ; ns; ns = ns->parent) {
- 		struct bsd_acct_struct *acct = acct_get(ns);
-+
- 		if (acct) {
- 			do_acct_process(acct);
- 			mutex_unlock(&acct->lock);
--- 
-2.21.0
-
+Could you post your code, please?
