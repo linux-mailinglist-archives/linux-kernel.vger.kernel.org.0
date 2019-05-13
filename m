@@ -2,41 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF9A1B7AE
+	by mail.lfdr.de (Postfix) with ESMTP id 57A7E1B7AD
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbfEMODK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:03:10 -0400
-Received: from verein.lst.de ([213.95.11.211]:39457 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730348AbfEMODH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730351AbfEMODH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 13 May 2019 10:03:07 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 7DDA168AFE; Mon, 13 May 2019 16:02:47 +0200 (CEST)
-Date:   Mon, 13 May 2019 16:02:46 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Kenneth Heitke <kenneth.heitke@intel.com>
-Subject: Re: [PATCH v3 5/7] nvme-pci: add device coredump infrastructure
-Message-ID: <20190513140246.GB24840@lst.de>
-References: <1557676457-4195-1-git-send-email-akinobu.mita@gmail.com> <1557676457-4195-6-git-send-email-akinobu.mita@gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:32847 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727918AbfEMODG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:03:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 07:03:05 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga003.jf.intel.com with ESMTP; 13 May 2019 07:03:05 -0700
+Date:   Mon, 13 May 2019 07:03:05 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
+Cc:     shuah@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kselftest@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] selftests: kvm: Add files generated when compiled to
+ .gitignore
+Message-ID: <20190513140305.GA28561@linux.intel.com>
+References: <5d60e7126803e9a11b51618e65966ba047eff7df>
+ <20190512044434.32627-1-skunberg.kelsey@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557676457-4195-6-git-send-email-akinobu.mita@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190512044434.32627-1-skunberg.kelsey@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Usage of a scatterlist here is rather bogus as we never use
-it for dma mapping.  Why can't you store the various pages in a
-large bio_vec and then just issue that to the device in one
-get log page command?  (or at least a few if MDTS kicks in?)
+On Sat, May 11, 2019 at 10:44:34PM -0600, Kelsey Skunberg wrote:
+> The following files are generated in /selftests/kvm/ after compiling and
+> should be added to /selftests/kvm/.gitignore:
+> 
+>         - /x86_64/hyperv_cpuid
+> 	- /x86_64/smm_test
+> 	- /clear_dirty_log_test
+> 
+> Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
+> ---
+
+An equivalent patch has already been queued.
+
+https://patchwork.kernel.org/patch/10931115/
+
+> Changes since v1:
+>         - Included /clear_dirty_log_test to .gitignore
+>         - Updated commit log to reflect file added
+> 
+>  tools/testing/selftests/kvm/.gitignore | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+> index 2689d1ea6d7a..391a19231618 100644
+> --- a/tools/testing/selftests/kvm/.gitignore
+> +++ b/tools/testing/selftests/kvm/.gitignore
+> @@ -6,4 +6,7 @@
+>  /x86_64/vmx_close_while_nested_test
+>  /x86_64/vmx_tsc_adjust_test
+>  /x86_64/state_test
+> +/x86_64/hyperv_cpuid
+> +/x86_64/smm_test
+> +/clear_dirty_log_test
+>  /dirty_log_test
+> --
+> 2.20.1
+> 
