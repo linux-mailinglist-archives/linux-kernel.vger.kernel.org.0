@@ -2,102 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D1B1B8C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C4C1B8DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbfEMOmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:42:01 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:37628 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730772AbfEMOl5 (ORCPT
+        id S1730810AbfEMOoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:44:13 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37183 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728133AbfEMOoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:41:57 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 32332C0161;
-        Mon, 13 May 2019 14:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557758508; bh=Q4RwNBuD8FtLCQ9UQgg0ETBjXIo13TCHbTK17grz4lY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bxWpXWU/MCnS+mi6hZ8O3LDVNP667dIopzjPVf22P7/Otl8C1qtBdGdadJTe9Ur38
-         eoT3IFkJA7d3WG6IBfB8OKHbQ84RzY4Y5YtrmLjhebvKEWEAJdlaWXsZBeZyTl2mrF
-         KWOmN7SYBlqzZXBpjU8gLXO5X25c1U4k677uCw/jaoZm1MK0JijbxOE+V9bWUzv7qJ
-         6mQ0mLvbjd2PUvvxZGHG5gv3j3kG8ic+hYnEjzfBcTXCetaT5ARV9221nxnvcQyOTE
-         61c7NLlK6Ee3o/Xoh0oGGge7avtKuerJQWdZpei1N1giZkvju8/hwnv4jWwEuZ8skP
-         fq+OZWHIWp2ZQ==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.106])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B5A52A005A;
-        Mon, 13 May 2019 14:41:55 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: Send SIGSEGV if userspace process accesses kernel virtual memory
-Date:   Mon, 13 May 2019 17:41:53 +0300
-Message-Id: <20190513144153.6112-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
+        Mon, 13 May 2019 10:44:12 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4DEaZH3013863;
+        Mon, 13 May 2019 16:44:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=H7Q5/LExNO59bdn3+PatXfQylruOtLqJEDuHGFHk764=;
+ b=bSJl0sDa++4vqFNqa9vdeF1fwx4x8cw4yukMVXb/JKd8yt9Bod9ExrcdTLJTaWHETQru
+ wxG0SWcF/7/0wDc59hEV71nMYggiAPJSC0kmZxzl93vK9AydXW5eN3fck6u1q+jN9jEe
+ FVs7c8UuilNXacCP8YlysODN9PXQWNa2R+HHo+HHXpE6C3hl2l1zLIFNyiZPM8HDz/eN
+ HwyLpYP1Tp3wz8GwDpdy/YlNEPQrQk8EVTfSEE0i8Mnk5OlAqm1nEYVvkwfB9Mo57xIa
+ oi6TX0CM55AjV/ApKhRuuu8v8S7fqBJERlvzty26qrmcKPGcQIkl3AfBYl0eJJyFk00q MQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2sdm5tugns-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 13 May 2019 16:44:04 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8241B34;
+        Mon, 13 May 2019 14:44:03 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 48C5D2899;
+        Mon, 13 May 2019 14:44:03 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 13 May
+ 2019 16:44:02 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 13 May 2019 16:44:01
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] Add supply property for DSI controller
+Date:   Mon, 13 May 2019 16:42:17 +0200
+Message-ID: <1557758539-28748-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of today if userspace process tries to access address which belongs
-to kernel virtual memory area and kernel have mapping for this address
-that process hangs instead of receiving SIGSEGV and being killed.
+The DSI controller needs a new property that powers its physical layer.
+Binding has been updated to documented this property.
+Device tree of stm32mp157c soc.
+Move reg18 & reg11 to stm32mp157c device tree file.
+Remove property phy-dsi-supply property to stm32mp157c-dk2.dts file.
 
-Steps to reproduce:
-Create userspace application which reads from the beginning of
-kernel-space virtual memory area (I.E. read from 0x7000_0000 on most
-of existing platforms):
------------------------->8-----------------
- #include <stdlib.h>
- #include <stdint.h>
+Changes in v2:
+- rename patch drm/stm: dsi: add support of an optional regulator
+- rework dw_mipi_dsi-stm probe sequence
 
- int main(int argc, char *argv[])
- {
- 	volatile uint32_t temp;
+Changes in v3:
+- remove device-tree patches
+- replace the optional regulator by a regulator
 
- 	temp = *(uint32_t *)(0x70000000);
- }
------------------------->8-----------------
-That application hangs after such memory access.
+Yannick Fertré (2):
+  dt-bindings: display: stm32: add supply property to DSI controller
+  drm/stm: dsi: add support of an regulator
 
-Fix that by checking which access (user or kernel) caused the exception
-before handling kernel virtual address fault.
+ .../devicetree/bindings/display/st,stm32-ltdc.txt  |  3 ++
+ drivers/gpu/drm/stm/dw_mipi_dsi-stm.c              | 53 ++++++++++++++++++----
+ 2 files changed, 48 insertions(+), 8 deletions(-)
 
-Cc: <stable@vger.kernel.org> # 4.20+
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/mm/fault.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index 8df1638259f3..53fb4ba6cd08 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	struct vm_area_struct *vma = NULL;
- 	struct task_struct *tsk = current;
- 	struct mm_struct *mm = tsk->mm;
--	int si_code = 0;
-+	int si_code = SEGV_ACCERR;
- 	int ret;
- 	vm_fault_t fault;
- 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
-@@ -82,6 +82,10 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	 * nothing more.
- 	 */
- 	if (address >= VMALLOC_START) {
-+		/* Forbid userspace to access kernel-space virtual memory */
-+		if (unlikely(user_mode(regs)))
-+			goto bad_area_nosemaphore;
-+
- 		ret = handle_kernel_vaddr_fault(address);
- 		if (unlikely(ret))
- 			goto bad_area_nosemaphore;
--- 
-2.14.5
+--
+2.7.4
 
