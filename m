@@ -2,162 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52541B417
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 283641B41A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbfEMKaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:30:24 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52112 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728653AbfEMKaV (ORCPT
+        id S1729056AbfEMKbP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 May 2019 06:31:15 -0400
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:18084 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728536AbfEMKbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:30:21 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o189so13314197wmb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 03:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iYRnpnNRQ7/Yn4sCtvCK5+WUBHE5avZWWYPxLbImYZU=;
-        b=UmBOW939gLTq232p+iwK3f8nCudEncfvXezxIaacngiWvHR8NtB7S5O7nxFq1G9SKz
-         ssd8Zi5tDEqiCdHVFS51Gw4UZYFqp+S7fqqHcqiaXYKet2KtrLRD4PD2VZE59dgrsvkj
-         3R4liWCFsEBSbG2sUJaHoZ0Uxw3sbivwcwRMp+bY0Xm1ayPdP+ZN8KhMJETc4zqYoZ8o
-         wt2DLh1MiZuUNBhKsYrmewM0i3WxsFP7W4pU5/eGIF0G7ZOQ+c50PZFxrz8wIz4DAg6c
-         zUeryUgBE5tPYqmhPjZvjMcCmCUFy9WkLnU2Mc4tn0/cHh9dF3Sr28aGM8yAVsYnP8x7
-         r4TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iYRnpnNRQ7/Yn4sCtvCK5+WUBHE5avZWWYPxLbImYZU=;
-        b=VOGuMlew3N0vfOTc4bJcwazVoROoZnyvR0f/PrlobpRVzWcN28Mj+2w6wwBJWewUFR
-         OhYyBd+HiTwXCZbEXXRfS6FJyE5DyfxHQ/CVpzMwDZ/16+zK9lVisYyaOdyH2S4uv+7c
-         tWBzPUpNTjiJ9If82jZUeQLC2S5ORo3uAJlIZmIPOSoVmR5ZZGgC332EfLpBc3s8ZOAe
-         8q/IVef8RLQZsLuonyGpx+e2i/EqjXB+TAOL0Mu8BMbZQlcYLRVm7OHL6NTOUo0yy5Th
-         bAfaDoEW7yGAEpTomJDS/AtWMFEXX/kOVha+/dIFVG01QgF+2mR05qAQcRXmUHUyBF2Z
-         hLyg==
-X-Gm-Message-State: APjAAAVxo5D98w9+S0vIEl/b6qI80EAoq3hTKXVzLJeMLrnMsEHTXEvD
-        BHP/Ka4AYaZUaattKcPgyp6Fi6mjExo=
-X-Google-Smtp-Source: APXvYqyy/1L6imqzBDSn9+0fWvo5keqx0qRGE8q6hHZf+fXclKoMF2IapzzL8fxz7CB5t4Cnh59PbQ==
-X-Received: by 2002:a1c:ca08:: with SMTP id a8mr14602038wmg.5.1557743419532;
-        Mon, 13 May 2019 03:30:19 -0700 (PDT)
-Received: from clegane.local (205.29.129.77.rev.sfr.net. [77.129.29.205])
-        by smtp.gmail.com with ESMTPSA id v192sm13645238wme.24.2019.05.13.03.30.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 03:30:19 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] genirq/timings: Add selftest for next event computation
-Date:   Mon, 13 May 2019 12:29:53 +0200
-Message-Id: <20190513102953.16424-10-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190513102953.16424-1-daniel.lezcano@linaro.org>
-References: <20190513102953.16424-1-daniel.lezcano@linaro.org>
+        Mon, 13 May 2019 06:31:15 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AFAACO3/JbAKmCfQENVQ4LAQEBAQEBA?=
+ =?us-ascii?q?QEBAQEBBwEBAQEBAYFUAQEBAQEBCwGICoJekx6Xb4FmhHkChA83Bg0BAwEBAgE?=
+ =?us-ascii?q?BAhABNIYNAgEDI1YQCw0NAiYCAlcGAQ2DJqhZcIEvGoUmhFyBC4Fzil4/gTgME?=
+ =?us-ascii?q?4JMhF4BAQcXgwQxggQiApAFj2oHAoIaBI8hgUkBDoUIgxEDhwmZcoF3MxoubwG?=
+ =?us-ascii?q?CQpAfSo0Agj4BAQ?=
+Received: from unknown (HELO [10.135.5.170]) ([1.125.130.169])
+  by ipmail03.adl6.internode.on.net with ESMTP; 13 May 2019 20:01:11 +0930
+Date:   Mon, 13 May 2019 20:01:07 +0930
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190511220659.GB8507@mit.edu>
+References: <48BA4A6E-5E2A-478E-A96E-A31FA959964C@internode.on.net> <CAFLxGvwnKKHOnM2w8i9hn7LTVYKh5PQP2zYMBmma2k9z7HBpzw@mail.gmail.com> <20190511220659.GB8507@mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: ext3/ext4 filesystem corruption under post 5.1.0 kernels
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+CC:     LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org
+From:   Arthur Marsh <arthur.marsh@internode.on.net>
+Message-ID: <09D87554-6795-4AEA-B8D0-FEBCB45673A9@internode.on.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The circular buffers are now validated at this point with the two
-previous patches. The next interrupt index algorithm which is the
-hardest part to validate can be validated with the tests provided with
-this patch.
+After a git bisect reset and updating to the current Linus git head, the problem no longer occurs.
 
-It uses the intervals stored in the arrays and insert all the values
-except the last one. The next event computation must return the same
-value as the last element we did not inserted.
+Thanks for the feedback on the problem that I experienced.
 
-Add tests for the next event index computation.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- kernel/irq/timings.c | 66 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
-
-diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 5e4efac967fd..eb2bb1d1551f 100644
---- a/kernel/irq/timings.c
-+++ b/kernel/irq/timings.c
-@@ -705,6 +705,68 @@ static struct timings_intervals tis[] __initdata = {
- 	{ intervals4, ARRAY_SIZE(intervals4) },
- };
- 
-+static int __init irq_timings_test_next_index(struct timings_intervals *ti)
-+{
-+	int _buffer[IRQ_TIMINGS_SIZE];
-+	int buffer[IRQ_TIMINGS_SIZE];
-+	int index, start, i, count, period_max;
-+
-+	count = ti->count - 1;
-+
-+	period_max = count > (3 * PREDICTION_PERIOD_MAX) ?
-+		PREDICTION_PERIOD_MAX : count / 3;
-+
-+	/*
-+	 * Inject all values except the last one which will be used
-+	 * to compare with the next index result.
-+	 */
-+	pr_debug("index suite: ");
-+
-+	for (i = 0; i < count; i++) {
-+		index = irq_timings_interval_index(ti->intervals[i]);
-+		_buffer[i & IRQ_TIMINGS_MASK] = index;
-+		pr_cont("%d ", index);
-+	}
-+
-+	start = count < IRQ_TIMINGS_SIZE ? 0 :
-+		count & IRQ_TIMINGS_MASK;
-+
-+	count = min_t(int, count, IRQ_TIMINGS_SIZE);
-+
-+	for (i = 0; i < count; i++) {
-+		int index = (start + i) & IRQ_TIMINGS_MASK;
-+		buffer[i] = _buffer[index];
-+	}
-+
-+	index = irq_timings_next_event_index(buffer, count, period_max);
-+	i = irq_timings_interval_index(ti->intervals[ti->count - 1]);
-+
-+	if (index != i) {
-+		pr_err("Expected (%d) and computed (%d) next indexes differ\n",
-+		       i, index);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init irq_timings_next_index_selftest(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(tis); i++) {
-+
-+		pr_info("---> Injecting intervals number #%d (count=%zd)\n",
-+			i, tis[i].count);
-+
-+		ret = irq_timings_test_next_index(&tis[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
- static int __init irq_timings_test_irqs(struct timings_intervals *ti)
- {
- 	struct irqt_stat __percpu *s;
-@@ -876,6 +938,10 @@ static int __init irq_timings_selftest(void)
- 		goto out;
- 
- 	ret = irq_timings_irqs_selftest();
-+	if (ret)
-+		goto out;
-+
-+	ret = irq_timings_next_index_selftest();
- out:
- 	pr_info("---------- selftest end with %s -----------\n",
- 		ret ? "failure" : "success");
+Arthur. 
 -- 
-2.17.1
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
