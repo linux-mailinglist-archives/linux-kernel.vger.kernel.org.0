@@ -2,98 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDE91BD6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99EC51BD7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfEMSwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:52:46 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41931 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728693AbfEMSwp (ORCPT
+        id S1728856AbfEMSxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:53:49 -0400
+Received: from smtprelay0069.hostedemail.com ([216.40.44.69]:48967 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726084AbfEMSxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:52:45 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y22so12591104qtn.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:52:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=b4TlRietwnM6oTPXcxhj2JOE8FV7T3pSL6QJavmQ1dg=;
-        b=H5qenU/7jx8NlQhm7S99sirqKd61HRj6fvztvxwH8qxnHnyhxnM3vrRGU/DDlRxMNi
-         9YteXtpVKNokOI7554+8eaokfgHk+gqKyuaVlN7BNAY80mUKipQQlX2r8/0N/qicdJRd
-         YM3wCagWhQTXChqRXBSku//06FLq37M9iiLfou15xlsJIB2bn1B49534tBII79HZWCsx
-         KnW8/mv/pTenMwi0D13Ff+ZhmoKnyD8noNvlP51qOFk4s2YOLeMBmq6fLeaxxDxrxQIi
-         BV9Pap+2eZERZd5/gTC+T2RP4uQrorq9WtE8uKWEMTRpCnrJwTTjWG3kI+/XaU6LGHOT
-         Wfpg==
-X-Gm-Message-State: APjAAAVZxe+5nAY8SwRe13PBiLWi6CLvLdwebWq+g3XrSJLlRp1Wes69
-        R9Cq4Yq07WAuyiJmVlXTQjM=
-X-Google-Smtp-Source: APXvYqxSKsVgAu+I6jDct+Jb+foaVr1VkQpIWA0uKzdaIX/lqaAusSviehhQATr1kLcIrmTwBR5YQQ==
-X-Received: by 2002:a0c:b161:: with SMTP id r30mr2632858qvc.15.1557773565039;
-        Mon, 13 May 2019 11:52:45 -0700 (PDT)
-Received: from dennisz-mbp ([2620:10d:c091:500::3:b635])
-        by smtp.gmail.com with ESMTPSA id y8sm2445558qki.26.2019.05.13.11.52.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 11:52:43 -0700 (PDT)
-Date:   Mon, 13 May 2019 14:52:41 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] percpu changes for v5.2-rc1
-Message-ID: <20190513185241.GA74787@dennisz-mbp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 13 May 2019 14:53:49 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B8E03C1DCBC;
+        Mon, 13 May 2019 18:53:47 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:966:973:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2198:2199:2200:2393:2553:2559:2562:2691:2731:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:3873:4321:4385:4605:5007:6119:6742:10004:10400:10848:11232:11657:11658:11914:12043:12555:12740:12760:12895:13069:13215:13229:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: fly77_5b0af3af8b416
+X-Filterd-Recvd-Size: 2641
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 13 May 2019 18:53:45 +0000 (UTC)
+Message-ID: <ea3792fdc90c2d37dd8a889c173c94d743b7b583.camel@perches.com>
+Subject: Re: [PATCH v10 1/4] MAINTAINERS: add an entry for for arm64 imx 
+ devicetrees
+From:   Joe Perches <joe@perches.com>
+To:     Angus Ainslie <angus@akkea.ca>, Fabio Estevam <festevam@gmail.com>
+Cc:     angus.ainslie@puri.sm, Shawn Guo <shawnguo@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Mon, 13 May 2019 11:53:44 -0700
+In-Reply-To: <e61562bfc80e25bf233ae7fd7b032f83@www.akkea.ca>
+References: <20190513174057.4410-1-angus@akkea.ca>
+         <20190513174057.4410-2-angus@akkea.ca>
+         <CAOMZO5BaQnrDOYogzgpmCExjB+uhYQ8SsxBiMWrSB-1KRtgeVQ@mail.gmail.com>
+         <e61562bfc80e25bf233ae7fd7b032f83@www.akkea.ca>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, 2019-05-13 at 11:48 -0700, Angus Ainslie wrote:
+> On 2019-05-13 11:01, Fabio Estevam wrote:
+> > On Mon, May 13, 2019 at 2:41 PM Angus Ainslie (Purism) <angus@akkea.ca> 
+> > wrote:
+> > > Add an explicit reference to imx* devicetrees
+> > > 
+> > > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> > > ---
+> > >  MAINTAINERS | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 7707c28628b9..0871a21a5bbb 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -1648,6 +1648,7 @@ T:        git 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
+> > >  F:     arch/arm/boot/dts/ls1021a*
+> > >  F:     arch/arm64/boot/dts/freescale/fsl-*
+> > >  F:     arch/arm64/boot/dts/freescale/qoriq-*
+> > > +F:     arch/arm64/boot/dts/freescale/imx*
+> > 
+> > No, please put this entry under ARM/FREESCALE IMX / MXC ARM 
+> > ARCHITECTURE
+> > 
+> 
+> I believe order is important. Would you like it before or after the "N:" 
+> entries ? Or just as the last entry.
 
-This pull request includes my scan hint update which helps address
-performance issues with heavily fragmented blocks.
+Order is not important, but I prefer the
+N: entries after the X: and F: entries.
 
-The other change is a lockdep fix when freeing an allocation causes
-balance work to be scheduled.
 
-Thanks,
-Dennis
-
-The following changes since commit fa3d493f7a573b4e4e2538486e912093a0161c1b:
-
-  Merge tag 'selinux-pr-20190312' of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux (2019-03-13 11:10:42 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git for-5.2
-
-for you to fetch changes up to 198790d9a3aeaef5792d33a560020861126edc22:
-
-  percpu: remove spurious lock dependency between percpu and sched (2019-05-08 12:08:48 -0700)
-
-----------------------------------------------------------------
-Dennis Zhou (12):
-      percpu: update free path with correct new free region
-      percpu: do not search past bitmap when allocating an area
-      percpu: introduce helper to determine if two regions overlap
-      percpu: manage chunks based on contig_bits instead of free_bytes
-      percpu: relegate chunks unusable when failing small allocations
-      percpu: set PCPU_BITMAP_BLOCK_SIZE to PAGE_SIZE
-      percpu: add block level scan_hint
-      percpu: remember largest area skipped during allocation
-      percpu: use block scan_hint to only scan forward
-      percpu: make pcpu_block_md generic
-      percpu: convert chunk hints to be based on pcpu_block_md
-      percpu: use chunk scan_hint to skip some scanning
-
-John Sperbeck (1):
-      percpu: remove spurious lock dependency between percpu and sched
-
- include/linux/percpu.h |  12 +-
- mm/percpu-internal.h   |  15 +-
- mm/percpu-km.c         |   2 +-
- mm/percpu-stats.c      |   5 +-
- mm/percpu.c            | 549 ++++++++++++++++++++++++++++++++++---------------
- 5 files changed, 405 insertions(+), 178 deletions(-)
