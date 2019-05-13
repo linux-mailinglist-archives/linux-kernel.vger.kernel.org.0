@@ -2,178 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A070E1B838
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436411B561
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730599AbfEMOVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:21:53 -0400
-Received: from 4.mo177.mail-out.ovh.net ([46.105.37.72]:44380 "EHLO
-        4.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730588AbfEMOVw (ORCPT
+        id S1729062AbfEMMAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 08:00:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34235 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728841AbfEMMAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:21:52 -0400
-X-Greylist: delayed 7800 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 10:21:51 EDT
-Received: from player729.ha.ovh.net (unknown [10.108.54.87])
-        by mo177.mail-out.ovh.net (Postfix) with ESMTP id 0072CF7501
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 13:56:15 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player729.ha.ovh.net (Postfix) with ESMTPSA id 1EAF25D72366;
-        Mon, 13 May 2019 11:56:07 +0000 (UTC)
-Date:   Mon, 13 May 2019 13:56:06 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
-Message-ID: <20190513135606.7d9a0902@bahia.lan>
-In-Reply-To: <20190429123659.00c0622b@bahia.lan>
-References: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
-        <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
-        <20190429123659.00c0622b@bahia.lan>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 13 May 2019 08:00:31 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n19so7109894pfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 05:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=p3WkRupLQANIn+eKZSEzZINagFb+f491TtMUB8rusGg=;
+        b=N+++fRZ20jobeOpyLHYLAVEpUKQjraWab8bLt6j5ZOHrH4gRwoiEzPEVePueOg4EkT
+         9aVhRhMNDREwNEbaja9OpqLvsmrwBITjfZtuZXZfVsGrxiBI5qlSlGtA8bTvgYsX80KS
+         B+Hy3tLCB6h6eCpC1xwUwRjx3yvZPN2lf3v3ZLVVBiv5sT7Ty37OChUzb50/4pDZrLMq
+         IE7CVxIDLsxzQNwTAEJyhwTyRmVumeHP1uFD1yumIOTTox/hWWkAOvidJivPGFVECEok
+         h/vm8VxlFnVl0yawuGVtUryQDBrwPXuS1oTAGBafBvVx/JAv2fvyytV/jVpmYh/Ndcd7
+         xm7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=p3WkRupLQANIn+eKZSEzZINagFb+f491TtMUB8rusGg=;
+        b=WIklum9mwtDa07fjGve1NbsQCSTYgM0YUAgA+6hADUNPTbHEbGNzDlUVHI5+GeqFmY
+         FWTE6uqcPyKMm9NqqA/iclAa8cNodAz9N7P4DKW0QDMv+clQ4Ze2zB9QbZIcuMAGRDF1
+         2m2NjkIQ8TZ+C/NSC0JORhTxFl7/11t62psAz8qxfxiUFUIsdoRwnSoXUU+HG6Pq6flB
+         Q/k7AUxSayuNfoQgtYdli/v/8MRSgC86Ph5KsGo2NM83j7GBRAZFFf/SqFPMNGlBqo+p
+         Op+LGGN2PL8ESu4A2JXHBQI2jrp5LmGlWPZF0QAwrHTNqJ8Xo5941b5uwvjieqEpkUnM
+         Wkhg==
+X-Gm-Message-State: APjAAAVbKA6ZnpuASJ3tf+BhBh0+lhcGe8LZUMv2TVXZYP6RvY/SSF2p
+        dhtXMi+nkwAc3rYg9ViVX47s1Iy+LLg=
+X-Google-Smtp-Source: APXvYqwVCYzieQmt6igQ6RiswHOPk0cOUDa7zoOiLFCwJCK65CcHTjofK0vKPbo01BznaQ8ITVMLqQ==
+X-Received: by 2002:a63:318b:: with SMTP id x133mr30649337pgx.297.1557748830228;
+        Mon, 13 May 2019 05:00:30 -0700 (PDT)
+Received: from [192.168.1.7] ([117.248.72.152])
+        by smtp.gmail.com with ESMTPSA id t25sm29707082pfq.91.2019.05.13.05.00.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 05:00:29 -0700 (PDT)
+Subject: Re: [PATCH v3 1/8] Staging: kpc2000: kpc_dma: Resolve trailing
+ whitespace error reported by checkpatch
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org
+References: <20190510193833.1051-1-bnvandana@gmail.com>
+ <20190513102622.22398-1-bnvandana@gmail.com> <20190513104920.GI18105@kadam>
+From:   Vandana BN <bnvandana@gmail.com>
+Message-ID: <73832a6a-bc47-5882-91af-b23727f33b87@gmail.com>
+Date:   Mon, 13 May 2019 17:30:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190513104920.GI18105@kadam>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 6583981181895154097
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrleeggdegiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael,
+oh ok.. thanks i will correct it.
 
-Any comments on this patch ? Should I repost with a shorter comment
-as suggested by Alexey ?
-
-Cheers,
-
---
-Greg
-
-On Mon, 29 Apr 2019 12:36:59 +0200
-Greg Kurz <groug@kaod.org> wrote:
-
-> On Mon, 29 Apr 2019 16:01:29 +1000
-> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> 
-> > On 20/04/2019 01:34, Greg Kurz wrote:  
-> > > Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
-> > > has the effect of incrementing the reference count of the PCI device, as
-> > > explained in drivers/pci/search.c:
-> > > 
-> > >  * Given a PCI domain, bus, and slot/function number, the desired PCI
-> > >  * device is located in the list of PCI devices. If the device is
-> > >  * found, its reference count is increased and this function returns a
-> > >  * pointer to its data structure.  The caller must decrement the
-> > >  * reference count by calling pci_dev_put().  If no device is found,
-> > >  * %NULL is returned.
-> > > 
-> > > Nothing was done to call pci_dev_put() and the reference count of GPU and
-> > > NPU PCI devices rockets up.
-> > > 
-> > > A natural way to fix this would be to teach the callers about the change,
-> > > so that they call pci_dev_put() when done with the pointer. This turns
-> > > out to be quite intrusive, as it affects many paths in npu-dma.c,
-> > > pci-ioda.c and vfio_pci_nvlink2.c.    
-> > 
-> > 
-> > afaict this referencing is only done to protect the current traverser
-> > and what you've done is actually a natural way (and the generic
-> > pci_get_dev_by_id() does exactly the same), although this looks a bit weird.
-> >   
-> 
-> Not exactly the same: pci_get_dev_by_id() always increment the refcount
-> of the returned PCI device. The refcount is only decremented when this
-> device is passed to pci_get_dev_by_id() to continue searching.
-> 
-> That means that the users of the PCI device pointer returned by
-> pci_get_dev_by_id() or its exported variants pci_get_subsys(),
-> pci_get_device() and pci_get_class() do handle the refcount. They
-> all pass the pointer to pci_dev_put() or continue the search,
-> which calls pci_dev_put() internally.
-> 
-> Direct and indirect callers of get_pci_dev() don't care for the
-> refcount at all unless I'm missing something.
-> 
-> >   
-> > > Also, the issue appeared in 4.16 and
-> > > some affected code got moved around since then: it would be problematic
-> > > to backport the fix to stable releases.
-> > > 
-> > > All that code never cared for reference counting anyway. Call pci_dev_put()
-> > > from get_pci_dev() to revert to the previous behavior.    
-> > >> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev    
-> > from pci_dn")  
-> > > Cc: stable@vger.kernel.org # v4.16
-> > > Signed-off-by: Greg Kurz <groug@kaod.org>
-> > > ---
-> > >  arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
-> > >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-> > > index e713ade30087..d8f3647e8fb2 100644
-> > > --- a/arch/powerpc/platforms/powernv/npu-dma.c
-> > > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
-> > > @@ -31,9 +31,22 @@ static DEFINE_SPINLOCK(npu_context_lock);
-> > >  static struct pci_dev *get_pci_dev(struct device_node *dn)
-> > >  {
-> > >  	struct pci_dn *pdn = PCI_DN(dn);
-> > > +	struct pci_dev *pdev;
-> > >  
-> > > -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> > > +	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> > >  					   pdn->busno, pdn->devfn);
-> > > +
-> > > +	/*
-> > > +	 * pci_get_domain_bus_and_slot() increased the reference count of
-> > > +	 * the PCI device, but callers don't need that actually as the PE
-> > > +	 * already holds a reference to the device.    
-> > 
-> > Imho this would be just enough.
-> > 
-> > Anyway,
-> > 
-> > Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> >   
-> 
-> Thanks !
-> 
-> I now realize that I forgot to add the --cc option for stable on my stgit
-> command line :-\.
-> 
-> Cc'ing now.
-> 
-> > 
-> > How did you find it? :)
-> >   
-> 
-> While reading code to find some inspiration for OpenCAPI passthrough. :)
-> 
-> I saw the following in vfio_pci_ibm_npu2_init():
-> 
-> 	if (!pnv_pci_get_gpu_dev(vdev->pdev))
-> 		return -ENODEV;
-> 
-> and simply followed the function calls.
-> 
-> >   
-> > > Since callers aren't
-> > > +	 * aware of the reference count change, call pci_dev_put() now to
-> > > +	 * avoid leaks.
-> > > +	 */
-> > > +	if (pdev)
-> > > +		pci_dev_put(pdev);
-> > > +
-> > > +	return pdev;
-> > >  }
-> > >  
-> > >  /* Given a NPU device get the associated PCI device. */
-> > >     
-> >   
-> 
-
+On 13/05/19 4:19 PM, Dan Carpenter wrote:
+> The Signed off by has to be before the first --- cut off line.
+> Everything after the cut off is removed from the commit message.
