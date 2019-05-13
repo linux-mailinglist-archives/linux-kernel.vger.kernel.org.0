@@ -2,90 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3A71BA2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0460E1BA33
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731403AbfEMPgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:36:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38703 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbfEMPgO (ORCPT
+        id S1730050AbfEMPhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:37:18 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35319 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbfEMPhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:36:14 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 14so11405010ljj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 08:36:13 -0700 (PDT)
+        Mon, 13 May 2019 11:37:17 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g5so6674127plt.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 08:37:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aBobX/gRQlSguqoBZZQLy/K1F4tBo5qMszjuejS20Co=;
-        b=gBlt9XMxpnYqx/4cyDasaIs3y4oMCc99NXC9pZof4vo3wRkQsQuOQBAmGySmbeIsnT
-         pGlcYsS4yR9ytTI6FC1eSjbPpj8iz4s9dZBkDcrSiPAPC7OMzW0Rt0OqIJrPgtasoPCC
-         r1LwRRJMyGIeT5nK+1RtGNaHi07nNrgYKip5lk0MdY8M8i+ortxgZcPNOlwIaF3i2knk
-         k8J9A+Kc8GGfGKhqh/R2ogQFyXVw8qLb70PRA9fmxiriz2JDhlOr9Yn/Kz/5CvFVx+L4
-         /j+HRZj4hBADoWB5wd5ni0jZq65JQozmkv8mwyQYZgxiIQZjdhUkU1QQujGdGVWS5gX9
-         Rbrw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wRRDlrnvuHRLfyMRQOj/Q6jBHy3+2xu46qlQP+83E3Q=;
+        b=Nxf77d9VAJIg0p/O3sFRuwWVZCEVabaV6YiJMr1MbvG7oaZbmCqmlTFzGO8l9CH55i
+         DydBhMydR5+LP/ynF/NyEULTDLSILhhzuK5X5ev3UtjiWs68pv1O+8Zd7STdIfyocNqa
+         gucAkpheJRkc+q4kYiiBBso55e58HG89v3m/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=aBobX/gRQlSguqoBZZQLy/K1F4tBo5qMszjuejS20Co=;
-        b=IoSNkhOUPgSMx57L+tEcddNoWZ2EtRQOOjqr+HImUiUb2l4b/c+j75JmQ36fcWnPGS
-         bywSN2B9QQY4bjPornX44Bc11MVakHjHweyH0gKaMSAApfzeyllaMSRiRyvclPMGUeB5
-         NPLrt4B28bwqayQqMD57vxFI2xbTUl7hM7oaBRvvLDDXg0wuDvAAWQEfRvlOa3iIpElj
-         CtmS2XCaWOu71yuyOBCAjZ0b1JRHv2rBALnLRW4nrWd8RUG2NNuvcQoDHUrwXXjnKcHp
-         p9gs35HlxfVUXBnvtCAIz/B9w+7fbiDSD7vXgjNqNxw2LbndSizQqDKr50/wkl2B6bm/
-         /5ug==
-X-Gm-Message-State: APjAAAUcjtwkzsyXoVBQYXUGYh/ejHclrohwVZKfzuJ8/JvkGb7UEdns
-        CatvHKnOfE4tZgDcQONrfqRPNg==
-X-Google-Smtp-Source: APXvYqx7EAgiVp7E/GNOloy5P70soEYmNXt7Mr3QGKLLM+PPeltgJmRtjYkCOSVI8X18cOxFkFgHYw==
-X-Received: by 2002:a2e:9713:: with SMTP id r19mr14381849lji.189.1557761772644;
-        Mon, 13 May 2019 08:36:12 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.81.227])
-        by smtp.gmail.com with ESMTPSA id t23sm711845lfk.9.2019.05.13.08.36.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 08:36:11 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: stmmac: dwmac-sun8i: enable support of
- unicast filtering
-To:     Corentin Labbe <clabbe@baylibre.com>, alexandre.torgue@st.com,
-        davem@davemloft.net, joabreu@synopsys.com,
-        maxime.ripard@bootlin.com, peppe.cavallaro@st.com, wens@csie.org
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <1557752799-9989-1-git-send-email-clabbe@baylibre.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <a4c3f91a-cad2-29f8-841f-df1a0fee0781@cogentembedded.com>
-Date:   Mon, 13 May 2019 18:36:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wRRDlrnvuHRLfyMRQOj/Q6jBHy3+2xu46qlQP+83E3Q=;
+        b=nXcL2LYNJ1M1EUMlIzMB1Zb5K0XsS+mseh2K2tkPF0Jlz15ZQzSJiB2Q6s9CQPL8K0
+         LQZDwxIXZLt3jU7cnBqrWr1cKf1hNDdltFNSd659JcKBja9Fx0+jffTzZUXSDxLasJZ5
+         qSRHoCmqwdQWEGOzWel2CMTpWaORBBV00w+k92UI6H0ZUYgAeDYrZCkZjpoOmObEoQFD
+         oKCvbFpLa9pWpc102owNZq36Jj2vREI2ZxhOlaY/IpksSkkBCOco7ZPF8/OD9kzAlzPc
+         1L4MlLDPflBXqytkbTcAr9W/Sz8hmFJJpwfws4Ydf8ZMd+HmlwIugS0rXvnarIwg/iS+
+         jFeA==
+X-Gm-Message-State: APjAAAWMUUEkD7pyv6CeTLLumssnyrp+kr/T4HVbdjBLni1XzXYrFoXF
+        6Wuj7HhywL9opSLRO1d4CKwWQw==
+X-Google-Smtp-Source: APXvYqyEfOsJGByTquC1+xb7Jbk5F7LMEsnGHkoUmoOXvQVlgFOV/AD52SYM1R802GZtBjkYxnpL2A==
+X-Received: by 2002:a17:902:70c6:: with SMTP id l6mr13811570plt.84.1557761836581;
+        Mon, 13 May 2019 08:37:16 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id a17sm18387038pff.82.2019.05.13.08.37.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 May 2019 08:37:15 -0700 (PDT)
+Date:   Mon, 13 May 2019 11:37:14 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: Question about sched_setaffinity()
+Message-ID: <20190513153714.GA40957@google.com>
+References: <20190501202713.GY3923@linux.ibm.com>
+ <20190507221613.GA11057@linux.ibm.com>
+ <20190509173654.GA23530@linux.ibm.com>
+ <20190509193625.GA12455@linux.ibm.com>
+ <20190510120819.GR2589@hirez.programming.kicks-ass.net>
+ <20190510230742.GY3923@linux.ibm.com>
+ <20190511214520.GA3251@andrea>
+ <20190512003915.GD3923@linux.ibm.com>
+ <20190512010539.GA8167@andrea>
+ <20190513122043.GJ3923@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1557752799-9989-1-git-send-email-clabbe@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513122043.GJ3923@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-On 05/13/2019 04:06 PM, Corentin Labbe wrote:
-
-> When adding more MAC address to a dwmac-sun8i interface, the device goes
-
-   Addresses?
-
-> directly in promiscuous mode.
-> This is due to IFF_UNICAST_FLT missing flag.
+On Mon, May 13, 2019 at 05:20:43AM -0700, Paul E. McKenney wrote:
+> On Sun, May 12, 2019 at 03:05:39AM +0200, Andrea Parri wrote:
+> > > > > The fix is straightforward.  I just added "rcutorture.shuffle_interval=0"
+> > > > > to the TRIVIAL.boot file, which stops rcutorture from shuffling its
+> > > > > kthreads around.
+> > > > 
+> > > > I added the option to the file and I didn't reproduce the issue.
+> > > 
+> > > Thank you!  May I add your Tested-by?
+> > 
+> > Please feel free to do so.  But it may be worth to squash "the commits"
+> > (and adjust the changelogs accordingly).  And you might want to remove
+> > some of those debug checks/prints?
 > 
-> So since the hardware support unicast filtering, let's add IFF_UNICAST_FLT.
+> Revert/remove a number of the commits, but yes.  ;-)
 > 
-> Fixes: 9f93ac8d4085 ("net-next: stmmac: Add dwmac-sun8i")
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-[...]
+> And remove the extra loop, but leave the single WARN_ON() complaining
+> about being on the wrong CPU.
 
-MBR, Sergei
+The other "toy" implementation I noticed is based on reader/writer locking.
+
+Would you see value in having that as an additional rcu torture type?
+
+thanks,
+
+ - Joel
+
