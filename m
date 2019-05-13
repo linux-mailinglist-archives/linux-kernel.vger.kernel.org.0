@@ -2,68 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD261B207
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A881B23C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfEMIoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 04:44:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfEMIoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 04:44:02 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20DD62084A;
-        Mon, 13 May 2019 08:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557737041;
-        bh=ugMALw/O3cXPViqg+8RfbM4wNDJ1LAMUNwNjIhWmq3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oeReko0CXz8ySA+Ei2LgTAdAe8Wk/ng0mpVKNPA+6RSldcAGioXQhSeUFhBWJmADV
-         orKwl8F7ZL+OLqBZ6MLq7jOisf1eAXWm2uk/jZSejuh1FZFqYLTZV6wnGlGC7595+N
-         uVdEz78Hn6PTL2wN73zBvo7PeT1mOYiZdWB9AZ+Q=
-Date:   Mon, 13 May 2019 10:43:58 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
-        Emanuel Bennici <benniciemanuel78@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        viswanath.barenkala@gmail.com
-Subject: Re: [PATCH] staging: rtl8723bs: core fix warning  Comparison to bool
-Message-ID: <20190513084358.GB17959@kroah.com>
-References: <20190512122449.GA28268@hari-Inspiron-1545>
+        id S1728458AbfEMJC7 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 May 2019 05:02:59 -0400
+Received: from mail2.ibb.gov.tr ([185.68.223.4]:29521 "EHLO
+        mailgateway3.ibb.gov.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbfEMJC7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:02:59 -0400
+X-Greylist: delayed 963 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 05:02:57 EDT
+Received: from mailgateway3.ibb.gov.tr (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 862F1D06F9;
+        Mon, 13 May 2019 11:46:52 +0300 (+03)
+Received: from mailgateway3.ibb.gov.tr (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72524D0709;
+        Mon, 13 May 2019 11:46:52 +0300 (+03)
+Received: from CASHT1.ibb.gov.tr (unknown [10.1.9.63])
+        by mailgateway3.ibb.gov.tr (Postfix) with ESMTPS;
+        Mon, 13 May 2019 11:46:52 +0300 (+03)
+Received: from MBXNODE2.ibb.gov.tr ([fe80::8893:4d13:c032:5f02]) by
+ CASHT1.ibb.gov.tr ([fe80::4810:76de:f19a:6f47%13]) with mapi id
+ 14.03.0439.000; Mon, 13 May 2019 11:46:51 +0300
+From:   =?iso-8859-9?Q?Cengiz_Nurettin_=DD=DELER?= <nisler@ibb.gov.tr>
+To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
+Subject: A lot of your incoming messages has been suspended
+Thread-Topic: A lot of your incoming messages has been suspended
+Thread-Index: AdUJaGjMwVk8y/3SQ8u6U3YMw0NBeg==
+Date:   Mon, 13 May 2019 08:46:51 +0000
+Message-ID: <BDE81191C06B1149BB99DA1249BE51EB01D9576D56@MBXNODE2.ibb.gov.tr>
+Accept-Language: en-GB, tr-TR, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.16.16.4]
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean
+Content-Type: text/plain; charset="iso-8859-9"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190512122449.GA28268@hari-Inspiron-1545>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 12, 2019 at 05:54:49PM +0530, Hariprasad Kelam wrote:
-> fix below issue reported by coccicheck
-> 
-> drivers/staging/rtl8723bs/core/rtw_mlme.c:1675:6-10: WARNING: Comparison
-> to bool
-> 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-You sent 3 patches that do different things, yet have the same subject
-line :(
 
-Please fix up and send as a numbered patch series, or better yet, fix
-the same thing in the whole file all at ince.
+MICROSOFT VERIFICATION NEEDED
 
-thanks,
+A lot of your incoming messages has been suspended because your email box account is not verify by Microsoft verification team. In order to receive your messages do verify<https://vccccl.wixsite.com/mysite-1> now, We apologise for any inconvenience and appreciate your understanding.
 
-greg k-h
+Thank You.
+
+Microsoft Verification Team
+
+Copyright © 2019 Webmail .Inc . All rights reserved.
