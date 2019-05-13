@@ -2,148 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F0BC1AEB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 03:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 103E51AEBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 03:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfEMBUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 21:20:25 -0400
-Received: from sonic305-3.consmr.mail.bf2.yahoo.com ([74.6.133.42]:46720 "EHLO
-        sonic305-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727131AbfEMBUY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 21:20:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1557710422; bh=kmhcbfiUAPDcBNaPIgo8gEuwKeqhFA+LCiP83+sxgTg=; h=Date:From:Subject:To:Cc:From:Subject; b=HfaBWEDVcqfHssIjbJOfGi8sQT+nkHvPiT9GZAShc8nYefRyh9Hev0derFXlMhrR2QktghAxTgQ1hD5UnYtCLtU443sX8QbI8G3iYStPiV0c042Z8CWf6V0GR3DqqCcQRT7ye0h6Kbj/Kt/6tj76YRyIX6WrpLe/PLt3c/aAu5gedao5pzavy0EBeU0u7IP5g2PuQnwEKIkJZFupRn9ctcMxQ5jzpAoXN/XVC/xGecaxCAqP1zj9VWZ64DQWNGYwi55AtFozOsWx/jAnAzRSadKel/4F6JKF1fzWYA2svk8MLbqyU7UMTYP4gGW1KpN9Okr9TgNGS4DJheXQszg0bA==
-X-YMail-OSG: iOu2uGIVM1knbRmq7g57uwvT6p0dEWonsZBuv.P48CJV_xjifZg_w0WTj.Gpj1f
- 5DE43IgVVueovXOHw9b0.xBlUfEBHLMjIdivSjF.hxtG0yiY3989SXuPP01lXwcRuWNpR1QmgZ2N
- fANwCNjJH3jgId.C.pS.14TeL2yyeced3ujPyZTnwXDNoOaN6yMDWIhbb9DBKcfuaIdx1pdKUchL
- L.ichL5Rhb3GyzRHnWWZVfwsfLe3Qfu_kAue6Cg1EtzRVFJNoYx79EoX6btGMUu2mZ80.8rOiX3l
- AbG.JrcVJqXuM1kURgeBoG66Bt.HHFDiCQG6EWTDYBB5pRLSXHGBXOlj164RipYClMKTU1k.O_E9
- VBkQGipXRxO.S0Nl2Q9ODG8U68WosQik84GQ9A7piLeeJDdTuyM0.39a49rkN7mjpFUhQu9AwibI
- 2zxHLdEkBDKMHCzmS6qToqoatg1W5ZLTNHI5WI3OtxHPAg0egSBwOnvViOunKLVfHEfqz.YbOHZs
- hUyJo3Gn1LLClfS5OK0IiSAJLd3l9yaZ8XDO4BnEgpEkGJduM.IRAtPty8iJDqfVF9BPjeLAQ4vz
- eKaq15OeeyRCoBNQoGWfG5jrz8iggxpU9fMajNgVI91PFU0dk8XDFdMVEE4bucczh7JTpFuPOZjN
- fyH4_IAgvd3fGYacIpSxweV3RVIi2nwnPeV0Z5chBFdWNsPis83HRArJb_EEq8MvxYWy7YSuMqxf
- TnLAueDeQDg7OGtzXvzi7OesIlrO5YCvtGCT1wahY3XvKvnzKc4DCVmf4lFAo74mhqjLYFCk3Tfg
- Sa2RKbbUTqhMoNLNl4D3dq0HoDLujoAPGAYuC5UvT0O5QBJR_Y9sHCL4PTCbvnJUs0EwD0W5dTuf
- TAEfz76QJesi9X0DzHdlGeJEQRkKEHEWMEIlnkErj871CdjZrzsk1D30TV9Er0240HHYcge0CCPv
- QijG8z.yZpX6fxjkUKbF8Ytu.A2vK4kue_CyhtScQtEbkF5y6j4u8MiXlKknXede3bbyA2Ho6Ufg
- iwfQdC2jj9jk98I65y4NfwLHVOdjrGKVggv0x8581W4QqK_SVfww63lBs.r10tX1IC3v3rIK2.21
- 4v4Ba7i2.iZWFDBH9xRzmOtAlk1.HNpRkpHhy.VF4RGPDQBEBbMMtLY3zCg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Mon, 13 May 2019 01:20:22 +0000
-Received: from CPE00fc8de26033-CM00fc8de26030.cpe.net.cable.rogers.com (EHLO localhost) ([99.228.156.240])
-          by smtp406.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 10b57405150ea85529f4fce74da5bb61;
-          Mon, 13 May 2019 01:20:18 +0000 (UTC)
-Date:   Sun, 12 May 2019 21:20:12 -0400
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: [REGRESSION] ptrace broken from "cgroup: cgroup v2 freezer" (76f969e)
-To:     linux-kernel@vger.kernel.org, tj@kernel.org, guro@fb.com
-Cc:     oleg@redhat.com, kernel-team@fb.com
+        id S1727309AbfEMBc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 21:32:29 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36300 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727054AbfEMBc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 21:32:28 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5EFD7A7C056586BE2EBB;
+        Mon, 13 May 2019 09:32:26 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.55) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
+ 09:32:15 +0800
+Subject: Re: [RFC] irqchip/gic-its: fix command queue pointer comparison bug
+To:     <linux-kernel@vger.kernel.org>
+References: <1557581684-71297-1-git-send-email-guoheyi@huawei.com>
+CC:     <wanghaibin.wang@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "Jason Cooper" <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+From:   Heyi Guo <guoheyi@huawei.com>
+Message-ID: <07768321-46c3-170f-e92b-58ad29a655c5@huawei.com>
+Date:   Mon, 13 May 2019 09:32:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1557709124.798rxdb4l3.astroid@alex-desktop.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1557581684-71297-1-git-send-email-guoheyi@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.55]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Sorry, this patch still has issue when the queue is almost full, for the sample window becomes very small.
 
-I was trying to use strace recently and found that it exhibited some=20
-strange behavior. I produced this minimal test case:
-
-#include <unistd.h>
-
-int main() {
-    write(1, "a", 1);
-    return 0;
-}
-
-which, when run using "gcc test.c && strace ./a.out" produces this=20
-strace output:
-
-[ pre-main omitted ]
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-write(1, "a", 1)                        =3D ? ERESTARTSYS (To be restarted =
-if SA_RESTART is set)
-[ repeats forever ]
-
-The correct result is of course:
-
-[ pre-main omitted ]
-write(1, "a", 1)                        =3D 1
-exit_group(0)                           =3D ?
-+++ exited with 0 +++
-
-Strangely, this only occurs when outputting to a tty-like output.=20
-Running "strace ./a.out" from a native Linux x86 console or a terminal=20
-emulator causes the abnormal behavior. However, the following commands=20
-work correctly:
-
-- strace ./a.out >/dev/null
-- strace ./a.out >/tmp/a # /tmp is a standard tmpfs
-- strace ./a.out >&- # causes -1 EBADF (Bad file descriptor)
-
-"strace -o /tmp/a ./a.out" hangs and produces the above (infinite)=20
-output to /tmp/a.
-
-I bisected this to 76f969e, "cgroup: cgroup v2 freezer". I reverted the=20
-entire patchset (reverting only that one caused a conflict), which=20
-resolved the issue. I skimmed the patch and came up with this=20
-workaround, which also resolves the issue. I am not at all clear on the=20
-technical workings of the patchset, but it seems to me like a process's=20
-frozen status is supposed to be "suspended" when a frozen process is=20
-ptraced, and "unsuspended" when ptracing ends. Therefore, it seems=20
-suspicious to always "enter frozen" whether or not the cgroup is=20
-actually frozen. It seems like the code should instead check if the=20
-cgroup is actually frozen, and if so, restore the frozen status.
-
-I am using systemd but not any other cgroup features. I tried in an=20
-initramfs environment (no systemd, /init -> shell script) and reproduced=20
-the failing test case.
-
-Please CC me on replies.
+How about we calculating the delta of each time read and then accumulating it to compare with the to_idr? This can guarantee to get real rd_idx with more than 1 wraps.
 
 Thanks,
-Alex.
 
----
- kernel/signal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Heyi
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 62f9aea4a15a..47145d9d89ca 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2110,7 +2110,7 @@ static void ptrace_stop(int exit_code, int why, int c=
-lear_code, kernel_siginfo_t
-                preempt_disable();
-                read_unlock(&tasklist_lock);
-                preempt_enable_no_resched();
--               cgroup_enter_frozen();
-+               //cgroup_enter_frozen();
-                freezable_schedule();
-        } else {
-                /*
-@@ -2289,7 +2289,7 @@ static bool do_signal_stop(int signr)
-                }
-=20
-                /* Now we don't run again until woken by SIGCONT or SIGKILL=
- */
--               cgroup_enter_frozen();
-+               //cgroup_enter_frozen();
-                freezable_schedule();
-                return true;
-        } else {
---=20
-2.21.0
+
+On 2019/5/11 21:34, Heyi Guo wrote:
+> When we run several VMs with PCI passthrough and GICv4 enabled, not
+> pinning vCPUs, we will occasionally see below warnings in dmesg:
+>
+> ITS queue timeout (65440 65504 480)
+> ITS cmd its_build_vmovp_cmd failed
+>
+> The reason for the above issue is that in BUILD_SINGLE_CMD_FUNC:
+> 1. Post the write command.
+> 2. Release the lock.
+> 3. Start to read GITS_CREADR to get the reader pointer.
+> 4. Compare the reader pointer to the target pointer.
+> 5. If reader pointer does not reach the target, sleep 1us and continue
+> to try.
+>
+> If we have several processors running the above concurrently, other
+> CPUs will post write commands while the 1st CPU is waiting the
+> completion. So we may have below issue:
+>
+> phase 1:
+> ---rd_idx-----from_idx-----to_idx--0---------
+>
+> wait 1us:
+>
+> phase 2:
+> --------------from_idx-----to_idx--0-rd_idx--
+>
+> That is the rd_idx may fly ahead of to_idx, and if in case to_idx is
+> near the wrap point, rd_idx will wrap around. So the below condition
+> will not be met even after 1s:
+>
+> if (from_idx < to_idx && rd_idx >= to_idx)
+>
+> There is another theoretical issue. For a slow and busy ITS, the
+> initial rd_idx may fall behind from_idx a lot, just as below:
+>
+> ---rd_idx---0--from_idx-----to_idx-----------
+>
+> This will cause the wait function exit too early.
+>
+> Actually, it does not make much sense to use from_idx to judge if
+> to_idx is wrapped, but we need a initial rd_idx when lock is still
+> acquired, and it can be used to judge whether to_idx is wrapped and
+> the current rd_idx is wrapped.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>
+> Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+> ---
+>
+> This patch has only been tested on 4.19.36, for my NIC device driver has
+> something wrong with mainline kernel, so I mark it as a RFC until test has been
+> done upon mainline kernel.
+>
+>   drivers/irqchip/irq-gic-v3-its.c | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 7577755..d14f3fbc 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -745,30 +745,30 @@ static void its_flush_cmd(struct its_node *its, struct its_cmd_block *cmd)
+>   }
+>   
+>   static int its_wait_for_range_completion(struct its_node *its,
+> -					 struct its_cmd_block *from,
+> +					 u64	origin_rd_idx,
+>   					 struct its_cmd_block *to)
+>   {
+> -	u64 rd_idx, from_idx, to_idx;
+> +	u64 rd_idx, to_idx;
+>   	u32 count = 1000000;	/* 1s! */
+>   
+> -	from_idx = its_cmd_ptr_to_offset(its, from);
+>   	to_idx = its_cmd_ptr_to_offset(its, to);
+> +	if (to_idx < origin_rd_idx)
+> +		to_idx += ITS_CMD_QUEUE_SZ;
+>   
+>   	while (1) {
+>   		rd_idx = readl_relaxed(its->base + GITS_CREADR);
+>   
+> -		/* Direct case */
+> -		if (from_idx < to_idx && rd_idx >= to_idx)
+> -			break;
+> +		/* Wrap around for CREADR */
+> +		if (rd_idx < origin_rd_idx)
+> +			rd_idx += ITS_CMD_QUEUE_SZ;
+>   
+> -		/* Wrapped case */
+> -		if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
+> +		if (rd_idx >= to_idx)
+>   			break;
+>   
+>   		count--;
+>   		if (!count) {
+>   			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu)\n",
+> -					   from_idx, to_idx, rd_idx);
+> +					   origin_rd_idx, to_idx, rd_idx);
+>   			return -1;
+>   		}
+>   		cpu_relax();
+> @@ -787,6 +787,7 @@ void name(struct its_node *its,						\
+>   	struct its_cmd_block *cmd, *sync_cmd, *next_cmd;		\
+>   	synctype *sync_obj;						\
+>   	unsigned long flags;						\
+> +	u64 rd_idx;							\
+>   									\
+>   	raw_spin_lock_irqsave(&its->lock, flags);			\
+>   									\
+> @@ -808,10 +809,11 @@ void name(struct its_node *its,						\
+>   	}								\
+>   									\
+>   post:									\
+> +	rd_idx = readl_relaxed(its->base + GITS_CREADR);		\
+>   	next_cmd = its_post_commands(its);				\
+>   	raw_spin_unlock_irqrestore(&its->lock, flags);			\
+>   									\
+> -	if (its_wait_for_range_completion(its, cmd, next_cmd))		\
+> +	if (its_wait_for_range_completion(its, rd_idx, next_cmd))	\
+>   		pr_err_ratelimited("ITS cmd %ps failed\n", builder);	\
+>   }
+>   
+
+
