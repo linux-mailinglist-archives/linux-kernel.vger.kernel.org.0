@@ -2,331 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C024C1B77A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D112F1B780
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbfEMNyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 09:54:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53590 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729747AbfEMNyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 09:54:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 47787AD64;
-        Mon, 13 May 2019 13:54:52 +0000 (UTC)
-Date:   Mon, 13 May 2019 15:54:24 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 09/12] mm/sparsemem: Support sub-section hotplug
-Message-ID: <20190513135317.GA31168@linux>
-References: <155718596657.130019.17139634728875079809.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155718601407.130019.14248061058774128227.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1730041AbfEMN4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 09:56:02 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:42216 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729710AbfEMN4C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 09:56:02 -0400
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x4DDtrJD000439
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 22:55:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x4DDtrJD000439
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557755754;
+        bh=GKa0/XhA2V5agnSr1M250vRxQ9JoLrHwFQTBlihVHZw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A2NezLU4rB7LoX8IMRZd2m4BP0V8uI1kRfoMdC14R5xIeo5PitG+FrU3NdRQpOew4
+         9RqK5eITEAmv+/ekZOiGVA0u+P6qg981h6T0XX2IE8gouF/9FwkHPmGINxhW9RRi59
+         8igcdRh/1CeXnNQnvTZQ4/QaowmQnDTh53o/AWkwePAnoB2U+ffQsC5O9+pvTkc4M7
+         x0ztU8EE9u1u2/cfVZUSUgtYAbI1uFcglHX1ulypEwr+I19g0eaVb6iSEzqvyEwZ+g
+         yD9veq4FAbafhgsFs1ViB7ZA2PmtdubjqjrVg+H1AD4aC0a8cLyYrcbE6IUjhrq/ox
+         5vxIOpiqNB1Ow==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id g187so8042807vsc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 06:55:54 -0700 (PDT)
+X-Gm-Message-State: APjAAAW0N2o0pPBaOVlTHcQQp3EY1VMzkhMQutqEzu8dELctvKhP/kCi
+        raDMie3wE2XMT1r+1ux3qyrYZ+lpnzS+gx6+U6I=
+X-Google-Smtp-Source: APXvYqxIyOecTEYmuZ9dJbhMFII02Kz7kZc+p8l16ixv3t6b/99y+iYBwzuOVT/a/uU4pr8i+3oANjnFqABcTGA/Q6Y=
+X-Received: by 2002:a67:f443:: with SMTP id r3mr13613203vsn.179.1557755753123;
+ Mon, 13 May 2019 06:55:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155718601407.130019.14248061058774128227.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190513112254.22534-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190513112254.22534-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 13 May 2019 22:55:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQjukukcfz9-SyFhqZOZ1v18CJDVA8Zmn5RL92Q=73ZxA@mail.gmail.com>
+Message-ID: <CAK7LNAQjukukcfz9-SyFhqZOZ1v18CJDVA8Zmn5RL92Q=73ZxA@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/boot: fix broken way to pass CONFIG options
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Nicholas Piggin <npiggin@gmail.com>, Rob Herring <robh@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rodrigo R. Galvao" <rosattig@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Greer <mgreer@animalcreek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 04:40:14PM -0700, Dan Williams wrote:
->  
-> +void subsection_mask_set(unsigned long *map, unsigned long pfn,
-> +		unsigned long nr_pages)
-> +{
-> +	int idx = subsection_map_index(pfn);
-> +	int end = subsection_map_index(pfn + nr_pages - 1);
-> +
-> +	bitmap_set(map, idx, end - idx + 1);
-> +}
-> +
->  void subsection_map_init(unsigned long pfn, unsigned long nr_pages)
->  {
->  	int end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
-> @@ -219,20 +235,17 @@ void subsection_map_init(unsigned long pfn, unsigned long nr_pages)
->  		return;
->  
->  	for (i = start_sec; i <= end_sec; i++) {
-> -		int idx, end;
-> -		unsigned long pfns;
->  		struct mem_section *ms;
-> +		unsigned long pfns;
->  
-> -		idx = subsection_map_index(pfn);
->  		pfns = min(nr_pages, PAGES_PER_SECTION
->  				- (pfn & ~PAGE_SECTION_MASK));
-> -		end = subsection_map_index(pfn + pfns - 1);
-> -
->  		ms = __nr_to_section(i);
-> -		bitmap_set(ms->usage->subsection_map, idx, end - idx + 1);
-> +		subsection_mask_set(ms->usage->subsection_map, pfn, pfns);
->  
->  		pr_debug("%s: sec: %d pfns: %ld set(%d, %d)\n", __func__, i,
-> -				pfns, idx, end - idx + 1);
-> +				pfns, subsection_map_index(pfn),
-> +				subsection_map_index(pfn + pfns - 1));
+On Mon, May 13, 2019 at 9:33 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Commit 5e9dcb6188a4 ("powerpc/boot: Expose Kconfig symbols to wrapper")
+> was wrong, but commit e41b93a6be57 ("powerpc/boot: Fix build failures
+> with -j 1") was also wrong.
+>
+> Check-in source files never ever depend on build artifacts.
+>
+> The correct dependency is:
+>
+>   $(obj)/serial.o: $(obj)/autoconf.h
+>
+> However, copying autoconf.h to arch/power/boot/ is questionable
+> in the first place.
+>
+> arch/powerpc/Makefile adopted multiple ways to pass CONFIG options.
+>
+> arch/powerpc/boot/decompress.c references CONFIG_KERNEL_GZIP and
+> CONFIG_KERNEL_XZ, which are passed via the command line.
+>
+> arch/powerpc/boot/serial.c includes the copied autoconf.h to
+> reference a couple of CONFIG options.
+>
+> Do not do this.
+>
+> We should have already learned that including autoconf.h from each
+> source file is really fragile.
+>
+> In fact, it is already broken.
+>
+> arch/powerpc/boot/ppc_asm.h references CONFIG_PPC_8xx, but
+> arch/powerpc/boot/utils.S is not given any way to access CONFIG
+> options. So, CONFIG_PPC_8xx is never defined here.
+>
+> Just pass $(LINUXINCLUDE) and remove all broken code.
+>
+> I also removed the -traditional flag to make include/linux/kconfig.h
+> work. I do not understand why it needs to imitate the behavior of
+> pre-standard C preprocessors.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-I would definetely add subsection_mask_set() and above change to Patch#3.
-I think it suits there better than here.
 
->  
->  		pfn += pfns;
->  		nr_pages -= pfns;
-> @@ -319,6 +332,15 @@ static void __meminit sparse_init_one_section(struct mem_section *ms,
->  		unsigned long pnum, struct page *mem_map,
->  		struct mem_section_usage *usage)
->  {
-> +	/*
-> +	 * Given that SPARSEMEM_VMEMMAP=y supports sub-section hotplug,
-> +	 * ->section_mem_map can not be guaranteed to point to a full
-> +	 *  section's worth of memory.  The field is only valid / used
-> +	 *  in the SPARSEMEM_VMEMMAP=n case.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
-> +		mem_map = NULL;
-> +
->  	ms->section_mem_map &= ~SECTION_MAP_MASK;
->  	ms->section_mem_map |= sparse_encode_mem_map(mem_map, pnum) |
->  							SECTION_HAS_MEM_MAP;
-> @@ -724,10 +746,142 @@ static void free_map_bootmem(struct page *memmap)
->  #endif /* CONFIG_MEMORY_HOTREMOVE */
->  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
->  
-> +#ifndef CONFIG_MEMORY_HOTREMOVE
-> +static void free_map_bootmem(struct page *memmap)
-> +{
-> +}
-> +#endif
-> +
-> +static bool is_early_section(struct mem_section *ms)
-> +{
-> +	struct page *usage_page;
-> +
-> +	usage_page = virt_to_page(ms->usage);
-> +	if (PageSlab(usage_page) || PageCompound(usage_page))
-> +		return false;
-> +	else
-> +		return true;
-> +}
-> +
-> +static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> +		int nid, struct vmem_altmap *altmap)
-> +{
-> +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	struct mem_section *ms = __pfn_to_section(pfn);
-> +	bool early_section = is_early_section(ms);
-> +	struct page *memmap = NULL;
-> +	unsigned long *subsection_map = ms->usage
-> +		? &ms->usage->subsection_map[0] : NULL;
-> +
-> +	subsection_mask_set(map, pfn, nr_pages);
-> +	if (subsection_map)
-> +		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> +
-> +	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
-> +				"section already deactivated (%#lx + %ld)\n",
-> +				pfn, nr_pages))
-> +		return;
-> +
-> +	if (WARN(!IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP)
-> +				&& nr_pages < PAGES_PER_SECTION,
-> +				"partial memory section removal not supported\n"))
-> +		return;
-> +
-> +	/*
-> +	 * There are 3 cases to handle across two configurations
-> +	 * (SPARSEMEM_VMEMMAP={y,n}):
-> +	 *
-> +	 * 1/ deactivation of a partial hot-added section (only possible
-> +	 * in the SPARSEMEM_VMEMMAP=y case).
-> +	 *    a/ section was present at memory init
-> +	 *    b/ section was hot-added post memory init
-> +	 * 2/ deactivation of a complete hot-added section
-> +	 * 3/ deactivation of a complete section from memory init
-> +	 *
-> +	 * For 1/, when subsection_map does not empty we will not be
-> +	 * freeing the usage map, but still need to free the vmemmap
-> +	 * range.
-> +	 *
-> +	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
-> +	 */
-> +	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> +	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
-> +		unsigned long section_nr = pfn_to_section_nr(pfn);
-> +
-> +		if (!early_section) {
-> +			kfree(ms->usage);
-> +			ms->usage = NULL;
-> +		}
-> +		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-> +		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
-> +	}
-> +
-> +	if (early_section && memmap)
-> +		free_map_bootmem(memmap);
-> +	else
-> +		depopulate_section_memmap(pfn, nr_pages, altmap);
-> +}
-> +
-> +static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> +		unsigned long nr_pages, struct vmem_altmap *altmap)
-> +{
-> +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	struct mem_section *ms = __pfn_to_section(pfn);
-> +	struct mem_section_usage *usage = NULL;
-> +	unsigned long *subsection_map;
-> +	struct page *memmap;
-> +	int rc = 0;
-> +
-> +	subsection_mask_set(map, pfn, nr_pages);
-> +
-> +	if (!ms->usage) {
-> +		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
-> +		if (!usage)
-> +			return ERR_PTR(-ENOMEM);
-> +		ms->usage = usage;
-> +	}
-> +	subsection_map = &ms->usage->subsection_map[0];
-> +
-> +	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
-> +		rc = -EINVAL;
-> +	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
-> +		rc = -EEXIST;
-> +	else
-> +		bitmap_or(subsection_map, map, subsection_map,
-> +				SUBSECTIONS_PER_SECTION);
-> +
-> +	if (rc) {
-> +		if (usage)
-> +			ms->usage = NULL;
-> +		kfree(usage);
-> +		return ERR_PTR(rc);
-> +	}
-> +
-> +	/*
-> +	 * The early init code does not consider partially populated
-> +	 * initial sections, it simply assumes that memory will never be
-> +	 * referenced.  If we hot-add memory into such a section then we
-> +	 * do not need to populate the memmap and can simply reuse what
-> +	 * is already there.
-> +	 */
-> +	if (nr_pages < PAGES_PER_SECTION && is_early_section(ms))
-> +		return pfn_to_page(pfn);
-> +
-> +	memmap = populate_section_memmap(pfn, nr_pages, nid, altmap);
-> +	if (!memmap) {
-> +		section_deactivate(pfn, nr_pages, nid, altmap);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	return memmap;
-> +}
+I re-read my commit log, and I thought it was needlessly
+too offensive. Sorry about that.
 
-I do not really like this.
-Sub-section scheme is only available on CONFIG_SPARSE_VMEMMAP, so I would rather
-have two internal __section_{activate,deactivate} functions for sparse-vmemmap and
-sparse-non-vmemmap.
-That way, we can hide all detail implementation and sub-section dance behind
-the __section_{activate,deactivate} functions.
+I will reword the commit log and send v2.
 
-> +
-> @@ -741,49 +895,31 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
->  		unsigned long nr_pages, struct vmem_altmap *altmap)
->  {
->  	unsigned long section_nr = pfn_to_section_nr(start_pfn);
-> -	struct mem_section_usage *usage;
->  	struct mem_section *ms;
->  	struct page *memmap;
->  	int ret;
->  
-> -	/*
-> -	 * no locking for this, because it does its own
-> -	 * plus, it does a kmalloc
-> -	 */
->  	ret = sparse_index_init(section_nr, nid);
->  	if (ret < 0 && ret != -EEXIST)
->  		return ret;
-> -	ret = 0;
-> -	memmap = populate_section_memmap(start_pfn, PAGES_PER_SECTION, nid,
-> -			altmap);
-> -	if (!memmap)
-> -		return -ENOMEM;
-> -	usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
-> -	if (!usage) {
-> -		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
-> -		return -ENOMEM;
-> -	}
->  
-> -	ms = __pfn_to_section(start_pfn);
-> -	if (ms->section_mem_map & SECTION_MARKED_PRESENT) {
-> -		ret = -EEXIST;
-> -		goto out;
-> -	}
-> +	memmap = section_activate(nid, start_pfn, nr_pages, altmap);
-> +	if (IS_ERR(memmap))
-> +		return PTR_ERR(memmap);
-> +	ret = 0;
->  
->  	/*
->  	 * Poison uninitialized struct pages in order to catch invalid flags
->  	 * combinations.
->  	 */
-> -	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
-> +	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
->  
-> +	ms = __pfn_to_section(start_pfn);
->  	section_mark_present(ms);
-> -	sparse_init_one_section(ms, section_nr, memmap, usage);
-> +	sparse_init_one_section(ms, section_nr, memmap, ms->usage);
->  
-> -out:
-> -	if (ret < 0) {
-> -		kfree(usage);
-> -		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
-> -	}
-> +	if (ret < 0)
-> +		section_deactivate(start_pfn, nr_pages, nid, altmap);
->  	return ret;
->  }
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 34f322d14e62..daeb2d7d8dd0 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -900,13 +900,12 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
-        int ret;
- 
-        ret = sparse_index_init(section_nr, nid);
--       if (ret < 0 && ret != -EEXIST)
-+       if (ret < 0)
-                return ret;
- 
-        memmap = section_activate(nid, start_pfn, nr_pages, altmap);
-        if (IS_ERR(memmap))
-                return PTR_ERR(memmap);
--       ret = 0;
- 
-        /*
-         * Poison uninitialized struct pages in order to catch invalid flags
-@@ -918,8 +917,6 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
-        section_mark_present(ms);
-        sparse_init_one_section(ms, section_nr, memmap, ms->usage);
- 
--       if (ret < 0)
--               section_deactivate(start_pfn, nr_pages, nid, altmap);
-        return ret;
- }
+
 
 -- 
-Oscar Salvador
-SUSE L3
+Best Regards
+Masahiro Yamada
