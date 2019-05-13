@@ -2,130 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0A11B44A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B35401B428
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfEMKtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:49:00 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:47599 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728133AbfEMKtA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:49:00 -0400
-X-Greylist: delayed 503 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 06:48:59 EDT
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 4C01C30D;
-        Mon, 13 May 2019 06:40:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 13 May 2019 06:40:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=WApew/vuxJIVZtbLL/hzndegcPF
-        zwFvShwAPmp+eSVw=; b=UMf5oONS/DFmzS5SYtP1oefeJJtM75U5GxD1sqM8G36
-        Ssd+pl3UkYGqMtVK1wGA4W7fm6eaRYv4wSo4234Pby9eppUqXk3na7zS75Bx9i3I
-        IYlsZGNMi3se89ciebk5i0O2Q9zycJWtRmZZth2wVIjadbheztqCZGfUUJbUvrWJ
-        KGuUCHLc2XS2DaPd8ufTVQwaqcKMdrIw/CHQWG5i6vYjzn8m6r5xKVumjEyUDGsy
-        KOS/ugG4lSwdtjwYUVutVmqG/oQZwHRFXLB+wJybshUlAXJ83keLWLeAxqxJaNLd
-        sExE+oFqAYaf9TLh514XjBou61y7YAEkBfuFK1kSusw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=WApew/
-        vuxJIVZtbLL/hzndegcPFzwFvShwAPmp+eSVw=; b=24W6q/NP/SFakj5ZCoiGVv
-        SEdjFX1uZ/mBVHoSbdp5gK1h6IjeJwq2n0X9ZCJALxSZMiEvF9W+bnVpxbpj0aJ+
-        qOTWF3Ltogn09ptqVyKRgxPNt2PeKRbTnU0Bg+Pab975sMY9y6f4kFe/dyNmeoNM
-        TZZ8TuRbGHJXSdRi3ekmdj7Re5lOODWFqrOMUwvsBhwSU3n5PlEwhqdfmwKZGtU1
-        eHXh/tOE8af+mFWxAdX+XFG3hsZIhSQFEjYfEJXZ0NZQDkgWh7M6R6OGBBWCqPVx
-        ZRYfFem/MkYG5qqwXEsH/t58tnnnXh0UzmYg1TnlpMZB4kkkznXXsXFtAtT93y/g
-        ==
-X-ME-Sender: <xms:oEnZXGJBEYRY3jLjzBu_7d93obVCWIoxjD40Ad0bGwjcvZjdRTeCsg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrleeggdeftdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
-    hrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
-    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
-    hinhdrtggtqeenucfkphepuddvgedrudeiledrudeirddukeehnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:oEnZXE4rpE1JjAe9wFG_jPXkjsmajRj4XqNfes1Z53jmQE4WRGsnYg>
-    <xmx:oEnZXPiQFp6beyvTFhkCumt-pM5rBhXanuNBO04tGmezRPSfuKWaRg>
-    <xmx:oEnZXAG3-60dlihvqnuEOg-CiHcXY7HcWk4SwPa_au2jRqTorT7FRw>
-    <xmx:oEnZXOpmeuZHjYu2KPeZPJ7q7mXJ-MyD-HJLX8Dlm8n2V_7g_Z1jwg>
-Received: from localhost (124-169-16-185.dyn.iinet.net.au [124.169.16.185])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C537F80063;
-        Mon, 13 May 2019 06:40:31 -0400 (EDT)
-Date:   Mon, 13 May 2019 20:39:36 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gfs2: Fix error path kobject memory leak
-Message-ID: <20190513103936.GA15053@eros.localdomain>
-References: <20190513033213.2468-1-tobin@kernel.org>
- <20190513071405.GF2868@kroah.com>
+        id S1729076AbfEMKk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 06:40:56 -0400
+Received: from mail.us.es ([193.147.175.20]:41430 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727132AbfEMKk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 06:40:56 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 928CEE5A40
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 12:40:54 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 76590DA737
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 12:40:54 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 70129DA709; Mon, 13 May 2019 12:40:54 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 7D7EDDA701;
+        Mon, 13 May 2019 12:40:45 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Mon, 13 May 2019 12:40:35 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 228C8406740D;
+        Mon, 13 May 2019 12:40:32 +0200 (CEST)
+Date:   Mon, 13 May 2019 12:40:31 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Jagdish Motwani <Jagdish.Motwani@Sophos.com>
+Cc:     Jagdish Motwani <j.k.motwani@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+        "coreteam@netfilter.org" <coreteam@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] netfilter: nf_queue:fix reinject verdict handling
+Message-ID: <20190513104031.np2ollc6njuof2s2@salvia>
+References: <20190508183114.7507-1-j.k.motwani@gmail.com>
+ <20190513092211.isxyzpytenvocbx2@salvia>
+ <CWXP265MB1464BCF96C61A8FD47619AE59E0F0@CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190513071405.GF2868@kroah.com>
-X-Mailer: Mutt 1.11.4 (2019-03-13)
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CWXP265MB1464BCF96C61A8FD47619AE59E0F0@CWXP265MB1464.GBRP265.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 09:14:05AM +0200, Greg Kroah-Hartman wrote:
-> On Mon, May 13, 2019 at 01:32:13PM +1000, Tobin C. Harding wrote:
-> > If a call to kobject_init_and_add() fails we must call kobject_put()
-> > otherwise we leak memory.
-> > 
-> > Function always calls kobject_init_and_add() which always calls
-> > kobject_init().
-> > 
-> > It is safe to leave object destruction up to the kobject release
-> > function and never free it manually.
-> > 
-> > Remove call to kfree() and always call kobject_put() in the error path.
-> > 
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> > ---
-> > 
-> > Is it ok to send patches during the merge window?
-> > 
-> > Applies on top of Linus' mainline tag: v5.1
-> > 
-> > Happy to rebase if there are conflicts.
-> > 
-> > thanks,
-> > Tobin.
-> > 
-> >  fs/gfs2/sys.c | 7 +------
-> >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
-> > index 1787d295834e..98586b139386 100644
-> > --- a/fs/gfs2/sys.c
-> > +++ b/fs/gfs2/sys.c
-> > @@ -661,8 +661,6 @@ int gfs2_sys_fs_add(struct gfs2_sbd *sdp)
-> >  	if (error)
-> >  		goto fail_reg;
-> >  
-> > -	sysfs_frees_sdp = 1; /* Freeing sdp is now done by sysfs calling
-> > -				function gfs2_sbd_release. */
+On Mon, May 13, 2019 at 10:36:51AM +0000, Jagdish Motwani wrote:
+> Hi Pablo,
 > 
-> You should also delete this variable at the top of the function, as it
-> is now only set once there and never used.
+> The case I am referring to is : If there are more than 1  hooks
+> returning NF_QUEUE verdict.  When the first queue reinjects the
+> packet, 'nf_reinject' starts traversing hooks with hook_index (i).
+> However if it again receives a NF_QUEUE verdict (by some other
+> netfilter hook), it queue with the wrong hook_index.  So, when the
+> second queue reinjects the packet, it re-executes some hooks in
+> between the first 2 hooks.
 
-Thanks, I should have gotten a compiler warning for that.  I was feeling
-so confident with my builds this morning ... pays not to get too cocky
-I suppose.
+Please, include this description in the patch. And thanks for
+explaining.
 
-> With that:
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Thanks, I will mark :  Fixes: 960632ece694 ("netfilter: convert hook list to an array") and update the description also.
 
-Thanks, will re-spin.
-
-	Tobin.
+Thanks, will wait for v2.
