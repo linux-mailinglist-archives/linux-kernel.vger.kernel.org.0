@@ -2,55 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5043C1B10A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 09:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D371B0D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 09:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfEMHOz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 03:14:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbfEMHOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 03:14:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 464F820578;
-        Mon, 13 May 2019 07:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557731694;
-        bh=0vjm7BJSAo+A2YxcnfzZfoWM4WgRO7sXAA6JkaduZuA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZJEwu0+rMPfOroLHfuKpLy6OEqzgxhviAsu/PambX+89fgLAEd5NLSIpPFndrBt4e
-         RoGlSIre7yR+cOD3UhXSK94qHFCWhh+7WM8gvSAF9XwqL+AvZbOCzSl8hiDIgOeUha
-         KJFZ4RNTw1j8eo4Z2P3gVSjR/A0A8bkrv83c7vHw=
-Date:   Mon, 13 May 2019 09:14:52 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ocfs2: Fix error path kobject memory leak
-Message-ID: <20190513071452.GG2868@kroah.com>
-References: <20190513033458.2824-1-tobin@kernel.org>
+        id S1727748AbfEMHJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 03:09:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42854 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725980AbfEMHJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 03:09:40 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A9CC21403EFB371D35F4;
+        Mon, 13 May 2019 15:09:37 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 13 May 2019 15:09:31 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] media: vim2m: fix two double-free issues
+Date:   Mon, 13 May 2019 15:18:29 +0800
+Message-ID: <20190513071829.140076-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513033458.2824-1-tobin@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 01:34:58PM +1000, Tobin C. Harding wrote:
-> If a call to kobject_init_and_add() fails we should call kobject_put()
-> otherwise we leak memory.
-> 
-> Add call to kobject_put() in the error path of call to
-> kobject_init_and_add().  Please note, this has the side effect that
-> the release method is called if kobject_init_and_add() fails.
-> 
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> ---
+vim2m_device_release() will be called by video_unregister_device() to release
+various objects.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+There are two double-free issue,
+1. dev->m2m_dev will be freed twice in error_m2m path/vim2m_device_release
+2. the error_v4l2 and error_free path in vim2m_probe() will release
+   same objects, since vim2m_device_release has done.
+
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: ea6c7e34f3b2 ("media: vim2m: replace devm_kzalloc by kzalloc")
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/media/platform/vim2m.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
+index 243c82b5d537..acd3bd48c7e2 100644
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -1359,7 +1359,7 @@ static int vim2m_probe(struct platform_device *pdev)
+ 						 MEDIA_ENT_F_PROC_VIDEO_SCALER);
+ 	if (ret) {
+ 		v4l2_err(&dev->v4l2_dev, "Failed to init mem2mem media controller\n");
+-		goto error_m2m;
++		goto error_dev;
+ 	}
+ 
+ 	ret = media_device_register(&dev->mdev);
+@@ -1373,11 +1373,11 @@ static int vim2m_probe(struct platform_device *pdev)
+ #ifdef CONFIG_MEDIA_CONTROLLER
+ error_m2m_mc:
+ 	v4l2_m2m_unregister_media_controller(dev->m2m_dev);
+-error_m2m:
+-	v4l2_m2m_release(dev->m2m_dev);
+ #endif
+ error_dev:
+ 	video_unregister_device(&dev->vfd);
++	/* vim2m_device_release called by video_unregister_device to release various objects */
++	return ret;
+ error_v4l2:
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ error_free:
+-- 
+2.20.1
+
