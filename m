@@ -2,122 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF8F1B47A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDDEF1B480
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbfEMLDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 07:03:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51382 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbfEMLDI (ORCPT
+        id S1729242AbfEMLFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 07:05:02 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39584 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729231AbfEMLFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 07:03:08 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o189so13421125wmb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:03:06 -0700 (PDT)
+        Mon, 13 May 2019 07:05:01 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f1so8706290lfl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WRqvTnSf7OQ2cd1bvnl7SkQVvla7dUVQROgM13fu2Aw=;
-        b=RdGbz448Xl7sbCh8S+513r/0nCFaMWckXqFBkpfJ72V37wRhZb+f3STpFIQ2D5Rqhw
-         /IYuzb97jjx301h/PZvzs0bciuywl3H3jiZwlgBYkJI29c+wehU7Eg53Peizm+06DspM
-         gb3rmhpJuts/UNqFqGYAoiYQj+xAQkGa6ys5qbgjxJnR4xVwasJt6rT0fRgBcqSLJMDx
-         fLyTc7Y4LB7BxR8Bo+nU49dcOPBtW2cMBuGeDlDZqzo1MrSXx0QjZyv2PuuRz2P1FGce
-         brpOQ2CSqM1AB538rLXFWYmXE7gyMVmwvgA9H/o4Yw2ZdcDwigK6PuaX8N+tRu54ukWi
-         AMDA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w2aTyEsXXgINm2iYMe46jgXNAvwErCJxVhYOHAxTxdo=;
+        b=yBGfuqfbMQCgliD3wrwLr0hRmquM17EiaCWALz55OZq2LazOK4J8mGJHgA9BHpG37o
+         C9Cz/2srCGZavEySCc9oN1Tse8QXYoY1ZroK7Q10fM1vMlQ2ujkmBKbzFwHa1KfQAIAT
+         dz6PAVz5H69b3CIdLazCnxdMAOkvyHPYMxYMUR8aVPPFsN2Yva/MizMQpXoY1vrxpfUz
+         /72AscVlBx+6VR8t+ErrWdF0PpwwNQGOFYsClg+SRCmlg3qMbGrKVsZclI/jAfmOnsEe
+         NqvimiurAy0g72vO+wS30gyCeFbC5XQNoBa4cVQ64r2LnEZIdgqHeAZgfPz4givjqE7D
+         I4qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WRqvTnSf7OQ2cd1bvnl7SkQVvla7dUVQROgM13fu2Aw=;
-        b=V/Y1+mMSDH3QocpLunP0Cl7n6+A5cs1j08LCuMy4I0+MCEnU7sUe4iAsvJu7gdahRf
-         O295dVfJfQbQEopOopFaTsX6AfX8JZbXsSxWfaXu7jURfM6phen0OJDCXQ7NGfZyFtSy
-         JG1StgmoE5UENpG/4XBdxrsVMHXMK0JgRMXFgOpDqH5CidN0UGiS/ToTvYxidf9aralI
-         qq1iMX0UoPdxmJkX+2dBJQAFjdDeXIpK4+X7gsKs+7u+u/lICzdszuVQIIOUgzIIqJ5F
-         VfPlG9OzDUmphOS2fABGKIgGefy1ottriprIvPTdm+nldf3dXD0CKXRiB1ZBKPG0OX9z
-         cmDA==
-X-Gm-Message-State: APjAAAXY0lGDX10WL76UAK1grCdejBNidLh3n8iu093X2UricRZrHeYi
-        MULRO25VdeFlBaPVUykUj4qhFw==
-X-Google-Smtp-Source: APXvYqyMcyvajnlaKPXrE/pmTG3QcILUV6eHFGhXb6asxr+aZ6yhWgw3/7zqxDkBjJMlUHbVcKulYQ==
-X-Received: by 2002:a1c:7ed2:: with SMTP id z201mr11867311wmc.113.1557745385424;
-        Mon, 13 May 2019 04:03:05 -0700 (PDT)
-Received: from [192.168.0.41] (205.29.129.77.rev.sfr.net. [77.129.29.205])
-        by smtp.googlemail.com with ESMTPSA id y1sm2199566wma.14.2019.05.13.04.03.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 04:03:04 -0700 (PDT)
-Subject: Re: [PATCH 7/9] genirq/timings: Add selftest for circular array
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Changbin Du <changbin.du@intel.com>
-References: <20190513102953.16424-1-daniel.lezcano@linaro.org>
- <20190513102953.16424-8-daniel.lezcano@linaro.org>
- <20190513105027.GQ9224@smile.fi.intel.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b32ff71b-8541-e135-11f2-7455ebc2b8c6@linaro.org>
-Date:   Mon, 13 May 2019 13:03:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w2aTyEsXXgINm2iYMe46jgXNAvwErCJxVhYOHAxTxdo=;
+        b=QJ3fYtTo0tK3Eto3MwM8V675aRjKc1s7Zzpyk0ID2b5cYdJSeUWyTsEPCshdRn3ojy
+         mJan5cYKL5T7b0Fn92MCgXmx/J67armYp+J887rejSNzFXvmChbfk/vgwrKnrJnc4jTE
+         5GNcQG6ooO3+UWvfWOKRzQeoqFMudIWY86IhNOKF1McGj17X4DQqkWBY7xQgtd7R6iRr
+         hoZzfiX7heSLnSj58lxv+D7RWHZkmxtplfOMjWKxeqOCpcp/8WsbDDIfn5OFar0Q6/gi
+         dVo0iqrb5ds2dC9f37XU/uBXm2sfmDMgFWxCLc2XeHw56bIk3P9iZKL6movWcJyRUECC
+         PerA==
+X-Gm-Message-State: APjAAAXvSt2uWEqpGNGUouSB3zJVJQjJmFZNF2o9y/aAlRZi+3eOdMqy
+        TxOD8y7v/4kkDDYIF/ueHbucMQ==
+X-Google-Smtp-Source: APXvYqzKHIY0n6oJU69DxP9sS/vxMtid7YQ/TJkM4OxmIj2byuy3/l0p2e9OHHD6mBNrsU9Q6F/8Lw==
+X-Received: by 2002:ac2:4217:: with SMTP id y23mr13153081lfh.134.1557745498257;
+        Mon, 13 May 2019 04:04:58 -0700 (PDT)
+Received: from centauri (h-158-174-22-72.NA.cust.bahnhof.se. [158.174.22.72])
+        by smtp.gmail.com with ESMTPSA id s26sm2954901ljj.52.2019.05.13.04.04.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 13 May 2019 04:04:57 -0700 (PDT)
+Date:   Mon, 13 May 2019 13:04:55 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] opp: Attach genpds to devices from within OPP core
+Message-ID: <20190513110455.GA30513@centauri>
+References: <1bc9053f5c41a10832b58a2a81decbad7f1aded9.1557742920.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190513105027.GQ9224@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1bc9053f5c41a10832b58a2a81decbad7f1aded9.1557742920.git.viresh.kumar@linaro.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/05/2019 12:50, Andy Shevchenko wrote:
-> On Mon, May 13, 2019 at 12:29:51PM +0200, Daniel Lezcano wrote:
->> Due to the complexity of the code and the difficulty to debug it,
->> let's add some selftests to the framework in order to spot issues or
->> regression at boot time when the runtime testing is enabled for this
->> subsystem.
->>
->> This tests the circular buffer at the limits and validates:
->>  - the encoding / decoding of the values
->>  - the macro to browse the irq timings circular buffer
->>  - the function to push data in the circular buffer
+On Mon, May 13, 2019 at 03:54:10PM +0530, Viresh Kumar wrote:
+> The OPP core requires the virtual device pointers to set performance
+> state on behalf of the device, for the multiple power domain case. The
+> genpd API (dev_pm_domain_attach_by_name()) has evolved now to support
+> even the single power domain case and that lets us add common code for
+> handling both the cases more efficiently.
 > 
->>  kernel/irq/timings.c | 119 +++++++++++++++++++++++++++++++++++++++++++
+> The virtual device structure returned by dev_pm_domain_attach_by_name()
+> isn't normally used by the cpufreq drivers as they don't manage power
+> on/off of the domains and so is only useful for the OPP core.
 > 
-> Is it possible to have it in a separate C-file?
-
-It is possible but I would like to keep the selftest in the same file in
-order to keep all the structures and functions self-contained.
-
->> +config TEST_IRQ_TIMINGS
->> +	bool "IRQ timings selftest"
+> This patch moves all the complexity into the OPP core to make the end
+> drivers simple. The earlier APIs dev_pm_opp_{set|put}_genpd_virt_dev()
+> are reworked into dev_pm_opp_{attach|detach}_genpd(). The new helper
+> dev_pm_opp_attach_genpd() accepts a NULL terminated array of strings
+> which contains names of all the genpd's to attach. It then attaches all
+> the domains and saves the pointers to the virtual devices. The other
+> helper undo the work done by this helper.
 > 
->> +	default n
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> @Niklas: Can you please try these patches and confirm they solve the
+> issues you were facing ?
 > 
-> This is already default.
-
-Right, thanks for the review.
-
->> +	depends on IRQ_TIMINGS
->> +	help
->> +	  Enable this option to test the irq timings code on boot.
->> +
->> +	  If unsure, say N.
+>  drivers/opp/core.c     | 128 ++++++++++++++++++++++++++---------------
+>  include/linux/pm_opp.h |   8 +--
+>  2 files changed, 86 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 0e7703fe733f..67d6b0caeab1 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1744,91 +1744,127 @@ void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table)
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_unregister_set_opp_helper);
+>  
+> +static void _opp_detach_genpd(struct opp_table *opp_table)
+> +{
+> +	int index;
+> +
+> +	for (index = 0; index < opp_table->required_opp_count; index++) {
+> +		if (!opp_table->genpd_virt_devs[index])
+> +			continue;
+> +
+> +		dev_pm_domain_detach(opp_table->genpd_virt_devs[index], false);
+> +		opp_table->genpd_virt_devs[index] = NULL;
+> +	}
+> +}
+> +
+>  /**
+> - * dev_pm_opp_set_genpd_virt_dev - Set virtual genpd device for an index
+> - * @dev: Consumer device for which the genpd device is getting set.
+> - * @virt_dev: virtual genpd device.
+> - * @index: index.
+> + * dev_pm_opp_attach_genpd - Attach genpd(s) for the device and save virtual device pointer
+> + * @dev: Consumer device for which the genpd is getting attached.
+> + * @names: Null terminated array of pointers containing names of genpd to attach.
+>   *
+>   * Multiple generic power domains for a device are supported with the help of
+>   * virtual genpd devices, which are created for each consumer device - genpd
+>   * pair. These are the device structures which are attached to the power domain
+>   * and are required by the OPP core to set the performance state of the genpd.
+> + * The same API also works for the case where single genpd is available and so
+> + * we don't need to support that separately.
+>   *
+>   * This helper will normally be called by the consumer driver of the device
+> - * "dev", as only that has details of the genpd devices.
+> + * "dev", as only that has details of the genpd names.
+>   *
+> - * This helper needs to be called once for each of those virtual devices, but
+> - * only if multiple domains are available for a device. Otherwise the original
+> - * device structure will be used instead by the OPP core.
+> + * This helper needs to be called once with a list of all genpd to attach.
+> + * Otherwise the original device structure will be used instead by the OPP core.
+>   */
+> -struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev,
+> -						struct device *virt_dev,
+> -						int index)
+> +struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
+>  {
+>  	struct opp_table *opp_table;
+> +	struct device *virt_dev;
+> +	int index, ret = -EINVAL;
+> +	const char **name = names;
+>  
+>  	opp_table = dev_pm_opp_get_opp_table(dev);
+>  	if (!opp_table)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	/*
+> +	 * If the genpd's OPP table isn't already initialized, parsing of the
+> +	 * required-opps fail for dev. We should retry this after genpd's OPP
+> +	 * table is added.
+> +	 */
+> +	if (!opp_table->required_opp_count) {
+> +		ret = -EPROBE_DEFER;
+> +		goto put_table;
+> +	}
+> +
+>  	mutex_lock(&opp_table->genpd_virt_dev_lock);
+>  
+> -	if (unlikely(!opp_table->genpd_virt_devs ||
+> -		     index >= opp_table->required_opp_count ||
+> -		     opp_table->genpd_virt_devs[index])) {
+> +	while (*name) {
+> +		index = of_property_match_string(dev->of_node,
+> +						 "power-domain-names", *name);
+> +		if (index < 0) {
+> +			dev_err(dev, "Failed to find power domain: %s (%d)\n",
+> +				*name, index);
+> +			goto err;
+> +		}
+>  
+> -		dev_err(dev, "Invalid request to set required device\n");
+> -		dev_pm_opp_put_opp_table(opp_table);
+> -		mutex_unlock(&opp_table->genpd_virt_dev_lock);
+> +		if (index >= opp_table->required_opp_count) {
+> +			dev_err(dev, "Index can't be greater than required-opp-count - 1, %s (%d : %d)\n",
+> +				*name, opp_table->required_opp_count, index);
+> +			goto err;
+> +		}
+>  
+> -		return ERR_PTR(-EINVAL);
+> +		if (opp_table->genpd_virt_devs[index]) {
+> +			dev_err(dev, "Genpd virtual device already set %s\n",
+> +				*name);
+> +			goto err;
+> +		}
+> +
+> +		virt_dev = dev_pm_domain_attach_by_name(dev, *name);
+> +		if (IS_ERR(virt_dev)) {
+> +			ret = PTR_ERR(virt_dev);
+> +			dev_err(dev, "Couldn't attach to pm_domain: %d\n", ret);
+> +			goto err;
+> +		}
+> +
+> +		opp_table->genpd_virt_devs[index] = virt_dev;
+> +		name++;
+>  	}
+>  
+> -	opp_table->genpd_virt_devs[index] = virt_dev;
+>  	mutex_unlock(&opp_table->genpd_virt_dev_lock);
+>  
+>  	return opp_table;
+> +
+> +err:
+> +	_opp_detach_genpd(opp_table);
+> +	mutex_unlock(&opp_table->genpd_virt_dev_lock);
+> +
+> +put_table:
+> +	dev_pm_opp_put_opp_table(opp_table);
+> +
+> +	return ERR_PTR(ret);
+>  }
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_attach_genpd);
+>  
+>  /**
+> - * dev_pm_opp_put_genpd_virt_dev() - Releases resources blocked for genpd device.
+> - * @opp_table: OPP table returned by dev_pm_opp_set_genpd_virt_dev().
+> - * @virt_dev: virtual genpd device.
+> - *
+> - * This releases the resource previously acquired with a call to
+> - * dev_pm_opp_set_genpd_virt_dev(). The consumer driver shall call this helper
+> - * if it doesn't want OPP core to update performance state of a power domain
+> - * anymore.
+> + * dev_pm_opp_detach_genpd() - Detach genpd(s) from the device.
+> + * @opp_table: OPP table returned by dev_pm_opp_attach_genpd().
+> + *
+> + * This detaches the genpd(s), resets the virtual device pointers, and puts the
+> + * OPP table.
+>   */
+> -void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table,
+> -				   struct device *virt_dev)
+> +void dev_pm_opp_detach_genpd(struct opp_table *opp_table)
+>  {
+> -	int i;
+> -
+>  	/*
+>  	 * Acquire genpd_virt_dev_lock to make sure virt_dev isn't getting
+>  	 * used in parallel.
+>  	 */
+>  	mutex_lock(&opp_table->genpd_virt_dev_lock);
+> -
+> -	for (i = 0; i < opp_table->required_opp_count; i++) {
+> -		if (opp_table->genpd_virt_devs[i] != virt_dev)
+> -			continue;
+> -
+> -		opp_table->genpd_virt_devs[i] = NULL;
+> -		dev_pm_opp_put_opp_table(opp_table);
+> -
+> -		/* Drop the vote */
+> -		dev_pm_genpd_set_performance_state(virt_dev, 0);
+> -		break;
+> -	}
+> -
+> +	_opp_detach_genpd(opp_table);
+>  	mutex_unlock(&opp_table->genpd_virt_dev_lock);
+>  
+> -	if (unlikely(i == opp_table->required_opp_count))
+> -		dev_err(virt_dev, "Failed to find required device entry\n");
+> +	dev_pm_opp_put_opp_table(opp_table);
+>  }
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_detach_genpd);
+>  
+>  /**
+>   * dev_pm_opp_xlate_performance_state() - Find required OPP's pstate for src_table.
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index b150fe97ce5a..be570761b77a 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -131,8 +131,8 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
+>  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
+>  struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
+>  void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+> -struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev, struct device *virt_dev, int index);
+> -void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev);
+> +struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names);
+> +void dev_pm_opp_detach_genpd(struct opp_table *opp_table);
+>  int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
+>  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+>  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
+> @@ -295,12 +295,12 @@ static inline struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const
+>  
+>  static inline void dev_pm_opp_put_clkname(struct opp_table *opp_table) {}
+>  
+> -static inline struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev, struct device *virt_dev, int index)
+> +static inline struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names)
+>  {
+>  	return ERR_PTR(-ENOTSUPP);
+>  }
+>  
+> -static inline void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev) {}
+> +static inline void dev_pm_opp_detach_genpd(struct opp_table *opp_table) {}
+>  
+>  static inline int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate)
+>  {
+> -- 
+> 2.21.0.rc0.269.g1a574e7a288b
 > 
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
