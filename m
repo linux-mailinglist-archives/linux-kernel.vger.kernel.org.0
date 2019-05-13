@@ -2,117 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D67BA1B763
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D620C1B7A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbfEMNvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 09:51:17 -0400
-Received: from sauhun.de ([88.99.104.3]:40712 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbfEMNvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 09:51:17 -0400
-Received: from localhost (p54B3324F.dip0.t-ipconnect.de [84.179.50.79])
-        by pokefinder.org (Postfix) with ESMTPSA id 745163E42F7;
-        Mon, 13 May 2019 15:51:14 +0200 (CEST)
-Date:   Mon, 13 May 2019 15:51:14 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "George G. Davis" <ggdavisiv@gmail.com>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "George G. Davis" <george_davis@mentor.com>
-Subject: Re: [PATCH] serial: sh-sci: disable DMA for uart_console
-Message-ID: <20190513135114.GA20443@kunai>
-References: <20190506194233.GA32430@vmlxhi-102.adit-jv.com>
- <1557413011-1662-1-git-send-email-george_davis@mentor.com>
+        id S1730324AbfEMOBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:01:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7639 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727272AbfEMOBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:01:48 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 183C2B7D0CAF378CE88;
+        Mon, 13 May 2019 21:52:55 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
+ 21:52:44 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <agross@kernel.org>, <david.brown@linaro.org>,
+        <amit.kucheria@linaro.org>, <rui.zhang@intel.com>,
+        <edubezval@gmail.com>, <daniel.lezcano@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] thermal: tsens: Make some symbols static
+Date:   Mon, 13 May 2019 21:52:16 +0800
+Message-ID: <20190513135216.23540-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <1557413011-1662-1-git-send-email-george_davis@mentor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix sparse warnings:
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/thermal/qcom/tsens-v0_1.c:322:29: warning: symbol 'tsens_v0_1_feat' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v0_1.c:330:24: warning: symbol 'tsens_v0_1_regfields' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v1.c:147:29: warning: symbol 'tsens_v1_feat' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v1.c:155:24: warning: symbol 'tsens_v1_regfields' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v2.c:30:29: warning: symbol 'tsens_v2_feat' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v2.c:38:24: warning: symbol 'tsens_v2_regfields' was not declared. Should it be static?
 
-On Thu, May 09, 2019 at 10:43:30AM -0400, George G. Davis wrote:
-> As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
-> console UART"), UART console lines use low-level PIO only access functions
-> which will conflict with use of the line when DMA is enabled, e.g. when
-> the console line is also used for systemd messages. So disable DMA
-> support for UART console lines.
->=20
-> Fixes: https://patchwork.kernel.org/patch/10929511/
-> Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
-> Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-> Signed-off-by: George G. Davis <george_davis@mentor.com>
-> ---
->  drivers/tty/serial/sh-sci.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 3cd139752d3f..885b56b1d4e4 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -1557,6 +1557,9 @@ static void sci_request_dma(struct uart_port *port)
-> =20
->  	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
-> =20
-> +	if (uart_console(port))
-> +		return; /* Cannot use DMA on console */
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/thermal/qcom/tsens-v0_1.c | 4 ++--
+ drivers/thermal/qcom/tsens-v1.c   | 4 ++--
+ drivers/thermal/qcom/tsens-v2.c   | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Minor nit: maybe the comment can be made more specific?
+diff --git a/drivers/thermal/qcom/tsens-v0_1.c b/drivers/thermal/qcom/tsens-v0_1.c
+index b3a63d7..a319283 100644
+--- a/drivers/thermal/qcom/tsens-v0_1.c
++++ b/drivers/thermal/qcom/tsens-v0_1.c
+@@ -319,7 +319,7 @@ static int calibrate_8974(struct tsens_priv *priv)
+ 
+ /* v0.1: 8916, 8974 */
+ 
+-const struct tsens_features tsens_v0_1_feat = {
++static const struct tsens_features tsens_v0_1_feat = {
+ 	.ver_major	= VER_0_1,
+ 	.crit_int	= 0,
+ 	.adc		= 1,
+@@ -327,7 +327,7 @@ const struct tsens_features tsens_v0_1_feat = {
+ 	.max_sensors	= 11,
+ };
+ 
+-const struct reg_field tsens_v0_1_regfields[MAX_REGFIELDS] = {
++static const struct reg_field tsens_v0_1_regfields[MAX_REGFIELDS] = {
+ 	/* ----- SROT ------ */
+ 	/* No VERSION information */
+ 
+diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
+index a1221ef..10b595d 100644
+--- a/drivers/thermal/qcom/tsens-v1.c
++++ b/drivers/thermal/qcom/tsens-v1.c
+@@ -144,7 +144,7 @@ static int calibrate_v1(struct tsens_priv *priv)
+ 
+ /* v1.x: qcs404,405 */
+ 
+-const struct tsens_features tsens_v1_feat = {
++static const struct tsens_features tsens_v1_feat = {
+ 	.ver_major	= VER_1_X,
+ 	.crit_int	= 0,
+ 	.adc		= 1,
+@@ -152,7 +152,7 @@ const struct tsens_features tsens_v1_feat = {
+ 	.max_sensors	= 11,
+ };
+ 
+-const struct reg_field tsens_v1_regfields[MAX_REGFIELDS] = {
++static const struct reg_field tsens_v1_regfields[MAX_REGFIELDS] = {
+ 	/* ----- SROT ------ */
+ 	/* VERSION */
+ 	[VER_MAJOR] = REG_FIELD(SROT_HW_VER_OFF, 28, 31),
+diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
+index 36fbfa6..1099069 100644
+--- a/drivers/thermal/qcom/tsens-v2.c
++++ b/drivers/thermal/qcom/tsens-v2.c
+@@ -27,7 +27,7 @@
+ 
+ /* v2.x: 8996, 8998, sdm845 */
+ 
+-const struct tsens_features tsens_v2_feat = {
++static const struct tsens_features tsens_v2_feat = {
+ 	.ver_major	= VER_2_X,
+ 	.crit_int	= 1,
+ 	.adc		= 0,
+@@ -35,7 +35,7 @@ const struct tsens_features tsens_v2_feat = {
+ 	.max_sensors	= 16,
+ };
+ 
+-const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
++static const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
+ 	/* ----- SROT ------ */
+ 	/* VERSION */
+ 	[VER_MAJOR] = REG_FIELD(SROT_HW_VER_OFF, 28, 31),
+-- 
+2.7.4
 
-/*
- * DMA on console may interfere with Kernel log messages which use
- * plain putchar(). So, simply don't use it with a console.
- */
 
-Other than that:
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Much better than dropping the properties, as Geert noted.
-
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzZdk0ACgkQFA3kzBSg
-KbbUJg/0D+EF6AyzLCGEPsV3puYcRKlpa9CGvd9V4bDHTn0Ft4v3pq+VR8CZg8Xc
-GGERKTh4+uu5SAFeYT9ZamkFLTBcyrzJ+qJWVuSmkZROJg6OlRn10tMV5Vw1L5PY
-O4IHapY707vQb6c9Sey6xoF15n7sKWD3HeoNyTDKwncPPwdDulsri2Q0WLIwrq3T
-L5T+wDTVlAW+Vbw4TA3FBZVjWjWthT85hpTZW802YWyA+ZJMwS678BU6eL7UZFwN
-+/raK/zqcTfyoY3vk03nG82BIQeZ4IVenLo7F9eXSYUY2d0JBzBbPqJOqINy2pbD
-j1eaOap+xS4TmlDNRSI9mIJb75AQXNaVz47P/tCQmLvJnNsFXREtzTlKT5pk489k
-FNQ0S1wpAf2clOUr+of53LKKnK2nS5vtWnoTcIE+g8dOztRDn2WkW20Ly0TgF8e1
-UPPOeoNkdGzeHHOQh0CA4yOlaKef0CV/WpxLTtRmlP+hPkyQOSbyYeVkipVd7TWu
-wwVBCSkIzUPnv6Ybmrrp0B0T6F5pZ3+c0Gy9SZH895dzYZF3ybnAqrRQ/T62UBvV
-7birU3vYq5sr4pyoQtnsrF2pAfcJecMcGem5WeQlbAlhRUkq7k89BJ91FNf73blL
-QsZr8CAATc7aCb/7Cj8O38Ify07O45dNe/djQ25GyP+rfrL+OA==
-=7vLz
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
