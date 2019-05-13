@@ -2,63 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64DA1B95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC571B93A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbfEMPAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:00:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:42469 "EHLO mga18.intel.com"
+        id S1731014AbfEMOzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:55:52 -0400
+Received: from node.akkea.ca ([192.155.83.177]:36988 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfEMPAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:00:48 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 08:00:47 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 13 May 2019 08:00:46 -0700
-Date:   Mon, 13 May 2019 08:55:24 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Mario.Limonciello@dell.com
-Cc:     hch@lst.de, keith.busch@intel.com, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        kai.heng.feng@canonical.com
-Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
-Message-ID: <20190513145522.GA15421@localhost.localdomain>
-References: <20190510212937.11661-1-keith.busch@intel.com>
- <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
- <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
- <20190513143741.GA25500@lst.de>
- <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1729771AbfEMOzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:55:51 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id B52964E2051;
+        Mon, 13 May 2019 14:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1557759350; bh=OOUM+cZt3N1O8ifnVoGjz7TsndlomzrMemNmnvMhK2E=;
+        h=From:To:Cc:Subject:Date;
+        b=ZaICwk+Z5Vwzoz5RWBjQlFETaFJLgWRLCfM3fr5fm0pdG2d4NmVNuTCg5oGBvyoOn
+         kkh+MoA/LIxTfLpXQpBm28TZqFGVsvujgMXl37WEP4hANtc/2G0d+MeClJ8RXGKqbn
+         FqnefmjKixeLVaoUQfvmtJkQzkeyGXrH4P0dg9HA=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id USx-Vvek2F9m; Mon, 13 May 2019 14:55:49 +0000 (UTC)
+Received: from midas.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
+        by node.akkea.ca (Postfix) with ESMTPSA id 15DD94E204B;
+        Mon, 13 May 2019 14:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1557759349; bh=OOUM+cZt3N1O8ifnVoGjz7TsndlomzrMemNmnvMhK2E=;
+        h=From:To:Cc:Subject:Date;
+        b=C21yMHCOjAsIVj3LJoksLIrYrY8yLDfs8XUPC1rCqBNqf8HXzxdVLNXH0c7ndRH06
+         sq6WiErAE96iNmDimIJsOTzUAZOoGPLq/3thiQ5ZVvB3U4wAo19VbkoMbrN1Inj680
+         0JTggLqe2LB8CQ1/yJ7YFHCMbqNGSXoHtQ9oezjs=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     angus.ainslie@puri.sm
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/3] Add support for the Purism Librem5 devkit
+Date:   Mon, 13 May 2019 07:55:36 -0700
+Message-Id: <20190513145539.28174-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 02:43:43PM +0000, Mario.Limonciello@dell.com wrote:
-> > Well, it sounds like your partners device does not work properly in this
-> > case.  There is nothing in the NVMe spec that says queues should be
-> > torn down for deep power states, and that whole idea seems rather
-> > counter productive to low-latency suspend/resume cycles.
-> 
-> Well I've got a thought, quoting the NVME spec:
-> "After a successful completion of a Set Features command for this feature, the controller shall be in the
-> Power State specified. If enabled, autonomous power state transitions continue to occur from the new state."
-> 
-> If APST is enabled on this disk, what is to stop an autonomous  reverse
-> transition from queue activity on the way down?
+The Librem5 devkit is based on the imx8mq from NXP. This is a default
+devicetree to boot the board to a command prompt.
 
-Regardless of whether APST is enabled or not, the controller may
-autonomously transition out of a host requested low power state in
-response to host activity. Exiting a low power state should mean some
-other task is actively using the device, and if that's the case, why are
-you trying to enter a low power state in the first place? Alternatively,
-if host activity really is idle, then why is the device autonomously
-leaving the requested state?
+Changes since v8:
+
+Fixed license comment.
+Changed regulators to all lower case.
+Changed clock frequency for NXP errata e7805.
+Dropped blank line.
+
+Changes since v7:
+
+More regulators always on for USB.
+Add vbus regulator.
+Drop vbat regulator.
+Replace legacy "gpio-key,wakeup" with "wakeup-source".
+Add vbus-supply to get rid of warning
+imx8mq-usb-phy 382f0040.usb-phy: 382f0040.usb-phy supply vbus not found, using dummy regulator
+
+Changes since v6:
+
+Dropped unused regulators.
+Fix regulator phandles case.
+Dropped extra whitespace.
+
+Changes since v5:
+
+Added reviewed-by tags.
+Moved USB port links to USB controller node.
+
+Changes since v4:
+
+Compiled against linux-next next-20190415.
+Added imx8mq to the arm yaml file.
+Re-arrange regulator nodes to drop undefined supplies.
+Additional ordering for aesthetics.
+Split some long lines.
+Added lots of blank lines.
+Moved pinctl muxes to where they are used.
+Cleaned out reg defintions from regulator nodes.
+
+Changes since v3:
+
+Freshly sorted and pressed nodes.
+Change the backlight to an interpolated scale.
+Dropped i2c2.
+Dropped devkit version number to match debian MR.
+
+Changes since v2:
+
+Fixed incorrect phy-supply for the fsl-fec.
+Dropped unused regulator property.
+Fixup Makefile for linux-next.
+
+Changes since v1:
+
+Dropped config file.
+Updated the board compatible label.
+Changed node names to follow naming conventions.
+Added a more complete regulator hierachy.
+Removed unused nodes.
+Removed unknown devices.
+Fixed comment style.
+Dropped undocumented properties.
+
+Angus Ainslie (Purism) (3):
+  arm64: dts: fsl: librem5: Add a device tree for the Librem5 devkit
+  dt-bindings: Add an entry for Purism SPC
+  dt-bindings: arm: fsl: Add the imx8mq boards
+
+ .../devicetree/bindings/arm/fsl.yaml          |   7 +
+ .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx8mq-librem5-devkit.dts   | 821 ++++++++++++++++++
+ 4 files changed, 830 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+
+-- 
+2.17.1
+
