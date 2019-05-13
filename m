@@ -2,107 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A43161AF34
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 05:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C992F1AF2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 05:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfEMDk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 23:40:27 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:48009 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727202AbfEMDk0 (ORCPT
+        id S1727503AbfEMDkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 23:40:06 -0400
+Received: from mail.windriver.com ([147.11.1.11]:41009 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbfEMDkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 23:40:26 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 6D874221AD;
-        Sun, 12 May 2019 23:40:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Sun, 12 May 2019 23:40:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=kFSE7bFFnbktj2ocg4ZHcDdWLHu2gnLS1nuSxzqjNPU=; b=zZvRWJQl
-        xkUdwF6tDIU9fbhNKHVNYUzGQS/tFwET14dixGRBziVNh3UO+JFXoISc6kFQifJh
-        pZO8VKIs1ah4DGz6f8Ex05DwB+ubJFtHYZs9/5UTaFIYTv9ybRyEIyalvEeG6vSZ
-        yFTXcOdjuLhSXyzkUb1LFv/0gDZKnuWSLUiVY4vGN0CVg35g6MMnwQ9xxTIX0Fca
-        G6dbPBs9dGQTEfcKzXVjmDtRvBVxpKd7+vMMFmfH3JpEOe0pmT/JWweH6HppOLPI
-        lGKu0PgZCeB1sJlCYzgXESXFEtOW0siJ5DaTY/G4f+XEaIX9LlkBn88KGaMYH/bm
-        Y5/WcZJgQnJe+g==
-X-ME-Sender: <xms:KefYXO6L8dCj1xGW-eXQqEl5PCVTnSbjtdsqo2_1TQa3b9F4-uTL_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrleefgdejudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
-    ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkph
-    epuddvgedrudeiledrudeirddukeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgs
-    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:KefYXBPY5UGHul880jFBuPKmtr9iDKJhC9J4EKSB0XAOtmSmvt5MQg>
-    <xmx:KefYXEvh96D8Cs-MWHBBI7F8TIN4JLZ_XJF8GTW9m6vyG7RuPxooqg>
-    <xmx:KefYXMZtSIhPPFHwJTZEQpI_owUKKfGurqB4N1lqoK4KnZdUQtV9-g>
-    <xmx:KefYXARItqzB8vczWxsTP10gzA4XaADFLy-h9SHGyV8MZrCsoBTM8w>
-Received: from eros.localdomain (124-169-16-185.dyn.iinet.net.au [124.169.16.185])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4822F8005A;
-        Sun, 12 May 2019 23:40:22 -0400 (EDT)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fs: btrfs: Don't leak memory when failing add fsid
-Date:   Mon, 13 May 2019 13:39:12 +1000
-Message-Id: <20190513033912.3436-3-tobin@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190513033912.3436-1-tobin@kernel.org>
-References: <20190513033912.3436-1-tobin@kernel.org>
+        Sun, 12 May 2019 23:40:06 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x4D3doEo017640
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Sun, 12 May 2019 20:39:51 -0700 (PDT)
+Received: from [128.224.162.183] (128.224.162.183) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sun, 12 May
+ 2019 20:39:50 -0700
+Subject: Re: [PATCH] kdb: Fix bound check compiler warning
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+CC:     <jason.wessel@windriver.com>, <prarit@redhat.com>,
+        <kgdb-bugreport@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1557280359-202637-1-git-send-email-wenlin.kang@windriver.com>
+ <20190508081640.tvtnazr4tf5jijh7@holly.lan>
+ <ac8af42c-e69d-6fd0-1d76-73a37e8a672c@windriver.com>
+ <20190512090003.de52davu55rrg7kn@wychelm.lan>
+From:   Wenlin Kang <wenlin.kang@windriver.com>
+Message-ID: <0c5121f7-645c-3651-cccc-2ae836d415b6@windriver.com>
+Date:   Mon, 13 May 2019 11:39:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190512090003.de52davu55rrg7kn@wychelm.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.183]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A failed call to kobject_init_and_add() must be followed by a call to
-kobject_put().  Currently in the error path when adding fs_devices we
-are missing this call.  This could be fixed by calling
-btrfs_sysfs_remove_fsid() if btrfs_sysfs_add_fsid() returns an error or
-by adding a call to kobject_put() directly in btrfs_sysfs_add_fsid().
-Here we choose the second option because it prevents the slightly
-unusual error path handling requirements of kobject from leaking out
-into btrfs functions.
+On 5/12/19 5:00 PM, Daniel Thompson wrote:
+> On Thu, May 09, 2019 at 10:56:03AM +0800, Wenlin Kang wrote:
+>> On 5/8/19 4:16 PM, Daniel Thompson wrote:
+>>> On Wed, May 08, 2019 at 09:52:39AM +0800, Wenlin Kang wrote:
+>>>> The strncpy() function may leave the destination string buffer
+>>>> unterminated, better use strlcpy() instead.
+>>>>
+>>>> This fixes the following warning with gcc 8.2:
+>>>>
+>>>> kernel/debug/kdb/kdb_io.c: In function 'kdb_getstr':
+>>>> kernel/debug/kdb/kdb_io.c:449:3: warning: 'strncpy' specified bound 256 equals destination size [-Wstringop-truncation]
+>>>>      strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>>>>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>
+>>>> Signed-off-by: Wenlin Kang <wenlin.kang@windriver.com>
+>>>> ---
+>>>>    kernel/debug/kdb/kdb_io.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+>>>> index 6a4b414..7fd4513 100644
+>>>> --- a/kernel/debug/kdb/kdb_io.c
+>>>> +++ b/kernel/debug/kdb/kdb_io.c
+>>>> @@ -446,7 +446,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>>>>    char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
+>>>>    {
+>>>>    	if (prompt && kdb_prompt_str != prompt)
+>>>> -		strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>>>> +		strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>>> Shouldn't that be strscpy?
+>>
+>> Hi Daniel
+>>
+>> I thought about strscpy, but I think strlcpy is better, because it only copy
+>> the real number of characters if src string less than that size.
+> Sorry, I'm confused by this. What behavior does strscpy() have that you
+> consider undesirable in this case?
 
-Add a call to kobject_put() in the error path of kobject_add_and_init().
-This causes the release method to be called if kobject_init_and_add()
-fails.  open_tree() is the function that calls btrfs_sysfs_add_fsid()
-and the error code in this function is already written with the
-assumption that the release method is called during the error path of
-open_tree() (as seen by the call to btrfs_sysfs_remove_fsid() under the
-fail_fsdev_sysfs label).
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- fs/btrfs/sysfs.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Hi Daniel
 
-diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-index 5a5930e3d32b..2f078b77fe14 100644
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -825,7 +825,12 @@ int btrfs_sysfs_add_fsid(struct btrfs_fs_devices *fs_devs,
- 	fs_devs->fsid_kobj.kset = btrfs_kset;
- 	error = kobject_init_and_add(&fs_devs->fsid_kobj,
- 				&btrfs_ktype, parent, "%pU", fs_devs->fsid);
--	return error;
-+	if (error) {
-+		kobject_put(&fs_devs->fsid_kobj);
-+		return error;
-+	}
-+
-+	return 0;
- }
- 
- int btrfs_sysfs_add_mounted(struct btrfs_fs_info *fs_info)
+I checked strscpy() again, and think either is fine to me, if you think 
+strscpy() is better, I can change it to this, and send v2, thanks for 
+your review.
+
+
+>
+> Daniel.
+>
+
 -- 
-2.21.0
+Thanks,
+Wenlin Kang
 
