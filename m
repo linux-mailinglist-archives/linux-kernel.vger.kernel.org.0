@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 758C41B5F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9B921B604
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfEMMbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 08:31:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35187 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729210AbfEMMb1 (ORCPT
+        id S1729940AbfEMMcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 08:32:06 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34033 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729848AbfEMMba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 08:31:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w12so15076795wrp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 05:31:27 -0700 (PDT)
+        Mon, 13 May 2019 08:31:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f8so5408203wrt.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 05:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=StsbiAbV0Vt+lXEMy/BJGmoZrMBaAxbvBsCBZl1IPto=;
-        b=iEprL8LWLl8A7xh4GNvz6+BTjvOd9OUeQARGtQ9hS7GYQo1sxl11GkNZR52DmtjVuT
-         x51TiXeHsXOTs1GC4jh1pQDR7W85s+mr/FJDkLPXxXa1PusMELawFwZ5GTMZk2NppEdW
-         4oSDKD+LCIBbVMe8a0I6PCte3y2oXxY6/7DLQr0jr3m3uizO4k1Hhq3sMF+IAWDEG5aP
-         Y5AutyjcAZHFBo7FG7MCxTJzJSShgHGG1XGn25I1wHga2cMvt3XWE70w9xm8FecQ8ubX
-         nPjEHAGb9FQpFa6oCgrFunTJrvxffo8a6mXcPd/8VJcW4nNPOGcEfSnvywbSQHMY5qxd
-         y7Vg==
+        bh=4iwsD3U3np8IEFD+xTq9Et1jrPwGjexYK1TesQwMIZ0=;
+        b=b8POFUNthuvdlpyMAvkz/XPAZYSPESkYHVHrRsGD/I32mzJ09+S9i3Ktn/Iqf0CN5e
+         eXNw9ANuWYo8/i8SL0pEagFcNTCv93/n0ORqEmb5I2K2xaCNEU/d2yjQks/B/8wSDyAW
+         /r18vTn6m5K+nQoLd5zViswByZF48gxxHIgU5HBH6NH1amFjBFP1R9vqLwMaM/oIVYyg
+         10xxLLdLF0O/ejD3lGhw/7YDhCE9sKJviaNDyJaxML+EgtQH5MJwIOkMAv1JljUI9q2b
+         LzuvBa77ygJMnX/ZnUmOeXkHAU9bXme+N9/WDu9099QCMnn6M9DzKZnT4kR5OWheER7j
+         WfPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=StsbiAbV0Vt+lXEMy/BJGmoZrMBaAxbvBsCBZl1IPto=;
-        b=L+rhSSBnf3NknY8e/7JwFScigX5zkMT9FnyQx2vruP5TvsA9DRZ7LnfaXporCBvqML
-         WHL0Da4hdU+qDLPHjKV9kpWch2UC3S5XkgHl/NPYC7x//ctcTEBjrP+ykXJ2yp4yKJG4
-         1BafkU1ENRgOv2fecSs41PHm2p8QZ1+eOdvkA/lHJfLJZNwblPuUnX4O767zQ/4BuuPj
-         Fu6ZgsBuz0G2EOPGwAN2CHRkCghSXLtlqkn2/iJV0xiCZ8yXANK2N5B9/PjE2hNEM9xu
-         A8y8rO7FZPzWRMDzxdAM2nwresbkfCoKttOsnLMqW6Qho+QE0ym07H0ja042TXGk/kDk
-         jeKQ==
-X-Gm-Message-State: APjAAAUfFtta6ymS3SiEJH2akGYhL63CQlV2NjvwhBhEPBG1+Sn5K1m1
-        AzJvCByjX+Y4573UvnmIL02cdA==
-X-Google-Smtp-Source: APXvYqxuc8ne4IV9H9oYDb0Z1fLfW2O4+EU4VQcyb6N9zPS21Am/DW97B5/RB95g9ame4z2qq4dViQ==
-X-Received: by 2002:adf:fc8f:: with SMTP id g15mr18367933wrr.122.1557750686306;
-        Mon, 13 May 2019 05:31:26 -0700 (PDT)
+        bh=4iwsD3U3np8IEFD+xTq9Et1jrPwGjexYK1TesQwMIZ0=;
+        b=pzZySNUVF+U0T8xaFXlaqcA2E33SCAXZqUvrbfjsmEhatOXfj0ed7+fUhQkBvmRLeE
+         V9pi06iEm6qfhMyg4TGQ/C5pgytwH7EQvf9lJf1jy+7/lVULA9d2dBUA0nLddTnSw/oT
+         HXTcF5gDB8E0Rg9CL+vUEO7VGaGHwvO0JEHQPFMbavNpJX5b+Ie6xlpjxiLws0dAtTTS
+         8V1k17zaS/0wIh4WLteV5dZ60CEVuY/h82R/uGjEJE7ghpweW5JJkD4ZK7cXv444i0Id
+         bgtu9+aUw0BK44fFgkKoKjJVnKfv3RngfxXqiZ19LIqgpx/iJ+p9PKxL3DpeNYM/V6rQ
+         Av1Q==
+X-Gm-Message-State: APjAAAVZQOVTW9ZltOonCLtM0VzP1j63r+FLTKQG/2lLJuT4PdUhqSKD
+        SdTqtkEQqcjLxebhsx71om6hwA==
+X-Google-Smtp-Source: APXvYqzbRgH8TxkyaTtXi+U2BxwbBAXcKGSfcjnlnf1UOwMIO+s/0Olaj1fC2ez7G+vkB7d/5d63Ng==
+X-Received: by 2002:adf:dece:: with SMTP id i14mr18177889wrn.138.1557750687429;
+        Mon, 13 May 2019 05:31:27 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.25
+        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 05:31:25 -0700 (PDT)
+        Mon, 13 May 2019 05:31:26 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -53,9 +53,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] clk: meson: axg: spread spectrum is on mpll2
-Date:   Mon, 13 May 2019 14:31:11 +0200
-Message-Id: <20190513123115.18145-4-jbrunet@baylibre.com>
+Subject: [PATCH v2 4/7] clk: meson: mpll: add init callback and regs
+Date:   Mon, 13 May 2019 14:31:12 +0200
+Message-Id: <20190513123115.18145-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190513123115.18145-1-jbrunet@baylibre.com>
 References: <20190513123115.18145-1-jbrunet@baylibre.com>
@@ -66,43 +66,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After testing, it appears that the SSEN bit controls the spread
-spectrum function on MPLL2, not MPLL0.
+Until now (gx and axg), the mpll setting on boot (whatever the
+bootloader) was good enough to generate a clean fractional division.
 
-Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
+It is not the case on the g12a. While moving away from the vendor u-boot,
+it was noticed the fractional part of the divider was no longer applied.
+Like on the pll, some magic settings need to applied on the mpll
+register.
+
+This change adds the ability to do that on the mpll driver.
+
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/axg.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/meson/clk-mpll.c | 35 ++++++++++++++++++++++++-----------
+ drivers/clk/meson/clk-mpll.h |  2 ++
+ 2 files changed, 26 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 7a8ef80e5f2c..3ddd0efc9ee0 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -469,11 +469,6 @@ static struct clk_regmap axg_mpll0_div = {
- 			.shift   = 16,
- 			.width   = 9,
- 		},
--		.ssen = {
--			.reg_off = HHI_MPLL_CNTL,
--			.shift   = 25,
--			.width	 = 1,
--		},
- 		.misc = {
- 			.reg_off = HHI_PLL_TOP_MISC,
- 			.shift   = 0,
-@@ -568,6 +563,11 @@ static struct clk_regmap axg_mpll2_div = {
- 			.shift   = 16,
- 			.width   = 9,
- 		},
-+		.ssen = {
-+			.reg_off = HHI_MPLL_CNTL,
-+			.shift   = 25,
-+			.width	 = 1,
-+		},
- 		.misc = {
- 			.reg_off = HHI_PLL_TOP_MISC,
- 			.shift   = 2,
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index d3f42e086431..2d39a8bc367c 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -115,8 +115,30 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	else
+ 		__acquire(mpll->lock);
+ 
+-	/* Enable and set the fractional part */
++	/* Set the fractional part */
+ 	meson_parm_write(clk->map, &mpll->sdm, sdm);
++
++	/* Set the integer divider part */
++	meson_parm_write(clk->map, &mpll->n2, n2);
++
++	if (mpll->lock)
++		spin_unlock_irqrestore(mpll->lock, flags);
++	else
++		__release(mpll->lock);
++
++	return 0;
++}
++
++static void mpll_init(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
++
++	if (mpll->init_count)
++		regmap_multi_reg_write(clk->map, mpll->init_regs,
++				       mpll->init_count);
++
++	/* Enable the fractional part */
+ 	meson_parm_write(clk->map, &mpll->sdm_en, 1);
+ 
+ 	/* Set spread spectrum if possible */
+@@ -126,19 +148,9 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 		meson_parm_write(clk->map, &mpll->ssen, ss);
+ 	}
+ 
+-	/* Set the integer divider part */
+-	meson_parm_write(clk->map, &mpll->n2, n2);
+-
+ 	/* Set the magic misc bit if required */
+ 	if (MESON_PARM_APPLICABLE(&mpll->misc))
+ 		meson_parm_write(clk->map, &mpll->misc, 1);
+-
+-	if (mpll->lock)
+-		spin_unlock_irqrestore(mpll->lock, flags);
+-	else
+-		__release(mpll->lock);
+-
+-	return 0;
+ }
+ 
+ const struct clk_ops meson_clk_mpll_ro_ops = {
+@@ -151,6 +163,7 @@ const struct clk_ops meson_clk_mpll_ops = {
+ 	.recalc_rate	= mpll_recalc_rate,
+ 	.round_rate	= mpll_round_rate,
+ 	.set_rate	= mpll_set_rate,
++	.init		= mpll_init,
+ };
+ EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
+ 
+diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
+index 0f948430fed4..a991d568c43a 100644
+--- a/drivers/clk/meson/clk-mpll.h
++++ b/drivers/clk/meson/clk-mpll.h
+@@ -18,6 +18,8 @@ struct meson_clk_mpll_data {
+ 	struct parm n2;
+ 	struct parm ssen;
+ 	struct parm misc;
++	const struct reg_sequence *init_regs;
++	unsigned int init_count;
+ 	spinlock_t *lock;
+ 	u8 flags;
+ };
 -- 
 2.20.1
 
