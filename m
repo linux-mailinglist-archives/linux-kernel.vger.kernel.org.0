@@ -2,99 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9D851B5F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6D21B603
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729896AbfEMMbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 08:31:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53404 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfEMMbc (ORCPT
+        id S1729928AbfEMMcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 08:32:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59144 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728755AbfEMMcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 08:31:32 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 198so13644369wme.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 05:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
-        b=FTChcYwy/64XxJA+Qdoi5SQTOLGXNUXjv+nlh1tRXwcJ5wHIr4YXrKpPSAYujuyCzp
-         nijO6vpU+0BTOBu0M8rH69Fy/BcRNzMsb9+QsY4mgYef5o5Py4Er/BU6A4UPldUHIUwm
-         3N1VBhSmqFk12ex6lkH7nZ7A1wkbMpbp1wKpzXPxwEDHpUroEI1zCpg1SeMKQmrJ7goz
-         QVgAUjDQTPtot79cCw6omTqisZOw9lWoYiGfS0N3V6ax1/grApmnole0AFlAcoL9OJMk
-         k1xLXdk/GNS3KbD325KPkAfuHONMfgCR0ZXh4mu7cIH8/tJI20Q5P7EPet0TDqsWy1Jv
-         Dx4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qDWoUB9bcp7o6UKFktF9ACZ04OzawQuwNyVSxDs2oGM=;
-        b=Ch59MxQD/IL5tnqGsP2mxy0XakfqDdT7ki9Q8lBTCTfK5gktHIEkoNuAOpRGt1b72k
-         DpoXjoRywUNx2bEB1hWBBBxcxGoDcE5yC0tVcrzbWiC41vwkgWdv4I6MWs/a2jgryZPD
-         JgIJiFAZdxY43gwQpyx9Aoqp/mOFgmEIkX2bujODVYavisjI1jW1whwlWGQKIvv3AN+6
-         ExMAb1FcoWZOUO/AKTOplMbG1sm3vK4VlRhFlVfMVFryqu42HsSB8uBYgj9d+7aSO85u
-         9q4hVM1qvrQbQdbdLy0PESTakL3SxG4vBuyZd40Hzxibph60q1KAAfpsXYmR2v9LDn3e
-         l+vQ==
-X-Gm-Message-State: APjAAAVXxIuaw9kcd5CEkkf8UAqsZ6WjXyeytLf8UcBIlrTsGLXGC53v
-        yYSoa4jpBwOqWXEavWYA4iHAvQ==
-X-Google-Smtp-Source: APXvYqzS/G2YjzdOEaicaTu5qFCKLfkduSgGOTIkrGT+2VPcKPiv3XEJKguO/PiftHRHyxFE9Kutnw==
-X-Received: by 2002:a1c:1d4:: with SMTP id 203mr16339134wmb.76.1557750690506;
-        Mon, 13 May 2019 05:31:30 -0700 (PDT)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t13sm16175584wra.81.2019.05.13.05.31.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 05:31:30 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] clk: meson: g12a: add controller register init
-Date:   Mon, 13 May 2019 14:31:15 +0200
-Message-Id: <20190513123115.18145-8-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190513123115.18145-1-jbrunet@baylibre.com>
-References: <20190513123115.18145-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 13 May 2019 08:32:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=DyTZZDy5htEJd2c/YmV8wjqlvgY0f2BXhVkZBBNvqiE=; b=IV919rFLx6om
+        DyIVwo56mxJ6+h6MnNq6mGysv0T4liq5xv+7APMr00Zo7QjeuiX8ECkHnjImlnqjUtpx8B2f7FCZk
+        IwteVlmk2WbDvGa3N787pcjfzjPZOeTPDNYnLDE6dx/9zMnituqhl9af1OpalungI3u986EibQnVh
+        cu78U=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hQA7T-0006aR-QN; Mon, 13 May 2019 12:31:51 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6CC771129232; Mon, 13 May 2019 13:31:51 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Applied "spi: bcm2835: only split transfers that exceed DLEN if DMA available" to the spi tree
+In-Reply-To: <20190509144000.681-1-nsaenzjulienne@suse.de>
+X-Patchwork-Hint: ignore
+Message-Id: <20190513123151.6CC771129232@debutante.sirena.org.uk>
+Date:   Mon, 13 May 2019 13:31:51 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the MPLL common register initial setting
+The patch
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+   spi: bcm2835: only split transfers that exceed DLEN if DMA available
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 3393f7d924510cfdb2ff9594eac2590d5de16d92 Mon Sep 17 00:00:00 2001
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 9 May 2019 16:39:59 +0200
+Subject: [PATCH] spi: bcm2835: only split transfers that exceed DLEN if DMA
+ available
+
+There is no use for this when performing non DMA operations. So we
+bypass the split.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/meson/g12a.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/spi/spi-bcm2835.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index ef1d2e4c8fd2..d5aceb79a91a 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -2992,10 +2992,16 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
- 	&g12a_vdec_hevcf,
- };
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index 3a9b2187787a..f87a023a445a 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -895,15 +895,17 @@ static int bcm2835_spi_prepare_message(struct spi_master *master,
+ 	u32 cs = bcm2835_rd(bs, BCM2835_SPI_CS);
+ 	int ret;
  
-+static const struct reg_sequence g12a_init_regs[] = {
-+	{ .reg = HHI_MPLL_CNTL0,	.def = 0x00000543 },
-+};
-+
- static const struct meson_eeclkc_data g12a_clkc_data = {
- 	.regmap_clks = g12a_clk_regmaps,
- 	.regmap_clk_num = ARRAY_SIZE(g12a_clk_regmaps),
--	.hw_onecell_data = &g12a_hw_onecell_data
-+	.hw_onecell_data = &g12a_hw_onecell_data,
-+	.init_regs = g12a_init_regs,
-+	.init_count = ARRAY_SIZE(g12a_init_regs),
- };
+-	/*
+-	 * DMA transfers are limited to 16 bit (0 to 65535 bytes) by the SPI HW
+-	 * due to DLEN. Split up transfers (32-bit FIFO aligned) if the limit is
+-	 * exceeded.
+-	 */
+-	ret = spi_split_transfers_maxsize(master, msg, 65532,
+-					  GFP_KERNEL | GFP_DMA);
+-	if (ret)
+-		return ret;
++	if (master->can_dma) {
++		/*
++		 * DMA transfers are limited to 16 bit (0 to 65535 bytes) by
++		 * the SPI HW due to DLEN. Split up transfers (32-bit FIFO
++		 * aligned) if the limit is exceeded.
++		 */
++		ret = spi_split_transfers_maxsize(master, msg, 65532,
++						  GFP_KERNEL | GFP_DMA);
++		if (ret)
++			return ret;
++	}
  
- static const struct of_device_id clkc_match_table[] = {
+ 	cs &= ~(BCM2835_SPI_CS_CPOL | BCM2835_SPI_CS_CPHA);
+ 
 -- 
 2.20.1
 
