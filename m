@@ -2,123 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05101B1A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758AF1B1AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbfEMIE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 04:04:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38270 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfEMIE2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 04:04:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v11so14084560wru.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 01:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FdczpF+HAtCkzG6jTzIfOqqlgewnqObJbWmhu1Fz2yM=;
-        b=Sld5lvhmRWIvM91ctJtd//tpVz1uloPeXyHekhDCoKSGrt3JP/Vx+70r8vP1bQGcwR
-         iuYJHi7x2/TnAnszH8u3hL9tssUToBtcKD1H102oNQG7gsGzal8StFurBHnmfiXuL9SQ
-         mvtTiKabDcfh+hEcAcdmmdAgMcZ8CdtsRAtMGqvi87YqAHOpnlZ/EFiM2TzaRf+KYfte
-         j0DKalgnO5CLWHl9KTE0y36Gue9BnTzanHx2T562Oiz9c1SaALAgOrPc2BVC5XPUq4LO
-         cvk9NZ21aRi846aiVdo271IK0QwDfJlQdVDMGZmD1repraLSDKZoqcZBam+wb9qoPkMa
-         hZAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FdczpF+HAtCkzG6jTzIfOqqlgewnqObJbWmhu1Fz2yM=;
-        b=FwPIt+yianXM5fVCGiMVbGiuu//UrByo4ckQoIqh9yQlNt4LU/Va8JyQTItoa6gCHG
-         QYUX+5VuxAgwFTAQS2tsupM2VUfQUpOu3f5Um65UCWuHLOhCW6HA2cpNzioI/KvPJnf8
-         UYHVngt6TO5aV9H7FwgD04ufboT0PLxPb50Uu8th0Vi6/kVDuyWReosel5zEI0JdQsqR
-         q+4lls7tjtTWJdiOZe1kSS5Mtc4UAWuw4LT+oTt9TP1VPW6i5DNp/ec+RhIMx9pQuNtS
-         /Y0ehzeOWXAbm1yKMHRj0W7l20nqBNahst7d9sY+0g36h+uKa6YpB6NH5gDz5vKy+U3t
-         Rhgw==
-X-Gm-Message-State: APjAAAVOLMgRD7JKtv/ZlhhCmQrYd5tbx/Qkd3RyZYihaqTO0Jy6XqQt
-        JHePEHaULd+V/pLSGaR7B6a6/Q==
-X-Google-Smtp-Source: APXvYqzvj8NuvJYWXTRnd2qzSR8XJHh9J+mCXfue5ISEeA4KA6HWrXpRsrTWXWt04RTsIrJWlms0Jw==
-X-Received: by 2002:a5d:434c:: with SMTP id u12mr17399442wrr.92.1557734667055;
-        Mon, 13 May 2019 01:04:27 -0700 (PDT)
-Received: from [192.168.0.41] (205.29.129.77.rev.sfr.net. [77.129.29.205])
-        by smtp.googlemail.com with ESMTPSA id e8sm29815369wrc.34.2019.05.13.01.04.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 01:04:26 -0700 (PDT)
-Subject: Re: [RFC 0/2] clocksource: davinci-timer: new driver
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190417144709.19588-1-brgl@bgdev.pl>
- <CAMRc=MdhfEM_CndCjCkY9kWeu+3VPTA7tmTy5PH=2XforZ6aLw@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <861538a7-9ee4-307d-433e-54e51a54fb98@linaro.org>
-Date:   Mon, 13 May 2019 10:04:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728147AbfEMIEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 04:04:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7631 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725928AbfEMIEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 04:04:44 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4BF61DA8C2D313CFD939;
+        Mon, 13 May 2019 16:04:42 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
+ 16:04:37 +0800
+Subject: Re: [PATCH] clk: ti: Remove unused function
+ ti_clk_build_component_gate
+To:     Tero Kristo <t-kristo@ti.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>
+References: <20190512100328.27136-1-yuehaibing@huawei.com>
+ <5315442d-fd29-1fbe-694d-07627cc43c25@ti.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <4fcb162f-527c-6259-1515-96d9bbda65e0@huawei.com>
+Date:   Mon, 13 May 2019 16:04:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdhfEM_CndCjCkY9kWeu+3VPTA7tmTy5PH=2XforZ6aLw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5315442d-fd29-1fbe-694d-07627cc43c25@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/05/2019 09:54, Bartosz Golaszewski wrote:
-> śr., 17 kwi 2019 o 16:47 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+On 2019/5/13 15:22, Tero Kristo wrote:
+> On 12/05/2019 13:03, YueHaibing wrote:
+>> There is no callers in tree, so can be removed.
+> 
+> Looks ok to me, basically legacy code that we forgot to remove while doing:
+> 
+> commit 7558562a70fbd6b3fa746fa33c76c9333aa0bb32
+> Author: Tony Lindgren <tony@atomide.com>
+> Date:   Thu Dec 14 08:32:06 2017 -0800
+> 
+>     clk: ti: Drop legacy clk-3xxx-legacy code
+> 
+> Could drop the same code for mux/div also though.
+
+Yes, I can send v2 also to remove this two, thanks!
+
+> 
+> -Tero
+> 
 >>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>   drivers/clk/ti/gate.c | 30 ------------------------------
+>>   1 file changed, 30 deletions(-)
 >>
->> Hi Daniel,
->>
->> as discussed - this is the davinci timer driver split into the clockevent
->> and clocksource parts.
->>
->> Since it won't work without all the other (left out for now) changes, I'm
->> marking it as RFC.
->>
->> The code has been simplified as requested, the duplicated enums and the
->> davinci_timer structure have been removed.
->>
->> Please let me know if that's better. I retested it on da850-lcdk, da830-evm
->> and dm365-evm.
->>
->> Bartosz Golaszewski (2):
->>   clocksource: davinci-timer: add support for clockevents
->>   clocksource: timer-davinci: add support for clocksource
->>
->>  drivers/clocksource/Kconfig         |   5 +
->>  drivers/clocksource/Makefile        |   1 +
->>  drivers/clocksource/timer-davinci.c | 342 ++++++++++++++++++++++++++++
->>  include/clocksource/timer-davinci.h |  44 ++++
->>  4 files changed, 392 insertions(+)
->>  create mode 100644 drivers/clocksource/timer-davinci.c
->>  create mode 100644 include/clocksource/timer-davinci.h
->>
->> --
->> 2.21.0
+>> diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+>> index 504c0e9..4238955 100644
+>> --- a/drivers/clk/ti/gate.c
+>> +++ b/drivers/clk/ti/gate.c
+>> @@ -131,36 +131,6 @@ static struct clk *_register_gate(struct device *dev, const char *name,
+>>       return clk;
+>>   }
+>>   -struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
+>> -{
+>> -    struct clk_hw_omap *gate;
+>> -    struct clk_omap_reg *reg;
+>> -    const struct clk_hw_omap_ops *ops = &clkhwops_wait;
+>> -
+>> -    if (!setup)
+>> -        return NULL;
+>> -
+>> -    gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+>> -    if (!gate)
+>> -        return ERR_PTR(-ENOMEM);
+>> -
+>> -    reg = (struct clk_omap_reg *)&gate->enable_reg;
+>> -    reg->index = setup->module;
+>> -    reg->offset = setup->reg;
+>> -
+>> -    gate->enable_bit = setup->bit_shift;
+>> -
+>> -    if (setup->flags & CLKF_NO_WAIT)
+>> -        ops = NULL;
+>> -
+>> -    if (setup->flags & CLKF_INTERFACE)
+>> -        ops = &clkhwops_iclk_wait;
+>> -
+>> -    gate->ops = ops;
+>> -
+>> -    return &gate->hw;
+>> -}
+>> -
+>>   static void __init _of_ti_gate_clk_setup(struct device_node *node,
+>>                        const struct clk_ops *ops,
+>>                        const struct clk_hw_omap_ops *hw_ops)
 >>
 > 
-> Hi Daniel,
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 > 
-> it's been almost a month so a gentle ping. Any comments on that?
-
-Oh right, I've been distracted with other things, sorry for that. Let me
-review it today.
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> .
+> 
 
