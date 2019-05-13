@@ -2,100 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D671B4F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 509581B4FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfEMLcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 07:32:46 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35628 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729012AbfEMLcp (ORCPT
+        id S1729118AbfEMLdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 07:33:11 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44969 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728577AbfEMLdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 07:32:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id h1so6646185pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:32:44 -0700 (PDT)
+        Mon, 13 May 2019 07:33:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g9so7048276pfo.11
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zaltys-org.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:in-reply-to:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=oW2OGfo2kmTLuf4Kc5CGIE4FQWJunf5Se7PBzqxMT+k=;
-        b=QyMS1KkvVFMpgE8NWSvXdmK/oaHre2INuuntPie9HgV+miKlaRnV1PjPxBWhMwbA7Z
-         mvnM8/inBQ015PcrGGYELYZXcPIWZoEra7stEA33UbOdFDDqtafe3k0xWiL4xDMZfN14
-         oRgt0iFijQzgyJ7ipOWy8U4tPQYbqUhL8ZaEf3dYxSxdlacM2ix2wCyYRU9Hrvo5msIR
-         /PSDuzWF6cuZaqs0QEXOXSPx9jqBz/8kW0DKR0vP4TjoL/bOG5vAgTdKCTdDZO8UaZ4+
-         y8XSBnFPLCsmt9FbYFpuVEER9KiWJ5AmZdE/vwaD2c3yewD02JewIBif9h1kaLakn6ys
-         82XQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sB99XFmRAyWkW3m5ctuFRcLtPaisMRs89ovpO9g5Z20=;
+        b=kYIGyZkTj4d6TVkn0APzaa/Kp1GKDCt6YDBacpcyl/LIDGQGPL5nJ7ccnor/nCkEOh
+         32sncLpjsKlOA7NM8aJaF1046huxDo75yJ8xtmZ9iUdu5cp6ArN+U0186PuZaGIZlTOy
+         lk1A79RzbI99/50gbQGtH+emKSTpT9l2XF06RUvEGDlAFz/RntKUpNb+eOnV0y3UpwpO
+         hxXuWpOAcSVwWYmOwP4VBgRiPTLOzzv88rv8mEhtBz0OPqxc24FTjPGy5+q18Q2wDX6Q
+         cPNvN65+DmJHrVu8X26K1BJSPhBdK6GH3PXhty7BOHOoRLIx3eQcHov7WyVDO3XH/Gb+
+         gHDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:in-reply-to:message-id:date
-         :user-agent:mime-version:content-transfer-encoding:content-language;
-        bh=oW2OGfo2kmTLuf4Kc5CGIE4FQWJunf5Se7PBzqxMT+k=;
-        b=VbFmEH2jEHX9djmZz9r7TMB0e6zVu6tCkhrrCbcGZy1kia1/t1HRd7KA2yEsVQSVxH
-         CZll6IY36WReZtS5ZhSFFopVFgpnrPFx9y+N50B3Kuq+uEqZGkjUZ0s27ckvYypre2i+
-         Ms4eH7hunFhLYLr/s9UTrFLZl4aFzX721MQbzM72GY/yq0sALX67J1JMZ3XibR7t5M/d
-         XiUgJFZdfqc/HxF70Mth352aP/TXOPsETJsrIXwrizCTrlt6WgzL6O5A7OJcbGvrTRD6
-         i3Djg34y7uZqjbcBlDNy3/x/jGn32oDV7bzGaq3WxCrcGLm4u9xbOgzg40AbHjlYtwfY
-         seFA==
-X-Gm-Message-State: APjAAAWxUCmMaBm/yPDmNSDMkYKYTvuHPeKNsGQ/38ykM61EJgszwWQi
-        M/oV6ezn6FbelvKYkcPoo7zQtA==
-X-Google-Smtp-Source: APXvYqxmZhyuK0mcNDMhg97F7hXXFjrF+5Xi3FPN/3a4oxJ4C/VPadqCq4QSeE7IoTblppgKCkskFw==
-X-Received: by 2002:a63:7989:: with SMTP id u131mr21610419pgc.180.1557747164024;
-        Mon, 13 May 2019 04:32:44 -0700 (PDT)
-Received: from [172.28.0.10] (122-59-127-127-fibre.sparkbb.co.nz. [122.59.127.127])
-        by smtp.googlemail.com with ESMTPSA id r9sm19107632pfc.173.2019.05.13.04.32.40
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sB99XFmRAyWkW3m5ctuFRcLtPaisMRs89ovpO9g5Z20=;
+        b=EIGEJ+Ql7R2qecYXk20oaNuJF6ukr2K1+S2pS5ho3qcl12ITGAIK1gBG2oeAnD0ART
+         hO2lgKlXS/1iJgc7A0hRhL0hwHPmj9Mx92kNEyB8/oH1DKp4RudjrP5NRQshp9BBLyZt
+         ERMfWE0dDDLaHNB/GiPSgE/hkmTUs4Ci7cXfLqb9wcvPmMSbyaI8iP61mTQVhE57Kwqz
+         MOLAXsOMmQBZnfaVTrRfpJqHX58HdL6p5o8ICuHMvCboWE77arGBDaw3jKjAcHAGb8yj
+         6oNOkXufXt1huaUBMeIuiTDl+PBpsFLiA6jAJZUQLYvuuBsbodelhE6XrroeFZHVkYce
+         tOlQ==
+X-Gm-Message-State: APjAAAVQx685rSSjBQ9oUYDQCn5WTr6dL3FzIQIt4S94Sg1BF0vI0lqP
+        bIPgXAa9v9m6ktO79ja/E3Q=
+X-Google-Smtp-Source: APXvYqxNzG85iHGGCVTDUVTI/DB51+T6KueBdEO9nT0mdo8QEpm1ADDONADwQQQIttRPvwJ18vhEqg==
+X-Received: by 2002:a63:ff23:: with SMTP id k35mr526095pgi.139.1557747190119;
+        Mon, 13 May 2019 04:33:10 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id 85sm5026295pgb.52.2019.05.13.04.33.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 04:32:43 -0700 (PDT)
-From:   James Grant <jamesg@zaltys.org>
-Subject: Re: [PATCH 0/5] usb: gadget: udc: lpc32xx: add stotg04 phy support
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-In-Reply-To: <20190409120908.12079-1-alexandre.belloni@bootlin.com>
-Message-ID: <efaaff85-ac39-f0e2-e042-7d6fd0c59054@zaltys.org>
-Date:   Mon, 13 May 2019 23:32:38 +1200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 13 May 2019 04:33:09 -0700 (PDT)
+Date:   Mon, 13 May 2019 19:33:01 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vt: Fix a missing-check bug in drivers/tty/vt/vt.c file
+ of Linux 5.0.14
+Message-ID: <20190513113253.GA5753@zhanggen-UX430UQ>
+References: <CAAie0ao_O0hcUOuUf67oog+dSswdQRpAtX8NyQvDAr_XQr=xQg@mail.gmail.com>
+ <20190510151206.GA31186@kroah.com>
+ <CAAie0arnSxFvkNE1KSxD1a19_PQy03Q4RSiLZo9t7C9LeKkA9w@mail.gmail.com>
+ <20190511060741.GC18755@kroah.com>
+ <20190512032719.GA16296@zhanggen-UX430UQ>
+ <20190512062009.GA25153@kroah.com>
+ <20190512084916.GA4615@zhanggen-UX430UQ>
+ <20190513073619.GA5580@kroah.com>
+ <20190513093730.GA4487@zhanggen-UX430UQ>
+ <20190513095809.GA4588@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-AU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513095809.GA4588@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested with a board containing LPC3250 SOC and STOTG04 PHY by using 
-serial gadget.
-
-Needed patch "[PATCH] usb: gadget: udc: lpc32xx: allocate descriptor 
-with GFP_ATOMIC" also.
-
-Tested-by: James Grant <jamesg@zaltys.org>
-
-Regards,
-James Grant.
-
-On 09/04/2019 14:09, Alexandre Belloni Wrote:
-> Hi,
->
-> This series starts to clean up the lpc32xx udc driver and also repairs
-> interrupt handling so hotplugging actually works. The design I tested
-> that on uses an stotg04 instead of the usual isp1301 so support for that
-> is also added.
->
-> A bit more work is needed to get the RNDIS gadget driver to work.
->
-> Alexandre Belloni (5):
->    usb: gadget: udc: lpc32xx: simplify probe
->    usb: gadget: udc: lpc32xx: simplify vbus handling
->    usb: gadget: udc: lpc32xx: properly setup phy interrupts
->    usb: gadget: udc: lpc32xx: add support for stotg04 phy
->    usb: gadget: udc: lpc32xx: rework interrupt handling
->
->   drivers/usb/gadget/udc/lpc32xx_udc.c | 167 +++++++++++----------------
->   1 file changed, 66 insertions(+), 101 deletions(-)
+On Mon, May 13, 2019 at 11:58:09AM +0200, Greg KH wrote:
+ 
+> You have to unwind the loop and free and uninitialize all of the other
+> things you just created as well.
+Hi Greg,
+I don't think we need to unwind the loop. The loop condition 
+MIN_NR_CONSOLES is defined as 1 in include/uapi/linux/vt.h. In this
+situation, should we free other memory except vc_cons[currcons].d, vc
+and vc->vc_screenbuf?
+Thanks
+Gen
