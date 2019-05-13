@@ -2,162 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8688F1BD42
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 208601BD43
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfEMShc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:37:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35884 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbfEMShc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:37:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 653B480D;
+        id S1726966AbfEMShg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:37:36 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44744 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfEMShd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 14:37:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z16so7188381pgv.11
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=7ta6Dt81bGZU9BIZmXBk7KPXs3pWx/uQSwyX/aFs/cU=;
+        b=Ql9zTXdTr2UHbU87mcJ0v0HAMUX6aGcYoVfeHA+cb9ZsIVTDmX1dlZ4jqVVw2ceRT7
+         qgDIIaF9f3wgUMrkaIt6fNHaoO/iZ4BVxJECbgfR3cmJY2ell5O9XgB8fdDMP83Q+0er
+         iN56XU3SVLoTsQvVzX8YpjTFImRP83CcLfAl632vtSlJci12w+OoZrYAEOR9vYBoAE6m
+         u8UmfwhPqVmaOKa/17EOPA8GyBgP0gruqkgIDnf2bbuZSBySdjPatmcDlOqfGZyaievL
+         XYyymbe5MsR3WIPSCwgnskQ2Y9FT0YhqDnQ1KkXHcbCEsdUkL71wrMUR37AesUlLExyP
+         4y2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7ta6Dt81bGZU9BIZmXBk7KPXs3pWx/uQSwyX/aFs/cU=;
+        b=pOe2c31EcOGz83ki0FYeUKjBvhhjB+8dIFwtDRbVe3j3Lw90mYCXfOtM/Zf+AXHRuA
+         Dvjuz2oKbHaC3OvoRfPFvYLGdzgReRpI3Hg+iHeZnFw369WA1pxUbxOV+DpePi5b5f/J
+         jYjC2JeTP4OwkQyO2ifkbQfDlB7sWJuXGlMy/gJp/IKbmJHw/BU1E28CXJByXUvERIfG
+         UOTi5f+8UeuYZNYR7l66kE3w5xvMcnBtpYYEOZC8gGYCBbv9qaibVw6P6yoTmPGQQdyX
+         ZvK5Dl6067kqTqPl/Y8KhFWVN6kuEIB7En7f88adq3h3/IxHl49g3g1KsaoF1vp4NsjZ
+         Fnow==
+X-Gm-Message-State: APjAAAVTMuDiTgbRqFLNRkFswg3uxE7RJ+yxIt0tX22QjtnLEoBERLIa
+        ceLM96sptAYGXhrwQ72g2ZS88bUIlyU=
+X-Google-Smtp-Source: APXvYqwfsOAP1xNjvu+u8ncG2XEwfMC9o240s60cZjr4QjdborLBIAOCCwf3Y8Dj8ev2ytQD3izV5w==
+X-Received: by 2002:aa7:95bb:: with SMTP id a27mr23976186pfk.30.1557772651657;
         Mon, 13 May 2019 11:37:31 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AE043F6C4;
-        Mon, 13 May 2019 11:37:29 -0700 (PDT)
-Subject: Re: [RFC] iommu: arm-smmu: stall support
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>
-References: <20170914194444.32551-1-robdclark@gmail.com>
- <20170919123038.GF8398@8bytes.org>
- <CAF6AEGuutkqjrWk4jagE=p-NwHgxdiPZjjsaFsfwtczK568j+A@mail.gmail.com>
- <20170922090204.GJ8398@8bytes.org>
- <32e3ab2c-a996-c805-2a0d-a2e85deb3a50@arm.com>
- <CAF6AEGuepdKo1Ob2jW66UhYXOTAqOMc3C-XKsK3Rze1QdLobLw@mail.gmail.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <571e825d-7f54-2da4-adc0-6b6ac6dae459@arm.com>
-Date:   Mon, 13 May 2019 19:37:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAF6AEGuepdKo1Ob2jW66UhYXOTAqOMc3C-XKsK3Rze1QdLobLw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id u11sm17334881pfh.130.2019.05.13.11.37.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 11:37:30 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Xu YiPing <xuyiping@hisilicon.com>,
+        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
+        butao <butao@hisilicon.com>,
+        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
+        Yudongbin <yudongbin@hisilicon.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        dri-devel@lists.freedesktop.org
+Subject: [RFC][PATCH 0/5 v4] DMA-BUF Heaps (destaging ION)
+Date:   Mon, 13 May 2019 11:37:22 -0700
+Message-Id: <20190513183727.15755-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Here is another RFC of the dma-buf heaps patchset Andrew and I
+have been working on which tries to destage a fair chunk of ION
+functionality.
 
-On 10/05/2019 19:23, Rob Clark wrote:
-> On Fri, Sep 22, 2017 at 2:58 AM Jean-Philippe Brucker
-> <jean-philippe.brucker@arm.com> wrote:
->>
->> On 22/09/17 10:02, Joerg Roedel wrote:
->>> On Tue, Sep 19, 2017 at 10:23:43AM -0400, Rob Clark wrote:
->>>> I would like to decide in the IRQ whether or not to queue work or not,
->>>> because when we get a gpu fault, we tend to get 1000's of gpu faults
->>>> all at once (and I really only need to handle the first one).  I
->>>> suppose that could also be achieved by having a special return value
->>>> from the fault handler to say "call me again from a wq"..
->>>>
->>>> Note that in the drm driver I already have a suitable wq to queue the
->>>> work, so it really doesn't buy me anything to have the iommu driver
->>>> toss things off to a wq for me.  Might be a different situation for
->>>> other drivers (but I guess mostly other drivers are using iommu API
->>>> indirectly via dma-mapping?)
->>>
->>> Okay, so since you are the only user for now, we don't need a
->>> work-queue. But I still want the ->resume call-back to be hidden in the
->>> iommu code and not be exposed to users.
->>>
->>> We already have per-domain fault-handlers, so the best solution for now
->>> is to call ->resume from report_iommu_fault() when the fault-handler
->>> returns a special value.
->>
->> The problem is that report_iommu_fault is called from IRQ context by the
->> SMMU driver, so the device driver callback cannot sleep.
->>
->> So if the device driver needs to be able to sleep between fault report and
->> resume, as I understand Rob needs for writing debugfs, we can either:
->>
->> * call report_iommu_fault from higher up, in a thread or workqueue.
->> * split the fault reporting as this patch proposes. The exact same
->>   mechanism is needed for the vSVM work by Intel: in order to inject fault
->>   into the guest, they would like to have an atomic notifier registered by
->>   VFIO for passing down the Page Request, and a new function in the IOMMU
->>   API to resume/complete the fault.
->>
-> 
-> So I was thinking about this topic again.. I would still like to get
-> some sort of async resume so that I can wire up GPU cmdstream/state
-> logging on iommu fault (without locally resurrecting and rebasing this
-> patch and drm/msm side changes each time I need to debug iommu
-> faults)..
+The patchset implements per-heap devices which can be opened
+directly and then an ioctl is used to allocate a dmabuf from the
+heap.
 
-We've been working on the new fault reporting API with Jacob and Eric,
-and I intend to send it out soon. It is supposed to be used for
-reporting faults to guests via VFIO, handling page faults via mm, and
-also reporting events directly to device drivers. Please let us know
-what works and what doesn't in your case
+The interface is similar, but much simpler then IONs, only
+providing an ALLOC ioctl.
 
-The most recent version of the patches is at
-http://www.linux-arm.org/git?p=linux-jpb.git;a=shortlog;h=refs/heads/sva/api
-(git://www.linux-arm.org/linux-jpb.git branch sva/api). Hopefully on the
-list sometimes next week, I'll add you on Cc.
+Also, I've provided relatively simple system and cma heaps.
 
-In particular, see commits
-	iommu: Introduce device fault data
-	iommu: Introduce device fault report API
-	iommu: Add recoverable fault reporting
+I've booted and tested these patches with AOSP on the HiKey960
+using the kernel tree here:
+  https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/dma-buf-heap
 
-The device driver calls iommu_register_device_fault_handler(dev, cb,
-data). To report a fault, the SMMU driver calls
-iommu_report_device_fault(dev, fault). This calls into the device driver
-directly, there isn't any workqueue. If the fault is recoverable (the
-SMMU driver set type IOMMU_FAULT_PAGE_REQ rather than
-IOMMU_FAULT_DMA_UNRECOV), the device driver calls iommu_page_response()
-once it has dealt with the fault (after sleeping if it needs to). This
-invokes the SMMU driver's resume callback.
+And the userspace changes here:
+  https://android-review.googlesource.com/c/device/linaro/hikey/+/909436
 
-At the moment we use mutexes, so iommu_report_device_fault() can only be
-called from an IRQ thread, which is incompatible with the current SMMUv2
-driver. Either we need to switch the SMMUv2 driver to an IRQ thread, or
-rework the fault handler to be called from an IRQ handler. The reporting
-also has to be per device rather than per domain, and I'm not sure if
-the SMMUv2 driver can deal with this.
+Compared to ION, this patchset is missing the system-contig,
+carveout and chunk heaps, as I don't have a device that uses
+those, so I'm unable to do much useful validation there.
+Additionally we have no upstream users of chunk or carveout,
+and the system-contig has been deprecated in the common/andoid-*
+kernels, so this should be ok.
 
-> 
-> And I do still prefer the fault cb in irq (or not requiring it in
-> wq)..  but on thinking about it, the two ideas aren't entirely
-> conflicting, ie. add some flags either when we register handler[1], or
-> they could be handled thru domain_set_attr, like:
-> 
->  _EXPLICIT_RESUME - iommu API user calls iommu_domain_resume(),
-> potentialy from wq/thread after fault handler returns
->  _HANDLER_SLEEPS  - iommu core handles the wq, and calls ops->resume()
-> internally
-> 
-> In both cases, from the iommu driver PoV it just implements
-> iommu_ops::resume().. in first case it is called via iommu user either
-> from the fault handler or at some point later (ie. wq or thread).
-> 
-> I don't particularly need the _HANDLER_SLEEPS case (unless I can't
-> convince anyone that iommu_domamin_resume() called from outside iommu
-> core is a good idea).. so probably I wouldn't wire up the wq plumbing
-> for the _HANDLER_SLEEPS case unless someone really wanted me to.
-> 
-> Since there are more iommu drivers, than places that register fault
-> handlers, I like the idea that in either case, from the driver PoV, it
-> is just implementing the resume callback.
-> 
-> [1] currently I only see a few places where fault handlers are
-> registered, so changing iommu_set_fault_handler() is really not much
-> churn
+I've also removed the stats accounting for now, since any such
+accounting  should be implemented by dma-buf core or the heaps
+themselves.
 
-At the moment we're keeping the new fault reporting mechanism separate
-from iommu_set_fault_handler()/report_iommu_fault(), to ease the transition.
 
-Thanks,
-Jean
+New in v4:
+* Add fd_flags per Benjamin's request to specify the creation
+  flags for the dmabuf fd.
+* Added some optimization in the system heap to allocate
+  contiguous pages where possible.
+* Reworked the kselftest code to use vgem rather then
+  introducing a dummy importer
+* Other cleanups suggested by Benjamin and Andrew.
+
+
+Outstanding concerns:
+* Need to better understand various secure heap implementations.
+  Some concern that heap private flags will be needed, but its
+  also possible that dma-buf heaps can't solve everyone's needs,
+  in which case, a vendor's secure buffer driver can implement
+  their own dma-buf exporter.
+* Making sure the performance issues from potentially
+  unnecessary cache-management operations can be resolved
+  properly for system and cma heaps(outstanding issue from ION).
+
+
+That said, the main user-interface is shaping up and I wanted
+to get some input on the device model (particularly from GreKH)
+and any other API/ABI specific input. 
+
+thanks
+-john
+
+
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Liam Mark <lmark@codeaurora.org>
+Cc: Pratik Patel <pratikp@codeaurora.org>
+Cc: Brian Starkey <Brian.Starkey@arm.com>
+Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
+Cc: Sudipto Paul <Sudipto.Paul@arm.com>
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: Xu YiPing <xuyiping@hisilicon.com>
+Cc: "Chenfeng (puck)" <puck.chen@hisilicon.com>
+Cc: butao <butao@hisilicon.com>
+Cc: "Xiaqing (A)" <saberlily.xia@hisilicon.com>
+Cc: Yudongbin <yudongbin@hisilicon.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Chenbo Feng <fengc@google.com>
+Cc: Alistair Strachan <astrachan@google.com>
+Cc: dri-devel@lists.freedesktop.org
+
+Andrew F. Davis (1):
+  dma-buf: Add dma-buf heaps framework
+
+John Stultz (4):
+  dma-buf: heaps: Add heap helpers
+  dma-buf: heaps: Add system heap to dmabuf heaps
+  dma-buf: heaps: Add CMA heap to dmabuf heaps
+  kselftests: Add dma-heap test
+
+ MAINTAINERS                                   |  18 ++
+ drivers/dma-buf/Kconfig                       |  10 +
+ drivers/dma-buf/Makefile                      |   2 +
+ drivers/dma-buf/dma-heap.c                    | 241 ++++++++++++++++
+ drivers/dma-buf/heaps/Kconfig                 |  14 +
+ drivers/dma-buf/heaps/Makefile                |   4 +
+ drivers/dma-buf/heaps/cma_heap.c              | 169 ++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.c          | 261 ++++++++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.h          |  55 ++++
+ drivers/dma-buf/heaps/system_heap.c           | 162 +++++++++++
+ include/linux/dma-heap.h                      |  59 ++++
+ include/uapi/linux/dma-heap.h                 |  56 ++++
+ tools/testing/selftests/dmabuf-heaps/Makefile |  11 +
+ .../selftests/dmabuf-heaps/dmabuf-heap.c      | 232 ++++++++++++++++
+ 14 files changed, 1294 insertions(+)
+ create mode 100644 drivers/dma-buf/dma-heap.c
+ create mode 100644 drivers/dma-buf/heaps/Kconfig
+ create mode 100644 drivers/dma-buf/heaps/Makefile
+ create mode 100644 drivers/dma-buf/heaps/cma_heap.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.h
+ create mode 100644 drivers/dma-buf/heaps/system_heap.c
+ create mode 100644 include/linux/dma-heap.h
+ create mode 100644 include/uapi/linux/dma-heap.h
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+
+-- 
+2.17.1
+
