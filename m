@@ -2,277 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26CD31BB3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB6121BB44
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730917AbfEMQqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 12:46:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbfEMQqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:46:42 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B5C536887;
-        Mon, 13 May 2019 16:46:42 +0000 (UTC)
-Received: from treble (ovpn-123-166.rdu2.redhat.com [10.10.123.166])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A66419926;
-        Mon, 13 May 2019 16:46:38 +0000 (UTC)
-Date:   Mon, 13 May 2019 11:46:36 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] livepatch: Remove duplicate warning about missing
- reliable stacktrace support
-Message-ID: <20190513164636.bm32vygasta6lmsa@treble>
-References: <20190430091049.30413-1-pmladek@suse.com>
- <20190430091049.30413-2-pmladek@suse.com>
- <20190507004032.2fgddlsycyypqdsn@treble>
- <20190507014332.l5pmvjyfropaiui2@treble>
- <20190507112950.wejw6nmfwzmm3vaf@pathway.suse.cz>
- <20190507120350.gpazr6xivzwvd3az@treble>
- <20190507142847.pre7tvm4oysimfww@pathway.suse.cz>
- <20190507212425.7gfqx5e3yc4fbdfy@treble>
- <20190513104318.5wt2hyg7jf5uikhl@pathway.suse.cz>
+        id S1730965AbfEMQsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 12:48:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38096 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728513AbfEMQsK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 12:48:10 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DGhekd120570;
+        Mon, 13 May 2019 16:47:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Qff8KnehFhJXqovrxQdZ7APq0wkHxbUzI8v2H1GwFfQ=;
+ b=G2PtJ/Hfil95i1O+Kj9eeEbcL8e9GWSz+sp/dIX+Krqd0IgEw72OA3na6JA2QkunW1Lh
+ JKW6+KcvM0Mxvji8hOLBqippaReXLoArtdrLqLWpi0WfFrGPSJv8AQMlbGvNHsH0u1qN
+ tBUcIEzdnlzk/abdFkpNaoYJhw/cwDALRtoJs/l5cZU1uFcp5qwy4IZa72ymnO6gLsdV
+ 1OEMNqfQsdvowAL5ozgkN3E3Ziorm2pM2kBOZuFuykS7pXteajYIbbV84jUrTwzTKt/J
+ awJtAdHcJ9Im3lPKOIsxABjPLcLibncI8wFTFwdgNUoOc41NbDkXu844ARxniVYYk7Zu qA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2sdq1q88eb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 16:47:19 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DGlHO4061879;
+        Mon, 13 May 2019 16:47:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2se0tvntqq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 16:47:18 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4DGlDdp020804;
+        Mon, 13 May 2019 16:47:14 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 May 2019 16:47:13 +0000
+Subject: Re: [RFC KVM 19/27] kvm/isolation: initialize the KVM page table with
+ core mappings
+To:     Dave Hansen <dave.hansen@intel.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, kvm@vger.kernel.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, jan.setjeeilers@oracle.com,
+        liran.alon@oracle.com, jwadams@google.com
+References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+ <1557758315-12667-20-git-send-email-alexandre.chartre@oracle.com>
+ <a9198e28-abe1-b980-597e-2d82273a2c17@intel.com>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <463b86c8-e9a0-fc13-efa4-31df3aea8e54@oracle.com>
+Date:   Mon, 13 May 2019 18:47:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190513104318.5wt2hyg7jf5uikhl@pathway.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 13 May 2019 16:46:42 +0000 (UTC)
+In-Reply-To: <a9198e28-abe1-b980-597e-2d82273a2c17@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905130114
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905130114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 12:43:18PM +0200, Petr Mladek wrote:
-> On Tue 2019-05-07 16:24:25, Josh Poimboeuf wrote:
-> > On Tue, May 07, 2019 at 04:28:47PM +0200, Petr Mladek wrote:
-> > > > > > > Also this check is effectively the same as the klp_have_reliable_stack()
-> > > > > > > check which is done in kernel/livepatch/core.c.  So I think it would be
-> > > > > > > clearer and more consistent if the same check is done here:
-> > > > > > > 
-> > > > > > > 	if (!klp_have_reliable_stack())
-> > > > > > > 		return -ENOSYS;
-> > > > > 
-> > > > > Huh, it smells with over engineering to me.
-> > > > 
-> > > > How so?  It makes the code more readable and the generated code should
-> > > > be much better because it becomes a build-time check.
-> > > 
-> > > save_stack_trace_tsk_reliable() returns various error codes.
-> > > We catch a specific one because otherwise the message below
-> > > might be misleading.
-> > > 
-> > > I do not see why we should prevent this error by calling
-> > > a custom hack: klp_have_reliable_stack()?
-> > 
-> > I wouldn't call it a hack.  It's a simple build-time check.
-> > 
-> > > Regarding reliability. If anyone changes semantic of
-> > > save_stack_trace_tsk_reliable() error codes, they would likely
-> > > check if all users (one at the moment) handle it correctly.
-> > > 
-> > > On the other hand, the dependency between the -ENOSYS
-> > > return value and klp_have_reliable_stack() is far from
-> > > obvious.
-> > 
-> > I don't follow your point.
+
+
+On 5/13/19 5:50 PM, Dave Hansen wrote:
+>> +	/*
+>> +	 * Copy the mapping for all the kernel text. We copy at the PMD
+>> +	 * level since the PUD is shared with the module mapping space.
+>> +	 */
+>> +	rv = kvm_copy_mapping((void *)__START_KERNEL_map, KERNEL_IMAGE_SIZE,
+>> +	     PGT_LEVEL_PMD);
+>> +	if (rv)
+>> +		goto out_uninit_page_table;
 > 
-> We implement klp_have_reliable_stack() in livepatch subsystem.
-> It checks config options that defines behavior of the
-> stacktrace subsystem.
+> Could you double-check this?  We (I) have had some repeated confusion
+> with the PTI code and kernel text vs. kernel data vs. __init.
+> KERNEL_IMAGE_SIZE looks to be 512MB which is quite a bit bigger than
+> kernel text.
+
+I probably have the same confusion :-) but I will try to check again.
+
+
+>> +	/*
+>> +	 * Copy the mapping for cpu_entry_area and %esp fixup stacks
+>> +	 * (this is based on the PTI userland address space, but probably
+>> +	 * not needed because the KVM address space is not directly
+>> +	 * enterered from userspace). They can both be copied at the P4D
+>> +	 * level since they each have a dedicated P4D entry.
+>> +	 */
+>> +	rv = kvm_copy_mapping((void *)CPU_ENTRY_AREA_PER_CPU, P4D_SIZE,
+>> +	     PGT_LEVEL_P4D);
+>> +	if (rv)
+>> +		goto out_uninit_page_table;
 > 
-> We use the above livepatch-specific function to warn about
-> that a function from stacktrace subsustem will not work.
-> You even suggest to use it to ignore result from
-> the stacktrace subsystem.
+> cpu_entry_area is used for more than just entry from userspace.  The gdt
+> mapping, for instance, is needed everywhere.  You might want to go look
+> at 'struct cpu_entry_area' in some more detail.
+
+Ok. Thanks.
+
+>> +#ifdef CONFIG_X86_ESPFIX64
+>> +	rv = kvm_copy_mapping((void *)ESPFIX_BASE_ADDR, P4D_SIZE,
+>> +	     PGT_LEVEL_P4D);
+>> +	if (rv)
+>> +		goto out_uninit_page_table;
+>> +#endif
 > 
-> OK, using klp_have_reliable_stack() on both locations
-> would keep it consistent.
+> Why are these mappings *needed*?  I thought we only actually used these
+> fixup stacks for some crazy iret-to-userspace handling.  We're certainly
+> not doing that from KVM context.
+
+Right. I initially looked what was used for PTI, and I probably copied unneeded
+mapping.
+
+> Am I forgetting something?
 > 
-> My point is that the check itself is not reliable because
-> it is "hard" to maintain.
-
-I don't see how it would be "hard" to maintain.  If an arch implements
-reliable stack tracing, but forgets to set HAVE_RELIABLE_STACKTRACE then
-they will notice the warning immediately when they try to livepatch.
-
-> Instead, I suggest to remove klp_have_reliable_stack() and use
-> the following in klp_enable_patch().
+>> +#ifdef CONFIG_VMAP_STACK
+>> +	/*
+>> +	 * Interrupt stacks are vmap'ed with guard pages, so we need to
+>> +	 * copy mappings.
+>> +	 */
+>> +	for_each_possible_cpu(cpu) {
+>> +		stack = per_cpu(hardirq_stack_ptr, cpu);
+>> +		pr_debug("IRQ Stack %px\n", stack);
+>> +		if (!stack)
+>> +			continue;
+>> +		rv = kvm_copy_ptes(stack - IRQ_STACK_SIZE, IRQ_STACK_SIZE);
+>> +		if (rv)
+>> +			goto out_uninit_page_table;
+>> +	}
+>> +
+>> +#endif
 > 
+> I seem to remember that the KVM VMENTRY/VMEXIT context is very special.
+>   Interrupts (and even NMIs?) are disabled.  Would it be feasible to do
+> the switching in there so that we never even *get* interrupts in the KVM
+> context?
+
+Ideally we would like to run with the KVM address space when handling a VM-exit
+(so between a VMEXIT and the next VMENTER) where interrupts are not disabled.
+
+> I also share Peter's concerns about letting modules do this.  If we ever
+> go down this road, we're going to have to think very carefully how we
+> let KVM do this without giving all the not-so-nice out-of-tree modules
+> the keys to the castle.
+
+Right, we probably need some more generic framework for creating limited
+kernel context space which kvm (or other module?) can deal with. I think
+kvm is a good place to start for having this kind of limited context, hence
+this RFC and my request for advice how best to do it.
+
+> A high-level comment: it looks like this is "working", but has probably
+> erred on the side of mapping too much.  The hard part is paring this
+> back to a truly minimal set of mappings.
 > 
-> 	if (stack_trace_save_tsk_reliable(current, NULL, 0) == -ENOSYS) {
-> 		pr_warn("This architecture doesn't have support for the livepatch consistency model.\n");
-> 		pr_warn("The livepatch transition may never complete.\n");
-> 	}
 
-It seems confusing to call that function where it isn't needed, since
-klp_enable_patch() isn't doing stack tracing yet at that location.
+Agree.
 
-Calling klp_have_reliable_stack() is more readable, and is exactly the
-check we want to make.
+Thanks,
 
-> Also I suggest to remove the check in klp_check_stack() completely.
-> We will always print that the stack is not reliable but only when
-> the debug message is enabled. It is slightly misleading
-> message for -ENOSYS. But I doubt that it could cause much
-> troubles in reality. This situation should be really rare
-> and easy to debug.
-
-If you want to remove the specific check in klp_check_stack(), that's
-fine with me.  I slightly prefer just reverting Kamalesh's commit, but I
-don't have a strong feeling either way.
-
-> > > If we want to discuss and fix this to the death. We should change
-> > > the return value from -ENOSYS to -EOPNOTSUPP. The reason
-> > > is the same as in the commit 375bfca3459db1c5596
-> > > ("livepatch: core: Return EOPNOTSUPP instead of ENOSYS").
-> > > 
-> > > Note that EOPNOTSUPP is the same errno as ENOTSUP, see
-> > > man 3 errno.
-> > 
-> > Sure, but that's a separate issue.
-> 
-> I just wanted to show that we might spend even more time with
-> making this code briliant.
-> 
-> 
-> > > > But I think Miroslav's suggestion to revert 1d98a69e5cef would be even
-> > > > better.
-> > > 
-> > > AFAIK, Miroslav wanted to point out that your opinion was inconsistent.
-> > 
-> > How is my opinion inconsistent?
-
-I don't guarantee that I will always be consistent with my past self.
-My thinking may evolve (or devolve?) over time.  And there's nothing
-wrong with that.  But none of the below is actually inconsistent.
-
-> 1. You have already acked the removal of WARN_ON() in
->    klp_have_reliable_stack(),
->    see https://lkml.kernel.org/r/20190424155154.h62wc3nt7ib2phdy@treble
-> 
->    You even suggested it, see
->    https://lkml.kernel.org/r/20190418135858.n3lzq2oxkj52m6bi@treble
-> 
->    But you suggest to put it back now.
-
-Maybe I wasn't clear.  If we're not planning on calling the weak version
-of the function, then the warning makes sense.
-
-> 2. You suggested to remove the warning when klp_check_stack() because
->    it was superfluous. There was a discussion about keeping
->    the check for -ENOSYS there and you did not react, see
->    https://lkml.kernel.org/r/20190424155532.3uyxyxwm4c5dqsf5@treble
-
-But then (I thought) Miroslav suggested reverting 1d98a69e5cef, which is
-a better idea.
-
->    You even acked the commit 1d98a69e5cef3aeb68bcef ("livepatch:
->    Remove reliable stacktrace check in klp_try_switch_task()").
-> 
->    And you suddenly want to revert it.
-
-The circumstances have changed since that commit: now we are going back
-to allowing non-reliable arches to load livepatches.
-
-> > Is there something wrong with the original approach, which was reverted
-> > with
-> > 
-> >   1d98a69e5cef ("livepatch: Remove reliable stacktrace check in klp_try_switch_task()")
-> > 
-> > ?
-> > 
-> > As I mentioned, that has some advantages:
-> > 
-> > - The generated code is simpler/faster because it uses a build-time
-> >   check.
-> > 
-> > - The code is more readable IMO.  Especially if the check is done higher
-> >   up the call stack by reverting 1d98a69e5cef.  That way the arch
-> >   support short-circuiting is done in the logical place, before doing
-> >   any more unnecessary work.  It's faster, but also, more importantly,
-> >   it's less surprising.
-> > 
-> > - It's also more consistent with other code, since the intent of this
-> >   check is the same as the klp_have_reliable_stack() use in
-> >   klp_enabled_patch().
-> > 
-> > If you disagree with those, please explain why.
-> 
-> As I said. I think that it is less reliable because we check config
-> options of an unrelated subsystem.
-
-There's no harm in checking the config option of another subsystem.
-Livepatch very much relies on stacktrace.
-
-> Also I think that it is overengineered.
-> save_stack_trace_tsk_reliable() is able to tell when it failed.
-> This particular failure is superfast. IMHO, it is not worth such
-> an optimization.
-
-Sure, performance isn't a concern, but code simplicity, readability, and
-consistency certainly are.
-
-> In fact, it is a compile time check as well because the inline
-> from include/linux/stacktrace.h
-> 
-> 
-> > > PS: This is my last mail in the thread this week. I will eventually
-> > > return to it with a clear head next week. It is all nitpicking from
-> > > my POV and I have better things to do.
-> > 
-> > I don't think it's helpful to characterize it as nitpicking.  The
-> > details of the code are important.
-> 
-> 1. You had issues with almost all my printk() messages, comments,
->    and commit messages. I know that my English is not perfect.
->    And that you might want to highlight another information.
->    But was is it really that bad?
-
-It's just code review.
-
-> 2. This entire patchset is about adding and removing messages
->    and checks. We have 3rd version and you are still not happy.
->    Not to say that you suggest something else each time.
-
-That's how review works.  If the code improves with each iteration then
-how is that a problem?
-
-> Frankly, I do mind too much about this code path, which and how
-> many warnings are printed. I am not aware about any complains.
-> IMHO, only people adding support for new architecture
-> might go this way.
-> 
-> I just wanted to switch the error to warning because Thomas
-> Gleixner wondered about unused code on s390 when refactoring
-> the stacktrace code.
-> 
-> I really did not expect that I would spend hours/days on this.
-> I do not think that it is worth it.
-> 
-> I consider most of the requests as nitpicking because
-> they requests extra work just because it looks like
-> a good idea.
-> 
-> My take is that we should accept changes when they improve
-> the situation and go in the right direction. Further clean up
-> might be done later by anyone who does not have anything
-> more important on the plate or gets annoyed enough.
-> 
-> Yes, you have many great ideas. But I am not a trained
-> monkey. And I do not know how to stop this when it is
-> looking endless.
-
-I'm just trying to help improve the code.  That's how open source works.
-And it's my responsibility as a maintainer.  If you're not open to
-review, don't bother posting the code in the first place.
-
--- 
-Josh
+alex.
