@@ -2,115 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 344801B837
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ADA11B847
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbfEMOVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:21:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46615 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730534AbfEMOVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:21:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r7so14873248wrr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 07:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cSguXg1ULNsLVeUlyV/JBYC1DyTsN/aiCX3xWl5lL/w=;
-        b=jleNO/Cdfykym1Iv62B4ZMzaeTMBfgLnbRfEOuZTYHQdFwoD/fE3Nu1uIO83bTuCb0
-         WufTyu79QjpzY5s5s1Orw+T6OkXimC1WGuD0yHItW1LPMoPvqskys5DxO8pNyTC4ETUn
-         89Ywwrps4NBIRn5o/0NOl6bzkn3fmWkCmrYM3/Grojkmqb4lW1xowhu96CezF4gLiK/1
-         pDJQJQvPFq6JEytsSw8z70jl3Aeprsh4UCVcEIAsKpgSj9R8c3+d/jI7Jk6plZr47VhM
-         Mb/gptNd4QJJZk6wUuG2U8eo6Ut7BoGxnUESQsUaQv5y5S+4390RDYWn7yytT4L9H7BN
-         VSuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cSguXg1ULNsLVeUlyV/JBYC1DyTsN/aiCX3xWl5lL/w=;
-        b=Q8GoiNGscT2/ZKYo4d3G7Oezknr5WkG9DHpk7FzUZMO97lMykappb52ZliKMEG/3KO
-         3BhjJeS6dKt09ajy+P3FDDoBLCK92tzuC8+Ku9mmf8ctUgkvRAvpLFTUJvTrIV5kfOUf
-         Z5ZNcD2jTqXyp/i6s/oeFieglNU5TJ1Iqq+V7XLgGf4ffyjLiFjl9pExDyD7xoNvcvGy
-         eLcaeW12M0DL15dJEuEqruSc9bUTG7IlLbj+AfBwDIG//oK9h3BC4Wj7k2/hyTPDozdK
-         zcsq/zpB1fyAls1tc4Qgwtpl0vaQJt7GJoL73VbmOfacrO1pVFdPvRj2mnacJiguM4CV
-         AuJg==
-X-Gm-Message-State: APjAAAWkff2En68oqUKlIUZpYt2Nb4hX6BN6fln1eh1Gxkz3fc3ZbSUJ
-        k/C7KxxbgVC8NkHkw29x1QwD0Q==
-X-Google-Smtp-Source: APXvYqyb7jvJZ+9TFKgT7DkyliaCtl4ZcjeYhYQ5a7ehr+YjdueGGPUKUKqqrkwlDWYC3gJx5sgcgQ==
-X-Received: by 2002:adf:aa0a:: with SMTP id p10mr8675758wrd.125.1557757305028;
-        Mon, 13 May 2019 07:21:45 -0700 (PDT)
-Received: from localhost.localdomain (aputeaux-684-1-11-31.w90-86.abo.wanadoo.fr. [90.86.214.31])
-        by smtp.gmail.com with ESMTPSA id v184sm21133615wma.6.2019.05.13.07.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 07:21:44 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, matthias.bgg@gmail.com
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 2/2] input: keyboard: mtk-pmic-keys: add MT6392 support
-Date:   Mon, 13 May 2019 16:21:20 +0200
-Message-Id: <20190513142120.6527-2-fparent@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190513142120.6527-1-fparent@baylibre.com>
-References: <20190513142120.6527-1-fparent@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729469AbfEMOYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:24:51 -0400
+Received: from mutluit.com ([82.211.8.197]:46738 "EHLO mutluit.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727272AbfEMOYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:24:45 -0400
+Received: from c22-local.mutluit.com (ip4d155212.dynamic.kabel-deutschland.de [77.21.82.18]:58476)
+        by mutluit.com (s2.mutluit.com [82.211.8.197]:25) with ESMTP ([XMail 1.27 ESMTP Server])
+        id <S16FAD6A> for <linux-kernel@vger.kernel.org> from <um@mutluit.com>;
+        Mon, 13 May 2019 10:24:41 -0400
+From:   Uenal Mutlu <um@mutluit.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-ide@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Uenal Mutlu <um@mutluit.com>, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Pablo Greco <pgreco@centosproject.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Oliver Schinagl <oliver@schinagl.nl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        FUKAUMI Naoki <naobsd@gmail.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Stefan Monnier <monnier@iro.umontreal.ca>
+Subject: [PATCH v3] drivers: ata: ahci_sunxi: Increased SATA/AHCI DMA TX/RX FIFOs
+Date:   Mon, 13 May 2019 16:24:10 +0200
+Message-Id: <20190513142410.9299-1-um@mutluit.com>
+X-Mailer: git-send-email 2.11.0
+X-Patchwork-Bot: notify
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for MT6392 PMIC's keys.
+Increasing the SATA/AHCI DMA TX/RX FIFOs (P0DMACR.TXTS and .RXTS, ie.
+TX_TRANSACTION_SIZE and RX_TRANSACTION_SIZE) from default 0x0 each
+to 0x3 each, gives a write performance boost of 120 MiB/s to 132 MiB/s
+from lame 36 MiB/s to 45 MiB/s previously.
+Read performance is above 200 MiB/s.
+[tested on SSD using dd bs=4K/8K/12K/16K/20K/24K/32K: peak-perf at 12K]
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
+Tested on the SBCs Banana Pi R1 (aka Lamobo R1) and Banana Pi M1 which
+are based on the Allwinner A20 32bit-SoC (ARMv7-a / arm-linux-gnueabihf).
+These devices are RaspberryPi-like small devices.
+
+This problem of slow SATA write-speed with these small devices lasts
+for about 7 years now (beginning with the A10 SoC). Many commentators
+throughout the years wrongly assumed the slow write speed was a
+hardware limitation. This patch finally solves the problem, which
+in fact was just a hard-to-find software problem due to lack of
+SATA/AHCI documentation by the SoC-maker Allwinner Technology.
+
+Lists of the affected sunxi and other boards and SoCs with SATA using
+the ahci_sunxi driver:
+  $ grep -i -e "^&ahci" arch/arm/boot/dts/sun*dts
+  and http://linux-sunxi.org/SATA#Devices_with_SATA_ports
+  See also http://linux-sunxi.org/Category:Devices_with_SATA_port
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Uenal Mutlu <um@mutluit.com>
 ---
- drivers/input/keyboard/mtk-pmic-keys.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
-index 8e6ebab05ab4..aaf68cbf7e5b 100644
---- a/drivers/input/keyboard/mtk-pmic-keys.c
-+++ b/drivers/input/keyboard/mtk-pmic-keys.c
-@@ -18,6 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/mfd/mt6323/registers.h>
-+#include <linux/mfd/mt6392/registers.h>
- #include <linux/mfd/mt6397/core.h>
- #include <linux/mfd/mt6397/registers.h>
- #include <linux/module.h>
-@@ -83,6 +84,16 @@ static const struct mtk_pmic_regs mt6323_regs = {
- 	.pmic_rst_reg = MT6323_TOP_RST_MISC,
- };
+v3:
+  * Removed RFC from Subject line, and also the explicit call for RFC
+    in the text, thereby submitting the patch for official merging.
+
+v2:
+  * Commented the patch in-place in ahci_sunxi.c
+  * With bs=12K and no conv=... passed to dd, the write performance
+    rises further to 132 MiB/s
+  * Changed MB/s to MiB/s
+  * Posted the story behind the patch:
+    http://lkml.iu.edu/hypermail/linux/kernel/1905.1/03506.html
+  * Posted a dd test script to find optimal bs, and some results:
+    https://bit.ly/2YoOzEM
+
+v1:
+  * States bs=4K for dd and a write performance of 120 MiB/s
+---
+ drivers/ata/ahci_sunxi.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 45 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
+index 911710643305..018186a39a69 100644
+--- a/drivers/ata/ahci_sunxi.c
++++ b/drivers/ata/ahci_sunxi.c
+@@ -157,8 +157,51 @@ static void ahci_sunxi_start_engine(struct ata_port *ap)
+ 	void __iomem *port_mmio = ahci_port_base(ap);
+ 	struct ahci_host_priv *hpriv = ap->host->private_data;
  
-+static const struct mtk_pmic_regs mt6392_regs = {
-+	.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
-+		MTK_PMIC_KEYS_REGS(MT6392_CHRSTATUS,
-+		0x2, MT6392_INT_MISC_CON, 0x10),
-+	.keys_regs[MTK_PMIC_HOMEKEY_INDEX] =
-+		MTK_PMIC_KEYS_REGS(MT6392_CHRSTATUS,
-+		0x4, MT6392_INT_MISC_CON, 0x8),
-+	.pmic_rst_reg = MT6392_TOP_RST_MISC,
-+};
-+
- struct mtk_pmic_keys_info {
- 	struct mtk_pmic_keys *keys;
- 	const struct mtk_pmic_keys_regs *regs;
-@@ -238,6 +249,9 @@ static const struct of_device_id of_mtk_pmic_keys_match_tbl[] = {
- 	}, {
- 		.compatible = "mediatek,mt6323-keys",
- 		.data = &mt6323_regs,
-+	}, {
-+		.compatible = "mediatek,mt6392-keys",
-+		.data = &mt6392_regs,
- 	}, {
- 		/* sentinel */
- 	}
+-	/* Setup DMA before DMA start */
+-	sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ff00, 0x00004400);
++	/* Setup DMA before DMA start
++	 *
++	 * NOTE: A similar SoC with SATA/AHCI by Texas Instruments documents
++	 *   this Vendor Specific Port (P0DMACR, aka PxDMACR) in its
++	 *   User's Guide document (TMS320C674x/OMAP-L1x Processor
++	 *   Serial ATA (SATA) Controller, Literature Number: SPRUGJ8C,
++	 *   March 2011, Chapter 4.33 Port DMA Control Register (P0DMACR),
++	 *   p.68, https://www.ti.com/lit/ug/sprugj8c/sprugj8c.pdf)
++	 *   as equivalent to the following struct:
++	 *
++	 *   struct AHCI_P0DMACR_t
++	 *   {
++	 *     unsigned TXTS     : 4;
++	 *     unsigned RXTS     : 4;
++	 *     unsigned TXABL    : 4;
++	 *     unsigned RXABL    : 4;
++	 *     unsigned Reserved : 16;
++	 *   };
++	 *
++	 *   TXTS: Transmit Transaction Size (TX_TRANSACTION_SIZE).
++	 *     This field defines the DMA transaction size in DWORDs for
++	 *     transmit (system bus read, device write) operation. [...]
++	 *
++	 *   RXTS: Receive Transaction Size (RX_TRANSACTION_SIZE).
++	 *     This field defines the Port DMA transaction size in DWORDs
++	 *     for receive (system bus write, device read) operation. [...]
++	 *
++	 *   TXABL: Transmit Burst Limit.
++	 *     This field allows software to limit the VBUSP master read
++	 *     burst size. [...]
++	 *
++	 *   RXABL: Receive Burst Limit.
++	 *     Allows software to limit the VBUSP master write burst
++	 *     size. [...]
++	 *
++	 *   Reserved: Reserved.
++	 *
++	 *
++	 * NOTE: According to the above document, the following alternative
++	 *   to the code below could perhaps be a better option
++	 *   (or preparation) for possible further improvements later:
++	 *     sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ffff,
++	 *		0x00000033);
++	 */
++	sunxi_clrsetbits(hpriv->mmio + AHCI_P0DMACR, 0x0000ffff, 0x00004433);
+ 
+ 	/* Start DMA */
+ 	sunxi_setbits(port_mmio + PORT_CMD, PORT_CMD_START);
 -- 
-2.20.1
+2.11.0
 
