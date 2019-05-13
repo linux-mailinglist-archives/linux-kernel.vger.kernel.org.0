@@ -2,126 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB1D1AEF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 04:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF45A1AEEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 04:31:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfEMCcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 22:32:14 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:36599 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfEMCcN (ORCPT
+        id S1727420AbfEMCbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 22:31:55 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43237 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbfEMCby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 22:32:13 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x4D2VvkW009922;
-        Mon, 13 May 2019 11:31:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x4D2VvkW009922
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557714718;
-        bh=Zsi54OSUGNcpYm5K99Z8vy92oXo87cVf0tHTBDx1LhA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qXuUlB3SVwHfwTd7LV6G81NMKbTnFLS0H5Nh/rja+Peirp/tZ8CGyXFqDg+DjOxgD
-         IzJkh1LtCeqGBP3qNXz7E6A37uFn3YRvcEvoEPtnYyprOra6cOdLAKnDQQAEXfyLRm
-         zSM0/gbmN1nObM3CZ2Na+uFaTWtqu9bz1NLruekZaFmIcKehS1FZ+I+RENuVREkpgl
-         6FAL/ej66R03aWcEdZ9zXInoU/3wVP6PYvY5ObUzNMM7DZL1UACY1QKBbNwraFsqFJ
-         Rb2ilqPNnTaaNzv0Rf5fpfuThtNCABV4YCuk5AZM7KcLGhAZBluFd6D/f9msCUvL8s
-         xJDWly6f6Fx9A==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id o5so754694vsq.4;
-        Sun, 12 May 2019 19:31:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAVp02jHmNJuN5QHLqI2ZqV2qLS/ffkdRyCKJu5NREJ9UbN2gQ1f
-        gs8gLPCFoF+vyh5zejrltnPMYEyF5gDoaDK7wG0=
-X-Google-Smtp-Source: APXvYqwznu7NWBF7htgakLGGukXxEvzXZOocCoKurpeQeezxk/Kh5cpfs4oRN3hVPkHjR3s0GN4jRYEWOvKiGU/GUSA=
-X-Received: by 2002:a67:db8b:: with SMTP id f11mr12581079vsk.155.1557714716867;
- Sun, 12 May 2019 19:31:56 -0700 (PDT)
+        Sun, 12 May 2019 22:31:54 -0400
+Received: by mail-pl1-f193.google.com with SMTP id n8so5643050plp.10
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 19:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GkmKn8xqtM5ZFNASHy3dhSS1TrKNKE1jNN1/7Rw3UKs=;
+        b=iRl0DBZnB84iNuFBTLWCeRyIpe0lPSsH15HCK6R6QA+PwO8exC1hHVjRgytri52y0q
+         AOdcHrBnb8unRWbDBfXAac3xtO2Pq/ni2zHg2H9doeRN/YbHX4x5lt0Z3vp3M99NadxD
+         E9/XMC0G2cO9/StbBL2Yw3EU2hvkVISGiw84w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GkmKn8xqtM5ZFNASHy3dhSS1TrKNKE1jNN1/7Rw3UKs=;
+        b=HMBGS8EHiJSojkx1mwhexseke8TbQyEB1ySoXjq+l1ABUcZr+myml6GTLbLDuwNWG+
+         V01O1Zg3GcxWvEY8SBxz9rKnEuGlM2NJbjxaKhTeSSq7UQVxw0NJGd9w6pmvu9mdHCE7
+         JouA0/8A1BB09z2iJhnvCsmsitoFwy2l/MQO6AiEQRKGJ+lSdALedwkoujw9kxxdOr4o
+         1YXycelBNYKqFZvNwDgQc0zRdxKbfSjCYdBh8iQ7K89HHZyOVV4JVeTGcUV70Vt5WKFb
+         rfYVbMtEYs8T2sUTneNKCgy/hXhYJiuJs12pG0FOIwC2pHlwPCUfnozFGMK8o3Z/kqBr
+         aZkg==
+X-Gm-Message-State: APjAAAWgwK36mzKKIBzrnvWsb0Vmtkm0fb/4BciML9My8bi8HcNS6hpC
+        PmabX3dcHNhf003xczCwlqU1Rw==
+X-Google-Smtp-Source: APXvYqxM3LbMIU9Q5iaT+nkjQfWHuEDGndPZntXzyCbgcmkhL7NypAv9mABJvVEnP0bGD1ZenD85DQ==
+X-Received: by 2002:a17:902:7406:: with SMTP id g6mr27017388pll.328.1557714713660;
+        Sun, 12 May 2019 19:31:53 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id y14sm13984506pga.54.2019.05.12.19.31.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 May 2019 19:31:52 -0700 (PDT)
+Date:   Sun, 12 May 2019 22:31:50 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        paulmck@linux.ibm.com, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@kernel.org,
+        gregkh@linuxfoundation.org, keescook@chromium.org,
+        srinivas.eeda@oracle.com
+Subject: Re: [PATCH 2/2] doc: kernel-parameters.txt: fix documentation of
+ nmi_watchdog parameter
+Message-ID: <20190513023150.GA192545@google.com>
+References: <1555211464-28652-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1555211464-28652-2-git-send-email-zhenzhong.duan@oracle.com>
+ <20190510144749.592f4249@gandalf.local.home>
 MIME-Version: 1.0
-References: <1557507361-7418-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1557507361-7418-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 13 May 2019 11:31:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATXs4Cr_2zwX08dd7xE84JaG6K6LF3YXA1=aFNVYji2Ew@mail.gmail.com>
-Message-ID: <CAK7LNATXs4Cr_2zwX08dd7xE84JaG6K6LF3YXA1=aFNVYji2Ew@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: make parent directories for the saved .config as needed
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190510144749.592f4249@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 1:56 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> With menuconfig / nconfig, users can input any file path from the
-> "Save" menu, but it fails if the parent directory does not exist.
->
-> Why not create the parent directory automatically. I think this is
-> a user-friendly behavior.
->
-> I changed the error messages in menuconfig / nconfig.
->
-> "Nonexistent directory" is no longer the most likely reason of the
-> failure. Perhaps, the user specified the existing directory, or
-> attempted to write to the location without write permission.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On Fri, May 10, 2019 at 02:47:49PM -0400, Steven Rostedt wrote:
+> 
+> As nobody else commented, I will ;)
+> 
+> Hi Zhenzhong!
+> 
+> On Sun, 14 Apr 2019 11:11:04 +0800
+> Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
+> 
+> > As stated in "Documentation/lockup-watchdogs.txt:line 22", the default
+> > behaivor after 'hardlockup' is to stay locked up rather than panic.
+> 
+> That actually says:
+> 
+>  A 'hardlockup' is defined as a bug that causes the CPU to loop in
+>  kernel mode for more than 10 seconds (see "Implementation" below for 
+>  details), without letting other interrupts have a chance to run.
+>  Similarly to the softlockup case, the current stack trace is displayed
+>  upon detection and the system will stay locked up unless the default
+>  behavior is changed, which can be done through a sysctl,
+>  'hardlockup_panic', a compile time knob, "BOOTPARAM_HARDLOCKUP_PANIC",
+>  and a kernel parameter, "nmi_watchdog"
+> 
+> If your config has:
+> 
+>  CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
+> 
+> The kernel will panic on hard lockup by default unless you add nopanic.
+> 
+> If your config has:
+> 
+>  # CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is not set
+> 
+> Then the default will be not to panic unless you add "panic" to the
+> kernel command line.
+> 
+> > 
+> > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 2b8ee90..fcc9579 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2769,7 +2769,7 @@
+> >  			0 - turn hardlockup detector in nmi_watchdog off
+> >  			1 - turn hardlockup detector in nmi_watchdog on
+> >  			When panic is specified, panic when an NMI watchdog
+> > -			timeout occurs (or 'nopanic' to override the opposite
+> > +			timeout occurs (or 'nopanic' which is the opposite
+> >  			default). To disable both hard and soft lockup detectors,
+> 
+> Honestly, I think the original text states what it does better than
+> your update. Because the nopanic is added to override the "opposite
+> default" which is if the config was set to do so.
+> 
+> That said, this all still can be explained better. What about:
+> 
+>         nmi_watchdog=   [KNL,BUGS=X86] Debugging features for SMP kernels
+>                         Format: [panic,][nopanic,][num]
+>                         Valid num: 0 or 1
+>                         0 - turn hardlockup detector in nmi_watchdog off
+>                         1 - turn hardlockup detector in nmi_watchdog on
+>                         When panic is specified, panic when an NMI watchdog
+>                         timeout occurs (or 'nopanic' to not panic on an NMI
+> 			watchdog, if CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is set)
+>                         To disable both hard and soft lockup detectors,
+>                         please see 'nowatchdog'.
+>                         This is useful when you use a panic=... timeout and
+>                         need the box quickly up again.
 
-Applied to linux-kbuild.
+Steven, your update makes it more clear to me. If patch is being written with
+such update, here is my Reviewed-by:
 
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
->  scripts/kconfig/confdata.c | 3 +++
->  scripts/kconfig/mconf.c    | 2 +-
->  scripts/kconfig/nconf.c    | 3 +--
->  3 files changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 431b805..b7bdd96 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -881,6 +881,9 @@ int conf_write(const char *name)
->                 return -1;
->         }
->
-> +       if (make_parent_dir(name))
-> +               return -1;
-> +
->         env = getenv("KCONFIG_OVERWRITECONFIG");
->         if (env && *env) {
->                 *tmpname = 0;
-> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
-> index 5f8c82a..694091f 100644
-> --- a/scripts/kconfig/mconf.c
-> +++ b/scripts/kconfig/mconf.c
-> @@ -936,7 +936,7 @@ static void conf_save(void)
->                                 set_config_filename(dialog_input_result);
->                                 return;
->                         }
-> -                       show_textbox(NULL, "Can't create file!  Probably a nonexistent directory.", 5, 60);
-> +                       show_textbox(NULL, "Can't create file!", 5, 60);
->                         break;
->                 case 1:
->                         show_helptext("Save Alternate Configuration", save_config_help);
-> diff --git a/scripts/kconfig/nconf.c b/scripts/kconfig/nconf.c
-> index ac92c0d..cbafe3b 100644
-> --- a/scripts/kconfig/nconf.c
-> +++ b/scripts/kconfig/nconf.c
-> @@ -1438,8 +1438,7 @@ static void conf_save(void)
->                                 set_config_filename(dialog_input_result);
->                                 return;
->                         }
-> -                       btn_dialog(main_window, "Can't create file! "
-> -                               "Probably a nonexistent directory.",
-> +                       btn_dialog(main_window, "Can't create file!",
->                                 1, "<OK>");
->                         break;
->                 case 1:
-> --
-> 2.7.4
->
+thanks!
 
+ - Joel
 
--- 
-Best Regards
-Masahiro Yamada
+> 
+> -- Steve
+> 
+> 
+> >  			please see 'nowatchdog'.
+> >  			This is useful when you use a panic=... timeout and
+> 
