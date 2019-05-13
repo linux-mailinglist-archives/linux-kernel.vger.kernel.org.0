@@ -2,75 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEBDD1B71B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 235A51B737
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 15:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729404AbfEMNfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 09:35:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59096 "EHLO mx1.redhat.com"
+        id S1729731AbfEMNlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 09:41:35 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31556 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727202AbfEMNfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 09:35:55 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E31D1552FC;
-        Mon, 13 May 2019 13:35:54 +0000 (UTC)
-Received: from flask (unknown [10.40.205.238])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 22DEB1001F54;
-        Mon, 13 May 2019 13:35:51 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Mon, 13 May 2019 15:35:51 +0200
-Date:   Mon, 13 May 2019 15:35:51 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH] KVM: X86: Enable IA32_MSIC_ENABLE MONITOR bit when
- exposing mwait/monitor
-Message-ID: <20190513133548.GA6538@flask>
-References: <1557740799-5792-1-git-send-email-wanpengli@tencent.com>
+        id S1725866AbfEMNle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 09:41:34 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 06:41:33 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga004.fm.intel.com with ESMTP; 13 May 2019 06:41:33 -0700
+Date:   Mon, 13 May 2019 07:36:11 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Busch, Keith" <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+Message-ID: <20190513133611.GA15318@localhost.localdomain>
+References: <20190510212937.11661-1-keith.busch@intel.com>
+ <20190511072258.GB14764@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557740799-5792-1-git-send-email-wanpengli@tencent.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 13 May 2019 13:35:55 +0000 (UTC)
+In-Reply-To: <20190511072258.GB14764@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-05-13 17:46+0800, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On Sat, May 11, 2019 at 12:22:58AM -0700, Christoph Hellwig wrote:
+> A couple nitpicks, mostly leftover from the previous iteration
+> (I didn't see replies to those comments from you, despite seeing
+> a reply to my mail, assuming it didn't get lost):
+
+I thought you just meant the freeze/unfreeze sequence. I removed that
+part entirely, but yes, I can move all of this from the core. I will
+just need to export 'nvme_set_features'
+ 
+> > +int nvme_set_power(struct nvme_ctrl *ctrl, unsigned ps)
+> > +{
+> > +	return nvme_set_features(ctrl, NVME_FEAT_POWER_MGMT, ps, NULL, 0, NULL);
+> > +}
+> > +EXPORT_SYMBOL_GPL(nvme_set_power);
+> > +
+> > +int nvme_get_power(struct nvme_ctrl *ctrl, u32 *result)
+> > +{
+> > +	struct nvme_command c;
+> > +	union nvme_result res;
+> > +	int ret;
+> > +
+> > +	if (!result)
+> > +		return -EINVAL;
+> > +
+> > +	memset(&c, 0, sizeof(c));
+> > +	c.features.opcode = nvme_admin_get_features;
+> > +	c.features.fid = cpu_to_le32(NVME_FEAT_POWER_MGMT);
+> > +
+> > +	ret = __nvme_submit_sync_cmd(ctrl->admin_q, &c, &res,
+> > +			NULL, 0, 0, NVME_QID_ANY, 0, 0, false);
+> > +	if (ret >= 0)
+> > +		*result = le32_to_cpu(res.u32);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(nvme_get_power);
 > 
-> MSR IA32_MSIC_ENABLE bit 18, according to SDM:
+> At this point I'd rather see those in the PCIe driver.  While the
+> power state feature is generic in the spec I don't see it actually
+> being used anytime anywhere else any time soon.
 > 
->  | When this bit is set to 0, the MONITOR feature flag is not set (CPUID.01H:ECX[bit 3] = 0). 
->  | This indicates that MONITOR/MWAIT are not supported.
->  | 
->  | Software attempts to execute MONITOR/MWAIT will cause #UD when this bit is 0.
->  | 
->  | When this bit is set to 1 (default), MONITOR/MWAIT are supported (CPUID.01H:ECX[bit 3] = 1). 
+> But maybe we can add a nvme_get_features helper ala nvme_set_features
+> in the core to avoid a little boilerplate code for the future?
+
+Sounds good.
+ 
+> > +	ret = nvme_set_power(&dev->ctrl, dev->ctrl.npss);
+> > +	if (ret < 0)
+> > +		return ret;
 > 
-> This bit should be set to 1, if BIOS enables MONITOR/MWAIT support on host and 
-> we intend to expose mwait/monitor to the guest.
+> I can't find any wording in the spec that guarantees the highest
+> numerical power state is the deepest.  But maybe I'm just missing
+> something as such an ordering would be really helpful?
 
-The CPUID.01H:ECX[bit 3] ought to mirror the value of the MSR bit and
-as userspace has control of them both, I'd argue that it is userspace's
-job to configure both bits to match on the initial setup.
+I actually only noticed APST made this assumption, and I had to search
+the spec to see where it calls this out. It is in section 8.4:
 
-Also, CPUID.01H:ECX[bit 3] is a better guard than kvm_mwait_in_guest().
-kvm_mwait_in_guest() affects the behavior of MONITOR/MWAIT, not its
-guest visibility.
-Some weird migration cases might want MONITOR in CPUID without
-kvm_mwait_in_guest() and the MSR should be correct there as well.
+  Power states are contiguously numbered starting with zero such that
+  each subsequent power state consumes less than or equal to the maximum
+  power consumed in the previous state.
 
-Missing the MSR bit shouldn't be a big problem for guests, so I am in
-favor of fixing the userspace code.
+> >  static int nvme_suspend(struct device *dev)
+> >  {
+> >  	struct pci_dev *pdev = to_pci_dev(dev);
+> >  	struct nvme_dev *ndev = pci_get_drvdata(pdev);
+> >  
+> > +	/*
+> > +	 * Try to use nvme if the device supports host managed power settings
+> > +	 * and platform firmware is not involved.
+> > +	 */
+> 
+> This just comments that what, but I think we need a why here as the
+> what is fairly obvious..
 
-Thanks.
-
-(For extra correctness in KVM, we could implement toggling of the CPUID
- bit based on guest writes to the MSR.)
+Sounds good.
