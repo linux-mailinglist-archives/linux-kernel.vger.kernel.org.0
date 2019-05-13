@@ -2,209 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5F61BF3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A14E81BF42
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfEMVuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 17:50:21 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44632 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbfEMVuT (ORCPT
+        id S1726566AbfEMVw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 17:52:57 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54186 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfEMVw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 17:50:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b8so19657403edm.11
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:50:17 -0700 (PDT)
+        Mon, 13 May 2019 17:52:57 -0400
+Received: by mail-it1-f196.google.com with SMTP id m141so1661823ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:52:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=isxZOxalCqIQgR18teS6HBBiX9h5vav9beRyCO+k5fg=;
-        b=Hrg3AfqPO2a0aMn8m9lLbEmYSpuqgzXBTaDf0CYhWJQg0O9QSg/Rahy1nXG9ZlxI1r
-         PpC4wdraxt4INBEy08hU4lEiEE9n0yP1/Mh/VIay8Ocm4U/4y5FpTHv+G+HUOR9qj2+U
-         vhtL0BznCnQqe0E8jexIdlrhpliNnxxqvkXlWrMzTXGZTInB42RhS2cUvBuOEhnyvPDL
-         uaWmXs7dTt9z9VC3Ju3z1p6reRqXRGaEs5yAIaBeloYQyCl9jKxIbnOtVMQeqrw7QYtP
-         EAkaKcGwlWNjz8TopiPndjMSpeq4okX35MdMMHYutmyuiwvFm5sBrT+1/gZtbedZs/bc
-         5+ZA==
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=spz1frMWWtHxRQEXNjNtgkaY/6ePBOEmlsOI1xvvGpQ=;
+        b=eUobuJlWsD+tXMvjyfP8LG+8hX5/OHN5o3k1eun6fh1/bVKcCBTfLxA/qsCoigDGHD
+         rvE5NHiWuyIfArPgSX8dmmgBuG8iQVbZY94Drg2bf/mzew9kDwwP0j9V8+Np6ckuB3Wf
+         ekQhRKprn4GOEdC2akwRQwV3udNz7F0aB0sIHz10SbHIP6+Ci3zJkBp47p6rV/c/6YhR
+         BoqPYI4TDpmG3NWn8iw8Ejhkka5dM9cp8ekLnICbweCj5ODveLkIXYp2VePjw8jjtCJL
+         /XfXbQF76c1UVpaqWX6QUREgTproaWmE6PDehw8rKUysHS3ynyOa//LDv9wkhDBFn7/Q
+         1IPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=isxZOxalCqIQgR18teS6HBBiX9h5vav9beRyCO+k5fg=;
-        b=fR8BKprY+1q81ZYXTga4t4XkGViqa2yzxFGpVVkO42wsei/Q4CRsSOKq8ymc5Uxyyy
-         rFlOl/L7qN83A7TB62JkeUdS3u3yOihS/GKIfg+YzTz6wrdxm9uWNMqlUdDmBxm3Gi6r
-         7AXv47VO3aQ5P6yovXmFoSF9OMbhLUxSL3OlN4cbGWvVp3Kp3RTs19qf4d8mvVcSNlIO
-         5CGxTuO88uc7IaZN+YjowwgYOPj1gk1O5ssEcGtZE/HaKGdV8fUSBQUV1+1imYeZYUpy
-         cG4iIP+lEA//PZdL4dC5+KQ2yZc1JRbtzFL3n36/VnYuk5JHrup1d+kqXxrs+20t3Kek
-         GAQA==
-X-Gm-Message-State: APjAAAWkm7QxGb0GBLsMtSuZhymGB4SsgqF37lzKPEyNmO2KaudpnUCV
-        z59g60DFxdyXX/aGfGAp6A==
-X-Google-Smtp-Source: APXvYqxZzhpmFk00bIOCP3TJ8/P6ynDoJ9ceAoDxwB8NiUSP3NTVZDlREnbs2FM3G+lka1+EUevJLQ==
-X-Received: by 2002:a17:906:1c51:: with SMTP id l17mr24023098ejg.202.1557784216849;
-        Mon, 13 May 2019 14:50:16 -0700 (PDT)
-Received: from localhost.localdomain ([92.117.184.230])
-        by smtp.gmail.com with ESMTPSA id g11sm4040891eda.42.2019.05.13.14.50.16
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=spz1frMWWtHxRQEXNjNtgkaY/6ePBOEmlsOI1xvvGpQ=;
+        b=WSTSOV5wFnv9OLS4xRFpR8REAfkb7iP5cYmD54SFJlAecVp5ch3sjcQUT0s4Jem2nY
+         ugk487r9zh4F73nZJBmgLOnmEb9e6zkwQ9CXkKQlVdKkptPNFN+9Hm/vI4VXPR7x1cZC
+         gl8EemYnOySC6XuUEmkFjilNi7SoHVKjM0J4k0M90rq01DJJlfJmfhSuhQlNUNCJFCag
+         8BglzX7ZH7uPJySkUoM/mawttwIvKpNv+mLjQSMyHyAopNDQTpuO7jg/+b6iChu2Aljd
+         GXC7XNs4KX0y5r4NEBJxvIsY1Sux2ggOldw+faOrloct8LUCMDChVn5YRAXRMa0b/h+E
+         eW/A==
+X-Gm-Message-State: APjAAAVXBcVc8p0/8ulH1N1tVoErSZr5JOEunoObSZrgLeflPZziHpiJ
+        iJazlbX/y69sxQbS5xfdrK8IDw==
+X-Google-Smtp-Source: APXvYqwWa/47VoH+KTSKqgtWgxk99Zeoy+Ir0N2WjMp/XQzWj2496079XR5FH+BJQVnuy/4XehzeLw==
+X-Received: by 2002:a02:c54a:: with SMTP id g10mr17221328jaj.43.1557784376402;
+        Mon, 13 May 2019 14:52:56 -0700 (PDT)
+Received: from viisi.lan (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id u11sm2973863iot.44.2019.05.13.14.52.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 14:50:16 -0700 (PDT)
-From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Viktor Rosendahl <viktor.rosendahl@gmail.com>
-Subject: [PATCH v3 4/4] ftrace: Add an option for tracing console latencies
-Date:   Mon, 13 May 2019 23:50:08 +0200
-Message-Id: <20190513215008.11256-5-viktor.rosendahl@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190513215008.11256-1-viktor.rosendahl@gmail.com>
-References: <20190513215008.11256-1-viktor.rosendahl@gmail.com>
+        Mon, 13 May 2019 14:52:55 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     robh+dt@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Megan Wachs <megan@sifive.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2] dt-bindings: sifive: describe sifive-blocks versioning
+Date:   Mon, 13 May 2019 14:51:53 -0700
+Message-Id: <20190513215152.26578-1-paul.walmsley@sifive.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This new trace option "console-latency" will enable the latency
-tracers to trace the console latencies. Previously this has always been
-implicitely disabled. I guess this is because they are considered
-to be well known and unavoidable.
+For IP blocks that are generated from the public, open-source
+sifive-blocks repository, describe the version numbering policy
+that its maintainers intend to use, upon request from Rob
+Herring <robh@kernel.org>.
 
-However, for some organizations it may nevertheless be desirable to
-trace them. Basically, we want to be able to tell that there are
-latencies in the system under test because someone has incorrectly
-enabled the serial console.
-
-Signed-off-by: Viktor Rosendahl <viktor.rosendahl@gmail.com>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Megan Wachs <megan@sifive.com>
+Cc: Wesley Terpstra <wesley@sifive.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
- include/linux/irqflags.h        | 21 +++++++++++++++++++++
- kernel/printk/printk.c          |  6 ++++--
- kernel/trace/trace.h            |  1 +
- kernel/trace/trace_irqsoff.c    | 12 ++++++++++++
- tools/trace/latency-collector.c | 11 +++++------
- 5 files changed, 43 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 21619c92c377..34b0424a32dc 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -68,9 +68,30 @@ do {						\
- 	defined(CONFIG_PREEMPT_TRACER)
-  extern void stop_critical_timings(void);
-  extern void start_critical_timings(void);
-+ extern bool console_tracing_disabled(void);
+This second version updates the example URL, requested by
+Rob Herring <robh+dt@kernel.org>.
+
+ .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+
+diff --git a/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+new file mode 100644
+index 000000000000..beaa3b64084e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+@@ -0,0 +1,38 @@
++DT compatible string versioning for SiFive open-source IP blocks
 +
-+# define console_stop_critical_timings(flag)		\
-+	do {						\
-+		typecheck(bool, flag);			\
-+		flag = console_tracing_disabled();	\
-+		if (flag)				\
-+			stop_critical_timings();	\
-+	} while (0)
++This document describes the version specification for DT "compatible"
++strings for open-source SiFive IP blocks.  HDL for these IP blocks
++can be found in this public repository:
 +
-+# define console_start_critical_timings(flag)		 \
-+	do {						 \
-+		typecheck(bool, flag);			 \
-+		if (flag)				 \
-+			start_critical_timings();	 \
-+	} while (0)
++https://github.com/sifive/sifive-blocks
 +
- #else
- # define stop_critical_timings() do { } while (0)
- # define start_critical_timings() do { } while (0)
-+# define console_stop_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
-+# define console_start_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
- #endif
- 
- /*
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 02ca827b8fac..3a18b7208399 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2348,6 +2348,7 @@ void console_unlock(void)
- 	static char ext_text[CONSOLE_EXT_LOG_MAX];
- 	static char text[LOG_LINE_MAX + PREFIX_MAX];
- 	unsigned long flags;
-+	bool cflag;
- 	bool do_cond_resched, retry;
- 
- 	if (console_suspended) {
-@@ -2448,9 +2449,10 @@ void console_unlock(void)
- 		 */
- 		console_lock_spinning_enable();
- 
--		stop_critical_timings();	/* don't trace print latency */
-+		/* don't trace print latency if it's disabled */
-+		console_stop_critical_timings(cflag);
- 		call_console_drivers(ext_text, ext_len, text, len);
--		start_critical_timings();
-+		console_start_critical_timings(cflag);
- 
- 		if (console_lock_spinning_disable_and_check()) {
- 			printk_safe_exit_irqrestore(flags);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3456d6a47a47..ca10ad40f2f8 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1250,6 +1250,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		C(PRINTK_MSGONLY,	"printk-msg-only"),	\
- 		C(CONTEXT_INFO,		"context-info"),   /* Print pid/cpu/time */ \
- 		C(LATENCY_FMT,		"latency-format"),	\
-+		C(CONSOLE_LATENCY,	"console-latency"),	\
- 		C(RECORD_CMD,		"record-cmd"),		\
- 		C(RECORD_TGID,		"record-tgid"),		\
- 		C(OVERWRITE,		"overwrite"),		\
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index a745b0cee5d3..bc02be207a7a 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -456,6 +456,18 @@ void stop_critical_timings(void)
- EXPORT_SYMBOL_GPL(stop_critical_timings);
- NOKPROBE_SYMBOL(stop_critical_timings);
- 
-+bool console_tracing_disabled(void)
-+{
-+	struct trace_array *tr = irqsoff_trace;
-+	int pc = preempt_count();
++IP block-specific DT compatible strings are contained within the HDL,
++in the form "sifive,<ip-block-name><integer version number>".
 +
-+	if (!preempt_trace(pc) && !irq_trace())
-+		return false;
++An example is "sifive,uart0" from:
 +
-+	return !(tr->trace_flags & TRACE_ITER_CONSOLE_LATENCY);
-+}
-+EXPORT_SYMBOL_GPL(console_tracing_disabled);
++https://github.com/sifive/sifive-blocks/blob/v1.0/src/main/scala/devices/uart/UART.scala#L43
 +
- #ifdef CONFIG_FUNCTION_TRACER
- static bool function_enabled;
- 
-diff --git a/tools/trace/latency-collector.c b/tools/trace/latency-collector.c
-index dfc364d7836a..8cf3c74d998f 100644
---- a/tools/trace/latency-collector.c
-+++ b/tools/trace/latency-collector.c
-@@ -953,10 +953,9 @@ static void show_usage(void)
- 
- "The following options are supported:\n"
- "-c, --policy POL\tRun the program with scheduling policy POL. POL can be\n"
--"\t\t\tother, batch, idle, rr or fifo. The default is other.\n"
--"\t\t\tWhen using rr or fifo, be careful to not configure the\n"
--"\t\t\ttracer so that traces are acquired extremely frequently,\n"
--"\t\t\tor you may starve your system.\n\n"
-+"\t\t\tother, batch, idle, rr or fifo. The default is rr. When\n"
-+"\t\t\tusing rr or fifo, remember that these policies may cause\n"
-+"\t\t\tother tasks to experience latencies.\n\n"
- 
- "-p, --priority PRI\tRun the program with priority PRI. The acceptable range\n"
- "\t\t\tof PRI depends on the scheduling policy.\n\n"
-@@ -1132,10 +1131,10 @@ static void scan_arguments(int argc, char *argv[])
- 	}
- 
- 	if (!sched_policy_set) {
--		sched_policy = SCHED_OTHER;
-+		sched_policy = SCHED_RR;
- 		sched_policy_set = true;
- 		if (!sched_pri_set) {
--			sched_pri = DEFAULT_PRI;
-+			sched_pri = RT_DEFAULT_PRI;
- 			sched_pri_set = true;
- 		}
- 	}
++Until these IP blocks (or IP integration) support version
++auto-discovery, the maintainers of these IP blocks intend to increment
++the suffixed number in the compatible string whenever the software
++interface to these IP blocks changes, or when the functionality of the
++underlying IP blocks changes in a way that software should be aware of.
++
++Driver developers can use compatible string "match" values such as
++"sifive,uart0" to indicate that their driver is compatible with the
++register interface and functionality associated with the relevant
++upstream sifive-blocks commits.  It is expected that most drivers will
++match on these IP block-specific compatible strings.
++
++DT data authors, when writing data for a particular SoC, should
++continue to specify an SoC-specific compatible string value, such as
++"sifive,fu540-c000-uart".  This way, if SoC-specific
++integration-specific bug fixes or workarounds are needed, the kernel
++or other system software can match on this string to apply them.  The
++IP block-specific compatible string (such as "sifive,uart0") should
++then be specified as a subsequent value.
++
++An example of this style:
++
++    compatible = "sifive,fu540-c000-uart", "sifive,uart0";
 -- 
-2.17.1
+2.20.1
 
