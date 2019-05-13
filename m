@@ -2,74 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34A091AEA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 02:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33CE81AEA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 02:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfEMAvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 12 May 2019 20:51:19 -0400
-Received: from git.icu ([163.172.180.134]:53824 "EHLO git.icu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfEMAvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 12 May 2019 20:51:19 -0400
-Received: from localhost.localdomain (minicloud.parqtec.unicamp.br [143.106.167.126])
-        by git.icu (Postfix) with ESMTPSA id 5583D220850;
-        Mon, 13 May 2019 00:51:15 +0000 (UTC)
-From:   Shawn Landden <shawn@git.icu>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, Shawn Landden <shawn@git.icu>
-Subject: [PATCH RESEND] powerpc: add simd.h implementation specific to PowerPC
-Date:   Sun, 12 May 2019 21:51:04 -0300
-Message-Id: <20190513005104.20140-1-shawn@git.icu>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a
-In-Reply-To: <20190512165032.19942-1-shawn@git.icu>
-References: <20190512165032.19942-1-shawn@git.icu>
+        id S1727189AbfEMAxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 12 May 2019 20:53:33 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40471 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfEMAxd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 12 May 2019 20:53:33 -0400
+Received: by mail-it1-f196.google.com with SMTP id g71so17724965ita.5
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2019 17:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=PPkDnlMSYBRKTg5a4WssQr0slyNQWQLri2cewBsAb2U=;
+        b=GVe3HKYTc3fAg6omaGD+X+51L5XYtCluRPMxzkOkPZwRPqmxxCDjwMQBAScGKOHhKJ
+         eXCsGm/Lc0E9LIRjcDGHocVruWqk4oM1Jtg2GRVaGk2YlqWTpAXY1kXBW1nbxMOc9V0Y
+         dRKqwzTPSLViKhWHhtPyqTyOvbTVxSX3cxsH9nPV+8FzgLrfJvLQXQf3UcTmVdLJ0wsj
+         96IxINB5TODwtZiQHxrusDZCZ1UoGAIYUnShySDe1Rcq6VGKqa2T+SjaYJz1+CiS77nr
+         Z3lUtz48OM7rSgwv/jgUlS/Mm9vKVGV0OLK6VIipl43/V2cyve9AejjkzrHDAhBVoiWF
+         FwAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=PPkDnlMSYBRKTg5a4WssQr0slyNQWQLri2cewBsAb2U=;
+        b=QLxiiblNQ10VPaOhujVHIBRer7HMJlz0159QQE0MYOBCUr37veV6ndCDmBYsXHt9tf
+         /5i5Nz+0uZ9Ff8FwntzPjM/Kqx4LC5xUXshPKFyFqx0at7HbdWhd2vVAJtRvigCDuCCU
+         4FE9net6H5WFpEnnGSpRk3EPVYlU+hwXaMzfLL9IFHkHn/W3y3Ql3KaGEi7v2ezZ9oJI
+         hMkSdbaAEit1xDDZ4oXFRC7daI1qtKFiCSwzcE+yctc7CW03zP+rAtJxqNR+vnLpgyBi
+         aBhWEbnu/9ZFfYWIvWmF5Jxqpkm27RwSYd9Vk5vaheXBgc0Er9greFM1oz1VsaaUmTNy
+         QlSA==
+X-Gm-Message-State: APjAAAWWraJRvKwSOza76Uui11HEcYUdY1ENhzckslN97Bs+mS+Ym6FN
+        bXZlEYyHRzrU6A0vNfR+7MleZkPwb/i47R8Dsas=
+X-Google-Smtp-Source: APXvYqz5IlwjbDYISMDKizDYMghLJOMnAt/NTMUjgCyBw+cj+9Z/4wF0k85CgG1uzENB1xHwAeucqdPEaq6Fw/DQwfw=
+X-Received: by 2002:a02:6a28:: with SMTP id l40mr15876438jac.25.1557708812624;
+ Sun, 12 May 2019 17:53:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:c770:0:0:0:0:0 with HTTP; Sun, 12 May 2019 17:53:32
+ -0700 (PDT)
+Reply-To: cfffdfd8brahim4@yandex.com
+From:   Salah Ibrahim <ascolwfirm@gmail.com>
+Date:   Sun, 12 May 2019 17:53:32 -0700
+Message-ID: <CAJpOSaW43sbUYpwdA7tD+g8Q2mc1VTEWFtHnhBQJuX+vDUr7Lg@mail.gmail.com>
+Subject: HI
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is safe to do SIMD in an interrupt on PowerPC.
-Only disable when there is no SIMD available
-(and this is a static branch).
+Dear Sir / Madam,
+Please forgive me if my request is not acceptable by your kind person.
+I am Dr. Nor Salah Ibrahim, Working at MAYBANK (Malaysia) as the
+Independent Non-Executive Director & Audit Committee. During our last
+banking Audits we discovered an abandoned account belongs to one of
+our Foreign Deceased Customer, Late Mr. Wang Jian, The Co-founder and
+Co-chairman of HNA Group, a Chinese conglomerate with significant real
+estate ownerships across the U.S., died in an accident while on a
+business trip in France on Tuesday.
 
-Tested and works with the WireGuard (Zinc) patch I wrote that needs this.
-Also improves performance of the crypto subsystem that checks this.
+Please go through this link:
+https://observer.com/2018/07/wang-jian-hna-founder-dies-tragic-fall/
 
-Re-sending because this linuxppc-dev didn't seem to accept it.
+ I am writing to request your assistance in transferring the sum of
+$35 million USD
+ (Fifteen Million United States Dollars) into your account as the Late
+Mr. Wang Jian Foreign Business Partner. Meanwhile, before I contacted
+you I have done personal investigation in locating any of Late Mr.
+Wang Jian relatives who knows about the account, but I came out
+unsuccessful.
 
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203571
-Signed-off-by: Shawn Landden <shawn@git.icu>
----
- arch/powerpc/include/asm/simd.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 arch/powerpc/include/asm/simd.h
+I will like to bring to your notice that I have made all the necessary
+arrangements with my colleagues to transfer the funds into your
+nominated bank account without any problem.  Upon your consideration
+and acceptance of this offer, I am willing to offer you 40% for your
+assistant, while 60% for me which I am planning to invest into a
+profitable business venture in your country.
 
-diff --git a/arch/powerpc/include/asm/simd.h b/arch/powerpc/include/asm/simd.h
-new file mode 100644
-index 000000000..b3fecb95a
---- /dev/null
-+++ b/arch/powerpc/include/asm/simd.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#include <asm/cpu_has_feature.h>
-+
-+/*
-+ * may_use_simd - whether it is allowable at this time to issue SIMD
-+ *                instructions or access the SIMD register file
-+ *
-+ * As documented in Chapter 6.2.1 Machine Status Save/Restore Registers
-+ * of Power ISA (2.07 and 3.0), all registers are saved/restored in an interrupt.
-+ */
-+static inline bool may_use_simd(void)
-+{
-+	return !cpu_has_feature(CPU_FTR_FPU_UNAVAILABLE);
-+}
--- 
-2.21.0.1020.gf2820cf01a
+ More details information will be forwarded to you to breakdown
+explaining comprehensively what require of you.
 
+Waiting for your urgent reply,
+Best Regards
+ Dr. Nor Salah Ibrahim
