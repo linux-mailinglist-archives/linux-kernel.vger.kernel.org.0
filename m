@@ -2,82 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 411C81B309
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD561B310
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbfEMJlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:41:08 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36057 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfEMJlI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:41:08 -0400
-X-Originating-IP: 83.204.64.206
-Received: from windsurf.home (anantes-658-1-8-206.w83-204.abo.wanadoo.fr [83.204.64.206])
-        (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 607CE1BF20E;
-        Mon, 13 May 2019 09:41:01 +0000 (UTC)
-Date:   Mon, 13 May 2019 11:40:59 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at
-Subject: Re: [PATCH v1] mtd: rawnand: Add Macronix NAND read retry support
-Message-ID: <20190513114059.3934b0bb@windsurf.home>
-In-Reply-To: <OF1EDBA487.7723094D-ON482583F9.00297ABF-482583F9.0029E3EE@mxic.com.tw>
-References: <1557474062-4949-1-git-send-email-masonccyang@mxic.com.tw>
-        <20190510153704.33de9568@windsurf.home>
-        <OF1EDBA487.7723094D-ON482583F9.00297ABF-482583F9.0029E3EE@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728665AbfEMJlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:41:47 -0400
+Received: from smtp-out.xnet.cz ([178.217.244.18]:51716 "EHLO smtp-out.xnet.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728635AbfEMJlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 05:41:46 -0400
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id 3D4DB3898;
+        Mon, 13 May 2019 11:41:44 +0200 (CEST)
+Received: by meh.true.cz (OpenSMTPD) with ESMTP id dd12d0d2;
+        Mon, 13 May 2019 11:41:43 +0200 (CEST)
+From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] of_net: Fix missing of_find_device_by_node ref count drop
+Date:   Mon, 13 May 2019 11:41:39 +0200
+Message-Id: <1557740500-2479-1-git-send-email-ynezz@true.cz>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+of_find_device_by_node takes a reference to the embedded struct device
+which needs to be dropped after use.
 
-On Mon, 13 May 2019 15:37:39 +0800
-masonccyang@mxic.com.tw wrote:
+Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+---
+ drivers/of/of_net.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> -------------------------------------------------------------------
->  static void macronix_nand_onfi_init(struct nand_chip *chip)
->  {
->           struct nand_parameters *p = &chip->parameters;
->           struct nand_onfi_vendor_macronix *mxic = (void 
-> *)p->onfi->vendor;
-
-Why cast to void*, instead of casting directly to struct
-nand_onfi_vendor_macronix * ?
-
-Also,  you are dereferencing p->info before checking whether it's NULL
-or not.
-
->           if (!p->onfi ||
->               ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0))
->                   return;
-
-So, the code should be:
-
-	struct nand_onfi_vendor_macronix *mxic;
-
-	if (!p->onfi)
-		return;
-
-	mxic = (struct nand_onfi_vendor_macronix *) p->info->vendor;
-
-	if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
-		return;
-
-Best regards,
-
-Thomas
+diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+index a4b392a5406b..6f1be80e8c4e 100644
+--- a/drivers/of/of_net.c
++++ b/drivers/of/of_net.c
+@@ -60,10 +60,13 @@ static const void *of_get_mac_addr_nvmem(struct device_node *np)
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	ret = nvmem_get_mac_address(&pdev->dev, &nvmem_mac);
+-	if (ret)
++	if (ret) {
++		put_device(&pdev->dev);
+ 		return ERR_PTR(ret);
++	}
+ 
+ 	mac = devm_kmemdup(&pdev->dev, nvmem_mac, ETH_ALEN, GFP_KERNEL);
++	put_device(&pdev->dev);
+ 	if (!mac)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.9.1
+
