@@ -2,42 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 249CE1B5DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BCDA1B5DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 14:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbfEMMad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 08:30:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56322 "EHLO
+        id S1729279AbfEMMaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 08:30:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56928 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfEMMad (ORCPT
+        with ESMTP id S1729134AbfEMMat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 08:30:33 -0400
+        Mon, 13 May 2019 08:30:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=FjQ+dnaEIl4gFNgh5qq4Z14zi4KnDS1kuCbKDL+ttw8=; b=OgX9Y8+6LFcE
-        H7NbkG5y67FRf9T9Y9TXVq1mtc93toobqvszxkg9P9UV6KcE50BAQPAD52fG7cDIFGh+OLdoyyLPb
-        947tVkay8/JfJPKm/hEzwcMVJACUG53oMHoArpsapkjPJknLgNZyKRR/ovXNtcDMe7D3IVsiSdgds
-        D80WE=;
+        List-Archive; bh=3dg4FwScEIcCqPU2mHWgY1X5dTD3ay7qM0L3mMRVCak=; b=AaPTPio6G/C9
+        9V2pdV9aCvSzXUGi7/Lk+Rsoj/6HwmmP6ykS2237Ml51rEvvnRorYPhEe5NMQMOQqyk1dPwRAjYKE
+        7qpwkZ3GxxWCCjGgnAmML9Hev92/wULqxdA7kfMp2/+I77+Si/PTOkuJJRvixVBTOXpy7s+p5M2hs
+        Fq59k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hQA67-0006WQ-Jx; Mon, 13 May 2019 12:30:27 +0000
+        id 1hQA69-0006We-Rj; Mon, 13 May 2019 12:30:29 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 151071129232; Mon, 13 May 2019 13:30:26 +0100 (BST)
+        id 4BF481129232; Mon, 13 May 2019 13:30:29 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+To:     Evan Green <evgreen@chromium.org>
+Cc:     alsa-devel@alsa-project.org, Ben Zhang <benzh@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        patchwork-bot+notify@kernel.org
-Subject: Applied "ASoC: hdmi-codec: re-introduce mutex locking" to the asoc tree
-In-Reply-To: <20190513081847.31140-1-jbrunet@baylibre.com>
+        Naveen M <naveen.m@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Rajat Jain <rajatja@chromium.org>,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        Sathya Prakash <sathya.prakash.m.r@intel.com>,
+        Takashi Iwai <tiwai@suse.com>, Yu Zhao <yuzhao@google.com>
+Subject: Applied "ASoC: Intel: Skylake: Add Cometlake PCI IDs" to the asoc tree
+In-Reply-To: <20190510223929.165569-3-evgreen@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190513123026.151071129232@debutante.sirena.org.uk>
-Date:   Mon, 13 May 2019 13:30:26 +0100 (BST)
+Message-Id: <20190513123029.4BF481129232@debutante.sirena.org.uk>
+Date:   Mon, 13 May 2019 13:30:29 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: hdmi-codec: re-introduce mutex locking
+   ASoC: Intel: Skylake: Add Cometlake PCI IDs
 
 has been applied to the asoc tree at
 
@@ -70,75 +79,97 @@ to this mail.
 Thanks,
 Mark
 
-From eb1ecadb7f67dde94ef0efd3ddaed5cb6c9a65ed Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 13 May 2019 10:18:47 +0200
-Subject: [PATCH] ASoC: hdmi-codec: re-introduce mutex locking
+From 5f740b243014f54e503ea5aca0a90680b56d0134 Mon Sep 17 00:00:00 2001
+From: Evan Green <evgreen@chromium.org>
+Date: Fri, 10 May 2019 15:39:29 -0700
+Subject: [PATCH] ASoC: Intel: Skylake: Add Cometlake PCI IDs
 
-Replace the bit atomic operations by a mutex to ensure only one dai
-at a time is active on the hdmi codec.
+Add PCI IDs for Intel CometLake platforms, which from a software
+point of view are extremely similar to Cannonlake platforms.
 
-This is a follow up on change:
-3fcf94ef4d41 ("ASoC: hdmi-codec: remove reference to the current substream")
-
-Suggested-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/hdmi-codec.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ sound/soc/intel/Kconfig                | 16 ++++++++++++++++
+ sound/soc/intel/skylake/skl-messages.c | 16 ++++++++++++++++
+ sound/soc/intel/skylake/skl.c          | 10 ++++++++++
+ 3 files changed, 42 insertions(+)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 90a892766625..6a0cc8d7e141 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -281,7 +281,7 @@ struct hdmi_codec_priv {
- 	uint8_t eld[MAX_ELD_BYTES];
- 	struct snd_pcm_chmap *chmap_info;
- 	unsigned int chmap_idx;
--	unsigned long busy;
-+	struct mutex lock;
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index fc1396adde71..b089ed3bf77f 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -165,6 +165,22 @@ config SND_SOC_INTEL_CFL
+ 	  If you have a Intel CoffeeLake platform with the DSP
+ 	  enabled in the BIOS then enable this option by saying Y or m.
+ 
++config SND_SOC_INTEL_CML_H
++	tristate "CometLake-H Platforms"
++	depends on PCI && ACPI
++	select SND_SOC_INTEL_SKYLAKE_FAMILY
++	help
++	  If you have a Intel CometLake-H platform with the DSP
++	  enabled in the BIOS then enable this option by saying Y or m.
++
++config SND_SOC_INTEL_CML_LP
++	tristate "CometLake-LP Platforms"
++	depends on PCI && ACPI
++	select SND_SOC_INTEL_SKYLAKE_FAMILY
++	help
++	  If you have a Intel CometLake-LP platform with the DSP
++	  enabled in the BIOS then enable this option by saying Y or m.
++
+ config SND_SOC_INTEL_SKYLAKE_FAMILY
+ 	tristate
+ 	select SND_SOC_INTEL_SKYLAKE_COMMON
+diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
+index 4bf70b4429f0..df01dc952521 100644
+--- a/sound/soc/intel/skylake/skl-messages.c
++++ b/sound/soc/intel/skylake/skl-messages.c
+@@ -255,6 +255,22 @@ static const struct skl_dsp_ops dsp_ops[] = {
+ 		.init_fw = cnl_sst_init_fw,
+ 		.cleanup = cnl_sst_dsp_cleanup
+ 	},
++	{
++		.id = 0x02c8,
++		.num_cores = 4,
++		.loader_ops = bxt_get_loader_ops,
++		.init = cnl_sst_dsp_init,
++		.init_fw = cnl_sst_init_fw,
++		.cleanup = cnl_sst_dsp_cleanup
++	},
++	{
++		.id = 0x06c8,
++		.num_cores = 4,
++		.loader_ops = bxt_get_loader_ops,
++		.init = cnl_sst_dsp_init,
++		.init_fw = cnl_sst_init_fw,
++		.cleanup = cnl_sst_dsp_cleanup
++	},
  };
  
- static const struct snd_soc_dapm_widget hdmi_widgets[] = {
-@@ -395,8 +395,8 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
- 	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
- 	int ret = 0;
- 
--	ret = test_and_set_bit(0, &hcp->busy);
--	if (ret) {
-+	ret = mutex_trylock(&hcp->lock);
-+	if (!ret) {
- 		dev_err(dai->dev, "Only one simultaneous stream supported!\n");
- 		return -EINVAL;
- 	}
-@@ -424,7 +424,7 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
- 
- err:
- 	/* Release the exclusive lock on error */
--	clear_bit(0, &hcp->busy);
-+	mutex_unlock(&hcp->lock);
- 	return ret;
- }
- 
-@@ -436,7 +436,7 @@ static void hdmi_codec_shutdown(struct snd_pcm_substream *substream,
- 	hcp->chmap_idx = HDMI_CODEC_CHMAP_IDX_UNKNOWN;
- 	hcp->hcd.ops->audio_shutdown(dai->dev->parent, hcp->hcd.data);
- 
--	clear_bit(0, &hcp->busy);
-+	mutex_unlock(&hcp->lock);
- }
- 
- static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
-@@ -773,6 +773,8 @@ static int hdmi_codec_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	hcp->hcd = *hcd;
-+	mutex_init(&hcp->lock);
-+
- 	daidrv = devm_kcalloc(dev, dai_count, sizeof(*daidrv), GFP_KERNEL);
- 	if (!daidrv)
- 		return -ENOMEM;
+ const struct skl_dsp_ops *skl_get_dsp_ops(int pci_id)
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index 4ed5b7e17d44..f864f7b3df3a 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -1166,6 +1166,16 @@ static const struct pci_device_id skl_ids[] = {
+ 	/* CFL */
+ 	{ PCI_DEVICE(0x8086, 0xa348),
+ 		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
++#endif
++#if IS_ENABLED(CONFIG_SND_SOC_INTEL_CML_LP)
++	/* CML-LP */
++	{ PCI_DEVICE(0x8086, 0x02c8),
++		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
++#endif
++#if IS_ENABLED(CONFIG_SND_SOC_INTEL_CML_H)
++	/* CML-H */
++	{ PCI_DEVICE(0x8086, 0x06c8),
++		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
+ #endif
+ 	{ 0, }
+ };
 -- 
 2.20.1
 
