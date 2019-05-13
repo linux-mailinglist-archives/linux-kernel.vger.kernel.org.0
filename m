@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA551BC61
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A081A1BC5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731997AbfEMR4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:56:18 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35347 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731959AbfEMR4J (ORCPT
+        id S1731981AbfEMR4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:56:12 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37865 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731905AbfEMR4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:56:09 -0400
-Received: by mail-io1-f67.google.com with SMTP id p2so10784988iol.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 10:56:08 -0700 (PDT)
+        Mon, 13 May 2019 13:56:10 -0400
+Received: by mail-it1-f195.google.com with SMTP id l7so451409ite.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 10:56:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p4CcdC3vdWD2Ui0Aq/H7gzZ1C57rvc/Ii4BGhP7cjj0=;
-        b=jGDNIPu60fcw0f1WOvGi2tiKVlqgSg6Fb/ykouk/D0JwoTi++nbdU6LgpBsSRtkySy
-         4lRd4qsd9DOHTnqJqxcNk6a5pTsQ00tkar43dO1wkrNPX8qlyLdVF6AvEh5z41HyZoJI
-         Pok4kVtpBr4M4GRyNifnkmEg2fAZxeJgyDt4E=
+        bh=lPaL2VEX/hSzV1Wc4p9/qEgeMAItoGsdR21BQw+ZGgc=;
+        b=ARYpG6dN7VA7JmzpN7iB8t24Q93Bs6/DdHTBoAsd+5raGiTu7FqD+BYziUnlJ4Rp+Y
+         wCr/Yh+DJEHs+d9DKa3pvhCyovheuxA3h8Rki86q2vUhH9XapHiWstb7lKO5mGzAs4zQ
+         Y4RKB4BdHnyuR7Hhlae2ru23Jqhqd2tvCguB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p4CcdC3vdWD2Ui0Aq/H7gzZ1C57rvc/Ii4BGhP7cjj0=;
-        b=a3wRIz4v2qnV12xaPi+nhuA1MLmmCxYZMgU9XzicnL3th7bpbdDyIiZdBAtJpiaevf
-         +sKuu4OaJPVOOeKhKCyTJrI1NM8C7VZFC3K+yNRYB/ZB92djodEYEPHJTX8eJDWMcsVB
-         E8UOe08K+09YhZ008fpyNPlYPr+21iLdzdSWtc3JlmwKuaOkEUuxnMkdTY3IgIx27GGq
-         XAei8X5B3QOSXzbdSofvzkBYYJgCBzz8mJq5ja3Um7CHttbbnErkEaZxm8XgC4iFzxJ/
-         z0qIWFHlZXzvi/dCvJHsnjaMY/5603CrXSG64xkvbmZ5TazA0i6k76HjgpW8dMdZi8+/
-         VslA==
-X-Gm-Message-State: APjAAAVXatdqDtuN+MhPNj/sF8BpiCeJfMDdy/fvTnWBGDv3K03u4JiF
-        2K/+UJ3xN2yCdZ46CqErLbsjlQ==
-X-Google-Smtp-Source: APXvYqzAf+DYtvpVdAY20sTIyvRr5z31svR51Zlph4CBmXYtO25zPoTjHPP0ujCD+kCxytw8tX9ufA==
-X-Received: by 2002:a05:6602:211a:: with SMTP id x26mr15415876iox.202.1557770168407;
-        Mon, 13 May 2019 10:56:08 -0700 (PDT)
+        bh=lPaL2VEX/hSzV1Wc4p9/qEgeMAItoGsdR21BQw+ZGgc=;
+        b=UXiaCZJ9EOROxdWblLm8zj7bQ4YWnhGQgKPN/v8v8avBcrbrTOnoiGhQHKB32G7e1F
+         uErj3Bu3+6r7kRbAh0nvKPmCCW2lbUYndQTKCZwvs3XD2iRz3sVDuqioe+hGoDB2wmma
+         7DWAUq7KKtkX5fgba9ng9T188LFbuCrj+VfoGDAaZVAuDXkhMS+Omqh30tzMWqjGbssw
+         VYGpgRZ0OlQKIMeodWb2UWAyhy2DmRl33bl7lCUTwvijhKU3LkYKFPDVFg6gdYfeWDd8
+         yAVqx63vs/DjeGHJPCn5R+OVpm2pi4OqSGG1PjiYFR86McOnComArIKLzAg405IMdxhM
+         uuoA==
+X-Gm-Message-State: APjAAAUZ8pQTxPClwx9Ami3PxKTT1XY8WB3nfe8VH/n5DnZ/1gZdk0GK
+        bF3zUvdKlJOU1MgWGfW8yv4wWA==
+X-Google-Smtp-Source: APXvYqwH4/GTy25BEvta0lp/d2+77OUftVtWL1TgrCCI35CS1y+6wKWgOoyZX4rEHnEhXACB7JjPRA==
+X-Received: by 2002:a05:660c:2ce:: with SMTP id j14mr336633itd.70.1557770169403;
+        Mon, 13 May 2019 10:56:09 -0700 (PDT)
 Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id l13sm88548iti.6.2019.05.13.10.56.07
+        by smtp.gmail.com with ESMTPSA id i203sm113538iti.7.2019.05.13.10.56.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 10:56:08 -0700 (PDT)
+        Mon, 13 May 2019 10:56:09 -0700 (PDT)
 From:   Raul E Rangel <rrangel@chromium.org>
 To:     stable@vger.kernel.org
 Cc:     linux-mmc@vger.kernel.org, djkurtz@google.com,
@@ -49,9 +49,9 @@ Cc:     linux-mmc@vger.kernel.org, djkurtz@google.com,
         Raul E Rangel <rrangel@chromium.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [stable/4.14.y PATCH 2/3] mmc: Fix null pointer dereference in mmc_init_request
-Date:   Mon, 13 May 2019 11:55:20 -0600
-Message-Id: <20190513175521.84955-3-rrangel@chromium.org>
+Subject: [stable/4.14.y PATCH 3/3] mmc: Kill the request if the queuedata has been removed
+Date:   Mon, 13 May 2019 11:55:21 -0600
+Message-Id: <20190513175521.84955-4-rrangel@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190513175521.84955-1-rrangel@chromium.org>
 References: <20190513175521.84955-1-rrangel@chromium.org>
@@ -62,37 +62,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible for queuedata to be cleared in mmc_cleanup_queue before
-the request has been started. This will result in dereferencing a null
-pointer.
+No reason to even try processing the request if the queue is shutting
+down.
 
 Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 ---
 
- drivers/mmc/core/queue.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/mmc/core/queue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index d99fa4e63033c..bd7d521d5ad9d 100644
+index bd7d521d5ad9d..e7ac7163fafa4 100644
 --- a/drivers/mmc/core/queue.c
 +++ b/drivers/mmc/core/queue.c
-@@ -159,8 +159,14 @@ static int mmc_init_request(struct request_queue *q, struct request *req,
+@@ -30,7 +30,7 @@ static int mmc_prep_request(struct request_queue *q, struct request *req)
  {
- 	struct mmc_queue_req *mq_rq = req_to_mmc_queue_req(req);
  	struct mmc_queue *mq = q->queuedata;
--	struct mmc_card *card = mq->card;
--	struct mmc_host *host = card->host;
-+	struct mmc_card *card;
-+	struct mmc_host *host;
-+
-+	if (!mq)
-+		return -ENODEV;
-+
-+	card = mq->card;
-+	host = card->host;
  
- 	mq_rq->sg = mmc_alloc_sg(host->max_segs, gfp);
- 	if (!mq_rq->sg)
+-	if (mq && (mmc_card_removed(mq->card) || mmc_access_rpmb(mq)))
++	if (!mq || mmc_card_removed(mq->card) || mmc_access_rpmb(mq))
+ 		return BLKPREP_KILL;
+ 
+ 	req->rq_flags |= RQF_DONTPREP;
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
