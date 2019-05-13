@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A131BA40
+	by mail.lfdr.de (Postfix) with ESMTP id EA0F61BA42
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbfEMPle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:41:34 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:41274 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728459AbfEMPle (ORCPT
+        id S1731421AbfEMPlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:41:35 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:41268 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728513AbfEMPle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 13 May 2019 11:41:34 -0400
 Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 3EA40C01E9;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 2CBC0C01E6;
         Mon, 13 May 2019 15:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557762098; bh=OxOanAp/g8NXx8Bi7pDKdees/WbGwt+8vXduKshOfkA=;
+        t=1557762098; bh=WCBNYFY1ChFojjxZC8JG7x5O1lCoq1Zfiew6HInYASk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=GGrI9Wv41G31vKgTVTJlhHO2WUNcWeKrV79YAoUNGB2XgvcTJ5h7ryOEorUGgW+oe
-         bZgFK2v1j1wVAKz2033RAeJuvzonqofZvPjsNGLYJvS+EQRNVqIvN9Ha+WMOf4u3TX
-         T7VyiWhJmUoTo/ci98rHOqz4Wc9go55Oo2UXDYjP0FRMRl16qhF2J2vtq6sYgPhaf7
-         XAoc8E95hFSEzJXCoACqqlUjNwJ6Z+//E1HYSGvbjN0HmMisJAbRVD5PPd/0mjjqQK
-         w4hIij79v0YbeeO8abfJC1AhyBCdl38apoV9zl373uQRWBgnZWGsF5YfTOqfvhR11v
-         HnGzVwE3n3B0g==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id BB723A009F;
+        b=adOzDD/S6wc0Q3IlQ3jHOnd/ViuLE178tE+nHGbZCLvOuXubf85vGX+0g3TE7fLr+
+         Y9Lpk7FWciHyLkVb/Dp2jZJKMTGy00tzR/4csxN30Y8LV0nDqLl/exNjdTVpLIaISX
+         eKnBksqt48xBdZoTN86d3NwyfW+aqWT4v5H8dDb4zCYwDdGo2qVNK4FlG6txKQU+/8
+         1PcxsmDs4+Cw8tLRioePY9w3ob9K0RmDOb33cXhQ4E5kc1tBn/UoYnCLpkRLtVsaQD
+         h+DHlCs+eU8k8IeRXiPdlxescC6NYauxic+ckbTPt5iBd3qetrHTzorXT9J5Q7cJov
+         nyWBHMirDPtaw==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CD54CA00A3;
         Mon, 13 May 2019 15:41:32 +0000 (UTC)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id E50DA3F922;
-        Mon, 13 May 2019 17:41:31 +0200 (CEST)
+        by de02.synopsys.com (Postfix) with ESMTP id 044ED3F928;
+        Mon, 13 May 2019 17:41:32 +0200 (CEST)
 From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
 To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Joao.Pinto@synopsys.com,
         Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
         Luis Oliveira <Luis.Oliveira@synopsys.com>
-Subject: [PATCH 1/2] reset: Add DesignWare IP support to simple reset
-Date:   Mon, 13 May 2019 17:41:27 +0200
-Message-Id: <1928cabd16a83f1dfdbadc17f302339f00e93ef8.1557759340.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH 2/2] dt-bindings: Document the DesignWare IP reset bindings
+Date:   Mon, 13 May 2019 17:41:28 +0200
+Message-Id: <57b3e24f85b0838fc7fafe35abab00e19993d458.1557759340.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1557759340.git.gustavo.pimentel@synopsys.com>
 References: <cover.1557759340.git.gustavo.pimentel@synopsys.com>
@@ -52,45 +52,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reset-simple driver can be now used on DesignWare IPs by
-default by selecting the following compatible strings:
- - snps,dw-high-reset for active high resets inputs
- - snps,dw-low-reset for active low resets inputs
+This adds documentation of device tree bindings for the
+DesignWare IP reset controller.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Signed-off-by: Luis Oliveira <luis.oliveira@synopsys.com>
 ---
- drivers/reset/Kconfig        | 2 +-
- drivers/reset/reset-simple.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/reset/snps,dw-reset.txt    | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/snps,dw-reset.txt
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 2c8c23d..2ee69f2 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -117,7 +117,7 @@ config RESET_QCOM_PDC
- 
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
--	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-+	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED || ARC
- 	help
- 	  This enables a simple reset controller driver for reset lines that
- 	  that can be asserted and deasserted by toggling bits in a contiguous,
-diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
-index 77fbba3..79e73be 100644
---- a/drivers/reset/reset-simple.c
-+++ b/drivers/reset/reset-simple.c
-@@ -129,6 +129,9 @@ static const struct of_device_id reset_simple_dt_ids[] = {
- 		.data = &reset_simple_active_low },
- 	{ .compatible = "aspeed,ast2400-lpc-reset" },
- 	{ .compatible = "aspeed,ast2500-lpc-reset" },
-+	{ .compatible = "snps,dw-high-reset" },
-+	{ .compatible = "snps,dw-low-reset",
-+		.data = &reset_simple_active_low },
- 	{ /* sentinel */ },
- };
- 
+diff --git a/Documentation/devicetree/bindings/reset/snps,dw-reset.txt b/Documentation/devicetree/bindings/reset/snps,dw-reset.txt
+new file mode 100644
+index 0000000..5316212
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/snps,dw-reset.txt
+@@ -0,0 +1,30 @@
++Synopsys DesignWare Reset controller
++=======================================
++
++Please also refer to reset.txt in this directory for common reset
++controller binding usage.
++
++Required properties:
++
++- compatible: should be one of the following.
++	"snps,dw-high-reset" - for active high configuration
++	"snps,dw-low-reset" - for active low configuration
++
++- reg: physical base address of the controller and length of memory mapped
++	region.
++
++- #reset-cells: must be 1.
++
++example:
++
++	dw_rst: reset-controller@0000 {
++		compatible = "dw,dw-high-reset";
++		reg = <0x0000 0x4>;
++		#reset-cells = <1>;
++	};
++
++	dw_rst: reset-controller@1000 {
++		compatible = "dw,dw-low-reset";
++		reg = <0x1000 0x4>;
++		#reset-cells = <1>;
++	};
 -- 
 2.7.4
 
