@@ -2,74 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A3C1BA52
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CF51BA5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfEMPqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbfEMPqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:46:36 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79B692147A
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 15:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557762395;
-        bh=OcS05eqt08syOJc9XJ+Dq4To3jKF7QcT29fpWx88obU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mImlR6Is3TMf8fni+IDHdVAZsE7/1M0GTnfOaMuLRGfn1j1/BDu3RGxid6M+0vEiu
-         TFTwQ6jlT+YHrBRxipQ8awjHA/fJy38yEvFDnls8nlN4k82xHuQ7q8V28aXBH0UBQe
-         sppUfQgNAihbuliOSVH+T+E061V8MR3QzVezRa2w=
-Received: by mail-wm1-f50.google.com with SMTP id 198so14357617wme.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 08:46:35 -0700 (PDT)
-X-Gm-Message-State: APjAAAWcxwKKE9IUNqmeXVJxgo8SkpVyyPGvzVf8afbfATaeKkKYORwy
-        m0MJ1vXtUzgv/k6FT/uTpGn9sXnDUQwQNGvbcCzYnA==
-X-Google-Smtp-Source: APXvYqy0TwclFLqOX6RpVV3KoKOlZdQ8RNcD/rtLCLdFTmws6W80DbiuXvJEyd8KUstfYJ7nC31kdBiSQSFUT51LIs4=
-X-Received: by 2002:a1c:eb18:: with SMTP id j24mr16973110wmh.32.1557762394127;
- Mon, 13 May 2019 08:46:34 -0700 (PDT)
+        id S1729235AbfEMPsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:48:22 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:37325 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbfEMPsW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:48:22 -0400
+Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hQDBb-00024C-CH from George_Davis@mentor.com ; Mon, 13 May 2019 08:48:19 -0700
+Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
+ (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 13 May
+ 2019 08:48:17 -0700
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     Chris Brandt <chris.brandt@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2] serial: sh-sci: disable DMA for uart_console
+Date:   Mon, 13 May 2019 11:47:26 -0400
+Message-ID: <1557762446-23811-1-git-send-email-george_davis@mentor.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com> <1557758315-12667-3-git-send-email-alexandre.chartre@oracle.com>
-In-Reply-To: <1557758315-12667-3-git-send-email-alexandre.chartre@oracle.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 13 May 2019 08:46:22 -0700
-X-Gmail-Original-Message-ID: <CALCETrUjLRgKH3XbZ+=pLCzPiFOV7DAvAYUvNLA7SMNkaNLEqQ@mail.gmail.com>
-Message-ID: <CALCETrUjLRgKH3XbZ+=pLCzPiFOV7DAvAYUvNLA7SMNkaNLEqQ@mail.gmail.com>
-Subject: Re: [RFC KVM 02/27] KVM: x86: Introduce address_space_isolation
- module parameter
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Jonathan Adams <jwadams@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
-<alexandre.chartre@oracle.com> wrote:
->
-> From: Liran Alon <liran.alon@oracle.com>
->
-> Add the address_space_isolation parameter to the kvm module.
->
-> When set to true, KVM #VMExit handlers run in isolated address space
-> which maps only KVM required code and per-VM information instead of
-> entire kernel address space.
+As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
+console UART"), UART console lines use low-level PIO only access functions
+which will conflict with use of the line when DMA is enabled, e.g. when
+the console line is also used for systemd messages. So disable DMA
+support for UART console lines.
 
-Does the *entry* also get isolated?  If not, it seems less useful for
-side-channel mitigation.
+Fixes: https://patchwork.kernel.org/patch/10929511/
+Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+---
+v2: Clarify comment regarding DMA support on kernel console,
+    add {Tested,Reviewed}-by:, and Cc: linux-stable lines.
+---
+ drivers/tty/serial/sh-sci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 3cd139752d3f..abc705716aa0 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1557,6 +1557,13 @@ static void sci_request_dma(struct uart_port *port)
+ 
+ 	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
+ 
++	/*
++	 * DMA on console may interfere with Kernel log messages which use
++	 * plain putchar(). So, simply don't use it with a console.
++	 */
++	if (uart_console(port))
++		return;
++
+ 	if (!port->dev->of_node)
+ 		return;
+ 
+-- 
+2.7.4
+
