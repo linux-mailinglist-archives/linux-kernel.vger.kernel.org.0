@@ -2,167 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3811B28B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E767B1B26E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 11:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbfEMJOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 05:14:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44379 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728793AbfEMJOO (ORCPT
+        id S1728591AbfEMJMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 05:12:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56162 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfEMJMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 05:14:14 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g9so6850860pfo.11
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 02:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XquRGMdkWaM/DcOHkh5rTCme/nLS8Vh3kbKhYIl4Twg=;
-        b=gz/tnqjukIUD4RWThkSaxWdDlmQh8HywQm3QrUdGpOG5v4q6hy+r35pZBmCLpNBvP1
-         VysEnCoJv098YRymkvsVjA+XH6rkRFBQXsGU1til8+7jkjk23m0Zn+foSPF25SDsT2lG
-         fGDmhPTdzTFzZTSiuS9neZvUS96xjKdCie9CQdRMtOuH4K9VNuALxjoiGObDmNYBlu6i
-         Sde909IVUyXG1EYqxDALrJ2m4pKXKNO3slb58x2WrxBcnjvi3Q9efNZLmiG8d9WK6IAx
-         FNIxQPYHLSDb+zGFh7HJrH4a8OMPz4Xn6b+wLFGQsLbn4RnpNt8hEU+DeNezPjNHWa7O
-         E+DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XquRGMdkWaM/DcOHkh5rTCme/nLS8Vh3kbKhYIl4Twg=;
-        b=BPBV+RWSMQOCwWUouEQH00d4CVhEBEke3a+cQwVUb/dYEgMXXgE3GXIbUsL5/1ETu6
-         AgE1/6i5irEkkEzT8YC6k7ClJq+Dt+/RK9A7waXrAUJCjXd1IyNvea64tvDbhhvbdI0q
-         CTbje8DYn6MIER+bLbSk/WH134zfgrwcBT94G3iQABXqfyQ0TlsvpxcpqHq9nbsXQulF
-         BE5z4M1Ib07q9S8cFtDCXfrnI2YyWp/CaG9oenvIO8mC5arbwHcYuD9Rf1ixfPviu+UI
-         nQrILEmJq36nl1hVbIxwb2gkVdgcbluOGe4kIUP7gFfdkr5mYnL3pbHXxrOHAbelkCzx
-         JEPw==
-X-Gm-Message-State: APjAAAWbFI9ZnCxPHI3Q1TZZV+Lt5Il/6CjPX53ire+n5Dng1vU+w42e
-        4tBlYqh3Ium8drrgeCqBr2Y=
-X-Google-Smtp-Source: APXvYqz8fg/gOGGQGPxmA0dBWWM80ayKbjIJVuacCPFHtBhjL6BeE6RM5qbjIOHO3/l/cj41qDHI0Q==
-X-Received: by 2002:a63:555a:: with SMTP id f26mr29982607pgm.197.1557738853804;
-        Mon, 13 May 2019 02:14:13 -0700 (PDT)
-Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id n18sm35500837pfi.48.2019.05.13.02.14.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 02:14:13 -0700 (PDT)
-From:   Yuyang Du <duyuyang@gmail.com>
-To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
-Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
-        tglx@linutronix.de, boqun.feng@gmail.com,
-        linux-kernel@vger.kernel.org, Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH 17/17] locking/lockdep: Remove irq-safe to irq-unsafe read check
-Date:   Mon, 13 May 2019 17:12:03 +0800
-Message-Id: <20190513091203.7299-18-duyuyang@gmail.com>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
-In-Reply-To: <20190513091203.7299-1-duyuyang@gmail.com>
-References: <20190513091203.7299-1-duyuyang@gmail.com>
+        Mon, 13 May 2019 05:12:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FhRnavH5ISIIL5pl8TyT+ztasWjBJfJsuvguEoKrBnk=; b=EvAbLVwUdc20zwJRefzd8QXJc
+        xGFN34vOXzCUBVBHMhCvseLFXe61OQl6jTYmI2IpoiF9NNOUAeidWxIdaXszHhOK2X4r7hDNLaykV
+        49pGvyK6Pe3kV8vOdLD5SMVPTkx4njIp7Rjq3/I8BEcLabvbNulz/3l6BHOJmklPrznaTshp+UpOx
+        kFaXb295xKAyC0BS5R96yYYxOexobeYwZNvi69E7DTKFRtFrA6aEZjbLlEMYOW6EcWGUYJUNjOC4y
+        TQcZWQE/WrzhWeSjXI8wcoe0LHeXtYXIZBSUhs9LnSBw9IViT06alNECta0qlYxO7RU5kHB8K3q93
+        RAjmE9aqg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQ70B-0002mG-NM; Mon, 13 May 2019 09:12:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DB1D02029F888; Mon, 13 May 2019 11:12:05 +0200 (CEST)
+Date:   Mon, 13 May 2019 11:12:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        "jstancek@redhat.com" <jstancek@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
+ flush
+Message-ID: <20190513091205.GO2650@hirez.programming.kicks-ass.net>
+References: <1557264889-109594-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190509083726.GA2209@brain-police>
+ <20190509103813.GP2589@hirez.programming.kicks-ass.net>
+ <F22533A7-016F-4506-809A-7E86BAF24D5A@vmware.com>
+ <20190509182435.GA2623@hirez.programming.kicks-ass.net>
+ <04668E51-FD87-4D53-A066-5A35ABC3A0D6@vmware.com>
+ <20190509191120.GD2623@hirez.programming.kicks-ass.net>
+ <7DA60772-3EE3-4882-B26F-2A900690DA15@vmware.com>
+ <20190513083606.GL2623@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513083606.GL2623@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have a lockdep warning:
+On Mon, May 13, 2019 at 10:36:06AM +0200, Peter Zijlstra wrote:
+> On Thu, May 09, 2019 at 09:21:35PM +0000, Nadav Amit wrote:
+> > It may be possible to avoid false-positive nesting indications (when the
+> > flushes do not overlap) by creating a new struct mmu_gather_pending, with
+> > something like:
+> > 
+> >   struct mmu_gather_pending {
+> >  	u64 start;
+> > 	u64 end;
+> > 	struct mmu_gather_pending *next;
+> >   }
+> > 
+> > tlb_finish_mmu() would then iterate over the mm->mmu_gather_pending
+> > (pointing to the linked list) and find whether there is any overlap. This
+> > would still require synchronization (acquiring a lock when allocating and
+> > deallocating or something fancier).
+> 
+> We have an interval_tree for this, and yes, that's how far I got :/
+> 
+> The other thing I was thinking of is trying to detect overlap through
+> the page-tables themselves, but we have a distinct lack of storage
+> there.
 
-  ========================================================
-  WARNING: possible irq lock inversion dependency detected
-  5.1.0-rc7+ #141 Not tainted
-  --------------------------------------------------------
-  kworker/8:2/328 just changed the state of lock:
-  0000000007f1a95b (&(&host->lock)->rlock){-...}, at: ata_bmdma_interrupt+0x27/0x1c0 [libata]
-  but this lock took another, HARDIRQ-READ-unsafe lock in the past:
-   (&trig->leddev_list_lock){.+.?}
-
-and interrupts could create inverse lock ordering between them.
-
-other info that might help us debug this:
-   Possible interrupt unsafe locking scenario:
-
-         CPU0                    CPU1
-         ----                    ----
-    lock(&trig->leddev_list_lock);
-                                 local_irq_disable();
-                                 lock(&(&host->lock)->rlock);
-                                 lock(&trig->leddev_list_lock);
-    <Interrupt>
-      lock(&(&host->lock)->rlock);
-
- *** DEADLOCK ***
-
-This splat is a false positive, which is enabled by the addition of
-recursive read locks in the graph. Specifically, trig->leddev_list_lock is a
-rwlock_t type, which was not in the graph before recursive read lock support
-was added in lockdep.
-
-This false positve is caused by a "false-positive" check in IRQ usage check.
-
-In mark_lock_irq(), the following checks are currently performed:
-
-   ----------------------------------
-  |   ->      | unsafe | read unsafe |
-  |----------------------------------|
-  | safe      |  F  B  |    F* B*    |
-  |----------------------------------|
-  | read safe |  F* B* |      -      |
-   ----------------------------------
-
-Where:
-F: check_usage_forwards
-B: check_usage_backwards
-*: check enabled by STRICT_READ_CHECKS
-
-But actually the safe -> unsafe read dependency does not create a deadlock
-scenario.
-
-Fix this by simply removing those two checks, and since safe read -> unsafe
-is indeed a problem, these checks are not actually strict per se, so remove
-the macro STRICT_READ_CHECKS, and we have the following checks:
-
-   ----------------------------------
-  |   ->      | unsafe | read unsafe |
-  |----------------------------------|
-  | safe      |  F  B  |      -      |
-  |----------------------------------|
-  | read safe |  F  B  |      -      |
-   ----------------------------------
-
-Signed-off-by: Yuyang Du <duyuyang@gmail.com>
----
- kernel/locking/lockdep.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 69d6bd6..62b454c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3446,8 +3446,6 @@ static int SOFTIRQ_verbose(struct lock_class *class)
- 	return 0;
- }
- 
--#define STRICT_READ_CHECKS	1
--
- static int (*state_verbose_f[])(struct lock_class *class) = {
- #define LOCKDEP_STATE(__STATE) \
- 	__STATE##_verbose,
-@@ -3493,7 +3491,7 @@ typedef int (*check_usage_f)(struct task_struct *, struct held_lock *,
- 	 * Validate that the lock dependencies don't have conflicting usage
- 	 * states.
- 	 */
--	if ((!read || STRICT_READ_CHECKS) &&
-+	if ((!read || !dir) &&
- 			!usage(curr, this, excl_bit, state_name(new_bit & ~LOCK_USAGE_READ_MASK)))
- 		return 0;
- 
-@@ -3504,7 +3502,7 @@ typedef int (*check_usage_f)(struct task_struct *, struct held_lock *,
- 		if (!valid_state(curr, this, new_bit, excl_bit + LOCK_USAGE_READ_MASK))
- 			return 0;
- 
--		if (STRICT_READ_CHECKS &&
-+		if (dir &&
- 			!usage(curr, this, excl_bit + LOCK_USAGE_READ_MASK,
- 				state_name(new_bit + LOCK_USAGE_READ_MASK)))
- 			return 0;
--- 
-1.8.3.1
-
+We might just use some state in the pmd, there's still 2 _pt_pad_[12] in
+struct page to 'use'. So we could come up with some tlb generation
+scheme that would detect conflict.
