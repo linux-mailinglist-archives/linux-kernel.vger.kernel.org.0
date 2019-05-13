@@ -2,121 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3711B8FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B8A1B8F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbfEMOrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:47:41 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54725 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728916AbfEMOrk (ORCPT
+        id S1730858AbfEMOrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:47:36 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:53580 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728916AbfEMOrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:47:40 -0400
-Received: by mail-wm1-f67.google.com with SMTP id i3so8363036wml.4
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 07:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ALWueNgHHs3ZajRzWLC6W++2c5xP+kZBpwlzia5t3sw=;
-        b=DIZBhs3+DdvpI1CqvIXZAGc5lF8SZVfY2jzm63MUvuntyEL4MNiatQ0+aS4d5PhXRR
-         VvHaULiYpyHb6UvspJLZHVYGkkr1HVl79wZ6GzQN5cUu2FVhlwhzPiE4BHGQXal7UqTV
-         ZDGytr9vh6+u8P/dXDoJTTBCGnm3ykaoUJ0FgmPbflwTdeAK2/00h2o0ogW6CfshZ1dN
-         2nB+gMQjEMtamV8JZdshw0Z1HVXQfFIx8lJaFrG21aJmEPzDrk68dnHsoeTVImrELbYk
-         fDftO7zSkaqXWS7QTcNi/nt1ecJ5wGSe/0anDHr1AYYJa8FCwVRkoN2I8UXh8B7FOBny
-         a/aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ALWueNgHHs3ZajRzWLC6W++2c5xP+kZBpwlzia5t3sw=;
-        b=D0bIToto9ZEvMvIOkIxItLScT5yws9oJRdeiVRoFAanhVLU6QGlOeAo74D5HadlYxK
-         z8uKuhJegwPJWBBpsVJzXjS4obJXQtCIBZq7kT2/zLT1tbV388PYmEn8WZuy3heoQEx1
-         V+KpaPtIcBPOH2oBqx/c529U4aqfLnz0iwI4JkTjD026hv97hddEXHjw8PFSRRMiiuoZ
-         VxAb9SP4ol/uBPt8NNKbXv6PWJb6zrZ+PmlVL1o9sOmo620EzUcKpp8a1US8rrEXR9Av
-         P7UPOQULg1DGbmsVB5yI9iqC5i6iDU+/VHNClwRRShMXuSwJocDyNnN+77L4Ak5/T4Z5
-         Hqjg==
-X-Gm-Message-State: APjAAAXlSobwfd/5ZErfz3/e9sJrLzo6eTz1iHF1UqSYcxH7vaDu59g9
-        WLP8VHwiNlOQI4U4Fd6I3INsX1y2
-X-Google-Smtp-Source: APXvYqzZ8fdmmFlLOfOgtMbKEXsTvxvbJSXY/+LygbnGMtNF5KV77IhMKtpiDSpRrKBHGscZJJWBDQ==
-X-Received: by 2002:a7b:c76b:: with SMTP id x11mr7207569wmk.22.1557758857815;
-        Mon, 13 May 2019 07:47:37 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id f6sm10598235wmh.13.2019.05.13.07.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 07:47:37 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, Omer Shpigelman <oshpigelman@habana.ai>
-Subject: [PATCH] habanalabs: increase PCI ELBI timeout for Palladium
-Date:   Mon, 13 May 2019 17:47:34 +0300
-Message-Id: <20190513144734.23644-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 May 2019 10:47:35 -0400
+Received: (qmail 3884 invoked by uid 2102); 13 May 2019 10:47:34 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 13 May 2019 10:47:34 -0400
+Date:   Mon, 13 May 2019 10:47:34 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <gustavo@embeddedor.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <suwan.kim027@gmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in usb_get_bos_descriptor
+In-Reply-To: <00000000000086510e05888df8c8@google.com>
+Message-ID: <Pine.LNX.4.44L0.1905131046130.1478-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omer Shpigelman <oshpigelman@habana.ai>
+On Fri, 10 May 2019, syzbot wrote:
 
-This patch increases the timeout for PCI ELBI configuration to support low
-frequency Palladium images.
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=124794d8a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
+> dashboard link: https://syzkaller.appspot.com/bug?extid=71f1e64501a309fcc012
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176a53d0a00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com
+> 
+> usb 1-1: Using ep0 maxpacket: 8
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in usb_get_bos_descriptor+0x8be/0x8fb  
+> drivers/usb/core/config.c:976
+> Write of size 1 at addr ffff8880a48e38ec by task kworker/0:2/533
 
-Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/habanalabs.h |  2 ++
- drivers/misc/habanalabs/pci.c        | 10 +++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+Insufficient descriptor size check.
 
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 2941838c04c1..9b1c03f1ab32 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -34,6 +34,8 @@
- #define HL_ARMCP_INFO_TIMEOUT_USEC	10000000 /* 10s */
- #define HL_ARMCP_EEPROM_TIMEOUT_USEC	10000000 /* 10s */
+Alan Stern
+
+
+#syz test: https://github.com/google/kasan.git usb-fuzzer
+
+ drivers/usb/core/config.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: usb-devel/drivers/usb/core/config.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/config.c
++++ usb-devel/drivers/usb/core/config.c
+@@ -932,8 +932,8 @@ int usb_get_bos_descriptor(struct usb_de
  
-+#define HL_PCI_ELBI_TIMEOUT_MSEC	10 /* 10ms */
-+
- #define HL_MAX_QUEUES			128
- 
- #define HL_MAX_JOBS_PER_CS		64
-diff --git a/drivers/misc/habanalabs/pci.c b/drivers/misc/habanalabs/pci.c
-index 0e78a04d63f4..c98d88c7a5c6 100644
---- a/drivers/misc/habanalabs/pci.c
-+++ b/drivers/misc/habanalabs/pci.c
-@@ -10,6 +10,8 @@
- 
- #include <linux/pci.h>
- 
-+#define HL_PLDM_PCI_ELBI_TIMEOUT_MSEC	(HL_PCI_ELBI_TIMEOUT_MSEC * 10)
-+
- /**
-  * hl_pci_bars_map() - Map PCI BARs.
-  * @hdev: Pointer to hl_device structure.
-@@ -88,8 +90,14 @@ static int hl_pci_elbi_write(struct hl_device *hdev, u64 addr, u32 data)
- {
- 	struct pci_dev *pdev = hdev->pdev;
- 	ktime_t timeout;
-+	u64 msec;
- 	u32 val;
- 
-+	if (hdev->pldm)
-+		msec = HL_PLDM_PCI_ELBI_TIMEOUT_MSEC;
-+	else
-+		msec = HL_PCI_ELBI_TIMEOUT_MSEC;
-+
- 	/* Clear previous status */
- 	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_STS, 0);
- 
-@@ -98,7 +106,7 @@ static int hl_pci_elbi_write(struct hl_device *hdev, u64 addr, u32 data)
- 	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_CTRL,
- 				PCI_CONFIG_ELBI_CTRL_WRITE);
- 
--	timeout = ktime_add_ms(ktime_get(), 10);
-+	timeout = ktime_add_ms(ktime_get(), msec);
- 	for (;;) {
- 		pci_read_config_dword(pdev, mmPCI_CONFIG_ELBI_STS, &val);
- 		if (val & PCI_CONFIG_ELBI_STS_MASK)
--- 
-2.17.1
+ 	/* Get BOS descriptor */
+ 	ret = usb_get_descriptor(dev, USB_DT_BOS, 0, bos, USB_DT_BOS_SIZE);
+-	if (ret < USB_DT_BOS_SIZE) {
+-		dev_err(ddev, "unable to get BOS descriptor\n");
++	if (ret < USB_DT_BOS_SIZE || bos->bLength < USB_DT_BOS_SIZE) {
++		dev_err(ddev, "unable to get BOS descriptor or descriptor too short\n");
+ 		if (ret >= 0)
+ 			ret = -ENOMSG;
+ 		kfree(bos);
+
 
