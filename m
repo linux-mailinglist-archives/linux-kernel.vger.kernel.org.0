@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7EA1BC77
+	by mail.lfdr.de (Postfix) with ESMTP id C055C1BC78
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbfEMR7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:59:33 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36160 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732087AbfEMR7a (ORCPT
+        id S1732125AbfEMR7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:59:37 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34046 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbfEMR7b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:59:30 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v80so7609526pfa.3;
-        Mon, 13 May 2019 10:59:30 -0700 (PDT)
+        Mon, 13 May 2019 13:59:31 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w7so6867488plz.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 10:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=rllXTOSI+l4dOxVedgJq5yZYXTiqRbCrivN8bEva+1o=;
-        b=P2R9iMibtoLad0qOV2+DiBMkXyuXf3CQycA8i3D+rYFgcUOhvBff8tb07olonxdyZ7
-         EPR1qiixByolrP00F9/QiDJeC0WrCoatZhz0uX5PWOtnkLAKq5sm+ivdFIgUsw+jatCR
-         XRSDJf+lBn1fdNKKAQPov56whA7FcvWt7xElnBS6N1/CncQ8e1K/glLMn+ZylC2mUtk4
-         LgcQu8O6Ile1SXpVLkxP7vlYLTYeVVRO+5oJAWZ04qhEbW6tAHLQOpq4apneRVO/dlEj
-         Uci7hpCy8r5PEu5g2UDwpeEOrPqZRp3fbszFTMQ4oMFSD3Ywf7uNyie439oxeSILOOpI
-         nf6A==
+        bh=aNQB0qvtiJDPOekMEIWJdUXL8B2EPHtpWXUL22B7EP0=;
+        b=EDWeZdRQ4APPef2t/EAB4C+buWvmsO9JTHrs1OKJg8xMJaPLVkrmdkjyX9MM9xv259
+         G3heh5V+uJSxwOFff9o+7WbKVFcMw9gToRuCORPjJAcKUwhpsGwzsc0Un81w5sFXTsB3
+         8NCdD8d6Yd5N7s7vDEvEekPfKX7Uq4JPaKFb+AHcZJqv2fW7Vo8a4kT+VahX3Tx+aNfh
+         zRe1CID9V2p29lN9Q5vpkE+P2m2SvMlfNwTd++pjKeWQZYZx4fwcGV3IUFgSMblEdo+c
+         c8n2LujtsT7SsVW64fQZwMhcVbFSI31BU8muWLbKob0n40WwvgVspxHN8R/tl7Crfp3k
+         wt8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=rllXTOSI+l4dOxVedgJq5yZYXTiqRbCrivN8bEva+1o=;
-        b=edhZwnSzOB8/2GCCMnL/I6ANW4xHlkTZNanHXzjh0JahtcPccVSMh/wMP0TXYqaftF
-         70yDYDMoP8+68bkRfGwm04tjDTPPq/zjFazxkCQKBOIy6qPFzX8Qfhb8IbZMYZ+kAvcH
-         MDgUInfwwEBYvmLesQRqWetercs9vdNq/4epvqgCP2ajAIJ0W859Ig514Bofh7p2JOj1
-         ui5Jz3U+iF9vEgI1MiBlAcT/PlcAXipu+oxm/umRpFbK4IuY7jyi9K7GlPEOFWVWSAoh
-         0VMJotdzsUpsuYXoWIvhBh2ALHxo1+cfFG9Ef9zUx7r/lYy7wyAkdZi6A69UhvlNDUus
-         QTEA==
-X-Gm-Message-State: APjAAAWkMxZ6MkSdTwl6fEBcv4n5HkBxNZcdDbkw3BGXp2CSvNi555HJ
-        t/byPt2FmGwN1Zwc1QEGF+aleEK6
-X-Google-Smtp-Source: APXvYqw4isY2CZSWFLw0cWYvh2NWwmmEFT2LoyQOEgEsbI31Z+B5w7inOWYLYdrjGOymQR4vwByrKQ==
-X-Received: by 2002:aa7:8e04:: with SMTP id c4mr34899854pfr.48.1557770370110;
-        Mon, 13 May 2019 10:59:30 -0700 (PDT)
+        bh=aNQB0qvtiJDPOekMEIWJdUXL8B2EPHtpWXUL22B7EP0=;
+        b=InAPhoEmmkWQwA+IfSR8QYSWT14sgfXL0F/DJGlXeX4PbKuHsRg94gilimtjg9POvo
+         BhDSPdWTT/jNc819BrzWFXgXah+o6qMGFuZZ5FLCjdm6+KCfZIrlErsA/7s49bu6Wr9D
+         C5YVU0bsFRr0r6xA8PI1oXMyE1koPFdudmcWl7drA8KuuDOk9yagz7RtWDaDgRI5P4V9
+         mkp7qtQSOF5sBEwPFdJxpW4GXY0LVgfgPA49xakscgVhBVr3iaN6iB0e/b81TdEEnbaf
+         Rvqia0+IrFDjxFrYJwFVib+KIM1o6pMfr/Y52ZE+v6qaxkxqgGzdPM1EzSgslhouZkVz
+         UStQ==
+X-Gm-Message-State: APjAAAVXPMhBe5hp3EORyFd1nKNoO6bF+xMXURdBywXqj3EeafbpEE6R
+        w/U10orfmokH9hsNqLDdxdQ=
+X-Google-Smtp-Source: APXvYqzHZC/iohzaPiPJD7ya4OXgF2nmaSBhdbVjlDJsbNDm8ag9uP80neDHg6wx+lLKfjzvKjJkyQ==
+X-Received: by 2002:a17:902:6b:: with SMTP id 98mr32859598pla.271.1557770371423;
+        Mon, 13 May 2019 10:59:31 -0700 (PDT)
 Received: from localhost.localdomain ([96.79.124.202])
-        by smtp.gmail.com with ESMTPSA id s12sm9536266pfd.152.2019.05.13.10.59.28
+        by smtp.gmail.com with ESMTPSA id s12sm9536266pfd.152.2019.05.13.10.59.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 10:59:29 -0700 (PDT)
+        Mon, 13 May 2019 10:59:30 -0700 (PDT)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH 10/19] hwmon/coretemp: Support multi-die/package
-Date:   Mon, 13 May 2019 13:58:54 -0400
-Message-Id: <ec2868f35113a01ff72d9041e0b97fc6a1c7df84.1557769318.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+Subject: [PATCH 11/19] topology: Create package_cpus sysfs attribute
+Date:   Mon, 13 May 2019 13:58:55 -0400
+Message-Id: <d9d3228b82fb5665e6f93a0ccd033fe022558521.1557769318.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <7b23d2d26d717b8e14ba137c94b70943f1ae4b5c.1557769318.git.len.brown@intel.com>
 References: <7b23d2d26d717b8e14ba137c94b70943f1ae4b5c.1557769318.git.len.brown@intel.com>
@@ -63,63 +61,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Rui <rui.zhang@intel.com>
+From: Len Brown <len.brown@intel.com>
 
-Package temperature sensors are actually implemented in hardware per-die.
+The existing sysfs cpu/topology/core_siblings (and core_siblings_list)
+attributes are documented, implemented, and used by programs to
+represent set of logical CPUs sharing the same package.
 
-Update coretemp to be "die-aware", so it can expose mulitple sensors
-per package, instead of just one.  No change to single-die/package
-systems.
+This makes sense if the next topology level above a core
+is always a package.  But on systems where there is a die
+topology level between a core and a package, the name
+and its definition become inconsistent.
 
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+So without changing its function, add a name for this map
+that describes what it actually is -- package CPUs --
+the set of CPUs that share the same package.
+
+This new name will be immune to changes in topology, since
+it describes threads at the current level, not siblings
+at a contained level.
+
 Signed-off-by: Len Brown <len.brown@intel.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-hwmon@vger.kernel.org
+Suggested-by: Brice Goglin <Brice.Goglin@inria.fr>
 ---
- drivers/hwmon/coretemp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/cputopology.txt | 12 ++++++------
+ drivers/base/topology.c       |  6 ++++++
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hwmon/coretemp.c b/drivers/hwmon/coretemp.c
-index 5d34f7271e67..c64ce32d3214 100644
---- a/drivers/hwmon/coretemp.c
-+++ b/drivers/hwmon/coretemp.c
-@@ -435,7 +435,7 @@ static int chk_ucode_version(unsigned int cpu)
+diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
+index 2ff8a1e9a2db..48af5c290e20 100644
+--- a/Documentation/cputopology.txt
++++ b/Documentation/cputopology.txt
+@@ -46,15 +46,15 @@ thread_siblings_list:
+ 	human-readable list of cpuX's hardware threads within the same
+ 	core as cpuX.
  
- static struct platform_device *coretemp_get_pdev(unsigned int cpu)
- {
--	int pkgid = topology_logical_package_id(cpu);
-+	int pkgid = topology_logical_die_id(cpu);
+-core_siblings:
++package_cpus:
  
- 	if (pkgid >= 0 && pkgid < max_packages)
- 		return pkg_devices[pkgid];
-@@ -579,7 +579,7 @@ static struct platform_driver coretemp_driver = {
+-	internal kernel map of cpuX's hardware threads within the same
+-	physical_package_id.
++	internal kernel map of the CPUs sharing the same physical_package_id.
++	(deprecated name: "core_siblings")
  
- static struct platform_device *coretemp_device_add(unsigned int cpu)
- {
--	int err, pkgid = topology_logical_package_id(cpu);
-+	int err, pkgid = topology_logical_die_id(cpu);
- 	struct platform_device *pdev;
+-core_siblings_list:
++package_cpus_list:
  
- 	if (pkgid < 0)
-@@ -703,7 +703,7 @@ static int coretemp_cpu_offline(unsigned int cpu)
- 	 * the rest.
- 	 */
- 	if (cpumask_empty(&pd->cpumask)) {
--		pkg_devices[topology_logical_package_id(cpu)] = NULL;
-+		pkg_devices[topology_logical_die_id(cpu)] = NULL;
- 		platform_device_unregister(pdev);
- 		return 0;
- 	}
-@@ -741,7 +741,7 @@ static int __init coretemp_init(void)
- 	if (!x86_match_cpu(coretemp_ids))
- 		return -ENODEV;
+-	human-readable list of cpuX's hardware threads within the same
+-	physical_package_id.
++	human-readable list of CPUs sharing the same physical_package_id.
++	(deprecated name: "core_siblings_list")
  
--	max_packages = topology_max_packages();
-+	max_packages = topology_max_packages() * topology_max_die_per_package();
- 	pkg_devices = kcalloc(max_packages, sizeof(struct platform_device *),
- 			      GFP_KERNEL);
- 	if (!pkg_devices)
+ book_siblings:
+ 
+diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+index 50352cf96f85..dc3c19b482f3 100644
+--- a/drivers/base/topology.c
++++ b/drivers/base/topology.c
+@@ -57,6 +57,10 @@ define_siblings_show_func(core_siblings, core_cpumask);
+ static DEVICE_ATTR_RO(core_siblings);
+ static DEVICE_ATTR_RO(core_siblings_list);
+ 
++define_siblings_show_func(package_cpus, core_cpumask);
++static DEVICE_ATTR_RO(package_cpus);
++static DEVICE_ATTR_RO(package_cpus_list);
++
+ #ifdef CONFIG_SCHED_BOOK
+ define_id_show_func(book_id);
+ static DEVICE_ATTR_RO(book_id);
+@@ -81,6 +85,8 @@ static struct attribute *default_attrs[] = {
+ 	&dev_attr_thread_siblings_list.attr,
+ 	&dev_attr_core_siblings.attr,
+ 	&dev_attr_core_siblings_list.attr,
++	&dev_attr_package_cpus.attr,
++	&dev_attr_package_cpus_list.attr,
+ #ifdef CONFIG_SCHED_BOOK
+ 	&dev_attr_book_id.attr,
+ 	&dev_attr_book_siblings.attr,
 -- 
 2.18.0-rc0
 
