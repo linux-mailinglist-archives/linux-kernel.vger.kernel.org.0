@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C46D1BBE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C423B1BBE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731669AbfEMR0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:26:55 -0400
-Received: from utopia.booyaka.com ([74.50.51.50]:50197 "EHLO
+        id S1731706AbfEMR1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:27:15 -0400
+Received: from utopia.booyaka.com ([74.50.51.50]:50234 "EHLO
         utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730437AbfEMR0z (ORCPT
+        with ESMTP id S1730002AbfEMR1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:26:55 -0400
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 13:26:55 EDT
-Received: (qmail 5770 invoked by uid 1019); 13 May 2019 17:20:13 -0000
+        Mon, 13 May 2019 13:27:14 -0400
+Received: (qmail 5883 invoked by uid 1019); 13 May 2019 17:20:33 -0000
 Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 13 May 2019 17:20:13 -0000
-Date:   Mon, 13 May 2019 17:20:13 +0000 (UTC)
+  by localhost with SMTP; 13 May 2019 17:20:33 -0000
+Date:   Mon, 13 May 2019 17:20:33 +0000 (UTC)
 From:   Paul Walmsley <paul@pwsan.com>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+cc:     linux-kbuild@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
         Palmer Dabbelt <palmer@sifive.com>,
-        linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        linux-riscv@lists.infradead.org, Vincent Chen <deanbo422@gmail.com>
-Subject: Re: [PATCH] s390: move arch/s390/defconfig to
- arch/s390/configs/defconfig
-In-Reply-To: <20190513021116.12191-1-yamada.masahiro@socionext.com>
-Message-ID: <alpine.DEB.2.21.999.1905131719430.5613@utopia.booyaka.com>
-References: <20190513021116.12191-1-yamada.masahiro@socionext.com>
+        linux-kernel@vger.kernel.org,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Greentime Hu <green.hu@gmail.com>, linux-alpha@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>, Matt Turner <mattst88@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        linux-riscv@lists.infradead.org,
+        Richard Henderson <rth@twiddle.net>
+Subject: Re: [PATCH] alpha: move arch/alpha/defconfig to
+ arch/alpha/configs/defconfig
+In-Reply-To: <20190513021405.12428-1-yamada.masahiro@socionext.com>
+Message-ID: <alpine.DEB.2.21.999.1905131720150.5613@utopia.booyaka.com>
+References: <20190513021405.12428-1-yamada.masahiro@socionext.com>
 User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -62,5 +63,6 @@ On Mon, 13 May 2019, Masahiro Yamada wrote:
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Reviewed-by: Paul Walmsley <paul@pwsan.com>
+
 
 - Paul
