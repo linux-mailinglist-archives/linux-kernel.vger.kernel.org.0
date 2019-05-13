@@ -2,112 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192D91B987
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFED1B999
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731116AbfEMPGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:06:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56122 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728659AbfEMPGc (ORCPT
+        id S1731129AbfEMPKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:10:45 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36857 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727339AbfEMPKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:06:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2/pZQCYHBRt5vZjBZiV+jXqyYA3iPhVXwNe1J6JTT5Q=; b=21LRkYCIu+9y35kAOJwzsIntS
-        j1JVTBcrifsbUMBdiCv0OXnIGwa7vEcK+5xsZrnpLyiQ/qL4Ql1RazGalQTM1GcLRXPCo0K88iEUa
-        Gg9AIxmVcew2xxKafQ/S1GVO4ZNEuoTHphQyUyO5q8Mawm41TDA3/7MB9kyyk1r/0TogczRIoPRbN
-        zmFdPuP10/39OO136NJ2oL/vo9C53k9oaDrbuYKk143w/B1pH9XKLRwsdjy4QKkKQdNY6rJjBHniP
-        QsL5XVscOxodLB0AlVgLH5BRPv0bMm6PXKb8w07anonG8Uguykd8Qg59QtOKq0vdpYRwLcE2LVUQq
-        dwf5TdyWw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQCWz-0007zz-7n; Mon, 13 May 2019 15:06:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EAC962029FD7A; Mon, 13 May 2019 17:06:19 +0200 (CEST)
-Date:   Mon, 13 May 2019 17:06:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v2 0/7] Add new tracepoints required for EAS testing
-Message-ID: <20190513150619.GX2589@hirez.programming.kicks-ass.net>
-References: <20190510113013.1193-1-qais.yousef@arm.com>
- <20190513122857.GU2623@hirez.programming.kicks-ass.net>
- <20190513134203.xmw6rsjwpj5b4tj6@e107158-lin.cambridge.arm.com>
+        Mon, 13 May 2019 11:10:43 -0400
+Received: by mail-yw1-f66.google.com with SMTP id q185so11274208ywe.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 08:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
+        bh=/ALChiOKnMbi5IPfVvBTTx9Afx2HTWGWhcKipkGBRc4=;
+        b=DG/ioZxRbc7Psl2Rwn2D9Ljvkt168cPnUdDyG2qr7woivVllgieIszsYuhKHWnIO4G
+         GCqPQrI+BpWFdHAIH/kt7DXJRxvMVOtgd6LJ9tBxFUToeqJVwyuR+mQ7tOzX4yuxxNYs
+         kk0CojDahTsS606dhWKKYke1XmI4IGjFmUjeNW4I5/wyV4JuNPDsewD1h2zNTq5rUiqS
+         I00jbiO0/5kw/mNW/eTXXm0uf6hHgE1V9ZRlMSzPVOJB/bwToMaHWbMPDinrfnWmzdEv
+         lSsVsECDhKyg6U6YZ9K/4TP4A8EvTZ5mi0jZOMHIS2HaSMYNOmETxYOoQZI2uAYidRrj
+         urig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc;
+        bh=/ALChiOKnMbi5IPfVvBTTx9Afx2HTWGWhcKipkGBRc4=;
+        b=saa4fqiVTtll0TSk0Ax5h0I1AgAoLWumtZr6yKhPTJcuI5CAKzHpZzwrvJPvb9Ij50
+         wMKOevrpT497fOBIpiUnFaFo8dxe/MtBzFceLALnd/qY2vsVspg7VPjqkdJrbJ1BjWPP
+         eiroH7WfCrVRCJ3HSxtu5AZ3fVdRNpYIdUIySst61joHbZOnSEICW6pscP3lL+b6vxdh
+         k57Xliu/VdVYFEs8sryhETH515QuDia78DiSucJNzMRH1VJcRYNBeOFzfN7vtCpwmd1G
+         pTbm+28SO7wsRiF/jWf9PxHfbdgk/abJLifdAhwrxv/cBiGO4/6d/pQnhihtYZNQWILO
+         YLUg==
+X-Gm-Message-State: APjAAAVBSJ6cv1yPuL2NzKfoW0xG4jbKxVrZ2ldZGzuTiMUJI6v8AjVK
+        Yikylp/he/7G1xDR3DnpaJ5/xGArHc3+Rv7Gd10=
+X-Received: by 2002:a81:9284:: with SMTP id j126mt12287877ywg.445.1557760243034;
+ Mon, 13 May 2019 08:10:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513134203.xmw6rsjwpj5b4tj6@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190502074519.61272b42@canb.auug.org.au> <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
+ <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+In-Reply-To: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+From:   Carlo Pisani <carlojpisani@gmail.com>
+Date:   Mon, 13 May 2019 17:10:13 +0200
+Message-ID: <CA+QBN9CN=n556f0KYj2LZ4q9wY+wx9mbWpaMcC44GufUqbsgEg@mail.gmail.com>
+Subject: Re: C3600, sata controller
+Cc:     Parisc List <linux-parisc@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 02:42:03PM +0100, Qais Yousef wrote:
-> On 05/13/19 14:28, Peter Zijlstra wrote:
-> > 
-> > 
-> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> > index c8c7c7efb487..11555f95a88e 100644
-> > --- a/include/trace/events/sched.h
-> > +++ b/include/trace/events/sched.h
-> > @@ -594,6 +594,23 @@ TRACE_EVENT(sched_wake_idle_without_ipi,
-> >  
-> >  	TP_printk("cpu=%d", __entry->cpu)
-> >  );
-> > +
-> > +/*
-> > + * Following tracepoints are not exported in tracefs and provide hooking
-> > + * mechanisms only for testing and debugging purposes.
-> > + */
-> > +DECLARE_TRACE(pelt_cfs_rq,
-> > +	TP_PROTO(struct cfs_rq *cfs_rq),
-> > +	TP_ARGS(cfs_rq));
-> > +
-> > +DECLARE_TRACE(pelt_se,
-> > +	TP_PROTO(struct sched_entity *se),
-> > +	TP_ARGS(se));
-> > +
-> > +DECLARE_TRACE(sched_overutilized,
-> > +	TP_PROTO(int overutilized),
-> > +	TP_ARGS(overutilized));
-> > +
-> 
-> If I decoded this patch correctly, what you're saying:
-> 
-> 	1. Move struct cfs_rq to the exported sched.h header
+hi, good news!
+after a burn-in test of 8hours, we can affirm that Adaptec 1210SA does work
+The chip is "Silicon Image Sil31122", so the kernel module is
+"sata_sil" (not sata_sil24)
 
-No, don't expose the structure, we want to keep that private. You can
-use unqualified pointers.
+while [ 1 ]
+do
+for item in `ls *.bin`
+    do
+        rm -f $copy.out
+        echo -n "$item ... "
+        mycp $item $copy.out
+        echo "done"
+    done
+done
 
-> 	2. Get rid of the fatty wrapper functions and export any necessary
-> 	   helper functions.
+*.bin are giant files, 1GB, 2GB, 4GB, 8GB, 16GB, 32GB
 
-Right, that should get them read-only access to the members of those
-structures and avoids the tracing code itself from becoming ugleh and
-also avoids us having to export those structures (which we really don't
-want to do).
+it has been tested on a PCI 32bit lost of a C3600
+with kernel /v4.16!!!
 
-> 	3. No need for RT and DL pelt tracking at the moment.
+"mycp" does a copy and then checks the md5 checksum
 
-Nah, you probably want rt,dl,irq (as Dietmar pointed out), it's just
-that your patched didn't do it right and I was lazy.
+I think this card can be added to the list!
 
-> I'm okay with this. The RT and DL might need to be revisited later but we don't
-> have immediate need for them now.
-> 
-> I'll add to this passing rd->span to sched_overutilizied.
-
-Or pass the rd itself and add another wrapper to extract the span.
+Our list has been already updated
+http://www.downthebunker.com/reloaded/space/viewtopic.php?f=50&p=1632
