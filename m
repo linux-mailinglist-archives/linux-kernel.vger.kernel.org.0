@@ -2,61 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40831B533
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 724901B53A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbfEMLpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 07:45:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54640 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfEMLpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 07:45:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kIFwTuS2Cq6ZYIK7P/ywG/BfaUTgrMlQGg1qCWu+uzI=; b=ReYOQaUrt+Qr5hvD0m6+3Wv1W
-        Nl73W6f8/GripfZ2I08SDufPtJezjJz80V+AW5QAewsXGvNgn+yjPfJQsIqQoLMKbiSLm15r+/noV
-        2gclMRQHZQ9K/QGx0V1p8d0Ggsy26zQT3JhiJpqJ8AE9StIfmozWUMinKQCZCbldDvcqluN3UdZab
-        NErbyDac0Qx/Xup/S+txTRLHKF1eobwznZdDqbQCpEIEzy1uV94J3hhXPlE3ywc7wGSlkCmhcT5Q9
-        AnaAjUD20+tFeEiBrSdzmmQ2TpHTS05Mfg0FJ4nMCCRGDA+2USffRHMskSbr+o0thKRygfdVxCJbG
-        yfa1+Tqhw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQ9OD-0006ri-VS; Mon, 13 May 2019 11:45:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 60BA92029F87A; Mon, 13 May 2019 13:45:04 +0200 (CEST)
-Date:   Mon, 13 May 2019 13:45:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yuyang Du <duyuyang@gmail.com>
-Cc:     will.deacon@arm.com, mingo@kernel.org, bvanassche@acm.org,
-        ming.lei@redhat.com, frederic@kernel.org, tglx@linutronix.de,
-        boqun.feng@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/17] locking/lockdep: Add lock type enum to explicitly
- specify read or write locks
-Message-ID: <20190513114504.GR2623@hirez.programming.kicks-ass.net>
-References: <20190513091203.7299-1-duyuyang@gmail.com>
- <20190513091203.7299-2-duyuyang@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513091203.7299-2-duyuyang@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729477AbfEMLrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 07:47:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55540 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729411AbfEMLrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 07:47:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 33432AD85;
+        Mon, 13 May 2019 11:47:31 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: kernel: only use i8253 clocksource with periodic clockevent
+Date:   Mon, 13 May 2019 13:47:25 +0200
+Message-Id: <20190513114725.17823-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 05:11:47PM +0800, Yuyang Du wrote:
-> + * Note that we have an assumption that a lock class cannot ever be both
-> + * read and recursive-read.
+i8253 clocksource needs a free running timer. This could only
+be used, if i8253 clockevent is set up as periodic.
 
-We have such locks in the kernel... see:
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ arch/mips/kernel/i8253.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  kernel/qrwlock.c:queued_read_lock_slowpath()
+diff --git a/arch/mips/kernel/i8253.c b/arch/mips/kernel/i8253.c
+index 5f209f111e59..df7ddd246eaa 100644
+--- a/arch/mips/kernel/i8253.c
++++ b/arch/mips/kernel/i8253.c
+@@ -32,7 +32,8 @@ void __init setup_pit_timer(void)
+ 
+ static int __init init_pit_clocksource(void)
+ {
+-	if (num_possible_cpus() > 1) /* PIT does not scale! */
++	if (num_possible_cpus() > 1 || /* PIT does not scale! */
++	    !clockevent_state_periodic(&i8253_clockevent))
+ 		return 0;
+ 
+ 	return clocksource_i8253_init();
+-- 
+2.13.7
 
-And yes, that is somewhat unfortunate, but hard to get rid of due to
-hysterical raisins.
