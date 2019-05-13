@@ -2,109 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C265D1BF2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 003F81BF33
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfEMVlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 17:41:12 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37924 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfEMVlM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 17:41:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f2so755106wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ml5e5SvV7EOXRrwnyGezErXhiPZR2O3UcJlBIK9a7mo=;
-        b=UosvtbuZOLfQWGbKAQSLNFzjqFu3HvMBi5n+MqvZEiZslVZprGN96XE7HylDEqUC3r
-         zoypEsCeENepF6lXHlmeXeZjlgQW4x0nXWC9YSFOuVB0jU1Zyw6D63GOiOogO0TOjqtz
-         2MQ8cls6nIG+Qs/TsdmbKKaOTp0IaYsGZYQPx1M60qG4eyUJN1Bg4nAChBB0qrhv7wsw
-         EQhm9P4A6fGQ0Xrb4+FFDjWuCM6u7RB6RYEjPyHBHk6sRDf3uFEugFKqGIFenMV9GKRS
-         D/I1WM9P3h7Pq62/A+StGZuE06uqmrNlh0fY6CQLdV5DQlf/P11WFdTHFCqybRqPOaOw
-         386g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ml5e5SvV7EOXRrwnyGezErXhiPZR2O3UcJlBIK9a7mo=;
-        b=Ulla8MRvGR04KDVhKElNUBAXhHrDUsXzn9FSI76CFc9q2IBbPCTv8t+toJRaFPOM3Q
-         j9b7Xmyq0Xh51kb2EzX+8qozQUms4gIxsjnFf9RQW8vg43QiJJfHpiwMKmvqAKerNFhf
-         qI2Mg56kconJah0vpOWVpLSQV1DFvMirTwZlBKEEaJhW/Ltzzox1Ut9V1vvObZnfJ33T
-         N6nOEsHGDYl+NX5RBAfqhwjtVdkW+uoV7m+aZLYvE1wdPJBtI85pBSbcK3OdHYoBJwAh
-         g20ciUPRkd+FgUg0+EliowdGbUyQL0BuZf5YCAFk5Q6BEzGG+nV5eiTlD5+LDp/TEcCP
-         dQ9A==
-X-Gm-Message-State: APjAAAWTC07UtousUFkkljDBdTvp96xzbJplKOAJ6jV5rSDGoqpEdaDz
-        eW6kz3VoCMc5KWdTZ+9JtQdggaVuZX2ZcjL6NQ8=
-X-Google-Smtp-Source: APXvYqzni/E4Dhvw7yCFu+XIF07MLzzgBIFhXwcHPfbgbZQhGJijxeMMpKzr+DBWZG8wOsVvfiuS0fKSfYBvgleclrc=
-X-Received: by 2002:a7b:c4d1:: with SMTP id g17mr8053477wmk.103.1557783670098;
- Mon, 13 May 2019 14:41:10 -0700 (PDT)
+        id S1726562AbfEMVng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 17:43:36 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34587 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfEMVng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 17:43:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=z1/mEU0BH5C5OCDEDKNzem043jlI3NyAKsW8ae1HheE=; b=C3RtlCdpQwV99rSBCvKtGGYmLE
+        EPv1I9hwqL0Os246k//uL4GN4zRurs76jrxSLngxsnUQ5L2kqdL2pPByzxlIA1Rzhr3m1xss5Toqh
+        gOmbbuO5WWQyMWH2bZfTGL7KEkpSWLPXGhtkphHZPokBuoltVKkj2gUwkxatRxeKABts=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hQIjM-0004HU-UG; Mon, 13 May 2019 23:43:32 +0200
+Date:   Mon, 13 May 2019 23:43:32 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 5/5] net: phy: dp83867: Use unsigned variables to store
+ unsigned properties
+Message-ID: <20190513214332.GB12345@lunn.ch>
+References: <20190510214550.18657-1-tpiepho@impinj.com>
+ <20190510214550.18657-5-tpiepho@impinj.com>
+ <49c6afc4-6c5b-51c9-74ab-9a6e8c2460a5@gmail.com>
+ <3a42c0cc-4a4b-e168-c03e-1cc13bd2f5d4@gmail.com>
+ <1557777496.4229.13.camel@impinj.com>
+ <b246b18d-5523-7b8b-9cd0-b8ccb8a511e9@gmail.com>
+ <20190513204641.GA12345@lunn.ch>
+ <1557782787.4229.36.camel@impinj.com>
 MIME-Version: 1.0
-References: <20190510032144.15060-1-yuehaibing@huawei.com>
-In-Reply-To: <20190510032144.15060-1-yuehaibing@huawei.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Mon, 13 May 2019 23:40:58 +0200
-Message-ID: <CAFLxGvz4awNWpnb_hFxwpYy4X_w6Z6+aLqUZ5Zxu6fJKXsbJ9A@mail.gmail.com>
-Subject: Re: [PATCH] ubifs: Fix build error without CONFIG_UBIFS_FS_XATTR
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557782787.4229.36.camel@impinj.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 5:22 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix gcc build error while CONFIG_UBIFS_FS_XATTR
-> is not set
->
-> fs/ubifs/dir.o: In function `ubifs_unlink':
-> dir.c:(.text+0x260): undefined reference to `ubifs_purge_xattrs'
-> fs/ubifs/dir.o: In function `do_rename':
-> dir.c:(.text+0x1edc): undefined reference to `ubifs_purge_xattrs'
-> fs/ubifs/dir.o: In function `ubifs_rmdir':
-> dir.c:(.text+0x2638): undefined reference to `ubifs_purge_xattrs'
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 9ca2d7326444 ("ubifs: Limit number of xattrs per inode")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/ubifs/ubifs.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-> index 379b9f7..fd7f399 100644
-> --- a/fs/ubifs/ubifs.h
-> +++ b/fs/ubifs/ubifs.h
-> @@ -2015,13 +2015,17 @@ int ubifs_xattr_set(struct inode *host, const char *name, const void *value,
->                     size_t size, int flags, bool check_lock);
->  ssize_t ubifs_xattr_get(struct inode *host, const char *name, void *buf,
->                         size_t size);
-> -int ubifs_purge_xattrs(struct inode *host);
->
->  #ifdef CONFIG_UBIFS_FS_XATTR
->  void ubifs_evict_xattr_inode(struct ubifs_info *c, ino_t xattr_inum);
-> +int ubifs_purge_xattrs(struct inode *host);
->  #else
->  static inline void ubifs_evict_xattr_inode(struct ubifs_info *c,
->                                            ino_t xattr_inum) { }
-> +static inline int ubifs_purge_xattrs(struct inode *host)
-> +{
-> +       return 0;
-> +}
->  #endif
->
->  #ifdef CONFIG_UBIFS_FS_SECURITY
-> --
+> > Hi Trent
+> > 
+> > I already deleted the patches. For patch 3:
+> > 
+> > + 	  if (dp83867->clk_output_sel > DP83867_CLK_O_SEL_REF_CLK &&
+> > +	         dp83867->clk_output_sel != DP83867_CLK_O_SEL_OFF) {
+> > +		 	phydev_err(phydev, "ti,clk-output-sel value %u out of range\n",
+> > +				   dp83867->clk_output_sel);
+> > +			return -EINVAL;
+> > +		      }
+> > 
+> > This last bit looks odd. If it is not OFF, it is invalid?
+> 
+> The valid values are in the range 0 to DP83867_CLK_O_SEL_REF_CLK and
+> also DP83867_CLK_O_SEL_OFF.  Thus invalid values are those greater than
+> DP83867_CLK_O_SEL_REF_CLK which are not DP83867_CLK_O_SEL_OFF.
 
-Applied.
+Hi Trent
+ 
+O.K.
 
--- 
-Thanks,
-//richard
+> > Are there any in tree users of DP83867_CLK_O_SEL_REF_CLK? We have to
+> > be careful changing its meaning. But if nobody is actually using it...
+> 
+> Nope.  I doubt this will affect anyone.  They'd need to strap the phy
+> to get a different configuration, and the explicitly add a property,
+> which isn't in the example DTS files, to change the configuration to
+> something they didn't want, and then depend on a driver bug ignoring
+> the erroneous setting they added.
+
+O.K, then this patch is O.K. Does the binding documentation need
+updating?
+ 
+> > Patch 4:
+> > 
+> > This is harder. Ideally we want to fix this. At some point, somebody
+> > is going to want 'rgmii' to actually mean 'rgmii', because that is
+> > what their hardware needs.
+> > 
+> > Could you add a WARN_ON() for 'rgmii' but the PHY is actually adding a
+> > delay? And add a comment about setting the correct thing in device
+> > tree?  Hopefully we will then get patches correcting DT blobs. And if
+> > we later do need to fix 'rgmii', we will break less board.
+> 
+> Yes I can do this.  Should it warn on any use of "rgmii"?
+
+No, i would only warn when there is a delay configured by
+strapping. If you want the PHY to be left alone, you should use
+PHY_INTERFACE_MODE_NA, which should be the default if there is no
+phy-mode property. If DT actually asked for "rgmii", it either means
+it is wrong and rgmii-id should be used to match the strapping, or
+both the strapping and the DT is wrong and somebody really does want
+"rgmii".
+
+> If so, how would someone make the warning go away if they actually
+> want rgmii mode with no delay?
+
+We take the warning out, and implement "rgmii" correctly, and let
+boards break which have broken DT. We have done this before, but
+without a period of time with a warning.
+
+> I suspect hsdk.dts is an example of an in-tree broken board that uses
+> "rgmii" would it should have used "rgmii-id".
+
+O.K, so when you submit the patch Cc: Alexey Brodkin <abrodkin@synopsys.com>
+
+     Andrew
