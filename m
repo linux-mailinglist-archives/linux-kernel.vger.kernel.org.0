@@ -2,140 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8DD71BF26
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 417641BF30
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEMVcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 17:32:46 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38671 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfEMVcq (ORCPT
+        id S1726525AbfEMVlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 17:41:16 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:40285 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726174AbfEMVlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 17:32:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y2so2431234pfg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qeOtgj/iKlKZY1KTzkXNPoBebeCJwrDC/cCz2qL6pKY=;
-        b=k+xusdOxFCNYDua8D0Qk+OrqDt3hw8KPbyEDnUz+QBCvzGHEN9nT+/tT174FKpFWq6
-         C+8EXO2qysVFTgenWrGaRB/kHOAdWxrxRt9UPbXEw/8Hp3o9+jdVhQek6eDaye2TK8WI
-         ecdwSeL60Rnsk8rCFUHOU6hKb3h6dyHCaFjsg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qeOtgj/iKlKZY1KTzkXNPoBebeCJwrDC/cCz2qL6pKY=;
-        b=hkqFXMkyIQh5PM2yIqZK5DsLNLP5sFiQoelqVluwACwYHbDS1DKYLbuoRntCOhhcGa
-         4mUnpXP9hjv13GWy59Jj9hQ8HBcSM+9ZS8LrT7IvRSst6Xpuij/k04k+p6JVk2zKcbT2
-         /ZYLGje8nI2W1jdFZI72p8VMb0nybEcMOS3+WPKJ5jD75A9FneEYmAJk32m6g6AnU1LC
-         bAXkHWe1cSAJunPppWnBwCU3w50aQajDcXcCdSviviue6lSAkxRgePGIGxcQctowrcR1
-         KF/PBHihp3APTdx7FrX3En0FSDLWnSRtQFR6cbOYpaDqhTjWZJi17C9fjk+p0yLucIBp
-         7H4A==
-X-Gm-Message-State: APjAAAXWCtM9HB9h2+Q91/yaslC9r0SzBbZv0hXHug0JtOEYxSlhoRMQ
-        h0jEcCPirZLoTfI9ZmYB2qxXytVCEE0=
-X-Google-Smtp-Source: APXvYqwisR+ufWQiWcK5iJsZgMAsaZ+6dAt/emAZ+QwXTEmcWpJcU265y7vy85/iLmHjOUXlQ9ABXg==
-X-Received: by 2002:a63:1d09:: with SMTP id d9mr34287802pgd.289.1557783165765;
-        Mon, 13 May 2019 14:32:45 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h187sm22228363pfc.52.2019.05.13.14.32.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 14:32:44 -0700 (PDT)
-Date:   Mon, 13 May 2019 14:32:43 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usercopy: Remove HARDENED_USERCOPY_PAGESPAN
-Message-ID: <201905131430.541A76A6FE@keescook>
-References: <201905101341.A17DDD7@keescook>
- <ead5e4ad-d911-3680-04a4-ae98507ba48c@redhat.com>
- <201905111657.76FE0BDCEC@keescook>
- <20190512041142.GA24542@bombadil.infradead.org>
+        Mon, 13 May 2019 17:41:15 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id E36E05C2;
+        Mon, 13 May 2019 17:41:11 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 13 May 2019 17:41:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=Vn/T/POBtkQCivubXNnOyOKOoXD
+        swoy+p7rd61BSZqE=; b=BvZ23USq+n0H6bFfinEnI042Scm2YF1IK4T/Ipy1oA7
+        EnMtmM24XOtJG3N6yUG9XfvPeAZ/DSmgYOungx4VobZ6ghiLq//Xwp0sr5EEG7tM
+        Chzj5aZKD6m7W1TvsCqEtWYJStcGCVl5G+L6L8KT4XKk/Q49y9FrPvwUw/u5w5D7
+        O5qDuZBkWjWLkA8eVdRxL4ZDD4N84oiQQg70BWtobahYl6yrquda8wBvHZGUs04V
+        KYsqffXOd3dFefZHvErodbuAPP7ralWwr5/PUjmwOHIPcRoJ33o8+xbuQoRLhy1b
+        S+15WBT9/o6/uFE9+rF5lgoLuJ8F+DzCb3RRLdnM1ww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Vn/T/P
+        OBtkQCivubXNnOyOKOoXDswoy+p7rd61BSZqE=; b=hnx7+g5RF4XXPsmU/JIrvk
+        trc7cyfb04VRdoTVoe6lKHx3US8i5l74WHwRKYREd8NxzoJ5f0nOTy1M+wkndKvQ
+        s36lQuteqU+wHNSrt27kx4eBalmY3U7wD/jg1Z5IgxEKOZZkUG1dAnxwkJKDRIZM
+        WGjxtno8qEf25ApyCQubPFDreAjW3PRnIJWgKKRg/RgBScFbfFagIq9ZZPRXGGMW
+        45UJP80rwyEROZa4jRQ3Xpd3vJ2I1jtMqXEB559MMNKKwZLuzZBzxPr7qofa7ejV
+        YkFZA7q3aCJ7IZ65bQZZS2tVhrsdzechSy+eWC2ALV6kf0kmor9G9G0gMsENPrkA
+        ==
+X-ME-Sender: <xms:d-TZXFRRkH-8e7vBJEPVZcl5TD4sDNFnspcIQp7fTLcc5I94HJLIGA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrleeggdduieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdludehmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppeduvdegrdduieelrdduiedrudekheenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:d-TZXK5j0tX3LgYou62RdrIWuzXD-nvhFHkz-iUYE9ZiNbWDK7_OQw>
+    <xmx:d-TZXEHh35WyA_1MN-hDT2kJcyx-PXCTO7hDV8IbYGIDwM0JtHDAsw>
+    <xmx:d-TZXMGzgk4fcT7RSe5zg_VG4SvazSyA1wEV-tv5d0XbsyNngqy8xw>
+    <xmx:d-TZXOSeMpWkHt6eP0ekLynCg-eMfbDDpJmpcXY3eYLiYcfYacYm_Q>
+Received: from localhost (124-169-16-185.dyn.iinet.net.au [124.169.16.185])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9515E80063;
+        Mon, 13 May 2019 17:41:10 -0400 (EDT)
+Date:   Tue, 14 May 2019 07:40:39 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gfs2: Fix error path kobject memory leak
+Message-ID: <20190513214039.GA27187@eros.localdomain>
+References: <20190513033213.2468-1-tobin@kernel.org>
+ <20190513071405.GF2868@kroah.com>
+ <20190513103936.GA15053@eros.localdomain>
+ <CAHc6FU7FCBn1CnzEjyj8W7LBu-Ths7bME2R3_GQ2ZmsFQxWEhA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190512041142.GA24542@bombadil.infradead.org>
+In-Reply-To: <CAHc6FU7FCBn1CnzEjyj8W7LBu-Ths7bME2R3_GQ2ZmsFQxWEhA@mail.gmail.com>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 09:11:42PM -0700, Matthew Wilcox wrote:
-> On Sat, May 11, 2019 at 05:03:08PM -0700, Kees Cook wrote:
-> > On Fri, May 10, 2019 at 08:41:43PM -0400, Laura Abbott wrote:
-> > > On 5/10/19 3:43 PM, Kees Cook wrote:
-> > > > This feature continues to cause more problems than it solves[1]. Its
-> > > > intention was to check the bounds of page-allocator allocations by using
-> > > > __GFP_COMP, for which we would need to find all missing __GFP_COMP
-> > > > markings. This work has been on hold and there is an argument[2]
-> > > > that such markings are not even the correct signal for checking for
-> > > > same-allocation pages. Instead of depending on BROKEN, this just removes
-> > > > it entirely. It can be trivially reverted if/when a better solution for
-> > > > tracking page allocator sizes is found.
-> > > > 
-> > > > [1] https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg37479.html
-> > > > [2] https://lkml.kernel.org/r/20190415022412.GA29714@bombadil.infradead.org
-> > > 
-> > > I agree the page spanning is broken but is it worth keeping the
-> > > checks against __rodata __bss etc.?
-> > 
-> > They're all just white-listing later checks (except RODATA which is
-> > doing a cheap RO test which is redundant on any architecture with actual
-> > rodata...) so they don't have any value in staying without the rest of
-> > the page allocator logic.
-> > 
-> > > > -	/* Is the object wholly within one base page? */
-> > > > -	if (likely(((unsigned long)ptr & (unsigned long)PAGE_MASK) ==
-> > > > -		   ((unsigned long)end & (unsigned long)PAGE_MASK)))
-> > > > -		return;
-> > > > -
-> > > > -	/* Allow if fully inside the same compound (__GFP_COMP) page. */
-> > > > -	endpage = virt_to_head_page(end);
-> > > > -	if (likely(endpage == page))
-> > > > -		return;
-> > 
-> > We _could_ keep the mixed CMA/reserved/neither check if we really wanted
-> > to, but that's such a corner case of a corner case, I'm not sure it's
-> > worth doing the virt_to_head_page() across the whole span to figure
-> > it out.
+On Mon, May 13, 2019 at 06:41:23PM +0200, Andreas Gruenbacher wrote:
+> On Mon, 13 May 2019 at 12:40, Tobin C. Harding <me@tobin.cc> wrote:
+> >
+> > On Mon, May 13, 2019 at 09:14:05AM +0200, Greg Kroah-Hartman wrote:
+> > > On Mon, May 13, 2019 at 01:32:13PM +1000, Tobin C. Harding wrote:
+> > > > If a call to kobject_init_and_add() fails we must call kobject_put()
+> > > > otherwise we leak memory.
+> > > >
+> > > > Function always calls kobject_init_and_add() which always calls
+> > > > kobject_init().
+> > > >
+> > > > It is safe to leave object destruction up to the kobject release
+> > > > function and never free it manually.
+> > > >
+> > > > Remove call to kfree() and always call kobject_put() in the error path.
+> > > >
+> > > > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > > > ---
+> > > >
+> > > > Is it ok to send patches during the merge window?
+> > > >
+> > > > Applies on top of Linus' mainline tag: v5.1
+> > > >
+> > > > Happy to rebase if there are conflicts.
+> > > >
+> > > > thanks,
+> > > > Tobin.
+> > > >
+> > > >  fs/gfs2/sys.c | 7 +------
+> > > >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
+> > > > index 1787d295834e..98586b139386 100644
+> > > > --- a/fs/gfs2/sys.c
+> > > > +++ b/fs/gfs2/sys.c
+> > > > @@ -661,8 +661,6 @@ int gfs2_sys_fs_add(struct gfs2_sbd *sdp)
+> > > >     if (error)
+> > > >             goto fail_reg;
+> > > >
+> > > > -   sysfs_frees_sdp = 1; /* Freeing sdp is now done by sysfs calling
+> > > > -                           function gfs2_sbd_release. */
+> > >
+> > > You should also delete this variable at the top of the function, as it
+> > > is now only set once there and never used.
+> >
+> > Thanks, I should have gotten a compiler warning for that.  I was feeling
+> > so confident with my builds this morning ... pays not to get too cocky
+> > I suppose.
+> >
+> > > With that:
+> > >
+> > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >
+> > Thanks, will re-spin.
 > 
-> I'd delete that first check, because it's a subset of the second check,
+> Don't bother, I'll fix that up.
 
-It seemed easier to short-circuit with a math test before doing the slightly more expensive virt_to_head_page(end) call. Do you think that's sensible?
-
-> 
-> 	/* Is the object wholly within a single (base or compound) page? */
-> 	endpage = virt_to_head_page(end);
-> 	if (likely(endpage == page))
-> 		return;
-> 
-> 	/*
-> 	 * If the start and end are more than MAX_ORDER apart, they must
-> 	 * be from separate allocations
-> 	 */
-> 	if (n >= (PAGE_SIZE << MAX_ORDER))
-> 		usercopy_abort("spans too many pages", NULL, to_user, 0, n);
-> 
-> 	/*
-> 	 * If neither page is compound, we can't tell if the object is
-> 	 * within a single allocation or not
-> 	 */
-> 	if (!PageCompound(page) && !PageCompound(endpage))
-> 		return;
-> 
-> > I really wish we had size of allocation reliably held somewhere. We'll
-> > need it for doing memory tagging of the page allocator too...
-> 
-> I think we'll need to store those allocations in a separate data structure
-> on the side.  As far as the rest of the kernel is concerned, those struct
-> pages belong to them once the page allocator has given them.
-
-Okay, let me work up a page-type refactoring while allocation size can
-stay back-burnered.
-
--- 
-Kees Cook
+Thanks man!
