@@ -2,81 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69DB51B1A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C321B1AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 10:04:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfEMICQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 04:02:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45032 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbfEMICQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 04:02:16 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3DA3681F01;
-        Mon, 13 May 2019 08:02:16 +0000 (UTC)
-Received: from localhost (ovpn-12-31.pek2.redhat.com [10.72.12.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7558619C6A;
-        Mon, 13 May 2019 08:02:13 +0000 (UTC)
-Date:   Mon, 13 May 2019 16:02:10 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>, j-nomura@ce.jp.nec.com
-Cc:     kasong@redhat.com, dyoung@redhat.com, fanc.fnst@cn.fujitsu.com,
-        x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-Message-ID: <20190513080210.GC16774@MiWiFi-R3L-srv>
-References: <20190424092944.30481-1-bhe@redhat.com>
- <20190424092944.30481-2-bhe@redhat.com>
- <20190429002318.GA25400@MiWiFi-R3L-srv>
- <20190429135536.GC2324@zn.tnic>
- <20190513014248.GA16774@MiWiFi-R3L-srv>
- <20190513070725.GA20105@zn.tnic>
- <20190513073254.GB16774@MiWiFi-R3L-srv>
- <20190513075006.GB20105@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513075006.GB20105@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 13 May 2019 08:02:16 +0000 (UTC)
+        id S1727922AbfEMIEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 04:04:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725928AbfEMIEe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 04:04:34 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4D84Fli008939
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:04:33 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sf2cmnh5r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:04:24 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Mon, 13 May 2019 09:02:25 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 13 May 2019 09:02:23 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4D82MFX46399508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 08:02:22 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D9C9AE051;
+        Mon, 13 May 2019 08:02:22 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9CBFAE065;
+        Mon, 13 May 2019 08:02:21 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 13 May 2019 08:02:21 +0000 (GMT)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf docu: Add description for stderr
+Date:   Mon, 13 May 2019 10:02:20 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 19051308-0020-0000-0000-0000033C05A2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051308-0021-0000-0000-0000218EB8F8
+Message-Id: <20190513080220.91966-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905130059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/13/19 at 09:50am, Borislav Petkov wrote:
-> On Mon, May 13, 2019 at 03:32:54PM +0800, Baoquan He wrote:
-> > This is a critical bug which breaks memory hotplug,
-> 
-> Please concentrate and stop the blabla:
-> 
-> 36f0c423552d ("x86/boot: Disable RSDP parsing temporarily")
-> 
-> already explains what the deal is. This code was *purposefully* disabled
-> because we ran out of time and it broke a couple of machines. Don't make
-> me repeat all that - you were on CC on *all* threads and messages!
-> 
-> So we're going to try it again this cycle and if there's no fallout, it
-> will go upstream. If not, it will have to be fixed. The usual thing.
-> 
-> And I don't care if Kairui's patch fixes this one problem - judging by
-> the fragility of this whole thing, it should be hammered on one more
-> cycle on as many boxes as possible to make sure there's no other SNAFUs.
-> 
-> So go test it on more machines instead. I've pushed it here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=next-merge-window
+Perf report displays recorded data on the screen and emits
+warnings and debug messages in the status line (last one on screen).
+Perf also supports the possibility to write all debug messages
+to stderr (instead of writing them to the status line).
+This is achieved with the following command:
 
-Pingfan has got a machine to reproduce the kexec breakage issue, and
-applying these two patches fix it. He planned to paste the test result.
-I will ask him to try this branch if he has time, or I can get his
-machine to test.
+ # ./perf --debug stderr=1 report -vvvvv -i ~/fast.data 2>/tmp/2
+ # ll /tmp/2
+ -rw-rw-r-- 1 tmricht tmricht 5420835 May  7 13:46 /tmp/2
+ #
 
-Junichi, also have a try on Boris's branch in NEC's test environment?
+The usage of variable stderr=1 is not documented, so add it
+to the perf man page.
 
-Thanks
-Baoquan
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/Documentation/perf.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
+index 864e37597252..401f0ed67439 100644
+--- a/tools/perf/Documentation/perf.txt
++++ b/tools/perf/Documentation/perf.txt
+@@ -22,6 +22,8 @@ OPTIONS
+ 	  verbose          - general debug messages
+ 	  ordered-events   - ordered events object debug messages
+ 	  data-convert     - data convert command debug messages
++	  stderr           - write debug output (option -v) to stderr
++	                     in browser mode
+ 
+ --buildid-dir::
+ 	Setup buildid cache directory. It has higher priority than
+-- 
+2.19.1
+
