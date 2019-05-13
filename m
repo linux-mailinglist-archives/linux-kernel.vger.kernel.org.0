@@ -2,107 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E891B427
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0A11B44A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 12:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfEMKjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 06:39:08 -0400
-Received: from relay.sw.ru ([185.231.240.75]:43700 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfEMKjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 06:39:08 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hQ8M3-0005RO-PD; Mon, 13 May 2019 13:38:48 +0300
-Subject: Re: [PATCH RFC 0/4] mm/ksm: add option to automerge VMAs
-To:     Oleksandr Natalenko <oleksandr@redhat.com>,
+        id S1728729AbfEMKtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 06:49:00 -0400
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:47599 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728133AbfEMKtA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 06:49:00 -0400
+X-Greylist: delayed 503 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 May 2019 06:48:59 EDT
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 4C01C30D;
+        Mon, 13 May 2019 06:40:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 13 May 2019 06:40:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=WApew/vuxJIVZtbLL/hzndegcPF
+        zwFvShwAPmp+eSVw=; b=UMf5oONS/DFmzS5SYtP1oefeJJtM75U5GxD1sqM8G36
+        Ssd+pl3UkYGqMtVK1wGA4W7fm6eaRYv4wSo4234Pby9eppUqXk3na7zS75Bx9i3I
+        IYlsZGNMi3se89ciebk5i0O2Q9zycJWtRmZZth2wVIjadbheztqCZGfUUJbUvrWJ
+        KGuUCHLc2XS2DaPd8ufTVQwaqcKMdrIw/CHQWG5i6vYjzn8m6r5xKVumjEyUDGsy
+        KOS/ugG4lSwdtjwYUVutVmqG/oQZwHRFXLB+wJybshUlAXJ83keLWLeAxqxJaNLd
+        sExE+oFqAYaf9TLh514XjBou61y7YAEkBfuFK1kSusw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=WApew/
+        vuxJIVZtbLL/hzndegcPFzwFvShwAPmp+eSVw=; b=24W6q/NP/SFakj5ZCoiGVv
+        SEdjFX1uZ/mBVHoSbdp5gK1h6IjeJwq2n0X9ZCJALxSZMiEvF9W+bnVpxbpj0aJ+
+        qOTWF3Ltogn09ptqVyKRgxPNt2PeKRbTnU0Bg+Pab975sMY9y6f4kFe/dyNmeoNM
+        TZZ8TuRbGHJXSdRi3ekmdj7Re5lOODWFqrOMUwvsBhwSU3n5PlEwhqdfmwKZGtU1
+        eHXh/tOE8af+mFWxAdX+XFG3hsZIhSQFEjYfEJXZ0NZQDkgWh7M6R6OGBBWCqPVx
+        ZRYfFem/MkYG5qqwXEsH/t58tnnnXh0UzmYg1TnlpMZB4kkkznXXsXFtAtT93y/g
+        ==
+X-ME-Sender: <xms:oEnZXGJBEYRY3jLjzBu_7d93obVCWIoxjD40Ad0bGwjcvZjdRTeCsg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrleeggdeftdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
+    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
+    hinhdrtggtqeenucfkphepuddvgedrudeiledrudeirddukeehnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:oEnZXE4rpE1JjAe9wFG_jPXkjsmajRj4XqNfes1Z53jmQE4WRGsnYg>
+    <xmx:oEnZXPiQFp6beyvTFhkCumt-pM5rBhXanuNBO04tGmezRPSfuKWaRg>
+    <xmx:oEnZXAG3-60dlihvqnuEOg-CiHcXY7HcWk4SwPa_au2jRqTorT7FRw>
+    <xmx:oEnZXOpmeuZHjYu2KPeZPJ7q7mXJ-MyD-HJLX8Dlm8n2V_7g_Z1jwg>
+Received: from localhost (124-169-16-185.dyn.iinet.net.au [124.169.16.185])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C537F80063;
+        Mon, 13 May 2019 06:40:31 -0400 (EDT)
+Date:   Mon, 13 May 2019 20:39:36 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, cluster-devel@redhat.com,
         linux-kernel@vger.kernel.org
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Timofey Titovets <nefelim4ag@gmail.com>,
-        Aaron Tomlin <atomlin@redhat.com>, linux-mm@kvack.org
-References: <20190510072125.18059-1-oleksandr@redhat.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <36a71f93-5a32-b154-b01d-2a420bca2679@virtuozzo.com>
-Date:   Mon, 13 May 2019 13:38:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Subject: Re: [PATCH] gfs2: Fix error path kobject memory leak
+Message-ID: <20190513103936.GA15053@eros.localdomain>
+References: <20190513033213.2468-1-tobin@kernel.org>
+ <20190513071405.GF2868@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190510072125.18059-1-oleksandr@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513071405.GF2868@kroah.com>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Oleksandr,
-
-On 10.05.2019 10:21, Oleksandr Natalenko wrote:
-> By default, KSM works only on memory that is marked by madvise(). And the
-> only way to get around that is to either:
+On Mon, May 13, 2019 at 09:14:05AM +0200, Greg Kroah-Hartman wrote:
+> On Mon, May 13, 2019 at 01:32:13PM +1000, Tobin C. Harding wrote:
+> > If a call to kobject_init_and_add() fails we must call kobject_put()
+> > otherwise we leak memory.
+> > 
+> > Function always calls kobject_init_and_add() which always calls
+> > kobject_init().
+> > 
+> > It is safe to leave object destruction up to the kobject release
+> > function and never free it manually.
+> > 
+> > Remove call to kfree() and always call kobject_put() in the error path.
+> > 
+> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > ---
+> > 
+> > Is it ok to send patches during the merge window?
+> > 
+> > Applies on top of Linus' mainline tag: v5.1
+> > 
+> > Happy to rebase if there are conflicts.
+> > 
+> > thanks,
+> > Tobin.
+> > 
+> >  fs/gfs2/sys.c | 7 +------
+> >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
+> > index 1787d295834e..98586b139386 100644
+> > --- a/fs/gfs2/sys.c
+> > +++ b/fs/gfs2/sys.c
+> > @@ -661,8 +661,6 @@ int gfs2_sys_fs_add(struct gfs2_sbd *sdp)
+> >  	if (error)
+> >  		goto fail_reg;
+> >  
+> > -	sysfs_frees_sdp = 1; /* Freeing sdp is now done by sysfs calling
+> > -				function gfs2_sbd_release. */
 > 
->   * use LD_PRELOAD; or
->   * patch the kernel with something like UKSM or PKSM.
->
-> Instead, lets implement a so-called "always" mode, which allows marking
-> VMAs as mergeable on do_anonymous_page() call automatically.
->
-> The submission introduces a new sysctl knob as well as kernel cmdline option
-> to control which mode to use. The default mode is to maintain old
-> (madvise-based) behaviour.
->
-> Due to security concerns, this submission also introduces VM_UNMERGEABLE
-> vmaflag for apps to explicitly opt out of automerging. Because of adding
-> a new vmaflag, the whole work is available for 64-bit architectures only.
->> This patchset is based on earlier Timofey's submission [1], but it doesn't
-> use dedicated kthread to walk through the list of tasks/VMAs.
+> You should also delete this variable at the top of the function, as it
+> is now only set once there and never used.
+
+Thanks, I should have gotten a compiler warning for that.  I was feeling
+so confident with my builds this morning ... pays not to get too cocky
+I suppose.
+
+> With that:
 > 
-> For my laptop it saves up to 300 MiB of RAM for usual workflow (browser,
-> terminal, player, chats etc). Timofey's submission also mentions
-> containerised workload that benefits from automerging too.
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This all approach looks complicated for me, and I'm not sure the shown profit
-for desktop is big enough to introduce contradictory vma flags, boot option
-and advance page fault handler. Also, 32/64bit defines do not look good for
-me. I had tried something like this on my laptop some time ago, and
-the result was bad even in absolute (not in memory percentage) meaning.
-Isn't LD_PRELOAD trick enough to desktop? Your workload is same all the time,
-so you may statically insert correct preload to /etc/profile and replace
-your mmap forever.
+Thanks, will re-spin.
 
-Speaking about containers, something like this may have a sense, I think.
-The probability of that several containers have the same pages are higher,
-than that desktop applications have the same pages; also LD_PRELOAD for
-containers is not applicable. 
-
-But 1)this could be made for trusted containers only (are there similar
-issues with KSM like with hardware side-channel attacks?!); 2) the most
-shared data for containers in my experience is file cache, which is not
-supported by KSM.
-
-There are good results by the link [1], but it's difficult to analyze
-them without knowledge about what happens inside them there.
-
-Some of tests have "VM" prefix. What the reason the hypervisor don't mark
-their VMAs as mergeable? Can't this be fixed in hypervisor? What is the
-generic reason that VMAs are not marked in all the tests?
-
-In case of there is a fundamental problem of calling madvise, can't we
-just implement an easier workaround like a new write-only file:
-
-#echo $task > /sys/kernel/mm/ksm/force_madvise
-
-which will mark all anon VMAs as mergeable for a passed task's mm?
-
-A small userspace daemon may write mergeable tasks there from time to time.
-
-Then we won't need to introduce additional vm flags and to change
-anon pagefault handler, and the changes will be small and only
-related to mm/ksm.c, and good enough for both 32 and 64 bit machines.
-
-Thanks,
-Kirill
+	Tobin.
