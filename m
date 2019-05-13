@@ -2,107 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898D81BAC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9121F1BAAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730326AbfEMQMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 12:12:07 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:39008 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbfEMQMH (ORCPT
+        id S1731531AbfEMQKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 12:10:33 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33493 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731482AbfEMQKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:12:07 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DG9XTA088123;
-        Mon, 13 May 2019 16:10:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=rP/OPccK5WignsxLuyYpQuz4cQ7lND2uT3MRe0Mdp4I=;
- b=XdPbt2CgygTocPQLUHC3NjedbqHDRyQesGdwcmWXviPgtwjzMllFtga5+MbKneALsVs3
- yjrREvz3m+1KhMkbAmmHU5mKjCdcMwtStehqYsXSThUNUdrQ85Pni0YlFiC9dUui5B3a
- z2KCerfTz7tOQNstDjCT+osz5BehIHQznn3pH7jWBkEsFJp3S/58CJK60pzSjlH0WSkX
- xoRqvbd5U6LJ4CA/3k59DS/IZS23ZBNzazWDlXP42YLnSXI8q6dqfkXmCdzE4M5NlrSV
- ZZiGHL6HzfV1ylTaNSzC74wb8ajAmVrXK4gqEHmCqd3iAeJhWTm4xMD3ckI5cRao4+R7 SA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2sdkwdgafm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 16:10:14 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DG9FRe128443;
-        Mon, 13 May 2019 16:10:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2sdmeajy04-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 May 2019 16:10:13 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4DGAC9w003137;
-        Mon, 13 May 2019 16:10:12 GMT
-Received: from [10.166.106.34] (/10.166.106.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 May 2019 09:10:12 -0700
-Subject: Re: [RFC KVM 05/27] KVM: x86: Add handler to exit kvm isolation
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Jonathan Adams <jwadams@google.com>
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
- <1557758315-12667-6-git-send-email-alexandre.chartre@oracle.com>
- <CALCETrXmHHjfa3tX2fxec_o165NB0qFBAG3q5i4BaKV==t7F2Q@mail.gmail.com>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <40427143-4d13-0583-9182-c38d51d6f9eb@oracle.com>
-Date:   Mon, 13 May 2019 18:10:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 13 May 2019 12:10:32 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d9so7582611wrx.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 09:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IBIWbSPpc7j2EgIiZbpjBgwSCzEoaoZA6IHHGeyqm0k=;
+        b=aY5uMZeISGZkbAL4GnQfuBHulOyUat3bMlveTgkJEg6ZBvpZ46nBDnlLqd/Jc79Ck2
+         8wJtwXrFpWPlcwX3JBvKFk61E77dPYAb0o4ZS6QivcLAxxymoy+SIWueXSvhsWe+Cui0
+         5M5/40WeQcT5p+w3fM/dlxqUl/nd2uCkqI1Ch1LT780M9ui4QcYyvBLFwwvG/HkUGw/2
+         ius4Ma6d9Ba2ztYKa4i/bA7eWNdcpXplomqgDocIwJ8mhjHxvSOs2EkEPg8k6mP1e5eX
+         ivr+bf+9dFvo7pyIFXxda2BQshTin5d1OCk7NFTzfkF9LebTtfxVv5dpxLe/SRxyKnXx
+         raDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IBIWbSPpc7j2EgIiZbpjBgwSCzEoaoZA6IHHGeyqm0k=;
+        b=nrXooFr8H9w/C0aL3rbCi4/NULlb+/+3U/WpPAulID2RzcQgKRMePFp8r52gLbAm+h
+         ZnllYXcX4f4hp1h7cks/hJLO2OS0C86Zhj0z1vhC0M1M71FdXju1uFhRfV9XSSBg1hOu
+         GWqluYmvzveqCa01u+w/yRDUK6BJ4wn8GsaB7RO5CeXjLnPiAhJtiirh7/1Bh7z4P3rw
+         H0J/+FqHKtQCEmE1+v7srqrKS/pdE+ZEUY5yXs7/XRbg3BCeO+uVOPItZOogq3MqefT7
+         35Nd/MBBOZlPwqjRbHJxRyr4TSkqaLi8AvFNuwq7wX7cqil1hyikLnbl0c1G/TqT/Wef
+         Ydfw==
+X-Gm-Message-State: APjAAAV+HZnn6D5eljUxPdmYjqn+KscB/X4tu/pp0H0I+Iv8acXt81pR
+        U3WcnR1VIOCyAReop3pxbUxH/A==
+X-Google-Smtp-Source: APXvYqwl0U7CzCVOL/tmw6kz1N59Lc9fpRVWsN1Me+FPaSVsbwduVRxDq8hd2gYZT9TE28T+W6qLNQ==
+X-Received: by 2002:adf:ce07:: with SMTP id p7mr3219226wrn.241.1557763830904;
+        Mon, 13 May 2019 09:10:30 -0700 (PDT)
+Received: from localhost.localdomain (aputeaux-684-1-11-31.w90-86.abo.wanadoo.fr. [90.86.214.31])
+        by smtp.gmail.com with ESMTPSA id n2sm24439089wra.89.2019.05.13.09.10.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 09:10:30 -0700 (PDT)
+From:   Fabien Parent <fparent@baylibre.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, matthias.bgg@gmail.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fabien Parent <fparent@baylibre.com>
+Subject: [PATCH v2 0/5] mt6392: Add support for MediaTek MT6392 PMIC
+Date:   Mon, 13 May 2019 18:10:21 +0200
+Message-Id: <20190513161026.31308-1-fparent@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXmHHjfa3tX2fxec_o165NB0qFBAG3q5i4BaKV==t7F2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905130110
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=993 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905130110
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series aims at bringing support for the MediaTek MT6392 PMIC. This
+PMIC is used on the MT8516 Pumpkin board.
 
+This patch series adds support for the following features:
+ * PMIC keys
+ * regulator
+ * RTC
 
-On 5/13/19 5:49 PM, Andy Lutomirski wrote:
-> On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
-> <alexandre.chartre@oracle.com> wrote:
->>
->> From: Liran Alon <liran.alon@oracle.com>
->>
->> Interrupt handlers will need this handler to switch from
->> the KVM address space back to the kernel address space
->> on their prelog.
-> 
-> This patch doesn't appear to do anything at all.  What am I missing?
-> 
+Fabien Parent (5):
+  dt-bindings: regulator: add support for MT6392
+  regulator: mt6392: Add support for MT6392 regulator
+  dt-bindings: mfd: mt6397: Add bindings for MT6392 PMIC
+  mfd: mt6397: Add support for MT6392 pmic
+  arm64: dts: mt6392: Add PMIC mt6392 dtsi
 
-Let me check. It looks like I trimmed the code invoking the handler from
-IRQ (to exit isolation when there's an IRQ). Probably a bad merge at some
-point. Sorry.
+ .../devicetree/bindings/mfd/mt6397.txt        |  12 +-
+ .../bindings/regulator/mt6392-regulator.txt   | 220 ++++++++
+ arch/arm64/boot/dts/mediatek/mt6392.dtsi      | 208 ++++++++
+ drivers/mfd/mt6397-core.c                     |  55 ++
+ drivers/regulator/Kconfig                     |   9 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/mt6392-regulator.c          | 490 ++++++++++++++++++
+ include/linux/mfd/mt6392/core.h               |  42 ++
+ include/linux/mfd/mt6392/registers.h          | 487 +++++++++++++++++
+ include/linux/regulator/mt6392-regulator.h    |  40 ++
+ 10 files changed, 1562 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mt6392-regulator.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6392.dtsi
+ create mode 100644 drivers/regulator/mt6392-regulator.c
+ create mode 100644 include/linux/mfd/mt6392/core.h
+ create mode 100644 include/linux/mfd/mt6392/registers.h
+ create mode 100644 include/linux/regulator/mt6392-regulator.h
 
-alex.
+-- 
+2.20.1
+
