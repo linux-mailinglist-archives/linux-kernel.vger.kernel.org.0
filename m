@@ -2,114 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076001BAD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AAA51BAEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbfEMQSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 12:18:36 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34310 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728954AbfEMQSg (ORCPT
+        id S1729842AbfEMQWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 12:22:12 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50386 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728381AbfEMQWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:18:36 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w7so6741349plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 09:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6+MQaTsVJQJSSNxT2mZEbP74D/A7peyG2T/rPYLLsDo=;
-        b=JdfUvZvYGDdVocnng1PLH23mptubsZoncwQugjqyn/7BY7LJI/ttP0jmsTDZv6twWn
-         DwHP3Hh2ytvh6KsT/ThvEHQ/1b4NKEzTklv1Y/5YeElkwnqIankILMWHyXhCU3vGq0mN
-         XBe6vvP0ztLSxaIm0V1N7qOYgICInr51AhSDDYtNwyEBc78dJYFmDUdPctVYH1CoJmXF
-         n7Mt/DiytbF9mK3VKZoYKDpA/2D1ktIi30rxm3A6ZnIoIdcVX+ywAIQtbimWFPMuZVV1
-         0cKujqi8SyaxV4HrCmn9c4Il4ADy6PLmNa//x7nzHnfqG1VcVoXrxx/5AsDk1skcTFZ2
-         PtVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6+MQaTsVJQJSSNxT2mZEbP74D/A7peyG2T/rPYLLsDo=;
-        b=q6oaR7PvSiu8v1MycozDc/a632iVcNclngq/++m6V2D4bLDqDbsF5gZk7lnHkxyE9/
-         ujBbYA0My5dx9ptsxmUbCCw8WOk4til+45LpDSDmcoppOm79IZ0WPH0AIhEq1XVYV85o
-         8AmDpyJNhk9VJG3uifXyMrXw4GhG7tVMpUNea6JhQmAWpCFfPEtv7pJgz3cRwMxpgukX
-         6mEXzCE0zsopw11/CQmWyTV8R8x4Raf84QG6O/pGoynUGmsxUIX3Ks/9cK37RAZwC/bZ
-         ue+PPwCZyI0foZavx9o2MFhrREMB51HCqDYSiyYgoxtSdIF8Ck/z3+0hc7iKPOljIVQK
-         KYOQ==
-X-Gm-Message-State: APjAAAVJrasitFZN4TD/AdZlzfPpbIvw/1m5ip3/6fSLQXbGTeX/ouTM
-        ixusxSItJVYxlJzZw7eE92615yg8ab4=
-X-Google-Smtp-Source: APXvYqxVd4aJV+d2m1lSilccmVOCeC9ZR8invejgr27Q9HyJZ6lw1fGD46Qe7pX39DCQBBxfwNebDA==
-X-Received: by 2002:a17:902:7241:: with SMTP id c1mr31608992pll.326.1557764315552;
-        Mon, 13 May 2019 09:18:35 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id n9sm17553093pff.59.2019.05.13.09.18.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 09:18:34 -0700 (PDT)
-Date:   Mon, 13 May 2019 10:18:32 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        coresight@lists.linaro.org, rjw@rjwysocki.net,
-        Leo Yan <leo.yan@linaro.org>
-Subject: Re: [PATCH v3 15/30] coresight: Make sure device uses DT for
- obsolete compatible check
-Message-ID: <20190513161832.GA16162@xps15>
-References: <1557226378-10131-1-git-send-email-suzuki.poulose@arm.com>
- <1557226378-10131-16-git-send-email-suzuki.poulose@arm.com>
+        Mon, 13 May 2019 12:22:11 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DGJRLm096886;
+        Mon, 13 May 2019 16:21:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Q1bINLnpf6kvvyhbh9wb20AMsLQSmmPWkmS1SRk8YqI=;
+ b=nhBkFt4TTWkWTnFgnFD71MoII8v8qNZFc6Elm77XUUgHXt3lp0q+2/oYlnroJQfovuZd
+ 7AUooQFDhTilIYxmjomt35bt4cZVDxxdgwpSMW70sZshbKz6Squu1fXsA1G9vv/f5HX6
+ GUWLYDKVlUnNnCTLw0oLk+RAWeJ0kPnHWByjzKFEJScb0qRO7Ka1kYZetAPUcCEbLmkN
+ 2Yivm6DE52Kq/b8YnYYbi/ZdNnrK91hgGkL8L2tlU/iQSMUGLSJ/Oq7IbFs13qTP9Ib+
+ H4dJvl0TnaXAPNrSsalPig97N1VCTTjKUF1rhuJRUxu3tNWO0Zp/0wnmeLwyR8zo5VcO Iw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 2sdkwdgcje-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 16:21:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4DGJZnA118286;
+        Mon, 13 May 2019 16:21:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sdnqj2eqk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 May 2019 16:21:22 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4DGLLLW011879;
+        Mon, 13 May 2019 16:21:21 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 May 2019 16:21:20 +0000
+Subject: Re: [RFC KVM 24/27] kvm/isolation: KVM page fault handler
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Jonathan Adams <jwadams@google.com>
+References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+ <1557758315-12667-25-git-send-email-alexandre.chartre@oracle.com>
+ <CALCETrXADiujgE6HJ95P_da5OyB05Z5CqR028da50aCUHv4Agg@mail.gmail.com>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <0ed10cf2-d21f-3247-5b38-4cc1f78e38e1@oracle.com>
+Date:   Mon, 13 May 2019 18:21:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557226378-10131-16-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CALCETrXADiujgE6HJ95P_da5OyB05Z5CqR028da50aCUHv4Agg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905130111
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905130111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 11:52:42AM +0100, Suzuki K Poulose wrote:
-> As we prepare to add support for ACPI bindings, let us make sure we do
-> the compatible check only if we are sure we are dealing with a DT based
-> system.
-> 
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
->  drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> index 6236a84..3423042 100644
-> --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> @@ -196,7 +196,8 @@ static int funnel_probe(struct device *dev, struct resource *res)
->  		dev->platform_data = pdata;
->  	}
->  
-> -	if (of_device_is_compatible(np, "arm,coresight-funnel"))
-> +	if (is_of_node(dev_fwnode(dev)) &&
-> +	    of_device_is_compatible(dev->of_node, "arm,coresight-funnel"))
->  		pr_warn_once("Uses OBSOLETE CoreSight funnel binding\n");
->  
->  	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> index ee6ad34..7e05145 100644
-> --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> @@ -187,7 +187,8 @@ static int replicator_probe(struct device *dev, struct resource *res)
->  		dev->platform_data = pdata;
->  	}
->  
-> -	if (of_device_is_compatible(np, "arm,coresight-replicator"))
-> +	if (is_of_node(dev_fwnode(dev)) &&
-> +	    of_device_is_compatible(dev->of_node, "arm,coresight-replicator"))
->  		pr_warn_once("Uses OBSOLETE CoreSight replicator binding\n");
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
->  
->  	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> -- 
-> 2.7.4
+On 5/13/19 6:02 PM, Andy Lutomirski wrote:
+> On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
+> <alexandre.chartre@oracle.com> wrote:
+>>
+>> The KVM page fault handler handles page fault occurring while using
+>> the KVM address space by switching to the kernel address space and
+>> retrying the access (except if the fault occurs while switching
+>> to the kernel address space). Processing of page faults occurring
+>> while using the kernel address space is unchanged.
+>>
+>> Page fault log is cleared when creating a vm so that page fault
+>> information doesn't persist when qemu is stopped and restarted.
 > 
+> Are you saying that a page fault will just exit isolation?  This
+> completely defeats most of the security, right?  Sure, it still helps
+> with side channels, but not with actual software bugs.
+> 
+
+Yes, page fault exit isolation so that the faulty instruction can be retried
+with the full kernel address space. When exiting isolation, we also want to
+kick the sibling hyperthread and pinned it so that it can't steal secret while
+we use the kernel address page, but that's not implemented in this serie
+(see TODO comment in kvm_isolation_exit() in patch 25 "kvm/isolation:
+implement actual KVM isolation enter/exit").
+
+alex.
