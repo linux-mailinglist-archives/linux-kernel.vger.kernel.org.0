@@ -2,130 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF29F1BC21
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825021BC29
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 19:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbfEMRln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 13:41:43 -0400
-Received: from mail-eopbgr790085.outbound.protection.outlook.com ([40.107.79.85]:28727
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729463AbfEMRlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 13:41:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QCdbNKQVEXtBCsICcQ6WoQ37OvkxU+sGCSZ5BQuMfes=;
- b=dFmnXGFlevaBZ2dLXVCg5wcKuD0OpK1mmvimOLfvRLpQe0mBzcVeG6/X45ur+tARD0kGSffc0NJXLadvUtRrkqyQca01JC7JLuT6EC1/13QX+9y6uuyC88PQyFATLjU+5y6sPmyMECTJIW9bHJ6KIvHF2fUT3CRag1C8t0dqSaA=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB5109.namprd05.prod.outlook.com (20.177.231.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.5; Mon, 13 May 2019 17:41:38 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::b057:917a:f098:6098]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::b057:917a:f098:6098%7]) with mapi id 15.20.1900.010; Mon, 13 May 2019
- 17:41:38 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Yang Shi <yang.shi@linux.alibaba.com>,
-        "jstancek@redhat.com" <jstancek@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
- flush
-Thread-Topic: [PATCH] mm: mmu_gather: remove __tlb_reset_range() for force
- flush
-Thread-Index: AQHVBlNcdgyGQHvMg0ymTH6Y7O8srKZjDs8AgAANcoCAAAcZgIAABfcAgAAkYwCABXN1AIAACg2AgAACfYCAACNEAIAAaJyA
-Date:   Mon, 13 May 2019 17:41:38 +0000
-Message-ID: <CEC6786F-C6DB-438D-AAA1-33DBEA8B8F0B@vmware.com>
-References: <20190509083726.GA2209@brain-police>
- <20190509103813.GP2589@hirez.programming.kicks-ass.net>
- <F22533A7-016F-4506-809A-7E86BAF24D5A@vmware.com>
- <20190509182435.GA2623@hirez.programming.kicks-ass.net>
- <04668E51-FD87-4D53-A066-5A35ABC3A0D6@vmware.com>
- <20190509191120.GD2623@hirez.programming.kicks-ass.net>
- <7DA60772-3EE3-4882-B26F-2A900690DA15@vmware.com>
- <20190513083606.GL2623@hirez.programming.kicks-ass.net>
- <20190513091205.GO2650@hirez.programming.kicks-ass.net>
- <847D4C2F-BD26-4BE0-A5BA-3C690D11BF77@vmware.com>
- <20190513112712.GO2623@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190513112712.GO2623@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [50.204.119.4]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 94711ab4-18b1-4e7a-2b4a-08d6d7ca409d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR05MB5109;
-x-ms-traffictypediagnostic: BYAPR05MB5109:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR05MB5109C0A12AB457ED96A6C044D00F0@BYAPR05MB5109.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0036736630
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(346002)(396003)(136003)(189003)(199004)(81156014)(66556008)(64756008)(68736007)(73956011)(66946007)(66446008)(66066001)(66476007)(2906002)(6436002)(81166006)(36756003)(99286004)(53936002)(76116006)(6512007)(6306002)(102836004)(305945005)(53546011)(6506007)(6246003)(7736002)(486006)(11346002)(3846002)(6116002)(476003)(6486002)(4326008)(446003)(2616005)(5660300002)(25786009)(8936002)(229853002)(478600001)(76176011)(86362001)(966005)(14454004)(71200400001)(26005)(71190400001)(83716004)(7416002)(54906003)(82746002)(316002)(186003)(14444005)(33656002)(6916009)(256004)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5109;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3Dlf80AsbmCfH5zyGa7hrpnk+u9p+CchJUgpFYTIbS5aCVABSFLimvILifMkc09z3EKRI8dUFlqa3c9JUZVLhQY9CWG2FHp03CvKkwrLFFaXMoRQVa9uWQhcyyzrMgtxocmTBMZgmC7sL8RoOzZTNZ3l6j9c9Wzjj0iUDHYWm5dAJvoE7tOAMznHVP25fnEMLIYIXIUnjS1ullnKrliZU6up7/e4+jo8Fy9tj/Rx0kwb847jc9IcDF2MjAl7yfcaoXk+9BxeeCB1WoVS85pMsIrO8Vpwf/T9SqB1M+2h4rwIlB0uixgBe0+uROMde2GeMdJQiCf4vucsdP9jzTYeqZQZK/2h5PXJok4AhQy3jEKzvYfNI4sLMPbheyCzn5YbfSuJqiHwIsaJTus9cipwUJ3Yyh+88+zNXmiMnQc6l4M=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FEF401722DAF4E4FBB3E0E89AB5F04E4@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730442AbfEMRrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 13:47:16 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39335 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730143AbfEMRrQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 13:47:16 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n25so215155wmk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 10:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZO18Emw4UCFSY8Qwru8jze0WnlZvHanBZQrUShnV7sI=;
+        b=LNLVsfRgwYSN+NnVqwxA7Yc5oxg99WBZRHH9SpsjeF77fTi9UZyTeJCaNXBQLFBR1+
+         +n2kMoJ6YAGsCl++xXSSnzPICK4KiGO4DplUyQWqaZ7NE47Az4r4j4rV5I5i9nDMTVwC
+         NO7J9bfV2S4hShbVI/3BXgG+2jE6HcCckWM9HvlGb7Q9b4ixGO23U1qsvi04Cd9RoGTr
+         ie4OlO2CCkaErVGxvRcBMsLP6uk04zTrFRVceipdB9Ao3FU1TJgmiTrWRtFxxSXbcN1h
+         yjaASFs9Y/e+mfVSintgwZNl8VFtp02SGvd0YueNo96U3+PPvSNh2TV+eSDH+TTJ2bp2
+         bc0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ZO18Emw4UCFSY8Qwru8jze0WnlZvHanBZQrUShnV7sI=;
+        b=YQEn07nNopz1/taxweYZp0+9t6EIJx+NFT23UwFe354/9EgaSW6LFw0nLzLXxk6niX
+         X8qxadBaMCJbgRrL5znfvKh6LVM3kL/rAz/DVe5EqyC4lzgXcM2/cCJyHXGr0U61MGvI
+         JeVNdN9TtvkuFB200pa0kqOB+J0e8uC/umDEQkSEZIpQNjCnuPvr4LxWaY04xBgMv5yP
+         V8EGo9vZFYrXx4nVzyqtiT5Xh+/nM1Mo2vU8NybrYe0rHc9hDOIb1TwyojvYmGsk0YCj
+         Xguzo83NEK0oNUzIBQ7AWBX8tjDxn7ArW5+hoVaobLfCWKRNVHiJw1fan4XFd2E3juER
+         Q0ug==
+X-Gm-Message-State: APjAAAXIwG64d+BzAjKYc3q0KjamSyhAiDpf6ALRAqlpLWMmfJYEL53z
+        /3e7CDS0zCLYiUDx6vAsARc=
+X-Google-Smtp-Source: APXvYqwHhbeSTV0mDOund0xOWOxRXnsZ1/aQjS3cxNWXUZODJDJqJr9sKDisDwu9FLpCRlnU6zbsTQ==
+X-Received: by 2002:a1c:6783:: with SMTP id b125mr17093887wmc.41.1557769633670;
+        Mon, 13 May 2019 10:47:13 -0700 (PDT)
+Received: from [10.67.49.52] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id v5sm33485848wra.83.2019.05.13.10.47.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 10:47:12 -0700 (PDT)
+Subject: Re: [PATCH v2] perf vendor events arm64: Add Cortex-A57 and
+ Cortex-A72 events
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, john.garry@huawei.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "moderated list:ARM PMU PROFILING AND DEBUGGING" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190502234704.7663-1-f.fainelli@gmail.com>
+ <20190513111930.GD6711@fuggles.cambridge.arm.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <381be75e-ca45-f024-d57f-b7d30d094dc2@gmail.com>
+Date:   Mon, 13 May 2019 10:47:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94711ab4-18b1-4e7a-2b4a-08d6d7ca409d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2019 17:41:38.4103
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5109
+In-Reply-To: <20190513111930.GD6711@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBNYXkgMTMsIDIwMTksIGF0IDQ6MjcgQU0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5m
-cmFkZWFkLm9yZz4gd3JvdGU6DQo+IA0KPiBPbiBNb24sIE1heSAxMywgMjAxOSBhdCAwOToyMTow
-MUFNICswMDAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4+IE9uIE1heSAxMywgMjAxOSwgYXQgMjox
-MiBBTSwgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPiB3cm90ZToNCj4gDQo+
-Pj4+IFRoZSBvdGhlciB0aGluZyBJIHdhcyB0aGlua2luZyBvZiBpcyB0cnlpbmcgdG8gZGV0ZWN0
-IG92ZXJsYXAgdGhyb3VnaA0KPj4+PiB0aGUgcGFnZS10YWJsZXMgdGhlbXNlbHZlcywgYnV0IHdl
-IGhhdmUgYSBkaXN0aW5jdCBsYWNrIG9mIHN0b3JhZ2UNCj4+Pj4gdGhlcmUuDQo+Pj4gDQo+Pj4g
-V2UgbWlnaHQganVzdCB1c2Ugc29tZSBzdGF0ZSBpbiB0aGUgcG1kLCB0aGVyZSdzIHN0aWxsIDIg
-X3B0X3BhZF9bMTJdIGluDQo+Pj4gc3RydWN0IHBhZ2UgdG8gJ3VzZScuIFNvIHdlIGNvdWxkIGNv
-bWUgdXAgd2l0aCBzb21lIHRsYiBnZW5lcmF0aW9uDQo+Pj4gc2NoZW1lIHRoYXQgd291bGQgZGV0
-ZWN0IGNvbmZsaWN0Lg0KPj4gDQo+PiBJdCBpcyByYXRoZXIgZWFzeSB0byBjb21lIHVwIHdpdGgg
-YSBzY2hlbWUgKGFuZCBJIGRpZCBzaW1pbGFyIHRoaW5ncykgaWYgeW91DQo+PiBmbHVzaCB0aGUg
-dGFibGUgd2hpbGUgeW91IGhvbGQgdGhlIHBhZ2UtdGFibGVzIGxvY2suIEJ1dCBpZiB5b3UgYmF0
-Y2ggYWNyb3NzDQo+PiBwYWdlLXRhYmxlcyBpdCBiZWNvbWVzIGhhcmRlci4NCj4gDQo+IFllYWg7
-IGZpbmRpbmcgdGhhdCBvdXQgbm93LiBJIGtlZXAgZmluZGluZyBob2xlcyA6Lw0KDQpZb3UgY2Fu
-IHVzZSBVaGxpZ+KAmXMgZGlzc2VydGF0aW9uIGZvciBpbnNwaXJhdGlvbiAoU2VjdGlvbiA0LjQp
-Lg0KDQpbMV0gaHR0cHM6Ly93d3cucmVzZWFyY2hnYXRlLm5ldC9wdWJsaWNhdGlvbi8zNjQ1MDQ4
-Ml9TY2FsYWJpbGl0eV9vZl9taWNyb2tlcm5lbC1iYXNlZF9zeXN0ZW1zL2Rvd25sb2FkDQoNCj4g
-DQo+PiBUaGlua2luZyBhYm91dCBpdCB3aGlsZSB0eXBpbmcsIHBlcmhhcHMgaXQgaXMgc2ltcGxl
-ciB0aGFuIEkgdGhpbmsgLSBpZiB5b3UNCj4+IG5lZWQgdG8gZmx1c2ggcmFuZ2UgdGhhdCBydW5z
-IGFjcm9zcyBtb3JlIHRoYW4gYSBzaW5nbGUgdGFibGUsIHlvdSBhcmUgdmVyeQ0KPj4gbGlrZWx5
-IHRvIGZsdXNoIGEgcmFuZ2Ugb2YgbW9yZSB0aGFuIDMzIGVudHJpZXMsIHNvIGFueWhvdyB5b3Ug
-YXJlIGxpa2VseSB0bw0KPj4gZG8gYSBmdWxsIFRMQiBmbHVzaC4NCj4gDQo+IFdlIGNhbid0IHJl
-bHkgb24gdGhlIDMzLCB0aGF0IHg4NiBzcGVjaWZpYy4gT3RoZXIgYXJjaGl0ZWN0dXJlcyBjYW4g
-aGF2ZQ0KPiBhbm90aGVyIChvciBubykgbGltaXQgb24gdGhhdC4NCg0KSSB3b25kZXIgd2hldGhl
-ciB0aGVyZSBhcmUgYXJjaGl0ZWN0dXJlcyB0aGF0IGRvIG5vIGludmFsaWRhdGUgdGhlIFRMQiBl
-bnRyeQ0KYnkgZW50cnksIGV4cGVyaWVuY2luZyB0aGVzZSBraW5kIG9mIG92ZXJoZWFkcy4NCg0K
-Pj4gU28gcGVyaGFwcyBqdXN0IGF2b2lkaW5nIHRoZSBiYXRjaGluZyBpZiBvbmx5IGVudHJpZXMg
-ZnJvbSBhIHNpbmdsZSB0YWJsZQ0KPj4gYXJlIGZsdXNoZWQgd291bGQgYmUgZW5vdWdoLg0KPiAN
-Cj4gVGhhdCdzIG5lYXIgdG8gd2hhdCBXaWxsIHN1Z2dlc3RlZCBpbml0aWFsbHksIGp1c3QgZmx1
-c2ggdGhlIGVudGlyZQ0KPiB0aGluZyB3aGVuIHRoZXJlJ3MgYSBjb25mbGljdC4NCg0KT25lIHF1
-ZXN0aW9uIGlzIGhvdyB5b3UgZGVmaW5lIGEgY29uZmxpY3QuIElJVUMsIFdpbGwgc3VnZ2VzdHMg
-c2FtZSBtbSBtYXJrcw0KYSBjb25mbGljdC4gSW4gYWRkaXRpb24sIEkgc3VnZ2VzdCB0aGF0IGlm
-IHlvdSBvbmx5IHJlbW92ZSBhIHNpbmdsZSBlbnRyeQ0KKG9yIGZldyBvbmVzKSwgeW91IHdvdWxk
-IGp1c3Qgbm90IGJhdGNoIGFuZCBkbyB0aGUgZmx1c2hpbmcgd2hpbGUgaG9sZGluZw0KdGhlIHBh
-Z2UtdGFibGUgbG9jay4NCg0K
+On 5/13/19 4:19 AM, Will Deacon wrote:
+> On Thu, May 02, 2019 at 04:47:04PM -0700, Florian Fainelli wrote:
+>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>> index 59cd8604b0bd..69a73957e35c 100644
+>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>> @@ -13,6 +13,8 @@
+>>  #
+>>  #Family-model,Version,Filename,EventType
+>>  0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
+>> +0x00000000411fd07[[:xdigit:]],v1,arm/cortex-a57-a72,core
+> 
+> The 4-bit variant field should be 0x0, not 0x1. In fact, I think we could do
+> the same for the revision field too and use 0x0 instead of [[:xdigit:]] for
+> Cortex-A53, no? Our implementation of get_cpuid_str() masks these out for us.
+> 
+> Am I missing something?
+
+I blindly copied from the existing a53 entry without looking at how
+get_cpuidr_str(), I will resubmit this and add a patch which removes the
+[[:xdigit:]] for the A53 (and now Brahma-B53 entry) as well.
+
+Thanks!
+-- 
+Florian
