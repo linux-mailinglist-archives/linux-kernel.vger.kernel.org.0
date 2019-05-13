@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F2391BF3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06CD11BF40
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 23:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfEMVuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 17:50:18 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33218 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfEMVuP (ORCPT
+        id S1726657AbfEMVuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 17:50:32 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35702 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfEMVuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 17:50:15 -0400
-Received: by mail-ed1-f66.google.com with SMTP id n17so19695365edb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:50:14 -0700 (PDT)
+        Mon, 13 May 2019 17:50:16 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p26so19690747edr.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 14:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DNSehQ0HlUuvAJBCW7j7sD8dF4I59FYKm2p33WbX/b8=;
-        b=mKH6uBkfpeoJYurCU8uzAnGJT2YKaMEm1UhrOOlyFVCqL72vyzKVcOQdd5AG7nFs+A
-         Co6p78vfZj0ISU7re3J9vhEyzIyIY8Iaizwtj404co0SwMyBXtWP95wSnV6vxis7iaCh
-         NX9VdikJ2s3EQh4RrZVVsvRUz3Xe6HfC4OBZys1lLAoWcGJ+H9imvthbjqXI7Bt+WuTZ
-         nv7UgPvu00EoolARa27jWG3U+A8MrMZp5YRj8S+YtDQPe48MP8+pLOUAatgVUjltLxom
-         mZWAGDNwW5Lj89RKQ4ux7cuJbuBFxb8swikeTzfSmOnAOSSGNQVnez32qdSIKrFbSsci
-         FCTg==
+        bh=VeOHKUgWc5lzs0lL8W8bL8bApiz7pnYC5IgVm7QTTfQ=;
+        b=o2d2L1PpcoYY0eqqQK46JeV3UVXgZTZV/LHZFo20fV7yetrgqfUVox7cYylC9dtUUd
+         bLQE67cFLo/ys4V+OBulD1XO3ZwyK29UrGn0ea0cL4YYXOi7OdF8gFRzLHK8eEcC48BQ
+         VESfCNXXxLelru/Eh9FrFQHHuLHjk3LlHAtI0AjendzVLGYurB2v47y1/tYmZj1aHdEA
+         5zg4je6RQe1/2KeaOcRv0nIktfVoXurBahZ848/4lrLm3cGeTIVMBAWv3rCKwWAzqcR4
+         EcKikoTu97zQtwFrQqJTDvUJOBG7kICOIeIJw5lattR8zUfNsUDXTDcWJD8yRmP2Ut+E
+         kJ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DNSehQ0HlUuvAJBCW7j7sD8dF4I59FYKm2p33WbX/b8=;
-        b=ikNdw+WA+F7ECeyhNXi6iQeACkPo4wk9CLjrTjVIWN8HgS7fUK4IXTfLgfWDbvehnS
-         udzD4iuYQ1KEpuHaFQ6Qoaj3vBfn/OwE1n5l/WhEYIC0KxJJkO8aGNkf2zLdBKdxZCNL
-         d2CpljncCxDn1iZvbOEPsCwqsrPWiQu0dkwffxCsjgxu00KNqyfz2XPgV8HkXtTbEXOV
-         uqwJROWi/Hv+YAzemKfGyEFCvUaOGG9EMNrtiCx5Jszw/INDOF8sG5r4MFodgq0ZhyVI
-         4FHbvBcAxvw0PimeYxbz8VbVb7ebyaZVwOm5DTWCqiV0QY3DdkHmzvjyLcSl6ziK5pUd
-         kYbw==
-X-Gm-Message-State: APjAAAUmB+ZfY1hYuddLrwwfg8wips+TETqx0kCapVhy9l88qTDwCceE
-        qjUd0efYW9NFHdkPKb0tSw==
-X-Google-Smtp-Source: APXvYqxgqs4xLA0916nI/uTz9+ehlQ6RAPrwVH6UCp3azlauUrNlhfLY9Bn5sOiKpITYQe1LrnTPQw==
-X-Received: by 2002:a17:906:d926:: with SMTP id rn6mr8057011ejb.191.1557784213282;
-        Mon, 13 May 2019 14:50:13 -0700 (PDT)
+        bh=VeOHKUgWc5lzs0lL8W8bL8bApiz7pnYC5IgVm7QTTfQ=;
+        b=pJdwfjyzKG4iSzDebiYuEBJ2qzQ1Vn1wOKS0jAX0to80qBxIZ8n5KilIRmkE+nrE3v
+         ZyGMxXVGNWjEuhorz89yqXtrN/v4oQq+q5h0LYy40CCizH9sNUFc8LWxc5cGSsHm42lw
+         AXODsLRnNievu6JWnTWD9vFgMqkG7Oxl3HeuC89inHj8mWFw75dzUw4w8cpRAHtLzc9+
+         jsORWTJ3F6R8ytgC1hW//Xu0kQx7/doAJFUhW3pSEUbBzHYCaANxT1cgSasU2BGftiAP
+         oRfvo9A03e+RlTFCYlvXHGx7mSX4t83pr5JdC6K3BKBZjGh1OvPgkgWex+X5CspAxoYk
+         Qs/w==
+X-Gm-Message-State: APjAAAVpusnoRmgHKZqe//Pj3H0g4eeRZhwav5IYfaHd/LhhLSEx0uI1
+        nhgc1oOI1GnQOqRqcHK3wg==
+X-Google-Smtp-Source: APXvYqwDzK+2OPKBQJP06xGroorkphFenj6u+qWPlEjwBF1QfjnJUqqBSoADHic7YuAp/CtEmI1cKw==
+X-Received: by 2002:a50:8818:: with SMTP id b24mr32513601edb.28.1557784214471;
+        Mon, 13 May 2019 14:50:14 -0700 (PDT)
 Received: from localhost.localdomain ([92.117.184.230])
-        by smtp.gmail.com with ESMTPSA id g11sm4040891eda.42.2019.05.13.14.50.12
+        by smtp.gmail.com with ESMTPSA id g11sm4040891eda.42.2019.05.13.14.50.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 14:50:12 -0700 (PDT)
+        Mon, 13 May 2019 14:50:13 -0700 (PDT)
 From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
 Cc:     Joel Fernandes <joel@joelfernandes.org>,
         Viktor Rosendahl <viktor.rosendahl@gmail.com>
-Subject: [PATCH v3 1/4] ftrace: Implement fs notification for tracing_max_latency
-Date:   Mon, 13 May 2019 23:50:05 +0200
-Message-Id: <20190513215008.11256-2-viktor.rosendahl@gmail.com>
+Subject: [PATCH v3 2/4] preemptirq_delay_test: Add the burst feature and a sysfs trigger
+Date:   Mon, 13 May 2019 23:50:06 +0200
+Message-Id: <20190513215008.11256-3-viktor.rosendahl@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190513215008.11256-1-viktor.rosendahl@gmail.com>
 References: <20190513215008.11256-1-viktor.rosendahl@gmail.com>
@@ -60,436 +60,238 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the feature that the tracing_max_latency file,
-e.g. /sys/kernel/debug/tracing/tracing_max_latency will receive
-notifications through the fsnotify framework when a new latency is
-available.
+This burst feature enables the user to generate a burst of
+preempt/irqsoff latencies. This makes it possible to test whether we
+are able to detect latencies that systematically occur very close to
+each other.
 
-One particularly interesting use of this facility is when enabling
-threshold tracing, through /sys/kernel/debug/tracing/tracing_thresh,
-together with the preempt/irqsoff tracers. This makes it possible to
-implement a user space program that can, with equal probability,
-obtain traces of latencies that occur immediately after each other in
-spite of the fact that the preempt/irqsoff tracers operate in overwrite
-mode.
+The maximum burst size is 10. We also create 10 identical test
+functions, so that we get 10 different backtraces; this is useful
+when we want to test whether we can detect all the latencies in a
+burst. Otherwise, there would be no easy way of differentiating
+between which latency in a burst was captured by the tracer.
 
-This facility works with the hwlat, preempt/irqsoff, and wakeup
-tracers.
-
-This patch also add four new tracepoints, for entering/exiting
-__schedule() and do_idle(). Those tracepoints are needed to disable
-and enable the notificaton facility because we cannot wake up the
-workqueue from these critical sections without risking a deadlock.
-Similar problems would also arise if we try to schedule a tasklet,
-raise a softirq, or wake up a kernel thread.
-
-If a notification event would happen in the forbidden sections, we
-schedule the fsnotify work as soon as we have exited
-do_idle()/__schedule().
+In addition, there is a sysfs trigger, so that it's not necessary to
+reload the module to repeat the test. The trigger will appear as
+/sys/kernel/preemptirq_delay_test/trigger in sysfs.
 
 Signed-off-by: Viktor Rosendahl <viktor.rosendahl@gmail.com>
 ---
- include/trace/events/power.h |  40 +++++++++
- include/trace/events/sched.h |  40 +++++++++
- kernel/sched/core.c          |   2 +
- kernel/sched/idle.c          |   2 +
- kernel/trace/trace.c         | 160 ++++++++++++++++++++++++++++++++++-
- kernel/trace/trace.h         |  10 +++
- kernel/trace/trace_hwlat.c   |   4 +-
- 7 files changed, 255 insertions(+), 3 deletions(-)
+ kernel/trace/Kconfig                 |   6 +-
+ kernel/trace/preemptirq_delay_test.c | 145 +++++++++++++++++++++++----
+ 2 files changed, 129 insertions(+), 22 deletions(-)
 
-diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-index f7aece721aed..40ab747274bd 100644
---- a/include/trace/events/power.h
-+++ b/include/trace/events/power.h
-@@ -40,6 +40,46 @@ DEFINE_EVENT(cpu, cpu_idle,
- 	TP_ARGS(state, cpu_id)
- );
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 5d965cef6c77..aab8909dfbff 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -740,9 +740,9 @@ config PREEMPTIRQ_DELAY_TEST
+ 	  configurable delay. The module busy waits for the duration of the
+ 	  critical section.
  
-+/*
-+ * Tracepoint for entering do_idle():
-+ */
-+TRACE_EVENT(do_idle_enter,
-+
-+	TP_PROTO(int cpu),
-+
-+	TP_ARGS(cpu),
-+
-+	TP_STRUCT__entry(
-+		__field(int, cpu)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cpu = cpu;
-+	),
-+
-+	TP_printk("cpu=%d", __entry->cpu)
-+);
-+
-+/*
-+ * Tracepoint for exiting do_idle():
-+ */
-+TRACE_EVENT(do_idle_exit,
-+
-+	TP_PROTO(int cpu),
-+
-+	TP_ARGS(cpu),
-+
-+	TP_STRUCT__entry(
-+		__field(int, cpu)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cpu = cpu;
-+	),
-+
-+	TP_printk("cpu=%d", __entry->cpu)
-+);
-+
- TRACE_EVENT(powernv_throttle,
+-	  For example, the following invocation forces a one-time irq-disabled
+-	  critical section for 500us:
+-	  modprobe preemptirq_delay_test test_mode=irq delay=500000
++	  For example, the following invocation generates a burst of three
++	  irq-disabled critical sections for 500us:
++	  modprobe preemptirq_delay_test test_mode=irq delay=500 burst_size=3
  
- 	TP_PROTO(int chip_id, const char *reason, int pmax),
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 9a4bdfadab07..6a3dae7b3249 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -183,6 +183,46 @@ TRACE_EVENT(sched_switch,
- 		__entry->next_comm, __entry->next_pid, __entry->next_prio)
- );
+ 	  If unsure, say N
  
-+/*
-+ * Tracepoint for entering __schedule():
-+ */
-+TRACE_EVENT(sched_schedule_enter,
-+
-+	TP_PROTO(int cpu),
-+
-+	TP_ARGS(cpu),
-+
-+	TP_STRUCT__entry(
-+		__field(int, cpu)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cpu = cpu;
-+	),
-+
-+	TP_printk("cpu=%d", __entry->cpu)
-+);
-+
-+/*
-+ * Tracepoint for exiting __schedule():
-+ */
-+TRACE_EVENT(sched_schedule_exit,
-+
-+	TP_PROTO(int cpu),
-+
-+	TP_ARGS(cpu),
-+
-+	TP_STRUCT__entry(
-+		__field(int, cpu)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cpu = cpu;
-+	),
-+
-+	TP_printk("cpu=%d", __entry->cpu)
-+);
-+
- /*
-  * Tracepoint for a task being migrated:
+diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+index d8765c952fab..dc281fa75198 100644
+--- a/kernel/trace/preemptirq_delay_test.c
++++ b/kernel/trace/preemptirq_delay_test.c
+@@ -3,6 +3,7 @@
+  * Preempt / IRQ disable delay thread to test latency tracers
+  *
+  * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
++ * Copyright (C) 2018, 2019 BMW Car IT GmbH
   */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 102dfcf0a29a..c9d86fcc48f5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3374,6 +3374,7 @@ static void __sched notrace __schedule(bool preempt)
- 	int cpu;
  
- 	cpu = smp_processor_id();
-+	trace_sched_schedule_enter(cpu);
- 	rq = cpu_rq(cpu);
- 	prev = rq->curr;
+ #include <linux/trace_clock.h>
+@@ -10,18 +11,25 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
++#include <linux/kobject.h>
+ #include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/printk.h>
+ #include <linux/string.h>
++#include <linux/sysfs.h>
  
-@@ -3448,6 +3449,7 @@ static void __sched notrace __schedule(bool preempt)
- 	}
+ static ulong delay = 100;
+-static char test_mode[10] = "irq";
++static char test_mode[12] = "irq";
++static uint burst_size = 1;
  
- 	balance_callback(rq);
-+	trace_sched_schedule_exit(cpu);
- }
+-module_param_named(delay, delay, ulong, S_IRUGO);
+-module_param_string(test_mode, test_mode, 10, S_IRUGO);
+-MODULE_PARM_DESC(delay, "Period in microseconds (100 uS default)");
+-MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default irq)");
++module_param_named(delay, delay, ulong, 0444);
++module_param_string(test_mode, test_mode, 12, 0444);
++module_param_named(burst_size, burst_size, uint, 0444);
++MODULE_PARM_DESC(delay, "Period in microseconds (100 us default)");
++MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt, irq, or alternate (default irq)");
++MODULE_PARM_DESC(burst_size, "The size of a burst (default 1)");
++
++#define MIN(x, y) ((x) < (y) ? (x) : (y))
  
- void __noreturn do_task_dead(void)
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index f5516bae0c1b..e328e045c6e8 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -224,6 +224,7 @@ static void cpuidle_idle_call(void)
- static void do_idle(void)
+ static void busy_wait(ulong time)
  {
- 	int cpu = smp_processor_id();
-+	trace_do_idle_enter(cpu);
- 	/*
- 	 * If the arch has a polling bit, we maintain an invariant:
- 	 *
-@@ -287,6 +288,7 @@ static void do_idle(void)
- 
- 	if (unlikely(klp_patch_pending(current)))
- 		klp_update_patch_state(current);
-+	trace_do_idle_exit(cpu);
+@@ -34,37 +42,136 @@ static void busy_wait(ulong time)
+ 	} while ((end - start) < (time * 1000));
  }
  
- bool cpu_in_idle(unsigned long pc)
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ec439999f387..608e0dbdf851 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -44,6 +44,10 @@
- #include <linux/trace.h>
- #include <linux/sched/clock.h>
- #include <linux/sched/rt.h>
-+#include <linux/fsnotify.h>
-+#include <linux/workqueue.h>
-+#include <trace/events/power.h>
-+#include <trace/events/sched.h>
- 
- #include "trace.h"
- #include "trace_output.h"
-@@ -1481,6 +1485,157 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
- 
- unsigned long __read_mostly	tracing_thresh;
- 
-+#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
-+	defined(CONFIG_FSNOTIFY)
-+
-+static const struct file_operations tracing_max_lat_fops;
-+static struct workqueue_struct *fsnotify_wq;
-+static DEFINE_PER_CPU(int, notify_disabled);
-+static DEFINE_PER_CPU(struct trace_array *, notify_delayed_tr);
-+
-+static void trace_fsnotify_workfn(struct work_struct *work)
-+{
-+	struct trace_array *tr = container_of(work, struct trace_array,
-+					      fsnotify_work);
-+	fsnotify(tr->d_max_latency->d_inode, FS_MODIFY,
-+		 tr->d_max_latency->d_inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+}
-+
-+static void trace_create_maxlat_file(struct trace_array *tr,
-+				      struct dentry *d_tracer)
-+{
-+	INIT_WORK(&tr->fsnotify_work, trace_fsnotify_workfn);
-+	tr->d_max_latency = trace_create_file("tracing_max_latency", 0644,
-+					      d_tracer, &tr->max_latency,
-+					      &tracing_max_lat_fops);
-+}
-+
-+/*
-+ * Disable fsnotify while in scheduler and idle code. Trying wake anyting up
-+ * from there is prone to deadlock.
-+ */
-+static inline void notrace trace_disable_fsnotify(void)
-+{
-+	int cpu;
-+	unsigned long flags;
-+
-+	raw_local_irq_save(flags);
-+	cpu = smp_processor_id();
-+	per_cpu(notify_disabled, cpu) = 1;
-+	raw_local_irq_restore(flags);
-+}
-+
-+static inline void notrace trace_enable_fsnotify(void)
-+{
-+	int cpu;
-+	struct trace_array *tr;
-+	unsigned long flags;
-+	bool do_queue = false;
-+
-+	raw_local_irq_save(flags);
-+	cpu = smp_processor_id();
-+	per_cpu(notify_disabled, cpu) = 0;
-+	tr = per_cpu(notify_delayed_tr, cpu);
-+	if (tr != NULL) {
-+		per_cpu(notify_delayed_tr, cpu) = NULL;
-+		do_queue = true;
-+	}
-+	raw_local_irq_restore(flags);
-+
-+	if (do_queue && fsnotify_wq)
-+		queue_work(fsnotify_wq, &tr->fsnotify_work);
-+}
-+
-+static void notrace probe_sched_enter(void *nihil, int cpu)
-+{
-+	trace_disable_fsnotify();
-+}
-+
-+static void notrace probe_sched_exit(void *nihil, int cpu)
-+{
-+	trace_enable_fsnotify();
-+}
-+
-+static __init void trace_maxlat_fsnotify_init(void)
-+{
-+	int ret;
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		per_cpu(notify_disabled, cpu) = 1;
-+	smp_wmb();
-+
-+	ret = register_trace_sched_schedule_enter(probe_sched_enter, NULL);
-+	if (ret) {
-+		pr_info("tracing_max_latency: Could not activate tracepoint probe to sched_schedule_enter\n");
-+		return;
-+	}
-+
-+	ret = register_trace_sched_schedule_exit(probe_sched_exit, NULL);
-+	if (ret) {
-+		pr_info("tracing_max_latency: Could not activate tracepoint probe to sched_schedule_exit\n");
-+		goto fail_deprobe_sched_enter;
-+	}
-+
-+	ret = register_trace_do_idle_enter(probe_sched_enter, NULL);
-+	if (ret) {
-+		pr_info("tracing_max_latency: Could not activate tracepoint probe to do_idle_enter\n");
-+		goto fail_deprobe_sched_exit;
-+	}
-+
-+	ret = register_trace_do_idle_exit(probe_sched_exit, NULL);
-+	if (ret) {
-+		pr_info("tracing_max_latency: Could not activate tracepoint probe to do_idle_exit\n");
-+		goto fail_deprobe_idle_enter;
-+	}
-+
-+	fsnotify_wq = alloc_workqueue("tr_max_lat_wq",
-+				      WQ_UNBOUND | WQ_HIGHPRI, 0);
-+	if (fsnotify_wq)
-+		return;
-+
-+	pr_err("Unable to allocate tr_max_lat_wq");
-+
-+	unregister_trace_do_idle_exit(probe_sched_exit, NULL);
-+
-+fail_deprobe_idle_enter:
-+	unregister_trace_do_idle_enter(probe_sched_enter, NULL);
-+
-+fail_deprobe_sched_exit:
-+	unregister_trace_sched_schedule_exit(probe_sched_exit, NULL);
-+
-+fail_deprobe_sched_enter:
-+	unregister_trace_sched_schedule_enter(probe_sched_enter, NULL);
-+}
-+
-+void trace_maxlat_fsnotify(struct trace_array *tr)
-+{
-+	int cpu = smp_processor_id();
-+
-+	if (!fsnotify_wq)
-+		return;
-+
-+	if (!per_cpu(notify_disabled, cpu))
-+		queue_work(fsnotify_wq, &tr->fsnotify_work);
-+	else
-+		/* queue it in trace_enable_fsnotify() */
-+		per_cpu(notify_delayed_tr, cpu) = tr;
-+}
-+
-+/*
-+ * (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
-+ *  defined(CONFIG_FSNOTIFY)
-+ */
-+#else
-+
-+#define trace_create_maxlat_file(tr, d_tracer)				\
-+	trace_create_file("tracing_max_latency", 0644, d_tracer,	\
-+			  &tr->max_latency, &tracing_max_lat_fops)
-+
-+#define trace_maxlat_fsnotify_init() do {} while (0)
-+
-+#endif
-+
- #ifdef CONFIG_TRACER_MAX_TRACE
- /*
-  * Copy the new maximum trace into the separate maximum-trace
-@@ -1519,6 +1674,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 
- 	/* record this tasks comm */
- 	tracing_record_cmdline(tsk);
-+	trace_maxlat_fsnotify(tr);
- }
- 
- /**
-@@ -8242,8 +8398,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
- 	create_trace_options_dir(tr);
- 
- #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
--	trace_create_file("tracing_max_latency", 0644, d_tracer,
--			&tr->max_latency, &tracing_max_lat_fops);
-+	trace_create_maxlat_file(tr, d_tracer);
- #endif
- 
- 	if (ftrace_create_function_files(tr, d_tracer))
-@@ -8404,6 +8559,7 @@ static __init int tracer_init_tracefs(void)
+-static int preemptirq_delay_run(void *data)
++static __always_inline void irqoff_test(void)
  {
- 	struct dentry *d_tracer;
+ 	unsigned long flags;
++	local_irq_save(flags);
++	busy_wait(delay);
++	local_irq_restore(flags);
++}
  
-+	trace_maxlat_fsnotify_init();
- 	trace_access_lock_init();
- 
- 	d_tracer = tracing_init_dentry();
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 639047b259d7..3456d6a47a47 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -17,6 +17,7 @@
- #include <linux/compiler.h>
- #include <linux/trace_seq.h>
- #include <linux/glob.h>
-+#include <linux/workqueue.h>
- 
- #ifdef CONFIG_FTRACE_SYSCALLS
- #include <asm/unistd.h>		/* For NR_SYSCALLS	     */
-@@ -265,6 +266,10 @@ struct trace_array {
- #endif
- #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
- 	unsigned long		max_latency;
-+#ifdef CONFIG_FSNOTIFY
-+	struct dentry		*d_max_latency;
-+	struct work_struct	fsnotify_work;
-+#endif
- #endif
- 	struct trace_pid_list	__rcu *filtered_pids;
- 	/*
-@@ -781,6 +786,11 @@ void update_max_tr_single(struct trace_array *tr,
- 			  struct task_struct *tsk, int cpu);
- #endif /* CONFIG_TRACER_MAX_TRACE */
- 
-+#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
-+	defined(CONFIG_FSNOTIFY)
-+void trace_maxlat_fsnotify(struct trace_array *tr);
-+#endif
+-	if (!strcmp(test_mode, "irq")) {
+-		local_irq_save(flags);
+-		busy_wait(delay);
+-		local_irq_restore(flags);
+-	} else if (!strcmp(test_mode, "preempt")) {
+-		preempt_disable();
+-		busy_wait(delay);
+-		preempt_enable();
++static __always_inline void preemptoff_test(void)
++{
++	preempt_disable();
++	busy_wait(delay);
++	preempt_enable();
++}
 +
- #ifdef CONFIG_STACKTRACE
- void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
- 		   int pc);
-diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
-index 1e6db9cbe4dc..44a47f81d949 100644
---- a/kernel/trace/trace_hwlat.c
-+++ b/kernel/trace/trace_hwlat.c
-@@ -254,8 +254,10 @@ static int get_sample(void)
- 		trace_hwlat_sample(&s);
- 
- 		/* Keep a running maximum ever recorded hardware latency */
--		if (sample > tr->max_latency)
-+		if (sample > tr->max_latency) {
- 			tr->max_latency = sample;
-+			trace_maxlat_fsnotify(tr);
-+		}
++static void execute_preemptirqtest(int idx)
++{
++	if (!strcmp(test_mode, "irq"))
++		irqoff_test();
++	else if (!strcmp(test_mode, "preempt"))
++		preemptoff_test();
++	else if (!strcmp(test_mode, "alternate")) {
++		if (idx % 2 == 0)
++			irqoff_test();
++		else
++			preemptoff_test();
  	}
++}
++
++#define DECLARE_TESTFN(POSTFIX)				\
++	static void preemptirqtest_##POSTFIX(int idx)	\
++	{						\
++		execute_preemptirqtest(idx);		\
++	}						\
  
- out:
++/*
++ * We create 10 different functions, so that we can get 10 different
++ * backtraces.
++ */
++DECLARE_TESTFN(0)
++DECLARE_TESTFN(1)
++DECLARE_TESTFN(2)
++DECLARE_TESTFN(3)
++DECLARE_TESTFN(4)
++DECLARE_TESTFN(5)
++DECLARE_TESTFN(6)
++DECLARE_TESTFN(7)
++DECLARE_TESTFN(8)
++DECLARE_TESTFN(9)
++
++static void (*testfuncs[])(int)  = {
++	preemptirqtest_0,
++	preemptirqtest_1,
++	preemptirqtest_2,
++	preemptirqtest_3,
++	preemptirqtest_4,
++	preemptirqtest_5,
++	preemptirqtest_6,
++	preemptirqtest_7,
++	preemptirqtest_8,
++	preemptirqtest_9,
++};
++
++#define NR_TEST_FUNCS ARRAY_SIZE(testfuncs)
++
++static int preemptirq_delay_run(void *data)
++{
++	int i;
++	int s = MIN(burst_size, NR_TEST_FUNCS);
++
++	for (i = 0; i < s; i++)
++		(testfuncs[i])(i);
+ 	return 0;
+ }
+ 
+-static int __init preemptirq_delay_init(void)
++static struct task_struct *preemptirq_start_test(void)
+ {
+ 	char task_name[50];
+-	struct task_struct *test_task;
+ 
+ 	snprintf(task_name, sizeof(task_name), "%s_test", test_mode);
++	return kthread_run(preemptirq_delay_run, NULL, task_name);
++}
++
++
++static ssize_t trigger_store(struct kobject *kobj, struct kobj_attribute *attr,
++			 const char *buf, size_t count)
++{
++	preemptirq_start_test();
++	return count;
++}
++
++static struct kobj_attribute trigger_attribute =
++	__ATTR(trigger, 0200, NULL, trigger_store);
++
++static struct attribute *attrs[] = {
++	&trigger_attribute.attr,
++	NULL,
++};
++
++static struct attribute_group attr_group = {
++	.attrs = attrs,
++};
++
++static struct kobject *preemptirq_delay_kobj;
++
++static int __init preemptirq_delay_init(void)
++{
++	struct task_struct *test_task;
++	int retval;
++
++	test_task = preemptirq_start_test();
++	retval = PTR_ERR_OR_ZERO(test_task);
++	if (retval != 0)
++		return retval;
++
++	preemptirq_delay_kobj = kobject_create_and_add("preemptirq_delay_test",
++						       kernel_kobj);
++	if (!preemptirq_delay_kobj)
++		return -ENOMEM;
++
++	retval = sysfs_create_group(preemptirq_delay_kobj, &attr_group);
++	if (retval)
++		kobject_put(preemptirq_delay_kobj);
+ 
+-	test_task = kthread_run(preemptirq_delay_run, NULL, task_name);
+-	return PTR_ERR_OR_ZERO(test_task);
++	return retval;
+ }
+ 
+ static void __exit preemptirq_delay_exit(void)
+ {
+-	return;
++	kobject_put(preemptirq_delay_kobj);
+ }
+ 
+ module_init(preemptirq_delay_init)
 -- 
 2.17.1
 
