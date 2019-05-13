@@ -2,182 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B761B970
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183E21B98E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 17:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbfEMPEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 11:04:31 -0400
-Received: from casper.infradead.org ([85.118.1.10]:53256 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730209AbfEMPEa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 11:04:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lmw8m2PcC49iVQvnEnxuI/mETRA7iB8j56Jy/bAQ+Wo=; b=Q1jTmjhz40l91KdKl+IJkHGplw
-        ym+QdE1zGPpm/ylCVzlMkanuTYV43agbp+BADE5rmLYvBSWdsvGZFheRLtIyVmpf2YQJ7O4BEG7Kh
-        aKjwdG4wa1FWaacy23Nq2G3buC+XyLLZoMSgvc2cnz7UNn/K9B5Sc+RHvWemCDREkXbT1HQ2MUfRg
-        BqfqtT3SgkLQCOxvsVKP73MexrsvPOMF8WIs4O3TVUhtLfSERdx+8tQEAK7WZ1RuF/FWAVwlJqD/m
-        2U9gY3DmYc8LRA8v/FgzZSSI1algA/nk16BIik5ih+A3tQ6qvnK2XQlElCCOVPA7Hr/69AAhMgU+h
-        4pz3Q33g==;
-Received: from [179.179.44.200] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQCV9-000331-I0; Mon, 13 May 2019 15:04:28 +0000
-Date:   Mon, 13 May 2019 12:04:23 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     bhelgaas@google.com, corbet@lwn.net, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 11/12] Documentation: PCI: convert
- endpoint/pci-test-function.txt to reST
-Message-ID: <20190513120423.159b971f@coco.lan>
-In-Reply-To: <20190513142000.3524-12-changbin.du@gmail.com>
-References: <20190513142000.3524-1-changbin.du@gmail.com>
-        <20190513142000.3524-12-changbin.du@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1730919AbfEMPKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 11:10:21 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60387 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727339AbfEMPKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 11:10:21 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 08:10:20 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 13 May 2019 08:10:20 -0700
+Date:   Mon, 13 May 2019 09:04:58 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Mario.Limonciello@dell.com
+Cc:     hch@lst.de, keith.busch@intel.com, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        kai.heng.feng@canonical.com
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+Message-ID: <20190513150458.GA15437@localhost.localdomain>
+References: <20190510212937.11661-1-keith.busch@intel.com>
+ <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
+ <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
+ <20190513143741.GA25500@lst.de>
+ <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
+ <20190513145522.GA15421@localhost.localdomain>
+ <d69ff7154191492eaa8f55535a7effa5@AUSX13MPC105.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d69ff7154191492eaa8f55535a7effa5@AUSX13MPC105.AMER.DELL.COM>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 13 May 2019 22:19:59 +0800
-Changbin Du <changbin.du@gmail.com> escreveu:
+On Mon, May 13, 2019 at 03:05:42PM +0000, Mario.Limonciello@dell.com wrote:
+> This system power state - suspend to idle is going to freeze threads.
+> But we're talking a multi threaded kernel.  Can't there be a timing problem going
+> on then too?  With a disk flush being active in one task and the other task trying
+> to put the disk into the deepest power state.  If you don't freeze the queues how
+> can you guarantee that didn't happen?
 
-> This converts the plain text documentation to reStructuredText format and
-> add it to Sphinx TOC tree. No essential content change.
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  Documentation/PCI/endpoint/index.rst          |  1 +
->  ...est-function.txt => pci-test-function.rst} | 34 ++++++++++++-------
->  2 files changed, 22 insertions(+), 13 deletions(-)
->  rename Documentation/PCI/endpoint/{pci-test-function.txt => pci-test-function.rst} (84%)
-> 
-> diff --git a/Documentation/PCI/endpoint/index.rst b/Documentation/PCI/endpoint/index.rst
-> index 3951de9f923c..b680a3fc4fec 100644
-> --- a/Documentation/PCI/endpoint/index.rst
-> +++ b/Documentation/PCI/endpoint/index.rst
-> @@ -9,3 +9,4 @@ PCI Endpoint Framework
->  
->     pci-endpoint
->     pci-endpoint-cfs
-> +   pci-test-function
-> diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.rst
-> similarity index 84%
-> rename from Documentation/PCI/endpoint/pci-test-function.txt
-> rename to Documentation/PCI/endpoint/pci-test-function.rst
-> index 5916f1f592bb..63148df97232 100644
-> --- a/Documentation/PCI/endpoint/pci-test-function.txt
-> +++ b/Documentation/PCI/endpoint/pci-test-function.rst
-> @@ -1,5 +1,10 @@
-> -				PCI TEST
-> -		    Kishon Vijay Abraham I <kishon@ti.com>
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=================
-> +PCI Test Function
-> +=================
-> +
-> +:Author: Kishon Vijay Abraham I <kishon@ti.com>
->  
->  Traditionally PCI RC has always been validated by using standard
->  PCI cards like ethernet PCI cards or USB PCI cards or SATA PCI cards.
-> @@ -23,30 +28,31 @@ The PCI endpoint test device has the following registers:
->  	8) PCI_ENDPOINT_TEST_IRQ_TYPE
->  	9) PCI_ENDPOINT_TEST_IRQ_NUMBER
->  
-> -*) PCI_ENDPOINT_TEST_MAGIC
-> +* PCI_ENDPOINT_TEST_MAGIC
->  
->  This register will be used to test BAR0. A known pattern will be written
->  and read back from MAGIC register to verify BAR0.
->  
-> -*) PCI_ENDPOINT_TEST_COMMAND:
-> +* PCI_ENDPOINT_TEST_COMMAND
->  
->  This register will be used by the host driver to indicate the function
->  that the endpoint device must perform.
->  
-> -Bitfield Description:
-> +Bitfield Description::
-> +
->    Bit 0		: raise legacy IRQ
->    Bit 1		: raise MSI IRQ
->    Bit 2		: raise MSI-X IRQ
->    Bit 3		: read command (read data from RC buffer)
->    Bit 4		: write command (write data to RC buffer)
-> -  Bit 5		: copy command (copy data from one RC buffer to another
-> -		  RC buffer)
-> +  Bit 5		: copy command (copy data from one RC buffer to another RC buffer)
-
-Why not use a table instead?
-
->  
-> -*) PCI_ENDPOINT_TEST_STATUS
-> +* PCI_ENDPOINT_TEST_STATUS
->  
->  This register reflects the status of the PCI endpoint device.
->  
-> -Bitfield Description:
-> +Bitfield Description::
-> +
->    Bit 0		: read success
->    Bit 1		: read fail
->    Bit 2		: write success
-> @@ -57,31 +63,33 @@ Bitfield Description:
->    Bit 7		: source address is invalid
->    Bit 8		: destination address is invalid
-
-Same here.
-
-If you replace the two bitfield descriptions to table:
-	Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
->  
-> -*) PCI_ENDPOINT_TEST_SRC_ADDR
-> +* PCI_ENDPOINT_TEST_SRC_ADDR
->  
->  This register contains the source address (RC buffer address) for the
->  COPY/READ command.
->  
-> -*) PCI_ENDPOINT_TEST_DST_ADDR
-> +* PCI_ENDPOINT_TEST_DST_ADDR
->  
->  This register contains the destination address (RC buffer address) for
->  the COPY/WRITE command.
->  
-> -*) PCI_ENDPOINT_TEST_IRQ_TYPE
-> +* PCI_ENDPOINT_TEST_IRQ_TYPE
->  
->  This register contains the interrupt type (Legacy/MSI) triggered
->  for the READ/WRITE/COPY and raise IRQ (Legacy/MSI) commands.
->  
->  Possible types:
-> +
->   - Legacy	: 0
->   - MSI		: 1
->   - MSI-X	: 2
->  
-> -*) PCI_ENDPOINT_TEST_IRQ_NUMBER
-> +* PCI_ENDPOINT_TEST_IRQ_NUMBER
->  
->  This register contains the triggered ID interrupt.
->  
->  Admissible values:
-> +
->   - Legacy	: 0
->   - MSI		: [1 .. 32]
->   - MSI-X	: [1 .. 2048]
-
-
-
-Thanks,
-Mauro
+But if an active data flush task is running, then we're not idle and
+shouldn't go to low power.
