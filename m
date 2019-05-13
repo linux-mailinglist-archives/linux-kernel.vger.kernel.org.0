@@ -2,291 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0751B7B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583911B7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730385AbfEMOEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:04:44 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56534 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729875AbfEMOEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:04:44 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8EB74F5C83569CF1B183;
-        Mon, 13 May 2019 22:04:40 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
- 22:04:32 +0800
-Subject: Re: [PATCH v6 1/1] iommu: enhance IOMMU dma mode build options
-To:     John Garry <john.garry@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
-References: <20190418135701.24668-1-thunder.leizhen@huawei.com>
- <20190418135701.24668-2-thunder.leizhen@huawei.com>
- <ca30a698-8047-9a86-a2f1-0b3e1c8692bf@huawei.com>
-CC:     Hanjun Guo <guohanjun@huawei.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5CD9796E.3040000@huawei.com>
-Date:   Mon, 13 May 2019 22:04:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1730407AbfEMOFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:05:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:15053 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729401AbfEMOFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:05:06 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E30E7FD6C;
+        Mon, 13 May 2019 14:05:00 +0000 (UTC)
+Received: from [10.36.116.17] (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C655F608C3;
+        Mon, 13 May 2019 14:04:49 +0000 (UTC)
+Subject: Re: [PATCH v7 14/23] iommu/smmuv3: Implement cache_invalidate
+To:     Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org,
+        vincent.stehle@arm.com
+References: <20190408121911.24103-1-eric.auger@redhat.com>
+ <20190408121911.24103-15-eric.auger@redhat.com>
+ <a53d72f5-c8a2-a9e9-eb0b-2fac65964caf@arm.com>
+ <edff2a6f-66e6-6d7e-49ca-3065e93a41a4@redhat.com>
+ <a181689b-94b5-5ff6-9fec-66b3f319cbc4@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <405002b2-5663-7c03-d5df-b9da6499a238@redhat.com>
+Date:   Mon, 13 May 2019 16:04:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <ca30a698-8047-9a86-a2f1-0b3e1c8692bf@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+In-Reply-To: <a181689b-94b5-5ff6-9fec-66b3f319cbc4@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 13 May 2019 14:05:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Robin,
 
+On 5/13/19 4:01 PM, Robin Murphy wrote:
+> On 13/05/2019 13:16, Auger Eric wrote:
+>> Hi Robin,
+>> On 5/8/19 5:01 PM, Robin Murphy wrote:
+>>> On 08/04/2019 13:19, Eric Auger wrote:
+>>>> Implement domain-selective and page-selective IOTLB invalidations.
+>>>>
+>>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>>
+>>>> ---
+>>>> v6 -> v7
+>>>> - check the uapi version
+>>>>
+>>>> v3 -> v4:
+>>>> - adapt to changes in the uapi
+>>>> - add support for leaf parameter
+>>>> - do not use arm_smmu_tlb_inv_range_nosync or arm_smmu_tlb_inv_context
+>>>>     anymore
+>>>>
+>>>> v2 -> v3:
+>>>> - replace __arm_smmu_tlb_sync by arm_smmu_cmdq_issue_sync
+>>>>
+>>>> v1 -> v2:
+>>>> - properly pass the asid
+>>>> ---
+>>>>    drivers/iommu/arm-smmu-v3.c | 60
+>>>> +++++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 60 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>>>> index 1486baf53425..4366921d8318 100644
+>>>> --- a/drivers/iommu/arm-smmu-v3.c
+>>>> +++ b/drivers/iommu/arm-smmu-v3.c
+>>>> @@ -2326,6 +2326,65 @@ static void arm_smmu_detach_pasid_table(struct
+>>>> iommu_domain *domain)
+>>>>        mutex_unlock(&smmu_domain->init_mutex);
+>>>>    }
+>>>>    +static int
+>>>> +arm_smmu_cache_invalidate(struct iommu_domain *domain, struct device
+>>>> *dev,
+>>>> +              struct iommu_cache_invalidate_info *inv_info)
+>>>> +{
+>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>> +    struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>>> +
+>>>> +    if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (!smmu)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (inv_info->version != IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (inv_info->cache & IOMMU_CACHE_INV_TYPE_IOTLB) {
+>>>> +        if (inv_info->granularity == IOMMU_INV_GRANU_PASID) {
+>>>> +            struct arm_smmu_cmdq_ent cmd = {
+>>>> +                .opcode = CMDQ_OP_TLBI_NH_ASID,
+>>>> +                .tlbi = {
+>>>> +                    .vmid = smmu_domain->s2_cfg.vmid,
+>>>> +                    .asid = inv_info->pasid,
+>>>> +                },
+>>>> +            };
+>>>> +
+>>>> +            arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+>>>> +            arm_smmu_cmdq_issue_sync(smmu);
+>>>
+>>> I'd much rather make arm_smmu_tlb_inv_context() understand nested
+>>> domains than open-code commands all over the place.
+>>
+>>
+>>>
+>>>> +
+>>>> +        } else if (inv_info->granularity == IOMMU_INV_GRANU_ADDR) {
+>>>> +            struct iommu_inv_addr_info *info = &inv_info->addr_info;
+>>>> +            size_t size = info->nb_granules * info->granule_size;
+>>>> +            bool leaf = info->flags & IOMMU_INV_ADDR_FLAGS_LEAF;
+>>>> +            struct arm_smmu_cmdq_ent cmd = {
+>>>> +                .opcode = CMDQ_OP_TLBI_NH_VA,
+>>>> +                .tlbi = {
+>>>> +                    .addr = info->addr,
+>>>> +                    .vmid = smmu_domain->s2_cfg.vmid,
+>>>> +                    .asid = info->pasid,
+>>>> +                    .leaf = leaf,
+>>>> +                },
+>>>> +            };
+>>>> +
+>>>> +            do {
+>>>> +                arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+>>>> +                cmd.tlbi.addr += info->granule_size;
+>>>> +            } while (size -= info->granule_size);
+>>>> +            arm_smmu_cmdq_issue_sync(smmu);
+>>>
+>>> An this in particular I would really like to go all the way through
+>>> io_pgtable_tlb_add_flush()/io_pgtable_sync() if at all possible. Hooking
+>>> up range-based invalidations is going to be a massive headache if the
+>>> abstraction isn't solid.
+>>
+>> The concern is the host does not "own" the s1 config asid
+>> (smmu_domain->s1_cfg.cd.asid is not set, practically). In our case the
+>> asid only is passed by the userspace on CACHE_INVALIDATE ioctl call.
+>>
+>> arm_smmu_tlb_inv_context and arm_smmu_tlb_inv_range_nosync use this field
+> 
+> Right, but that's not exactly hard to solve. Even just something like
+> the (untested, purely illustrative) refactoring below would be beneficial.
+Sure I can go this way.
 
-On 2019/5/8 17:42, John Garry wrote:
-> On 18/04/2019 14:57, Zhen Lei wrote:
->> First, add build option IOMMU_DEFAULT_{LAZY|STRICT}, so that we have the
->> opportunity to set {lazy|strict} mode as default at build time. Then put
->> the three config options in an choice, make people can only choose one of
->> the three at a time.
->>
->> The default IOMMU dma modes on each ARCHs have no change.
->>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> ---
->>  arch/ia64/kernel/pci-dma.c                |  2 +-
->>  arch/powerpc/platforms/powernv/pci-ioda.c |  3 ++-
->>  arch/s390/pci/pci_dma.c                   |  2 +-
->>  arch/x86/kernel/pci-dma.c                 |  7 ++---
->>  drivers/iommu/Kconfig                     | 44 ++++++++++++++++++++++++++-----
->>  drivers/iommu/amd_iommu_init.c            |  3 ++-
->>  drivers/iommu/intel-iommu.c               |  2 +-
->>  drivers/iommu/iommu.c                     |  3 ++-
->>  8 files changed, 48 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
->> index fe988c49f01ce6a..655511dbf3c3b34 100644
->> --- a/arch/ia64/kernel/pci-dma.c
->> +++ b/arch/ia64/kernel/pci-dma.c
->> @@ -22,7 +22,7 @@
->>  int force_iommu __read_mostly;
->>  #endif
->>
->> -int iommu_pass_through;
->> +int iommu_pass_through = IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
->>
->>  static int __init pci_iommu_init(void)
->>  {
->> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
->> index 3ead4c237ed0ec9..383e082a9bb985c 100644
->> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
->> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
->> @@ -85,7 +85,8 @@ void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
->>      va_end(args);
->>  }
->>
->> -static bool pnv_iommu_bypass_disabled __read_mostly;
->> +static bool pnv_iommu_bypass_disabled __read_mostly =
->> +            !IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
->>  static bool pci_reset_phbs __read_mostly;
->>
->>  static int __init iommu_setup(char *str)
->> diff --git a/arch/s390/pci/pci_dma.c b/arch/s390/pci/pci_dma.c
->> index 9e52d1527f71495..784ad1e0acecfb1 100644
->> --- a/arch/s390/pci/pci_dma.c
->> +++ b/arch/s390/pci/pci_dma.c
->> @@ -17,7 +17,7 @@
->>
->>  static struct kmem_cache *dma_region_table_cache;
->>  static struct kmem_cache *dma_page_table_cache;
->> -static int s390_iommu_strict;
->> +static int s390_iommu_strict = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
->>
->>  static int zpci_refresh_global(struct zpci_dev *zdev)
->>  {
->> diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
->> index d460998ae828514..fb2bab42a0a3173 100644
->> --- a/arch/x86/kernel/pci-dma.c
->> +++ b/arch/x86/kernel/pci-dma.c
->> @@ -43,11 +43,8 @@
->>   * It is also possible to disable by default in kernel config, and enable with
->>   * iommu=nopt at boot time.
->>   */
->> -#ifdef CONFIG_IOMMU_DEFAULT_PASSTHROUGH
->> -int iommu_pass_through __read_mostly = 1;
->> -#else
->> -int iommu_pass_through __read_mostly;
->> -#endif
->> +int iommu_pass_through __read_mostly =
->> +            IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
->>
->>  extern struct iommu_table_entry __iommu_table[], __iommu_table_end[];
->>
->> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
->> index 6f07f3b21816c64..8a1f1793cde76b4 100644
->> --- a/drivers/iommu/Kconfig
->> +++ b/drivers/iommu/Kconfig
->> @@ -74,17 +74,47 @@ config IOMMU_DEBUGFS
->>        debug/iommu directory, and then populate a subdirectory with
->>        entries as required.
->>
->> -config IOMMU_DEFAULT_PASSTHROUGH
->> -    bool "IOMMU passthrough by default"
->> +choice
->> +    prompt "IOMMU dma mode"
-> 
-> /s/dma/DMA/
-OK
+Thank you for detailing
 
+Eric
 > 
-> And how about add "default", as in "Default IOMMU DMA mode" or "IOMMU default DMA mode"?
-Yes. I prefer "IOMMU default DMA mode".
-
+> Robin.
 > 
->>      depends on IOMMU_API
->> -        help
->> -      Enable passthrough by default, removing the need to pass in
->> -      iommu.passthrough=on or iommu=pt through command line. If this
->> -      is enabled, you can still disable with iommu.passthrough=off
->> -      or iommu=nopt depending on the architecture.
->> +    default IOMMU_DEFAULT_PASSTHROUGH if (PPC_POWERNV && PCI)
->> +    default IOMMU_DEFAULT_LAZY if (AMD_IOMMU || INTEL_IOMMU || S390_IOMMU)
->> +    default IOMMU_DEFAULT_STRICT
->> +    help
->> +      This option allows IOMMU dma mode to be chose at build time, to
+> ----->8-----
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index d3880010c6cf..31ef703cf671 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -1423,11 +1423,9 @@ static void arm_smmu_tlb_inv_context(void *cookie)
+>      arm_smmu_cmdq_issue_sync(smmu);
+>  }
 > 
-> again, capitalize acronyms, i.e. /s/dma/DMA/ (more of these above and below)
-OK, I will check it all. Thanks.
-
+> -static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+> -                      size_t granule, bool leaf, void *cookie)
+> +static void __arm_smmu_tlb_inv_range(struct arm_smmu_domain
+> *smmu_domain, u16 asid,
+> +        unsigned long iova, size_t size, size_t granule, bool leaf)
+>  {
+> -    struct arm_smmu_domain *smmu_domain = cookie;
+> -    struct arm_smmu_device *smmu = smmu_domain->smmu;
+>      struct arm_smmu_cmdq_ent cmd = {
+>          .tlbi = {
+>              .leaf    = leaf,
+> @@ -1437,18 +1435,27 @@ static void
+> arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
 > 
->> +      override the default dma mode of each ARCHs, removing the need to
->> +      pass in kernel parameters through command line. You can still use
->> +      ARCHs specific boot options to override this option again.
->> +
->> +config IOMMU_DEFAULT_PASSTHROUGH
+>      if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
+>          cmd.opcode    = CMDQ_OP_TLBI_NH_VA;
+> -        cmd.tlbi.asid    = smmu_domain->s1_cfg.cd.asid;
+> +        cmd.tlbi.asid    = asid;
+>      } else {
+>          cmd.opcode    = CMDQ_OP_TLBI_S2_IPA;
+>          cmd.tlbi.vmid    = smmu_domain->s2_cfg.vmid;
+>      }
 > 
-> I think that it may need to be indented, along with the other choices
-There is no problem. I referred to mm/Kconfig.
-
+>      do {
+> -        arm_smmu_cmdq_issue_cmd(smmu, &cmd);
+> +        arm_smmu_cmdq_issue_cmd(smmu_domain->smmu, &cmd);
+>          cmd.tlbi.addr += granule;
+>      } while (size -= granule);
+>  }
 > 
->> +    bool "passthrough"
->> +    help
->> +      In this mode, the dma access through IOMMU without any addresses
->> +      transformation. That means, the wrong or illegal dma access can not
-> 
-> transformation, or translation?
-I copied from somewhere. OK, "translation" will be more clear.
-
-> 
->> +      be caught, no error information will be reported.
->>
->>        If unsure, say N here.
->>
->> +config IOMMU_DEFAULT_LAZY
->> +    bool "lazy"
->> +    help
->> +      Support lazy mode, where for every IOMMU DMA unmap operation, the
->> +      flush operation of IOTLB and the free operation of IOVA are deferred.
->> +      They are only guaranteed to be done before the related IOVA will be
->> +      reused.
->> +
->> +config IOMMU_DEFAULT_STRICT
->> +    bool "strict"
->> +    help
->> +      For every IOMMU DMA unmap operation, the flush operation of IOTLB and
->> +      the free operation of IOVA are guaranteed to be done in the unmap
->> +      function.
->> +
->> +      This mode is safer than the two above, but it maybe slow in some high
-> 
-> slow, or slower? And passthough is not safe, so anything is implicitly safer.
-OK. I will change it to "slower".
-
-> 
->> +      performace scenarios.
->> +
->> +endchoice
->> +
->>  config OF_IOMMU
->>         def_bool y
->>         depends on OF && IOMMU_API
->> diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
->> index ff40ba758cf365e..16c02b08adb4cb2 100644
->> --- a/drivers/iommu/amd_iommu_init.c
->> +++ b/drivers/iommu/amd_iommu_init.c
->> @@ -166,7 +166,8 @@ struct ivmd_header {
->>                         to handle */
->>  LIST_HEAD(amd_iommu_unity_map);        /* a list of required unity mappings
->>                         we find in ACPI */
->> -bool amd_iommu_unmap_flush;        /* if true, flush on every unmap */
->> +bool amd_iommu_unmap_flush = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
->> +                    /* if true, flush on every unmap */
->>
->>  LIST_HEAD(amd_iommu_list);        /* list of all AMD IOMMUs in the
->>                         system */
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index 28cb713d728ceef..0c3cc716210f35a 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -362,7 +362,7 @@ static int domain_detach_iommu(struct dmar_domain *domain,
->>
->>  static int dmar_map_gfx = 1;
->>  static int dmar_forcedac;
->> -static int intel_iommu_strict;
->> +static int intel_iommu_strict = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
->>  static int intel_iommu_superpage = 1;
->>  static int intel_iommu_sm;
->>  static int iommu_identity_mapping;
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 109de67d5d727c2..0ec5952ac60e2a3 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -43,7 +43,8 @@
->>  #else
->>  static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
->>  #endif
->> -static bool iommu_dma_strict __read_mostly = true;
->> +static bool iommu_dma_strict __read_mostly =
->> +            IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
->>
->>  struct iommu_callback_data {
->>      const struct iommu_ops *ops;
->> -- 
->> 1.8.3
->>
->>
->>
->> .
->>
-> 
-> 
-> 
-> .
-> 
-
--- 
-Thanks!
-BestRegards
-
+> +static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+> +                      size_t granule, bool leaf, void *cookie)
+> +{
+> +    struct arm_smmu_domain *smmu_domain = cookie;
+> +
+> +    __arm_smmu_tlb_inv_range(smmu_domain, smmu_domain->s1_cfg.cd.asid,
+> iova,
+> +            size, granule, leaf);
+> +}
+> +
+>  static const struct iommu_gather_ops arm_smmu_gather_ops = {
+>      .tlb_flush_all    = arm_smmu_tlb_inv_context,
+>      .tlb_add_flush    = arm_smmu_tlb_inv_range_nosync,
