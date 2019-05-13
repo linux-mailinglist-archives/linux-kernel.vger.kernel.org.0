@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 408001BD51
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 901D71BD44
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 20:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfEMSiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 14:38:10 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34283 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfEMShg (ORCPT
+        id S1727033AbfEMShj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 14:37:39 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:47022 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfEMShh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 14:37:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id n19so7662793pfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:37:34 -0700 (PDT)
+        Mon, 13 May 2019 14:37:37 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y11so7632722pfm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 11:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gATWMxDxmzE+Kqrehkxf/HK0LYrFdMlroJJW15098zI=;
-        b=xPQENRQD3xB5rkEH3fmjoqmS6J7mA2UN8L8WgN45PTWl9x/e7eY8REqvOCXhLDqt/q
-         FmgBn/3cUgZ20lVFVD2FF5XVM47qdIVwIY5gcT1z2G+e077c7A9eAL7Lv9Vqm1Igcd5T
-         VgK8VTAXSHpd3GjJNdOa6uf7O4OxQU2gh92J6VIh6iTkxouWADvmu992h2QFhzi68vbV
-         Y2/F1PEJ3pKeLTo8PAPgtmF/hXSs5uj/V1Ufzo5D5mMKWAmPhMlupl4HWDjIyEtDvv3M
-         GahYiZ2i3v1fN0MgrG7tr1QFkLWEONz3nKfzLQXW+y3A+yRMKmSYpsNl+c2XYsGTU5fT
-         3sJw==
+        bh=hz3ZGtoAymkx6t8CRx6nzIb0wfkZta9h4Him4Tyc0Qg=;
+        b=pvpkBGXVzKfKWGXQGmMHOJ8L8VHi+CfFfXuwrBVLL/uvzV6YTP1fhJ5E6zJTOjMBbG
+         ahTJd9ZHNL5zIwbehZI8xrFyJO8n6PkVli5F0RfX6wjjUGw7Uw5xRMXFAqxYaHu9TTb+
+         WfHCptIUK47k4x2Djuus6YXY8PF+f4NAQHlaruEq6iRa+hZr7YkW5ZC6WCTxs0YM6P/s
+         SVD6wa/QsSZZ7q4QVlVH3osNU6BVeNkLtgQbIa695w3s27rSsRKvLMCaiuvVOCfJ9QUC
+         rzpmwg1X1RzjDO7iHyI/gNS51H9o6J52Bds3Bmy0VAoyAXuTFDk6djZA95AxrDN7NkRJ
+         6eDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gATWMxDxmzE+Kqrehkxf/HK0LYrFdMlroJJW15098zI=;
-        b=QNSFbaPOFwLKrqKj1iAxOoWMW/6Xi9HkidxntIU9lXbgyCEfNDJJa7OD5ocNIafJJ/
-         z8/JgPurYQGzsK5cvemOzh1tfeX6VGRaNeLFxN1L5JKBFmXioALSPGoFe58bOB5qQuIx
-         Sk1CbAk9oh47+af2UDwDRrawmvYYlE1vg6lyDyaX4hgmP/482cvnVL/j7tX+WZrCrQ5/
-         pY/4jOv2uOi1KUtD71Ff2h1CK7OgrYx1ltNDSXH0Iwh4M6tLFvTmco+QdiwXnEU+/Tit
-         9aEINEABKJ89fMYF49ESFa6UBYdu9BFePzSjVw3pMdiLqQMkvaM038fyQpsupjEbBEbo
-         lYig==
-X-Gm-Message-State: APjAAAVb7rHqKg6yrQH/wnCKsj2AD/mlksHkr14b7l0pYxv5yjEP6jas
-        D+aCwVrUER61IrJmM3k73cLQBLSKeoI=
-X-Google-Smtp-Source: APXvYqxbpZ7Py6ANjtv5lmvcwTTYayLktNBid9ffOZKw0EymOnxcjUccRx+1qZiSUKMJuHhm76pJYA==
-X-Received: by 2002:a63:8342:: with SMTP id h63mr33988771pge.251.1557772653475;
-        Mon, 13 May 2019 11:37:33 -0700 (PDT)
+        bh=hz3ZGtoAymkx6t8CRx6nzIb0wfkZta9h4Him4Tyc0Qg=;
+        b=KqDGqcUvByq+gAM7Zpm+xBhup4E0GK00O35ADR3s16v5GTIoV1H4eFj/eacEWPhfqp
+         qSlaLxWPGxN6e4SZTNBY3xrbDE23veYx5wl5Y/PKBSKOzL5mN1NXxnivTi1rMkcPh/ip
+         0EcxAzmy2GBusIOe6j3+a7R1Oyxb14+e2s13KgrwlS98vGVB8aQEpYohVBSS8Bs7CI0f
+         bwwohPKRKv2lhACQD8HucH0tTKCSC4q+ZWqsW8lncXLQ5GCB2zdLNhiq7QwOEtgfGOJm
+         AB7X2SzbuVjKkLUxlVcWiaUpYuZp0iNjLK/IZATKpnNYoUtXY89IBX7RlWxoylzH5Eap
+         9R8A==
+X-Gm-Message-State: APjAAAUceUwJIfF4z4RC0qYWotKK6eodfgYgKzSpCjP8aDUNUk2xkxGC
+        +7KEUzveaocQp+hKlmleo6+iEvsSU2w=
+X-Google-Smtp-Source: APXvYqyK4NnZKSimS2Z6YiFEMmckA26zjmHx/NLhwAahG04NSE5vlfx5aBkeZUEDBhbscNc0MW2sJw==
+X-Received: by 2002:a65:6659:: with SMTP id z25mr33066763pgv.10.1557772655342;
+        Mon, 13 May 2019 11:37:35 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id u11sm17334881pfh.130.2019.05.13.11.37.31
+        by smtp.gmail.com with ESMTPSA id u11sm17334881pfh.130.2019.05.13.11.37.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 11:37:32 -0700 (PDT)
+        Mon, 13 May 2019 11:37:34 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Laura Abbott <labbott@redhat.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         Liam Mark <lmark@codeaurora.org>,
@@ -54,6 +55,7 @@ Cc:     "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
         Brian Starkey <Brian.Starkey@arm.com>,
         Vincent Donnefort <Vincent.Donnefort@arm.com>,
         Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
         Xu YiPing <xuyiping@hisilicon.com>,
         "Chenfeng (puck)" <puck.chen@hisilicon.com>,
         butao <butao@hisilicon.com>,
@@ -62,11 +64,10 @@ Cc:     "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Chenbo Feng <fengc@google.com>,
         Alistair Strachan <astrachan@google.com>,
-        dri-devel@lists.freedesktop.org,
-        John Stultz <john.stultz@linaro.org>
-Subject: [RFC][PATCH 1/5 v4] dma-buf: Add dma-buf heaps framework
-Date:   Mon, 13 May 2019 11:37:23 -0700
-Message-Id: <20190513183727.15755-2-john.stultz@linaro.org>
+        dri-devel@lists.freedesktop.org
+Subject: [RFC][PATCH 2/5 v4] dma-buf: heaps: Add heap helpers
+Date:   Mon, 13 May 2019 11:37:24 -0700
+Message-Id: <20190513183727.15755-3-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190513183727.15755-1-john.stultz@linaro.org>
 References: <20190513183727.15755-1-john.stultz@linaro.org>
@@ -75,20 +76,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Andrew F. Davis" <afd@ti.com>
+Add generic helper dmabuf ops for dma heaps, so we can reduce
+the amount of duplicative code for the exported dmabufs.
 
-This framework allows a unified userspace interface for dma-buf
-exporters, allowing userland to allocate specific types of memory
-for use in dma-buf sharing.
-
-Each heap is given its own device node, which a user can allocate
-a dma-buf fd from using the DMA_HEAP_IOC_ALLOC.
-
-This code is an evoluiton of the Android ION implementation,
-and a big thanks is due to its authors/maintainers over time
-for their effort:
-  Rebecca Schultz Zavin, Colin Cross, Benjamin Gaignard,
-  Laura Abbott, and many other contributors!
+This code is an evolution of the Android ION implementation, so
+thanks to its original authors and maintainters:
+  Rebecca Schultz Zavin, Colin Cross, Laura Abbott, and others!
 
 Cc: Laura Abbott <labbott@redhat.com>
 Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
@@ -108,483 +101,387 @@ Cc: Christoph Hellwig <hch@infradead.org>
 Cc: Chenbo Feng <fengc@google.com>
 Cc: Alistair Strachan <astrachan@google.com>
 Cc: dri-devel@lists.freedesktop.org
-Signed-off-by: Andrew F. Davis <afd@ti.com>
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
 v2:
-* Folded down fixes I had previously shared in implementing
-  heaps
-* Make flags a u64 (Suggested by Laura)
-* Add PAGE_ALIGN() fix to the core alloc funciton
-* IOCTL fixups suggested by Brian
-* Added fixes suggested by Benjamin
-* Removed core stats mgmt, as that should be implemented by
-  per-heap code
-* Changed alloc to return a dma-buf fd, rather then a buffer
-  (as it simplifies error handling)
+* Removed cache management performance hack that I had
+  accidentally folded in.
+* Removed stats code that was in helpers
+* Lots of checkpatch cleanups
 v3:
-* Removed scare-quotes in MAINTAINERS email address
-* Get rid of .release function as it didn't do anything (from
-  Christoph)
-* Renamed filp to file (suggested by Christoph)
-* Split out ioctl handling to separate function (suggested by
-  Christoph)
-* Add comment documenting PAGE_ALIGN usage (suggested by Brian)
-* Switch from idr to Xarray (suggested by Brian)
-* Fixup cdev creation (suggested by Brian)
-* Avoid EXPORT_SYMBOL until we finalize modules (suggested by
-  Brian)
-* Make struct dma_heap internal only (folded in from Andrew)
-* Small cleanups suggested by GregKH
-* Provide class->devnode callback to get consistent /dev/
-  subdirectory naming (Suggested by Bjorn)
+* Uninline INIT_HEAP_HELPER_BUFFER (suggested by Christoph)
+* Switch to WARN on buffer destroy failure (suggested by Brian)
+* buffer->kmap_cnt decrementing cleanup (suggested by Christoph)
+* Extra buffer->vaddr checking in dma_heap_dma_buf_kmap
+  (suggested by Brian)
+* Switch to_helper_buffer from macro to inline function
+  (suggested by Benjamin)
+* Rename kmap->vmap (folded in from Andrew)
+* Use vmap for vmapping - not begin_cpu_access (folded in from
+  Andrew)
+* Drop kmap for now, as its optional (folded in from Andrew)
+* Fold dma_heap_map_user into the single caller (foled in from
+  Andrew)
+* Folded in patch from Andrew to track page list per heap not
+  sglist, which simplifies the tracking logic
 v4:
-* Folded down dma-heap.h change that was in a following patch
-* Added fd_flags entry to allocation structure and pass it
-  through to heap code for use on dma-buf fd creation (suggested
-  by Benjamin)
+* Moved dma-heap.h change out to previous patch
 ---
- MAINTAINERS                   |  18 +++
- drivers/dma-buf/Kconfig       |   8 ++
- drivers/dma-buf/Makefile      |   1 +
- drivers/dma-buf/dma-heap.c    | 241 ++++++++++++++++++++++++++++++++++
- include/linux/dma-heap.h      |  59 +++++++++
- include/uapi/linux/dma-heap.h |  56 ++++++++
- 6 files changed, 383 insertions(+)
- create mode 100644 drivers/dma-buf/dma-heap.c
- create mode 100644 include/linux/dma-heap.h
- create mode 100644 include/uapi/linux/dma-heap.h
+ drivers/dma-buf/Makefile             |   1 +
+ drivers/dma-buf/heaps/Makefile       |   2 +
+ drivers/dma-buf/heaps/heap-helpers.c | 261 +++++++++++++++++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.h |  55 ++++++
+ 4 files changed, 319 insertions(+)
+ create mode 100644 drivers/dma-buf/heaps/Makefile
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e77c31652881..7d85484fa8db 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4725,6 +4725,24 @@ F:	include/linux/*fence.h
- F:	Documentation/driver-api/dma-buf.rst
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
-+DMA-BUF HEAPS FRAMEWORK
-+M:	Sumit Semwal <sumit.semwal@linaro.org>
-+R:	Andrew F. Davis <afd@ti.com>
-+R:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
-+R:	Liam Mark <lmark@codeaurora.org>
-+R:	Laura Abbott <labbott@redhat.com>
-+R:	Brian Starkey <Brian.Starkey@arm.com>
-+R:	John Stultz <john.stultz@linaro.org>
-+S:	Maintained
-+L:	linux-media@vger.kernel.org
-+L:	dri-devel@lists.freedesktop.org
-+L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
-+F:	include/uapi/linux/dma-heap.h
-+F:	include/linux/dma-heap.h
-+F:	drivers/dma-buf/dma-heap.c
-+F:	drivers/dma-buf/heaps/*
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
-+
- DMA GENERIC OFFLOAD ENGINE SUBSYSTEM
- M:	Vinod Koul <vkoul@kernel.org>
- L:	dmaengine@vger.kernel.org
-diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-index 3fc9c2efc583..8344cdaaa328 100644
---- a/drivers/dma-buf/Kconfig
-+++ b/drivers/dma-buf/Kconfig
-@@ -38,4 +38,12 @@ config UDMABUF
- 	  A driver to let userspace turn memfd regions into dma-bufs.
- 	  Qemu can use this to create host dmabufs for guest framebuffers.
- 
-+menuconfig DMABUF_HEAPS
-+	bool "DMA-BUF Userland Memory Heaps"
-+	select DMA_SHARED_BUFFER
-+	help
-+	  Choose this option to enable the DMA-BUF userland memory heaps,
-+	  this allows userspace to allocate dma-bufs that can be shared between
-+	  drivers.
-+
- endmenu
 diff --git a/drivers/dma-buf/Makefile b/drivers/dma-buf/Makefile
-index 0913a6ccab5a..b0332f143413 100644
+index b0332f143413..09c2f2db9cf4 100644
 --- a/drivers/dma-buf/Makefile
 +++ b/drivers/dma-buf/Makefile
 @@ -1,4 +1,5 @@
  obj-y := dma-buf.o dma-fence.o dma-fence-array.o reservation.o seqno-fence.o
-+obj-$(CONFIG_DMABUF_HEAPS)	+= dma-heap.o
++obj-$(CONFIG_DMABUF_HEAPS)	+= heaps/
+ obj-$(CONFIG_DMABUF_HEAPS)	+= dma-heap.o
  obj-$(CONFIG_SYNC_FILE)		+= sync_file.o
  obj-$(CONFIG_SW_SYNC)		+= sw_sync.o sync_debug.o
- obj-$(CONFIG_UDMABUF)		+= udmabuf.o
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+diff --git a/drivers/dma-buf/heaps/Makefile b/drivers/dma-buf/heaps/Makefile
 new file mode 100644
-index 000000000000..d8c3e586fec6
+index 000000000000..de49898112db
 --- /dev/null
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -0,0 +1,241 @@
++++ b/drivers/dma-buf/heaps/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-y					+= heap-helpers.o
+diff --git a/drivers/dma-buf/heaps/heap-helpers.c b/drivers/dma-buf/heaps/heap-helpers.c
+new file mode 100644
+index 000000000000..00cbdbbb97e5
+--- /dev/null
++++ b/drivers/dma-buf/heaps/heap-helpers.c
+@@ -0,0 +1,261 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Framework for userspace DMA-BUF allocations
-+ *
-+ * Copyright (C) 2011 Google, Inc.
-+ * Copyright (C) 2019 Linaro Ltd.
-+ */
-+
-+#include <linux/cdev.h>
-+#include <linux/debugfs.h>
 +#include <linux/device.h>
 +#include <linux/dma-buf.h>
 +#include <linux/err.h>
-+#include <linux/xarray.h>
++#include <linux/idr.h>
 +#include <linux/list.h>
 +#include <linux/slab.h>
 +#include <linux/uaccess.h>
-+
-+#include <linux/dma-heap.h>
 +#include <uapi/linux/dma-heap.h>
 +
-+#define DEVNAME "dma_heap"
++#include "heap-helpers.h"
 +
-+#define NUM_HEAP_MINORS 128
++void INIT_HEAP_HELPER_BUFFER(struct heap_helper_buffer *buffer,
++			     void (*free)(struct heap_helper_buffer *))
++{
++	buffer->private_flags = 0;
++	buffer->priv_virt = NULL;
++	mutex_init(&buffer->lock);
++	buffer->vmap_cnt = 0;
++	buffer->vaddr = NULL;
++	INIT_LIST_HEAD(&buffer->attachments);
++	buffer->free = free;
++}
 +
-+/**
-+ * struct dma_heap - represents a dmabuf heap in the system
-+ * @name:		used for debugging/device-node name
-+ * @ops:		ops struct for this heap
-+ * @minor		minor number of this heap device
-+ * @heap_devt		heap device node
-+ * @heap_cdev		heap char device
-+ *
-+ * Represents a heap of memory from which buffers can be made.
-+ */
-+struct dma_heap {
-+	const char *name;
-+	struct dma_heap_ops *ops;
-+	void *priv;
-+	unsigned int minor;
-+	dev_t heap_devt;
-+	struct cdev heap_cdev;
++
++static void *dma_heap_map_kernel(struct heap_helper_buffer *buffer)
++{
++	void *vaddr;
++
++	vaddr = vmap(buffer->pages, buffer->pagecount, VM_MAP, PAGE_KERNEL);
++	if (!vaddr)
++		return ERR_PTR(-ENOMEM);
++
++	return vaddr;
++}
++
++void dma_heap_buffer_destroy(struct dma_heap_buffer *heap_buffer)
++{
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++
++	if (buffer->vmap_cnt > 0) {
++		WARN("%s: buffer still mapped in the kernel\n",
++			     __func__);
++		vunmap(buffer->vaddr);
++	}
++
++	buffer->free(buffer);
++}
++
++static void *dma_heap_buffer_vmap_get(struct dma_heap_buffer *heap_buffer)
++{
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++	void *vaddr;
++
++	if (buffer->vmap_cnt) {
++		buffer->vmap_cnt++;
++		return buffer->vaddr;
++	}
++	vaddr = dma_heap_map_kernel(buffer);
++	if (WARN_ONCE(!vaddr,
++		      "heap->ops->map_kernel should return ERR_PTR on error"))
++		return ERR_PTR(-EINVAL);
++	if (IS_ERR(vaddr))
++		return vaddr;
++	buffer->vaddr = vaddr;
++	buffer->vmap_cnt++;
++	return vaddr;
++}
++
++static void dma_heap_buffer_vmap_put(struct dma_heap_buffer *heap_buffer)
++{
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++
++	if (!--buffer->vmap_cnt) {
++		vunmap(buffer->vaddr);
++		buffer->vaddr = NULL;
++	}
++}
++
++struct dma_heaps_attachment {
++	struct device *dev;
++	struct sg_table table;
++	struct list_head list;
 +};
 +
-+static dev_t dma_heap_devt;
-+static struct class *dma_heap_class;
-+static DEFINE_XARRAY_ALLOC(dma_heap_minors);
-+
-+static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
-+				 unsigned int fd_flags,
-+				 unsigned int heap_flags)
++static int dma_heap_attach(struct dma_buf *dmabuf,
++			      struct dma_buf_attachment *attachment)
 +{
-+	/*
-+	 * Allocations from all heaps have to begin
-+	 * and end on page boundaries.
-+	 */
-+	len = PAGE_ALIGN(len);
-+	if (!len)
-+		return -EINVAL;
++	struct dma_heaps_attachment *a;
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++	int ret;
 +
-+	return heap->ops->allocate(heap, len, fd_flags, heap_flags);
-+}
++	a = kzalloc(sizeof(*a), GFP_KERNEL);
++	if (!a)
++		return -ENOMEM;
 +
-+static int dma_heap_open(struct inode *inode, struct file *file)
-+{
-+	struct dma_heap *heap;
-+
-+	heap = xa_load(&dma_heap_minors, iminor(inode));
-+	if (!heap) {
-+		pr_err("dma_heap: minor %d unknown.\n", iminor(inode));
-+		return -ENODEV;
++	ret = sg_alloc_table_from_pages(&a->table, buffer->pages,
++					buffer->pagecount, 0,
++					buffer->pagecount << PAGE_SHIFT,
++					GFP_KERNEL);
++	if (ret) {
++		kfree(a);
++		return ret;
 +	}
 +
-+	/* instance data as context */
-+	file->private_data = heap;
-+	nonseekable_open(inode, file);
++	a->dev = attachment->dev;
++	INIT_LIST_HEAD(&a->list);
++
++	attachment->priv = a;
++
++	mutex_lock(&buffer->lock);
++	list_add(&a->list, &buffer->attachments);
++	mutex_unlock(&buffer->lock);
 +
 +	return 0;
 +}
 +
-+static long dma_heap_ioctl_allocate(struct file *file, unsigned long arg)
++static void dma_heap_detatch(struct dma_buf *dmabuf,
++				struct dma_buf_attachment *attachment)
 +{
-+	struct dma_heap_allocation_data heap_allocation;
-+	struct dma_heap *heap = file->private_data;
-+	int fd;
++	struct dma_heaps_attachment *a = attachment->priv;
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
 +
-+	if (copy_from_user(&heap_allocation, (void __user *)arg,
-+			   sizeof(heap_allocation)))
-+		return -EFAULT;
++	mutex_lock(&buffer->lock);
++	list_del(&a->list);
++	mutex_unlock(&buffer->lock);
 +
-+	if (heap_allocation.fd ||
-+	    heap_allocation.reserved0 ||
-+	    heap_allocation.reserved1) {
-+		pr_warn_once("dma_heap: ioctl data not valid\n");
-+		return -EINVAL;
-+	}
++	sg_free_table(&a->table);
++	kfree(a);
++}
 +
-+	if (heap_allocation.fd_flags & ~DMA_HEAP_VALID_FD_FLAGS) {
-+		pr_warn_once("dma_heap: fd_flags has invalid or unsupported flags set\n");
-+		return -EINVAL;
-+	}
++static struct sg_table *dma_heap_map_dma_buf(
++					struct dma_buf_attachment *attachment,
++					enum dma_data_direction direction)
++{
++	struct dma_heaps_attachment *a = attachment->priv;
++	struct sg_table *table;
 +
-+	if (heap_allocation.heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS) {
-+		pr_warn_once("dma_heap: heap flags has invalid or unsupported flags set\n");
-+		return -EINVAL;
-+	}
++	table = &a->table;
 +
++	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
++			direction))
++		table = ERR_PTR(-ENOMEM);
++	return table;
++}
 +
-+	fd = dma_heap_buffer_alloc(heap, heap_allocation.len,
-+				   heap_allocation.fd_flags,
-+				   heap_allocation.heap_flags);
-+	if (fd < 0)
-+		return fd;
++static void dma_heap_unmap_dma_buf(struct dma_buf_attachment *attachment,
++			      struct sg_table *table,
++			      enum dma_data_direction direction)
++{
++	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
++}
 +
-+	heap_allocation.fd = fd;
++static vm_fault_t dma_heap_vm_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct heap_helper_buffer *buffer = vma->vm_private_data;
 +
-+	if (copy_to_user((void __user *)arg, &heap_allocation,
-+			 sizeof(heap_allocation)))
-+		return -EFAULT;
++	vmf->page = buffer->pages[vmf->pgoff];
++	get_page(vmf->page);
 +
 +	return 0;
 +}
 +
-+static long dma_heap_ioctl(struct file *file, unsigned int cmd,
-+			   unsigned long arg)
++static const struct vm_operations_struct dma_heap_vm_ops = {
++	.fault = dma_heap_vm_fault,
++};
++
++static int dma_heap_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 +{
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++
++	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
++		return -EINVAL;
++
++	vma->vm_ops = &dma_heap_vm_ops;
++	vma->vm_private_data = buffer;
++
++	return 0;
++}
++
++static void dma_heap_dma_buf_release(struct dma_buf *dmabuf)
++{
++	struct dma_heap_buffer *buffer = dmabuf->priv;
++
++	dma_heap_buffer_destroy(buffer);
++}
++
++static int dma_heap_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
++					enum dma_data_direction direction)
++{
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++	struct dma_heaps_attachment *a;
 +	int ret = 0;
 +
-+	switch (cmd) {
-+	case DMA_HEAP_IOC_ALLOC:
-+		ret = dma_heap_ioctl_allocate(file, arg);
-+		break;
-+	default:
-+		return -ENOTTY;
++	mutex_lock(&buffer->lock);
++	list_for_each_entry(a, &buffer->attachments, list) {
++		dma_sync_sg_for_cpu(a->dev, a->table.sgl, a->table.nents,
++				    direction);
 +	}
++	mutex_unlock(&buffer->lock);
 +
 +	return ret;
 +}
 +
-+static const struct file_operations dma_heap_fops = {
-+	.owner          = THIS_MODULE,
-+	.open		= dma_heap_open,
-+	.unlocked_ioctl = dma_heap_ioctl,
-+};
-+
-+/**
-+ * dma_heap_get_data() - get per-subdriver data for the heap
-+ * @heap: DMA-Heap to retrieve private data for
-+ *
-+ * Returns:
-+ * The per-subdriver data for the heap.
-+ */
-+void *dma_heap_get_data(struct dma_heap *heap)
++static int dma_heap_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
++				      enum dma_data_direction direction)
 +{
-+	return heap->priv;
-+}
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++	struct dma_heaps_attachment *a;
 +
-+struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
-+{
-+	struct dma_heap *heap;
-+	struct device *dev_ret;
-+	int ret;
-+
-+	if (!exp_info->name || !strcmp(exp_info->name, "")) {
-+		pr_err("dma_heap: Cannot add heap without a name\n");
-+		return ERR_PTR(-EINVAL);
++	mutex_lock(&buffer->lock);
++	list_for_each_entry(a, &buffer->attachments, list) {
++		dma_sync_sg_for_device(a->dev, a->table.sgl, a->table.nents,
++				       direction);
 +	}
-+
-+	if (!exp_info->ops || !exp_info->ops->allocate) {
-+		pr_err("dma_heap: Cannot add heap with invalid ops struct\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	heap = kzalloc(sizeof(*heap), GFP_KERNEL);
-+	if (!heap)
-+		return ERR_PTR(-ENOMEM);
-+
-+	heap->name = exp_info->name;
-+	heap->ops = exp_info->ops;
-+	heap->priv = exp_info->priv;
-+
-+	/* Find unused minor number */
-+	ret = xa_alloc(&dma_heap_minors, &heap->minor, heap,
-+			XA_LIMIT(0, NUM_HEAP_MINORS - 1), GFP_KERNEL);
-+	if (ret < 0) {
-+		pr_err("dma_heap: Unable to get minor number for heap\n");
-+		return ERR_PTR(ret);
-+	}
-+
-+	/* Create device */
-+	heap->heap_devt = MKDEV(MAJOR(dma_heap_devt), heap->minor);
-+
-+	cdev_init(&heap->heap_cdev, &dma_heap_fops);
-+	ret = cdev_add(&heap->heap_cdev, heap->heap_devt, 1);
-+	if (ret < 0) {
-+		pr_err("dma_heap: Unable to add char device\n");
-+		return ERR_PTR(ret);
-+	}
-+
-+	/*
-+	 * TODO: Need to filter "name" to make
-+	 * sure we don't add something crazy
-+	 */
-+	dev_ret = device_create(dma_heap_class,
-+				NULL,
-+				heap->heap_devt,
-+				NULL,
-+				heap->name);
-+	if (IS_ERR(dev_ret)) {
-+		pr_err("dma_heap: Unable to create device\n");
-+		cdev_del(&heap->heap_cdev);
-+		return (struct dma_heap *)dev_ret;
-+	}
-+
-+	return heap;
-+}
-+
-+static char *dma_heap_devnode(struct device *dev, umode_t *mode)
-+{
-+	return kasprintf(GFP_KERNEL, "dma_heap/%s", dev_name(dev));
-+}
-+
-+
-+static int dma_heap_init(void)
-+{
-+	int ret;
-+
-+	ret = alloc_chrdev_region(&dma_heap_devt, 0, NUM_HEAP_MINORS, DEVNAME);
-+	if (ret)
-+		return ret;
-+
-+	dma_heap_class = class_create(THIS_MODULE, DEVNAME);
-+	if (IS_ERR(dma_heap_class)) {
-+		unregister_chrdev_region(dma_heap_devt, NUM_HEAP_MINORS);
-+		return PTR_ERR(dma_heap_class);
-+	}
-+	dma_heap_class->devnode = dma_heap_devnode;
++	mutex_unlock(&buffer->lock);
 +
 +	return 0;
 +}
-+subsys_initcall(dma_heap_init);
-diff --git a/include/linux/dma-heap.h b/include/linux/dma-heap.h
++
++void *dma_heap_dma_buf_vmap(struct dma_buf *dmabuf)
++{
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++	void *vaddr;
++
++	mutex_lock(&buffer->lock);
++	vaddr = dma_heap_buffer_vmap_get(heap_buffer);
++	mutex_unlock(&buffer->lock);
++
++	return vaddr;
++}
++
++void dma_heap_dma_buf_vunmap(struct dma_buf *dmabuf, void *vaddr)
++{
++	struct dma_heap_buffer *heap_buffer = dmabuf->priv;
++	struct heap_helper_buffer *buffer = to_helper_buffer(heap_buffer);
++
++	mutex_lock(&buffer->lock);
++	dma_heap_buffer_vmap_put(heap_buffer);
++	mutex_unlock(&buffer->lock);
++}
++
++const struct dma_buf_ops heap_helper_ops = {
++	.map_dma_buf = dma_heap_map_dma_buf,
++	.unmap_dma_buf = dma_heap_unmap_dma_buf,
++	.mmap = dma_heap_mmap,
++	.release = dma_heap_dma_buf_release,
++	.attach = dma_heap_attach,
++	.detach = dma_heap_detatch,
++	.begin_cpu_access = dma_heap_dma_buf_begin_cpu_access,
++	.end_cpu_access = dma_heap_dma_buf_end_cpu_access,
++	.vmap = dma_heap_dma_buf_vmap,
++	.vunmap = dma_heap_dma_buf_vunmap,
++};
+diff --git a/drivers/dma-buf/heaps/heap-helpers.h b/drivers/dma-buf/heaps/heap-helpers.h
 new file mode 100644
-index 000000000000..7a1b633ac02f
+index 000000000000..a17502dc22e3
 --- /dev/null
-+++ b/include/linux/dma-heap.h
-@@ -0,0 +1,59 @@
++++ b/drivers/dma-buf/heaps/heap-helpers.h
+@@ -0,0 +1,55 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * DMABUF Heaps Allocation Infrastructure
++ * DMABUF Heaps helper code
 + *
 + * Copyright (C) 2011 Google, Inc.
 + * Copyright (C) 2019 Linaro Ltd.
 + */
 +
-+#ifndef _DMA_HEAPS_H
-+#define _DMA_HEAPS_H
++#ifndef _HEAP_HELPERS_H
++#define _HEAP_HELPERS_H
 +
-+#include <linux/cdev.h>
-+#include <linux/types.h>
-+
-+struct dma_heap;
++#include <linux/dma-heap.h>
++#include <linux/list.h>
 +
 +/**
-+ * struct dma_heap_ops - ops to operate on a given heap
-+ * @allocate:		allocate dmabuf and return fd
-+ *
-+ * allocate returns dmabuf fd  on success, -errno on error.
++ * struct dma_heap_buffer - metadata for a particular buffer
++ * @heap:		back pointer to the heap the buffer came from
++ * @dmabuf:		backing dma-buf for this buffer
++ * @size:		size of the buffer
++ * @flags:		buffer specific flags
 + */
-+struct dma_heap_ops {
-+	int (*allocate)(struct dma_heap *heap,
-+			unsigned long len,
-+			unsigned long fd_flags,
-+			unsigned long heap_flags);
++struct dma_heap_buffer {
++	struct dma_heap *heap;
++	struct dma_buf *dmabuf;
++	size_t size;
++	unsigned long flags;
 +};
 +
-+/**
-+ * struct dma_heap_export_info - information needed to export a new dmabuf heap
-+ * @name:	used for debugging/device-node name
-+ * @ops:	ops struct for this heap
-+ * @priv:	heap exporter private data
-+ *
-+ * Information needed to export a new dmabuf heap.
-+ */
-+struct dma_heap_export_info {
-+	const char *name;
-+	struct dma_heap_ops *ops;
-+	void *priv;
++struct heap_helper_buffer {
++	struct dma_heap_buffer heap_buffer;
++
++	unsigned long private_flags;
++	void *priv_virt;
++	struct mutex lock;
++	int vmap_cnt;
++	void *vaddr;
++	pgoff_t pagecount;
++	struct page **pages;
++	struct list_head attachments;
++
++	void (*free)(struct heap_helper_buffer *buffer);
++
 +};
 +
-+/**
-+ * dma_heap_get_data() - get per-heap driver data
-+ * @heap: DMA-Heap to retrieve private data for
-+ *
-+ * Returns:
-+ * The per-heap data for the heap.
-+ */
-+void *dma_heap_get_data(struct dma_heap *heap);
++static inline struct heap_helper_buffer *to_helper_buffer(
++						struct dma_heap_buffer *h)
++{
++	return container_of(h, struct heap_helper_buffer, heap_buffer);
++}
 +
-+/**
-+ * dma_heap_add - adds a heap to dmabuf heaps
-+ * @exp_info:		information needed to register this heap
-+ */
-+struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info);
++void INIT_HEAP_HELPER_BUFFER(struct heap_helper_buffer *buffer,
++				 void (*free)(struct heap_helper_buffer *));
++extern const struct dma_buf_ops heap_helper_ops;
 +
-+#endif /* _DMA_HEAPS_H */
-diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-heap.h
-new file mode 100644
-index 000000000000..c382280277d7
---- /dev/null
-+++ b/include/uapi/linux/dma-heap.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * DMABUF Heaps Userspace API
-+ *
-+ * Copyright (C) 2011 Google, Inc.
-+ * Copyright (C) 2019 Linaro Ltd.
-+ */
-+#ifndef _UAPI_LINUX_DMABUF_POOL_H
-+#define _UAPI_LINUX_DMABUF_POOL_H
-+
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
-+
-+/**
-+ * DOC: DMABUF Heaps Userspace API
-+ *
-+ */
-+
-+/* Valid FD_FLAGS are O_CLOEXEC, O_RDONLY, O_WRONLY, O_RDWR */
-+#define DMA_HEAP_VALID_FD_FLAGS (O_CLOEXEC | O_ACCMODE)
-+
-+/* Currently no heap flags */
-+#define DMA_HEAP_VALID_HEAP_FLAGS (0)
-+
-+/**
-+ * struct dma_heap_allocation_data - metadata passed from userspace for
-+ *                                      allocations
-+ * @len:		size of the allocation
-+ * @fd:			will be populated with a fd which provdes the
-+ *			handle to the allocated dma-buf
-+ * @fd_flags:		file descriptor flags used when allocating
-+ * @heap_flags:		flags passed to heap
-+ *
-+ * Provided by userspace as an argument to the ioctl
-+ */
-+struct dma_heap_allocation_data {
-+	__u64 len;
-+	__u32 fd;
-+	__u32 fd_flags;
-+	__u64 heap_flags;
-+	__u32 reserved0;
-+	__u32 reserved1;
-+};
-+
-+#define DMA_HEAP_IOC_MAGIC		'H'
-+
-+/**
-+ * DOC: DMA_HEAP_IOC_ALLOC - allocate memory from pool
-+ *
-+ * Takes an dma_heap_allocation_data struct and returns it with the fd field
-+ * populated with the dmabuf handle of the allocation.
-+ */
-+#define DMA_HEAP_IOC_ALLOC	_IOWR(DMA_HEAP_IOC_MAGIC, 0, \
-+				      struct dma_heap_allocation_data)
-+
-+#endif /* _UAPI_LINUX_DMABUF_POOL_H */
++#endif /* _HEAP_HELPERS_H */
 -- 
 2.17.1
 
