@@ -2,55 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE41E1BB39
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CB21BB3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 18:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730832AbfEMQqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 12:46:32 -0400
-Received: from mga05.intel.com ([192.55.52.43]:43141 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbfEMQqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 12:46:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 May 2019 09:46:23 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 13 May 2019 09:46:22 -0700
-Date:   Mon, 13 May 2019 09:46:22 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
-        pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        kvm@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, konrad.wilk@oracle.com,
-        jan.setjeeilers@oracle.com, liran.alon@oracle.com,
-        jwadams@google.com
-Subject: Re: [RFC KVM 19/27] kvm/isolation: initialize the KVM page table
- with core mappings
-Message-ID: <20190513164622.GC28561@linux.intel.com>
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
- <1557758315-12667-20-git-send-email-alexandre.chartre@oracle.com>
- <a9198e28-abe1-b980-597e-2d82273a2c17@intel.com>
+        id S1730894AbfEMQqk convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 May 2019 12:46:40 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:61776 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728347AbfEMQqj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 12:46:39 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16543216-1500050 
+        for multiple; Mon, 13 May 2019 17:46:32 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9198e28-abe1-b980-597e-2d82273a2c17@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        Steven Price <steven.price@arm.com>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <0b7f0b7f-3e14-f5bb-368a-08037c2a8529@arm.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+References: <20190513143244.16478-1-steven.price@arm.com>
+ <20190513143921.GP17751@phenom.ffwll.local>
+ <155775884217.2165.11223399053598674062@skylake-alporthouse-com>
+ <0b7f0b7f-3e14-f5bb-368a-08037c2a8529@arm.com>
+Message-ID: <155776599144.2165.15056323416635154840@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] drm/panfrost: Use drm_gem_dump_map_offset()
+Date:   Mon, 13 May 2019 17:46:31 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 08:50:19AM -0700, Dave Hansen wrote:
-> I seem to remember that the KVM VMENTRY/VMEXIT context is very special.
-> Interrupts (and even NMIs?) are disabled.  Would it be feasible to do
-> the switching in there so that we never even *get* interrupts in the KVM
-> context?
+Quoting Steven Price (2019-05-13 16:14:01)
+> On 13/05/2019 15:47, Chris Wilson wrote:
+> > Quoting Daniel Vetter (2019-05-13 15:39:21)
+> >> On Mon, May 13, 2019 at 03:32:44PM +0100, Steven Price wrote:
+> >>> panfrost_ioctl_mmap_bo() contains a reimplementation of
+> >>> drm_gem_dump_map_offset() but with a bug - it allows mapping imported
+> >>> objects (without going through the exporter). Fix this by switching to
+> >>> use the generic drm_gem_dump_map_offset() function instead which has the
+> >>> bonus of simplifying the code.
+> >>
+> >> gem_dumb stuff is for kms drivers, panfrost is a render driver. We're
+> >> generally trying to separate these two worlds somewhat cleanly.
+> >>
+> >> I think it'd be good to have a non-dumb version of this in the core, and
+> >> use that. Or upgrade the dumb version to be that helper for everyone (and
+> >> drop the _dumb).
+> 
+> I'm slightly confused by what you think is the best course of action here.
+> 
+> I can create a patch dropping the '_dumb' from drm_gem_dump_map_offset()
+> if that's the objection. Or do you want a helper function with two
+> callers (the 'dump' and the 'shmem' versions)?
+> 
+> > More specifically, since panfrost is using the drm_gem_shmem helper and
+> > vm_ops, it too can provide the wrapper as it is the drm_gem_shmem layer
+> > that implies that trying to mmap an imported object is an issue as that
+> > is not a universal problem.
+> mmap'ing an imported object isn't a problem as such. But rather than
+> going behind the exporter's back we would need to call dma_buf_mmap() to
+> ensure that the exporter can do whatever is necessary.
+> 
+> I could add a wrapper in drm_gem_shmem_helper, but I'm not sure what the
+> benefit of a wrapper here is?
 
-NMIs are enabled on VMX's VM-Exit.  On SVM, NMIs are blocked on exit until
-STGI is executed.
+No, my point is that the pagefaulting is being provided by drm_gem_shmem
+and that is relying on direct access to struct page, hence that is
+imposing the restriction that it can only handle its own shmem objects.
+The driver should not guess the helper, but ask the helper if it can
+perform an mmap of this object, and since this object is not an shmem
+object it will say no.
+
+Different drivers can use their HW to fault in indirect access to dmabuf
+(treating the dmabuf as a conveyance of a sglist and not struct page)
+and so do not need to different/reject foreign objects from their
+specialised mmap routines and are oblivious to them.
+-Chris
