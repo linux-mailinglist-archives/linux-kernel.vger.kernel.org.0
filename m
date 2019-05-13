@@ -2,135 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42EBF1B8AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C1E1B89E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 16:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbfEMOj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 10:39:28 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33089 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbfEMOj1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 10:39:27 -0400
-Received: by mail-ed1-f68.google.com with SMTP id n17so17937820edb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 07:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ryZaZY36BnT6HZ57j2I8+zLgD4GPxPPgFaTeITzHIls=;
-        b=ArT0hy+5fBWwK4ahOW21BLqnpZkbJDOETktpPAUm+jqGy80Szxv7N+eI1QHQPWbsZi
-         4yP6W7VIfG/chPd4gzRCxUvO6uFj3W66783FeGfyxGuF9IVnhKw9chexY4oD6GMGHCg+
-         UuAHK1omaV8hjS0KOo6MEuP0umM1qY25gg12w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=ryZaZY36BnT6HZ57j2I8+zLgD4GPxPPgFaTeITzHIls=;
-        b=H/PmFhlLmC0Xh8FXi1a+E6hMiej/quUjoEUEIBUfmi5IJ4EXqhzyxkzbvhwb+z3ASz
-         gDP/re9xVJc9dt3flapejWtkQ35w/DZiEUGRTQUIXznkr3x6sneoEMemfN9DyBZS2FYn
-         EY1tB2hZRnBvfJecpPXiF0dAAepdEMbZJfUS3PqndznuLVYqHOuvW3Mc8Bq5nulW7uxv
-         wZQoTDJBlZ3H3btVNP49U0l8BPq7P4Kt+79e471bLZvUfkUKAvTEmQJHr6H2+je4npyG
-         JPVtHUu2njOUo+E2Uqko5KEyKT6dOL2PXt1j6enrKnO9w7ChXFNOy5/N1NN5sXJkGhuH
-         GXcA==
-X-Gm-Message-State: APjAAAVIPk1slOmxaH4jPPN0Kx9UfeoJSTut1Pfi6lbzXqACKfZiuzEA
-        oewhxz0LSF8Y5fYyK0iSNeFGlA==
-X-Google-Smtp-Source: APXvYqynBjsYVMKBelwmFg3AUdbFo/m1V+E7GiuAZWbZBkyClPMwGgY3y8iX8aW8uTI5W/6a7W+mKw==
-X-Received: by 2002:aa7:c44e:: with SMTP id n14mr29429954edr.203.1557758366108;
-        Mon, 13 May 2019 07:39:26 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id h8sm297691ejf.73.2019.05.13.07.39.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 07:39:25 -0700 (PDT)
-Date:   Mon, 13 May 2019 16:39:21 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Subject: Re: [PATCH] drm/panfrost: Use drm_gem_dump_map_offset()
-Message-ID: <20190513143921.GP17751@phenom.ffwll.local>
-Mail-Followup-To: Steven Price <steven.price@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>
-References: <20190513143244.16478-1-steven.price@arm.com>
+        id S1730644AbfEMOky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 10:40:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55232 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729482AbfEMOkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 10:40:52 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D2ED30832D1;
+        Mon, 13 May 2019 14:40:50 +0000 (UTC)
+Received: from [10.36.116.17] (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA5265D722;
+        Mon, 13 May 2019 14:40:42 +0000 (UTC)
+Subject: Re: [PATCH v7 12/23] iommu/smmuv3: Get prepared for nested stage
+ support
+To:     Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org,
+        vincent.stehle@arm.com
+References: <20190408121911.24103-1-eric.auger@redhat.com>
+ <20190408121911.24103-13-eric.auger@redhat.com>
+ <66f873eb-35c0-d1e9-794e-9150dbdb13fe@arm.com>
+ <a1099cec-a8ad-6efa-b7e8-77388814f7e2@redhat.com>
+ <424fc9bc-f040-d702-5a04-0faef1125989@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <cc13eb29-576f-6816-dafd-dd5a814a6013@redhat.com>
+Date:   Mon, 13 May 2019 16:40:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513143244.16478-1-steven.price@arm.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <424fc9bc-f040-d702-5a04-0faef1125989@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 13 May 2019 14:40:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 03:32:44PM +0100, Steven Price wrote:
-> panfrost_ioctl_mmap_bo() contains a reimplementation of
-> drm_gem_dump_map_offset() but with a bug - it allows mapping imported
-> objects (without going through the exporter). Fix this by switching to
-> use the generic drm_gem_dump_map_offset() function instead which has the
-> bonus of simplifying the code.
+Hi Robin,
 
-gem_dumb stuff is for kms drivers, panfrost is a render driver. We're
-generally trying to separate these two worlds somewhat cleanly.
-
-I think it'd be good to have a non-dumb version of this in the core, and
-use that. Or upgrade the dumb version to be that helper for everyone (and
-drop the _dumb).
--Daniel
-
-> CC: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
+On 5/13/19 1:43 PM, Robin Murphy wrote:
+> On 10/05/2019 15:34, Auger Eric wrote:
+>> Hi Robin,
+>>
+>> On 5/8/19 4:24 PM, Robin Murphy wrote:
+>>> On 08/04/2019 13:19, Eric Auger wrote:
+>>>> To allow nested stage support, we need to store both
+>>>> stage 1 and stage 2 configurations (and remove the former
+>>>> union).
+>>>>
+>>>> A nested setup is characterized by both s1_cfg and s2_cfg
+>>>> set.
+>>>>
+>>>> We introduce a new ste.abort field that will be set upon
+>>>> guest stage1 configuration passing. If s1_cfg is NULL and
+>>>> ste.abort is set, traffic can't pass. If ste.abort is not set,
+>>>> S1 is bypassed.
+>>>>
+>>>> arm_smmu_write_strtab_ent() is modified to write both stage
+>>>> fields in the STE and deal with the abort field.
+>>>>
+>>>> In nested mode, only stage 2 is "finalized" as the host does
+>>>> not own/configure the stage 1 context descriptor, guest does.
+>>>>
+>>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>>
+>>>> ---
+>>>>
+>>>> v4 -> v5:
+>>>> - reset ste.abort on detach
+>>>>
+>>>> v3 -> v4:
+>>>> - s1_cfg.nested_abort and nested_bypass removed.
+>>>> - s/ste.nested/ste.abort
+>>>> - arm_smmu_write_strtab_ent modifications with introduction
+>>>>     of local abort, bypass and translate local variables
+>>>> - comment updated
+>>>>
+>>>> v1 -> v2:
+>>>> - invalidate the STE before moving from a live STE config to another
+>>>> - add the nested_abort and nested_bypass fields
+>>>> ---
+>>>>    drivers/iommu/arm-smmu-v3.c | 35 ++++++++++++++++++++---------------
+>>>>    1 file changed, 20 insertions(+), 15 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>>>> index 21d027695181..e22e944ffc05 100644
+>>>> --- a/drivers/iommu/arm-smmu-v3.c
+>>>> +++ b/drivers/iommu/arm-smmu-v3.c
+>>>> @@ -211,6 +211,7 @@
+>>>>    #define STRTAB_STE_0_CFG_BYPASS        4
+>>>>    #define STRTAB_STE_0_CFG_S1_TRANS    5
+>>>>    #define STRTAB_STE_0_CFG_S2_TRANS    6
+>>>> +#define STRTAB_STE_0_CFG_NESTED        7
+>>>>      #define STRTAB_STE_0_S1FMT        GENMASK_ULL(5, 4)
+>>>>    #define STRTAB_STE_0_S1FMT_LINEAR    0
+>>>> @@ -514,6 +515,7 @@ struct arm_smmu_strtab_ent {
+>>>>         * configured according to the domain type.
+>>>>         */
+>>>>        bool                assigned;
+>>>> +    bool                abort;
+>>>>        struct arm_smmu_s1_cfg        *s1_cfg;
+>>>>        struct arm_smmu_s2_cfg        *s2_cfg;
+>>>>    };
+>>>> @@ -628,10 +630,8 @@ struct arm_smmu_domain {
+>>>>        bool                non_strict;
+>>>>          enum arm_smmu_domain_stage    stage;
+>>>> -    union {
+>>>> -        struct arm_smmu_s1_cfg    s1_cfg;
+>>>> -        struct arm_smmu_s2_cfg    s2_cfg;
+>>>> -    };
+>>>> +    struct arm_smmu_s1_cfg    s1_cfg;
+>>>> +    struct arm_smmu_s2_cfg    s2_cfg;
+>>>>          struct iommu_domain        domain;
+>>>>    @@ -1108,12 +1108,13 @@ static void arm_smmu_write_strtab_ent(struct
+>>>> arm_smmu_device *smmu, u32 sid,
+>>>>                          __le64 *dst, struct arm_smmu_strtab_ent *ste)
+>>>>    {
+>>>>        /*
+>>>> -     * This is hideously complicated, but we only really care about
+>>>> -     * three cases at the moment:
+>>>> +     * We care about the following transitions:
+>>>>         *
+>>>>         * 1. Invalid (all zero) -> bypass/fault (init)
+>>>> -     * 2. Bypass/fault -> translation/bypass (attach)
+>>>> -     * 3. Translation/bypass -> bypass/fault (detach)
+>>>> +     * 2. Bypass/fault -> single stage translation/bypass (attach)
+>>>> +     * 3. single stage Translation/bypass -> bypass/fault (detach)
+>>>> +     * 4. S2 -> S1 + S2 (attach_pasid_table)
+>>>> +     * 5. S1 + S2 -> S2 (detach_pasid_table)
+>>>>         *
+>>>>         * Given that we can't update the STE atomically and the SMMU
+>>>>         * doesn't read the thing in a defined order, that leaves us
+>>>> @@ -1124,7 +1125,7 @@ static void arm_smmu_write_strtab_ent(struct
+>>>> arm_smmu_device *smmu, u32 sid,
+>>>>         * 3. Update Config, sync
+>>>>         */
+>>>>        u64 val = le64_to_cpu(dst[0]);
+>>>> -    bool ste_live = false;
+>>>> +    bool abort, bypass, translate, ste_live = false;
+>>>>        struct arm_smmu_cmdq_ent prefetch_cmd = {
+>>>>            .opcode        = CMDQ_OP_PREFETCH_CFG,
+>>>>            .prefetch    = {
+>>>> @@ -1138,11 +1139,11 @@ static void arm_smmu_write_strtab_ent(struct
+>>>> arm_smmu_device *smmu, u32 sid,
+>>>>                break;
+>>>>            case STRTAB_STE_0_CFG_S1_TRANS:
+>>>>            case STRTAB_STE_0_CFG_S2_TRANS:
+>>>> +        case STRTAB_STE_0_CFG_NESTED:
+>>>>                ste_live = true;
+>>>>                break;
+>>>>            case STRTAB_STE_0_CFG_ABORT:
+>>>> -            if (disable_bypass)
+>>>> -                break;
+>>>> +            break;
+>>>>            default:
+>>>>                BUG(); /* STE corruption */
+>>>>            }
+>>>> @@ -1152,8 +1153,13 @@ static void arm_smmu_write_strtab_ent(struct
+>>>> arm_smmu_device *smmu, u32 sid,
+>>>>        val = STRTAB_STE_0_V;
+>>>>          /* Bypass/fault */
+>>>> -    if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
+>>>> -        if (!ste->assigned && disable_bypass)
+>>>> +
+>>>> +    abort = (!ste->assigned && disable_bypass) || ste->abort;
+>>>> +    translate = ste->s1_cfg || ste->s2_cfg;
+>>>> +    bypass = !abort && !translate;
+>>>> +
+>>>> +    if (abort || bypass) {
+>>>> +        if (abort)
+>>>>                val |= FIELD_PREP(STRTAB_STE_0_CFG,
+>>>> STRTAB_STE_0_CFG_ABORT);
+>>>>            else
+>>>>                val |= FIELD_PREP(STRTAB_STE_0_CFG,
+>>>> STRTAB_STE_0_CFG_BYPASS);
+>>>> @@ -1172,7 +1178,6 @@ static void arm_smmu_write_strtab_ent(struct
+>>>> arm_smmu_device *smmu, u32 sid,
+>>>>        }
+>>>>          if (ste->s1_cfg) {
+>>>> -        BUG_ON(ste_live);
+>>>
+>>> Hmm, I'm a little uneasy about just removing these checks altogether, as
+>>> there are still cases where rewriting a live entry is bogus, that we'd
+>>> really like to keep catching. Is the problem that it's hard to tell when
+>>> you're 'rewriting' the S2 config of a nested entry with the same thing
+>>> on attaching/detaching its S1 context?
+>> No, I restored the original checks in !nested mode and added a new check
+>> to make sure we never update a live S1 in nested mode. Only S2 can be
+>> live.
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 94b0819ad50b..d048250ad8ab 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -254,26 +254,14 @@ static int panfrost_ioctl_mmap_bo(struct drm_device *dev, void *data,
->  		      struct drm_file *file_priv)
->  {
->  	struct drm_panfrost_mmap_bo *args = data;
-> -	struct drm_gem_object *gem_obj;
-> -	int ret;
->  
->  	if (args->flags != 0) {
->  		DRM_INFO("unknown mmap_bo flags: %d\n", args->flags);
->  		return -EINVAL;
->  	}
->  
-> -	gem_obj = drm_gem_object_lookup(file_priv, args->handle);
-> -	if (!gem_obj) {
-> -		DRM_DEBUG("Failed to look up GEM BO %d\n", args->handle);
-> -		return -ENOENT;
-> -	}
-> -
-> -	ret = drm_gem_create_mmap_offset(gem_obj);
-> -	if (ret == 0)
-> -		args->offset = drm_vma_node_offset_addr(&gem_obj->vma_node);
-> -	drm_gem_object_put_unlocked(gem_obj);
-> -
-> -	return ret;
-> +	return drm_gem_dumb_map_offset(file_priv, dev, args->handle,
-> +				       &args->offset);
->  }
->  
->  static int panfrost_ioctl_get_bo_offset(struct drm_device *dev, void *data,
-> -- 
-> 2.20.1
-> 
+> Right, either way it's fairly easy to enforce "!(cfg->s1 && ste->s1)",
+> but what I'm really concerned about is that fact where Stream IDs (or
+> possibly PASIDS) get messed up and we end up silently writing a nested
+> config over an STE which happens to already have an S2 configuration for
+> some other domain (or vice versa).
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> 
+> I guess it might suffice to verify that the VTTBRs match for S2<->nested
+> transitions, what do you reckon?
+Yes I can test the STE.S2TTB values which should are identical during
+such transitions.
+
+Thanks
+
+Eric
+> 
+> Robin.
