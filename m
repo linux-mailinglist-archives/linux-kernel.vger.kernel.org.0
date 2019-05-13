@@ -2,138 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F1F1B49B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 877131B498
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2019 13:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbfEMLPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 07:15:01 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42927 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729301AbfEMLO7 (ORCPT
+        id S1729295AbfEMLOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 07:14:48 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46481 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728116AbfEMLOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 07:14:59 -0400
-Received: by mail-qt1-f194.google.com with SMTP id j53so14122647qta.9
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:14:58 -0700 (PDT)
+        Mon, 13 May 2019 07:14:47 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f37so16977176edb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 04:14:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7ZfFsSLpKN7HyaM6v93FCUf+4/Rm0naSo5dp2W2IoAs=;
-        b=P7ipmsq9G0+9OQ54tSFpZgx4uejZvqKec5RS4a3yX+3drQ7fHtnDqSGIIgcnEEtqk7
-         JkP2QLEsEoGnD0hS/v+0AtmraeSEhBrD6jM+/soz3CKbv0M54wMXOYJGVOld0lzQuNdh
-         q0lc45XDBoD1Pt+YWPhZ7I4v05Ywg6KPt8S5Q=
+        bh=UWmGYQkX5ziDlQEAMnWWXiWNixr8ETc6toa2bNjqovo=;
+        b=p9pxyutt3nteInevAPKvPqzooCTEiAwiquO+LcBVrdiBLukNvM4nG5ZQTW8QtcyVsT
+         jZu83ZbINTP8vZ1TSPWXxh5LjStyLFesGIRHR0+bfcipRebTmcyfmwuuq1535mJYI57o
+         BQVkIel/2raqaE1U4wX0nqm+mfOXENzHoVhjZwIBa6g6xt0zCpSNOGuEVqYYPsX13Dpc
+         KCwgP5qExQ7UQjKJV1L05mlKOZtObyxN6jEO1eU4V3cqqL+R2Mf19P3nkYLaz7Mq8NKd
+         LzY9b+fdOOZ5sgFqb0W4J0L+kJbV8R09Q3kjrTXFIrCmycJoSB8gpMN17V5612EdGpaR
+         /0GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7ZfFsSLpKN7HyaM6v93FCUf+4/Rm0naSo5dp2W2IoAs=;
-        b=RRfW6KS1Bn6yQsorVLuzU75nPbFvA4aaShIzEzYgHw01vglFzdaVSf+ihPGtyiwpp1
-         fvWjvn14CbiiCdUkDkmMNuSVQgzKy5YIpXfAXWAMXvfp83DFhX2f7H3bQnSbhxGcDC9m
-         7EzB0EosB0WxWKgBGZk7zxYxZKE82uHIGGnH+ocYDeIfSUHmk7VqXgLsiVYBNxuDzDDi
-         Mc3nuhpPcXkU6ngLf3KPdITsHUzue7SF0Cq3l426PmfERQcfuMHaOV2K/D5g8fDkveVl
-         P2ZfkGCZxSwVgOhwWaSSI1dMFT4ZxlBSKc0rtVh0FC7M1hy+B5QOU2/0FtuuQsrxCTmj
-         0JVg==
-X-Gm-Message-State: APjAAAXbc3+Lm+OvKDGLPjVLnZH/j8QaSXPLg2N0MZc8Ps/26Cr7D/a6
-        Bsg3NVB1go989cWDY3yxZtp4Hhlg4TQBe+dVlTWDHA==
-X-Google-Smtp-Source: APXvYqyBfY131U29dBbU/X4gXO3dZg+CiqpFSNzlD1lAHQ8Z1Q1egpybgdc6YHf9RPbXTaQ8EFaZSNZK9NLwjWHnaJY=
-X-Received: by 2002:ac8:22d3:: with SMTP id g19mr1436241qta.236.1557746098383;
- Mon, 13 May 2019 04:14:58 -0700 (PDT)
+        bh=UWmGYQkX5ziDlQEAMnWWXiWNixr8ETc6toa2bNjqovo=;
+        b=cEI3YUVTOjRvBhFpGe9OivbEY28dSK8cMOBnvCY8ywX8z0p+IjoTHJwBoWb2uIbOqN
+         0PZe6tS46Gb4x7SykEhei/NsTObuBzhy+K4nB1lPT6ODPhkazNMnRjS46DtORPP++0pB
+         hxA6oonxjtWaxkp4Apz8vZPmi6Xon8zUX0YDKQTYnrjom91YuoAAgLZvt2IXSqv22lkD
+         qZWnfCHkdhJlhvWyBvtXTJMhVb2qLl8l2gdWqxDIg8zwWHWa27TfWmVMtNNZIbfpAWaG
+         vuTHDZp/ZxTlXulUiG1hqhtNN4+LrirtwUVnCeIpKeYo4QfP9guSA+3FzGHLPL2ImKax
+         7kJg==
+X-Gm-Message-State: APjAAAWJV2EOyHRwlVOItFt6WSDbFc42xsC1cfPlSoNn83kne+lDOKj2
+        K1JxCxj7AxxmgeRhB5ChmNaqieK1MOcPVNnTZ8w=
+X-Google-Smtp-Source: APXvYqxehO6qr0CVLbZ/ewnxhNOUYns80zBSSRxZ/Oe/UAEL7fk2757r5dLBz6+hh8X23yEasknD3OzQVXJ3eUtlp7s=
+X-Received: by 2002:a50:9441:: with SMTP id q1mr28451354eda.101.1557746086425;
+ Mon, 13 May 2019 04:14:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190513003819.356-1-hsinyi@chromium.org> <20190513003819.356-2-hsinyi@chromium.org>
- <20190513085853.GB9271@rapoport-lnx>
-In-Reply-To: <20190513085853.GB9271@rapoport-lnx>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Mon, 13 May 2019 19:14:32 +0800
-Message-ID: <CAJMQK-hKrU2J0_uGe3eO_JTNwM=HRkXbDx2u45izcdD7wqwGeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] amr64: map FDT as RW for early_init_dt_scan()
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>
+References: <1557741724-6859-1-git-send-email-viorel.suman@nxp.com> <1557741724-6859-3-git-send-email-viorel.suman@nxp.com>
+In-Reply-To: <1557741724-6859-3-git-send-email-viorel.suman@nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Mon, 13 May 2019 14:14:35 +0300
+Message-ID: <CAEnQRZDqaXPaE_RiSRmKfqOkwORp5zPoigG2sDAt52zwVWwGow@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH V2 2/2] ASoC: ak4458: add return value for ak4458_probe
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Colin Ian King <colin.king@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Viorel Suman <viorel.suman@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 4:59 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-
+On Mon, May 13, 2019 at 1:05 PM Viorel Suman <viorel.suman@nxp.com> wrote:
 >
-> This makes the fdt mapped without the call to meblock_reserve(fdt) which
-> makes the fdt memory available for memblock allocations.
+> AK4458 is probed successfully even if AK4458 is not present - this
+> is caused by probe function returning no error on i2c access failure.
+> Return an error on probe if i2c access has failed.
 >
-> Chances that is will be actually allocated are small, but you know, things
-> happen.
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+> ---
+>  sound/soc/codecs/ak4458.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 >
-> IMHO, instead of calling directly __fixmap_remap_fdt() it would be better
-> to add pgprot parameter to fixmap_remap_fdt(). Then here and in kaslr.c it
-> can be called with PAGE_KERNEL and below with PAGE_KERNEL_RO.
+> diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
+> index baf990a..7156215 100644
+> --- a/sound/soc/codecs/ak4458.c
+> +++ b/sound/soc/codecs/ak4458.c
+> @@ -539,9 +539,10 @@ static void ak4458_power_on(struct ak4458_priv *ak4458)
+>         }
+>  }
 >
-> There is no problem to call memblock_reserve() for the same area twice,
-> it's essentially a NOP.
+> -static void ak4458_init(struct snd_soc_component *component)
+> +static int ak4458_init(struct snd_soc_component *component)
+>  {
+>         struct ak4458_priv *ak4458 = snd_soc_component_get_drvdata(component);
+> +       int ret;
 >
-Thanks for the suggestion. Will update fixmap_remap_fdt() in next patch.
-
-However, I tested on some arm64 platform, if we also call
-memblock_reserve() in kaslr.c, would cause warning[1] when
-memblock_reserve() is called again in setup_machine_fdt(). The warning
-comes from https://elixir.bootlin.com/linux/latest/source/mm/memblock.c#L601
-```
-if (type->regions[0].size == 0) {
-  WARN_ON(type->cnt != 1 || type->total_size);
-  ...
-```
-
-Call memblock_reserve() multiple times after setup_machine_fdt()
-doesn't have such warning though.
-
-I didn't trace the real reason causing this. But in this case, maybe
-don't call memblock_reserve() in kaslr?
-
-[1]
-[    0.000000] WARNING: CPU: 0 PID: 0 at
-/mnt/host/source/src/third_party/kernel/v4.19/mm/memblock.c:583
-memblock_add_range+0x1bc/0x1c8
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.38 #125
-[    0.000000] pstate: 600001c5 (nZCv dAIF -PAN -UAO)
-[    0.000000] pc : memblock_add_range+0x1bc/0x1c8
-[    0.000000] lr : memblock_add_range+0x30/0x1c8
-[    0.000000] sp : ffffff9b5e203e80
-[    0.000000] x29: ffffff9b5e203ed0 x28: 0000000040959324
-[    0.000000] x27: 0000000040080000 x26: 0000000000080000
-[    0.000000] x25: 0000000080127e4b x24: 0000000000000000
-[    0.000000] x23: 0000001b55000000 x22: 000000000001152b
-[    0.000000] x21: 000000005f800000 x20: 0000000000000000
-[    0.000000] x19: ffffff9b5e24bf00 x18: 00000000ffffffb8
-[    0.000000] x17: 000000000000003c x16: ffffffbefea00000
-[    0.000000] x15: ffffffbefea00000 x14: ffffff9b5e3c17d8
-[    0.000000] x13: 00e8000000000713 x12: 0000000000000000
-[    0.000000] x11: ffffffbefea00000 x10: 00e800005f800710
-[    0.000000] x9 : 000000000001152b x8 : ffffff9b5e365690
-[    0.000000] x7 : 6f20646573616228 x6 : 0000000000000002
-[    0.000000] x5 : 0000000000000000 x4 : 0000000000000000
-[    0.000000] x3 : 0000000000200000 x2 : 000000000001152b
-[    0.000000] x1 : 000000005f800000 x0 : ffffff9b5e24bf00
-[    0.000000] Call trace:
-[    0.000000]  memblock_add_range+0x1bc/0x1c8
-[    0.000000]  memblock_reserve+0x60/0xac
-[    0.000000]  fixmap_remap_fdt+0x4c/0x78
-[    0.000000]  setup_machine_fdt+0x64/0xfc
-[    0.000000]  setup_arch+0x68/0x1e0
-[    0.000000]  start_kernel+0x68/0x380
+>         /* External Mute ON */
+>         if (ak4458->mute_gpiod)
+> @@ -549,21 +550,21 @@ static void ak4458_init(struct snd_soc_component *component)
+>
+>         ak4458_power_on(ak4458);
+>
+> -       snd_soc_component_update_bits(component, AK4458_00_CONTROL1,
+> +       ret = snd_soc_component_update_bits(component, AK4458_00_CONTROL1,
+>                             0x80, 0x80);   /* ACKS bit = 1; 10000000 */
+> +       if (ret < 0)
+> +               return ret;
+>
+> -       ak4458_rstn_control(component, 1);
+> +       return ak4458_rstn_control(component, 1);
+>  }
+>
+>  static int ak4458_probe(struct snd_soc_component *component)
+>  {
+>         struct ak4458_priv *ak4458 = snd_soc_component_get_drvdata(component);
+>
+> -       ak4458_init(component);
+> -
+>         ak4458->fs = 48000;
+>
+> -       return 0;
+> +       return ak4458_init(component);
+>  }
+>
+>  static void ak4458_remove(struct snd_soc_component *component)
+> --
+> 2.7.4
+>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
