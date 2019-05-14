@@ -2,87 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48EAD1CA4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 273B51CA51
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfENO1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:27:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55693 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfENO1F (ORCPT
+        id S1726571AbfENO1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:27:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37292 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfENO12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:27:05 -0400
-Received: by mail-wm1-f68.google.com with SMTP id x64so3099698wmb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=u0eVRocZPCT0aug7aBTiFNphdt5giEcrh3D7mF/GVRU=;
-        b=gV1IFuQpOmQFw5EBRP9Mnk6+S0wuKsb+R8Y/h6VC4FFIzEYHChCYPhCQ2ImKUDE3lS
-         h2bCYZSdaC7lFj4tklHmk3M2mnYJkajT4VXzI+vSivcxbPbSbV7eVfCGAnHED5lvEHl4
-         TJxTDL0E0jb+NcRHCqwHDa0g64xNzRVbnx/xs5n76zII97qMeEkIe6atSMur/ZYpQLBK
-         Lg0wtHBRG28V5vcRl0W+pbtrysUSxHBvjuxokNyOhLc9cZYHl7WrzA2GiS6cQhUM1vVC
-         lghBEZaCZyN+uMcDURK3PKVz0locfVwKYVUEnVqF2UfGfcx6S6EJ4Hc8AyNia93C2DPN
-         epsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=u0eVRocZPCT0aug7aBTiFNphdt5giEcrh3D7mF/GVRU=;
-        b=Xu7yytz1QCQCErZe0NoYSHKTuGsDadAuzY8mw4ct68spYrkIIpeOVdvyjXUW3g87Gw
-         /HzykG5ZPgjVzcNoLwh64unbi3FBKeaZN3NyPo2sCtVGXMmPo+RtF3B0gziiMxD43hn4
-         O5C3Kh90jyCOzsQNVF88zjkZXMtodPZek4jF0yCxvS+zw3W75ckJjQeYHukljI2MTDTO
-         h7D6JlZSjSi+KT861Swh1rVSp7DGgvxcwkiYFmRbcCMPP/6CJKdTQp31Y8RnovVbGBn8
-         glVkHol2j4sNzBvh4zo6nR6DUL7VLevQyyXSPySvtGnd9PZc/Czq5vLyF/WuyBqgdcFs
-         MxZQ==
-X-Gm-Message-State: APjAAAUbPB6GFTrfriG3B5X1MAP2cggJkhAUimxb+jnbcxTI7ytIe4DP
-        lJSq27A6jvcCtaLJ5sfmQ/SrzQ==
-X-Google-Smtp-Source: APXvYqyra4gqxcH2sf1ZTeW4iRYuoO9yamYWDI8dEYSE9FcH+wiZmXCr9laJzB7zMx9u0Rv8eezA3g==
-X-Received: by 2002:a7b:c301:: with SMTP id k1mr19118868wmj.37.1557844023781;
-        Tue, 14 May 2019 07:27:03 -0700 (PDT)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id h15sm12343642wru.52.2019.05.14.07.27.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 07:27:03 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] arm64: dts: meson: g12a: enable hdmi_tx sound dai provider
-Date:   Tue, 14 May 2019 16:26:49 +0200
-Message-Id: <20190514142649.1127-9-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190514142649.1127-1-jbrunet@baylibre.com>
-References: <20190514142649.1127-1-jbrunet@baylibre.com>
+        Tue, 14 May 2019 10:27:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eNvhEe3BMTRaZ1fLMuDOKnrgYFbmEX60UqHNIxHZPnQ=; b=1laPt4YcsSByydA6OAeBTkdoPG
+        GEisQedgcPbnTOnE5ITOdPgGqPKli8Fm3YkUxv1tV8/brlnLK2OkiCxHxD9S6n74I227kkS5b4KOS
+        29QCup7DP9WooAOpTON1XnmqTFEazMGg/3uaC5Bi00d2r4I2G9XX9yNqSCL85MdCWGggxMFleqlge
+        mU/pJXFircxoc2K4v3FLEXZyCWpxNLlx/fHs/NrNOYBvG+naStYkxQes3ysF+2hE1KPcQ7jLzJKQh
+        8nJiJvZS4WAV3JAYWzDN1dVSR10p7E51BUWAMoR725GoJ4m95xyaUoay2f9G7322GHH+96j1vLU8W
+        tNUbutLQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQYOS-0008LC-RO; Tue, 14 May 2019 14:27:01 +0000
+Subject: Re: [RFC PATCH v3 11/21] x86/watchdog/hardlockup: Add an HPET-based
+ hardlockup detector
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>
+Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+References: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1557842534-4266-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <62576937-50fc-fded-784b-d691e455dfc1@infradead.org>
+Date:   Tue, 14 May 2019 07:26:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1557842534-4266-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment the sysnopsys hdmi i2s driver provides a single playback
-DAI. Add the corresponding sound-dai-cell to the hdmi device node.
+On 5/14/19 7:02 AM, Ricardo Neri wrote:
+> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+> index 15d0fbe27872..376a5db81aec 100644
+> --- a/arch/x86/Kconfig.debug
+> +++ b/arch/x86/Kconfig.debug
+> @@ -169,6 +169,17 @@ config IOMMU_LEAK
+>  config HAVE_MMIOTRACE_SUPPORT
+>  	def_bool y
+>  
+> +config X86_HARDLOCKUP_DETECTOR_HPET
+> +	bool "Use HPET Timer for Hard Lockup Detection"
+> +	select SOFTLOCKUP_DETECTOR
+> +	select HARDLOCKUP_DETECTOR
+> +	select HARDLOCKUP_DETECTOR_CORE
+> +	depends on HPET_TIMER && HPET && X86_64
+> +	help
+> +	  Say y to enable a hardlockup detector that is driven by an High-
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+	                                                       by a
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index d6c6408281e9..4fd1ed4d434b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -158,6 +158,7 @@
- 				clock-names = "isfr", "iahb", "venci";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-+				#sound-dai-cells = <0>;
- 				status = "disabled";
- 
- 				/* VPU VENC Input */
+> +	  Precision Event Timer. This option is helpful to not use counters
+> +	  from the Performance Monitoring Unit to drive the detector.
+> +
+>  config X86_DECODER_SELFTEST
+>  	bool "x86 instruction decoder selftest"
+>  	depends on DEBUG_KERNEL && KPROBES
+
+
 -- 
-2.20.1
-
+~Randy
