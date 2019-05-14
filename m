@@ -2,99 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF721C9A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C50E1C9C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfENN4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:56:25 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38619 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfENN4X (ORCPT
+        id S1726254AbfENN6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:58:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38011 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfENN6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:56:23 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f2so2928642wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:56:21 -0700 (PDT)
+        Tue, 14 May 2019 09:58:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 14so14422617ljj.5;
+        Tue, 14 May 2019 06:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=86654d179AmYQd0W155rp/5r8oXi5m1uO9ZO93VNkFk=;
-        b=0/8LCAaGJNktegVp5hvXEJKrCJyGBEztPbgPxBjNprn70liAooiXylCnf9NmSqffJu
-         6FdNYMu0hUEVzlblwjLVxsyZ8sqmvPUCzZw++tMu1JOPxtF4KZKCFxkf0vly9g9zOMmA
-         muv/ksRVk1QZN3Oq8Q7wcRclQveCNtgDCG2ImYKhGbPoICiZBtNnXzsVLpyeoVTKYAIC
-         v/j5fNPYfuosfBhVnuYHWpR/K5uzQehrOSM97xnq4XlAnUZpZbKxAqOn/gB6Px/arZV0
-         eHECJ4cl9S8YY0QpVdpchL31zC9aGTuWDlThXekNtMU9yvVq9wXfZTdoqVLpz1bkp97L
-         tzLg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=TXkbr8S0quedHhwnVy9a2UzBuQwq+DVg7EOJ79R7nvk=;
+        b=dVwhDA/CsdVyGzQz4Zq5GyUImMVOPlzK7q92WaBv7aVR/QNOln6a9vHks5IQjJ21Xv
+         lqqj2A6TR2AD7nzeoZGHQw9U3U5x16XjiHEEig6Z/452AC8sMkgC/a05J/zbcBMKhokv
+         JFXrLfRjEZHm0QsChfdmptxwabFfnLT9X5Whod9F5xmQMwa/EpgUO7rF/emXZYUDuhb0
+         C5NcuAyuoyRYabw+YyRFGapqrOvp5n1PD//7/kUIGLdzhSM1QD73RBiBCQFG27o1SAzR
+         Am+gEbfJ3zA+PF2iPD5lC70v0VAYrp6hx4lBC2I647hu9NLKvwU2yVFg2iYqhRv4hNqI
+         vH1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=86654d179AmYQd0W155rp/5r8oXi5m1uO9ZO93VNkFk=;
-        b=WkGJYV7WcJZOmfkRdSBeI20E70waUi3c4v6PwHbJppr0KjEs9PS9bjLNlOfUWlSMoM
-         82+wX11H/Du1BN+Grz2qkVtQIBK9Ce4F4R4rgEkRo3LKs7HfFdYFaLu+OwpYfrqGM6q5
-         A6Xhnri0JqXW43HVRiJWsQzJqy6eSuqJ7ZDYniUi8P1CwLywirAr40VvI+6BhZrRz566
-         KhbO5qAuskDlNh20oZtUjNygpcR1OtM6IZS+5TTYsrgDFw9deWV0LvedgNYqjVixct0+
-         cWic9FYhs7ygfJi0JDW/UTWfI0FHkJs/It/u7vBYwnGpXKydTo5B6oBiqeHL4EdB+jJu
-         Vfcw==
-X-Gm-Message-State: APjAAAVPQhmijyLwlqAKRQq5VaZAjWma3BLJm74dyGlZHRrHpKh7k87y
-        h1HOchrbb4ADueXKdxTEJ2Y6vQ==
-X-Google-Smtp-Source: APXvYqwb3bU1jO/QwSVdfeHhtnBJGUvDAKBhKSKwgt+bw0bfGUlasyzQ02SmuLaRek4uISPMHzwBng==
-X-Received: by 2002:a7b:ce83:: with SMTP id q3mr18652009wmj.32.1557842181297;
-        Tue, 14 May 2019 06:56:21 -0700 (PDT)
-Received: from mjourdan-pc.numericable.fr (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
-        by smtp.gmail.com with ESMTPSA id d72sm1375764wmd.12.2019.05.14.06.56.20
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=TXkbr8S0quedHhwnVy9a2UzBuQwq+DVg7EOJ79R7nvk=;
+        b=WmBEeCDRcxaFtvC7lZ4AzNlO2m6jfJiUR5bweo8+GyWPuHjvOJbZpPGw+8T3VQ/0mn
+         2herlUayYM1Xnxw88eMq+NE+ZkkECnVKeE2RaTTmUHzyK0VjjvE0rPlVktcx8L/T8H75
+         LZQwlN58Czp5QRdW3C998iPlrn0G7FV8VtkFSV+viGqZ4kkpvq8Nej2tzI34XJpdIkTK
+         zvWdH8DiX//HNwv1Cf0MMwJTKL6keKnyG3Wf/jRvbTsesQqmcnP4NdzADWHEsj5I33tj
+         3dl1MnJ3gSA4B7kEKePS4s14WApzyVjnioAlmH6pyUxAq09ibjietifq1hIlCgSuXjG7
+         fmAQ==
+X-Gm-Message-State: APjAAAWUI9BUSe0IpI7Wd50+hxSvRKg2+HOWQ7IJwa8hxCo6w6BdmHCr
+        WFnIx757GbjV4aB3rpgssqM=
+X-Google-Smtp-Source: APXvYqx0S1pl0aXedFJoDeY9xEINeBSgt0TzaWXi3c4ODg1MdUP8vfhIX2JBNMO1WKWZxmxyQf118Q==
+X-Received: by 2002:a2e:568b:: with SMTP id k11mr17057734lje.124.1557842330726;
+        Tue, 14 May 2019 06:58:50 -0700 (PDT)
+Received: from [10.17.182.120] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id y27sm1282033ljd.14.2019.05.14.06.58.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 06:56:20 -0700 (PDT)
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH v6 4/4] MAINTAINERS: Add meson video decoder
-Date:   Tue, 14 May 2019 15:56:12 +0200
-Message-Id: <20190514135612.30822-5-mjourdan@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190514135612.30822-1-mjourdan@baylibre.com>
-References: <20190514135612.30822-1-mjourdan@baylibre.com>
+        Tue, 14 May 2019 06:58:49 -0700 (PDT)
+Subject: Re: [RFC PATCH] ARM: mach-shmobile: Parse DT to get ARCH timer memory
+ region
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Julien Grall <julien.grall@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+References: <1557505377-28577-1-git-send-email-olekstysh@gmail.com>
+ <e64d7f2f-209e-cf7d-6ddc-88d338b1c010@arm.com>
+ <cc9c5c48-2bc1-be49-4188-8b26dbf7ecc1@gmail.com>
+ <CAMuHMdWODzaHSeXyB5CgGmq3ZumFGVZYOUT1v1_Ps-RguPLseA@mail.gmail.com>
+ <25f5f60e-46ff-18af-2a65-1e3f6719ef49@gmail.com>
+ <CAMuHMdWkEU7x_Lzk6NUCxEdZRx_xTBFzkETwShZ322aYL5=bLg@mail.gmail.com>
+From:   Oleksandr <olekstysh@gmail.com>
+Message-ID: <3e786103-69a4-2867-fc04-ccb4512bf221@gmail.com>
+Date:   Tue, 14 May 2019 16:58:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWkEU7x_Lzk6NUCxEdZRx_xTBFzkETwShZ322aYL5=bLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an entry for the meson video decoder for amlogic SoCs.
 
-Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 14.05.19 10:16, Geert Uytterhoeven wrote:
+> Hi Oleksandr,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 878588cfb453..87c1e469ed63 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10057,6 +10057,14 @@ S:	Maintained
- F:	drivers/mtd/nand/raw/meson_*
- F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
- 
-+MESON VIDEO DECODER DRIVER FOR AMLOGIC SOCS
-+M:	Maxime Jourdan <mjourdan@baylibre.com>
-+L:	linux-media@lists.freedesktop.org
-+L:	linux-amlogic@lists.infradead.org
-+S:	Supported
-+F:	drivers/media/platform/meson/vdec/
-+T:	git git://linuxtv.org/media_tree.git
-+
- METHODE UDPU SUPPORT
- M:	Vladimir Vid <vladimir.vid@sartura.hr>
- S:	Maintained
+Hi Geert
+
+
+>
+> On Mon, May 13, 2019 at 6:00 PM Oleksandr <olekstysh@gmail.com> wrote:
+>> On 13.05.19 18:13, Geert Uytterhoeven wrote:
+>>>> So, if the DT bindings for the counter module is not an option (if I
+>>>> correctly understood a discussion pointed by Geert in another letter),
+>>>> we should probably prevent all timer code here from being executed if
+>>>> PSCI is in use.
+>>>> What I mean is to return to [2], but with the modification to use
+>>>> psci_smp_available() helper as an indicator of PSCI usage.
+>>>>
+>>>> Julien, Geert, what do you think?
+>>> Yes, that sounds good to me.
+>>>
+>>> Note that psci_smp_available() seems to return false if CONFIG_SMP=n,
+>>> so checking for that is not sufficient to avoid crashes when running a
+>>> uniprocessor kernel on a PSCI-enabled system.
+>> Indeed, you are right.
+>>
+>>
+>> Nothing than just check for psci_ops.cpu_on == NULL directly comes to
+>> mind...
+>>
+>> Have already checked with CONFIG_SMP=n, it works.
+>>
+>> Sounds ok?
+> Fine for me, thanks!
+
+Great, I will send new version.
+
+
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
 -- 
-2.21.0
+Regards,
+
+Oleksandr Tyshchenko
 
