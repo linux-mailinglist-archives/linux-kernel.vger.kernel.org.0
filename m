@@ -2,104 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 622341C4CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 633211C4EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfENI1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:27:55 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63734 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726732AbfENI1e (ORCPT
+        id S1726971AbfENI22 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 May 2019 04:28:28 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:46406 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726678AbfENI20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:27:34 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E8Q9dW029565;
-        Tue, 14 May 2019 10:27:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=Qcbov99m1lkaIUfnuX86RHd5PLWtt8rqoo5dDBx7OIc=;
- b=m1K4JyBF9G3LpGo1bTOXreixgG0vtt4K5/6kWYXSKY42v6Y90iaKW3mCRhoE9xG7Fi5A
- /JcNcgwzfcuXVAvxMM0ESAsykAOZIZAtF5qCQqpU4317PjECjoRcS4SV25xlzodEl3cm
- tExaCwvUX691f9qThMlcoiflqvr+0PJ76uv7F1Vw9lFuqd+3CVZ3aebI0ljbKoGIjjC2
- VqK0fUACd2beFiJJKA92KXACjn5p4E+VoagU5sVdHKANt1dG8kFYgI0ewMjYkPrjyosl
- DceUd9C/q9tilNMFMqXmOP0+zrdIle2fnnyIJGRfPjuMRKDOprtCopJO6nwKiE54pP8p Ig== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2sdkuyqnns-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 14 May 2019 10:27:17 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D5C8E34;
-        Tue, 14 May 2019 08:27:16 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F87A1551;
-        Tue, 14 May 2019 08:27:16 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May
- 2019 10:27:16 +0200
-Received: from localhost (10.201.23.25) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May 2019 10:27:16
- +0200
-From:   Fabien Dessenne <fabien.dessenne@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-CC:     Fabien Dessenne <fabien.dessenne@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        "Ludovic Barre" <ludovic.barre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v4 8/8] ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
-Date:   Tue, 14 May 2019 10:27:03 +0200
-Message-ID: <1557822423-22658-9-git-send-email-fabien.dessenne@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
-References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+        Tue, 14 May 2019 04:28:26 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-28-QSu0seGsPgOZSvrndg-J7w-1; Tue, 14 May 2019 09:28:22 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 14 May 2019 09:28:22 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 14 May 2019 09:28:22 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Sergey Senozhatsky' <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        'christophe leroy' <christophe.leroy@c-s.fr>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Russell Currey <ruscur@russell.cc>,
+        "Stephen Rothwell" <sfr@ozlabs.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: RE: [PATCH] vsprintf: Do not break early boot with probing addresses
+Thread-Topic: [PATCH] vsprintf: Do not break early boot with probing addresses
+Thread-Index: AQHVB1bC/iTC8Q7sI0elwkZY5/gFJaZowlxwgAEika2AAGmPsA==
+Date:   Tue, 14 May 2019 08:28:21 +0000
+Message-ID: <45348cf615fe40d383c1a25688d4a88f@AcuMS.aculab.com>
+References: <20190510081635.GA4533@jagdpanzerIV>
+ <20190510084213.22149-1-pmladek@suse.com>
+ <20190510122401.21a598f6@gandalf.local.home>
+ <daf4dfd1-7f4f-8b92-6866-437c3a2be28b@c-s.fr>
+ <096d6c9c17b3484484d9d9d3f3aa3a7c@AcuMS.aculab.com>
+ <20190513091320.GK9224@smile.fi.intel.com>
+ <20190513124220.wty2qbnz4wo52h3x@pathway.suse.cz>
+ <20190514020730.GA651@jagdpanzerIV>
+In-Reply-To: <20190514020730.GA651@jagdpanzerIV>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.25]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_05:,,
- signatures=0
+X-MC-Unique: QSu0seGsPgOZSvrndg-J7w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable m4 coprocessor for STM32MP157a-dk1 board.
+> And I like Steven's "(fault)" idea.
+> How about this:
+> 
+> 	if ptr < PAGE_SIZE		-> "(null)"
+> 	if IS_ERR_VALUE(ptr)		-> "(fault)"
+> 
+> 	-ss
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
----
- arch/arm/boot/dts/stm32mp157a-dk1.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Or:
+	if (ptr < PAGE_SIZE)
+		return ptr ? "(null+)" : "(null)";
+	if IS_ERR_VALUE(ptr)
+		return "(errno)"
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 26ce8de..da64ee2 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -116,6 +116,16 @@
- 	status = "okay";
- };
- 
-+&m4_rproc {
-+	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
-+			<&vdev0vring1>, <&vdev0buffer>;
-+	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
-+	mbox-names = "vq0", "vq1", "shutdown";
-+	interrupt-parent = <&exti>;
-+	interrupts = <68 1>;
-+	status = "okay";
-+};
-+
- &rng1 {
- 	status = "okay";
- };
--- 
-2.7.4
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
