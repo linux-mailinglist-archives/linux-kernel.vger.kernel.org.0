@@ -2,60 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB2401E578
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 899061E57E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbfENXOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 19:14:36 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34977 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfENXOg (ORCPT
+        id S1726687AbfENXTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 19:19:10 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37245 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfENXTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 19:14:36 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q15so663356wmj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 16:14:35 -0700 (PDT)
+        Tue, 14 May 2019 19:19:09 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p15so345129pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 16:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=6Kek9QVj4szYCmg4cWmG7S7DN5LfYymCN0wAWE3VBLo=;
-        b=lOhBJcGcJaKnAZjn/EH49+uLAimoLl5RXD6lb/jZ1z0xI/ELdZ3AeIN0wbvxsb00/T
-         QlfmgGlwfyjHfGYW2iGb8h5LWXk//JGa9KNkN+SAk4oJOJQMYZ4q8CEwCprDuJPaofLl
-         JoNn7480s5ZbOqETXKgPjPUwszwNlsi4lxMZpLldoiNZmxnRl2VDQXMfC084ElIR5jBq
-         SrBz6lrhJmPDXD93q1H3leRQQMnKm9VpnNwfqq8kTL1l82zrkDe+gEc+fP+gLk1sxG3v
-         QnGMGy1iup7bHaCV7EE5zV0IJ6X/RUztfm+its+6knNECSjyTPa6oS0YA9m6raU9t+14
-         E3DA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=65cWsglVoepzFlykZ42+abk0YI6VmpB8isURvrndfio=;
+        b=Bg39hYCrdxq9ZvR+2i/HlXSRaq6orpc1oOB8WF33oCVFV3rNh0CexWyS1Z8QPqlm8F
+         634lbyY40ksqDjssWKmNVtGI+1F3APRXwSAL0XqoS1nJrYkqeYOkCUNp8JWFWm6ZNg2N
+         3YnG2RckdXyh7Hd/JvDkJlfyEQP3VpBJF0SPvweC+YvdIQjG/OVFu00sC5S5PmUtedb0
+         57OXt1xXLQFMEhV58WldO2KsTL77idwyKmIM1odUUjPKE4+37YyS67kBXQTSZPy0lER0
+         iehTg4wcOiUIvCRTLfByhOie4AbWZpgc/tuXOmP4dOA/iaDvGuiNcBG7UtbS06g67YaV
+         pQVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=6Kek9QVj4szYCmg4cWmG7S7DN5LfYymCN0wAWE3VBLo=;
-        b=ogr66iZo8zVpBj0E3pbtlBeiGAJjSv+7A04fpQBc3hMen1UsYcmdkeL9J5csx/ZMdP
-         cUIObiUCIdBP/n0Js8XpoEvFHHQ16W991fSC9Ah8y8LVmKG/0oWvV05WaNAPoaQkSQIb
-         W+9PoVVOB9blezeQJ6WHijJHk1Pabh+9Fk7X1sx4e8O+10cf0WktaxcWz39IXvBuIX7O
-         AwZiv8LkRNPsiJBr2cW3AKCYSFPNp+V2bTiGPLlLm6s4aD/m8u3CA8qh6mq5/PNdrfMq
-         SPuMSWOOIURA9FSKuHGCdVsFJTJ4692gJmVPy2ETvYYNsdamPBnZVSBq6wKG8pQpGoXZ
-         VOOQ==
-X-Gm-Message-State: APjAAAU4YR+8lobRMN1i/y92rGrclj83NT/noOoJactWz/klVskyQtRD
-        /7vabN0hcWY5m2xiz0PFbVFLIWjhs7S0BCw2Xzk=
-X-Google-Smtp-Source: APXvYqwY5q5XOxgXJbdscqyMtQ+EXPnoDsidYGKpHz/FMg4oYUrZuYpFzhAQNjB8ppCVo/leCB3eRi9gHYec8I6eflU=
-X-Received: by 2002:a1c:4102:: with SMTP id o2mr19754350wma.91.1557875674473;
- Tue, 14 May 2019 16:14:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=65cWsglVoepzFlykZ42+abk0YI6VmpB8isURvrndfio=;
+        b=CG/OwUNvXtnYcmOv8bHOPRPejEE8Fa3J3YOsg2teO3Y1C4kDS/3SFFmSzlgl+piBz6
+         fzinUQSRfEyY/q/Vyo3ZYbPTFSIdrlvFkQSWbk+XB1JOfsdVtuJhioBT4ZlpFnDCUi4i
+         E44Hg/VzWMpLeMW90lCRV/F13TuYJ4aQGj/FjtrcuTJRia14/elFT+k6r12GbyYNcST2
+         QD5nKyWQ4bbSjHz8IsurO1ZvECewddXtLFf5TBsrN6L6QI+7WzDp7P9lUTqrsUB6w1Xn
+         HobwATkOEgIU6YH+FWPCpOAPhI8QzcsBjhhPoPrRFuxauNLtsgD+Mi1UcybauvFVUMZk
+         OYzQ==
+X-Gm-Message-State: APjAAAVBN1vZElKA3t5FCWOuFqlIDF6w9M8+/yp4y5s1Zt+zhBpHtsUF
+        cvQbDqBo6s3NlLuwk3toVyzR5w==
+X-Google-Smtp-Source: APXvYqwRc6VN5ebH7uglXTpSRZvZHWA1IEE/QiHsPmobJB2SKK6EBwf8uUbYe/O8Vc0yLOYiPNp2/w==
+X-Received: by 2002:a17:902:5998:: with SMTP id p24mr23416476pli.9.1557875948193;
+        Tue, 14 May 2019 16:19:08 -0700 (PDT)
+Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
+        by smtp.gmail.com with ESMTPSA id p64sm253565pfp.72.2019.05.14.16.19.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 14 May 2019 16:19:07 -0700 (PDT)
+Date:   Tue, 14 May 2019 16:19:02 -0700
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, rdunlap@infradead.org, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
+        Felix Guo <felixguoxiuping@gmail.com>
+Subject: Re: [PATCH v3 15/18] Documentation: kunit: add documentation for
+ KUnit
+Message-ID: <20190514231902.GA12893@google.com>
+References: <20190514054251.186196-1-brendanhiggins@google.com>
+ <20190514054251.186196-16-brendanhiggins@google.com>
+ <20190514073422.4287267c@lwn.net>
+ <20190514180810.GA109557@google.com>
+ <20190514121623.0314bf07@lwn.net>
 MIME-Version: 1.0
-Received: by 2002:a05:600c:54b:0:0:0:0 with HTTP; Tue, 14 May 2019 16:14:33
- -0700 (PDT)
-Reply-To: adama53md@gmail.com
-From:   Ahmed Adama <accserivce@gmail.com>
-Date:   Tue, 14 May 2019 23:14:33 +0000
-Message-ID: <CACdKAEop01dqjHhbtz9zMRMk5vT2EfEfdOzj2MZFGGD7qbEB2A@mail.gmail.com>
-Subject: RE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514121623.0314bf07@lwn.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-I need your cooperation to transfer $7 million in your bank account
-and you will be entitled to 40% of the money, kindly reply me for more
-details if you are interested.
+On Tue, May 14, 2019 at 12:16:23PM -0600, Jonathan Corbet wrote:
+> On Tue, 14 May 2019 11:08:10 -0700
+> Brendan Higgins <brendanhiggins@google.com> wrote:
+> 
+> > > Naturally, though, I have one request: I'd rather not see this at the top
+> > > level, which is more than crowded enough as it is.  Can this material
+> > > please go into the development tools book, alongside the kselftest
+> > > documentation?
+
+Hmmm...probably premature to bring this up, but Documentation/dev-tools/
+is kind of thrown together.
+
+It would be nice to provide a coherent overview, maybe provide some
+basic grouping as well.
+
+It would be nice if there was kind of a gentle introduction to the
+tools, which ones you should be looking at, when, why, etc.
+
+> > Oh yeah, that seems like the obvious home for this in hindsight. Sorry
+> > about that. Will fix in next revision!
+> 
+> No need to apologize - I have to say the same thing to everybody :)
