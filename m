@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95B591C6CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642C11C6D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfENKOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:14:38 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41822 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbfENKOf (ORCPT
+        id S1726870AbfENKPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:15:04 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43618 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbfENKOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:14:35 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k8so13739193lja.8;
-        Tue, 14 May 2019 03:14:34 -0700 (PDT)
+        Tue, 14 May 2019 06:14:37 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z5so13752839lji.10;
+        Tue, 14 May 2019 03:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/CF3zUxT58FrI22dH2e8VkIScaME9jsEnqCoLXcGC50=;
-        b=BUr58BIdfrb26hi1VznHTWRuNTvi6PE2HM/d43lB1/4mLrMjLQsJh0h4EajAa0wLvK
-         W7gPUyAzH/kAtl78iqQr6puDgKqs2kteYoPBmP9j7Z7ozFE45hOf7xqcAAq6m/QvsdqC
-         r3Dq8EE91W/Y0SdAXy13jCvQ7S2XMd405dw9WVn6wwdMXS/7M9+T4JyNCMUGXzrokQ7c
-         KdlmlbBaEdEuF1441mKJlD53C+ObD+K6qSVWEvZ4cX/BVavJDNPsN7OJtw7Ogwo2LWBb
-         ZJKdpj1mi1P2nPY16QYGVdKq+1EGfhyW7D8A8mBni+bMEa8hIM5z6HiKjbhp8I6Tl6Fm
-         gmjg==
+        bh=9s95PEyKvrKcIxnCrKXPxIhz9gSDtf2oaROGKu+HmG0=;
+        b=rX5R1krXwY3mXws0q1xHY/0wi0cgtHA+Xo9Iy7cRRkxMJ9g3nWRX5DkyAT2GlSbY7I
+         bhQ4bA8AR/gH8H8i0v2xqi36w8zEAIjWVh2sh4fV333x+ViOAe/QYQkphW3IOkkRxWgo
+         w/882SaPwpnh+Xgql748e8K+IvKurUvbvm3k4J4APf7Cj3rChht4eUo70+BYaxedhUs2
+         uUry/olMrKWvqTUE4xvQeNYuUc3LFClB/QA+41NaHlKu6EUfJEfyTWI7wlGzZMPPds3D
+         gnNHhBtaBIIFPKLcjgoV9n5HSGRbS47/xdT6mKvhco4Y8ZLCfF0aKxvuCn5wBSbhZJcF
+         R+wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/CF3zUxT58FrI22dH2e8VkIScaME9jsEnqCoLXcGC50=;
-        b=caAPVVIs2nQKHQ18LJ7AKXXmzY+C9Iy8aSwT6oeyIYzyYvAgYGZf7rryS2xS9J0sKG
-         Gp1ETxOCiFfzSqh15Kwzgtayqm9dfilkHuPrYG7CXuzZnIYo8FrsyAl135slRAiO+1tM
-         dW6cgaO4CAk2Ko/3yTd56AKbU5+ifmd+wU+u7oPXe7/aHo2QxEN2H/5WJv34heVeLDXW
-         SXahQKKHlxejZ1xbLJaMm0jJ88uyTVNizELxNdWJk1VBe9MMQkC1n2gOfzXx1KvnZ9Lr
-         gd/YpoSD8lY3dBNW+M3w4d5wqPrSGWXtR3IBW55OWW0x7UTQi4KtIrAsIxxtj41hboIS
-         JdZw==
-X-Gm-Message-State: APjAAAVvTv7X2JkKn8TN31k3EDGWNcNSSQyhc6c37SNh3k/9pozIBp4w
-        Zpl0rdeeu7zgOsL+3fWuD/k=
-X-Google-Smtp-Source: APXvYqwSVd6OkLCoa6TZGqISPUUOET/rwMPIIBMFxKzzi75QQFgeUI7iHRhG1dKdDCNBwDai7tW/PQ==
-X-Received: by 2002:a2e:5d49:: with SMTP id r70mr17505169ljb.102.1557828873407;
-        Tue, 14 May 2019 03:14:33 -0700 (PDT)
+        bh=9s95PEyKvrKcIxnCrKXPxIhz9gSDtf2oaROGKu+HmG0=;
+        b=PBHFKv4l8uiZoKiAcN6ZrBcL7eHTZVumbfuFEMTD2WGBQmHMwnlxnBBjUSlgbxJlnh
+         qkJDVvICdoAISIt+pJyHo4eJoVW4qf9L9h4UULwwHpddzprgpWgE64loNxLgteZ/Jn7q
+         iZZ45yndqd1YnX3Mw3RnGhwmye0Kz9AGonX20+iK2P21FPPH3KN+6ZT0PgvvRJlXwTq3
+         +sl1H4pYjCiPJ6FCLJW3JA9b1CwYdbt4QVCHhzA1Pky4+k5edtvP2ao2F6bPEWoPnwui
+         OEG/JALNHrJ2NsmQUul3IyOlC0y34UPtLZQFfUpy0qw1PxAigFTPgeM3v1GURGrWjSw6
+         fi1g==
+X-Gm-Message-State: APjAAAXfUe5BTCFaXrDEbsSQCcJu2L/i98tAGoqxJESFUHRIzSKGDVYE
+        WZJNhBC4clOUOiRUoikXH1k=
+X-Google-Smtp-Source: APXvYqxd+eNICyCIxuMtAN/hcvvAqN3FLgLucqpULtEZsaRT7hhWHPnlnYsmgNRZm6G2yfyiMqK5Jg==
+X-Received: by 2002:a2e:8716:: with SMTP id m22mr1091852lji.128.1557828874518;
+        Tue, 14 May 2019 03:14:34 -0700 (PDT)
 Received: from localhost.localdomain ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.32
+        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 03:14:32 -0700 (PDT)
+        Tue, 14 May 2019 03:14:34 -0700 (PDT)
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] tty: max310x: Don't pass stacked buffers to SPI
-Date:   Tue, 14 May 2019 13:14:11 +0300
-Message-Id: <20190514101415.26754-4-fancer.lancer@gmail.com>
+Subject: [PATCH 4/7] tty: max310x: Fix invalid baudrate divisors calculator
+Date:   Tue, 14 May 2019 13:14:12 +0300
+Message-Id: <20190514101415.26754-5-fancer.lancer@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190514101415.26754-1-fancer.lancer@gmail.com>
 References: <20190514101415.26754-1-fancer.lancer@gmail.com>
@@ -63,106 +63,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SPI transfer tx/rx buffers must be DMA-safe and the structure
-documentation clearly states this. Data declared on the system stack isn't
-DMA-safe [1]. Instead at least kernel memory should be used for the
-buffers. In order to fix this here we can create the buffers at the device
-probing stage and use them without any synchronization, since batch
-read/write methods are called from non-reentrant contexts - either from
-rx-event IRQ threaded handler or from the tx workqueue item.
+Current calculator doesn't do it' job quite correct. First of all the
+max310x baud-rates generator supports the divisor being less than 16.
+In this case the x2/x4 modes can be used to double or quadruple
+the reference frequency. But the current baud-rate setter function
+just filters all these modes out by the first condition and setups
+these modes only if there is a clocks-baud division remainder. The former
+doesn't seem right at all, since enabling the x2/x4 modes causes the line
+noise tolerance reduction and should be only used as a last resort to
+enable a requested too high baud-rate.
 
-[1] Documentation/DMA-API-HOWTO.txt
+Finally the fraction is supposed to be calculated from D = Fref/(c*baud)
+formulae, but not from D % 16, which causes the precision loss. So to speak
+the current baud-rate calculator code works well only if the baud perfectly
+fits to the uart reference input frequency.
+
+Lets fix the calculator by implementing the algo fully compliant with
+the fractional baud-rate generator described in the datasheet:
+D = Fref / (c*baud), where c={16,8,4} is the x1/x2/x4 rate mode
+respectively, Fref - reference input frequency. The divisor fraction is
+calculated from the same formulae, but making sure it is found with a
+resolution of 0.0625 (four bits).
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/tty/serial/max310x.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ drivers/tty/serial/max310x.c | 51 ++++++++++++++++++++++--------------
+ 1 file changed, 31 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 527f1476c24a..0e3dc89c459b 100644
+index 0e3dc89c459b..ca044f96c5cc 100644
 --- a/drivers/tty/serial/max310x.c
 +++ b/drivers/tty/serial/max310x.c
-@@ -258,6 +258,10 @@ struct max310x_one {
- 	struct work_struct	tx_work;
- 	struct work_struct	md_work;
- 	struct work_struct	rs_work;
+@@ -501,37 +501,48 @@ static bool max310x_reg_precious(struct device *dev, unsigned int reg)
+ 
+ static int max310x_set_baud(struct uart_port *port, int baud)
+ {
+-	unsigned int mode = 0, clk = port->uartclk, div = clk / baud;
++	unsigned int mode = 0, div = 0, frac = 0, c = 0, F = 0;
+ 
+-	/* Check for minimal value for divider */
+-	if (div < 16)
+-		div = 16;
+-
+-	if (clk % baud && (div / 16) < 0x8000) {
++	/*
++	 * Calculate the integer divisor first. Select a proper mode
++	 * in case if the requested baud is too high for the pre-defined
++	 * clocks frequency.
++	 */
++	div = port->uartclk / baud;
++	if (div < 8) {
++		/* Mode x4 */
++		c = 4;
++		mode = MAX310X_BRGCFG_4XMODE_BIT;
++	} else if (div < 16) {
+ 		/* Mode x2 */
++		c = 8;
+ 		mode = MAX310X_BRGCFG_2XMODE_BIT;
+-		clk = port->uartclk * 2;
+-		div = clk / baud;
+-
+-		if (clk % baud && (div / 16) < 0x8000) {
+-			/* Mode x4 */
+-			mode = MAX310X_BRGCFG_4XMODE_BIT;
+-			clk = port->uartclk * 4;
+-			div = clk / baud;
+-		}
++	} else {
++		c = 16;
+ 	}
+ 
+-	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, (div / 16) >> 8);
+-	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div / 16);
+-	max310x_port_write(port, MAX310X_BRGCFG_REG, (div % 16) | mode);
++	/* Calculate the divisor in accordance with the fraction coefficient */
++	div /= c;
++	F = c*baud;
 +
-+	u8 wr_header;
-+	u8 rd_header;
-+	u8 rx_buf[MAX310X_FIFO_SIZE];
- };
- #define to_max310x_port(_port) \
- 	container_of(_port, struct max310x_one, port)
-@@ -608,11 +612,11 @@ static int max310x_set_ref_clk(struct device *dev, struct max310x_port *s,
++	/* Calculate the baud rate fraction */
++	if (div > 0)
++		frac = (16*(port->uartclk % F)) / F;
++	else
++		div = 1;
++
++	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, div >> 8);
++	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div);
++	max310x_port_write(port, MAX310X_BRGCFG_REG, frac | mode);
  
- static void max310x_batch_write(struct uart_port *port, u8 *txbuf, unsigned int len)
+-	return DIV_ROUND_CLOSEST(clk, div);
++	/* Return the actual baud rate we just programmed */
++	return (16*port->uartclk) / (c*(16*div + frac));
+ }
+ 
+ static int max310x_update_best_err(unsigned long f, long *besterr)
  {
--	u8 header[] = { (port->iobase + MAX310X_THR_REG) | MAX310X_WRITE_BIT };
-+	struct max310x_one *one = to_max310x_port(port);
- 	struct spi_transfer xfer[] = {
- 		{
--			.tx_buf = &header,
--			.len = sizeof(header),
-+			.tx_buf = &one->wr_header,
-+			.len = sizeof(one->wr_header),
- 		}, {
- 			.tx_buf = txbuf,
- 			.len = len,
-@@ -623,11 +627,11 @@ static void max310x_batch_write(struct uart_port *port, u8 *txbuf, unsigned int
+ 	/* Use baudrate 115200 for calculate error */
+-	long err = f % (115200 * 16);
++	long err = f % (460800 * 16);
  
- static void max310x_batch_read(struct uart_port *port, u8 *rxbuf, unsigned int len)
- {
--	u8 header[] = { port->iobase + MAX310X_RHR_REG };
-+	struct max310x_one *one = to_max310x_port(port);
- 	struct spi_transfer xfer[] = {
- 		{
--			.tx_buf = &header,
--			.len = sizeof(header),
-+			.tx_buf = &one->rd_header,
-+			.len = sizeof(one->rd_header),
- 		}, {
- 			.rx_buf = rxbuf,
- 			.len = len,
-@@ -638,8 +642,8 @@ static void max310x_batch_read(struct uart_port *port, u8 *rxbuf, unsigned int l
- 
- static void max310x_handle_rx(struct uart_port *port, unsigned int rxlen)
- {
-+	struct max310x_one *one = to_max310x_port(port);
- 	unsigned int sts, ch, flag, i;
--	u8 buf[MAX310X_FIFO_SIZE];
- 
- 	if (port->read_status_mask == MAX310X_LSR_RXOVR_BIT) {
- 		/* We are just reading, happily ignoring any error conditions.
-@@ -654,7 +658,7 @@ static void max310x_handle_rx(struct uart_port *port, unsigned int rxlen)
- 		 * */
- 
- 		sts = max310x_port_read(port, MAX310X_LSR_IRQSTS_REG);
--		max310x_batch_read(port, buf, rxlen);
-+		max310x_batch_read(port, one->rx_buf, rxlen);
- 
- 		port->icount.rx += rxlen;
- 		flag = TTY_NORMAL;
-@@ -666,7 +670,8 @@ static void max310x_handle_rx(struct uart_port *port, unsigned int rxlen)
- 		}
- 
- 		for (i = 0; i < rxlen; ++i) {
--			uart_insert_char(port, sts, MAX310X_LSR_RXOVR_BIT, buf[i], flag);
-+			uart_insert_char(port, sts, MAX310X_LSR_RXOVR_BIT,
-+					 one->rx_buf[i], flag);
- 		}
- 
- 	} else {
-@@ -1298,6 +1303,10 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 		INIT_WORK(&s->p[i].md_work, max310x_md_proc);
- 		/* Initialize queue for changing RS485 mode */
- 		INIT_WORK(&s->p[i].rs_work, max310x_rs_proc);
-+		/* Initialize SPI-transfer buffers */
-+		s->p[i].wr_header = (s->p[i].port.iobase + MAX310X_THR_REG) |
-+				    MAX310X_WRITE_BIT;
-+		s->p[i].rd_header = (s->p[i].port.iobase + MAX310X_RHR_REG);
- 
- 		/* Register port */
- 		ret = uart_add_one_port(&max310x_uart, &s->p[i].port);
+ 	if ((*besterr < 0) || (*besterr > err)) {
+ 		*besterr = err;
 -- 
 2.21.0
 
