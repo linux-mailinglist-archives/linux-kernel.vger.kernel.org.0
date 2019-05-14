@@ -2,57 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7CB1E53E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 00:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63CA31E543
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 00:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfENWla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 18:41:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:59772 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfENWla (ORCPT
+        id S1726646AbfENWmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 18:42:25 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35572 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfENWmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 18:41:30 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C0F4D14C048B2;
-        Tue, 14 May 2019 15:41:29 -0700 (PDT)
-Date:   Tue, 14 May 2019 15:41:29 -0700 (PDT)
-Message-Id: <20190514.154129.1092466491484366074.davem@davemloft.net>
-To:     luca@lucaceresoli.net
-Cc:     netdev@vger.kernel.org, nicolas.ferre@microchip.com,
-        linux-kernel@vger.kernel.org, andrew@lunn.ch,
-        soren.brinkmann@xilinx.com, cyrille.pitchen@atmel.com,
-        shubhrajyoti.datta@xilinx.com, harini.katakam@xilinx.com
-Subject: Re: [PATCH net RESEND] net: macb: fix error format in dev_err()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190514132307.15311-1-luca@lucaceresoli.net>
-References: <20190514132307.15311-1-luca@lucaceresoli.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 14 May 2019 15:41:30 -0700 (PDT)
+        Tue, 14 May 2019 18:42:25 -0400
+Received: by mail-it1-f196.google.com with SMTP id u186so1492712ith.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 15:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J/+UqoVyOLSQ0y8e5yE4txVnGHYAUO/Sws7YS3mRmnI=;
+        b=cZl74vcnzPif//MhMVWyBs4L+OD+iNvZ9PMrJIAd8U6gbRh78KDyX4Ie6vEssxk3qW
+         6RnVzdW5rufKwjHPvOu3iE6v4+P5P5nTfBUEoMZ4Xmn3kBzhJ2wz289Sq4IDi5s5ObU0
+         N9B21WD5Dse36ePurthR+gIP6Xuf9Gj+rHnME=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J/+UqoVyOLSQ0y8e5yE4txVnGHYAUO/Sws7YS3mRmnI=;
+        b=a/uHICdYUHV+FAsH7YLIUZxcIA9uySAoJFGFEhzw9qw8YGT4wbtYD799FkPR4J7uHP
+         TA9STKphdwW4Ct05hK6cWVbBjDYGp89ljkT2qOcHFBZdK8ButSoH9GCBeHAgmXyZYfRp
+         I9dJnhix6oIGlKhI8rNNA1jhG3eZD+gpaTubc9R+vqzpz9AO/BznN29ceJ7fzXBlwwF9
+         8S0GqDrSPrrn53QaH3BV9G8A33f2xl/Lh472W2TjDPbrV973mdFdP/py+8aW5gRZxKyB
+         rVrOvMmoGVKi4elhk7sPsbYwjLd4vQVAYz2173FCzwAGrfZA+L3tlBVyFDOIh1jtiAHI
+         8x0A==
+X-Gm-Message-State: APjAAAXjU91PNIsWHerI8BmyX+yZFglQ6b0y/64MWxIzqoeQ9ggOtN8a
+        suOnhsP7HEWwdFQe6FXs1ddo7+JhgQI=
+X-Google-Smtp-Source: APXvYqxHEpysOT+P5y8GAeYLfwQvzn2kRXUmfcK22Ut1cMilZdKlx1zEvZd6eCAoEiOsSheerXzRUw==
+X-Received: by 2002:a02:694f:: with SMTP id e76mr25889586jac.111.1557873744534;
+        Tue, 14 May 2019 15:42:24 -0700 (PDT)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id u134sm213608itb.32.2019.05.14.15.42.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 15:42:23 -0700 (PDT)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     shuah@kernel.org
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: avoid KBUILD_OUTPUT dir cluttering with selftest objects
+Date:   Tue, 14 May 2019 16:42:22 -0600
+Message-Id: <20190514224222.31310-1-skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
-Date: Tue, 14 May 2019 15:23:07 +0200
+Running "make kselftest" or building selftests when KBUILD_OUTPUT
+is set, will create selftest objects in the KBUILD_OUTPUT directory.
+This could be undesirable especially when user didn't intend to
+relocate selftest objects.
 
-> Errors are negative numbers. Using %u shows them as very large positive
-> numbers such as 4294967277 that don't make sense. Use the %d format
-> instead, and get a much nicer -19.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Fixes: b48e0bab142f ("net: macb: Migrate to devm clock interface")
-> Fixes: 93b31f48b3ba ("net/macb: unify clock management")
-> Fixes: 421d9df0628b ("net/macb: merge at91_ether driver into macb driver")
-> Fixes: aead88bd0e99 ("net: ethernet: macb: Add support for rx_clk")
-> Fixes: f5473d1d44e4 ("net: macb: Support clock management for tsu_clk")
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Use KBUILD_OUTPUT/kselftest to create selftest objects instead of
+cluttering the main directory.
 
-Applied.
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+---
+ tools/testing/selftests/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index c71a63b923d4..9781ca79794a 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -71,6 +71,9 @@ override LDFLAGS =
+ override MAKEFLAGS =
+ endif
+ 
++# Append kselftest to KBUILD_OUTPUT to avoid cluttering
++# KBUILD_OUTPUT with selftest objects and headers installed
++# by selftests Makefile or lib.mk.
+ ifneq ($(KBUILD_SRC),)
+ override LDFLAGS =
+ endif
+@@ -79,7 +82,7 @@ ifneq ($(O),)
+ 	BUILD := $(O)
+ else
+ 	ifneq ($(KBUILD_OUTPUT),)
+-		BUILD := $(KBUILD_OUTPUT)
++		BUILD := $(KBUILD_OUTPUT)/kselftest
+ 	else
+ 		BUILD := $(shell pwd)
+ 		DEFAULT_INSTALL_HDR_PATH := 1
+-- 
+2.17.1
+
