@@ -2,91 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD4A1C821
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B09F1C848
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfENMEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 08:04:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36310 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfENMEW (ORCPT
+        id S1726409AbfENMOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 08:14:11 -0400
+Received: from freki.datenkhaos.de ([81.7.17.101]:50248 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfENMOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 08:04:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ANiALWppH8ILUGFxS4Qrkx79rFjQyK8e8zRwG0vYFV8=; b=c/Yu05Reag7wzOJIwT0uOImpO
-        EKhRRNkobwhMnBKiBQjvxenWIkAaDDHsLs9tA7Et8kWapmXMYqu6S4cMBKbejEICut8reVwxeb+Oj
-        YB394+UFayke869Y1+ppmtJN+TBE2WDtcA8OA2gDWxW8vV227TeHHLFUXWBH/kIvtY1GjNxHHEGEW
-        3BKaJxP40zy6VY4aGG/WU6aICA9b9BRTVmIWW6XMqkiIEZuaH6tdY7MAqtIpXdfkb1031bZxYN+YA
-        Rh77icdImp+fUfm+xa3QlWfVLYeX3R01lJ/An7pZWBiUzFa2AjFwRoUyc3cN8fzfhn9bpfQ/TJJIp
-        GMpWZDwRA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQWAA-0007l3-DF; Tue, 14 May 2019 12:04:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 086162029F877; Tue, 14 May 2019 14:04:05 +0200 (CEST)
-Date:   Tue, 14 May 2019 14:04:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yuyang Du <duyuyang@gmail.com>
-Cc:     will.deacon@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>, ming.lei@redhat.com,
-        Frederic Weisbecker <frederic@kernel.org>, tglx@linutronix.de,
-        Boqun Feng <boqun.feng@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/17] locking/lockdep: Add lock type enum to explicitly
- specify read or write locks
-Message-ID: <20190514120404.GQ2589@hirez.programming.kicks-ass.net>
-References: <20190513091203.7299-1-duyuyang@gmail.com>
- <20190513091203.7299-2-duyuyang@gmail.com>
- <20190513114504.GR2623@hirez.programming.kicks-ass.net>
- <CAHttsrYf_SSEHwPZRqs2KGznPgC9Je3dPOft1bwZ5pYC5R0xUg@mail.gmail.com>
+        Tue, 14 May 2019 08:14:11 -0400
+X-Greylist: delayed 575 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 08:14:10 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 46C4F12F2625;
+        Tue, 14 May 2019 14:04:34 +0200 (CEST)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JVAF5zPZzDM4; Tue, 14 May 2019 14:04:26 +0200 (CEST)
+Received: from probook (geri.datenkhaos.de [81.7.17.45])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Tue, 14 May 2019 14:04:26 +0200 (CEST)
+Date:   Tue, 14 May 2019 14:04:21 +0200
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Borislav Petkov <bp@suse.de>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/build: Move _etext to actual end of .text
+Message-ID: <20190514120416.GA11736@probook>
+References: <20190423183827.GA4012@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHttsrYf_SSEHwPZRqs2KGznPgC9Je3dPOft1bwZ5pYC5R0xUg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190423183827.GA4012@beast>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 09:31:48AM +0800, Yuyang Du wrote:
-> Thanks for review.
+On 2019 Apr 23, Kees Cook wrote:
+> When building x86 with Clang LTO and CFI, CFI jump regions are
+> automatically added to the end of the .text section late in linking. As a
+> result, the _etext position was being labelled before the appended jump
+> regions, causing confusion about where the boundaries of the executable
+> region actually are in the running kernel, and broke at least the fault
+> injection code. This moves the _etext mark to outside (and immediately
+> after) the .text area, as it already the case on other architectures
+> (e.g. arm64, arm).
 > 
-> On Mon, 13 May 2019 at 19:45, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, May 13, 2019 at 05:11:47PM +0800, Yuyang Du wrote:
-> > > + * Note that we have an assumption that a lock class cannot ever be both
-> > > + * read and recursive-read.
-> >
-> > We have such locks in the kernel... see:
-> >
-> >   kernel/qrwlock.c:queued_read_lock_slowpath()
-> >
-> > And yes, that is somewhat unfortunate, but hard to get rid of due to
-> > hysterical raisins.
+> Reported-and-tested-by: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/x86/kernel/vmlinux.lds.S | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> That is ok, then LOCK_TYPE_RECURSIVE has to be 3 such that
-> LOCK_TYPE_RECURSIVE & LOCK_TYPE_READ != 0. I thought to do this in the
-> first place without assuming. Anyway, it is better to know.
-> 
-> And I guess in a task:
-> 
-> (1) read(X);
->     recursive_read(x);      /* this is ok ? */
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index bad8c51fee6e..de94da2366e7 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -141,11 +141,11 @@ SECTIONS
+>  		*(.text.__x86.indirect_thunk)
+>  		__indirect_thunk_end = .;
+>  #endif
+> -
+> -		/* End of text section */
+> -		_etext = .;
+>  	} :text = 0x9090
+>  
+> +	/* End of text section */
+> +	_etext = .;
+> +
+>  	NOTES :text :note
+>  
+>  	EXCEPTION_TABLE(16) :text = 0x9090
+> -- 
+> 2.17.1
 
-Correct, that is the use-case for that 'funny' construct.
+This breaks the build on my system:
 
-> (2) recursive_read(x);
->     read(x)      /* not ok ? */
+  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  CC      arch/x86/boot/compressed/early_serial_console.o
+  CC      arch/x86/boot/compressed/kaslr.o
+  AS      arch/x86/boot/compressed/mem_encrypt.o
+  CC      arch/x86/boot/compressed/kaslr_64.o
+Invalid absolute R_X86_64_32S relocation: _etext
+make[2]: *** [arch/x86/boot/compressed/Makefile:130: arch/x86/boot/compressed/vmlinux.relocs] Error 1
+make[2]: *** Deleting file 'arch/x86/boot/compressed/vmlinux.relocs'
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [arch/x86/boot/Makefile:112: arch/x86/boot/compressed/vmlinux] Error 2
+make: *** [arch/x86/Makefile:283: bzImage] Error 2
 
-Indeed, read can block due to a pending writer, while recurise_read will
-not suffer like that.
 
-> Either way, very small change may need to be made.
 
-OK, excellent.
+-- 
+Regards,
+  Johannes
+
