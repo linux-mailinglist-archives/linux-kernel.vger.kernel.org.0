@@ -2,163 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7391CC87
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7BE1CCC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfENQJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 12:09:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:42886 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfENQJ3 (ORCPT
+        id S1726349AbfENQSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 12:18:44 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36482 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfENQSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 12:09:29 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EG46i6086549;
-        Tue, 14 May 2019 16:09:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=9uHuet9oULx3Dl16D7fXJItXNL536JRp038hEDJp0PY=;
- b=hTG+d6BL9woEPC6IiRUTVyEe7702u71K9isLvRg/yPznlo1GVQ0LT2b+Z0buG/nZSaEZ
- D7r8jKL/vR6mkpUcDVsTXqQIQ25EQzoCqxK8ApEve4zw7qi5xJgjXF5QmmBw8nInnEe4
- ruWczm6LvllaInybKkZmJh21TR/sU6rvaDNSjvYGW+fpHgQuWO2waTQplqO/aMFYT4lb
- U51dRjQ2NM+augMoQrfEOKQFxn/0Ub4iujx8fR1AdnF8DUZMD4bMIp7F/LwkQbI2xDN4
- 2cj8boMAppZHFdhkD+50H72XjiqJ1tUuTh2Sz5ir7JbJ5drl9bJLT0Xsogr45jCoaKmS Yw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 2sdkwdqdnv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 16:09:11 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EG7Kgo034402;
-        Tue, 14 May 2019 16:09:11 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2se0tw887w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 16:09:10 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4EG98PO024162;
-        Tue, 14 May 2019 16:09:09 GMT
-Received: from ubuette (/75.80.107.76)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 14 May 2019 16:09:08 +0000
-Date:   Tue, 14 May 2019 09:09:06 -0700
-From:   Larry Bassel <larry.bassel@oracle.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Larry Bassel <larry.bassel@oracle.com>, mike.kravetz@oracle.com,
-        willy@infradead.org, dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH, RFC 0/2] Share PMDs for FS/DAX on x86
-Message-ID: <20190514160906.GB27569@ubuette>
-References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
- <20190514122820.26zddpb27uxgrwzp@box>
+        Tue, 14 May 2019 12:18:43 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z1so14899018ljb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HO0cnBM0dn7BVUw2B8mMBOcjVqtIjYAhv4NF4GvQNTw=;
+        b=cpfwfbRyqVxPcSivVQTYAkFsUt14IzV28F82+YoNcSVOGlqkabWnL8g5roVVkGBNgU
+         I2rI0AkpuG5BkBqvH6buk0MtJV7fiWLwUL6hzZd31x+OPykwOsxjwMPpYRC1BHGh4H3X
+         KX+PXRNVyYJRn/+ZyvzNhaBBOXjItKQ5yJLnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HO0cnBM0dn7BVUw2B8mMBOcjVqtIjYAhv4NF4GvQNTw=;
+        b=GjSPq/O50v7ZQkZy0BmpsXGkiYjvu6dsGy6TocopuJaWbi0drw/rfz5ecdOGD4Qr8x
+         5JiMl6z4nlLExwJZz0e+Sa7zOU11i0j2eA+N/Kbnkuf8Cto7BiQPlpX4ymOIHyxFMBmK
+         +3p9ySLxSKHvQqUshrh5IxNu9RlLnIUUgapv6cCEzjF9XJSn5Y32xylKDc96G1kem8Fq
+         Sf/ozok2ADS38PRAU24fTMyIQ2iKGMweanJu9jtmnf9+/ZWXEsNxO+16mQPiEQMOkPQe
+         c+Xm8manyiTf1abXbKRlYr3u+NBIDnZ2DUKPwudGzV0JtJy2WUEehgchgGOIyVzSiVQp
+         RTdQ==
+X-Gm-Message-State: APjAAAUr3MBvhXTCAPNDGrwFN4Q7wcN0TWdfCSfhjzuITQi9oUQNnroV
+        fQBkCLkhDPrrYJcdh2lsbTKYGklIApk=
+X-Google-Smtp-Source: APXvYqydod4xkmVQEoid3JXReMb6jvlpYcOgxuWhcI88mqigh4c/nsyKn6uHu8b4GW43vRWF5n9YMw==
+X-Received: by 2002:a2e:964a:: with SMTP id z10mr8267781ljh.22.1557850721902;
+        Tue, 14 May 2019 09:18:41 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id b23sm3879828lfg.41.2019.05.14.09.18.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 09:18:41 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id y19so12355608lfy.5
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:18:41 -0700 (PDT)
+X-Received: by 2002:ac2:5a41:: with SMTP id r1mr17174747lfn.148.1557850250052;
+ Tue, 14 May 2019 09:10:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190514122820.26zddpb27uxgrwzp@box>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905140113
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905140113
+References: <20190424123656.484227701@infradead.org> <20190424124421.636767843@infradead.org>
+ <20190424211759.52xraajqwudc2fza@pburton-laptop> <2b2b07cc.bf42.16a52dc4e4d.Coremail.huangpei@loongson.cn>
+ <20190425073348.GV11158@hirez.programming.kicks-ass.net> <20190425091258.GC14281@hirez.programming.kicks-ass.net>
+ <20190514155813.GG2677@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190514155813.GG2677@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 14 May 2019 09:10:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgxT24Z6Ba_4DKbMfBnQ0Cp4gzwp6Vq1aBkU5bsjqKUhg@mail.gmail.com>
+Message-ID: <CAHk-=wgxT24Z6Ba_4DKbMfBnQ0Cp4gzwp6Vq1aBkU5bsjqKUhg@mail.gmail.com>
+Subject: Re: Re: [RFC][PATCH 2/5] mips/atomic: Fix loongson_llsc_mb() wreckage
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     huangpei@loongson.cn, Paul Burton <paul.burton@mips.com>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "akiyks@gmail.com" <akiyks@gmail.com>,
+        "andrea.parri@amarulasolutions.com" 
+        <andrea.parri@amarulasolutions.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "dlustig@nvidia.com" <dlustig@nvidia.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "j.alglave@ucl.ac.uk" <j.alglave@ucl.ac.uk>,
+        "luc.maranget@inria.fr" <luc.maranget@inria.fr>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Huacai Chen <chenhc@lemote.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 19 15:28, Kirill A. Shutemov wrote:
-> On Thu, May 09, 2019 at 09:05:31AM -0700, Larry Bassel wrote:
-> > This patchset implements sharing of page table entries pointing
-> > to 2MiB pages (PMDs) for FS/DAX on x86.
-> 
-> -EPARSE.
-> 
-> How do you share entries? Entries do not take any space, page tables that
-> cointain these entries do.
+On Tue, May 14, 2019 at 8:58 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> So if two variables share a line, and one is local while the other is
+> shared atomic, can contention on the line, but not the variable, cause
+> issues for the local variable?
+>
+> If not; why not? Because so far the issue is line granular due to the
+> coherence aspect.
 
-Yes, I'll correct this in v2.
+If I understood the issue correctly, it's not that cache coherence
+doesn't work, it's literally that the sc succeeds when it shouldn't.
 
-> 
-> Have you checked if the patch makes memory consumption any better. I have
-> doubts in it.
+In other words, it's not going to affect anything else, but it means
+that "ll/sc" isn't actually truly atomic, because the cacheline could
+have bounced around to another CPU in the meantime.
 
-Yes I have -- the following is debugging output I have from my testing.
-The (admittedly simple) test case is two copies of a program that mmaps
-1GiB of a DAX/XFS file (with 2MiB page size), touches the first page
-(physical 200400000 in this case) and then sleeps forever.
+So we *think* we got an atomic update, but didn't, and the "ll/sc"
+pair ends up incorrectly working as a regular "load -> store" pair,
+because the "sc' incorrectly thought it still had exclusive access to
+the line from the "ll".
 
-sharing disabled:
+The added memory barrier isn't because it's a memory barrier, it's
+just keeping the subsequent speculative instructions from getting the
+cacheline back and causing that "sc" confusion.
 
-(process A)
-[  420.369975] pgd_index = fe
-[  420.369975] pgd = 00000000e1ebf83b
-[  420.369975] pgd_val = 8000000405ca8067
-[  420.369976] pud_index = 100
-[  420.369976] pud = 00000000bd7a7df0
-[  420.369976] pud_val = 4058f9067
-[  420.369977] pmd_index = 0
-[  420.369977] pmd = 00000000791e93d4
-[  420.369977] pmd_val = 84000002004008e7
-[  420.369978] pmd huge
-[  420.369978] page_addr = 200400000, page_offset = 0
-[  420.369979] vaddr = 7f4000000000, paddr = 200400000
+But note how from a cache coherency standpoint, it's not about the
+cache coherency being wrong, it's literally just about the ll/sc not
+giving the atomicity guarantees that the sequence is *supposed* to
+give. So an "atomic_inc()" can basically (under just the wrong
+circumstances) essentially turn into just a non-atomic "*p++".
 
-(process B)
-[  420.370013] pgd_index = fe
-[  420.370014] pgd = 00000000a2bac60d
-[  420.370014] pgd_val = 8000000405a8f067
-[  420.370015] pud_index = 100
-[  420.370015] pud = 00000000dcc3ff1a
-[  420.370015] pud_val = 3fc713067
-[  420.370016] pmd_index = 0
-[  420.370016] pmd = 000000006b4679db
-[  420.370016] pmd_val = 84000002004008e7
-[  420.370017] pmd huge
-[  420.370017] page_addr = 200400000, page_offset = 0
-[  420.370018] vaddr = 7f4000000000, paddr = 200400000
+NOTE! I have no actual inside knowledge of what is going on. The above
+is purely my reading of this thread, and maybe I have mis-understood.
 
-sharing enabled:
-
-(process A)
-[  696.992342] pgd_index = fe
-[  696.992342] pgd = 000000009612024b
-[  696.992343] pgd_val = 8000000404725067
-[  696.992343] pud_index = 100
-[  696.992343] pud = 00000000c98ab17c
-[  696.992344] pud_val = 4038e3067
-[  696.992344] pmd_index = 0
-[  696.992344] pmd = 000000002437681b
-[  696.992344] pmd_val = 84000002004008e7
-[  696.992345] pmd huge
-[  696.992345] page_addr = 200400000, page_offset = 0
-[  696.992345] vaddr = 7f4000000000, paddr = 200400000
-
-(process B)
-[  696.992351] pgd_index = fe
-[  696.992351] pgd = 0000000012326848
-[  696.992352] pgd_val = 800000040a953067
-[  696.992352] pud_index = 100
-[  696.992352] pud = 00000000f989bcf6
-[  696.992352] pud_val = 4038e3067
-[  696.992353] pmd_index = 0
-[  696.992353] pmd = 000000002437681b
-[  696.992353] pmd_val = 84000002004008e7
-[  696.992353] pmd huge
-[  696.992354] page_addr = 200400000, page_offset = 0
-[  696.992354] vaddr = 7f4000000000, paddr = 200400000
-
-Note that in the sharing enabled case, the pud_val and pmd are
-the same for the two processes. In the disabled case we
-have two separate pmds (and so more memory was allocated).
-
-Also, (though not visible from the output above) the second
-process did not take a page fault as the virtual->physical mapping
-was already established thanks to the sharing.
-
-Larry
+                  Linus
