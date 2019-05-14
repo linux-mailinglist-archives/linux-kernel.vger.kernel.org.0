@@ -2,98 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9D01CC05
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203A51CC08
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfENPhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:37:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbfENPhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:37:51 -0400
-Received: from linux-8ccs (ip5f5ade5e.dynamic.kabel-deutschland.de [95.90.222.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D2AE2086A;
-        Tue, 14 May 2019 15:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557848270;
-        bh=zHaae0mdyUYkoIAyzKfGo5omzgy2QdobwBLjMwVzihE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=yM/vJZmazDD9HhC+NcfkrwBVGetaTU12X63sogcJx9kXmBU+jXzqwF0uCRA85GppV
-         ct+gr0CzZjajpmGzCfdrblszOHoZfEhMd1k4MQgYVId7nZBUOrsadSQzI51OesEaeG
-         9jvjdFqFQJ/Ltn1L0pjOgVzCtBMMIdqDBHfXnRPM=
-Date:   Tue, 14 May 2019 17:37:46 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules updates for v5.2
-Message-ID: <20190514153746.GA4533@linux-8ccs>
+        id S1726195AbfENPkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:40:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57836 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbfENPkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 11:40:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73C8C374;
+        Tue, 14 May 2019 08:40:09 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B89C3F703;
+        Tue, 14 May 2019 08:40:06 -0700 (PDT)
+Date:   Tue, 14 May 2019 16:40:00 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        akpm@linux-foundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, mhocko@suse.com, mgorman@techsingularity.net,
+        james.morse@arm.com, robin.murphy@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com, osalvador@suse.de,
+        david@redhat.com, cai@lca.pw, logang@deltatee.com,
+        ira.weiny@intel.com
+Subject: Re: [PATCH V3 2/4] arm64/mm: Hold memory hotplug lock while walking
+ for kernel page table dump
+Message-ID: <20190514154000.GA20935@lakrids.cambridge.arm.com>
+References: <1557824407-19092-1-git-send-email-anshuman.khandual@arm.com>
+ <1557824407-19092-3-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1557824407-19092-3-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, May 14, 2019 at 02:30:05PM +0530, Anshuman Khandual wrote:
+> The arm64 pagetable dump code can race with concurrent modification of the
+> kernel page tables. When a leaf entries are modified concurrently, the dump
+> code may log stale or inconsistent information for a VA range, but this is
+> otherwise not harmful.
+> 
+> When intermediate levels of table are freed, the dump code will continue to
+> use memory which has been freed and potentially reallocated for another
+> purpose. In such cases, the dump code may dereference bogus addressses,
+> leading to a number of potential problems.
+> 
+> Intermediate levels of table may by freed during memory hot-remove, or when
+> installing a huge mapping in the vmalloc region. To avoid racing with these
+> cases, take the memory hotplug lock when walking the kernel page table.
+> 
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-Please pull below to receive modules updates for the 5.2 merge window.
-Details can be found in the signed tag.
+Can we please move this after the next patch (which addresses the huge
+vmap case), and change the last paragraph to:
 
-Note that there is a trivial conflict between the modules tree and vfs tree
-in include/linux/module.h. 
+  Intermediate levels of table may by freed during memory hot-remove,
+  which will be enabled by a subsequent patch. To avoid racing with
+  this, take the memory hotplug lock when walking the kernel page table.
 
-Commit 007ec26cdc9f ("vfs: Implement logging through fs_context") from the
-vfs tree and commit dadec066d8fa ("module: add stubs for within_module
-functions") from the modules tree both added the stub for
-within_module_core(). The hunk in question is exactly the same for both
-commits, so the conflict is trivially resolvable.
+With that, this looks good to me.
 
 Thanks,
+Mark.
 
-Jessica
-
----
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.2
-
-for you to fetch changes up to dadec066d8fa7da227f623f632ea114690fecaf8:
-
-  module: add stubs for within_module functions (2019-05-02 16:32:29 +0200)
-
-----------------------------------------------------------------
-Modules updates for v5.2
-
-Summary of modules changes for the 5.2 merge window:
-
-- Use a separate table to store symbol types instead of
-  hijacking fields in struct Elf_Sym
-
-- Trivial code cleanups
-
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
-
-----------------------------------------------------------------
-Eugene Loh (1):
-      kallsyms: store type information in its own array
-
-Mathias Krause (1):
-      vmlinux.lds.h: drop unused __vermagic
-
-Tri Vo (1):
-      module: add stubs for within_module functions
-
- include/asm-generic/vmlinux.lds.h |  1 -
- include/linux/module.h            | 18 ++++++++++++++++++
- kernel/module-internal.h          |  2 +-
- kernel/module.c                   | 21 ++++++++++++++-------
- 4 files changed, 33 insertions(+), 9 deletions(-)
+> ---
+>  arch/arm64/mm/ptdump_debugfs.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/ptdump_debugfs.c b/arch/arm64/mm/ptdump_debugfs.c
+> index 064163f..80171d1 100644
+> --- a/arch/arm64/mm/ptdump_debugfs.c
+> +++ b/arch/arm64/mm/ptdump_debugfs.c
+> @@ -7,7 +7,10 @@
+>  static int ptdump_show(struct seq_file *m, void *v)
+>  {
+>  	struct ptdump_info *info = m->private;
+> +
+> +	get_online_mems();
+>  	ptdump_walk_pgd(m, info);
+> +	put_online_mems();
+>  	return 0;
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(ptdump);
+> -- 
+> 2.7.4
+> 
