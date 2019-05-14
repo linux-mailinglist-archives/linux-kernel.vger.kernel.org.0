@@ -2,113 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CCE1C897
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C501C944
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfENM0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 08:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfENM0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 08:26:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F22F20850;
-        Tue, 14 May 2019 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557836781;
-        bh=hDe8JK/intQfOgS2b4KY347OHuGJn9Hop4XrcrgRJvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T1KVaVowgWw/jLckCJWk4UztYLZ0Ux/jCD/9flMC0t2Jk/t9M56poFrSMtBpPoYFn
-         vg5DtXUjI0lD4jyBccSrRNNMRSzAh72MLdhnbv2epiWCt8rVomQ+u5dGXzyy/2OuNo
-         TjTQbJHvVg7bZBP+QHf5JJJXgrb+Z8GUiNIBlwA8=
-Date:   Tue, 14 May 2019 14:26:18 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Esben Haabendal <esben@haabendal.dk>, linux-serial@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: 8250: Add support for 8250/16550 as MFD
- function
-Message-ID: <20190514122618.GA18859@kroah.com>
-References: <20190426084038.6377-1-esben@geanix.com>
- <20190426084038.6377-3-esben@geanix.com>
- <20190507114905.GB29524@dell>
- <87o94ejwrx.fsf@haabendal.dk>
- <20190507133844.GA6194@dell>
- <87bm05mpmx.fsf@haabendal.dk>
- <20190514104741.GO4319@dell>
+        id S1726109AbfENNQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:16:57 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37563 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfENNQ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 09:16:56 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w37so22853500edw.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MTM1aBzPfSK5tgU1k2RNG5j9nKyYFdiQfhSRyC1AQNs=;
+        b=zDzjKRXBJHz2yPiLvfNwWdJqq/vB0SaFrHEGC+4tdjK7qgnCrVKdrQGXbzYdw14oyQ
+         2FN8i/6zGtMT7lmFJlnRkAQy9xn0Tp8jrpcCjZpMztqBnpJhbPLgLKtBXA5z8CinroXQ
+         oUFY0Wc1G6z6gMD8EtLGHoj+izORshYJT61j0WN+f7ynFTnhvncUf8umGzpqVB3Cm+Uo
+         tVXzXMPSSLzGbhwbKsIi1DOaLf+pAZVzIsTMvypZUewODOBy3mGMSnUKEn+UfHghHFyo
+         n02Y3xxyaGokkB8Wh+M10bEQkurf0e5pdpzJBL1swKYPqDuk23hNfPs5vXLP7F6ulYgp
+         ZoEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MTM1aBzPfSK5tgU1k2RNG5j9nKyYFdiQfhSRyC1AQNs=;
+        b=pZ+9ApUc2n4xgwRMvJhkEBe7UL1tCwCQkI8PWN8EZ69gTzzm6zCUfN4sl3woFk9QIp
+         06zvAQewhu87qcc4oLETfW/FWdUs+YmvJrB9s86P4l5S+XRoyl5FpNeRgn0MMlwEOdAi
+         Ixh0vC7jy+FdDlVbhFFbqUkAr9mKCbHSPjh5H0ktMwWGK0jTfulzqMj+UmbjMXWE9+KF
+         086IqHSjEbSDnbWFUq+Hl5lJID6fsBCFpCGWnSSurFLeatjz8lRtgpu+5vH/Xe57URna
+         9vTcJoBV3JRKBkQ0FcYSWVQONObZgQs9FhtbIgUESepfgeUmx/FVQHO+9xfA0LoS4uih
+         rHMg==
+X-Gm-Message-State: APjAAAXKhOEyVaGGqQzkW9t0zKdKxlX0IV/6IbbXy95X6i6Cd0UYveAr
+        lQBANBMUs+V39p6z1sEIRAV/yw==
+X-Google-Smtp-Source: APXvYqxcAIh9/gohpAQTlGcytkwF0FDILsHXqj2wEvoP1yEMfI5z16TGN2EPlhSbHRGWJA81mLADdw==
+X-Received: by 2002:a17:906:74a:: with SMTP id z10mr15167062ejb.199.1557839814937;
+        Tue, 14 May 2019 06:16:54 -0700 (PDT)
+Received: from box.localdomain (mm-137-212-121-178.mgts.dynamic.pppoe.byfly.by. [178.121.212.137])
+        by smtp.gmail.com with ESMTPSA id h8sm678784ejf.73.2019.05.14.06.16.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 06:16:53 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id F1D16100C33; Tue, 14 May 2019 15:28:20 +0300 (+03)
+Date:   Tue, 14 May 2019 15:28:20 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Larry Bassel <larry.bassel@oracle.com>
+Cc:     mike.kravetz@oracle.com, willy@infradead.org,
+        dan.j.williams@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH, RFC 0/2] Share PMDs for FS/DAX on x86
+Message-ID: <20190514122820.26zddpb27uxgrwzp@box>
+References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190514104741.GO4319@dell>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 11:47:41AM +0100, Lee Jones wrote:
-> On Tue, 14 May 2019, Esben Haabendal wrote:
-> 
-> > Lee Jones <lee.jones@linaro.org> writes:
-> > 
-> > > On Tue, 07 May 2019, Esben Haabendal wrote:
-> > >
-> > >> Lee Jones <lee.jones@linaro.org> writes:
-> > >> 
-> > >> > On Fri, 26 Apr 2019, Esben Haabendal wrote:
-> > >> >
-> > >> >> The serial8250-mfd driver is for adding 8250/16550 UART ports as functions
-> > >> >> to an MFD driver.
-> > >> >> 
-> > >> >> When calling mfd_add_device(), platform_data should be a pointer to a
-> > >> >> struct plat_serial8250_port, with proper settings like .flags, .type,
-> > >> >> .iotype, .regshift and .uartclk.  Memory (or ioport) and IRQ should be
-> > >> >> passed as cell resources.
-> > >> >
-> > >> > What?  No, please!
-> > >> >
-> > >> > If you *must* create a whole driver just to be able to use
-> > >> > platform_*() helpers (which I don't think you should), then please
-> > >> > call it something else.  This doesn't have anything to do with MFD.
-> > >> 
-> > >> True.
-> > >> 
-> > >> I really don't think it is a good idea to create a whole driver just to
-> > >> be able to use platform_get_*() helpers.  And if I am forced to do this,
-> > >> because I am unable to convince Andy to improve the standard serial8250
-> > >> driver to support that, it should be called MFD.  The driver would be
-> > >
-> > > I assume you mean "shouldn't"?
-> > 
-> > Of-course.
-> > 
-> > >> generally usable for all usecases where platform_get_*() works.
-> > >> 
-> > >> I don't have any idea what to call such a driver.  It really would just
-> > >> be a fork of the current serial8250 driver, just allowing use of
-> > >> platform_get_*(), supporting exactly the same hardware.
-> > >> 
-> > >> I am still hoping that we can find a way to improve serial8250 to be
-> > >> usable in these cases.
-> > >
-> > > Me too.
-> > 
-> > Unfortunately, I don't seem to be able to convince Andy to accept
-> > something like that.
-> 
-> Andy is not he Maintainer.
-> 
-> What are Greg and Jiri's opinions?
+On Thu, May 09, 2019 at 09:05:31AM -0700, Larry Bassel wrote:
+> This patchset implements sharing of page table entries pointing
+> to 2MiB pages (PMDs) for FS/DAX on x86.
 
-I've been ignoring all of this at the moment because of the 5.2-rc merge
-window.  I'll look at it after -rc1 is out.
+-EPARSE.
 
-thanks,
+How do you share entries? Entries do not take any space, page tables that
+cointain these entries do.
 
-greg k-h
+Have you checked if the patch makes memory consumption any better. I have
+doubts in it.
