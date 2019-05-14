@@ -2,261 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14A71C53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26D41C556
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbfENIrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:47:52 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:28472 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726078AbfENIrt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:47:49 -0400
-X-UUID: dda4ebf4559542a5be255812bfdd5d2a-20190514
-X-UUID: dda4ebf4559542a5be255812bfdd5d2a-20190514
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1399189182; Tue, 14 May 2019 16:47:43 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 14 May 2019 16:47:42 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 14 May 2019 16:47:41 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v5 6/6] usb: mtu3: register a USB Role Switch for dual role mode
-Date:   Tue, 14 May 2019 16:47:23 +0800
-Message-ID: <1557823643-8616-7-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
+        id S1726857AbfENIsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:48:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35400 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfENIsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 04:48:50 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CF36530820EA;
+        Tue, 14 May 2019 08:48:49 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-95.pek2.redhat.com [10.72.12.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 02079608AC;
+        Tue, 14 May 2019 08:48:45 +0000 (UTC)
+Date:   Tue, 14 May 2019 16:48:41 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, j-nomura@ce.jp.nec.com,
+        kasong@redhat.com, fanc.fnst@cn.fujitsu.com, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
+ and ACPI tables
+Message-ID: <20190514084841.GA27876@dhcp-128-65.nay.redhat.com>
+References: <20190424092944.30481-1-bhe@redhat.com>
+ <20190424092944.30481-2-bhe@redhat.com>
+ <20190429002318.GA25400@MiWiFi-R3L-srv>
+ <20190429135536.GC2324@zn.tnic>
+ <20190513014248.GA16774@MiWiFi-R3L-srv>
+ <20190513070725.GA20105@zn.tnic>
+ <20190513073254.GB16774@MiWiFi-R3L-srv>
+ <20190513075006.GB20105@zn.tnic>
+ <20190513080653.GD16774@MiWiFi-R3L-srv>
+ <20190514032208.GA25875@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514032208.GA25875@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 14 May 2019 08:48:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because extcon is not allowed for new bindings, and the
-dual role switch is supported by USB Role Switch,
-especially for Type-C drivers, so register a USB Role
-Switch to support the new way
+On 05/14/19 at 11:22am, Dave Young wrote:
+> On 05/13/19 at 04:06pm, Baoquan He wrote:
+> > Hi Dave,
+> > 
+> > On 05/13/19 at 09:50am, Borislav Petkov wrote:
+> > > On Mon, May 13, 2019 at 03:32:54PM +0800, Baoquan He wrote:
+> > > > This is a critical bug which breaks memory hotplug,
+> > > 
+> > > Please concentrate and stop the blabla:
+> > > 
+> > > 36f0c423552d ("x86/boot: Disable RSDP parsing temporarily")
+> > > 
+> > > already explains what the deal is. This code was *purposefully* disabled
+> > > because we ran out of time and it broke a couple of machines. Don't make
+> > 
+> > I remember your machine is the one on whihc the issue is reported. Could
+> > you also test it and confirm if these all things found ealier are
+> > cleared out?
+> > 
+> 
+> I did some tests on the laptop,  thing is:
+> 1. apply the 3 patches (two you posted + Boris's revert commit 52b922c3d49c)
+>    on latest Linus master branch, everything works fine.
+> 
+> 2. build and test the tip/next-merge-window branch, kernel hangs early
+> without output, (both 1st boot and kexec boot)
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v5 no change
+Update about 2.  It should be not early rsdp related, I got the boot log
+Since can not reproduce with Linus master branch it may have been fixed.
 
-v4 changes:
-  1. assign fwnode member of usb_role_switch struct suggested by Heikki
+[    0.685374][    T1] rcu: Hierarchical SRCU implementation.
+[    0.686414][    T1] general protection fault: 0000 [#1] SMP PTI
+[    0.687328][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.1.0-rc6+ #877
+[    0.687328][    T1] Hardware name: LENOVO 4236NUC/4236NUC, BIOS 83ET82WW (1.52 ) 06/04/2018
+[    0.687328][    T1] RIP: 0010:reserve_ds_buffers+0x34e/0x450
+[    0.687328][    T1] Code: e8 77 49 1a 00 4c 8b 54 24 18 48 85 c0 4c 8b 4c 24 10 48 89 44 24 20 0f 84 68 fe ff ff 4a 8b 0c cd 20 88 07 a7 48 8d 54 24 20 <48> 89 04 11 e9 e5 fd ff ff 85 db 0f 85 67 fe ff ff 45 85 ed 75 24
+[    0.687328][    T1] RSP: 0000:ffffa52100c8bd90 EFLAGS: 00010286
+[    0.687328][    T1] RAX: ffff8c6bd5d03000 RBX: 0000000000000000 RCX: ffff8c6bd6000000
+[    0.687328][    T1] RDX: ffffa52100c8bdb0 RSI: ffffffffa620e209 RDI: ffff8c6bd5d04000
+[    0.687328][    T1] RBP: ffff8c6bd60103a0 R08: ffff8c6bd4da0000 R09: 0000000000000000
+[    0.687328][    T1] R10: ffff8c6bd4e20000 R11: ffffc8e248538800 R12: 00000000000103a0
+[    0.687328][    T1] R13: 0000000000010000 R14: fffffe0000013000 R15: 0000000000000000
+[    0.687328][    T1] FS:  0000000000000000(0000) GS:ffff8c6bd6000000(0000) knlGS:0000000000000000
+[    0.687328][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.687328][    T1] CR2: ffff8c6bde5ff000 CR3: 000000015700e001 CR4: 00000000000606f0
+[    0.687328][    T1] Call Trace:
+[    0.687328][    T1]  ? hardlockup_detector_event_create+0x50/0x50
+[    0.687328][    T1]  x86_reserve_hardware+0x173/0x180
+[    0.687328][    T1]  x86_pmu_event_init+0x39/0x220
+[    0.687328][    T1]  ? hardlockup_detector_event_create+0x50/0x50
+[    0.687328][    T1]  perf_try_init_event+0x42/0xd0
+[    0.687328][    T1]  perf_event_alloc+0x46a/0x8b0
+[    0.687328][    T1]  perf_event_create_kernel_counter+0x21/0x130
+[    0.687328][    T1]  hardlockup_detector_event_create+0x39/0x50
+[    0.687328][    T1]  hardlockup_detector_perf_init+0xc/0x40
+[    0.687328][    T1]  lockup_detector_init+0x3a/0x71
+[    0.687328][    T1]  kernel_init_freeable+0xbc/0x231
+[    0.687328][    T1]  ? rest_init+0x9f/0x9f
+[    0.687328][    T1]  kernel_init+0xa/0x101
+[    0.687328][    T1]  ret_from_fork+0x35/0x40
+[    0.687328][    T1] Modules linked in:
+[    0.687331][    T1] ---[ end trace 71ee47f6125e74a4 ]---
+[    0.688331][    T1] RIP: 0010:reserve_ds_buffers+0x34e/0x450
+[    0.689330][    T1] Code: e8 77 49 1a 00 4c 8b 54 24 18 48 85 c0 4c 8b 4c 24 10 48 89 44 24 20 0f 84 68 fe ff ff 4a 8b 0c cd 20 88 07 a7 48 8d 54 24 20 <48> 89 04 11 e9 e5 fd ff ff 85 db 0f 85 67 fe ff ff 45 85 ed 75 24
+[    0.690330][    T1] RSP: 0000:ffffa52100c8bd90 EFLAGS: 00010286
+[    0.691330][    T1] RAX: ffff8c6bd5d03000 RBX: 0000000000000000 RCX: ffff8c6bd6000000
+[    0.692330][    T1] RDX: ffffa52100c8bdb0 RSI: ffffffffa620e209 RDI: ffff8c6bd5d04000
+[    0.693330][    T1] RBP: ffff8c6bd60103a0 R08: ffff8c6bd4da0000 R09: 0000000000000000
+[    0.694330][    T1] R10: ffff8c6bd4e20000 R11: ffffc8e248538800 R12: 00000000000103a0
+[    0.695330][    T1] R13: 0000000000010000 R14: fffffe0000013000 R15: 0000000000000000
+[    0.696330][    T1] FS:  0000000000000000(0000) GS:ffff8c6bd6000000(0000) knlGS:0000000000000000
+[    0.697330][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.698330][    T1] CR2: ffff8c6bde5ff000 CR3: 000000015700e001 CR4: 00000000000606f0
+[    0.699334][    T1] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+[    0.700328][    T1] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
 
-v3 changes:
-  1. select USB_ROLE_SWITCH in Kconfig suggested by Heikki
-  2. rename ssusb_mode_manual_switch() to ssusb_mode_switch()
-
-v2 no change
----
- drivers/usb/mtu3/Kconfig        |  1 +
- drivers/usb/mtu3/mtu3.h         |  5 ++++
- drivers/usb/mtu3/mtu3_debugfs.c |  4 +--
- drivers/usb/mtu3/mtu3_dr.c      | 48 ++++++++++++++++++++++++++++++++-
- drivers/usb/mtu3/mtu3_dr.h      |  6 ++---
- drivers/usb/mtu3/mtu3_plat.c    |  3 ++-
- 6 files changed, 60 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/mtu3/Kconfig b/drivers/usb/mtu3/Kconfig
-index bcc23486c4ed..88e3db7b3016 100644
---- a/drivers/usb/mtu3/Kconfig
-+++ b/drivers/usb/mtu3/Kconfig
-@@ -43,6 +43,7 @@ config USB_MTU3_DUAL_ROLE
- 	bool "Dual Role mode"
- 	depends on ((USB=y || USB=USB_MTU3) && (USB_GADGET=y || USB_GADGET=USB_MTU3))
- 	depends on (EXTCON=y || EXTCON=USB_MTU3)
-+	select USB_ROLE_SWITCH
- 	help
- 	  This is the default mode of working of MTU3 controller where
- 	  both host and gadget features are enabled.
-diff --git a/drivers/usb/mtu3/mtu3.h b/drivers/usb/mtu3/mtu3.h
-index 76ecf12fdf62..6087be236a35 100644
---- a/drivers/usb/mtu3/mtu3.h
-+++ b/drivers/usb/mtu3/mtu3.h
-@@ -199,6 +199,9 @@ struct mtu3_gpd_ring {
- * @id_nb : notifier for iddig(idpin) detection
- * @id_work : work of iddig detection notifier
- * @id_event : event of iddig detecion notifier
-+* @role_sw : use USB Role Switch to support dual-role switch, can't use
-+*		extcon at the same time, and extcon is deprecated.
-+* @role_sw_used : true when the USB Role Switch is used.
- * @is_u3_drd: whether port0 supports usb3.0 dual-role device or not
- * @manual_drd_enabled: it's true when supports dual-role device by debugfs
- *		to switch host/device modes depending on user input.
-@@ -212,6 +215,8 @@ struct otg_switch_mtk {
- 	struct notifier_block id_nb;
- 	struct work_struct id_work;
- 	unsigned long id_event;
-+	struct usb_role_switch *role_sw;
-+	bool role_sw_used;
- 	bool is_u3_drd;
- 	bool manual_drd_enabled;
- };
-diff --git a/drivers/usb/mtu3/mtu3_debugfs.c b/drivers/usb/mtu3/mtu3_debugfs.c
-index b7c86ccd50b4..3ed666f94dd9 100644
---- a/drivers/usb/mtu3/mtu3_debugfs.c
-+++ b/drivers/usb/mtu3/mtu3_debugfs.c
-@@ -453,9 +453,9 @@ static ssize_t ssusb_mode_write(struct file *file, const char __user *ubuf,
- 		return -EFAULT;
- 
- 	if (!strncmp(buf, "host", 4) && !ssusb->is_host) {
--		ssusb_mode_manual_switch(ssusb, 1);
-+		ssusb_mode_switch(ssusb, 1);
- 	} else if (!strncmp(buf, "device", 6) && ssusb->is_host) {
--		ssusb_mode_manual_switch(ssusb, 0);
-+		ssusb_mode_switch(ssusb, 0);
- 	} else {
- 		dev_err(ssusb->dev, "wrong or duplicated setting\n");
- 		return -EINVAL;
-diff --git a/drivers/usb/mtu3/mtu3_dr.c b/drivers/usb/mtu3/mtu3_dr.c
-index 5fcb71af875a..08e18448e8b8 100644
---- a/drivers/usb/mtu3/mtu3_dr.c
-+++ b/drivers/usb/mtu3/mtu3_dr.c
-@@ -7,6 +7,8 @@
-  * Author: Chunfeng Yun <chunfeng.yun@mediatek.com>
-  */
- 
-+#include <linux/usb/role.h>
-+
- #include "mtu3.h"
- #include "mtu3_dr.h"
- #include "mtu3_debug.h"
-@@ -280,7 +282,7 @@ static int ssusb_extcon_register(struct otg_switch_mtk *otg_sx)
-  * This is useful in special cases, such as uses TYPE-A receptacle but also
-  * wants to support dual-role mode.
-  */
--void ssusb_mode_manual_switch(struct ssusb_mtk *ssusb, int to_host)
-+void ssusb_mode_switch(struct ssusb_mtk *ssusb, int to_host)
- {
- 	struct otg_switch_mtk *otg_sx = &ssusb->otg_switch;
- 
-@@ -318,6 +320,47 @@ void ssusb_set_force_mode(struct ssusb_mtk *ssusb,
- 	mtu3_writel(ssusb->ippc_base, SSUSB_U2_CTRL(0), value);
- }
- 
-+static int ssusb_role_sw_set(struct device *dev, enum usb_role role)
-+{
-+	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
-+	bool to_host = false;
-+
-+	if (role == USB_ROLE_HOST)
-+		to_host = true;
-+
-+	if (to_host ^ ssusb->is_host)
-+		ssusb_mode_switch(ssusb, to_host);
-+
-+	return 0;
-+}
-+
-+static enum usb_role ssusb_role_sw_get(struct device *dev)
-+{
-+	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
-+	enum usb_role role;
-+
-+	role = ssusb->is_host ? USB_ROLE_HOST : USB_ROLE_DEVICE;
-+
-+	return role;
-+}
-+
-+static int ssusb_role_sw_register(struct otg_switch_mtk *otg_sx)
-+{
-+	struct usb_role_switch_desc role_sx_desc = { 0 };
-+	struct ssusb_mtk *ssusb =
-+		container_of(otg_sx, struct ssusb_mtk, otg_switch);
-+
-+	if (!otg_sx->role_sw_used)
-+		return 0;
-+
-+	role_sx_desc.set = ssusb_role_sw_set;
-+	role_sx_desc.get = ssusb_role_sw_get;
-+	role_sx_desc.fwnode = dev_fwnode(ssusb->dev);
-+	otg_sx->role_sw = usb_role_switch_register(ssusb->dev, &role_sx_desc);
-+
-+	return PTR_ERR_OR_ZERO(otg_sx->role_sw);
-+}
-+
- int ssusb_otg_switch_init(struct ssusb_mtk *ssusb)
- {
- 	struct otg_switch_mtk *otg_sx = &ssusb->otg_switch;
-@@ -328,6 +371,8 @@ int ssusb_otg_switch_init(struct ssusb_mtk *ssusb)
- 
- 	if (otg_sx->manual_drd_enabled)
- 		ssusb_dr_debugfs_init(ssusb);
-+	else if (otg_sx->role_sw_used)
-+		ret = ssusb_role_sw_register(otg_sx);
- 	else
- 		ret = ssusb_extcon_register(otg_sx);
- 
-@@ -340,4 +385,5 @@ void ssusb_otg_switch_exit(struct ssusb_mtk *ssusb)
- 
- 	cancel_work_sync(&otg_sx->id_work);
- 	cancel_work_sync(&otg_sx->vbus_work);
-+	usb_role_switch_unregister(otg_sx->role_sw);
- }
-diff --git a/drivers/usb/mtu3/mtu3_dr.h b/drivers/usb/mtu3/mtu3_dr.h
-index ba6fe357ce29..5e58c4dbd54a 100644
---- a/drivers/usb/mtu3/mtu3_dr.h
-+++ b/drivers/usb/mtu3/mtu3_dr.h
-@@ -71,7 +71,7 @@ static inline void ssusb_gadget_exit(struct ssusb_mtk *ssusb)
- #if IS_ENABLED(CONFIG_USB_MTU3_DUAL_ROLE)
- int ssusb_otg_switch_init(struct ssusb_mtk *ssusb);
- void ssusb_otg_switch_exit(struct ssusb_mtk *ssusb);
--void ssusb_mode_manual_switch(struct ssusb_mtk *ssusb, int to_host);
-+void ssusb_mode_switch(struct ssusb_mtk *ssusb, int to_host);
- int ssusb_set_vbus(struct otg_switch_mtk *otg_sx, int is_on);
- void ssusb_set_force_mode(struct ssusb_mtk *ssusb,
- 			  enum mtu3_dr_force_mode mode);
-@@ -86,8 +86,8 @@ static inline int ssusb_otg_switch_init(struct ssusb_mtk *ssusb)
- static inline void ssusb_otg_switch_exit(struct ssusb_mtk *ssusb)
- {}
- 
--static inline void
--ssusb_mode_manual_switch(struct ssusb_mtk *ssusb, int to_host) {}
-+static inline void ssusb_mode_switch(struct ssusb_mtk *ssusb, int to_host)
-+{}
- 
- static inline int ssusb_set_vbus(struct otg_switch_mtk *otg_sx, int is_on)
- {
-diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
-index fd0f6c5dfbc1..9c256ea3cdf5 100644
---- a/drivers/usb/mtu3/mtu3_plat.c
-+++ b/drivers/usb/mtu3/mtu3_plat.c
-@@ -299,8 +299,9 @@ static int get_ssusb_rscs(struct platform_device *pdev, struct ssusb_mtk *ssusb)
- 	otg_sx->is_u3_drd = of_property_read_bool(node, "mediatek,usb3-drd");
- 	otg_sx->manual_drd_enabled =
- 		of_property_read_bool(node, "enable-manual-drd");
-+	otg_sx->role_sw_used = of_property_read_bool(node, "usb-role-switch");
- 
--	if (of_property_read_bool(node, "extcon")) {
-+	if (!otg_sx->role_sw_used && of_property_read_bool(node, "extcon")) {
- 		otg_sx->edev = extcon_get_edev_by_phandle(ssusb->dev, 0);
- 		if (IS_ERR(otg_sx->edev)) {
- 			dev_err(ssusb->dev, "couldn't get extcon device\n");
--- 
-2.21.0
-
+Thanks
+Dave
