@@ -2,80 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2CC1CF34
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E60B1CF16
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:29:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfENSjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 14:39:16 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:63549 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfENSjQ (ORCPT
+        id S1727615AbfENS3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 14:29:50 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46818 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727565AbfENS3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 14:39:16 -0400
-X-Greylist: delayed 580 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 14:39:15 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id D469A3F7F2;
-        Tue, 14 May 2019 20:29:33 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 tagged_above=-999 required=6.31
-        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ntDtz1TyoPSy; Tue, 14 May 2019 20:29:33 +0200 (CEST)
-Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
-        (Authenticated sender: mb547485)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 0C1D83F393;
-        Tue, 14 May 2019 20:29:31 +0200 (CEST)
-Date:   Tue, 14 May 2019 20:29:31 +0200
-From:   Fredrik Noring <noring@nocrew.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     laurentiu.tudor@nxp.com, hch@lst.de, stern@rowland.harvard.edu,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        marex@denx.de, JuergenUrban@gmx.de, leoyang.li@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] prerequisites for device reserved local mem
- rework
-Message-ID: <20190514182931.GA2559@sx9>
-References: <20190514143807.7745-1-laurentiu.tudor@nxp.com>
- <9d34015d-c219-179b-3141-4b0de3530ac3@arm.com>
+        Tue, 14 May 2019 14:29:50 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 203so12868464oid.13;
+        Tue, 14 May 2019 11:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YzHwYmKzjuKvCOCh10t0J9NpuXRpPAJJUwj2kybwkcQ=;
+        b=V093A41P+K5tEG4t03XJ3d+7PTyuCoW2oNm1Nh1S21pQjOK3wC6slvaecR/0t2O7gu
+         pqYBDniVFRkeX5y41cZui9umzX3h8bAE59uVgNAFZ12zlTQxGDyU2lsUam5c550ol6pN
+         kDE6X/4M/ZErMoonr5I/Q5DVmG9ymKHVyzR1dAdImxbcrXz4hvBUXvhXGeV8Td1/szRP
+         xPvWEi0B9eHH+gDThvqRrLbzj7agpYLG8pTP2m5fqM3CEXf/zz+cxWa8okMWhOxKuVRc
+         a+jDelL2YDDS9m2FZt2kGBP2xbNJm4VD4dEXGy3hvWPHPrl2nTsLJNxPJ8wKO4AoMddY
+         KyOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YzHwYmKzjuKvCOCh10t0J9NpuXRpPAJJUwj2kybwkcQ=;
+        b=SgB4df+eQUO9UmjU7Hu8gnpMsrovC4L+XVwqMhxVd+OqUWqW4yxwYvlN7aGODShoBh
+         CJKVZq40gyuAYBf+DU68wESblVDWtAjznnzezHkKlM4gZP2F4vjkpzy8Is77XRMlWCLx
+         P3qR7m25WrINs/Xy7AiUZrwPtY+PHNfxThCQxwqWA48UHpIJAF3EPLA9iS+Fy9Jv7YrE
+         e7VLNlYlNILI9LoAf9ehzrfSr2gSUNJSdLEmQo0sDu47KjNiMLFxgAvti8o/uRaiA1LO
+         BHEtxkgdqLHf0z41pyZgXZyt3TSy3h31HK5oNB9dK/G1Lrp+N3VuyZ1rrMvDr6ARsujP
+         s3Sg==
+X-Gm-Message-State: APjAAAUKw9yo7RlXG0qVlpdbQ24mjhXjtto43BY8aGXUAqegHFU7LLQ1
+        CKVr+86j0ev081kSbtfNM8j64ANGC2MZnXZY0uk=
+X-Google-Smtp-Source: APXvYqxcWe1Slj1XnihHFg5ydnIfXNbBimRjDB0bETv6zV5QhUSm2aIUfIunQTLyioy582hC+nI5IHzzlfR8e/5WRCk=
+X-Received: by 2002:aca:ed0a:: with SMTP id l10mr4134001oih.39.1557858589257;
+ Tue, 14 May 2019 11:29:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9d34015d-c219-179b-3141-4b0de3530ac3@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190514094537.8765-1-jbrunet@baylibre.com>
+In-Reply-To: <20190514094537.8765-1-jbrunet@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 14 May 2019 20:29:38 +0200
+Message-ID: <CAFBinCB=p4O53vPpvQBYP_PLxa9oc0_qGBLwYz-jzg+WNoGR7A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: meson: g12a: set uart_ao clocks
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Robin!
-
-> > For HCs that have local memory, replace the current DMA API usage
-> > with a genalloc generic allocator to manage the mappings for these
-> > devices.
-> > This is in preparation for dropping the existing "coherent" dma
-> > mem declaration APIs. Current implementation was relying on a short
-> > circuit in the DMA API that in the end, was acting as an allocator
-> > for these type of devices.
-> > 
-> > Only compiled tested, so any volunteers willing to test are most welcome.
-> 
-> I recall an out-of-tree PlayStation 2 OHCI driver being another 
-> HCD_LOCAL_MEM user - if Fredrik and Juergen are still active on that, 
-> hopefully they might be able to comment on whether this approach can 
-> work for them too. Patchwork link just in case: 
-> https://patchwork.kernel.org/project/linux-usb/list/?series=117433
-
-True. In fact I'm preparing a patch submission for this PS2 OHCI driver,
-along with about a hundred other patches (unrelated to the USB subsystem).
-Hopefully in a few weeks. My patches are currently on top of v5.0. What
-branch/version is recommended to try this DMA update?
-
-Here is the v5.0.11 PS2 OHCI driver, for reference:
-
-https://github.com/frno7/linux/blob/ps2-v5.0.11/drivers/usb/host/ohci-ps2.c
-
-Fredrik
+On Tue, May 14, 2019 at 11:45 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> Now that the AO clock controller is available, make the uarts of the
+> always-on domain claim the appropriate peripheral clock.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
