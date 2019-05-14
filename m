@@ -2,87 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850FE1CECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5091CECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbfENSNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 14:13:55 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44839 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfENSNz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 14:13:55 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g18so15920787otj.11;
-        Tue, 14 May 2019 11:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nyGqEkYvn3BjYrUHlUmuJ5keO+5aqjugox8sRHwUIKQ=;
-        b=sMJt7uF/4MNIcXxMXbk2JGh9sK1ZuIkDIyJcENl1EXYhzKzodF1+ugcoWijVBgq+i8
-         9EhD8c5zI9PaWrG06IIKSesXQ0MoUwdjL4UipV2+zYdA8XqkgsRMXtyKaljBghy2R6Ym
-         YJACxzNY2afZNBKPl0H8CEVcVdKZRazC9WYzgVJQ00NYkrfHKHRFYAXIoV4CNjbfFG5B
-         07M/t4bMdKWo/yxz464eIynQQPJZMaYkQyP2bI4BriaD64C9EmnziZMLV8jootQU8J8W
-         WOsTK7N+x8ilXKC9COudzpcDlYC+mWifszg5v143FlGiIaiRMDUcntuzNrrTIhcY0rD4
-         sFew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nyGqEkYvn3BjYrUHlUmuJ5keO+5aqjugox8sRHwUIKQ=;
-        b=NJpGG7QSrTAsBwt5Q6ZEmriD1yf1eP2yQTGJYHi8NWVRNfWm8AcmywRYONguULaZG6
-         JsULfMCWtVFAgYUMsd1ur56GNU7jvI+gPvp/bforQMXYeam8wg8j7+75c0Eq9rwRBc/V
-         mdn4nQAq+7bXLpJg5DuH471UP+Hvxd2mDGnj7TH+ycRi4lnVWCuDts93Arq0g8BHslHf
-         +QsIJfo7VoXB+6MleQ+6FFq5dQLGBLTczdUcJGeB3Gj+JZsrw0+3r8yFPaBnhAN3ROSQ
-         B/sVOkF9q4C9ffuphv1nERftp8LOLT+akpw1y+X1JaGjxNwu3LtPNjvosiKCDXwL+n8N
-         UU/w==
-X-Gm-Message-State: APjAAAXM9QcB/BISWMJE8dY3mjvXiZru/x9FSFkVtrXM5/GluqzUrLAs
-        XieIH7JunRlxhdQsNLBRnttDxcRrJksDcqzhaKY=
-X-Google-Smtp-Source: APXvYqz+CMQFl/iOZjK2ovpb8x50ggC+uyHiRTZ4z3hnHfRgzwsvxnfKT1wYL9y9zA8iIXUs4gGObTt3HYxN+WCmozs=
-X-Received: by 2002:a05:6830:1182:: with SMTP id u2mr11543945otq.71.1557857634583;
- Tue, 14 May 2019 11:13:54 -0700 (PDT)
+        id S1727574AbfENSOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 14:14:38 -0400
+Received: from ms.lwn.net ([45.79.88.28]:45402 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726412AbfENSOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 14:14:38 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 9487F308;
+        Tue, 14 May 2019 18:14:37 +0000 (UTC)
+Date:   Tue, 14 May 2019 12:14:36 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Toralf =?UTF-8?B?RsO2cnN0ZXI=?= <toralf.foerster@gmx.de>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re:
+ https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html gives
+ 404
+Message-ID: <20190514121436.7770a83a@lwn.net>
+In-Reply-To: <d200d191-258e-ba3f-1c7f-9f2e7fee5b36@gmx.de>
+References: <d200d191-258e-ba3f-1c7f-9f2e7fee5b36@gmx.de>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <20190513124531.20334-1-jbrunet@baylibre.com>
-In-Reply-To: <20190513124531.20334-1-jbrunet@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 14 May 2019 20:13:43 +0200
-Message-ID: <CAFBinCDASu9_wx+hhyqYBb4=m=oxcgJv=UcBpPXhfj50p+gkCA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: meson: g12a: fix gp0 and hifi ranges
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 2:45 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> While some SoC samples are able to lock with a PLL factor of 55, others
-> samples can't. ATM, a minimum of 60 appears to work on all the samples
-> I have tried.
->
-> Even with 60, it sometimes takes a long time for the PLL to eventually
-> lock. The documentation says that the minimum rate of these PLLs DCO
-> should be 3GHz, a factor of 125. Let's use that to be on the safe side.
->
-> With factor range changed, the PLL seems to lock quickly (enough) so far.
-> It is still unclear if the range was the only reason for the delay.
->
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-this matches with what Amlogic does in their 4.9 vendor kernel from
-buildroot-openlinux-A113-201901:
-$ grep -P "\tPLL_RATE" kernel/aml-4.9/drivers/amlogic/clk/g12a/g12a.h
-| cut -d',' -f2 | tr -s " " | sort -u | head -n5
- 125
- 126
- 128
- 129
- 132
+On Tue, 14 May 2019 19:48:12 +0200
+Toralf Förster <toralf.foerster@gmx.de> wrote:
 
-based on that:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> But this link is mentioned in dmesg of 5.1.2
+
+It works for me.  I think you just needed to wait for the relevant commit
+to make it upstream and the docs to be regenerated.
+
+Thanks,
+
+jon
