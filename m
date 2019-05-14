@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D951E1C9FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACED1CA00
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfENOEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:04:14 -0400
-Received: from mga09.intel.com ([134.134.136.24]:59052 "EHLO mga09.intel.com"
+        id S1726803AbfENOET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:04:19 -0400
+Received: from mga09.intel.com ([134.134.136.24]:59047 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfENOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726272AbfENOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 10:02:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 07:02:56 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 07:02:57 -0700
 X-ExtLoop1: 1
 Received: from unknown (HELO luv-build.sc.intel.com) ([172.25.110.25])
   by fmsmga005.fm.intel.com with ESMTP; 14 May 2019 07:02:56 -0700
@@ -29,16 +29,14 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Ricardo Neri <ricardo.neri@intel.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Stephane Eranian <eranian@google.com>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Subject: [RFC PATCH v3 03/21] x86/hpet: Calculate ticks-per-second in a separate function
-Date:   Tue, 14 May 2019 07:01:56 -0700
-Message-Id: <1557842534-4266-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH v3 04/21] x86/hpet: Add hpet_set_comparator() for periodic and one-shot modes
+Date:   Tue, 14 May 2019 07:01:57 -0700
+Message-Id: <1557842534-4266-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -47,20 +45,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is easier to compute the expiration times of an HPET timer by using
-its frequency (i.e., the number of times it ticks in a second) than its
-period, as given in the capabilities register.
+Instead of setting the timer period directly in hpet_set_periodic(), add a
+new helper function hpet_set_comparator() that only sets the accumulator
+and comparator. hpet_set_periodic() will only prepare the timer for
+periodic mode and leave the expiration programming to
+hpet_set_comparator().
 
-In addition to the HPET char driver, the HPET-based hardlockup detector
-will also need to know the timer's frequency. Thus, create a common
-function that both can use.
+This new function can also be used by other components (e.g., the HPET-
+based hardlockup detector) which also need to configure HPET timers. Thus,
+add its declaration into the hpet header file.
 
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
@@ -68,79 +66,100 @@ Cc: Stephane Eranian <eranian@google.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
+Originally-by: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- drivers/char/hpet.c  | 31 ++++++++++++++++++++++++-------
- include/linux/hpet.h |  1 +
- 2 files changed, 25 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/hpet.h |  1 +
+ arch/x86/kernel/hpet.c      | 57 ++++++++++++++++++++++++++++---------
+ 2 files changed, 45 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index d0ad85900b79..bdcbecfdb858 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -836,6 +836,29 @@ static unsigned long hpet_calibrate(struct hpets *hpetp)
- 	return ret;
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index f132fbf984d4..e7098740f5ee 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -102,6 +102,7 @@ extern int hpet_rtc_timer_init(void);
+ extern irqreturn_t hpet_rtc_interrupt(int irq, void *dev_id);
+ extern int hpet_register_irq_handler(rtc_irq_handler handler);
+ extern void hpet_unregister_irq_handler(rtc_irq_handler handler);
++extern void hpet_set_comparator(int num, unsigned int cmp, unsigned int period);
+ 
+ #endif /* CONFIG_HPET_EMULATE_RTC */
+ 
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 560fc28e1d13..c5c5fc150193 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -289,6 +289,46 @@ static void hpet_legacy_clockevent_register(void)
+ 	printk(KERN_DEBUG "hpet clockevent registered\n");
  }
  
-+u64 hpet_get_ticks_per_sec(u64 hpet_caps)
++/**
++ * hpet_set_comparator() - Helper function for setting comparator register
++ * @num:	The timer ID
++ * @cmp:	The value to be written to the comparator/accumulator
++ * @period:	The value to be written to the period (0 = oneshot mode)
++ *
++ * Helper function for updating comparator, accumulator and period values.
++ *
++ * In periodic mode, HPET needs HPET_TN_SETVAL to be set before writing
++ * to the Tn_CMP to update the accumulator. Then, HPET needs a second
++ * write (with HPET_TN_SETVAL cleared) to Tn_CMP to set the period.
++ * The HPET_TN_SETVAL bit is automatically cleared after the first write.
++ *
++ * For one-shot mode, HPET_TN_SETVAL does not need to be set.
++ *
++ * See the following documents:
++ *   - Intel IA-PC HPET (High Precision Event Timers) Specification
++ *   - AMD-8111 HyperTransport I/O Hub Data Sheet, Publication # 24674
++ */
++void hpet_set_comparator(int num, unsigned int cmp, unsigned int period)
 +{
-+	u64 ticks_per_sec, period;
++	if (period) {
++		unsigned int v = hpet_readl(HPET_Tn_CFG(num));
 +
-+	period = (hpet_caps & HPET_COUNTER_CLK_PERIOD_MASK) >>
-+		 HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
++		hpet_writel(v | HPET_TN_SETVAL, HPET_Tn_CFG(num));
++	}
 +
-+	/*
-+	 * The frequency is the reciprocal of the period. The period is given
-+	 * femtoseconds per second. Thus, prepare a dividend to obtain the
-+	 * frequency in ticks per second.
++	hpet_writel(cmp, HPET_Tn_CMP(num));
++
++	if (!period)
++		return;
++
++	/* This delay is seldom used: never in one-shot mode and in periodic
++	 * only when reprogramming the timer.
 +	 */
-+
-+	/* 10^15 femtoseconds per second */
-+	ticks_per_sec = 1000000000000000uLL;
-+	ticks_per_sec += period >> 1; /* round */
-+
-+	/* The quotient is put in the dividend. We drop the remainder. */
-+	do_div(ticks_per_sec, period);
-+
-+	return ticks_per_sec;
++	udelay(1);
++	hpet_writel(period, HPET_Tn_CMP(num));
 +}
++EXPORT_SYMBOL_GPL(hpet_set_comparator);
 +
- int hpet_alloc(struct hpet_data *hdp)
+ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
  {
- 	u64 cap, mcfg;
-@@ -844,7 +867,6 @@ int hpet_alloc(struct hpet_data *hdp)
- 	struct hpets *hpetp;
- 	struct hpet __iomem *hpet;
- 	static struct hpets *last;
--	unsigned long period;
- 	unsigned long long temp;
- 	u32 remainder;
+ 	unsigned int cfg, cmp, now;
+@@ -300,19 +340,10 @@ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
+ 	now = hpet_readl(HPET_COUNTER);
+ 	cmp = now + (unsigned int)delta;
+ 	cfg = hpet_readl(HPET_Tn_CFG(timer));
+-	cfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC | HPET_TN_SETVAL |
+-	       HPET_TN_32BIT;
+-	hpet_writel(cfg, HPET_Tn_CFG(timer));
+-	hpet_writel(cmp, HPET_Tn_CMP(timer));
+-	udelay(1);
+-	/*
+-	 * HPET on AMD 81xx needs a second write (with HPET_TN_SETVAL
+-	 * cleared) to T0_CMP to set the period. The HPET_TN_SETVAL
+-	 * bit is automatically cleared after the first write.
+-	 * (See AMD-8111 HyperTransport I/O Hub Data Sheet,
+-	 * Publication # 24674)
+-	 */
+-	hpet_writel((unsigned int)delta, HPET_Tn_CMP(timer));
++	cfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC | HPET_TN_32BIT;
++
++	hpet_set_comparator(timer, cmp, (unsigned int)delta);
++
+ 	hpet_start_counter();
+ 	hpet_print_config();
  
-@@ -894,12 +916,7 @@ int hpet_alloc(struct hpet_data *hdp)
- 
- 	last = hpetp;
- 
--	period = (cap & HPET_COUNTER_CLK_PERIOD_MASK) >>
--		HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
--	temp = 1000000000000000uLL; /* 10^15 femtoseconds per second */
--	temp += period >> 1; /* round */
--	do_div(temp, period);
--	hpetp->hp_tick_freq = temp; /* ticks per second */
-+	hpetp->hp_tick_freq = hpet_get_ticks_per_sec(cap);
- 
- 	printk(KERN_INFO "hpet%d: at MMIO 0x%lx, IRQ%s",
- 		hpetp->hp_which, hdp->hd_phys_address,
-diff --git a/include/linux/hpet.h b/include/linux/hpet.h
-index 8604564b985d..e7b36bcf4699 100644
---- a/include/linux/hpet.h
-+++ b/include/linux/hpet.h
-@@ -107,5 +107,6 @@ static inline void hpet_reserve_timer(struct hpet_data *hd, int timer)
- }
- 
- int hpet_alloc(struct hpet_data *);
-+u64 hpet_get_ticks_per_sec(u64 hpet_caps);
- 
- #endif				/* !__HPET__ */
 -- 
 2.17.1
 
