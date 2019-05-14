@@ -2,117 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 641001C49C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D419A1C43A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 09:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfENIXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:23:14 -0400
-Received: from mx07-00376f01.pphosted.com ([185.132.180.163]:28378 "EHLO
-        mx07-00376f01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725985AbfENIXO (ORCPT
+        id S1726187AbfENH4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 03:56:00 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55311 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfENH4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:23:14 -0400
-X-Greylist: delayed 1637 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 04:23:12 EDT
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-        by mx07-00376f01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E7hLLU012623;
-        Tue, 14 May 2019 08:55:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=dk201812; bh=uKFpAT7GrQSucExulDdH+qORJ6Ns2etUzr/PYek6Ejo=;
- b=uv78+xKCIP2KAgoPoLFzjakPS3sRS4qdQA4jVZnoFVUCXbE0As6rDPZpgOZFpxLGLw5W
- bIgn2bPSswq6S4LlAeBOwR0sw2DOFb3JllXfs8GWs0xiuKQ8IgqzN+kyPHvDUU3PqoCw
- IRV+wOq11mv3MpakmxE0ekRjIuIFa3VtKZM/e0EoaVlXPqT14i542tlMsrRjMRD9795t
- hksBwX+1eIgBFbGa3JodYXnlkXS7cP6rvyVR9Vv/7RSK1NC1dbZRjsWvqQxADTOKmbQ5
- eOeRvzAV+5lB7ngjVxdFv6BoqQkOQJl9QQceVp5A7qSN2c60J9n9x31u1kDFBScL4lU8 tw== 
-Received: from hhmail02.hh.imgtec.org ([217.156.249.195])
-        by mx07-00376f01.pphosted.com with ESMTP id 2sdpft2tqw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 14 May 2019 08:55:42 +0100
-Received: from michael-imgtec (10.80.17.22) by hhmail02.hh.imgtec.org
- (10.100.10.21) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 14 May
- 2019 08:55:41 +0100
-Date:   Tue, 14 May 2019 15:55:37 +0800
-From:   Michael Yang <michael.yang@imgtec.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-CC:     <sumit.semwal@linaro.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <gustavo@padovan.org>,
-        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>,
-        <gregkh@linuxfoundation.org>
-Subject: Re: [EXTERNAL] Re: [PATCH] sync_file: Return reasonable timestamp
- when merging signaled fences
-Message-ID: <20190514075537.GA7483@michael-imgtec>
-References: <1554710495-6646-1-git-send-email-michael.yang@imgtec.com>
- <1557376451-20164-1-git-send-email-michael.yang@imgtec.com>
- <155740236592.28545.17880521046408313036@skylake-alporthouse-com>
+        Tue, 14 May 2019 03:56:00 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x64so1719026wmb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 00:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=AZcNqe5qvtY4dcuVPf2hIhfe8ZNEonQhM7fP56+pLys=;
+        b=azwnJ7Adc4FZ5DZhip+da3lj0FuE4ctMi8uwjjtF6REh0S/xbSWaaWoR3pl2lBJ6c/
+         4/AFKediJhhtbToQwNWayxFyhA/SQ1iQO4sPNLbvA78Xll94OM4X3TAwfQNqRThw5/0p
+         brF2Ue4q6T7QUBNvraTRt15t+C82uucOVWxmo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=AZcNqe5qvtY4dcuVPf2hIhfe8ZNEonQhM7fP56+pLys=;
+        b=DkJH3wLd4R1bVfPtb2Tub6PeSnn+SUtgqc3Swxg55tO0XkFn87uD2/KCiwkQagP7e7
+         7Av1BwO5ZDb72IvM3Vp9/rQYA2ap98yoBzUMZZmaE3yMaJy2CRq4t4nLap8sbRvc/hBg
+         I8hNRkHechTaYli8XK7kGNk1O3R4PEySbjJCb0m6JJoKVhAxxvsIxOqGz86JXzd4CMug
+         BhgwJSgg5VZ2E32oY7IgTBKLkCa9HqTJy1q9uhWfeD4yrTyvJPdyTeW7eUy3SP3Ihd3S
+         tvxupVaNlPeEgyoC8C2ZhH8qzhh26ZbWR5racvPmtpSnnhyYMgrSzsuzGqhFDnDbw6kY
+         ZEmQ==
+X-Gm-Message-State: APjAAAUnWHkN3ot8Qp3VPutB/w69lcEPkJLv1brejDfiFwCcjWpiVxQH
+        LlQmKlFGBfjLi/jfzW6lpZD96w==
+X-Google-Smtp-Source: APXvYqzy2E5+GTUUanOar5cUy7aboEwVSs6bEVbybGdEIZoPPQiyThOSHxOHiq40am/MaT6+1a5IrQ==
+X-Received: by 2002:a1c:21c1:: with SMTP id h184mr1682103wmh.78.1557820558015;
+        Tue, 14 May 2019 00:55:58 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (217-197-180-204.pool.digikabel.hu. [217.197.180.204])
+        by smtp.gmail.com with ESMTPSA id t6sm2302733wmt.8.2019.05.14.00.55.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 May 2019 00:55:57 -0700 (PDT)
+Date:   Tue, 14 May 2019 09:55:55 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 5.2
+Message-ID: <20190514075555.GB7850@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155740236592.28545.17880521046408313036@skylake-alporthouse-com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.17.22]
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 12:46:05PM +0100, Chris Wilson wrote:
-> Quoting Michael Yang (2019-05-09 05:34:11)
-> > If all the sync points were signaled in both fences a and b,
-> > there was only one sync point in merged fence which is a_fence[0].
-> > The Fence structure in android framework might be confused about
-> > timestamp if there were any sync points which were signaled after
-> > a_fence[0]. It might be more reasonable to use timestamp of last signaled
-> > sync point to represent the merged fence.
-> > The issue can be found from EGL extension ANDROID_get_frame_timestamps.
-> > Sometimes the return value of EGL_READS_DONE_TIME_ANDROID is head of
-> > the return value of EGL_RENDERING_COMPLETE_TIME_ANDROID.
-> > That means display/composition had been completed before rendering
-> > was completed that is incorrect.
-> > 
-> > Some discussion can be found at:
-> > https://urldefense.proofpoint.com/v2/url?u=https-3A__android-2Dreview.googlesource.com_c_kernel_common_-2B_907009&d=DwIFaQ&c=bq9ppmgvSw3oQFfR871D_w&r=Ngg6vhouPkgwSIbDMU7rDN0ZfT2Qax50xuWkXXqQ3zw&m=N9R9dXGJ3zk0e0gXNM4tsiro7xCOLlWx6c3HAEseSSw&s=6sY2t9i2wvylWH-rPUlvY1MIuWKjCPzT8SeCgpZOIGk&e= 
-> > 
-> > Signed-off-by: Michael Yang <michael.yang@imgtec.com>
-> > ---
-> > Hi,
-> > I didn't get response since I previously sent this a month ago.
-> > Could someone have a chance to look at it please?
-> > Thanks.
-> >  drivers/dma-buf/sync_file.c | 25 +++++++++++++++++++++++--
-> >  1 file changed, 23 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
-> > index 4f6305c..d46bfe1 100644
-> > --- a/drivers/dma-buf/sync_file.c
-> > +++ b/drivers/dma-buf/sync_file.c
-> > @@ -274,8 +274,29 @@ static struct sync_file *sync_file_merge(const char *name, struct sync_file *a,
-> >         for (; i_b < b_num_fences; i_b++)
-> >                 add_fence(fences, &i, b_fences[i_b]);
-> >  
-> > -       if (i == 0)
-> > -               fences[i++] = dma_fence_get(a_fences[0]);
-> > +       /* If all the sync pts were signaled, then adding the sync_pt who
-> > +        * was the last signaled to the fence.
-> > +        */
-> > +       if (i == 0) {
-> > +               struct dma_fence *last_signaled_sync_pt = a_fences[0];
-> > +               int iter;
-> > +
-> > +               for (iter = 1; iter < a_num_fences; iter++) {
-> 
-> If there is more than one fence, sync_file->fence is a fence_array and
-> its timestamp is what you want. If there is one fence, sync_file->fence
-> is a pointer to that fence, and naturally has the right timestamp.
-> 
-> In short, this should be handled by dma_fence_array_create() when given
-> a complete set of signaled fences, it too should inherit the signaled
-> status with the timestamp being taken from the last fence. It should
-> also be careful to inherit the error status.
-> -Chris
-Thanks Chris for the inputs. For this case, there will be only one fence
-in sync_file->fence after doing sync_file_merge(). Regarding to the current
-implementation, dma_fence_array_create() is not called as num_fences is equal
-to 1. I was wondering do you suggest that we pass a complete set of signaled
-fences to sync_file_set_fence() and handle it in dma_fence_array_create().
-Thanks.
-- Michael
+Hi Linus,
+
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.2
+
+Just bug fixes in this small update.
+
+Thanks,
+Miklos
+
+---
+Amir Goldstein (4):
+      ovl: fix missing upper fs freeze protection on copy up for ioctl
+      ovl: support stacked SEEK_HOLE/SEEK_DATA
+      ovl: do not generate duplicate fsnotify events for "fake" path
+      ovl: relax WARN_ON() for overlapping layers use case
+
+Jiufei Xue (1):
+      ovl: check the capability before cred overridden
+
+---
+ fs/overlayfs/copy_up.c   |   6 +--
+ fs/overlayfs/dir.c       |   2 +-
+ fs/overlayfs/file.c      | 133 +++++++++++++++++++++++++++++++++++++----------
+ fs/overlayfs/inode.c     |   3 +-
+ fs/overlayfs/overlayfs.h |   2 +-
+ 5 files changed, 113 insertions(+), 33 deletions(-)
