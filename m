@@ -2,106 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 899061E57E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 704971E585
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfENXTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 19:19:10 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37245 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfENXTJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 19:19:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p15so345129pll.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 16:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=65cWsglVoepzFlykZ42+abk0YI6VmpB8isURvrndfio=;
-        b=Bg39hYCrdxq9ZvR+2i/HlXSRaq6orpc1oOB8WF33oCVFV3rNh0CexWyS1Z8QPqlm8F
-         634lbyY40ksqDjssWKmNVtGI+1F3APRXwSAL0XqoS1nJrYkqeYOkCUNp8JWFWm6ZNg2N
-         3YnG2RckdXyh7Hd/JvDkJlfyEQP3VpBJF0SPvweC+YvdIQjG/OVFu00sC5S5PmUtedb0
-         57OXt1xXLQFMEhV58WldO2KsTL77idwyKmIM1odUUjPKE4+37YyS67kBXQTSZPy0lER0
-         iehTg4wcOiUIvCRTLfByhOie4AbWZpgc/tuXOmP4dOA/iaDvGuiNcBG7UtbS06g67YaV
-         pQVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=65cWsglVoepzFlykZ42+abk0YI6VmpB8isURvrndfio=;
-        b=CG/OwUNvXtnYcmOv8bHOPRPejEE8Fa3J3YOsg2teO3Y1C4kDS/3SFFmSzlgl+piBz6
-         fzinUQSRfEyY/q/Vyo3ZYbPTFSIdrlvFkQSWbk+XB1JOfsdVtuJhioBT4ZlpFnDCUi4i
-         E44Hg/VzWMpLeMW90lCRV/F13TuYJ4aQGj/FjtrcuTJRia14/elFT+k6r12GbyYNcST2
-         QD5nKyWQ4bbSjHz8IsurO1ZvECewddXtLFf5TBsrN6L6QI+7WzDp7P9lUTqrsUB6w1Xn
-         HobwATkOEgIU6YH+FWPCpOAPhI8QzcsBjhhPoPrRFuxauNLtsgD+Mi1UcybauvFVUMZk
-         OYzQ==
-X-Gm-Message-State: APjAAAVBN1vZElKA3t5FCWOuFqlIDF6w9M8+/yp4y5s1Zt+zhBpHtsUF
-        cvQbDqBo6s3NlLuwk3toVyzR5w==
-X-Google-Smtp-Source: APXvYqwRc6VN5ebH7uglXTpSRZvZHWA1IEE/QiHsPmobJB2SKK6EBwf8uUbYe/O8Vc0yLOYiPNp2/w==
-X-Received: by 2002:a17:902:5998:: with SMTP id p24mr23416476pli.9.1557875948193;
-        Tue, 14 May 2019 16:19:08 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
-        by smtp.gmail.com with ESMTPSA id p64sm253565pfp.72.2019.05.14.16.19.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 14 May 2019 16:19:07 -0700 (PDT)
-Date:   Tue, 14 May 2019 16:19:02 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, rdunlap@infradead.org, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
-Subject: Re: [PATCH v3 15/18] Documentation: kunit: add documentation for
- KUnit
-Message-ID: <20190514231902.GA12893@google.com>
-References: <20190514054251.186196-1-brendanhiggins@google.com>
- <20190514054251.186196-16-brendanhiggins@google.com>
- <20190514073422.4287267c@lwn.net>
- <20190514180810.GA109557@google.com>
- <20190514121623.0314bf07@lwn.net>
+        id S1726425AbfENXWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 19:22:11 -0400
+Received: from mail.us.es ([193.147.175.20]:54854 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbfENXWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 19:22:10 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 98767DA70A
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 01:22:08 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 89425DA702
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 01:22:08 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 7E297DA706; Wed, 15 May 2019 01:22:08 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 8AEE3DA702;
+        Wed, 15 May 2019 01:22:06 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Wed, 15 May 2019 01:22:06 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 697AC4265A31;
+        Wed, 15 May 2019 01:22:06 +0200 (CEST)
+Date:   Wed, 15 May 2019 01:22:06 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Cc:     Florian Westphal <fw@strlen.de>, shuah <shuah@kernel.org>,
+        linu-kselftest@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests : netfilter: Wrote a error and exit code for a
+ command which needed veth kernel module.
+Message-ID: <20190514232206.cbbx5734z2eg4d5f@salvia>
+References: <20190405163126.7278-1-jeffrin@rajagiritech.edu.in>
+ <20190405164746.pfc6wxj4nrynjma4@breakpoint.cc>
+ <CAG=yYwnN37OoL1DSN8qPeKWhzVJOcUFtR-7Q9fVT5AULk5S54w@mail.gmail.com>
+ <c4660969-1287-0697-13c0-e598327551fb@kernel.org>
+ <20190430100256.mfgerggoccagi2hc@breakpoint.cc>
+ <20190430105225.bu5pil5fjxkltu4q@salvia>
+ <CAG=yYw=YQzZQd-uyVXEgdTtLC9rpO5DE7SYW3hxQD3bVS8SD=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190514121623.0314bf07@lwn.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAG=yYw=YQzZQd-uyVXEgdTtLC9rpO5DE7SYW3hxQD3bVS8SD=g@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 12:16:23PM -0600, Jonathan Corbet wrote:
-> On Tue, 14 May 2019 11:08:10 -0700
-> Brendan Higgins <brendanhiggins@google.com> wrote:
+On Sun, May 12, 2019 at 02:28:07AM +0530, Jeffrin Thalakkottoor wrote:
+> Hi Pablo,
 > 
-> > > Naturally, though, I have one request: I'd rather not see this at the top
-> > > level, which is more than crowded enough as it is.  Can this material
-> > > please go into the development tools book, alongside the kselftest
-> > > documentation?
+> Please follow up on the mail you sent.
+> This is for my interest to see my patch upstream
 
-Hmmm...probably premature to bring this up, but Documentation/dev-tools/
-is kind of thrown together.
+Please, pick a shorter patch subject, I'd suggest something like:
 
-It would be nice to provide a coherent overview, maybe provide some
-basic grouping as well.
+"selftests: netfilter: missing error check when setting up veth interface"
 
-It would be nice if there was kind of a gentle introduction to the
-tools, which ones you should be looking at, when, why, etc.
+or alike.
 
-> > Oh yeah, that seems like the obvious home for this in hindsight. Sorry
-> > about that. Will fix in next revision!
-> 
-> No need to apologize - I have to say the same thing to everybody :)
+Submit your v2 and don't forget to Cc: netfilter-devel@vger.kernel.org
+
+Thanks.
