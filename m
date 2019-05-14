@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A081C6D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 213891C6CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfENKOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:14:35 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:32941 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbfENKOd (ORCPT
+        id S1726691AbfENKOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:14:37 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34430 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfENKOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:14:33 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w1so11194176ljw.0;
-        Tue, 14 May 2019 03:14:31 -0700 (PDT)
+        Tue, 14 May 2019 06:14:34 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v18so11436358lfi.1;
+        Tue, 14 May 2019 03:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4EmGOKmnVBQqEED+58Lv287Y6Xqzhezr5xh4jatbgao=;
-        b=Jv6VK2nFKFlbU+7D4+/OCW3P1X3F3eEqeF1KKbSA3bfOwuqXSLrnmLrL6Br+OCDBy3
-         +3SIqsEkYbaqU7m7gInXOiTh4bvi7LrLieyOyZ5qaCc2TLa3YpexyxSnoXrVnFk/jt97
-         sy0+nEZvXRLP5a9WiyiZuOMDVz/X9BSizW8/2l2wy57uxU3X1ZWcm0TYiUEJLbyA4Obj
-         UEI0O7nfVc0CZn7tgrk3GjI5CuME00as7poeCfic9/FaZgHWnVPD9dh0vhrk2j55oUxg
-         8Fm5lDOdMDAAtbr60gRlaA5GRaNY066BoY6s+q5mwN1CjjgGehQb/bBH0BtaLV3xQGve
-         kPNg==
+        bh=bermH+qcfg6fxNhcwx32poEW88kaY2/q9KQrNfCSlPQ=;
+        b=ITLwBme+PtJxOfZZImLP0AGD5O0DJgJDl6GEXaqokIabNzw0oG/E0wkgzxUOD626fD
+         j/yzxYWSeV4VfnIRCvf9UU4Vxy4MT4fgygTci2srIlKGU4SXmqtKarBe+7lgW0/dbCfk
+         kn2tKgU3pSQIA06191F1Bylb3AVK0681anW6PxSviKkUT0nlU9r/Jb1OUtAjWYZS4vvW
+         /4Ojg9wzcYtz0RVg2UQZThKrexIbl5NF25KttxqzL9LjmwISVxrmFHdPubYJgvFSXxzt
+         cXdZuFaKCBzuSCa1k8hyrwO8tfee1Fl7kBEDsnscgb8sUtbrADJI9xK4mQJ94k6VIKNf
+         Xefg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4EmGOKmnVBQqEED+58Lv287Y6Xqzhezr5xh4jatbgao=;
-        b=XJtQpTTCIr5376Yce2cOhYmL/Cv86/Nq986Vx41d3m+TA7TPpoIb9nRrYvHaiFW22R
-         jPEQ0f/4A1Csdtzixur7NwS3MHo6/zPYfwL4fqLNR2NtGzIB81xITj7lMsp25+Tcuude
-         ocJTKuSHiShmx/oETCTnOpZ46ErDEVv2ArJBM1PNudqQhzoo0P3/QGelchlD3EDBGbsT
-         TiQ70u0TACryObuBORptdAOW+rt1Ual/86JzWYHYAGu5msefsAXPjq8T6qXjEVbz55s0
-         BV2DEeb514OahZGybRXv0BmUQu+QI2iITWNBqte9L8U1jN51CwLx1U67OCr7TEZpACGz
-         aE1Q==
-X-Gm-Message-State: APjAAAW2piT8kJ6xGGx8ngR8O54RTuJYcT8wF9X1qP10qkBmCu5m3MVM
-        i2LWgemGVVDMm+NUjlCfob3236s5
-X-Google-Smtp-Source: APXvYqyzwPCnnIzDdET1+EP3ChHDwT2Ej7H9sHsxFWGJgKtMako0u2QZUzQ+WN5Gcv3UkcIg3904fg==
-X-Received: by 2002:a2e:5852:: with SMTP id x18mr4301689ljd.81.1557828870971;
-        Tue, 14 May 2019 03:14:30 -0700 (PDT)
+        bh=bermH+qcfg6fxNhcwx32poEW88kaY2/q9KQrNfCSlPQ=;
+        b=FMwN7B+XTR+D/5B/8YKk67D1X8wqUpcLmH1xnXeS6gZShRDaJ+5dPuS15kG7fMc2fn
+         RE/7ffakjDGBVURc1cy4XuNwuRDaBhW/PRx1zsh5rwYm4LNCxXsRRTN9nZfUmExpnTZt
+         mUc9YEypUXsUW9pPY3aGshOPsFZlm7XbXuXD9f+A6jWQh2nW0GP6DqlEELVT5aH5MgqZ
+         CxuduFfiFjT66scHbz24f/6LSXTXaph99aOY1LYQ4W7Art8nC721E7+K6/oD4W5g+yST
+         5RiF2TWVjgIbePE83z3ok/wX0nQ4DFdvoIDs3SD+UKoenZfRNc8goQoAAk1VpxAjXi7W
+         pFPw==
+X-Gm-Message-State: APjAAAUR8UNTedTWpEMQFkXV5wtID7RTmoHEwJRrClTEu6W1kcqXnbok
+        h0QXyTjtMiyiaS+TLB3LAsw=
+X-Google-Smtp-Source: APXvYqzT8zGzHXXA2zK0OdewB9tDHNRgs+9RlodpqnK/TSztmza/lZ0n/fjUBX9GRLr9RiaQeH0TWw==
+X-Received: by 2002:a19:e20e:: with SMTP id z14mr16843748lfg.43.1557828872162;
+        Tue, 14 May 2019 03:14:32 -0700 (PDT)
 Received: from localhost.localdomain ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.29
+        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 03:14:30 -0700 (PDT)
+        Tue, 14 May 2019 03:14:31 -0700 (PDT)
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] tty: max310x: Simplify tx-work item code
-Date:   Tue, 14 May 2019 13:14:09 +0300
-Message-Id: <20190514101415.26754-2-fancer.lancer@gmail.com>
+Subject: [PATCH 2/7] tty: max310x: Introduce max310x_one port macro-wrapper
+Date:   Tue, 14 May 2019 13:14:10 +0300
+Message-Id: <20190514101415.26754-3-fancer.lancer@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190514101415.26754-1-fancer.lancer@gmail.com>
 References: <20190514101415.26754-1-fancer.lancer@gmail.com>
@@ -63,96 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since cmwq introduction in the kernel, workqueues've been turned into
-non-reentrant execution contexts [1]. It means any work item is
-guaranteed to be executed by at most one worker system-wide at any
-given time. Since tx-handler max310x_handle_tx() is called by a
-single work item we don't need it to be self-protected by the mutex.
-We also don't need to check the tx work item pending state before
-scheduling it (which in the first place was racy btw), since cmwq will
-make sure to reschedule the item if it wasn't pending at the moment of
-schedule_work() call.
-
-[1] Documentation/core-api/workqueue.rst
+uart_port structure instance is embedded into the max310x_one
+super-structure, which is accessed by some of the uart-port callback
+methods. In order to improve the callback's code readability lets
+define the to_max310x_port() wrapper which just translates the passed
+uart_port pointer to the max310x_one one. It is also going to be
+handy in future commits.
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/tty/serial/max310x.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/tty/serial/max310x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 450ba6d7996c..4ee805862b68 100644
+index 4ee805862b68..527f1476c24a 100644
 --- a/drivers/tty/serial/max310x.c
 +++ b/drivers/tty/serial/max310x.c
-@@ -263,7 +263,6 @@ struct max310x_one {
+@@ -259,6 +259,8 @@ struct max310x_one {
+ 	struct work_struct	md_work;
+ 	struct work_struct	rs_work;
+ };
++#define to_max310x_port(_port) \
++	container_of(_port, struct max310x_one, port)
+ 
  struct max310x_port {
  	struct max310x_devtype	*devtype;
- 	struct regmap		*regmap;
--	struct mutex		mutex;
- 	struct clk		*clk;
- #ifdef CONFIG_GPIOLIB
- 	struct gpio_chip	gpio;
-@@ -768,8 +767,7 @@ static void max310x_start_tx(struct uart_port *port)
+@@ -765,7 +767,7 @@ static void max310x_handle_tx(struct uart_port *port)
+ 
+ static void max310x_start_tx(struct uart_port *port)
  {
- 	struct max310x_one *one = container_of(port, struct max310x_one, port);
+-	struct max310x_one *one = container_of(port, struct max310x_one, port);
++	struct max310x_one *one = to_max310x_port(port);
  
--	if (!work_pending(&one->tx_work))
--		schedule_work(&one->tx_work);
-+	schedule_work(&one->tx_work);
+ 	schedule_work(&one->tx_work);
  }
+@@ -858,7 +860,7 @@ static void max310x_md_proc(struct work_struct *ws)
  
- static irqreturn_t max310x_port_irq(struct max310x_port *s, int portno)
-@@ -826,14 +824,11 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
- 	return IRQ_RETVAL(handled);
- }
- 
--static void max310x_wq_proc(struct work_struct *ws)
-+static void max310x_tx_proc(struct work_struct *ws)
+ static void max310x_set_mctrl(struct uart_port *port, unsigned int mctrl)
  {
- 	struct max310x_one *one = container_of(ws, struct max310x_one, tx_work);
--	struct max310x_port *s = dev_get_drvdata(one->port.dev);
+-	struct max310x_one *one = container_of(port, struct max310x_one, port);
++	struct max310x_one *one = to_max310x_port(port);
  
--	mutex_lock(&s->mutex);
- 	max310x_handle_tx(&one->port);
--	mutex_unlock(&s->mutex);
+ 	schedule_work(&one->md_work);
  }
+@@ -981,7 +983,7 @@ static void max310x_rs_proc(struct work_struct *ws)
+ static int max310x_rs485_config(struct uart_port *port,
+ 				struct serial_rs485 *rs485)
+ {
+-	struct max310x_one *one = container_of(port, struct max310x_one, port);
++	struct max310x_one *one = to_max310x_port(port);
  
- static unsigned int max310x_tx_empty(struct uart_port *port)
-@@ -1269,8 +1264,6 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 	uartclk = max310x_set_ref_clk(dev, s, freq, xtal);
- 	dev_dbg(dev, "Reference clock set to %i Hz\n", uartclk);
- 
--	mutex_init(&s->mutex);
--
- 	for (i = 0; i < devtype->nr; i++) {
- 		unsigned int line;
- 
-@@ -1298,7 +1291,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 		/* Clear IRQ status register */
- 		max310x_port_read(&s->p[i].port, MAX310X_IRQSTS_REG);
- 		/* Initialize queue for start TX */
--		INIT_WORK(&s->p[i].tx_work, max310x_wq_proc);
-+		INIT_WORK(&s->p[i].tx_work, max310x_tx_proc);
- 		/* Initialize queue for changing LOOPBACK mode */
- 		INIT_WORK(&s->p[i].md_work, max310x_md_proc);
- 		/* Initialize queue for changing RS485 mode */
-@@ -1350,8 +1343,6 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 		}
- 	}
- 
--	mutex_destroy(&s->mutex);
--
- out_clk:
- 	clk_disable_unprepare(s->clk);
- 
-@@ -1372,7 +1363,6 @@ static int max310x_remove(struct device *dev)
- 		s->devtype->power(&s->p[i].port, 0);
- 	}
- 
--	mutex_destroy(&s->mutex);
- 	clk_disable_unprepare(s->clk);
- 
- 	return 0;
+ 	if ((rs485->delay_rts_before_send > 0x0f) ||
+ 	    (rs485->delay_rts_after_send > 0x0f))
 -- 
 2.21.0
 
