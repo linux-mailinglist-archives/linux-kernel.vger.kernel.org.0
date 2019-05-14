@@ -2,87 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C471C761
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 13:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 280D31C765
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 13:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfENLBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 07:01:16 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42358 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfENLBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 07:01:16 -0400
-Received: by mail-io1-f66.google.com with SMTP id g16so12644345iom.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 04:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a2Zuv8CKh3wPvxluNj428+EEqYUTWg7a1Kriib7f/xU=;
-        b=fodpkxYMLnwiILy2IEMEeBWNfvFSddYprl+ERPMf5/ikNS7aDUAodH6EUKBdLeGYL+
-         8oP9SZJGySwxYTwipx66czNchCG0ftPMpDnXDffHm0gBmIuXF+mUcQSCJ96P53vQWeaX
-         yo+nH6Qv/6hLH1DUKBOBAM6bqm8SKK4f5Ywn5Qt9by/ZtQsamYW65C1H+BzEEoHFI5cc
-         KaSI9ff8mUOZRjt6bXarXxAy7Mx7bJH6gnkWrZXTxQ1giu1A5pp/2BUjDakVpFpP9QHn
-         hoRh9OAh7xZWm3Sr2R9vAd6M0P6DedrMG7zhXAJbDzGm7gkJHZ0IiHie6CFUu5sk2htC
-         rA7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a2Zuv8CKh3wPvxluNj428+EEqYUTWg7a1Kriib7f/xU=;
-        b=NhCwnL89FwmcKlCBdtCKa0WyjCVTgAkDprYhUGYbkrbzJkeUNBwVuh8oIy/kOyIVGu
-         z5B0cT1z6nHrW3FBUzRzywd4VtheU2Jx8ZUto4jsxX8IyREW5+kKUUi6NG3sLzDz1zV0
-         PdHrO4feLMj344smtMWYD1koNgURLagOyHBwHiOeh31+7vjKcqbAUxGrMYIqtzR1cVOY
-         fD78hpiXjd+F6KN52+J4yAF07bm6GNf0GJiqy+dd5A25i7bC66UxCQ/49qacXTxlUxcS
-         0Nc9cz0f4z1rwW6C2ulSi12Ug55bDbMhb+tsQnlV69oieNs2SfewOVkfw6/oLHr0jgyW
-         83TQ==
-X-Gm-Message-State: APjAAAWpbOnCQu4LU26IIBAyc8eVx/SbF96DO3erGonXxFF79bLzQ/oE
-        Xvwpl3AMjUdcNy90IlUJQL/HI8TGRebq6g==
-X-Google-Smtp-Source: APXvYqzBxQxDZq/DOZfrDQ8lF6ybkBqcX+N1b48Z/8zqlQthSK2n14L3t0nmGAD+X809fQ9nLIrA8A==
-X-Received: by 2002:a5d:9c0d:: with SMTP id 13mr2556258ioe.160.1557831675694;
-        Tue, 14 May 2019 04:01:15 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fea8:7a60:20d:6f1c:3788:87f4:7fe7])
-        by smtp.gmail.com with ESMTPSA id k201sm982609itb.10.2019.05.14.04.01.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 04:01:14 -0700 (PDT)
-From:   Donald Yandt <donald.yandt@gmail.com>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, Donald Yandt <donald.yandt@gmail.com>
-Subject: [PATCH v2] tools/perf/util: null-terminate version char array upon error
-Date:   Tue, 14 May 2019 07:01:00 -0400
-Message-Id: <20190514110100.22019-1-donald.yandt@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726513AbfENLCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 07:02:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfENLCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 07:02:03 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8FF6489C3E;
+        Tue, 14 May 2019 11:02:02 +0000 (UTC)
+Received: from work-vm (ovpn-117-232.ams2.redhat.com [10.36.117.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E57D61995;
+        Tue, 14 May 2019 11:01:48 +0000 (UTC)
+Date:   Tue, 14 May 2019 12:01:45 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Yan Zhao <yan.y.zhao@intel.com>,
+        Erik Skultety <eskultet@redhat.com>,
+        "cjia@nvidia.com" <cjia@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>,
+        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
+        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "eauger@redhat.com" <eauger@redhat.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Yang, Ziye" <ziye.yang@intel.com>,
+        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "felipe@nutanix.com" <felipe@nutanix.com>,
+        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "dinechin@redhat.com" <dinechin@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [PATCH v2 1/2] vfio/mdev: add version attribute for mdev device
+Message-ID: <20190514110143.GD2753@work-vm>
+References: <20190510110838.2df4c4d0.cohuck@redhat.com>
+ <20190510093608.GD2854@work-vm>
+ <20190510114838.7e16c3d6.cohuck@redhat.com>
+ <20190513132804.GD11139@beluga.usersys.redhat.com>
+ <20190514061235.GC20407@joy-OptiPlex-7040>
+ <20190514072039.GA2089@beluga.usersys.redhat.com>
+ <20190514073219.GD20407@joy-OptiPlex-7040>
+ <20190514074344.GB2089@beluga.usersys.redhat.com>
+ <20190514074736.GE20407@joy-OptiPlex-7040>
+ <20190514115135.078bbaf7.cohuck@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514115135.078bbaf7.cohuck@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 14 May 2019 11:02:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If fgets fails due to any other error besides end-of-file, the version char array may not even be null-terminated.
+* Cornelia Huck (cohuck@redhat.com) wrote:
+> On Tue, 14 May 2019 03:47:36 -0400
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > On Tue, May 14, 2019 at 03:43:44PM +0800, Erik Skultety wrote:
+> > > On Tue, May 14, 2019 at 03:32:19AM -0400, Yan Zhao wrote:  
+> > > > On Tue, May 14, 2019 at 03:20:40PM +0800, Erik Skultety wrote:  
+> 
+> > > > > That said, from libvirt POV as a consumer, I'd expect there to be truly only 2
+> > > > > errors (I believe Alex has mentioned something similar in one of his responses
+> > > > > in one of the threads):
+> > > > >     a) read error indicating that an mdev type doesn't support migration
+> > > > >         - I assume if one type doesn't support migration, none of the other
+> > > > >           types exposed on the parent device do, is that a fair assumption?
+> 
+> Probably; but there might be cases where the migratability depends not
+> on the device type, but how the partitioning has been done... or is
+> that too contrived?
+> 
+> > > > >     b) write error indicating that the mdev types are incompatible for
+> > > > >     migration
+> > > > >
+> > > > > Regards,
+> > > > > Erik  
+> > > > Thanks for this explanation.
+> > > > so, can we arrive at below agreements?
+> > > >
+> > > > 1. "not to define the specific errno returned for a specific situation,
+> > > > let the vendor driver decide, userspace simply needs to know that an errno on
+> > > > read indicates the device does not support migration version comparison and
+> > > > that an errno on write indicates the devices are incompatible or the target
+> > > > doesn't support migration versions. "
+> > > > 2. vendor driver should log detailed error reasons in kernel log.  
+> > > 
+> > > That would be my take on this, yes, but I open to hear any other suggestions and
+> > > ideas I couldn't think of as well.
+> 
+> So, read to find out whether migration is supported at all, write to
+> find out whether it is supported for that concrete pairing is
+> reasonable for libvirt?
+> 
+> > > 
+> > > Erik  
+> > got it. thanks a lot!
+> > 
+> > hi Cornelia and Dave,
+> > do you also agree on:
+> > 1. "not to define the specific errno returned for a specific situation,
+> > let the vendor driver decide, userspace simply needs to know that an errno on
+> > read indicates the device does not support migration version comparison and
+> > that an errno on write indicates the devices are incompatible or the target
+> > doesn't support migration versions. "
+> > 2. vendor driver should log detailed error reasons in kernel log.
+> 
+> Two questions:
+> - How reasonable is it to refer to the system log in order to find out
+>   what exactly went wrong?
+> - If detailed error reporting is basically done to the syslog, do
+>   different error codes still provide useful information? Or should the
+>   vendor driver decide what it wants to do?
 
-Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
----
- tools/perf/util/machine.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I don't see error codes as being that helpful; if we can't actually get
+an error message back up the stack (which was my preference), then I guess
+syslog is as good as it will get.
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 3c520baa1..28a9541c4 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1234,8 +1234,9 @@ static char *get_kernel_version(const char *root_dir)
- 	if (!file)
- 		return NULL;
+Dave
 
--	version[0] = '\0';
- 	tmp = fgets(version, sizeof(version), file);
-+	if (!tmp)
-+		*version = '\0';
- 	fclose(file);
-
- 	name = strstr(version, prefix);
 --
-2.20.1
-
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
