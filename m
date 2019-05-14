@@ -2,355 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3261C93D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F711C92A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfENNMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:12:38 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37806 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfENNMh (ORCPT
+        id S1726134AbfENNIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:08:04 -0400
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:45483 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfENNIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:12:37 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e6so8621692pgc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:12:36 -0700 (PDT)
+        Tue, 14 May 2019 09:08:04 -0400
+Received: by mail-pf1-f171.google.com with SMTP id s11so9102556pfm.12;
+        Tue, 14 May 2019 06:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CKs3W/HZ8xcgUNVlG7cUVSbVqrQ3vHb9Xsah+xFkjqg=;
-        b=Cfb3WEoUyL5NQ+DE834BvxUzhPCmLMsbTj1O/U/QtmKFizrRAYaJCoPBk+/kN1k/A4
-         3cyKrQqVs7Z+N6KO2ge+Z6fE9CdVUumVVW2Bg2Nvpn9a1Ck9FvxrkSaRC783P50bN89s
-         k9tIqsRhKij6O0irbE6zXbfA3YGTh2BQteQhvJBKDRWip9wUBJyNlyahVNfearGF1R56
-         sQre7LpJkbA7u7r3yxkEdVaDXOca5HnVkqYTU1ieLCwKoP3pL8h527NmgbiiKMwau8vv
-         XL4TKS0IrFqkqGMDKd5hSR2lVsD8uWysp8cp07cDTsnLdkbveNk4qTjv0yyK8pqOpDpT
-         NwYQ==
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=HkTrup9eFQQ+oLlEDmRavF3Qjf2zdQSOrx8h9qp5+SQ=;
+        b=AYYyR+ExyOp9KaKCIYiyM8TaijaswJ4nql8ZYcwkMKNLB6qQn2w1u4/b3ykklPbopa
+         kUJCqAeNf9pNXqpeDOLXfY5W33ozl7X7pDq2vEaG5gzyGPNZmF2+lZz2L9NTJs+9NvpA
+         zrc1MdQJyK3EY0fEoxZ+PZL3q7GO2ZaY+hePqezPY8IZXt/SbAiz1XMpFEcDDc+He1je
+         9WnMaCxkHNZ2TpuDNwON4F24r6MgecQk2byObXMiwzuGgfpLxfDyNvaYOGsCxUqii3Ly
+         TFSDOqWXhYRxWHi48yfwNMuF8bZRFKETxiWBEpYuz4AcCxSAFt9mPK8NOZSbYxUbqAAX
+         TnmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CKs3W/HZ8xcgUNVlG7cUVSbVqrQ3vHb9Xsah+xFkjqg=;
-        b=E9biB1mYA9dRvQ9eFgwO3OQiL8GGiR/DUBBQcNzAzAoBHBlPwm8GBi/tPZuB5fU58x
-         /V7i0o7Y0jxq75E4Tw9D8JXEKalWUYgNnuU+JCzP/XQL5KjCTVR+qYUUAkute5+VF7/l
-         oZlBv2r73f7j77L0L3P+bEzOeQLW/Eg6MwSWVnHoInOUjZWI8v/ZcQf3wqdYbN1H1NCt
-         msWF0sor4aQ89fUlM6NwWEiX94fVpT+yn/N3xh9nsXj3whtLL2MTG59PpTcWQ2DFAjMx
-         XQhbAziO9f/5CyUYTcEww6SmQAw14xdCtXPtPoTZ/CEmYYzI0iCrFy3/Ih42vDBgW3Tg
-         SVAA==
-X-Gm-Message-State: APjAAAXsoS2QlJzfz4Cy+K6EOtxeDNOHHhWV1pSXYJAWMI+pL6uFtUyc
-        CkUkrai+N1RkNztH+oYsD2gKdA==
-X-Google-Smtp-Source: APXvYqyBTKVZgA/2uINyNWML6uUpGy2LUKuyahxZqyVFYkid+7uLwhB3MtrdUKXDmZWQqeifBIMCng==
-X-Received: by 2002:a63:1048:: with SMTP id 8mr37778917pgq.70.1557839556085;
-        Tue, 14 May 2019 06:12:36 -0700 (PDT)
-Received: from box.localdomain ([192.55.54.45])
-        by smtp.gmail.com with ESMTPSA id x17sm8534536pgh.47.2019.05.14.06.12.34
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=HkTrup9eFQQ+oLlEDmRavF3Qjf2zdQSOrx8h9qp5+SQ=;
+        b=hUHlINM2E0h23XGuOQbpKM2a54HMqpHIkwg8frfb6N6xc9wqADAi/8Z2lp7tNrmthg
+         3d6KKVEiCnOmzyFbYDSFlz0TCDumEiQ5qCbjUge3QEFPoFY2Z1iUVGAVBYUFaimpMG3D
+         Uk8CzhZi7PRm7wA+0cVkRKLbKcDbCR2gmxQjrMdrNH9jJueqOLeoSuO/1T5GdafBRKgc
+         P0ZzgFu93kz1Jn2/y3DLy3l3SERHDUo2hxEOE6rPuEAKDt1ZMb4XUWhKuSVQ9wMzNVfv
+         eM2bxnXBb0z4cihVF5tn6m0Ay0Xeydl9Xa47s/+l1SPdDHTCrs0CBIN9Zg0DB9AJG28U
+         7s4w==
+X-Gm-Message-State: APjAAAUpCA5mCkmDO0DbCfLZwMiG0FMPYn95z5yw5eHK+d1dO44kUWHZ
+        5cOAS/cj03ysf2euLzXHYLeQmUjz
+X-Google-Smtp-Source: APXvYqxdeFaXiGgR5XZIdBg6q2jWBImkdZ0F+r1FkMDsIuxIDKynydOuN5LTJMH1xZiF8NzRZ+nwPw==
+X-Received: by 2002:aa7:87ca:: with SMTP id i10mr14451676pfo.157.1557839283140;
+        Tue, 14 May 2019 06:08:03 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.27? ([2402:f000:1:1501:200:5efe:a66f:471b])
+        by smtp.gmail.com with ESMTPSA id h14sm542472pgj.8.2019.05.14.06.08.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 06:12:35 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 02BF5100C35; Tue, 14 May 2019 16:01:47 +0300 (+03)
-Date:   Tue, 14 May 2019 16:01:47 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Larry Bassel <larry.bassel@oracle.com>
-Cc:     mike.kravetz@oracle.com, willy@infradead.org,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH, RFC 2/2] Implement sharing/unsharing of PMDs for FS/DAX
-Message-ID: <20190514130147.2pk2xx32aiomm57b@box>
-References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
- <1557417933-15701-3-git-send-email-larry.bassel@oracle.com>
+        Tue, 14 May 2019 06:08:02 -0700 (PDT)
+To:     pkshih@realtek.com, Kalle Valo <kvalo@codeaurora.org>,
+        David Miller <davem@davemloft.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] rtlwifi: a crash in error handling code of rtl_pci_probe()
+Message-ID: <4627da7a-c56c-5d88-62ae-ea2be9430f6f@gmail.com>
+Date:   Tue, 14 May 2019 21:07:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557417933-15701-3-git-send-email-larry.bassel@oracle.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 09:05:33AM -0700, Larry Bassel wrote:
-> This is based on (but somewhat different from) what hugetlbfs
-> does to share/unshare page tables.
-> 
-> Signed-off-by: Larry Bassel <larry.bassel@oracle.com>
-> ---
->  include/linux/hugetlb.h |   4 ++
->  mm/huge_memory.c        |  32 ++++++++++++++
->  mm/hugetlb.c            |  21 ++++++++--
->  mm/memory.c             | 108 +++++++++++++++++++++++++++++++++++++++++++++++-
->  4 files changed, 160 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 11943b6..9ed9542 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -142,6 +142,10 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
->  int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
->  void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
->  				unsigned long *start, unsigned long *end);
-> +unsigned long page_table_shareable(struct vm_area_struct *svma,
-> +				   struct vm_area_struct *vma,
-> +				   unsigned long addr, pgoff_t idx);
-> +bool vma_shareable(struct vm_area_struct *vma, unsigned long addr);
->  struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
->  			      int write);
->  struct page *follow_huge_pd(struct vm_area_struct *vma,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index b6a34b3..e1627c3 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1747,6 +1747,33 @@ static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
->  	mm_dec_nr_ptes(mm);
->  }
->  
-> +#ifdef CONFIG_MAY_SHARE_FSDAX_PMD
-> +static int unshare_huge_pmd(struct mm_struct *mm, unsigned long addr,
-> +			    pmd_t *pmdp)
-> +{
-> +	pgd_t *pgd = pgd_offset(mm, addr);
-> +	p4d_t *p4d = p4d_offset(pgd, addr);
-> +	pud_t *pud = pud_offset(p4d, addr);
-> +
-> +	WARN_ON(page_count(virt_to_page(pmdp)) == 0);
-> +	if (page_count(virt_to_page(pmdp)) == 1)
-> +		return 0;
-> +
-> +	pud_clear(pud);
+In rtl_pci_probe(), when request_irq() in rtl_pci_intr_mode_legacy() in 
+rtl_pci_intr_mode_decide() fails, a crash occurs.
+The crash information is as follows:
 
-You don't have proper locking in place to do this.
+[  108.271155] kasan: CONFIG_KASAN_INLINE enabled
+[  108.271163] kasan: GPF could be caused by NULL-ptr deref or user 
+memory access
+......
+[  108.271193] RIP: 0010:cfg80211_get_drvinfo+0xce/0x3b0 [cfg80211]
+......
+[  108.271235] Call Trace:
+[  108.271245]  ethtool_get_drvinfo+0x110/0x640
+[  108.271255]  ? cfg80211_get_chan_state+0x7e0/0x7e0 [cfg80211]
+[  108.271261]  ? ethtool_get_settings+0x340/0x340
+[  108.271268]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
+[  108.271279]  ? kasan_check_write+0x14/0x20
+[  108.271284]  dev_ethtool+0x272d/0x4c20
+[  108.271290]  ? unwind_get_return_address+0x66/0xb0
+[  108.271299]  ? __save_stack_trace+0x92/0x100
+[  108.271307]  ? ethtool_get_rxnfc+0x3f0/0x3f0
+[  108.271316]  ? save_stack+0xa3/0xd0
+[  108.271323]  ? save_stack+0x43/0xd0
+[  108.271331]  ? ftrace_graph_ret_addr+0x2d/0x170
+[  108.271338]  ? ftrace_graph_ret_addr+0x2d/0x170
+[  108.271346]  ? ftrace_graph_ret_addr+0x2d/0x170
+[  108.271354]  ? update_stack_state+0x3b2/0x670
+[  108.271361]  ? update_stack_state+0x3b2/0x670
+[  108.271370]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
+[  108.271379]  ? unwind_next_frame.part.5+0x19f/0xa60
+[  108.271388]  ? bpf_prog_kallsyms_find+0x3e/0x270
+[  108.271396]  ? is_bpf_text_address+0x1a/0x30
+[  108.271408]  ? kernel_text_address+0x11d/0x130
+[  108.271416]  ? __kernel_text_address+0x12/0x40
+[  108.271423]  ? unwind_get_return_address+0x66/0xb0
+[  108.271431]  ? __save_stack_trace+0x92/0x100
+[  108.271440]  ? save_stack+0xa3/0xd0
+[  108.271448]  ? udp_ioctl+0x35/0xe0
+[  108.271457]  ? inet_ioctl+0x100/0x320
+[  108.271466]  ? inet_stream_connect+0xb0/0xb0
+[  108.271475]  ? alloc_file+0x60/0x480
+[  108.271483]  ? alloc_file_pseudo+0x19d/0x270
+[  108.271495]  ? sock_alloc_file+0x51/0x170
+[  108.271502]  ? __sys_socket+0x12c/0x1f0
+[  108.271510]  ? __x64_sys_socket+0x78/0xb0
+[  108.271520]  ? do_syscall_64+0xb1/0x2e0
+[  108.271529]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  108.271538]  ? kasan_check_read+0x11/0x20
+[  108.271548]  ? mutex_lock+0x8f/0xe0
+[  108.271557]  ? __mutex_lock_slowpath+0x20/0x20
+[  108.271568]  dev_ioctl+0x1fb/0xae0
+[  108.271576]  ? dev_ioctl+0x1fb/0xae0
+[  108.271586]  ? _copy_from_user+0x71/0xd0
+[  108.271594]  sock_do_ioctl+0x1e2/0x2f0
+[  108.271602]  ? kmem_cache_alloc+0xf9/0x250
+[  108.271611]  ? ___sys_recvmsg+0x5a0/0x5a0
+[  108.271621]  ? apparmor_file_alloc_security+0x128/0x7e0
+[  108.271630]  ? kasan_unpoison_shadow+0x35/0x50
+[  108.271638]  ? kasan_kmalloc+0xad/0xe0
+[  108.271652]  ? apparmor_file_alloc_security+0x128/0x7e0
+[  108.271662]  ? apparmor_file_alloc_security+0x269/0x7e0
+[  108.271670]  sock_ioctl+0x361/0x590
+[  108.271678]  ? sock_ioctl+0x361/0x590
+[  108.271686]  ? routing_ioctl+0x470/0x470
+[  108.271695]  ? kasan_check_write+0x14/0x20
+[  108.271703]  ? __mutex_init+0xba/0x130
+[  108.271713]  ? percpu_counter_add_batch+0xc7/0x120
+[  108.271722]  ? alloc_empty_file+0xae/0x150
+[  108.271729]  ? routing_ioctl+0x470/0x470
+[  108.271738]  do_vfs_ioctl+0x1ae/0xfe0
+[  108.271745]  ? do_vfs_ioctl+0x1ae/0xfe0
+[  108.271754]  ? alloc_file_pseudo+0x1ad/0x270
+[  108.271762]  ? ioctl_preallocate+0x1e0/0x1e0
+[  108.271770]  ? alloc_file+0x480/0x480
+[  108.271778]  ? kasan_check_read+0x11/0x20
+[  108.271786]  ? __fget+0x24d/0x320
+[  108.271794]  ? iterate_fd+0x180/0x180
+[  108.271802]  ? fd_install+0x52/0x60
+[  108.271812]  ? security_file_ioctl+0x8c/0xb0
+[  108.271820]  ksys_ioctl+0x99/0xb0
+[  108.271829]  __x64_sys_ioctl+0x78/0xb0
+[  108.271839]  do_syscall_64+0xb1/0x2e0
+[  108.271857]  ? prepare_exit_to_usermode+0xc8/0x160
+[  108.271871]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+......
 
-> +	put_page(virt_to_page(pmdp));
-> +	mm_dec_nr_pmds(mm);
-> +	return 1;
-> +}
-> +
-> +#else
-> +static int unshare_huge_pmd(struct mm_struct *mm, unsigned long addr,
-> +			    pmd_t *pmdp)
-> +{
-> +	return 0;
-> +}
-> +
-> +#endif
-> +
->  int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  		 pmd_t *pmd, unsigned long addr)
->  {
-> @@ -1764,6 +1791,11 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  	 * pgtable_trans_huge_withdraw after finishing pmdp related
->  	 * operations.
->  	 */
-> +	if (unshare_huge_pmd(vma->vm_mm, addr, pmd)) {
-> +		spin_unlock(ptl);
-> +		return 1;
-> +	}
-> +
->  	orig_pmd = pmdp_huge_get_and_clear_full(tlb->mm, addr, pmd,
->  			tlb->fullmm);
->  	tlb_remove_pmd_tlb_entry(tlb, pmd, addr);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 641cedf..919a290 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -4594,9 +4594,9 @@ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
->  }
->  
->  #ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> -static unsigned long page_table_shareable(struct vm_area_struct *svma,
-> -				struct vm_area_struct *vma,
-> -				unsigned long addr, pgoff_t idx)
-> +unsigned long page_table_shareable(struct vm_area_struct *svma,
-> +				   struct vm_area_struct *vma,
-> +				   unsigned long addr, pgoff_t idx)
->  {
->  	unsigned long saddr = ((idx - svma->vm_pgoff) << PAGE_SHIFT) +
->  				svma->vm_start;
-> @@ -4619,7 +4619,7 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
->  	return saddr;
->  }
->  
-> -static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
-> +bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
->  {
->  	unsigned long base = addr & PUD_MASK;
->  	unsigned long end = base + PUD_SIZE;
-> @@ -4763,6 +4763,19 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
->  				unsigned long *start, unsigned long *end)
->  {
->  }
-> +
-> +unsigned long page_table_shareable(struct vm_area_struct *svma,
-> +				   struct vm_area_struct *vma,
-> +				   unsigned long addr, pgoff_t idx)
-> +{
-> +	return 0;
-> +}
-> +
-> +bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
-> +{
-> +	return false;
-> +}
-> +
->  #define want_pmd_share()	(0)
->  #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
->  
-> diff --git a/mm/memory.c b/mm/memory.c
-> index f7d962d..4c1814c 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3845,6 +3845,109 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_MAY_SHARE_FSDAX_PMD
-> +static pmd_t *huge_pmd_offset(struct mm_struct *mm,
-> +			      unsigned long addr, unsigned long sz)
+I checked the driver source code, but cannot find the reason, so I only 
+report the crash...
+Can somebody give an explanation about this crash?
 
-Could you explain what this function suppose to do?
+This crash is triggered by a runtime fuzzing tool named FIZZER written 
+by us.
 
-As far as I can see vma_mmu_pagesize() is always PAGE_SIZE of DAX
-filesystem. So we have 'sz' == PAGE_SIZE here.
 
-So this function can pointer to PMD of PUD page table entry casted to
-pmd_t*.
-
-Why?
-
-> +{
-> +	pgd_t *pgd;
-> +	p4d_t *p4d;
-> +	pud_t *pud;
-> +	pmd_t *pmd;
-> +
-> +	pgd = pgd_offset(mm, addr);
-> +	if (!pgd_present(*pgd))
-> +		return NULL;
-> +	p4d = p4d_offset(pgd, addr);
-> +	if (!p4d_present(*p4d))
-> +		return NULL;
-> +
-> +	pud = pud_offset(p4d, addr);
-> +	if (sz != PUD_SIZE && pud_none(*pud))
-> +		return NULL;
-> +	/* hugepage or swap? */
-> +	if (pud_huge(*pud) || !pud_present(*pud))
-> +		return (pmd_t *)pud;
-> +
-> +	pmd = pmd_offset(pud, addr);
-> +	if (sz != PMD_SIZE && pmd_none(*pmd))
-> +		return NULL;
-> +	/* hugepage or swap? */
-> +	if (pmd_huge(*pmd) || !pmd_present(*pmd))
-> +		return pmd;
-> +
-> +	return NULL;
-> +}
-> +
-> +static pmd_t *pmd_share(struct mm_struct *mm, pud_t *pud, unsigned long addr)
-> +{
-> +	struct vm_area_struct *vma = find_vma(mm, addr);
-
-Why? Caller has vma on hands.
-
-> +	struct address_space *mapping = vma->vm_file->f_mapping;
-> +	pgoff_t idx = ((addr - vma->vm_start) >> PAGE_SHIFT) +
-> +			vma->vm_pgoff;
-
-linear_page_index()?
-
-> +	struct vm_area_struct *svma;
-> +	unsigned long saddr;
-> +	pmd_t *spmd = NULL;
-> +	pmd_t *pmd;
-> +	spinlock_t *ptl;
-> +
-> +	if (!vma_shareable(vma, addr))
-> +		return pmd_alloc(mm, pud, addr);
-> +
-> +	i_mmap_lock_write(mapping);
-> +
-> +	vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
-> +		if (svma == vma)
-> +			continue;
-> +
-> +		saddr = page_table_shareable(svma, vma, addr, idx);
-> +		if (saddr) {
-> +			spmd = huge_pmd_offset(svma->vm_mm, saddr,
-> +					       vma_mmu_pagesize(svma));
-> +			if (spmd) {
-> +				get_page(virt_to_page(spmd));
-
-So, here we get a pin on a page table page. And we don't know if it's PMD
-or PUD page table.
-
-And we only checked one entry in the page table.
-
-What if the page table mixes huge-PMD/PUD entries with pointers to page
-table.
-
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (!spmd)
-> +		goto out;
-> +
-> +	ptl = pmd_lockptr(mm, spmd);
-> +	spin_lock(ptl);
-
-You take lock on PMD page table...
-
-> +
-> +	if (pud_none(*pud)) {
-> +		pud_populate(mm, pud,
-> +			    (pmd_t *)((unsigned long)spmd & PAGE_MASK));
-
-... and modify PUD page table.
-
-> +		mm_inc_nr_pmds(mm);
-> +	} else {
-> +		put_page(virt_to_page(spmd));
-> +	}
-> +	spin_unlock(ptl);
-> +out:
-> +	pmd = pmd_alloc(mm, pud, addr);
-> +	i_mmap_unlock_write(mapping);
-> +	return pmd;
-> +}
-> +
-> +static bool may_share_pmd(struct vm_area_struct *vma)
-> +{
-> +	if (vma_is_fsdax(vma))
-> +		return true;
-> +	return false;
-> +}
-> +#else
-> +static pmd_t *pmd_share(struct mm_struct *mm, pud_t *pud, unsigned long addr)
-> +{
-> +	return pmd_alloc(mm, pud, addr);
-> +}
-> +
-> +static bool may_share_pmd(struct vm_area_struct *vma)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  /*
->   * By the time we get here, we already hold the mm semaphore
->   *
-> @@ -3898,7 +4001,10 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
->  		}
->  	}
->  
-> -	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
-> +	if (unlikely(may_share_pmd(vma)))
-> +		vmf.pmd = pmd_share(mm, vmf.pud, address);
-> +	else
-> +		vmf.pmd = pmd_alloc(mm, vmf.pud, address);
->  	if (!vmf.pmd)
->  		return VM_FAULT_OOM;
->  	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
-> -- 
-> 1.8.3.1
-> 
+Best wishes,
+Jia-Ju Bai
