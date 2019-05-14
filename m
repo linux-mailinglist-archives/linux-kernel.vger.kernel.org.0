@@ -2,106 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E79A1CABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D83491CAC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfENOsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:48:10 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35833 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfENOsI (ORCPT
+        id S1726851AbfENOs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:48:27 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53444 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbfENOsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:48:08 -0400
-Received: by mail-qt1-f195.google.com with SMTP id a39so18492024qtk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:48:07 -0700 (PDT)
+        Tue, 14 May 2019 10:48:20 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 198so3194068wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:48:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v9eQGAXN/pUrwyhsEw4eGQ0SnWi81FsI3CN7zGHdMUY=;
-        b=nDY82R10ZFExPQ1BFRb0cIsRXMz1+Mbb5gLhwYj+P7wenw+vz2PGDVO3MW1ll4xmEs
-         gzrdZELS8S8hCF9KgzMJiVhBrijLGGB98FkA8+R5fQM4kS6TCVEKcnjnmqEENZNN2g1i
-         MIaN+82TeYtLkyYogEUBZJs5wC36oh/Lrj/mtbiGyb+InmfWr6WcxZ5AUVWPFFlrvyBG
-         4/pj6sdMf1+RGHBtb7Fzr/WKYFSZbUrM0e04VzB3MN1farriSoCrf2lrxWkXLgFkKwSI
-         ++gDxtWGnByHUiyi82arM6CP8Kw0joJB6gqMxBIk3ySoeP2uvbbsfusBhTd61y/daTbz
-         mYOA==
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oVzNv9Cda4AG48ayrkoKl5rIu1/NIqCv8NqNC2WTHNk=;
+        b=PWGMigxrpID6s8IULkbH99Y1lhvCduvvj46ce+Jn7M72fT9TeIXEZYECmVOQCUQNHr
+         FApeJ4e7A9fYy9hxGe5qnCUNcXvgdNuVkhfOD5K1xtfRWbarEA7+dfHVLkK7x7+g3xiK
+         Re4w+Z+2GFCXOd0H6gAQJMx6YjB9hvvcVK8f8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v9eQGAXN/pUrwyhsEw4eGQ0SnWi81FsI3CN7zGHdMUY=;
-        b=SeRyGlB7hKzI+Q57+vZGkg5pYRV2jNUz1SdVcduGloHUlv4tzWAq6+xH0BSQfQxcB0
-         x2N2lSRkKDttf8qIXy6iq5wgzIbH019GZmpfBQtCgnyZkdKj4bFrWC2mUxakUAIYVuyB
-         MRoVjUzGsbFLpgFfQP25L87Cc+kgmQku7DRbnkL5oErd811cPawiarOrDO5ig59jI4EQ
-         4+ad2Ci/+njwxx5Z08XzlyRGGBfNn864Du2QbMsxLI5RgG0gF26OGDAFQ6JntsgFbKN9
-         lXsr/tjvtABdbUVdyoHPXlTYxFSJzdwU4zk7xWr3an3YawbPTLUhyetNXrxCv7XJCtfn
-         J0UA==
-X-Gm-Message-State: APjAAAU31lbOBj1m4Og2JKHl47iMtEOU7RMXVtxMZ3b1EMa9VXHWxKNU
-        GB0/Kah9Fk9GEl3axoXDcUChRA==
-X-Google-Smtp-Source: APXvYqzApoMig2QGgNA/X1ddscMp17wEIujDVgwIUcQLacZ1b7Qm2pChC9VvoBo44rkmkDMamq2H4Q==
-X-Received: by 2002:ac8:2e38:: with SMTP id r53mr30002293qta.192.1557845286967;
-        Tue, 14 May 2019 07:48:06 -0700 (PDT)
-Received: from ovpn-120-85.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 124sm7905551qkj.59.2019.05.14.07.48.05
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oVzNv9Cda4AG48ayrkoKl5rIu1/NIqCv8NqNC2WTHNk=;
+        b=VldS/TvQZjLXR9LwqHBve2yuSH6qO0aD68W2xD5NnWLZ75XRScr9ZKBv0oR9oYYEzw
+         FYSg9RFSHOFWFY770vAPronFWMh5acIkRjnulelSyev7y/rzVIfjjr3SfQ+T17Ocq1n0
+         ZdglP3WlULf01CLymaWR8VKdOKzESFe/KEEfmJv2bgN1i+wNwdJ88K2AgTsYxI8dieuq
+         CLrI9UMScNjaDPI599gQBGMxHMIe3iP2KKilXzF2vEvxNgjTb5fXHOEIJbVC6wOMxZ3y
+         MCsDUVxGbcGdssAbghLus+XaTy6LXa3G9OFyY/avnYFsztYux3l/etJitU15p1pHkjZa
+         iaAA==
+X-Gm-Message-State: APjAAAWO/y1wSsMUYA/4GBnZJuKsRI+zM4pdMRjTZkUuIeZ+DgZ35cR2
+        5Wora3hlVuRs1jnEIRgZ8T0v/g==
+X-Google-Smtp-Source: APXvYqxYk6Oc5UfGGWqyARsIZbZicHGDxdaBpkaV0YzlrdD1K6Gucx02gXt4F3GaCGNm3U6vsVvpfQ==
+X-Received: by 2002:a1c:3c2:: with SMTP id 185mr2275481wmd.91.1557845297691;
+        Tue, 14 May 2019 07:48:17 -0700 (PDT)
+Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id p6sm12048114wrs.6.2019.05.14.07.48.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 07:48:06 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, catalin.marinas@arm.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [RESEND PATCH] slab: skip kmemleak_object in leaks_show()
-Date:   Tue, 14 May 2019 10:47:41 -0400
-Message-Id: <20190514144741.39460-1-cai@lca.pw>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
+        Tue, 14 May 2019 07:48:17 -0700 (PDT)
+Date:   Tue, 14 May 2019 16:48:06 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 5/5] IB/hfi1: Fix improper uses of smp_mb__before_atomic()
+Message-ID: <20190514144806.GA14962@andrea>
+References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1556568902-12464-6-git-send-email-andrea.parri@amarulasolutions.com>
+ <14063C7AD467DE4B82DEDB5C278E8663BE6AADCE@FMSMSX108.amr.corp.intel.com>
+ <20190429231657.GA2733@andrea>
+ <20190509211221.GA4966@andrea>
+ <0a78eded-6c08-8d32-ec31-d62d6feb2118@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a78eded-6c08-8d32-ec31-d62d6feb2118@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running tests on a debug kernel will usually generate a large number of
-kmemleak objects.
+On Tue, May 14, 2019 at 08:32:52AM -0400, Dennis Dalessandro wrote:
+> On 5/9/2019 5:12 PM, Andrea Parri wrote:
+> >On Tue, Apr 30, 2019 at 01:16:57AM +0200, Andrea Parri wrote:
+> >>Hi Mike,
+> >>
+> >>>>This barrier only applies to the read-modify-write operations; in
+> >>>>particular, it does not apply to the atomic_read() primitive.
+> >>>>
+> >>>>Replace the barrier with an smp_mb().
+> >>>
+> >>>This is one of a couple of barrier issues that we are currently looking into.
+> >>>
+> >>>See:
+> >>>
+> >>>[PATCH for-next 6/9] IB/rdmavt: Add new completion inline
+> >>>
+> >>>We will take a look at this one as well.
+> >>
+> >>Thank you for the reference and for looking into this,
+> >
+> >So, I'm planning to just drop this patch; or can I do something to help?
+> >
+> >Please let me know.
+> 
+> Mike was looking into this, and I've got a handful of patches from him to
+> review. He's unavailable for a while but if it's not included in the patches
+> I've got we'll get something out shortly. So yes I think we can hold off on
+> this patch for now. Thanks.
 
-  # grep kmemleak /proc/slabinfo
-  kmemleak_object   2243606 3436210 ...
+Thank you for the confirmation, Dennis.  I'll hold off on this one.
 
-As the result, reading /proc/slab_allocators could easily loop forever
-while processing the kmemleak_object cache and any additional freeing or
-allocating objects will trigger a reprocessing. To make a situation
-worse, soft-lockups could easily happen in this sitatuion which will
-call printk() to allocate more kmemleak objects to guarantee a livelock.
-
-Since kmemleak_object has a single call site (create_object()), there
-isn't much new information compared with slabinfo. Just skip it.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/slab.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/mm/slab.c b/mm/slab.c
-index 20f318f4f56e..85d1d223f879 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -4285,6 +4285,15 @@ static int leaks_show(struct seq_file *m, void *p)
- 	if (!(cachep->flags & SLAB_RED_ZONE))
- 		return 0;
- 
-+	/*
-+	 * /proc/slabinfo has the same information, so skip kmemleak here due to
-+	 * a high volume and its RCU free could make cachep->store_user_clean
-+	 * dirty all the time.
-+	 */
-+	if (IS_ENABLED(CONFIG_DEBUG_KMEMLEAK) &&
-+	    !strcmp("kmemleak_object", cachep->name))
-+		return 0;
-+
- 	/*
- 	 * Set store_user_clean and start to grab stored user information
- 	 * for all objects on this cache. If some alloc/free requests comes
--- 
-2.20.1 (Apple Git-117)
-
+  Andrea
