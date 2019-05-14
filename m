@@ -2,89 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 404351CE38
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 199C61CE2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfENRpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 13:45:41 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35404 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfENRpk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 13:45:40 -0400
-Received: by mail-it1-f193.google.com with SMTP id u186so196477ith.0;
-        Tue, 14 May 2019 10:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m8P3ySfQalD2SQo532FRU/HLb6fvJ+vp5xEa0aBB+cw=;
-        b=dsb2Vbdht04/hUI7Ko/hGCIHe/OINRXscnQ3RlKsTtGWkgoGH1Ro46ftF0t3EPowxn
-         EKDEFzxCYIL1iLebE79IN9vgT1qdXAble+GIaKqq6oFcQj62bJnIw3APcA9GPu30jQav
-         a9ZXdm4Jr8qGtTcL7LrgI7XbHJxakjPeKqlMpdtSyBRv+Xn4w7ptnbJhzr+ljuScC6y/
-         RxTp7yt4+B9fxuOqeE02nBEu11mooBkvmlDbuLUTdBBLf5PsV7uToJIUGeYZ0xMrz2LV
-         8QITiBQmD/g5tit/u8mdyL8EOkz3/KYiuVhejbDfsnt5F0FQswmqj7ojN4uVg02ZlRyr
-         BIlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m8P3ySfQalD2SQo532FRU/HLb6fvJ+vp5xEa0aBB+cw=;
-        b=rrw4+3urM4sTuMsu8ms6VVvUj9HvcNVvJaRzH6fwJpglkcejjbAUCmUiGKfHVUm2pO
-         X+KAbHNyA3DmWrCrUnExfihZ9+xLOdP5G58HInibecKj0CcY3BfdxDifgWqM8BmnZNaZ
-         Y5Yq3lD6UFo/9XxWSVG/bRSfLd5tvWY32vJj95rTi/DzT4zu2ZCJzbtuy0crN41p4OT7
-         DRpdHgJrRfhtDvhuMabAqRAjrmgI3tEiDDePaEaQhucgMyqF9ikimSVk6PNZ1LlIbszP
-         DWHrzz5eFe00/9RDAkLXGo+Jc+CHqXKp8e4xLItAg32kiyLPGIetxqO7r59GssFuaaVZ
-         ItZg==
-X-Gm-Message-State: APjAAAW884wDa+SPx3Tk4qbg/a9fd90/+t77bWwYJtYwyLFI+yPj4VjM
-        0/dPUWFYp1g64HGqnG66nN8=
-X-Google-Smtp-Source: APXvYqyNjOy0Qp/27t8FJseSlkRckGp8QpSBnnYf6NnmhHkHAclV2Vnq/BC+mqdSzs3bYnB/uDFUgQ==
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr4817559itl.46.1557855939295;
-        Tue, 14 May 2019 10:45:39 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fea8:7a60:20d:6f1c:3788:87f4:7fe7])
-        by smtp.gmail.com with ESMTPSA id d195sm1456283itc.21.2019.05.14.10.45.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 10:45:38 -0700 (PDT)
-From:   Donald Yandt <donald.yandt@gmail.com>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        yanmin_zhang@linux.intel.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Donald Yandt <donald.yandt@gmail.com>
-Subject: [PATCH v3] tools/perf/util: null-terminate version char array upon error
-Date:   Tue, 14 May 2019 13:44:42 -0400
-Message-Id: <20190514174441.23135-1-donald.yandt@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726911AbfENRok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 13:44:40 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32941 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726229AbfENRok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 13:44:40 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 9D28C725DEC5245686F9;
+        Tue, 14 May 2019 18:44:38 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 14 May
+ 2019 18:44:35 +0100
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+CC:     Rob Landley <rob@landley.net>,
+        Arvind Sankar <niveditas98@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <initramfs@vger.kernel.org>
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+ <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <49965ffd-dd57-ffe5-4a2f-73cdfb387848@landley.net>
+ <de91ef53-6bb3-b937-8773-5f6b34e1acb7@huawei.com>
+ <20190514152704.GB37109@rani.riverdale.lan>
+ <20190514155739.GA70223@rani.riverdale.lan>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <ca622341-5ea2-895e-8b82-7181a709c104@huawei.com>
+Date:   Tue, 14 May 2019 19:44:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190514155739.GA70223@rani.riverdale.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If fgets fails due to any other error besides end-of-file, the version char array may not even be null-terminated.
+On 5/14/2019 5:57 PM, Arvind Sankar wrote:
+> On Tue, May 14, 2019 at 11:27:04AM -0400, Arvind Sankar wrote:
+>> It's also much easier to change/customize it for the end
+>> system's requirements rather than setting the process in stone by
+>> putting it inside the kernel.
+> 
+> As an example, if you allow unverified external initramfs, it seems to
+> me that it can try to play games that wouldn't be prevented by the
+> in-kernel code: setup /dev in a weird way to try to trick /init, or more
+> easily, replace /init by /bin/sh so you get a shell prompt while only
+> the initramfs is loaded. It's easy to imagine that a system would want
+> to lock itself down to prevent abuses like this.
 
-Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
-Fixes: a1645ce12adb ("perf: 'perf kvm' tool for monitoring guest performance from host")
----
- tools/perf/util/machine.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, these issues should be addressed. But the purpose of this patch set
+is simply to set xattrs. And existing protection mechanisms can be
+improved later when the basic functionality is there.
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 3c520baa1..28a9541c4 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1234,8 +1234,9 @@ static char *get_kernel_version(const char *root_dir)
- 	if (!file)
- 		return NULL;
 
--	version[0] = '\0';
- 	tmp = fgets(version, sizeof(version), file);
-+	if (!tmp)
-+		*version = '\0';
- 	fclose(file);
+> So you might already want an embedded initramfs that can be trusted and
+> that can't be overwritten by an external one even outside the
+> security.ima stuff.
 
- 	name = strstr(version, prefix);
---
-2.20.1
+The same problems exist also the root filesystem. These should be solved
+regardless of the filesystem used, for remote attestation and for local
+enforcement.
 
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
