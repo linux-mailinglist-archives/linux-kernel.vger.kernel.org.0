@@ -2,97 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F30C1CB56
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5ED1CB64
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfENPGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:06:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52172 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfENPGM (ORCPT
+        id S1726412AbfENPIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:08:40 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37446 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfENPIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:06:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NQhfVy0qFNuvDpdRYcvkTlDsVD03kBM9D8DvgCnqBPc=; b=Dl5/ocQVDpG/+WUNiJvVsFRBD
-        +ZkCa4teBLvzobqhtymTMHwRMN1560TtLfuX8i3hGHz4nH+aHwmDrQig/arE4f8Em+vwjmiclnVGl
-        axaSq2p7TChHq11t36ylMJH87h10VU4zL8+zHyONdqsNUd+YcPZIwuVXIdQZS4Oswg+7w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hQZ0K-00015Q-Ac; Tue, 14 May 2019 15:06:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 85DBD1121EE8; Tue, 14 May 2019 16:06:07 +0100 (BST)
-Date:   Tue, 14 May 2019 16:06:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH 1/4] spi: For controllers that need realtime always use
- the pump thread
-Message-ID: <20190514150607.GA1917@sirena.org.uk>
-References: <20190510223437.84368-1-dianders@chromium.org>
- <20190510223437.84368-2-dianders@chromium.org>
- <20190512073301.GC21483@sirena.org.uk>
- <CAD=FV=UBic4qywgYQFGEXx_frD9ZoRJX7XGgDbQCvb2CbkBa9w@mail.gmail.com>
- <20190514093038.GB8665@sirena.org.uk>
- <CAD=FV=UXhQg2CuNsTCkSe1BuEvkGMj6qeUB2iF=Qfj=Z0fLiWw@mail.gmail.com>
+        Tue, 14 May 2019 11:08:40 -0400
+Received: by mail-qt1-f194.google.com with SMTP id o7so19406605qtp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 08:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7kZvhpKITp7GpY2UYW4YcAvoZ7pH6PjHdqS7w9gr3cw=;
+        b=FuNs4AlL6ZoplYtEJAQPOUNR/irdssflBkI+WQYPo1k/Wp9qb40VYJ1S/iMw+nVr0Z
+         4W4KadJrj7s3iAuyCBi8kLa3aqKQxyjzYo7fAC8lYvsILAF4pYUFEVOvOOhlTV4tyOG8
+         JSmJJuF+v9bt7JN7AIJ7VGwKBNTBusf8T15Nwptam76/E/bo8Vlk4vb5QhKdKqRMpced
+         Ke2C12ECJhs+pKHO4zwcieQTkqMX58OBTmeeO7l1iAcqgKYimyU921AyV77UcNGmNsfn
+         Y5kfuxZg6vtXDRNqV7zxGzPkon5jAyrfhclfTkPWY0mMc7p7B0eCrm0cRmZ/7CiNimR7
+         wczw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7kZvhpKITp7GpY2UYW4YcAvoZ7pH6PjHdqS7w9gr3cw=;
+        b=j5aOw5AF1zlgH8t3tHc/J8KAg6WuX9m5wFVsIevgvvs2DjPyFzJLT4EFLR7mnTtnb9
+         PrbeXWaRjnaBK+kRDra14CwsH+gDFqL1GVujPljNEmZtKZTin44T/aRgQPNPixt3wwZ4
+         Vl0W9kEIo/nDqOZ0qL/n7JEZvFRW0KYHG/hBFtOnXKx6v9dyH2vnkFhxjETX7XPT/JKS
+         FtmaqwlcJ9ORxoKTMas0k1vlAItlyBnwiyoC5AkzKWdATFOv5AZK0P2/Lpa9X6p1JqOm
+         WymUS4FOeHy/fjiDR9IeDR0nEYzsFy0JqvS9BQGVejH9rxPu3684uwVdNZ970pJ0EHks
+         3nQQ==
+X-Gm-Message-State: APjAAAX7GJXMihbI7nyeN9eSO++Cih7Z0JdGjBYRQdsnixlro06iVsXF
+        Y0jybfR6YZov9Cp8JmlpwC/7jMXsmME=
+X-Google-Smtp-Source: APXvYqyJLWdC5h+BGz6LDsPy3eLEj1lu0rQj66IlbHa/gB1z6dYmdFdVXyCb+ij3Jws+g//usPep4g==
+X-Received: by 2002:ac8:2924:: with SMTP id y33mr29791366qty.212.1557846519358;
+        Tue, 14 May 2019 08:08:39 -0700 (PDT)
+Received: from ovpn-120-85.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id b19sm8577242qkk.51.2019.05.14.08.08.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 08:08:38 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, keith.busch@intel.com, ira.weiny@intel.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [RESEND PATCH] nvdimm: fix some compilation warnings
+Date:   Tue, 14 May 2019 11:07:35 -0400
+Message-Id: <20190514150735.39625-1-cai@lca.pw>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UXhQg2CuNsTCkSe1BuEvkGMj6qeUB2iF=Qfj=Z0fLiWw@mail.gmail.com>
-X-Cookie: There is a fly on your nose.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Several places (dimm_devs.c, core.c etc) include label.h but only
+label.c uses NSINDEX_SIGNATURE, so move its definition to label.c
+instead.
+In file included from drivers/nvdimm/dimm_devs.c:23:
+drivers/nvdimm/label.h:41:19: warning: 'NSINDEX_SIGNATURE' defined but
+not used [-Wunused-const-variable=]
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The commit d9b83c756953 ("libnvdimm, btt: rework error clearing") left
+an unused variable.
+drivers/nvdimm/btt.c: In function 'btt_read_pg':
+drivers/nvdimm/btt.c:1272:8: warning: variable 'rc' set but not used
+[-Wunused-but-set-variable]
 
-On Tue, May 14, 2019 at 07:42:38AM -0700, Doug Anderson wrote:
+Last, some places abuse "/**" which is only reserved for the kernel-doc.
+drivers/nvdimm/bus.c:648: warning: cannot understand function prototype:
+'struct attribute_group nd_device_attribute_group = '
+drivers/nvdimm/bus.c:677: warning: cannot understand function prototype:
+'struct attribute_group nd_numa_attribute_group = '
 
-> ...but I guess you're saying that you don't want to guarantee that the
-> SPI core will happen to have this thread sitting around in the future
-> so you'd rather add the extra complexity to cros_ec so the core can
-> evolve more freely?
+Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/nvdimm/btt.c   | 6 ++----
+ drivers/nvdimm/bus.c   | 4 ++--
+ drivers/nvdimm/label.c | 2 ++
+ drivers/nvdimm/label.h | 2 --
+ 4 files changed, 6 insertions(+), 8 deletions(-)
 
-We need something to support spi_async() but what you're asking for is
-fairly specific implementation details about how things are currently
-structured, and we do need to be able to continue to make improvements
-for users who are interested in performance.  Ensuring that the calling
-context is also less likely to be preempted is going to make it much
-less likely that any other work is going to cause some timing change
-that creates problems for you.
+diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
+index 4671776f5623..9f02a99cfac0 100644
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -1269,11 +1269,9 @@ static int btt_read_pg(struct btt *btt, struct bio_integrity_payload *bip,
+ 
+ 		ret = btt_data_read(arena, page, off, postmap, cur_len);
+ 		if (ret) {
+-			int rc;
+-
+ 			/* Media error - set the e_flag */
+-			rc = btt_map_write(arena, premap, postmap, 0, 1,
+-				NVDIMM_IO_ATOMIC);
++			btt_map_write(arena, premap, postmap, 0, 1,
++				      NVDIMM_IO_ATOMIC);
+ 			goto out_rtt;
+ 		}
+ 
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 7ff684159f29..2eb6a6cfe9e4 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -642,7 +642,7 @@ static struct attribute *nd_device_attributes[] = {
+ 	NULL,
+ };
+ 
+-/**
++/*
+  * nd_device_attribute_group - generic attributes for all devices on an nd bus
+  */
+ struct attribute_group nd_device_attribute_group = {
+@@ -671,7 +671,7 @@ static umode_t nd_numa_attr_visible(struct kobject *kobj, struct attribute *a,
+ 	return a->mode;
+ }
+ 
+-/**
++/*
+  * nd_numa_attribute_group - NUMA attributes for all devices on an nd bus
+  */
+ struct attribute_group nd_numa_attribute_group = {
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index f3d753d3169c..02a51b7775e1 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -25,6 +25,8 @@ static guid_t nvdimm_btt2_guid;
+ static guid_t nvdimm_pfn_guid;
+ static guid_t nvdimm_dax_guid;
+ 
++static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
++
+ static u32 best_seq(u32 a, u32 b)
+ {
+ 	a &= NSINDEX_SEQ_MASK;
+diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+index e9a2ad3c2150..4bb7add39580 100644
+--- a/drivers/nvdimm/label.h
++++ b/drivers/nvdimm/label.h
+@@ -38,8 +38,6 @@ enum {
+ 	ND_NSINDEX_INIT = 0x1,
+ };
+ 
+-static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
+-
+ /**
+  * struct nd_namespace_index - label set superblock
+  * @sig: NAMESPACE_INDEX\0
+-- 
+2.20.1 (Apple Git-117)
 
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlza2V4ACgkQJNaLcl1U
-h9BdzAf+KMVQaYP9/vNw0i0uGrveiVFMzejKMkn1HLO53K5CGl+UPRj+Y2OYUy/4
-o4zonygqZNCkn+XY4BVZHOGInN1sb2Vzp6Ky1kuw76YxxwL+xKsLuua7+HQ9bCQM
-oVh1Okwky0twqGK78DMtZpfRrYyetWfXA6teiW7G3LZ9+eEd0hXuVVGamq9lzDlM
-zYR8ar3mdRRJmW8JGkJSE0t6Q03CMoeVPoNT8TUs41QnLfNOi/shVZ5kRwbuyoTA
-PZGyAEjbIEYmMe7UR09ePu685ymCtrO9KjqplYeBQBOaUm6KqjURqrJBGWhVyLqF
-sRSuDvQVfjGjiNbqlpfc7QsEj0HaLw==
-=RN96
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
