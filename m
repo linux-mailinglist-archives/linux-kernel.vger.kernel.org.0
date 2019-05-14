@@ -2,148 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E9B1CE2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 802851CE16
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfENRlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 13:41:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46088 "EHLO
+        id S1726766AbfENRh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 13:37:28 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42240 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfENRlN (ORCPT
+        with ESMTP id S1726180AbfENRh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 13:41:13 -0400
+        Tue, 14 May 2019 13:37:27 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EHd3OO162112;
-        Tue, 14 May 2019 17:40:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=p33uS+TUiN9yF3So3JOzWSY5vzWOrHkF0MG7IR3jVx8=;
- b=tAKVGsi8XeFr0YF3AWuAwEuX06KjNk5z3brmC7KG8+WuHsnLDQ5qPU74tJDsQqrxFtpg
- 0eCGwHdRpTj2hK1l7jW3LtRrazR2BKlEF548tGX7TuAxPaLZkep8AQ9yF9StzU63IjJl
- yl4yMfj6mtc6EZ1qgX14uvy+4F7nBnViQb09U4YeTP/Zk+hkCpS6PI5rzvo+ep/EVd9H
- zjYrfvFTnBS/4SJSAAkMO1ViF1xMdEpLn1NCzK8Sv1Z2ouwKbiw9Jdb7BNpzMSA/Bnv2
- wnl+fsOZ5Hxztf2l2uLcUAkUkCavNykD5SvnfUusRp4806+vtB7yorLvBUOLVqVSkNcC tg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2sdnttqt8r-1
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EHNwbu149298;
+        Tue, 14 May 2019 17:37:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=hHqEGvBgw/HFtBdP4Hbpaoa+IOhMS3wp3QgyUigg06A=;
+ b=nqXYlNZ3UXI9YF9LFb+rZM47ZxFvnqRQRnHnj8dxH6fg5Zvyx98gIp80Id8MtimweCHI
+ wmnfK8/4pksEFHIgwS4qnDRZ+fOVUyopaMcH0RwHdKztXbXHSk84GJkFVRyITzgbmMtn
+ 3QIDiKaKkO+LjgxQfQTGVEDpyIrEcmHkKj6NFscEYYYl/LZxuvGmejP0K0V8MSCU/iCp
+ AjTfzBWUPyd3qwqFYjSlK9yDW2flINBZTHIArckG8LjJflPLxu7CfNY6XbibN1WOLu8p
+ HX3h6WP8UOdzHlGkDGSYUnJFdvgILdNkKaBIA+zNyL4unqHi3fRBM6uta2ehBwIFvM4m 1g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2sdnttqspd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 17:40:52 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EHeBdx030778;
-        Tue, 14 May 2019 17:40:52 GMT
+        Tue, 14 May 2019 17:37:21 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EHbJum049732;
+        Tue, 14 May 2019 17:37:20 GMT
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2sf3cnd6u7-1
+        by aserp3030.oracle.com with ESMTP id 2sdmeb7f43-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 17:40:51 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4EHeo8C023556;
-        Tue, 14 May 2019 17:40:50 GMT
-Received: from [10.132.91.213] (/10.132.91.213)
+        Tue, 14 May 2019 17:37:20 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4EHbIsL021477;
+        Tue, 14 May 2019 17:37:18 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 14 May 2019 10:40:50 -0700
-Subject: Re: [RFC V2 2/2] sched/fair: Fallback to sched-idle CPU if idle CPU
- isn't found
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-To:     Steven Sistare <steven.sistare@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     songliubraving@fb.com, Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@linaro.org, chris.redpath@arm.com,
-        Dietmar.Eggemann@arm.com, linux-kernel@vger.kernel.org
-References: <cover.1556182964.git.viresh.kumar@linaro.org>
- <59b37c56b8fcb834f7d3234e776eaeff74ad117f.1556182965.git.viresh.kumar@linaro.org>
- <20190510072125.GG2623@hirez.programming.kicks-ass.net>
- <20190513093418.altqhlhu4zsu75t4@vireshk-i7>
- <20190513113518.GQ2623@hirez.programming.kicks-ass.net>
- <05ffe5f4-4324-2977-e46e-155e1aef57fa@oracle.com>
- <b5f84cce-8000-d9c9-26ae-e34c9ca53ed5@oracle.com>
-Message-ID: <da8789d4-3ded-63be-d6f5-1dbe736be104@oracle.com>
-Date:   Tue, 14 May 2019 10:36:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        with ESMTP ; Tue, 14 May 2019 10:37:18 -0700
+To:     Ondrej Zary <linux@zary.sk>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] fdomain: Resurrect driver
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190514172309.12874-1-linux@zary.sk>
+Date:   Tue, 14 May 2019 13:37:09 -0400
+In-Reply-To: <20190514172309.12874-1-linux@zary.sk> (Ondrej Zary's message of
+        "Tue, 14 May 2019 19:23:06 +0200")
+Message-ID: <yq1r291c4ze.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <b5f84cce-8000-d9c9-26ae-e34c9ca53ed5@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9257 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=612
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905140121
+ engine=8.0.1-1810050000 definitions=main-1905140120
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9257 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=663 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905140121
+ definitions=main-1905140120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 5/14/19 10:27 AM, Subhra Mazumdar wrote:
+Ondrej,
+
+> Resurrect previously removed fdomain driver, in modern style.
+> Initialization is rewritten completely, with support for multiple
+> cards, no more global state variables.  Most of the code from
+> interrupt handler is moved to a workqueue.
 >
-> On 5/14/19 9:03 AM, Steven Sistare wrote:
->> On 5/13/2019 7:35 AM, Peter Zijlstra wrote:
->>> On Mon, May 13, 2019 at 03:04:18PM +0530, Viresh Kumar wrote:
->>>> On 10-05-19, 09:21, Peter Zijlstra wrote:
->>>>> I don't hate his per se; but the whole select_idle_sibling() thing is
->>>>> something that needs looking at.
->>>>>
->>>>> There was the task stealing thing from Steve that looked 
->>>>> interesting and
->>>>> that would render your apporach unfeasible.
->>>> I am surely missing something as I don't see how that patchset will
->>>> make this patchset perform badly, than what it already does.
->>> Nah; I just misremembered. I know Oracle has a patch set poking at
->>> select_idle_siblings() _somewhere_ (as do I), and I just found the 
->>> wrong
->>> one.
->>>
->>> Basically everybody is complaining select_idle_sibling() is too
->>> expensive for checking the entire LLC domain, except for FB (and thus
->>> likely some other workloads too) that depend on it to kill their tail
->>> latency.
->>>
->>> But I suppose we could still do this, even if we scan only a subset of
->>> the LLC, just keep track of the last !idle CPU running only SCHED_IDLE
->>> tasks and pick that if you do not (in your limited scan) find a better
->>> candidate.
->> Subhra posted a patch that incrementally searches for an idle CPU in 
->> the LLC,
->> remembering the last CPU examined, and searching a fixed number of 
->> CPUs from there.
->> That technique is compatible with the one that Viresh suggests; the 
->> incremental
->> search would stop if a SCHED_IDLE cpu was found.
-> This was the last version of patchset I sent:
-> https://lkml.org/lkml/2018/6/28/810
->
-> Also select_idle_core is a net -ve for certain workloads like OLTP. So I
-> had put a SCHED_FEAT to be able to disable it.
-Forgot to add, the cpumask_weight computation may not be O(1) with large
-number of CPUs, so needs to be precomputed in a per-cpu variable to further
-optimize. That part is missing from the above patchset.
->
-> Thanks,
-> Subhra
->>
->> I also fiddled with select_idle_sibling, maintaining a per-LLC bitmap 
->> of idle CPUs,
->> updated with atomic operations.  Performance was basically unchanged 
->> for the
->> workloads I tested, and I inserted timers around the idle search 
->> showing it was
->> a very small fraction of time both before and after my changes.  That 
->> led me to
->> ignore the push side and optimize the pull side with task stealing.
->>
->> I would be very interested in hearing from folks that have workloads 
->> that demonstrate
->> that select_idle_sibling is too expensive.
->>
->> - Steve
+> This is a modularized version with core separated from bus-specific
+> drivers (PCI, ISA and PCMCIA). Only PCI and ISA drivers are submitted
+> for now.
+
+Applied to 5.3/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
