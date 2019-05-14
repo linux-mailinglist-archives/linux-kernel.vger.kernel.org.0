@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FB31D0C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9711D0BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:41:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfENUlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 16:41:15 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34965 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfENUk5 (ORCPT
+        id S1726510AbfENUlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 16:41:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39240 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbfENUk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 16:40:57 -0400
-Received: by mail-pg1-f195.google.com with SMTP id h1so153716pgs.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 13:40:56 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id z26so107258pfg.6
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 13:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=n9za352hE3ZueleWfuyo9coMAwkfOt9GXkoYlh/EHlI=;
-        b=YPL3r83lJDb9POCxfAD0R3L1iJgVZzCq8cQDPGYrM+xL4wiqdO6E0a+NZlWi+nmaZj
-         uEkbnErpKUymJYufx3GoEdqcv66yhyjorgmlLhT0C3h7Qky9Z5Srivu0odXj37LnROig
-         XD776Jy1V+YNOfYUsQ2gkVFPZZPDcVVDgwmLU=
+        bh=ZOSFwWR6X/LU0mbE+B8y1nxNZ62szs9hXxH/kMhQXpA=;
+        b=aoywBB6xhd+TEBFb11h+NDf8gP2RwoXM/+RGmp2MQvrX60QVIW9ZQhwvi/GaaBIGlw
+         1nceIjiuGWGD/r7uWcZZeKIQEC4CtIbBD0N/NTiO75PwRgQjtX5bg08om2TWjLdA72ze
+         Wz2mH1m3xdWEN1Lbe3bPVQnp9zQXOgDS2B0wU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=n9za352hE3ZueleWfuyo9coMAwkfOt9GXkoYlh/EHlI=;
-        b=GQtZxV8DUCRujiiTZRRt7eBmVjNKYc3q5uX2Iy9FUaxIEHP9rXmBhK55s5SbCmwgA+
-         FerTRMWY2Qg/14nCmfnB4HFomw3dHMgAHo8oJ9jTFJq0LEE/9F7I3Mn//9Xgw3lLe/yK
-         zHqdGh1vkBc+CX8fRMvov+cM6lsEQ23TVGUAeC6CbmJE/YbemxfoeWkmEZCY8X1nevTg
-         2l0utuzLws07qQWypqvc4sMq1/I831q5dMpJKyccsobiMPufGlYEHW9GZKXedDeC3Uqf
-         XO7+3Vqi8inxBLTCwLjFMq4wnJSgg2HlEeUZaNOuzedUNJW7snSNbRo3vVH125mNTSNt
-         0//w==
-X-Gm-Message-State: APjAAAWme07+y0wlBbUS6H2vmooEe1AijseYUAENzjKTU/qzac/U7CKt
-        o9M77p9nj15gozeKkaAo9uUP3A==
-X-Google-Smtp-Source: APXvYqyxCNQQitAxoK0bdUz/KVX/Lk/IeO2hikQeSb141VYl1QmP0Fo3zaFarsibbAsyIwBY2xE9hQ==
-X-Received: by 2002:a63:d949:: with SMTP id e9mr39677144pgj.437.1557866456510;
-        Tue, 14 May 2019 13:40:56 -0700 (PDT)
+        bh=ZOSFwWR6X/LU0mbE+B8y1nxNZ62szs9hXxH/kMhQXpA=;
+        b=L9058u5Xu4he8Z1S60/RT2P7a3m/0WyVu0jsfV0/bkEqCDIUkdRIYa8yUyqqL70JHA
+         df3EBDlbQqJo1Ic7O+J0GVv0pJAPs3s3Cp6c0c9L2r0/OMwzDMDBfVwH2+5Dbl6xvOcW
+         IR7AWulLuNt5/U2agwfqPOGZ7gWtuJVB+8snVjIX+lHx0KJC/+3yTyjup6EsNz+iuB5c
+         fbjNUFuQSUQ9IoC/zrknUUTDOl0faicUxuy8ytYtVvidN00JFv9Po6+bs0SQBZnZp08t
+         lVuJlchkB2GXD+eHTUwnX/A5Buw5tY97VAHXSLlvqREoHFF3S/C/6zya6Whey/ow/qyZ
+         DmRg==
+X-Gm-Message-State: APjAAAV/TQGgASerhHb6kfh5miqGalC0b/OLjeQot9Bnv5NFWJ1wwpr6
+        fX42uYJmQ89harTEO1oXcc3kCQ==
+X-Google-Smtp-Source: APXvYqykohH7nNYtYXxpXQh6fvYURqf0hwvpGbFY1xMuuDEjZn5yie249qDHWz/KB5Zp3rAJCwnVfA==
+X-Received: by 2002:a62:2fc6:: with SMTP id v189mr5247034pfv.136.1557866457316;
+        Tue, 14 May 2019 13:40:57 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id p2sm2137pfi.73.2019.05.14.13.40.55
+        by smtp.gmail.com with ESMTPSA id p2sm2137pfi.73.2019.05.14.13.40.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 13:40:55 -0700 (PDT)
+        Tue, 14 May 2019 13:40:56 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: [PATCH v2 2/3] of/fdt: Remove dead code and mark functions with __init
-Date:   Tue, 14 May 2019 13:40:52 -0700
-Message-Id: <20190514204053.124122-3-swboyd@chromium.org>
+Subject: [PATCH v2 3/3] of/fdt: Mark initial_boot_params as __ro_after_init
+Date:   Tue, 14 May 2019 13:40:53 -0700
+Message-Id: <20190514204053.124122-4-swboyd@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190514204053.124122-1-swboyd@chromium.org>
 References: <20190514204053.124122-1-swboyd@chromium.org>
@@ -60,132 +60,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some functions in here are never called, and others are only called
-during __init. Remove the dead code and some dead exports for functions
-that don't exist (I'm looking at you of_fdt_get_string!). Mark some
-functions with __init so we can throw them away after we boot up and
-poke at the FDT blob too.
+The FDT pointer, i.e. initial_boot_params, shouldn't be changed after
+init. It's only set by boot code and then the only user of the FDT is
+the raw sysfs reading API. Mark this pointer with __ro_after_init so
+that the pointer can't be changed after init.
 
 Cc: Hsin-Yi Wang <hsinyi@chromium.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/of/fdt.c       | 37 +++++--------------------------------
- include/linux/of_fdt.h | 11 -----------
- 2 files changed, 5 insertions(+), 43 deletions(-)
+ drivers/of/fdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 4734223ab702..93414b89735f 100644
+index 93414b89735f..f131a1b8588b 100644
 --- a/drivers/of/fdt.c
 +++ b/drivers/of/fdt.c
-@@ -38,7 +38,7 @@
-  * memory entries in the /memory node. This function may be called
-  * any time after initial_boot_param is set.
-  */
--void of_fdt_limit_memory(int limit)
-+void __init of_fdt_limit_memory(int limit)
- {
- 	int memory;
- 	int len;
-@@ -110,25 +110,6 @@ static int of_fdt_is_compatible(const void *blob,
- 	return 0;
- }
+@@ -516,7 +516,7 @@ EXPORT_SYMBOL_GPL(of_fdt_unflatten_tree);
+ int __initdata dt_root_addr_cells;
+ int __initdata dt_root_size_cells;
  
--/**
-- * of_fdt_is_big_endian - Return true if given node needs BE MMIO accesses
-- * @blob: A device tree blob
-- * @node: node to test
-- *
-- * Returns true if the node has a "big-endian" property, or if the kernel
-- * was compiled for BE *and* the node has a "native-endian" property.
-- * Returns false otherwise.
-- */
--bool of_fdt_is_big_endian(const void *blob, unsigned long node)
--{
--	if (fdt_getprop(blob, node, "big-endian", NULL))
--		return true;
--	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) &&
--	    fdt_getprop(blob, node, "native-endian", NULL))
--		return true;
--	return false;
--}
--
- static bool of_fdt_device_is_available(const void *blob, unsigned long node)
- {
- 	const char *status = fdt_getprop(blob, node, "status", NULL);
-@@ -145,8 +126,8 @@ static bool of_fdt_device_is_available(const void *blob, unsigned long node)
- /**
-  * of_fdt_match - Return true if node matches a list of compatible values
-  */
--int of_fdt_match(const void *blob, unsigned long node,
--                 const char *const *compat)
-+static int __init of_fdt_match(const void *blob, unsigned long node,
-+			       const char *const *compat)
- {
- 	unsigned int tmp, score = 0;
+-void *initial_boot_params;
++void *initial_boot_params __ro_after_init;
  
-@@ -758,7 +739,7 @@ int __init of_scan_flat_dt_subnodes(unsigned long parent,
-  * @return offset of the subnode, or -FDT_ERR_NOTFOUND if there is none
-  */
+ #ifdef CONFIG_OF_EARLY_FLATTREE
  
--int of_get_flat_dt_subnode_by_name(unsigned long node, const char *uname)
-+int __init of_get_flat_dt_subnode_by_name(unsigned long node, const char *uname)
- {
- 	return fdt_subnode_offset(initial_boot_params, node, uname);
- }
-@@ -771,14 +752,6 @@ unsigned long __init of_get_flat_dt_root(void)
- 	return 0;
- }
- 
--/**
-- * of_get_flat_dt_size - Return the total size of the FDT
-- */
--int __init of_get_flat_dt_size(void)
--{
--	return fdt_totalsize(initial_boot_params);
--}
--
- /**
-  * of_get_flat_dt_prop - Given a node in the flat blob, return the property ptr
-  *
-@@ -804,7 +777,7 @@ int __init of_flat_dt_is_compatible(unsigned long node, const char *compat)
- /**
-  * of_flat_dt_match - Return true if node matches a list of compatible values
-  */
--int __init of_flat_dt_match(unsigned long node, const char *const *compat)
-+static int __init of_flat_dt_match(unsigned long node, const char *const *compat)
- {
- 	return of_fdt_match(initial_boot_params, node, compat);
- }
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index a713e5d156d8..acf820e88952 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -23,15 +23,6 @@
- struct device_node;
- 
- /* For scanning an arbitrary device-tree at any time */
--extern char *of_fdt_get_string(const void *blob, u32 offset);
--extern void *of_fdt_get_property(const void *blob,
--				 unsigned long node,
--				 const char *name,
--				 int *size);
--extern bool of_fdt_is_big_endian(const void *blob,
--				 unsigned long node);
--extern int of_fdt_match(const void *blob, unsigned long node,
--			const char *const *compat);
- extern void *of_fdt_unflatten_tree(const unsigned long *blob,
- 				   struct device_node *dad,
- 				   struct device_node **mynodes);
-@@ -64,9 +55,7 @@ extern int of_get_flat_dt_subnode_by_name(unsigned long node,
- extern const void *of_get_flat_dt_prop(unsigned long node, const char *name,
- 				       int *size);
- extern int of_flat_dt_is_compatible(unsigned long node, const char *name);
--extern int of_flat_dt_match(unsigned long node, const char *const *matches);
- extern unsigned long of_get_flat_dt_root(void);
--extern int of_get_flat_dt_size(void);
- extern uint32_t of_get_flat_dt_phandle(unsigned long node);
- 
- extern int early_init_dt_scan_chosen(unsigned long node, const char *uname,
 -- 
 Sent by a computer through tubes
 
