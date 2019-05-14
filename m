@@ -2,126 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F191C311
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 08:16:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 258F31C327
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 08:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfENGOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 02:14:52 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:61464 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfENGOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 02:14:47 -0400
-X-AuditID: c0a8fbf4-519ff700000014c1-98-5cda5cd5eff3
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 02.23.05313.5DC5ADC5; Tue, 14 May 2019 08:14:45 +0200 (CEST)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Tue, 14 May 2019 08:14:41 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "angus@akkea.ca" <angus@akkea.ca>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>
-Subject: regulator: BD71837: possible regression
-Thread-Topic: regulator: BD71837: possible regression
-Thread-Index: AQHVChxRpztiZk/CxkiSfV6HgmFFIw==
-Date:   Tue, 14 May 2019 06:14:41 +0000
-Message-ID: <4efe8d75766719eee3987fd80b2c11a0e66c75fa.camel@fi.rohmeurope.com>
-References: <34f520784f0b489861d62bc30749bf2a@www.akkea.ca>
-In-Reply-To: <34f520784f0b489861d62bc30749bf2a@www.akkea.ca>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EE478F9CF38C5C478ABFD0D5168622A4@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726254AbfENGRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 02:17:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:38889 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbfENGRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 02:17:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4536tL62z0z9s00;
+        Tue, 14 May 2019 16:17:46 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Rafael Aquini <aquini@redhat.com>,
+        Joel Savitz <jsavitz@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Sandeep Patil <sspatil@android.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
+In-Reply-To: <20190510072500.GA1520@yury-thinkpad>
+References: <1557158023-23021-1-git-send-email-jsavitz@redhat.com> <20190507125430.GA31025@x230.aquini.net> <20190508063716.GA3096@yury-thinkpad> <87k1ezugqh.fsf@concordia.ellerman.id.au> <20190510072500.GA1520@yury-thinkpad>
+Date:   Tue, 14 May 2019 16:17:46 +1000
+Message-ID: <87k1ettv91.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsVyYMXvTbpXY27FGPxp0LZ4fP82o8XUh0/Y
-        LC7vmsPmwOwxtWsFo8emVZ1sHp83yQUwR3HbJCWWlAVnpufp2yVwZyzcYFvQoFFxfV4/cwPj
-        H7UuRk4OCQETiflPVrN2MXJxCAlcY5TY//gXI4RzglFi9pI9QBkODjYBG4mum+wgDSICqhLn
-        Ti5iBqlhFljEKLHt4GlWkISwgIHE7I3HoIpMJdqntUPZehKTF14Em8MC1Nw5RR8kzCvgJ3Gl
-        7SVYWEjAWmL6LneQMCfQpp/HboJNZBSQlehseMcEYjMLiEtsevadFeJmAYkle84zQ9iiEi8f
-        /4OKK0ns/fmQBWQks4CmxPpd+hCtDhITZ31hh7AVJaZ0P2SHuEBQ4uTMJywTGMVmIdkwC6F7
-        FpLuWUi6ZyHpXsDIuopRIjcxMyc9sSTVUK8otVSvKD8jF0gl5+duYoRE2pcdjP8PeR5iFOBg
-        VOLhlTW/FSPEmlhWXJl7iFGSg0lJlPdx340YIb6k/JTKjMTijPii0pzU4kOMEhzMSiK8UYpA
-        Od6UxMqq1KJ8mJQ0B4uSOO/vXQdjhARANmenphakFsFkZTg4lCR4s6OB9ggWpaanVqRl5pQg
-        pJk4OEGGc0mJFKfmpaQWJZaWZMSDkkp8MTCtgKR4gPY+BmnnLS5IzAWKQrSeYtTmOLDo4Vxm
-        jrcHn89lFmLJy89LlRLnvRsFVCoAUppRmge36BWjONC/wrzOIIN4gOkYbs4roBVMQCsCiq+B
-        rChJREhJNTCuFOG6+XJG2vx9NXVbJ8t1NJxrqNjHljfBkD3L1vXO9lkHzl6Vn37l4NMU1SUt
-        uSvt1b21zvyq3rWrzm6uPMvCTcvkOt67GsVOli1kTuGJar82dfm962+6BWwLH63ftk37WOnf
-        FaHHuJI1Ep8YVSXWcW8TsOTKm/GR95XUi8MpXcZt1ftFy0uUWIozEg21mIuKEwHlk0yohAMA
-        AA==
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gQW5ndXMsDQoNCkknbGwgYWRkIHRoZSBsaW51eCBsaXN0IGFuZCBNYXJrIHRvIENDIGFz
-IHRoaXMgc291bmRzIGxpa2UgYSByZWdyZXNzaW9uDQp3aGljaCBtYXkgaW1wYWN0IHRvIG90aGVy
-IHJlZ3VsYXRvciBkcml2ZXJzIHRvby4gTWFyaywgcGxlYXNlIGxldCBtZQ0Ka25vdyBpZiB5b3Ug
-ZG9uJ3QgZmVlbCBhZGRpbmcgeW91IHRvIGRpc2N1c3Npb25zIGxpa2UgdGhpcyBhcmUNCmFwcHJv
-cHJpYXRlIHNvIEkgZG9uJ3QgZG8gaXQgaW4gdGhlIGZ1dHVyZS4NCg0KT24gTW9uLCAyMDE5LTA1
-LTEzIGF0IDE3OjIxIC0wNzAwLCBBbmd1cyBBaW5zbGllIHdyb3RlOg0KPiBIaSBNYXR0aSwNCj4g
-DQo+IEkndmUgYmVlbiBkb2luZyBzb21lIGludGVncmF0aW9uIHdpdGggb3VyIGZlYXR1cmUgYnJh
-bmNoZXMgb24gbGludXgtDQo+IG5leHQgDQo+IChuZXh0LTIwMTkwNTEwKSBhbmQgSSBoaXQgYSBz
-bmFnIGFzIHNvb24gYXMgSSBlbmFibGUgdGhlIEJENzE4MzcuDQo+IA0KPiBUaGVyZSdzIGEgY291
-cGxlIG9mIHdlaXJkIHRoaW5ncyBJJ20gc2VlaW5nDQo+IA0KPiBbICAgIDAuOTA3MDI1XSBiZDcx
-OHh4LXBtaWMgYmQ3MTh4eC1wbWljLjIuYXV0bzogbm8gZGVmYXVsdCBwaW5jdHJsIA0KPiBzdGF0
-ZQ0KPiBbICAgIDAuOTA3NjUxXSBiZDcxOHh4LXBtaWMgYmQ3MTh4eC1wbWljLjIuYXV0bzogVW5s
-b2NrZWQgbG9jaw0KPiByZWdpc3RlciANCj4gMHgyZg0KPiBbICAgIDAuOTMyNDgzXSByb2htLWJk
-NzE4eDcgMC0wMDRiOiBMb29raW5nIHVwIGJ1Y2s2LXN1cHBseSBmcm9tDQo+IGRldmljZSANCj4g
-dHJlZQ0KPiBbICAgIDAuOTMyNDk5XSByb2htLWJkNzE4eDcgMC0wMDRiOiBMb29raW5nIHVwIGJ1
-Y2s2LXN1cHBseSBwcm9wZXJ0eQ0KPiBpbiANCj4gbm9kZSAvc29jQDAvYnVzQDMwODAwMDAwL2ky
-Y0AzMGEyMDAwMC9wbWljQDRiIGZhDQo+IGlsZWQNCj4gWyAgICAwLjkzNzg2MV0gcm9obS1iZDcx
-OHg3IDAtMDA0YjogTG9va2luZyB1cCBidWNrNy1zdXBwbHkgZnJvbQ0KPiBkZXZpY2UgDQo+IHRy
-ZWUNCj4gWyAgICAwLjkzNzg3N10gcm9obS1iZDcxOHg3IDAtMDA0YjogTG9va2luZyB1cCBidWNr
-Ny1zdXBwbHkgcHJvcGVydHkNCj4gaW4gDQo+IG5vZGUgL3NvY0AwL2J1c0AzMDgwMDAwMC9pMmNA
-MzBhMjAwMDAvcG1pY0A0YiBmYQ0KPiBpbGVkDQoNCkRvZXMgdGhpcyBtZWFuIHdlIGhhdmUgYSBy
-ZWdyZXNzaW9uIGluIGxpbnV4LW5leHQ/IEkgZ3Vlc3MgeW91IGhhdmUgbm90DQpzZWVuIHRoZXNl
-IGlzc3VlcyBpbiBvbGRlciBrZXJuZWxzPw0KDQo+IFdoYXQgc2hvdWxkIGJ1Y2s2Lzcgc3VwcGx5
-IGJlIHNldCB0byA/DQoNClRoZSBidWNrNiBhbmQgYnVjazcgYXJlIG5vdCBzdXBwbGllZCBieSBh
-bnkgb3RoZXIgcmVndWxhdG9ycy4gV2hhdCBpcw0Kc3BlY2lhbCBhYm91dCBidWNrNiBhbmQgYnVj
-azcgaXMgdGhhdCB0aGV5IGFyZSBzdXBwbHlpbmcgTERPcyA1IGFuZCA2Lg0KU28gSSBhc3N1bWUg
-dGhlIHByb2JsZW0gZW1lcmdlcyB3aGVuIExET3MgYXJlIHRyeWluZyB0byBmaW5kIHRoZWlyDQpz
-dXBwbGllcnMuIChJIGFtIG5vdCBzdXJlIGlmIHN1cHBsaWVyIGlzIGNvcnJlY3Qgd29yZCAtIGJ1
-dCB3aGF0IEkgbWVhbg0KaXMgdGhhdCBidWNrcyA2IGFuZCA3IGFyZSBraW5kIG9mIHBhcmVudHMg
-Zm9yIExET3MpLiBUaGlzIGlzIHJlZmxlY3RlZA0KaW4gcmVndWxhdG9yX2Rlc2MgZm9yIExET3Mu
-IChUaGUgc3VwcGx5X25hbWUgZmllbGQgaXMgc2V0KS4NCg0KSSBhbSBub3Qgc3VyZSBidXQgcGVy
-aGFwcyB0aGUgcmVndWxhdG9yIGNvcmUgaXMgY2hhbmdlZCBzbyB0aGF0IHRoaXMNCnBhcmVudC9j
-aGlsZCByZWxhdGlvbiBtdXN0IGJlIG1vZGVsbGVkIHVzaW5nIDxmb28+LXN1cHBseSBwcm9wZXJ0
-aWVzIGluDQpkZXZpY2UtdHJlZS4gQXJlIHlvdSBhYmxlIHRvIGJpc2VjdCB0aGUgY2hhbmdlIHdo
-aWNoIGJyZWFrcyB0aGlzPyBUaGVyZQ0KbWF5IGJlIG90aGVyIHJlZ3VsYXRvciBkcml2ZXJzIGRv
-aW5nIHRoZSBzYW1lIGFzIGJkNzE4eDcgaXMgKHdoaWNoDQptZWFucyB0cnVzaXRpbmcgdG8gc2V0
-dGluZyB0aGUgc3VwcGx5X25hbWUgaW4gZGVzYyB0byBiZSBlbm91Z2ggLSBhbmQNCndpdGhvdXQg
-ZGVlcGVyIHVuZGVyc3RhbmRpbmcgSSdkIHNheSBpdCBzaG91bGQgYmUgZW5vdWdoKS4NCg0KSWYg
-dGhpcyBjaGFuZ2UgaXMgaW50ZW50aW9uYWwgYW5kIGJ1Y2s2LXN1cHBseSBhbmQgYnVjazctc3Vw
-cGx5IGFyZSBib3cNCnJlcXVpcmVkIGFsc28gaW4gRFQsIHRoZW4gd2Ugc2hvdWxkIHJlZmxlY3Qg
-dGhpcyBmYWN0IGFsc28gaW4gYmluZGluZ3MNCmRvYyBmb3IgQkQ3MTgzNyBhbmQgQkQ3MTg0Ny4N
-Cg0KPiBUaGUgcnRjIGFsc28gc2VlbXMgdG8gaGF2ZSBsb3N0IGl0J3MgbWluZA0KPiANCj4gWyAg
-NDk3LjM2MzYyMV0gcnRjIHJ0YzA6IFRpbWVvdXQgd2FpdGluZyBmb3IgTFBTUlQgQ291bnRlciB0
-byBjaGFuZ2UNCj4gDQo+IEFtIEkgbWlzc2luZyBsaW5raW5nIHRoZSBiZDcxODM3IGNsb2NrIHRv
-IHRoZSBydGMgc29tZWhvdyA/DQoNCkkgZG9uJ3QgdGhpbmsgdGhlcmUgaXMgYW55IFNXIGFjdGlv
-bnMgcmVxdWlyZWQuIFRoZSAzMC43MksgY2xvY2sgY2FuIGJlDQpjb250cm9sbGVkIHVzaW5nIGNs
-ay1iZDcxOHg3IGRyaXZlciAtIGJ1dCBJIGRvbid0IHRoaW5rIHRoZXJlIGhhcyBiZWVuDQpjaGFu
-Z2VzIHRoZXJlIGFuZCB0aGlzIGRyaXZlcnMgc2hvdWxkIG5vdCB0b3VjaCB0aGUgY2xrIGdhdGUg
-dW5sZXNzDQphc2tlZCBieSBzb21lIHVzZXIuIFN0aWxsLCBpZiB0aGUgYnVja3M2LzcgZ2V0IGRp
-c2FibGVkIGZvciBzb21lIHJlYXNvbg0KKG9yIGlmIExET3MgYXJlIGVuYWJsZWQgYmVmb3JlIHRo
-ZXNlIGJ1Y2tzIGFyZSBlbmFibGVkKSAtIHRoZW4sIHdpdGhvdXQNCnRoZSBjb3JyZWN0IHBhcmVu
-dCBjaGlsZCByZWxhdGlvbiB0aGUgTERPcyBjYW4ndCBnZXQgZW5hYmxlZCAtIGFuZA0Kdm9sdGFn
-ZSBtb25pdG9yaW5nIG1heSBraWNrLWluLiBZZXQsIGFzc3VtaW5nIHRoZSBTb0MgaXMgcG93ZXJl
-ZCBieQ0KYmQ3MTgzNyB0aGlzIHNob3VsZCBwcm9iYWJseSBsZWFkIHRvIHJlc2V0LWxvb3AgYW5k
-IG5vdCBqdXN0IHRvIGNsb2NrDQplcnJvcnMuLi4NCg0KSSB3b3VsZCBkZWZpbml0ZWx5IHN0YXJ0
-IGxvb2tpbmcgYXQgdGhlIGNoYW5nZXMgaW4gaG93IHN1cHBsaWVycyBhcmUNCmxvb2tlZCB1cCBh
-bmQgbWF5YmUgYWxzbyB0cmllZCBzZXR0aW5nIHRoZSBidWNrNi1zdXBwbHkgYW5kIGJ1Y2s3LQ0K
-c3VwcGx5IHByb3BlcnRpZXMgd2l0aCBwaGFuZGxlcyB0byBidWNrNiBhbmQgYnVjazcgbm9kZXMu
-IEkgY2FuIGFsc28NCnRyeSBjaGVja2luZyB0aGUgY29yZSBpZiB5b3UgZG9uJ3QgaGF2ZSB0aGUg
-cG9zc2liaWxpdHkgdG8gZG8gYmlzZWN0aW5nDQotIGJ1dCBJIGFtIG5vdCBhYmxlIHRvIGRvIGl0
-IHJpZ2h0IG5vdy4gSXQgbWF5IGJlIEkgY2FuIGNoZWNrIHRoaXMgb25seQ0KYXQgbmV4dCB3ZWVr
-Lg0KDQo+IEFuZCBmaW5hbGx5IHRoZSByZXNldCBpcyBoYW5naW5nIGFnYWluIGV2ZW4gd2l0aCAN
-Cj4gInJvaG0scmVzZXQtc252cy1wb3dlcmVkIi4NCg0KVGhpcyBjb3VsZCB3ZWxsIGJlIGR1ZSB0
-byB0aGUgbWlzc2luZyBwYXJlbnQvY2hpbGQgcmVsYXRpb24gYmV0d2Vlbg0KYnVja3MgYW5kIExE
-T3MuDQoNCj4gDQo+IFBvaW50ZXJzIHdvdWxkIGJlIGFwcHJlY2lhdGVkLg0KPiANCj4gVGhhbmtz
-DQo+IEFuZ3VzDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0K
+Yury Norov <yury.norov@gmail.com> writes:
+> On Fri, May 10, 2019 at 01:32:22PM +1000, Michael Ellerman wrote:
+>> Yury Norov <yury.norov@gmail.com> writes:
+>> > On Tue, May 07, 2019 at 08:54:31AM -0400, Rafael Aquini wrote:
+>> >> On Mon, May 06, 2019 at 11:53:43AM -0400, Joel Savitz wrote:
+>> >> > There is currently no easy and architecture-independent way to find the
+>> >> > lowest unusable virtual address available to a process without
+>> >> > brute-force calculation. This patch allows a user to easily retrieve
+>> >> > this value via /proc/<pid>/status.
+>> >> > 
+>> >> > Using this patch, any program that previously needed to waste cpu cycles
+>> >> > recalculating a non-sensitive process-dependent value already known to
+>> >> > the kernel can now be optimized to use this mechanism.
+>> >> > 
+>> >> > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+>> >> > ---
+>> >> >  Documentation/filesystems/proc.txt | 2 ++
+>> >> >  fs/proc/task_mmu.c                 | 2 ++
+>> >> >  2 files changed, 4 insertions(+)
+>> >> > 
+>> >> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+>> >> > index 66cad5c86171..1c6a912e3975 100644
+>> >> > --- a/Documentation/filesystems/proc.txt
+>> >> > +++ b/Documentation/filesystems/proc.txt
+>> >> > @@ -187,6 +187,7 @@ read the file /proc/PID/status:
+>> >> >    VmLib:      1412 kB
+>> >> >    VmPTE:        20 kb
+>> >> >    VmSwap:        0 kB
+>> >> > +  VmTaskSize:	137438953468 kB
+>> >> >    HugetlbPages:          0 kB
+>> >> >    CoreDumping:    0
+>> >> >    THP_enabled:	  1
+>> >> > @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
+>> >> >   VmPTE                       size of page table entries
+>> >> >   VmSwap                      amount of swap used by anonymous private data
+>> >> >                               (shmem swap usage is not included)
+>> >> > + VmTaskSize                  lowest unusable address in process virtual memory
+>> >> 
+>> >> Can we change this help text to "size of process' virtual address space memory" ?
+>> >
+>> > Agree. Or go in other direction and make it VmEnd
+>> 
+>> Yeah I think VmEnd would be clearer to folks who aren't familiar with
+>> the kernel's usage of the TASK_SIZE terminology.
+>> 
+>> >> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> >> > index 95ca1fe7283c..0af7081f7b19 100644
+>> >> > --- a/fs/proc/task_mmu.c
+>> >> > +++ b/fs/proc/task_mmu.c
+>> >> > @@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>> >> >  	seq_put_decimal_ull_width(m,
+>> >> >  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
+>> >> >  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
+>> >> > +	seq_put_decimal_ull_width(m,
+>> >> > +		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
+>> >> >  	seq_puts(m, " kB\n");
+>> >> >  	hugetlb_report_usage(m, mm);
+>> >> >  }
+>> >
+>> > I'm OK with technical part, but I still have questions not answered
+>> > (or wrongly answered) in v1 and v2. Below is the very detailed
+>> > description of the concerns I have.
+>> >
+>> > 1. What is the exact reason for it? Original version tells about some
+>> > test that takes so much time that you were able to drink a cup of
+>> > coffee before it was done. The test as you said implements linear
+>> > search to find the last page and so is of O(n). If it's only for some
+>> > random test, I think the kernel can survive without it. Do you have a
+>> > real example of useful programs that suffer without this information?
+>> >
+>> >
+>> > 2. I have nothing against taking breaks and see nothing weird if
+>> > ineffective algorithms take time. On my system (x86, Ubuntu) the last
+>> > mapped region according to /proc/<pid>/maps is:
+>> > ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0     [vsyscall]
+>> > So to find the required address, we have to inspect 2559 pages. With a
+>> > binary search it would take 12 iterations at max. If my calculation is
+>> > wrong or your environment is completely different - please elaborate.
+>> 
+>> I agree it should not be hard to calculate, but at the same time it's
+>> trivial for the kernel to export the information so I don't see why the
+>> kernel shouldn't.
+>
+> Kernel shouldn't do it unless there will be real users of the feature.
+> Otherwise it's pure bloating.
+
+A single line or two of code to print a value that's useful information
+for userspace is hardly "bloat".
+
+I agree it's good to have users for things, but this seems like it's so
+trivial that we should just add it and someone will find a use for it.
+
+> One possible user of it that I can imagine is mmap(MAP_FIXED). The
+> documentation is very clear about it:
+>
+>    Furthermore,  this  option  is  extremely  hazardous (when used on its own),
+>    because it forcibly removes preexisting mappings, making it easy for a 
+>    multithreaded  process  to corrupt its own address space.
+>
+> VmEnd provided by kernel may encourage people to solve their problems
+> by using MAP_FIXED which is potentially dangerous.
+
+There's MAP_FIXED_NOREPLACE now which is not dangerous.
+
+Using MAX_FIXED_NOREPLACE and VmEnd would make it relatively easy to do
+a userspace ASLR implementation, so that actually is an argument in
+favour IMHO.
+
+> Another scenario of VmEnd is to understand how many top bits of address will
+> be always zero to allocate them for user's purpose, like smart pointers. It
+> worth to discuss this usecase with compiler people. If they have interest,
+> I think it's more straightforward to give them something like:
+>    int preserve_top_bits(int nbits);
+
+You mean a syscall?
+
+With things like hardware pointer tagging / colouring coming along I
+think you're right that using VmEnd and assuming the top bits are never
+used is a bad idea, an explicit interface would be better.
+
+cheers
