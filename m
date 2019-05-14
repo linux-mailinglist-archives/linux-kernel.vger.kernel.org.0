@@ -2,92 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC0A71C5B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 11:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A84A71C5BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 11:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfENJLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 05:11:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49612 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfENJLR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 05:11:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5iwEwLS1q3rI3tAGb5MvfXH7TArOjbZqT169gIY63aw=; b=qeo8z6lcGC5Q+l4zSa6K3Udf0
-        TyPkOkFdLABZunCuMBawHnkr3YMpTu7Oop8c9CpS8YB/3hww/qqEyCFVmTnNw57JKF4/YWgwz/17f
-        u0Auz0Y+RgjXpNwholppjO3aJRQ+GBjcltgeLpccEOVc9NPognMGJa/LSwmxOrVudpYz0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hQTSl-0000YL-13; Tue, 14 May 2019 09:11:07 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 055E11128518; Tue, 14 May 2019 10:11:06 +0100 (BST)
-Date:   Tue, 14 May 2019 10:11:05 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "angus@akkea.ca" <angus@akkea.ca>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>
-Subject: Re: regulator: BD71837: possible regression
-Message-ID: <20190514091105.GA8665@sirena.org.uk>
-References: <34f520784f0b489861d62bc30749bf2a@www.akkea.ca>
- <4efe8d75766719eee3987fd80b2c11a0e66c75fa.camel@fi.rohmeurope.com>
+        id S1726481AbfENJMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 05:12:31 -0400
+Received: from relay.sw.ru ([185.231.240.75]:58800 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbfENJMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 05:12:30 -0400
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1hQTTt-0001sf-Bj; Tue, 14 May 2019 12:12:17 +0300
+Subject: Re: [PATCH RFC 0/4] mm/ksm: add option to automerge VMAs
+To:     Oleksandr Natalenko <oleksandr@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Aaron Tomlin <atomlin@redhat.com>, linux-mm@kvack.org
+References: <20190510072125.18059-1-oleksandr@redhat.com>
+ <36a71f93-5a32-b154-b01d-2a420bca2679@virtuozzo.com>
+ <20190513113314.lddxv4kv5ajjldae@butterfly.localdomain>
+ <a3870e32-3a27-e6df-fcb2-79080cdd167a@virtuozzo.com>
+ <20190514063043.ojhsb6d3ohxx4wur@butterfly.localdomain>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <8f146863-5963-81b2-ed20-6428d1da353c@virtuozzo.com>
+Date:   Tue, 14 May 2019 12:12:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Content-Disposition: inline
-In-Reply-To: <4efe8d75766719eee3987fd80b2c11a0e66c75fa.camel@fi.rohmeurope.com>
-X-Cookie: Information is the inverse of entropy.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190514063043.ojhsb6d3ohxx4wur@butterfly.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14.05.2019 09:30, Oleksandr Natalenko wrote:
+> Hi.
+> 
+> On Mon, May 13, 2019 at 03:37:56PM +0300, Kirill Tkhai wrote:
+>>> Yes, I get your point. But the intention is to avoid another hacky trick
+>>> (LD_PRELOAD), thus *something* should *preferably* be done on the
+>>> kernel level instead.
+>>
+>> I don't think so. Does userspace hack introduce some overhead? It does not
+>> look so. Why should we think about mergeable VMAs in page fault handler?!
+>> This is the last thing we want to think in page fault handler.
+>>
+>> Also, there is difficult synchronization in page fault handlers, and it's
+>> easy to make a mistake. So, there is a mistake in [3/4], and you call
+>> ksm_enter() with mmap_sem read locked, while normal way is to call it
+>> with write lock (see madvise_need_mmap_write()).
+>>
+>> So, let's don't touch this path. Small optimization for unlikely case will
+>> introduce problems in optimization for likely case in the future.
+> 
+> Yup, you're right, I've missed the fact that write lock is needed there.
+> Re-vamping locking there is not my intention, so lets find another
+> solution.
+> 
+>>> Also, just for the sake of another piece of stats here:
+>>>
+>>> $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
+>>> 526
+>>
+>> This all requires attentive analysis. The number looks pretty big for me.
+>> What are the pages you get merged there? This may be just zero pages,
+>> you have identical.
+>>
+>> E.g., your browser want to work fast. It introduces smart schemes,
+>> and preallocates many pages in background (mmap + write 1 byte to a page),
+>> so in further it save some time (no page fault + alloc), when page is
+>> really needed. But your change merges these pages and kills this
+>> optimization. Sounds not good, does this?
+>>
+>> I think, we should not think we know and predict better than application
+>> writers, what they want from kernel. Let's people decide themselves
+>> in dependence of their workload. The only exception is some buggy
+>> or old applications, which impossible to change, so force madvise
+>> workaround may help. But only in case there are really such applications...
+>>
+>> I'd researched what pages you have duplicated in these 526 MB. Maybe
+>> you find, no action is required or a report to userspace application
+>> to use madvise is needed.
+> 
+> OK, I agree, this is a good argument to move decision to userspace.
+> 
+>>> 2) what kinds of opt-out we should maintain? Like, what if force_madvise
+>>> is called, but the task doesn't want some VMAs to be merged? This will
+>>> required new flag anyway, it seems. And should there be another
+>>> write-only file to unmerge everything forcibly for specific task?
+>>
+>> For example,
+>>
+>> Merge:
+>> #echo $task > /sys/kernel/mm/ksm/force_madvise
+> 
+> Immediate question: what should be actually done on this? I see 2
+> options:
+> 
+> 1) mark all VMAs as mergeable + set some flag for mmap() to mark all
+> further allocations as mergeable as well;
+> 2) just mark all the VMAs as mergeable; userspace can call this
+> periodically to mark new VMAs.
+> 
+> My prediction is that 2) is less destructive, and the decision is
+> preserved predominantly to userspace, thus it would be a desired option.
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Let's see, how we use KSM now. It's good for virtual machines: people
+install the same distribution in several VMs, and they have the same
+packages and the same files. When you read a file inside VM, its pages
+are file cache for the VM, but they are anonymous pages for host kernel.
 
-On Tue, May 14, 2019 at 06:14:41AM +0000, Vaittinen, Matti wrote:
+Hypervisor marks VM memory as mergeable, and host KSM merges the same
+anonymous pages together. Many of file cache inside VM is constant
+content, so we have good KSM compression on such the file pages.
+The result we have is explainable and expected.
 
-> I am not sure but perhaps the regulator core is changed so that this
-> parent/child relation must be modelled using <foo>-supply properties in
-> device-tree. Are you able to bisect the change which breaks this? There
-> may be other regulator drivers doing the same as bd718x7 is (which
-> means trusiting to setting the supply_name in desc to be enough - and
-> without deeper understanding I'd say it should be enough).
+But we don't know anything about pages, you have merged on your laptop.
+We can't make any assumptions before analysis of applications, which
+produce such the pages. Let's check what happens before we try to implement
+some specific design (if we really need something to implement).
 
-The framework will look for the parent regulator and warn if it can't
-find it but it should still instantiate it if the mapping is a hard
-failure (as opposed to a probe deferral).
+The rest is just technical details. We may implement everything we need
+on top of this (even implement a polling of /proc/[pid]/maps and write
+a task and address of vma to force_madvise or similar file).
 
-> If this change is intentional and buck6-supply and buck7-supply are bow
-> required also in DT, then we should reflect this fact also in bindings
-> doc for BD71837 and BD71847.
-
-It is always and has always been best practice to wire up the regulators
-as completely as possible; this is less error prone and gives you more
-ability to take advantage of framework improvements.
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzahikACgkQJNaLcl1U
-h9A4wwf+LXRrOGq+A/gGUmt/59Lbdhs1W19J/aIKbsahi0GaJVe5W0PWktgCOWuC
-88TkX5EsPmUzcMoU91yOBATpxa5PGtxjqK+esXGStEB342WrPEaieL4skqpS9GXx
-eawQSVIRM0l1i6kmzonT++Vpk6dP96A1sTmRXWiFQqMl9suDaC/rexsbY9F5ywjK
-cZiCbTfEUbMi39soGbQU2hKr3DMBjIZgMt8njq2SUZfQkzPxcK+B7mC4Dt2PZQTn
-AWuPxXySqB0VxAs7L2t05OkVqI93d1PF4aOJoLMug5B1GNYb2elAzQfCpW0D60H7
-BZZV3sujvkvcvvrZk4IvzyTiQmbbDQ==
-=okbM
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+Kirill
