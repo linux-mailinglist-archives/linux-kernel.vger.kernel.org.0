@@ -2,218 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05141D087
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EBA01D08A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbfENUYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 16:24:51 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34514 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfENUYu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 16:24:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id n19so98833pfa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 13:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BVBCNtw4OCSkXzf6e+pUMYZpGLCjILIxG5vFuVVP94I=;
-        b=kTAxGgC3T/bvSvNY297IvTzEw7QycBCSWS3tVIM+8LK1Yh7qeL7trWWTuv61tD548m
-         cp0jPns5UNODon9wuZx8C3BDIOYV9FQvUqHbuaifpHlgNC+yDZFKDXwNJ5FG/RqaV4v2
-         NoyUcjYiT7aSPfCzVsRid4Bfm9+cItlvdygPffCOE2ZJnOBUfSjMrG3mgQwnZCC2zGmg
-         vpRXnQ0mFBiQrJkNbwhT+49dVHCCtVJQV5nwG5/K57lj8zHRltJeoQ9YYkEtOvF3oxXB
-         DDEu7cbO01dc3e/0EKWJNWiEsMaRAVeO8J5xNYExDmoTlCv7NXfLDBM0v1MZ0xv5shrO
-         m2/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BVBCNtw4OCSkXzf6e+pUMYZpGLCjILIxG5vFuVVP94I=;
-        b=pOauhv4dUTqBwXQj6vaS6B/xNxS/N7Zb/1f5QcdwmgAGokAyLqSGO6U9JOkC9y2EzC
-         y6eqkUiXh8NNQ8rjggJlGF+WXjdzfa9VUIRU5HuKWW5+l01NDonPCZWP/IwRDvFXkBP7
-         SzJvgrqr1uqECWmfP8eR9I1CEc0Ftgd6udIdWSgQEjq9avimH+hXKTUuAD7ZtQKiCwTD
-         mPYwqxh07NgEpzN1cE7e6NSGpey8rOYvldhSVeI0VuAgIWcV0DjF1iY1rRYCMe0i6aBx
-         Djyg7uv8l5XZ+Hv72OCvgEc8TRXzlcYilC+tGeEZribwUjfAgftSdvfBMpGelY11wbCM
-         QIeg==
-X-Gm-Message-State: APjAAAWu4vWeTOR5KeWHgbNY4QahE9At7Bc/4XlAG3Z15ij4CroCW3Y9
-        dAnrY6iFIqnWt/XTzR7NauZCpODutYvoHjAvwXBMSw==
-X-Google-Smtp-Source: APXvYqypyoGijJYogmMon+IZnBnO02AAnROorviN2SnTvCNN9mPldwAK/7yFGAibQD9Ds1Qa+hw+sPH8wk29RbLw56c=
-X-Received: by 2002:a63:e711:: with SMTP id b17mr39800783pgi.202.1557865488608;
- Tue, 14 May 2019 13:24:48 -0700 (PDT)
+        id S1726494AbfENUZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 16:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726279AbfENUZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 16:25:05 -0400
+Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 884DB2166E;
+        Tue, 14 May 2019 20:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557865504;
+        bh=NJCVrEGhRtkVbEPWKfeunnKoZOPbNR7D1pgnMVpmTJk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XtfKPjB5RRK820tIaOu65waeznxxdSZ8xw+WU1hsK0yANhaMI+k/eWfV8PeBc9VSn
+         VVzIFOdII3Cc6oUhY8Xpw9PsqNtqnWmpQxb0ZXqrWFArfJceuE6rIuEmtcOTiMmT0W
+         WckyK17uRa9YIAutnG6LtFCJTE0jqpUFLVNlrYvM=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     x86@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 0/2] x86/speculation/mds: Minor fixes
+Date:   Tue, 14 May 2019 13:24:38 -0700
+Message-Id: <cover.1557865329.git.luto@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190513222109.110020-1-ndesaulniers@google.com>
- <20190513232910.GA30209@archlinux-i9> <CAKwvOd=W9nm04zvRQ3iu=AGHnitongZ7VQ9S32U9hBZKwNyeMw@mail.gmail.com>
- <201905141041.C38DA1B305@keescook>
-In-Reply-To: <201905141041.C38DA1B305@keescook>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 14 May 2019 13:24:37 -0700
-Message-ID: <CAKwvOdn2ESh+-T8=YFT=W=gjZHPpCY8QJVS7ytPHM04tN1v13g@mail.gmail.com>
-Subject: Re: [PATCH] lkdtm: support llvm-objcopy
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathanchance@gmail.com>,
-        Jordan Rupprect <rupprecht@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 11:11 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Mon, May 13, 2019 at 04:50:05PM -0700, Nick Desaulniers wrote:
-> > On Mon, May 13, 2019 at 4:29 PM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> > >
-> > > On Mon, May 13, 2019 at 03:21:09PM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
-> > > > With CONFIG_LKDTM=y and make OBJCOPY=llvm-objcopy, llvm-objcopy errors:
-> > > > llvm-objcopy: error: --set-section-flags=.text conflicts with
-> > > > --rename-section=.text=.rodata
-> > > >
-> > > > Rather than support setting flags then renaming sections vs renaming
-> > > > then setting flags, it's simpler to just change both at the same time
-> > > > via --rename-section.
-> > > >
-> > > > This can be verified with:
-> > > > $ readelf -S drivers/misc/lkdtm/rodata_objcopy.o
-> > > > ...
-> > > > Section Headers:
-> > > >   [Nr] Name              Type             Address           Offset
-> > > >        Size              EntSize          Flags  Link  Info  Align
-> > > > ...
-> > > >   [ 1] .rodata           PROGBITS         0000000000000000  00000040
-> > > >        0000000000000004  0000000000000000   A       0     0     4
-> > > > ...
-> > > >
-> > > > Which shows in the Flags field that .text is now renamed .rodata, the
-> > > > append flag A is set, and the section is not flagged as writeable W.
-> > > >
-> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/448
-> > > > Reported-by: Nathan Chancellor <nathanchance@gmail.com>
-> > >
-> > > This should be natechancellor@gmail.com (although I think I do own that
-> > > email, just haven't been into it for 10+ years...)
-> >
-> > Sorry, I should have looked it up.  I'll just fix this, my earlier
-> > mistake, and collect Kees's reviewed by tag in a v2 sent directly to
-> > GKH.
->
-> Sounds good.
->
-> > > I ran this script to see if there was any change for GNU objcopy and it
-> > > looks like .rodata's type gets changed, is this intentional? Otherwise,
-> > > this works for llvm-objcopy like you show.
-> > >
-> > > -----------
-> > >
-> > > 1c1
-> > > < There are 11 section headers, starting at offset 0x240:
-> > > ---
-> > > > There are 11 section headers, starting at offset 0x230:
-> > > 8c8
-> > > <   [ 1] .rodata           PROGBITS         0000000000000000  00000040
-> > > ---
-> > > >   [ 1] .rodata           NOBITS           0000000000000000  00000040
-> > > 10c10
->
-> Oh, very good catch; thank you!
->
-> >
-> > Interesting find.  the .rodata of vmlinux itself is marked PROGBITS,
-> > so its curious that GNU binutils changes the "Type" after the rename.
-> > I doubt the code in question relies on NOBITS for this section.  Kees,
-> > can you clarify?  Jordan, do you know what the differences are between
-> > PROGBITS vs NOBITS?
-> > https://people.redhat.com/mpolacek/src/devconf2012.pdf seems to
-> > suggest NOBITS zero initializes data but I'm not sure that's what this
-> > code wants.
->
-> Yes, the linker treats this as a zeroed section. My testing only checked that the NX protection check kicked, but in looking at the memory, the failure mode wouldn't have returned, because it got zeroed instead of seeing a "ret":
->
-> Before the patch (with a two-byte target dump added):
->
->         lkdtm: attempting bad execution at ffffffff986db2b0
->         lkdtm: f3 c3
->
-> After the patch:
->
->         lkdtm: attempting bad execution at ffffffff986db2b0
->         lkdtm: 00 00
->
-> So, yes, this breaks the fall-back case and should not be used. It seems
-> that objcopy BFD breaks the PROGBITS in this case, but llvm-objcopy
-> does not...
+The first I heard of MDS was today.  Let's fix the problems I noticed
+right away.
 
-I'm not sure I want to call it a bug in the initial implementation.  I've filed:
-https://sourceware.org/bugzilla/show_bug.cgi?id=24554 for
-clarification.  Jordan, I hope you can participate in any discussion
-there?
+Andy Lutomirski (2):
+  x86/speculation/mds: Revert CPU buffer clear on double fault exit
+  x86/speculation/mds: Improve CPU buffer clear documentation
 
->
-> $ objcopy --set-section-flags .text=alloc,readonly --rename-section .text=.rodata rodata.o rodata_objcopy.o
-> $ readelf -S rodata_objcopy.o | grep -A1 \.rodata
->   [ 1] .rodata           PROGBITS         0000000000000000  00000040
->        0000000000000002  0000000000000000   A       0     0     16
->
-> $ objcopy --rename-section .text=.rodata,alloc,readonly rodata.o rodata_objcopy.o
-> $ readelf -S rodata_objcopy.o | grep -A1 \.rodata
->   [ 1] .rodata           NOBITS           0000000000000000  00000040
->        0000000000000002  0000000000000000   A       0     0     16
->
-> $ llvm-objcopy --rename-section .text=.rodata,alloc,readonly rodata.o rodata_objcopy-llvm.o
-> $ readelf -S rodata_objcopy-llvm.o | grep -A1 \.rodata
->   [ 1] .rodata           PROGBITS         0000000000000000  00000040
->        0000000000000002  0000000000000000   A       0     0     16
->
->
-> llvm-objcopy doesn't like doing both arguments at the same time,
-> and BFD gets it wrong when using the appended flags. How about just a
-> two-stage copy, like this?
-
-Yeah, I think this should work.  What you wrote above + the link the
-bug I just filed would go well in a commit message, along with:
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
->
-> diff --git a/drivers/misc/lkdtm/Makefile b/drivers/misc/lkdtm/Makefile
-> index 951c984de61a..715832c844c8 100644
-> --- a/drivers/misc/lkdtm/Makefile
-> +++ b/drivers/misc/lkdtm/Makefile
-> @@ -14,9 +14,12 @@ KASAN_SANITIZE_stackleak.o   := n
->  KCOV_INSTRUMENT_rodata.o       := n
->
->  OBJCOPYFLAGS :=
-> +OBJCOPYFLAGS_rodata_flags.o    := \
-> +                       --set-section-flags .text=alloc,readonly
->  OBJCOPYFLAGS_rodata_objcopy.o  := \
-> -                       --set-section-flags .text=alloc,readonly \
->                         --rename-section .text=.rodata
-> -targets += rodata.o rodata_objcopy.o
-> -$(obj)/rodata_objcopy.o: $(obj)/rodata.o FORCE
-> +targets += rodata.o rodata_flags.o rodata_objcopy.o
-> +$(obj)/rodata_flags.o: $(obj)/rodata.o FORCE
-> +       $(call if_changed,objcopy)
-> +$(obj)/rodata_objcopy.o: $(obj)/rodata_flags.o FORCE
->         $(call if_changed,objcopy)
->
->
-> --
-> Kees Cook
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To post to this group, send email to clang-built-linux@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/201905141041.C38DA1B305%40keescook.
-> For more options, visit https://groups.google.com/d/optout.
-
-
+ Documentation/x86/mds.rst | 44 ++++++---------------------------------
+ arch/x86/kernel/traps.c   |  8 -------
+ 2 files changed, 6 insertions(+), 46 deletions(-)
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.21.0
+
