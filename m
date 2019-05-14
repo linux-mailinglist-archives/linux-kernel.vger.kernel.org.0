@@ -2,116 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7BE1CCC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA911CC89
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfENQSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 12:18:44 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36482 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfENQSn (ORCPT
+        id S1726422AbfENQKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 12:10:47 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51648 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfENQKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 12:18:43 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z1so14899018ljb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HO0cnBM0dn7BVUw2B8mMBOcjVqtIjYAhv4NF4GvQNTw=;
-        b=cpfwfbRyqVxPcSivVQTYAkFsUt14IzV28F82+YoNcSVOGlqkabWnL8g5roVVkGBNgU
-         I2rI0AkpuG5BkBqvH6buk0MtJV7fiWLwUL6hzZd31x+OPykwOsxjwMPpYRC1BHGh4H3X
-         KX+PXRNVyYJRn/+ZyvzNhaBBOXjItKQ5yJLnA=
+        Tue, 14 May 2019 12:10:46 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o189so3493527wmb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:10:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HO0cnBM0dn7BVUw2B8mMBOcjVqtIjYAhv4NF4GvQNTw=;
-        b=GjSPq/O50v7ZQkZy0BmpsXGkiYjvu6dsGy6TocopuJaWbi0drw/rfz5ecdOGD4Qr8x
-         5JiMl6z4nlLExwJZz0e+Sa7zOU11i0j2eA+N/Kbnkuf8Cto7BiQPlpX4ymOIHyxFMBmK
-         +3p9ySLxSKHvQqUshrh5IxNu9RlLnIUUgapv6cCEzjF9XJSn5Y32xylKDc96G1kem8Fq
-         Sf/ozok2ADS38PRAU24fTMyIQ2iKGMweanJu9jtmnf9+/ZWXEsNxO+16mQPiEQMOkPQe
-         c+Xm8manyiTf1abXbKRlYr3u+NBIDnZ2DUKPwudGzV0JtJy2WUEehgchgGOIyVzSiVQp
-         RTdQ==
-X-Gm-Message-State: APjAAAUr3MBvhXTCAPNDGrwFN4Q7wcN0TWdfCSfhjzuITQi9oUQNnroV
-        fQBkCLkhDPrrYJcdh2lsbTKYGklIApk=
-X-Google-Smtp-Source: APXvYqydod4xkmVQEoid3JXReMb6jvlpYcOgxuWhcI88mqigh4c/nsyKn6uHu8b4GW43vRWF5n9YMw==
-X-Received: by 2002:a2e:964a:: with SMTP id z10mr8267781ljh.22.1557850721902;
-        Tue, 14 May 2019 09:18:41 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id b23sm3879828lfg.41.2019.05.14.09.18.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 09:18:41 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id y19so12355608lfy.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:18:41 -0700 (PDT)
-X-Received: by 2002:ac2:5a41:: with SMTP id r1mr17174747lfn.148.1557850250052;
- Tue, 14 May 2019 09:10:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wYcnLcHNEWzuyUPaOSPaqvipKhwQq75NVlrWVwfonxY=;
+        b=iPGpbgoa2jROmIx6GbH6qFx0eFA5h97R1e9TRWoT3fSfXTR63760onDAK7bnPItBCg
+         rcYR1bO0gtBVNABZakrovUceHM1iJEMs+gMce4qG3ysD2Yxk7kmiqeEXZjg2fDBCZCZ0
+         fHQqExonBdKVKO/Kt5uoys/SkYSHXbyoqQhiw6hwcCmqik2It/dQZLGR/H9V0xB1goVP
+         uSI9jgmTh8J2350J+6TwEjld1w7GqpFuyhRxtky6exQItFH17AvHGMScaH5WtF35MJ7L
+         +I2/FvsLCSaLm8DMzXLoP16whDZG7e7gTvVCr8Nuvjp9fG03MSrWlh5bF7HDa45Cfhs5
+         2ocA==
+X-Gm-Message-State: APjAAAXFsQkJxGWElAW0OlDdWXVmdQKnmgz1WbrrOa4HQV44keCz0Cn3
+        mfVcCPW4XZNklto35TTATuHTOg==
+X-Google-Smtp-Source: APXvYqxqlLOgXzEWalLGMo/rtA7vvFLalOSyrklAhb9ipPKK7DakL4gduRG3L+0mF5EDXgRvQwftWw==
+X-Received: by 2002:a1c:2dd2:: with SMTP id t201mr9244992wmt.136.1557850244405;
+        Tue, 14 May 2019 09:10:44 -0700 (PDT)
+Received: from steredhat (host151-251-static.12-87-b.business.telecomitalia.it. [87.12.251.151])
+        by smtp.gmail.com with ESMTPSA id l2sm5293724wmf.16.2019.05.14.09.10.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 May 2019 09:10:43 -0700 (PDT)
+Date:   Tue, 14 May 2019 18:10:41 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH v2 8/8] vsock/virtio: make the RX buffer size tunable
+Message-ID: <20190514161041.y4exigcwwys34naf@steredhat>
+References: <20190510125843.95587-1-sgarzare@redhat.com>
+ <20190510125843.95587-9-sgarzare@redhat.com>
+ <eddb5a89-ed44-3a65-0181-84f7f27dd2cb@redhat.com>
+ <8e72ef5e-cf6a-a635-3f76-bdeac95761b8@redhat.com>
 MIME-Version: 1.0
-References: <20190424123656.484227701@infradead.org> <20190424124421.636767843@infradead.org>
- <20190424211759.52xraajqwudc2fza@pburton-laptop> <2b2b07cc.bf42.16a52dc4e4d.Coremail.huangpei@loongson.cn>
- <20190425073348.GV11158@hirez.programming.kicks-ass.net> <20190425091258.GC14281@hirez.programming.kicks-ass.net>
- <20190514155813.GG2677@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190514155813.GG2677@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 14 May 2019 09:10:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgxT24Z6Ba_4DKbMfBnQ0Cp4gzwp6Vq1aBkU5bsjqKUhg@mail.gmail.com>
-Message-ID: <CAHk-=wgxT24Z6Ba_4DKbMfBnQ0Cp4gzwp6Vq1aBkU5bsjqKUhg@mail.gmail.com>
-Subject: Re: Re: [RFC][PATCH 2/5] mips/atomic: Fix loongson_llsc_mb() wreckage
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     huangpei@loongson.cn, Paul Burton <paul.burton@mips.com>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "akiyks@gmail.com" <akiyks@gmail.com>,
-        "andrea.parri@amarulasolutions.com" 
-        <andrea.parri@amarulasolutions.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "dlustig@nvidia.com" <dlustig@nvidia.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "j.alglave@ucl.ac.uk" <j.alglave@ucl.ac.uk>,
-        "luc.maranget@inria.fr" <luc.maranget@inria.fr>,
-        "npiggin@gmail.com" <npiggin@gmail.com>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Huacai Chen <chenhc@lemote.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e72ef5e-cf6a-a635-3f76-bdeac95761b8@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 8:58 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> So if two variables share a line, and one is local while the other is
-> shared atomic, can contention on the line, but not the variable, cause
-> issues for the local variable?
->
-> If not; why not? Because so far the issue is line granular due to the
-> coherence aspect.
+On Mon, May 13, 2019 at 08:46:19PM +0800, Jason Wang wrote:
+> 
+> On 2019/5/13 下午6:05, Jason Wang wrote:
+> > 
+> > On 2019/5/10 下午8:58, Stefano Garzarella wrote:
+> > > The RX buffer size determines the memory consumption of the
+> > > vsock/virtio guest driver, so we make it tunable through
+> > > a module parameter.
+> > > 
+> > > The size allowed are between 4 KB and 64 KB in order to be
+> > > compatible with old host drivers.
+> > > 
+> > > Suggested-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > 
+> > 
+> > I don't see much value of doing this through kernel command line. We
+> > should deal with them automatically like what virtio-net did. Or even a
+> > module parameter is better.
+> > 
+> > Thanks
+> 
+> 
+> Sorry, I misread the patch. But even module parameter is something not
+> flexible enough. We should deal with them transparently.
+> 
 
-If I understood the issue correctly, it's not that cache coherence
-doesn't work, it's literally that the sc succeeds when it shouldn't.
+Okay, I'll try to understand how we can automatically adapt the RX
+buffer size. Since the flow is stream based, the receiver doesn't know the
+original packet size.
 
-In other words, it's not going to affect anything else, but it means
-that "ll/sc" isn't actually truly atomic, because the cacheline could
-have bounced around to another CPU in the meantime.
+Maybe I can reuse the EWMA approach to understand if the buffers are
+entirely filled or not.
+In that case I can increase (e.g. double) or decrease the size.
 
-So we *think* we got an atomic update, but didn't, and the "ll/sc"
-pair ends up incorrectly working as a regular "load -> store" pair,
-because the "sc' incorrectly thought it still had exclusive access to
-the line from the "ll".
+I'll try to do it!
 
-The added memory barrier isn't because it's a memory barrier, it's
-just keeping the subsequent speculative instructions from getting the
-cacheline back and causing that "sc" confusion.
-
-But note how from a cache coherency standpoint, it's not about the
-cache coherency being wrong, it's literally just about the ll/sc not
-giving the atomicity guarantees that the sequence is *supposed* to
-give. So an "atomic_inc()" can basically (under just the wrong
-circumstances) essentially turn into just a non-atomic "*p++".
-
-NOTE! I have no actual inside knowledge of what is going on. The above
-is purely my reading of this thread, and maybe I have mis-understood.
-
-                  Linus
+Thanks,
+Stefano
