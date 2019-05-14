@@ -2,168 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1101CC30
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C21641CC3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfENPq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:46:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60732 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfENPq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:46:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RZIV4GdxyTAh4QDLTqY1ayeSgHEJhZ4dPbD/pRyFXE8=; b=updwztt2QGCujng57uUQPCyJTT
-        WQb8EggEcWtWvnVIUPY7yCTtOcyM85EzW1OTTXhzdbcLMuS8WEJ4d+KFNlNt1UBKUYnLO5TZx3JD5
-        EwH9k/EBUcLG36I3HKTDmjfrSKTtVkj/xbW7Ah+wsYSIbyuipb174fGrzFWHQZitaBaggfz76pC0Z
-        eF4TwxW3jKTn60Ywrtev8oRqMMdR9nXxmCxLQ5Q1cSQeHzUv6H1Dbf1Bn/oV7LUZhcDoJ1iRjfl2I
-        loKA4trNxA0U+xPgzNKpT8ycJ1yYPSeXFfnGcQlf3yrHlDYw8EB/W34XT3XeB7U4f8omCdnMIHoP6
-        BBAVSWPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQZdX-0002oI-18; Tue, 14 May 2019 15:46:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 87BC42029F877; Tue, 14 May 2019 17:46:36 +0200 (CEST)
-Date:   Tue, 14 May 2019 17:46:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     huangpei@loongson.cn
-Cc:     Paul Burton <paul.burton@mips.com>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "akiyks@gmail.com" <akiyks@gmail.com>,
-        "andrea.parri@amarulasolutions.com" 
-        <andrea.parri@amarulasolutions.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "dlustig@nvidia.com" <dlustig@nvidia.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "j.alglave@ucl.ac.uk" <j.alglave@ucl.ac.uk>,
-        "luc.maranget@inria.fr" <luc.maranget@inria.fr>,
-        "npiggin@gmail.com" <npiggin@gmail.com>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Huacai Chen <chenhc@lemote.com>
-Subject: Re: Re: Re: Re: Re: [RFC][PATCH 2/5] mips/atomic: Fix
- loongson_llsc_mb() wreckage
-Message-ID: <20190514154636.GF2677@hirez.programming.kicks-ass.net>
-References: <20190424123656.484227701@infradead.org>
- <20190424124421.636767843@infradead.org>
- <20190424211759.52xraajqwudc2fza@pburton-laptop>
- <2b2b07cc.bf42.16a52dc4e4d.Coremail.huangpei@loongson.cn>
- <20190425073348.GV11158@hirez.programming.kicks-ass.net>
- <5b13fd3b.c031.16a54452744.Coremail.huangpei@loongson.cn>
- <20190425122611.GT4038@hirez.programming.kicks-ass.net>
- <2ff11adc.c051.16a548cd90c.Coremail.huangpei@loongson.cn>
- <20190425133105.GV4038@hirez.programming.kicks-ass.net>
- <592bc84.c106.16a57936acf.Coremail.huangpei@loongson.cn>
+        id S1726342AbfENPt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:49:56 -0400
+Received: from mail-eopbgr820082.outbound.protection.outlook.com ([40.107.82.82]:21024
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725901AbfENPtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 11:49:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q+cV5nQUritTdFUknDzJVWAoOeLLVGz2oThSdTDm2qs=;
+ b=r7sCywDH63mRwEyDQwt2dY88KngGkXPlQvcOFtwDtsVEUEpu+IHSlbD5RZPdNIYVcbyycH6Ty6ewpUSuD/2GhyGwYVwV3rAb6YLZygu02D/kHFmoMGcysT6M9zclM3uehoDBGlEmGDs2EHNLCp/1nqDegaTlf5bLtDceYBxxlEw=
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
+ DM6PR12MB3004.namprd12.prod.outlook.com (20.178.29.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.25; Tue, 14 May 2019 15:49:52 +0000
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::edb0:d696:3077:51bc]) by DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::edb0:d696:3077:51bc%2]) with mapi id 15.20.1878.024; Tue, 14 May 2019
+ 15:49:52 +0000
+From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "graf@amazon.com" <graf@amazon.com>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Subject: [PATCH v2] svm/avic: Allow avic_vcpu_load logic to support host APIC
+ ID 255
+Thread-Topic: [PATCH v2] svm/avic: Allow avic_vcpu_load logic to support host
+ APIC ID 255
+Thread-Index: AQHVCmyrLU0LS+h5g0aXaHB58uDCjQ==
+Date:   Tue, 14 May 2019 15:49:52 +0000
+Message-ID: <1557848977-146396-1-git-send-email-suravee.suthikulpanit@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [165.204.78.1]
+x-clientproxiedby: SN1PR12CA0088.namprd12.prod.outlook.com
+ (2603:10b6:802:21::23) To DM6PR12MB2844.namprd12.prod.outlook.com
+ (2603:10b6:5:45::32)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 1.8.3.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3a77cce1-4128-4606-d0ae-08d6d883cd9d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3004;
+x-ms-traffictypediagnostic: DM6PR12MB3004:
+x-microsoft-antispam-prvs: <DM6PR12MB3004764E972200A5B163AC8AF3080@DM6PR12MB3004.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0037FD6480
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(39860400002)(396003)(366004)(189003)(199004)(52116002)(14454004)(6512007)(86362001)(2906002)(25786009)(7736002)(305945005)(4326008)(3846002)(53936002)(66066001)(6116002)(186003)(476003)(2616005)(54906003)(99286004)(316002)(6436002)(486006)(6486002)(26005)(2501003)(102836004)(386003)(6506007)(110136005)(68736007)(72206003)(4720700003)(66946007)(73956011)(36756003)(66476007)(5660300002)(66446008)(64756008)(66556008)(256004)(8676002)(50226002)(81156014)(8936002)(81166006)(14444005)(71200400001)(71190400001)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3004;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IN8PellT1cf2RCayNETNCP/u16GLGM7Xfr28lADyRosRwHG5SAD2uUavl0LYTD7/I3Fl0kiBlN1d5ytYFM/10CVHrmmUg0MTSBfHSjjL2RcLfLmfGRnWEP7zXYhAguAKAc+nyFSfSYPOGy5QX+5wMzRjiO3pmYBNq9ubJKN5B0OsyWumdOzAUfqK4W/9ob8/yrv/HbE+tYeFs90dacPpKTqIczHTv0Suf7Jc3LrtRr0s5qfQHRBbyVhFtAspV8bDlYCxIJZV7cSoI9YHXLM9vpwmnL08IEYLyBKKfcs7cpERliN8jYbSn3GyxyvVEKDP7bFf5OY6D5JNArgAxD0ZGyJsrwECmQL4zeMgQ4W/ONau2sFd7YtViV8smxtUxTjQT9skrAFokpaRLGgTyidaDCDy6lj2RB7tIuZ9aPea7Yk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <592bc84.c106.16a57936acf.Coremail.huangpei@loongson.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a77cce1-4128-4606-d0ae-08d6d883cd9d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2019 15:49:52.7085
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-(sorry for the delay, I got sidetracked elsewhere)
-
-On Fri, Apr 26, 2019 at 10:57:20AM +0800, huangpei@loongson.cn wrote:
-> > -----原始邮件-----
-> > On Thu, Apr 25, 2019 at 08:51:17PM +0800, huangpei@loongson.cn wrote:
-> > 
-> > > > So basically the initial value of @v is set to 1.
-> > > > 
-> > > > Then CPU-1 does atomic_add_unless(v, 1, 0)
-> > > >      CPU-2 does atomic_set(v, 0)
-> > > > 
-> > > > If CPU1 goes first, it will see 1, which is not 0 and thus add 1 to 1
-> > > > and obtains 2. Then CPU2 goes and writes 0, so the exist clause sees
-> > > > v==0 and doesn't observe 2.
-> > > > 
-> > > > The other way around, CPU-2 goes first, writes a 0, then CPU-1 goes and
-> > > > observes the 0, finds it matches 0 and doesn't add.  Again, the exist
-> > > > clause will find 0 doesn't match 2.
-> > > > 
-> > > > This all goes unstuck if interleaved like:
-> > > > 
-> > > > 
-> > > > 	CPU-1			CPU-2
-> > > > 
-> > > > 				xor	t0, t0
-> > > > 1:	ll	t0, v
-> > > > 	bez	t0, 2f
-> > > > 				sw	t0, v
-> > > > 	add	t0, t1
-> > > > 	sc	t0, v
-> > > > 	beqz t0, 1b
-> > > > 
-> > > > (sorry if I got the MIPS asm wrong; it's not something I normally write)
-> > > > 
-> > > > And the store-word from CPU-2 doesn't make the SC from CPU-1 fail.
-> > > > 
-> > > 
-> > > loongson's llsc bug DOES NOT fail this litmus( we will not get V=2)；
-> > > 
-> > > only speculative memory access from CPU-1 can "blind" CPU-1(here blind means do ll/sc
-> > >  wrong）, this speculative memory access can be observed corrently by CPU2. In this 
-> > > case, sw from CPU-2 can get I , which can be observed by CPU-1, and clear llbit，then 
-> > > failed sc. 
-> > 
-> > I'm not following, suppose CPU-1 happens as a speculation (imagine
-> > whatever code is required to make that happen before). CPU-2 sw will
-> > cause I on CPU-1's ll but, as in the previous email, CPU-1 will continue
-> > as if it still has E and complete the SC.
-> > 
-> > That is; I'm just not seeing why this case would be different from two
-> > competing LL/SCs.
-> > 
-> 
-> I get your point. I kept my eye on the sw from CPU-2, but forgot the speculative
->  mem access from CPU-1. 
-> 
-> There is no difference bewteen this one and the former case.
-> 
-> ========================================================================= 
->                        V = 1
-> 
->     CPU-1                       CPU-2
-> 
->                                 xor  t0, t0
-> 1:  ll     t0, V               
->     beqz   t0, 2f
-> 
->     /* if speculative mem 
->     access kick cacheline of
->     V out, it can blind CPU-1 
->     and make CPU-1 believe it 
->     still hold E on V, and can
->     NOT see the sw from CPU-2
->     actually invalid V, which 
->     should clear LLBit of CPU-1, 
->     but not */
->                                 sw   t0, V     // just after sw, V = 0
->     addiu  t0, t0, 1            
-> 
->     sc     t0, V
->     /* oops, sc write t0(2) 
->     into V with LLBit */
-> 
->     /* get V=2 */
->     beqz   t0, 1b
->     nop
-> 2:
-> ================================================================================    
->                
-> if speculative mem access *does not* kick out cache line of V, CPU-1 can see sw
-> from CPU-2, and clear LLBit, which cause sc fail and retry, That's OK
-
-OK; so do I understand it correctly that your CPU _can_ in fact fail
-that test and result in 2? If so I think I'm (finally) understanding :-)
+Q3VycmVudCBsb2dpYyBkb2VzIG5vdCBhbGxvdyBWQ1BVIHRvIGJlIGxvYWRlZCBvbnRvIENQVSB3
+aXRoDQpBUElDIElEIDI1NS4gVGhpcyBzaG91bGQgYmUgYWxsb3dlZCBzaW5jZSB0aGUgaG9zdCBw
+aHlzaWNhbCBBUElDIElEDQpmaWVsZCBpbiB0aGUgQVZJQyBQaHlzaWNhbCBBUElDIHRhYmxlIGVu
+dHJ5IGlzIGFuIDgtYml0IHZhbHVlLA0KYW5kIEFQSUMgSUQgMjU1IGlzIHZhbGlkIGluIHN5c3Rl
+bSB3aXRoIHgyQVBJQyBlbmFibGVkLg0KSW5zdGVhZCwgZG8gbm90IGFsbG93IFZDUFUgbG9hZCBp
+ZiB0aGUgaG9zdCBBUElDIElEIGNhbm5vdCBiZQ0KcmVwcmVzZW50ZWQgYnkgYW4gOC1iaXQgdmFs
+dWUuDQoNCkFsc28sIHVzZSB0aGUgbW9yZSBhcHByb3ByaWF0ZSBBVklDX1BIWVNJQ0FMX0lEX0VO
+VFJZX0hPU1RfUEhZU0lDQUxfSURfTUFTSw0KaW5zdGVhZCBvZiBBVklDX01BWF9QSFlTSUNBTF9J
+RF9DT1VOVC4gDQoNClNpZ25lZC1vZmYtYnk6IFN1cmF2ZWUgU3V0aGlrdWxwYW5pdCA8c3VyYXZl
+ZS5zdXRoaWt1bHBhbml0QGFtZC5jb20+DQotLS0NCg0KQ2hhbmdlIGluIFYyOg0KICAqIFVzZSBB
+VklDX1BIWVNJQ0FMX0lEX0VOVFJZX0hPU1RfUEhZU0lDQUxfSURfTUFTSyBpbnN0ZWFkIG9mDQog
+ICAgQVZJQ19NQVhfUEhZU0lDQUxfSURfQ09VTlQuIA0KDQogYXJjaC94ODYva3ZtL3N2bS5jIHwg
+NiArKysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
+DQoNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vc3ZtLmMgYi9hcmNoL3g4Ni9rdm0vc3ZtLmMN
+CmluZGV4IDY4Nzc2N2YuLjM0NWZlOWUgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9rdm0vc3ZtLmMN
+CisrKyBiL2FyY2gveDg2L2t2bS9zdm0uYw0KQEAgLTIwNzEsNyArMjA3MSwxMSBAQCBzdGF0aWMg
+dm9pZCBhdmljX3ZjcHVfbG9hZChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIGludCBjcHUpDQogCWlm
+ICgha3ZtX3ZjcHVfYXBpY3ZfYWN0aXZlKHZjcHUpKQ0KIAkJcmV0dXJuOw0KIA0KLQlpZiAoV0FS
+Tl9PTihoX3BoeXNpY2FsX2lkID49IEFWSUNfTUFYX1BIWVNJQ0FMX0lEX0NPVU5UKSkNCisJLyoN
+CisJICogU2luY2UgdGhlIGhvc3QgcGh5c2ljYWwgQVBJQyBpZCBpcyA4IGJpdHMsDQorCSAqIHdl
+IGNhbiBzdXBwb3J0IGhvc3QgQVBJQyBJRCB1cHRvIDI1NS4NCisJICovDQorCWlmIChXQVJOX09O
+KGhfcGh5c2ljYWxfaWQgPiBBVklDX1BIWVNJQ0FMX0lEX0VOVFJZX0hPU1RfUEhZU0lDQUxfSURf
+TUFTSykpDQogCQlyZXR1cm47DQogDQogCWVudHJ5ID0gUkVBRF9PTkNFKCooc3ZtLT5hdmljX3Bo
+eXNpY2FsX2lkX2NhY2hlKSk7DQotLSANCjEuOC4zLjENCg0K
