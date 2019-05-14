@@ -2,104 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D83491CAC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E8B1CAE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfENOs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:48:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53444 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfENOsU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:48:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 198so3194068wme.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oVzNv9Cda4AG48ayrkoKl5rIu1/NIqCv8NqNC2WTHNk=;
-        b=PWGMigxrpID6s8IULkbH99Y1lhvCduvvj46ce+Jn7M72fT9TeIXEZYECmVOQCUQNHr
-         FApeJ4e7A9fYy9hxGe5qnCUNcXvgdNuVkhfOD5K1xtfRWbarEA7+dfHVLkK7x7+g3xiK
-         Re4w+Z+2GFCXOd0H6gAQJMx6YjB9hvvcVK8f8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oVzNv9Cda4AG48ayrkoKl5rIu1/NIqCv8NqNC2WTHNk=;
-        b=VldS/TvQZjLXR9LwqHBve2yuSH6qO0aD68W2xD5NnWLZ75XRScr9ZKBv0oR9oYYEzw
-         FYSg9RFSHOFWFY770vAPronFWMh5acIkRjnulelSyev7y/rzVIfjjr3SfQ+T17Ocq1n0
-         ZdglP3WlULf01CLymaWR8VKdOKzESFe/KEEfmJv2bgN1i+wNwdJ88K2AgTsYxI8dieuq
-         CLrI9UMScNjaDPI599gQBGMxHMIe3iP2KKilXzF2vEvxNgjTb5fXHOEIJbVC6wOMxZ3y
-         MCsDUVxGbcGdssAbghLus+XaTy6LXa3G9OFyY/avnYFsztYux3l/etJitU15p1pHkjZa
-         iaAA==
-X-Gm-Message-State: APjAAAWO/y1wSsMUYA/4GBnZJuKsRI+zM4pdMRjTZkUuIeZ+DgZ35cR2
-        5Wora3hlVuRs1jnEIRgZ8T0v/g==
-X-Google-Smtp-Source: APXvYqxYk6Oc5UfGGWqyARsIZbZicHGDxdaBpkaV0YzlrdD1K6Gucx02gXt4F3GaCGNm3U6vsVvpfQ==
-X-Received: by 2002:a1c:3c2:: with SMTP id 185mr2275481wmd.91.1557845297691;
-        Tue, 14 May 2019 07:48:17 -0700 (PDT)
-Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id p6sm12048114wrs.6.2019.05.14.07.48.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 07:48:17 -0700 (PDT)
-Date:   Tue, 14 May 2019 16:48:06 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 5/5] IB/hfi1: Fix improper uses of smp_mb__before_atomic()
-Message-ID: <20190514144806.GA14962@andrea>
-References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1556568902-12464-6-git-send-email-andrea.parri@amarulasolutions.com>
- <14063C7AD467DE4B82DEDB5C278E8663BE6AADCE@FMSMSX108.amr.corp.intel.com>
- <20190429231657.GA2733@andrea>
- <20190509211221.GA4966@andrea>
- <0a78eded-6c08-8d32-ec31-d62d6feb2118@intel.com>
+        id S1726251AbfENOvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:51:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35372 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725901AbfENOvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 10:51:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 520E3AF94;
+        Tue, 14 May 2019 14:51:23 +0000 (UTC)
+Date:   Tue, 14 May 2019 16:51:22 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oleksandr Natalenko <oleksandr@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org,
+        linux-api@vger.kernel.org, Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH RFC v2 0/4] mm/ksm: add option to automerge VMAs
+Message-ID: <20190514145122.GG4683@dhcp22.suse.cz>
+References: <20190514131654.25463-1-oleksandr@redhat.com>
+ <20190514144105.GF4683@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a78eded-6c08-8d32-ec31-d62d6feb2118@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190514144105.GF4683@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 08:32:52AM -0400, Dennis Dalessandro wrote:
-> On 5/9/2019 5:12 PM, Andrea Parri wrote:
-> >On Tue, Apr 30, 2019 at 01:16:57AM +0200, Andrea Parri wrote:
-> >>Hi Mike,
-> >>
-> >>>>This barrier only applies to the read-modify-write operations; in
-> >>>>particular, it does not apply to the atomic_read() primitive.
-> >>>>
-> >>>>Replace the barrier with an smp_mb().
-> >>>
-> >>>This is one of a couple of barrier issues that we are currently looking into.
-> >>>
-> >>>See:
-> >>>
-> >>>[PATCH for-next 6/9] IB/rdmavt: Add new completion inline
-> >>>
-> >>>We will take a look at this one as well.
-> >>
-> >>Thank you for the reference and for looking into this,
-> >
-> >So, I'm planning to just drop this patch; or can I do something to help?
-> >
-> >Please let me know.
+[Forgot Hugh]
+
+On Tue 14-05-19 16:41:05, Michal Hocko wrote:
+> [This is adding a new user visible interface so you should be CCing
+> linux-api mailing list. Also CC Hugh for KSM in general. Done now]
 > 
-> Mike was looking into this, and I've got a handful of patches from him to
-> review. He's unavailable for a while but if it's not included in the patches
-> I've got we'll get something out shortly. So yes I think we can hold off on
-> this patch for now. Thanks.
+> On Tue 14-05-19 15:16:50, Oleksandr Natalenko wrote:
+> > By default, KSM works only on memory that is marked by madvise(). And the
+> > only way to get around that is to either:
+> > 
+> >   * use LD_PRELOAD; or
+> >   * patch the kernel with something like UKSM or PKSM.
+> > 
+> > Instead, lets implement a sysfs knob, which allows marking VMAs as
+> > mergeable. This can be used manually on some task in question or by some
+> > small userspace helper daemon.
+> > 
+> > The knob is named "force_madvise", and it is write-only. It accepts a PID
+> > to act on. To mark the VMAs as mergeable, use:
+> > 
+> >    # echo PID > /sys/kernel/mm/ksm/force_madvise
+> > 
+> > To unmerge all the VMAs, use the same approach, prepending the PID with
+> > the "minus" sign:
+> > 
+> >    # echo -PID > /sys/kernel/mm/ksm/force_madvise
+> > 
+> > This patchset is based on earlier Timofey's submission [1], but it doesn't
+> > use dedicated kthread to walk through the list of tasks/VMAs. Instead,
+> > it is up to userspace to traverse all the tasks in /proc if needed.
+> > 
+> > The previous suggestion [2] was based on amending do_anonymous_page()
+> > handler to implement fully automatic mode, but this approach was
+> > incorrect due to improper locking and not desired due to excessive
+> > complexity.
+> > 
+> > The current approach just implements minimal interface and leaves the
+> > decision on how and when to act to userspace.
+> 
+> Please make sure to describe a usecase that warrants adding a new
+> interface we have to maintain for ever.
+> 
+> > 
+> > Thanks.
+> > 
+> > [1] https://lore.kernel.org/patchwork/patch/1012142/
+> > [2] http://lkml.iu.edu/hypermail/linux/kernel/1905.1/02417.html
+> > 
+> > Oleksandr Natalenko (4):
+> >   mm/ksm: introduce ksm_enter() helper
+> >   mm/ksm: introduce ksm_leave() helper
+> >   mm/ksm: introduce force_madvise knob
+> >   mm/ksm: add force merging/unmerging documentation
+> > 
+> >  Documentation/admin-guide/mm/ksm.rst |  11 ++
+> >  mm/ksm.c                             | 160 +++++++++++++++++++++------
+> >  2 files changed, 137 insertions(+), 34 deletions(-)
+> > 
+> > -- 
+> > 2.21.0
+> > 
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-Thank you for the confirmation, Dennis.  I'll hold off on this one.
-
-  Andrea
+-- 
+Michal Hocko
+SUSE Labs
