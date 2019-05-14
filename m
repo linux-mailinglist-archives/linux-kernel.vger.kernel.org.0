@@ -2,53 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4417C1C763
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 13:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F381C724
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbfENLBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 07:01:30 -0400
-Received: from ns.gsystem.sk ([62.176.172.50]:37766 "EHLO gsystem.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfENLB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 07:01:29 -0400
-X-Greylist: delayed 1116 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 07:01:28 EDT
-Received: from [192.168.1.3]
-        by gsystem.sk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <linux@zary.sk>)
-        id 1hQUtP-0003kB-DR; Tue, 14 May 2019 12:42:43 +0200
-From:   Ondrej Zary <linux@zary.sk>
-To:     Arthur Marsh <arthur.marsh@internode.on.net>
-Subject: Re: ext3/ext4 filesystem corruption under post 5.1.0 kernels
-Date:   Tue, 14 May 2019 12:42:39 +0200
-User-Agent: KMail/1.9.10
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org
-References: <48BA4A6E-5E2A-478E-A96E-A31FA959964C@internode.on.net> <09D87554-6795-4AEA-B8D0-FEBCB45673A9@internode.on.net> <850EDDE2-5B82-4354-AF1C-A2D0B8571093@internode.on.net>
-In-Reply-To: <850EDDE2-5B82-4354-AF1C-A2D0B8571093@internode.on.net>
-X-KMail-QuotePrefix: > 
+        id S1726369AbfENKnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:43:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53892 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbfENKnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 06:43:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B12B8374;
+        Tue, 14 May 2019 03:43:09 -0700 (PDT)
+Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 122D93F703;
+        Tue, 14 May 2019 03:43:07 -0700 (PDT)
+Subject: Re: [PATCH v3 02/16] iommu: Introduce cache_invalidate API
+To:     Auger Eric <eric.auger@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1556922737-76313-3-git-send-email-jacob.jun.pan@linux.intel.com>
+ <d32d3d19-11c9-4af9-880b-bb8ebefd4f7f@redhat.com>
+ <44d5ba37-a9e9-cc7a-2a3a-d32b840afa29@arm.com>
+ <7807afe9-efab-9f48-4ca0-2332a7a54950@redhat.com>
+ <1a5a5fad-ed21-5c79-9a9e-ff21fadfb95f@arm.com>
+ <1edd45e6-4da3-e393-36b2-9e63cd5f7607@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <4094baf1-6cf5-a33b-4717-08ced0673c50@arm.com>
+Date:   Tue, 14 May 2019 11:42:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+In-Reply-To: <1edd45e6-4da3-e393-36b2-9e63cd5f7607@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201905141242.39800.linux@zary.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 14 May 2019, Arthur Marsh wrote:
-> Apologies, I had forgotten to
+On 14/05/2019 08:46, Auger Eric wrote:
+> Hi Jean,
 > 
-> got bisect - - hard origin/master
+> On 5/13/19 7:09 PM, Jean-Philippe Brucker wrote:
+>> On 13/05/2019 17:50, Auger Eric wrote:
+>>>> struct iommu_inv_pasid_info {
+>>>> #define IOMMU_INV_PASID_FLAGS_PASID	(1 << 0)
+>>>> #define IOMMU_INV_PASID_FLAGS_ARCHID	(1 << 1)
+>>>> 	__u32	flags;
+>>>> 	__u32	archid;
+>>>> 	__u64	pasid;
+>>>> };
+>>> I agree it does the job now. However it looks a bit strange to do a
+>>> PASID based invalidation in my case - SMMUv3 nested stage - where I
+>>> don't have any PASID involved.
+>>>
+>>> Couldn't we call it context based invalidation then? A context can be
+>>> tagged by a PASID or/and an ARCHID.
+>>
+>> I think calling it "context" would be confusing as well (I shouldn't
+>> have used it earlier), since VT-d uses that name for device table
+>> entries (=STE on Arm SMMU). Maybe "addr_space"?
+> yes you're right. Well we already pasid table table terminology so we
+> can use it here as well - as long as we understand what purpose it
+> serves ;-) - So OK for iommu_inv_pasid_info.
 > 
-> I am still seeing the corruption leading to the invalid block error on 5.1.0+ kernels on both my machines.
-> 
-> Arthur. 
+> I think Jean understood we would keep pasid standalone field in
+> iommu_cache_invalidate_info's union. I understand the struct
+> iommu_inv_pasid_info now would replace it, correct?
 
-I've been probably hit by the same bug. ext3 filesystem on my test machine was corrupted twice with 5.1.0+. Only the corruption was heavier. Some files that were open (e.g. logs) became cros-linked with files that were not used for ages.
+Yes
 
--- 
-Ondrej Zary
+Thanks,
+Jean
