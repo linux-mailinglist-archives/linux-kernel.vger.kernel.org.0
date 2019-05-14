@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D50181CA46
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EC21CA50
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbfENO1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:27:08 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35286 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbfENO1C (ORCPT
+        id S1726547AbfENO10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:27:26 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42915 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfENO1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:27:02 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q15so3061816wmj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:27:01 -0700 (PDT)
+        Tue, 14 May 2019 10:27:04 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l2so19450940wrb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:27:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aD54kzlCgobh7qHLUEe+WoDY1KdxgWPEqEa9mzFDans=;
-        b=KOEh79CIy13+6cKp1UGamcLZMvfjs68/Yk2B3MUVDuSF4J4W3UwhXzcIk5pA7PwLta
-         b24QAdDTg1Y4tYwh9Ht2/XjNoEFD+G1fZIzvdJAnRp8okGbJJGLHjHgo9XyAOEsJ5+Gx
-         n6WrHP0Ni0p5oQqcTMvr5F5Sm33GLpfv8vDAIDeuorCso9+gXWHs821EUQ7SxdjHYTSl
-         5NPyWms9E/OEzMfPdQBqMS0xoYp74VZlAIYFSkCaX6Qioag/i+xN7wOPabdXg4qNmaxb
-         AD+kMw6MnNVh3kUwAb55Mla2TUyAWTutP4F27nmu9pXmUdcT4w55ron8S8wHtbKSwReq
-         ZnQA==
+        bh=4UiaVyfOL73xkXYf2uJjieahrgB1t1Do944eA1pOwmA=;
+        b=PIwE79cod1lccflCI19QyYhFpzoS2dui0oJV9kti+3tHtL5N+nJhczAQfM1xVqcnFK
+         tM97KfWK28/CO9CdADKqNMfk5Qek+bgl8UB4JI4Jl20/wwHiTrxNnBBpkxejCA06kX4A
+         QbIlwqquaa5t156HH+Sa/3jDOPHdCQa+XxebBmj6cejCZ/NS4v6wHVdxKBV4//h4UHhw
+         WwybeNuoAnex38cjreKRy57iFjBehXeNbH6BsVVqAYwkxd+PXJuEsy8sfAJLZCq/09/2
+         WOJGIqdVMn1YepcIM0sfUcaL2Y6dPKcH/EoeMT76jIvkfaGkJSNCpKRfNzCS7OA46//V
+         ul1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aD54kzlCgobh7qHLUEe+WoDY1KdxgWPEqEa9mzFDans=;
-        b=hXuPoeuoDR2NMjE7Zj2gsvuWyuDSb0MTbmvmN0YW43NJA1ywM3GtmYoehHKEvabO4f
-         yj+YOEmTntgMTlM5/xGuo8fB6us7aQB7xNoLTvNh67E0UJKsrAXAI/njlyKxRzJzP9iC
-         +ktK20DUuoxw5GqfYHJILEMmcAIsM1FggJlUcX0fbmsK+O/LNEqHGGP7ALv1c/dlnMBu
-         9WcB8nINY/1fO5eiH0fbsfIiwYKoaBagjp88UZA6T3RA+PqpP8E7j5oLcXheBtsMgCMl
-         xcm+Jw7zWwWcJzjVkX184Q/oTTFqAokGDzDBzkgdcGdSjiYXykt8ivev9XunEtVMXm8l
-         A/pQ==
-X-Gm-Message-State: APjAAAUYHec8t+qG/VAoC1Vndb/iHK8gQKyOBoxwBbhdKfXhY1A6xzlk
-        y7vngvDlnw1+6AXBMHYrAcJPbqeJro8=
-X-Google-Smtp-Source: APXvYqwK4fpNYfx0XX/6As+wbLsTZqCzYY6hOAul3bZH9nHtsvj5eaCsZ4zN30GUtxJIqXcp+mER9A==
-X-Received: by 2002:a1c:a711:: with SMTP id q17mr18801730wme.146.1557844020875;
-        Tue, 14 May 2019 07:27:00 -0700 (PDT)
+        bh=4UiaVyfOL73xkXYf2uJjieahrgB1t1Do944eA1pOwmA=;
+        b=E0oL2IcjPpnMP8DI4wkuBcCrG5DJbGxTYzIKGBoHlkKIlz+9hEIa5OcQecbHnZTyRj
+         WJq0RHw5UFK8mov4qo1ZiT3sGN7CygDWYjp00+VwV7Q3ex6XCgtBWQzc8DM8TeUuv2v+
+         NNAvUdAJMjcjAvCqtNgkxOTEk4b04GHLAUSRoWNIgwprMxmDbxn6vjqKdLDKcZFFW/18
+         hY6mlkGUUC5Kq5i8IMPP+9ahatR82FOHgdgFxkqJ0dTYKHCEA29jiFPWNrNBMUxkioTe
+         jB/c72n66PYW7o7jaR3v+kCjLbh2aulWGNHnmXEWoHxxvE0YckwmeEvPpBT6Rw+yp5zy
+         MXFA==
+X-Gm-Message-State: APjAAAWJQkRArRZDYywtkUESbpglLIdBWqs3g9axGZD/bNiZul8EnAPD
+        cebBdUcAUFXYX451ywQRgpQnzQ==
+X-Google-Smtp-Source: APXvYqw5fO7c8RNHMpxo+PX9iqfcPie/9aLysADsb/eHUy3PI2oKG/eECkpIwCqdyTsmZfreK7En4Q==
+X-Received: by 2002:a5d:53c3:: with SMTP id a3mr2557545wrw.60.1557844021823;
+        Tue, 14 May 2019 07:27:01 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id h15sm12343642wru.52.2019.05.14.07.26.59
+        by smtp.googlemail.com with ESMTPSA id h15sm12343642wru.52.2019.05.14.07.27.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 07:26:59 -0700 (PDT)
+        Tue, 14 May 2019 07:27:01 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/8] arm64: dts: meson: g12a: add spdifouts
-Date:   Tue, 14 May 2019 16:26:46 +0200
-Message-Id: <20190514142649.1127-6-jbrunet@baylibre.com>
+Subject: [PATCH v2 6/8] arm64: dts: meson: g12a: add pdm
+Date:   Tue, 14 May 2019 16:26:47 +0200
+Message-Id: <20190514142649.1127-7-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190514142649.1127-1-jbrunet@baylibre.com>
 References: <20190514142649.1127-1-jbrunet@baylibre.com>
@@ -63,106 +63,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the devices nodes and pinctrl definitions for the spdif outputs of
-the g12a SoC family
+Add the pdm device node and the pinctrl definition for this capture
+interface g12a SoC family
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 60 +++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 177 ++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index 40a82ddda79f..f25a7c7ed995 100644
+index f25a7c7ed995..8dbdcbea5945 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -643,6 +643,33 @@
+@@ -497,6 +497,170 @@
  						};
  					};
  
-+					spdif_out_h_pins: spdif-out-h {
++					pdm_din0_a_pins: pdm-din0-a {
 +						mux {
-+							groups = "spdif_out_h";
-+							function = "spdif_out";
-+							drive-strength-microamp = <500>;
++							groups = "pdm_din0_a";
++							function = "pdm";
 +							bias-disable;
 +						};
 +					};
 +
-+					spdif_out_a11_pins: spdif-out-a11 {
++					pdm_din0_c_pins: pdm-din0-c {
 +						mux {
-+							groups = "spdif_out_a11";
-+							function = "spdif_out";
-+							drive-strength-microamp = <500>;
++							groups = "pdm_din0_c";
++							function = "pdm";
 +							bias-disable;
 +						};
 +					};
 +
-+					spdif_out_a13_pins: spdif-out-a13 {
++					pdm_din0_x_pins: pdm-din0-x {
 +						mux {
-+							groups = "spdif_out_a13";
-+							function = "spdif_out";
-+							drive-strength-microamp = <500>;
++							groups = "pdm_din0_x";
++							function = "pdm";
 +							bias-disable;
 +						};
 +					};
 +
- 					tdm_a_din0_pins: tdm-a-din0 {
++					pdm_din0_z_pins: pdm-din0-z {
++						mux {
++							groups = "pdm_din0_z";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din1_a_pins: pdm-din1-a {
++						mux {
++							groups = "pdm_din1_a";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din1_c_pins: pdm-din1-c {
++						mux {
++							groups = "pdm_din1_c";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din1_x_pins: pdm-din1-x {
++						mux {
++							groups = "pdm_din1_x";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din1_z_pins: pdm-din1-z {
++						mux {
++							groups = "pdm_din1_z";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din2_a_pins: pdm-din2-a {
++						mux {
++							groups = "pdm_din2_a";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din2_c_pins: pdm-din2-c {
++						mux {
++							groups = "pdm_din2_c";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din2_x_pins: pdm-din2-x {
++						mux {
++							groups = "pdm_din2_x";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din2_z_pins: pdm-din2-z {
++						mux {
++							groups = "pdm_din2_z";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din3_a_pins: pdm-din3-a {
++						mux {
++							groups = "pdm_din3_a";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din3_c_pins: pdm-din3-c {
++						mux {
++							groups = "pdm_din3_c";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din3_x_pins: pdm-din3-x {
++						mux {
++							groups = "pdm_din3_x";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_din3_z_pins: pdm-din3-z {
++						mux {
++							groups = "pdm_din3_z";
++							function = "pdm";
++							bias-disable;
++						};
++					};
++
++					pdm_dclk_a_pins: pdm-dclk-a {
++						mux {
++							groups = "pdm_dclk_a";
++							function = "pdm";
++							bias-disable;
++							drive-strength-microamp = <500>;
++						};
++					};
++
++					pdm_dclk_c_pins: pdm-dclk-c {
++						mux {
++							groups = "pdm_dclk_c";
++							function = "pdm";
++							bias-disable;
++							drive-strength-microamp = <500>;
++						};
++					};
++
++					pdm_dclk_x_pins: pdm-dclk-x {
++						mux {
++							groups = "pdm_dclk_x";
++							function = "pdm";
++							bias-disable;
++							drive-strength-microamp = <500>;
++						};
++					};
++
++					pdm_dclk_z_pins: pdm-dclk-z {
++						mux {
++							groups = "pdm_dclk_z";
++							function = "pdm";
++							bias-disable;
++							drive-strength-microamp = <500>;
++						};
++					};
++
+ 					pwm_a_pins: pwm-a {
  						mux {
- 							groups = "tdm_a_din0";
-@@ -1312,6 +1339,18 @@
- 					status = "disabled";
+ 							groups = "pwm_a";
+@@ -1164,6 +1328,19 @@
  				};
- 
-+				spdifout: audio-controller@480 {
-+					compatible = "amlogic,g12a-spdifout",
-+						     "amlogic,axg-spdifout";
-+					reg = <0x0 0x480 0x0 0x50>;
-+					#sound-dai-cells = <0>;
-+					sound-name-prefix = "SPDIFOUT";
-+					clocks = <&clkc_audio AUD_CLKID_SPDIFOUT>,
-+						 <&clkc_audio AUD_CLKID_SPDIFOUT_CLK>;
-+					clock-names = "pclk", "mclk";
-+					status = "disabled";
-+				};
-+
- 				tdmout_a: audio-controller@500 {
- 					compatible = "amlogic,g12a-tdmout";
- 					reg = <0x0 0x500 0x0 0x40>;
-@@ -1353,6 +1392,18 @@
- 						      "lrclk", "lrclk_sel";
- 					status = "disabled";
- 				};
-+
-+				spdifout_b: audio-controller@680 {
-+					compatible = "amlogic,g12a-spdifout",
-+						     "amlogic,axg-spdifout";
-+					reg = <0x0 0x680 0x0 0x50>;
-+					#sound-dai-cells = <0>;
-+					sound-name-prefix = "SPDIFOUT_B";
-+					clocks = <&clkc_audio AUD_CLKID_SPDIFOUT_B>,
-+						 <&clkc_audio AUD_CLKID_SPDIFOUT_B_CLK>;
-+					clock-names = "pclk", "mclk";
-+					status = "disabled";
-+				};
  			};
  
- 			usb3_pcie_phy: phy@46000 {
-@@ -1506,6 +1557,15 @@
- 						};
- 					};
- 
-+					spdif_ao_out_pins: spdif-ao-out {
-+						mux {
-+							groups = "spdif_ao_out";
-+							function = "spdif_ao_out";
-+							drive-strength-microamp = <500>;
-+							bias-disable;
-+						};
-+					};
++			pdm: audio-controller@40000 {
++				compatible = "amlogic,g12a-pdm",
++					     "amlogic,axg-pdm";
++				reg = <0x0 0x40000 0x0 0x34>;
++				#sound-dai-cells = <0>;
++				sound-name-prefix = "PDM";
++				clocks = <&clkc_audio AUD_CLKID_PDM>,
++					 <&clkc_audio AUD_CLKID_PDM_DCLK>,
++					 <&clkc_audio AUD_CLKID_PDM_SYSCLK>;
++				clock-names = "pclk", "dclk", "sysclk";
++				status = "disabled";
++			};
 +
- 					tdm_ao_b_din1_pins: tdm-ao-b-din1 {
- 						mux {
- 							groups = "tdm_ao_b_din1";
+ 			audio: bus@42000 {
+ 				compatible = "simple-bus";
+ 				reg = <0x0 0x42000 0x0 0x2000>;
 -- 
 2.20.1
 
