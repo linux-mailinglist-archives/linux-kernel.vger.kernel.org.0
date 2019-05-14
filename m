@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FB831C787
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 13:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C02E1C789
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 13:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfENLPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 07:15:20 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50619 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfENLPT (ORCPT
+        id S1726495AbfENLPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 07:15:23 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54741 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbfENLPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 07:15:19 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f204so2442313wme.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 04:15:18 -0700 (PDT)
+        Tue, 14 May 2019 07:15:20 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i3so2423307wml.4
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 04:15:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Q7xsW/BOqJsCwgtal4qtDTg4ltIl/wE9sOygtXfjPeA=;
-        b=VtJkORK/int8nHN6cmzQjp1Ji18eM5y9IACvX/eNBYaP1YLpFQCbfiruihBnN61HJh
-         +blQr9Kd+oZabfYJSjvxO9gHcvCe3eXZIIaE8a7IVrM97WBCy0MgUJiIzodlRZA+SCV4
-         EcRNBbv0C44ug8Bl1H9Q3K/JzpNDizBOJdKYD2qL/h4UNDHsolEqlqxxKXQxbo8BAWfM
-         G6xl+DrU9QMQvainmAAz9OFra3np8NjFmdnaMVr/2CYUPmEHCRZR5OnWg+/VCTsZZV0d
-         BPARqcc2vMyL1UrMSXWko0GpenqlXL2TBsIukJChFqDceHFeKZDaNzawnyhBM41vpx1/
-         e6/A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KH/9jGUTYqNchbklGeod/jCiLtawhcosDapSAft/y/g=;
+        b=YoxYoVPOitJltIYLqd6dVcVS8kBc0olC0nqpmZOXI1okxviKNcCGelSEGL3srl9FuR
+         8teYFRzjPqEKQKvo45cx1QF6GxMcOazu+vkGdD6bhVzvFL2+BBmtFwB04qYdijZ5bfZz
+         0QHCQZybDoT5YyNXgZepeTbECSU6pyMyrVciLByz5PWOqrGtfgLwWpUEUySccnOMdSqj
+         vt6kaB5r/q12Zys9C/bGNLiErKd3vmSuizSacJ3/X988PKeHdvj4OkLv7WIg7Uhe8MsI
+         ZoDmSRsm0zzeUoaO9ZwBWkOR3eZTIut2jHmpvhkxuv2peJK1dwY3R/tG0ArjJIA+C2PC
+         VCHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Q7xsW/BOqJsCwgtal4qtDTg4ltIl/wE9sOygtXfjPeA=;
-        b=j2TwViYjA1GgzmOfLbnWrN2S7zkelXO6ECBwUj4Z7rL9V9v8dcbfdpqbN8Ulnwo6dX
-         6FeID1nDM3BRKvVZyq/7Xrjl6ceid7q2l7GTty8V9fYQ1xhLzfQvjVOrb8PFj0SuVG6j
-         DwJ6bTrnVeIDl0K3fdW98JauG0H8BQuEFQsYMbGBvHEjB01dwrBa8QQ7jmpFWr2TUfeM
-         pRtza3/zxRS2kyZPl7xmuiTIdRN94/pq4/0sGEGNnyPrhK0H1G+xcvvwi0J79wqfyF1I
-         A2nEyISNtYGiQBowr6Ud9mFPAjBbG8smn5pDwUgPJ9KasrEgSKuk9la0kOT93ajTUiwg
-         norg==
-X-Gm-Message-State: APjAAAXLG2itTXCtC6Yb+PllBHMkGKpDdUdwRbvOXcUU3AG62SQ7s+jx
-        sp79Ut7nQUQc8RqnExEmQ5PrAQ==
-X-Google-Smtp-Source: APXvYqwnQNFTMvQOm2DZEC2cil/Y5FxH3KxccUo/gq+bPu+lW7WLk5n0PrVPzsen43A3CmDIdODIMA==
-X-Received: by 2002:a1c:4045:: with SMTP id n66mr2088020wma.142.1557832517491;
-        Tue, 14 May 2019 04:15:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KH/9jGUTYqNchbklGeod/jCiLtawhcosDapSAft/y/g=;
+        b=bPkAWXNr6ZBEGX5MVRlYZzDAKj/ZXnZ9UxQIwU3ta6O8eoemxQqY/2a8Z3Rj4tInNo
+         Mh96QW1fE2tceB5+4RLWLQ9E24iIGZi4k3ISblcuuyzSzTQDrflr3cgWzWV06vzq/3Jl
+         rCKN5Kdz1Zr4FaZL9e6sbC7GNNSOo3q4Vl7wqZp2KUw4Ma89bItsQtXf3tydjpicH30I
+         2Q5QRYRqWcpuIkAHudaS2Xs7lxYSoSRembWQyi/2qipbJ+9WpeR2N9x/5FR8/K69is1a
+         6gGK0epnWDtarmokL/qJvxzIkyA+CQ9NSMbg4uZ8nLmZ2kAOX9QyMXxRO2ASmHPmfkO9
+         h2ug==
+X-Gm-Message-State: APjAAAUW0PRwlcRX3P6R7BVK/OB0c6yCuTH2jxsPgmJC8JoPSXnzyZMt
+        YotQRYc2U3UD6qJHJsTwhpOFlQ==
+X-Google-Smtp-Source: APXvYqyFXBhASQ7s2Rzi8oOTabzfkeNhlmXxwFIUALwnaLudgCnEC7/4EHYWhhjH2bC1IexA/KblNw==
+X-Received: by 2002:a1c:eb12:: with SMTP id j18mr530763wmh.48.1557832518385;
+        Tue, 14 May 2019 04:15:18 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id c130sm7289922wmf.47.2019.05.14.04.15.16
+        by smtp.googlemail.com with ESMTPSA id c130sm7289922wmf.47.2019.05.14.04.15.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 04:15:16 -0700 (PDT)
+        Tue, 14 May 2019 04:15:17 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] arm64: dts: meson: g12a: add audio devices
-Date:   Tue, 14 May 2019 13:15:02 +0200
-Message-Id: <20190514111510.23299-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/8] arm64: dts: meson: g12a: add audio clock controller
+Date:   Tue, 14 May 2019 13:15:03 +0200
+Message-Id: <20190514111510.23299-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190514111510.23299-1-jbrunet@baylibre.com>
+References: <20190514111510.23299-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -61,32 +63,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds audio related devices to g12a SoC family.
-It adds the clock controller as well as the memory, tdm, spdif
-and pdm interfaces.
+Add the g12a clock controller dedicated to audio.
 
-At this stage, the HDMI and internal audio DAC are still missing.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 36 +++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-Notice the use of the pinconf DT property 'drive-strength-microamp'.
-Support for this property is not yet merged in meson pinctrl driver but
-the DT part as been acked by the DT maintainer [0] so it should be safe
-to use.
-
-[0]: https://lkml.kernel.org/r/20190513152451.GA25690@bogus
-
-Jerome Brunet (8):
-  arm64: dts: meson: g12a: add audio clock controller
-  arm64: dts: meson: g12a: add audio memory arbitrer
-  arm64: dts: meson: g12a: add audio fifos
-  arm64: dts: meson: g12a: add tdm
-  arm64: dts: meson: g12a: add spdifouts
-  arm64: dts: meson: g12a: add pdm
-  arm64: dts: meson: g12a: add spdifin
-  arm64: dts: meson: g12a: enable hdmi_tx sound dai provider
-
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 1227 +++++++++++++++++--
- 1 file changed, 1136 insertions(+), 91 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index e6c0c19b3223..09aa024d9f0e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -673,6 +673,42 @@
+ 				};
+ 			};
+ 
++			audio: bus@42000 {
++				compatible = "simple-bus";
++				reg = <0x0 0x42000 0x0 0x2000>;
++				#address-cells = <2>;
++				#size-cells = <2>;
++				ranges = <0x0 0x0 0x0 0x42000 0x0 0x2000>;
++
++				clkc_audio: clock-controller@0 {
++					status = "disabled";
++					compatible = "amlogic,g12a-audio-clkc";
++					reg = <0x0 0x0 0x0 0xb4>;
++					#clock-cells = <1>;
++
++					clocks = <&clkc CLKID_AUDIO>,
++						 <&clkc CLKID_MPLL0>,
++						 <&clkc CLKID_MPLL1>,
++						 <&clkc CLKID_MPLL2>,
++						 <&clkc CLKID_MPLL3>,
++						 <&clkc CLKID_HIFI_PLL>,
++						 <&clkc CLKID_FCLK_DIV3>,
++						 <&clkc CLKID_FCLK_DIV4>,
++						 <&clkc CLKID_GP0_PLL>;
++					clock-names = "pclk",
++						      "mst_in0",
++						      "mst_in1",
++						      "mst_in2",
++						      "mst_in3",
++						      "mst_in4",
++						      "mst_in5",
++						      "mst_in6",
++						      "mst_in7";
++
++					resets = <&reset RESET_AUDIO>;
++				};
++			};
++
+ 			usb3_pcie_phy: phy@46000 {
+ 				compatible = "amlogic,g12a-usb3-pcie-phy";
+ 				reg = <0x0 0x46000 0x0 0x2000>;
 -- 
 2.20.1
 
