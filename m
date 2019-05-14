@@ -2,105 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3471CB9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0479A1CBA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:17:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfENPQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:16:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42624 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfENPQs (ORCPT
+        id S1726009AbfENPRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:17:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41127 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfENPRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:16:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l2so19655196wrb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 08:16:47 -0700 (PDT)
+        Tue, 14 May 2019 11:17:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d12so19637599wrm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 08:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ldoasDQ7UppVRifjaSRw3DpwTvd/jIO8STWlnJPAxfE=;
-        b=NCuQ5Dx09mZmmtzR1xCLl1TJ1ZNRcWelTVn+oju+wnaLyYL57pGcqbSf7uqmQ27/U/
-         5C/BnuK8H8cKtgNxm4+qMSgZGu5zC/Ty4xgBLY54/Bax9I596zMvA2KcYHFsjgMWKCnM
-         VCr8aK+l/CQmDm4t0z6sG4/3SPJKapBhU03Nu5g3CNGu7EH0Uf/FXjQUrJPkxx0JMYmg
-         F22T146IzA5zKetOzh2IVhJsE4wK//Kc19vlMAyfYMbOK0HxTshJ6lXBvXu5FgXVzT//
-         qfTWUMIf3MRB34wG3t+rO8zACW7VpxaHFrTTPo3OS2wbYrwSkXALxZtRVt1314LhtseC
-         +V9A==
+        bh=kIhiqSMek0R4jDQ4M9fJjcqpAO0J7pAlAP0TmoL3YBU=;
+        b=MWKf30+ckK2l4pIoW7kmWtx0es9Q5LydNiOLlasRlMt5eVKvpCpZc1Db8FeOn/7Lca
+         qBezESV/vORAvhPKmSV37sHHSK9cL3DplJpiDhpdjicctYGm3kw5k4Eh4qT4ukjCZXRw
+         8rpBWLBIXU7Zsz5fnrEvg5D3kl0yrssWtkueTsqB6u2hl5hq3S+uo5NVFQ9xcMVbaTkz
+         QyNo/KspyptmClPv1NQdhYQlGUSmumdr8NwTJBp0m8TsbnugH49tZpIlkDTA6pLgxneX
+         wuqZQZBdUcO3SgCnviUzoEIGYPmEb2dJco+lIwVACT+CTQnnSeZMqye7snSdWtlHPKOL
+         nfLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ldoasDQ7UppVRifjaSRw3DpwTvd/jIO8STWlnJPAxfE=;
-        b=UjPN1i2ZaI74w5fIb2OofvrbqfUFcQvvzH+l6+isXZi7okkRn8N9hFHU5zBKndJOe2
-         7DuqseiYPbsJN7yLRcZm7HJrjbp6gnOnbJb/eBpXimcCkGW01V74ge8s/dmJGGQRYO88
-         7xSz711ciITc9v7hbAH+ACN0FTAAo5dZx6aF2nSQsB1RSsuWUy4deqSt65Jsnv7rd0Yv
-         lZhGUcSBAsrI8MddlzG/MH5VuFeOAcNUUxvh2gXylo+lmEnUUxuFpevH3pNbp80S0U7O
-         n4Wb3lpdRBMZc6OLXfzO1G8MEg3OFZykWBPSsb4sBDw64SEwwlxagA4SLZbhBica7p/h
-         z89Q==
-X-Gm-Message-State: APjAAAWnkkFddS7ajKg/3buSyNp9Tl7ciXLpiMjvBhxGqlXPZndLoqJ3
-        E2xOgIfDXVOLYROx2M4woUy8og==
-X-Google-Smtp-Source: APXvYqxIfmglfSdFhF5NGPO1mepeasVBqjYZcAsJqS+2XU0UT5lyfQrgwd3nc3CRa0ONcFJ/HM4hTA==
-X-Received: by 2002:a5d:6750:: with SMTP id l16mr14648596wrw.274.1557847006476;
-        Tue, 14 May 2019 08:16:46 -0700 (PDT)
-Received: from brauner.io ([81.92.17.132])
-        by smtp.gmail.com with ESMTPSA id i25sm5169501wmb.46.2019.05.14.08.16.43
+        bh=kIhiqSMek0R4jDQ4M9fJjcqpAO0J7pAlAP0TmoL3YBU=;
+        b=qoHpEH1bLWco8hZ6wF72lt6wQBXH5xZjEENGaOAbL1gYtRTlWtGVuUaypulao1/olB
+         ZpbJb/v2/SP7skGt8dEOHlZUbSFpZ4UhPoMWi+zNLpbtSzOiVFZfudcxjSGcHZFehQRK
+         d5cRXepzFTAkTbBQJBMVj+J1KpDpihvjP3tQT9eH5EQ5Y1bYHsKI7JX7WWqviFlhl58h
+         Gc0EOL+GaH7OUW9RqEuiROxoYQAinmES1e1fz3ErtUCgxHL4Zy2jFKpI/qOQ/rnpxGZW
+         hseQ8PhTC9N1Lk43qssMCzQU+acjSuT/dDThnUpF8fE1oQmquOI/sRFRR96anlhA/HvO
+         Ohpg==
+X-Gm-Message-State: APjAAAVBdf3jNZcnttSAAfN9Mtfnr6SV7wvmGnxKL6r1WAXmQa9slQEV
+        E6WBpCgbHpOgBbWQhuKsky9oAw==
+X-Google-Smtp-Source: APXvYqwCt7I6lKBbVuVId5vRnhcFO7AfYJ93Tx7KMbKIS0tzJIR8arNbE4x5QxA2wyowIBcK6cEJYg==
+X-Received: by 2002:adf:cf05:: with SMTP id o5mr6473204wrj.262.1557847031802;
+        Tue, 14 May 2019 08:17:11 -0700 (PDT)
+Received: from brauner.io ([81.92.17.147])
+        by smtp.gmail.com with ESMTPSA id n2sm29139738wra.89.2019.05.14.08.17.09
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 14 May 2019 08:16:45 -0700 (PDT)
-Date:   Tue, 14 May 2019 17:16:42 +0200
+        Tue, 14 May 2019 08:17:11 -0700 (PDT)
+Date:   Tue, 14 May 2019 17:17:08 +0200
 From:   Christian Brauner <christian@brauner.io>
-To:     Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Colascione <dancol@google.com>,
-        Jann Horn <jannh@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Jonathan Kowalski <bl0pbl33p@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>, kernel-team@android.com,
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
         Arnd Bergmann <arnd@arndb.de>,
+        Daniel Colascione <dancol@google.com>,
+        David Howells <dhowells@redhat.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
+        Jonathan Kowalski <bl0pbl33p@gmail.com>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
         KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kselftest@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Nadav Amit <namit@vmware.com>,
+        Nadav Amit <namit@vmware.com>, Oleg Nesterov <oleg@redhat.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Serge Hallyn <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Tim Murray <timmurray@google.com>,
         Tycho Andersen <tycho@tycho.ws>
-Subject: Re: [PATCH v2 1/2] Add polling support to pidfd
-Message-ID: <20190514151605.7aadxh6owlk42bwr@brauner.io>
+Subject: Re: [PATCH v2 2/2] Add selftests for pidfd polling
+Message-ID: <20190514151706.fu7ehba6hsxnvfaf@brauner.io>
 References: <20190430162154.61314-1-joel@joelfernandes.org>
- <20190501151312.GA30235@redhat.com>
- <20190502151320.cvc6uc3b4bmww23k@brauner.io>
- <20190502160247.GD7323@redhat.com>
+ <20190430162154.61314-2-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190502160247.GD7323@redhat.com>
+In-Reply-To: <20190430162154.61314-2-joel@joelfernandes.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 06:02:48PM +0200, Oleg Nesterov wrote:
-> On 05/02, Christian Brauner wrote:
-> >
-> > On Wed, May 01, 2019 at 05:13:12PM +0200, Oleg Nesterov wrote:
-> > >
-> > > Otherwise I see no problems.
-> >
-> > I'll remove the WARN_ON() check when applying this. Can I get your
-> > Acked/Review, Oleg?
+On Tue, Apr 30, 2019 at 12:21:54PM -0400, Joel Fernandes (Google) wrote:
+> Other than verifying pidfd based polling, the tests make sure that
+> wait semantics are preserved with the pidfd poll. Notably the 2 cases:
+> 1. If a thread group leader exits while threads still there, then no
+>    pidfd poll notifcation should happen.
+> 2. If a non-thread group leader does an execve, then the thread group
+>    leader is signaled to exit and is replaced with the execing thread
+>    as the new leader, however the parent is not notified in this case.
 > 
-> Yes, feel free to add
-> 
-> 	Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
 Applied to 
 
