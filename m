@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF8331C4A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E55771C4E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfENI1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:27:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39594 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfENI05 (ORCPT
+        id S1726707AbfENI1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:27:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44610 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfENI06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:26:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w8so15687423wrl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:26:56 -0700 (PDT)
+        Tue, 14 May 2019 04:26:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c5so18090461wrs.11
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RK97rIPqJ1mZypVshy2AL2Te8nJvkZlZG4fdj01VBV8=;
-        b=sUzajzzkQiSy4sPdi9iAqWdKPbA50pOct8MjX3ZvHTi8X0BPfW4FbUJF7hbgySJr+F
-         6CJ70MhdP451txHIBSW5QUYtDcSbh2bgsXnP5gwVjppE4jsmWNix7vSUNvUlmHLMhS84
-         uWS4JVQbn1jKt3HI3V/R+vuCAD2GAjGUYDQrtmDO0+bAhVgQDcwZkvWy8cbLrp5jKK60
-         rvRUyBxyySsgGyfMx5h4ICpyW7l4RWFCzFM3UNVnC5j7j/paEcvOqK7bMx1j1KAc3CAt
-         pJuq1VYTgFaV63pfeIbxQfSD/jmpubep6UZURn+BVTchmzmU2icDNBu+26OVemGpQg++
-         Sh6g==
+        bh=msbkGlp4GOhLlJp7h+ns/oU8AGbAhiOw2cYUQ/XgHZU=;
+        b=v3xu7tjvWyfaSEtn4pHRnlXDCYWDQ73FPtqaZDcSMRAqeBkyLCwCElW4Etf/UHqdAS
+         tmjpx/aldrU/FHEVSknXFUAO/q3MY5dWhKaSaQEWzbZHoCvb3CgRFFehThzxC/48XrKb
+         L3CZO6ra+Lmv1EcITN8K2ww8dnm8/794sm8v0lm6v8TFWuEqfH11p7cZOzXe4+tEHc0U
+         LOLY3Hsle0ZqEWNbdY3DMK354CZF4tqB6s/aEAqyEF5JPafQPStOY0z6xThkbVyVCMR4
+         JKoMQY27au5l85fl4z9RoZJwD1YMLcpbFO6+jXpo+NQhZ4vS53L6svo33sUQiU1mjS/m
+         T8FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RK97rIPqJ1mZypVshy2AL2Te8nJvkZlZG4fdj01VBV8=;
-        b=Ux9lE0IkdJXHsrgzvDwh/Gnij+A8+9eBBQMWJvgEkAeZbMmoI8UngJKhIyjLJ/Ugne
-         VWXqw8CprBmfZEAlKFKGQRVjkRJHIf+aUCAn0pVadhRjGyDqMND/9w6sjD1C1EbdI6jd
-         oigDon8SVEeYr8bYaE+r8AXyAllAf83NP3BGP7l/SHxArdvu9Q/URVSEQ3awPYo0n4dz
-         CgDc6zOxzKwvf9HeuH1Io4NP+Y7AvCOY+d5TFzvr600zfo5GnvjtGwPFB2iitMBPdVho
-         +MeaGpTVhH09tRced3dMCfQrS+vbwaAJK1JU9pES+toVqw3G0xc9VhC3onpz8DSsrFnq
-         5eSQ==
-X-Gm-Message-State: APjAAAVoXVq89xwoFZ756OB/gQMjnGpS+7vVUlFufI4oL9wHWGHmv/Vs
-        AReTfjfQXe336J8nxLV12uCG4g==
-X-Google-Smtp-Source: APXvYqzeS8omztpZAz37W/A3cxE173n7dyzC4UL8ae/t0P+AL5+oSE+n7XEoWFhsP02XFjXF0fd6xw==
-X-Received: by 2002:adf:da4a:: with SMTP id r10mr20120761wrl.216.1557822416023;
-        Tue, 14 May 2019 01:26:56 -0700 (PDT)
+        bh=msbkGlp4GOhLlJp7h+ns/oU8AGbAhiOw2cYUQ/XgHZU=;
+        b=s7E7Uz+rU5X4NgxFpYJTRft7CBUX2NJAC7qqG9mr6aAQPv3y2dfTjjU06hUn2D+B8N
+         9fnwYg3PmEqUlhv7i9bm0CUDeOuj/0D7PxlvLGiPYXrhK/aFeNTbLgzETdSt2c8qu6hG
+         9v6z9EdURj3+D4Ij7LOjp/cAN8oX9IpTllc9+EdjVAtdfmb0c4shIuNDJZ1FbwQa12w6
+         q58eB08kf9nesqlD7HfmkK2P2Be6nkexrRp38TZbHOlGNF7VJGzj820c3VHoyP4rV82g
+         K0IyYUoGry2CMmRgz1o5XxjiFJeM4V40Rw/CV4i96EpTgEsohoCI0XVS+dbIDDRrbkoH
+         pPWw==
+X-Gm-Message-State: APjAAAXoRDDGRcaKvIky8vbGjRXbaIxzevENcayGkpuXXbwU01OnusLL
+        CZZVUlrQtiATpg07e2B7vzdKGg==
+X-Google-Smtp-Source: APXvYqwzs56xDJxA92pMFFuDkKZTbEVAiHK7h/pHSRnD43if/pfZrGEj7WlTCVebkgIwwFKkhSQ8YA==
+X-Received: by 2002:a5d:4e90:: with SMTP id e16mr10730256wru.312.1557822417035;
+        Tue, 14 May 2019 01:26:57 -0700 (PDT)
 Received: from glaroque-ThinkPad-T480.home ([2a01:cb1d:379:8b00:1910:6694:7019:d3a])
-        by smtp.gmail.com with ESMTPSA id j190sm2450772wmb.19.2019.05.14.01.26.55
+        by smtp.gmail.com with ESMTPSA id j190sm2450772wmb.19.2019.05.14.01.26.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 01:26:55 -0700 (PDT)
+        Tue, 14 May 2019 01:26:56 -0700 (PDT)
 From:   Guillaume La Roque <glaroque@baylibre.com>
 To:     linus.walleij@linaro.org, khilman@baylibre.com
 Cc:     jbrunet@baylibre.com, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/6] dt-bindings: pinctrl: add a 'drive-strength-microamp' property
-Date:   Tue, 14 May 2019 10:26:47 +0200
-Message-Id: <20190514082652.20686-2-glaroque@baylibre.com>
+Subject: [PATCH v6 2/6] pinctrl: generic: add new 'drive-strength-microamp' property support
+Date:   Tue, 14 May 2019 10:26:48 +0200
+Message-Id: <20190514082652.20686-3-glaroque@baylibre.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190514082652.20686-1-glaroque@baylibre.com>
 References: <20190514082652.20686-1-glaroque@baylibre.com>
@@ -60,37 +60,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This property allow drive-strength parameter in uA instead of mA.
+Add drive-strength-microamp property support to allow drive strength in uA
 
 Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/pinconf-generic.c       | 2 ++
+ include/linux/pinctrl/pinconf-generic.h | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index cef2b5855d60..fcd37e93ed4d 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -258,6 +258,7 @@ drive-push-pull		- drive actively high and low
- drive-open-drain	- drive with open drain
- drive-open-source	- drive with open source
- drive-strength		- sink or source at most X mA
-+drive-strength-microamp	- sink or source at most X uA
- input-enable		- enable input on pin (no effect on output, such as
- 			  enabling an input buffer)
- input-disable		- disable input on pin (no effect on output, such as
-@@ -326,6 +327,8 @@ arguments are described below.
- 
- - drive-strength takes as argument the target strength in mA.
- 
-+- drive-strength-microamp takes as argument the target strength in uA.
-+
- - input-debounce takes the debounce time in usec as argument
-   or 0 to disable debouncing
- 
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index b4f7f8a458ea..d0cbdb1ad76a 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -39,6 +39,7 @@ static const struct pin_config_item conf_items[] = {
+ 	PCONFDUMP(PIN_CONFIG_DRIVE_OPEN_SOURCE, "output drive open source", NULL, false),
+ 	PCONFDUMP(PIN_CONFIG_DRIVE_PUSH_PULL, "output drive push pull", NULL, false),
+ 	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH, "output drive strength", "mA", true),
++	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH_UA, "output drive strength", "uA", true),
+ 	PCONFDUMP(PIN_CONFIG_INPUT_DEBOUNCE, "input debounce", "usec", true),
+ 	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
+ 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
+@@ -167,6 +168,7 @@ static const struct pinconf_generic_params dt_params[] = {
+ 	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
+ 	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
+ 	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
++	{ "drive-strength-microamp", PIN_CONFIG_DRIVE_STRENGTH_UA, 0 },
+ 	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
+ 	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
+ 	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 6c0680641108..72d06d6a3099 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -55,6 +55,8 @@
+  *	push-pull mode, the argument is ignored.
+  * @PIN_CONFIG_DRIVE_STRENGTH: the pin will sink or source at most the current
+  *	passed as argument. The argument is in mA.
++ * @PIN_CONFIG_DRIVE_STRENGTH_UA: the pin will sink or source at most the current
++ *	passed as argument. The argument is in uA.
+  * @PIN_CONFIG_INPUT_DEBOUNCE: this will configure the pin to debounce mode,
+  *	which means it will wait for signals to settle when reading inputs. The
+  *	argument gives the debounce time in usecs. Setting the
+@@ -112,6 +114,7 @@ enum pin_config_param {
+ 	PIN_CONFIG_DRIVE_OPEN_SOURCE,
+ 	PIN_CONFIG_DRIVE_PUSH_PULL,
+ 	PIN_CONFIG_DRIVE_STRENGTH,
++	PIN_CONFIG_DRIVE_STRENGTH_UA,
+ 	PIN_CONFIG_INPUT_DEBOUNCE,
+ 	PIN_CONFIG_INPUT_ENABLE,
+ 	PIN_CONFIG_INPUT_SCHMITT,
 -- 
 2.17.1
 
