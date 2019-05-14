@@ -2,98 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE4E1C271
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 07:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 193391C29F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 07:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfENFqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 01:46:43 -0400
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:41013 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfENFqi (ORCPT
+        id S1726834AbfENFxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 01:53:37 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38642 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfENFxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 01:46:38 -0400
-Received: by mail-yw1-f74.google.com with SMTP id b81so10724278ywc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 22:46:38 -0700 (PDT)
+        Tue, 14 May 2019 01:53:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 14so13121305ljj.5;
+        Mon, 13 May 2019 22:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=NNCnVCTAATMxlDMarLLJ67yqDDVFt+vwrBh9wh5mNVQ=;
-        b=ogDQD8ZjbQ6rQB/cWAayl+9VthgdTRB4N9+9GyMbHO4DiRsdRDrdV4hPILgY7Dd+L0
-         I2RHu02OyvKeDL+lm6hCGMoAmOxcXp1iclHCDygBWy5BFLe5GT+edQ82hOKLR/JJ9KdQ
-         11b1p3QAxEdg7lXAO1lNroEn+qdvSJWt3iw3DL5AYhMjgqkE31tSGZQfrWeGG6OKTYPS
-         afsxa8QMIeJn+iGaVG/JH2h1LJjJKyL47IF09+kVKczWp9X/zQGgRpH1Zc1iYBbEn+oS
-         scXx1DItvS3mhp2+j2MbNl8vNbIJweBsYUaOnaq+FaUIBk4qrqEB0Zys9RYKfXBLRZW1
-         bh9g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bM8hX4jppxiiULCsRqeT+54oxj9AT3t2fWeo8Qg5H18=;
+        b=Dob32DPoL28AKLt8YMC5ibe91NtjpjbzGPVHHk8989EBn9rOV27UBxAiE9y5p9T1nE
+         fLc3Sk2ckq+3v/VDhuZq67lIbfDE/2xLNa1ul3s+hN0SwcrsPQHePrwWRU5SmASrF2wB
+         Kceqql6z0YU/4HAP2PxGQWot0rJDixIGSMhwGOPWTew8N/0DB7dLXkUmXEqbtYvRgaz2
+         v8ZTqlPv+do87EQ162FcrGCOXmTMDMEs8abJno+7PblkZCcjMpNCVO/ctt8bg2R6/alF
+         1sjQxbH36CWqJj3CGd7c3FX7clQxVFQl6IeQBFqff3zmwClmL65/2YePRBj8FfXLrmyF
+         DtEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=NNCnVCTAATMxlDMarLLJ67yqDDVFt+vwrBh9wh5mNVQ=;
-        b=A1UF/iF2v0ztlgVZ1dngjjwMG37WhEtUtfW80mLU9mnPwUSofGRturi27ETPEnB0Do
-         JUl7n/zp+7AmNhkdbUYUk9ymRfr6Lpa9520RprYV0iJVMFhKJfBUIefe+ihbNn/R375O
-         r90mDwxhWUzKBPMxoqeH7tWtM8SCdMXMe9pX64frGy1VnG72LmcYTedbbdau3UjDiHgn
-         Znfywbb6dIYLcET6T2HKjQM7/NTMGvbF7myShuv3UhiiFb91rwyHqvm5G3l7utV9nAf+
-         EQVuxOzPKIFWk4As+GkgflSQRmfVPGwEOfw1hW86Ie5LfTZ/DtVf8GgWrw6tKKylGHu3
-         zyPg==
-X-Gm-Message-State: APjAAAWRWoMmMh6n4vDGZSCe4IGfqVwQjYiDcBboG7ywLZEhQJZxBqXs
-        fF5hJHXcGBxyHfeRqIphYKBzIrCIa/5ahXQmfwhPmQ==
-X-Google-Smtp-Source: APXvYqzDnMJ4szPxIA4N77qJLw1e3aRJqDLenWVgRY3sM/QbVOHbh8x+6bBUoK7BNggbwfl2r5XHp/gCvYGW7uZKqd8+nw==
-X-Received: by 2002:a81:9b17:: with SMTP id s23mr15952402ywg.503.1557812797962;
- Mon, 13 May 2019 22:46:37 -0700 (PDT)
-Date:   Mon, 13 May 2019 22:42:52 -0700
-In-Reply-To: <20190514054251.186196-1-brendanhiggins@google.com>
-Message-Id: <20190514054251.186196-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190514054251.186196-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v3 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, rdunlap@infradead.org, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bM8hX4jppxiiULCsRqeT+54oxj9AT3t2fWeo8Qg5H18=;
+        b=s4pV+oDnGi5BlFcgpiKPxTQg+G2Fds/j2wGKSlUYbEYGLBn3hgtyBwpIJKC8Ws5TBN
+         3J7pFTj4t+6jpxKNimwP1nWzAdfiTkDaMiyA+1xizdIbfGq+ZndRqemYBCpS8PBC2r9f
+         Pu07Au6CZ8hU155puyZwq7G/VNntQSqcRkNxdd6PbhRO+TwgESKwWk7q2OfOjimmzxOs
+         WOitFjHyboSNtfHBR2vG7vqVktLHogpuXE/6OTfvkuN1oRvz5eMaq+1yGBRWIrPVLFMo
+         IL6IowLADixISfqRIponMNpi/KON2bHMAARwJUUgYfmG2TrNJaLrCblabImz8gYQ8dlJ
+         9wQA==
+X-Gm-Message-State: APjAAAX5lIdTZmpbdPiVMrfthGPh1gxqqyC5yGa0M92Q6icXhAydvL88
+        m8L+6mVc8HnyV35YMZNKEfQ=
+X-Google-Smtp-Source: APXvYqzuGAt6PH1pi+yzKaxNkn0AG7TBFPHbW5+hx5CYlVXf4WXfqqLPsFmrqnUUKbHAmIvFhV4ftQ==
+X-Received: by 2002:a2e:89cc:: with SMTP id c12mr11613738ljk.90.1557813214576;
+        Mon, 13 May 2019 22:53:34 -0700 (PDT)
+Received: from k8s-master.localdomain (kovt.soborka.net. [94.158.152.75])
+        by smtp.googlemail.com with ESMTPSA id y7sm3465555ljj.34.2019.05.13.22.53.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2019 22:53:33 -0700 (PDT)
+From:   Kovtunenko Oleksandr <alexander198961@gmail.com>
+To:     sfrench@samba.org
+Cc:     linux-kernel@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-cifs@vger.kernel.org,
+        Kovtunenko Oleksandr <alexander198961@gmail.com>
+Subject: [PATCH] Fixed  https://bugzilla.kernel.org/show_bug.cgi?id=202935 allow write on the same file
+Date:   Tue, 14 May 2019 05:52:34 +0000
+Message-Id: <1557813154-6663-1-git-send-email-alexander198961@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section.
-
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Kovtunenko Oleksandr <alexander198961@gmail.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/cifsfs.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8a91887c8d541..2e539647589fd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12526,6 +12526,7 @@ S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index a05bf1d..2964438 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1073,11 +1073,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
  
- PS3 NETWORK SUPPORT
+ 	cifs_dbg(FYI, "copychunk range\n");
+ 
+-	if (src_inode == target_inode) {
+-		rc = -EINVAL;
+-		goto out;
+-	}
+-
+ 	if (!src_file->private_data || !dst_file->private_data) {
+ 		rc = -EBADF;
+ 		cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
 -- 
-2.21.0.1020.gf2820cf01a-goog
+1.8.3.1
 
