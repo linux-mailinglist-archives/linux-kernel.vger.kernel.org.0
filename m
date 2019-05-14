@@ -2,110 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21DF31C6C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EB11C6D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfENKOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:14:42 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36392 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfENKOk (ORCPT
+        id S1726827AbfENKPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:15:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50834 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfENKOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:14:40 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z1so13771747ljb.3;
-        Tue, 14 May 2019 03:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wJX9SF3UY7JHR+kvaWwAxJyLE5sk5ey5I1uN0qqeGlw=;
-        b=BPF60NQYM9hKHJxp283UcsOH9eBso8/DH2YH3zv61zystYy31lPADB1EF8H7jlXftz
-         xAripLNHqO406rxkKpGMdQNHJyoIdddIHVyQPFpwV4dgt8AbFE1NGCeonNsLZmTTBjrP
-         4ytt1nLn5L09LvqQLSAdNpH7qnrCzzWMRWeVbr5sLECLyODW2le0/fab7MKqLVdvUrdg
-         rx507c98XQWJBr76TQbd7p76b2tdFBlvu8V46wM0IFNb4BV6v9VU0ruhNUlgqGQrxNdE
-         AxQBCAAyrVKT0Jp57MOyTNcgHpTMdncHXaW6QJMYC1D3DACothTzdlj69RxE5wSpBFlE
-         62nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wJX9SF3UY7JHR+kvaWwAxJyLE5sk5ey5I1uN0qqeGlw=;
-        b=M21KFz63VTD+Kc2sqtNfuHATxsLpFz/7CnbxTUO6a2lfdUodnnOTNlB8FSmQTDEg7B
-         n3oR0p8/6WL/CGg6H4OYN1XVaYbl2Pfksk0IHBocohDk8lg2yU6/Dh0S6hK/JWolhgZn
-         nOZ+VAtozsq+0+2dmqxsaCp4W+yYUONY38LEtmFLChCmAizZIXIbXvAmCGI77dgc5gZT
-         5HbEXmPnBDi8kIVRvHhFmZJXbwNwF+oUHLiwqKoMHTjbk4OJnyh1rDUlA1e+W+Ih3lXB
-         4ar833h448WHUFRBQxoUbWIbqEdhBv+AZ2OCX1McyEMd6VFIyNA1I9hV9wB6700Q+7+J
-         pcTw==
-X-Gm-Message-State: APjAAAVWhO2g8UHv9OMXto2WDgLnX9ve3kkeD49FectbXgPPacAxAtix
-        1wpvGQUDV403FqWmKWTMQbM=
-X-Google-Smtp-Source: APXvYqxKAPIKTgQcSFzsi/73Id8EZCbCE4nG6nPu5WuXlQi2bq+BsyGkuwf+TztsEOcE2FUUC2n6qA==
-X-Received: by 2002:a2e:63d1:: with SMTP id s78mr17101496lje.166.1557828878014;
-        Tue, 14 May 2019 03:14:38 -0700 (PDT)
-Received: from localhost.localdomain ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 03:14:37 -0700 (PDT)
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] tty: max310x: Split uart characters insertion loop
-Date:   Tue, 14 May 2019 13:14:15 +0300
-Message-Id: <20190514101415.26754-8-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190514101415.26754-1-fancer.lancer@gmail.com>
-References: <20190514101415.26754-1-fancer.lancer@gmail.com>
+        Tue, 14 May 2019 06:14:37 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 2338D283123
+Subject: Re: [REGRESSION] usb: gadget: f_fs: Allow scatter-gather buffers
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Felipe Balbi <balbi@kernel.org>, "Yang, Fei" <fei.yang@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chen Yu <chenyu56@huawei.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "kernel@collabora.com" <kernel@collabora.com>
+References: <CALAqxLUMRaNxwTUi9QS7-Cy-Ve4+vteBm8-jW4yzZg_QTJVChA@mail.gmail.com>
+ <7caebeb2-ea96-2276-3078-1e53f09ce227@collabora.com>
+ <CALAqxLUfJYUtmQDC_aDMxW7KcPUawGoRq-PNUfmzQuNKh97FmQ@mail.gmail.com>
+ <CALAqxLVUFfrPVVjR74V3PhhtcCytfp=cUYjo=BcJ14D1fkVXTw@mail.gmail.com>
+ <7ec57c29-d1ab-dc4c-755d-a6009b9132b5@collabora.com>
+ <CALAqxLUgnTB7aZ4edXCaG8SJsJzfY1_yNEPc6Losssw5Xy9-XA@mail.gmail.com>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Message-ID: <36620156-d119-b1b2-989e-0c13b783296e@collabora.com>
+Date:   Tue, 14 May 2019 12:14:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <CALAqxLUgnTB7aZ4edXCaG8SJsJzfY1_yNEPc6Losssw5Xy9-XA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Batch read mode doesn't check any conditions or flags except the Rx
-overflow one. But it may only happen after the last character is pushed
-into the RHR register. In this case we shouldn't push all the read
-characters with overrun flag set, but only the last one caused the
-FIFO overflow. This commit splits the characters retrieval loop into
-two parts. First one is ordinary intsert-chars procedure without taking
-the overrun status into account. Second part inserts the last character
-checking whether the overrun happened and pushing a '\0' character with
-TTY_OVERRUN flag to a flip-buffer.
+Hi,
 
-If we left the loop the way it was the '\0' character would be inserted
-after each character retrieved at the overrun occasion.
+W dniu 13.05.2019 o 20:09, John Stultz pisze:
+> On Mon, May 13, 2019 at 7:08 AM Andrzej Pietrasiewicz
+> <andrzej.p@collabora.com> wrote:
 
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/tty/serial/max310x.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+<snip>
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 36943f6c198c..81b2413c3da4 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -680,10 +680,16 @@ static void max310x_handle_rx(struct uart_port *port, unsigned int rxlen)
- 			port->icount.overrun++;
- 		}
- 
--		for (i = 0; i < rxlen; ++i) {
--			uart_insert_char(port, sts, MAX310X_LSR_RXOVR_BIT,
--					 one->rx_buf[i], flag);
--		}
-+		for (i = 0; i < (rxlen - 1); ++i)
-+			uart_insert_char(port, sts, 0, one->rx_buf[i], flag);
-+
-+		/*
-+		 * Handle the overrun case for the last character only, since
-+		 * the RxFIFO overflow happens after it is pushed to the FIFO
-+		 * tail.
-+		 */
-+		uart_insert_char(port, sts, MAX310X_LSR_RXOVR_BIT,
-+				 one->rx_buf[rxlen], flag);
- 
- 	} else {
- 		if (unlikely(rxlen >= port->fifosize)) {
--- 
-2.21.0
+>>
+>> Do you get "functionfs read size 512 > requested size 24, splitting
+>> request into multiple reads" message when problems happen?
+> 
+> Unfortunately no.
 
+Actually that's a fortunate outcome :)
+
+> 
+>> Is there anything in the kernel log?
+> 
+> Nope. Just the transfers stall/hang and further attempts at adb
+> connections fail until the USB cable is unplugged and replugged.
+> 
+
+<snip>
+
+> 
+>> Is there a way to try your adb without building and running the
+>> whole Android?
+> 
+> Maybe? I have heard of folks doing it in the past, though I don't
+> really know a quick path to get there.
+> 
+> Is there anything else I can try for you?
+
+Have you tried compiling FunctionFS with debugging enabled?
+You do so bu uncommenting:
+
+/* #define DEBUG */
+/* #define VERBOSE_DEBUG */
+
+at the beginning of drivers/usb/gadget/function/f_fs.c
+
+Is there anything suspicious in the kernel log when you run it then?
+
+Remote debugging through this mailing list will incur enormous
+round trip time ;) The most valuable help would be helping in
+reproducing the problem you encounter.
+
+One question that comes to my mind is this: Does the USB transmission
+stall (e.g. endpoint stall) or not? In other words, is adb connection
+broken because USB stops transmitting anything, or because the
+data is transmitted but its integrity is broken during transmission
+and that causes adb/adbd confusion which results in stopping their
+operation? Does anything keep happening on FunctionFS when adb
+connection is broken?
+
+Andrzej
