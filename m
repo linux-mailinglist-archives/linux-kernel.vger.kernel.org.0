@@ -2,110 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 986A61C461
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D231C41A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 09:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfENIIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:08:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55536 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725899AbfENIIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:08:38 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 310FA79B1C67F328660D;
-        Tue, 14 May 2019 16:08:35 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 May 2019
- 16:08:27 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <paulus@samba.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] ppp: deflate: Fix possible crash in deflate_init
-Date:   Tue, 14 May 2019 15:43:00 +0800
-Message-ID: <20190514074300.42588-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726533AbfENHoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 03:44:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbfENHn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 03:43:59 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CDB6630820EA;
+        Tue, 14 May 2019 07:43:58 +0000 (UTC)
+Received: from beluga.usersys.redhat.com (unknown [10.43.2.166])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA2675C206;
+        Tue, 14 May 2019 07:43:46 +0000 (UTC)
+Date:   Tue, 14 May 2019 09:43:44 +0200
+From:   Erik Skultety <eskultet@redhat.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>,
+        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
+        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "eauger@redhat.com" <eauger@redhat.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Yang, Ziye" <ziye.yang@intel.com>,
+        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "felipe@nutanix.com" <felipe@nutanix.com>,
+        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "dinechin@redhat.com" <dinechin@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [PATCH v2 1/2] vfio/mdev: add version attribute for mdev device
+Message-ID: <20190514074344.GB2089@beluga.usersys.redhat.com>
+References: <20190509154857.GF2868@work-vm>
+ <20190509175404.512ae7aa.cohuck@redhat.com>
+ <20190509164825.GG2868@work-vm>
+ <20190510110838.2df4c4d0.cohuck@redhat.com>
+ <20190510093608.GD2854@work-vm>
+ <20190510114838.7e16c3d6.cohuck@redhat.com>
+ <20190513132804.GD11139@beluga.usersys.redhat.com>
+ <20190514061235.GC20407@joy-OptiPlex-7040>
+ <20190514072039.GA2089@beluga.usersys.redhat.com>
+ <20190514073219.GD20407@joy-OptiPlex-7040>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190514073219.GD20407@joy-OptiPlex-7040>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 14 May 2019 07:43:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUG: unable to handle kernel paging request at ffffffffa018f000
-PGD 3270067 P4D 3270067 PUD 3271063 PMD 2307eb067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP
-CPU: 0 PID: 4138 Comm: modprobe Not tainted 5.1.0-rc7+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:ppp_register_compressor+0x3e/0xd0 [ppp_generic]
-Code: 98 4a 3f e2 48 8b 15 c1 67 00 00 41 8b 0c 24 48 81 fa 40 f0 19 a0
-75 0e eb 35 48 8b 12 48 81 fa 40 f0 19 a0 74
-RSP: 0018:ffffc90000d93c68 EFLAGS: 00010287
-RAX: ffffffffa018f000 RBX: ffffffffa01a3000 RCX: 000000000000001a
-RDX: ffff888230c750a0 RSI: 0000000000000000 RDI: ffffffffa019f000
-RBP: ffffc90000d93c80 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa0194080
-R13: ffff88822ee1a700 R14: 0000000000000000 R15: ffffc90000d93e78
-FS:  00007f2339557540(0000) GS:ffff888237a00000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffa018f000 CR3: 000000022bde4000 CR4: 00000000000006f0
-Call Trace:
- ? 0xffffffffa01a3000
- deflate_init+0x11/0x1000 [ppp_deflate]
- ? 0xffffffffa01a3000
- do_one_initcall+0x6c/0x3cc
- ? kmem_cache_alloc_trace+0x248/0x3b0
- do_init_module+0x5b/0x1f1
- load_module+0x1db1/0x2690
- ? m_show+0x1d0/0x1d0
- __do_sys_finit_module+0xc5/0xd0
- __x64_sys_finit_module+0x15/0x20
- do_syscall_64+0x6b/0x1d0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+On Tue, May 14, 2019 at 03:32:19AM -0400, Yan Zhao wrote:
+> On Tue, May 14, 2019 at 03:20:40PM +0800, Erik Skultety wrote:
+> > On Tue, May 14, 2019 at 02:12:35AM -0400, Yan Zhao wrote:
+> > > On Mon, May 13, 2019 at 09:28:04PM +0800, Erik Skultety wrote:
+> > > > On Fri, May 10, 2019 at 11:48:38AM +0200, Cornelia Huck wrote:
+> > > > > On Fri, 10 May 2019 10:36:09 +0100
+> > > > > "Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
+> > > > >
+> > > > > > * Cornelia Huck (cohuck@redhat.com) wrote:
+> > > > > > > On Thu, 9 May 2019 17:48:26 +0100
+> > > > > > > "Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
+> > > > > > >
+> > > > > > > > * Cornelia Huck (cohuck@redhat.com) wrote:
+> > > > > > > > > On Thu, 9 May 2019 16:48:57 +0100
+> > > > > > > > > "Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > > * Cornelia Huck (cohuck@redhat.com) wrote:
+> > > > > > > > > > > On Tue, 7 May 2019 15:18:26 -0600
+> > > > > > > > > > > Alex Williamson <alex.williamson@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > On Sun,  5 May 2019 21:49:04 -0400
+> > > > > > > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > > +  Errno:
+> > > > > > > > > > > > > +  If vendor driver wants to claim a mdev device incompatible to all other mdev
+> > > > > > > > > > > > > +  devices, it should not register version attribute for this mdev device. But if
+> > > > > > > > > > > > > +  a vendor driver has already registered version attribute and it wants to claim
+> > > > > > > > > > > > > +  a mdev device incompatible to all other mdev devices, it needs to return
+> > > > > > > > > > > > > +  -ENODEV on access to this mdev device's version attribute.
+> > > > > > > > > > > > > +  If a mdev device is only incompatible to certain mdev devices, write of
+> > > > > > > > > > > > > +  incompatible mdev devices's version strings to its version attribute should
+> > > > > > > > > > > > > +  return -EINVAL;
+> > > > > > > > > > > >
+> > > > > > > > > > > > I think it's best not to define the specific errno returned for a
+> > > > > > > > > > > > specific situation, let the vendor driver decide, userspace simply
+> > > > > > > > > > > > needs to know that an errno on read indicates the device does not
+> > > > > > > > > > > > support migration version comparison and that an errno on write
+> > > > > > > > > > > > indicates the devices are incompatible or the target doesn't support
+> > > > > > > > > > > > migration versions.
+> > > > > > > > > > >
+> > > > > > > > > > > I think I have to disagree here: It's probably valuable to have an
+> > > > > > > > > > > agreed error for 'cannot migrate at all' vs 'cannot migrate between
+> > > > > > > > > > > those two particular devices'. Userspace might want to do different
+> > > > > > > > > > > things (e.g. trying with different device pairs).
+> > > > > > > > > >
+> > > > > > > > > > Trying to stuff these things down an errno seems a bad idea; we can't
+> > > > > > > > > > get much information that way.
+> > > > > > > > >
+> > > > > > > > > So, what would be a reasonable approach? Userspace should first read
+> > > > > > > > > the version attributes on both devices (to find out whether migration
+> > > > > > > > > is supported at all), and only then figure out via writing whether they
+> > > > > > > > > are compatible?
+> > > > > > > > >
+> > > > > > > > > (Or just go ahead and try, if it does not care about the reason.)
+> > > > > > > >
+> > > > > > > > Well, I'm OK with something like writing to test whether it's
+> > > > > > > > compatible, it's just we need a better way of saying 'no'.
+> > > > > > > > I'm not sure if that involves reading back from somewhere after
+> > > > > > > > the write or what.
+> > > > > > >
+> > > > > > > Hm, so I basically see two ways of doing that:
+> > > > > > > - standardize on some error codes... problem: error codes can be hard
+> > > > > > >   to fit to reasons
+> > > > > > > - make the error available in some attribute that can be read
+> > > > > > >
+> > > > > > > I'm not sure how we can serialize the readback with the last write,
+> > > > > > > though (this looks inherently racy).
+> > > > > > >
+> > > > > > > How important is detailed error reporting here?
+> > > > > >
+> > > > > > I think we need something, otherwise we're just going to get vague
+> > > > > > user reports of 'but my VM doesn't migrate'; I'd like the error to be
+> > > > > > good enough to point most users to something they can understand
+> > > > > > (e.g. wrong card family/too old a driver etc).
+> > > > >
+> > > > > Ok, that sounds like a reasonable point. Not that I have a better idea
+> > > > > how to achieve that, though... we could also log a more verbose error
+> > > > > message to the kernel log, but that's not necessarily where a user will
+> > > > > look first.
+> > > >
+> > > > In case of libvirt checking the compatibility, it won't matter how good the
+> > > > error message in the kernel log is and regardless of how many error states you
+> > > > want to handle, libvirt's only limited to errno here, since we're going to do
+> > > > plain read/write, so our internal error message returned to the user is only
+> > > > going to contain what the errno says - okay, of course we can (and we DO)
+> > > > provide libvirt specific string, further specifying the error but like I
+> > > > mentioned, depending on how many error cases we want to distinguish this may be
+> > > > hard for anyone to figure out solely on the error code, as apps will most
+> > > > probably not parse the
+> > > > logs.
+> > > >
+> > > > Regards,
+> > > > Erik
+> > > hi Erik
+> > > do you mean you are agreeing on defining common errors and only returning errno?
+> >
+> > In a sense, yes. While it is highly desirable to have logs with descriptive
+> > messages which will help in troubleshooting tremendously, I wanted to point out
+> > that spending time with error logs may not be that worthwhile especially since
+> > most apps (like libvirt) will solely rely on using read(3)/write(3) to sysfs.
+> > That means that we're limited by the errnos available, so apart from
+> > reporting the generic system message we can't any more magic in terms of the
+> > error messages, so the driver needs to assure that a proper message is
+> > propagated to the journal and at best libvirt can direct the user (consumer) to
+> > look through the system logs for more info. I also agree with the point
+> > mentioned above that defining a specific errno is IMO not the way to go, as
+> > these would be just too specific for the read(3)/write(3) use case.
+> >
+> > That said, from libvirt POV as a consumer, I'd expect there to be truly only 2
+> > errors (I believe Alex has mentioned something similar in one of his responses
+> > in one of the threads):
+> >     a) read error indicating that an mdev type doesn't support migration
+> >         - I assume if one type doesn't support migration, none of the other
+> >           types exposed on the parent device do, is that a fair assumption?
+> >     b) write error indicating that the mdev types are incompatible for
+> >     migration
+> >
+> > Regards,
+> > Erik
+> Thanks for this explanation.
+> so, can we arrive at below agreements?
+>
+> 1. "not to define the specific errno returned for a specific situation,
+> let the vendor driver decide, userspace simply needs to know that an errno on
+> read indicates the device does not support migration version comparison and
+> that an errno on write indicates the devices are incompatible or the target
+> doesn't support migration versions. "
+> 2. vendor driver should log detailed error reasons in kernel log.
 
-If ppp_deflate fails to register in deflate_init,
-module initialization failed out, however
-ppp_deflate_draft may has been regiestred and not
-unregistered before return.
-Then the seconed modprobe will trigger crash like this.
+That would be my take on this, yes, but I open to hear any other suggestions and
+ideas I couldn't think of as well.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ppp/ppp_deflate.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ppp/ppp_deflate.c b/drivers/net/ppp/ppp_deflate.c
-index b5edc7f..2829efe 100644
---- a/drivers/net/ppp/ppp_deflate.c
-+++ b/drivers/net/ppp/ppp_deflate.c
-@@ -610,12 +610,16 @@ static void z_incomp(void *arg, unsigned char *ibuf, int icnt)
- 
- static int __init deflate_init(void)
- {
--        int answer = ppp_register_compressor(&ppp_deflate);
--        if (answer == 0)
--                printk(KERN_INFO
--		       "PPP Deflate Compression module registered\n");
-+	int answer;
-+
-+	answer = ppp_register_compressor(&ppp_deflate);
-+	if (answer)
-+		return answer;
-+
-+	pr_info("PPP Deflate Compression module registered\n");
- 	ppp_register_compressor(&ppp_deflate_draft);
--        return answer;
-+
-+	return 0;
- }
- 
- static void __exit deflate_cleanup(void)
--- 
-1.8.3.1
-
-
+Erik
