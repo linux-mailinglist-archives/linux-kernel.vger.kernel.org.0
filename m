@@ -2,338 +2,407 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F33A11C448
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D191C450
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfENIAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:00:10 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40412 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfENIAJ (ORCPT
+        id S1726400AbfENIBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:01:11 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41457 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfENIBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:00:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g69so454323plb.7
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:00:08 -0700 (PDT)
+        Tue, 14 May 2019 04:01:11 -0400
+Received: by mail-vs1-f68.google.com with SMTP id g187so9726295vsc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qmImQs3/7c0LXwB0nTQAxTJYiC8MuoLgE8xIG8Tm5O4=;
-        b=biw/httZ7LNwyRVCMrvBT2zbF+p2oG91jQU+l2SyS/9sV5KK6LiWBnhzEhuwLQsBoW
-         X8kzrG4MVIMA8sfsgcFuhL385pC/79BeeXvxRCN8/3WRJxyaKcJAUH7hvjM/7tL4+JFh
-         GK9jh4I0S6os86Bkh7/5m6eA+2iQZkrxL7buqF1gkBTmVugmfIdWP/BFpPuOsgW3TMyU
-         luNODvSs8vFtWPlLRAsZcPAcvXY5Iu1kYBgWRodUoQOqi6YoJLlvDDerIpNaDzV3TXS4
-         sMndhpe2I2m7gj/QjLR6+OkGviiKoRZuet1JniT6L9yvAo7AEr9fU9zB1eyb9WD+IeB4
-         7wIQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=okuJZrx/sGYZydGEd+yQqOjQjoDcUDL8lzTtKlMnaHw=;
+        b=p+oy54AfhhDypsyzJ5IhDkyYhWSD6DOXCird4xkNuGelm/6ps1iOlCPRi+EFAmMttE
+         UuhK4OWnW/+MKtitdeTpOH/J/MGZ7cQT/fUTpiPLph+peEBBmtfMcZ/lyW5pV6a4pkMc
+         JxdSEvZhuc+IAZjATmBPNTodSxHYpE2QwicP/lyEz2Ovqn2CnwiMoDdu+ShVwJ+4SZR+
+         oOdBB0xtv1rqtmxCcjy+28Sz+HbJc3b6oj6E+jSugzZMgIM2Nbv48zz+R8LN/59WJ1I7
+         oxBkdLaoM+/K5jzuXWlYC273xDk4o9XypLUKOgoFa5JCKTar3j/0DtEkO29PLZp5Iprl
+         CZKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qmImQs3/7c0LXwB0nTQAxTJYiC8MuoLgE8xIG8Tm5O4=;
-        b=jNbq3RD58u0MDrqKhzFw7wNP9LxinYabZG9Ase4Ww/P1c7Mj8SqkF7Aa1BCgIJYZoT
-         VU+8YFaBU7oHNlk8m1OU6deiWHjT3cNeYbOeQEol1QKw8iKnElsr8/2MywiLZ2nlgIRc
-         tgQ1PYJ3fE31f46zsihxWKVTOHCxqIWN0Nq7pdI4U5rCr/2SCn8gQxS6/9LJ97LtmIbF
-         flX6j3B32AY00NFlUFmVsi94VeHqdZMwvm2u6b2krYess0y/2SnMSsJcKSw8WbPfmQld
-         Uk8o1f7JnmFWd+KjLgo06p1fOn+moiu9HkbB5RqMuMxmklRr6R+Wap4BQAwmIaaz1CDd
-         fD4Q==
-X-Gm-Message-State: APjAAAUj5YLR5jQ7K3pJIlpQsqEmKVTWMmu3ZlObO6suvofnP8QZ8Eg7
-        +LIS7ZGviKqWb9GbgV2rnGStLQ==
-X-Google-Smtp-Source: APXvYqwQCipm0AHDaVoG3LWGzF8Wl22z+O5ja+MEZvJAfFUVv/ZE8Gvzk6Ws7guVWw+sDHr1xsmzPA==
-X-Received: by 2002:a17:902:f096:: with SMTP id go22mr37387931plb.49.1557820807750;
-        Tue, 14 May 2019 01:00:07 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
-        by smtp.gmail.com with ESMTPSA id j12sm19128638pff.148.2019.05.14.01.00.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 14 May 2019 01:00:05 -0700 (PDT)
-Date:   Tue, 14 May 2019 01:00:00 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     Knut Omang <knut.omang@oracle.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jeff Dike <jdike@addtoit.com>, Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190514080000.GA212892@google.com>
-References: <20190509214233.GA20877@mit.edu>
- <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
- <20190509233043.GC20877@mit.edu>
- <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
- <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
- <a1b88d5add15d43de0468c32d9a2427629337abb.camel@oracle.com>
- <CAKMK7uFd1xUx8u3xWLwifVSq4OEnMO4S-m0hESe68UzONXnMFg@mail.gmail.com>
- <CAFd5g47Fvafwgh15JNfxSBRf5qqG2z+V+XGAB2cJtNnHFTiFfQ@mail.gmail.com>
- <8abaf5f2-dd33-98d0-7b34-b57de7fe7c8b@gmail.com>
- <a3362d96a6d95d852753739384ded814f5269aac.camel@oracle.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=okuJZrx/sGYZydGEd+yQqOjQjoDcUDL8lzTtKlMnaHw=;
+        b=IGzWIf0+3K0V/peXzA68HMoZoru4gO930mYdbI5saEf2AnXVl7CAfVd3Wd+rttt4s+
+         C62nzYL26W+i651y1rF5yjJfldO9KrmKuji10OgBl0QNt4e7SnOlm6uhw8U+lag9U1ab
+         nMuXfLGBwknazfFIAKXiL0fFpkVZ2ZUvXQqv2cR/92TT+PUh+qY5pQ67xHTgWSXfTosA
+         tIYDDaRrM61WafPS/ssjv+L1QNokJRVdlhpOwFj783zqrY51fBocB3VGH/1FxFnwFezC
+         4Dl5+Ykb73Z7MC9a6kkKdzhQzbb8jVoulXzQOB+EOurSq6XeL2VIcoK4Evd7tlY8x3qd
+         BXow==
+X-Gm-Message-State: APjAAAX0FWfP7rpJqFKUbnZ+Va18qCWTpUPKC/HUxg4n6VRNWj8mYDB6
+        ugh8Ldcljb3zNyXaI+yKQY0KJMypOBiWib5WMkz4Ww==
+X-Google-Smtp-Source: APXvYqyLGmf5hA7M2/cyL7HXFHWdWwqZvDN0JLsgFW3g6Ac6RKBO7DIOjyGN9mPb70HfJHP1DwxpirjyjGcBFVaA5Ik=
+X-Received: by 2002:a67:ecc4:: with SMTP id i4mr16386752vsp.240.1557820869478;
+ Tue, 14 May 2019 01:01:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3362d96a6d95d852753739384ded814f5269aac.camel@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190510192514.19301-1-namit@vmware.com>
+In-Reply-To: <20190510192514.19301-1-namit@vmware.com>
+From:   Paul Turner <pjt@google.com>
+Date:   Tue, 14 May 2019 01:00:33 -0700
+Message-ID: <CAPM31RJ_vQsLp3nK5nhq0U8J+x_9w=aV+TtPGj7vdtiOKPpw8g@mail.gmail.com>
+Subject: Re: [RFC] x86: Speculative execution warnings
+To:     Nadav Amit <namit@vmware.com>
+Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirsky <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 11, 2019 at 08:43:23AM +0200, Knut Omang wrote:
-> On Fri, 2019-05-10 at 14:59 -0700, Frank Rowand wrote:
-> > On 5/10/19 3:23 AM, Brendan Higgins wrote:
-> > >> On Fri, May 10, 2019 at 7:49 AM Knut Omang <knut.omang@oracle.com> wrote:
-> > >>>
-> > >>> On Thu, 2019-05-09 at 22:18 -0700, Frank Rowand wrote:
-> > >>>> On 5/9/19 4:40 PM, Logan Gunthorpe wrote:
-> > >>>>>
-> > >>>>>
-> > >>>>> On 2019-05-09 5:30 p.m., Theodore Ts'o wrote:
-> > >>>>>> On Thu, May 09, 2019 at 04:20:05PM -0600, Logan Gunthorpe wrote:
-> > >>>>>>>
-> > >>>>>>> The second item, arguably, does have significant overlap with kselftest.
-> > >>>>>>> Whether you are running short tests in a light weight UML environment or
-> > >>>>>>> higher level tests in an heavier VM the two could be using the same
-> > >>>>>>> framework for writing or defining in-kernel tests. It *may* also be valuable
-> > >>>>>>> for some people to be able to run all the UML tests in the heavy VM
-> > >>>>>>> environment along side other higher level tests.
-> > >>>>>>>
-> > >>>>>>> Looking at the selftests tree in the repo, we already have similar items to
-> > >>>>>>> what Kunit is adding as I described in point (2) above. kselftest_harness.h
-> > >>>>>>> contains macros like EXPECT_* and ASSERT_* with very similar intentions to
-> > >>>>>>> the new KUNIT_EXECPT_* and KUNIT_ASSERT_* macros.
-> > >>>>>>>
-> > >>>>>>> However, the number of users of this harness appears to be quite small. Most
-> > >>>>>>> of the code in the selftests tree seems to be a random mismash of scripts
-> > >>>>>>> and userspace code so it's not hard to see it as something completely
-> > >>>>>>> different from the new Kunit:
-> > >>>>>>>
-> > >>>>>>> $ git grep --files-with-matches kselftest_harness.h *
-> > >>>>>>
-> > >>>>>> To the extent that we can unify how tests are written, I agree that
-> > >>>>>> this would be a good thing.  However, you should note that
-> > >>>>>> kselftest_harness.h is currently assums that it will be included in
-> > >>>>>> userspace programs.  This is most obviously seen if you look closely
-> > >>>>>> at the functions defined in the header files which makes calls to
-> > >>>>>> fork(), abort() and fprintf().
-> > >>>>>
-> > >>>>> Ah, yes. I obviously did not dig deep enough. Using kunit for
-> > >>>>> in-kernel tests and kselftest_harness for userspace tests seems like
-> > >>>>> a sensible line to draw to me. Trying to unify kernel and userspace
-> > >>>>> here sounds like it could be difficult so it's probably not worth
-> > >>>>> forcing the issue unless someone wants to do some really fancy work
-> > >>>>> to get it done.
-> > >>>>>
-> > >>>>> Based on some of the other commenters, I was under the impression
-> > >>>>> that kselftests had in-kernel tests but I'm not sure where or if they
-> > >>>>> exist.
-> > >>>>
-> > >>>> YES, kselftest has in-kernel tests.  (Excuse the shouting...)
-> > >>>>
-> > >>>> Here is a likely list of them in the kernel source tree:
-> > >>>>
-> > >>>> $ grep module_init lib/test_*.c
-> > >>>> lib/test_bitfield.c:module_init(test_bitfields)
-> > >>>> lib/test_bitmap.c:module_init(test_bitmap_init);
-> > >>>> lib/test_bpf.c:module_init(test_bpf_init);
-> > >>>> lib/test_debug_virtual.c:module_init(test_debug_virtual_init);
-> > >>>> lib/test_firmware.c:module_init(test_firmware_init);
-> > >>>> lib/test_hash.c:module_init(test_hash_init);  /* Does everything */
-> > >>>> lib/test_hexdump.c:module_init(test_hexdump_init);
-> > >>>> lib/test_ida.c:module_init(ida_checks);
-> > >>>> lib/test_kasan.c:module_init(kmalloc_tests_init);
-> > >>>> lib/test_list_sort.c:module_init(list_sort_test);
-> > >>>> lib/test_memcat_p.c:module_init(test_memcat_p_init);
-> > >>>> lib/test_module.c:static int __init test_module_init(void)
-> > >>>> lib/test_module.c:module_init(test_module_init);
-> > >>>> lib/test_objagg.c:module_init(test_objagg_init);
-> > >>>> lib/test_overflow.c:static int __init test_module_init(void)
-> > >>>> lib/test_overflow.c:module_init(test_module_init);
-> > >>>> lib/test_parman.c:module_init(test_parman_init);
-> > >>>> lib/test_printf.c:module_init(test_printf_init);
-> > >>>> lib/test_rhashtable.c:module_init(test_rht_init);
-> > >>>> lib/test_siphash.c:module_init(siphash_test_init);
-> > >>>> lib/test_sort.c:module_init(test_sort_init);
-> > >>>> lib/test_stackinit.c:module_init(test_stackinit_init);
-> > >>>> lib/test_static_key_base.c:module_init(test_static_key_base_init);
-> > >>>> lib/test_static_keys.c:module_init(test_static_key_init);
-> > >>>> lib/test_string.c:module_init(string_selftest_init);
-> > >>>> lib/test_ubsan.c:module_init(test_ubsan_init);
-> > >>>> lib/test_user_copy.c:module_init(test_user_copy_init);
-> > >>>> lib/test_uuid.c:module_init(test_uuid_init);
-> > >>>> lib/test_vmalloc.c:module_init(vmalloc_test_init)
-> > >>>> lib/test_xarray.c:module_init(xarray_checks);
-> > >>>>
-> > >>>>
-> > >>>>> If they do exists, it seems like it would make sense to
-> > >>>>> convert those to kunit and have Kunit tests run-able in a VM or
-> > >>>>> baremetal instance.
-> > >>>>
-> > >>>> They already run in a VM.
-> > >>>>
-> > >>>> They already run on bare metal.
-> > >>>>
-> > >>>> They already run in UML.
-> > >>>>
-> > >>>> This is not to say that KUnit does not make sense.  But I'm still trying
-> > >>>> to get a better description of the KUnit features (and there are
-> > >>>> some).
-> > >>>
-> > >>> FYI, I have a master student who looks at converting some of these to KTF, such as
-> > for
-> > >>> instance the XArray tests, which lended themselves quite good to a semi-automated
-> > >>> conversion.
-> > >>>
-> > >>> The result is also a somewhat more compact code as well as the flexibility
-> > >>> provided by the Googletest executor and the KTF frameworks, such as running selected
-> > >>> tests, output formatting, debugging features etc.
-> > >>
-> > >> So is KTF already in upstream? Or is the plan to unify the KTF and
-> > > 
-> > > I am not certain about KTF's upstream plans, but I assume that Knut
-> > > would have CC'ed me on the thread if he had started working on it.
-> > > 
-> > >> Kunit in-kernel test harnesses? Because there's tons of these
-> > > 
-> > > No, no plan. Knut and I talked about this a good while ago and it
-> > > seemed that we had pretty fundamentally different approaches both in
-> > > terms of implementation and end goal. Combining them seemed pretty
-> > > infeasible, at least from a technical perspective. Anyway, I am sure
-> > > Knut would like to give him perspective on the matter and I don't want
-> > > to say too much without first giving him a chance to chime in on the
-> > > matter.
-> > > 
-> > > Nevertheless, I hope you don't see resolving this as a condition for
-> > > accepting this patchset. I had several rounds of RFC on KUnit, and no
-> > > one had previously brought this up.
-> > 
-> > I seem to recall a request in reply to the KUnit RFC email threads to
-> > work together.
-> 
-> You recall right.
-> I wanted us to work together to refine a common approach.
+From: Nadav Amit <namit@vmware.com>
+Date: Fri, May 10, 2019 at 7:45 PM
+To: <x86@kernel.org>
+Cc: Borislav Petkov, <linux-kernel@vger.kernel.org>, Nadav Amit, Andy
+Lutomirsky, Ingo Molnar, Peter Zijlstra, Thomas Gleixner, Jann Horn
 
-Are you talking about right after we met at LPC in 2017? We talked about
-working together, but I thought you didn't really see much value in what
-I was doing with KUnit.
+> It may be useful to check in runtime whether certain assertions are
+> violated even during speculative execution. This can allow to avoid
+> adding unnecessary memory fences and at the same time check that no data
+> leak channels exist.
+>
+> For example, adding such checks can show that allocating zeroed pages
+> can return speculatively non-zeroed pages (the first qword is not
+> zero).  [This might be a problem when the page-fault handler performs
+> software page-walk, for example.]
+>
+> Introduce SPEC_WARN_ON(), which checks in runtime whether a certain
+> condition is violated during speculative execution. The condition should
+> be computed without branches, e.g., using bitwise operators. The check
+> will wait for the condition to be realized (i.e., not speculated), and
+> if the assertion is violated, a warning will be thrown.
+>
+> Warnings can be provided in one of two modes: precise and imprecise.
+> Both mode are not perfect. The precise mode does not always make it easy
+> to understand which assertion was broken, but instead points to a point
+> in the execution somewhere around the point in which the assertion was
+> violated.  In addition, it prints a warning for each violation (unlike
+> WARN_ONCE() like behavior).
+>
+> The imprecise mode, on the other hand, can sometimes throw the wrong
+> indication, specifically if the control flow has changed between the
+> speculative execution and the actual one. Note that it is not a
+> false-positive, it just means that the output would mislead the user to
+> think the wrong assertion was broken.
+>
+> There are some more limitations. Since the mechanism requires an
+> indirect branch, it should not be used in production systems that are
+> susceptible for Spectre v2. The mechanism requires TSX and performance
+> counters that are only available in skylake+. There is a hidden
+> assumption that TSX is not used in the kernel for anything else, other
+> than this mechanism.
+>
 
-Or are you talking about our fist discussion on the RFC[1]. In this
-case, you seemed to assert that KTF's approach was fundamentally
-different and superior. You also didn't really seem interested in trying
-to merge KTF at the time. The discussion concluded with Luis suggesting
-that we should just keep working on both separately and let individual
-users decide.
+Nice trick!
 
-What changed since then?
+Can you eliminate the indirect call by forcing an access fault to
+abort the transaction instead, e.g. "cmove 0, $1"?
 
-> I still think that's possible.
+(If this works, it may also allow support on older architectures as
+the RTM_RETIRED.ABORT* events go back further I believe?)
 
-I hope you aren't asserting that I have been unwilling to work with you.
-At the outset (before I sent out the RFC), I was willing to let you take
-the lead on things, but you didn't seem very interested in anything that
-I brought to the table and most importantly were not interested in
-sending out any code for discussion on the mailing lists.
-
-After I started the RFC, most of your comments were very high level and,
-at least to me, seemed like pretty fundamental philosophical differences
-in our approaches, which is fine! I think Luis recognized that and I
-think that is part of why he suggested for us to continue to work on
-them separately.
-
-I am not trying to be mean, but I don't really know what you expected me
-to do. I don't recall any specific changes you suggested me to make in
-my code (I think you only ever made a single comment on a thread on
-anything other than the cover letter.) And you never proposed any of
-your own code demonstrating an alternative way of doing things.
-
-Nevertheless, you are of course fully welcome to critique anything I
-have proposed, or to propose your own way of doing things, but we need
-to do so here on the mailing lists.
-
-> > However whether that impacts acceptance of this patch set is up to
-> > the maintainer and how she wants to resolve the potential collision
-> > of KUnit and KTF (if there is indeed any sort of collision).
-> 
-> I believe there's overlap and potential for unification and code sharing.
-> My concern is to make sure that that can happen without disrupting too 
-> many test users. I'd really like to get some more time to explore that.
-
-It's possible. Like I said before, our approaches are pretty
-fundamentally different. It sounds like there might be some overlap
-between our expectaion/assertion macros, but we probably cannot use the
-ones from Googletest without introducing C++ into the kernel which is a
-no-no.
-
-> It strikes me that the main difference in the two approaches 
-> lies in the way reporting is done by default. Since KUnit handles all the
-> reporting itself, while KTF relies on Googletest for that, a lot more code 
-> in KUnit revolves around that part, while with KTF we have focused more on 
-> features to enable writing powerful and effective tests.
-
-I have a lot more features on the way, but what is in this initial
-patchset are the absolutely core things needed to produce an MVP, and
-yes, most of that code revolves around reporting and the fundamental
-structure of tests.
-
-Developing cool features is great, but you need to start off on a basis
-that the community will accept. Sometimes you need to play around
-downstream a bit to develop your ideas, but you always want to get
-upstream feedback as early as possible; it's always possible that
-someone might propose something, or point out something that breaks a
-fundamental assumption that all your later features depend on.
-
-> The reporting part can possibly be made configurable: Reporting with printk or reporting 
-> via netlink to user space. In fact, as a KTF debugging option KTF already 
-> supports printk reporting which can be enabled via sysfs.
-
-Yep, I intentionally left an interface so printk (well actually
-vprintk_emit) can be swapped out with another mechanism.
-
-> If macros can have the same syntax, then there's 
-> likely features in KTF that KUnit users would benefit from too. 
-> But this of course have to be tried out.
-
-Cool. Looking forward to hearing about it.
-
-Cheers!
-
-[1] https://lkml.org/lkml/2018/11/24/170
-
-> > >> in-kernel unit tests already, and every merge we get more (Frank's
-> > >> list didn't even look into drivers or anywhere else, e.g. it's missing
-> > >> the locking self tests I worked on in the past), and a more structured
-> > >> approach would really be good.
-> > > 
-> > > Well, that's what I am trying to do. I hope you like it!
-> > > 
-> > > Cheers!
-> > > .
-> > > 
-> > 
-> 
+> The basic idea behind the implementation is to use a performance counter
+> that updates also during speculative execution as an indication for
+> assertion failure. By using conditional-mov, which is not predicted,
+> to affect the control flow, the condition is realized before the event
+> that affects the PMU is triggered.
+>
+> Enable this feature by setting "spec_warn=on" or "spec_warn=precise"
+> kernel parameter. I did not run performance numbers but I guess the
+> overhead should not be too high.
+>
+> I did not run too many tests, but brief experiments suggest that it does
+> work. Let me know if I missed anything and whether you think this can be
+> useful. To be frank, the exact use cases are not super clear, and there
+> are various possible extensions (e.g., ensuring the speculation window
+> is long enough by adding data dependencies). I would appreciate your
+> inputs.
+>
+> Cc: Andy Lutomirsky <luto@kernel.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/Kconfig                     |   4 +
+>  arch/x86/include/asm/nospec-branch.h |  30 +++++
+>  arch/x86/kernel/Makefile             |   1 +
+>  arch/x86/kernel/nospec.c             | 185 +++++++++++++++++++++++++++
+>  4 files changed, 220 insertions(+)
+>  create mode 100644 arch/x86/kernel/nospec.c
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 62fc3fda1a05..2cc57c2172be 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2887,6 +2887,10 @@ config X86_DMA_REMAP
+>  config HAVE_GENERIC_GUP
+>         def_bool y
+>
+> +config DEBUG_SPECULATIVE_EXECUTION
+> +       bool "Debug speculative execution"
+> +       depends on X86_64
+> +
+>  source "drivers/firmware/Kconfig"
+>
+>  source "arch/x86/kvm/Kconfig"
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index dad12b767ba0..3f1af6378304 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -290,6 +290,36 @@ static inline void indirect_branch_prediction_barrier(void)
+>  /* The Intel SPEC CTRL MSR base value cache */
+>  extern u64 x86_spec_ctrl_base;
+>
+> +#ifdef CONFIG_DEBUG_SPECULATIVE_EXECUTION
+> +
+> +extern bool spec_check(unsigned long cond);
+> +
+> +DECLARE_STATIC_KEY_FALSE(spec_test_key);
+> +DECLARE_STATIC_KEY_FALSE(spec_test_precise_key);
+> +
+> +#define SPEC_WARN_ON(cond)                                             \
+> +do {                                                                   \
+> +       bool _error;                                                    \
+> +                                                                       \
+> +       if (!static_branch_unlikely(&spec_test_key))                    \
+> +               break;                                                  \
+> +                                                                       \
+> +       _error = spec_check((unsigned long)(cond));                     \
+> +                                                                       \
+> +       if (static_branch_unlikely(&spec_test_precise_key))             \
+> +               break;                                                  \
+> +                                                                       \
+> +       WARN_ONCE(_error,                                               \
+> +               "Speculative execution assertion failed: (%s)\n",       \
+> +               __stringify(cond));                                     \
+> +} while (0)
+> +
+> +#else
+> +
+> +#define SPEC_BUG_ON(cond)      BUILD_BUG_ON_INVALID(cond)
+> +
+> +#endif
+> +
+>  /*
+>   * With retpoline, we must use IBRS to restrict branch prediction
+>   * before calling into firmware.
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 00b7e27bc2b7..63a3a1420f8e 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -139,6 +139,7 @@ obj-$(CONFIG_X86_INTEL_UMIP)                += umip.o
+>  obj-$(CONFIG_UNWINDER_ORC)             += unwind_orc.o
+>  obj-$(CONFIG_UNWINDER_FRAME_POINTER)   += unwind_frame.o
+>  obj-$(CONFIG_UNWINDER_GUESS)           += unwind_guess.o
+> +obj-y                                  += nospec.o
+>
+>  ###
+>  # 64 bit specific files
+> diff --git a/arch/x86/kernel/nospec.c b/arch/x86/kernel/nospec.c
+> new file mode 100644
+> index 000000000000..9e0711d34543
+> --- /dev/null
+> +++ b/arch/x86/kernel/nospec.c
+> @@ -0,0 +1,185 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/init.h>
+> +#include <linux/perf_event.h>
+> +
+> +#include <asm/cmdline.h>
+> +
+> +#include "../events/perf_event.h"
+> +
+> +#ifdef CONFIG_DEBUG_SPECULATIVE_EXECUTION
+> +
+> +static struct perf_event_attr spec_event_attr = {
+> +       .type                   = PERF_TYPE_RAW,
+> +       .size                   = sizeof(struct perf_event_attr),
+> +       .config                 = 0x15d,
+> +       .sample_freq            = 1,
+> +       .pinned                 = 1,
+> +       .freq                   = 1,
+> +       .exclude_user           = 1,
+> +};
+> +
+> +static DEFINE_PER_CPU(unsigned int, spec_warn_irq_count);
+> +
+> +DEFINE_STATIC_KEY_FALSE(spec_test_key);
+> +EXPORT_SYMBOL(spec_test_key);
+> +
+> +DEFINE_STATIC_KEY_FALSE(spec_test_precise_key);
+> +EXPORT_SYMBOL(spec_test_precise_key);
+> +
+> +static void spec_event_handler(struct perf_event *evt,
+> +               struct perf_sample_data *data, struct pt_regs *regs)
+> +{
+> +       unsigned int cnt;
+> +
+> +       /*
+> +        * We need a barrier to prevent the xabort from being executed
+> +        * speculatively.
+> +        */
+> +
+> +       indirect_branch_prediction_barrier();
+> +
+> +       /*
+> +        * Avoid false positives or wrong indications in the wrong spot due to
+> +        * IRQs.
+> +        */
+> +       cnt = this_cpu_read(irq_count);
+> +       this_cpu_write(spec_warn_irq_count, cnt);
+> +       if (!static_branch_unlikely(&spec_test_precise_key))
+> +               return;
+> +
+> +       WARN(1, "Speculative execution detected at ip=%lx\n", regs->ip);
+> +}
+> +
+> +static DEFINE_PER_CPU(struct perf_event *, spec_perf_event);
+> +
+> +void nop_func(void)
+> +{
+> +}
+> +
+> +void xabort_func(void)
+> +{
+> +       asm volatile ("xabort $1");
+> +}
+> +
+> +bool spec_check(unsigned long cond)
+> +{
+> +       bool error = false;
+> +
+> +       /*
+> +        * Avoid mistakenly triggering more events inside the NMI handler. We
+> +        * will assume that this condition can be resolved with speculation.
+> +        */
+> +       if (in_nmi())
+> +               return 0;
+> +
+> +       preempt_disable();
+> +
+> +       /*
+> +        * Run a transaction which would only trigger xabort if the condition
+> +        * is true. This xabort is counted by the PMU and  will trigger an
+> +        * interrupt. The conditional move prevents speculative evaluation of
+> +        * the condition. The branch would not mistakenly be mispredicted later
+> +        * to run xabort again, since we run IBPB in the nmi handler.
+> +        *
+> +        * The implementation is based on the assumption cmov's are not going
+> +        * through prediction, which is a common assumption. It is based on
+> +        * Intel SDM saying "Use the SETCC and CMOV instructions to eliminate
+> +        * unpredictable conditional branches where possible".
+> +        *
+> +        * This code is susceptible to Spectre v2 attacks.
+> +        */
+> +       asm volatile ("xbegin 1f\n\t"
+> +                     "movq nop_func, %%rax\n\t"
+> +                     "testq %[cond], %[cond]\n\t"
+> +                     "cmovnzq %[xabort_func], %%rax\n\t"
+> +                     ANNOTATE_RETPOLINE_SAFE
+> +                     "call *%%rax\n\t"
+> +                     "xend\n\t"
+> +                     "1:" : : [cond]"r"((u64)(cond)), [xabort_func]"r"(xabort_func) :
+> +                               "memory", "rax");
+> +
+> +       /*
+> +        * Prevent wrong alerts due to speculative events that happened in the
+> +        * IRQ handler.
+> +        */
+> +       if (likely(__this_cpu_read(spec_warn_irq_count) != __this_cpu_read(irq_count)))
+> +               goto out;
+> +
+> +       /* Check again with IRQs disabled to be sure we get a stable read. */
+> +       this_cpu_write(spec_warn_irq_count, -2);
+> +       error = true;
+> +out:
+> +       preempt_enable();
+> +       return error;
+> +}
+> +EXPORT_SYMBOL(spec_check);
+> +
+> +static int __init nospec_init(void)
+> +{
+> +       int cpu, len;
+> +       char buf[20];
+> +       bool precise, enable;
+> +
+> +       /* Check the TSX and PMU are supported */
+> +       if (!boot_cpu_has(X86_FEATURE_RTM) || !boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
+> +               pr_err("Speculative checks are not supported on this CPU");
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * Unlike their name indicates, precise warnings are actually
+> +        * imprecise, in the sense that they do not provide the exact code that
+> +        * caused the speculation failure. They are precise in the sense that
+> +        * they are prevent scenarios that the wrong assertion will be assumed
+> +        * to fail.  This might happen if speculatively a certain assertion
+> +        * fails, but on the actual execution, this assertion does not fail.
+> +        */
+> +       len = cmdline_find_option(boot_command_line, "spec_warn",  buf, sizeof(buf));
+> +
+> +       if (len < 0)
+> +               return 0;
+> +
+> +       precise = (len == 7 && !strncmp(buf, "precise", 7));
+> +       enable = (len == 2 && !strncmp(buf, "on", 2)) || precise;
+> +
+> +       if (!enable) {
+> +               pr_err("Invalid spec_warn argument (spec_warn=%s)", buf);
+> +               return 0;
+> +       }
+> +
+> +       /* Set impossible value in order not to trigger a warning */
+> +       for_each_online_cpu(cpu)
+> +               per_cpu(spec_warn_irq_count, cpu) = (unsigned int)-2;
+> +
+> +       if (precise)
+> +               static_key_enable(&spec_test_precise_key.key);
+> +
+> +       pr_info("Enabling %s speculative execution checks",
+> +                       precise ? "precise" : "imprecise");
+> +
+> +       /*
+> +        * For each CPU, set a performance counter to trigger a PMU interrupt
+> +        * whenever an instruction that causes a transaction abort is executed.
+> +        * These instruction will only be counted within a transaction.
+> +        */
+> +       for_each_online_cpu(cpu) {
+> +               struct perf_event *evt =
+> +                       perf_event_create_kernel_counter(&spec_event_attr, cpu,
+> +                                       NULL, &spec_event_handler, NULL);
+> +
+> +               if (!evt) {
+> +                       pr_err("Failed to enable speculative checks");
+> +                       break;
+> +               }
+> +
+> +               per_cpu(spec_perf_event, cpu) = evt;
+> +       }
+> +
+> +       static_key_enable(&spec_test_key.key);
+> +
+> +       return 0;
+> +}
+> +arch_initcall(nospec_init);
+> +
+> +#endif
+> --
+> 2.19.1
+>
