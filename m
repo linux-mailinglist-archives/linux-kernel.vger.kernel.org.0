@@ -2,123 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C34991C4A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FA21C4C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfENI1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:27:08 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36198 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfENI1D (ORCPT
+        id S1726779AbfENI1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:27:37 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59152 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726148AbfENI1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:27:03 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j187so1834489wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=O97zZZn1z4pV5/CBd0LynhS3xGUIwq2UphBG0p1YFRQ=;
-        b=bPf4WuuYIqH2CH9bQmXEo1O34FgtRlbigWtGU36yskR/JqXCQ/OJg76GS3qGPgMcR3
-         vHOr3yIF50qoEfqp2acVrlqRNwYxmCtwNrQxxMlMjfvOMjYEq/hfhCPcZ92ywzjH/Wu3
-         2X6f+ps9mNRR882qkn9/0YTWP3xAaw/S8SMi6j7LPy5n84ItH994gvgN8f22JsCBQjiW
-         2ptIfpHlkGvIz1fhsW+HEgTyY/tnOsLHH50eYsvvTCPLuOPqAkvdQHlfZ5sKy7IQeD4U
-         1nbAL8REhP2W/4aftAOOcxBoc9DY+hyc2QYH17vGyL2+bpQ9vJAjSpnIIXL6OUuQ3TNo
-         8wUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=O97zZZn1z4pV5/CBd0LynhS3xGUIwq2UphBG0p1YFRQ=;
-        b=umGdB90bjNq6jvboVDiNIqo3uaYn3DrpdY6vFBy7XhDV/2dEbI/w9IWfGjJy/9oftS
-         ft5FkUuMMvxYyNi09uNgsmF/uccYmR/jeLwF7tFZL8yORanmFA7Tk4xmUDte+aTNKaPv
-         lC+Z/vhuqRwDGcROY/GraV+dRYjWLVqWSAk32T1PiOk/7uU9YTNYuM0EHa1VvXhRszTI
-         mBFbrNNFGuRVMT941ncpgiqiuIaZg5pm3G9YSHo6CFKFOe44FLTpXH2PeinoLhZ7xDUL
-         +7OmvIQ7tDeoG+ayCZjhAyMSkFXsl59BvCO8svHKj3iLa03ju+OUxhbVv/m6iDKGW8a8
-         oXaA==
-X-Gm-Message-State: APjAAAUvaj7b1cLp+Qk3+ADhwIVHAPZobt2sFqgzZqHNyrJ8Dciawflv
-        8J241NUw5RXYk2LYOb/z/zK5RQ==
-X-Google-Smtp-Source: APXvYqwgUQzayw2v0ikkYZxkiB0BG9CeOqyLkpcMOf/bqVkm0uyUrcKtkGPsT8Nrob/g7fdLlQ43wg==
-X-Received: by 2002:a7b:c8d1:: with SMTP id f17mr5244524wml.45.1557822421448;
-        Tue, 14 May 2019 01:27:01 -0700 (PDT)
-Received: from glaroque-ThinkPad-T480.home ([2a01:cb1d:379:8b00:1910:6694:7019:d3a])
-        by smtp.gmail.com with ESMTPSA id j190sm2450772wmb.19.2019.05.14.01.27.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 01:27:01 -0700 (PDT)
-From:   Guillaume La Roque <glaroque@baylibre.com>
-To:     linus.walleij@linaro.org, khilman@baylibre.com
-Cc:     jbrunet@baylibre.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/6] pinctrl: meson: g12a: add DS bank value
-Date:   Tue, 14 May 2019 10:26:52 +0200
-Message-Id: <20190514082652.20686-7-glaroque@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190514082652.20686-1-glaroque@baylibre.com>
-References: <20190514082652.20686-1-glaroque@baylibre.com>
+        Tue, 14 May 2019 04:27:32 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E8Q8xp029562;
+        Tue, 14 May 2019 10:27:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=cSw7dbXcAbS5Q/0FeaUhUZjqh7E4PIut1NGw2jFxHQc=;
+ b=RbfAZWNaTw7ekn4Qvx6XDaQ9kqvaprs9BUC9VSJL84SFK4sSm4IYGB51dn7AVuELdKoP
+ JSLiGo8Fmqbtkb59Zu0MpxjzII8Uvb6kOpnhQnrURRAMdVfldmCuTLq+IdVrZkk1eDgv
+ gcWXN1t+8q2Bs9CVPZ2C7eIGkBEZnSfZEPbP5eDejPJeEuWjC2uT5p2GFDtUUyDHvBFQ
+ 20//UDlxX1gc5+EWb3v/UiVhVHOhGayDDMnxANEaOvvpz+sYlUclC0+XaQPUSH0W9JS6
+ XA6upeebVf4E7YerIPeavihghI6g1hWcVEekqpgFqlBZ2R84MtOZV7lznn3YJb8dip9A sQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2sdkuyqnmk-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 14 May 2019 10:27:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B86A434;
+        Tue, 14 May 2019 08:27:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E2C81551;
+        Tue, 14 May 2019 08:27:07 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May
+ 2019 10:27:07 +0200
+Received: from localhost (10.201.23.25) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May 2019 10:27:06
+ +0200
+From:   Fabien Dessenne <fabien.dessenne@st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        "Ludovic Barre" <ludovic.barre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v4 0/8] stm32 m4 remoteproc on STM32MP157c
+Date:   Tue, 14 May 2019 10:26:55 +0200
+Message-ID: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.25]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add drive-strength bank regiter and bit value for G12A SoC
+STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
+Cortex-M4.
+This patchset adds the support of the stm32_rproc driver allowing to control
+the M4 remote processor.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pinctrl/meson/pinctrl-meson-g12a.c | 36 +++++++++++-----------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+Changes since v3:
+-Replaced "st,auto_boot" with "st,auto-boot"
+-Update m4 reg values and align with unit-address
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index d494492e98e9..3475cd7bd2af 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -1304,28 +1304,28 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- };
- 
- static struct meson_bank meson_g12a_periphs_banks[] = {
--	/* name  first  last  irq  pullen  pull  dir  out  in */
--	BANK("Z",    GPIOZ_0,    GPIOZ_15, 12, 27,
--	     4,  0,  4,  0,  12,  0,  13, 0,  14, 0),
--	BANK("H",    GPIOH_0,    GPIOH_8, 28, 36,
--	     3,  0,  3,  0,  9,  0,  10,  0,  11,  0),
--	BANK("BOOT", BOOT_0,     BOOT_15,  37, 52,
--	     0,  0,  0,  0,  0, 0,  1, 0,  2, 0),
--	BANK("C",    GPIOC_0,    GPIOC_7,  53, 60,
--	     1,  0,  1,  0,  3, 0,  4, 0,  5, 0),
--	BANK("A",    GPIOA_0,    GPIOA_15,  61, 76,
--	     5,  0,  5,  0,  16,  0,  17,  0,  18,  0),
--	BANK("X",    GPIOX_0,    GPIOX_19,   77, 96,
--	     2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
-+	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
-+	BANK_DS("Z",    GPIOZ_0,    GPIOZ_15, 12, 27,
-+		4,  0,  4,  0,  12,  0,  13, 0,  14, 0, 5, 0),
-+	BANK_DS("H",    GPIOH_0,    GPIOH_8, 28, 36,
-+		3,  0,  3,  0,  9,  0,  10,  0,  11,  0, 4, 0),
-+	BANK_DS("BOOT", BOOT_0,     BOOT_15,  37, 52,
-+		0,  0,  0,  0,  0, 0,  1, 0,  2, 0, 0, 0),
-+	BANK_DS("C",    GPIOC_0,    GPIOC_7,  53, 60,
-+		1,  0,  1,  0,  3, 0,  4, 0,  5, 0, 1, 0),
-+	BANK_DS("A",    GPIOA_0,    GPIOA_15,  61, 76,
-+		5,  0,  5,  0,  16,  0,  17,  0,  18,  0, 6, 0),
-+	BANK_DS("X",    GPIOX_0,    GPIOX_19,   77, 96,
-+		2,  0,  2,  0,  6,  0,  7,  0,  8,  0, 2, 0),
- };
- 
- static struct meson_bank meson_g12a_aobus_banks[] = {
--	/* name  first  last  irq  pullen  pull  dir  out  in  */
--	BANK("AO",   GPIOAO_0,  GPIOAO_11,  0, 11,
--	     3,  0,  2, 0,  0,  0,  4, 0,  1,  0),
-+	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
-+	BANK_DS("AO", GPIOAO_0, GPIOAO_11, 0, 11, 3, 0, 2, 0, 0, 0, 4, 0, 1, 0,
-+		0, 0),
- 	/* GPIOE actually located in the AO bank */
--	BANK("E",   GPIOE_0,  GPIOE_2,   97, 99,
--	     3,  16,  2, 16,  0,  16,  4, 16,  1,  16),
-+	BANK_DS("E", GPIOE_0, GPIOE_2, 97, 99, 3, 16, 2, 16, 0, 16, 4, 16, 1,
-+		16, 1, 0),
- };
- 
- static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
+Changes since v2:
+- Clarified "reg" description
+- Change m4 unit adress to 38000000
+- Renamed "auto_boot" in "st,auto-boot"
+
+Changes since v1:
+- Gave details about the memory mapping (in bindings).
+- Used 'dma-ranges' instead of 'ranges'.
+- Updated the 'compatible' property.
+- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
+- Clarified why / when mailboxes are optional.
+
+Fabien Dessenne (8):
+  dt-bindings: stm32: add bindings for ML-AHB interconnect
+  dt-bindings: remoteproc: add bindings for stm32 remote processor
+    driver
+  remoteproc: stm32: add an ST stm32_rproc driver
+  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+
+ .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
+ drivers/remoteproc/Kconfig                         |  15 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+ 8 files changed, 868 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
+
 -- 
-2.17.1
+2.7.4
 
