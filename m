@@ -2,119 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A471CB43
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0388A1CAFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:55:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfENPAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:00:03 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7644 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725854AbfENPAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:00:03 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 80CFEE82291E955F230C;
-        Tue, 14 May 2019 22:56:11 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 May 2019
- 22:56:04 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <paulus@samba.org>, <gnault@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] ppp: deflate: Fix possible crash in deflate_init
-Date:   Tue, 14 May 2019 22:55:32 +0800
-Message-ID: <20190514145532.21932-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190514074300.42588-1-yuehaibing@huawei.com>
-References: <20190514074300.42588-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        id S1726520AbfENOzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:55:50 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42026 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfENOzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 10:55:49 -0400
+Received: by mail-qk1-f195.google.com with SMTP id d4so10449214qkc.9
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:55:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7kGY/UxYYLr+YI89dChLQwq+Sl4QElIXlRa9KLaAqLc=;
+        b=Ie1FW8t/zgtSHMLE2lv6OkWmsD0oHrb8dnkzxez9BUMpQYX4t445sRjeAKgrjA7gNq
+         WZ+YK+yyNYBGivt+XlQQ0/ID8fRy14jEYu/8aGAM5rft2MiqJH6UfW2XSfA1rJ9EH9VU
+         oNJrwWHJU3YNPOJaAq0LTm9px6raXtNI79sLYOu686Yg4euDvJ3lIePTNVKPqrMDG/0t
+         pdecmTsjtjsMD1DGa8Ynj3tu+Oo6MZfqLnX8+iccbLm0GEXBQqjsEa4x7oxY3k8XhKeg
+         rC9ZW9jRKt3+aUCnp1hidNEQG50mtkTRoJinWF+6rgMSvDuVjhdiFV5dP4GLYc5Vl0tF
+         sRFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7kGY/UxYYLr+YI89dChLQwq+Sl4QElIXlRa9KLaAqLc=;
+        b=X+iWErW5xlMHJPGG4lcKJOU/hNzGJ4fE7h01MLtpQ/pgY5U8D7O+uY2jCl1pWTGxqD
+         /L6epxku+VYdJnMi+Q5p96AWxRuomlLARRDitaDQ/8atMJ2uI53EjWBI10ggQnzxNNc1
+         BfCvHBFCHNksbu81VUfHnfqXwUu0S9+qwoSP41GM3uaLwNYF/brWFtRkeMQ9F1Zht95L
+         1SSe6wpxa7evnIoqltIyTpmiU3UL+hLp3UeJq93EefYIWxY9ornaWqYMCeSVlE0LhIYX
+         rKzq+lp4V+1QFAR8AYqfa4vG7MR+dBlG1YGLcs5Uamvn0J+NISxllHguQc77Jmv7hbMu
+         1m5w==
+X-Gm-Message-State: APjAAAXf/hSVdLEjjxN7LZhqmM+Ii24idyRbFxCLBQoouue7/WwaItBe
+        ZHi9PGySxlX1+wvE9C8Rufj0wYFlz9Q=
+X-Google-Smtp-Source: APXvYqyyouR/emlU+oGf1TyeVSV5Y8Cb0m/ABHv93umiARSns7lGaXQJkvikuj3dJnQac8uYNBfw3Q==
+X-Received: by 2002:a37:508a:: with SMTP id e132mr27875371qkb.281.1557845748158;
+        Tue, 14 May 2019 07:55:48 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id r143sm546809qke.62.2019.05.14.07.55.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 07:55:47 -0700 (PDT)
+Message-ID: <1557845746.6132.27.camel@lca.pw>
+Subject: Re: [PATCH] iommu/amd: print out "tag" in INVALID_PPR_REQUEST
+From:   Qian Cai <cai@lca.pw>
+To:     Gary R Hook <ghook@amd.com>, "jroedel@suse.de" <jroedel@suse.de>
+Cc:     "Hook, Gary" <Gary.Hook@amd.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 14 May 2019 10:55:46 -0400
+In-Reply-To: <ea379dc8-dd6b-f204-0abc-7b6fe87a851b@amd.com>
+References: <20190506041106.29167-1-cai@lca.pw>
+         <ea379dc8-dd6b-f204-0abc-7b6fe87a851b@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUG: unable to handle kernel paging request at ffffffffa018f000
-PGD 3270067 P4D 3270067 PUD 3271063 PMD 2307eb067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP
-CPU: 0 PID: 4138 Comm: modprobe Not tainted 5.1.0-rc7+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:ppp_register_compressor+0x3e/0xd0 [ppp_generic]
-Code: 98 4a 3f e2 48 8b 15 c1 67 00 00 41 8b 0c 24 48 81 fa 40 f0 19 a0
-75 0e eb 35 48 8b 12 48 81 fa 40 f0 19 a0 74
-RSP: 0018:ffffc90000d93c68 EFLAGS: 00010287
-RAX: ffffffffa018f000 RBX: ffffffffa01a3000 RCX: 000000000000001a
-RDX: ffff888230c750a0 RSI: 0000000000000000 RDI: ffffffffa019f000
-RBP: ffffc90000d93c80 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa0194080
-R13: ffff88822ee1a700 R14: 0000000000000000 R15: ffffc90000d93e78
-FS:  00007f2339557540(0000) GS:ffff888237a00000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffa018f000 CR3: 000000022bde4000 CR4: 00000000000006f0
-Call Trace:
- ? 0xffffffffa01a3000
- deflate_init+0x11/0x1000 [ppp_deflate]
- ? 0xffffffffa01a3000
- do_one_initcall+0x6c/0x3cc
- ? kmem_cache_alloc_trace+0x248/0x3b0
- do_init_module+0x5b/0x1f1
- load_module+0x1db1/0x2690
- ? m_show+0x1d0/0x1d0
- __do_sys_finit_module+0xc5/0xd0
- __x64_sys_finit_module+0x15/0x20
- do_syscall_64+0x6b/0x1d0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+On Tue, 2019-05-07 at 13:47 +0000, Gary R Hook wrote:
+> On 5/5/19 11:11 PM, Qian Cai wrote:
+> > [CAUTION: External Email]
+> > 
+> > The commit e7f63ffc1bf1 ("iommu/amd: Update logging information for new
+> > event type") introduced a variable "tag" but had never used it which
+> > generates a warning below,
+> > 
+> > drivers/iommu/amd_iommu.c: In function 'iommu_print_event':
+> > drivers/iommu/amd_iommu.c:567:33: warning: variable 'tag' set but not
+> > used [-Wunused-but-set-variable]
+> >    int type, devid, pasid, flags, tag;
+> >                                   ^~~
+> > so just use it during the logging.
+> > 
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+> > ---
+> >   drivers/iommu/amd_iommu.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> > index f7cdd2ab7f11..52f41369c5b3 100644
+> > --- a/drivers/iommu/amd_iommu.c
+> > +++ b/drivers/iommu/amd_iommu.c
+> > @@ -631,9 +631,9 @@ static void iommu_print_event(struct amd_iommu *iommu,
+> > void *__evt)
+> >                  pasid = ((event[0] >> 16) & 0xFFFF)
+> >                          | ((event[1] << 6) & 0xF0000);
+> >                  tag = event[1] & 0x03FF;
+> > -               dev_err(dev, "Event logged [INVALID_PPR_REQUEST
+> > device=%02x:%02x.%x pasid=0x%05x address=0x%llx flags=0x%04x]\n",
+> > +               dev_err(dev, "Event logged [INVALID_PPR_REQUEST
+> > device=%02x:%02x.%x pasid=0x%05x tag=0x%04x address=0x%llx flags=0x%04x]\n",
+> >                          PCI_BUS_NUM(devid), PCI_SLOT(devid),
+> > PCI_FUNC(devid),
+> > -                       pasid, address, flags);
+> > +                       pasid, tag, address, flags);
+> >                  break;
+> >          default:
+> >                  dev_err(dev, "Event logged [UNKNOWN event[0]=0x%08x
+> > event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
+> 
+> I did manage to overlook that variable when I posted the original patch. 
+> But it looks to me like 41e59a41fc5d1 (iommu tree) already fixed this... 
+> I'm not sure why it never got pushed to the main tree.
 
-If ppp_deflate fails to register in deflate_init,
-module initialization failed out, however
-ppp_deflate_draft may has been regiestred and not
-unregistered before return.
-Then the seconed modprobe will trigger crash like this.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: also check ppp_deflate_draft registration
----
- drivers/net/ppp/ppp_deflate.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ppp/ppp_deflate.c b/drivers/net/ppp/ppp_deflate.c
-index b5edc7f..685e875 100644
---- a/drivers/net/ppp/ppp_deflate.c
-+++ b/drivers/net/ppp/ppp_deflate.c
-@@ -610,12 +610,20 @@ static void z_incomp(void *arg, unsigned char *ibuf, int icnt)
- 
- static int __init deflate_init(void)
- {
--        int answer = ppp_register_compressor(&ppp_deflate);
--        if (answer == 0)
--                printk(KERN_INFO
--		       "PPP Deflate Compression module registered\n");
--	ppp_register_compressor(&ppp_deflate_draft);
--        return answer;
-+	int rc;
-+
-+	rc = ppp_register_compressor(&ppp_deflate);
-+	if (rc)
-+		return rc;
-+
-+	rc = ppp_register_compressor(&ppp_deflate_draft);
-+	if (rc) {
-+		ppp_unregister_compressor(&ppp_deflate);
-+		return rc;
-+	}
-+
-+	pr_info("PPP Deflate Compression module registered\n");
-+	return 0;
- }
- 
- static void __exit deflate_cleanup(void)
--- 
-1.8.3.1
-
-
+Jroedel, I am wondering what the plan for 41e59a41fc5d1 (iommu tree) or this
+patch to be pushed to the linux-next or mainline...
