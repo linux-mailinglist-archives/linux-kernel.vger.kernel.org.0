@@ -2,195 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9841C037
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 02:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD921C03B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 02:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfENAzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 May 2019 20:55:25 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42696 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfENAzY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 May 2019 20:55:24 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j53so17050409qta.9
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2019 17:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=pUBFTG3mMVYxmSF25knkwovcz+vklh44Q18Z6S9OSMc=;
-        b=MEimntidxOkQd50CgVh8V2VxRsFvKBoAstt85gad8xJKVyOeEoV11zNRiqblSvAjiq
-         1QMi0NcKTVMLI1kA/Ti0gtw7ZFby3wLfPdAYxMEersXhqvV0bIM4WNTeqPD3JVn0eq3L
-         fXCzgi2TPzX1K+d0wwQ8aa0i+RPNEWdCQhRT0tVOFlu9oLDteHUUwFB6fGSD9P5kO5Fy
-         QMPfyLpS3waf7LwPmFKhZOL+oGi8jEkKE5cOJIomUMyRcDSV7JsDlyP/y0jWzDqj9i00
-         VlzwONALu4JbkW8pjGfZbB2qrLpPHFJKoEUZRXHhDVxONQG1nfBbKJzOdnph7/mfKImg
-         wP8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=pUBFTG3mMVYxmSF25knkwovcz+vklh44Q18Z6S9OSMc=;
-        b=s6EAQ4kyv31z3OmCozPk1xzOxaLe4S/i5G2hnk6yWwzQWJYDDFgBUSfJbqNBYnZNLn
-         gwNm47ZNvxDQmgF7I/3wEXUlMW7sy1lt3wKkWgqhqhBm9Kmo7KC8thqoMMzDe0+EwXmS
-         SzazdIveZNiP/PymcGl3pv844s5Z9DxW3SYhyhU8YXsBg8oJqQ2l5UPNybn9u0QYDdiy
-         upWokKT1C0yF0Nq6e7psIUH7OITbVWvi0K095Z0XmBYIjAH9kN04S0di7OrR2JC1ao7p
-         XT4vEjt6vBfBEHke2z5VzHoCyD3j53gkRcCX3vQex+f9jvZQ4DPdbLSjQOeptVdzjgg4
-         iPYw==
-X-Gm-Message-State: APjAAAXpXMKRqnU/a/h8Jbe+c/lqL5r9T70TmtsjSyDfqBOmRuaNuYaS
-        +yXjJE5g2Qt2INACkcaMDO4ZhQ==
-X-Google-Smtp-Source: APXvYqyBUTx5Iw2WP9ZH7PL2DyEW9PA/PLDHy2q3fM6GCCJLcIjrlSwisidKRxN8NrlAM44YqdEpjA==
-X-Received: by 2002:ac8:4304:: with SMTP id z4mr18655245qtm.275.1557795322864;
-        Mon, 13 May 2019 17:55:22 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id r47sm11534911qtc.14.2019.05.13.17.55.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 May 2019 17:55:22 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hQLiz-0008Kd-Jd; Mon, 13 May 2019 21:55:21 -0300
-Date:   Mon, 13 May 2019 21:55:21 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Doug Ledford <dledford@redhat.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>
-Subject: [PATCH v2] RDMA: Directly cast the sockaddr union to sockaddr
-Message-ID: <20190514005521.GA18085@ziepe.ca>
+        id S1726899AbfENA4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 May 2019 20:56:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:41959 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfENA4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 May 2019 20:56:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 452zm21TCvz9s5c;
+        Tue, 14 May 2019 10:56:50 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1557795411;
+        bh=TxTcMKVqXgh7M+k63ZhUKgh1N6mWCEbKVbjlNxSZxxQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=L55k7XpytwSSD1dtS2oPdIP7U3wNYg3AWkB2LnGA0twqCO3igIMU8erT6RZjhAa9y
+         RoM/9XKlRI6XB8ZdUU0kinDUTSLoHZQP6Lqv3W2IvIlWz92+9SYzkCeEXcEe3NwQX/
+         n+7rIeMIcMlbRr2D7sp9HE9F0LWXXFLfrVy9LX5dzAGwosbvjg6npXpgAJt7gaYbuY
+         yQCyF8YFZkhMi7jgklFHnG/GF33pAjYe6CleQ67oa7bisbtZZWOaJ6kDqM+lV/prnL
+         8Flj3rovoCnJVqQyQYtU6ucLoIkZ412E7yBkIM73p4BAAGqnzZSI1cMR1sQn4FvaVY
+         8oJtwbQvAH3bA==
+Date:   Tue, 14 May 2019 10:56:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Tyler Hicks <tyhicks@canonical.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the ecryptfs tree
+Message-ID: <20190514105649.512267cd@canb.auug.org.au>
+In-Reply-To: <CAK7LNAT_aJ4-abaNXe5VwvAYa2TOprjFL-vcUc730EDwHq80kw@mail.gmail.com>
+References: <20190514100910.6996d2f5@canb.auug.org.au>
+        <CAK7LNAT_aJ4-abaNXe5VwvAYa2TOprjFL-vcUc730EDwHq80kw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GAZU4z.04i=a5k9ZE+2ngzi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc 9 now does allocation size tracking and thinks that passing the member
-of a union and then accessing beyond that member's bounds is an overflow.
+--Sig_/GAZU4z.04i=a5k9ZE+2ngzi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Instead of using the union member, use the entire union with a cast to
-get to the sockaddr. gcc will now know that the memory extends the full
-size of the union.
+Hi all,
 
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
----
- drivers/infiniband/core/addr.c           | 16 ++++++++--------
- drivers/infiniband/hw/ocrdma/ocrdma_ah.c |  5 ++---
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c |  5 ++---
- 3 files changed, 12 insertions(+), 14 deletions(-)
+[excessive quoting for new CC's]
 
-I missed the ocrdma files in the v1
+On Tue, 14 May 2019 09:40:53 +0900 Masahiro Yamada <yamada.masahiro@socione=
+xt.com> wrote:
+>
+> On Tue, May 14, 2019 at 9:16 AM Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+> >
+> > I don't know why this suddenly appeared after mergeing the ecryptfs tree
+> > since nothin has changed in that tree for some time (and nothing in that
+> > tree seems relevant).
+> >
+> > After merging the ecryptfs tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > scripts/Makefile.modpost:112: target '.tmp_versions/asix.mod' doesn't m=
+atch the target pattern
+> > scripts/Makefile.modpost:113: warning: overriding recipe for target '.t=
+mp_versions/asix.mod'
+> > scripts/Makefile.modpost:100: warning: ignoring old recipe for target '=
+.tmp_versions/asix.mod'
+> > scripts/Makefile.modpost:127: target '.tmp_versions/asix.mod' doesn't m=
+atch the target pattern
+> > scripts/Makefile.modpost:128: warning: overriding recipe for target '.t=
+mp_versions/asix.mod'
+> > scripts/Makefile.modpost:113: warning: ignoring old recipe for target '=
+.tmp_versions/asix.mod'
+> > make[2]: Circular .tmp_versions/asix.mod <- __modpost dependency droppe=
+d.
+> > Binary file .tmp_versions/asix.mod matches: No such file or directory
+> > make[2]: *** [scripts/Makefile.modpost:91: __modpost] Error 1
+> > make[1]: *** [Makefile:1290: modules] Error 2
+> >
+> > The only clue I can see is that asix.o gets built in two separate
+> > directories (drivers/net/{phy,usb}). =20
+>=20
+> Module name should be unique.
+>=20
+> If both are compiled as a module,
+> they have the same module names:
+>=20
+> drivers/net/phy/asix.ko
+> drivers/net/usb/asix.ko
+>=20
+> If you see .tmp_version directory,
+> you will see asix.mod
+>=20
+> Perhaps, one overwrote the other,
+> or it already got broken somehow.
 
-We can revisit what to do with that repetitive union after the merge
-window, but this simple patch will eliminate the warnings for now.
+So, the latter of these drivers (drivers/net/phy/asix.c) was added in
+v4.18-rc1 by commit
 
-Linus, I'll send this as a PR tomorrow - there is also a bug fix for
-the rdma-netlink changes posted that should go too.
+  31dd83b96641 ("net-next: phy: new Asix Electronics PHY driver")
 
-Thanks,
-Jason
+If we can't have 2 modules with the same base name, is it too late to
+change its name?
 
-diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-index ba01b90c04e775..2f7d14159841f8 100644
---- a/drivers/infiniband/core/addr.c
-+++ b/drivers/infiniband/core/addr.c
-@@ -731,8 +731,8 @@ int roce_resolve_route_from_path(struct sa_path_rec *rec,
- 	if (rec->roce.route_resolved)
- 		return 0;
- 
--	rdma_gid2ip(&sgid._sockaddr, &rec->sgid);
--	rdma_gid2ip(&dgid._sockaddr, &rec->dgid);
-+	rdma_gid2ip((struct sockaddr *)&sgid, &rec->sgid);
-+	rdma_gid2ip((struct sockaddr *)&dgid, &rec->dgid);
- 
- 	if (sgid._sockaddr.sa_family != dgid._sockaddr.sa_family)
- 		return -EINVAL;
-@@ -743,7 +743,7 @@ int roce_resolve_route_from_path(struct sa_path_rec *rec,
- 	dev_addr.net = &init_net;
- 	dev_addr.sgid_attr = attr;
- 
--	ret = addr_resolve(&sgid._sockaddr, &dgid._sockaddr,
-+	ret = addr_resolve((struct sockaddr *)&sgid, (struct sockaddr *)&dgid,
- 			   &dev_addr, false, true, 0);
- 	if (ret)
- 		return ret;
-@@ -815,22 +815,22 @@ int rdma_addr_find_l2_eth_by_grh(const union ib_gid *sgid,
- 	struct rdma_dev_addr dev_addr;
- 	struct resolve_cb_context ctx;
- 	union {
--		struct sockaddr     _sockaddr;
- 		struct sockaddr_in  _sockaddr_in;
- 		struct sockaddr_in6 _sockaddr_in6;
- 	} sgid_addr, dgid_addr;
- 	int ret;
- 
--	rdma_gid2ip(&sgid_addr._sockaddr, sgid);
--	rdma_gid2ip(&dgid_addr._sockaddr, dgid);
-+	rdma_gid2ip((struct sockaddr *)&sgid_addr, sgid);
-+	rdma_gid2ip((struct sockaddr *)&dgid_addr, dgid);
- 
- 	memset(&dev_addr, 0, sizeof(dev_addr));
- 	dev_addr.net = &init_net;
- 	dev_addr.sgid_attr = sgid_attr;
- 
- 	init_completion(&ctx.comp);
--	ret = rdma_resolve_ip(&sgid_addr._sockaddr, &dgid_addr._sockaddr,
--			      &dev_addr, 1000, resolve_cb, true, &ctx);
-+	ret = rdma_resolve_ip((struct sockaddr *)&sgid_addr,
-+			      (struct sockaddr *)&dgid_addr, &dev_addr, 1000,
-+			      resolve_cb, true, &ctx);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-index 1d4ea135c28f2a..8d3e36d548aae9 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-@@ -83,7 +83,6 @@ static inline int set_av_attr(struct ocrdma_dev *dev, struct ocrdma_ah *ah,
- 	struct iphdr ipv4;
- 	const struct ib_global_route *ib_grh;
- 	union {
--		struct sockaddr     _sockaddr;
- 		struct sockaddr_in  _sockaddr_in;
- 		struct sockaddr_in6 _sockaddr_in6;
- 	} sgid_addr, dgid_addr;
-@@ -133,9 +132,9 @@ static inline int set_av_attr(struct ocrdma_dev *dev, struct ocrdma_ah *ah,
- 		ipv4.tot_len = htons(0);
- 		ipv4.ttl = ib_grh->hop_limit;
- 		ipv4.protocol = nxthdr;
--		rdma_gid2ip(&sgid_addr._sockaddr, sgid);
-+		rdma_gid2ip((struct sockaddr *)&sgid_addr, sgid);
- 		ipv4.saddr = sgid_addr._sockaddr_in.sin_addr.s_addr;
--		rdma_gid2ip(&dgid_addr._sockaddr, &ib_grh->dgid);
-+		rdma_gid2ip((struct sockaddr*)&dgid_addr, &ib_grh->dgid);
- 		ipv4.daddr = dgid_addr._sockaddr_in.sin_addr.s_addr;
- 		memcpy((u8 *)ah->av + eth_sz, &ipv4, sizeof(struct iphdr));
- 	} else {
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index 32674b291f60da..5127e2ea4bdd2d 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -2499,7 +2499,6 @@ static int ocrdma_set_av_params(struct ocrdma_qp *qp,
- 	u16 vlan_id = 0xFFFF;
- 	u8 mac_addr[6], hdr_type;
- 	union {
--		struct sockaddr     _sockaddr;
- 		struct sockaddr_in  _sockaddr_in;
- 		struct sockaddr_in6 _sockaddr_in6;
- 	} sgid_addr, dgid_addr;
-@@ -2542,8 +2541,8 @@ static int ocrdma_set_av_params(struct ocrdma_qp *qp,
- 
- 	hdr_type = rdma_gid_attr_network_type(sgid_attr);
- 	if (hdr_type == RDMA_NETWORK_IPV4) {
--		rdma_gid2ip(&sgid_addr._sockaddr, &sgid_attr->gid);
--		rdma_gid2ip(&dgid_addr._sockaddr, &grh->dgid);
-+		rdma_gid2ip((struct sockaddr *)&sgid_addr, &sgid_attr->gid);
-+		rdma_gid2ip((struct sockaddr *)&dgid_addr, &grh->dgid);
- 		memcpy(&cmd->params.dgid[0],
- 		       &dgid_addr._sockaddr_in.sin_addr.s_addr, 4);
- 		memcpy(&cmd->params.sgid[0],
--- 
-2.21.0
+I am sort of suprised that noone else has hit this in the past year.
 
+> > I have the following files in the object directory:
+> >
+> > ./.tmp_versions/asix.mod
+> > ./drivers/net/usb/asix.ko
+> > ./drivers/net/usb/asix.mod.o
+> > ./drivers/net/usb/asix.o
+> > ./drivers/net/usb/asix_common.o
+> > ./drivers/net/usb/asix_devices.o
+> > ./drivers/net/usb/.asix.ko.cmd
+> > ./drivers/net/usb/.asix.mod.o.cmd
+> > ./drivers/net/usb/.asix.o.cmd
+> > ./drivers/net/usb/asix.mod.c
+> > ./drivers/net/usb/.asix_common.o.cmd
+> > ./drivers/net/usb/.asix_devices.o.cmd
+> > ./drivers/net/phy/asix.ko
+> > ./drivers/net/phy/asix.o
+> > ./drivers/net/phy/.asix.ko.cmd
+> > ./drivers/net/phy/.asix.mod.o.cmd
+> > ./drivers/net/phy/asix.mod.o
+> > ./drivers/net/phy/asix.mod.c
+> > ./drivers/net/phy/.asix.o.cmd
+> >
+> > ./.tmp_versions/asix.mod
+> >
+> > Looks like this:
+> >
+> > ------------------------------------------
+> > drivers/net/phy/asix.ko
+> > drivers/net/phy/asix.o
+> >
+> >
+> > ------------------------------------------
+> >
+> > What you can't see above are the 256 NUL bytes at the end of the file
+> > (followed by a NL).
+> >
+> > This is from a -j 80 build.  Surely there is a race condition here if t=
+he
+> > file in .tmp_versions is only named for the base name of the module and
+> > we have 2 modules with the same base name.
+> >
+> > I removed that file and redid the build and it succeeded.
+> >
+> > Mind you, I have no itdea why this file was begin rebuilt, the merge
+> > only touched these files:
+> >
+> > fs/ecryptfs/crypto.c
+> > fs/ecryptfs/keystore.c
+> >
+> > Puzzled ... :-(
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/GAZU4z.04i=a5k9ZE+2ngzi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzaElEACgkQAVBC80lX
+0Gyjdgf/VOXl+vcYN5/Ns9TE9My0Xo/JNrguSjSJhQx3ADvaV+/jtei0jM7gRdLu
+Zjl0UU0Ru2sOJjhUnIgm7nAk7c9btHOG46lMDnYuFWvYATJNpPR5yepJywPvpbTy
+BMtnQEcSWBUIYW8GLDZiVtsrH1bgmahjDfJ/kShawh6OiF2p5+ai/zx2bOMPV5vR
+1nC41I+l76jUF8triGtXtcbHtuTKKJI5MMUhnn/xEO/uIukCNAv5FjcrC0SPHXPX
+97bj/UFKpGuZEPDlGVJBUOaBaif2xOuq2d5cbGktps99xg2f2Ti9NrD9z02RW/RA
+2/SyK8qUp3+tSlyC77Ns41H08A4MXQ==
+=zQyT
+-----END PGP SIGNATURE-----
+
+--Sig_/GAZU4z.04i=a5k9ZE+2ngzi--
