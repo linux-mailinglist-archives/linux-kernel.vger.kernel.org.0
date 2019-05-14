@@ -2,103 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC27E1CC11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D1891CC2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfENPnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:43:47 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38740 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfENPnr (ORCPT
+        id S1726820AbfENPqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:46:48 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:35820 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726406AbfENPpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:43:47 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f97so3358148plb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 08:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=v0nvVqgy68rs5XKTL1qS0XTg9vbvJX75DMTfHz65o7k=;
-        b=o4uo3BL2FJTiVqjqCYWGK7TMMV+lwcOVDCNWJTqe+tsflDaF1yLX/e9s+YSEdV9a/X
-         0LABKAoi0StS36W6oGQpGj2P9Ct672agdHbaJD3SQjoZ0jW0NpD1tvHmfqZg3k3gEIMm
-         pD3Y0PN2veoFVEcAjudbuFBK4ihHBhxjGmFrArDMaQOSdIoNf0wbzeoWhlxvo11h8EQj
-         5+ePJDr+YQ3YkBtn6wnDJCoLAujldWH4NLM1lyC6LyWFIUDCdOPrWhUQBDcmMaKmwirX
-         GLQ96LzLwwi7s2MUdjqt+joWr3rsVAX/g44QiL28zCZdC3f8nx6CKfXtYBWsA//YqsXb
-         s4oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=v0nvVqgy68rs5XKTL1qS0XTg9vbvJX75DMTfHz65o7k=;
-        b=HWyU1L+Evtq6eQuMUebc4n//YZPO55pvJhmovAzi8zuD+1KENMDVVKZSH2f++51N+A
-         z+aBH4UytVeVH+nadyB8oJ/9nNMrZjZhvyo219XI1kQlLuuC+hym8f8rTznTP71iY3/F
-         mwyAseTThVoGOjr7tFyMSkDzwmigkr8SJoUET1V2N8TPf+LxjcQbGl3X4RCGcQwALnIT
-         iycKU+xJnjNaEKjTBvqUXsdsJCkyFS4tli0RNWssF0ZBly3bozBX4Vy1FAgccJ0K2N2h
-         d9SIKuD+i7FZh+9y3H/SWboTb3WKmDqUOt3GRjCg9u5GZIrY5o5zLJyrp2r4xmYIlN6G
-         GW6Q==
-X-Gm-Message-State: APjAAAVhVHjEh5LWBiUQeYNGK5ci0+384J90z8/2vaEBStdlmDVPo5Re
-        PI4XL7+GexrA0ma/WrbIV1mKNg==
-X-Google-Smtp-Source: APXvYqzfFBQAOq4cxgvOLcK8bcyy/NCFnT7eLClak8c7V4eglmQgE2DbsTwqSnHYj5t5cw7CJVy3Wg==
-X-Received: by 2002:a17:902:4203:: with SMTP id g3mr19140823pld.288.1557848626663;
-        Tue, 14 May 2019 08:43:46 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:1d0a:33b8:7824:bf6b? ([2601:646:c200:1ef2:1d0a:33b8:7824:bf6b])
-        by smtp.gmail.com with ESMTPSA id o2sm36069339pgq.1.2019.05.14.08.43.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 08:43:45 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC KVM 24/27] kvm/isolation: KVM page fault handler
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <95f462d4-37d3-f863-b7c6-2bcbb92251ec@oracle.com>
-Date:   Tue, 14 May 2019 08:43:44 -0700
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Jonathan Adams <jwadams@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8DBEACE9-AB4C-4891-8522-A474CA59E325@amacapital.net>
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com> <1557758315-12667-25-git-send-email-alexandre.chartre@oracle.com> <20190513151500.GY2589@hirez.programming.kicks-ass.net> <13F2FA4F-116F-40C6-9472-A1DE689FE061@oracle.com> <CALCETrUcR=3nfOtFW2qt3zaa7CnNJWJLqRY8AS9FTJVHErjhfg@mail.gmail.com> <20190514072110.GF2589@hirez.programming.kicks-ass.net> <95f462d4-37d3-f863-b7c6-2bcbb92251ec@oracle.com>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
+        Tue, 14 May 2019 11:45:42 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 00A99C019E;
+        Tue, 14 May 2019 15:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1557848732; bh=4mT+CT/Y/eN1ccimNjL9XsPYGjFtt8YEZq6/C+Bm3Mw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Etajpdh84QTRJ5YQGyMqZ0UIypNAEH5MUjYIISSVeujbtU4F4zHpIqz3q28QT52Ss
+         yo+KkBRfIaZkLwDrxHwsPg1GCQwKltT1JHd2kIGs1/8jHCr3f2j6EUsZuUau28yXLG
+         LNZYSufovBZdvR6t/NDy1eHWtbXdjADu9zB7YFGhFHfmP5CBDbf96dcE6mbHR+oyV5
+         vfwz2YtbTx98oHUEBGLrWpIrZbALyvMZP7Ehlf035QhGYdJYUHwJ0sg0jHslKNMCtQ
+         ERprrCf+jkeRfyQtIQ3/qZTPbw5qwm46QG+gNLh6mGFhmuRtoCeBjYh4PtLXCDEZ/V
+         mDZHIa6HaxgNQ==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 10FC9A0244;
+        Tue, 14 May 2019 15:45:39 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 0A82A3EA09;
+        Tue, 14 May 2019 17:45:39 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [RFC net-next v2 00/14] net: stmmac: Selftests
+Date:   Tue, 14 May 2019 17:45:22 +0200
+Message-Id: <cover.1557848472.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ Submitting with net-next closed for proper review and testing. ]
 
+This introduces selftests support in stmmac driver. We add 9 basic sanity
+checks and MAC loopback support for all cores within the driver. This way
+more tests can easily be added in the future and can be run in virtually
+any MAC/GMAC/QoS/XGMAC platform.
 
-> On May 14, 2019, at 8:36 AM, Alexandre Chartre <alexandre.chartre@oracle.c=
-om> wrote:
->=20
->=20
->> On 5/14/19 9:21 AM, Peter Zijlstra wrote:
->>> On Mon, May 13, 2019 at 07:02:30PM -0700, Andy Lutomirski wrote:
->>> This sounds like a great use case for static_call().  PeterZ, do you
->>> suppose we could wire up static_call() with the module infrastructure
->>> to make it easy to do "static_call to such-and-such GPL module symbol
->>> if that symbol is in a loaded module, else nop"?
->> You're basically asking it to do dynamic linking. And I suppose that is
->> technically possible.
->> However, I'm really starting to think kvm (or at least these parts of it
->> that want to play these games) had better not be a module anymore.
->=20
-> Maybe we can use an atomic notifier (e.g. page_fault_notifier)?
->=20
->=20
+Having this we can find regressions and missing features in the driver
+while at the same time we can check if the IP is correctly working.
 
-IMO that=E2=80=99s worse. I want to be able to read do_page_fault() and unde=
-rstand what happens and in what order.
+We have been using this for some time now and I do have more tests to
+submit in the feature. My experience is that although writing the tests
+adds more development time, the gain results are obvious.
 
-Having do_page_fault run with the wrong CR3 is so fundamental to its operati=
-on that it needs to be very obvious what=E2=80=99s happening.=
+I let this feature optional within the driver under a Kconfig option.
+
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+
+Corentin Labbe (1):
+  net: ethernet: stmmac: dwmac-sun8i: Enable control of loopback
+
+Jose Abreu (13):
+  net: stmmac: Add MAC loopback callback to HWIF
+  net: stmmac: dwmac100: Add MAC loopback support
+  net: stmmac: dwmac1000: Add MAC loopback support
+  net: stmmac: dwmac4/5: Add MAC loopback support
+  net: stmmac: dwxgmac2: Add MAC loopback support
+  net: stmmac: Switch MMC functions to HWIF callbacks
+  net: stmmac: dwmac1000: Also pass control frames while in promisc mode
+  net: stmmac: dwmac4/5: Also pass control frames while in promisc mode
+  net: stmmac: dwxgmac2: Also pass control frames while in promisc mode
+  net: stmmac: Introduce selftests support
+  net: stmmac: dwmac1000: Fix Hash Filter
+  net: stmmac: dwmac1000: Clear unused address entries
+  net: stmmac: dwmac4/5: Fix Hash Filter
+
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   9 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000.h    |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |  22 +-
+ .../net/ethernet/stmicro/stmmac/dwmac100_core.c    |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   3 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  19 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   2 +
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  15 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |   9 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +
+ drivers/net/ethernet/stmicro/stmmac/mmc.h          |   4 -
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |  13 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  22 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   4 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 846 +++++++++++++++++++++
+ 19 files changed, 1014 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
+
+-- 
+2.7.4
+
