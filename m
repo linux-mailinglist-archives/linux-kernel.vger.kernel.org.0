@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76FA21C4C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA201C4E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfENI1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:27:37 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59152 "EHLO
+        id S1726646AbfENI2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:28:23 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19238 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726148AbfENI1c (ORCPT
+        by vger.kernel.org with ESMTP id S1726678AbfENI1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 04:27:32 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E8Q8xp029562;
-        Tue, 14 May 2019 10:27:08 +0200
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E8Q8xq029562;
+        Tue, 14 May 2019 10:27:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=cSw7dbXcAbS5Q/0FeaUhUZjqh7E4PIut1NGw2jFxHQc=;
- b=RbfAZWNaTw7ekn4Qvx6XDaQ9kqvaprs9BUC9VSJL84SFK4sSm4IYGB51dn7AVuELdKoP
- JSLiGo8Fmqbtkb59Zu0MpxjzII8Uvb6kOpnhQnrURRAMdVfldmCuTLq+IdVrZkk1eDgv
- gcWXN1t+8q2Bs9CVPZ2C7eIGkBEZnSfZEPbP5eDejPJeEuWjC2uT5p2GFDtUUyDHvBFQ
- 20//UDlxX1gc5+EWb3v/UiVhVHOhGayDDMnxANEaOvvpz+sYlUclC0+XaQPUSH0W9JS6
- XA6upeebVf4E7YerIPeavihghI6g1hWcVEekqpgFqlBZ2R84MtOZV7lznn3YJb8dip9A sQ== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=ug1rZBb4tp1QfVGX2K2LUauv8v7kBPMYnK+aqeqOCBA=;
+ b=1eEmFBvmFp2Kt7iCklqkRaGZECElRyWYDZQKUavC/hkOrkWqInyOfUJ4V3EfoGkQunUO
+ mzyEcMfs6zP80CO1aLv0H90K/en9L/uuuEbjsmMCDX1IGEKBwWmPz4a/tD6kCSlw/BlO
+ /JChmB/bESSdhZXKh1u18gMzat0TS6ArSsMrP33vT/8t+oBWMM4uztUwrDRXqObDxZ+/
+ Y5HuDFYCxKUi8080cfGbKPJ5T7JK555Yx5341xPf0+LX09oxsts7jga1BnZPYcq87IW2
+ PAkYqbM16UoKoHYLlUbGt9cWXCUCHTLNg+k759GiW7pDH57hU2ZqD40/X/L2FWw4eru+ gg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2sdkuyqnmk-1
+        by mx07-00178001.pphosted.com with ESMTP id 2sdkuyqnmr-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 14 May 2019 10:27:08 +0200
+        Tue, 14 May 2019 10:27:09 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B86A434;
-        Tue, 14 May 2019 08:27:07 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E2C81551;
-        Tue, 14 May 2019 08:27:07 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May
- 2019 10:27:07 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CC3643F;
+        Tue, 14 May 2019 08:27:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9666A1550;
+        Tue, 14 May 2019 08:27:08 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May
+ 2019 10:27:08 +0200
 Received: from localhost (10.201.23.25) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May 2019 10:27:06
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 14 May 2019 10:27:07
  +0200
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -55,10 +56,12 @@ CC:     Fabien Dessenne <fabien.dessenne@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         "Ludovic Barre" <ludovic.barre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v4 0/8] stm32 m4 remoteproc on STM32MP157c
-Date:   Tue, 14 May 2019 10:26:55 +0200
-Message-ID: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH v4 1/8] dt-bindings: stm32: add bindings for ML-AHB interconnect
+Date:   Tue, 14 May 2019 10:26:56 +0200
+Message-ID: <1557822423-22658-2-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.23.25]
@@ -69,51 +72,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
-Cortex-M4.
-This patchset adds the support of the stm32_rproc driver allowing to control
-the M4 remote processor.
+Document the ML-AHB interconnect for stm32 SoCs.
 
-Changes since v3:
--Replaced "st,auto_boot" with "st,auto-boot"
--Update m4 reg values and align with unit-address
-
-Changes since v2:
-- Clarified "reg" description
-- Change m4 unit adress to 38000000
-- Renamed "auto_boot" in "st,auto-boot"
-
-Changes since v1:
-- Gave details about the memory mapping (in bindings).
-- Used 'dma-ranges' instead of 'ranges'.
-- Updated the 'compatible' property.
-- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
-- Clarified why / when mailboxes are optional.
-
-Fabien Dessenne (8):
-  dt-bindings: stm32: add bindings for ML-AHB interconnect
-  dt-bindings: remoteproc: add bindings for stm32 remote processor
-    driver
-  remoteproc: stm32: add an ST stm32_rproc driver
-  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
-  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
-  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
-  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
-  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
-
- .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
- .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
- arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
- arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
- arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
- drivers/remoteproc/Kconfig                         |  15 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
- 8 files changed, 868 insertions(+)
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ .../devicetree/bindings/arm/stm32/mlahb.txt        | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
- create mode 100644 drivers/remoteproc/stm32_rproc.c
 
+diff --git a/Documentation/devicetree/bindings/arm/stm32/mlahb.txt b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+new file mode 100644
+index 0000000..25307aa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+@@ -0,0 +1,37 @@
++ML-AHB interconnect bindings
++
++These bindings describe the STM32 SoCs ML-AHB interconnect bus which connects
++a Cortex-M subsystem with dedicated memories.
++The MCU SRAM and RETRAM memory parts can be accessed through different addresses
++(see "RAM aliases" in [1]) using different buses (see [2]) : balancing the
++Cortex-M firmware accesses among those ports allows to tune the system
++performance.
++
++[1]: https://www.st.com/resource/en/reference_manual/dm00327659.pdf
++[2]: https://wiki.st.com/stm32mpu/wiki/STM32MP15_RAM_mapping
++
++Required properties:
++- compatible: should be "simple-bus"
++- dma-ranges: describes memory addresses translation between the local CPU and
++	   the remote Cortex-M processor. Each memory region, is declared with
++	   3 parameters:
++		 - param 1: device base address (Cortex-M processor address)
++		 - param 2: physical base address (local CPU address)
++		 - param 3: size of the memory region.
++
++The Cortex-M remote processor accessed via the mlahb interconnect is described
++by a child node.
++
++Example:
++mlahb {
++	compatible = "simple-bus";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	dma-ranges = <0x00000000 0x38000000 0x10000>,
++		     <0x10000000 0x10000000 0x60000>,
++		     <0x30000000 0x30000000 0x60000>;
++
++	m4_rproc: m4@10000000 {
++		...
++	};
++};
 -- 
 2.7.4
 
