@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D05E1CDD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A3A1CDDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfENRUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 13:20:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59390 "EHLO
+        id S1726995AbfENRUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 13:20:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59408 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbfENRUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 13:20:12 -0400
+        id S1726251AbfENRUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 13:20:18 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6924C374;
-        Tue, 14 May 2019 10:20:11 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 773DF15AB;
+        Tue, 14 May 2019 10:20:18 -0700 (PDT)
 Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A01943F575;
-        Tue, 14 May 2019 10:20:08 -0700 (PDT)
-Subject: Re: [PATCH v7 10/13] selftests/resctrl: Add vendor detection
- mechanism
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2854E3F575;
+        Tue, 14 May 2019 10:20:15 -0700 (PDT)
+Subject: Re: [PATCH v7 00/13] selftests/resctrl: Add resctrl selftest
+To:     "Yu, Fenghua" <fenghua.yu@intel.com>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Xiaochen Shen <xiaochen.shen@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
+        "Pathan, Arshiya Hayatkhan" <arshiya.hayatkhan.pathan@intel.com>,
+        "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
         Babu Moger <babu.moger@amd.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
- <1549767042-95827-11-git-send-email-fenghua.yu@intel.com>
- <20190510183909.65732a67@donnerap.cambridge.arm.com>
+ <20190510183556.24c33f02@donnerap.cambridge.arm.com>
+ <3E5A0FA7E9CA944F9D5414FEC6C712209D8A3BFE@ORSMSX106.amr.corp.intel.com>
 From:   James Morse <james.morse@arm.com>
-Message-ID: <5cc3b562-6e48-f64c-06dd-b1ee1059e33e@arm.com>
-Date:   Tue, 14 May 2019 18:20:06 +0100
+Message-ID: <bbc6843c-74c6-9159-9746-ec7ec68c602b@arm.com>
+Date:   Tue, 14 May 2019 18:20:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190510183909.65732a67@donnerap.cambridge.arm.com>
+In-Reply-To: <3E5A0FA7E9CA944F9D5414FEC6C712209D8A3BFE@ORSMSX106.amr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -50,65 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andre,
+Hi Fenghua,
 
-(thanks for digging into this!)
+On 10/05/2019 20:20, Yu, Fenghua wrote:
+>> On Friday, May 10, 2019 10:36 AM
+>> Andre Przywara [mailto:andre.przywara@arm.com] wrote:
+>> On Sat,  9 Feb 2019 18:50:29 -0800
+>> Fenghua Yu <fenghua.yu@intel.com> wrote:
 
-On 10/05/2019 18:39, Andre Przywara wrote:
-> On Sat,  9 Feb 2019 18:50:39 -0800
-> Fenghua Yu <fenghua.yu@intel.com> wrote:
->> From: Babu Moger <babu.moger@amd.com>
+>>> With more and more resctrl features are being added by Intel, AMD and
+>>> ARM, a test tool is becoming more and more useful to validate that
+>>> both hardware and software functionalities work as expected.
 >>
->> RESCTRL feature is supported both on Intel and AMD now. Some features
->> are implemented differently. Add vendor detection mechanism. Use the vendor
->> check where there are differences.
+>> That's very much appreciated! We decided to use that tool here to detect
+>> regressions in James' upcoming resctrl rework series. While doing so we
+>> spotted some shortcomings:
+
+>> - There is some unconditional x86 inline assembly which obviously breaks
+>> the build on ARM.
 > 
-> I don't think vendor detection is the right approach. The Linux userland
-> interface should be even architecture agnostic, not to speak of different
-> vendors.
+> Will fix this as much as possible.
 > 
-> But even if we need this for some reason ...
+> BTW, does ARM support perf imc_count events which are used in CAT tests?
 
->> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
->> index 3959b2b0671a..1d9adcfbdb4c 100644
->> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
->> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
->> @@ -14,6 +14,66 @@
->>  #define BENCHMARK_ARGS		64
->>  #define BENCHMARK_ARG_SIZE	64
->>  
->> +/**
->> + * This variables provides information about the vendor
->> + */
->> +int genuine_intel;
->> +int authentic_amd;
->> +
->> +void lcpuid(const unsigned int leaf, const unsigned int subleaf,
->> +	    struct cpuid_out *out)
-> 
-> There is a much easier way to detect the vendor, without resorting to
-> (unchecked) inline assembly in userland:
+I've never heard of these. git-grep says its a powerpc pmu...
 
-> I changed this to scan /proc/cpuinfo for a line starting with vendor_id,
-> then use the information there. This should work everywhere.
+(after a quick chat with Andre), is this a cache-miss counter?
+If so, its a bit murky, (and beware, I don't know much about perf).
+The arch code's armv8_pmu has a 'PERF_COUNT_HW_CACHE_MISSES' map entry, so yes...
+... but if we're measuring this on a cache outside the CPU, we'd need an 'uncore' pmu
+driver, so it would depend on what the manufacturer implemented.
 
-Everywhere x86. /proc/cpuinfo is unfortunately arch specific, arm64 spells that field 'CPU
-implementer'. Short of invoking lscpu, I don't know a portable way of finding this string.
 
-What do we need it for? Surely it indicates something is wrong with the kernel interface
-if you need to know which flavour of CPU this is.
-
-The only differences I've spotted are the 'MAX_MBA_BW' on Intel is a percentage, on AMD
-its a number between 1 and 2K. If user-space needs to know we could add another file with
-the 'max_bandwidth'. (I haven't spotted how the MBA default_ctrl gets exposed).
-
-The other one is the non-contiguous CBM values, where user-space is expected to try it and
-see [0]. If user-space needs to know, we could expose some 'sparse_bitmaps=[0 1]', unaware
-user-space keeps working.
+I should admit that I'm expecting this selftest to test resctrl, and not depend on a lot
+else. Couldn't it use the llc_occupancy value, 50% bitmap gives ~50% lower occupancy. Or
+(some combination of) the mbm byte counters, (which would require a seeky workload to
+cause repeat re-fills of the same line)...
 
 
 Thanks,
 
 James
-
-[0] https://lore.kernel.org/patchwork/patch/991236/#1179944
