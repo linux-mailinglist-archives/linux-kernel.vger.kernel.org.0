@@ -2,102 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D24FF1CA96
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A26FA1CA9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbfENOlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:41:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33148 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726151AbfENOlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:41:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16AAFAC38;
-        Tue, 14 May 2019 14:41:06 +0000 (UTC)
-Date:   Tue, 14 May 2019 16:41:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Timofey Titovets <nefelim4ag@gmail.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH RFC v2 0/4] mm/ksm: add option to automerge VMAs
-Message-ID: <20190514144105.GF4683@dhcp22.suse.cz>
-References: <20190514131654.25463-1-oleksandr@redhat.com>
+        id S1726542AbfENOmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:42:32 -0400
+Received: from verein.lst.de ([213.95.11.211]:46209 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfENOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 10:42:31 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 7826268B05; Tue, 14 May 2019 16:42:10 +0200 (CEST)
+Date:   Tue, 14 May 2019 16:42:10 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     laurentiu.tudor@nxp.com
+Cc:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, marex@denx.de, leoyang.li@nxp.com,
+        linux-kernel@vger.kernel.org, robin.murphy@arm.com
+Subject: Re: [RFC PATCH v2 1/3] USB: use genalloc for USB HCs with local
+ memory
+Message-ID: <20190514144210.GA14625@lst.de>
+References: <20190514143807.7745-1-laurentiu.tudor@nxp.com> <20190514143807.7745-2-laurentiu.tudor@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190514131654.25463-1-oleksandr@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190514143807.7745-2-laurentiu.tudor@nxp.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[This is adding a new user visible interface so you should be CCing
-linux-api mailing list. Also CC Hugh for KSM in general. Done now]
+> @@ -136,6 +137,10 @@ void *hcd_buffer_alloc(
+>  		if (size <= pool_max[i])
+>  			return dma_pool_alloc(hcd->pool[i], mem_flags, dma);
+>  	}
+> +
+> +	if (hcd->driver->flags & HCD_LOCAL_MEM)
+> +		return gen_pool_dma_alloc(hcd->localmem_pool, size, dma);
 
-On Tue 14-05-19 15:16:50, Oleksandr Natalenko wrote:
-> By default, KSM works only on memory that is marked by madvise(). And the
-> only way to get around that is to either:
-> 
->   * use LD_PRELOAD; or
->   * patch the kernel with something like UKSM or PKSM.
-> 
-> Instead, lets implement a sysfs knob, which allows marking VMAs as
-> mergeable. This can be used manually on some task in question or by some
-> small userspace helper daemon.
-> 
-> The knob is named "force_madvise", and it is write-only. It accepts a PID
-> to act on. To mark the VMAs as mergeable, use:
-> 
->    # echo PID > /sys/kernel/mm/ksm/force_madvise
-> 
-> To unmerge all the VMAs, use the same approach, prepending the PID with
-> the "minus" sign:
-> 
->    # echo -PID > /sys/kernel/mm/ksm/force_madvise
-> 
-> This patchset is based on earlier Timofey's submission [1], but it doesn't
-> use dedicated kthread to walk through the list of tasks/VMAs. Instead,
-> it is up to userspace to traverse all the tasks in /proc if needed.
-> 
-> The previous suggestion [2] was based on amending do_anonymous_page()
-> handler to implement fully automatic mode, but this approach was
-> incorrect due to improper locking and not desired due to excessive
-> complexity.
-> 
-> The current approach just implements minimal interface and leaves the
-> decision on how and when to act to userspace.
+I think this check needs to be before the above code to use the dma
+pools, as we should always use the HCD local memory.  Probably all the
+way up just below the size == 0 check, that way we can also remove the
+other HCD_LOCAL_MEM check.
 
-Please make sure to describe a usecase that warrants adding a new
-interface we have to maintain for ever.
+> @@ -165,5 +170,10 @@ void hcd_buffer_free(
+>  			return;
+>  		}
+>  	}
+> -	dma_free_coherent(hcd->self.sysdev, size, addr, dma);
+> +
+> +	if (hcd->driver->flags & HCD_LOCAL_MEM)
+> +		gen_pool_free(hcd->localmem_pool, (unsigned long)addr,
+> +			      size);
+> +	else
+> +		dma_free_coherent(hcd->self.sysdev, size, addr, dma);
 
-> 
-> Thanks.
-> 
-> [1] https://lore.kernel.org/patchwork/patch/1012142/
-> [2] http://lkml.iu.edu/hypermail/linux/kernel/1905.1/02417.html
-> 
-> Oleksandr Natalenko (4):
->   mm/ksm: introduce ksm_enter() helper
->   mm/ksm: introduce ksm_leave() helper
->   mm/ksm: introduce force_madvise knob
->   mm/ksm: add force merging/unmerging documentation
-> 
->  Documentation/admin-guide/mm/ksm.rst |  11 ++
->  mm/ksm.c                             | 160 +++++++++++++++++++++------
->  2 files changed, 137 insertions(+), 34 deletions(-)
-> 
-> -- 
-> 2.21.0
-> 
+Same here.
 
--- 
-Michal Hocko
-SUSE Labs
+> @@ -505,8 +506,15 @@ static int ohci_init (struct ohci_hcd *ohci)
+>  	timer_setup(&ohci->io_watchdog, io_watchdog_func, 0);
+>  	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+>  
+> -	ohci->hcca = dma_alloc_coherent (hcd->self.controller,
+> -			sizeof(*ohci->hcca), &ohci->hcca_dma, GFP_KERNEL);
+> +	if (hcd->driver->flags & HCD_LOCAL_MEM)
+> +		ohci->hcca = gen_pool_dma_alloc(hcd->localmem_pool,
+> +						sizeof(*ohci->hcca),
+> +						&ohci->hcca_dma);
+> +	else
+> +		ohci->hcca = dma_alloc_coherent(hcd->self.controller,
+> +						sizeof(*ohci->hcca),
+> +						&ohci->hcca_dma,
+> +						GFP_KERNEL);
+
+I wonder if we could just use hcd_buffer_alloc/free here, althought
+that would require them to be exported.  I'll leave that decision to
+the relevant maintainers, though.
+
+Except for this the series looks exactly what I had envisioned to
+get rid of the device local dma_declare_coherent use case, thanks!
