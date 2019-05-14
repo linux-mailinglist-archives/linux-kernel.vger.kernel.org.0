@@ -2,135 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5863F1E42F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 23:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 651581E435
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 23:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfENVzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 17:55:25 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45369 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbfENVzV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 17:55:21 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i21so213424pgi.12
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 14:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zGsQ7lgpHhpTbszYslBdzxyDCXSizX6+VVJQr1o6b6I=;
-        b=Sqp9nGAlWQZ5vX1dxWHDTDuxZAQ8qZWMKHz3Jl8zJhU4HCd4U5LRW6+WrNk+FFVT4m
-         hghwxry4xwaDl/HQX8VpDYEsXxjpIc+C5kovvhxiwYCqXTRQef29CxCNWFm1bW5znOQt
-         K7SZARGMC8Rt7RfHAn3RpY8sM6daSCeeLH7swaooopzfa3ObMdZ6EWj/nj1LpViuniyi
-         4bbhnkKWhoastGyfdBE/DJkoP1Rh8R0rld6KSf2YfFl4gdmjFXNecFeWf9TzQuYX9kSC
-         yl5u8Qe4FV0TiiOwcMABkeTC1I2KGOOO/tJlPkFrFplmiajsczCkdhcwsEb9HLfHGJbp
-         bZGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zGsQ7lgpHhpTbszYslBdzxyDCXSizX6+VVJQr1o6b6I=;
-        b=PZrb9PU2h+ZB2G9/pfBLMhQxb20AVTSJjrSN68tBTXU7kiXbSvQSdh0XE0njLZlkNI
-         uEJndtWkYa2BGEyRbJ0wkq6RxeO6T75ywf+1FBE5eArAW3z5AuTkfxu9TDG4trWfHsAi
-         BwXgzoNvm107eQR/AqrqA0UBAuwV81wjUrlHQLQoKmO7FqIfYUmzcRqsiHQyKKy33xS7
-         6Oz58ltYXJe4vQRk3CQ/9tFKl5OL31Xm8ziXfmShH3B8RMiS+BvQCkvEY+Yn/Yniww9y
-         IOUeCXm+GOUsfA5a3+Mr2ms3beVZrdmcBnE8hcZli6+kKWcBmhIaTJQbuGXbszSzX/pu
-         8IIA==
-X-Gm-Message-State: APjAAAVvqN8dxS45HROdQMpem9EBwp40ILUM1HRBYU9iy9FAbpM2iMWH
-        Gs+wug+FJrPclrwdmCfgnUup/Q==
-X-Google-Smtp-Source: APXvYqw24l2gqEGsaEZKg5LYXhvlKPM4W+qe2urWfGhhgYhWFa149ACdSpb4zow/e83hwlMY5jdZGg==
-X-Received: by 2002:a63:2bc8:: with SMTP id r191mr39777166pgr.72.1557870920728;
-        Tue, 14 May 2019 14:55:20 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:bde9:fbad:7d91:52eb? ([2601:646:c200:1ef2:bde9:fbad:7d91:52eb])
-        by smtp.gmail.com with ESMTPSA id d15sm116637pfm.186.2019.05.14.14.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 14:55:19 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC KVM 18/27] kvm/isolation: function to copy page table entries for percpu buffer
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <20190514210603.GD1977@linux.intel.com>
-Date:   Tue, 14 May 2019 14:55:18 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Jonathan Adams <jwadams@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A1EB80C0-2D88-4DC0-A898-3BED50A4F5A8@amacapital.net>
-References: <CALCETrWUKZv=wdcnYjLrHDakamMBrJv48wp2XBxZsEmzuearRQ@mail.gmail.com> <20190514070941.GE2589@hirez.programming.kicks-ass.net> <b8487de1-83a8-2761-f4a6-26c583eba083@oracle.com> <B447B6E8-8CEF-46FF-9967-DFB2E00E55DB@amacapital.net> <4e7d52d7-d4d2-3008-b967-c40676ed15d2@oracle.com> <CALCETrXtwksWniEjiWKgZWZAyYLDipuq+sQ449OvDKehJ3D-fg@mail.gmail.com> <e5fedad9-4607-0aa4-297e-398c0e34ae2b@oracle.com> <20190514170522.GW2623@hirez.programming.kicks-ass.net> <20190514180936.GA1977@linux.intel.com> <CALCETrVzbBLokip5n0KEyG6irH6aoEWqyNODTy8embpXhB1GQg@mail.gmail.com> <20190514210603.GD1977@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+        id S1726490AbfENV5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 17:57:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33988 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbfENV5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 17:57:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4213374;
+        Tue, 14 May 2019 14:57:00 -0700 (PDT)
+Received: from [192.168.1.124] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C9803F703;
+        Tue, 14 May 2019 14:56:57 -0700 (PDT)
+Subject: Re: [PATCH v4 0/8] Allwinner H6 Mali GPU support
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190512174608.10083-1-peron.clem@gmail.com>
+ <20190513151405.GW17751@phenom.ffwll.local>
+ <de50a9da-669f-ab25-2ef2-5ffb90f8ee03@baylibre.com>
+ <CAJiuCccuEw0BK6MwROR+XUDvu8AJTmZ5tu=pYwZbGAuvO31pgg@mail.gmail.com>
+ <CAJiuCccWa5UTML68JDQq6q8SyNZzVWwQWTOL=+84Bh4EMHGC3A@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <3c2c9094-69d4-bace-d5ee-c02b7f56ac82@arm.com>
+Date:   Tue, 14 May 2019 22:56:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAJiuCccWa5UTML68JDQq6q8SyNZzVWwQWTOL=+84Bh4EMHGC3A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-05-14 10:22 pm, Clément Péron wrote:
+> Hi,
+> 
+> On Tue, 14 May 2019 at 17:17, Clément Péron <peron.clem@gmail.com> wrote:
+>>
+>> Hi,
+>>
+>> On Tue, 14 May 2019 at 12:29, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>>
+>>> Hi,
+>>>
+>>> On 13/05/2019 17:14, Daniel Vetter wrote:
+>>>> On Sun, May 12, 2019 at 07:46:00PM +0200, peron.clem@gmail.com wrote:
+>>>>> From: Clément Péron <peron.clem@gmail.com>
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> The Allwinner H6 has a Mali-T720 MP2. The drivers are
+>>>>> out-of-tree so this series only introduce the dt-bindings.
+>>>>
+>>>> We do have an in-tree midgard driver now (since 5.2). Does this stuff work
+>>>> together with your dt changes here?
+>>>
+>>> No, but it should be easy to add.
+>> I will give it a try and let you know.
+> Added the bus_clock and a ramp delay to the gpu_vdd but the driver
+> fail at probe.
+> 
+> [    3.052919] panfrost 1800000.gpu: clock rate = 432000000
+> [    3.058278] panfrost 1800000.gpu: bus_clock rate = 100000000
+> [    3.179772] panfrost 1800000.gpu: mali-t720 id 0x720 major 0x1
+> minor 0x1 status 0x0
+> [    3.187432] panfrost 1800000.gpu: features: 00000000,10309e40,
+> issues: 00000000,21054400
+> [    3.195531] panfrost 1800000.gpu: Features: L2:0x07110206
+> Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002821 AS:0xf
+> JS:0x7
+> [    3.207178] panfrost 1800000.gpu: shader_present=0x3 l2_present=0x1
+> [    3.238257] panfrost 1800000.gpu: Fatal error during GPU init
+> [    3.244165] panfrost: probe of 1800000.gpu failed with error -12
+> 
+> The ENOMEM is coming from "panfrost_mmu_init"
+> alloc_io_pgtable_ops(ARM_MALI_LPAE, &pfdev->mmu->pgtbl_cfg,
+>                                           pfdev);
+> 
+> Which is due to a check in the pgtable alloc "cfg->ias != 48"
+> arm-lpae io-pgtable: arm_mali_lpae_alloc_pgtable cfg->ias 33 cfg->oas 40
+> 
+> DRI stack is totally new for me, could you give me a little clue about
+> this issue ?
 
+Heh, this is probably the one bit which doesn't really count as "DRI stack".
 
-> On May 14, 2019, at 2:06 PM, Sean Christopherson <sean.j.christopherson@in=
-tel.com> wrote:
->=20
->> On Tue, May 14, 2019 at 01:33:21PM -0700, Andy Lutomirski wrote:
->> On Tue, May 14, 2019 at 11:09 AM Sean Christopherson
->> <sean.j.christopherson@intel.com> wrote:
->>> For IRQs it's somewhat feasible, but not for NMIs since NMIs are unblock=
-ed
->>> on VMX immediately after VM-Exit, i.e. there's no way to prevent an NMI
->>> from occuring while KVM's page tables are loaded.
->>>=20
->>> Back to Andy's question about enabling IRQs, the answer is "it depends".=
+That's merely a somewhat-conservative sanity check - I'm pretty sure it 
+*should* be fine to change the test to "cfg->ias > 48" (io-pgtable 
+itself ought to cope). You'll just get to be the first to actually test 
+a non-48-bit configuration here :)
 
->>> Exits due to INTR, NMI and #MC are considered high priority and are
->>> serviced before re-enabling IRQs and preemption[1].  All other exits are=
-
->>> handled after IRQs and preemption are re-enabled.
->>>=20
->>> A decent number of exit handlers are quite short, e.g. CPUID, most RDMSR=
-
->>> and WRMSR, any event-related exit, etc...  But many exit handlers requir=
-e
->>> significantly longer flows, e.g. EPT violations (page faults) and anythi=
-ng
->>> that requires extensive emulation, e.g. nested VMX.  In short, leaving
->>> IRQs disabled across all exits is not practical.
->>>=20
->>> Before going down the path of figuring out how to handle the corner case=
-s
->>> regarding kvm_mm, I think it makes sense to pinpoint exactly what exits
->>> are a) in the hot path for the use case (configuration) and b) can be
->>> handled fast enough that they can run with IRQs disabled.  Generating th=
-at
->>> list might allow us to tightly bound the contents of kvm_mm and sidestep=
-
->>> many of the corner cases, i.e. select VM-Exits are handle with IRQs
->>> disabled using KVM's mm, while "slow" VM-Exits go through the full conte=
-xt
->>> switch.
->>=20
->> I suspect that the context switch is a bit of a red herring.  A
->> PCID-don't-flush CR3 write is IIRC under 300 cycles.  Sure, it's slow,
->> but it's probably minor compared to the full cost of the vm exit.  The
->> pain point is kicking the sibling thread.
->=20
-> Speaking of PCIDs, a separate mm for KVM would mean consuming another
-> ASID, which isn't good.
-
-I=E2=80=99m not sure we care. We have many logical address spaces (two per m=
-m plus a few more).  We have 4096 PCIDs, but we only use ten or so.  And we h=
-ave some undocumented number of *physical* ASIDs with some undocumented mech=
-anism by which PCID maps to a physical ASID.
-
-I don=E2=80=99t suppose you know how many physical ASIDs we have?  And how i=
-t interacts with the VPID stuff?
+Robin.
