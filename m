@@ -2,159 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C961E56A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24FCB1E572
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 01:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfENXDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 19:03:11 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44188 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfENXDL (ORCPT
+        id S1726553AbfENXH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 19:07:58 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40876 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfENXH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 19:03:11 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c5so311702pll.11;
-        Tue, 14 May 2019 16:03:10 -0700 (PDT)
+        Tue, 14 May 2019 19:07:57 -0400
+Received: by mail-it1-f195.google.com with SMTP id g71so1527061ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 16:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4xuOhafijhTBKjPcHvwICr8fCf3XDF6k7moLbg3FXwg=;
-        b=f+iki57StuAV+FkmK28LEJUx6eRLXHSLyK478LBU5ugMCQKEKAZdX23XdU0hTop3GI
-         xGJewyrbS+bCN0qDv8n7PLgw3R8cXpE0K/wG2jRzQacmvbhYfW7oSLUF0VZeH68ddsoC
-         qCNTE4tz3BD6ag5z4FRz+GrqR1A+UYG9qKbww7xnZsjPhVhqd+6O8objP/SAgY/BQF1Q
-         ivbwlEgshLeExC9RVBfCEAUIXWs05qZfaYgSJfxqkwNiFZ85iJBc25BjSEsCaj8LJ185
-         thGVy5+SA6YMXpJunfpxoxvi7Ld/QsAGJr58tOGd2mFNOsejpsJWS0s/mxLb0Izfo4iT
-         76Gw==
+        bh=fpPu6Srd12TWDsvx6xpShWyEQ5HvPxAwKNMasqNHAbk=;
+        b=T11Vup/cYbfwY6YzAWV/mGwGD1gQDYyQC6G2BxXK4PPC718ZLMCye+aG74WCj5fos9
+         09wYZgeFb/k3+WuqEj2zLbyGm+bkK2/fb3EhCCyuqqbpOLLYRADkdR71j6umz8fgOctZ
+         oqF99nuKSPFnPGmRSiq5LQk19GqyNEeW44WFHIe5sd7P733SpJ5y5USvprGUccgWM81n
+         nGOhxOhJ7X/f4vqn4W7KFFCnNxOOifuIbvXltdYt19gYBbkBHc5QoQjg7VswpWrjrFuw
+         ecnaOdC9+M3e21yFG1yAo7HXSJsQE+PZ29OeX51tStLm2xS3s+V9hEk1Af9GkrlUK6et
+         GgmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4xuOhafijhTBKjPcHvwICr8fCf3XDF6k7moLbg3FXwg=;
-        b=b8VSCG2DEf4t8R2wEAGIfJSF4EQUNBIH/JgRKqv/Zl+I3t0bsd1Ya851h1lsGwITOn
-         Zf7cVmYtFfAW6yMeBSxi/OyThJrZeKcLCezpph7gLzIkFfNYMqqyXcCl8tzNej+B8Dyr
-         3tRGNHLd2+ajuccWRvjRsP7HEwf34iintT6MuYSPYz/DZghkb+/7z4N1+C8WLKAqyrLZ
-         C2xkpSn17MmmtmQ19DPyfQG4O1pVcFdzeKGuHYDElLsdUnz+K1GG59q0B5z7g1ntDCKy
-         2o9o1ZRF3yjuZUdyYk38/UtiXzQBbQejO+BxE5Bp9lqB32C+s/iLfgZ0J3UTKIub3sB5
-         lBsA==
-X-Gm-Message-State: APjAAAUOI13e5i5A8NB8cULdC95vGU44RKSmuHR3avVhONfM9q1m8EPI
-        YY12xSbzROj9HEBWavnflak=
-X-Google-Smtp-Source: APXvYqy3fmo7/ncm6lIHtrFpfQoSewVnPVoZDijQHrQxC4R9KBEXyV2Q9ZJU/PMMxrsLSU8w/4pXOg==
-X-Received: by 2002:a17:902:5983:: with SMTP id p3mr38930332pli.224.1557874990361;
-        Tue, 14 May 2019 16:03:10 -0700 (PDT)
-Received: from localhost ([2601:640:5:a19f:19d3:11c4:475e:3daa])
-        by smtp.gmail.com with ESMTPSA id l65sm238391pfb.7.2019.05.14.16.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 16:03:09 -0700 (PDT)
-Date:   Tue, 14 May 2019 16:01:58 -0700
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Cyril Hrubis <chrubis@suse.cz>
-Cc:     Yuri Norov <ynorov@marvell.com>, Andreas Schwab <schwab@suse.de>,
-        "ltp@lists.linux.it" <ltp@lists.linux.it>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Steve Ellcey <sellcey@caviumnetworks.com>,
-        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
-        Alexander Graf <agraf@suse.de>,
-        Bamvor Zhangjian <bamv2005@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Manuel Montezelo <manuel.montezelo@gmail.com>,
-        James Hogan <james.hogan@imgtec.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Lin Yongting <linyongting@huawei.com>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        Nathan_Lynch <Nathan_Lynch@mentor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Subject: Re: [LTP] [EXT] Re: [PATCH v9 00/24] ILP32 for ARM64
-Message-ID: <20190514230158.GA6780@yury-thinkpad>
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
- <20190508225900.GA14091@yury-thinkpad>
- <mvmtvdyoi33.fsf@suse.de>
- <MN2PR18MB30865B950D85C6463EB0E1D4CB0F0@MN2PR18MB3086.namprd18.prod.outlook.com>
- <20190514104311.GA24708@rei>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fpPu6Srd12TWDsvx6xpShWyEQ5HvPxAwKNMasqNHAbk=;
+        b=JgakVNbJKWvIy6di1Nw0EniozDLX6LUvYOPn9igpIDYQyPxqOZZcMB33KoPy+im9FH
+         PH6CdY6Qfgx5VynsgSLZEbPTRi7ixcQdlYTihEq2uuIOBw+Fs3Z6rPQAlU6RpiYeHWQN
+         CWgUPMtAMAQwoJeUbzNlRMZMYhk5pHLNlxI9zJaD0zDQQMdAYEia0PaSAuFRIAINXxB8
+         FvIFffOhU0GP8/VMnRWJK0N5EhL9WS85aMrsN2rAnKQaSsZeIB2BrCp3vKY+PQKCOUDY
+         ylfLFf2aT0j9veK8ArbqKc2FKLgm3US3BElAj89c0sVg0lm+SPMXLCzqduVjZDd8OD+f
+         rqcg==
+X-Gm-Message-State: APjAAAUBX+65INsq9Chz7mCM2LFVMu66uMTUKMg2ylMA8wpST8UOU0FV
+        BgRqQnJbGkrEEqWhkf4Bel0ITg==
+X-Google-Smtp-Source: APXvYqxzoN7tuegV3gbfgvvbtn2Q1L1KZkn1XCuidG9PwFMOYDrpY9iAjhpTh23QbBLY6Tw5nU3lYw==
+X-Received: by 2002:a24:8b07:: with SMTP id g7mr5386727ite.129.1557875276553;
+        Tue, 14 May 2019 16:07:56 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
+        by smtp.gmail.com with ESMTPSA id m142sm199408itb.31.2019.05.14.16.07.55
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 14 May 2019 16:07:55 -0700 (PDT)
+Date:   Tue, 14 May 2019 17:07:51 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: don't expose page to fast gup before it's ready
+Message-ID: <20190514230751.GA70050@google.com>
+Reply-To: Andrew Morton <akpm@linux-foundation.org>,
+          Michal Hocko <mhocko@kernel.org>
+References: <20180108225632.16332-1-yuzhao@google.com>
+ <20180109084622.GF1732@dhcp22.suse.cz>
+ <20180109101050.GA83229@google.com>
+ <20190514142527.356cb071155cd1077536f3da@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190514104311.GA24708@rei>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190514142527.356cb071155cd1077536f3da@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 12:43:11PM +0200, Cyril Hrubis wrote:
-> Hi!
-> > > There is a problem with the stack size accounting during execve when
-> > > there is no stack limit:
-> > >
-> > > $ ulimit -s
-> > > 8192
-> > > $ ./hello.ilp32 
-> > > Hello World!
-> > > $ ulimit -s unlimited
-> > > $ ./hello.ilp32 
-> > > Segmentation fault
-> > > $ strace ./hello.ilp32 
-> > > execve("./hello.ilp32", ["./hello.ilp32"], 0xfffff10548f0 /* 77 vars */) = -1 ENOMEM (Cannot allocate memory)
-> > > +++ killed by SIGSEGV +++
-> > > Segmentation fault (core dumped)
-> > >
-> > > Andreas.
+On Tue, May 14, 2019 at 02:25:27PM -0700, Andrew Morton wrote:
+> On Tue, 9 Jan 2018 02:10:50 -0800 Yu Zhao <yuzhao@google.com> wrote:
+> 
+> > > Also what prevents reordering here? There do not seem to be any barriers
+> > > to prevent __SetPageSwapBacked leak after set_pte_at with your patch.
 > > 
-> > Thanks Andreas, I will take a look. Do we have such test in LTP?
-
-So the problem was in not converting new compat-sensitive code:
-
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 5bdf357169d8..c509f83fa506 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -63,7 +63,7 @@
- 				TASK_SIZE_32 : TASK_SIZE_64)
- #define TASK_SIZE_OF(tsk)	(is_compat_thread(tsk) ? \
- 				TASK_SIZE_32 : TASK_SIZE_64)
--#define DEFAULT_MAP_WINDOW	(test_thread_flag(TIF_32BIT) ? \
-+#define DEFAULT_MAP_WINDOW	(is_compat_task() ? \
- 				TASK_SIZE_32 : DEFAULT_MAP_WINDOW_64)
- #else
- #define TASK_SIZE		TASK_SIZE_64
-
-The fix is incorporated in ilp32-5.1.1:
-https://github.com/norov/linux/tree/ilp32-5.1.1
-
-> We do have a test that we can run a binary with very small stack size
-> i.e. 512kB but there does not seem to be anything that would catch this
-> specific problem.
+> > I assumed mem_cgroup_commit_charge() acted as full barrier. Since you
+> > explicitly asked the question, I realized my assumption doesn't hold
+> > when memcg is disabled. So we do need something to prevent reordering
+> > in my patch. And it brings up the question whether we want to add more
+> > barrier to other places that call page_add_new_anon_rmap() and
+> > set_pte_at().
 > 
-> Can you please open an issue and describe how to reproduce the problem
-> at our github tracker:
-> 
-> https://github.com/linux-test-project/ltp/issues
-> 
-> Then we can create testcase based on that reproducer later on.
-> 
-> -- 
-> Cyril Hrubis
-> chrubis@suse.cz
+> Is a new version of this patch planned?
 
-OK, I'll do.
+Sorry for the late reply. The last time I tried, I didn't come up
+with a better fix because:
+  1) as Michal pointed out, we need to make sure the fast gup sees
+  all changes made before set_pte_at();
+  2) pairing smp_wmb() in set_pte/pmd_at() with smp_rmb() in gup
+  seems the best way to prevent any potential ordering related
+  problems in the future;
+  3) but this slows down the paths that don't require the smp_mwb()
+  unnecessarily.
 
-Yury
+I didn't give it further thought because the problem doesn't seem
+fatal at the time. Now the fast gup has changed and the problem is
+serious:
+
+	CPU 1				CPU 1
+set_pte_at			get_user_pages_fast
+page_add_new_anon_rmap		gup_pte_range
+__SetPageSwapBacked (fetch)
+				try_get_compound_head
+				page_ref_add_unless
+__SetPageSwapBacked (store)
+
+Or the similar problem could happen to __do_huge_pmd_anonymous_page(),
+for the reason of missing smp_wmb() between the non-atomic bit op
+and set_pmd_at().
+
+We could simply replace __SetPageSwapBacked() with its atomic
+version. But 2) seems more preferable to me because it addresses
+my original problem:
+
+> > I didn't observe the race directly. But I did get few crashes when
+> > trying to access mem_cgroup of pages returned by get_user_pages_fast().
+> > Those page were charged and they showed valid mem_cgroup in kdumps.
+> > So this led me to think the problem came from premature set_pte_at().
+
+Thoughts? Thanks.
