@@ -2,57 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB3A1C6B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8351C6BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfENKMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:12:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46757 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfENKMt (ORCPT
+        id S1726603AbfENKMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:12:54 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44552 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfENKMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:12:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r7so687339wrr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 03:12:48 -0700 (PDT)
+        Tue, 14 May 2019 06:12:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c5so18482226wrs.11
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 03:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JhynvhAiddsMm/Ocp7kfyLUqbkQfMFHtGPzDTJPS1B0=;
-        b=POgIrSQvJlnEj7sbeK83izHCW7/GNPyqSQO0wUuvNg0ap2oo/MDC29Uj291gjEXA9o
-         OOktcC8ZvbzM54YaY105eVEKF4L0mP0I5JKwuxFilZBTNBGicOIp6s45+vumK0A+d0P3
-         Lg5xHawaznKjqnhlI4lS/ivZUVtjU8TXLr+3710P/HT7OttPffWSt9U6QN+MsbFCdFnH
-         YIAp91wpgf7k1LYDfDAu48s8UWNAYXNjqe35n0aU8KP4xvylUMjUrmqZAUOgBsTxxEzG
-         foOtZEBJZ10Lt2TfL2DOvQZ4hcb+RvKBIO8I6BaBW3PeRU7WiK375bDnlIQKiIx36X7k
-         VTMw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Atf8xTduPRCjHaXk5dCgP7q9YSDsKO5FSEd0MFVYX1Y=;
+        b=BhwJiYLVrHp0f/xqZZSNWoay0tbstdkSlIs6prGA+SI3lltcaTNCegPX6mmnazAjux
+         hUiIgZZIZd25bQGz/xHRuV+R4JE7TsiuqDekrQhlLgbMU8qkz6BYd0fnpQv49pYkLQki
+         yXKJDabVln4yUT/LaIzA92sF1sGfYSqtm9UC4nBAv6n3/7/aNc0Aw04hPbGOrCqmXdpp
+         b6xfEHfju50RBn0Og7uJhFVm7aiwLuw1D2atAbSAFtgZlztFgB9YB0BcPmzraj6EfMqC
+         Zzp2u50Rn7ihBD5+EzKn8k3Z8vPLJ42sDh4WrSPWM84qBifGep2j0izZJtdHxgiyWx2H
+         q3ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JhynvhAiddsMm/Ocp7kfyLUqbkQfMFHtGPzDTJPS1B0=;
-        b=ZIzhcusgrPC8qYc7UwO3/UWeeSBV1frglI8N/fO9rV4VVgRZYqEXylFcpaeTgpuXO3
-         BKo5kVbVZrYOofD2ejrm/g6BWqz1DUc1RysLA5yurVipcH7VpGFHaef2UQn/OToy8YWg
-         Fot32bRdqZioduMDbPBhSvBCiLPhBsfuplLX4UNkRv2jQ+S6rIgPeedsuUd8xaEs/fYS
-         BVvylPrcJCFPY7uj0B3LZpSorAlW7sE9J6aOkzMKYqcxt2k84PIf3c1Zrvh42Cd2vaFM
-         o4QQ7H9NlVMWiRxb1P8zSEmsBgRTk8Vi61gojvrxZWR7Vp8oytDc4M4hp9wU4AwFXQ9E
-         nGqA==
-X-Gm-Message-State: APjAAAU2Y7OOUOv9bPYMSeuQH9+7BPBrTAiIjxUGNTnSCkJhhdXPE9rK
-        740nY3q2GU3IEILNhBj8YzCwgw==
-X-Google-Smtp-Source: APXvYqxWgcWkABQ/gpTGPgCZF14Fs8TuOZduMEHV27FG7xjEGdKo8VVbb7/N98vhPuSiXwmwHNdJHg==
-X-Received: by 2002:a5d:52c4:: with SMTP id r4mr20149062wrv.79.1557828767618;
-        Tue, 14 May 2019 03:12:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Atf8xTduPRCjHaXk5dCgP7q9YSDsKO5FSEd0MFVYX1Y=;
+        b=fvaAIpeiHUIO4s8ARh7ZPd2xJuk1uonqslPSy3DaNJBHKUTod1Ao9u8NIalnUrGz8F
+         9AFZEOB8uu+cIAeTpOpwWTZg1HGQybuqDS76r/na0Yus+QHOpl7/JdCFaDq7DM8j+spi
+         ran2HBpLocrkUcYTcokZnVwFDhGGLyZcwa1CTwzOxOxddEmku8Y6iTO2G8Lok3FAkuxZ
+         TIY6Oz/WNcbFeLr/9KThp3PpxFzU5ycSIwmw/DpKHUJtQNunSw/+H+rmaeLXaia+p0xy
+         pCBpXG2iFto20Lr/Sto2Jy1WFo14YDel7OKlJ8HvLkClcIBPmh3auCg7KyC84sBkt2XG
+         EaBA==
+X-Gm-Message-State: APjAAAUUuaDr07MeUFkakog2WELkQEjFEcwGf8bHf5NqtbMBXIqNmZSH
+        6rtyo+i/5NDZmbb3C6t5xlP36Q==
+X-Google-Smtp-Source: APXvYqycdgP46dGvov7Qs/H3XUTJIeYdFqMSfT6eFoH0Mj6MOif7X082m+VcRCv04QbmJbI343elZw==
+X-Received: by 2002:adf:81a2:: with SMTP id 31mr20914699wra.165.1557828768534;
+        Tue, 14 May 2019 03:12:48 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id r23sm2219564wmh.29.2019.05.14.03.12.46
+        by smtp.googlemail.com with ESMTPSA id r23sm2219564wmh.29.2019.05.14.03.12.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 14 May 2019 03:12:47 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] arm64: dts: meson: g12a: add i2c
-Date:   Tue, 14 May 2019 12:12:34 +0200
-Message-Id: <20190514101237.13969-1-jbrunet@baylibre.com>
+Cc:     Guillaume La Roque <glaroque@baylibre.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 1/3] arm64: dts: meson: g12a: add i2c nodes
+Date:   Tue, 14 May 2019 12:12:35 +0200
+Message-Id: <20190514101237.13969-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190514101237.13969-1-jbrunet@baylibre.com>
+References: <20190514101237.13969-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -61,28 +64,316 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the i2c controllers and pinctrl definitions to the g12a DT then
-the busses present on the u200 and sei510.
+From: Guillaume La Roque <glaroque@baylibre.com>
 
-Notice the use of the pinconf DT property 'drive-strength-microamp'.
-Support for this property is not yet merged in meson pinctrl driver but
-the DT part as been acked by the DT maintainer [0] so it should be safe
-to use.
+Add pinctrl and nodes for i2c support on amlogic g12a
 
-[0]: https://lkml.kernel.org/r/20190513152451.GA25690@bogus
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 268 ++++++++++++++++++++
+ 1 file changed, 268 insertions(+)
 
-Guillaume La Roque (1):
-  arm64: dts: meson: g12a: add i2c nodes
-
-Jerome Brunet (2):
-  arm64: dts: meson: u200: enable i2c busses
-  arm64: dts: meson: sei510: enable i2c3
-
- .../boot/dts/amlogic/meson-g12a-sei510.dts    |   6 +
- .../boot/dts/amlogic/meson-g12a-u200.dts      |  21 ++
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   | 268 ++++++++++++++++++
- 3 files changed, 295 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index ca01064a771a..e6c0c19b3223 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -244,6 +244,188 @@
+ 						};
+ 					};
+ 
++
++					i2c0_sda_c_pins: i2c0-sda-c {
++						mux {
++							groups = "i2c0_sda_c";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++
++						};
++					};
++
++					i2c0_sck_c_pins: i2c0-sck-c {
++						mux {
++							groups = "i2c0_sck_c";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c0_sda_z0_pins: i2c0-sda-z0 {
++						mux {
++							groups = "i2c0_sda_z0";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c0_sck_z1_pins: i2c0-sck-z1 {
++						mux {
++							groups = "i2c0_sck_z1";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c0_sda_z7_pins: i2c0-sda-z7 {
++						mux {
++							groups = "i2c0_sda_z7";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c0_sda_z8_pins: i2c0-sda-z8 {
++						mux {
++							groups = "i2c0_sda_z8";
++							function = "i2c0";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sda_x_pins: i2c1-sda-x {
++						mux {
++							groups = "i2c1_sda_x";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sck_x_pins: i2c1-sck-x {
++						mux {
++							groups = "i2c1_sck_x";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sda_h2_pins: i2c1-sda-h2 {
++						mux {
++							groups = "i2c1_sda_h2";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sck_h3_pins: i2c1-sck-h3 {
++						mux {
++							groups = "i2c1_sck_h3";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sda_h6_pins: i2c1-sda-h6 {
++						mux {
++							groups = "i2c1_sda_h6";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c1_sck_h7_pins: i2c1-sck-h7 {
++						mux {
++							groups = "i2c1_sck_h7";
++							function = "i2c1";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c2_sda_x_pins: i2c2-sda-x {
++						mux {
++							groups = "i2c2_sda_x";
++							function = "i2c2";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c2_sck_x_pins: i2c2-sck-x {
++						mux {
++							groups = "i2c2_sck_x";
++							function = "i2c2";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c2_sda_z_pins: i2c2-sda-z {
++						mux {
++							groups = "i2c2_sda_z";
++							function = "i2c2";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c2_sck_z_pins: i2c2-sck-z {
++						mux {
++							groups = "i2c2_sck_z";
++							function = "i2c2";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c3_sda_h_pins: i2c3-sda-h {
++						mux {
++							groups = "i2c3_sda_h";
++							function = "i2c3";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c3_sck_h_pins: i2c3-sck-h {
++						mux {
++							groups = "i2c3_sck_h";
++							function = "i2c3";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c3_sda_a_pins: i2c3-sda-a {
++						mux {
++							groups = "i2c3_sda_a";
++							function = "i2c3";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c3_sck_a_pins: i2c3-sck-a {
++						mux {
++							groups = "i2c3_sck_a";
++							function = "i2c3";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
+ 					pwm_a_pins: pwm-a {
+ 						mux {
+ 							groups = "pwm_a";
+@@ -589,6 +771,42 @@
+ 						gpio-ranges = <&ao_pinctrl 0 0 15>;
+ 					};
+ 
++					i2c_ao_sck_pins: i2c_ao_sck_pins {
++						mux {
++							groups = "i2c_ao_sck";
++							function = "i2c_ao";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c_ao_sda_pins: i2c_ao_sda {
++						mux {
++							groups = "i2c_ao_sda";
++							function = "i2c_ao";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c_ao_sck_e_pins: i2c_ao_sck_e {
++						mux {
++							groups = "i2c_ao_sck_e";
++							function = "i2c_ao";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
++					i2c_ao_sda_e_pins: i2c_ao_sda_e {
++						mux {
++							groups = "i2c_ao_sda_e";
++							function = "i2c_ao";
++							bias-disable;
++							drive-strength-microamp = <3000>;
++						};
++					};
++
+ 					uart_ao_a_pins: uart-a-ao {
+ 						mux {
+ 							groups = "uart_ao_a_tx",
+@@ -723,6 +941,16 @@
+ 				status = "disabled";
+ 			};
+ 
++			i2c_AO: i2c@5000 {
++				compatible = "amlogic,meson-axg-i2c";
++				status = "disabled";
++				reg = <0x0 0x05000 0x0 0x20>;
++				interrupts = <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_I2C>;
++			};
++
+ 			pwm_AO_ab: pwm@7000 {
+ 				compatible = "amlogic,meson-g12a-ao-pwm-ab";
+ 				reg = <0x0 0x7000 0x0 0x20>;
+@@ -826,6 +1054,46 @@
+ 				status = "disabled";
+ 			};
+ 
++			i2c3: i2c@1c000 {
++				compatible = "amlogic,meson-axg-i2c";
++				status = "disabled";
++				reg = <0x0 0x1c000 0x0 0x20>;
++				interrupts = <GIC_SPI 39 IRQ_TYPE_EDGE_RISING>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_I2C>;
++			};
++
++			i2c2: i2c@1d000 {
++				compatible = "amlogic,meson-axg-i2c";
++				status = "disabled";
++				reg = <0x0 0x1d000 0x0 0x20>;
++				interrupts = <GIC_SPI 215 IRQ_TYPE_EDGE_RISING>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_I2C>;
++			};
++
++			i2c1: i2c@1e000 {
++				compatible = "amlogic,meson-axg-i2c";
++				status = "disabled";
++				reg = <0x0 0x1e000 0x0 0x20>;
++				interrupts = <GIC_SPI 214 IRQ_TYPE_EDGE_RISING>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_I2C>;
++			};
++
++			i2c0: i2c@1f000 {
++				compatible = "amlogic,meson-axg-i2c";
++				status = "disabled";
++				reg = <0x0 0x1f000 0x0 0x20>;
++				interrupts = <GIC_SPI 21 IRQ_TYPE_EDGE_RISING>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&clkc CLKID_I2C>;
++			};
++
+ 			clk_msr: clock-measure@18000 {
+ 				compatible = "amlogic,meson-g12a-clk-measure";
+ 				reg = <0x0 0x18000 0x0 0x10>;
 -- 
 2.20.1
 
