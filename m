@@ -2,69 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB991C682
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F721C68F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfENKAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:00:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42369 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfENKAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:00:21 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 188so13711742ljf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 03:00:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=VDYOXCfNS0RWcAwG+vOaefxruFova/pQq0ocFvR2Rt0=;
-        b=jLbY1Esstiy4RAA+81YwyWhF15j03i5QQ0FBBHs09lNyFmgxoaizgnyvMNlrGjVy6R
-         1KsrAYFkHaD5h9/SJI6H+8wQJS/P6cvXUPW+zY+Nfqj73zHcwMhkrluUFL1/RocTnqd6
-         CIadTlA7Mz58+pFXzzmHJ9kd6EkH3EOStas7UfeYfyT6w5PytG0dCwM90chrRcwKajZ8
-         8tFplBM7HPd7vVOXkg1DO4gBxhfiZ7cP0wGbQPYcoUkDgd9wUUX3LZB2dviVKwrcRT3K
-         UM/5CsP2OYXp0wW9sMxGou3OVE54ihjwd/b5WhHUgyWsjxEzzmL1oPh6zBt8YsxLPh2C
-         ml6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=VDYOXCfNS0RWcAwG+vOaefxruFova/pQq0ocFvR2Rt0=;
-        b=tBYnl7CSF8QTwl94Mw76xRweiBTyp3YqNR/rAH/tSqKaF6Pe1+j1DZx6JuaYPvPgsA
-         X5WDGz+iODaovJgc9TezYGenthnlUpjyTRt6NlJ054XldUezVx4Jz/mr4aVYdIcOeyFu
-         1EPxAhBHY3QiOZOnMWIE7hTpVLyS3bazdsQZnrrcjb82zBcEZGuc2mZu9ZjG1TYo+k6I
-         2KQe0ar4+hntzRYGAYZi8ZToRBSiKBibFk3V9C+AfqXc3pvJj01V6liLtl/L+n4B0CE/
-         opNigWj2areAXUd5M355RWYm3il4lYYI+IEjRFPKd3EbM9OMj6f+LAUgltdqilAEPhV3
-         /btg==
-X-Gm-Message-State: APjAAAXuU7dmWawLkaLzebrLi4KXMtxfkClVA+tW68ycSYEsM5+ccOka
-        bnOhBlO85Rb97obsEwokFXosfydtuOMBdGG7ff8=
-X-Google-Smtp-Source: APXvYqzk1yG19EsvY2W/M1v3ANT7ldqHUe/zgg63Zo8jBGRToRH0Wh7X4RUkg0W4LSvmtMy9wfaknmKkTSxPxb5ul5E=
-X-Received: by 2002:a2e:9b46:: with SMTP id o6mr15286141ljj.76.1557828019097;
- Tue, 14 May 2019 03:00:19 -0700 (PDT)
+        id S1726525AbfENKCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:02:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36718 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726075AbfENKCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 06:02:53 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C74C30198BD;
+        Tue, 14 May 2019 10:02:52 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96F1A63B8B;
+        Tue, 14 May 2019 10:02:51 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 412B818089C8;
+        Tue, 14 May 2019 10:02:49 +0000 (UTC)
+Date:   Tue, 14 May 2019 06:02:48 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        dan j williams <dan.j.williams@intel.com>,
+        zwisler@kernel.org, vishal l verma <vishal.l.verma@intel.com>,
+        dave jiang <dave.jiang@intel.com>, mst@redhat.com,
+        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
+        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger kernel <adilger.kernel@dilger.ca>,
+        darrick wong <darrick.wong@oracle.com>, lcapitulino@redhat.com,
+        kwolf@redhat.com, imammedo@redhat.com, jmoyer@redhat.com,
+        nilal@redhat.com, riel@surriel.com, stefanha@redhat.com,
+        aarcange@redhat.com, david@fromorbit.com, cohuck@redhat.com,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        pbonzini@redhat.com, kilobyte@angband.pl,
+        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com
+Message-ID: <919431491.28558886.1557828168896.JavaMail.zimbra@redhat.com>
+In-Reply-To: <cd5572ac-14d0-f872-6321-c522daa70f49@redhat.com>
+References: <20190510155202.14737-1-pagupta@redhat.com> <20190510155202.14737-3-pagupta@redhat.com> <f2ea35a6-ec98-447c-44fe-0cb3ab309340@redhat.com> <752392764.28554139.1557826022323.JavaMail.zimbra@redhat.com> <86298c2c-cc7c-5b97-0f11-335d7da8c450@redhat.com> <712871093.28555872.1557827242385.JavaMail.zimbra@redhat.com> <cd5572ac-14d0-f872-6321-c522daa70f49@redhat.com>
+Subject: Re: [PATCH v8 2/6] virtio-pmem: Add virtio pmem driver
 MIME-Version: 1.0
-Reply-To: mrsmariajohnson03@gmail.com
-Received: by 2002:a19:6602:0:0:0:0:0 with HTTP; Tue, 14 May 2019 03:00:18
- -0700 (PDT)
-From:   Mrs Maria johnson <mrsmariiajohnson03@gmail.com>
-Date:   Tue, 14 May 2019 12:00:18 +0200
-X-Google-Sender-Auth: AHf2bUdWhqARkpOrfj2xkS6rh48
-Message-ID: <CAGSYV_minepqWDZMht4C+wVpu7eygfT0ZsP5Y4NE1frb+LpEWA@mail.gmail.com>
-Subject: From mrs maria johnson
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.16.148, 10.4.195.1]
+Thread-Topic: virtio-pmem: Add virtio pmem driver
+Thread-Index: TcH/fzTmTGlr7ZcMfiu1eOEXog6lYw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 14 May 2019 10:02:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
 
-I am Mrs Maria Johnson an Active Banker, i saw your email address
-while browsing through the bank DTC Screen in my office yesterday so i
-decided to use this very chance to know you more, i have deal of
-($10.5 million Dollars) to transfer into your account, if you are
-interested get back to me for more detail.
+> >>
+> >> I think you should do the same here, vdev->priv is allocated in
+> >> virtio_pmem_probe.
+> >>
+> >> But maybe I am missing something important here :)
+> > 
+> > Because virtio_balloon use "kzalloc" for allocation and needs to be freed.
+> > But virtio pmem uses "devm_kzalloc" which takes care of automatically
+> > deleting
+> > the device memory when associated device is detached.
+> 
+> Hehe, thanks, that was the part that I was missing!
 
-Thanks for your co-operation.
+Thank you for the review.
 
-Your faithfully
-Mrs Maria Johnson
+Best regards,
+Pankaj
+> 
+> --
+> 
+> Thanks,
+> 
+> David / dhildenb
+> 
