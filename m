@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4231CF3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB5C1CF46
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfENSkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 14:40:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37373 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbfENSkI (ORCPT
+        id S1727682AbfENSkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 14:40:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34335 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727633AbfENSkJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 14:40:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6so5686pgc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 11:40:07 -0700 (PDT)
+        Tue, 14 May 2019 14:40:09 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c13so12717pgt.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 11:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0N3Ca5zISCWrqDaiQya2BHLNV2R0SKAMMpgd+oEiq7I=;
-        b=M2URzQs0AsI3b7hj/0Vj5SHYRtSwsrr0sG3OGhmhmeHN8Ow93+Op1SbVcMqS5b0atL
-         cvBTyv1CU0yCe7oWkFdkaHHnO9HNsHmE5XsBXiBj3DXMTAxo/EZpcQjpclcjjDIgCe1r
-         OaSeG6TAiyizIYAsYeH6AQ8U9q1DUuvb5mr8U=
+        bh=bCp66aV1gNxi33sE4L4kBrPzrebCfikC/mxwtWxT3pw=;
+        b=Pg0FWMZIqRZLdiikvIImkxfeP3LRkBxXx/th6apFqSwURqdn63h23semFgSQmGJy6F
+         lwDY5vXvHCiZV70qr4Z+Y4+b86bZf3VwvRVteFfJzUMjjLVFsEnyoqvNDPWMalvLGQ6i
+         Os6I56KrF9GgyES0oR9JXF3o8a9b/ASyBEqzs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0N3Ca5zISCWrqDaiQya2BHLNV2R0SKAMMpgd+oEiq7I=;
-        b=RdqpiulJBC1f8KStRUU2mdboFxvUqP3BGYbhY94OWHLa4WgjTKOchi2l5Jh7Eqr7HK
-         F49hwyKdWssGM6OV64bkrR9JNSl99rp8ytsv8J7cC9qKBigvQE9KR7wqtdG2H3lkfw07
-         +V89YpPV0BASV0vhhv5glfwfOuiZ7SmLkOWVYkD/WLBy4WOXyQWftF+UmqmDBrkOHI7E
-         VfYAMVTK/XwOZIiC0HUp3kVMrOZeDUFwxdo/GR/5avCsWq1gkBt4dqVfNCeggTxC+l8e
-         m3A4mAY6+jprGW9jVat9nCEXRYuP+tiGvdAMmpUCGaF3tkSx3GdN5BjDpATCoEwow7/c
-         xN5w==
-X-Gm-Message-State: APjAAAXI9YLuBceajrfCLosNXs8oAtSR19w3tmSa7C2kfj/iZGSSB2CZ
-        K3pOBLnyuk6i2rayrFv+AnIBSA==
-X-Google-Smtp-Source: APXvYqwsPRRqnqUC6zW6GwQqLExv5kHpvE8tqqm5XrxLIHYzYFDzamN9gpmiEZa+un+sigooU9QmZA==
-X-Received: by 2002:a63:6e0b:: with SMTP id j11mr26476923pgc.291.1557859207212;
-        Tue, 14 May 2019 11:40:07 -0700 (PDT)
+        bh=bCp66aV1gNxi33sE4L4kBrPzrebCfikC/mxwtWxT3pw=;
+        b=QvGOMK4SEIFKEn77meVzkIzhbBkPfABnsDT+IaCqCIF6Z9Os7ERfDtG+o1a99sKkQd
+         UsdKs0QgGj4hj2idLXiO3OCRmiZIQAqay6b7IyJyXWjLCW8/v9gCfk4tsGDM/QpJGB/a
+         G8y7reIUynejAC7plnOtkjbbaUfsmcRB32PULqV7cV6VXSaiVbsnKRwtow1X377Mfl6P
+         iYBPKvo1PlN0yiTrSjKmZ07ZDHxfFcgC0A4rSYFmCevGvOhWD0CXm7vs9WuDMoM+iusN
+         S6C3R3RG8n6pZK+slSjuEwhUQV76g1cts7ydH5OFqIXR4W877JNgwIET6TYn+yaBEqiy
+         4T5w==
+X-Gm-Message-State: APjAAAXxDtvhx1WQVToh01UysRh4BrAi8MspEfAOHM9xl7SfznuxAR9L
+        YLdc4lJEwCSzjTv97WUjVns6w88sXT0=
+X-Google-Smtp-Source: APXvYqwKFFk8VbfvQdWZ//TMaT0qP/i15b1ykYA7pmCwvZ+MflxIyOjEaHAbRIib6vZAH8JiTkSiyA==
+X-Received: by 2002:a63:a449:: with SMTP id c9mr3561397pgp.149.1557859208387;
+        Tue, 14 May 2019 11:40:08 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id 19sm19182454pgz.24.2019.05.14.11.40.06
+        by smtp.gmail.com with ESMTPSA id 19sm19182454pgz.24.2019.05.14.11.40.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 11:40:06 -0700 (PDT)
+        Tue, 14 May 2019 11:40:07 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Mark Brown <broonie@kernel.org>,
         Benson Leung <bleung@chromium.org>,
@@ -49,10 +49,10 @@ To:     Mark Brown <broonie@kernel.org>,
 Cc:     linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
         Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
         mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] platform/chrome: cros_ec_spi: Move to real time priority for transfers
-Date:   Tue, 14 May 2019 11:39:33 -0700
-Message-Id: <20190514183935.143463-2-dianders@chromium.org>
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH v3 2/3] spi: Allow SPI devices to request the pumping thread be realtime
+Date:   Tue, 14 May 2019 11:39:34 -0700
+Message-Id: <20190514183935.143463-3-dianders@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190514183935.143463-1-dianders@chromium.org>
 References: <20190514183935.143463-1-dianders@chromium.org>
@@ -63,218 +63,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 37a186225a0c ("platform/chrome: cros_ec_spi: Transfer
-messages at high priority") we moved transfers to a high priority
-workqueue.  This helped make them much more reliable.
-
-...but, we still saw failures.
-
-We were actually finding ourselves competing for time with dm-crypt
-which also scheduled work on HIGHPRI workqueues.  While we can
-consider reverting the change that made dm-crypt run its work at
-HIGHPRI, the argument in commit a1b89132dc4f ("dm crypt: use
-WQ_HIGHPRI for the IO and crypt workqueues") is somewhat compelling.
-It does make sense for IO to be scheduled at a priority that's higher
-than the default user priority.  It also turns out that dm-crypt isn't
-alone in using high priority like this.  loop_prepare_queue() does
-something similar for loopback devices.
-
-Looking in more detail, it can be seen that the high priority
-workqueue isn't actually that high of a priority.  It runs at MIN_NICE
-which is _fairly_ high priority but still below all real time
+Right now the only way to get the SPI pumping thread bumped up to
+realtime priority is for the controller to request it.  However it may
+be that the controller works fine with the normal priority but
+communication to a particular SPI device on the bus needs realtime
 priority.
 
-Should we move cros_ec_spi to real time priority to fix our problems,
-or is this just escalating a priority war?  I'll argue here that
-cros_ec_spi _does_ belong at real time priority.  Specifically
-cros_ec_spi actually needs to run quickly for correctness.  As I
-understand this is exactly what real time priority is for.
+Let's add a way for devices to request realtime priority when they set
+themselves up.
 
-There currently doesn't appear to be any way to use the standard
-workqueue APIs with a real time priority, so we'll switch over to
-using using a kthread worker.  We'll match the priority that the SPI
-core uses when it wants to do things on a realtime thread and just use
-"MAX_RT_PRIO - 1".
-
-This commit plus the patch ("platform/chrome: cros_ec_spi: Request the
-SPI thread be realtime") are enough to get communications very close
-to 100% reliable (the only known problem left is when serial console
-is turned on, which isn't something that happens in shipping devices).
-Specifically this test case now passes (tested on rk3288-veyron-jerry):
-
-  dd if=/dev/zero of=/var/log/foo.txt bs=4M count=512&
-  while true; do
-    ectool version > /dev/null;
-  done
-
-It should be noted that "/var/log" is encrypted (and goes through
-dm-crypt) and also passes through a loopback device.
+NOTE: this will just affect the priority of transfers that end up on
+the SPI core's pumping thread.  In many cases transfers happen in the
+context of the caller so if you need realtime priority for all
+transfers you should ensure the calling context is also realtime
+priority.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v3:
-- cros_ec realtime patch replaces revert; now patch #1
+- SPI core change now like patch v1 patch #2 (with name "rt").
 
-Changes in v2: None
+Changes in v2:
+- Now only force transfers to the thread for devices that want it.
+- Squashed patch #1 and #2 together.
+- Renamed variable to "force_rt_transfers".
 
- drivers/platform/chrome/cros_ec_spi.c | 88 +++++++++++++++++++++++----
- 1 file changed, 77 insertions(+), 11 deletions(-)
+ drivers/spi/spi.c       | 36 ++++++++++++++++++++++++++++++------
+ include/linux/spi/spi.h |  2 ++
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index 8e9451720e73..b89bf11dda64 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -13,6 +13,8 @@
- #include <linux/slab.h>
- #include <linux/spi/spi.h>
- 
-+#include <uapi/linux/sched/types.h>
-+
- 
- /* The header byte, which follows the preamble */
- #define EC_MSG_HEADER			0xec
-@@ -67,12 +69,16 @@
-  *      is sent when we want to turn on CS at the start of a transaction.
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-+ * @high_pri_worker: Used to give work to high_pri_thread.
-+ * @high_pri_thread: We'll do our transfers here to reduce preemption problems.
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
- 	unsigned int start_of_msg_delay;
- 	unsigned int end_of_msg_delay;
-+	struct kthread_worker high_pri_worker;
-+	struct task_struct *high_pri_thread;
- };
- 
- typedef int (*cros_ec_xfer_fn_t) (struct cros_ec_device *ec_dev,
-@@ -89,7 +95,7 @@ typedef int (*cros_ec_xfer_fn_t) (struct cros_ec_device *ec_dev,
-  */
- 
- struct cros_ec_xfer_work_params {
--	struct work_struct work;
-+	struct kthread_work work;
- 	cros_ec_xfer_fn_t fn;
- 	struct cros_ec_device *ec_dev;
- 	struct cros_ec_command *ec_msg;
-@@ -632,7 +638,7 @@ static int do_cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	return ret;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 8eb7460dd744..466984796dd9 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1364,10 +1364,32 @@ static void spi_pump_messages(struct kthread_work *work)
+ 	__spi_pump_messages(ctlr, true);
  }
  
--static void cros_ec_xfer_high_pri_work(struct work_struct *work)
-+static void cros_ec_xfer_high_pri_work(struct kthread_work *work)
+-static int spi_init_queue(struct spi_controller *ctlr)
++/**
++ * spi_set_thread_rt - set the controller to pump at realtime priority
++ * @ctlr: controller to boost priority of
++ *
++ * This can be called because the controller requested realtime priority
++ * (by setting the ->rt value before calling spi_register_controller()) or
++ * because a device on the bus said that its transfers needed realtime
++ * priority.
++ *
++ * NOTE: at the moment if any device on a bus says it needs realtime then
++ * the thread will be at realtime priority for all transfers on that
++ * controller.  If this eventually becomes a problem we may see if we can
++ * find a way to boost the priority only temporarily during relevant
++ * transfers.
++ */
++static void spi_set_thread_rt(struct spi_controller *ctlr)
  {
- 	struct cros_ec_xfer_work_params *params;
+ 	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
  
-@@ -644,12 +650,14 @@ static int cros_ec_xfer_high_pri(struct cros_ec_device *ec_dev,
- 				 struct cros_ec_command *ec_msg,
- 				 cros_ec_xfer_fn_t fn)
- {
--	struct cros_ec_xfer_work_params params;
--
--	INIT_WORK_ONSTACK(&params.work, cros_ec_xfer_high_pri_work);
--	params.ec_dev = ec_dev;
--	params.ec_msg = ec_msg;
--	params.fn = fn;
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct cros_ec_xfer_work_params params = {
-+		.work = KTHREAD_WORK_INIT(params.work,
-+					  cros_ec_xfer_high_pri_work),
-+		.ec_dev = ec_dev,
-+		.ec_msg = ec_msg,
-+		.fn = fn,
-+	};
++	dev_info(&ctlr->dev,
++		"will run message pump with realtime priority\n");
++	sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
++}
++
++static int spi_init_queue(struct spi_controller *ctlr)
++{
+ 	ctlr->running = false;
+ 	ctlr->busy = false;
  
- 	/*
- 	 * This looks a bit ridiculous.  Why do the work on a
-@@ -660,9 +668,8 @@ static int cros_ec_xfer_high_pri(struct cros_ec_device *ec_dev,
- 	 * context switched out for too long and the EC giving up on
- 	 * the transfer.
+@@ -1387,11 +1409,8 @@ static int spi_init_queue(struct spi_controller *ctlr)
+ 	 * request and the scheduling of the message pump thread. Without this
+ 	 * setting the message pump thread will remain at default priority.
  	 */
--	queue_work(system_highpri_wq, &params.work);
--	flush_work(&params.work);
--	destroy_work_on_stack(&params.work);
-+	kthread_queue_work(&ec_spi->high_pri_worker, &params.work);
-+	kthread_flush_work(&params.work);
+-	if (ctlr->rt) {
+-		dev_info(&ctlr->dev,
+-			"will run message pump with realtime priority\n");
+-		sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
+-	}
++	if (ctlr->rt)
++		spi_set_thread_rt(ctlr);
  
- 	return params.ret;
+ 	return 0;
  }
-@@ -694,6 +701,61 @@ static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct device *dev)
- 		ec_spi->end_of_msg_delay = val;
- }
+@@ -2982,6 +3001,11 @@ int spi_setup(struct spi_device *spi)
  
-+static void cros_ec_spi_high_pri_release(struct device *dev, void *res)
-+{
-+	struct cros_ec_spi *ec_spi = *(struct cros_ec_spi **)res;
-+
-+	kthread_stop(ec_spi->high_pri_thread);
-+	kthread_destroy_worker(&ec_spi->high_pri_worker);
-+}
-+
-+static int cros_ec_spi_devm_high_pri_alloc(struct device *dev,
-+					   struct cros_ec_spi *ec_spi)
-+{
-+	struct sched_param sched_priority = {
-+		.sched_priority = MAX_RT_PRIO - 1,
-+	};
-+	struct cros_ec_spi **ptr;
-+	int err = 0;
-+
-+	ptr = devres_alloc(cros_ec_spi_high_pri_release, sizeof(*ptr),
-+			   GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+	*ptr = ec_spi;
-+
-+	kthread_init_worker(&ec_spi->high_pri_worker);
-+	ec_spi->high_pri_thread = kthread_create(kthread_worker_fn,
-+						 &ec_spi->high_pri_worker,
-+						 "cros_ec_spi_high_pri");
-+	if (IS_ERR(ec_spi->high_pri_thread)) {
-+		err = PTR_ERR(ec_spi->high_pri_thread);
-+		dev_err(dev, "Can't create cros_ec high pri thread: %d\n", err);
-+		goto err_worker_initted;
+ 	spi_set_cs(spi, false);
+ 
++	if (spi->rt && !spi->controller->rt) {
++		spi->controller->rt = true;
++		spi_set_thread_rt(spi->controller);
 +	}
 +
-+	err = sched_setscheduler_nocheck(ec_spi->high_pri_thread,
-+					 SCHED_FIFO, &sched_priority);
-+	if (err) {
-+		dev_err(dev, "Can't set cros_ec high pri priority: %d\n", err);
-+		goto err_thread_created;
-+	}
-+
-+	wake_up_process(ec_spi->high_pri_thread);
-+
-+	devres_add(dev, ptr);
-+
-+	return 0;
-+
-+err_thread_created:
-+	kthread_stop(ec_spi->high_pri_thread);
-+
-+err_worker_initted:
-+	kthread_destroy_worker(&ec_spi->high_pri_worker);
-+	devres_free(ptr);
-+	return err;
-+}
-+
- static int cros_ec_spi_probe(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
-@@ -732,6 +794,10 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 
- 	ec_spi->last_transfer_ns = ktime_get_ns();
- 
-+	err = cros_ec_spi_devm_high_pri_alloc(dev, ec_spi);
-+	if (err)
-+		return err;
-+
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
- 		dev_err(dev, "cannot register EC\n");
+ 	dev_dbg(&spi->dev, "setup mode %d, %s%s%s%s%u bits/w, %u Hz max --> %d\n",
+ 			(int) (spi->mode & (SPI_CPOL | SPI_CPHA)),
+ 			(spi->mode & SPI_CS_HIGH) ? "cs_high, " : "",
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 053abd22ad31..15505c2485d6 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -109,6 +109,7 @@ void spi_statistics_add_transfer_stats(struct spi_statistics *stats,
+  *	This may be changed by the device's driver, or left at the
+  *	default (0) indicating protocol words are eight bit bytes.
+  *	The spi_transfer.bits_per_word can override this for each transfer.
++ * @rt: Make the pump thread real time priority.
+  * @irq: Negative, or the number passed to request_irq() to receive
+  *	interrupts from this device.
+  * @controller_state: Controller's runtime state
+@@ -143,6 +144,7 @@ struct spi_device {
+ 	u32			max_speed_hz;
+ 	u8			chip_select;
+ 	u8			bits_per_word;
++	bool			rt;
+ 	u32			mode;
+ #define	SPI_CPHA	0x01			/* clock phase */
+ #define	SPI_CPOL	0x02			/* clock polarity */
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
