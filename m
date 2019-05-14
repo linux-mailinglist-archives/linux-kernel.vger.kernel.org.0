@@ -2,112 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6AC11CE09
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4961CE0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfENRb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 13:31:27 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41967 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbfENRbZ (ORCPT
+        id S1727022AbfENRdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 13:33:17 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:41969 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfENRdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 13:31:25 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g8so16001290otl.8
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 10:31:24 -0700 (PDT)
+        Tue, 14 May 2019 13:33:16 -0400
+Received: by mail-qt1-f201.google.com with SMTP id l37so8753371qtc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 10:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=BqvKyNI72vvS2gqJPoI8R/UL+5htusVnGEndKiYEuoY=;
+        b=XlmB/6S5tyl3kACOqI4RGi/AYAGBbATRdM/YoHuRUjzjL+KYSHDYtIQ/jaLlJWnrcO
+         kKFuLImD55wowWDHZK6Z+K7qCdb9oCnoRZofnbeT01aUlnPaQHRbv7Q5pFDCrhlJMZDC
+         d4rWVYIRVQQbvD2AYgyRg79TQ3ve4gSVzSDqG95sRbSs0/gjbTE0civ7xkXZUi54yVgn
+         qs+xruAdlj+DIojHH3pkdQwU/dtoryxtACifn8x8oI9V6ij4Vy9wLLGd80wSbdvObWhQ
+         mIbSq54jOvoKnkGStZrdrLOwft/OmmGVoOQ+QpxeMZNakr9QjkbbjZCXVHb7BB5CvMZR
+         69Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ErzBDF5ta8fy4S6axV5usgeVf1icUMn3T8UVynCsAWs=;
-        b=UohxSKf/RDYZxIdFU4oSsi9uZkXLk53EsAVAFJYTnGOrBEMTtlMnJzoUo/DyMZD4+L
-         /zNyEySGkxJXRnJcK8rSRE9wi+OX8CMCb/gRxErcajWgjpuHvR7Zqvm+tR59xqJUP5N/
-         93TLYJv7aldBBh6ObLjLENRmvUlyrBGdgjEI88+imPpi8uZ1uPdGHT0ILIjXdvz7uqIt
-         zKEsfHh9yN/JRayRlb/Bu7maCaaWMwxRtVRzDSNs6zuabDb10+uE7aiun9PpOLmWT2gp
-         ck/5lXJhw5hSDr8CpmVUBSvga4xku6mpZh9EUs40rSJa3iJpm/cXPHwmKJhKfUaF4Hi5
-         Do1g==
-X-Gm-Message-State: APjAAAUcXOw98cG/LzhqQgcqmYQFFjpoesGAKuMuNtrhLZRTDx9mVNBJ
-        RqFEDdm/w+3X6TTNhRzLsUA=
-X-Google-Smtp-Source: APXvYqxkxGAxP4ZnVEYXQ1pF+uY0YgUE1LJnsi3HHxrq+TOlnXkjSIbH/bnYS6xVvJ3PilYfe8glmw==
-X-Received: by 2002:a9d:362:: with SMTP id 89mr4306623otv.17.1557855084265;
-        Tue, 14 May 2019 10:31:24 -0700 (PDT)
-Received: from sultan-box.localdomain ([107.193.118.89])
-        by smtp.gmail.com with ESMTPSA id m25sm6357027otp.81.2019.05.14.10.31.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 10:31:23 -0700 (PDT)
-Date:   Tue, 14 May 2019 10:31:19 -0700
-From:   Sultan Alsawaf <sultan@kerneltoast.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Daniel Colascione <dancol@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [RFC] simple_lmk: Introduce Simple Low Memory Killer for Android
-Message-ID: <20190514173119.GA19142@sultan-box.localdomain>
-References: <20190319231020.tdcttojlbmx57gke@brauner.io>
- <20190320015249.GC129907@google.com>
- <20190507021622.GA27300@sultan-box.localdomain>
- <20190507153154.GA5750@redhat.com>
- <20190507163520.GA1131@sultan-box.localdomain>
- <20190509155646.GB24526@redhat.com>
- <20190509183353.GA13018@sultan-box.localdomain>
- <20190510151024.GA21421@redhat.com>
- <20190513164555.GA30128@sultan-box.localdomain>
- <20190514124453.6fb1095d@oasis.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190514124453.6fb1095d@oasis.local.home>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=BqvKyNI72vvS2gqJPoI8R/UL+5htusVnGEndKiYEuoY=;
+        b=XobMI/SApvTxXYkOY7p99sOju/bxr8OvQiYUVscxfCzp3FYra08FL6RhxY1K2uOyvd
+         9yNVtOo4EdfTecl7KLuCpxNgHBjBNjU9V0JvUH26689xi2zeAD+/pdoKrbKe1MEpERkd
+         Uvsguz3yO0hEb3yh9y3cJbNIqV5l3ATXt71xO6Kari3eHEvqp6NOv19aMbaYkno/zipn
+         zQ8qOOD1D5kkYpKOTx0V4l0O3z5X+H6A7QTj/87Lw4mAJ+k1vW0ja6pZw7QLo38DaHNf
+         VgIZvnIW9kYtPUkeUMSuONzvrLYjyD178MhuOouUP1wqzGlJDlCiSFVw6bYMmasjE9g2
+         /Vjg==
+X-Gm-Message-State: APjAAAW9QzLFUDBv1/WNdZAPzJsBzhai94iuVkkS3bb4hLC8JNs3LhuA
+        dlkU04BITRpYvqoR1yaWDXqPPEI=
+X-Google-Smtp-Source: APXvYqzjdFzVH61R1ab0XzAVIAq2a6gann2WfIrLxzjrOU/9McW0tnQBAzZtO6M72haqhK0xoNa5U44=
+X-Received: by 2002:a05:620a:16b4:: with SMTP id s20mr29037867qkj.34.1557855195127;
+ Tue, 14 May 2019 10:33:15 -0700 (PDT)
+Date:   Tue, 14 May 2019 10:33:03 -0700
+Message-Id: <20190514173304.213692-1-wvw@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH] thermal: make thermal_cooling_device_register accepts const string
+From:   Wei Wang <wvw@google.com>
+Cc:     wei.vince.wang@gmail.com, Wei Wang <wvw@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 12:44:53PM -0400, Steven Rostedt wrote:
-> OK, this has gotten my attention.
-> 
-> This thread is quite long, do you have a git repo I can look at, and
-> also where is the first task_lock() taken before the
-> find_lock_task_mm()?
-> 
-> -- Steve
+Change the argument similarly to thermal_zone_device_register. This will
+help register names get from of_property_read_string during probe.
 
-Hi Steve,
+Signed-off-by: Wei Wang <wvw@google.com>
+---
+ Documentation/thermal/sysfs-api.txt |  7 ++++---
+ drivers/thermal/thermal_core.c      |  6 +++---
+ include/linux/thermal.h             | 12 ++++++------
+ 3 files changed, 13 insertions(+), 12 deletions(-)
 
-This is the git repo I work on: https://github.com/kerneltoast/android_kernel_google_wahoo
+diff --git a/Documentation/thermal/sysfs-api.txt b/Documentation/thermal/sysfs-api.txt
+index c3fa500df92c..0c26c05197ad 100644
+--- a/Documentation/thermal/sysfs-api.txt
++++ b/Documentation/thermal/sysfs-api.txt
+@@ -31,7 +31,7 @@ temperature) and throttle appropriate devices.
+ 1. thermal sysfs driver interface functions
+ 
+ 1.1 thermal zone device interface
+-1.1.1 struct thermal_zone_device *thermal_zone_device_register(char *type,
++1.1.1 struct thermal_zone_device *thermal_zone_device_register(const char *type,
+ 		int trips, int mask, void *devdata,
+ 		struct thermal_zone_device_ops *ops,
+ 		const struct thermal_zone_params *tzp,
+@@ -160,8 +160,9 @@ temperature) and throttle appropriate devices.
+ 	drivers for temperature calculations.
+ 
+ 1.2 thermal cooling device interface
+-1.2.1 struct thermal_cooling_device *thermal_cooling_device_register(char *name,
+-		void *devdata, struct thermal_cooling_device_ops *)
++1.2.1 struct thermal_cooling_device *thermal_cooling_device_register(
++		const char *name, void *devdata,
++		struct thermal_cooling_device_ops *ops)
+ 
+     This interface function adds a new thermal cooling device (fan/processor/...)
+     to /sys/class/thermal/ folder as cooling_device[0-*]. It tries to bind itself
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 6590bb5cb688..b708b66fef94 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -941,7 +941,7 @@ static void bind_cdev(struct thermal_cooling_device *cdev)
+  */
+ static struct thermal_cooling_device *
+ __thermal_cooling_device_register(struct device_node *np,
+-				  char *type, void *devdata,
++				  const char *type, void *devdata,
+ 				  const struct thermal_cooling_device_ops *ops)
+ {
+ 	struct thermal_cooling_device *cdev;
+@@ -1015,7 +1015,7 @@ __thermal_cooling_device_register(struct device_node *np,
+  * ERR_PTR. Caller must check return value with IS_ERR*() helpers.
+  */
+ struct thermal_cooling_device *
+-thermal_cooling_device_register(char *type, void *devdata,
++thermal_cooling_device_register(const char *type, void *devdata,
+ 				const struct thermal_cooling_device_ops *ops)
+ {
+ 	return __thermal_cooling_device_register(NULL, type, devdata, ops);
+@@ -1039,7 +1039,7 @@ EXPORT_SYMBOL_GPL(thermal_cooling_device_register);
+  */
+ struct thermal_cooling_device *
+ thermal_of_cooling_device_register(struct device_node *np,
+-				   char *type, void *devdata,
++				   const char *type, void *devdata,
+ 				   const struct thermal_cooling_device_ops *ops)
+ {
+ 	return __thermal_cooling_device_register(np, type, devdata, ops);
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 5f4705f46c2f..0f58fffee9a8 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -442,10 +442,10 @@ void thermal_zone_device_update(struct thermal_zone_device *,
+ 				enum thermal_notify_event);
+ void thermal_zone_set_trips(struct thermal_zone_device *);
+ 
+-struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
+-		const struct thermal_cooling_device_ops *);
++struct thermal_cooling_device *thermal_cooling_device_register(const char *,
++		void *, const struct thermal_cooling_device_ops *);
+ struct thermal_cooling_device *
+-thermal_of_cooling_device_register(struct device_node *np, char *, void *,
++thermal_of_cooling_device_register(struct device_node *np, const char *, void *,
+ 				   const struct thermal_cooling_device_ops *);
+ void thermal_cooling_device_unregister(struct thermal_cooling_device *);
+ struct thermal_zone_device *thermal_zone_get_zone_by_name(const char *name);
+@@ -496,12 +496,12 @@ static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+ static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+ { }
+ static inline struct thermal_cooling_device *
+-thermal_cooling_device_register(char *type, void *devdata,
++thermal_cooling_device_register(const char *type, void *devdata,
+ 	const struct thermal_cooling_device_ops *ops)
+ { return ERR_PTR(-ENODEV); }
+ static inline struct thermal_cooling_device *
+-thermal_of_cooling_device_register(struct device_node *np,
+-	char *type, void *devdata, const struct thermal_cooling_device_ops *ops)
++thermal_of_cooling_device_register(struct device_node *np, const char *type,
++	void *devdata, const struct thermal_cooling_device_ops *ops)
+ { return ERR_PTR(-ENODEV); }
+ static inline void thermal_cooling_device_unregister(
+ 	struct thermal_cooling_device *cdev)
+-- 
+2.21.0.1020.gf2820cf01a-goog
 
-With the newest simple_lmk iteration being this commit: https://github.com/kerneltoast/android_kernel_google_wahoo/commit/6b145b8c28b39f7047393169117f72ea7387d91c
-
-This repo is based off the 4.4 kernel that Google ships on the Pixel 2/2XL.
-
-simple_lmk iterates through the entire task list more than once and locks
-potential victims using find_lock_task_mm(). It keeps these potential victims
-locked across the multiple times that the task list is iterated.
-
-The locking pattern that Oleg said should cause lockdep to complain is that
-iterating through the entire task list more than once can lead to locking the
-same task that was locked earlier with find_lock_task_mm(), and thus deadlock.
-But there is a check in simple_lmk that avoids locking potential victims that
-were already found, which avoids the deadlock, but lockdep doesn't know about
-the check (which is done with vtsk_is_duplicate()) and should therefore
-complain.
-
-Lockdep does not complain though.
-
-Sultan
