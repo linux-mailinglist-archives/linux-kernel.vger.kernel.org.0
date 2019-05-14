@@ -2,53 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095C31D05E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B9C1D071
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfENUPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 16:15:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59536 "EHLO mail.kernel.org"
+        id S1726381AbfENUUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 16:20:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:23576 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfENUPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 16:15:15 -0400
-Subject: Re: [GIT PULL] Modules updates for v5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557864915;
-        bh=oE3NcVUGH7x6d12zcqbTI5MKlpQyOUmc09VxLkwOeJU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FxuZ7lqHijuAqNp9MRDDyK2DoHUvgBpaIJWWywwR1LzY2n6W9V4rGRtZt84z6BN4K
-         cI8hI9wksXxYuwZdfxNFbtC9GVKft7WXA6TpapZMJgLyWV6j9Xh9ICLD5uwU5YatkC
-         l4iU2DneaStcJZpa7Vn+POigq7mJKLOeiVlNoq+c=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190514153746.GA4533@linux-8ccs>
-References: <20190514153746.GA4533@linux-8ccs>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190514153746.GA4533@linux-8ccs>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git
- tags/modules-for-v5.2
-X-PR-Tracked-Commit-Id: dadec066d8fa7da227f623f632ea114690fecaf8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 280664f558c9d973315d48f125eb664cc607d089
-Message-Id: <155786491524.29168.2926770091125486218.pr-tracker-bot@kernel.org>
-Date:   Tue, 14 May 2019 20:15:15 +0000
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726036AbfENUUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 16:20:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 13:20:06 -0700
+X-ExtLoop1: 1
+Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
+  by fmsmga006.fm.intel.com with ESMTP; 14 May 2019 13:20:05 -0700
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 1/3] perf parse-regs: Split parse_regs
+Date:   Tue, 14 May 2019 13:19:32 -0700
+Message-Id: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 14 May 2019 17:37:46 +0200:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.2
+The available registers for --int-regs and --user-regs may be different,
+e.g. XMM registers.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/280664f558c9d973315d48f125eb664cc607d089
+Split parse_regs into two dedicated functions for --int-regs and
+--user-regs respectively.
 
-Thank you!
+Modify the warning message. "--user-regs=?" should be applied to show
+the available registers for --user-regs.
 
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+No changes since V1
+
+ tools/perf/builtin-record.c          |  4 ++--
+ tools/perf/util/parse-regs-options.c | 19 ++++++++++++++++---
+ tools/perf/util/parse-regs-options.h |  3 ++-
+ 3 files changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 386e665..45172bb 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -2029,10 +2029,10 @@ static struct option __record_options[] = {
+ 		    "use per-thread mmaps"),
+ 	OPT_CALLBACK_OPTARG('I', "intr-regs", &record.opts.sample_intr_regs, NULL, "any register",
+ 		    "sample selected machine registers on interrupt,"
+-		    " use '-I?' to list register names", parse_regs),
++		    " use '-I?' to list register names", parse_intr_regs),
+ 	OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs, NULL, "any register",
+ 		    "sample selected machine registers on interrupt,"
+-		    " use '-I?' to list register names", parse_regs),
++		    " use '--user-regs=?' to list register names", parse_user_regs),
+ 	OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
+ 		    "Record running/enabled time of read (:S) events"),
+ 	OPT_CALLBACK('k', "clockid", &record.opts,
+diff --git a/tools/perf/util/parse-regs-options.c b/tools/perf/util/parse-regs-options.c
+index 9cb187a..b21617f 100644
+--- a/tools/perf/util/parse-regs-options.c
++++ b/tools/perf/util/parse-regs-options.c
+@@ -5,8 +5,8 @@
+ #include <subcmd/parse-options.h>
+ #include "util/parse-regs-options.h"
+ 
+-int
+-parse_regs(const struct option *opt, const char *str, int unset)
++static int
++__parse_regs(const struct option *opt, const char *str, int unset, bool intr)
+ {
+ 	uint64_t *mode = (uint64_t *)opt->value;
+ 	const struct sample_reg *r;
+@@ -48,7 +48,8 @@ parse_regs(const struct option *opt, const char *str, int unset)
+ 					break;
+ 			}
+ 			if (!r->name) {
+-				ui__warning("Unknown register \"%s\", check man page or run \"perf record -I?\"\n", s);
++				ui__warning("Unknown register \"%s\", check man page or run \"perf record %s?\"\n",
++					    s, intr ? "-I" : "--user-regs=");
+ 				goto error;
+ 			}
+ 
+@@ -69,3 +70,15 @@ parse_regs(const struct option *opt, const char *str, int unset)
+ 	free(os);
+ 	return ret;
+ }
++
++int
++parse_user_regs(const struct option *opt, const char *str, int unset)
++{
++	return __parse_regs(opt, str, unset, false);
++}
++
++int
++parse_intr_regs(const struct option *opt, const char *str, int unset)
++{
++	return __parse_regs(opt, str, unset, true);
++}
+diff --git a/tools/perf/util/parse-regs-options.h b/tools/perf/util/parse-regs-options.h
+index cdefb1a..2b23d25 100644
+--- a/tools/perf/util/parse-regs-options.h
++++ b/tools/perf/util/parse-regs-options.h
+@@ -2,5 +2,6 @@
+ #ifndef _PERF_PARSE_REGS_OPTIONS_H
+ #define _PERF_PARSE_REGS_OPTIONS_H 1
+ struct option;
+-int parse_regs(const struct option *opt, const char *str, int unset);
++int parse_user_regs(const struct option *opt, const char *str, int unset);
++int parse_intr_regs(const struct option *opt, const char *str, int unset);
+ #endif /* _PERF_PARSE_REGS_OPTIONS_H */
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.7.4
+
