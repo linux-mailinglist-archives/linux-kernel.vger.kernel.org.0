@@ -2,114 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0388A1CAFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 764881CB2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfENOzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:55:50 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42026 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfENOzt (ORCPT
+        id S1726660AbfENO6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:58:17 -0400
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:42052 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfENO6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:55:49 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d4so10449214qkc.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:55:48 -0700 (PDT)
+        Tue, 14 May 2019 10:58:14 -0400
+Received: by mail-pl1-f180.google.com with SMTP id x15so8387868pln.9;
+        Tue, 14 May 2019 07:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7kGY/UxYYLr+YI89dChLQwq+Sl4QElIXlRa9KLaAqLc=;
-        b=Ie1FW8t/zgtSHMLE2lv6OkWmsD0oHrb8dnkzxez9BUMpQYX4t445sRjeAKgrjA7gNq
-         WZ+YK+yyNYBGivt+XlQQ0/ID8fRy14jEYu/8aGAM5rft2MiqJH6UfW2XSfA1rJ9EH9VU
-         oNJrwWHJU3YNPOJaAq0LTm9px6raXtNI79sLYOu686Yg4euDvJ3lIePTNVKPqrMDG/0t
-         pdecmTsjtjsMD1DGa8Ynj3tu+Oo6MZfqLnX8+iccbLm0GEXBQqjsEa4x7oxY3k8XhKeg
-         rC9ZW9jRKt3+aUCnp1hidNEQG50mtkTRoJinWF+6rgMSvDuVjhdiFV5dP4GLYc5Vl0tF
-         sRFg==
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=0LsZkohtkLGwcDs9hRe0VJ+ypCQo2GRqxmcPfS0ioFc=;
+        b=q9r/17xBR7SJhg2wxXoddjTsUJl5WLsUQ0mM6cpOwkSyLeqhqanDu322FS9tp8tqGG
+         lXPHeBchF6lZJEWf67HKBafqZTfFsXZItGoWPREIfY4oYu37y/dyG8keOPX/Tn8x3MXg
+         zvTCK6Ga2EIe6xtvtqyIz30aUFddv+ti9A5M57Q5JQXrWrBZZLRqdwWPtasrQGxx1Wko
+         JBy7tCNr6wqHv0af7/fvI88DfdtIFviKartbD7o0AUt76Cei4eCPojbopRGgl7nCdlG8
+         x5oV9FLV7Ue/Phvd7tQYOnnc5Gwo1veuFDP9jAfoUZtXc6Zxof7PRPxq2HyiTCsxlBcM
+         KwNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7kGY/UxYYLr+YI89dChLQwq+Sl4QElIXlRa9KLaAqLc=;
-        b=X+iWErW5xlMHJPGG4lcKJOU/hNzGJ4fE7h01MLtpQ/pgY5U8D7O+uY2jCl1pWTGxqD
-         /L6epxku+VYdJnMi+Q5p96AWxRuomlLARRDitaDQ/8atMJ2uI53EjWBI10ggQnzxNNc1
-         BfCvHBFCHNksbu81VUfHnfqXwUu0S9+qwoSP41GM3uaLwNYF/brWFtRkeMQ9F1Zht95L
-         1SSe6wpxa7evnIoqltIyTpmiU3UL+hLp3UeJq93EefYIWxY9ornaWqYMCeSVlE0LhIYX
-         rKzq+lp4V+1QFAR8AYqfa4vG7MR+dBlG1YGLcs5Uamvn0J+NISxllHguQc77Jmv7hbMu
-         1m5w==
-X-Gm-Message-State: APjAAAXf/hSVdLEjjxN7LZhqmM+Ii24idyRbFxCLBQoouue7/WwaItBe
-        ZHi9PGySxlX1+wvE9C8Rufj0wYFlz9Q=
-X-Google-Smtp-Source: APXvYqyyouR/emlU+oGf1TyeVSV5Y8Cb0m/ABHv93umiARSns7lGaXQJkvikuj3dJnQac8uYNBfw3Q==
-X-Received: by 2002:a37:508a:: with SMTP id e132mr27875371qkb.281.1557845748158;
-        Tue, 14 May 2019 07:55:48 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id r143sm546809qke.62.2019.05.14.07.55.46
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=0LsZkohtkLGwcDs9hRe0VJ+ypCQo2GRqxmcPfS0ioFc=;
+        b=T61HVVNUju6b6uo7nO2Rwmk6NUUPkducpOBgvpfQrHa00faum3Sq9kWTIv78TLo1Is
+         Wrz6Ni/BC6rzjdyg2S2jLp0aIi8TAnQFzKz02yGUH4uyBujLpjV0+U94r1Ei/3OWusZi
+         9vDJq+q/RiLHc3ZHNNOPulfobxEsrKAAYLNUroEAfn/1lg7LGQJ4CoMm1wddKWJnoax3
+         Twdn9/3wjXjK1YY/601IBzAI/3/N5gOBZEUgUyrzFcBzMD9UnPQLc6O0nZ6V6kO7tzye
+         X3XXewErKcCqRJAUP/vj3I5Dmr5YAQUS4sZv0KGxvzRlAnspxd1EmcbuKeTEHe5IeWXH
+         /dCQ==
+X-Gm-Message-State: APjAAAVmGlQ7NV98tgdAISjiNSJEh5ywBQltkThNeYF0yHS1wiKuU/3P
+        oKeKyLIbyMuKzfea8wkRxdVltyfj
+X-Google-Smtp-Source: APXvYqyCJlRLzCMnsZYmmkcjVr7eBSSe4MvuLLZxWawlfMF0nyetLZsXq/olBoQm2HJua7HSGSY1wQ==
+X-Received: by 2002:a17:902:9a03:: with SMTP id v3mr39505744plp.27.1557845893729;
+        Tue, 14 May 2019 07:58:13 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.27? ([2402:f000:1:1501:200:5efe:a66f:471b])
+        by smtp.gmail.com with ESMTPSA id q17sm7643780pfq.74.2019.05.14.07.58.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 07:55:47 -0700 (PDT)
-Message-ID: <1557845746.6132.27.camel@lca.pw>
-Subject: Re: [PATCH] iommu/amd: print out "tag" in INVALID_PPR_REQUEST
-From:   Qian Cai <cai@lca.pw>
-To:     Gary R Hook <ghook@amd.com>, "jroedel@suse.de" <jroedel@suse.de>
-Cc:     "Hook, Gary" <Gary.Hook@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 14 May 2019 10:55:46 -0400
-In-Reply-To: <ea379dc8-dd6b-f204-0abc-7b6fe87a851b@amd.com>
-References: <20190506041106.29167-1-cai@lca.pw>
-         <ea379dc8-dd6b-f204-0abc-7b6fe87a851b@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 14 May 2019 07:58:12 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] usb: xhci: Possible resource leaks when xhci_run() fails
+To:     mathias.nyman@intel.com, Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <fd7610ec-5f14-7952-cd9a-e56adb4e1353@gmail.com>
+Date:   Tue, 14 May 2019 22:58:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-05-07 at 13:47 +0000, Gary R Hook wrote:
-> On 5/5/19 11:11 PM, Qian Cai wrote:
-> > [CAUTION: External Email]
-> > 
-> > The commit e7f63ffc1bf1 ("iommu/amd: Update logging information for new
-> > event type") introduced a variable "tag" but had never used it which
-> > generates a warning below,
-> > 
-> > drivers/iommu/amd_iommu.c: In function 'iommu_print_event':
-> > drivers/iommu/amd_iommu.c:567:33: warning: variable 'tag' set but not
-> > used [-Wunused-but-set-variable]
-> >    int type, devid, pasid, flags, tag;
-> >                                   ^~~
-> > so just use it during the logging.
-> > 
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> >   drivers/iommu/amd_iommu.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> > index f7cdd2ab7f11..52f41369c5b3 100644
-> > --- a/drivers/iommu/amd_iommu.c
-> > +++ b/drivers/iommu/amd_iommu.c
-> > @@ -631,9 +631,9 @@ static void iommu_print_event(struct amd_iommu *iommu,
-> > void *__evt)
-> >                  pasid = ((event[0] >> 16) & 0xFFFF)
-> >                          | ((event[1] << 6) & 0xF0000);
-> >                  tag = event[1] & 0x03FF;
-> > -               dev_err(dev, "Event logged [INVALID_PPR_REQUEST
-> > device=%02x:%02x.%x pasid=0x%05x address=0x%llx flags=0x%04x]\n",
-> > +               dev_err(dev, "Event logged [INVALID_PPR_REQUEST
-> > device=%02x:%02x.%x pasid=0x%05x tag=0x%04x address=0x%llx flags=0x%04x]\n",
-> >                          PCI_BUS_NUM(devid), PCI_SLOT(devid),
-> > PCI_FUNC(devid),
-> > -                       pasid, address, flags);
-> > +                       pasid, tag, address, flags);
-> >                  break;
-> >          default:
-> >                  dev_err(dev, "Event logged [UNKNOWN event[0]=0x%08x
-> > event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
-> 
-> I did manage to overlook that variable when I posted the original patch. 
-> But it looks to me like 41e59a41fc5d1 (iommu tree) already fixed this... 
-> I'm not sure why it never got pushed to the main tree.
+xhci_pci_setup() is assigned to hc_driver.reset;
+xhci_run() is assigned to hc_driver.start();
+xhci_stop() is assigned to hc_driver.stop().
 
-Jroedel, I am wondering what the plan for 41e59a41fc5d1 (iommu tree) or this
-patch to be pushed to the linux-next or mainline...
+xhci_pci_setup() calls xhci_gen_setup, which calls xhci_init(). And 
+xhci_init() calls xhci_mem_init() to allocate resources.
+
+xhci_stop() calls xhci_mem_cleanup(), to release the resources allocated 
+in xhci_mem_init() (also namely xhci_pci_setup()).
+
+xhci_run() can fail, because xhci_try_enable_msi() or 
+xhci_alloc_command() in this function can fail.
+
+In drivers/usb/core/hcd.c:
+     retval = hcd->driver->reset(hcd);
+     if (retval < 0) {
+         ......
+         goto err_hcd_driver_setup;
+     }
+     ......
+     retval = hcd->driver->start(hcd);
+     if (retval < 0) {
+         ......
+         goto err_hcd_driver_start;
+     }
+     .......
+     hcd->driver->stop(hcd);
+     hcd->state = HC_STATE_HALT;
+     clear_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+     del_timer_sync(&hcd->rh_timer);
+err_hcd_driver_start:
+     if (usb_hcd_is_primary_hcd(hcd) && hcd->irq > 0)
+         free_irq(irqnum, hcd);
+err_request_irq:
+err_hcd_driver_setup:
+err_set_rh_speed:
+     usb_put_invalidate_rhdev(hcd);
+err_allocate_root_hub:
+     usb_deregister_bus(&hcd->self);
+err_register_bus:
+     hcd_buffer_destroy(hcd);
+err_create_buf:
+     usb_phy_roothub_power_off(hcd->phy_roothub);
+err_usb_phy_roothub_power_on:
+     usb_phy_roothub_exit(hcd->phy_roothub);
+
+Thus, when hcd->driver->reset() succeeds and hcd->driver->start() fails, 
+hcd->driver->stop() is not called.
+
+Namely, when xhci_pci_setup() successfully allocates resources, and 
+xhci_run() fails, xhci_stop() is not called to release the resources.
+For this reason, resource leaks occur in this case.
+
+I check the code of the ehci driver, uhci driver and ohci driver, and 
+find that they do not have such problem, because:
+In the ehci driver, ehci_run() (namely hcd->driver->start()) never fails.
+In the uhci driver, all the resources are allocated in uhci_start 
+(namely hcd->driver->start()), and no resources are allocated in 
+uhci_pci_init() (namely hcd->driver->reset()).
+In the ohci driver, ohci_setup() (namely hcd->driver->reset()) also 
+allocates resources. But when ohci_start() (namely hcd->driver->start()) 
+is going to fail, ohci_stop() is directly called to release the 
+resources allocated by ohci_setup().
+
+Thus, there are two possible ways of fixing bugs:
+1) Call xhci_stop() when xhci_run() is going to fail (like the ohci driver)
+2) Move all resource-allocation operations into xhci_run() (like the 
+uhci driver).
+
+I am not sure whether these ways are correct, so I only report bugs.
+
+These bugs are found by a runtime fuzzing tool named FIZZER written by us.
+
+
+Best wishes,
+Jia-Ju Bai
