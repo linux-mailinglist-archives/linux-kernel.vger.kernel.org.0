@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3D41CA44
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48EAD1CA4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfENO1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:27:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55691 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfENO1F (ORCPT
+        id S1726523AbfENO1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:27:20 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55693 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfENO1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 10:27:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x64so3099632wmb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:27:03 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id x64so3099698wmb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 07:27:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RVVyuMvOECdnykHOg06JMYBC0CP3Jj/vLDrIXkB+hBI=;
-        b=jEs81h1ajv0Mq+rqCs5b30885SiDPdTBh3OyhKqv8gKw5qS8VuT6tBfJsEjItE8bdk
-         VkeovzQsr+gFHJnI/NTPM2nkLtnTzRqm/QB8by757kG1YvJXF4trV1rBPldpQ6UcVbCz
-         n/WI4tdrqWa4VWBwiMIA5hBUZcHXe9K50/XpMDTZGsWhOLxR75d5QQ3vj7FjepEnCzFy
-         /DLfdwRT+MXvOGDmeqpDGwrPCqezrTuXJ9n4KYV6nqCs7b7VGcA/6fhX0keVsO3Ie7jf
-         8JUFIX6riORBclj/D6TTo+HIQymhklyLbTHzJF/411jb/AolIDp/mLqYQ2clGfZstw+8
-         P23A==
+        bh=u0eVRocZPCT0aug7aBTiFNphdt5giEcrh3D7mF/GVRU=;
+        b=gV1IFuQpOmQFw5EBRP9Mnk6+S0wuKsb+R8Y/h6VC4FFIzEYHChCYPhCQ2ImKUDE3lS
+         h2bCYZSdaC7lFj4tklHmk3M2mnYJkajT4VXzI+vSivcxbPbSbV7eVfCGAnHED5lvEHl4
+         TJxTDL0E0jb+NcRHCqwHDa0g64xNzRVbnx/xs5n76zII97qMeEkIe6atSMur/ZYpQLBK
+         Lg0wtHBRG28V5vcRl0W+pbtrysUSxHBvjuxokNyOhLc9cZYHl7WrzA2GiS6cQhUM1vVC
+         lghBEZaCZyN+uMcDURK3PKVz0locfVwKYVUEnVqF2UfGfcx6S6EJ4Hc8AyNia93C2DPN
+         epsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RVVyuMvOECdnykHOg06JMYBC0CP3Jj/vLDrIXkB+hBI=;
-        b=Vb5e6ZqNILYQkfG9ZkFlgoppIqSkmmX/5KxvHoaTKjr8KLqLynXexsiZFBO4lFAJ7b
-         SMazNxF8ynwS2ylBhw9BBO/PHBb/0G8GvsKmmtsQ5PH8CK8LALGkaOUFmJmV/J4f4lju
-         KYYWrU2ZI8YuyTYLJbFphi3rtGlpqUc+DC8tUIi2eA7KdNmVfrBBdvTmUFzRK3igfNHF
-         B9G9FHEdeU9NSfSVaCzW8nsYiSLGhYarWw8c/Tlr4EtamTLzpublh8stVs0n/GSslfpE
-         xS+QXa7ocyDo9rg8n6Y10NSsYCDbb0q8TqwovKlbfUSL48gLT11MBDFwEDq3Oo4kWY6T
-         uKBw==
-X-Gm-Message-State: APjAAAVD85nE+J+iZiIl3Qv7Bxw50HomoUX36dW9RnDFYQ+JJGpSkJBL
-        b8t0eDeMAUy4oJ+iumA5zRRXuw==
-X-Google-Smtp-Source: APXvYqxGAyi+CZ3nqvmR/sh1VIPkflen3Zz1B6mLaq7ed4bmv3GwqxMt+X2Q7sRF92Dx4Q75JgBZKw==
-X-Received: by 2002:a1c:4145:: with SMTP id o66mr20386116wma.68.1557844022765;
-        Tue, 14 May 2019 07:27:02 -0700 (PDT)
+        bh=u0eVRocZPCT0aug7aBTiFNphdt5giEcrh3D7mF/GVRU=;
+        b=Xu7yytz1QCQCErZe0NoYSHKTuGsDadAuzY8mw4ct68spYrkIIpeOVdvyjXUW3g87Gw
+         /HzykG5ZPgjVzcNoLwh64unbi3FBKeaZN3NyPo2sCtVGXMmPo+RtF3B0gziiMxD43hn4
+         O5C3Kh90jyCOzsQNVF88zjkZXMtodPZek4jF0yCxvS+zw3W75ckJjQeYHukljI2MTDTO
+         h7D6JlZSjSi+KT861Swh1rVSp7DGgvxcwkiYFmRbcCMPP/6CJKdTQp31Y8RnovVbGBn8
+         glVkHol2j4sNzBvh4zo6nR6DUL7VLevQyyXSPySvtGnd9PZc/Czq5vLyF/WuyBqgdcFs
+         MxZQ==
+X-Gm-Message-State: APjAAAUbPB6GFTrfriG3B5X1MAP2cggJkhAUimxb+jnbcxTI7ytIe4DP
+        lJSq27A6jvcCtaLJ5sfmQ/SrzQ==
+X-Google-Smtp-Source: APXvYqyra4gqxcH2sf1ZTeW4iRYuoO9yamYWDI8dEYSE9FcH+wiZmXCr9laJzB7zMx9u0Rv8eezA3g==
+X-Received: by 2002:a7b:c301:: with SMTP id k1mr19118868wmj.37.1557844023781;
+        Tue, 14 May 2019 07:27:03 -0700 (PDT)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id h15sm12343642wru.52.2019.05.14.07.27.01
+        by smtp.googlemail.com with ESMTPSA id h15sm12343642wru.52.2019.05.14.07.27.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 07:27:02 -0700 (PDT)
+        Tue, 14 May 2019 07:27:03 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/8] arm64: dts: meson: g12a: add spdifin
-Date:   Tue, 14 May 2019 16:26:48 +0200
-Message-Id: <20190514142649.1127-8-jbrunet@baylibre.com>
+Subject: [PATCH v2 8/8] arm64: dts: meson: g12a: enable hdmi_tx sound dai provider
+Date:   Tue, 14 May 2019 16:26:49 +0200
+Message-Id: <20190514142649.1127-9-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190514142649.1127-1-jbrunet@baylibre.com>
 References: <20190514142649.1127-1-jbrunet@baylibre.com>
@@ -63,69 +63,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the spdif input device node and the pinctrl definition for
-this capture interface g12a SoC family
+At the moment the sysnopsys hdmi i2s driver provides a single playback
+DAI. Add the corresponding sound-dai-cell to the hdmi device node.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 37 +++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index 8dbdcbea5945..d6c6408281e9 100644
+index d6c6408281e9..4fd1ed4d434b 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -807,6 +807,30 @@
- 						};
- 					};
+@@ -158,6 +158,7 @@
+ 				clock-names = "isfr", "iahb", "venci";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
++				#sound-dai-cells = <0>;
+ 				status = "disabled";
  
-+					spdif_in_a10_pins: spdif-in-a10 {
-+						mux {
-+							groups = "spdif_in_a10";
-+							function = "spdif_in";
-+							bias-disable;
-+						};
-+					};
-+
-+					spdif_in_a12_pins: spdif-in-a12 {
-+						mux {
-+							groups = "spdif_in_a12";
-+							function = "spdif_in";
-+							bias-disable;
-+						};
-+					};
-+
-+					spdif_in_h_pins: spdif-in-h {
-+						mux {
-+							groups = "spdif_in_h";
-+							function = "spdif_in";
-+							bias-disable;
-+						};
-+					};
-+
- 					spdif_out_h_pins: spdif-out-h {
- 						mux {
- 							groups = "spdif_out_h";
-@@ -1516,6 +1540,19 @@
- 					status = "disabled";
- 				};
- 
-+				spdifin: audio-controller@400 {
-+					compatible = "amlogic,g12a-spdifin",
-+						     "amlogic,axg-spdifin";
-+					reg = <0x0 0x400 0x0 0x30>;
-+					#sound-dai-cells = <0>;
-+					sound-name-prefix = "SPDIFIN";
-+					interrupts = <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>;
-+					clocks = <&clkc_audio AUD_CLKID_SPDIFIN>,
-+						 <&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
-+					clock-names = "pclk", "refclk";
-+					status = "disabled";
-+				};
-+
- 				spdifout: audio-controller@480 {
- 					compatible = "amlogic,g12a-spdifout",
- 						     "amlogic,axg-spdifout";
+ 				/* VPU VENC Input */
 -- 
 2.20.1
 
