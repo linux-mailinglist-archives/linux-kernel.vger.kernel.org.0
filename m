@@ -2,139 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B581CD03
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28A41CD0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfENQbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 12:31:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46856 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725916AbfENQbn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 12:31:43 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4EGRC3Z007110
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 12:31:43 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sfyg5wgy6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 12:31:43 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 14 May 2019 17:31:40 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 May 2019 17:31:38 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4EGVbFZ54657156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 16:31:37 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE2484203F;
-        Tue, 14 May 2019 16:31:36 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EB6A42045;
-        Tue, 14 May 2019 16:31:36 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.148.90])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 14 May 2019 16:31:36 +0000 (GMT)
-Subject: Re: [PATCH v2 1/2] KVM: Start populating /sys/hypervisor with KVM
- entries
-To:     "Sironi, Filippo" <sironi@amazon.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "vasu.srinivasan@oracle.com" <vasu.srinivasan@oracle.com>
-References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
- <1557847002-23519-1-git-send-email-sironi@amazon.de>
- <1557847002-23519-2-git-send-email-sironi@amazon.de>
- <d03f6be5-d8dc-4389-e14c-295f36a68827@de.ibm.com>
- <56DAB9BD-2543-49DA-9886-C9C8F2B814F9@amazon.de>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Tue, 14 May 2019 18:31:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726472AbfENQd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 12:33:27 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32939 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725916AbfENQd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 12:33:26 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 453499C173FFC64BA28C;
+        Tue, 14 May 2019 17:33:25 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 14 May
+ 2019 17:33:22 +0100
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Rob Landley <rob@landley.net>,
+        Arvind Sankar <niveditas98@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        <initramfs@vger.kernel.org>
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+ <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <9357cb32-3803-2a7e-4949-f9e4554c1ee9@huawei.com>
+Date:   Tue, 14 May 2019 18:33:29 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <56DAB9BD-2543-49DA-9886-C9C8F2B814F9@amazon.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19051416-4275-0000-0000-00000334B4CC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051416-4276-0000-0000-0000384435BA
-Message-Id: <926fdc5e-8ef2-0995-6a74-77b76af0905e@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=630 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905140115
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 14.05.19 18:09, Sironi, Filippo wrote:
-
->> Isnt kvm_para_available a function that is defined in the context of the HOST
->> and not of the guest?
+On 5/14/2019 5:19 PM, Andy Lutomirski wrote:
+> On Mon, May 13, 2019 at 5:47 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>>
+>> On 5/13/2019 11:07 AM, Rob Landley wrote:
+>>>
+>>>
+>>> On 5/13/19 2:49 AM, Roberto Sassu wrote:
+>>>> On 5/12/2019 9:43 PM, Arvind Sankar wrote:
+>>>>> On Sun, May 12, 2019 at 05:05:48PM +0000, Rob Landley wrote:
+>>>>>> On 5/12/19 7:52 AM, Mimi Zohar wrote:
+>>>>>>> On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
+>>>>>>>> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
+>>>>>>>>> This proposal consists in marshaling pathnames and xattrs in a file called
+>>>>>>>>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+>>>>>>>>> been extracted.
+>>>>>>>>
+>>>>>>>> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
+>>>>>>>> be done equivalently by the initramfs' /init? Why is kernel involvement
+>>>>>>>> actually required here?
+>>>>>>>
+>>>>>>> It's too late.  The /init itself should be signed and verified.
+>>>>>>
+>>>>>> If the initramfs cpio.gz image was signed and verified by the extractor, how is
+>>>>>> the init in it _not_ verified?
+>>>>>>
+>>>>>> Ro
+>>>>>
+>>>>> Wouldn't the below work even before enforcing signatures on external
+>>>>> initramfs:
+>>>>> 1. Create an embedded initramfs with an /init that does the xattr
+>>>>> parsing/setting. This will be verified as part of the kernel image
+>>>>> signature, so no new code required.
+>>>>> 2. Add a config option/boot parameter to panic the kernel if an external
+>>>>> initramfs attempts to overwrite anything in the embedded initramfs. This
+>>>>> prevents overwriting the embedded /init even if the external initramfs
+>>>>> is unverified.
+>>>>
+>>>> Unfortunately, it wouldn't work. IMA is already initialized and it would
+>>>> verify /init in the embedded initial ram disk.
+>>>
+>>> So you made broken infrastructure that's causing you problems. Sounds unfortunate.
+>>
+>> The idea is to be able to verify anything that is accessed, as soon as
+>> rootfs is available, without distinction between embedded or external
+>> initial ram disk.
+>>
+>> Also, requiring an embedded initramfs for xattrs would be an issue for
+>> systems that use it for other purposes.
+>>
+>>
+>>>> The only reason why
+>>>> opening .xattr-list works is that IMA is not yet initialized
+>>>> (late_initcall vs rootfs_initcall).
+>>>
+>>> Launching init before enabling ima is bad because... you didn't think of it?
+>>
+>> No, because /init can potentially compromise the integrity of the
+>> system.
 > 
-> No, kvm_para_available is defined in the guest context.
-> On x86, it checks for the presence of the KVM CPUID leafs.
-> 
+> I think Rob is right here.  If /init was statically built into the
+> kernel image, it has no more ability to compromise the kernel than
+> anything else in the kernel.  What's the problem here?
 
-Right you are, I mixed that up.
+Right, the measurement/signature verification of the kernel image is
+sufficient.
 
+Now, assuming that we defer the IMA initialization until /init in the
+embedded initramfs has been executed, the problem is how to handle
+processes launched with the user mode helper or files directly read by
+the kernel (if it can happen before /init is executed). If IMA is not
+yet enabled, these operations will be performed without measurement and
+signature verification.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
