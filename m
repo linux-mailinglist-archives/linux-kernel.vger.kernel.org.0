@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C62E31CA01
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A3531C9E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfENOEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:04:23 -0400
+        id S1726454AbfENODC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 10:03:02 -0400
 Received: from mga05.intel.com ([192.55.52.43]:47286 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfENOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726283AbfENOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 10:02:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -29,16 +29,26 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Ricardo Neri <ricardo.neri@intel.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Babu Moger <Babu.Moger@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Stephane Eranian <eranian@google.com>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Subject: [RFC PATCH v3 06/21] x86/hpet: Configure the timer used by the hardlockup detector
-Date:   Tue, 14 May 2019 07:01:59 -0700
-Message-Id: <1557842534-4266-7-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH v3 07/21] watchdog/hardlockup: Define a generic function to detect hardlockups
+Date:   Tue, 14 May 2019 07:02:00 -0700
+Message-Id: <1557842534-4266-8-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -47,95 +57,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the initial configuration of the timer to be used by the
-hardlockup detector. Return a data structure with a description of the
-timer; this information is subsequently used by the hardlockup detector.
+The procedure to detect hardlockups is independent of the underlying
+mechanism that generates the non-maskable interrupt used to drive the
+detector. Thus, it can be put in a separate, generic function. In this
+manner, it can be invoked by various implementations of the NMI watchdog.
 
-Only provide the timer if it supports Front Side Bus interrupt delivery.
-This condition greatly simplifies the implementation of the detector.
-Specifically, it helps to avoid the complexities of routing the interrupt
-via the IO-APIC (e.g., potential race conditions that arise from re-
-programming the IO-APIC in NMI context).
+For this purpose, move the bulk of watchdog_overflow_callback() to the
+new function inspect_for_hardlockups(). This function can then be called
+from the applicable NMI handlers.
 
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Babu Moger <Babu.Moger@amd.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- arch/x86/include/asm/hpet.h | 13 +++++++++++++
- arch/x86/kernel/hpet.c      | 25 +++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+ include/linux/nmi.h   |  1 +
+ kernel/watchdog_hld.c | 18 +++++++++++-------
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
-index 6f099e2781ce..20abdaa5372d 100644
---- a/arch/x86/include/asm/hpet.h
-+++ b/arch/x86/include/asm/hpet.h
-@@ -109,6 +109,19 @@ extern void hpet_set_comparator(int num, unsigned int cmp, unsigned int period);
+diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+index 9003e29cde46..5a8b19749769 100644
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -212,6 +212,7 @@ extern int proc_watchdog_thresh(struct ctl_table *, int ,
+ 				void __user *, size_t *, loff_t *);
+ extern int proc_watchdog_cpumask(struct ctl_table *, int,
+ 				 void __user *, size_t *, loff_t *);
++void inspect_for_hardlockups(struct pt_regs *regs);
  
- #endif /* CONFIG_HPET_EMULATE_RTC */
+ #ifdef CONFIG_HAVE_ACPI_APEI_NMI
+ #include <asm/nmi.h>
+diff --git a/kernel/watchdog_hld.c b/kernel/watchdog_hld.c
+index 247bf0b1582c..b352e507b17f 100644
+--- a/kernel/watchdog_hld.c
++++ b/kernel/watchdog_hld.c
+@@ -106,14 +106,8 @@ static struct perf_event_attr wd_hw_attr = {
+ 	.disabled	= 1,
+ };
  
-+#ifdef CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
-+struct hpet_hld_data {
-+	bool		has_periodic;
-+	u32		num;
-+	u64		ticks_per_second;
-+};
-+
-+extern struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void);
-+#else
-+static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
-+{ return NULL; }
-+#endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
-+
- #else /* CONFIG_HPET_TIMER */
+-/* Callback function for perf event subsystem */
+-static void watchdog_overflow_callback(struct perf_event *event,
+-				       struct perf_sample_data *data,
+-				       struct pt_regs *regs)
++void inspect_for_hardlockups(struct pt_regs *regs)
+ {
+-	/* Ensure the watchdog never gets throttled */
+-	event->hw.interrupts = 0;
+-
+ 	if (__this_cpu_read(watchdog_nmi_touch) == true) {
+ 		__this_cpu_write(watchdog_nmi_touch, false);
+ 		return;
+@@ -163,6 +157,16 @@ static void watchdog_overflow_callback(struct perf_event *event,
+ 	return;
+ }
  
- static inline int hpet_enable(void) { return 0; }
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index ba0a5cc075d5..20a16a304f89 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -170,6 +170,31 @@ do {								\
- 		_hpet_print_config(__func__, __LINE__);	\
- } while (0)
- 
-+#ifdef CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
-+struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
++/* Callback function for perf event subsystem */
++static void watchdog_overflow_callback(struct perf_event *event,
++				       struct perf_sample_data *data,
++				       struct pt_regs *regs)
 +{
-+	struct hpet_hld_data *hdata;
-+	unsigned int cfg;
-+
-+	cfg = hpet_readl(HPET_Tn_CFG(HPET_WD_TIMER_NR));
-+
-+	if (!(cfg & HPET_TN_FSB_CAP))
-+		return NULL;
-+
-+	hdata = kzalloc(sizeof(*hdata), GFP_KERNEL);
-+	if (!hdata)
-+		return NULL;
-+
-+	if (cfg & HPET_TN_PERIODIC_CAP)
-+		hdata->has_periodic = true;
-+
-+	hdata->num = HPET_WD_TIMER_NR;
-+	hdata->ticks_per_second = hpet_get_ticks_per_sec(hpet_readq(HPET_ID));
-+
-+	return hdata;
++	/* Ensure the watchdog never gets throttled */
++	event->hw.interrupts = 0;
++	inspect_for_hardlockups(regs);
 +}
-+#endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
 +
- /*
-  * When the hpet driver (/dev/hpet) is enabled, we need to reserve
-  * timer 0 and timer 1 in case of RTC emulation. Timer 2 is reserved in case
+ static int hardlockup_detector_event_create(void)
+ {
+ 	unsigned int cpu = smp_processor_id();
 -- 
 2.17.1
 
