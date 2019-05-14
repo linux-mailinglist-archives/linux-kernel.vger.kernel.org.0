@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA881C6C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A081C6D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfENKOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:14:32 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45065 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfENKOb (ORCPT
+        id S1726650AbfENKOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:14:35 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32941 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbfENKOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:14:31 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n22so11374284lfe.12;
-        Tue, 14 May 2019 03:14:30 -0700 (PDT)
+        Tue, 14 May 2019 06:14:33 -0400
+Received: by mail-lj1-f196.google.com with SMTP id w1so11194176ljw.0;
+        Tue, 14 May 2019 03:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YIZ3kgLRbbPlHjkQaU8GGW+xZ44MSvuVReE59qUFDXA=;
-        b=JBRvZK070+rHxRCffanCjbI2/OlhQwa/N8JN3+t1UbNb0ZYQimUxd33Mv2Zpx4KLZS
-         GDvFb4JSDz7hP5h76UhrEJWz/qIWfJ0msGEEEZo0sUCN4IFw+2cvNTZDHm63L7wLQ/oJ
-         giFTSAhwjDZcMxYwT4pB6APvKq4MLectAthKeM7idFVQcDynqel4xIZx7LJ5zLLvPIn+
-         5u75SlFeZ/B7+FnH7tFI3p7MB+ytK8OkyfXYEa/seXEMHEptW4v4kb5EWLEwAJ+LUZ2l
-         TuFrbnP2dv4sln+jpjciiwC/vTze9SdWsUqKFycqD5rrpoCa5MhGjRuT72aRMua/ztu2
-         DaNw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4EmGOKmnVBQqEED+58Lv287Y6Xqzhezr5xh4jatbgao=;
+        b=Jv6VK2nFKFlbU+7D4+/OCW3P1X3F3eEqeF1KKbSA3bfOwuqXSLrnmLrL6Br+OCDBy3
+         +3SIqsEkYbaqU7m7gInXOiTh4bvi7LrLieyOyZ5qaCc2TLa3YpexyxSnoXrVnFk/jt97
+         sy0+nEZvXRLP5a9WiyiZuOMDVz/X9BSizW8/2l2wy57uxU3X1ZWcm0TYiUEJLbyA4Obj
+         UEI0O7nfVc0CZn7tgrk3GjI5CuME00as7poeCfic9/FaZgHWnVPD9dh0vhrk2j55oUxg
+         8Fm5lDOdMDAAtbr60gRlaA5GRaNY066BoY6s+q5mwN1CjjgGehQb/bBH0BtaLV3xQGve
+         kPNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YIZ3kgLRbbPlHjkQaU8GGW+xZ44MSvuVReE59qUFDXA=;
-        b=aES5zRpUEmBEEGmAGdgYD3Xeuesp3L4KAy1fOvKK5uzPrbNmTazFJ4AFsBKiJCpcpE
-         gdC19IO52rYyUP9FffYGjwafZUGYYI996NMwa5WVvRu1nQxxxkrCaryh3rHl+1wi2jFn
-         O9H9lIMuwhOmKkW1b7w0RTj/ulsjruWan08bAdLe3f8SoOp+lOBONVjkVEc7F+bKIG0f
-         MWWOuL1bEAtdPubd9v803aYDsy5ofxn56by8kGnsbErPXP8a9kKkUS4lPGklHY8QopOi
-         4d1zqd9KYzNS50XCRSqGyX7uv95dexFt0rYRbS2VTUy71OETIBiBjuocrX/YaliLmNk5
-         LzNg==
-X-Gm-Message-State: APjAAAUkUAmy/P8x3HtQEXTXAISdW5lpXrYSIT4/Zc0vuSMfmSgUKdwk
-        hLtNjSNA4a311L4qSHzgVhY=
-X-Google-Smtp-Source: APXvYqzF+ksXffBErnYUSHAodm5Kp8IJ34xoA3xPxb207dmag1RJmhmD9ql2mAc2x/a2hhTvHKfRiQ==
-X-Received: by 2002:ac2:51a9:: with SMTP id f9mr17085224lfk.56.1557828869654;
-        Tue, 14 May 2019 03:14:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4EmGOKmnVBQqEED+58Lv287Y6Xqzhezr5xh4jatbgao=;
+        b=XJtQpTTCIr5376Yce2cOhYmL/Cv86/Nq986Vx41d3m+TA7TPpoIb9nRrYvHaiFW22R
+         jPEQ0f/4A1Csdtzixur7NwS3MHo6/zPYfwL4fqLNR2NtGzIB81xITj7lMsp25+Tcuude
+         ocJTKuSHiShmx/oETCTnOpZ46ErDEVv2ArJBM1PNudqQhzoo0P3/QGelchlD3EDBGbsT
+         TiQ70u0TACryObuBORptdAOW+rt1Ual/86JzWYHYAGu5msefsAXPjq8T6qXjEVbz55s0
+         BV2DEeb514OahZGybRXv0BmUQu+QI2iITWNBqte9L8U1jN51CwLx1U67OCr7TEZpACGz
+         aE1Q==
+X-Gm-Message-State: APjAAAW2piT8kJ6xGGx8ngR8O54RTuJYcT8wF9X1qP10qkBmCu5m3MVM
+        i2LWgemGVVDMm+NUjlCfob3236s5
+X-Google-Smtp-Source: APXvYqyzwPCnnIzDdET1+EP3ChHDwT2Ej7H9sHsxFWGJgKtMako0u2QZUzQ+WN5Gcv3UkcIg3904fg==
+X-Received: by 2002:a2e:5852:: with SMTP id x18mr4301689ljd.81.1557828870971;
+        Tue, 14 May 2019 03:14:30 -0700 (PDT)
 Received: from localhost.localdomain ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.28
+        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 03:14:28 -0700 (PDT)
+        Tue, 14 May 2019 03:14:30 -0700 (PDT)
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] tty: max310x: Simplify the code and fix a few bugs
-Date:   Tue, 14 May 2019 13:14:08 +0300
-Message-Id: <20190514101415.26754-1-fancer.lancer@gmail.com>
+Subject: [PATCH 1/7] tty: max310x: Simplify tx-work item code
+Date:   Tue, 14 May 2019 13:14:09 +0300
+Message-Id: <20190514101415.26754-2-fancer.lancer@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190514101415.26754-1-fancer.lancer@gmail.com>
+References: <20190514101415.26754-1-fancer.lancer@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,59 +63,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I started using this driver two years ago in kernek 4.4 and then in kernel
-4.9. It didn't go well from the very beginning due to my platform
-peculiarities: DW SPI core with hardware CS and relatively slow MIPS-based
-SoC. This patchset is intended to fix some of the problems I found out
-during the max310x driver utilization with max14830 device.
+Since cmwq introduction in the kernel, workqueues've been turned into
+non-reentrant execution contexts [1]. It means any work item is
+guaranteed to be executed by at most one worker system-wide at any
+given time. Since tx-handler max310x_handle_tx() is called by a
+single work item we don't need it to be self-protected by the mutex.
+We also don't need to check the tx work item pending state before
+scheduling it (which in the first place was racy btw), since cmwq will
+make sure to reschedule the item if it wasn't pending at the moment of
+schedule_work() call.
 
-First of all it was discovered, that workqueue API isn't optimally used.
-Work context isn't re-entrant by design, so the mutex used to guard the
-TX-method is redundant. schedule_work() method is also created in a way
-the work item is scheduled only if it isn't pending. Patch 1 concerns all
-these fixes. Seeing the similar container_of(uart_port) is used three
-times in the driver, the patch 2 introduces a macro to_max310x_port() to
-get a pointer to corresponding struct max310x_one. This is the code
-simplification and is going to be used in the following patches.
-
-It was found out, that batch read and write methods used buffers allocated
-on the kernel stack. Since they might be utilized by SPI controllers for
-DMA it might be unsafe on some platforms. Patch 3 provides a dedicated
-kmalloced buffers for this.
-
-The baud-rate calculator function didn't work correct for all the possible
-baud-rates requested within a pre-defined input reference frequency.
-Instead an algo fully compliant with datasheet divisor formulae is
-implemented in patch 4.
-
-Patches 5 and 6 are created to fix some rs485 issues. Particularly the
-rs485 mode is configured on the port startup if it's enabled. And seeing
-the mode2 register provides a way to enable/disable the echo-suppression
-in RS485 mode, it is used to implement the SER_RS485_RX_DURING_TX flag
-support.
-
-Finally it was discovered that in case if inbound hardware FIFO
-experienced overflow, a lot of '\0' characters inserted into the
-flip-buffer as a character of the RX-FIFO overrun. It isn't quite correct
-since the overflow happened only after the last character had been
-received. Patch 7 is dedicated to push only a single RX-FIFO overrun
-character in this case.
+[1] Documentation/core-api/workqueue.rst
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+---
+ drivers/tty/serial/max310x.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-
-Serge Semin (7):
-  tty: max310x: Simplify tx-work item code
-  tty: max310x: Introduce max310x_one port macro-wrapper
-  tty: max310x: Don't pass stacked buffers to SPI
-  tty: max310x: Fix invalid baudrate divisors calculator
-  tty: max310x: Add rx-during-tx rs485 flag support
-  tty: max310x: Optionally enable rs485 on startup
-  tty: max310x: Split uart characters insertion loop
-
- drivers/tty/serial/max310x.c | 157 +++++++++++++++++++++--------------
- 1 file changed, 95 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index 450ba6d7996c..4ee805862b68 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -263,7 +263,6 @@ struct max310x_one {
+ struct max310x_port {
+ 	struct max310x_devtype	*devtype;
+ 	struct regmap		*regmap;
+-	struct mutex		mutex;
+ 	struct clk		*clk;
+ #ifdef CONFIG_GPIOLIB
+ 	struct gpio_chip	gpio;
+@@ -768,8 +767,7 @@ static void max310x_start_tx(struct uart_port *port)
+ {
+ 	struct max310x_one *one = container_of(port, struct max310x_one, port);
+ 
+-	if (!work_pending(&one->tx_work))
+-		schedule_work(&one->tx_work);
++	schedule_work(&one->tx_work);
+ }
+ 
+ static irqreturn_t max310x_port_irq(struct max310x_port *s, int portno)
+@@ -826,14 +824,11 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
+ 	return IRQ_RETVAL(handled);
+ }
+ 
+-static void max310x_wq_proc(struct work_struct *ws)
++static void max310x_tx_proc(struct work_struct *ws)
+ {
+ 	struct max310x_one *one = container_of(ws, struct max310x_one, tx_work);
+-	struct max310x_port *s = dev_get_drvdata(one->port.dev);
+ 
+-	mutex_lock(&s->mutex);
+ 	max310x_handle_tx(&one->port);
+-	mutex_unlock(&s->mutex);
+ }
+ 
+ static unsigned int max310x_tx_empty(struct uart_port *port)
+@@ -1269,8 +1264,6 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	uartclk = max310x_set_ref_clk(dev, s, freq, xtal);
+ 	dev_dbg(dev, "Reference clock set to %i Hz\n", uartclk);
+ 
+-	mutex_init(&s->mutex);
+-
+ 	for (i = 0; i < devtype->nr; i++) {
+ 		unsigned int line;
+ 
+@@ -1298,7 +1291,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 		/* Clear IRQ status register */
+ 		max310x_port_read(&s->p[i].port, MAX310X_IRQSTS_REG);
+ 		/* Initialize queue for start TX */
+-		INIT_WORK(&s->p[i].tx_work, max310x_wq_proc);
++		INIT_WORK(&s->p[i].tx_work, max310x_tx_proc);
+ 		/* Initialize queue for changing LOOPBACK mode */
+ 		INIT_WORK(&s->p[i].md_work, max310x_md_proc);
+ 		/* Initialize queue for changing RS485 mode */
+@@ -1350,8 +1343,6 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 		}
+ 	}
+ 
+-	mutex_destroy(&s->mutex);
+-
+ out_clk:
+ 	clk_disable_unprepare(s->clk);
+ 
+@@ -1372,7 +1363,6 @@ static int max310x_remove(struct device *dev)
+ 		s->devtype->power(&s->p[i].port, 0);
+ 	}
+ 
+-	mutex_destroy(&s->mutex);
+ 	clk_disable_unprepare(s->clk);
+ 
+ 	return 0;
 -- 
 2.21.0
 
