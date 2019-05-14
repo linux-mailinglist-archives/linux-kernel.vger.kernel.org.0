@@ -2,156 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29A871C4A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF421C4CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfENIXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:23:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726130AbfENIXn (ORCPT
+        id S1726834AbfENI1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:27:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52738 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbfENI1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:23:43 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4E8MHkR131745
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 04:23:42 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sfqjdp32h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 04:23:42 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 14 May 2019 09:23:39 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 May 2019 09:23:37 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4E8Na4951970092
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 May 2019 08:23:36 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12FFF52051;
-        Tue, 14 May 2019 08:23:36 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.112])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id A12D952050;
-        Tue, 14 May 2019 08:23:34 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 14 May 2019 11:23:34 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] docs: reorder memory-hotplug documentation
-Date:   Tue, 14 May 2019 11:23:33 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19051408-4275-0000-0000-000003348A71
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051408-4276-0000-0000-00003844097D
-Message-Id: <1557822213-19058-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905140062
+        Tue, 14 May 2019 04:27:43 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4E8NRWe038322;
+        Tue, 14 May 2019 08:26:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=4GwONZKT5RET7N6PWlM860uaduZb6+5QuVv3rFgtIho=;
+ b=Me7oLnU0/rmmtbQAySa5AOY/0LStOilrC3J76991LQTTFatI8eSBS258oGayJxjOmJ/D
+ yHWDyCS73SnTaafYTYObBvbUdom0TeUggz2cbj3NFCkO1ERgywX83bGDVXanVtBN1ADK
+ rA9iUbU7+FYqBDOL8FnBoQQUrjXihLOaBqP3eCUS59RzXfix50RyTJXON2aGBWJKluN4
+ nYFPxujFDsqwPztKIgZhuv4YbdpzXoGhW26Z4odBcUA885M8JB4OpiAy7A73R0NJiT0E
+ Jao0Uz8of4JvQOSHd+YQqAK/xhBmvYcu6KHzbKIrQkMWK4Qd0qKc+Pxc/nzUYRNj0Iuo ag== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2sdnttm68s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 May 2019 08:26:05 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4E8OA2d011637;
+        Tue, 14 May 2019 08:26:05 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2sf3cn4jgq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 May 2019 08:26:04 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4E8Q0LQ024611;
+        Tue, 14 May 2019 08:26:00 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 May 2019 01:26:00 -0700
+Subject: Re: [RFC KVM 18/27] kvm/isolation: function to copy page table
+ entries for percpu buffer
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Jonathan Adams <jwadams@google.com>
+References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+ <1557758315-12667-19-git-send-email-alexandre.chartre@oracle.com>
+ <CALCETrWUKZv=wdcnYjLrHDakamMBrJv48wp2XBxZsEmzuearRQ@mail.gmail.com>
+ <20190514070941.GE2589@hirez.programming.kicks-ass.net>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <b8487de1-83a8-2761-f4a6-26c583eba083@oracle.com>
+Date:   Tue, 14 May 2019 10:25:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190514070941.GE2589@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905140062
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905140062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "Locking Internals" section of the memory-hotplug documentation is
-duplicated in admin-guide and core-api. Drop the admin-guide copy as
-locking internals does not belong there.
 
-While on it, move the "Future Work" section to the core-api part.
+On 5/14/19 9:09 AM, Peter Zijlstra wrote:
+> On Mon, May 13, 2019 at 11:18:41AM -0700, Andy Lutomirski wrote:
+>> On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
+>> <alexandre.chartre@oracle.com> wrote:
+>>>
+>>> pcpu_base_addr is already mapped to the KVM address space, but this
+>>> represents the first percpu chunk. To access a per-cpu buffer not
+>>> allocated in the first chunk, add a function which maps all cpu
+>>> buffers corresponding to that per-cpu buffer.
+>>>
+>>> Also add function to clear page table entries for a percpu buffer.
+>>>
+>>
+>> This needs some kind of clarification so that readers can tell whether
+>> you're trying to map all percpu memory or just map a specific
+>> variable.  In either case, you're making a dubious assumption that
+>> percpu memory contains no secrets.
+> 
+> I'm thinking the per-cpu random pool is a secrit. IOW, it demonstrably
+> does contain secrits, invalidating that premise.
+> 
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- Documentation/admin-guide/mm/memory-hotplug.rst | 51 -------------------------
- Documentation/core-api/memory-hotplug.rst       | 11 ++++++
- 2 files changed, 11 insertions(+), 51 deletions(-)
+The current code unconditionally maps the entire first percpu chunk
+(pcpu_base_addr). So it assumes it doesn't contain any secret. That is
+mainly a simplification for the POC because a lot of core information
+that we need, for example just to switch mm, are stored there (like
+cpu_tlbstate, current_task...).
 
-diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
-index 5c4432c..72090ba 100644
---- a/Documentation/admin-guide/mm/memory-hotplug.rst
-+++ b/Documentation/admin-guide/mm/memory-hotplug.rst
-@@ -391,54 +391,3 @@ Physical memory remove
- Need more implementation yet....
-  - Notification completion of remove works by OS to firmware.
-  - Guard from remove if not yet.
--
--
--Locking Internals
--=================
--
--When adding/removing memory that uses memory block devices (i.e. ordinary RAM),
--the device_hotplug_lock should be held to:
--
--- synchronize against online/offline requests (e.g. via sysfs). This way, memory
--  block devices can only be accessed (.online/.state attributes) by user
--  space once memory has been fully added. And when removing memory, we
--  know nobody is in critical sections.
--- synchronize against CPU hotplug and similar (e.g. relevant for ACPI and PPC)
--
--Especially, there is a possible lock inversion that is avoided using
--device_hotplug_lock when adding memory and user space tries to online that
--memory faster than expected:
--
--- device_online() will first take the device_lock(), followed by
--  mem_hotplug_lock
--- add_memory_resource() will first take the mem_hotplug_lock, followed by
--  the device_lock() (while creating the devices, during bus_add_device()).
--
--As the device is visible to user space before taking the device_lock(), this
--can result in a lock inversion.
--
--onlining/offlining of memory should be done via device_online()/
--device_offline() - to make sure it is properly synchronized to actions
--via sysfs. Holding device_hotplug_lock is advised (to e.g. protect online_type)
--
--When adding/removing/onlining/offlining memory or adding/removing
--heterogeneous/device memory, we should always hold the mem_hotplug_lock in
--write mode to serialise memory hotplug (e.g. access to global/zone
--variables).
--
--In addition, mem_hotplug_lock (in contrast to device_hotplug_lock) in read
--mode allows for a quite efficient get_online_mems/put_online_mems
--implementation, so code accessing memory can protect from that memory
--vanishing.
--
--
--Future Work
--===========
--
--  - allowing memory hot-add to ZONE_MOVABLE. maybe we need some switch like
--    sysctl or new control file.
--  - showing memory block and physical device relationship.
--  - test and make it better memory offlining.
--  - support HugeTLB page migration and offlining.
--  - memmap removing at memory offline.
--  - physical remove memory.
-diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
-index de7467e..e08be1c 100644
---- a/Documentation/core-api/memory-hotplug.rst
-+++ b/Documentation/core-api/memory-hotplug.rst
-@@ -123,3 +123,14 @@ In addition, mem_hotplug_lock (in contrast to device_hotplug_lock) in read
- mode allows for a quite efficient get_online_mems/put_online_mems
- implementation, so code accessing memory can protect from that memory
- vanishing.
-+
-+Future Work
-+===========
-+
-+  - allowing memory hot-add to ZONE_MOVABLE. maybe we need some switch like
-+    sysctl or new control file.
-+  - showing memory block and physical device relationship.
-+  - test and make it better memory offlining.
-+  - support HugeTLB page migration and offlining.
-+  - memmap removing at memory offline.
-+  - physical remove memory.
--- 
-2.7.4
+If the entire first percpu chunk effectively has secret then we will
+need to individually map only buffers we need. The kvm_copy_percpu_mapping()
+function is added to copy mapping for a specified percpu buffer, so
+this used to map percpu buffers which are not in the first percpu chunk.
 
+Also note that mapping is constrained by PTE (4K), so mapped buffers
+(percpu or not) which do not fill a whole set of pages can leak adjacent
+data store on the same pages.
+
+alex.
