@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB2F1C947
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B81C1C948
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbfENNRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:17:03 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40379 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfENNRB (ORCPT
+        id S1726369AbfENNRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:17:04 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36458 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfENNRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:17:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h4so19198806wre.7
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:17:00 -0700 (PDT)
+        Tue, 14 May 2019 09:17:03 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s17so2719842wru.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:17:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ljDEI5wRVFawwIewIlFmLcuWyWda410CfkNvL+gmA1U=;
-        b=gTR2zBXB1x3vvp49XaQGMIob9dDKyeZx8ZAWTyXu1HUIXMZRJDl9+zmYzjgfFo4TZz
-         alkzLqmO55MOLi9n9HQyr7uHHu2ntOBwpKvsTChh9c7dodOCcxPe5X0HCLpuXXzXAL13
-         /idV8j/R5CbV9Hfa7VlnmctOkSX5Lc+fCCJp/vbXP4opDb/4QQWP6wk5wVBw5okXjrqQ
-         129qBFQZiATzj5oHYi4iTtH6aZAAT6Tg7MNk6Znz67PhiF4TJz87mIscCr/AiPuDxf5S
-         9PIGFUuzplU5PPKXfgS0uYV8wYxYM6VRsI7vpmW4Rx0Xp3PL+BZxJdlmjv79JN405nT2
-         B8Rg==
-X-Gm-Message-State: APjAAAV4QpT3n9+JtNiIiRQC2IROEs+34nBom/V+HtmBTOhzPI6A4m9r
-        1fM0w0d6WbaZConm4Ao4zzoOZZX4eyrmPw==
-X-Google-Smtp-Source: APXvYqyoalSThS0pSE7N8sUVpxlOVAILQIDieoXie4XGja4UBj+IPrLGODtVhuz+nrtZqWL+oyjzXQ==
-X-Received: by 2002:adf:b35e:: with SMTP id k30mr2739640wrd.178.1557839819722;
-        Tue, 14 May 2019 06:16:59 -0700 (PDT)
+        bh=VdAVf6UsURaBN1kR2hvAUBFTDOMaklbC2zfjfZkKj2k=;
+        b=ioUhWLRT7MVpotVAob5fLfWxkWadHOIMwNAcYtO/6/oAdIuGi8VNrGnZ3XjSoLNEvx
+         6OhIPr0k3PzEQ4WtnLuoKMD5EQpzWRgq38CA5jM7jel7oVw1stEhUR2edg0rGN35XPDB
+         +pFhUmQYrn50yxjEJXL64fB8D7ndkXl6W1cGrnUvPloNNk00Xu0e73xSUqUBh5AgYLYY
+         h8WbFrkpoy57Nufe0sjLxaLqBG5igLL8HojHKwqypweCTh1dVqqlz2CwdSmCwRJ37ptM
+         rDKyWn8CXGRbF9kurEAXbw/nbYh5D5jeQ/JQFmdP6jQHcWGwWODXkirK2K0K5MCk43Bi
+         dHjw==
+X-Gm-Message-State: APjAAAX5o28MW32teIeoVUlt9GqTVPKr5p7cCAwqcySsGB9IxbyjFrHU
+        1NErtIog9Z4+LRec4in+dz9OHNOZJbg15Q==
+X-Google-Smtp-Source: APXvYqyKKvVTOE8RaLl7n7pCLi0m5G1sMvqGxaeEklK4ZdRJocqbNZnJLuLQOOWk1SEOtgBgAe0hnw==
+X-Received: by 2002:adf:8306:: with SMTP id 6mr9923763wrd.155.1557839821146;
+        Tue, 14 May 2019 06:17:01 -0700 (PDT)
 Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id u125sm7196076wme.15.2019.05.14.06.16.58
+        by smtp.gmail.com with ESMTPSA id f7sm1720014wmc.26.2019.05.14.06.17.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 06:16:59 -0700 (PDT)
+        Tue, 14 May 2019 06:17:00 -0700 (PDT)
 From:   Oleksandr Natalenko <oleksandr@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -44,9 +44,9 @@ Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Timofey Titovets <nefelim4ag@gmail.com>,
         Aaron Tomlin <atomlin@redhat.com>,
         Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org
-Subject: [PATCH RFC v2 2/4] mm/ksm: introduce ksm_leave() helper
-Date:   Tue, 14 May 2019 15:16:52 +0200
-Message-Id: <20190514131654.25463-3-oleksandr@redhat.com>
+Subject: [PATCH RFC v2 3/4] mm/ksm: introduce force_madvise knob
+Date:   Tue, 14 May 2019 15:16:53 +0200
+Message-Id: <20190514131654.25463-4-oleksandr@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190514131654.25463-1-oleksandr@redhat.com>
 References: <20190514131654.25463-1-oleksandr@redhat.com>
@@ -57,66 +57,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move MADV_UNMERGEABLE part of ksm_madvise() into a dedicated helper
-since it will be further used for unmerging VMAs forcibly.
+Present a new sysfs knob to mark task's anonymous memory as mergeable.
 
-This does not bring any functional changes.
+To force merging task's VMAs, its PID is echoed in a write-only file:
+
+   # echo PID > /sys/kernel/mm/ksm/force_madvise
+
+Force unmerging is done similarly, but with "minus" sign:
+
+   # echo -PID > /sys/kernel/mm/ksm/force_madvise
+
+"0" or "-0" can be used to control the current task.
+
+To achieve this, previously introduced ksm_enter()/ksm_leave() helpers
+are used in the "store" handler.
 
 Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
 ---
- mm/ksm.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ mm/ksm.c | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 02fdbee394cc..e9f3901168bb 100644
+index e9f3901168bb..22c59fb03d3a 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -2478,6 +2478,25 @@ static int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
- 	return 0;
- }
+@@ -2879,10 +2879,77 @@ static void wait_while_offlining(void)
  
-+static int ksm_leave(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, unsigned long *vm_flags)
+ #define KSM_ATTR_RO(_name) \
+ 	static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
++#define KSM_ATTR_WO(_name) \
++	static struct kobj_attribute _name##_attr = __ATTR_WO(_name)
+ #define KSM_ATTR(_name) \
+ 	static struct kobj_attribute _name##_attr = \
+ 		__ATTR(_name, 0644, _name##_show, _name##_store)
+ 
++static ssize_t force_madvise_store(struct kobject *kobj,
++				     struct kobj_attribute *attr,
++				     const char *buf, size_t count)
 +{
 +	int err;
++	pid_t pid;
++	bool merge = true;
++	struct task_struct *tsk;
++	struct mm_struct *mm;
++	struct vm_area_struct *vma;
 +
-+	if (!(*vm_flags & VM_MERGEABLE))
-+		return 0;		/* just ignore the advice */
++	err = kstrtoint(buf, 10, &pid);
++	if (err)
++		return -EINVAL;
 +
-+	if (vma->anon_vma) {
-+		err = unmerge_ksm_pages(vma, start, end);
-+		if (err)
-+			return err;
++	if (pid < 0) {
++		pid = abs(pid);
++		merge = false;
 +	}
 +
-+	*vm_flags &= ~VM_MERGEABLE;
++	if (!pid && *buf == '-')
++		merge = false;
 +
-+	return 0;
++	rcu_read_lock();
++	if (pid) {
++		tsk = find_task_by_vpid(pid);
++		if (!tsk) {
++			err = -ESRCH;
++			rcu_read_unlock();
++			goto out;
++		}
++	} else {
++		tsk = current;
++	}
++
++	tsk = tsk->group_leader;
++
++	get_task_struct(tsk);
++	rcu_read_unlock();
++
++	mm = get_task_mm(tsk);
++	if (!mm) {
++		err = -EINVAL;
++		goto out_put_task_struct;
++	}
++	down_write(&mm->mmap_sem);
++	vma = mm->mmap;
++	while (vma) {
++		if (merge)
++			ksm_enter(vma->vm_mm, vma, &vma->vm_flags);
++		else
++			ksm_leave(vma, vma->vm_start, vma->vm_end, &vma->vm_flags);
++		vma = vma->vm_next;
++	}
++	up_write(&mm->mmap_sem);
++	mmput(mm);
++
++out_put_task_struct:
++	put_task_struct(tsk);
++
++out:
++	return err ? err : count;
 +}
++KSM_ATTR_WO(force_madvise);
 +
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags)
+ static ssize_t sleep_millisecs_show(struct kobject *kobj,
+ 				    struct kobj_attribute *attr, char *buf)
  {
-@@ -2492,16 +2511,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		break;
+@@ -3185,6 +3252,7 @@ static ssize_t full_scans_show(struct kobject *kobj,
+ KSM_ATTR_RO(full_scans);
  
- 	case MADV_UNMERGEABLE:
--		if (!(*vm_flags & VM_MERGEABLE))
--			return 0;		/* just ignore the advice */
--
--		if (vma->anon_vma) {
--			err = unmerge_ksm_pages(vma, start, end);
--			if (err)
--				return err;
--		}
--
--		*vm_flags &= ~VM_MERGEABLE;
-+		err = ksm_leave(vma, start, end, vm_flags);
-+		if (err)
-+			return err;
- 		break;
- 	}
- 
+ static struct attribute *ksm_attrs[] = {
++	&force_madvise_attr.attr,
+ 	&sleep_millisecs_attr.attr,
+ 	&pages_to_scan_attr.attr,
+ 	&run_attr.attr,
 -- 
 2.21.0
 
