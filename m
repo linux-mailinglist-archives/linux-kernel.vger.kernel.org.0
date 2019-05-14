@@ -2,83 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A0221CD2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 958D81CD39
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfENQpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 12:45:04 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55352 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726013AbfENQpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 12:45:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 09:45:03 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 14 May 2019 09:45:03 -0700
-Date:   Tue, 14 May 2019 09:45:03 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH 3/3] KVM: LAPIC: Optimize timer latency further
-Message-ID: <20190514164503.GA1668@linux.intel.com>
-References: <1557401361-3828-1-git-send-email-wanpengli@tencent.com>
- <1557401361-3828-4-git-send-email-wanpengli@tencent.com>
- <20190513195417.GM28561@linux.intel.com>
- <CANRm+CxVRMQF9yHoqDMJR9FROGtLwYgaQXPqu++S7Juneh2vtw@mail.gmail.com>
- <CANRm+Czg-0m1dV1DVfqSTr89Xrq169xx3LqEGTYH0mmjafvhMQ@mail.gmail.com>
+        id S1726400AbfENQrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 12:47:23 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39231 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfENQrX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 12:47:23 -0400
+Received: by mail-ua1-f67.google.com with SMTP id v7so6455408ual.6
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y7PwSEWga2/yPtBQUis8gBpGWAMpLLGBJz02yhRxW58=;
+        b=VSY8dXQoBspa4RXRjnFzsXCE0X8Uk+FIr6PE+cYivABoT0y+YLVAE8RbSuXG99Z7Rf
+         N25/9PQ9Ufr7OYaHSH7Oh1iMkAYcaMSPowqMKeVyfw80o2CRO7ieTWCoCIez+CTxr4Tl
+         rSbsPE7YdyNeVFoFWWU48wHDTgvkSL8q1w8to=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y7PwSEWga2/yPtBQUis8gBpGWAMpLLGBJz02yhRxW58=;
+        b=TFwqLgIx6g+w1Whp0SSSnc1Q28x/8RfP1Nl+OhBc2NzrlSTDNIg+lXUcIOFKPprerd
+         JCDCMcIPpZbdDrq37Wl1nDib/G8BOPqZAyJBq6ntPOhVEzfVJZ+WyGQtI8fsRaOT2A3z
+         pTzFh54Bcypx6XiGxwdhK3Erslo7+0oKkYyRgYejH4rMKp7D1WgwwuSnH6dVoaNWsCLY
+         Dd5vBPvlD8uuwIKZGJScjUlcau2XySAS7U78CsKwPaUhCSjN/r5hQdgn0pkbRhsctGe0
+         mSnXTUTLfo46tdmiVCGHMAE0zHk8m36AtDswo1QaZXI3mM3AnVO7yRN+cBX4O18tCJA+
+         loTg==
+X-Gm-Message-State: APjAAAURhM0r5bGkXIdb7To6PH4m7r6nwpkVWJ013nGCm7QvA5ifcRrj
+        eGQr4MLWGSj62HqWklKaNhDtIhH1reU=
+X-Google-Smtp-Source: APXvYqzarCVh4FvfCDlqwwh7HhzHjeBDqJblyShJ81QHLPXzQ7iWpVkXAo65WOU262MoHxTzI2eoOg==
+X-Received: by 2002:ab0:806:: with SMTP id a6mr18119629uaf.10.1557852441897;
+        Tue, 14 May 2019 09:47:21 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id o66sm3621844vke.17.2019.05.14.09.47.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 09:47:20 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id z17so6467448uar.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:47:20 -0700 (PDT)
+X-Received: by 2002:ab0:2692:: with SMTP id t18mr1528737uao.106.1557852440345;
+ Tue, 14 May 2019 09:47:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANRm+Czg-0m1dV1DVfqSTr89Xrq169xx3LqEGTYH0mmjafvhMQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAD=FV=VOAjgdrvkK8YKPP-8zqwPpo39rA43JH2BCeYLB0UkgAQ@mail.gmail.com>
+ <20190513171519.GA26166@redhat.com>
+In-Reply-To: <20190513171519.GA26166@redhat.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 14 May 2019 09:47:10 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X7GDNoJVvRgBTDoVkf9UYA69B-rTY2G3888w=9iS=RtQ@mail.gmail.com>
+Message-ID: <CAD=FV=X7GDNoJVvRgBTDoVkf9UYA69B-rTY2G3888w=9iS=RtQ@mail.gmail.com>
+Subject: Re: Problems caused by dm crypt: use WQ_HIGHPRI for the IO and crypt workqueues
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Tim Murray <timmurray@google.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
+        Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 06:56:04PM +0800, Wanpeng Li wrote:
-> On Tue, 14 May 2019 at 09:45, Wanpeng Li <kernellwp@gmail.com> wrote:
+Hi,
+
+On Mon, May 13, 2019 at 10:15 AM Mike Snitzer <snitzer@redhat.com> wrote:
+
+> On Mon, May 13 2019 at 12:18pm -0400,
+> Doug Anderson <dianders@chromium.org> wrote:
+>
+> > Hi,
 > >
-> > On Tue, 14 May 2019 at 03:54, Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > > Rather than reinvent the wheel, can we simply move the call to
-> > > wait_lapic_expire() into vmx.c and svm.c?  For VMX we'd probably want to
-> > > support the advancement if enable_unrestricted_guest=true so that we avoid
-> > > the emulation_required case, but other than that I don't see anything that
-> > > requires wait_lapic_expire() to be called where it is.
+> > I wanted to jump on the bandwagon of people reporting problems with
+> > commit a1b89132dc4f ("dm crypt: use WQ_HIGHPRI for the IO and crypt
+> > workqueues").
 > >
-> > I also considered to move wait_lapic_expire() into vmx.c and svm.c
-> > before, what do you think, Paolo, Radim?
-> 
-> However, guest_enter_irqoff() also prevents this. Otherwise, we will
-> account busy wait time as guest time. How about sampling several times
-> and get the average value or conservative min value to handle Sean's
-> concern?
+> > Specifically I've been tracking down communication errors when talking
+> > to our Embedded Controller (EC) over SPI.  I found that communication
+> > errors happened _much_ more frequently on newer kernels than older
+> > ones.  Using ftrace I managed to track the problem down to the dm
+> > crypt patch.  ...and, indeed, reverting that patch gets rid of the
+> > vast majority of my errors.
+> >
+> > If you want to see the ftrace of my high priority worker getting
+> > blocked for 7.5 ms, you can see:
+> >
+> > https://bugs.chromium.org/p/chromium/issues/attachmentText?aid=392715
+> >
+> >
+> > In my case I'm looking at solving my problems by bumping the CrOS EC
+> > transfers fully up to real time priority.  ...but given that there are
+> > other reports of problems with the dm-crypt priority (notably I found
+> > https://bugzilla.kernel.org/show_bug.cgi?id=199857) maybe we should
+> > also come up with a different solution for dm-crypt?
+> >
+>
+> And chance you can test how behaviour changes if you remove
+> WQ_CPU_INTENSIVE? e.g.:
+>
+> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> index 692cddf3fe2a..c97d5d807311 100644
+> --- a/drivers/md/dm-crypt.c
+> +++ b/drivers/md/dm-crypt.c
+> @@ -2827,8 +2827,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>
+>         ret = -ENOMEM;
+>         cc->io_queue = alloc_workqueue("kcryptd_io/%s",
+> -                                      WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
+> -                                      1, devname);
+> +                                      WQ_HIGHPRI | WQ_MEM_RECLAIM, 1, devname);
+>         if (!cc->io_queue) {
+>                 ti->error = "Couldn't create kcryptd io queue";
+>                 goto bad;
+> @@ -2836,11 +2835,10 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>
+>         if (test_bit(DM_CRYPT_SAME_CPU, &cc->flags))
+>                 cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+> -                                                 WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
+> -                                                 1, devname);
+> +                                                 WQ_HIGHPRI | WQ_MEM_RECLAIM, 1, devname);
+>         else
+>                 cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+> -                                                 WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND,
+> +                                                 WQ_HIGHPRI | WQ_MEM_RECLAIM | WQ_UNBOUND,
+>                                                   num_online_cpus(), devname);
+>         if (!cc->crypt_queue) {
+>                 ti->error = "Couldn't create kcryptd queue";
 
-Hmm, looking at the history, wait_lapic_expire() was originally called
-immediately before kvm_x86_ops->run()[1].  The call was moved above
-guest_enter_irqoff() because of its tracepoint, which violated the RCU
-extended quiescent state invoked by guest_enter_irqoff()[2][3].  In
-other words, I don't think there is a fundamental issue with accounting
-the busy wait time to the guest rather than the host.
+It's not totally trivially easy for me to test.  My previous failure
+cases were leaving a few devices "idle" over a long period of time.  I
+did that on 3 machines last night and didn't see any failures.  Thus
+removing "WQ_CPU_INTENSIVE" may have made things better.  Before I say
+for sure I'd want to test for longer / redo the test a few times,
+since I've seen the problem go away on its own before (just by
+timing/luck) and then re-appear.
 
-Assuming the tracepoint was added to help tune the advancement time, I
-think we can simply remove the tracepoint, which would allow moving
-wait_lapic_expire().  Now that the advancement time is tracked per-vCPU,
-realizing a change in the advancement time requires creating a new VM.
-For all intents and purposes this makes it impractical to hand tune the
-advancement in real time using the tracepoint as the feedback mechanism.
+Do you have a theory about why removing WQ_CPU_INTENSIVE would help?
 
-If we want to expose the per-vCPU advancement time to the user, a debugfs
-entry is likely sufficient given that the advancement time is
-automatically adjusted.
+---
 
-[1] Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline hrtimer expiration")
-[2] Commit 8b89fe1f6c43 ("kvm: x86: move tracepoints outside extended quiescent state")
-[3] https://patchwork.kernel.org/patch/7821111/
+NOTE: in trying to reproduce problems more quickly I actually came up
+with a better test case for the problem I was seeing.  I found that I
+can reproduce my own problems much better with this test:
+
+  dd if=/dev/zero of=/var/log/foo.txt bs=4M count=512&
+  while true; do
+    ectool version > /dev/null;
+  done
+
+It should be noted that "/var" is on encrypted stateful on my system
+so throwing data at it stresses dm-crypt.  It should also be noted
+that somehow "/var" also ends up traversing through a loopback device
+(this becomes relevant below):
+
+
+With the above test:
+
+1. With a mainline kernel that has commit 37a186225a0c
+("platform/chrome: cros_ec_spi: Transfer messages at high priority"):
+I see failures.
+
+2. With a mainline kernel that has commit 37a186225a0c plus removing
+WQ_CPU_INTENSIVE in dm-crypt: I still see failures.
+
+3. With a mainline kernel that has commit 37a186225a0c plus removing
+high priority (but keeping CPU intensive) in dm-crypt: I still see
+failures.
+
+4. With a mainline kernel that has commit 37a186225a0c plus removing
+high priority (but keeping CPU intensive) in dm-crypt plus removing
+set_user_nice() in loop_prepare_queue(): I get a pass!
+
+5. With a mainline kernel that has commit 37a186225a0c plus removing
+set_user_nice() in loop_prepare_queue() plus leaving dm-crypt alone: I
+see failures.
+
+6. With a mainline kernel that has commit 37a186225a0c plus removing
+set_user_nice() in loop_prepare_queue() plus removing WQ_CPU_INTENSIVE
+in dm-crypt: I still see failures
+
+7. With my new "cros_ec at realtime" series and no other patches, I get a pass!
+
+
+tl;dr: High priority (even without CPU_INTENSIVE) definitely causes
+interference with my high priority work starving it for > 8 ms, but
+dm-crypt isn't unique here--loopback devices also have problems.
+
+
+-Doug
