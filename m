@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C501C944
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C501C8C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbfENNQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:16:57 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37563 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfENNQ4 (ORCPT
+        id S1726324AbfENMcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 08:32:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37316 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfENMcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:16:56 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w37so22853500edw.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MTM1aBzPfSK5tgU1k2RNG5j9nKyYFdiQfhSRyC1AQNs=;
-        b=zDzjKRXBJHz2yPiLvfNwWdJqq/vB0SaFrHEGC+4tdjK7qgnCrVKdrQGXbzYdw14oyQ
-         2FN8i/6zGtMT7lmFJlnRkAQy9xn0Tp8jrpcCjZpMztqBnpJhbPLgLKtBXA5z8CinroXQ
-         oUFY0Wc1G6z6gMD8EtLGHoj+izORshYJT61j0WN+f7ynFTnhvncUf8umGzpqVB3Cm+Uo
-         tVXzXMPSSLzGbhwbKsIi1DOaLf+pAZVzIsTMvypZUewODOBy3mGMSnUKEn+UfHghHFyo
-         n02Y3xxyaGokkB8Wh+M10bEQkurf0e5pdpzJBL1swKYPqDuk23hNfPs5vXLP7F6ulYgp
-         ZoEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MTM1aBzPfSK5tgU1k2RNG5j9nKyYFdiQfhSRyC1AQNs=;
-        b=pZ+9ApUc2n4xgwRMvJhkEBe7UL1tCwCQkI8PWN8EZ69gTzzm6zCUfN4sl3woFk9QIp
-         06zvAQewhu87qcc4oLETfW/FWdUs+YmvJrB9s86P4l5S+XRoyl5FpNeRgn0MMlwEOdAi
-         Ixh0vC7jy+FdDlVbhFFbqUkAr9mKCbHSPjh5H0ktMwWGK0jTfulzqMj+UmbjMXWE9+KF
-         086IqHSjEbSDnbWFUq+Hl5lJID6fsBCFpCGWnSSurFLeatjz8lRtgpu+5vH/Xe57URna
-         9vTcJoBV3JRKBkQ0FcYSWVQONObZgQs9FhtbIgUESepfgeUmx/FVQHO+9xfA0LoS4uih
-         rHMg==
-X-Gm-Message-State: APjAAAXKhOEyVaGGqQzkW9t0zKdKxlX0IV/6IbbXy95X6i6Cd0UYveAr
-        lQBANBMUs+V39p6z1sEIRAV/yw==
-X-Google-Smtp-Source: APXvYqxcAIh9/gohpAQTlGcytkwF0FDILsHXqj2wEvoP1yEMfI5z16TGN2EPlhSbHRGWJA81mLADdw==
-X-Received: by 2002:a17:906:74a:: with SMTP id z10mr15167062ejb.199.1557839814937;
-        Tue, 14 May 2019 06:16:54 -0700 (PDT)
-Received: from box.localdomain (mm-137-212-121-178.mgts.dynamic.pppoe.byfly.by. [178.121.212.137])
-        by smtp.gmail.com with ESMTPSA id h8sm678784ejf.73.2019.05.14.06.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 06:16:53 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id F1D16100C33; Tue, 14 May 2019 15:28:20 +0300 (+03)
-Date:   Tue, 14 May 2019 15:28:20 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Larry Bassel <larry.bassel@oracle.com>
-Cc:     mike.kravetz@oracle.com, willy@infradead.org,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH, RFC 0/2] Share PMDs for FS/DAX on x86
-Message-ID: <20190514122820.26zddpb27uxgrwzp@box>
-References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
+        Tue, 14 May 2019 08:32:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nfiJ0fErHzHqOsAL1Bf0v65xMLNpccKN1AMUIPQ9zQQ=; b=ApS8spaseaHDNS0GgWddD2fg5
+        MZjkWzEW1lH3hQUDR4oHhkzTnhajGs4GnvqvWP5ZqJ91TbFJ/7oo7R29lPVcg9tnoCd08Kb3vcxvu
+        F1BI0C5v7NAjrW2JSx8WGqfu3d9dgvP42cvYyF7ogjDsaM3B2J3HkEnOrnZBLqUhnVBoiX7oD75uV
+        JRM4XWPWTG/QXB62FhFlvl/qAz7L926hWZStSkti1x+r/jjtsaU8fX2YsnujXm1hmUnLFzVO9cPXX
+        S3qh7EHzkv2BQKGepStVT2pZh00ZPceNSXBVT+0e9FQ10FdZy9Svb+94MO3qw5NOx7ZYi0WYWXTCf
+        dUYkv5NCw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQWbP-000358-Bw; Tue, 14 May 2019 12:32:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B8FCB2029F877; Tue, 14 May 2019 14:32:13 +0200 (CEST)
+Date:   Tue, 14 May 2019 14:32:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [RFC Patch] perf_event: fix a cgroup switch warning
+Message-ID: <20190514123213.GR2589@hirez.programming.kicks-ass.net>
+References: <20190514002747.7047-1-xiyou.wangcong@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190514002747.7047-1-xiyou.wangcong@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 09:05:31AM -0700, Larry Bassel wrote:
-> This patchset implements sharing of page table entries pointing
-> to 2MiB pages (PMDs) for FS/DAX on x86.
+On Mon, May 13, 2019 at 05:27:47PM -0700, Cong Wang wrote:
+> We have been consistently triggering the warning
+> WARN_ON_ONCE(cpuctx->cgrp) in perf_cgroup_switch() for a rather
+> long time, although we still have no clue on how to reproduce it.
+> 
+> Looking into the code, it seems the only possibility here is that
+> the process calling perf_event_open() with a cgroup target exits
+> before the process in the target cgroup exits but after it gains
+> CPU to run. This is because we use the atomic counter
+> perf_cgroup_events as an indication of whether cgroup perf event
+> has enabled or not, which is inaccurate, illustrated as below:
+> 
+> CPU 0					CPU 1
+> // open perf events with a cgroup
+> // target for all CPU's
+> perf_event_open():
+>   account_event_cpu()
+>   // perf_cgroup_events == 1
+> 				// Schedule in a process in the target cgroup
+> 				perf_cgroup_switch()
+> perf_event_release_kernel():
+>   unaccount_event_cpu()
+>   // perf_cgroup_events == 0
+> 				// schedule out
+> 				// but perf_cgroup_sched_out() is skipped
+> 				// cpuctx->cgrp left as non-NULL
 
--EPARSE.
+				which implies we observed:
+				'perf_cgroup_events == 0'
 
-How do you share entries? Entries do not take any space, page tables that
-cointain these entries do.
+> 				// schedule in another process
+> 				perf_cgroup_switch() // WARN triggerred
 
-Have you checked if the patch makes memory consumption any better. I have
-doubts in it.
+				which implies we observed:
+				'perf_cgroup_events == 1'
+
+
+Which is impossible. It _might_ have been possible if the out and in
+happened on different CPUs. But then I'm not sure that is enough to
+trigger the problem.
+
+> The proposed fix is kinda ugly,
+
+Yes :-)
+
+> Suggestions? Thoughts?
+
+At perf_event_release time, when it is the last cgroup event, there
+should not be any cgroup events running anymore, so ideally
+perf_cgroup_switch() would not set state.
+
+Furthermore; list_update_cgroup_event() will actually clear cpuctx->cgrp
+on removal of the last cgroup event.
+
+Also; perf_cgroup_switch() will WARN when there are not in fact any
+cgroup events at all. I would expect that WARN to trigger too in your
+scneario. But you're not seeing that?
+
+I do however note that that check seems racy; we do that without holding
+the ctx_lock.
+
+
+
+
+
