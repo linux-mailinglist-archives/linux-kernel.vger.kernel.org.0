@@ -2,98 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59EB61CC24
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1101CC30
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:47:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfENPqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:46:16 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:35836 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726501AbfENPpm (ORCPT
+        id S1726875AbfENPq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:46:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60732 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfENPq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:45:42 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E1E81C01B3;
-        Tue, 14 May 2019 15:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557848732; bh=87qMI7z9d1Uv1YsqslX0Keb+m0ZvPiaxNErrA74vtSg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=EHQ9jA6thzPlDM4TKhWyqOEHojxrXzFTFrg/WAEsTuIy6zLs/hiSkGdVzENp0wxs9
-         zWIw1wTObo92jXAmZg7YdQfQqZUjv2Dm7dsK+8wTWqKJgpa0+mzinpeXUINXiV2Abg
-         iqN2gesUSJJ+1JYiUpf5ZDmfJl8awnDM1KbxD6lA2cuyO5Ua6NiWEL2xIkSsPzvzKT
-         m1c26P1KhxgCXHRUAtKwIG6s7IZzzXNRkr2vcD9QQUZ5EJ9IqGXjuKrFoz8TqEZiuf
-         +DYHdgVS3A+6zQh2O8wDXybSPJpxNSyca4KJvclHIpR7qzu2Xeb+qlYN7c1QWlcQ6S
-         y8lJ3Fm8hG3bQ==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 1A7D9A00AB;
-        Tue, 14 May 2019 15:45:42 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 246CB3EA40;
-        Tue, 14 May 2019 17:45:40 +0200 (CEST)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [RFC net-next v2 14/14] net: stmmac: dwmac4/5: Fix Hash Filter
-Date:   Tue, 14 May 2019 17:45:36 +0200
-Message-Id: <a9fffe7f06f8aaaa86d85f4f944cc8b79acd8928.1557848472.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1557848472.git.joabreu@synopsys.com>
-References: <cover.1557848472.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1557848472.git.joabreu@synopsys.com>
-References: <cover.1557848472.git.joabreu@synopsys.com>
+        Tue, 14 May 2019 11:46:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RZIV4GdxyTAh4QDLTqY1ayeSgHEJhZ4dPbD/pRyFXE8=; b=updwztt2QGCujng57uUQPCyJTT
+        WQb8EggEcWtWvnVIUPY7yCTtOcyM85EzW1OTTXhzdbcLMuS8WEJ4d+KFNlNt1UBKUYnLO5TZx3JD5
+        EwH9k/EBUcLG36I3HKTDmjfrSKTtVkj/xbW7Ah+wsYSIbyuipb174fGrzFWHQZitaBaggfz76pC0Z
+        eF4TwxW3jKTn60Ywrtev8oRqMMdR9nXxmCxLQ5Q1cSQeHzUv6H1Dbf1Bn/oV7LUZhcDoJ1iRjfl2I
+        loKA4trNxA0U+xPgzNKpT8ycJ1yYPSeXFfnGcQlf3yrHlDYw8EB/W34XT3XeB7U4f8omCdnMIHoP6
+        BBAVSWPQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQZdX-0002oI-18; Tue, 14 May 2019 15:46:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 87BC42029F877; Tue, 14 May 2019 17:46:36 +0200 (CEST)
+Date:   Tue, 14 May 2019 17:46:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     huangpei@loongson.cn
+Cc:     Paul Burton <paul.burton@mips.com>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "akiyks@gmail.com" <akiyks@gmail.com>,
+        "andrea.parri@amarulasolutions.com" 
+        <andrea.parri@amarulasolutions.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "dlustig@nvidia.com" <dlustig@nvidia.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "j.alglave@ucl.ac.uk" <j.alglave@ucl.ac.uk>,
+        "luc.maranget@inria.fr" <luc.maranget@inria.fr>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Huacai Chen <chenhc@lemote.com>
+Subject: Re: Re: Re: Re: Re: [RFC][PATCH 2/5] mips/atomic: Fix
+ loongson_llsc_mb() wreckage
+Message-ID: <20190514154636.GF2677@hirez.programming.kicks-ass.net>
+References: <20190424123656.484227701@infradead.org>
+ <20190424124421.636767843@infradead.org>
+ <20190424211759.52xraajqwudc2fza@pburton-laptop>
+ <2b2b07cc.bf42.16a52dc4e4d.Coremail.huangpei@loongson.cn>
+ <20190425073348.GV11158@hirez.programming.kicks-ass.net>
+ <5b13fd3b.c031.16a54452744.Coremail.huangpei@loongson.cn>
+ <20190425122611.GT4038@hirez.programming.kicks-ass.net>
+ <2ff11adc.c051.16a548cd90c.Coremail.huangpei@loongson.cn>
+ <20190425133105.GV4038@hirez.programming.kicks-ass.net>
+ <592bc84.c106.16a57936acf.Coremail.huangpei@loongson.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <592bc84.c106.16a57936acf.Coremail.huangpei@loongson.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order for hash filter to work we need to set the HPF bit.
 
-Fout out while running stmmac selftests
+(sorry for the delay, I got sidetracked elsewhere)
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h      | 1 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 2 ++
- 2 files changed, 3 insertions(+)
+On Fri, Apr 26, 2019 at 10:57:20AM +0800, huangpei@loongson.cn wrote:
+> > -----原始邮件-----
+> > On Thu, Apr 25, 2019 at 08:51:17PM +0800, huangpei@loongson.cn wrote:
+> > 
+> > > > So basically the initial value of @v is set to 1.
+> > > > 
+> > > > Then CPU-1 does atomic_add_unless(v, 1, 0)
+> > > >      CPU-2 does atomic_set(v, 0)
+> > > > 
+> > > > If CPU1 goes first, it will see 1, which is not 0 and thus add 1 to 1
+> > > > and obtains 2. Then CPU2 goes and writes 0, so the exist clause sees
+> > > > v==0 and doesn't observe 2.
+> > > > 
+> > > > The other way around, CPU-2 goes first, writes a 0, then CPU-1 goes and
+> > > > observes the 0, finds it matches 0 and doesn't add.  Again, the exist
+> > > > clause will find 0 doesn't match 2.
+> > > > 
+> > > > This all goes unstuck if interleaved like:
+> > > > 
+> > > > 
+> > > > 	CPU-1			CPU-2
+> > > > 
+> > > > 				xor	t0, t0
+> > > > 1:	ll	t0, v
+> > > > 	bez	t0, 2f
+> > > > 				sw	t0, v
+> > > > 	add	t0, t1
+> > > > 	sc	t0, v
+> > > > 	beqz t0, 1b
+> > > > 
+> > > > (sorry if I got the MIPS asm wrong; it's not something I normally write)
+> > > > 
+> > > > And the store-word from CPU-2 doesn't make the SC from CPU-1 fail.
+> > > > 
+> > > 
+> > > loongson's llsc bug DOES NOT fail this litmus( we will not get V=2)；
+> > > 
+> > > only speculative memory access from CPU-1 can "blind" CPU-1(here blind means do ll/sc
+> > >  wrong）, this speculative memory access can be observed corrently by CPU2. In this 
+> > > case, sw from CPU-2 can get I , which can be observed by CPU-1, and clear llbit，then 
+> > > failed sc. 
+> > 
+> > I'm not following, suppose CPU-1 happens as a speculation (imagine
+> > whatever code is required to make that happen before). CPU-2 sw will
+> > cause I on CPU-1's ll but, as in the previous email, CPU-1 will continue
+> > as if it still has E and complete the SC.
+> > 
+> > That is; I'm just not seeing why this case would be different from two
+> > competing LL/SCs.
+> > 
+> 
+> I get your point. I kept my eye on the sw from CPU-2, but forgot the speculative
+>  mem access from CPU-1. 
+> 
+> There is no difference bewteen this one and the former case.
+> 
+> ========================================================================= 
+>                        V = 1
+> 
+>     CPU-1                       CPU-2
+> 
+>                                 xor  t0, t0
+> 1:  ll     t0, V               
+>     beqz   t0, 2f
+> 
+>     /* if speculative mem 
+>     access kick cacheline of
+>     V out, it can blind CPU-1 
+>     and make CPU-1 believe it 
+>     still hold E on V, and can
+>     NOT see the sw from CPU-2
+>     actually invalid V, which 
+>     should clear LLBit of CPU-1, 
+>     but not */
+>                                 sw   t0, V     // just after sw, V = 0
+>     addiu  t0, t0, 1            
+> 
+>     sc     t0, V
+>     /* oops, sc write t0(2) 
+>     into V with LLBit */
+> 
+>     /* get V=2 */
+>     beqz   t0, 1b
+>     nop
+> 2:
+> ================================================================================    
+>                
+> if speculative mem access *does not* kick out cache line of V, CPU-1 can see sw
+> from CPU-2, and clear LLBit, which cause sc fail and retry, That's OK
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-index c3cbca804bcd..01c10893b7a5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-@@ -65,6 +65,7 @@
- #define GMAC_PACKET_FILTER_HMC		BIT(2)
- #define GMAC_PACKET_FILTER_PM		BIT(4)
- #define GMAC_PACKET_FILTER_PCF		BIT(7)
-+#define GMAC_PACKET_FILTER_HPF		BIT(10)
- 
- #define GMAC_MAX_PERFECT_ADDRESSES	128
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 02a3a7e2db6e..094bd069c093 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -438,6 +438,8 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
- 		writel(mc_filter[1], ioaddr + GMAC_HASH_TAB_32_63);
- 	}
- 
-+	value |= GMAC_PACKET_FILTER_HPF;
-+
- 	/* Handle multiple unicast addresses */
- 	if (netdev_uc_count(dev) > GMAC_MAX_PERFECT_ADDRESSES) {
- 		/* Switch to promiscuous mode if more than 128 addrs
--- 
-2.7.4
-
+OK; so do I understand it correctly that your CPU _can_ in fact fail
+that test and result in 2? If so I think I'm (finally) understanding :-)
