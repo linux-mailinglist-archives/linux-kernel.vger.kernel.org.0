@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A4571C44F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDA281C457
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:04:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfENIA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:00:59 -0400
-Received: from mailrelay4-1.pub.mailoutpod1-cph3.one.com ([46.30.210.185]:27243
-        "EHLO mailrelay4-1.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726007AbfENIA6 (ORCPT
+        id S1726135AbfENIEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:04:36 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46342 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfENIEf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:00:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=haabendal.dk; s=20140924;
-        h=content-type:mime-version:message-id:in-reply-to:date:references:subject:cc:
-         to:from:from;
-        bh=QlmDVaRpqxxukroinxw3TPJxyM76gDhPC9ypTGUAIq4=;
-        b=xtQ7y135cx8t5EkkC0nUAPWeX3hcy1sfumg5qyLt2aA9a9M++qdmephxzHIhiMEhFD94mRNcfx9sX
-         4MXCDOxNMX9nGm6X1cqXH8j0Uxuu8N6EqYOi6n4DUf99ec2AwhTszry9zU96x/QoC0dvMiKybErnpD
-         P9tqCsoxK3hee0nA=
-X-HalOne-Cookie: 3c078f0ae0e520a51c24966b95c318af61496e8f
-X-HalOne-ID: 664b6b39-761e-11e9-abc4-d0431ea8bb10
-Received: from localhost (unknown [193.163.1.7])
-        by mailrelay4.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id 664b6b39-761e-11e9-abc4-d0431ea8bb10;
-        Tue, 14 May 2019 08:00:55 +0000 (UTC)
-From:   Esben Haabendal <esben@haabendal.dk>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: 8250: Add support for 8250/16550 as MFD function
-References: <20190426084038.6377-1-esben@geanix.com>
-        <20190426084038.6377-3-esben@geanix.com> <20190507114905.GB29524@dell>
-        <87o94ejwrx.fsf@haabendal.dk> <20190507133844.GA6194@dell>
-Date:   Tue, 14 May 2019 10:00:54 +0200
-In-Reply-To: <20190507133844.GA6194@dell> (Lee Jones's message of "Tue, 7 May
-        2019 14:38:44 +0100")
-Message-ID: <87bm05mpmx.fsf@haabendal.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        Tue, 14 May 2019 04:04:35 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j49so6720805otc.13;
+        Tue, 14 May 2019 01:04:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kB17CNIkNudo9lQqUE06/YkvGevRbJzz0AoPJPb6ktc=;
+        b=Z+HjzeLhr0Dqle03P0O/1srlROaWqziSFK4q78z4SOkQaRR1v5+3EiYgyR7pxtafXm
+         WK2tdbr1ofhyHluvIPiN6bByHsuVFwA0iL+xSjp/ZEPVls6HBbndwscET8eYWwDeFTUj
+         TlCGUk6Y0P51eW6yYTPe4oBjHaQ33pghQ88z0kHIKS2m05++SCVmj6O3VfqQGaWCJGxY
+         fUv6btXYZmQi1Mt225fkX0QwDqdWMdI13AA2uhr9SvVJ+VWghqyTS5O66HN+IM/npiO1
+         6GH3EsXNAOnz9ux59nxIZwm7GrvzT0gPJoHY7+J4L7d8wTU8YRqPuMBfyzzGFBbx0DGb
+         XvlQ==
+X-Gm-Message-State: APjAAAXhj1w/ku1PCqdgvzVN/D8YI19rrKKbLZJFdJBiy5s2kYcy2MFt
+        SLvnBMAecax2k9PM0uSCtax3Pqii+gxN/zjUinE=
+X-Google-Smtp-Source: APXvYqxWif0G6pQHhcU4KlJ5vC6KPXRlOORPDLaMZI5cz8NUcPo2oZliCB12ipxHoYjnRvcTjRrFXRhyFfoFmxezLIc=
+X-Received: by 2002:a9d:5912:: with SMTP id t18mr14859091oth.252.1557821074817;
+ Tue, 14 May 2019 01:04:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190510212937.11661-1-keith.busch@intel.com> <0080aaff18e5445dabca509d4113eca8@AUSX13MPC105.AMER.DELL.COM>
+ <955722d8fc16425dbba0698c4806f8fd@AUSX13MPC105.AMER.DELL.COM>
+ <20190513143741.GA25500@lst.de> <b12ff66f8c224e4199ff1b90ed6bc393@AUSX13MPC105.AMER.DELL.COM>
+ <20190513145522.GA15421@localhost.localdomain> <d69ff7154191492eaa8f55535a7effa5@AUSX13MPC105.AMER.DELL.COM>
+ <20190513150458.GA15437@localhost.localdomain>
+In-Reply-To: <20190513150458.GA15437@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 14 May 2019 10:04:22 +0200
+Message-ID: <CAJZ5v0g3cCYK3rAQn09pCr7LMrRr=zQy_ceaEB5AKhVx604YgA@mail.gmail.com>
+Subject: Re: [PATCH] nvme/pci: Use host managed power state for suspend
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lee Jones <lee.jones@linaro.org> writes:
-
-> On Tue, 07 May 2019, Esben Haabendal wrote:
+On Mon, May 13, 2019 at 5:10 PM Keith Busch <kbusch@kernel.org> wrote:
 >
->> Lee Jones <lee.jones@linaro.org> writes:
->> 
->> > On Fri, 26 Apr 2019, Esben Haabendal wrote:
->> >
->> >> The serial8250-mfd driver is for adding 8250/16550 UART ports as functions
->> >> to an MFD driver.
->> >> 
->> >> When calling mfd_add_device(), platform_data should be a pointer to a
->> >> struct plat_serial8250_port, with proper settings like .flags, .type,
->> >> .iotype, .regshift and .uartclk.  Memory (or ioport) and IRQ should be
->> >> passed as cell resources.
->> >
->> > What?  No, please!
->> >
->> > If you *must* create a whole driver just to be able to use
->> > platform_*() helpers (which I don't think you should), then please
->> > call it something else.  This doesn't have anything to do with MFD.
->> 
->> True.
->> 
->> I really don't think it is a good idea to create a whole driver just to
->> be able to use platform_get_*() helpers.  And if I am forced to do this,
->> because I am unable to convince Andy to improve the standard serial8250
->> driver to support that, it should be called MFD.  The driver would be
+> On Mon, May 13, 2019 at 03:05:42PM +0000, Mario.Limonciello@dell.com wrote:
+> > This system power state - suspend to idle is going to freeze threads.
+> > But we're talking a multi threaded kernel.  Can't there be a timing problem going
+> > on then too?  With a disk flush being active in one task and the other task trying
+> > to put the disk into the deepest power state.  If you don't freeze the queues how
+> > can you guarantee that didn't happen?
 >
-> I assume you mean "shouldn't"?
+> But if an active data flush task is running, then we're not idle and
+> shouldn't go to low power.
 
-Of-course.
+To be entirely precise, system suspend prevents user space from
+running while it is in progress.  It doesn't do that to kernel
+threads, at least not by default, though, so if there is a kernel
+thread flushing the data, it needs to be stopped or suspended somehow
+directly in the system suspend path.  [And yes, system suspend (or
+hibernation) may take place at any time so long as all user space can
+be prevented from running then (by means of the tasks freezer).]
 
->> generally usable for all usecases where platform_get_*() works.
->> 
->> I don't have any idea what to call such a driver.  It really would just
->> be a fork of the current serial8250 driver, just allowing use of
->> platform_get_*(), supporting exactly the same hardware.
->> 
->> I am still hoping that we can find a way to improve serial8250 to be
->> usable in these cases.
->
-> Me too.
+However, freezing the queues from a driver ->suspend callback doesn't
+help in general and the reason why is hibernation.  Roughly speaking,
+hibernation works in two steps, the first of which creates a snapshot
+image of system memory and the second one writes that image to
+persistent storage.  Devices are resumed between the two steps in
+order to make it possible to do the write, but that would unfreeze the
+queues and let the data flusher run.  If it runs, it may cause the
+memory snapshot image that has just been created to become outdated
+and restoring the system memory contents from that image going forward
+may cause corruption to occur.
 
-Unfortunately, I don't seem to be able to convince Andy to accept
-something like that.
+Thus freezing the queues from a driver ->suspend callback should not
+be relied on for correctness if the same callback is used for system
+suspend and hibernation, which is the case here.  If doing that
+prevents the system from crashing, it is critical to find out why IMO,
+as that may very well indicate a broader issue, not necessarily in the
+driver itself.
 
-I might have to do this out-of-tree :(
-
-/Esben
+But note that even if the device turns out to behave oddly, it still
+needs to be handled, unless it may be prevented from shipping to users
+in that shape.  If it ships, users will face the odd behavior anyway.
