@@ -2,334 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B9F1C592
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 11:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD401C5A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 11:05:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfENJCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 05:02:45 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47394 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725916AbfENJCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 05:02:45 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3FDCEC449AF04FC2B0DD;
-        Tue, 14 May 2019 17:02:40 +0800 (CST)
-Received: from [127.0.0.1] (10.67.78.74) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 May 2019
- 17:02:29 +0800
-Subject: Re: [RFC] Question about enable doorbell irq and halt_poll process
-From:   "Tangnianyao (ICT)" <tangnianyao@huawei.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <guoheyi@huawei.com>, <kvm@vger.kernel.org>,
-        <xuwei5@huawei.com>, <wanghaibin.wang@huawei.com>
-References: <0fb3c9ba-8428-ea6c-2973-952624f601cc@huawei.com>
- <20190320170219.510f2e1e@why.wild-wind.fr.eu.org>
- <5df934fd-06d5-55f2-68a5-6f4985e4ac1b@huawei.com>
- <86zhpc66jl.wl-marc.zyngier@arm.com>
- <e32d81ed-d1f5-ce0b-7845-d4b680d556df@huawei.com>
- <86imvu3uje.wl-marc.zyngier@arm.com>
- <6547b80a-f0c1-b74e-f37f-59c1ad96c8b3@huawei.com>
- <861s1tavn0.wl-marc.zyngier@arm.com>
- <5910533f-c6ac-6350-370f-bd218bba3fd8@huawei.com>
-Message-ID: <53a525e5-c9a7-0d98-ff7a-ca5be0ea381a@huawei.com>
-Date:   Tue, 14 May 2019 17:02:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <5910533f-c6ac-6350-370f-bd218bba3fd8@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.78.74]
-X-CFilter-Loop: Reflected
+        id S1726871AbfENJFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 05:05:30 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:25760 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbfENJFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 05:05:17 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 453BbY47qqz9v0YZ;
+        Tue, 14 May 2019 11:05:13 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=QEXAUooo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id b0W5i0t6Q68R; Tue, 14 May 2019 11:05:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 453BbY301Rz9v0YY;
+        Tue, 14 May 2019 11:05:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1557824713; bh=v4bNhQOc7ZvxUNO59OYToxqsttx0pncVXMsK3CmHAi4=;
+        h=From:Subject:To:Cc:Date:From;
+        b=QEXAUoooJ0KRP4YbPD13py3w4zLXPhVu4CkmcJFYQi5j7hsZ0t4HmObK8oCaHfsda
+         Rem60QOLsHg4ZpIuHXgUBxZAdBp5vl8zlNx0GZNilvjDfKxERLPKt8ZHwxVuNACHA3
+         Ekz9EZFNrLrSZAuM0phNLlNx3MXmLmJdEZD1GaEI=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 776788B8BE;
+        Tue, 14 May 2019 11:05:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id IJPs24qvg3OW; Tue, 14 May 2019 11:05:14 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 23C578B8BD;
+        Tue, 14 May 2019 11:05:14 +0200 (CEST)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B72316742D; Tue, 14 May 2019 09:05:13 +0000 (UTC)
+Message-Id: <239d1c8f15b8bedc161a234f9f1a22a07160dbdf.1557824379.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 1/4] powerpc/64: flush_inval_dcache_range() becomes
+ flush_dcache_range()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 14 May 2019 09:05:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On most arches having function flush_dcache_range(), including PPC32,
+this function does a writeback and invalidation of the cache bloc.
 
+On PPC64, flush_dcache_range() only does a writeback while
+flush_inval_dcache_range() does the invalidation in addition.
 
-On 2019/4/29 10:29, Tangnianyao (ICT) wrote:
+In addition it looks like within arch/powerpc/, there are no PPC64
+platforms using flush_dcache_range()
 
-Hi, Marc
+This patch drops the existing 64 bits version of flush_dcache_range()
+and renames flush_inval_dcache_range() into flush_dcache_range().
 
-> On 2019/4/23 18:00, Marc Zyngier wrote:
-> 
-> Hi, Marc
-> 
->> On Tue, 23 Apr 2019 08:44:17 +0100,
->> "Tangnianyao (ICT)" <tangnianyao@huawei.com> wrote:
->>>
->>> Hi, Marc
->>
->> [...]
->>
->>> I've learned that there's some implementation problem for the PCIe
->>> controller of Hi1616, the processor of D05. The PCIe ACS was not
->>> implemented properly and D05 doesn't support VM using pcie vf.
->>
->> My D05 completely disagrees with you:
->>
->> root@unassigned-hostname:~# lspci -v
->> 00:00.0 Host bridge: Red Hat, Inc. QEMU PCIe Host bridge
->> 	Subsystem: Red Hat, Inc QEMU PCIe Host bridge
->> 	Flags: fast devsel
->> lspci: Unable to load libkmod resources: error -12
->>
->> 00:01.0 Ethernet controller: Red Hat, Inc Virtio network device (rev 01)
->> 	Subsystem: Red Hat, Inc Virtio network device
->> 	Flags: bus master, fast devsel, latency 0, IRQ 40
->> 	Memory at 10040000 (32-bit, non-prefetchable) [size=4K]
->> 	Memory at 8000000000 (64-bit, prefetchable) [size=16K]
->> 	Expansion ROM at 10000000 [disabled] [size=256K]
->> 	Capabilities: [98] MSI-X: Enable+ Count=3 Masked-
->> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
->> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
->> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
->> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
->> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
->> 	Kernel driver in use: virtio-pci
->>
->> 00:02.0 SCSI storage controller: Red Hat, Inc Virtio block device (rev 01)
->> 	Subsystem: Red Hat, Inc Virtio block device
->> 	Flags: bus master, fast devsel, latency 0, IRQ 41
->> 	Memory at 10041000 (32-bit, non-prefetchable) [size=4K]
->> 	Memory at 8000004000 (64-bit, prefetchable) [size=16K]
->> 	Capabilities: [98] MSI-X: Enable+ Count=2 Masked-
->> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
->> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
->> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
->> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
->> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
->> 	Kernel driver in use: virtio-pci
->>
->> 00:03.0 SCSI storage controller: Red Hat, Inc Virtio SCSI (rev 01)
->> 	Subsystem: Red Hat, Inc Virtio SCSI
->> 	Flags: bus master, fast devsel, latency 0, IRQ 42
->> 	Memory at 10042000 (32-bit, non-prefetchable) [size=4K]
->> 	Memory at 8000008000 (64-bit, prefetchable) [size=16K]
->> 	Capabilities: [98] MSI-X: Enable+ Count=4 Masked-
->> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
->> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
->> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
->> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
->> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
->> 	Kernel driver in use: virtio-pci
->>
->> 00:04.0 Ethernet controller: Intel Corporation I350 Ethernet Controller Virtual Function (rev 01)
->> 	Subsystem: Intel Corporation I350 Ethernet Controller Virtual Function
->> 	Flags: bus master, fast devsel, latency 0
->> 	Memory at 800000c000 (64-bit, prefetchable) [size=16K]
->> 	Memory at 8000010000 (64-bit, prefetchable) [size=16K]
->> 	Capabilities: [70] MSI-X: Enable+ Count=3 Masked-
->> 	Capabilities: [a0] Express Root Complex Integrated Endpoint, MSI 00
->> 	Capabilities: [100] Advanced Error Reporting
->> 	Capabilities: [1a0] Transaction Processing Hints
->> 	Capabilities: [1d0] Access Control Services
->> 	Kernel driver in use: igbvf
->>
->> root@unassigned-hostname:~# uptime
->>  05:40:45 up 27 days, 17:16,  1 user,  load average: 4.10, 4.05, 4.01
->>
-> 
-> I have make a new quirk to fix ACS problem on Hi1616, to enable VM using
-> pcie vf.
-> 
->> For something that isn't supposed to work, it is pretty good. So
->> please test it and let me know how it fares. At this stage, not
->> regressing deployed HW is more important than improving the situation
->> on HW that nobody has.
->>
->>>
->>>>
->>>>>
->>>>>>
->>>>>>> Compared to default halt_poll_ns, 500000ns, enabling doorbells is not
->>>>>>> large at all.
->>>>>>
->>>>>> Sure. But I'm not sure this is a universal figure.
->>>>>>
->>>>>>>
->>>>>>>> Frankly, you want to be careful with that. I'd rather enable them late
->>>>>>>> and have a chance of not blocking because of another (virtual)
->>>>>>>> interrupt, which saves us the doorbell business.
->>>>>>>>
->>>>>>>> I wonder if you wouldn't be in a better position by drastically
->>>>>>>> reducing halt_poll_ns for vcpu that can have directly injected
->>>>>>>> interrupts.
->>>>>>>>
->>>>>>>
->>>>>>> If we set halt_poll_ns to a small value, the chance of
->>>>>>> not blocking and vcpu scheduled out becomes larger. The cost
->>>>>>> of vcpu scheduled out is quite expensive.
->>>>>>> In many cases, one pcpu is assigned to only
->>>>>>> one vcpu, and halt_poll_ns is set quite large, to increase
->>>>>>> chance of halt_poll process got terminated. This is the
->>>>>>> reason we want to set halt_poll_ns large. And We hope vlpi
->>>>>>> stop halt_poll process in time.
->>>>>>
->>>>>> Fair enough. It is certainly realistic to strictly partition the
->>>>>> system when GICv4 is in use, so I can see some potential benefit.
->>>>>>
->>>>>>> Though it will check whether vcpu is runnable again by
->>>>>>> kvm_vcpu_check_block. Vlpi can prevent scheduling vcpu out.
->>>>>>> However it's somewhat later if halt_poll_ns is larger.
->>>>>>>
->>>>>>>> In any case, this is something that we should measure, not guess.
->>>>>>
->>>>>> Please post results of realistic benchmarks that we can reproduce,
->>>>>> with and without this change. I'm willing to entertain the idea, but I
->>>>>> need more than just a vague number.
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>> 	M.
->>>>>>
->>>>>
->>>>> I tested it with and without change (patch attached in the last).
->>>>> halt_poll_ns is keep default, 500000ns.
->>>>> I have merged the patch "arm64: KVM: Always set ICH_HCR_EL2.EN if GICv4 is enabled"
->>>>> to my test kernel, to make sure ICH_HCR_EL2.EN=1 in guest.
->>>>>
->>>>> netperf result:
->>>>> D06 as server, intel 8180 server as client
->>>>> with change:
->>>>> package 512 bytes - 5400 Mbits/s
->>>>> package 64 bytes - 740 Mbits/s
->>>>> without change:
->>>>> package 512 bytes - 5000 Mbits/s
->>>>> package 64 bytes - 710 Mbits/s
->>>>>
->>>>> Also I have tested D06 as client, intel machine as server,
->>>>> with the change, the result remains the same.
->>>>
->>>> So anywhere between 4% and 8% improvement. Please post results for D05
->>>> once you've found one.
->>>>
->>>>>
->>>>>
->>>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->>>>> index 55fe8e2..0f56904 100644
->>>>> --- a/virt/kvm/kvm_main.c
->>>>> +++ b/virt/kvm/kvm_main.c
->>>>> @@ -2256,6 +2256,16 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->>>>>  	if (vcpu->halt_poll_ns) {
->>>>>  		ktime_t stop = ktime_add_ns(ktime_get(), vcpu->halt_poll_ns);
->>>>>
->>>>> +#ifdef CONFIG_ARM64
->>>>> +		/*
->>>>> +		 * When using gicv4, enable doorbell before halt pool wait
->>>>> +		 * so that direct vlpi can stop halt poll.
->>>>> +		 */
->>>>> +		if (vcpu->arch.vgic_cpu.vgic_v3.its_vpe.its_vm) {
->>>>> +			kvm_vgic_v4_enable_doorbell(vcpu);
->>>>> +		}
->>>>> +#endif
->>>>> +
->>>>
->>>> Irk. No. You're now leaving doorbells enabled when going back to the
->>>> guest, and that's pretty bad as the whole logic relies on doorbells
->>>> being disabled if the guest can run.
->>>>
->>>> So please try this instead on top of mainline. And it has to be on top
->>>> of mainline as we've changed the way timer interrupts work in 5.1 --
->>>> see accb99bcd0ca ("KVM: arm/arm64: Simplify bg_timer programming").
->>>>
->>
->> [...]
->>
->>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->>>> index f25aa98a94df..0ae4ad5dcb12 100644
->>>> --- a/virt/kvm/kvm_main.c
->>>> +++ b/virt/kvm/kvm_main.c
->>>> @@ -2252,6 +2252,8 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->>>>  	bool waited = false;
->>>>  	u64 block_ns;
->>>>  
->>>> +	kvm_arch_vcpu_blocking(vcpu);
->>>> +
->>>>  	start = cur = ktime_get();
->>>>  	if (vcpu->halt_poll_ns) {
->>>>  		ktime_t stop = ktime_add_ns(ktime_get(), vcpu->halt_poll_ns);
->>>> @@ -2272,8 +2274,6 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->>>>  		} while (single_task_running() && ktime_before(cur, stop));
->>>>  	}
->>>>  
->>>> -	kvm_arch_vcpu_blocking(vcpu);
->>>> -
->>>>  	for (;;) {
->>>>  		prepare_to_swait_exclusive(&vcpu->wq, &wait, TASK_INTERRUPTIBLE);
->>>>  
->>>> @@ -2287,8 +2287,8 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->>>>  	finish_swait(&vcpu->wq, &wait);
->>>>  	cur = ktime_get();
->>>>  
->>>> -	kvm_arch_vcpu_unblocking(vcpu);
->>>>  out:
->>>> +	kvm_arch_vcpu_unblocking(vcpu);
->>>>  	block_ns = ktime_to_ns(cur) - ktime_to_ns(start);
->>>>  
->>>>  	if (!vcpu_valid_wakeup(vcpu))
->>>>
->>>> Thanks,
->>>>
->>>> 	M.
->>>>
->>>
->>> I've tested your patch and the results showed as follow:
->>>
->>> netperf result:
->>> D06 as server, intel 8180 server as client
->>> with change:
->>> package 512 bytes - 5500 Mbits/s
->>> package 64 bytes - 760 Mbits/s
->>> without change:
->>> package 512 bytes - 5000 Mbits/s
->>> package 64 bytes - 710 Mbits/s
->>
->> OK, that's pretty good. Let me know once you've tested it on D05.
->>
->> Thanks,
->>
->> 	M.
->>
-> 
-> The average cost of kvm_vgic_v4_enable_doorbell on D05 is 0.74us,
-> while it is 0.35us on D06.
-> 
-> netperf result:
-> server: D05 vm using 82599 vf,
-> client: intel 8180
-> 5.0.0-rc3, have merged the patch "arm64: KVM: Always set ICH_HCR_EL2.EN
-> if GICv4 is enabled"
-> 
-> with change:
-> package 512 bytes - 7150 Mbits/s
-> package 64 bytes - 1080 Mbits/s
-> without change:
-> package 512 bytes - 7050 Mbits/s
-> package 64 bytes - 1080 Mbits/s
-> 
-> It seems not work on D05, as the doorbell enable process costs more than
-> that on D06.
-> 
-> Thanks,
-> Tang
-> 
-> 
-> .
-> 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/cacheflush.h |  1 -
+ arch/powerpc/kernel/misc_64.S         | 27 ++-------------------------
+ arch/powerpc/lib/pmem.c               |  8 ++++----
+ arch/powerpc/mm/mem.c                 |  4 ++--
+ arch/powerpc/sysdev/dart_iommu.c      |  2 +-
+ drivers/macintosh/smu.c               |  4 ++--
+ 6 files changed, 11 insertions(+), 35 deletions(-)
 
-On D05, Hi1616, ACS extended capability was not implemented standardly, it
-has to fix it by making a new quirk. And this change results to about 1.5%
-performance drop on D05, while it improves 5% to 8% on D06. D06 will be
-more commercially used than D05. We think it may be reasonable to change
-this process.
-If you need to verify this process,  you may use our D06 machine. I will
-shows how you can use it with another email. As I know, James.Morse@arm.com
-has ever used it too.
-
-Thanks,
-Tang
-
+diff --git a/arch/powerpc/include/asm/cacheflush.h b/arch/powerpc/include/asm/cacheflush.h
+index d5a8d7bf0759..e9a40b110f1d 100644
+--- a/arch/powerpc/include/asm/cacheflush.h
++++ b/arch/powerpc/include/asm/cacheflush.h
+@@ -109,7 +109,6 @@ static inline void invalidate_dcache_range(unsigned long start,
+ #endif /* CONFIG_PPC32 */
+ #ifdef CONFIG_PPC64
+ extern void flush_dcache_range(unsigned long start, unsigned long stop);
+-extern void flush_inval_dcache_range(unsigned long start, unsigned long stop);
+ #endif
+ 
+ #define copy_to_user_page(vma, page, vaddr, dst, src, len) \
+diff --git a/arch/powerpc/kernel/misc_64.S b/arch/powerpc/kernel/misc_64.S
+index 262ba9481781..a4fd536efb44 100644
+--- a/arch/powerpc/kernel/misc_64.S
++++ b/arch/powerpc/kernel/misc_64.S
+@@ -121,31 +121,8 @@ EXPORT_SYMBOL(flush_icache_range)
+  *
+  *    flush all bytes from start to stop-1 inclusive
+  */
+-_GLOBAL_TOC(flush_dcache_range)
+ 
+-/*
+- * Flush the data cache to memory 
+- * 
+- * Different systems have different cache line sizes
+- */
+- 	ld	r10,PPC64_CACHES@toc(r2)
+-	lwz	r7,DCACHEL1BLOCKSIZE(r10)	/* Get dcache block size */
+-	addi	r5,r7,-1
+-	andc	r6,r3,r5		/* round low to line bdy */
+-	subf	r8,r6,r4		/* compute length */
+-	add	r8,r8,r5		/* ensure we get enough */
+-	lwz	r9,DCACHEL1LOGBLOCKSIZE(r10)	/* Get log-2 of dcache block size */
+-	srw.	r8,r8,r9		/* compute line count */
+-	beqlr				/* nothing to do? */
+-	mtctr	r8
+-0:	dcbst	0,r6
+-	add	r6,r6,r7
+-	bdnz	0b
+-	sync
+-	blr
+-EXPORT_SYMBOL(flush_dcache_range)
+-
+-_GLOBAL(flush_inval_dcache_range)
++_GLOBAL_TOC(flush_dcache_range)
+  	ld	r10,PPC64_CACHES@toc(r2)
+ 	lwz	r7,DCACHEL1BLOCKSIZE(r10)	/* Get dcache block size */
+ 	addi	r5,r7,-1
+@@ -164,7 +141,7 @@ _GLOBAL(flush_inval_dcache_range)
+ 	sync
+ 	isync
+ 	blr
+-
++EXPORT_SYMBOL(flush_dcache_range)
+ 
+ /*
+  * Flush a particular page from the data cache to RAM.
+diff --git a/arch/powerpc/lib/pmem.c b/arch/powerpc/lib/pmem.c
+index 53c018762e1c..36e08bf850e0 100644
+--- a/arch/powerpc/lib/pmem.c
++++ b/arch/powerpc/lib/pmem.c
+@@ -23,14 +23,14 @@
+ void arch_wb_cache_pmem(void *addr, size_t size)
+ {
+ 	unsigned long start = (unsigned long) addr;
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ }
+ EXPORT_SYMBOL(arch_wb_cache_pmem);
+ 
+ void arch_invalidate_pmem(void *addr, size_t size)
+ {
+ 	unsigned long start = (unsigned long) addr;
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ }
+ EXPORT_SYMBOL(arch_invalidate_pmem);
+ 
+@@ -43,7 +43,7 @@ long __copy_from_user_flushcache(void *dest, const void __user *src,
+ 	unsigned long copied, start = (unsigned long) dest;
+ 
+ 	copied = __copy_from_user(dest, src, size);
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ 
+ 	return copied;
+ }
+@@ -53,7 +53,7 @@ void *memcpy_flushcache(void *dest, const void *src, size_t size)
+ 	unsigned long start = (unsigned long) dest;
+ 
+ 	memcpy(dest, src, size);
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ 
+ 	return dest;
+ }
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index cd525d709072..39e66f033995 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -125,7 +125,7 @@ int __ref arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altm
+ 			start, start + size, rc);
+ 		return -EFAULT;
+ 	}
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ 
+ 	return __add_pages(nid, start_pfn, nr_pages, altmap, want_memblock);
+ }
+@@ -153,7 +153,7 @@ int __ref arch_remove_memory(int nid, u64 start, u64 size,
+ 
+ 	/* Remove htab bolted mappings for this section of memory */
+ 	start = (unsigned long)__va(start);
+-	flush_inval_dcache_range(start, start + size);
++	flush_dcache_range(start, start + size);
+ 	ret = remove_section_mapping(start, start + size);
+ 
+ 	/* Ensure all vmalloc mappings are flushed in case they also
+diff --git a/arch/powerpc/sysdev/dart_iommu.c b/arch/powerpc/sysdev/dart_iommu.c
+index 2a751795ec1e..bc259a8d3f2d 100644
+--- a/arch/powerpc/sysdev/dart_iommu.c
++++ b/arch/powerpc/sysdev/dart_iommu.c
+@@ -158,7 +158,7 @@ static void dart_cache_sync(unsigned int *base, unsigned int count)
+ 	unsigned int tmp;
+ 
+ 	/* Perform a standard cache flush */
+-	flush_inval_dcache_range(start, end);
++	flush_dcache_range(start, end);
+ 
+ 	/*
+ 	 * Perform the sequence described in the CPC925 manual to
+diff --git a/drivers/macintosh/smu.c b/drivers/macintosh/smu.c
+index 6a844125cf2d..97758eed03f2 100644
+--- a/drivers/macintosh/smu.c
++++ b/drivers/macintosh/smu.c
+@@ -133,7 +133,7 @@ static void smu_start_cmd(void)
+ 	/* Flush command and data to RAM */
+ 	faddr = (unsigned long)smu->cmd_buf;
+ 	fend = faddr + smu->cmd_buf->length + 2;
+-	flush_inval_dcache_range(faddr, fend);
++	flush_dcache_range(faddr, fend);
+ 
+ 
+ 	/* We also disable NAP mode for the duration of the command
+@@ -195,7 +195,7 @@ static irqreturn_t smu_db_intr(int irq, void *arg)
+ 		 * reply length (it's only 2 cache lines anyway)
+ 		 */
+ 		faddr = (unsigned long)smu->cmd_buf;
+-		flush_inval_dcache_range(faddr, faddr + 256);
++		flush_dcache_range(faddr, faddr + 256);
+ 
+ 		/* Now check ack */
+ 		ack = (~cmd->cmd) & 0xff;
+-- 
+2.13.3
 
