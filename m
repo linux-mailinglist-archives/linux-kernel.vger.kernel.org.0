@@ -2,85 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4ED1CCC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E65F31CCD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 18:21:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbfENQSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 12:18:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42195 "EHLO
+        id S1726381AbfENQVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 12:21:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33258 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfENQSV (ORCPT
+        with ESMTP id S1726013AbfENQVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 12:18:21 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l2so19886131wrb.9;
-        Tue, 14 May 2019 09:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2QCo8Dha4jyH5qWVup39lkl3qNYvyEmFp/lbafcwv0g=;
-        b=M2KCHHXa9w7/0ORsFwfWWtv8dG1WOl97mnj3NEraBVfUPCaS3RJyCUsg0aDol2crMV
-         raEb9PUzHG/xhP6y6ugm6qvILLGa8UEU//4WsgOZwBDbII7z1cevZXlD4xywNq1wcR3Q
-         w0Vl+YrMkTKbMLgJp0H3HliVuCckDZBdoFKx7fzPBO/OP8Bc3AwQp6gVMUSaF7QEvZGu
-         fItLVS3WYog+yqtkIDBHgRL18EcAfR1z0ve0HPcxOTPQ28xswqyWZui5KWr/1olovf0n
-         +NHrQUziMAS0fVm1Eb/wlwZy0NNHp+wKWJ+bUCFve3NAgimjqazbg1jOtDQ4Tar7EQyR
-         Gfsg==
+        Tue, 14 May 2019 12:21:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d9so11553881wrx.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 09:21:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2QCo8Dha4jyH5qWVup39lkl3qNYvyEmFp/lbafcwv0g=;
-        b=Px6Am08Sc8pZMS0XDS3UK8hu/9OZ6BfA0340oCsC0jq5L3YaxvSFx8auPLICltvILE
-         xseFaWz5AM1NX7WK4LO5MWL+b4uRAO7rKRkIN44chvvL+qCR9dhQk4aGfqyXx08tSqtN
-         Znw8we9UT9V8TxKADjYmDwvG/acKzRPpeUrFfnsVQ0dgUXaATsDDUxtKD+VsedxAaUqM
-         F+Kgcr2wb6X6rfCljMgpIAn/VJs1C4+Ei7i+M0XZzl+FjvB7BgIAdT7lLEoeWFCJobae
-         HyM9SUJ7IcI2ipepegjKDtka/9/tckE54BNKYOsdqP/yUNJqiW3tKb1lsUE7FPxVrrAF
-         Ivww==
-X-Gm-Message-State: APjAAAWdEuvntDOz5kt4AOf41L9R6Bv+gyV084MqAyaWta8HE49HkaVY
-        6+dXcPi5xuqfjkf+VKXPL3s=
-X-Google-Smtp-Source: APXvYqxYdKqSrZRWSHsMpQlKO7iixoLljsIATMn2P6fIRC02plxoPJYE12VcGiTDYRt10LFDD8Y+Wg==
-X-Received: by 2002:a5d:66c1:: with SMTP id k1mr14777198wrw.225.1557850699692;
-        Tue, 14 May 2019 09:18:19 -0700 (PDT)
-Received: from nexussix.ar.arcelik ([84.44.14.233])
-        by smtp.gmail.com with ESMTPSA id d16sm15422987wrs.68.2019.05.14.09.18.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 09:18:19 -0700 (PDT)
-From:   Cengiz Can <cengizc@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, kexec@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cengizc@gmail.com
-Subject: [PATCH] Documentation: kdump: fix minor typo
-Date:   Tue, 14 May 2019 19:17:25 +0300
-Message-Id: <20190514161724.16604-1-cengizc@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=BOCFSrhgfdaeCsPqx/9Z23ucW5WFX+NmToiNV2PrBeE=;
+        b=hcV9dy3w3chOiWSLO3uK8G0jJsiL+NhYWspXxaY685vAf/XjdMOnVxXDjvC7xhf5L4
+         rh5TaaQiQVJdrru9uM9gIjKRN548YszwgVZPBMGd3HmGtDaPgO3QK372JcHAp8zjVWmj
+         Qi1a6gmW0RBRv5k/x5qa2673B7vaJ//HOoDOiu3WH8kRAYiBPYrPBAhzxTKRsDc2IivZ
+         kTJfKnyZnRGYipQru7OiX6blf/WwI50vgItaZ27wy8tBYeBLN113idpK22/J3ye0f3AG
+         AX/f9J/ypsXi9gpuzYGte1FF6a2U5H+KGMySdmBv+pyl4EtbuHOfF/ZwPZLtr4guTTzY
+         1hog==
+X-Gm-Message-State: APjAAAU70J/btWRnvxphtLYp72lDjCfFchFgxuOHWS1EWXWJp1+jESXB
+        YacyBthF9JaCoS2mxP70A8PWTg==
+X-Google-Smtp-Source: APXvYqyscd4jQz6/42rGahRh0erb6xOt/MMNshG64dkL9Ee+1e2OY4Rd80gvnBFmXC+AkJhQaflnLg==
+X-Received: by 2002:adf:afcd:: with SMTP id y13mr21348543wrd.270.1557850859484;
+        Tue, 14 May 2019 09:20:59 -0700 (PDT)
+Received: from steredhat (host151-251-static.12-87-b.business.telecomitalia.it. [87.12.251.151])
+        by smtp.gmail.com with ESMTPSA id g3sm4407851wmf.9.2019.05.14.09.20.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 May 2019 09:20:58 -0700 (PDT)
+Date:   Tue, 14 May 2019 18:20:56 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH v2 7/8] vsock/virtio: increase RX buffer size to 64 KiB
+Message-ID: <20190514162056.5aotcuzsi6e6wya7@steredhat>
+References: <20190510125843.95587-1-sgarzare@redhat.com>
+ <20190510125843.95587-8-sgarzare@redhat.com>
+ <bf0416f1-0e69-722d-75ce-3d101e6d7d71@redhat.com>
+ <20190513175138.4yycad2xi65komw6@steredhat>
+ <fd934a4c-f7d2-8a04-ed93-a3b690ed0d79@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <fd934a4c-f7d2-8a04-ed93-a3b690ed0d79@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kdump.txt had a minor typo.
+On Tue, May 14, 2019 at 11:38:05AM +0800, Jason Wang wrote:
+> 
+> On 2019/5/14 上午1:51, Stefano Garzarella wrote:
+> > On Mon, May 13, 2019 at 06:01:52PM +0800, Jason Wang wrote:
+> > > On 2019/5/10 下午8:58, Stefano Garzarella wrote:
+> > > > In order to increase host -> guest throughput with large packets,
+> > > > we can use 64 KiB RX buffers.
+> > > > 
+> > > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > > ---
+> > > >    include/linux/virtio_vsock.h | 2 +-
+> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+> > > > index 84b72026d327..5a9d25be72df 100644
+> > > > --- a/include/linux/virtio_vsock.h
+> > > > +++ b/include/linux/virtio_vsock.h
+> > > > @@ -10,7 +10,7 @@
+> > > >    #define VIRTIO_VSOCK_DEFAULT_MIN_BUF_SIZE	128
+> > > >    #define VIRTIO_VSOCK_DEFAULT_BUF_SIZE		(1024 * 256)
+> > > >    #define VIRTIO_VSOCK_DEFAULT_MAX_BUF_SIZE	(1024 * 256)
+> > > > -#define VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE	(1024 * 4)
+> > > > +#define VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE	(1024 * 64)
+> > > >    #define VIRTIO_VSOCK_MAX_BUF_SIZE		0xFFFFFFFFUL
+> > > >    #define VIRTIO_VSOCK_MAX_PKT_BUF_SIZE		(1024 * 64)
+> > > 
+> > > We probably don't want such high order allocation. It's better to switch to
+> > > use order 0 pages in this case. See add_recvbuf_big() for virtio-net. If we
+> > > get datapath unified, we will get more stuffs set.
+> > IIUC, you are suggesting to allocate only pages and put them in a
+> > scatterlist, then add them to the virtqueue.
+> > 
+> > Is it correct?
+> 
+> 
+> Yes since you are using:
+> 
+>                 pkt->buf = kmalloc(buf_len, GFP_KERNEL);
+>                 if (!pkt->buf) {
+>                         virtio_transport_free_pkt(pkt);
+>                         break;
+>                 }
+> 
+> This is likely to fail when the memory is fragmented which is kind of
+> fragile.
+> 
+> 
 
-Signed-off-by: Cengiz Can <cengizc@gmail.com>
----
- Documentation/kdump/kdump.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for pointing that out.
 
-diff --git a/Documentation/kdump/kdump.txt b/Documentation/kdump/kdump.txt
-index 51814450a7f8..3162eeb8c262 100644
---- a/Documentation/kdump/kdump.txt
-+++ b/Documentation/kdump/kdump.txt
-@@ -410,7 +410,7 @@ Notes on loading the dump-capture kernel:
- * Boot parameter "1" boots the dump-capture kernel into single-user
-   mode without networking. If you want networking, use "3".
- 
--* We generally don' have to bring up a SMP kernel just to capture the
-+* We generally don't have to bring up a SMP kernel just to capture the
-   dump. Hence generally it is useful either to build a UP dump-capture
-   kernel or specify maxcpus=1 option while loading dump-capture kernel.
-   Note, though maxcpus always works, you had better replace it with
--- 
-2.21.0
+> > 
+> > The issue that I have here, is that the virtio-vsock guest driver, see
+> > virtio_vsock_rx_fill(), allocates a struct virtio_vsock_pkt that
+> > contains the room for the header, then allocates the buffer for the payload.
+> > At this point it fills the scatterlist with the &virtio_vsock_pkt.hdr and the
+> > buffer for the payload.
+> 
+> 
+> This part should be fine since what is needed is just adding more pages to
+> sg[] and call virtuqeueu_add_sg().
+> 
+> 
 
+Yes, I agree.
+
+> > 
+> > Changing this will require several modifications, and if we get datapath
+> > unified, I'm not sure it's worth it.
+> > Of course, if we leave the datapaths separated, I'd like to do that later.
+> > 
+> > What do you think?
+> 
+> 
+> For the driver it self, it should not be hard. But I think you mean the
+> issue of e.g virtio_vsock_pkt itself which doesn't support sg. For short
+> time, maybe we can use kvec instead.
+
+I'll try to use kvec in the virtio_vsock_pkt.
+
+Since this struct is shared also with the host driver (vhost-vsock),
+I hope the changes could be limited, otherwise we can remove the last 2
+patches of the series for now, leaving the RX buffer size to 4KB.
+
+Thanks,
+Stefano
