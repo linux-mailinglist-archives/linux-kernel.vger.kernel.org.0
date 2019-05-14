@@ -2,77 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7F01CBFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1311CC06
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbfENPgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:36:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34396 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfENPgx (ORCPT
+        id S1726482AbfENPh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:37:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41286 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfENPh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:36:53 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hQZU0-0005TC-0d; Tue, 14 May 2019 17:36:48 +0200
-Date:   Tue, 14 May 2019 17:36:47 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Corey Minyard <cminyard@mvista.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, minyard@acm.org,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH RT v2] Fix a lockup in wait_for_completion() and friends
-Message-ID: <20190514153647.wri6ivffbq7r263y@linutronix.de>
-References: <20190508205728.25557-1-minyard@acm.org>
- <20190509161925.kul66w54wpjcinuc@linutronix.de>
- <20190514084356.GJ2589@hirez.programming.kicks-ass.net>
- <20190514091219.nesriqe7qplk3476@linutronix.de>
- <20190514121350.GA6050@minyard.net>
+        Tue, 14 May 2019 11:37:58 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EFY5Ad041917;
+        Tue, 14 May 2019 15:36:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=K6RAKYDjcjRrn7OwP84UHYgsO7ChGZaEr+sqPb3xwhc=;
+ b=5XJ/WDUHZ0rtX1wy7iGiSQInjd4Yje8V0Nmw7F2TpN62bao4hby9ViD40alDqoIimCcT
+ IqmNrySa/hvm/yvNnPV7kAphqhwRpXXmIo9tmtGOcJefID4qORAU6rmiyGDpSb8VzGkL
+ wb2TZXj3OraOSmMlRjSCXoGgbjRn5+uqIUwZ+EjtnghualrShvTzaqilDUUKkav3ZVEG
+ DUvMwQXC/emAR1qaIFGPMioz6EbIWV+l5UJVwALQDf2XpMOl/tGCRp2uLVjWvH3o5D1j
+ ygyljCSo8K2hmvy8qbg334BYRGKGGy7EcRlTxjFeqnVaX0FP4NSfdl91Nuo1L4e/hW2f uQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2sdnttpxv1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 May 2019 15:36:59 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4EFZLrw135409;
+        Tue, 14 May 2019 15:36:59 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2se0tw7m68-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 May 2019 15:36:58 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4EFatFM011608;
+        Tue, 14 May 2019 15:36:56 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 May 2019 08:36:54 -0700
+Subject: Re: [RFC KVM 24/27] kvm/isolation: KVM page fault handler
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        jan.setjeeilers@oracle.com, Jonathan Adams <jwadams@google.com>
+References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
+ <1557758315-12667-25-git-send-email-alexandre.chartre@oracle.com>
+ <20190513151500.GY2589@hirez.programming.kicks-ass.net>
+ <13F2FA4F-116F-40C6-9472-A1DE689FE061@oracle.com>
+ <CALCETrUcR=3nfOtFW2qt3zaa7CnNJWJLqRY8AS9FTJVHErjhfg@mail.gmail.com>
+ <20190514072110.GF2589@hirez.programming.kicks-ass.net>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <95f462d4-37d3-f863-b7c6-2bcbb92251ec@oracle.com>
+Date:   Tue, 14 May 2019 17:36:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190514121350.GA6050@minyard.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190514072110.GF2589@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=941
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905140109
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9256 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=973 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905140110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-14 07:13:50 [-0500], Corey Minyard wrote:
-> > Corey, would it make any change which waiter is going to be woken up?
+
+On 5/14/19 9:21 AM, Peter Zijlstra wrote:
+> On Mon, May 13, 2019 at 07:02:30PM -0700, Andy Lutomirski wrote:
 > 
-> In the application that found this, the wake order probably isn't
-> relevant.
-
-what I expected.
-
-> For other applications, I really doubt that very many are using multiple
-> waiters.  If so, this bug would have been reported sooner, I think.
-
-most other do either one waiter/waker pair or one waker and multiple
-waiter. And then reinit_completion() is used for the next round.
-
-> As you mention, for RT you would want waiter woken by priority and FIFO
-> within priority.  I don't think POSIX says anything about FIFO within
-> priority, but that's probably a good idea.  That's no longer a simple
-> wait queue  The way it is now is probably closer to that than what Peter
-> suggested, but not really that close.
+>> This sounds like a great use case for static_call().  PeterZ, do you
+>> suppose we could wire up static_call() with the module infrastructure
+>> to make it easy to do "static_call to such-and-such GPL module symbol
+>> if that symbol is in a loaded module, else nop"?
 > 
-> This is heavily used in drivers and fs code, where it probably doesn't
-> matter.  I looked through a few users in mm and kernel, and they had
-> one waiter or were init/shutdown type things where order is not important.
+> You're basically asking it to do dynamic linking. And I suppose that is
+> technically possible.
 > 
-> So I'm not sure it's important.
+> However, I'm really starting to think kvm (or at least these parts of it
+> that want to play these games) had better not be a module anymore.
+> 
 
-Why did you bring POSIX into this? This isn't an API exported to
-userland which would fall into that category.
+Maybe we can use an atomic notifier (e.g. page_fault_notifier)?
 
-Peter's suggestion for FIFO is that we probably don't want to starve one
-thread/waiter if it is always enqueued at the end of the list. As you
-said, in your case it does not matter because (I assume) each waiter is
-equal and the outcome would be the same.
-
-> -corey
-
-Sebastian
+alex.
