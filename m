@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 642C11C6D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C2F1C6C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 12:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfENKPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 06:15:04 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43618 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfENKOh (ORCPT
+        id S1726758AbfENKOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 06:14:39 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37636 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfENKOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 06:14:37 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z5so13752839lji.10;
-        Tue, 14 May 2019 03:14:35 -0700 (PDT)
+        Tue, 14 May 2019 06:14:38 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h19so7339917ljj.4;
+        Tue, 14 May 2019 03:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9s95PEyKvrKcIxnCrKXPxIhz9gSDtf2oaROGKu+HmG0=;
-        b=rX5R1krXwY3mXws0q1xHY/0wi0cgtHA+Xo9Iy7cRRkxMJ9g3nWRX5DkyAT2GlSbY7I
-         bhQ4bA8AR/gH8H8i0v2xqi36w8zEAIjWVh2sh4fV333x+ViOAe/QYQkphW3IOkkRxWgo
-         w/882SaPwpnh+Xgql748e8K+IvKurUvbvm3k4J4APf7Cj3rChht4eUo70+BYaxedhUs2
-         uUry/olMrKWvqTUE4xvQeNYuUc3LFClB/QA+41NaHlKu6EUfJEfyTWI7wlGzZMPPds3D
-         gnNHhBtaBIIFPKLcjgoV9n5HSGRbS47/xdT6mKvhco4Y8ZLCfF0aKxvuCn5wBSbhZJcF
-         R+wA==
+        bh=qPn8FPvs2SjLEj/IT8pEZw6LNgmcxaZw6OHHve5bSvE=;
+        b=BuPHlOKhuHA86vpCSCE2Khe2qcQ53z+yUJ0J6wRlq87EXVDsc++DdiW7fBe3ovXTVA
+         Y3izPN5hENRt/2ttq0Ea+lJG8g0x8qpX5jHoifk+DoKV80NFXtac4jmhdfC6I+JyMe8j
+         STPvN1y6+xAtDe2L+pjI6NDQqHtPS5JSpsNXwckulTkWx3DUnRhvGzB/R2ksEmydgAlP
+         Iv0wikz0gbUI9dOT0fRfudxvhQiFCoNZuzM3uziUOprlPIjRQxEDG/fku2cosvti50Dk
+         xxZvEQeywmtlcsWKlNFWtsrGehfmWlix/ZrLfm1zSoQVOwFp8gJvHPpRQUyEBCV5PcCz
+         Nexg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9s95PEyKvrKcIxnCrKXPxIhz9gSDtf2oaROGKu+HmG0=;
-        b=PBHFKv4l8uiZoKiAcN6ZrBcL7eHTZVumbfuFEMTD2WGBQmHMwnlxnBBjUSlgbxJlnh
-         qkJDVvICdoAISIt+pJyHo4eJoVW4qf9L9h4UULwwHpddzprgpWgE64loNxLgteZ/Jn7q
-         iZZ45yndqd1YnX3Mw3RnGhwmye0Kz9AGonX20+iK2P21FPPH3KN+6ZT0PgvvRJlXwTq3
-         +sl1H4pYjCiPJ6FCLJW3JA9b1CwYdbt4QVCHhzA1Pky4+k5edtvP2ao2F6bPEWoPnwui
-         OEG/JALNHrJ2NsmQUul3IyOlC0y34UPtLZQFfUpy0qw1PxAigFTPgeM3v1GURGrWjSw6
-         fi1g==
-X-Gm-Message-State: APjAAAXfUe5BTCFaXrDEbsSQCcJu2L/i98tAGoqxJESFUHRIzSKGDVYE
-        WZJNhBC4clOUOiRUoikXH1k=
-X-Google-Smtp-Source: APXvYqxd+eNICyCIxuMtAN/hcvvAqN3FLgLucqpULtEZsaRT7hhWHPnlnYsmgNRZm6G2yfyiMqK5Jg==
-X-Received: by 2002:a2e:8716:: with SMTP id m22mr1091852lji.128.1557828874518;
-        Tue, 14 May 2019 03:14:34 -0700 (PDT)
+        bh=qPn8FPvs2SjLEj/IT8pEZw6LNgmcxaZw6OHHve5bSvE=;
+        b=rXVwfJVQU+J73NmWtmL+FiZKuGzkEmwSyLDmdtVwAXBfGfhzidS96ngaFPP3eZxdCg
+         USRJ7/7WV/u+tJ5qqSjXWl61ua0iljxW3r8qiY9A7KrFBbd+5juiu1C6wr2p0110Cpxu
+         Pxc9IZvP40v2PvVTQyKNITeEnmOhrrAD/kcUr2IRF6kNvzBKPclBzgGJ/P08GZbhidyp
+         sMFVavNqKTq1IVnG7lWUlvt2a/1gyNa/mW287x5dzk6gOCQ8xAEuSbDeh7EapeD432c/
+         zIK0ASgMWDBjDSzLYLK65DNjTKp+UW27lM3qBkpQ+xTQ7UN5wIfpcGRW8BJMYJIMs9qU
+         k3uA==
+X-Gm-Message-State: APjAAAUTnUUjQThHAENOC22m3725BQpDp060wO58w2cUx3qJUekmt8yD
+        TkEw52MHG+ay4gZfKGLsqE8=
+X-Google-Smtp-Source: APXvYqxKhs2VHDhW/KEDGjyMv++36P8nn6OVWjhyVQa/SWIVgYYAgf9/dEhHVseBpuQvVpjIoLqWSQ==
+X-Received: by 2002:a2e:9812:: with SMTP id a18mr15359706ljj.146.1557828875653;
+        Tue, 14 May 2019 03:14:35 -0700 (PDT)
 Received: from localhost.localdomain ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.33
+        by smtp.gmail.com with ESMTPSA id v2sm3126359ljg.6.2019.05.14.03.14.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 03:14:34 -0700 (PDT)
+        Tue, 14 May 2019 03:14:35 -0700 (PDT)
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     Serge Semin <Sergey.Semin@t-platforms.ru>,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] tty: max310x: Fix invalid baudrate divisors calculator
-Date:   Tue, 14 May 2019 13:14:12 +0300
-Message-Id: <20190514101415.26754-5-fancer.lancer@gmail.com>
+Subject: [PATCH 5/7] tty: max310x: Add rx-during-tx rs485 flag support
+Date:   Tue, 14 May 2019 13:14:13 +0300
+Message-Id: <20190514101415.26754-6-fancer.lancer@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190514101415.26754-1-fancer.lancer@gmail.com>
 References: <20190514101415.26754-1-fancer.lancer@gmail.com>
@@ -63,106 +63,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current calculator doesn't do it' job quite correct. First of all the
-max310x baud-rates generator supports the divisor being less than 16.
-In this case the x2/x4 modes can be used to double or quadruple
-the reference frequency. But the current baud-rate setter function
-just filters all these modes out by the first condition and setups
-these modes only if there is a clocks-baud division remainder. The former
-doesn't seem right at all, since enabling the x2/x4 modes causes the line
-noise tolerance reduction and should be only used as a last resort to
-enable a requested too high baud-rate.
-
-Finally the fraction is supposed to be calculated from D = Fref/(c*baud)
-formulae, but not from D % 16, which causes the precision loss. So to speak
-the current baud-rate calculator code works well only if the baud perfectly
-fits to the uart reference input frequency.
-
-Lets fix the calculator by implementing the algo fully compliant with
-the fractional baud-rate generator described in the datasheet:
-D = Fref / (c*baud), where c={16,8,4} is the x1/x2/x4 rate mode
-respectively, Fref - reference input frequency. The divisor fraction is
-calculated from the same formulae, but making sure it is found with a
-resolution of 0.0625 (four bits).
+The driver currently sets the echo suppression bit by default when rs485
+is enabled. Naturally it disables any data retrieval in rs485 mode while
+RTSn is pushed up. The receiver gate (RX_) can be enabled just by clearing
+(or not setting) the EchoSuprs bit of mode2 register. So by setting or
+clearing the bit we implement the SER_RS485_RX_DURING_TX rs485 flag
+support.
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/tty/serial/max310x.c | 51 ++++++++++++++++++++++--------------
- 1 file changed, 31 insertions(+), 20 deletions(-)
+ drivers/tty/serial/max310x.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 0e3dc89c459b..ca044f96c5cc 100644
+index ca044f96c5cc..2255300404bd 100644
 --- a/drivers/tty/serial/max310x.c
 +++ b/drivers/tty/serial/max310x.c
-@@ -501,37 +501,48 @@ static bool max310x_reg_precious(struct device *dev, unsigned int reg)
- 
- static int max310x_set_baud(struct uart_port *port, int baud)
+@@ -975,25 +975,23 @@ static void max310x_set_termios(struct uart_port *port,
+ static void max310x_rs_proc(struct work_struct *ws)
  {
--	unsigned int mode = 0, clk = port->uartclk, div = clk / baud;
-+	unsigned int mode = 0, div = 0, frac = 0, c = 0, F = 0;
+ 	struct max310x_one *one = container_of(ws, struct max310x_one, rs_work);
+-	unsigned int val;
++	unsigned int delay, mode1 = 0, mode2 = 0;
  
--	/* Check for minimal value for divider */
--	if (div < 16)
--		div = 16;
--
--	if (clk % baud && (div / 16) < 0x8000) {
-+	/*
-+	 * Calculate the integer divisor first. Select a proper mode
-+	 * in case if the requested baud is too high for the pre-defined
-+	 * clocks frequency.
-+	 */
-+	div = port->uartclk / baud;
-+	if (div < 8) {
-+		/* Mode x4 */
-+		c = 4;
-+		mode = MAX310X_BRGCFG_4XMODE_BIT;
-+	} else if (div < 16) {
- 		/* Mode x2 */
-+		c = 8;
- 		mode = MAX310X_BRGCFG_2XMODE_BIT;
--		clk = port->uartclk * 2;
--		div = clk / baud;
--
--		if (clk % baud && (div / 16) < 0x8000) {
--			/* Mode x4 */
--			mode = MAX310X_BRGCFG_4XMODE_BIT;
--			clk = port->uartclk * 4;
--			div = clk / baud;
--		}
-+	} else {
-+		c = 16;
+-	val = (one->port.rs485.delay_rts_before_send << 4) |
++	delay = (one->port.rs485.delay_rts_before_send << 4) |
+ 		one->port.rs485.delay_rts_after_send;
+-	max310x_port_write(&one->port, MAX310X_HDPIXDELAY_REG, val);
++	max310x_port_write(&one->port, MAX310X_HDPIXDELAY_REG, delay);
+ 
+ 	if (one->port.rs485.flags & SER_RS485_ENABLED) {
+-		max310x_port_update(&one->port, MAX310X_MODE1_REG,
+-				MAX310X_MODE1_TRNSCVCTRL_BIT,
+-				MAX310X_MODE1_TRNSCVCTRL_BIT);
+-		max310x_port_update(&one->port, MAX310X_MODE2_REG,
+-				MAX310X_MODE2_ECHOSUPR_BIT,
+-				MAX310X_MODE2_ECHOSUPR_BIT);
+-	} else {
+-		max310x_port_update(&one->port, MAX310X_MODE1_REG,
+-				MAX310X_MODE1_TRNSCVCTRL_BIT, 0);
+-		max310x_port_update(&one->port, MAX310X_MODE2_REG,
+-				MAX310X_MODE2_ECHOSUPR_BIT, 0);
++		mode1 = MAX310X_MODE1_TRNSCVCTRL_BIT;
++
++		if (!(one->port.rs485.flags & SER_RS485_RX_DURING_TX))
++			mode2 = MAX310X_MODE2_ECHOSUPR_BIT;
  	}
- 
--	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, (div / 16) >> 8);
--	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div / 16);
--	max310x_port_write(port, MAX310X_BRGCFG_REG, (div % 16) | mode);
-+	/* Calculate the divisor in accordance with the fraction coefficient */
-+	div /= c;
-+	F = c*baud;
 +
-+	/* Calculate the baud rate fraction */
-+	if (div > 0)
-+		frac = (16*(port->uartclk % F)) / F;
-+	else
-+		div = 1;
-+
-+	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, div >> 8);
-+	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div);
-+	max310x_port_write(port, MAX310X_BRGCFG_REG, frac | mode);
- 
--	return DIV_ROUND_CLOSEST(clk, div);
-+	/* Return the actual baud rate we just programmed */
-+	return (16*port->uartclk) / (c*(16*div + frac));
++	max310x_port_update(&one->port, MAX310X_MODE1_REG,
++			MAX310X_MODE1_TRNSCVCTRL_BIT, mode1);
++	max310x_port_update(&one->port, MAX310X_MODE2_REG,
++			MAX310X_MODE2_ECHOSUPR_BIT, mode2);
  }
  
- static int max310x_update_best_err(unsigned long f, long *besterr)
- {
- 	/* Use baudrate 115200 for calculate error */
--	long err = f % (115200 * 16);
-+	long err = f % (460800 * 16);
+ static int max310x_rs485_config(struct uart_port *port,
+@@ -1005,7 +1003,8 @@ static int max310x_rs485_config(struct uart_port *port,
+ 	    (rs485->delay_rts_after_send > 0x0f))
+ 		return -ERANGE;
  
- 	if ((*besterr < 0) || (*besterr > err)) {
- 		*besterr = err;
+-	rs485->flags &= SER_RS485_RTS_ON_SEND | SER_RS485_ENABLED;
++	rs485->flags &= SER_RS485_RTS_ON_SEND | SER_RS485_RX_DURING_TX |
++			SER_RS485_ENABLED;
+ 	memset(rs485->padding, 0, sizeof(rs485->padding));
+ 	port->rs485 = *rs485;
+ 
 -- 
 2.21.0
 
