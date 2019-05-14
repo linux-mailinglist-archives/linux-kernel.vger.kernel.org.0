@@ -2,132 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B324D1CFAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 21:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDB11CFBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 21:18:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfENTNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 15:13:17 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40493 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfENTNQ (ORCPT
+        id S1726229AbfENTSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 15:18:35 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48764 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726013AbfENTSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 15:13:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id d15so264200ljc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 12:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D9Mpv/Ka19QUo3Yv5Zhhwcz4xrs+t6R8N4bDjTao8es=;
-        b=Ys3HnMH7gqlpLEQvfGsqQZ4AH4oXF6E5Gqeqt6lGXM7jy1UDtYkN7zSaLXd5m2pybT
-         6wDT/W77uvNxhmxxg4kp3LXnUKSIqFNRKQxMgKTY8Fo2PItl23nFlf60IyEo2v77Oth6
-         GCi6QhUOGTP+vmUmi/za/YMXcqF/0Cx+3vcj5MiM5vCT+TQ1lHqNcNmHLPAT5opZTIWt
-         KUSfYl5MtAXHgabGz4+yepAvC2eaNcvqHqOQqkRKMgNQHajJXkki+uvNN2xzwhOQ4b1M
-         Uqr4mUaDmxeOP5IizAvYf7jqF+TBQwQ64ALXtmswKcPSWJv6MdhbHovSCf9FLMtfCe8D
-         tHUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=D9Mpv/Ka19QUo3Yv5Zhhwcz4xrs+t6R8N4bDjTao8es=;
-        b=be7nWgGnIYLUEmGqp7CsKUbGzF5L7mAO7gZoQBdsySfwSInesKtaCQO1RlIXIjIbPx
-         uXRDE3yn+tDWkk8Dck6Z3loUFw/kClreXJdyPRLxhMiD9FbwMwHQuNePV/2mNs31KbIT
-         rXQ461NhobyQw5DH7Mq6tNcSOHB/V+2QBqLGbdHxjFpIdbRZ0OmW+djB831KFQlI4l5g
-         i6d1hr/8nSjNxoDZAj3hYCBj4h+KUEMVRh23ZcmD5y5yt0E98jMkOFmuyJiY72Rz2Iwo
-         saJCjtlKz13zEALBo+tPRPLnNW4rilKcx9UWmgkKgcj4dtLBK+zGuaR2kC6a6vg5Lgb7
-         nskg==
-X-Gm-Message-State: APjAAAUIzewg33iq8sro91rxoATXMwZrSAybNjJ8ut1jSS5niCLK4Tx3
-        ezS90DMKtRT4oIv/wdwUBr1d7Q==
-X-Google-Smtp-Source: APXvYqwXJTBropO/IuseO4C6BcaScEWNBOPLrfNNCs7d2/NB2FanDtYgGeWtEAPIqS/TZDJdqvd8Gg==
-X-Received: by 2002:a2e:92ce:: with SMTP id k14mr17873191ljh.83.1557861192675;
-        Tue, 14 May 2019 12:13:12 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.86.127])
-        by smtp.gmail.com with ESMTPSA id q29sm3826886ljc.8.2019.05.14.12.13.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 12:13:11 -0700 (PDT)
-Subject: Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        zhengxunli@mxic.com.tw
-References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
- <1553847606-18122-3-git-send-email-masonccyang@mxic.com.tw>
- <1e2bf23d-db39-0d1d-0bcc-6d9cd2935a82@cogentembedded.com>
- <cdee3d53-6ee3-4435-117e-8ba4a58ca72b@cogentembedded.com>
- <OF82CE76E9.E6395EF7-ON482583DD.000E37D7-482583DD.000E5077@mxic.com.tw>
- <3d334751-8fd4-7db1-9deb-e6c94936df13@cogentembedded.com>
- <OF4ABCC306.B053BA23-ON482583E0.000F480C-482583E0.000FAD4A@mxic.com.tw>
- <3971c669-9095-9d18-d029-37f9663a54b2@cogentembedded.com>
- <OF58AAFF49.C4593DEB-ON482583E1.001D551E-482583E1.001F089D@mxic.com.tw>
- <9014077e-2648-adad-72c1-baf834f5a511@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <e0720e41-23da-2aa5-636b-777568974b17@cogentembedded.com>
-Date:   Tue, 14 May 2019 22:13:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <9014077e-2648-adad-72c1-baf834f5a511@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+        Tue, 14 May 2019 15:18:35 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EEA368EE109;
+        Tue, 14 May 2019 12:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1557861514;
+        bh=kEo/SVpo1ALfduxjBL6j4BgvcDYrykkEFotN47vMdpo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=FYrdoogoLnISQM1Gna4zR8dFz0m1XqoyYVy6MoFrTEVnU1hi7m7DSZV3h/A2XZcZK
+         HsqRkNweLASCPrYAmWtU/51Zax8vrUpzjyu751TcYxE1QZc61MAVSntV/NhaZG+E5j
+         phj1QTEdYcMFyulxVm8BeM7Q6aZReGPxpRKST4Lk=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id QdQKJpAzFTsY; Tue, 14 May 2019 12:18:33 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4F2438EE0ED;
+        Tue, 14 May 2019 12:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1557861513;
+        bh=kEo/SVpo1ALfduxjBL6j4BgvcDYrykkEFotN47vMdpo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JeEEo+NfnkowNE+9caNm6hsbGtn0T6bU8NF+hBTf94ux0+YI/Yfe8OsASW6MhvDb3
+         wtySyGjG0MToAmT+lQFezolyaeD/lHNHpWchGwk0XgpylgDu2zsE3rXzmufIdJJEXa
+         ko7T09bgCGxuMzfgUSW2rrqIqCefgkntCBg38DTI=
+Message-ID: <1557861511.3378.19.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Rob Landley <rob@landley.net>,
+        Arvind Sankar <niveditas98@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        initramfs@vger.kernel.org
+Date:   Tue, 14 May 2019 12:18:31 -0700
+In-Reply-To: <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+         <20190512194322.GA71658@rani.riverdale.lan>
+         <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+         <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+         <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+         <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/14/2019 10:06 PM, Sergei Shtylyov wrote:
-
+On Tue, 2019-05-14 at 08:19 -0700, Andy Lutomirski wrote:
+> On Mon, May 13, 2019 at 5:47 AM Roberto Sassu <roberto.sassu@huawei.c
+> om> wrote:
+> > On 5/13/2019 11:07 AM, Rob Landley wrote:
 [...]
->>>>>>>> Have you tested reading? v8 patch still works while v9 patches
->>>>>>>> hang on doing:
->>>>>>>>
->>>>>>>> $ cat /dev/mtd<n>...
->>>>>>>
->>>>>>>    Sorry, 'od -x', not 'cat'.
->>>>>>
->>>>>> root@draak:/# cat /proc/mtd
->>>>>> dev:    size   erasesize  name
->>>>>> mtd0: 00040000 00001000 "Bank 1 - Boot parameter"
->>>>>> mtd1: 00140000 00001000 "Bank 1 - Loader-BL2"
->>>>>> mtd2: 00040000 00001000 "Bank 1 - Certification"
->>>>>> mtd3: 00080000 00001000 "Bank 1 - ARM Trusted FW"
->>>>>> mtd4: 00400000 00001000 "Bank 1 - Reserved-1"
->>>>>> mtd5: 00300000 00001000 "Bank 1 - U-Boot"
->>>>>> mtd6: 00200000 00001000 "Bank 1 - Reserved-2"
->>>>>> mtd7: 00480000 00001000 "Bank 1 - Splash"
->>>>>> mtd8: 00040000 00001000 "Bank 1 - Device Tree"
->>>>>> root@draak:/# od -x /dev/mtd1
->>>>>> 0000000 0000 d280 0001 d280 0002 d280 0003 d280
->>>>>> 0000020 0004 d280 0005 d280 0006 d280 0007 d280
->>>>>> 0000040 0008 d280 0009 d280 000a d280 000b d280
->>>>>> 0000060 000c d280 000d d280 000e d280 000f d280
->>>>>> 0000100 0010 d280 0011 d280 0012 d280 0013 d280
->>>>>> 0000120 0014 d280 0015 d280 0016 d280 0017 d280
->>>>>> 0000140 0018 d280 0019 d280 001a d280 001b d280
->>>>>> 0000160 001c d280 001d d280 001e d280 1000 d53e
->>>>>> 0000200 f800 9266 1000 d51e 3fdf d503 3ba0 1005
->>>>>
->>>>>    Still hangs for me. After I patches spi-mem.c and the driver to
->>>>> call RPM for the MFD, it started working again. Perhaps, that clock>> >> is still enabled on your target. What does the following print (for
+> > > > The only reason why opening .xattr-list works is that IMA is
+> > > > not yet initialized (late_initcall vs rootfs_initcall).
+> > > 
+> > > Launching init before enabling ima is bad because... you didn't
+> > > think of it?
+> > 
+> > No, because /init can potentially compromise the integrity of the
+> > system.
 > 
->    Even with these issues worked around, I still see strange behavior on
-> writes, e.g. after I mount JFFS2 partition, remove 1 file, unmount, re-mount,
-> and mount again, the removed file is back! :-/
+> I think Rob is right here.  If /init was statically built into the
+> kernel image, it has no more ability to compromise the kernel than
+> anything else in the kernel.  What's the problem here?
 
-   Too many re-mounts, one was enough. :-)
+The specific problem is that unless you own the kernel signing key,
+which is really untrue for most distribution consumers because the
+distro owns the key, you cannot build the initrd statically into the
+kernel.  You can take the distro signed kernel, link it with the initrd
+then resign the combination with your key, provided you insert your key
+into the MoK variables as a trusted secure boot key, but the distros
+have been unhappy recommending this as standard practice.
 
-> [...]
-> 
->> thanks & best regards,
->> Mason
+If our model for security is going to be to link the kernel and the
+initrd statically to give signature protection over the aggregate then
+we need to figure out how to execute this via the distros.  If we
+accept that the split model, where the distro owns and signs the kernel
+but the machine owner builds and is responsible for the initrd, then we
+need to explore split security models like this proposal.
 
-MBR, Sergei
+James
+
