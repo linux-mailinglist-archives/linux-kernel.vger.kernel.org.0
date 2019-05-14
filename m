@@ -2,184 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CAF81CBC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5CF1CBF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 17:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfENPYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 11:24:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfENPYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 11:24:03 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 562672168B
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 15:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557847441;
-        bh=lEnwwmU1XbKwYI+07sS2BHHk1ukbBjXSFcW1oRTxeAo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eVCLg4/XxcMGOLsPFn6OR8b5+D0fSJ3C73EsiGv+ZP1UExvdsqIN8jEcRCYerQv8E
-         JiJQI0nJ+Wm5vH2G6Wc56NLBhB0dSfY8L+kVXyatxe3O+MvvIlYBmHROcAADcXdyMu
-         gmFnLgnQ5/GErDUj0tVtJM/DgF+Mw/f+QUS627hc=
-Received: by mail-wr1-f41.google.com with SMTP id s17so3237259wru.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 08:24:01 -0700 (PDT)
-X-Gm-Message-State: APjAAAWf9t/IIDW5FJjlonyDOf1XEehg7/U42avxM9+aWj+f+5r34WjO
-        5MALYIzYhK7oPxpVNp6GS98wZt0yyPrVpE6RXTGakQ==
-X-Google-Smtp-Source: APXvYqwp/EH6Ur2QGhQN9gAoRRiB/nJpoSiqieV+SAlyq4722fUPl9jhM5kLhCa86Aomekj/B2SnT/Jc8fHYaltd/GY=
-X-Received: by 2002:adf:ec42:: with SMTP id w2mr21163913wrn.77.1557847439920;
- Tue, 14 May 2019 08:23:59 -0700 (PDT)
+        id S1726277AbfENPeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 11:34:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7645 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726044AbfENPeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 11:34:23 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 18DD8EF5B46FE4019ED3;
+        Tue, 14 May 2019 23:34:20 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 May 2019
+ 23:34:10 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <sudipm.mukherjee@gmail.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] parport: Fix mem leak in parport_register_dev_model
+Date:   Tue, 14 May 2019 23:24:37 +0800
+Message-ID: <20190514152437.35744-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <1557758315-12667-1-git-send-email-alexandre.chartre@oracle.com>
- <1557758315-12667-19-git-send-email-alexandre.chartre@oracle.com>
- <CALCETrWUKZv=wdcnYjLrHDakamMBrJv48wp2XBxZsEmzuearRQ@mail.gmail.com>
- <20190514070941.GE2589@hirez.programming.kicks-ass.net> <b8487de1-83a8-2761-f4a6-26c583eba083@oracle.com>
- <B447B6E8-8CEF-46FF-9967-DFB2E00E55DB@amacapital.net> <4e7d52d7-d4d2-3008-b967-c40676ed15d2@oracle.com>
-In-Reply-To: <4e7d52d7-d4d2-3008-b967-c40676ed15d2@oracle.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 14 May 2019 08:23:48 -0700
-X-Gmail-Original-Message-ID: <CALCETrXtwksWniEjiWKgZWZAyYLDipuq+sQ449OvDKehJ3D-fg@mail.gmail.com>
-Message-ID: <CALCETrXtwksWniEjiWKgZWZAyYLDipuq+sQ449OvDKehJ3D-fg@mail.gmail.com>
-Subject: Re: [RFC KVM 18/27] kvm/isolation: function to copy page table
- entries for percpu buffer
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jan.setjeeilers@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Jonathan Adams <jwadams@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 2:42 AM Alexandre Chartre
-<alexandre.chartre@oracle.com> wrote:
->
->
-> On 5/14/19 10:34 AM, Andy Lutomirski wrote:
-> >
-> >
-> >> On May 14, 2019, at 1:25 AM, Alexandre Chartre <alexandre.chartre@orac=
-le.com> wrote:
-> >>
-> >>
-> >>> On 5/14/19 9:09 AM, Peter Zijlstra wrote:
-> >>>> On Mon, May 13, 2019 at 11:18:41AM -0700, Andy Lutomirski wrote:
-> >>>> On Mon, May 13, 2019 at 7:39 AM Alexandre Chartre
-> >>>> <alexandre.chartre@oracle.com> wrote:
-> >>>>>
-> >>>>> pcpu_base_addr is already mapped to the KVM address space, but this
-> >>>>> represents the first percpu chunk. To access a per-cpu buffer not
-> >>>>> allocated in the first chunk, add a function which maps all cpu
-> >>>>> buffers corresponding to that per-cpu buffer.
-> >>>>>
-> >>>>> Also add function to clear page table entries for a percpu buffer.
-> >>>>>
-> >>>>
-> >>>> This needs some kind of clarification so that readers can tell wheth=
-er
-> >>>> you're trying to map all percpu memory or just map a specific
-> >>>> variable.  In either case, you're making a dubious assumption that
-> >>>> percpu memory contains no secrets.
-> >>> I'm thinking the per-cpu random pool is a secrit. IOW, it demonstrabl=
-y
-> >>> does contain secrits, invalidating that premise.
-> >>
-> >> The current code unconditionally maps the entire first percpu chunk
-> >> (pcpu_base_addr). So it assumes it doesn't contain any secret. That is
-> >> mainly a simplification for the POC because a lot of core information
-> >> that we need, for example just to switch mm, are stored there (like
-> >> cpu_tlbstate, current_task...).
-> >
-> > I don=E2=80=99t think you should need any of this.
-> >
->
-> At the moment, the current code does need it. Otherwise it can't switch f=
-rom
-> kvm mm to kernel mm: switch_mm_irqs_off() will fault accessing "cpu_tlbst=
-ate",
-> and then the page fault handler will fail accessing "current" before call=
-ing
-> the kvm page fault handler. So it will double fault or loop on page fault=
-s.
-> There are many different places where percpu variables are used, and I ha=
-ve
-> experienced many double fault/page fault loop because of that.
+BUG: memory leak
+unreferenced object 0xffff8881df48cda0 (size 16):
+  comm "syz-executor.0", pid 5077, jiffies 4295994670 (age 22.280s)
+  hex dump (first 16 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000d2d0d5fe>] parport_register_dev_model+0x141/0x6e0 [parport]
+    [<00000000782f6dab>] 0xffffffffc15d1196
+    [<00000000d2ca6ae4>] platform_drv_probe+0x7e/0x100
+    [<00000000628c2a94>] really_probe+0x342/0x4d0
+    [<000000006874f5da>] driver_probe_device+0x8c/0x170
+    [<00000000424de37a>] __device_attach_driver+0xda/0x100
+    [<000000002acab09a>] bus_for_each_drv+0xfe/0x170
+    [<000000003d9e5f31>] __device_attach+0x190/0x230
+    [<0000000035d32f80>] bus_probe_device+0x123/0x140
+    [<00000000a05ba627>] device_add+0x7cc/0xce0
+    [<000000003f7560bf>] platform_device_add+0x230/0x3c0
+    [<000000002a0be07d>] 0xffffffffc15d0949
+    [<000000007361d8d2>] port_check+0x3b/0x50 [parport]
+    [<000000004d67200f>] bus_for_each_dev+0x115/0x180
+    [<000000003ccfd11c>] __parport_register_driver+0x1f0/0x210 [parport]
+    [<00000000987f06fc>] 0xffffffffc15d803e
+	
+After commit 4e5a74f1db8d ("parport: Revert "parport: fix
+memory leak""), free_pardevice do not free par_dev->state,
+we should free it in error path of parport_register_dev_model
+before return.
 
-Now you're experiencing what working on the early PTI code was like :)
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 4e5a74f1db8d ("parport: Revert "parport: fix memory leak"")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/parport/share.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This is why I think you shouldn't touch current in any of this.
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index 5dc53d4..7b4ee33 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -895,6 +895,7 @@ parport_register_dev_model(struct parport *port, const char *name,
+ 	par_dev->devmodel = true;
+ 	ret = device_register(&par_dev->dev);
+ 	if (ret) {
++		kfree(par_dev->state);
+ 		put_device(&par_dev->dev);
+ 		goto err_put_port;
+ 	}
+@@ -912,6 +913,7 @@ parport_register_dev_model(struct parport *port, const char *name,
+ 			spin_unlock(&port->physport->pardevice_lock);
+ 			pr_debug("%s: cannot grant exclusive access for device %s\n",
+ 				 port->name, name);
++			kfree(par_dev->state);
+ 			device_unregister(&par_dev->dev);
+ 			goto err_put_port;
+ 		}
+-- 
+2.7.4
 
->
-> >>
-> >> If the entire first percpu chunk effectively has secret then we will
-> >> need to individually map only buffers we need. The kvm_copy_percpu_map=
-ping()
-> >> function is added to copy mapping for a specified percpu buffer, so
-> >> this used to map percpu buffers which are not in the first percpu chun=
-k.
-> >>
-> >> Also note that mapping is constrained by PTE (4K), so mapped buffers
-> >> (percpu or not) which do not fill a whole set of pages can leak adjace=
-nt
-> >> data store on the same pages.
-> >>
-> >>
-> >
-> > I would take a different approach: figure out what you need and put it =
-in its
-> > own dedicated area, kind of like cpu_entry_area.
->
-> That's certainly something we can do, like Julian proposed with "Process-=
-local
-> memory allocations": https://lkml.org/lkml/2018/11/22/1240
->
-> That's fine for buffers allocated from KVM, however, we will still need s=
-ome
-> core kernel mappings so the thread can run and interrupts can be handled.
->
-> > One nasty issue you=E2=80=99ll have is vmalloc: the kernel stack is in =
-the
-> > vmap range, and, if you allow access to vmap memory at all, you=E2=80=
-=99ll
-> > need some way to ensure that *unmap* gets propagated. I suspect the
-> > right choice is to see if you can avoid using the kernel stack at all
-> > in isolated mode.  Maybe you could run on the IRQ stack instead.
->
-> I am currently just copying the task stack mapping into the KVM page tabl=
-e
-> (patch 23) when a vcpu is created:
->
->         err =3D kvm_copy_ptes(tsk->stack, THREAD_SIZE);
->
-> And this seems to work. I am clearing the mapping when the VM vcpu is fre=
-ed,
-> so I am making the assumption that the same task is used to create and fr=
-ee
-> a vcpu.
->
 
-vCPUs are bound to an mm but not a specific task, right?  So I think
-this is wrong in both directions.
-
-Suppose a vCPU is created, then the task exits, the stack mapping gets
-freed (the core code tries to avoid this, but it does happen), and a
-new stack gets allocated at the same VA with different physical pages.
-Now you're toast :)  On the flip side, wouldn't you crash if a vCPU is
-created and then run on a different thread?
-
-How important is the ability to enable IRQs while running with the KVM
-page tables?
