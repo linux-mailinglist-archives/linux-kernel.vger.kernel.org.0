@@ -2,107 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D05C1C45E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC72F1C466
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfENIHz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 May 2019 04:07:55 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:62634 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725899AbfENIHy (ORCPT
+        id S1726434AbfENIIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:08:55 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46707 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfENIIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:07:54 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16548174-1500050 
-        for multiple; Tue, 14 May 2019 09:06:14 +0100
-Content-Type: text/plain; charset="utf-8"
+        Tue, 14 May 2019 04:08:54 -0400
+Received: by mail-ot1-f66.google.com with SMTP id j49so6730966otc.13;
+        Tue, 14 May 2019 01:08:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AWm6mMU5ntuV/CqseYpvApqEUMSFpmgOWSwc60Tv2bc=;
+        b=F0EjUCJiIB5F4D3GoURhu1AKUGjpkk46fDdHYFlkokF9DiEJMIMpv/BRGUyDBIS/m7
+         AP6nbqZFFdzjqSNeavAZO/jPxladFV8wGTQ9jjtvOOkiTNoPrp5af8t7YPY0NRKlscSX
+         XI4ZXJfUwqBLhOmVmIB2/uXeuDUiQmglywy5uheDyB5u9A7nWuBLoAqqn7XiOqKh8soN
+         em5FWotejBvIcgKtgUorxlKR3ZlqXuqRWFDpKPxJEzhksI98Srft9pfLAx3952ihI+uu
+         SrI+qqYG9QQES3O3iNbROGOFqv2nat9/SJZ6w8oqzC7SQbGzoCTJ5MgbEn7hYzRIfn+o
+         5XcA==
+X-Gm-Message-State: APjAAAXubFhT1189GjduEsXjuS3mgLsEQN/pVfeBlYaeJBVAqGMK0kFb
+        weHkBjlkYqyZYkNFgP30J4b5iYd7XO5u4OYCkvU=
+X-Google-Smtp-Source: APXvYqwTEraX14mcZPt1vimtoi25THN+ixAWY1ha+9DfuEBICcJUnLm2RU77VIBddQdQK8nrMAM+2KXW8YeAocOii18=
+X-Received: by 2002:a9d:5912:: with SMTP id t18mr14870864oth.252.1557821333611;
+ Tue, 14 May 2019 01:08:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Michael Yang <michael.yang@imgtec.com>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20190514075537.GA7483@michael-imgtec>
-Cc:     sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, gustavo@padovan.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        gregkh@linuxfoundation.org
-References: <1554710495-6646-1-git-send-email-michael.yang@imgtec.com>
- <1557376451-20164-1-git-send-email-michael.yang@imgtec.com>
- <155740236592.28545.17880521046408313036@skylake-alporthouse-com>
- <20190514075537.GA7483@michael-imgtec>
-Message-ID: <155782117405.2525.2694876407407711784@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [EXTERNAL] Re: [PATCH] sync_file: Return reasonable timestamp when
- merging signaled fences
-Date:   Tue, 14 May 2019 09:06:14 +0100
+References: <20190513192300.653-1-ulf.hansson@linaro.org>
+In-Reply-To: <20190513192300.653-1-ulf.hansson@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 14 May 2019 10:08:42 +0200
+Message-ID: <CAJZ5v0gbK3AFCVC1b9LyXeMOM8fKR1=ECXZwaeSYRSqcK0UgYA@mail.gmail.com>
+Subject: Re: [PATCH 00/18] ARM/ARM64: Support hierarchical CPU arrangement for PSCI
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Souvik Chakravarty <souvik.chakravarty@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Michael Yang (2019-05-14 08:55:37)
-> On Thu, May 09, 2019 at 12:46:05PM +0100, Chris Wilson wrote:
-> > Quoting Michael Yang (2019-05-09 05:34:11)
-> > > If all the sync points were signaled in both fences a and b,
-> > > there was only one sync point in merged fence which is a_fence[0].
-> > > The Fence structure in android framework might be confused about
-> > > timestamp if there were any sync points which were signaled after
-> > > a_fence[0]. It might be more reasonable to use timestamp of last signaled
-> > > sync point to represent the merged fence.
-> > > The issue can be found from EGL extension ANDROID_get_frame_timestamps.
-> > > Sometimes the return value of EGL_READS_DONE_TIME_ANDROID is head of
-> > > the return value of EGL_RENDERING_COMPLETE_TIME_ANDROID.
-> > > That means display/composition had been completed before rendering
-> > > was completed that is incorrect.
-> > > 
-> > > Some discussion can be found at:
-> > > https://urldefense.proofpoint.com/v2/url?u=https-3A__android-2Dreview.googlesource.com_c_kernel_common_-2B_907009&d=DwIFaQ&c=bq9ppmgvSw3oQFfR871D_w&r=Ngg6vhouPkgwSIbDMU7rDN0ZfT2Qax50xuWkXXqQ3zw&m=N9R9dXGJ3zk0e0gXNM4tsiro7xCOLlWx6c3HAEseSSw&s=6sY2t9i2wvylWH-rPUlvY1MIuWKjCPzT8SeCgpZOIGk&e= 
-> > > 
-> > > Signed-off-by: Michael Yang <michael.yang@imgtec.com>
-> > > ---
-> > > Hi,
-> > > I didn't get response since I previously sent this a month ago.
-> > > Could someone have a chance to look at it please?
-> > > Thanks.
-> > >  drivers/dma-buf/sync_file.c | 25 +++++++++++++++++++++++--
-> > >  1 file changed, 23 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
-> > > index 4f6305c..d46bfe1 100644
-> > > --- a/drivers/dma-buf/sync_file.c
-> > > +++ b/drivers/dma-buf/sync_file.c
-> > > @@ -274,8 +274,29 @@ static struct sync_file *sync_file_merge(const char *name, struct sync_file *a,
-> > >         for (; i_b < b_num_fences; i_b++)
-> > >                 add_fence(fences, &i, b_fences[i_b]);
-> > >  
-> > > -       if (i == 0)
-> > > -               fences[i++] = dma_fence_get(a_fences[0]);
-> > > +       /* If all the sync pts were signaled, then adding the sync_pt who
-> > > +        * was the last signaled to the fence.
-> > > +        */
-> > > +       if (i == 0) {
-> > > +               struct dma_fence *last_signaled_sync_pt = a_fences[0];
-> > > +               int iter;
-> > > +
-> > > +               for (iter = 1; iter < a_num_fences; iter++) {
-> > 
-> > If there is more than one fence, sync_file->fence is a fence_array and
-> > its timestamp is what you want. If there is one fence, sync_file->fence
-> > is a pointer to that fence, and naturally has the right timestamp.
-> > 
-> > In short, this should be handled by dma_fence_array_create() when given
-> > a complete set of signaled fences, it too should inherit the signaled
-> > status with the timestamp being taken from the last fence. It should
-> > also be careful to inherit the error status.
-> > -Chris
-> Thanks Chris for the inputs. For this case, there will be only one fence
-> in sync_file->fence after doing sync_file_merge(). Regarding to the current
-> implementation, dma_fence_array_create() is not called as num_fences is equal
-> to 1. I was wondering do you suggest that we pass a complete set of signaled
-> fences to sync_file_set_fence() and handle it in dma_fence_array_create().
-> Thanks.
+On Mon, May 13, 2019 at 9:23 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> This series enables support for hierarchical CPU arrangement, managed by PSCI
+> for ARM/ARM64. It's based on using the generic PM domain (genpd), which
+> recently was extended to manage devices belonging to CPUs.
 
-No, in the case there is only one fence, we just inherit its timestamp
-along with its fence status. (A single fence is the degenerate case of
-a fence array.)
--Chris
+ACK for the patches touching cpuidle in this series (from the
+framework perspective), but I'm assuming it to be taken care of by
+ARM/ARM64 maintainers.
