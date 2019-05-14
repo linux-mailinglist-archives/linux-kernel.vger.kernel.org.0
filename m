@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C15C1C94A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB2F1C947
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfENNRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:17:21 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35715 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfENNRA (ORCPT
+        id S1726336AbfENNRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:17:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40379 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbfENNRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:17:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w12so19206408wrp.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:16:59 -0700 (PDT)
+        Tue, 14 May 2019 09:17:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h4so19198806wre.7
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 06:17:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vA0P95K9fRheR4E+ESk+WXsmN1wAOY/rldukfhup8+8=;
-        b=RROK6Fm3RUoJdiTQGiYDJ8MbpYNvqI/eigb98ddEcEYucRmuLVqBzBA9WvtcwWbmcu
-         xgP7XKsFuWO1Hz7Vb9FSoOVtYlnhaMkbLHkqoHkPVdtlkIBFFgreS7BWSwJPFIzRPWGj
-         bJe+4Olwgk8PyefzlHhWPpLe/ELAywW0xtdsveNbl/dPzJGdSqPRuWZaOf7AWSstLDtH
-         FpQLf40ZE4O9I9rtRQtohIj8XWrLK6UdH9tQxMm4U/uqfYdgN8QshhvX/bwdk6Fg1Q8M
-         sutuOdRY3O18whwDVfBog1qtbDCr6DhbfF1NYbk6vyt2VdTsZ2VTstcjTlJtVj+uxatH
-         wpqg==
-X-Gm-Message-State: APjAAAWUbU2rCmk/hmuUIjp8WndgY1+7hfVSm87LmkaFjG/3awc3zOv1
-        xPwenPF9+rOaEDpdsrzaNaG+Or9GUrZT8A==
-X-Google-Smtp-Source: APXvYqyA7ev1bORFUVmblymk/lrv+ZsAH07hD7NalfDAhNsPNHuNGBskFQiodfLrs4do1an3hLlNeQ==
-X-Received: by 2002:adf:c149:: with SMTP id w9mr10697762wre.40.1557839818301;
-        Tue, 14 May 2019 06:16:58 -0700 (PDT)
+        bh=ljDEI5wRVFawwIewIlFmLcuWyWda410CfkNvL+gmA1U=;
+        b=gTR2zBXB1x3vvp49XaQGMIob9dDKyeZx8ZAWTyXu1HUIXMZRJDl9+zmYzjgfFo4TZz
+         alkzLqmO55MOLi9n9HQyr7uHHu2ntOBwpKvsTChh9c7dodOCcxPe5X0HCLpuXXzXAL13
+         /idV8j/R5CbV9Hfa7VlnmctOkSX5Lc+fCCJp/vbXP4opDb/4QQWP6wk5wVBw5okXjrqQ
+         129qBFQZiATzj5oHYi4iTtH6aZAAT6Tg7MNk6Znz67PhiF4TJz87mIscCr/AiPuDxf5S
+         9PIGFUuzplU5PPKXfgS0uYV8wYxYM6VRsI7vpmW4Rx0Xp3PL+BZxJdlmjv79JN405nT2
+         B8Rg==
+X-Gm-Message-State: APjAAAV4QpT3n9+JtNiIiRQC2IROEs+34nBom/V+HtmBTOhzPI6A4m9r
+        1fM0w0d6WbaZConm4Ao4zzoOZZX4eyrmPw==
+X-Google-Smtp-Source: APXvYqyoalSThS0pSE7N8sUVpxlOVAILQIDieoXie4XGja4UBj+IPrLGODtVhuz+nrtZqWL+oyjzXQ==
+X-Received: by 2002:adf:b35e:: with SMTP id k30mr2739640wrd.178.1557839819722;
+        Tue, 14 May 2019 06:16:59 -0700 (PDT)
 Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id b2sm16325220wrt.20.2019.05.14.06.16.57
+        by smtp.gmail.com with ESMTPSA id u125sm7196076wme.15.2019.05.14.06.16.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 06:16:57 -0700 (PDT)
+        Tue, 14 May 2019 06:16:59 -0700 (PDT)
 From:   Oleksandr Natalenko <oleksandr@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -44,9 +44,9 @@ Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Timofey Titovets <nefelim4ag@gmail.com>,
         Aaron Tomlin <atomlin@redhat.com>,
         Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org
-Subject: [PATCH RFC v2 1/4] mm/ksm: introduce ksm_enter() helper
-Date:   Tue, 14 May 2019 15:16:51 +0200
-Message-Id: <20190514131654.25463-2-oleksandr@redhat.com>
+Subject: [PATCH RFC v2 2/4] mm/ksm: introduce ksm_leave() helper
+Date:   Tue, 14 May 2019 15:16:52 +0200
+Message-Id: <20190514131654.25463-3-oleksandr@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190514131654.25463-1-oleksandr@redhat.com>
 References: <20190514131654.25463-1-oleksandr@redhat.com>
@@ -57,98 +57,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move MADV_MERGEABLE part of ksm_madvise() into a dedicated helper since
-it will be further used for marking VMAs to be merged forcibly.
+Move MADV_UNMERGEABLE part of ksm_madvise() into a dedicated helper
+since it will be further used for unmerging VMAs forcibly.
 
 This does not bring any functional changes.
 
 Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
 ---
- mm/ksm.c | 60 +++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 24 deletions(-)
+ mm/ksm.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index fc64874dc6f4..02fdbee394cc 100644
+index 02fdbee394cc..e9f3901168bb 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -2442,41 +2442,53 @@ static int ksm_scan_thread(void *nothing)
+@@ -2478,6 +2478,25 @@ static int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
  	return 0;
  }
  
--int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
--		unsigned long end, int advice, unsigned long *vm_flags)
-+static int ksm_enter(struct mm_struct *mm, struct vm_area_struct *vma,
-+		unsigned long *vm_flags)
- {
--	struct mm_struct *mm = vma->vm_mm;
- 	int err;
- 
--	switch (advice) {
--	case MADV_MERGEABLE:
--		/*
--		 * Be somewhat over-protective for now!
--		 */
--		if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
--				 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
--				 VM_HUGETLB | VM_MIXEDMAP))
--			return 0;		/* just ignore the advice */
-+	/*
-+	 * Be somewhat over-protective for now!
-+	 */
-+	if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
-+			 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
-+			 VM_HUGETLB | VM_MIXEDMAP))
++static int ksm_leave(struct vm_area_struct *vma, unsigned long start,
++		unsigned long end, unsigned long *vm_flags)
++{
++	int err;
++
++	if (!(*vm_flags & VM_MERGEABLE))
 +		return 0;		/* just ignore the advice */
- 
--		if (vma_is_dax(vma))
--			return 0;
-+	if (vma_is_dax(vma))
-+		return 0;
- 
- #ifdef VM_SAO
--		if (*vm_flags & VM_SAO)
--			return 0;
-+	if (*vm_flags & VM_SAO)
-+		return 0;
- #endif
- #ifdef VM_SPARC_ADI
--		if (*vm_flags & VM_SPARC_ADI)
--			return 0;
-+	if (*vm_flags & VM_SPARC_ADI)
-+		return 0;
- #endif
- 
--		if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
--			err = __ksm_enter(mm);
--			if (err)
--				return err;
--		}
-+	if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
-+		err = __ksm_enter(mm);
++
++	if (vma->anon_vma) {
++		err = unmerge_ksm_pages(vma, start, end);
 +		if (err)
 +			return err;
 +	}
 +
-+	*vm_flags |= VM_MERGEABLE;
++	*vm_flags &= ~VM_MERGEABLE;
 +
 +	return 0;
 +}
- 
--		*vm_flags |= VM_MERGEABLE;
-+int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, int advice, unsigned long *vm_flags)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+	int err;
 +
-+	switch (advice) {
-+	case MADV_MERGEABLE:
-+		err = ksm_enter(mm, vma, vm_flags);
-+		if (err)
-+			return err;
+ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+ 		unsigned long end, int advice, unsigned long *vm_flags)
+ {
+@@ -2492,16 +2511,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
  		break;
  
  	case MADV_UNMERGEABLE:
+-		if (!(*vm_flags & VM_MERGEABLE))
+-			return 0;		/* just ignore the advice */
+-
+-		if (vma->anon_vma) {
+-			err = unmerge_ksm_pages(vma, start, end);
+-			if (err)
+-				return err;
+-		}
+-
+-		*vm_flags &= ~VM_MERGEABLE;
++		err = ksm_leave(vma, start, end, vm_flags);
++		if (err)
++			return err;
+ 		break;
+ 	}
+ 
 -- 
 2.21.0
 
