@@ -2,99 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 273B51CA51
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC091CA5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 16:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfENO1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 10:27:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37292 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfENO12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 10:27:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eNvhEe3BMTRaZ1fLMuDOKnrgYFbmEX60UqHNIxHZPnQ=; b=1laPt4YcsSByydA6OAeBTkdoPG
-        GEisQedgcPbnTOnE5ITOdPgGqPKli8Fm3YkUxv1tV8/brlnLK2OkiCxHxD9S6n74I227kkS5b4KOS
-        29QCup7DP9WooAOpTON1XnmqTFEazMGg/3uaC5Bi00d2r4I2G9XX9yNqSCL85MdCWGggxMFleqlge
-        mU/pJXFircxoc2K4v3FLEXZyCWpxNLlx/fHs/NrNOYBvG+naStYkxQes3ysF+2hE1KPcQ7jLzJKQh
-        8nJiJvZS4WAV3JAYWzDN1dVSR10p7E51BUWAMoR725GoJ4m95xyaUoay2f9G7322GHH+96j1vLU8W
-        tNUbutLQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQYOS-0008LC-RO; Tue, 14 May 2019 14:27:01 +0000
-Subject: Re: [RFC PATCH v3 11/21] x86/watchdog/hardlockup: Add an HPET-based
- hardlockup detector
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>
-Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-References: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1557842534-4266-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <62576937-50fc-fded-784b-d691e455dfc1@infradead.org>
-Date:   Tue, 14 May 2019 07:26:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1557842534-4266-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726454AbfENO3W convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 May 2019 10:29:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59182 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726060AbfENO3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 10:29:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0F709AD12;
+        Tue, 14 May 2019 14:29:19 +0000 (UTC)
+Date:   Tue, 14 May 2019 16:29:18 +0200
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] mfd: ioc3: Add driver for SGI IOC3 chip
+Message-Id: <20190514162918.a481ac682f36eb6f05aed984@suse.de>
+In-Reply-To: <20190510071419.GB7321@dell>
+References: <20190409154610.6735-1-tbogendoerfer@suse.de>
+        <20190409154610.6735-3-tbogendoerfer@suse.de>
+        <20190508102313.GG3995@dell>
+        <20190509160220.bb5382df931e5bd0972276df@suse.de>
+        <20190510071419.GB7321@dell>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/14/19 7:02 AM, Ricardo Neri wrote:
-> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-> index 15d0fbe27872..376a5db81aec 100644
-> --- a/arch/x86/Kconfig.debug
-> +++ b/arch/x86/Kconfig.debug
-> @@ -169,6 +169,17 @@ config IOMMU_LEAK
->  config HAVE_MMIOTRACE_SUPPORT
->  	def_bool y
->  
-> +config X86_HARDLOCKUP_DETECTOR_HPET
-> +	bool "Use HPET Timer for Hard Lockup Detection"
-> +	select SOFTLOCKUP_DETECTOR
-> +	select HARDLOCKUP_DETECTOR
-> +	select HARDLOCKUP_DETECTOR_CORE
-> +	depends on HPET_TIMER && HPET && X86_64
-> +	help
-> +	  Say y to enable a hardlockup detector that is driven by an High-
+On Fri, 10 May 2019 08:14:19 +0100
+Lee Jones <lee.jones@linaro.org> wrote:
 
-	                                                       by a
+> On Thu, 09 May 2019, Thomas Bogendoerfer wrote:
+> > > > +	}
+> > > > +	pr_err("ioc3: CRC error in NIC address\n");
+> > > > +}
+> > > 
+> > > This all looks like networking code.  If this is the case, it should
+> > > be moved to drivers/networking or similar.
+> > 
+> > no it's not. nic stands for number in a can produced by Dallas Semi also
+> > known under the name 1-Wire (https://en.wikipedia.org/wiki/1-Wire).
+> > SGI used them to provide partnumber, serialnumber and mac addresses.
+> > By placing the code to read the NiCs inside ioc3 driver there is no need
+> > for locking and adding library code for accessing these informations.
+> 
+> Great.  So it looks like you should be using this, no?
+> 
+>   drivers/base/regmap/regmap-w1.c
 
-> +	  Precision Event Timer. This option is helpful to not use counters
-> +	  from the Performance Monitoring Unit to drive the detector.
-> +
->  config X86_DECODER_SELFTEST
->  	bool "x86 instruction decoder selftest"
->  	depends on DEBUG_KERNEL && KPROBES
+not sure about regmap-w1, but drivers/w1 contains usefull stuff
+like w1_crc8. The only drawback I see right now is, that I need
+information about part numbers at ioc3 probe time, but for using
+w1 framework I need to create a platform device, which will give
+me this information not synchronous. I'll see how I could solve that.
 
+> > > > +static struct resource ioc3_uarta_resources[] = {
+> > > > +	DEFINE_RES_MEM(offsetof(struct ioc3, sregs.uarta),
+> > > 
+> > > You are the first user of offsetof() in MFD.  Could you tell me why
+> > > it's required please?
+> > 
+> > to get the offsets of different chip functions out of a struct.
+> 
+> I can see what it does on a coding level.
+> 
+> What are you using it for in practical/real terms?
+
+ioc3 has one PCI bar, where all different functions are accessible.
+The current ioc3 register map has all these functions set up in one
+struct. The base address of these registers comes out of the PCI
+framework and to use the MFD framework I need offsets for the different
+functions. And because there was already struct ioc3 I'm using
+offsetof on this struct.
+
+> Why wouldn't any other MFD driver require this, but you do?
+
+the other PCI MFD drivers I've looked at, have a PCI BAR per function,
+which makes live easier and no need for offsetof. Other MFD drivers
+#define the offsets and don't have a big struct, which contains all
+function registers. If you really insist on using #defines I need
+to go through a few parts of the kernel where struct ioc3 is still used.
+
+> > > > +	if (ipd->info->funcs & IOC3_SER) {
+> > > > +		writel(GPCR_UARTA_MODESEL | GPCR_UARTB_MODESEL,
+> > > > +			&ipd->regs->gpcr_s);
+> > > > +		writel(0, &ipd->regs->gppr[6]);
+> > > > +		writel(0, &ipd->regs->gppr[7]);
+> > > > +		udelay(100);
+> > > > +		writel(readl(&ipd->regs->port_a.sscr) & ~SSCR_DMA_EN,
+> > > > +		       &ipd->regs->port_a.sscr);
+> > > > +		writel(readl(&ipd->regs->port_b.sscr) & ~SSCR_DMA_EN,
+> > > > +		       &ipd->regs->port_b.sscr);
+> > > > +		udelay(1000);
+> > > 
+> > > No idea what any of this does.
+> > > 
+> > > It looks like it belongs in the serial driver (and needs comments).
+> > 
+> > it configures the IOC3 chip for serial usage. This is not part of
+> > the serial register set, so it IMHO belongs in the MFD driver.
+> 
+> So it does serial things, but doesn't belong in the serial driver?
+
+It sets up IOC3 GPIOs and IOC3 serial mode in way the 8250 driver
+can work with the connected superio.
+
+> Could you please go into a bit more detail as to why you think that?
+> 
+> Why is it better here?
+
+access to gpio and serial mode is outside of the 8250 register space.
+So either I need to export with some additional resources/new special
+platform data or just set it where it is done.
+
+> It's also totally unreadable by the way!
+
+sure, I'll add comments.
+
+> > > > +	}
+> > > > +#if defined(CONFIG_SGI_IP27)
+> > > 
+> > > What is this?  Can't you obtain this dynamically by probing the H/W?
+> > 
+> > that's the machine type and the #ifdef CONFIG_xxx are just for saving space,
+> > when compiled for other machines and it's easy to remove.
+> 
+> Please find other ways to save the space.  #ifery can get very messy,
+> very quickly and is almost always avoidable.
+
+space isn't a problem at all, so removing #ifdef CONFIG is easy.
+
+> 
+> > > > +	if (ipd->info->irq_offset) {
+> > > 
+> > > What does this really signify?
+> > 
+> > IOC3 ASICs are most of the time connected to a SGI bridge chip. IOC3 can
+> > provide two interrupt lines, which are wired to the bridge chip. The first
+> > interrupt is assigned via the PCI core, but since IOC3 is not a PCI multi
+> > function device the second interrupt must be treated here. And the used
+> > interrupt line on the bridge chip differs between boards.
+> 
+> Please provide a MACRO, function or something else which results in
+> more readable code.  Whatever you choose to use, please add this text
+> above, it will be helpful for future readers.
+
+will do.
+
+Thomas.
 
 -- 
-~Randy
+SUSE Linux GmbH
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG Nürnberg)
