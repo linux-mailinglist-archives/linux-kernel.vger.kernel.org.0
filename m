@@ -2,85 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C65091CE27
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 19:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B82671CEEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfENRiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 13:38:25 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39213 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfENRiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 13:38:23 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z26so9506765pfg.6;
-        Tue, 14 May 2019 10:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Af+6okQBbBqI283SlkSp5KD4CPy+AkHPzwyEcYQ+9Mg=;
-        b=jJNIwt+ZFeGtfVTmguA4D9aqTzf2cxOJrbHR0IEggfMsNQeVWgXzt0abGeCQMlYhXQ
-         w/o57RsBIDGHNpK7XVdc76kBsShQnwYTF4ID20XulNLJreRlzfOE1pxW0vU8I81Q84Yr
-         15d7mELFQrG8HcTmlOhLkifOf308+DOm0dZnzwb78easI3YE12cFxb/GXix29ArQqpTf
-         UROmvsACUMWLe3ciAbFTBWgA0Tm0GzN4kUprUHg7D2GOW3q7riXsy+BtBMAH9yL2iMBS
-         y/AKAKvestQ0aQKuyAQK640mEQOTpsRqEPRCsU3EgRtbmCPUUxDLoLEEvLXi1dtucLz/
-         HVvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Af+6okQBbBqI283SlkSp5KD4CPy+AkHPzwyEcYQ+9Mg=;
-        b=sns3i0u+qd9FMlLnMdZ7xU91Q8ayTbMsJHGhHbkeaIFtBBQ39f8H5okk3Lt7Is9j6a
-         7Zk+5qGQJP/hccX5hlQLbZTq8Z6MPy7MTWw+ZzVl+FxFo7F2UTZr8Iabr1e0hEi70RZH
-         K/pQRWyPX5CnRV5aXR+3q5ngchHE17MJt1yhfcWqWQOZRYwBGcY0B27STcWUF8CAjzt6
-         KHohR2ZXtjyahlG10dGRZJliPFLuy4DkTUbUbe3qZkIjvQ7cNEyd4om60gHqI8IVLPy+
-         kZsPQ/07JCcPuLM3igMNKguoCbLon5EsFkXp7Df2t3zNUNG9OJKEak832Tae7i9FPNm2
-         I/GA==
-X-Gm-Message-State: APjAAAWv7o9fyTBQH/jsFjT9a7xItIKQHJsEWv7kX9bDu46xYTqM54v5
-        fa/e0lvkV6WDAa4G/boZqAD7I186
-X-Google-Smtp-Source: APXvYqxtzuJ/roniTZP8I35oCojKxTGjqb7Bgg8WaAksJkq4A/NsQRQxmTmYmK0fMX9yNVdwFAzOJQ==
-X-Received: by 2002:aa7:9242:: with SMTP id 2mr42788012pfp.230.1557855502904;
-        Tue, 14 May 2019 10:38:22 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id a80sm46115717pfj.105.2019.05.14.10.38.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 10:38:22 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-mips@linux-mips.org
-Cc:     joe@perches.com, Florian Fainelli <f.fainelli@gmail.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-mips@vger.kernel.org (open list:BROADCOM NVRAM DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] firmware: bcm47xx_nvram: Allow COMPILE_TEST
-Date:   Tue, 14 May 2019 10:38:15 -0700
-Message-Id: <20190514173816.17030-2-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190514173816.17030-1-f.fainelli@gmail.com>
-References: <20190514173816.17030-1-f.fainelli@gmail.com>
+        id S1727570AbfENSUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 14:20:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfENSUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 14:20:45 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AAD214DB11;
+        Tue, 14 May 2019 18:20:44 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-6.gru2.redhat.com [10.97.112.6])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E022608AC;
+        Tue, 14 May 2019 18:20:41 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 05C3310517B;
+        Tue, 14 May 2019 14:42:42 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x4EHgccD013133;
+        Tue, 14 May 2019 14:42:38 -0300
+Date:   Tue, 14 May 2019 14:42:37 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Wanpeng Li <kernellwp@gmail.com>, kvm-devel <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Bandan Das <bsd@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] sched: introduce configurable delay before entering idle
+Message-ID: <20190514174235.GA12269@amt.cnet>
+References: <20190507185647.GA29409@amt.cnet>
+ <CANRm+Cx8zCDG6Oz1m9eukkmx_uVFYcQOdMwZrHwsQcbLm_kuPA@mail.gmail.com>
+ <20190514135022.GD4392@amt.cnet>
+ <20190514152015.GM20906@char.us.oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514152015.GM20906@char.us.oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 14 May 2019 18:20:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow building building the BCM47xx NVRAM and SPROM drivers using
-COMPILE_TEST.
+On Tue, May 14, 2019 at 11:20:15AM -0400, Konrad Rzeszutek Wilk wrote:
+> On Tue, May 14, 2019 at 10:50:23AM -0300, Marcelo Tosatti wrote:
+> > On Mon, May 13, 2019 at 05:20:37PM +0800, Wanpeng Li wrote:
+> > > On Wed, 8 May 2019 at 02:57, Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> > > >
+> > > >
+> > > > Certain workloads perform poorly on KVM compared to baremetal
+> > > > due to baremetal's ability to perform mwait on NEED_RESCHED
+> > > > bit of task flags (therefore skipping the IPI).
+> > > 
+> > > KVM supports expose mwait to the guest, if it can solve this?
+> > > 
+> > > Regards,
+> > > Wanpeng Li
+> > 
+> > Unfortunately mwait in guest is not feasible (uncompatible with multiple
+> > guests). Checking whether a paravirt solution is possible.
+> 
+> There is the obvious problem with that the guest can be malicious and
+> provide via the paravirt solution bogus data. That is it expose 0% CPU
+> usage but in reality be mining and using 100%.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/firmware/broadcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The idea is to have a hypercall for the guest to perform the
+need_resched=1 bit set. It can only hurt itself.
 
-diff --git a/drivers/firmware/broadcom/Kconfig b/drivers/firmware/broadcom/Kconfig
-index f77cdb3a041f..c041dcb7ea52 100644
---- a/drivers/firmware/broadcom/Kconfig
-+++ b/drivers/firmware/broadcom/Kconfig
-@@ -1,6 +1,6 @@
- config BCM47XX_NVRAM
- 	bool "Broadcom NVRAM driver"
--	depends on BCM47XX || ARCH_BCM_5301X
-+	depends on BCM47XX || ARCH_BCM_5301X || COMPILE_TEST
- 	help
- 	  Broadcom home routers contain flash partition called "nvram" with all
- 	  important hardware configuration as well as some minor user setup.
--- 
-2.17.1
 
