@@ -2,136 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1DA21C877
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BB11C925
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfENMYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 08:24:00 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:32795 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725893AbfENMX7 (ORCPT
+        id S1726148AbfENNCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 09:02:51 -0400
+Received: from 5.mo179.mail-out.ovh.net ([46.105.43.140]:33474 "EHLO
+        5.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfENNCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 08:23:59 -0400
-Received: from [IPv6:2001:420:44c1:2579:859d:cefd:f7a7:d8be] ([IPv6:2001:420:44c1:2579:859d:cefd:f7a7:d8be])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id QWTJhvRq93qlsQWTMh3eLj; Tue, 14 May 2019 14:23:57 +0200
-Subject: Re: [PATCH v2] media/doc: Allow sizeimage to be set by v4l clients
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190412155915.16849-1-stanimir.varbanov@linaro.org>
- <a1807c37-99cf-d1fa-bcb9-67af2935abaf@xs4all.nl>
- <ecdb8da5f00a8f5bd5d5ec125e2aa162e0091728.camel@ndufresne.ca>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <72987956-49f0-c6fe-be45-42b357f541a1@xs4all.nl>
-Date:   Tue, 14 May 2019 14:23:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 14 May 2019 09:02:51 -0400
+X-Greylist: delayed 1796 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 09:02:47 EDT
+Received: from player688.ha.ovh.net (unknown [10.109.159.69])
+        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 86DD31311D3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 14:25:34 +0200 (CEST)
+Received: from kaod.org (deibp9eh1--blueice1n4.emea.ibm.com [195.212.29.166])
+        (Authenticated sender: groug@kaod.org)
+        by player688.ha.ovh.net (Postfix) with ESMTPSA id 5B3775A70662;
+        Tue, 14 May 2019 12:25:26 +0000 (UTC)
+Date:   Tue, 14 May 2019 14:25:24 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
+Message-ID: <20190514142524.76c0417f@bahia.lan>
+In-Reply-To: <87sgths2zf.fsf@concordia.ellerman.id.au>
+References: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
+        <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
+        <20190429123659.00c0622b@bahia.lan>
+        <20190513135606.7d9a0902@bahia.lan>
+        <87sgths2zf.fsf@concordia.ellerman.id.au>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <ecdb8da5f00a8f5bd5d5ec125e2aa162e0091728.camel@ndufresne.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfDsKrimLIgQxo4gW55w4bBX4S8inS9QnnKVDHGMSVyP1VxS0rwKZK1PQPH/ejahgKGTh31j7CaVij6+d6NhruWCR6R6KesTtZ0hlcYfy2RmlBdzY5REA
- X5F0gnkwUyLum31eBShxbchK33Q7c1SCTpC7suKxM+GnrDxDlrToziwVwsDR7z1iXPJFKb5E+/A01+rHW/0/JhAoC4kxM48i7y88nZp0qshhmIApEvapUs2i
- +F41v9D0fAgDrLBscKTV5h/Hgp7Hjn/JA/i/d0dJGKdqLkvlHH3yMWPyjofG47KyGBzZhd8Dpiuxr+/yMkLeH9gQtNO1EF/PmTBdVjkacscseoPa6MT7GOSy
- XaDG5rMI96eGz9H2tF+9N0uK3ZJ9TDzXCzJcj0pxt07vLSM5IbyQHgwZqteIDbbU9pGvuL7RTEFElP/jfiLslgn53YehTM0UU9LtauB4wOut8FC/fUcTCJF+
- KGg7us049hQp11P1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 12951789578739882417
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrleeigdehvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/14/19 2:19 PM, Nicolas Dufresne wrote:
-> Le mardi 14 mai 2019 à 10:54 +0200, Hans Verkuil a écrit :
->> Hi Stanimir,
->>
->> On 4/12/19 5:59 PM, Stanimir Varbanov wrote:
->>> This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
->>> field description to allow v4l clients to set bigger image size
->>> in case of variable length compressed data.
->>
->> I've been reconsidering this change. The sizeimage value in the format
->> is the minimum size a buffer should have in order to store the data of
->> an image of the width and height as described in the format.
+On Tue, 14 May 2019 21:13:40 +1000
+Michael Ellerman <mpe@ellerman.id.au> wrote:
+
+> Greg Kurz <groug@kaod.org> writes:
+> > Michael,
+> >
+> > Any comments on this patch ? Should I repost with a shorter comment
+> > as suggested by Alexey ?  
 > 
-> Should this read as the minimum size for the specific (returned by
-> driver) width/height/bytesperline ?
-
-Yes. Although for compressed formats the bytesperline value plays no role
-of course.
-
-Regards,
-
-	Hans
-
+> No the longer comment seems fine to me.
 > 
->>
->> But there is nothing that prevents userspace from calling VIDIOC_CREATEBUFS
->> instead of VIDIOC_REQBUFS to allocate larger buffers.
->>
->> So do we really need this change?
->>
->> The more I think about this, the more uncomfortable I become with this change.
->>
->> Regards,
->>
->> 	Hans
->>
->>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->>> ---
->>>  Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst | 13 ++++++++++++-
->>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst        | 11 ++++++++++-
->>>  2 files changed, 22 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->>> index 5688c816e334..005428a8121e 100644
->>> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->>> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->>> @@ -31,7 +31,18 @@ describing all planes of that format.
->>>  
->>>      * - __u32
->>>        - ``sizeimage``
->>> -      - Maximum size in bytes required for image data in this plane.
->>> +      - Maximum size in bytes required for image data in this plane,
->>> +	set by the driver. When the image consists of variable length
->>> +	compressed data this is the number of bytes required by the
->>> +	codec to support the worst-case compression scenario.
->>> +
->>> +	For uncompressed images the driver will set the value. For
->>> +	variable length compressed data clients are allowed to set
->>> +	the sizeimage field, but the driver may ignore it and set the
->>> +	value itself, or it may modify the provided value based on
->>> +	alignment requirements or minimum/maximum size requirements.
->>> +	If the client wants to leave this to the driver, then it should
->>> +	set sizeimage to 0.
->>>      * - __u32
->>>        - ``bytesperline``
->>>        - Distance in bytes between the leftmost pixels in two adjacent
->>> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->>> index 71eebfc6d853..0f7771151db9 100644
->>> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->>> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->>> @@ -89,7 +89,16 @@ Single-planar format structure
->>>        - Size in bytes of the buffer to hold a complete image, set by the
->>>  	driver. Usually this is ``bytesperline`` times ``height``. When
->>>  	the image consists of variable length compressed data this is the
->>> -	maximum number of bytes required to hold an image.
->>> +	number of bytes required by the codec to support the worst-case
->>> +	compression scenario.
->>> +
->>> +	For uncompressed images the driver will set the value. For
->>> +	variable length compressed data clients are allowed to set
->>> +	the sizeimage field, but the driver may ignore it and set the
->>> +	value itself, or it may modify the provided value based on
->>> +	alignment requirements or minimum/maximum size requirements.
->>> +	If the client wants to leave this to the driver, then it should
->>> +	set sizeimage to 0.
->>>      * - __u32
->>>        - ``colorspace``
->>>        - Image colorspace, from enum :c:type:`v4l2_colorspace`.
->>>
+> I'm not a big fan of the patch, it's basically a hack :)
 > 
+
+Yeah :)
+
+> But for a backportable fix I guess it is OK.
+> 
+> I would be happier though if we eventually fix up the code to do the
+> refcounting properly.
+> 
+
+I had started to do just that before deciding to go for the backportable
+hack. Should I rebase the other patches I have on top of this patch and
+repost the whole thing, so that we have both the ugly fix for stable and
+the pretty one for 5.2 ?
+
+Cheers,
+
+--
+Greg
+
+> cheers
+> 
+> > On Mon, 29 Apr 2019 12:36:59 +0200
+> > Greg Kurz <groug@kaod.org> wrote:  
+> >> On Mon, 29 Apr 2019 16:01:29 +1000
+> >> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+> >>   
+> >> > On 20/04/2019 01:34, Greg Kurz wrote:    
+> >> > > Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
+> >> > > has the effect of incrementing the reference count of the PCI device, as
+> >> > > explained in drivers/pci/search.c:
+> >> > > 
+> >> > >  * Given a PCI domain, bus, and slot/function number, the desired PCI
+> >> > >  * device is located in the list of PCI devices. If the device is
+> >> > >  * found, its reference count is increased and this function returns a
+> >> > >  * pointer to its data structure.  The caller must decrement the
+> >> > >  * reference count by calling pci_dev_put().  If no device is found,
+> >> > >  * %NULL is returned.
+> >> > > 
+> >> > > Nothing was done to call pci_dev_put() and the reference count of GPU and
+> >> > > NPU PCI devices rockets up.
+> >> > > 
+> >> > > A natural way to fix this would be to teach the callers about the change,
+> >> > > so that they call pci_dev_put() when done with the pointer. This turns
+> >> > > out to be quite intrusive, as it affects many paths in npu-dma.c,
+> >> > > pci-ioda.c and vfio_pci_nvlink2.c.      
+> >> > 
+> >> > 
+> >> > afaict this referencing is only done to protect the current traverser
+> >> > and what you've done is actually a natural way (and the generic
+> >> > pci_get_dev_by_id() does exactly the same), although this looks a bit weird.
+> >> >     
+> >> 
+> >> Not exactly the same: pci_get_dev_by_id() always increment the refcount
+> >> of the returned PCI device. The refcount is only decremented when this
+> >> device is passed to pci_get_dev_by_id() to continue searching.
+> >> 
+> >> That means that the users of the PCI device pointer returned by
+> >> pci_get_dev_by_id() or its exported variants pci_get_subsys(),
+> >> pci_get_device() and pci_get_class() do handle the refcount. They
+> >> all pass the pointer to pci_dev_put() or continue the search,
+> >> which calls pci_dev_put() internally.
+> >> 
+> >> Direct and indirect callers of get_pci_dev() don't care for the
+> >> refcount at all unless I'm missing something.
+> >>   
+> >> >     
+> >> > > Also, the issue appeared in 4.16 and
+> >> > > some affected code got moved around since then: it would be problematic
+> >> > > to backport the fix to stable releases.
+> >> > > 
+> >> > > All that code never cared for reference counting anyway. Call pci_dev_put()
+> >> > > from get_pci_dev() to revert to the previous behavior.      
+> >> > >> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev      
+> >> > from pci_dn")    
+> >> > > Cc: stable@vger.kernel.org # v4.16
+> >> > > Signed-off-by: Greg Kurz <groug@kaod.org>
+> >> > > ---
+> >> > >  arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
+> >> > >  1 file changed, 14 insertions(+), 1 deletion(-)
+> >> > > 
+> >> > > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+> >> > > index e713ade30087..d8f3647e8fb2 100644
+> >> > > --- a/arch/powerpc/platforms/powernv/npu-dma.c
+> >> > > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
+> >> > > @@ -31,9 +31,22 @@ static DEFINE_SPINLOCK(npu_context_lock);
+> >> > >  static struct pci_dev *get_pci_dev(struct device_node *dn)
+> >> > >  {
+> >> > >  	struct pci_dn *pdn = PCI_DN(dn);
+> >> > > +	struct pci_dev *pdev;
+> >> > >  
+> >> > > -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
+> >> > > +	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
+> >> > >  					   pdn->busno, pdn->devfn);
+> >> > > +
+> >> > > +	/*
+> >> > > +	 * pci_get_domain_bus_and_slot() increased the reference count of
+> >> > > +	 * the PCI device, but callers don't need that actually as the PE
+> >> > > +	 * already holds a reference to the device.      
+> >> > 
+> >> > Imho this would be just enough.
+> >> > 
+> >> > Anyway,
+> >> > 
+> >> > Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> >> >     
+> >> 
+> >> Thanks !
+> >> 
+> >> I now realize that I forgot to add the --cc option for stable on my stgit
+> >> command line :-\.
+> >> 
+> >> Cc'ing now.
+> >>   
+> >> > 
+> >> > How did you find it? :)
+> >> >     
+> >> 
+> >> While reading code to find some inspiration for OpenCAPI passthrough. :)
+> >> 
+> >> I saw the following in vfio_pci_ibm_npu2_init():
+> >> 
+> >> 	if (!pnv_pci_get_gpu_dev(vdev->pdev))
+> >> 		return -ENODEV;
+> >> 
+> >> and simply followed the function calls.
+> >>   
+> >> >     
+> >> > > Since callers aren't
+> >> > > +	 * aware of the reference count change, call pci_dev_put() now to
+> >> > > +	 * avoid leaks.
+> >> > > +	 */
+> >> > > +	if (pdev)
+> >> > > +		pci_dev_put(pdev);
+> >> > > +
+> >> > > +	return pdev;
+> >> > >  }
+> >> > >  
+> >> > >  /* Given a NPU device get the associated PCI device. */
+> >> > >       
+> >> >     
+> >>   
 
