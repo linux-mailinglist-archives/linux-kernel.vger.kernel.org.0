@@ -2,232 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8C21C572
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:56:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E461C57B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfENI4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:56:50 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:49128 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725916AbfENI4u (ORCPT
+        id S1726642AbfENI6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:58:41 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33552 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726058AbfENI6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:56:50 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 514E4C01E1;
-        Tue, 14 May 2019 08:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557824200; bh=O+0rWepauJnazeZEJmN4/DK9betXSpBzbpaFCxnnojw=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Yf3p1HRP2tSiHuEfjUvd78hUwJqUehwQh0tSeY8klr0yrT0xMJ7IRd+ZvsNTpxqK6
-         DW4ngUsRHi9hM5yw+GugAEQxm9NrMPTI/r0QCiWR2TpnNpGTrnqyXTIfTYs1mWZ7UY
-         1RhOQuzdCg0WPZZbaWE35cV0uvHbOaqN8uaVtB5s/3PI883xUe/6ReDc0nrqCBw4Dz
-         MyLaB8O7uLjYW1CUaSkEd4ZlcgiVZo//VL+ydtO9BeC65K8jTGh1Ml8FY3h9fwxN4j
-         AKGdT1uQYOaIHUPMi40Pzq3FHL1Ixq1ztSxtKE6YoX+ocQefdYauJ1PHnCts4kzyc0
-         HcQOqfk4DG1Hw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 5B047A009D;
-        Tue, 14 May 2019 08:56:49 +0000 (UTC)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 14 May 2019 01:56:49 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
- 14 May 2019 10:56:46 +0200
-From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tools pci: Do not delete pcitest.sh in 'make clean'
-Thread-Topic: [PATCH] tools pci: Do not delete pcitest.sh in 'make clean'
-Thread-Index: AQHVCbrw4jLq+8y4G0GDGSXvGZ9UF6ZqUVJQ
-Date:   Tue, 14 May 2019 08:56:46 +0000
-Message-ID: <305100E33629484CBB767107E4246BBB0A6F349C@DE02WEMBXB.internal.synopsys.com>
-References: <20190513175955.GB8003@kernel.org>
-In-Reply-To: <20190513175955.GB8003@kernel.org>
-Accept-Language: pt-PT, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWjNWemRHRjJiMXhoY0hCa1lYUmhYSEp2WVcxcGJtZGNNRGxrT0RRNVlq?=
- =?utf-8?B?WXRNekprTXkwMFlUUXdMVGcxWldVdE5tSTROR0poTWpsbE16VmlYRzF6WjNO?=
- =?utf-8?B?Y2JYTm5MVE15TjJFM1pHRXpMVGMyTWpZdE1URmxPUzA1T0RneUxXWTRPVFJq?=
- =?utf-8?B?TWpjek9EQTBNbHhoYldVdGRHVnpkRnd6TWpkaE4yUmhOUzAzTmpJMkxURXha?=
- =?utf-8?B?VGt0T1RnNE1pMW1PRGswWXpJM016Z3dOREppYjJSNUxuUjRkQ0lnYzNvOUlq?=
- =?utf-8?B?TTNPRElpSUhROUlqRXpNakF5TWprM09EQTBPVE0zTXpnNU5DSWdhRDBpVWpS?=
- =?utf-8?B?SFN5dFNibXBPUlVWbVNVVktkRFZZVldweU9IWldSa3BGUFNJZ2FXUTlJaUln?=
- =?utf-8?B?WW13OUlqQWlJR0p2UFNJeElpQmphVDBpWTBGQlFVRkZVa2hWTVZKVFVsVkdU?=
- =?utf-8?B?a05uVlVGQlFsRktRVUZFUjJSMFREQk5aM0pXUVZsMmFWaFlTbVJ1TVc1NmFT?=
- =?utf-8?B?dEtaR05zTW1aWFprMVBRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVaEJRVUZCUTJ0RFFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVWQlFWRkJRa0ZCUVVGR2RHSkNjSGRCUVVGQlFVRkJRVUZCUVVGQlFVRktO?=
- =?utf-8?B?RUZCUVVKdFFVZHJRV0puUW1oQlJ6UkJXWGRDYkVGR09FRmpRVUp6UVVkRlFX?=
- =?utf-8?B?Sm5RblZCUjJ0QlltZENia0ZHT0VGa2QwSm9RVWhSUVZwUlFubEJSekJCV1ZG?=
- =?utf-8?B?Q2VVRkhjMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?blFVRkJRVUZCYm1kQlFVRkhXVUZpZDBJeFFVYzBRVnBCUW5sQlNHdEJXSGRD?=
- =?utf-8?B?ZDBGSFJVRmpaMEl3UVVjMFFWcFJRbmxCU0UxQldIZENia0ZIV1VGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFWRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkRRVUZCUVVGQlEyVkJRVUZCV21kQ2RrRklWVUZpWjBKclFV?=
- =?utf-8?B?aEpRV1ZSUW1aQlNFRkJXVkZDZVVGSVVVRmlaMEpzUVVoSlFXTjNRbVpCU0Ux?=
- =?utf-8?B?QldWRkNkRUZJVFVGa1VVSjFRVWRqUVZoM1FtcEJSemhCWW1kQ2JVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUpCUVVGQlFVRkJRVUZCU1VGQlFVRkJRVW8wUVVGQlFtMUJSemhC?=
- =?utf-8?B?WkZGQ2RVRkhVVUZqWjBJMVFVWTRRV05CUW1oQlNFbEJaRUZDZFVGSFZVRmpa?=
- =?utf-8?B?MEo2UVVZNFFXTjNRbWhCUnpCQlkzZENNVUZITkVGYWQwSm1RVWhKUVZwUlFu?=
- =?utf-8?B?cEJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGRlFVRkJRVUZCUVVGQlFXZEJRVUZCUVVGdVow?=
- =?utf-8?B?RkJRVWRaUVdKM1FqRkJSelJCV2tGQ2VVRklhMEZZZDBKM1FVZEZRV05uUWpC?=
- =?utf-8?B?QlJ6UkJXbEZDZVVGSVRVRllkMEo2UVVjd1FXRlJRbXBCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJVVUZCUVVGQlFVRkJRVU5C?=
- =?utf-8?B?UVVGQlFVRkRaVUZCUVVGYVowSjJRVWhWUVdKblFtdEJTRWxCWlZGQ1prRklR?=
- =?utf-8?B?VUZaVVVKNVFVaFJRV0puUW14QlNFbEJZM2RDWmtGSVRVRmtRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUWtGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGSlFVRkJRVUZCU2pSQlFVRkNiVUZIT0VGa1VVSjFRVWRSUVdO?=
- =?utf-8?B?blFqVkJSamhCWTBGQ2FFRklTVUZrUVVKMVFVZFZRV05uUW5wQlJqaEJaRUZD?=
- =?utf-8?B?ZWtGSE1FRlpkMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVVkJRVUZCUVVGQlFVRkJaMEZCUVVGQlFXNW5RVUZCUjFsQlluZENN?=
- =?utf-8?B?VUZITkVGYVFVSjVRVWhyUVZoM1FuZEJSMFZCWTJkQ01FRkhORUZhVVVKNVFV?=
- =?utf-8?B?aE5RVmgzUWpGQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZSUVVGQlFVRkJRVUZCUTBGQlFVRkJRVU5sUVVG?=
- =?utf-8?B?QlFWcDNRakJCU0UxQldIZENkMEZJU1VGaWQwSnJRVWhWUVZsM1FqQkJSamhC?=
- =?utf-8?B?WkVGQ2VVRkhSVUZoVVVKMVFVZHJRV0puUW01QlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQ1FVRkJRVUZCUVVGQlFVbEJR?=
- =?utf-8?B?VUZCUVVGS05FRkJRVUo2UVVkRlFXSkJRbXhCU0UxQldIZENhRUZIVFVGWmQw?=
- =?utf-8?B?SjJRVWhWUVdKblFqQkJSamhCWTBGQ2MwRkhSVUZpWjBGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJSVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZuUVVGQlFVRkJibWRCUVVGSVRVRlpVVUp6UVVkVlFXTjNRbVpC?=
- =?utf-8?B?U0VWQlpGRkNka0ZJVVVGYVVVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVZGQlFVRkJRVUZCUVVGRFFVRkJRVUZCUTJWQlFVRkJZM2RDZFVGSVFV?=
- =?utf-8?B?RmpkMEptUVVkM1FXRlJRbXBCUjFWQlltZENla0ZIVlVGWWQwSXdRVWRWUVdO?=
- =?utf-8?B?blFuUkJSamhCVFZGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVSkJRVUZCUVVGQlFVRkJTVUZCUVVGQlFVbzBRVUZC?=
- =?utf-8?B?UW5wQlJ6UkJZMEZDZWtGR09FRmlRVUp3UVVkTlFWcFJRblZCU0UxQldsRkNa?=
- =?utf-8?B?a0ZJVVVGYVVVSjVRVWN3UVZoM1FucEJTRkZCWkZGQ2EwRkhWVUZpWjBJd1FV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZGUVVGQlFVRkJRVUZCUVdkQlFV?=
- =?utf-8?B?RkJRVUZ1WjBGQlFVaFpRVnAzUW1aQlIzTkJXbEZDTlVGSVkwRmlkMEo1UVVk?=
- =?utf-8?B?UlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlVVRkJRVUZC?=
- =?utf-8?Q?QUFBQUNBQUFBQUFBPSIvPjwvbWV0YT4=3D?=
-x-originating-ip: [10.98.3.41]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 14 May 2019 04:58:41 -0400
+Received: by mail-vs1-f67.google.com with SMTP id y6so9836078vsb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 01:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MLSCBYZPRnRjPoWF2biQlF2E7iPn0TGMhmM3d3DWvJk=;
+        b=q8lxVzyzoXF98rEkWk5wquphTuXEip2RN7SWX+ji6R038d7laVaDsxolVn4Lifr3L4
+         nDasZXSsGt9J3K/Dma2aHgNQXDd5PmwH0TmaWaaa1ielTpN5NpWI1KuO6GzoTid1P87V
+         W+5QUyaNPx3uISiPfkM3GUlQFtkj6y4HL+j6jrliPgZKgTNgOWzvACEQGlWMm/hygShh
+         Hk/tX4mdGKpaW3Nb3aJUV384CKlCitHayN9Zw9WXdnfRaWYon4saa+Za6XYQRGPeEULH
+         F5R1ANYbch30daXqS7q1vJFNPngTOJVKDjhVvf3ixaqY34sSs44//FI0jLdvax1IQdpR
+         9YTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MLSCBYZPRnRjPoWF2biQlF2E7iPn0TGMhmM3d3DWvJk=;
+        b=NcstbSu+9AM0MBs3xqKpOhcnWVc4+rEAGF5sV6DPMSy2fMGYq2nNHFx5QhTuGWJhGb
+         Y5YdZeY0MF2KPHtvZ9trIkQJWWsk/kkXd7dP1cA7PEgpeR9mMxiI6XVg/o8TMtCW41JM
+         1EI5ubn9QA/UxhWtr3Zv/SPQZKoYOMYqGCDk6UFGhkN6dYiQU/pARIOcIkRE9IU+ZJBT
+         8q4UFPVqdr+MlsZDKJ6HkDAUZCF6aSKC2H5PrKxwuHVzhBkSDYBv7MQyUomBgccJmKwt
+         N9cXG1oWHSjFsELhu/3FqDZiG3aeempcJBfg0KHfOO1Ls4PPdwnfbhnSIn4XmJGjCqKJ
+         /FxA==
+X-Gm-Message-State: APjAAAU00plbp5BxDZoapDGzTSBVc0xjZpEpU3hhbe/KhDNRtgtVRPAs
+        rmW+ef14Zya2zuT4tmE9noVgUUi0oUyBjHlOD24Iww==
+X-Google-Smtp-Source: APXvYqwycH28jEcSrDkjPUkWW/Zcz25ycb6BQFN7+w/8A+3I/hQsVj2ek7HBD2590jjCbU0ruGu2wcP3lpcGlb4hlPI=
+X-Received: by 2002:a67:ebc5:: with SMTP id y5mr13449930vso.34.1557824320126;
+ Tue, 14 May 2019 01:58:40 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190513192300.653-1-ulf.hansson@linaro.org> <CAJZ5v0gbK3AFCVC1b9LyXeMOM8fKR1=ECXZwaeSYRSqcK0UgYA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gbK3AFCVC1b9LyXeMOM8fKR1=ECXZwaeSYRSqcK0UgYA@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 14 May 2019 10:58:04 +0200
+Message-ID: <CAPDyKFpU3u248Gi+FnrVdY-EWXJQuu14uNV9d3Xs0W-K-EMEhg@mail.gmail.com>
+Subject: Re: [PATCH 00/18] ARM/ARM64: Support hierarchical CPU arrangement for PSCI
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Souvik Chakravarty <souvik.chakravarty@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCBNYXkgMTMsIDIwMTkgYXQgMTk6Mzc6MjgsIEFybmFsZG8gQ2FydmFsaG8gZGUgTWVs
-byANCjxhcm5hbGRvLm1lbG9AZ21haWwuY29tPiB3cm90ZToNCg0KDQpIaSBBcm5hbGRvLA0KDQpJ
-IHRoaW5rIEtpc2hvbiBoYXMgYWxyZWFkeSBkaXNwYXRjaGVkIGEgcGF0Y2ggZml4aW5nIHRoaXMg
-aXNzdWUuDQpLaXNob24sIGNhbiB5b3UgY29uZmlybSBpdD8NCg0KUmVnYXJkcywNCkd1c3Rhdm8N
-Cg0KPiBIaSwNCj4gDQo+IAlJIGhhdmUgdGhpcyBpbiBteSBsb2NhbCBwZXJmL2NvcmUgYnJhbmNo
-LCBsaW5lZCB1cCBmb3IgNS4yLA0KPiBwbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91J3JlIG9rIHdp
-dGggaXQuDQo+IA0KPiAtIEFybmFsZG8NCj4gDQo+IGNvbW1pdCA0ZGZlOGY1OTE1NjM4MmI3Njk1
-ZmU1YzEwYmRkZDVjOTdjODQyODlhDQo+IEF1dGhvcjogQXJuYWxkbyBDYXJ2YWxobyBkZSBNZWxv
-IDxhY21lQHJlZGhhdC5jb20+DQo+IERhdGU6ICAgTW9uIE1heSAxMyAxMzo1MzoyMCAyMDE5IC0w
-NDAwDQo+IA0KPiAgICAgdG9vbHMgcGNpOiBEbyBub3QgZGVsZXRlIHBjaXRlc3Quc2ggaW4gJ21h
-a2UgY2xlYW4nDQo+ICAgICANCj4gICAgIFdoZW4gcnVubmluZyAnbWFrZSAtQyB0b29scyBjbGVh
-bicgSSBub3RpY2VkIHRoYXQgYSByZXZpc2lvbiBjb250cm9sbGVkDQo+ICAgICBmaWxlIHdhcyBi
-ZWluZyBkZWxldGVkOg0KPiAgICAgDQo+ICAgICAgICQgZ2l0IGRpZmYNCj4gICAgICAgZGlmZiAt
-LWdpdCBhL3Rvb2xzL3BjaS9wY2l0ZXN0LnNoIGIvdG9vbHMvcGNpL3BjaXRlc3Quc2gNCj4gICAg
-ICAgZGVsZXRlZCBmaWxlIG1vZGUgMTAwNjQ0DQo+ICAgICAgIGluZGV4IDc1ZWQ0OGZmMjk5MC4u
-MDAwMDAwMDAwMDAwDQo+ICAgICAgIC0tLSBhL3Rvb2xzL3BjaS9wY2l0ZXN0LnNoDQo+ICAgICAg
-ICsrKyAvZGV2L251bGwNCj4gICAgICAgQEAgLTEsNzIgKzAsMCBAQA0KPiAgICAgICAtIyEvYmlu
-L3NoDQo+ICAgICAgIC0jIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+ICAgICAg
-IC0NCj4gICAgICAgLWVjaG8gIkJBUiB0ZXN0cyINCj4gICAgICAgLWVjaG8NCj4gICAgICAgPFNO
-SVA+DQo+ICAgICANCj4gICAgIFNvIEkgY2hhbmdlZCB0aGUgbWFrZSB2YXJpYWJsZXMgdG8gZml4
-IHRoYXQsIHRlc3RpbmcgaXQgc2hvdWxkIHByb2R1Y2UNCj4gICAgIHRoZSBzYW1lIGludGVuZGVk
-IHJlc3VsdCB3aGlsZSBub3QgZGVsZXRpbmcgcmV2aXNpb24gY29udHJvbGxlZCBmaWxlcy4NCj4g
-ICAgIA0KPiAgICAgICAkIG1ha2UgTz0vdG1wL2J1aWxkL3BjaSAtQyB0b29scy9wY2kgaW5zdGFs
-bA0KPiAgICAgICBtYWtlOiBFbnRlcmluZyBkaXJlY3RvcnkgJy9ob21lL2FjbWUvZ2l0L3BlcmYv
-dG9vbHMvcGNpJw0KPiAgICAgICBtYWtlIC1mIC9ob21lL2FjbWUvZ2l0L3BlcmYvdG9vbHMvYnVp
-bGQvTWFrZWZpbGUuYnVpbGQgZGlyPS4gb2JqPXBjaXRlc3QNCj4gICAgICAgaW5zdGFsbCAtZCAt
-bSA3NTUgL3Vzci9iaW47ICAgICAgICAgICBcDQo+ICAgICAgIGZvciBwcm9ncmFtIGluIC90bXAv
-YnVpbGQvcGNpL3BjaXRlc3QgcGNpdGVzdC5zaDsgZG8gIFwNCj4gICAgICAgICAgICAgaW5zdGFs
-bCAkcHJvZ3JhbSAvdXNyL2JpbjsgICAgICBcDQo+ICAgICAgIGRvbmUNCj4gICAgICAgaW5zdGFs
-bDogY2Fubm90IGNoYW5nZSBwZXJtaXNzaW9ucyBvZiDigJgvdXNyL2JpbuKAmTogT3BlcmF0aW9u
-IG5vdCBwZXJtaXR0ZWQNCj4gICAgICAgaW5zdGFsbDogY2Fubm90IGNyZWF0ZSByZWd1bGFyIGZp
-bGUgJy91c3IvYmluL3BjaXRlc3QnOiBQZXJtaXNzaW9uIGRlbmllZA0KPiAgICAgICBpbnN0YWxs
-OiBjYW5ub3QgY3JlYXRlIHJlZ3VsYXIgZmlsZSAnL3Vzci9iaW4vcGNpdGVzdC5zaCc6IFBlcm1p
-c3Npb24gZGVuaWVkDQo+ICAgICAgIG1ha2U6ICoqKiBbTWFrZWZpbGU6NDY6IGluc3RhbGxdIEVy
-cm9yIDENCj4gICAgICAgbWFrZTogTGVhdmluZyBkaXJlY3RvcnkgJy9ob21lL2FjbWUvZ2l0L3Bl
-cmYvdG9vbHMvcGNpJw0KPiAgICAgICAkIGxzIC1sYSAvdG1wL2J1aWxkL3BjaS9wY2l0ZXN0DQo+
-ICAgICAgIC1yd3hyd3hyLXguIDEgYWNtZSBhY21lIDI3MTUyIE1heSAxMyAxMzo1MiAvdG1wL2J1
-aWxkL3BjaS9wY2l0ZXN0DQo+ICAgICAgICQgL3RtcC9idWlsZC9wY2kvcGNpdGVzdA0KPiAgICAg
-ICBjYW4ndCBvcGVuIFBDSSBFbmRwb2ludCBUZXN0IGRldmljZTogTm8gc3VjaCBmaWxlIG9yIGRp
-cmVjdG9yeQ0KPiAgICAgICAkDQo+ICAgICANCj4gICAgIENjOiBBZHJpYW4gSHVudGVyIDxhZHJp
-YW4uaHVudGVyQGludGVsLmNvbT4NCj4gICAgIENjOiBHdXN0YXZvIFBpbWVudGVsIDxndXN0YXZv
-LnBpbWVudGVsQHN5bm9wc3lzLmNvbT4NCj4gICAgIENjOiBKaXJpIE9sc2EgPGpvbHNhQGtlcm5l
-bC5vcmc+DQo+ICAgICBDYzogS2lzaG9uIFZpamF5IEFicmFoYW0gSSA8a2lzaG9uQHRpLmNvbT4N
-Cj4gICAgIENjOiBMb3JlbnpvIFBpZXJhbGlzaSA8bG9yZW56by5waWVyYWxpc2lAYXJtLmNvbT4N
-Cj4gICAgIENjOiBOYW1oeXVuZyBLaW0gPG5hbWh5dW5nQGtlcm5lbC5vcmc+DQo+ICAgICBGaXhl
-czogMWNlNzhjZTA5NDMwICgidG9vbHM6IFBDSTogQ2hhbmdlIHBjaXRlc3QgY29tcGlsaW5nIHBy
-b2Nlc3MiKQ0KPiAgICAgTGluazogaHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3Yy
-L3VybD91PWh0dHBzLTNBX19sa21sLmtlcm5lbC5vcmdfbl90aXAtMkQ5cmU2YmQ3ZWg5ZXBpM2tv
-c2xrdjNvY24tNDBnaXQua2VybmVsLm9yZyZkPUR3SURhUSZjPURQTDZfWF82SmtYRng3QVhXcUIw
-dGcmcj1ia1d4cExvVy1mLUUzRWRpRENDYTBfaDBQaWNzVmlhc1Nsdklwelp2UHhzJm09YVpqUjVS
-OTFBSlI0MDJGUkREbll6WFplelRIcGhaQ2lOaC05RzhCTzZ2RSZzPVZ6a1QwWFl2QjM3c1ZaOC1s
-T3hXTjdMc0c2SXZEVENSakNUVWZlcnRzUnMmZT0NCj4gICAgIFNpZ25lZC1vZmYtYnk6IEFybmFs
-ZG8gQ2FydmFsaG8gZGUgTWVsbyA8YWNtZUByZWRoYXQuY29tPg0KPiANCj4gZGlmZiAtLWdpdCBh
-L3Rvb2xzL3BjaS9NYWtlZmlsZSBiL3Rvb2xzL3BjaS9NYWtlZmlsZQ0KPiBpbmRleCA0NmU0YzJm
-MzE4YzkuLmY2NGRhODE3YmMwMyAxMDA2NDQNCj4gLS0tIGEvdG9vbHMvcGNpL01ha2VmaWxlDQo+
-ICsrKyBiL3Rvb2xzL3BjaS9NYWtlZmlsZQ0KPiBAQCAtMTQsNyArMTQsNyBAQCBNQUtFRkxBR1Mg
-Kz0gLXINCj4gIA0KPiAgQ0ZMQUdTICs9IC1PMiAtV2FsbCAtZyAtRF9HTlVfU09VUkNFIC1JJChP
-VVRQVVQpaW5jbHVkZQ0KPiAgDQo+IC1BTExfVEFSR0VUUyA6PSBwY2l0ZXN0IHBjaXRlc3Quc2gN
-Cj4gK0FMTF9UQVJHRVRTIDo9IHBjaXRlc3QNCj4gIEFMTF9QUk9HUkFNUyA6PSAkKHBhdHN1YnN0
-ICUsJChPVVRQVVQpJSwkKEFMTF9UQVJHRVRTKSkNCj4gIA0KPiAgYWxsOiAkKEFMTF9QUk9HUkFN
-UykNCj4gQEAgLTQ0LDcgKzQ0LDcgQEAgY2xlYW46DQo+ICANCj4gIGluc3RhbGw6ICQoQUxMX1BS
-T0dSQU1TKQ0KPiAgCWluc3RhbGwgLWQgLW0gNzU1ICQoREVTVERJUikkKGJpbmRpcik7CQlcDQo+
-IC0JZm9yIHByb2dyYW0gaW4gJChBTExfUFJPR1JBTVMpOyBkbwkJXA0KPiArCWZvciBwcm9ncmFt
-IGluICQoQUxMX1BST0dSQU1TKSBwY2l0ZXN0LnNoOyBkbwlcDQo+ICAJCWluc3RhbGwgJCRwcm9n
-cmFtICQoREVTVERJUikkKGJpbmRpcik7CVwNCj4gIAlkb25lDQo+ICANCg0KDQo=
+On Tue, 14 May 2019 at 10:08, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Mon, May 13, 2019 at 9:23 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > This series enables support for hierarchical CPU arrangement, managed by PSCI
+> > for ARM/ARM64. It's based on using the generic PM domain (genpd), which
+> > recently was extended to manage devices belonging to CPUs.
+>
+> ACK for the patches touching cpuidle in this series (from the
+> framework perspective), but I'm assuming it to be taken care of by
+> ARM/ARM64 maintainers.
+
+Thanks for the ack! Yes, this is for PSCI/ARM maintainers.
+
+BTW, apologize for sending this in the merge window, but wanted to
+take the opportunity for people to have a look before OSPM Pisa next
+week.
+
+Kind regards
+Uffe
