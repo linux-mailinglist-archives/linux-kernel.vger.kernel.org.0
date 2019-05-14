@@ -2,203 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0BB11C925
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 15:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34CCE1C897
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 14:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726148AbfENNCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 09:02:51 -0400
-Received: from 5.mo179.mail-out.ovh.net ([46.105.43.140]:33474 "EHLO
-        5.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfENNCv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 09:02:51 -0400
-X-Greylist: delayed 1796 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 May 2019 09:02:47 EDT
-Received: from player688.ha.ovh.net (unknown [10.109.159.69])
-        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 86DD31311D3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 14:25:34 +0200 (CEST)
-Received: from kaod.org (deibp9eh1--blueice1n4.emea.ibm.com [195.212.29.166])
-        (Authenticated sender: groug@kaod.org)
-        by player688.ha.ovh.net (Postfix) with ESMTPSA id 5B3775A70662;
-        Tue, 14 May 2019 12:25:26 +0000 (UTC)
-Date:   Tue, 14 May 2019 14:25:24 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>
-Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
-Message-ID: <20190514142524.76c0417f@bahia.lan>
-In-Reply-To: <87sgths2zf.fsf@concordia.ellerman.id.au>
-References: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
-        <962c1d9e-719c-cb82-cabc-1cf619e1510b@ozlabs.ru>
-        <20190429123659.00c0622b@bahia.lan>
-        <20190513135606.7d9a0902@bahia.lan>
-        <87sgths2zf.fsf@concordia.ellerman.id.au>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1726394AbfENM0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 08:26:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbfENM0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 May 2019 08:26:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F22F20850;
+        Tue, 14 May 2019 12:26:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557836781;
+        bh=hDe8JK/intQfOgS2b4KY347OHuGJn9Hop4XrcrgRJvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T1KVaVowgWw/jLckCJWk4UztYLZ0Ux/jCD/9flMC0t2Jk/t9M56poFrSMtBpPoYFn
+         vg5DtXUjI0lD4jyBccSrRNNMRSzAh72MLdhnbv2epiWCt8rVomQ+u5dGXzyy/2OuNo
+         TjTQbJHvVg7bZBP+QHf5JJJXgrb+Z8GUiNIBlwA8=
+Date:   Tue, 14 May 2019 14:26:18 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Esben Haabendal <esben@haabendal.dk>, linux-serial@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] serial: 8250: Add support for 8250/16550 as MFD
+ function
+Message-ID: <20190514122618.GA18859@kroah.com>
+References: <20190426084038.6377-1-esben@geanix.com>
+ <20190426084038.6377-3-esben@geanix.com>
+ <20190507114905.GB29524@dell>
+ <87o94ejwrx.fsf@haabendal.dk>
+ <20190507133844.GA6194@dell>
+ <87bm05mpmx.fsf@haabendal.dk>
+ <20190514104741.GO4319@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 12951789578739882417
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrleeigdehvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514104741.GO4319@dell>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 May 2019 21:13:40 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
-
-> Greg Kurz <groug@kaod.org> writes:
-> > Michael,
-> >
-> > Any comments on this patch ? Should I repost with a shorter comment
-> > as suggested by Alexey ?  
+On Tue, May 14, 2019 at 11:47:41AM +0100, Lee Jones wrote:
+> On Tue, 14 May 2019, Esben Haabendal wrote:
 > 
-> No the longer comment seems fine to me.
+> > Lee Jones <lee.jones@linaro.org> writes:
+> > 
+> > > On Tue, 07 May 2019, Esben Haabendal wrote:
+> > >
+> > >> Lee Jones <lee.jones@linaro.org> writes:
+> > >> 
+> > >> > On Fri, 26 Apr 2019, Esben Haabendal wrote:
+> > >> >
+> > >> >> The serial8250-mfd driver is for adding 8250/16550 UART ports as functions
+> > >> >> to an MFD driver.
+> > >> >> 
+> > >> >> When calling mfd_add_device(), platform_data should be a pointer to a
+> > >> >> struct plat_serial8250_port, with proper settings like .flags, .type,
+> > >> >> .iotype, .regshift and .uartclk.  Memory (or ioport) and IRQ should be
+> > >> >> passed as cell resources.
+> > >> >
+> > >> > What?  No, please!
+> > >> >
+> > >> > If you *must* create a whole driver just to be able to use
+> > >> > platform_*() helpers (which I don't think you should), then please
+> > >> > call it something else.  This doesn't have anything to do with MFD.
+> > >> 
+> > >> True.
+> > >> 
+> > >> I really don't think it is a good idea to create a whole driver just to
+> > >> be able to use platform_get_*() helpers.  And if I am forced to do this,
+> > >> because I am unable to convince Andy to improve the standard serial8250
+> > >> driver to support that, it should be called MFD.  The driver would be
+> > >
+> > > I assume you mean "shouldn't"?
+> > 
+> > Of-course.
+> > 
+> > >> generally usable for all usecases where platform_get_*() works.
+> > >> 
+> > >> I don't have any idea what to call such a driver.  It really would just
+> > >> be a fork of the current serial8250 driver, just allowing use of
+> > >> platform_get_*(), supporting exactly the same hardware.
+> > >> 
+> > >> I am still hoping that we can find a way to improve serial8250 to be
+> > >> usable in these cases.
+> > >
+> > > Me too.
+> > 
+> > Unfortunately, I don't seem to be able to convince Andy to accept
+> > something like that.
 > 
-> I'm not a big fan of the patch, it's basically a hack :)
+> Andy is not he Maintainer.
 > 
+> What are Greg and Jiri's opinions?
 
-Yeah :)
+I've been ignoring all of this at the moment because of the 5.2-rc merge
+window.  I'll look at it after -rc1 is out.
 
-> But for a backportable fix I guess it is OK.
-> 
-> I would be happier though if we eventually fix up the code to do the
-> refcounting properly.
-> 
+thanks,
 
-I had started to do just that before deciding to go for the backportable
-hack. Should I rebase the other patches I have on top of this patch and
-repost the whole thing, so that we have both the ugly fix for stable and
-the pretty one for 5.2 ?
-
-Cheers,
-
---
-Greg
-
-> cheers
-> 
-> > On Mon, 29 Apr 2019 12:36:59 +0200
-> > Greg Kurz <groug@kaod.org> wrote:  
-> >> On Mon, 29 Apr 2019 16:01:29 +1000
-> >> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> >>   
-> >> > On 20/04/2019 01:34, Greg Kurz wrote:    
-> >> > > Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
-> >> > > has the effect of incrementing the reference count of the PCI device, as
-> >> > > explained in drivers/pci/search.c:
-> >> > > 
-> >> > >  * Given a PCI domain, bus, and slot/function number, the desired PCI
-> >> > >  * device is located in the list of PCI devices. If the device is
-> >> > >  * found, its reference count is increased and this function returns a
-> >> > >  * pointer to its data structure.  The caller must decrement the
-> >> > >  * reference count by calling pci_dev_put().  If no device is found,
-> >> > >  * %NULL is returned.
-> >> > > 
-> >> > > Nothing was done to call pci_dev_put() and the reference count of GPU and
-> >> > > NPU PCI devices rockets up.
-> >> > > 
-> >> > > A natural way to fix this would be to teach the callers about the change,
-> >> > > so that they call pci_dev_put() when done with the pointer. This turns
-> >> > > out to be quite intrusive, as it affects many paths in npu-dma.c,
-> >> > > pci-ioda.c and vfio_pci_nvlink2.c.      
-> >> > 
-> >> > 
-> >> > afaict this referencing is only done to protect the current traverser
-> >> > and what you've done is actually a natural way (and the generic
-> >> > pci_get_dev_by_id() does exactly the same), although this looks a bit weird.
-> >> >     
-> >> 
-> >> Not exactly the same: pci_get_dev_by_id() always increment the refcount
-> >> of the returned PCI device. The refcount is only decremented when this
-> >> device is passed to pci_get_dev_by_id() to continue searching.
-> >> 
-> >> That means that the users of the PCI device pointer returned by
-> >> pci_get_dev_by_id() or its exported variants pci_get_subsys(),
-> >> pci_get_device() and pci_get_class() do handle the refcount. They
-> >> all pass the pointer to pci_dev_put() or continue the search,
-> >> which calls pci_dev_put() internally.
-> >> 
-> >> Direct and indirect callers of get_pci_dev() don't care for the
-> >> refcount at all unless I'm missing something.
-> >>   
-> >> >     
-> >> > > Also, the issue appeared in 4.16 and
-> >> > > some affected code got moved around since then: it would be problematic
-> >> > > to backport the fix to stable releases.
-> >> > > 
-> >> > > All that code never cared for reference counting anyway. Call pci_dev_put()
-> >> > > from get_pci_dev() to revert to the previous behavior.      
-> >> > >> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev      
-> >> > from pci_dn")    
-> >> > > Cc: stable@vger.kernel.org # v4.16
-> >> > > Signed-off-by: Greg Kurz <groug@kaod.org>
-> >> > > ---
-> >> > >  arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
-> >> > >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >> > > 
-> >> > > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-> >> > > index e713ade30087..d8f3647e8fb2 100644
-> >> > > --- a/arch/powerpc/platforms/powernv/npu-dma.c
-> >> > > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
-> >> > > @@ -31,9 +31,22 @@ static DEFINE_SPINLOCK(npu_context_lock);
-> >> > >  static struct pci_dev *get_pci_dev(struct device_node *dn)
-> >> > >  {
-> >> > >  	struct pci_dn *pdn = PCI_DN(dn);
-> >> > > +	struct pci_dev *pdev;
-> >> > >  
-> >> > > -	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> >> > > +	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
-> >> > >  					   pdn->busno, pdn->devfn);
-> >> > > +
-> >> > > +	/*
-> >> > > +	 * pci_get_domain_bus_and_slot() increased the reference count of
-> >> > > +	 * the PCI device, but callers don't need that actually as the PE
-> >> > > +	 * already holds a reference to the device.      
-> >> > 
-> >> > Imho this would be just enough.
-> >> > 
-> >> > Anyway,
-> >> > 
-> >> > Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> >> >     
-> >> 
-> >> Thanks !
-> >> 
-> >> I now realize that I forgot to add the --cc option for stable on my stgit
-> >> command line :-\.
-> >> 
-> >> Cc'ing now.
-> >>   
-> >> > 
-> >> > How did you find it? :)
-> >> >     
-> >> 
-> >> While reading code to find some inspiration for OpenCAPI passthrough. :)
-> >> 
-> >> I saw the following in vfio_pci_ibm_npu2_init():
-> >> 
-> >> 	if (!pnv_pci_get_gpu_dev(vdev->pdev))
-> >> 		return -ENODEV;
-> >> 
-> >> and simply followed the function calls.
-> >>   
-> >> >     
-> >> > > Since callers aren't
-> >> > > +	 * aware of the reference count change, call pci_dev_put() now to
-> >> > > +	 * avoid leaks.
-> >> > > +	 */
-> >> > > +	if (pdev)
-> >> > > +		pci_dev_put(pdev);
-> >> > > +
-> >> > > +	return pdev;
-> >> > >  }
-> >> > >  
-> >> > >  /* Given a NPU device get the associated PCI device. */
-> >> > >       
-> >> >     
-> >>   
-
+greg k-h
