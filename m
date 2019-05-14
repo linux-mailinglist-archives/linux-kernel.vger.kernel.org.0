@@ -2,111 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D74461CF3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B521CF53
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 20:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbfENSkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 14:40:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44998 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbfENSkK (ORCPT
+        id S1727506AbfENSrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 14:47:08 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45003 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfENSrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 14:40:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z16so9035179pgv.11
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 11:40:09 -0700 (PDT)
+        Tue, 14 May 2019 14:47:07 -0400
+Received: by mail-oi1-f196.google.com with SMTP id z65so5707489oia.11;
+        Tue, 14 May 2019 11:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OcHRjuNh3iuHe2OOeqLEpCHwon6We01Vth7kruZts9w=;
-        b=oRNJMjbZONAB6lTSayFLjDb64FvQxZvxjxGC6/CKO2ajYShAfTvLkD9w9PaWC6ZucH
-         +vlA7pUNbPaEblItuWqIla63p71/OmY69f1MIUvfvk80kREbcjkIS13egnrTlu4hXU6D
-         sHLU9Ehp5dF7P7mVXByw/aPdWAuH6bb8FrmT8=
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b3wKV2yvyhNXBHezd2g3VNLzJd77vsTJn5OuHUZElkE=;
+        b=FSuDnTxaDbNRibS/cl1V/LWshcY/nC5P8Wwb7sEKTQIA9N2sXN/aZ6qS/B9N6ZZYli
+         iSBFSvSmeeYzin0eC/VMw0QMTnlgL6WK1P6ZSSX7g7RIkiQlQ+zVRYyuU+L6c1KQtOUm
+         H1eZ1Jhgv6syoz7DG5/dU3a6wKSu4JpdNY90IRtdlh8byKBHrEgvzB8s0C2DAGu7u3g7
+         ecabg5KjKS48Qa6iSf+sF7zgW7KHddpTQClz7GvcquLTMtxqN2S6BOGnxIxUWSmrdZru
+         E/VAnuEYZ3NTqFnB3QqeLNELRDkAwZjEk4qOK/laDM+wxE5Day3oWcT4Y4fqgcKRX2gl
+         3A4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OcHRjuNh3iuHe2OOeqLEpCHwon6We01Vth7kruZts9w=;
-        b=GVT589b/q+GAhitmcR5vKbNw192gjNdaTPHyXwlriqgx0gxKoVI36HDoNzc8FnPG+S
-         7GBkIsBQ6rIkqdL1vxj3vF6DXE5QEIQm6qvEJoLYKIouk1wEvcLgyWMkVQuvWyhaDl59
-         1KRYizave1Gj/Iynz5PDoeCkZ3vPQ4N4VKUgrEFHkNVkwV9hRiiqDY3gN/1gFtM6K1+d
-         DDfYZdB4Ea6P6evJo+qY3j2VUyGIpuqH0y2I4d59izPBMPp7NzaOtHLw3A/6Hd9kcjiQ
-         rFC1gZsf7Zvh8476NWmZkTo1aizZcGPpAzG7aUiKTdynLXT9TXCKzI1YroSssvjh0PEs
-         buGA==
-X-Gm-Message-State: APjAAAXGSUM1wCEYEx4EueGy5lfGJR6qwZeFf/lIGHe7lEzUMh9/WJmy
-        pqCn6yxLLUlv0lYg7wiOknDjSA==
-X-Google-Smtp-Source: APXvYqyBf7wHRsbXM+g3mGM7sD2OHe50LO7O4N+pmTyuoJhSbjvQ0kDIHiQ/Be7y7EsTGEMCDe3euQ==
-X-Received: by 2002:a63:5516:: with SMTP id j22mr37051377pgb.370.1557859209357;
-        Tue, 14 May 2019 11:40:09 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id 19sm19182454pgz.24.2019.05.14.11.40.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 11:40:08 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Mark Brown <broonie@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
-        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
-        mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] platform/chrome: cros_ec_spi: Request the SPI thread be realtime
-Date:   Tue, 14 May 2019 11:39:35 -0700
-Message-Id: <20190514183935.143463-4-dianders@chromium.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-In-Reply-To: <20190514183935.143463-1-dianders@chromium.org>
-References: <20190514183935.143463-1-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b3wKV2yvyhNXBHezd2g3VNLzJd77vsTJn5OuHUZElkE=;
+        b=IgNXG6EFCdj+WS+rk+3ba/Rqu39o6lpzKBRJC7XNw6zBDWBycPyS/7hWSUaVGqLu7v
+         NQelS5y8nRnHsvyzfA5mDTwjgs5BDiUsKrZiqlywNguI8HLAENSX5DrQDKZn6YG6NZfO
+         kMnrqYJvdO6kPD71/XpFdShIUTZJy/IJD41Ac+Fh/klxk1fmjTFvy6IZh646yQd9ObVE
+         pm5J9YFGBCXKJ/lcH5vQ/7Jss5fm9ZE/gpxWofKt5ZCCmd+ryuwtf+O7lmg3ZtN5N19a
+         ETcLMSuoADqnCICvV5EH81kJxLKEFKqh2CsVj4B7Kif+H/Fb9b0SunNt9K9AdbVJc+GL
+         Y3lQ==
+X-Gm-Message-State: APjAAAXKs4YDAYKF/hOUcBfAq/0piUTMsycyDhDecA1qCQrhnRz8Sorv
+        ifJzBG/n4wErb+D8U6+/kAHRvsfVfeZfWxQO5Hs=
+X-Google-Smtp-Source: APXvYqyAsqSOHm/4PjG8rmz2z+47hObMZtkODxPLmkZxrCSNCrhSrYuN8g3dNQ1msbyt5tew1NttZ3FWwieMhIJnR2U=
+X-Received: by 2002:aca:ab04:: with SMTP id u4mr3815658oie.15.1557859627031;
+ Tue, 14 May 2019 11:47:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190514135612.30822-1-mjourdan@baylibre.com> <20190514135612.30822-2-mjourdan@baylibre.com>
+In-Reply-To: <20190514135612.30822-2-mjourdan@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 14 May 2019 20:46:56 +0200
+Message-ID: <CAFBinCBm=zJb9Ap3XL03X4LUAPcPQ2u=gJsBhBdHSUXYD5BMpw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] dt-bindings: media: add Amlogic Video Decoder Bindings
+To:     Maxime Jourdan <mjourdan@baylibre.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All currently known ECs in the wild are very sensitive to timing.
-Specifically the ECs are known to drop a transfer if more than 8 ms
-passes from the assertion of the chip select until the transfer
-finishes.
+Hi Maxime,
 
-Let's use the new feature introduced in the patch (spi: Allow SPI
-devices to request the pumping thread be realtime") to request the SPI
-pumping thread be realtime.  This means that if we get shunted off to
-the SPI thread for whatever reason we won't get downgraded to low
-priority.
+On Tue, May 14, 2019 at 3:56 PM Maxime Jourdan <mjourdan@baylibre.com> wrote:
+>
+> Add documentation for the meson vdec dts node.
+thank you for working on this!
 
-NOTES:
-- We still need to keep ourselves as high priority since the SPI core
-  doesn't guarantee that all transfers end up on the pumping thread
-  (in fact, it tries pretty hard to do them in the calling context).
-- If future Chrome OS ECs ever fix themselves to be less sensitive
-  then we could consider adding a property (or compatible string) to
-  not set this property.  For now we need it across the board.
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
----
+[...]
+> +Required properties:
+> +- compatible: value should be different for each SoC family as :
+> +       - GXBB (S905) : "amlogic,gxbb-vdec"
+> +       - GXL (S905X, S905D) : "amlogic,gxl-vdec"
+> +       - GXM (S912) : "amlogic,gxm-vdec"
+> +- reg: base address and size of he following memory-mapped regions :
+> +       - dos
+> +       - esparser
+> +- reg-names: should contain the names of the previous memory regions
+> +- interrupts: should contain the following IRQs:
+> +       - vdec
+> +       - esparser
+> +- interrupt-names: should contain the names of the previous interrupts
+Maxime already mentioned in the RFC version that there may be more
+interrupts in the future. I'm fine with adding the missing ones on
+demand
 
-Changes in v3:
-- Updated description and variable name since we no longer force.
+> +- amlogic,ao-sysctrl: should point to the AOBUS sysctrl node
+my goal is to remove this property at some point and replace it with
+references to the power-domains.
+however, we don't have a power-domain driver for this yet (it's
+somewhere on my TODO-list - it involves splitting the current
+meson-gx-pwrc-vpu into two separate drivers, so we need to do it
+carefully so we don't break HDMI support)
 
-Changes in v2:
-- Renamed variable to "force_rt_transfers".
 
- drivers/platform/chrome/cros_ec_spi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index b89bf11dda64..4f34e2215884 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -765,6 +765,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 
- 	spi->bits_per_word = 8;
- 	spi->mode = SPI_MODE_0;
-+	spi->rt = true;
- 	err = spi_setup(spi);
- 	if (err < 0)
- 		return err;
--- 
-2.21.0.1020.gf2820cf01a-goog
-
+Regards
+Martin
