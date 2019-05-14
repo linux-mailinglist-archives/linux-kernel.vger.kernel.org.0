@@ -2,180 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DA71D049
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871591D04D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 22:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfENUEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 16:04:34 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35213 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfENUEe (ORCPT
+        id S1726261AbfENUG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 16:06:59 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41540 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726107AbfENUG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 16:04:34 -0400
-Received: by mail-qt1-f195.google.com with SMTP id a39so582533qtk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 13:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2wZQ6xWxc+/+0XmEJfXIGreqSfh73KSQ5TKQRQXts58=;
-        b=XtTEYKummlHi//ChjhE1VH9Y1m+spOUTqRcjCQJRhxc1cOI7N8azzbfCUibgdDWADS
-         ANJ79xzwlFSQ0fLTcXSWIliRXwyKYRuzGQXm5iB1VnnPn6rU2FWTyqhcwrJyOaHLGnKz
-         zNjoKmjsnu+PbBx40quKXVbVirwoJpsFDJ1ztemXfL2kARjy8F0n/4hRAWqSHQXr7VPX
-         JQjjQHlDT7kqCaXzSrSyBxLNN6aIsi1WpejQpVm8nK8bG0B/LOaI2BrW28tDmKHC0RF6
-         lZNuZ3/Nbto98YIEfekmGXa2NJuozk/TFBtWRCG6ce3ehpOiRdv8wS/AdhwJ1HCeBHPl
-         Kvvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2wZQ6xWxc+/+0XmEJfXIGreqSfh73KSQ5TKQRQXts58=;
-        b=rAJJSXlunqUDKsrpk7apyF/NFbSUOMdeAXaxh//GQ67F49I1K/1a+F/j4jGdxhMse2
-         zKe9Rmhq5gte3YEpzPSOZZ5OJNGuBcoeC79a3hFL4nElK4R14pILW3b5q/M5TuCOXt61
-         GQEG/HHRvP9Sp8ROQ03v2cQYGGLm8ZBluy5TcX3LLbcafgR1IcnR4DyACuVhYMismI0U
-         4Y3DtGHE0qN3o5tT9Z07Q6CSScdekvQozgd8q03bEDwWdIzi06u7Dqfg+DoCqDDST3Pk
-         eaPpeZ4ya+ypv1pjeoKpqBxSu0Nq+tQGjTjbNaylfyUaTNYlXZxBljx6V3VYzOqEDQty
-         0AAw==
-X-Gm-Message-State: APjAAAXpXtBplEcjR9ZmcZYQPPU7J3nfuGkaTnqhhhqdEHu92l4Gu1wh
-        7miU0hKCquXP40AdqPB4B6qN/b+J7ks=
-X-Google-Smtp-Source: APXvYqwpOfuSsBF6JyzStVV467mNiQVNlv+ojmrBrZb+WJR08SIrxVKs7dbsMkUvqu+ZsUv/kzyf8w==
-X-Received: by 2002:aed:2a25:: with SMTP id c34mr32386158qtd.62.1557864272534;
-        Tue, 14 May 2019 13:04:32 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (179-240-182-78.3g.claro.net.br. [179.240.182.78])
-        by smtp.gmail.com with ESMTPSA id o64sm9422001qke.61.2019.05.14.13.04.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 May 2019 13:04:30 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B9F0C403AD; Tue, 14 May 2019 17:04:24 -0300 (-03)
-Date:   Tue, 14 May 2019 17:04:24 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 09/12] perf record: implement
- -z,--compression_level[=<n>] option
-Message-ID: <20190514200424.GB8945@kernel.org>
-References: <12cce142-6238-475b-b9aa-236531c12c2b@linux.intel.com>
- <9ff06518-ae63-a908-e44d-5d9e56dd66d9@linux.intel.com>
+        Tue, 14 May 2019 16:06:59 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4EJwJGb001902;
+        Tue, 14 May 2019 13:05:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=nAvEob6Kh3imkf/jkDHpX8X0Pv+7hR1jBzS4jh+zXhg=;
+ b=AI5EJ0PjpAn0WpxTLN4yXat5kceFTVPe7QaKQSJeQLv8uUNNdNQZIJqVr6UZaWzI9dFm
+ VxH/gcc6bONw8F2UGlH0D/sRTGu/aASdOcAcl/X/FnztKflroV2fvLst8udTFyLPoGLr
+ LX79H+IScBBo8JyPglVk7qDPiQHfUrtNNSc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sfy23sdrj-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 14 May 2019 13:05:59 -0700
+Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
+ ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 14 May 2019 13:05:59 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 14 May 2019 13:05:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nAvEob6Kh3imkf/jkDHpX8X0Pv+7hR1jBzS4jh+zXhg=;
+ b=OFGnSFKLrl+vrJLTNfKuPeI79meaMHFTGvGreLRTu9AxVUvwFoqcqodm+DOU+YBLVviolmiKV1bCPNjqULA8HQtTR+uBKREv92/oRH4UlEL7E+SaDYUNumUA3u/mxw4fzyRnYHQ3QvzYID56b93g0K+Digjr33OcU6ryT3vIFCQ=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2791.namprd15.prod.outlook.com (20.179.158.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.22; Tue, 14 May 2019 20:05:57 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1878.024; Tue, 14 May 2019
+ 20:05:57 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Matteo Croce <mcroce@redhat.com>
+CC:     "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: WARNING: CPU: 1 PID: 228 at kernel/cgroup/cgroup.c:5929
+Thread-Topic: WARNING: CPU: 1 PID: 228 at kernel/cgroup/cgroup.c:5929
+Thread-Index: AQHVCoqk1mZJtzvIAk+xNbeMmTPUdKZqj/2AgAB4sACAAAMbgA==
+Date:   Tue, 14 May 2019 20:05:57 +0000
+Message-ID: <20190514200553.GF12629@tower.DHCP.thefacebook.com>
+References: <CAGnkfhwMSNm4uSkcGtqaGmYanfNK9rx6m2a3TqJh08YitbGAUg@mail.gmail.com>
+ <20190514194249.GD12629@tower.DHCP.thefacebook.com>
+ <CAGnkfhxwP1SwJLv2E-6Xd7ZXN8XUPRyXkM=tB0Z=jre8Rij6=A@mail.gmail.com>
+In-Reply-To: <CAGnkfhxwP1SwJLv2E-6Xd7ZXN8XUPRyXkM=tB0Z=jre8Rij6=A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR01CA0037.prod.exchangelabs.com (2603:10b6:300:101::23)
+ To BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::298]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bc7612bc-db73-4f36-5152-08d6d8a793b3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB2791;
+x-ms-traffictypediagnostic: BYAPR15MB2791:
+x-microsoft-antispam-prvs: <BYAPR15MB2791F392A573A8431C33BA24BE080@BYAPR15MB2791.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0037FD6480
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(366004)(376002)(39860400002)(136003)(199004)(189003)(6486002)(486006)(54906003)(11346002)(446003)(7736002)(476003)(186003)(66946007)(33656002)(6916009)(2906002)(99286004)(9686003)(6512007)(46003)(6436002)(68736007)(316002)(73956011)(66476007)(66556008)(64756008)(66446008)(53936002)(229853002)(4326008)(81156014)(558084003)(14454004)(5660300002)(71190400001)(81166006)(305945005)(8676002)(478600001)(86362001)(76176011)(8936002)(25786009)(52116002)(1076003)(6116002)(386003)(14444005)(256004)(6506007)(71200400001)(102836004)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2791;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ALoi8StZIjTHD5UY2dqCAyxYAkQSd6Qw7sdj6zDyxUfulTocho/+Aj2Swre35tyIgdVVWr6j7BABgETHS32Y6aPHdv66CWFEa5cpKAJf2U1M8xJYVf1dKSTZwE1OJFgzamrlWmVGLepztEQmbv/WLTGrLAFYett9jRvSiGiKpiPrJg6YF6FiQq0/+LjxPBA4IdHvkzbgqFJm4EVn6meQzKObOfG9qgJxVLke9pBEo/xD/wRPw3u6IGK+oN1oHeYzByjxLNTZy1ofXk0v81QSBlxSl1i2femz9HCwOGmQf6Aqrl/D2t7p0bX1raN1m9zAkec/GnL3GfuAGiEdk4kbwmMJ+O5929a9t+ufwDYUrB7VxzvkugE55VsOcdzbAfGDPRc8Q7sANkGJ8qsdlkoFe9uqMe9L2Hm0v9mzG+Ij1DQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <84E68961D69B6B4FB14640807D9BDB97@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ff06518-ae63-a908-e44d-5d9e56dd66d9@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc7612bc-db73-4f36-5152-08d6d8a793b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2019 20:05:57.0993
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2791
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=679 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905140134
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 18, 2019 at 08:44:42PM +0300, Alexey Budankov escreveu:
-> 
-> Implemented -z,--compression_level[=<n>] option that enables compression
-> of mmaped kernel data buffers content in runtime during perf record
-> mode collection. Default option value is 1 (fastest compression).
-> 
-> Compression overhead has been measured for serial and AIO streaming
-> when profiling matrix multiplication workload:
-> 
->     -------------------------------------------------------------
->     | SERIAL			  | AIO-1                       |
-> ----------------------------------------------------------------|
+On Tue, May 14, 2019 at 09:54:46PM +0200, Matteo Croce wrote:
+> Hi Roman,
+>=20
+> yes, this one fixes it.
+>=20
+> --=20
+> Matteo Croce
+> per aspera ad upstream
 
-Please don't have lines starting with --- in the cset comment log
-message, breaks scripts, fixing it up now.
+Thank you for the confirmation!
 
-- Arnaldo
+The patch will be merged upstream soon.
 
-> |-z | OVH(x) | ratio(x) size(MiB) | OVH(x) | ratio(x) size(MiB) |
-> |---------------------------------------------------------------|
-> | 0 | 1,00   | 1,000    179,424   | 1,00   | 1,000    187,527   |
-> | 1 | 1,04   | 8,427    181,148   | 1,01   | 8,474    188,562   |
-> | 2 | 1,07   | 8,055    186,953   | 1,03   | 7,912    191,773   |
-> | 3 | 1,04   | 8,283    181,908   | 1,03   | 8,220    191,078   |
-> | 5 | 1,09   | 8,101    187,705   | 1,05   | 7,780    190,065   |
-> | 8 | 1,05   | 9,217    179,191   | 1,12   | 6,111    193,024   |
-> -----------------------------------------------------------------
-> 
-> OVH = (Execution time with -z N) / (Execution time with -z 0)
-> 
-> ratio - compression ratio
-> size  - number of bytes that was compressed
-> 
-> 	size ~= trace size x ratio
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  tools/perf/Documentation/perf-record.txt |  5 +++++
->  tools/perf/builtin-record.c              | 25 ++++++++++++++++++++++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index 18fceb49434e..0567bacc2ae6 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -471,6 +471,11 @@ Also at some cases executing less trace write syscalls with bigger data size can
->  shorter than executing more trace write syscalls with smaller data size thus lowering
->  runtime profiling overhead.
->  
-> +-z::
-> +--compression-level[=n]::
-> +Produce compressed trace using specified level n (default: 1 - fastest compression,
-> +22 - smallest trace)
-> +
->  --all-kernel::
->  Configure all used events to run in kernel space.
->  
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 2e083891affa..7258f2964a3b 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -440,6 +440,26 @@ static int record__mmap_flush_parse(const struct option *opt,
->  	return 0;
->  }
->  
-> +#ifdef HAVE_ZSTD_SUPPORT
-> +static unsigned int comp_level_default = 1;
-> +static int record__parse_comp_level(const struct option *opt,
-> +				    const char *str,
-> +				    int unset)
-> +{
-> +	struct record_opts *opts = (struct record_opts *)opt->value;
-> +
-> +	if (unset) {
-> +		opts->comp_level = 0;
-> +	} else {
-> +		if (str)
-> +			opts->comp_level = strtol(str, NULL, 0);
-> +		if (!opts->comp_level)
-> +			opts->comp_level = comp_level_default;
-> +	}
-> +
-> +	return 0;
-> +}
-> +#endif
->  static unsigned int comp_level_max = 22;
->  
->  static int record__comp_enabled(struct record *rec)
-> @@ -2169,6 +2189,11 @@ static struct option __record_options[] = {
->  	OPT_CALLBACK(0, "affinity", &record.opts, "node|cpu",
->  		     "Set affinity mask of trace reading thread to NUMA node cpu mask or cpu of processed mmap buffer",
->  		     record__parse_affinity),
-> +#ifdef HAVE_ZSTD_SUPPORT
-> +	OPT_CALLBACK_OPTARG('z', "compression-level", &record.opts, &comp_level_default,
-> +		     "n", "Produce compressed trace using specified level (default: 1 - fastest compression, 22 - smallest trace)",
-> +		     record__parse_comp_level),
-> +#endif
->  	OPT_END()
->  };
->  
-> -- 
-> 2.20.1
-
--- 
-
-- Arnaldo
+Thanks!
