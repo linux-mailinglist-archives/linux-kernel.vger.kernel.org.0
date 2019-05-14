@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25DAA1C54C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499581C53D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2019 10:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfENIsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 04:48:08 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:55472 "EHLO
+        id S1726621AbfENIrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 04:47:43 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:4294 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725916AbfENIrj (ORCPT
+        with ESMTP id S1726449AbfENIrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 04:47:39 -0400
-X-UUID: bf7c4763819d42ffbce3bc351accec92-20190514
-X-UUID: bf7c4763819d42ffbce3bc351accec92-20190514
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Tue, 14 May 2019 04:47:41 -0400
+X-UUID: 96eaa1e971b94ae6bcaac495a40ffc84-20190514
+X-UUID: 96eaa1e971b94ae6bcaac495a40ffc84-20190514
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2021548160; Tue, 14 May 2019 16:47:34 +0800
+        with ESMTP id 1430199521; Tue, 14 May 2019 16:47:35 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 14 May 2019 16:47:30 +0800
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 14 May 2019 16:47:33 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 14 May 2019 16:47:28 +0800
+ Transport; Tue, 14 May 2019 16:47:32 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -42,9 +42,9 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-mediatek@lists.infradead.org>,
         Biju Das <biju.das@bp.renesas.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v5 2/6] dt-bindings: usb: add binding for Type-B GPIO connector driver
-Date:   Tue, 14 May 2019 16:47:19 +0800
-Message-ID: <1557823643-8616-3-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v5 3/6] dt-bindings: usb: mtu3: add properties about USB Role Switch
+Date:   Tue, 14 May 2019 16:47:20 +0800
+Message-ID: <1557823643-8616-4-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
@@ -56,78 +56,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's used to support dual role switch via GPIO when use Type-B
-receptacle, typically the USB ID pin is connected to an input
-GPIO pin
+Now the USB Role Switch is supported, so add properties about it,
+and modify some description related.
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v5 changes:
- 1. treat type-B connector as child device of USB controller's, but not
-    as a separate virtual device, suggested by Rob
- 2. put connector's port node under connector node, suggested by Rob
+v5 changes
+ 1. modify decription about extcon and vbus-supply properties
+ 2. make this patch depend on [1]
 
-v4 no changes
+ [1]: [v3] dt-binding: usb: add usb-role-switch property
+      https://patchwork.kernel.org/patch/10934835/
 
-v3 changes:
- 1. treat type-B connector as a virtual device, but not child device of
-    USB controller's
+v4: no changes
+v3: no changes
 
 v2 changes:
-  1. new patch to make binding clear suggested by Hans
+  1. fix typo
+  2. refer new binding about connector property
 ---
- .../bindings/usb/typeb-conn-gpio.txt          | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
+ .../devicetree/bindings/usb/mediatek,mtu3.txt          | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt b/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
-new file mode 100644
-index 000000000000..20dd3499a348
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
-@@ -0,0 +1,42 @@
-+USB Type-B GPIO Connector
-+
-+This is used to switch dual role mode from the USB ID pin connected to
-+an input GPIO pin.
-+
-+Required properties:
-+- compatible : should include "linux,typeb-conn-gpio" and "usb-b-connector".
-+- id-gpios, vbus-gpios : either one of them must be present, and both
-+	can be present as well.
-+- vbus-supply : can be present if needed when supports dual role mode or
-+	host mode.
-+	see connector/usb-connector.txt
-+
-+Sub-nodes:
-+- port : should be present.
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+index 3382b5cb471d..3a8300205cdb 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+@@ -28,8 +28,13 @@ Optional properties:
+ 	parent's address space
+  - extcon : external connector for vbus and idpin changes detection, needed
+ 	when supports dual-role mode.
++	it's considered valid for compatibility reasons, not allowed for
++	new bindings, and use "usb-role-switch" property instead.
+  - vbus-supply : reference to the VBUS regulator, needed when supports
+ 	dual-role mode.
++	it's considered valid for compatibility reasons, not allowed for
++	new bindings, and put into a usb-connector node.
++	see connector/usb-connector.txt.
+  - pinctrl-names : a pinctrl state named "default" is optional, and need be
+ 	defined if auto drd switch is enabled, that means the property dr_mode
+ 	is set as "otg", and meanwhile the property "mediatek,enable-manual-drd"
+@@ -39,6 +44,8 @@ Optional properties:
+ 
+  - maximum-speed : valid arguments are "super-speed", "high-speed" and
+ 	"full-speed"; refer to usb/generic.txt
++ - usb-role-switch : use USB Role Switch to support dual-role switch, but
++	not extcon; see usb/generic.txt.
+  - enable-manual-drd : supports manual dual-role switch via debugfs; usually
+ 	used when receptacle is TYPE-A and also wants to support dual-role
+ 	mode.
+@@ -61,6 +68,9 @@ The xhci should be added as subnode to mtu3 as shown in the following example
+ if host mode is enabled. The DT binding details of xhci can be found in:
+ Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+ 
++The port would be added as subnode if use "usb-role-switch" property.
 +	see graph.txt
 +
-+Example:
-+
-+&mtu3 {
-+	status = "okay";
-+
-+	connector {
-+		compatible = "linux,typeb-conn-gpio", "usb-b-connector";
-+		label = "micro-USB";
-+		type = "micro";
-+		id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
-+		vbus-supply = <&usb_p0_vbus>;
-+
-+		port {
-+			bconn_ep: endpoint@0 {
-+				remote-endpoint = <&usb_role_sw>;
-+			};
-+		};
-+	};
-+
-+	port {
-+		usb_role_sw: endpoint@0 {
-+			remote-endpoint = <&bconn_ep>;
-+		};
-+	};
-+};
+ Example:
+ ssusb: usb@11271000 {
+ 	compatible = "mediatek,mt8173-mtu3";
 -- 
 2.21.0
 
