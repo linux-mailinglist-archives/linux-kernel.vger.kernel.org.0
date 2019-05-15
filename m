@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01C261F2BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4963C1F3CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfEOLKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:10:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43386 "EHLO mail.kernel.org"
+        id S1727450AbfEOLAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbfEOLJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:09:57 -0400
+        id S1726896AbfEOLAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A23BD21473;
-        Wed, 15 May 2019 11:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C51C21743;
+        Wed, 15 May 2019 11:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918597;
-        bh=l4JtLHfLDj9majz6351VQqqQ6ALmlPCCirmKccmeIso=;
+        s=default; t=1557918022;
+        bh=W25fDk90CE/VcUeJCvl3ivWPtFGrBDi6Fs+1ehglUec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gnYCzIrttodkOwkdwktDBXYtz+cmhMH/bPJrqHGH9vWD526ZRvxqmBGXfTfeoRcGH
-         YeRuFm5qSH/Kuorlyff1uQwxHX7B1snhyhFYXo6P7hR/VJtLjWwqzepP4b7QnQa3n/
-         1rgyCve0E99CJ3gOIFnFAIeI6nMkBtK+yl9jATlk=
+        b=c6zrp7vxIvQB5s0KkEoz1hf7Oes2kJ5Ma1lOSE6Aaqo6pJ2pYdbTjsvtpFkPbytp2
+         HXoLjjCwwuTUf26jcHbYM95gIU8ssPwlsII5sEkE2dnQMj5TMuXFKlKrDD4gNXR2Aq
+         KRaEjoFV8gCL4K6+oj9dywiEYUIMvxW/w8P/jeBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiang Biao <jiang.biao2@zte.com.cn>,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        dwmw2@amazon.co.uk, konrad.wilk@oracle.com, bp@suse.de,
-        zhong.weidong@zte.com.cn, Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 192/266] x86/speculation: Remove SPECTRE_V2_IBRS in enum spectre_v2_mitigation
-Date:   Wed, 15 May 2019 12:54:59 +0200
-Message-Id: <20190515090729.438146456@linuxfoundation.org>
+        stable@vger.kernel.org, Mukesh Ojha <mojha@codeaurora.org>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 3.18 23/86] usb: u132-hcd: fix resource leak
+Date:   Wed, 15 May 2019 12:55:00 +0200
+Message-Id: <20190515090647.685523125@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiang Biao <jiang.biao2@zte.com.cn>
+[ Upstream commit f276e002793cdb820862e8ea8f76769d56bba575 ]
 
-commit d9f4426c73002957be5dd39936f44a09498f7560 upstream.
+if platform_driver_register fails, cleanup the allocated resource
+gracefully.
 
-SPECTRE_V2_IBRS in enum spectre_v2_mitigation is never used. Remove it.
-
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Cc: dwmw2@amazon.co.uk
-Cc: konrad.wilk@oracle.com
-Cc: bp@suse.de
-Cc: zhong.weidong@zte.com.cn
-Link: https://lkml.kernel.org/r/1531872194-39207-1-git-send-email-jiang.biao2@zte.com.cn
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/x86/include/asm/nospec-branch.h |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/host/u132-hcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -169,7 +169,6 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
--	SPECTRE_V2_IBRS,
- 	SPECTRE_V2_IBRS_ENHANCED,
- };
+diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+index ab5128755672..3d9ce725d1df 100644
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -3234,6 +3234,9 @@ static int __init u132_hcd_init(void)
+ 	printk(KERN_INFO "driver %s\n", hcd_name);
+ 	workqueue = create_singlethread_workqueue("u132");
+ 	retval = platform_driver_register(&u132_platform_driver);
++	if (retval)
++		destroy_workqueue(workqueue);
++
+ 	return retval;
+ }
  
+-- 
+2.19.1
+
 
 
