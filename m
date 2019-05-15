@@ -2,184 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C312B1F1D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC871F1DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731509AbfEOLzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:55:49 -0400
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:32898 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731132AbfEOLzq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:55:46 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id D738C2E0ABC;
-        Wed, 15 May 2019 14:55:42 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 7Uaf6EnKr8-tgsS7u6u;
-        Wed, 15 May 2019 14:55:42 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1557921342; bh=CfT2mw9Voryfx7z4pzvbGxS8fdbuS8Bjj6c0PWDezKs=;
-        h=Message-ID:Date:To:From:Subject;
-        b=J2Ynm2oDP1Lw2/V1Y9ufeN0W22FUMXnolWMJrZE6QZQ3N9yRRA+POCOF3gWyPv2d7
-         JlSLIwIdfa3ZsjusBfq51I9nYvXGu0NIorP9fsPGzs+NUcDwaazaG0SrYIc13KDJE9
-         AgFvJ6E+avYNVjR2T1fMO4kxaFzu/iFhiWAqq5MY=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ed19:3833:7ce1:2324])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id GGfHxKOueD-tglO5KqC;
-        Wed, 15 May 2019 14:55:42 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH RFC] proc/meminfo: add NetBuffers counter for socket buffers
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Date:   Wed, 15 May 2019 14:55:41 +0300
-Message-ID: <155792134187.1641.3858215257559626632.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
+        id S1728671AbfEOL4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:56:30 -0400
+Received: from mail-eopbgr140041.outbound.protection.outlook.com ([40.107.14.41]:1606
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730720AbfEOL41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:56:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9czvIIreUmdJTxciZdE7mshvJdk9XLtrT/Jn7tGL0uI=;
+ b=kCWf423Nwn06vX71OCg+pAwbtFA+jwXwOcY4n7jSdG8Te2f6uc9xQhX7ReG5s4Me3QrZ8/seATWOhV8UBthPZrcLG9RIqLAzCY52+BV8abFVj/gUJenEaCHp690rQZJWXqIxFQDhpUv+0yiUZ/+bBDcmqNvKJShe32rNTrmZ2xs=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3723.eurprd04.prod.outlook.com (52.134.72.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 11:56:23 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d%2]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 11:56:23 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+CC:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V2 1/2] soc: imx: Add SCU SoC info driver support
+Thread-Topic: [PATCH V2 1/2] soc: imx: Add SCU SoC info driver support
+Thread-Index: AQHVCvixb1MFrIDHlECOalYM+lyDeaZsEfMAgAACb0A=
+Date:   Wed, 15 May 2019 11:56:23 +0000
+Message-ID: <DB3PR0402MB3916FA535853AE7C0438FF8AF5090@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1557908823-11349-1-git-send-email-Anson.Huang@nxp.com>
+ <CAEnQRZAL4BuHP8MDDBfOXTcub8LVdZ-CyZxdzt-5dseVjMMDQA@mail.gmail.com>
+In-Reply-To: <CAEnQRZAL4BuHP8MDDBfOXTcub8LVdZ-CyZxdzt-5dseVjMMDQA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f50f54a2-b327-4a5d-b5d5-08d6d92c5a4c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3723;
+x-ms-traffictypediagnostic: DB3PR0402MB3723:
+x-microsoft-antispam-prvs: <DB3PR0402MB3723AF7FC10265086C21C44FF5090@DB3PR0402MB3723.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2201;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(136003)(366004)(13464003)(189003)(199004)(76176011)(26005)(81166006)(6506007)(81156014)(7736002)(305945005)(8936002)(66446008)(99286004)(68736007)(53546011)(33656002)(8676002)(7696005)(186003)(76116006)(2906002)(52536014)(5660300002)(102836004)(73956011)(66946007)(44832011)(486006)(476003)(446003)(11346002)(71200400001)(71190400001)(256004)(66476007)(229853002)(6116002)(55016002)(6436002)(316002)(3846002)(478600001)(14454004)(66556008)(64756008)(4326008)(54906003)(6916009)(7416002)(9686003)(74316002)(53936002)(6246003)(25786009)(86362001)(66066001)(15866825006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3723;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6BQvf8T4pqJorPKbRAE+arlMKPG6wo8Jbqs5ETeye9Vmg/aORLSD5VSoMB+fugD3W5OdrqzieoExh4J8LD7S5bxuoqwyY7LCrApoLSuqjoU4NUTqiq06MRzlAdPCpVocPnGElC+4zFTXOfoXPockHbYDFm1TlfhlAvQEpjzbD0o6yBtAo7zL+mqX2o+vrU3Te9Lye3Yg9ORZj5PfttjlrMAszwwTZMA65T44t9ShvDubUTrTlmf7VU0GrUGrmrXZPRKTfgAEwTOpC9lgXWWFcEsFQhWI6PkfGfMXk7iHdecgcWV2tjUXXlv185l4szr9e0JPzrY2KeQF0ls0O2mANucbBtfYzWhHIigpRlwQCxOd3ntXrmjdypLAqUQU6xv3hG+WwnyKgPfL8JawIo0rWvw9ksDEew7CFJmL/Tz6/bw=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f50f54a2-b327-4a5d-b5d5-08d6d92c5a4c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 11:56:23.5328
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3723
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Socket buffers always were dark-matter that lives by its own rules.
-This patch adds line NetBuffers that exposes most common kinds of them.
-
-TCP and UDP are most important species.
-SCTP is added as example of modular protocol.
-UNIX have no memory counter for now, should be easy to add.
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- fs/proc/meminfo.c  |    5 ++++-
- include/linux/mm.h |    6 ++++++
- mm/page_alloc.c    |    3 ++-
- net/core/sock.c    |   20 ++++++++++++++++++++
- net/sctp/socket.c  |    2 +-
- 5 files changed, 33 insertions(+), 3 deletions(-)
-
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 7bc14716fc5d..0ee2300a916d 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -41,6 +41,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	unsigned long sreclaimable, sunreclaim, misc_reclaimable;
- 	unsigned long kernel_stack_kb, page_tables, percpu_pages;
- 	unsigned long anon_pages, file_pages, swap_cached;
-+	unsigned long net_buffers;
- 	long kernel_misc;
- 	int lru;
- 
-@@ -66,12 +67,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	kernel_stack_kb = global_zone_page_state(NR_KERNEL_STACK_KB);
- 	page_tables = global_zone_page_state(NR_PAGETABLE);
- 	percpu_pages = pcpu_nr_pages();
-+	net_buffers = total_netbuffer_pages();
- 
- 	/* all other kinds of kernel memory allocations */
- 	kernel_misc = i.totalram - i.freeram - anon_pages - file_pages
- 		      - sreclaimable - sunreclaim - misc_reclaimable
- 		      - (kernel_stack_kb >> (PAGE_SHIFT - 10))
--		      - page_tables - percpu_pages;
-+		      - page_tables - percpu_pages - net_buffers;
- 	if (kernel_misc < 0)
- 		kernel_misc = 0;
- 
-@@ -137,6 +139,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	show_val_kb(m, "VmallocUsed:    ", 0ul);
- 	show_val_kb(m, "VmallocChunk:   ", 0ul);
- 	show_val_kb(m, "Percpu:         ", percpu_pages);
-+	show_val_kb(m, "NetBuffers:     ", net_buffers);
- 	show_val_kb(m, "KernelMisc:     ", kernel_misc);
- 
- #ifdef CONFIG_MEMORY_FAILURE
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e8834ac32b7..d0a58355bfb7 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2254,6 +2254,12 @@ extern void si_meminfo_node(struct sysinfo *val, int nid);
- extern unsigned long arch_reserved_kernel_pages(void);
- #endif
- 
-+#ifdef CONFIG_NET
-+extern unsigned long total_netbuffer_pages(void);
-+#else
-+static inline unsigned long total_netbuffer_pages(void) { return 0; }
-+#endif
-+
- extern __printf(3, 4)
- void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...);
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3b13d3914176..fcdd7c6e72b9 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5166,7 +5166,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		" active_file:%lu inactive_file:%lu isolated_file:%lu\n"
- 		" unevictable:%lu dirty:%lu writeback:%lu unstable:%lu\n"
- 		" slab_reclaimable:%lu slab_unreclaimable:%lu\n"
--		" mapped:%lu shmem:%lu pagetables:%lu bounce:%lu\n"
-+		" mapped:%lu shmem:%lu pagetables:%lu bounce:%lu net_buffers:%lu\n"
- 		" free:%lu free_pcp:%lu free_cma:%lu\n",
- 		global_node_page_state(NR_ACTIVE_ANON),
- 		global_node_page_state(NR_INACTIVE_ANON),
-@@ -5184,6 +5184,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		global_node_page_state(NR_SHMEM),
- 		global_zone_page_state(NR_PAGETABLE),
- 		global_zone_page_state(NR_BOUNCE),
-+		total_netbuffer_pages(),
- 		global_zone_page_state(NR_FREE_PAGES),
- 		free_pcp,
- 		global_zone_page_state(NR_FREE_CMA_PAGES));
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 75b1c950b49f..dfca4e024b74 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -142,6 +142,7 @@
- #include <trace/events/sock.h>
- 
- #include <net/tcp.h>
-+#include <net/udp.h>
- #include <net/busy_poll.h>
- 
- static DEFINE_MUTEX(proto_list_mutex);
-@@ -3573,3 +3574,22 @@ bool sk_busy_loop_end(void *p, unsigned long start_time)
- }
- EXPORT_SYMBOL(sk_busy_loop_end);
- #endif /* CONFIG_NET_RX_BUSY_POLL */
-+
-+#if IS_ENABLED(CONFIG_IP_SCTP)
-+atomic_long_t sctp_memory_allocated;
-+EXPORT_SYMBOL_GPL(sctp_memory_allocated);
-+#endif
-+
-+unsigned long total_netbuffer_pages(void)
-+{
-+	unsigned long ret = 0;
-+
-+#if IS_ENABLED(CONFIG_IP_SCTP)
-+	ret += atomic_long_read(&sctp_memory_allocated);
-+#endif
-+#ifdef CONFIG_INET
-+	ret += atomic_long_read(&tcp_memory_allocated);
-+	ret += atomic_long_read(&udp_memory_allocated);
-+#endif
-+	return ret;
-+}
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index e4e892cc5644..9d11afdeeae4 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -107,7 +107,7 @@ static int sctp_sock_migrate(struct sock *oldsk, struct sock *newsk,
- 			     enum sctp_socket_type type);
- 
- static unsigned long sctp_memory_pressure;
--static atomic_long_t sctp_memory_allocated;
-+extern atomic_long_t sctp_memory_allocated;
- struct percpu_counter sctp_sockets_allocated;
- 
- static void sctp_enter_memory_pressure(struct sock *sk)
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGFuaWVsIEJhbHV0YSBb
+bWFpbHRvOmRhbmllbC5iYWx1dGFAZ21haWwuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAx
+NSwgMjAxOSA3OjQ3IFBNDQo+IFRvOiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4N
+Cj4gQ2M6IGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29tOyB3aWxsLmRlYWNvbkBhcm0uY29tOw0KPiBz
+aGF3bmd1b0BrZXJuZWwub3JnOyBzLmhhdWVyQHBlbmd1dHJvbml4LmRlOyBrZXJuZWxAcGVuZ3V0
+cm9uaXguZGU7DQo+IGZlc3RldmFtQGdtYWlsLmNvbTsgYWdyb3NzQGtlcm5lbC5vcmc7IG1heGlt
+ZS5yaXBhcmRAYm9vdGxpbi5jb207DQo+IG9sb2ZAbGl4b20ubmV0OyBob3JtcytyZW5lc2FzQHZl
+cmdlLm5ldC5hdTsNCj4gamFnYW5AYW1hcnVsYXNvbHV0aW9ucy5jb207IGJqb3JuLmFuZGVyc3Nv
+bkBsaW5hcm8ub3JnOyBMZW9uYXJkIENyZXN0ZXoNCj4gPGxlb25hcmQuY3Jlc3RlekBueHAuY29t
+PjsgbWFyYy53LmdvbnphbGV6QGZyZWUuZnI7DQo+IGRpbmd1eWVuQGtlcm5lbC5vcmc7IGVucmlj
+LmJhbGxldGJvQGNvbGxhYm9yYS5jb207DQo+IGwuc3RhY2hAcGVuZ3V0cm9uaXguZGU7IEFiZWwg
+VmVzYSA8YWJlbC52ZXNhQG54cC5jb20+OyByb2JoQGtlcm5lbC5vcmc7DQo+IGxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+ZGwtbGludXgtDQo+IGlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFU
+Q0ggVjIgMS8yXSBzb2M6IGlteDogQWRkIFNDVSBTb0MgaW5mbyBkcml2ZXIgc3VwcG9ydA0KPiAN
+Cj4gSGkgQW5zb24sDQo+IA0KPiBTaW5jZSB5b3UgYXJlIGdvaW5nIHRvIHNlbmQgYSBuZXcgdmVy
+c2lvbiBmb3IgdGhpcyBwbGVhc2UgY29uc2lkZXIgbXkNCj4gY29tbWVudCBpbmxpbmUuDQo+IA0K
+PiA8c25pcD4NCj4gDQo+ID4gK3N0YXRpYyB1MzIgaW14OHF4cF9zb2NfcmV2aXNpb24odm9pZCkg
+ew0KPiA+ICsgICAgICAgc3RydWN0IGlteF9zY19tc2dfbWlzY19nZXRfc29jX2lkIG1zZzsNCj4g
+PiArICAgICAgIHN0cnVjdCBpbXhfc2NfcnBjX21zZyAqaGRyID0gJm1zZy5oZHI7DQo+ID4gKyAg
+ICAgICB1MzIgcmV2ID0gMDsNCj4gDQo+IE5vIG5lZWQgdG8gaW5pdGlhbGl6ZSB0aGlzIGhlcmUu
+DQo+IA0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArDQo+ID4gKyAgICAgICBoZHItPnZlciA9
+IElNWF9TQ19SUENfVkVSU0lPTjsNCj4gPiArICAgICAgIGhkci0+c3ZjID0gSU1YX1NDX1JQQ19T
+VkNfTUlTQzsNCj4gPiArICAgICAgIGhkci0+ZnVuYyA9IElNWF9TQ19NSVNDX0ZVTkNfR0VUX0NP
+TlRST0w7DQo+ID4gKyAgICAgICBoZHItPnNpemUgPSAzOw0KPiA+ICsNCj4gPiArICAgICAgIG1z
+Zy5kYXRhLnNlbmQuY29udHJvbCA9IElNWF9TQ19DX0lEOw0KPiA+ICsgICAgICAgbXNnLmRhdGEu
+c2VuZC5yZXNvdXJjZSA9IElNWF9TQ19SX1NZU1RFTTsNCj4gPiArDQo+ID4gKyAgICAgICByZXQg
+PSBpbXhfc2N1X2NhbGxfcnBjKHNvY19pcGNfaGFuZGxlLCAmbXNnLCB0cnVlKTsNCj4gPiArICAg
+ICAgIGlmIChyZXQpIHsNCj4gPiArICAgICAgICAgICAgICAgZGV2X2VycigmaW14X3NjdV9zb2Nf
+cGRldi0+ZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICJnZXQgc29jIGluZm8gZmFp
+bGVkLCByZXQgJWRcbiIsIHJldCk7DQo+ID4gKyAgICAgICAgICAgICAgIC8qIHJldHVybiAwIG1l
+YW5zIGdldHRpbmcgcmV2aXNpb24gZmFpbGVkICovDQo+IA0KPiBKdXN0IHJldHVybiAwIGhlcmUu
+IE5vIG5lZWQgZm9yIHJldi4NCg0KT0ssIHRoYW5rcy4NCg0KQW5zb24uDQoNCj4gPiArICAgICAg
+ICAgICAgICAgcmV0dXJuIHJldjsNCj4gPiArICAgICAgIH0NCj4gPiArDQo=
