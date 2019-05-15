@@ -2,67 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7542A1F1F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734F61F343
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbfEOL7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:59:05 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:54668 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730686AbfEOL7C (ORCPT
+        id S1726903AbfEOMM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:12:29 -0400
+Received: from gauss.credativ.com ([93.94.130.89]:38863 "EHLO
+        gauss.credativ.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727385AbfEOMMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:59:02 -0400
-Received: by mail-io1-f69.google.com with SMTP id t7so1595570iof.21
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:59:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=wLlE37yrPzANdfG8Iq9EHwFi5Q9N85cm606vgS2oU/4=;
-        b=O4xdWYL6z2aN7QqTbIx/Q3XUhynuQHbVUiXnUOW4g+kvuxxLCwmMG+bdLiOgutzfNS
-         OuL9Uxx347rYnb+I7L6dqkzOCGubWcusKMdh3iswwXPniZk9X3t5ixl2UH1nHKNliwrd
-         H83LJUdED1TDwuAl+gCoPF3ijgL/MQ453UedoA+dj6qI/aUqAs8IGZCesVGs3YWOiHNR
-         yt2bOZ3fS3QC7Uv8GGM5z+Jb8UHJNnHlyRZynQl88ZfeNls5NfPlvuWrW0SK8hbZ/P58
-         ee1fJUjAAU58eXmZDZy2lk4NJThfJ2Wf8WEZgdRkrgguailAjyLT9+uYR+PNN3xh72t7
-         3ORg==
-X-Gm-Message-State: APjAAAX3wioyKDzMiTAfG1i3ey4lg77MJLORedCC0j566CbC7phJuu5Y
-        EOfmXkQBaHvVLfK8xzrwD8MRdsrOjjIyo7nk+fQ3wxjTsVy7
-X-Google-Smtp-Source: APXvYqxhuea74sT72yLEr885VWUmC0yDDZPYDcDl1CPKw5tL3esMrV9W9iAbuAnr0eDXBy6JlimI1pULYWtWhNarz5FlgldoTSCn
+        Wed, 15 May 2019 08:12:24 -0400
+X-Greylist: delayed 564 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 May 2019 08:12:22 EDT
+Received: from gauss.credativ.com (localhost [127.0.0.1])
+        by gauss.credativ.com (Postfix) with ESMTP id EB9971E319C;
+        Wed, 15 May 2019 14:02:54 +0200 (CEST)
+Received: from iniza.credativ.lan (fw-front.credativ.com [62.154.226.94])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sdi@gauss.credativ.com)
+        by gauss.credativ.com (Postfix) with ESMTPSA id C04CB1E1A54;
+        Wed, 15 May 2019 14:02:54 +0200 (CEST)
+From:   Sedat Dilek <sedat.dilek@credativ.de>
+To:     Samuel Ortiz <sameo@linux.intel.com>,
+        Charles Gorand <charles.gorand@effinnov.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Perrochaud?= 
+        <clement.perrochaud@effinnov.com>, linux-nfc@lists.01.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sedat Dilek <sedat.dilek@credativ.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Oleg Zhurakivskyy <oleg.zhurakivskyy@intel.com>
+Subject: [PATCH 1/2] NFC: nxp-nci: Clarify on supported chips
+Date:   Wed, 15 May 2019 14:02:33 +0200
+Message-Id: <20190515120233.19159-1-sedat.dilek@credativ.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:f68b:: with SMTP id u133mr7534350ith.139.1557921541063;
- Wed, 15 May 2019 04:59:01 -0700 (PDT)
-Date:   Wed, 15 May 2019 04:59:01 -0700
-In-Reply-To: <20190515102133.GA16193@quack2.suse.cz>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b0c360588ebe04f@google.com>
-Subject: Re: INFO: task hung in __get_super
-From:   syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, dvyukov@google.com, jack@suse.cz,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This patch clarifies on the supported NXP NCI chips and families
+and lists PN547 and PN548 separately which are known as NPC100
+respectively NPC300.
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+This helps to find informations and identify drivers on vendor's
+support websites.
 
-Reported-and-tested-by:  
-syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com
+This patch is on top of Andy Shevchenko's patchset:
+"[PATCH v2 00/12] NFC: nxp-nci: clean up and support new ID"
 
-Tested on:
+For details see the discussion in [1] and [2].
 
-commit:         e93c9c99 Linux 5.1
-git tree:        
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v5.1
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5edd1df52e9bc982
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133626d8a00000
+I add the references to the linux-wireless mailing-list and patchwork
+URLs as Linux NFC is marked orphan now (see commit "NFC: Orphan the
+subsystem").
 
-Note: testing is done by a robot and is best-effort only.
+NOTE: Tested above patchset against Linux v5.1.1 and v5.1.2.
+
+[1] https://marc.info/?t=155774435600001&r=1&w=2
+[2] https://patchwork.kernel.org/project/linux-wireless/list/?submitter=33142
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=d0a7e8cb3c9d7d4fa2bcdd557be19f0841e2a3be
+
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Suggested-by: Oleg Zhurakivskyy <oleg.zhurakivskyy@intel.com>
+Signed-off-by: Sedat Dilek <sedat.dilek@credativ.de>
+---
+ drivers/nfc/nxp-nci/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nfc/nxp-nci/Kconfig b/drivers/nfc/nxp-nci/Kconfig
+index a28c4265354d..16473cfcb1d8 100644
+--- a/drivers/nfc/nxp-nci/Kconfig
++++ b/drivers/nfc/nxp-nci/Kconfig
+@@ -2,8 +2,8 @@ config NFC_NXP_NCI
+ 	tristate "NXP-NCI NFC driver"
+ 	depends on NFC_NCI
+ 	---help---
+-	  Generic core driver for NXP NCI chips such as the NPC100
+-	  or PN7150 families.
++	  Generic core driver for NXP NCI chips such as the NPC100 (PN547),
++	  NPC300 (PN548) or PN7150 families.
+ 	  This is a driver based on the NCI NFC kernel layers and
+ 	  will thus not work with NXP libnfc library.
+ 
+-- 
+2.20.1
+
