@@ -2,82 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A93B51E86F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D421E874
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfEOGpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 02:45:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40417 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfEOGpL (ORCPT
+        id S1726494AbfEOGqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 02:46:16 -0400
+Received: from twhmllg3.macronix.com ([211.75.127.131]:47213 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbfEOGqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 02:45:11 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so835707pfn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 23:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=awWr7CqE/VI7koIkZm/vLnS/8LIohJ8DzEhbOAp8yVw=;
-        b=KW5wjEppeN2Y8sAfrlgDf5wT5zp95JTjyJZv4Ti5fRz7+AKXFFuvLvkkxAonwZ5IE1
-         aPgDoMEgXfMN6MrC8UdZnpZkchtLnD6PMFYfXDPskBEv9kAqj4VmoAoHXd4FRSwGmkEy
-         BADG/NCWU75fvwFdNtTKlKMKvUmvF/NodtMOzlf59yOonbUgGmP07xNRp30pK68KumuE
-         MgGzDYpD67mLxy7RYFiSlCzRZetbS9G2iyXg5C4bIK1Vz11cgj5SwtqXPq2Zry6eOdnB
-         6zO1o6LCuz9mb6sWc46rMrN8y/dvWrDYFEgmTAMOPp6Yw84X4sCRsvyIMd4iFht++7f0
-         muEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=awWr7CqE/VI7koIkZm/vLnS/8LIohJ8DzEhbOAp8yVw=;
-        b=rt2tIwhlN8CbdN7Owks0dLtXp4AwZU2pBoQI9bopqejClo7k2JoRYAp0j+isuj/7lC
-         8T3vttm5FH4ul+KIyrFf6NGrhcWARgFybFrLgQHopsEbZbLOyDgjRq/VIsoCUgWEuq/+
-         DKk06FbjSH9chJfTrDma+1Ghov8A8b68KchkbPqqFu7Qu/EGm9IdLEOXj+U970lz0R4i
-         DIa7j9qTrmDA0uUBCCxlveCcyoeDcTdpU/gJO7OYQJMxp7c781wFZu+QHY6/MLTwLy5R
-         Nj4GFnFZF8nJxACw7FcmbhTMEm+x2PqXnfkMpytGOVLqQn+wEJumUSss10TubTS4LhNy
-         CxnQ==
-X-Gm-Message-State: APjAAAV6+g392NciXvqoQxumBLiDePpQmvywxbZuUnl7xQeeiaN8mDI3
-        0dqyLxMhb1oY8vCjhec/zR0zxUpSFFM=
-X-Google-Smtp-Source: APXvYqyR+dxNyaEUgow2q49fbaA/GfcdLr+mZH80X+llvwEJ2Tk77sIbLS1pPPX7y6mAFRvDNFv7Xw==
-X-Received: by 2002:aa7:8683:: with SMTP id d3mr629082pfo.145.1557902711325;
-        Tue, 14 May 2019 23:45:11 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id u8sm2002289pgl.91.2019.05.14.23.45.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 23:45:10 -0700 (PDT)
-Date:   Wed, 15 May 2019 14:44:57 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     rientjes@google.com, iamjoonsoo.kim@lge.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [Patch] slub: Fix a missing-check bug in mm/slub.c file of Linux
- 5.1.1
-Message-ID: <20190515064457.GA29939@zhanggen-UX430UQ>
+        Wed, 15 May 2019 02:46:16 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id x4F6k794019550;
+        Wed, 15 May 2019 14:46:07 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id 8F91689F5AB5F1D369B3;
+        Wed, 15 May 2019 14:46:07 +0800 (CST)
+In-Reply-To: <20190512142835.4caddc8e@xps13>
+References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw> <1555320234-15802-2-git-send-email-masonccyang@mxic.com.tw> <20190512142835.4caddc8e@xps13>
+To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        christophe.kerello@st.com, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        geert@linux-m68k.org, juliensu@mxic.com.tw, lee.jones@linaro.org,
+        liang.yang@amlogic.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marcel.ziswiler@toradex.com, marek.vasut@gmail.com,
+        mark.rutland@arm.com, paul.burton@mips.com, richard@nod.at,
+        robh+dt@kernel.org, stefan@agner.ch, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 1/4]  mfd: Add Macronix MX25F0A MFD controller driver
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-KeepSent: 4F52243F:0954FF8C-482583FB:0023B249;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF4F52243F.0954FF8C-ON482583FB.0023B249-482583FB.00252E6F@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Wed, 15 May 2019 14:46:07 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/05/15 PM 02:46:07,
+        Serialize complete at 2019/05/15 PM 02:46:07
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com x4F6k794019550
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pointer s is allocated with kmem_cache_zalloc(). And s is used in the 
-follwoing codes. However, when kmem_cache_zalloc fails, using s will
-cause null pointer dereference and the kernel will go wrong. Thus we 
-check whether the kmem_cache_zalloc fails.
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Hi Miquel,
 
----
---- mm/slub.c
-+++ mm/slub.c
-@@ -4201,6 +4201,8 @@ static struct kmem_cache * __init bootst
- {
- 	int node;
- 	struct kmem_cache *s = kmem_cache_zalloc(kmem_cache, GFP_NOWAIT);
-+	if (!s)
-+		return ERR_PTR(-ENOMEM);
- 	struct kmem_cache_node *n;
  
- 	memcpy(s, static_cache, kmem_cache->object_size);
----
+> > Add a driver for Macronix MX25F0A multifunction device controller.
+> > 
+> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> > ---
+> >  drivers/mfd/Kconfig              |   9 ++
+> >  drivers/mfd/Makefile             |   1 +
+> >  drivers/mfd/mxic-mx25f0a.c       |  84 +++++++++++++++++++
+> >  include/linux/mfd/mxic-mx25f0a.h | 175 
++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 269 insertions(+)
+> >  create mode 100644 drivers/mfd/mxic-mx25f0a.c
+> >  create mode 100644 include/linux/mfd/mxic-mx25f0a.h
+> > 
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 26ad646..7e99e93 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -823,6 +823,15 @@ config MFD_MAX8998
+> >       additional drivers must be enabled in order to use the 
+functionality
+> >       of the device.
+> > 
+> > +config MFD_MXIC_MX25F0A
+> > +   tristate "Macronix mx25f0a multifunction device support"
+> > +   select MFD_CORE
+> > +   help
+> > +     This supports for Macronix mx25f0a multifunction device 
+controller
+> > +     for raw nand or spi. You have to select individual components 
+like
+> 
+> Please use upper case for acronyms in plain English: NAND, SPI
+
+okay, will fix.
+
+And I also would like to remove "mx25f0a" char.
+
+patch to:
+------------------------------------------------------------------------
+config MFD_MXIC_FMC
+   tristate "Macronix Flash Memory Controller support"
+   select MFD_CORE
+   help
+     This supports Macronix Flash Memory Controller for raw NAND and SPI.
+     You have to select individual components like raw NAND controller
+     or SPI host controller under the corresponding  menus.
+-------------------------------------------------------------------------
+
+thanks for your review.
+
+best regards,
+Mason
+
+
+
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
