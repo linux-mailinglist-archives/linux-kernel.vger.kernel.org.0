@@ -2,97 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972121EA5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC971EA63
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:46:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfEOInh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 04:43:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62345 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfEOIng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 04:43:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 01:43:35 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 15 May 2019 01:43:35 -0700
-Received: from [10.125.252.185] (abudanko-mobl.ccr.corp.intel.com [10.125.252.185])
-        by linux.intel.com (Postfix) with ESMTP id 487A45800CB;
-        Wed, 15 May 2019 01:43:31 -0700 (PDT)
-Subject: Re: [PATCH v10 09/12] perf record: implement
- -z,--compression_level[=<n>] option
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <12cce142-6238-475b-b9aa-236531c12c2b@linux.intel.com>
- <9ff06518-ae63-a908-e44d-5d9e56dd66d9@linux.intel.com>
- <20190514202041.GC8945@kernel.org> <20190514214631.GD8945@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <cb3e1074-e0bc-aa6c-f4f8-73490a6b6735@linux.intel.com>
-Date:   Wed, 15 May 2019 11:43:30 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726330AbfEOIqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 04:46:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725902AbfEOIqV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 04:46:21 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4F8h8e5071632
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:46:20 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sge3x4tmk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:46:19 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 15 May 2019 09:46:03 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 May 2019 09:45:59 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4F8jwVB56557678
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 May 2019 08:45:58 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8998A4055;
+        Wed, 15 May 2019 08:45:58 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6876CA4040;
+        Wed, 15 May 2019 08:45:58 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.60])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 15 May 2019 08:45:58 +0000 (GMT)
+Date:   Wed, 15 May 2019 10:45:57 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, Greentime Hu <green.hu@gmail.com>,
+        linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org, Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH] s390: move arch/s390/defconfig to
+ arch/s390/configs/defconfig
+In-Reply-To: <20190513021116.12191-1-yamada.masahiro@socionext.com>
+References: <20190513021116.12191-1-yamada.masahiro@socionext.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190514214631.GD8945@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051508-0020-0000-0000-0000033CDC18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051508-0021-0000-0000-0000218F9C91
+Message-Id: <20190515104557.1d5a389f@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905150057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 13 May 2019 11:11:16 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-On 15.05.2019 0:46, Arnaldo Carvalho de Melo wrote:
-> Em Tue, May 14, 2019 at 05:20:41PM -0300, Arnaldo Carvalho de Melo escreveu:
->> Em Mon, Mar 18, 2019 at 08:44:42PM +0300, Alexey Budankov escreveu:
->>>
->>> Implemented -z,--compression_level[=<n>] option that enables compression
->>> of mmaped kernel data buffers content in runtime during perf record
->>> mode collection. Default option value is 1 (fastest compression).
+> As of Linux 5.1, alpha and s390 are the last architectures that
+> have defconfig in arch/*/ instead of arch/*/configs/.
 > 
-> <SNIP>
->  
->> [root@quaco ~]# perf record -z2
->> ^C[ perf record: Woken up 1 times to write data ]
->> 0x1746e0 [0x76]: failed to process type: 81 [Invalid argument]
->> [ perf record: Captured and wrote 1.568 MB perf.data, compressed (original 0.452 MB, ratio is 3.995) ]
->>
->> [root@quaco ~]#
+>   $ find arch -name defconfig | sort
+>   arch/alpha/defconfig
+>   arch/arm64/configs/defconfig
+>   arch/csky/configs/defconfig
+>   arch/nds32/configs/defconfig
+>   arch/riscv/configs/defconfig
+>   arch/s390/defconfig
 > 
-> So, its the buildid processing at the end, so we can't do build-id
-> processing when using PERF_RECORD_COMPRESSED, otherwise we'd have to
-> uncompress at the end to find the PERF_RECORD_FORK/PERF_RECORD_MMAP,
-> etc.
+> The arch/$(ARCH)/defconfig is the hard-coded default in Kconfig,
+> and I want to deprecate it after evacuating the remaining defconfig
+> into the standard location, arch/*/configs/.
 > 
-> [root@quaco ~]# perf record -z2  --no-buildid sleep 1
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.020 MB perf.data, compressed (original 0.001 MB, ratio is 2.153) ]
-> [root@quaco ~]# perf report -D | grep PERF_RECORD_COMP
-> 0x4f40 [0x195]: failed to process type: 81 [Invalid argument]
-> Error:
-> failed to process sample
-> 0 0x4f40 [0x195]: PERF_RECORD_COMPRESSED
-> [root@quaco ~]#
+> Define KBUILD_DEFCONFIG like other architectures, and move defconfig
+> into the configs/ subdirectory.
 > 
-> I'll play with it tomorrow.
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Applied the whole patch set on top of the current perf/core 
-and the whole thing functions as expected.
+I have added this patch to my linux/s390 tree and will push it upstream
+soon. Thanks!
 
-~Alexey
+> ---
+> 
+>  arch/s390/Makefile                | 2 ++
+>  arch/s390/{ => configs}/defconfig | 0
+>  2 files changed, 2 insertions(+)
+>  rename arch/s390/{ => configs}/defconfig (100%)
+> 
+> diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+> index df1d6a150f30..de8521fc9de5 100644
+> --- a/arch/s390/Makefile
+> +++ b/arch/s390/Makefile
+> @@ -10,6 +10,8 @@
+>  # Copyright (C) 1994 by Linus Torvalds
+>  #
+> 
+> +KBUILD_DEFCONFIG := defconfig
+> +
+>  LD_BFD		:= elf64-s390
+>  KBUILD_LDFLAGS	:= -m elf64_s390
+>  KBUILD_AFLAGS_MODULE += -fPIC
+> diff --git a/arch/s390/defconfig b/arch/s390/configs/defconfig
+> similarity index 100%
+> rename from arch/s390/defconfig
+> rename to arch/s390/configs/defconfig
 
-> 
-> - Arnaldo
->  
->> I've pushed what I have to the tmp.perf/core branch, please try to see
->> if I made any mistake in fixing up conflicts with BPF_PROG_INFO and
->> BPF_BTF header features. I'll continue tomorrow with 10-12/12.
-> 
+
+-- 
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
