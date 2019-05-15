@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE051F079
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BEB1F147
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732136AbfEOL0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37126 "EHLO mail.kernel.org"
+        id S1731682AbfEOLuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:50:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732119AbfEOL0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:18 -0400
+        id S1731458AbfEOLW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78E8320818;
-        Wed, 15 May 2019 11:26:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A8AF20862;
+        Wed, 15 May 2019 11:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919578;
-        bh=dD7zTEz88dOfkKYT0g9JV76fjXUG+y9OtNgz7xfOd64=;
+        s=default; t=1557919348;
+        bh=bm66xKRLhd7zHtRL+0BEHuLQckw6arjnAi9uTkJzrAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=woX4pzql8RRSu/CLPOj/Qei/7EqnPRn9IyzwVhbA24ufvWrD0VwH4qk1jMlCRfA6A
-         +vOw8NLmyS8eQtotmcYUsxaCnAZlShinEaz26sWPABMO0KWgWiK0EARktUTxscmg2f
-         2Crz7vXlDWkbc3IurR8tgQO6JCTKFHfJJ/Kw4IQ8=
+        b=YnV8xpLYDLMQ691b5MmnDo4Cwo5/YXVDom+ZdoYtQhdRlhwXq/GyT9ZGUnagr7CFd
+         7aqtF+s3lvdLndU2yqFp6xBa0ef/p6Puh6ErTw3Ttq8733ZWoQYhDzHwopjCJcQoY8
+         URXaW7PjWYTHdSQrnUMQMrOk6wM2Ybi59WcicHc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 015/137] libnvdimm/namespace: Fix a potential NULL pointer dereference
+        stable@vger.kernel.org, Guenter Rock <linux@roeck-us.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 4.19 005/113] hwmon: (pwm-fan) Disable PWM if fetching cooling data fails
 Date:   Wed, 15 May 2019 12:54:56 +0200
-Message-Id: <20190515090654.479892163@linuxfoundation.org>
+Message-Id: <20190515090653.460107239@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 55c1fc0af29a6c1b92f217b7eb7581a882e0c07c ]
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-In case kmemdup fails, the fix goes to blk_err to avoid NULL
-pointer dereference.
+commit 53f1647da3e8fb3e89066798f0fdc045064d353d upstream.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In case pwm_fan_of_get_cooling_data() fails we should disable the PWM
+just like in the other error cases.
+
+Fixes: 2e5219c77183 ("hwmon: (pwm-fan) Read PWM FAN configuration from device tree")
+Cc: <stable@vger.kernel.org> # 4.14+
+Reported-by: Guenter Rock <linux@roeck-us.net>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvdimm/namespace_devs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/hwmon/pwm-fan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index 33a3b23b3db71..e761b29f71606 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -2249,9 +2249,12 @@ static struct device *create_namespace_blk(struct nd_region *nd_region,
- 	if (!nsblk->uuid)
- 		goto blk_err;
- 	memcpy(name, nd_label->name, NSLABEL_NAME_LEN);
--	if (name[0])
-+	if (name[0]) {
- 		nsblk->alt_name = kmemdup(name, NSLABEL_NAME_LEN,
- 				GFP_KERNEL);
-+		if (!nsblk->alt_name)
-+			goto blk_err;
-+	}
- 	res = nsblk_add_resource(nd_region, ndd, nsblk,
- 			__le64_to_cpu(nd_label->dpa));
- 	if (!res)
--- 
-2.20.1
-
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -250,7 +250,7 @@ static int pwm_fan_probe(struct platform
+ 
+ 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
+ 	if (ret)
+-		return ret;
++		goto err_pwm_disable;
+ 
+ 	ctx->pwm_fan_state = ctx->pwm_fan_max_state;
+ 	if (IS_ENABLED(CONFIG_THERMAL)) {
 
 
