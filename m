@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372511EEED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCABA1EE23
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732259AbfEOL1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:27:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38510 "EHLO mail.kernel.org"
+        id S1730679AbfEOLRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731887AbfEOL1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:37 -0400
+        id S1730669AbfEOLRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC75E20818;
-        Wed, 15 May 2019 11:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DC3E20644;
+        Wed, 15 May 2019 11:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919657;
-        bh=33I4Aosfj8cjXEJXoooJJ3/McdDfAMrkDABR0Qe9Psk=;
+        s=default; t=1557919050;
+        bh=dAx1Ud770CfA15dP1fOgAyDLUuDk5IXqgHlLykRZ8sU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kNIuTlGSqN9y3N2rcXagmUZvuoKMdo48bwl76XpZCKGTm+6rUJvkA0o++PM5OPYUa
-         nNpmWZ6L1LBxxR2QHv2kgQniSI4pcf+8KvJebU6tyGGLhHfg9aM7U2pIE0+Q9UHDD1
-         GHR/cftfcvejEPGdBkUDFCOPlVPe4Eu9y0zw8ScY=
+        b=JgjEl1aFbS/s+kiaJVZSWKBI+jWrVVlTi+1sPwQlh7Syg4ykQiOUahoKhR+nw2h+T
+         Di1ZKfZZCsWpUGxftji7hPdyotH9udTSXoXlp7oGLjMWlACXTDyxj2Tl18lpmEXFld
+         BhmNuXh6AuZNs9xD3XMySch1aDuKQZDAXwbass4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Roman Li <Roman.Li@amd.com>,
-        Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Bhawanpreet Lakha <BhawanpreetLakha@amd.com>
-Subject: [PATCH 5.0 045/137] drm/amd/display: If one stream full updates, full update all planes
+        stable@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 046/115] ima: open a new file instance if no read permissions
 Date:   Wed, 15 May 2019 12:55:26 +0200
-Message-Id: <20190515090656.715043062@linuxfoundation.org>
+Message-Id: <20190515090702.901419593@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,118 +44,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c238bfe0be9ef7420f7669a69e27c8c8f4d8a568 ]
+[ Upstream commit a408e4a86b36bf98ad15b9ada531cf0e5118ac67 ]
 
-[Why]
-On some compositors, with two monitors attached, VT terminal
-switch can cause a graphical issue by the following means:
+Open a new file instance as opposed to changing file->f_mode when
+the file is not readable.  This is done to accomodate overlayfs
+stacked file operations change.  The real struct file is hidden
+behind the overlays struct file.  So, any file->f_mode manipulations are
+not reflected on the real struct file.  Open the file again in read mode
+if original file cannot be read, read and calculate the hash.
 
-There are two streams, one for each monitor. Each stream has one
-plane
-
-current state:
-	M1:S1->P1
-	M2:S2->P2
-
-The user calls for a terminal switch and a commit is made to
-change both planes to linear swizzle mode. In atomic check,
-a new dc_state is constructed with new planes on each stream
-
-new state:
-	M1:S1->P3
-	M2:S2->P4
-
-In commit tail, each stream is committed, one at a time. The first
-stream (S1) updates properly, triggerring a full update and replacing
-the state
-
-current state:
-	M1:S1->P3
-	M2:S2->P4
-
-The update for S2 comes in, but dc detects that there is no difference
-between the stream and plane in the new and current states, and so
-triggers a fast update. The fast update does not program swizzle,
-so the second monitor is corrupted
-
-[How]
-Add a flag to dc_plane_state that forces full updates
-
-When a stream undergoes a full update, set this flag on all changed
-planes, then clear it on the current stream
-
-Subsequent streams will get full updates as a result
-
-Signed-off-by: David Francis <David.Francis@amd.com>
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Roman Li <Roman.Li@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet Lakha@amd.com>
-Acked-by: Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: stable@vger.kernel.org (linux-4.19)
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 19 +++++++++++++++++++
- drivers/gpu/drm/amd/display/dc/dc.h      |  3 +++
- 2 files changed, 22 insertions(+)
+ security/integrity/ima/ima_crypto.c | 54 ++++++++++++++++++-----------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 1f92e7e8e3d38..5af2ea1f201d3 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -1308,6 +1308,11 @@ static enum surface_update_type det_surface_update(const struct dc *dc,
- 		return UPDATE_TYPE_FULL;
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index cb041af9eddb2..af680b5b678a4 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -232,7 +232,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ {
+ 	loff_t i_size, offset;
+ 	char *rbuf[2] = { NULL, };
+-	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
++	int rc, rbuf_len, active = 0, ahash_rc = 0;
+ 	struct ahash_request *req;
+ 	struct scatterlist sg[1];
+ 	struct ahash_completion res;
+@@ -279,11 +279,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 					  &rbuf_size[1], 0);
  	}
  
-+	if (u->surface->force_full_update) {
-+		update_flags->bits.full_update = 1;
-+		return UPDATE_TYPE_FULL;
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
+-
+ 	for (offset = 0; offset < i_size; offset += rbuf_len) {
+ 		if (!rbuf[1] && offset) {
+ 			/* Not using two buffers, and it is not the first
+@@ -322,8 +317,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 	/* wait for the last update request to complete */
+ 	rc = ahash_wait(ahash_rc, &res);
+ out3:
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	ima_free_pages(rbuf[0], rbuf_size[0]);
+ 	ima_free_pages(rbuf[1], rbuf_size[1]);
+ out2:
+@@ -358,7 +351,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ {
+ 	loff_t i_size, offset = 0;
+ 	char *rbuf;
+-	int rc, read = 0;
++	int rc;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
+ 
+ 	shash->tfm = tfm;
+@@ -379,11 +372,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ 	if (!rbuf)
+ 		return -ENOMEM;
+ 
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
+-
+ 	while (offset < i_size) {
+ 		int rbuf_len;
+ 
+@@ -400,8 +388,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ 		if (rc)
+ 			break;
+ 	}
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	kfree(rbuf);
+ out:
+ 	if (!rc)
+@@ -442,6 +428,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ {
+ 	loff_t i_size;
+ 	int rc;
++	struct file *f = file;
++	bool new_file_instance = false, modified_flags = false;
+ 
+ 	/*
+ 	 * For consistency, fail file's opened with the O_DIRECT flag on
+@@ -453,15 +441,41 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 		return -EINVAL;
+ 	}
+ 
+-	i_size = i_size_read(file_inode(file));
++	/* Open a new file instance in O_RDONLY if we cannot read */
++	if (!(file->f_mode & FMODE_READ)) {
++		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
++				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
++		flags |= O_RDONLY;
++		f = dentry_open(&file->f_path, flags, file->f_cred);
++		if (IS_ERR(f)) {
++			/*
++			 * Cannot open the file again, lets modify f_flags
++			 * of original and continue
++			 */
++			pr_info_ratelimited("Unable to reopen file for reading.\n");
++			f = file;
++			f->f_flags |= FMODE_READ;
++			modified_flags = true;
++		} else {
++			new_file_instance = true;
++		}
 +	}
 +
- 	type = get_plane_info_update_type(u);
- 	elevate_update_type(&overall_type, type);
++	i_size = i_size_read(file_inode(f));
  
-@@ -1637,6 +1642,14 @@ void dc_commit_updates_for_stream(struct dc *dc,
- 		}
- 
- 		dc_resource_state_copy_construct(state, context);
-+
-+		for (i = 0; i < dc->res_pool->pipe_count; i++) {
-+			struct pipe_ctx *new_pipe = &context->res_ctx.pipe_ctx[i];
-+			struct pipe_ctx *old_pipe = &dc->current_state->res_ctx.pipe_ctx[i];
-+
-+			if (new_pipe->plane_state && new_pipe->plane_state != old_pipe->plane_state)
-+				new_pipe->plane_state->force_full_update = true;
-+		}
+ 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+-		rc = ima_calc_file_ahash(file, hash);
++		rc = ima_calc_file_ahash(f, hash);
+ 		if (!rc)
+-			return 0;
++			goto out;
  	}
  
+-	return ima_calc_file_shash(file, hash);
++	rc = ima_calc_file_shash(f, hash);
++out:
++	if (new_file_instance)
++		fput(f);
++	else if (modified_flags)
++		f->f_flags &= ~FMODE_READ;
++	return rc;
+ }
  
-@@ -1680,6 +1693,12 @@ void dc_commit_updates_for_stream(struct dc *dc,
- 		dc->current_state = context;
- 		dc_release_state(old);
- 
-+		for (i = 0; i < dc->res_pool->pipe_count; i++) {
-+			struct pipe_ctx *pipe_ctx = &context->res_ctx.pipe_ctx[i];
-+
-+			if (pipe_ctx->plane_state && pipe_ctx->stream == stream)
-+				pipe_ctx->plane_state->force_full_update = false;
-+		}
- 	}
- 	/*let's use current_state to update watermark etc*/
- 	if (update_type >= UPDATE_TYPE_FULL)
-diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/display/dc/dc.h
-index 4b5bbb13ce7fe..7d5656d7e460d 100644
---- a/drivers/gpu/drm/amd/display/dc/dc.h
-+++ b/drivers/gpu/drm/amd/display/dc/dc.h
-@@ -496,6 +496,9 @@ struct dc_plane_state {
- 	struct dc_plane_status status;
- 	struct dc_context *ctx;
- 
-+	/* HACK: Workaround for forcing full reprogramming under some conditions */
-+	bool force_full_update;
-+
- 	/* private to dc_surface.c */
- 	enum dc_irq_source irq_source;
- 	struct kref refcount;
+ /*
 -- 
 2.20.1
 
