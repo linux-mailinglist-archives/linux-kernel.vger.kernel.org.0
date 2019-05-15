@@ -2,42 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 102841F1EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AB581F216
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbfEOL5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53712 "EHLO mail.kernel.org"
+        id S1729856AbfEOLMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:12:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730565AbfEOLQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:49 -0400
+        id S1728929AbfEOLMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:12:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F6592084E;
-        Wed, 15 May 2019 11:16:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05ED120644;
+        Wed, 15 May 2019 11:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919008;
-        bh=eFQjP66oTnVHWqZBj9HYryRNiX4vDQqo/nQR3Xb5xcI=;
+        s=default; t=1557918762;
+        bh=XTbGk+eNjaxn2smx4uoCJQ9q2ZQ0CP6flhJiitiT/pE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=br1gyMJ6HFdabCo1Bzbd94W7l/vvfHRKw0GIKwkEOzIlDCbms4Gxb+BUvjNHC7mwZ
-         2O0/a5/P+pB1L86yFAGVIZmD3X9PYjYclZRriny1cVbTnpD0PnLX+Dajy5HMx6vDtM
-         VgqyTM5HSivRafahhjtTD0cSVEiALGyRzeEb1K6A=
+        b=oVrTJ3cVX7E8558A9xOHqA3G1L25hGEJdDNgvCbW0pzrAwXnuWG3ZSnFEsXr2MNPb
+         zNDbSxKMu7KB4gugPdSa9735vqkH1blMq4yCgkA3pj/DEQYG5+kxrU+3r4K2xE1sih
+         Lh7+x9L+Oeu+BpF2iFbA6zaauTAJhsApIe+QAzME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 032/115] s390: ctcm: fix ctcm_new_device error return code
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 205/266] x86/speculation: Disable STIBP when enhanced IBRS is in use
 Date:   Wed, 15 May 2019 12:55:12 +0200
-Message-Id: <20190515090701.723139375@linuxfoundation.org>
+Message-Id: <20190515090729.892869678@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,53 +62,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 27b141fc234a3670d21bd742c35d7205d03cbb3a ]
+From: Tim Chen <tim.c.chen@linux.intel.com>
 
-clang points out that the return code from this function is
-undefined for one of the error paths:
+commit 34bce7c9690b1d897686aac89604ba7adc365556 upstream.
 
-../drivers/s390/net/ctcm_main.c:1595:7: warning: variable 'result' is used uninitialized whenever 'if' condition is true
-      [-Wsometimes-uninitialized]
-                if (priv->channel[direction] == NULL) {
-                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/s390/net/ctcm_main.c:1638:9: note: uninitialized use occurs here
-        return result;
-               ^~~~~~
-../drivers/s390/net/ctcm_main.c:1595:3: note: remove the 'if' if its condition is always false
-                if (priv->channel[direction] == NULL) {
-                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/s390/net/ctcm_main.c:1539:12: note: initialize the variable 'result' to silence this warning
-        int result;
-                  ^
+If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
+user space exploits from hyperthread sibling.
 
-Make it return -ENODEV here, as in the related failure cases.
-gcc has a known bug in underreporting some of these warnings
-when it has already eliminated the assignment of the return code
-based on some earlier optimization step.
+Disable STIBP when enhanced IBRS is used.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185003.966801480@linutronix.de
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/ctcm_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/bugs.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
-index 26363e0816fe4..fbe35c2ac8981 100644
---- a/drivers/s390/net/ctcm_main.c
-+++ b/drivers/s390/net/ctcm_main.c
-@@ -1594,6 +1594,7 @@ static int ctcm_new_device(struct ccwgroup_device *cgdev)
- 		if (priv->channel[direction] == NULL) {
- 			if (direction == CTCM_WRITE)
- 				channel_free(priv->channel[CTCM_READ]);
-+			result = -ENODEV;
- 			goto out_dev;
- 		}
- 		priv->channel[direction]->netdev = dev;
--- 
-2.20.1
-
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -317,6 +317,10 @@ static bool stibp_needed(void)
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+ 		return false;
+ 
++	/* Enhanced IBRS makes using STIBP unnecessary. */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return false;
++
+ 	if (!boot_cpu_has(X86_FEATURE_STIBP))
+ 		return false;
+ 
+@@ -761,6 +765,9 @@ static void __init l1tf_select_mitigatio
+ 
+ static char *stibp_state(void)
+ {
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return "";
++
+ 	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
+ 		return ", STIBP";
+ 	else
 
 
