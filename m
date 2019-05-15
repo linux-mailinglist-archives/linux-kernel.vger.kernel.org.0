@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C762E1EE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C46841EE76
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730617AbfEOLRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54124 "EHLO mail.kernel.org"
+        id S1731375AbfEOLV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfEOLRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:05 -0400
+        id S1731114AbfEOLVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE51720644;
-        Wed, 15 May 2019 11:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D041420818;
+        Wed, 15 May 2019 11:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919024;
-        bh=PsE3L0Tytn+xs1zWFdeYNbl+o7QgsJvAnDvvDVgEk5c=;
+        s=default; t=1557919309;
+        bh=NljyWHJE3LHl1R3hTGZPKriz1RfsS+DAErMLb5Fbkpk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x4QsHcuoRJAlmyo3gEFpRcI36+TfIhVAWrlptFAaL/+HzYrlqY4ovN3JZS7bGCALu
-         AlM0PzliOce6dosmQK7hVA36JR7X3DznkmbmQehO+chQQTjsjLyeqTLGYdk3T4x+Dr
-         jxeZ5Yl/V/XGjyyJMnD0N2Iw4AFJktq0BsiFsZ8U=
+        b=BumWJI2AZcq7b9qXda8LJ5gxXpJ1PrJ+x2QStChgPeDGRZrK5vBBhLPqO36D6ZVg2
+         T+Hd4wq8BtwYskD//QJpZ8bcoKTa9ynvZcefTcFU9lXAHUEdDMXk1m9E1oyJXIifGj
+         YoVXRVi0e244ntGFmptWzAFdL0cXg4NzpxOgSxxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Daniel Gomez <dagmcr@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Martin Leung <martin.leung@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>,
+        Joshua Aberback <Joshua.Aberback@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 037/115] spi: Micrel eth switch: declare missing of table
+Subject: [PATCH 4.19 026/113] drm/amd/display: extending AUX SW Timeout
 Date:   Wed, 15 May 2019 12:55:17 +0200
-Message-Id: <20190515090702.139538082@linuxfoundation.org>
+Message-Id: <20190515090655.490560298@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +47,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2f23a2a768bee7ad2ff1e9527c3f7e279e794a46 ]
+[ Upstream commit f4bbebf8e7eb4d294b040ab2d2ba71e70e69b930 ]
 
-Add missing <of_device_id> table for SPI driver relying on SPI
-device match since compatible is in a DT binding or in a DTS.
+[Why]
+AUX takes longer to reply when using active DP-DVI dongle on some asics
+resulting in up to 2000+ us edid read (timeout).
 
-Before this patch:
-modinfo drivers/net/phy/spi_ks8995.ko | grep alias
-alias:          spi:ksz8795
-alias:          spi:ksz8864
-alias:          spi:ks8995
+[How]
+1. Adjust AUX poll to match spec
+2. Extend the SW timeout. This does not affect normal
+operation since we exit the loop as soon as AUX acks.
 
-After this patch:
-modinfo drivers/net/phy/spi_ks8995.ko | grep alias
-alias:          spi:ksz8795
-alias:          spi:ksz8864
-alias:          spi:ks8995
-alias:          of:N*T*Cmicrel,ksz8795C*
-alias:          of:N*T*Cmicrel,ksz8795
-alias:          of:N*T*Cmicrel,ksz8864C*
-alias:          of:N*T*Cmicrel,ksz8864
-alias:          of:N*T*Cmicrel,ks8995C*
-alias:          of:N*T*Cmicrel,ks8995
-
-Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Martin Leung <martin.leung@amd.com>
+Reviewed-by: Jun Lei <Jun.Lei@amd.com>
+Acked-by: Joshua Aberback <Joshua.Aberback@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/spi_ks8995.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 9 ++++++---
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.h | 6 +++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/phy/spi_ks8995.c b/drivers/net/phy/spi_ks8995.c
-index 1e2d4f1179da3..45df03673e010 100644
---- a/drivers/net/phy/spi_ks8995.c
-+++ b/drivers/net/phy/spi_ks8995.c
-@@ -162,6 +162,14 @@ static const struct spi_device_id ks8995_id[] = {
- };
- MODULE_DEVICE_TABLE(spi, ks8995_id);
- 
-+static const struct of_device_id ks8895_spi_of_match[] = {
-+        { .compatible = "micrel,ks8995" },
-+        { .compatible = "micrel,ksz8864" },
-+        { .compatible = "micrel,ksz8795" },
-+        { },
-+ };
-+MODULE_DEVICE_TABLE(of, ks8895_spi_of_match);
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+index 3f5b2e6f7553f..df936edac5c76 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+@@ -189,6 +189,12 @@ static void submit_channel_request(
+ 				1,
+ 				0);
+ 	}
 +
- static inline u8 get_chip_id(u8 val)
- {
- 	return (val >> ID1_CHIPID_S) & ID1_CHIPID_M;
-@@ -529,6 +537,7 @@ static int ks8995_remove(struct spi_device *spi)
- static struct spi_driver ks8995_driver = {
- 	.driver = {
- 		.name	    = "spi-ks8995",
-+		.of_match_table = of_match_ptr(ks8895_spi_of_match),
- 	},
- 	.probe	  = ks8995_probe,
- 	.remove	  = ks8995_remove,
++	REG_UPDATE(AUX_INTERRUPT_CONTROL, AUX_SW_DONE_ACK, 1);
++
++	REG_WAIT(AUX_SW_STATUS, AUX_SW_DONE, 0,
++				10, aux110->timeout_period/10);
++
+ 	/* set the delay and the number of bytes to write */
+ 
+ 	/* The length include
+@@ -241,9 +247,6 @@ static void submit_channel_request(
+ 		}
+ 	}
+ 
+-	REG_UPDATE(AUX_INTERRUPT_CONTROL, AUX_SW_DONE_ACK, 1);
+-	REG_WAIT(AUX_SW_STATUS, AUX_SW_DONE, 0,
+-				10, aux110->timeout_period/10);
+ 	REG_UPDATE(AUX_SW_CONTROL, AUX_SW_GO, 1);
+ }
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
+index f7caab85dc801..2c6f50b4245a4 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
+@@ -69,11 +69,11 @@ enum {	/* This is the timeout as defined in DP 1.2a,
+ 	 * at most within ~240usec. That means,
+ 	 * increasing this timeout will not affect normal operation,
+ 	 * and we'll timeout after
+-	 * SW_AUX_TIMEOUT_PERIOD_MULTIPLIER * AUX_TIMEOUT_PERIOD = 1600usec.
++	 * SW_AUX_TIMEOUT_PERIOD_MULTIPLIER * AUX_TIMEOUT_PERIOD = 2400usec.
+ 	 * This timeout is especially important for
+-	 * resume from S3 and CTS.
++	 * converters, resume from S3, and CTS.
+ 	 */
+-	SW_AUX_TIMEOUT_PERIOD_MULTIPLIER = 4
++	SW_AUX_TIMEOUT_PERIOD_MULTIPLIER = 6
+ };
+ struct aux_engine_dce110 {
+ 	struct aux_engine base;
 -- 
 2.20.1
 
