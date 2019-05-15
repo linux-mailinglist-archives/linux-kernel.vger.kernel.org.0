@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1EE1EE8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A381F030
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbfEOLXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33284 "EHLO mail.kernel.org"
+        id S1732673AbfEOLlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:41:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731285AbfEOLXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:01 -0400
+        id S1726525AbfEOL2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F06ED20818;
-        Wed, 15 May 2019 11:22:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89F7F20818;
+        Wed, 15 May 2019 11:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919380;
-        bh=/d9PVLH/lgj6KLU9qXfdf0QWirSWnEW5nYPk3uGDmg4=;
+        s=default; t=1557919715;
+        bh=WlWMS1xXo7beueki27apiS84qmVZ+m3dhjYsOpVi51o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GPQUNDgm6s5fVX+QAA5X3e90XJB38OrPQUbtBMs1z1udo7t8aUm0oEKiqYVzg/mR9
-         dVs5tOFsNExe687RP0zxl0bqXzreXVaVMxjVlWuEL1yg4iEAq9OV9oVMaQIisCM26E
-         phSo+w1Yja/XvLHXh4jXtOXS2QErCgy5vyyajGyY=
+        b=lT5LOs2fe2uxrIigCuzrK85ZDYYGGK+/FSEFznQbm/HTUPckrWKSBDh5eg2TLZ9kV
+         v6NfQuBLx2WtjK6jF+xl1dKK4e7BgMX5KLPw7mhbizdVBqhaNl8ZLNR7NGLyazxqei
+         YOpbpLXRTzUSbbKzYqiz9hMDliuzQTeiQbP3pyik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Po-Hsu Lin <po-hsu.lin@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/113] selftests/net: correct the return value for run_netsocktests
-Date:   Wed, 15 May 2019 12:55:45 +0200
-Message-Id: <20190515090657.731000591@linuxfoundation.org>
+Subject: [PATCH 5.0 065/137] ipvs: do not schedule icmp errors from tunnels
+Date:   Wed, 15 May 2019 12:55:46 +0200
+Message-Id: <20190515090658.180646169@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 30c04d796b693e22405c38e9b78e9a364e4c77e6 ]
+[ Upstream commit 0261ea1bd1eb0da5c0792a9119b8655cf33c80a3 ]
 
-The run_netsocktests will be marked as passed regardless the actual test
-result from the ./socket:
+We can receive ICMP errors from client or from
+tunneling real server. While the former can be
+scheduled to real server, the latter should
+not be scheduled, they are decapsulated only when
+existing connection is found.
 
-    selftests: net: run_netsocktests
-    ========================================
-    --------------------
-    running socket test
-    --------------------
-    [FAIL]
-    ok 1..6 selftests: net: run_netsocktests [PASS]
-
-This is because the test script itself has been successfully executed.
-Fix this by exit 1 when the test failed.
-
-Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6044eeffafbe ("ipvs: attempt to schedule icmp packets")
+Signed-off-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/run_netsocktests | 2 +-
+ net/netfilter/ipvs/ip_vs_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/run_netsocktests b/tools/testing/selftests/net/run_netsocktests
-index b093f39c298c3..14e41faf2c574 100755
---- a/tools/testing/selftests/net/run_netsocktests
-+++ b/tools/testing/selftests/net/run_netsocktests
-@@ -7,7 +7,7 @@ echo "--------------------"
- ./socket
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
-+	exit 1
- else
- 	echo "[PASS]"
- fi
--
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index 235205c93e14b..df112b27246a3 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -1647,7 +1647,7 @@ ip_vs_in_icmp(struct netns_ipvs *ipvs, struct sk_buff *skb, int *related,
+ 	if (!cp) {
+ 		int v;
+ 
+-		if (!sysctl_schedule_icmp(ipvs))
++		if (ipip || !sysctl_schedule_icmp(ipvs))
+ 			return NF_ACCEPT;
+ 
+ 		if (!ip_vs_try_to_schedule(ipvs, AF_INET, skb, pd, &v, &cp, &ciph))
 -- 
 2.20.1
 
