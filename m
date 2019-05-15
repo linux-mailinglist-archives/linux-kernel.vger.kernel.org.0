@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6511F191
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F671EE48
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbfEOLPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:15:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52248 "EHLO mail.kernel.org"
+        id S1730970AbfEOLT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730334AbfEOLPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:15:41 -0400
+        id S1730959AbfEOLTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A05BD2084E;
-        Wed, 15 May 2019 11:15:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFCAD206BF;
+        Wed, 15 May 2019 11:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918941;
-        bh=IrG606G2ac9Y9jrMvCLPLa5ctK/pQzOopwKA7yfSsE8=;
+        s=default; t=1557919164;
+        bh=EeXegtB9IY6jVYQGc/zxNmd20QzgJGVLjO7aS6tSl50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QB5BPnSFumtRJVhuPviNulA77hEZiqQ5r7E3KrhKjvOHTvjKOQ6vq8pj415udPW6z
-         pLlvFxNH4gKgs11UKPMRZoaQPOouXbEDmf3XXdI6UX6wutQEDgEgchVT/RuhxfUzmv
-         yeAOaw+BNA/bfMmsYDtq4pI8P4s785/kG5my8gMc=
+        b=eRE+RI9r+G81axEi2dcc22FL7ASjGYFGZYiyOOScrEKeKWEvf7/n0Fp8BqDaMEvqL
+         KN7ZPav8rWeU0bybZO/NXleSs2E+d92t7GWWae54U00aK0Jc8bCtNXPfF3tQnlFcrp
+         Gr8pRvkx348+Ulo1AtKbdwtBxWYbVnTzsc5P91FM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 35/51] Revert "x86: vdso: Use $LD instead of $CC to link"
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 090/115] mlxsw: core: Do not use WQ_MEM_RECLAIM for mlxsw workqueue
 Date:   Wed, 15 May 2019 12:56:10 +0200
-Message-Id: <20190515090626.919390908@linuxfoundation.org>
+Message-Id: <20190515090705.813986708@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,73 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 94c0c4f033eee2304a98cf30a141f9dae35d3a62.
+[ Upstream commit b442fed1b724af0de087912a5718ddde1b87acbb ]
 
-The commit message in the 4.9 stable tree did not have a reference to
-the upstream commit id.
+The workqueue is used to periodically update the networking stack about
+activity / statistics of various objects such as neighbours and TC
+actions.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It should not be called as part of memory reclaim path, so remove the
+WQ_MEM_RECLAIM flag.
+
+Fixes: 3d5479e92087 ("mlxsw: core: Remove deprecated create_workqueue")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/entry/vdso/Makefile | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 2ae92c6b1de6d..d5409660f5de6 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -47,8 +47,10 @@ targets += $(vdso_img_sodbg)
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
+index 33262c09c703c..fad26046e1595 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1812,7 +1812,7 @@ static int __init mlxsw_core_module_init(void)
+ {
+ 	int err;
  
- export CPPFLAGS_vdso.lds += -P -C
- 
--VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
--			-z max-page-size=4096 -z common-page-size=4096
-+VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
-+			-Wl,--no-undefined \
-+			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
-+			$(DISABLE_LTO)
- 
- $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
- 	$(call if_changed,vdso)
-@@ -94,8 +96,10 @@ CFLAGS_REMOVE_vvar.o = -pg
- #
- 
- CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
--			   -z max-page-size=4096 -z common-page-size=4096
-+VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
-+			   -Wl,-soname=linux-vdso.so.1 \
-+			   -Wl,-z,max-page-size=4096 \
-+			   -Wl,-z,common-page-size=4096
- 
- # 64-bit objects to re-brand as x32
- vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
-@@ -123,7 +127,7 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
- 	$(call if_changed,vdso)
- 
- CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
-+VDSO_LDFLAGS_vdso32.lds = -m32 -Wl,-m,elf_i386 -Wl,-soname=linux-gate.so.1
- 
- # This makes sure the $(obj) subdirectory exists even though vdso32/
- # is not a kbuild sub-make subdirectory.
-@@ -161,13 +165,13 @@ $(obj)/vdso32.so.dbg: FORCE \
- # The DSO images are built using a special linker script.
- #
- quiet_cmd_vdso = VDSO    $@
--      cmd_vdso = $(LD) -nostdlib -o $@ \
-+      cmd_vdso = $(CC) -nostdlib -o $@ \
- 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
--		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
-+		       -Wl,-T,$(filter %.lds,$^) $(filter %.o,$^) && \
- 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
- 
--VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
--	$(call ld-option, --build-id) -Bsymbolic
-+VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
-+	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
- GCOV_PROFILE := n
- 
- #
+-	mlxsw_wq = alloc_workqueue(mlxsw_core_driver_name, WQ_MEM_RECLAIM, 0);
++	mlxsw_wq = alloc_workqueue(mlxsw_core_driver_name, 0, 0);
+ 	if (!mlxsw_wq)
+ 		return -ENOMEM;
+ 	mlxsw_owq = alloc_ordered_workqueue("%s_ordered", 0,
 -- 
 2.20.1
 
