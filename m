@@ -2,139 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBAE1EFB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FCFD1EF9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbfEOLeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:34:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbfEOLe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:34:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4C822084F;
-        Wed, 15 May 2019 11:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557920067;
-        bh=FlCUTuS9CnyJ0DGTw2d4Cg5FpmsUQ7/KOR3/5rA/wj4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GwJQJ7MJeMXk+eQ/g9AWWsNqcvHYBWxAQyPH319w82FTtIHNURhVyKwZpXhIwYnrB
-         pWh+hVUphPwCPKEETlZVV9jJdtOw/saVSDm8hp3ZTUZNyFRi0YZDiHbjlxs85PvsOq
-         X6cFkr1JBkLwcgraf0T7i5XNgfZ/pypBzAyNzZd0=
-Date:   Wed, 15 May 2019 13:31:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] kbuild: check uniqueness of basename of modules
-Message-ID: <20190515113113.GC11749@kroah.com>
-References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
- <CAK8P3a1y7hxME0me_Zu-F8a8jU6n=T+c32mv83utOtsL-+gc0A@mail.gmail.com>
- <20190515081422.GA22750@kroah.com>
- <CAK7LNASpJFAgvuak=mz5kkM3oGh9-M8y_84KZv-xcUkQ0h=d_A@mail.gmail.com>
+        id S1733142AbfEOLdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:33:06 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56840 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733107AbfEOLc4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:56 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4FBWPRh046477;
+        Wed, 15 May 2019 20:32:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Wed, 15 May 2019 20:32:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4FBWOeM046474
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 15 May 2019 20:32:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in __get_super
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
+        dvyukov@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-block@vger.kernel.org
+References: <0000000000002cd22305879b22c4@google.com>
+ <201905150102.x4F12b6o009249@www262.sakura.ne.jp>
+ <20190515102133.GA16193@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <024bba2a-4d2f-1861-bfd9-819511bdf6eb@i-love.sakura.ne.jp>
+Date:   Wed, 15 May 2019 20:32:27 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASpJFAgvuak=mz5kkM3oGh9-M8y_84KZv-xcUkQ0h=d_A@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190515102133.GA16193@quack2.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 05:57:50PM +0900, Masahiro Yamada wrote:
-> On Wed, May 15, 2019 at 5:14 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, May 15, 2019 at 10:08:12AM +0200, Arnd Bergmann wrote:
-> > > On Wed, May 15, 2019 at 9:39 AM Masahiro Yamada
-> > > <yamada.masahiro@socionext.com> wrote:
-> > > >
-> > > > In the recent build test of linux-next, Stephen saw a build error
-> > > > caused by a broken .tmp_versions/*.mod file:
-> > > >
-> > > >   https://lkml.org/lkml/2019/5/13/991
-> > > >
-> > > > drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
-> > > > basename, and there is a race in generating .tmp_versions/asix.mod
-> > > >
-> > > > Kbuild has not checked this before, and it occasionally shows up with
-> > > > obscure error message when this kind of race occurs.
-> > > >
-> > > > It is not trivial to catch this potential issue by eyes.
-> > > >
-> > > > Hence, this script.
-> > > >
-> > > > I compile-tested allmodconfig for the latest kernel as of writing,
-> > > > it detected the following:
-> > > >
-> > > > warning: same basename '88pm800.ko' if the following are built as modules:
-> > > >   drivers/regulator/88pm800.ko
-> > > >   drivers/mfd/88pm800.ko
-> > > > warning: same basename 'adv7511.ko' if the following are built as modules:
-> > > >   drivers/gpu/drm/bridge/adv7511/adv7511.ko
-> > > >   drivers/media/i2c/adv7511.ko
-> > > > warning: same basename 'asix.ko' if the following are built as modules:
-> > > >   drivers/net/phy/asix.ko
-> > > >   drivers/net/usb/asix.ko
-> > > > warning: same basename 'coda.ko' if the following are built as modules:
-> > > >   fs/coda/coda.ko
-> > > >   drivers/media/platform/coda/coda.ko
-> > > > warning: same basename 'realtek.ko' if the following are built as modules:
-> > > >   drivers/net/phy/realtek.ko
-> > > >   drivers/net/dsa/realtek.ko
-> > > >
-> > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > >
-> > > That looks great!
-> > >
-> > > > ---
-> > > >
-> > > >  [Alternative fix ? ]
-> > > >
-> > > > I do not know about the user experience of modprobe etc.
-> > > > when two different modules have the same name.
-> > > > It does not matter if this is correctly handled by modules.order?
-> > > >
-> > > > If this is just a problem of the build system, it is pretty easy to fix.
-> > > > For example, if we prepend the directory path, parallel build will
-> > > > never write to the same file simultanously.
-> > > >
-> > > >   asix.mod -> drivers/net/phy/asix.mod
-> > > >   asix.mod -> drivers/net/usb/asix.mod
-> > >
-> > > non-unique module names cause all kinds of problems, and
-> > > modprobe can certainly not handle them correctly, and there
-> > > are issues with symbols exported from a module when another
-> > > one has the same name.
-> >
-> > /sys/modules/ will fall over when this happens as well.  I thought we
-> > had the "rule" that module names had to be unique, I guess it was only a
-> > matter of time before they started colliding :(
-> >
-> > So warning is good, but forbidding this is better, as things will break.
-> >
-> > Or we need to fix up the places where things will break.
-> 
-> 
-> If we intentionally break the build,
-> we need to send fix-up patches to subsystems first.
+On 2019/05/15 19:21, Jan Kara wrote:
+> The question is how to fix this problem. The simplest fix I can see is that
+> we'd just refuse to do LOOP_SET_FD if someone has the block device
+> exclusively open as there are high chances such user will be unpleasantly
+> surprised by the device changing under him. OTOH this has some potential
+> for userspace visible regressions. But I guess it's worth a try. Something
+> like attached patch?
 
-True, but those builds are already broken if anyone tries to use them :)
+(1) If I understand correctly, FMODE_EXCL is set at blkdev_open() only if O_EXCL
+    is specified. How can we detect if O_EXCL was not used, for the reproducer
+    ( https://syzkaller.appspot.com/text?tag=ReproC&x=135385a8a00000 ) is not
+    using O_EXCL ?
 
-A warning for now would be nice, that way we can find these and know to
-fix them up over time.
-
-thanks,
-
-greg k-h
+(2) There seems to be no serialization. What guarantees that mount_bdev()
+    does not start due to preempted after the check added by this patch?
