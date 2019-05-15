@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE761EF07
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4201F24B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732202AbfEOL24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
+        id S1730178AbfEOMBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732071AbfEOL2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:28:46 -0400
+        id S1729514AbfEOLNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:13:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26B8820818;
-        Wed, 15 May 2019 11:28:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D10652084E;
+        Wed, 15 May 2019 11:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919725;
-        bh=akPbtu2m/5AOg/1NNH29ydnBj+HXAz/HUtkMhjTCuc0=;
+        s=default; t=1557918824;
+        bh=vh6pNQ/LJmID+Mg91bzB6nBHD3tR33/G4T+7k2YMbME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDvJ0KAMdT+9AryMmsgD4iuVjlskMPzWur+8r9lIfhYqZTZ6UD19wwATUc/vSsZ4r
-         bvh2rHG90smR9kzUNNLpL2eMtSLHZB44CWhDh54y4PIZypLMMIPL6vnV+BOdPxBGMW
-         gZ/a64W/nHDhP8JzQ3i7HLiBEAo5biaVXVRpM89c=
+        b=fQxphLEb48siaUXdtQPM42cHex4XQKlSYQ77Ph5/SHDlgYnsY2jFMvx0CZJxfAMeM
+         UJbPBiQ/kCXJsRiEW3pJdxLMkbXcVFyikcVLXV22W8HemD+yKCN+eIeQEmJlZC5dml
+         VjNowPzCEbIFwRD5YGHlgiZkgF5I/C6hDYwkqlnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Auhagen <sven.auhagen@voleatech.de>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 068/137] netfilter: nat: fix icmp id randomization
+Subject: [PATCH 4.9 14/51] s390/3270: fix lockdep false positive on view->lock
 Date:   Wed, 15 May 2019 12:55:49 +0200
-Message-Id: <20190515090658.388711972@linuxfoundation.org>
+Message-Id: <20190515090621.828009478@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,172 +44,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5bdac418f33f60b07a34e01e722889140ee8fac9 ]
+[ Upstream commit 5712f3301a12c0c3de9cc423484496b0464f2faf ]
 
-Sven Auhagen reported that a 2nd ping request will fail if 'fully-random'
-mode is used.
+The spinlock in the raw3270_view structure is used by con3270, tty3270
+and fs3270 in different ways. For con3270 the lock can be acquired in
+irq context, for tty3270 and fs3270 the highest context is bh.
 
-Reason is that if no proto information is given, min/max are both 0,
-so we set the icmp id to 0 instead of chosing a random value between
-0 and 65535.
+Lockdep sees the view->lock as a single class and if the 3270 driver
+is used for the console the following message is generated:
 
-Update test case as well to catch this, without fix this yields:
-[..]
-ERROR: cannot ping ns1 from ns2 with ip masquerade fully-random (attempt 2)
-ERROR: cannot ping ns1 from ns2 with ipv6 masquerade fully-random (attempt 2)
+WARNING: inconsistent lock state
+5.1.0-rc3-05157-g5c168033979d #12 Not tainted
+--------------------------------
+inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+swapper/0/1 [HC0[0]:SC1[1]:HE1:SE0] takes:
+(____ptrval____) (&(&view->lock)->rlock){?.-.}, at: tty3270_update+0x7c/0x330
 
-... becaus 2nd ping clashes with existing 'id 0' icmp conntrack and gets
-dropped.
+Introduce a lockdep subclass for the view lock to distinguish bh from
+irq locks.
 
-Fixes: 203f2e78200c27e ("netfilter: nat: remove l4proto->unique_tuple")
-Reported-by: Sven Auhagen <sven.auhagen@voleatech.de>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_nat_core.c                  | 11 ++++--
- tools/testing/selftests/netfilter/nft_nat.sh | 36 +++++++++++++++-----
- 2 files changed, 35 insertions(+), 12 deletions(-)
+ drivers/s390/char/con3270.c | 2 +-
+ drivers/s390/char/fs3270.c  | 3 ++-
+ drivers/s390/char/raw3270.c | 3 ++-
+ drivers/s390/char/raw3270.h | 4 +++-
+ drivers/s390/char/tty3270.c | 3 ++-
+ 5 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
-index d159e9e7835b4..ade527565127b 100644
---- a/net/netfilter/nf_nat_core.c
-+++ b/net/netfilter/nf_nat_core.c
-@@ -358,9 +358,14 @@ static void nf_nat_l4proto_unique_tuple(struct nf_conntrack_tuple *tuple,
- 	case IPPROTO_ICMPV6:
- 		/* id is same for either direction... */
- 		keyptr = &tuple->src.u.icmp.id;
--		min = range->min_proto.icmp.id;
--		range_size = ntohs(range->max_proto.icmp.id) -
--			     ntohs(range->min_proto.icmp.id) + 1;
-+		if (!(range->flags & NF_NAT_RANGE_PROTO_SPECIFIED)) {
-+			min = 0;
-+			range_size = 65536;
-+		} else {
-+			min = ntohs(range->min_proto.icmp.id);
-+			range_size = ntohs(range->max_proto.icmp.id) -
-+				     ntohs(range->min_proto.icmp.id) + 1;
-+		}
- 		goto find_free_id;
- #if IS_ENABLED(CONFIG_NF_CT_PROTO_GRE)
- 	case IPPROTO_GRE:
-diff --git a/tools/testing/selftests/netfilter/nft_nat.sh b/tools/testing/selftests/netfilter/nft_nat.sh
-index 8ec76681605cc..3194007cf8d1b 100755
---- a/tools/testing/selftests/netfilter/nft_nat.sh
-+++ b/tools/testing/selftests/netfilter/nft_nat.sh
-@@ -321,6 +321,7 @@ EOF
+diff --git a/drivers/s390/char/con3270.c b/drivers/s390/char/con3270.c
+index 285b4006f44bb..5d5e78afde88a 100644
+--- a/drivers/s390/char/con3270.c
++++ b/drivers/s390/char/con3270.c
+@@ -628,7 +628,7 @@ con3270_init(void)
+ 		     (void (*)(unsigned long)) con3270_read_tasklet,
+ 		     (unsigned long) condev->read);
  
- test_masquerade6()
+-	raw3270_add_view(&condev->view, &con3270_fn, 1);
++	raw3270_add_view(&condev->view, &con3270_fn, 1, RAW3270_VIEW_LOCK_IRQ);
+ 
+ 	INIT_LIST_HEAD(&condev->freemem);
+ 	for (i = 0; i < CON3270_STRING_PAGES; i++) {
+diff --git a/drivers/s390/char/fs3270.c b/drivers/s390/char/fs3270.c
+index 85eca1cef0630..04a6810a4298c 100644
+--- a/drivers/s390/char/fs3270.c
++++ b/drivers/s390/char/fs3270.c
+@@ -462,7 +462,8 @@ fs3270_open(struct inode *inode, struct file *filp)
+ 
+ 	init_waitqueue_head(&fp->wait);
+ 	fp->fs_pid = get_pid(task_pid(current));
+-	rc = raw3270_add_view(&fp->view, &fs3270_fn, minor);
++	rc = raw3270_add_view(&fp->view, &fs3270_fn, minor,
++			      RAW3270_VIEW_LOCK_BH);
+ 	if (rc) {
+ 		fs3270_free_view(&fp->view);
+ 		goto out;
+diff --git a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
+index a2da898ce90fd..1ebf632e327b9 100644
+--- a/drivers/s390/char/raw3270.c
++++ b/drivers/s390/char/raw3270.c
+@@ -919,7 +919,7 @@ raw3270_deactivate_view(struct raw3270_view *view)
+  * Add view to device with minor "minor".
+  */
+ int
+-raw3270_add_view(struct raw3270_view *view, struct raw3270_fn *fn, int minor)
++raw3270_add_view(struct raw3270_view *view, struct raw3270_fn *fn, int minor, int subclass)
  {
-+	local natflags=$1
- 	local lret=0
+ 	unsigned long flags;
+ 	struct raw3270 *rp;
+@@ -941,6 +941,7 @@ raw3270_add_view(struct raw3270_view *view, struct raw3270_fn *fn, int minor)
+ 		view->cols = rp->cols;
+ 		view->ascebc = rp->ascebc;
+ 		spin_lock_init(&view->lock);
++		lockdep_set_subclass(&view->lock, subclass);
+ 		list_add(&view->list, &rp->view_list);
+ 		rc = 0;
+ 		spin_unlock_irqrestore(get_ccwdev_lock(rp->cdev), flags);
+diff --git a/drivers/s390/char/raw3270.h b/drivers/s390/char/raw3270.h
+index 56519cbb165c7..7577d7d0ad486 100644
+--- a/drivers/s390/char/raw3270.h
++++ b/drivers/s390/char/raw3270.h
+@@ -149,6 +149,8 @@ struct raw3270_fn {
+ struct raw3270_view {
+ 	struct list_head list;
+ 	spinlock_t lock;
++#define RAW3270_VIEW_LOCK_IRQ	0
++#define RAW3270_VIEW_LOCK_BH	1
+ 	atomic_t ref_count;
+ 	struct raw3270 *dev;
+ 	struct raw3270_fn *fn;
+@@ -157,7 +159,7 @@ struct raw3270_view {
+ 	unsigned char *ascebc;		/* ascii -> ebcdic table */
+ };
  
- 	ip netns exec ns0 sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
-@@ -354,13 +355,13 @@ ip netns exec ns0 nft -f - <<EOF
- table ip6 nat {
- 	chain postrouting {
- 		type nat hook postrouting priority 0; policy accept;
--		meta oif veth0 masquerade
-+		meta oif veth0 masquerade $natflags
- 	}
- }
- EOF
- 	ip netns exec ns2 ping -q -c 1 dead:1::99 > /dev/null # ping ns2->ns1
- 	if [ $? -ne 0 ] ; then
--		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerading"
-+		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerade $natflags"
- 		lret=1
- 	fi
+-int raw3270_add_view(struct raw3270_view *, struct raw3270_fn *, int);
++int raw3270_add_view(struct raw3270_view *, struct raw3270_fn *, int, int);
+ int raw3270_activate_view(struct raw3270_view *);
+ void raw3270_del_view(struct raw3270_view *);
+ void raw3270_deactivate_view(struct raw3270_view *);
+diff --git a/drivers/s390/char/tty3270.c b/drivers/s390/char/tty3270.c
+index 272cb6cd1b2ac..6dd6f9ff7de56 100644
+--- a/drivers/s390/char/tty3270.c
++++ b/drivers/s390/char/tty3270.c
+@@ -978,7 +978,8 @@ static int tty3270_install(struct tty_driver *driver, struct tty_struct *tty)
+ 		return PTR_ERR(tp);
  
-@@ -397,19 +398,26 @@ EOF
- 		fi
- 	done
- 
-+	ip netns exec ns2 ping -q -c 1 dead:1::99 > /dev/null # ping ns2->ns1
-+	if [ $? -ne 0 ] ; then
-+		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerade $natflags (attempt 2)"
-+		lret=1
-+	fi
-+
- 	ip netns exec ns0 nft flush chain ip6 nat postrouting
- 	if [ $? -ne 0 ]; then
- 		echo "ERROR: Could not flush ip6 nat postrouting" 1>&2
- 		lret=1
- 	fi
- 
--	test $lret -eq 0 && echo "PASS: IPv6 masquerade for ns2"
-+	test $lret -eq 0 && echo "PASS: IPv6 masquerade $natflags for ns2"
- 
- 	return $lret
- }
- 
- test_masquerade()
- {
-+	local natflags=$1
- 	local lret=0
- 
- 	ip netns exec ns0 sysctl net.ipv4.conf.veth0.forwarding=1 > /dev/null
-@@ -417,7 +425,7 @@ test_masquerade()
- 
- 	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
- 	if [ $? -ne 0 ] ; then
--		echo "ERROR: canot ping ns1 from ns2"
-+		echo "ERROR: cannot ping ns1 from ns2 $natflags"
- 		lret=1
- 	fi
- 
-@@ -443,13 +451,13 @@ ip netns exec ns0 nft -f - <<EOF
- table ip nat {
- 	chain postrouting {
- 		type nat hook postrouting priority 0; policy accept;
--		meta oif veth0 masquerade
-+		meta oif veth0 masquerade $natflags
- 	}
- }
- EOF
- 	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
- 	if [ $? -ne 0 ] ; then
--		echo "ERROR: cannot ping ns1 from ns2 with active ip masquerading"
-+		echo "ERROR: cannot ping ns1 from ns2 with active ip masquere $natflags"
- 		lret=1
- 	fi
- 
-@@ -485,13 +493,19 @@ EOF
- 		fi
- 	done
- 
-+	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
-+	if [ $? -ne 0 ] ; then
-+		echo "ERROR: cannot ping ns1 from ns2 with active ip masquerade $natflags (attempt 2)"
-+		lret=1
-+	fi
-+
- 	ip netns exec ns0 nft flush chain ip nat postrouting
- 	if [ $? -ne 0 ]; then
- 		echo "ERROR: Could not flush nat postrouting" 1>&2
- 		lret=1
- 	fi
- 
--	test $lret -eq 0 && echo "PASS: IP masquerade for ns2"
-+	test $lret -eq 0 && echo "PASS: IP masquerade $natflags for ns2"
- 
- 	return $lret
- }
-@@ -750,8 +764,12 @@ test_local_dnat
- test_local_dnat6
- 
- reset_counters
--test_masquerade
--test_masquerade6
-+test_masquerade ""
-+test_masquerade6 ""
-+
-+reset_counters
-+test_masquerade "fully-random"
-+test_masquerade6 "fully-random"
- 
- reset_counters
- test_redirect
+ 	rc = raw3270_add_view(&tp->view, &tty3270_fn,
+-			      tty->index + RAW3270_FIRSTMINOR);
++			      tty->index + RAW3270_FIRSTMINOR,
++			      RAW3270_VIEW_LOCK_BH);
+ 	if (rc) {
+ 		tty3270_free_view(tp);
+ 		return rc;
 -- 
 2.20.1
 
