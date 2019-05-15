@@ -2,136 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59C61EE46
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C791F166
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbfEOLTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:19:23 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32942 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730926AbfEOLTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:18 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 140A8AC54039E2847CA4;
-        Wed, 15 May 2019 12:19:16 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 15 May
- 2019 12:19:06 +0100
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-CC:     Rob Landley <rob@landley.net>, Andy Lutomirski <luto@kernel.org>,
-        "Arvind Sankar" <niveditas98@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Linux API" <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        <initramfs@vger.kernel.org>,
-        "Silviu Vlasceanu" <Silviu.Vlasceanu@huawei.com>
-References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
- <20190512194322.GA71658@rani.riverdale.lan>
- <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
- <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
- <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
- <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
- <1557861511.3378.19.camel@HansenPartnership.com>
- <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
- <1557878052.2873.6.camel@HansenPartnership.com>
- <20190515005221.GB88615@rani.riverdale.lan>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a138af12-d983-453e-f0b2-661a80b7e837@huawei.com>
-Date:   Wed, 15 May 2019 13:19:04 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190515005221.GB88615@rani.riverdale.lan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        id S1731476AbfEOLxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:53:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36522 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730983AbfEOLTl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3B615611DC; Wed, 15 May 2019 11:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557919179;
+        bh=ttr2xmvM52sCyNpkVv5zDVmk1ljobJDPrByM3R11jRY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aUFcPFAPLg6qXk44y4Irrk2TF9lEpM3XeQguMeoeLFbdDxdvZOLYKq2yXua0TJzw1
+         Rb3P0KNXUyZ0D+fWBFsEjgn5lrdz390J7dPgPdmtsMLp6rAwum5D7lr3kKp25sWe9d
+         KKMlI+8bDxWE1Lt6+E4bfZpXHPKeLpI3Hu3HAPO8=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from rocky-HP-EliteBook-8460p.wlan.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rjliao@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7C17960CF1;
+        Wed, 15 May 2019 11:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557919176;
+        bh=ttr2xmvM52sCyNpkVv5zDVmk1ljobJDPrByM3R11jRY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EdtPLgV75AeYe41YGMg7P/pin5N8SyT+RQ1G2MX8xD2C5vn9honkFsMIpe0w4JDeM
+         LIo1ftqix7yIWHU0+EerWvyjUJl6aEs8G3dzDLqZt9DrtvBXQeIoCCTd/Dyb8eB4tM
+         Q+7Qf0OXWCbtz7oeh5o7GkXW83SIwGHTC06IEAIM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C17960CF1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rjliao@codeaurora.org
+From:   Rocky Liao <rjliao@codeaurora.org>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, marcel@holtmann.org,
+        johan.hedberg@gmail.com, thierry.escande@linaro.org
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        c-hbandi@codeaurora.org, Rocky Liao <rjliao@codeaurora.org>
+Subject: [PATCH v5 1/2] Bluetooth: hci_qca: Load customized NVM based on the device property
+Date:   Wed, 15 May 2019 19:19:21 +0800
+Message-Id: <1557919161-11010-1-git-send-email-rjliao@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1557631148-5120-1-git-send-email-rjliao@codeaurora.org>
+References: <1557631148-5120-1-git-send-email-rjliao@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/15/2019 2:52 AM, Arvind Sankar wrote:
-> On Tue, May 14, 2019 at 04:54:12PM -0700, James Bottomley wrote:
->> On Tue, 2019-05-14 at 18:39 -0500, Rob Landley wrote:
->>> On 5/14/19 2:18 PM, James Bottomley wrote:
->>>>> I think Rob is right here.  If /init was statically built into
->>>>> the kernel image, it has no more ability to compromise the kernel
->>>>> than anything else in the kernel.  What's the problem here?
->>>>
->>>> The specific problem is that unless you own the kernel signing key,
->>>> which is really untrue for most distribution consumers because the
->>>> distro owns the key, you cannot build the initrd statically into
->>>> the kernel.  You can take the distro signed kernel, link it with
->>>> the initrd then resign the combination with your key, provided you
->>>> insert your key into the MoK variables as a trusted secure boot
->>>> key, but the distros have been unhappy recommending this as
->>>> standard practice.
->>>>
->>>> If our model for security is going to be to link the kernel and the
->>>> initrd statically to give signature protection over the aggregate
->>>> then we need to figure out how to execute this via the distros.  If
->>>> we accept that the split model, where the distro owns and signs the
->>>> kernel but the machine owner builds and is responsible for the
->>>> initrd, then we need to explore split security models like this
->>>> proposal.
->>>
->>> You can have a built-in and an external initrd? The second extracts
->>> over the first? (I know because once upon a time conflicting files
->>> would append. It sounds like the desired behavior here is O_EXCL fail
->>> and move on.)
->>
->> Technically yes, because the first initrd could find the second by some
->> predefined means, extract it to a temporary directory and do a
->> pivot_root() and then the second would do some stuff, find the real
->> root and do a pivot_root() again.  However, while possible, wouldn't it
->> just add to the rendezvous complexity without adding any benefits? even
->> if the first initrd is built and signed by the distro and the second is
->> built by you, the first has to verify the second somehow.  I suppose
->> the second could be tar extracted, which would add xattrs, if that's
->> the goal?
->>
->> James
->>
-> You can specify multiple initrd's to the boot loader, and they get
-> loaded in sequence into memory and parsed by the kernel before /init is
-> launched. Currently I believe later ones will overwrite the earlier
-> ones, which is why we've been talking about adding an option to prevent
-> that. You don't have to mess with manually finding/parsing initramfs's
-> which wouldn't even be feasible since you may not have the drivers
-> loaded yet to access the device/filesystem on which they live.
-> 
-> Once that's done, the embedded /init is just going to do in userspace
-> wht the current patch does in the kernel. So all the files in the
-> external initramfs(es) would need to have IMA signatures via the special
-> xattr file.
+QCA BTSOC NVM is a customized firmware file and different vendors may
+want to have different BTSOC configuration (e.g. Configure SCO over PCM
+or I2S, Setting Tx power, etc.) via this file. This patch will allow
+vendors to download different NVM firmware file by reading a device
+property "firmware-name".
 
-So, the scheme you are proposing is not equivalent: using the distro key
-to verify signatures, compared to adding a new user key to verify the
-initramfs he builds. Why would it be necessary for the user to share
-responsibility with the distro, if the only files he uses come from the
-distro?
+Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+---
+Changes in v5:
+  * Made the change applicable to the wcn399x series chip sets
+---
+ drivers/bluetooth/btqca.c   |  8 ++++++--
+ drivers/bluetooth/btqca.h   |  6 ++++--
+ drivers/bluetooth/hci_qca.c | 19 ++++++++++++++++++-
+ 3 files changed, 28 insertions(+), 5 deletions(-)
 
-
-> Note that if you want the flexibility to be able to load one or both of
-> two external initramfs's, the current in-kernel proposal wouldn't be
-> enough -- the xattr specification would have to be more flexible (eg
-> reading .xattr-list* to allow each initramfs to specifiy its own
-> xattrs. This sort of enhancement would be much easier to handle with the
-> userspace variant.
-
-Yes, the alternative solution is to parse .xattr-list at the time it is
-extracted. The .xattr-list of each initramfs will be processed. Also,
-the CPIO parser doesn't have to reopen the file after all other files
-have been extracted.
-
-Roberto
-
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index cc12eec..a78b80e 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -332,7 +332,8 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+ EXPORT_SYMBOL_GPL(qca_set_bdaddr_rome);
+ 
+ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+-		   enum qca_btsoc_type soc_type, u32 soc_ver)
++		   enum qca_btsoc_type soc_type, u32 soc_ver,
++		   const char *firmware_name)
+ {
+ 	struct rome_config config;
+ 	int err;
+@@ -365,7 +366,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+-	if (qca_is_wcn399x(soc_type))
++	if (firmware_name)
++		snprintf(config.fwname, sizeof(config.fwname),
++			 "qca/%s", firmware_name);
++	else if (qca_is_wcn399x(soc_type))
+ 		snprintf(config.fwname, sizeof(config.fwname),
+ 			 "qca/crnv%02x.bin", rom_ver);
+ 	else
+diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+index 4c4fe2b..8c037bb 100644
+--- a/drivers/bluetooth/btqca.h
++++ b/drivers/bluetooth/btqca.h
+@@ -140,7 +140,8 @@ enum qca_btsoc_type {
+ 
+ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+-		   enum qca_btsoc_type soc_type, u32 soc_ver);
++		   enum qca_btsoc_type soc_type, u32 soc_ver,
++		   const char *firmware_name);
+ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
+ int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+ static inline bool qca_is_wcn399x(enum qca_btsoc_type soc_type)
+@@ -155,7 +156,8 @@ static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdad
+ }
+ 
+ static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+-				 enum qca_btsoc_type soc_type, u32 soc_ver)
++				 enum qca_btsoc_type soc_type, u32 soc_ver,
++				 const char *firmware_name)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 57322c4..9590602 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -169,6 +169,7 @@ struct qca_serdev {
+ 	struct qca_power *bt_power;
+ 	u32 init_speed;
+ 	u32 oper_speed;
++	const char *firmware_name;
+ };
+ 
+ static int qca_power_setup(struct hci_uart *hu, bool on);
+@@ -190,6 +191,17 @@ static enum qca_btsoc_type qca_soc_type(struct hci_uart *hu)
+ 	return soc_type;
+ }
+ 
++static const char *qca_get_firmware_name(struct hci_uart *hu)
++{
++	if (hu->serdev) {
++		struct qca_serdev *qsd = serdev_device_get_drvdata(hu->serdev);
++
++		return qsd->firmware_name;
++	} else {
++		return NULL;
++	}
++}
++
+ static void __serial_clock_on(struct tty_struct *tty)
+ {
+ 	/* TODO: Some chipset requires to enable UART clock on client
+@@ -1195,6 +1207,7 @@ static int qca_setup(struct hci_uart *hu)
+ 	struct qca_data *qca = hu->priv;
+ 	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
+ 	enum qca_btsoc_type soc_type = qca_soc_type(hu);
++	const char *firmware_name = qca_get_firmware_name(hu);
+ 	int ret;
+ 	int soc_ver = 0;
+ 
+@@ -1245,7 +1258,8 @@ static int qca_setup(struct hci_uart *hu)
+ 
+ 	bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
+ 	/* Setup patch / NVM configurations */
+-	ret = qca_uart_setup(hdev, qca_baudrate, soc_type, soc_ver);
++	ret = qca_uart_setup(hdev, qca_baudrate, soc_type, soc_ver,
++			firmware_name);
+ 	if (!ret) {
+ 		set_bit(QCA_IBS_ENABLED, &qca->flags);
+ 		qca_debugfs_init(hdev);
+@@ -1477,6 +1491,9 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+ 			return PTR_ERR(qcadev->bt_en);
+ 		}
+ 
++		device_property_read_string(&serdev->dev, "firmware-name",
++					 &qcadev->firmware_name);
++
+ 		qcadev->susclk = devm_clk_get(&serdev->dev, NULL);
+ 		if (IS_ERR(qcadev->susclk)) {
+ 			dev_err(&serdev->dev, "failed to acquire clk\n");
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+
