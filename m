@@ -2,141 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838061EA6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86F31EA79
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbfEOIrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 04:47:45 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39150 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfEOIrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 04:47:45 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4C0961A0171;
-        Wed, 15 May 2019 10:47:43 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A30A1A006B;
-        Wed, 15 May 2019 10:47:37 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C17CA4029A;
-        Wed, 15 May 2019 16:47:30 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        yangbo.lu@nxp.com, jiafei.pan@nxp.com,
-        Ashish Kumar <Ashish.Kumar@nxp.com>
-Subject: [PATCH v3] arm64: dts: ls1028a: Add esdhc node in dts
-Date:   Wed, 15 May 2019 16:49:25 +0800
-Message-Id: <20190515084925.30155-1-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726098AbfEOIwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 04:52:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41144 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfEOIwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 04:52:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d12so1684966wrm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 01:52:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F6DFe62CqcWW1zROhCHNbimDkV4rEZq8vvGMAT2Is98=;
+        b=n3RAxT/pe7iUiMaNhNB/CvmXdvkEH32UlNZPfDF+QzLLEfWufPRyh4kZK0cgZYisjl
+         9/EUiet5nYxVqriU8WCnMDy6ChQyxVeKUi8QWgBiq39KpJ4EZOSmHpeyHSkRQAcTPA39
+         3tYLIBzv8W1tciA0ten5bNjIr2p4Ex2C80KXKjZ+kmCdUjRFr7+Dmjy/5h8qzEqNdKXj
+         Wum7DbLi69KHZFMj5FJWV7P/DmSJiju92yTcxo6cbqYa82yKpYVaoYz16lHFTzFIZ2dn
+         19trQagjWua40M3jaTPQuPuraqOlChqjWGMhjmkPgppsEMPyp4+x5cmC8Ib53KYZVdJJ
+         uo3w==
+X-Gm-Message-State: APjAAAVZ5LqkRj6xUKkgCr5VO6DABmjUcbwNL1KUQaHEeQrK9yhx/6qk
+        n0fGU/9sgMeF6JJF6jqkeYpTwQ==
+X-Google-Smtp-Source: APXvYqwLCZxxNevBY2k96AGejabdkmuyTgj3ImDiVQ15+XN1UfSnqKNGvxTjlaeeXG7DlIrNyVO6Ew==
+X-Received: by 2002:adf:ba10:: with SMTP id o16mr15326042wrg.89.1557910320163;
+        Wed, 15 May 2019 01:52:00 -0700 (PDT)
+Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id o16sm1915596wro.63.2019.05.15.01.51.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 01:51:59 -0700 (PDT)
+Date:   Wed, 15 May 2019 10:51:58 +0200
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org,
+        linux-api@vger.kernel.org, Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH RFC v2 0/4] mm/ksm: add option to automerge VMAs
+Message-ID: <20190515085158.hyuamrxkxhjhx6go@butterfly.localdomain>
+References: <20190514131654.25463-1-oleksandr@redhat.com>
+ <20190514144105.GF4683@dhcp22.suse.cz>
+ <20190514145122.GG4683@dhcp22.suse.cz>
+ <20190515062523.5ndf7obzfgugilfs@butterfly.localdomain>
+ <20190515065311.GB16651@dhcp22.suse.cz>
+ <20190515073723.wbr522cpyjfelfav@butterfly.localdomain>
+ <20190515083321.GC16651@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515083321.GC16651@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ashish Kumar <Ashish.Kumar@nxp.com>
+On Wed, May 15, 2019 at 10:33:21AM +0200, Michal Hocko wrote:
+> > For my current setup with 2 Firefox instances I get 100 to 200 MiB saved
+> > for the second instance depending on the amount of tabs.
+> 
+> What does prevent Firefox (an opensource project) to be updated to use
+> the explicit merging?
 
-This patch is to add esdhc node and enable SD UHS-I,
-eMMC HS200 for ls1028ardb/ls1028aqds board.
+This was rather an example of a big project. Other big projects may be
+closed source, of course.
 
-Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
-Change in v3:
-		replace "esdhc@" with "mmc@"
+And yes, with regard to FF specifically I think nothing prevents it from
+being modified appropriately.
 
- arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |    8 ++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   13 ++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   27 +++++++++++++++++++++
- 3 files changed, 48 insertions(+), 0 deletions(-)
+> > Answering your question regarding using existing interfaces, since
+> > there's only one, madvise(2), this requires modifying all the
+> > applications one wants to de-duplicate. In case of containers with
+> > arbitrary content or in case of binary-only apps this is pretty hard if
+> > not impossible to do properly.
+> 
+> OK, this makes more sense. Please note that there are other people who
+> would like to see certain madvise operations to be done on a remote
+> process - e.g. to allow external memory management (Android would like
+> to control memory aging so something like MADV_DONTNEED without loosing
+> content and more probably) and potentially other madvise operations.
+> Or maybe we need a completely new interface other than madvise.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-index 14c79f4..180e5d2 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-@@ -42,6 +42,14 @@
- 	status = "okay";
- };
- 
-+&esdhc {
-+	status = "okay";
-+};
-+
-+&esdhc1 {
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-index f86b054..1bfaf42 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-@@ -30,6 +30,19 @@
- 	};
- };
- 
-+&esdhc {
-+	status = "okay";
-+	sd-uhs-sdr104;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr12;
-+	};
-+
-+&esdhc1 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	};
-+
- &i2c0 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 2896bbc..462833c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -274,6 +274,33 @@
- 			status = "disabled";
- 		};
- 
-+		esdhc: mmc@2140000 {
-+			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-+			reg = <0x0 0x2140000 0x0 0x10000>;
-+			interrupts = <0 28 0x4>; /* Level high type */
-+			clock-frequency = <0>; /* fixed up by bootloader */
-+			clocks = <&clockgen 2 1>;
-+			voltage-ranges = <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			little-endian;
-+			bus-width = <4>;
-+			status = "disabled";
-+		};
-+
-+		esdhc1: mmc@2150000 {
-+			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-+			reg = <0x0 0x2150000 0x0 0x10000>;
-+			interrupts = <0 63 0x4>; /* Level high type */
-+			clock-frequency = <0>; /* fixed up by bootloader */
-+			clocks = <&clockgen 2 1>;
-+			voltage-ranges = <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			broken-cd;
-+			little-endian;
-+			bus-width = <4>;
-+			status = "disabled";
-+		};
-+
- 		sata: sata@3200000 {
- 			compatible = "fsl,ls1028a-ahci";
- 			reg = <0x0 0x3200000 0x0 0x10000>,
+I didn't know about those intentions. Could you please point me to a
+relevant discussion so that I can check the details?
+
+> In general, having a more generic API that would cover more usecases is
+> definitely much more preferable than one ad-hoc API that handles a very
+> specific usecase. So please try to think about a more generic
+
+Yup, I see now. Since you are aware of ongoing intentions, please do Cc
+those people then and/or let me know about previous discussions please.
+That way thinking of how a new API should be implemented (be it a sysfs
+file or something else) should be easier and more visible.
+
+Thanks.
+
 -- 
-1.7.1
-
+  Best regards,
+    Oleksandr Natalenko (post-factum)
+    Senior Software Maintenance Engineer
