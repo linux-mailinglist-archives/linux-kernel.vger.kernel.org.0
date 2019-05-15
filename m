@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F053A1F24D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E0201EDA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbfEOMBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:01:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49392 "EHLO mail.kernel.org"
+        id S1729712AbfEOLMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:12:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729761AbfEOLNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:40 -0400
+        id S1729274AbfEOLMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:12:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B70B620644;
-        Wed, 15 May 2019 11:13:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4B1820644;
+        Wed, 15 May 2019 11:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918819;
-        bh=Nc2YgTqwsgxczvB4E+Mh1BjslV4IUV3hlHpngQqXUok=;
+        s=default; t=1557918724;
+        bh=lCA9yCHJbxOvPg1laqgfr1DEDOUsJEVKxcDY6A/EtBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vpVtMcaHYWmdb7QgX+VOragxAbY/uMYauvK2OE334TzBJgxB2gpd7unojAUOio3GI
-         zXCOXjQQoPf8QN79AdnnXiDX0xetZvJYhG7Fk7DsKlozN1Vmp4PNzeb7DJe78Onwkw
-         3UQtkJY1zY3XjR0CSL6sCya6M+ZHvJq3rvUKsllQ=
+        b=Vcly20mnuBGAo1r90Jw7SV9KcFWoaNss/vDmQevgpi+WFZUzN3JxLugVXEKRIwSBy
+         eBGIy/gvE3eErlxKKubTQ+mk8OlEInejk1/lcL8Ty3iQW1Hffvuj7mioKtEVtezJgF
+         XYinzcUuki40C9HfoxFF7hjWBjEtstn6eBp4Efk8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 12/51] s390/dasd: Fix capacity calculation for large volumes
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jon Masters <jcm@redhat.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 240/266] Documentation: Move L1TF to separate directory
 Date:   Wed, 15 May 2019 12:55:47 +0200
-Message-Id: <20190515090621.135203735@linuxfoundation.org>
+Message-Id: <20190515090731.122992345@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2cc9637ce825f3a9f51f8f78af7474e9e85bfa5f ]
+From: Thomas Gleixner <tglx@linutronix.de>
 
-The DASD driver incorrectly limits the maximum number of blocks of ECKD
-DASD volumes to 32 bit numbers. Volumes with a capacity greater than
-2^32-1 blocks are incorrectly recognized as smaller volumes.
+commit 65fd4cb65b2dad97feb8330b6690445910b56d6a upstream.
 
-This results in the following volume capacity limits depending on the
-formatted block size:
+Move L!TF to a separate directory so the MDS stuff can be added at the
+side. Otherwise the all hardware vulnerabilites have their own top level
+entry. Should have done that right away.
 
-  BLKSIZE  MAX_GB   MAX_CYL
-      512    2047   5843492
-     1024    4095   8676701
-     2048    8191  13634816
-     4096   16383  23860929
-
-The same problem occurs when a volume with more than 17895697 cylinders
-is accessed in raw-track-access mode.
-
-Fix this problem by adding an explicit type cast when calculating the
-maximum number of blocks.
-
-Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Jon Masters <jcm@redhat.com>
+[bwh: Backported to 4.4: we never added the documentation, so just update
+ the log message]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/block/dasd_eckd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 11c6335b19516..9d772201e3347 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -2054,14 +2054,14 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
- 	blk_per_trk = recs_per_track(&private->rdc_data, 0, block->bp_block);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1063,7 +1063,7 @@ static void __init l1tf_select_mitigatio
+ 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
+ 				half_pa);
+ 		pr_info("However, doing so will make a part of your RAM unusable.\n");
+-		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html might help you decide.\n");
++		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html might help you decide.\n");
+ 		return;
+ 	}
  
- raw:
--	block->blocks = (private->real_cyl *
-+	block->blocks = ((unsigned long) private->real_cyl *
- 			  private->rdc_data.trk_per_cyl *
- 			  blk_per_trk);
- 
- 	dev_info(&device->cdev->dev,
--		 "DASD with %d KB/block, %d KB total size, %d KB/track, "
-+		 "DASD with %u KB/block, %lu KB total size, %u KB/track, "
- 		 "%s\n", (block->bp_block >> 10),
--		 ((private->real_cyl *
-+		 (((unsigned long) private->real_cyl *
- 		   private->rdc_data.trk_per_cyl *
- 		   blk_per_trk * (block->bp_block >> 9)) >> 1),
- 		 ((blk_per_trk * block->bp_block) >> 10),
--- 
-2.20.1
-
 
 
