@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917E61EC90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EAF71EE71
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfEOK7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:59:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55408 "EHLO mail.kernel.org"
+        id S1731319AbfEOLVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727035AbfEOK7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:59:00 -0400
+        id S1730751AbfEOLVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A0F021473;
-        Wed, 15 May 2019 10:58:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F26E920818;
+        Wed, 15 May 2019 11:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917939;
-        bh=42zUaAaH9kR/pOsbplX2AEbGuInHv/eCmvgX5punsP0=;
+        s=default; t=1557919293;
+        bh=FEcgngtZEuyg9UX8fft4+eshJZJxiuhsK5c2ub4emgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QZUjIxJRU6uSWiiAUENWdeOT/DnDervK+PmcKEVZ7KrGOaWfwvFqvbxUf7BUbzsdU
-         6iYP9CR+wO/vV78Wla4TOfjtnI8q+TOjwqsG4k/OdzrsvHkJWRkN+qB2u6VOjxSl9R
-         oK/R8LAWS0cADWgHPocd3vp7R8aXscqVhFmUPSro=
+        b=p8VLqBffH3Oq0sY5sYxANwjkpHnE31HYfaEyVCJR8Pa5cn6bxkHPo3MEMyFqY9ZLk
+         /VfjmPkRUCVNfijaFxq1K5H7T56ku7yxk9gjUK9A2CF4SQ1sXdD9K907Qwlwpcp5gT
+         mbVZF2jM74N2wgnnWDuFUOfZrO2HbsiYlgLUj8Yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+d65f673b847a1a96cdba@syzkaller.appspotmail.com
-Subject: [PATCH 3.18 33/86] USB: w1 ds2490: Fix bug caused by improper use of altsetting array
-Date:   Wed, 15 May 2019 12:55:10 +0200
-Message-Id: <20190515090649.435966500@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 020/113] mac80211: Increase MAX_MSG_LEN
+Date:   Wed, 15 May 2019 12:55:11 +0200
+Message-Id: <20190515090655.009269983@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+[ Upstream commit 78be2d21cc1cd3069c6138dcfecec62583130171 ]
 
-commit c114944d7d67f24e71562fcfc18d550ab787e4d4 upstream.
+Looks that 100 chars isn't enough for messages, as we keep getting
+warnings popping from different places due to message shortening.
+Instead of trying to shorten the prints, just increase the buffer size.
 
-The syzkaller USB fuzzer spotted a slab-out-of-bounds bug in the
-ds2490 driver.  This bug is caused by improper use of the altsetting
-array in the usb_interface structure (the array's entries are not
-always stored in numerical order), combined with a naive assumption
-that all interfaces probed by the driver will have the expected number
-of altsettings.
-
-The bug can be fixed by replacing references to the possibly
-non-existent intf->altsetting[alt] entry with the guaranteed-to-exist
-intf->cur_altsetting entry.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+d65f673b847a1a96cdba@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/w1/masters/ds2490.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/mac80211/trace_msg.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/w1/masters/ds2490.c
-+++ b/drivers/w1/masters/ds2490.c
-@@ -1013,15 +1013,15 @@ static int ds_probe(struct usb_interface
- 	/* alternative 3, 1ms interrupt (greatly speeds search), 64 byte bulk */
- 	alt = 3;
- 	err = usb_set_interface(dev->udev,
--		intf->altsetting[alt].desc.bInterfaceNumber, alt);
-+		intf->cur_altsetting->desc.bInterfaceNumber, alt);
- 	if (err) {
- 		dev_err(&dev->udev->dev, "Failed to set alternative setting %d "
- 			"for %d interface: err=%d.\n", alt,
--			intf->altsetting[alt].desc.bInterfaceNumber, err);
-+			intf->cur_altsetting->desc.bInterfaceNumber, err);
- 		goto err_out_clear;
- 	}
+diff --git a/net/mac80211/trace_msg.h b/net/mac80211/trace_msg.h
+index 366b9e6f043e2..40141df09f255 100644
+--- a/net/mac80211/trace_msg.h
++++ b/net/mac80211/trace_msg.h
+@@ -1,4 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Portions of this file
++ * Copyright (C) 2019 Intel Corporation
++ */
++
+ #ifdef CONFIG_MAC80211_MESSAGE_TRACING
  
--	iface_desc = &intf->altsetting[alt];
-+	iface_desc = intf->cur_altsetting;
- 	if (iface_desc->desc.bNumEndpoints != NUM_EP-1) {
- 		pr_info("Num endpoints=%d. It is not DS9490R.\n",
- 			iface_desc->desc.bNumEndpoints);
+ #if !defined(__MAC80211_MSG_DRIVER_TRACE) || defined(TRACE_HEADER_MULTI_READ)
+@@ -11,7 +16,7 @@
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM mac80211_msg
+ 
+-#define MAX_MSG_LEN	100
++#define MAX_MSG_LEN	120
+ 
+ DECLARE_EVENT_CLASS(mac80211_msg_event,
+ 	TP_PROTO(struct va_format *vaf),
+-- 
+2.20.1
+
 
 
