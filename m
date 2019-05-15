@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DB31EE4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E801EEB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbfEOLTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:19:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57390 "EHLO mail.kernel.org"
+        id S1731837AbfEOLYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:24:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730959AbfEOLTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:38 -0400
+        id S1731809AbfEOLY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07126217F5;
-        Wed, 15 May 2019 11:19:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E828D20843;
+        Wed, 15 May 2019 11:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919177;
-        bh=5lQQSp2MY0e8p5PILottSeNZMveQFwsHmlVtymy3HyE=;
+        s=default; t=1557919467;
+        bh=Z1+mqXLAirFvbmvmCUIXTQaG/lgWQ7ZQ8Dub1uR1z1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=upnSgj356feRaoS786CMBUHXqxBvRqV5WLvGBxpxqpFwTfD5diLCjU/uMG/krnFzf
-         mfDXttkDWikMa9tA2T37qTn1MdJHNK9V0WhldQJ4cfcjXlUGj1JVFYBNwDLZZRco2p
-         v025KgG9to02x9BPIbefF9nuNvV3EbXxX8fmkjvM=
+        b=XDKXR9mWumjyAG5z8Tvryq9fNzZ+lzVySv/D0HAXWZkTFOeHRBAcwQn1yneiOa7lY
+         29AzZyT6n0UDE5i9SJ5xV6Dp7nV5UxFkxHgrTqX68Rs73lD/MSNmD21ipx2zv9yS8l
+         OuNgThTNQO/VOCsGj/VbZVXSpfb70aOpTO9glDHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 094/115] cw1200: fix missing unlock on error in cw1200_hw_scan()
-Date:   Wed, 15 May 2019 12:56:14 +0200
-Message-Id: <20190515090706.049215152@linuxfoundation.org>
+Subject: [PATCH 4.19 084/113] rtlwifi: rtl8723ae: Fix missing break in switch statement
+Date:   Wed, 15 May 2019 12:56:15 +0200
+Message-Id: <20190515090700.019427985@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 51c8d24101c79ffce3e79137e2cee5dfeb956dd7 upstream.
+commit 84242b82d81c54e009a2aaa74d3d9eff70babf56 upstream.
 
-Add the missing unlock before return from function cw1200_hw_scan()
-in the error handling case.
+Add missing break statement in order to prevent the code from falling
+through to case 0x1025, and erroneously setting rtlhal->oem_id to
+RT_CID_819X_ACER when rtlefuse->eeprom_svid is equal to 0x10EC and
+none of the cases in switch (rtlefuse->eeprom_smid) match.
 
-Fixes: 4f68ef64cd7f ("cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+This bug was found thanks to the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Fixes: 238ad2ddf34b ("rtlwifi: rtl8723ae: Clean up the hardware info routine")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/st/cw1200/scan.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/st/cw1200/scan.c
-+++ b/drivers/net/wireless/st/cw1200/scan.c
-@@ -84,8 +84,11 @@ int cw1200_hw_scan(struct ieee80211_hw *
- 
- 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
- 		req->ie_len);
--	if (!frame.skb)
-+	if (!frame.skb) {
-+		mutex_unlock(&priv->conf_mutex);
-+		up(&priv->scan.lock);
- 		return -ENOMEM;
-+	}
- 
- 	if (req->ie_len)
- 		skb_put_data(frame.skb, req->ie, req->ie_len);
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
+@@ -1699,6 +1699,7 @@ static void _rtl8723e_read_adapter_info(
+ 					rtlhal->oem_id = RT_CID_819X_LENOVO;
+ 					break;
+ 				}
++				break;
+ 			case 0x1025:
+ 				rtlhal->oem_id = RT_CID_819X_ACER;
+ 				break;
 
 
