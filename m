@@ -2,142 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E50781E73C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 05:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF981E748
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 06:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfEOD7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 23:59:06 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52712 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbfEOD7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 23:59:05 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A068A1A0170;
-        Wed, 15 May 2019 05:59:03 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE9DC1A00B9;
-        Wed, 15 May 2019 05:58:57 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B762540302;
-        Wed, 15 May 2019 11:58:50 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        yangbo.lu@nxp.com, jiafei.pan@nxp.com,
-        Ashish Kumar <Ashish.Kumar@nxp.com>
-Subject: [PATCH v2] arm64: dts: ls1028a: Add esdhc node in dts
-Date:   Wed, 15 May 2019 12:00:46 +0800
-Message-Id: <20190515040046.9230-1-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726680AbfEOEFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 00:05:21 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:24440 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfEOEFV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 00:05:21 -0400
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x4F454sW015590
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 13:05:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x4F454sW015590
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557893105;
+        bh=QXsCEwCOT8dSlZT3vBX54289D2U7bwg2IlfNnETiDDQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CDu+5Mm7AxKWm14tUoEu7Wd+zPGqd01/i1iOvp0sWOGNg7Y+gCYSOPWx3mhSHkwU2
+         0x18nGBuKpF0odOH/Xxp9dLDBS/mCmdZEsXxLQOvuGO8FkgK1ZAI/PmhSy62xqge0G
+         chCK4vl9UEGPC3wVicnmdXqL4RZ38nEZ97byAPmF3lHbLtNvVYpy+uLSrtD0ht98s4
+         3vcM5PMc9YYau92//IF0j81rqSno8yxO4J8ds3n9oV6mNyAxwjUzDhvFlsMG36fm7K
+         8+OL9pCumw8mFHn3WvZnmUrPynN0RNx8kjB+IgnHr7XjTiBprfO/TLdQVkMs3qXcxC
+         Kv9OFyDeaLEdg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id y6so791777vsb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 21:05:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAXZreR71EvPU+Maq8uVhoZQ0WB4uLgEVz+yZj78i93hVLpn8O1J
+        n9JgsR+6xMZbiwdPKqNQEXmO8ctY9d43457r/X4=
+X-Google-Smtp-Source: APXvYqwsU+rSHu8NSKuZNBBErQInp9T2BBh9v46SzTAusxEAN6a0CyYBMRzJNxcEh9PuxZPZ0PdNUIvxzkLzR43ZZbg=
+X-Received: by 2002:a67:d382:: with SMTP id b2mr2582839vsj.155.1557893103697;
+ Tue, 14 May 2019 21:05:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190513112254.22534-1-yamada.masahiro@socionext.com> <CAOSf1CFqiKK-=aRU0kYPajY8rmjrFVdMi+AA692rXwLrC7S2Lg@mail.gmail.com>
+In-Reply-To: <CAOSf1CFqiKK-=aRU0kYPajY8rmjrFVdMi+AA692rXwLrC7S2Lg@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 15 May 2019 13:04:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT-ZcihM+XB39oxaagckvKXTwgvar-7m0AoTSPi-ezvJg@mail.gmail.com>
+Message-ID: <CAK7LNAT-ZcihM+XB39oxaagckvKXTwgvar-7m0AoTSPi-ezvJg@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/boot: fix broken way to pass CONFIG options
+To:     Oliver <oohall@gmail.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rodrigo R. Galvao" <rosattig@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Greer <mgreer@animalcreek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ashish Kumar <Ashish.Kumar@nxp.com>
+On Mon, May 13, 2019 at 11:24 PM Oliver <oohall@gmail.com> wrote:
+>
+> On Mon, May 13, 2019 at 9:23 PM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Commit 5e9dcb6188a4 ("powerpc/boot: Expose Kconfig symbols to wrapper")
+> > was wrong, but commit e41b93a6be57 ("powerpc/boot: Fix build failures
+> > with -j 1") was also wrong.
+> >
+> > Check-in source files never ever depend on build artifacts.
+> >
+> > The correct dependency is:
+> >
+> >   $(obj)/serial.o: $(obj)/autoconf.h
+> >
+> > However, copying autoconf.h to arch/power/boot/ is questionable
+> > in the first place.
+> >
+> > arch/powerpc/Makefile adopted multiple ways to pass CONFIG options.
+> >
+> > arch/powerpc/boot/decompress.c references CONFIG_KERNEL_GZIP and
+> > CONFIG_KERNEL_XZ, which are passed via the command line.
+> >
+> > arch/powerpc/boot/serial.c includes the copied autoconf.h to
+> > reference a couple of CONFIG options.
+> >
+> > Do not do this.
+> >
+> > We should have already learned that including autoconf.h from each
+> > source file is really fragile.
+> >
+> > In fact, it is already broken.
+> >
+> > arch/powerpc/boot/ppc_asm.h references CONFIG_PPC_8xx, but
+> > arch/powerpc/boot/utils.S is not given any way to access CONFIG
+> > options. So, CONFIG_PPC_8xx is never defined here.
+> >
+> > Just pass $(LINUXINCLUDE) and remove all broken code.
+>
+> I'm not sure how safe this is.
 
-This patch is to add esdhc node and enable SD UHS-I,
-eMMC HS200 for ls1028ardb/ls1028aqds board.
 
-Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
-Change in v2:
-		Update the patch title
-		Add a commont in dts code
+I chose to use $(LINUXINCLUDE) since this is
+what other boot decompressors do.
+(e.g. arch/arm/boot/compressed)
 
- arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |    8 ++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   13 ++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   27 +++++++++++++++++++++
- 3 files changed, 48 insertions(+), 0 deletions(-)
+With this, two headers are included:
+include/linux/kconfig.h
+include/generated/autoconf.h
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-index 14c79f4..180e5d2 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-@@ -42,6 +42,14 @@
- 	status = "okay";
- };
- 
-+&esdhc {
-+	status = "okay";
-+};
-+
-+&esdhc1 {
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-index f86b054..1bfaf42 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-@@ -30,6 +30,19 @@
- 	};
- };
- 
-+&esdhc {
-+	status = "okay";
-+	sd-uhs-sdr104;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr12;
-+	};
-+
-+&esdhc1 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	};
-+
- &i2c0 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 2896bbc..5c7546f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -274,6 +274,33 @@
- 			status = "disabled";
- 		};
- 
-+		esdhc: esdhc@2140000 {
-+			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-+			reg = <0x0 0x2140000 0x0 0x10000>;
-+			interrupts = <0 28 0x4>; /* Level high type */
-+			clock-frequency = <0>; /* fixed up by bootloader */
-+			clocks = <&clockgen 2 1>;
-+			voltage-ranges = <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			little-endian;
-+			bus-width = <4>;
-+			status = "disabled";
-+		};
-+
-+		esdhc1: esdhc@2150000 {
-+			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-+			reg = <0x0 0x2150000 0x0 0x10000>;
-+			interrupts = <0 63 0x4>; /* Level high type */
-+			clock-frequency = <0>; /* fixed up by bootloader */
-+			clocks = <&clockgen 2 1>;
-+			voltage-ranges = <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			broken-cd;
-+			little-endian;
-+			bus-width = <4>;
-+			status = "disabled";
-+		};
-+
- 		sata: sata@3200000 {
- 			compatible = "fsl,ls1028a-ahci";
- 			reg = <0x0 0x3200000 0x0 0x10000>,
--- 
-1.7.1
+The first one enables to use IS_ENABLE(), etc.
+The second one is the list of CONFIG options.
 
+If you want to minimize the number of included headers,
+ you can add
+-include include/generated/autoconf.h instead.
+
+
+> The original reason for the
+> CONFIG_KERNEL_XZ hack in the makefile was because the kernel headers
+> couldn't be included directly. The bootwrapper is compiled with a
+> 32bit toolchain when the kernel is compiled for 64bit big endian
+> because of older systems with broken firmware that can't load 64bit
+> ELFs directly.
+
+I do not see CONFIG_32BIT or CONFIG_64BIT  in arch/power/boot.
+
+If you are saying "including autoconf.h itself is bad",
+we should revert 5e9dcb6188a40e604e66dc30fab30c2be89aa1cc
+But, I doubt it.
+
+
+> When I added XZ support to the wrapper I did experiment
+> with including the kernel headers directly and couldn't make it work
+> reliably.
+
+Right. I am pretty sure it won't work.
+But, it is unrelated to including CONFIG options.
+
+
+I am not a PPC developer, so I am not excited about
+looking into boot wrapper.
+
+When I was seeing Makefiles for my Kbuild refactoring,
+I found
+$(srctree)/$(src)/serial.c: $(obj)/autoconf.h
+then I shuddered.
+
+
+If PPC folks want to keep the breakage as is,
+I can send the following.
+
+It it Michael's call.
+
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -202,7 +202,7 @@ $(obj)/empty.c:
+ $(obj)/zImage.coff.lds $(obj)/zImage.ps3.lds : $(obj)/%: $(srctree)/$(src)/%.S
+        $(Q)cp $< $@
+
+-$(srctree)/$(src)/serial.c: $(obj)/autoconf.h
++$(obj)/serial.o: $(obj)/autoconf.h
+
+ $(obj)/autoconf.h: $(obj)/%: $(objtree)/include/generated/%
+        $(Q)cp $< $@
+
+
+
+
+> I don't remember what the exact reason was, but I think it
+> was something to do with the generated headers not always matching
+> what you would expect when compiling for 32bit. It's also possible I
+> was just being paranoid. Either way it's about time we found a real
+> fix...
+>
+> The stuff in serial.c and ppc_asm.h was added later to work around
+> other issues without anyone thinking too hard about it. Oh well.
+>
+> > I also removed the -traditional flag to make include/linux/kconfig.h
+> > work. I do not understand why it needs to imitate the behavior of
+> > pre-standard C preprocessors.
+>
+> I'm not sure why it's there either. The boot wrapper was re-written at
+> some point so it might just be a hold over from the dawn of time.
+>
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  arch/powerpc/boot/.gitignore |  2 --
+> >  arch/powerpc/boot/Makefile   | 14 +++-----------
+> >  arch/powerpc/boot/serial.c   |  1 -
+> >  3 files changed, 3 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/arch/powerpc/boot/.gitignore b/arch/powerpc/boot/.gitignore
+> > index 32034a0cc554..6610665fcf5e 100644
+> > --- a/arch/powerpc/boot/.gitignore
+> > +++ b/arch/powerpc/boot/.gitignore
+> > @@ -44,5 +44,3 @@ fdt_sw.c
+> >  fdt_wip.c
+> >  libfdt.h
+> >  libfdt_internal.h
+> > -autoconf.h
+> > -
+> > diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+> > index 73d1f3562978..b8a82be2af2a 100644
+> > --- a/arch/powerpc/boot/Makefile
+> > +++ b/arch/powerpc/boot/Makefile
+> > @@ -20,9 +20,6 @@
+> >
+> >  all: $(obj)/zImage
+> >
+> > -compress-$(CONFIG_KERNEL_GZIP) := CONFIG_KERNEL_GZIP
+> > -compress-$(CONFIG_KERNEL_XZ)   := CONFIG_KERNEL_XZ
+> > -
+> >  ifdef CROSS32_COMPILE
+> >      BOOTCC := $(CROSS32_COMPILE)gcc
+> >      BOOTAR := $(CROSS32_COMPILE)ar
+> > @@ -34,7 +31,7 @@ endif
+> >  BOOTCFLAGS    := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+> >                  -fno-strict-aliasing -O2 -msoft-float -mno-altivec -mno-vsx \
+> >                  -pipe -fomit-frame-pointer -fno-builtin -fPIC -nostdinc \
+> > -                -D$(compress-y)
+> > +                $(LINUXINCLUDE)
+> >
+> >  ifdef CONFIG_PPC64_BOOT_WRAPPER
+> >  BOOTCFLAGS     += -m64
+> > @@ -51,7 +48,7 @@ BOOTCFLAGS    += -mlittle-endian
+> >  BOOTCFLAGS     += $(call cc-option,-mabi=elfv2)
+> >  endif
+> >
+> > -BOOTAFLAGS     := -D__ASSEMBLY__ $(BOOTCFLAGS) -traditional -nostdinc
+> > +BOOTAFLAGS     := -D__ASSEMBLY__ $(BOOTCFLAGS) -nostdinc
+> >
+> >  BOOTARFLAGS    := -cr$(KBUILD_ARFLAGS)
+> >
+> > @@ -202,14 +199,9 @@ $(obj)/empty.c:
+> >  $(obj)/zImage.coff.lds $(obj)/zImage.ps3.lds : $(obj)/%: $(srctree)/$(src)/%.S
+> >         $(Q)cp $< $@
+> >
+> > -$(srctree)/$(src)/serial.c: $(obj)/autoconf.h
+> > -
+> > -$(obj)/autoconf.h: $(obj)/%: $(objtree)/include/generated/%
+> > -       $(Q)cp $< $@
+> > -
+> >  clean-files := $(zlib-) $(zlibheader-) $(zliblinuxheader-) \
+> >                 $(zlib-decomp-) $(libfdt) $(libfdtheader) \
+> > -               autoconf.h empty.c zImage.coff.lds zImage.ps3.lds zImage.lds
+> > +               empty.c zImage.coff.lds zImage.ps3.lds zImage.lds
+> >
+> >  quiet_cmd_bootcc = BOOTCC  $@
+> >        cmd_bootcc = $(BOOTCC) -Wp,-MD,$(depfile) $(BOOTCFLAGS) -c -o $@ $<
+> > diff --git a/arch/powerpc/boot/serial.c b/arch/powerpc/boot/serial.c
+> > index b0491b8c0199..9457863147f9 100644
+> > --- a/arch/powerpc/boot/serial.c
+> > +++ b/arch/powerpc/boot/serial.c
+> > @@ -18,7 +18,6 @@
+> >  #include "stdio.h"
+> >  #include "io.h"
+> >  #include "ops.h"
+> > -#include "autoconf.h"
+> >
+> >  static int serial_open(void)
+> >  {
+> > --
+> > 2.17.1
+> >
+
+
+
+--
+Best Regards
+Masahiro Yamada
