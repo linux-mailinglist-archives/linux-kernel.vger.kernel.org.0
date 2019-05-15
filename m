@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F871EE7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0981EE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbfEOLWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60352 "EHLO mail.kernel.org"
+        id S1730663AbfEOLR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730877AbfEOLWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:10 -0400
+        id S1728459AbfEOLRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E261F20818;
-        Wed, 15 May 2019 11:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B27B206BF;
+        Wed, 15 May 2019 11:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919330;
-        bh=Hf8qXXvC/RpJAv8+tngHo+7/65d/kNCeXPGYNRJ0nXY=;
+        s=default; t=1557919043;
+        bh=oGHSbytJsiHse1qv2YgnDOtzQdItpFrlh6u6E/WJa2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2mCGPoykVFK+lm+aTesP2qxZ92C8M6Fiz0EwF1yF60IoZp9zWsZovmKEr9etltE7N
-         TZFB3FO6PXzrml/fjDloF2PJkN3U6tUF1b/LFyBlYxset9KA45L439ONjKxjHaqWRM
-         5S2bTj5+43hkUXUYJZCvDo6ILwX3ARHJou0MlOdU=
+        b=B56J3S0/FJVYgOlnhJTyNd7qwqZz6GiJOSeXJA0TfM95B0Z/ITTsczwUiWesPDODu
+         XT5F9rfhV1Vxu53Yaw2XG+xl0cFl/QaD0BARbvtSc7Za/cBptszOpFoK90dvf3gSN4
+         XpXYGE0KrgX0/5jU1G3UnCKqUguqhuhwKeQk0d8E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Jonathan Billings <jsbillin@umich.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/113] afs: Unlock pages for __pagevec_release()
+        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 044/115] ACPICA: AML interpreter: add region addresses in global list during initialization
 Date:   Wed, 15 May 2019 12:55:24 +0200
-Message-Id: <20190515090656.091640301@linuxfoundation.org>
+Message-Id: <20190515090702.692348707@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 21bd68f196ca91fc0f3d9bd1b32f6e530e8c1c88 ]
+[ Upstream commit 4abb951b73ff0a8a979113ef185651aa3c8da19b ]
 
-__pagevec_release() complains loudly if any page in the vector is still
-locked.  The pages need to be locked for generic_error_remove_page(), but
-that function doesn't actually unlock them.
+The table load process omitted adding the operation region address
+range to the global list. This omission is problematic because the OS
+queries the global list to check for address range conflicts before
+deciding which drivers to load. This commit may result in warning
+messages that look like the following:
 
-Unlock the pages afterwards.
+[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
+[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
 
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Jonathan Billings <jsbillin@umich.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+However, these messages do not signify regressions. It is a result of
+properly adding address ranges within the global address list.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
+Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/afs/write.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/acpi/acpica/dsopcode.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 19c04caf3c012..e00461a6de9aa 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -253,6 +253,7 @@ static void afs_kill_pages(struct address_space *mapping,
- 				first = page->index + 1;
- 			lock_page(page);
- 			generic_error_remove_page(mapping, page);
-+			unlock_page(page);
- 		}
+diff --git a/drivers/acpi/acpica/dsopcode.c b/drivers/acpi/acpica/dsopcode.c
+index 0336df7ac47dd..e8070f6ca835e 100644
+--- a/drivers/acpi/acpica/dsopcode.c
++++ b/drivers/acpi/acpica/dsopcode.c
+@@ -451,6 +451,10 @@ acpi_ds_eval_region_operands(struct acpi_walk_state *walk_state,
+ 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
+ 			  obj_desc->region.length));
  
- 		__pagevec_release(&pv);
++	status = acpi_ut_add_address_range(obj_desc->region.space_id,
++					   obj_desc->region.address,
++					   obj_desc->region.length, node);
++
+ 	/* Now the address and length are valid for this opregion */
+ 
+ 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
 -- 
 2.20.1
 
