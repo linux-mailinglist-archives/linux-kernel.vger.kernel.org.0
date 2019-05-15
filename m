@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEED1ED6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F781EEE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfEOLJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:09:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42294 "EHLO mail.kernel.org"
+        id S1732172AbfEOL1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:27:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728113AbfEOLJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:09:24 -0400
+        id S1731966AbfEOL1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49E9C2084F;
-        Wed, 15 May 2019 11:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C444920843;
+        Wed, 15 May 2019 11:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918563;
-        bh=hnUej7ys3ITiP39luoDvCJAWYDcmxkOIaF1YbLFXxxY=;
+        s=default; t=1557919620;
+        bh=QpFXXmpMTOdZPQAY3EtC5FGc6JxRxY/eUM5iSrnA3Jc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pS5wNnD6V1YqI4kC5zb5VUsGUAywBEbgyOamCCGb7N9kyS+2sX4jYmFboEm0Tc7Qd
-         YdXQwTv3vuKKoLwuuPl/8yEHzkigWMMPXPXusPQ/kgqUx3/1+LyXr9wCFAyXKEuKrE
-         8+fQfGse2Ui6K6qk5GmAp0Fn4Pe6nufy6GSqECE8=
+        b=z7AkAijL1bWVoJpPl1POxXovh5Fsyy6MVbI59DR7IvVAPr6kGT2ktXZrpZ4Vv2Gsi
+         L12rgTov5s36V1uAZ85AuDvTfhVrBF2IHgLBa7ZrS6U4nfvCVEeCafY7s0lEYGzQKX
+         QbZdcWRtkL6ymVnBQVrLZOrjugMcVJoCoEq0qpKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 180/266] x86: stop exporting msr-index.h to userland
+        stable@vger.kernel.org, Lei YU <mine260309@gmail.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 5.0 006/137] hwmon: (occ) Fix extended status bits
 Date:   Wed, 15 May 2019 12:54:47 +0200
-Message-Id: <20190515090729.016771030@linuxfoundation.org>
+Message-Id: <20190515090653.152307752@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,34 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Lei YU <mine260309@gmail.com>
 
-commit 25dc1d6cc3082aab293e5dad47623b550f7ddd2a upstream.
+commit b88c5049219a7f322bb1fd65fc30d17472a23563 upstream.
 
-Even if this file was not in an uapi directory, it was exported because
-it was listed in the Kbuild file.
+The occ's extended status is checked and shown as sysfs attributes. But
+the code was incorrectly checking the "status" bits.
+Fix it by checking the "ext_status" bits.
 
-Fixes: b72e7464e4cf ("x86/uapi: Do not export <asm/msr-index.h> as part of the user API headers")
-Suggested-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: stable@vger.kernel.org
+Fixes: df04ced684d4 ("hwmon (occ): Add sysfs attributes for additional OCC data")
+Signed-off-by: Lei YU <mine260309@gmail.com>
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/uapi/asm/Kbuild |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/arch/x86/include/uapi/asm/Kbuild
-+++ b/arch/x86/include/uapi/asm/Kbuild
-@@ -27,7 +27,6 @@ header-y += ldt.h
- header-y += mce.h
- header-y += mman.h
- header-y += msgbuf.h
--header-y += msr-index.h
- header-y += msr.h
- header-y += mtrr.h
- header-y += param.h
+---
+ drivers/hwmon/occ/sysfs.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/drivers/hwmon/occ/sysfs.c
++++ b/drivers/hwmon/occ/sysfs.c
+@@ -51,16 +51,16 @@ static ssize_t occ_sysfs_show(struct dev
+ 		val = !!(header->status & OCC_STAT_ACTIVE);
+ 		break;
+ 	case 2:
+-		val = !!(header->status & OCC_EXT_STAT_DVFS_OT);
++		val = !!(header->ext_status & OCC_EXT_STAT_DVFS_OT);
+ 		break;
+ 	case 3:
+-		val = !!(header->status & OCC_EXT_STAT_DVFS_POWER);
++		val = !!(header->ext_status & OCC_EXT_STAT_DVFS_POWER);
+ 		break;
+ 	case 4:
+-		val = !!(header->status & OCC_EXT_STAT_MEM_THROTTLE);
++		val = !!(header->ext_status & OCC_EXT_STAT_MEM_THROTTLE);
+ 		break;
+ 	case 5:
+-		val = !!(header->status & OCC_EXT_STAT_QUICK_DROP);
++		val = !!(header->ext_status & OCC_EXT_STAT_QUICK_DROP);
+ 		break;
+ 	case 6:
+ 		val = header->occ_state;
 
 
