@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB6D1EC9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E031EE1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbfEOK7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55898 "EHLO mail.kernel.org"
+        id S1730626AbfEOLRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbfEOK7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:59:23 -0400
+        id S1728261AbfEOLRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21B852084E;
-        Wed, 15 May 2019 10:59:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1D9420644;
+        Wed, 15 May 2019 11:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917962;
-        bh=iHx3Ka/phA/8s7Iny4Bl/gW1DnuS8OKqP7Z7MljoNhk=;
+        s=default; t=1557919027;
+        bh=OGmgcPDYmpGZoe6b7p5Kka/NjwDpmejKew+gZBRRk08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yf3cDIfGUdrBGINWjIb/M+P6drXH9dAPCY74ZLYEFUd7Hsf8aZ8LUF+Vg9/hqiIaz
-         sPai4tq/dYq2VBreC9uPLIwOIwsMUaIfO8HXhc2n2CJ0u2A3kJnkC0Wpsvz/I33IHn
-         BbFMiaK6We5fVou6e+VMgSpHWVAVS/zNlJBCGAyk=
+        b=NN5r6cwpiuVubtn3Zc5OTQKExrNtnafFO2z4IIF/uqrytlnjusR0+MS5rBs0gPhMI
+         fUZ6nNGASMeauvCIq8EoHLrUfDwd+yREwEXVgLAONUhj1KMPKSbinwJ3ElGbgnG9+c
+         p+GgyJhw/f++wEYiso2SQEtUrGr77jxMksJzPtDI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Daniel Gomez <dagmcr@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 41/86] jffs2: fix use-after-free on symlink traversal
+Subject: [PATCH 4.14 038/115] spi: ST ST95HF NFC: declare missing of table
 Date:   Wed, 15 May 2019 12:55:18 +0200
-Message-Id: <20190515090650.702530211@linuxfoundation.org>
+Message-Id: <20190515090702.220165255@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4fdcfab5b5537c21891e22e65996d4d0dd8ab4ca ]
+[ Upstream commit d04830531d0c4a99c897a44038e5da3d23331d2f ]
 
-free the symlink body after the same RCU delay we have for freeing the
-struct inode itself, so that traversal during RCU pathwalk wouldn't step
-into freed memory.
+Add missing <of_device_id> table for SPI driver relying on SPI
+device match since compatible is in a DT binding or in a DTS.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Before this patch:
+modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
+alias:          spi:st95hf
+
+After this patch:
+modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
+alias:          spi:st95hf
+alias:          of:N*T*Cst,st95hfC*
+alias:          of:N*T*Cst,st95hf
+
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/readinode.c | 5 -----
- fs/jffs2/super.c     | 5 ++++-
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/nfc/st95hf/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
-index 386303dca382..4f390be71723 100644
---- a/fs/jffs2/readinode.c
-+++ b/fs/jffs2/readinode.c
-@@ -1429,11 +1429,6 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f)
+diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
+index 2b26f762fbc3b..01acb6e533655 100644
+--- a/drivers/nfc/st95hf/core.c
++++ b/drivers/nfc/st95hf/core.c
+@@ -1074,6 +1074,12 @@ static const struct spi_device_id st95hf_id[] = {
+ };
+ MODULE_DEVICE_TABLE(spi, st95hf_id);
  
- 	jffs2_kill_fragtree(&f->fragtree, deleted?c:NULL);
- 
--	if (f->target) {
--		kfree(f->target);
--		f->target = NULL;
--	}
--
- 	fds = f->dents;
- 	while(fds) {
- 		fd = fds;
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 0bbc31d10857..d1be5991bb66 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -47,7 +47,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
- static void jffs2_i_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
--	kmem_cache_free(jffs2_inode_cachep, JFFS2_INODE_INFO(inode));
-+	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
++static const struct of_device_id st95hf_spi_of_match[] = {
++        { .compatible = "st,st95hf" },
++        { },
++};
++MODULE_DEVICE_TABLE(of, st95hf_spi_of_match);
 +
-+	kfree(f->target);
-+	kmem_cache_free(jffs2_inode_cachep, f);
- }
- 
- static void jffs2_destroy_inode(struct inode *inode)
+ static int st95hf_probe(struct spi_device *nfc_spi_dev)
+ {
+ 	int ret;
+@@ -1260,6 +1266,7 @@ static struct spi_driver st95hf_driver = {
+ 	.driver = {
+ 		.name = "st95hf",
+ 		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(st95hf_spi_of_match),
+ 	},
+ 	.id_table = st95hf_id,
+ 	.probe = st95hf_probe,
 -- 
 2.20.1
 
