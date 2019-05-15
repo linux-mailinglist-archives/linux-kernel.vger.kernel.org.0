@@ -2,542 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570561F575
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9E51F56C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfEONTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 09:19:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55802 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbfEONTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 09:19:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id x64so2643741wmb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 06:19:08 -0700 (PDT)
+        id S1727949AbfEONTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 09:19:04 -0400
+Received: from mail-eopbgr110087.outbound.protection.outlook.com ([40.107.11.87]:25376
+        "EHLO GBR01-CWL-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727388AbfEONTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 09:19:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2l6cV/XBERtzMJN9MOTGY475jDhdiqP66F5DuNPZchA=;
-        b=CGC57N2dTGbsXRGtWoOCsuPXcWdTNYdtBnNwGPHVxj/xgHCEmAU+fWutrPVXsGWrtX
-         ivDqS0xAD9YMFpwOaXT2zSBZxxAPBp1KpSt/mzgPPbWwI37tVaeFluhbumSfyybfzW/b
-         5kZ4ZPJePgq5ZkOveKQw+IkgnH+gjijoiihuWZOvmUL8a7ujnsjSdQ2PjDvtZ+qDwRSz
-         JyE4d0T94VpJ6Nb5ojSOgEsu6eCOYVI1SG4sXKIcc0YXUVEl1oTm0oYae/nhbXHC+D4W
-         dkg22QmikZSOFjdYhAMkbAX3rTcV41NIglH2PrUJB/sYBkaUianICIhSQiXq560vFDe9
-         Ys3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2l6cV/XBERtzMJN9MOTGY475jDhdiqP66F5DuNPZchA=;
-        b=i2cNziO3R/byXE+C/8sDN5PL0voAysadaH1xdLvYsbjO2EjBn/b33gEVtwfGvmJhV2
-         mzfUCAb5Kr32y0K7QasFuT3jGtLLJ1cCQRRjBn5wp+XMCgCFg/4Ut4k59lKVbl3KZ4u7
-         IJCUnERZ2lxGKnfwFjlzt1ZRIaMCcy8RD9G991aQlJGactgrpJ7RGAkF0Lpp7w1/AUBR
-         20QvtOkVgOUbzJLceCVbegJW7kSnpKlZ42W7QV8fP3NnkZFiiqjFmC1mR4THeEWRPrfu
-         Z6nhQ3KCUyPdnGtPg0KeIHfVu8G97fXFV3GehCEtCbgL3oy473/adp0h+IMdsdUE4KG6
-         M3Yg==
-X-Gm-Message-State: APjAAAUuYt5IoDnQiu+7QShsHVJ7K5sTEKkYZ8l1rgOiQenAzUI/xB9/
-        wOqVpjOQglhicQ5Jftzv89xFaA==
-X-Google-Smtp-Source: APXvYqzV9IrpFP9v8rb7MSFaAjwig9e+NH7CRTqfvbqgP9tO28VK202yRIKwpDr1/QkYKbKCB1e97Q==
-X-Received: by 2002:a1c:a695:: with SMTP id p143mr23747745wme.128.1557926348128;
-        Wed, 15 May 2019 06:19:08 -0700 (PDT)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id b206sm2789848wmd.28.2019.05.15.06.19.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 May 2019 06:19:07 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH 5/5] ASoC: meson: add g12a tohdmitx control
-Date:   Wed, 15 May 2019 15:18:58 +0200
-Message-Id: <20190515131858.32130-6-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190515131858.32130-1-jbrunet@baylibre.com>
-References: <20190515131858.32130-1-jbrunet@baylibre.com>
+ d=camlinlimited.onmicrosoft.com; s=selector1-camlinlimited-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ePt4pOeKnmN0qfdz2sQZdCE7G+B4hWqqBgsAvEHbCQc=;
+ b=MJkkjIch3alkJaxAwWT3wH0YwPcDqweOKa89ideP5pPgwrfJXGXvnHWUSqEcWg/boY704mKOQRKcfHeGmDisK2z0S7Hu1RnMgHUItW0aFexne5vWEAouDEqWo9oIqrEFivLqBk/qZkvZ9Mj5j1FTGRpzked1vkbKhumzrX/eAjA=
+Received: from LO2P123MB1776.GBRP123.PROD.OUTLOOK.COM (20.176.155.215) by
+ LO2P123MB2080.GBRP123.PROD.OUTLOOK.COM (20.176.155.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 13:18:58 +0000
+Received: from LO2P123MB1776.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::50e4:5d16:56d4:9572]) by LO2P123MB1776.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::50e4:5d16:56d4:9572%6]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 13:18:58 +0000
+From:   Lech Perczak <l.perczak@camlintechnologies.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Dumazet <edumazet@google.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Piotr Figiel <p.figiel@camlintechnologies.com>,
+        =?utf-8?B?S3J6eXN6dG9mIERyb2JpxYRza2k=?= 
+        <k.drobinski@camlintechnologies.com>,
+        Pawel Lenkow <p.lenkow@camlintechnologies.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: Recurring warning in page_copy_sane (inside copy_page_to_iter)
+ when running stress tests involving drop_caches
+Thread-Topic: Recurring warning in page_copy_sane (inside copy_page_to_iter)
+ when running stress tests involving drop_caches
+Thread-Index: AQHU+0je8+eBBHiobkyiBc3+zJz+BKZOQv6AgB4H7wA=
+Date:   Wed, 15 May 2019 13:18:58 +0000
+Message-ID: <011a16e4-6aff-104c-a19b-d2bd11caba99@camlintechnologies.com>
+References: <d68c83ba-bf5a-f6e8-44dd-be98f45fc97a@camlintechnologies.com>
+ <14c9e6f4-3fb8-ca22-91cc-6970f1d52265@camlintechnologies.com>
+In-Reply-To: <14c9e6f4-3fb8-ca22-91cc-6970f1d52265@camlintechnologies.com>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0502CA0005.eurprd05.prod.outlook.com
+ (2603:10a6:203:91::15) To LO2P123MB1776.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:c6::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=l.perczak@camlintechnologies.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [95.143.242.242]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8c200f42-a819-4c1c-15b9-08d6d937e35e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:LO2P123MB2080;
+x-ms-traffictypediagnostic: LO2P123MB2080:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <LO2P123MB2080E9B3F1DEC5DB184F842D87090@LO2P123MB2080.GBRP123.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(396003)(39850400004)(136003)(199004)(189003)(55674003)(446003)(5660300002)(99286004)(52116002)(186003)(110136005)(26005)(2616005)(54906003)(68736007)(476003)(11346002)(45080400002)(31686004)(8676002)(81156014)(3846002)(6116002)(486006)(8936002)(7736002)(229853002)(4326008)(81166006)(14454004)(6246003)(6486002)(478600001)(966005)(71190400001)(71200400001)(305945005)(14444005)(256004)(66556008)(64756008)(25786009)(66946007)(66066001)(66476007)(73956011)(66446008)(2906002)(6436002)(102836004)(53936002)(76176011)(386003)(6506007)(86362001)(36756003)(31696002)(6512007)(6306002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:LO2P123MB2080;H:LO2P123MB1776.GBRP123.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: camlintechnologies.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: j/qqS8z0Q7Rn/Fv+2jjkdxJCu2H/4C2iq4zh+o+h33nYn/EiNNayWJwp2cENr7AFEZ9ja+8PYE0g6b3XuuNUtgs85lGdxWoWruWOsc2op7k0uPCI3cdc07cqPb1Qy5FEXN2FOXTzNIMRndKUpiYCC/44yQ76Y1PY9llZCsXO4s2/RRAllgP9uSh+iON6rdstmx7xMx/ZJlAUlFfZsgvuxNbVNDvycefrdRF9csFUkrpTdOAY/7rljraWJZF/IDO8Ynnsz/vP+NxBwG/CHRkpJ7wsHFt/SbvXjVJNFj/8TMyJ7Qf0IoKWThdiyiMNRVwO8IxEhkztratcp3xAmmgBy8mnDYk9pqGGZWPEbsUGscmMTm/gM1XahB+xrq5c67G3sFW1VFQYWsPHSgAjymgAXYSwh8BvtVPIkmbuyEGm6EQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F96B5F9797EE9F42AACB4E3F60DF51EC@GBRP123.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: camlintechnologies.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c200f42-a819-4c1c-15b9-08d6d937e35e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 13:18:58.2855
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fd4b1729-b18d-46d2-9ba0-2717b852b252
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P123MB2080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the hdmitx control glue of the Amlogic g12a SoC family.
-This glue links the 3 TDM and 2 SPDIF output interfaces of the SoC to
-the related inputs of the Synopsys HDMI controller found in these SoCs.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/Kconfig         |   8 +
- sound/soc/meson/Makefile        |   2 +
- sound/soc/meson/g12a-tohdmitx.c | 413 ++++++++++++++++++++++++++++++++
- 3 files changed, 423 insertions(+)
- create mode 100644 sound/soc/meson/g12a-tohdmitx.c
-
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 8779fe23671d..4e5b4d4f3531 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -56,6 +56,7 @@ config SND_MESON_AXG_SOUND_CARD
- 	imply SND_MESON_AXG_SPDIFOUT
- 	imply SND_MESON_AXG_SPDIFIN
- 	imply SND_MESON_AXG_PDM
-+	imply SND_MESON_G12A_TOHDMITX if DRM_MESON_DW_HDMI
- 	help
- 	  Select Y or M to add support for the AXG SoC sound card
- 
-@@ -82,4 +83,11 @@ config SND_MESON_AXG_PDM
- 	help
- 	  Select Y or M to add support for PDM input embedded
- 	  in the Amlogic AXG SoC family
-+
-+config SND_MESON_G12A_TOHDMITX
-+	tristate "Amlogic G12A To HDMI TX Control Support"
-+	imply SND_SOC_HDMI_CODEC
-+	help
-+	  Select Y or M to add support for HDMI audio on the g12a SoC
-+	  family
- endmenu
-diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index b45dfb9e2f88..1a8b1470ed84 100644
---- a/sound/soc/meson/Makefile
-+++ b/sound/soc/meson/Makefile
-@@ -11,6 +11,7 @@ snd-soc-meson-axg-sound-card-objs := axg-card.o
- snd-soc-meson-axg-spdifin-objs := axg-spdifin.o
- snd-soc-meson-axg-spdifout-objs := axg-spdifout.o
- snd-soc-meson-axg-pdm-objs := axg-pdm.o
-+snd-soc-meson-g12a-tohdmitx-objs := g12a-tohdmitx.o
- 
- obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
- obj-$(CONFIG_SND_MESON_AXG_FRDDR) += snd-soc-meson-axg-frddr.o
-@@ -23,3 +24,4 @@ obj-$(CONFIG_SND_MESON_AXG_SOUND_CARD) += snd-soc-meson-axg-sound-card.o
- obj-$(CONFIG_SND_MESON_AXG_SPDIFIN) += snd-soc-meson-axg-spdifin.o
- obj-$(CONFIG_SND_MESON_AXG_SPDIFOUT) += snd-soc-meson-axg-spdifout.o
- obj-$(CONFIG_SND_MESON_AXG_PDM) += snd-soc-meson-axg-pdm.o
-+obj-$(CONFIG_SND_MESON_G12A_TOHDMITX) += snd-soc-meson-g12a-tohdmitx.o
-diff --git a/sound/soc/meson/g12a-tohdmitx.c b/sound/soc/meson/g12a-tohdmitx.c
-new file mode 100644
-index 000000000000..707ccb192e4c
---- /dev/null
-+++ b/sound/soc/meson/g12a-tohdmitx.c
-@@ -0,0 +1,413 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2019 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <sound/pcm_params.h>
-+#include <linux/regmap.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+
-+#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-+
-+#define G12A_TOHDMITX_DRV_NAME "g12a-tohdmitx"
-+
-+#define TOHDMITX_CTRL0			0x0
-+#define  CTRL0_ENABLE_SHIFT		31
-+#define  CTRL0_I2S_DAT_SEL		GENMASK(13, 12)
-+#define  CTRL0_I2S_LRCLK_SEL		GENMASK(9, 8)
-+#define  CTRL0_I2S_BLK_CAP_INV		BIT(7)
-+#define  CTRL0_I2S_BCLK_O_INV		BIT(6)
-+#define  CTRL0_I2S_BCLK_SEL		GENMASK(5, 4)
-+#define  CTRL0_SPDIF_CLK_CAP_INV	BIT(3)
-+#define  CTRL0_SPDIF_CLK_O_INV		BIT(2)
-+#define  CTRL0_SPDIF_SEL		BIT(1)
-+#define  CTRL0_SPDIF_CLK_SEL		BIT(0)
-+
-+struct g12a_tohdmitx_input {
-+	struct snd_pcm_hw_params params;
-+	unsigned int fmt;
-+};
-+
-+static struct snd_soc_dapm_widget *
-+g12a_tohdmitx_get_input(struct snd_soc_dapm_widget *w)
-+{
-+	struct snd_soc_dapm_path *p = NULL;
-+	struct snd_soc_dapm_widget *in;
-+
-+	snd_soc_dapm_widget_for_each_source_path(w, p) {
-+		if (!p->connect)
-+			continue;
-+
-+		/* Check that we still are in the same component */
-+		if (snd_soc_dapm_to_component(w->dapm) !=
-+		    snd_soc_dapm_to_component(p->source->dapm))
-+			continue;
-+
-+		if (p->source->id == snd_soc_dapm_dai_in)
-+			return p->source;
-+
-+		in = g12a_tohdmitx_get_input(p->source);
-+		if (in)
-+			return in;
-+	}
-+
-+	return NULL;
-+}
-+
-+static struct g12a_tohdmitx_input *
-+g12a_tohdmitx_get_input_data(struct snd_soc_dapm_widget *w)
-+{
-+	struct snd_soc_dapm_widget *in =
-+		g12a_tohdmitx_get_input(w);
-+	struct snd_soc_dai *dai;
-+
-+	if (WARN_ON(!in))
-+		return NULL;
-+
-+	dai = in->priv;
-+
-+	return dai->playback_dma_data;
-+}
-+
-+static const char * const g12a_tohdmitx_i2s_mux_texts[] = {
-+	"I2S A", "I2S B", "I2S C",
-+};
-+
-+static SOC_ENUM_SINGLE_EXT_DECL(g12a_tohdmitx_i2s_mux_enum,
-+				g12a_tohdmitx_i2s_mux_texts);
-+
-+static int g12a_tohdmitx_get_input_val(struct snd_soc_component *component,
-+				       unsigned int mask)
-+{
-+	unsigned int val;
-+
-+	snd_soc_component_read(component, TOHDMITX_CTRL0, &val);
-+	return (val & mask) >> __ffs(mask);
-+}
-+
-+static int g12a_tohdmitx_i2s_mux_get_enum(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_kcontrol_component(kcontrol);
-+
-+	ucontrol->value.enumerated.item[0] =
-+		g12a_tohdmitx_get_input_val(component, CTRL0_I2S_DAT_SEL);
-+
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_i2s_mux_put_enum(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_kcontrol_component(kcontrol);
-+	struct snd_soc_dapm_context *dapm =
-+		snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-+	unsigned int mux = ucontrol->value.enumerated.item[0];
-+	unsigned int val = g12a_tohdmitx_get_input_val(component,
-+						       CTRL0_I2S_DAT_SEL);
-+
-+	/* Force disconnect of the mux while updating */
-+	if (val != mux)
-+		snd_soc_dapm_mux_update_power(dapm, kcontrol, 0, NULL, NULL);
-+
-+	snd_soc_component_update_bits(component, TOHDMITX_CTRL0,
-+				      CTRL0_I2S_DAT_SEL |
-+				      CTRL0_I2S_LRCLK_SEL |
-+				      CTRL0_I2S_BCLK_SEL,
-+				      FIELD_PREP(CTRL0_I2S_DAT_SEL, mux) |
-+				      FIELD_PREP(CTRL0_I2S_LRCLK_SEL, mux) |
-+				      FIELD_PREP(CTRL0_I2S_BCLK_SEL, mux));
-+
-+	snd_soc_dapm_mux_update_power(dapm, kcontrol, mux, e, NULL);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new g12a_tohdmitx_i2s_mux =
-+	SOC_DAPM_ENUM_EXT("I2S Source", g12a_tohdmitx_i2s_mux_enum,
-+			  g12a_tohdmitx_i2s_mux_get_enum,
-+			  g12a_tohdmitx_i2s_mux_put_enum);
-+
-+static const char * const g12a_tohdmitx_spdif_mux_texts[] = {
-+	"SPDIF A", "SPDIF B",
-+};
-+
-+static SOC_ENUM_SINGLE_EXT_DECL(g12a_tohdmitx_spdif_mux_enum,
-+				g12a_tohdmitx_spdif_mux_texts);
-+
-+static int g12a_tohdmitx_spdif_mux_get_enum(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_kcontrol_component(kcontrol);
-+
-+	ucontrol->value.enumerated.item[0] =
-+		g12a_tohdmitx_get_input_val(component, CTRL0_SPDIF_SEL);
-+
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_spdif_mux_put_enum(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_kcontrol_component(kcontrol);
-+	struct snd_soc_dapm_context *dapm =
-+		snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-+	unsigned int mux = ucontrol->value.enumerated.item[0];
-+	unsigned int val = g12a_tohdmitx_get_input_val(component,
-+						       CTRL0_SPDIF_SEL);
-+
-+	/* Force disconnect of the mux while updating */
-+	if (val != mux)
-+		snd_soc_dapm_mux_update_power(dapm, kcontrol, 0, NULL, NULL);
-+
-+	snd_soc_component_update_bits(component, TOHDMITX_CTRL0,
-+				      CTRL0_SPDIF_SEL |
-+				      CTRL0_SPDIF_CLK_SEL,
-+				      FIELD_PREP(CTRL0_SPDIF_SEL, mux) |
-+				      FIELD_PREP(CTRL0_SPDIF_CLK_SEL, mux));
-+
-+	snd_soc_dapm_mux_update_power(dapm, kcontrol, mux, e, NULL);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new g12a_tohdmitx_spdif_mux =
-+	SOC_DAPM_ENUM_EXT("SPDIF Source", g12a_tohdmitx_spdif_mux_enum,
-+			  g12a_tohdmitx_spdif_mux_get_enum,
-+			  g12a_tohdmitx_spdif_mux_put_enum);
-+
-+static const struct snd_kcontrol_new g12a_tohdmitx_out_enable =
-+	SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOHDMITX_CTRL0,
-+				    CTRL0_ENABLE_SHIFT, 1, 0);
-+
-+static const struct snd_soc_dapm_widget g12a_tohdmitx_widgets[] = {
-+	SND_SOC_DAPM_MUX("I2S SRC", SND_SOC_NOPM, 0, 0,
-+			 &g12a_tohdmitx_i2s_mux),
-+	SND_SOC_DAPM_SWITCH("I2S OUT EN", SND_SOC_NOPM, 0, 0,
-+			    &g12a_tohdmitx_out_enable),
-+	SND_SOC_DAPM_MUX("SPDIF SRC", SND_SOC_NOPM, 0, 0,
-+			 &g12a_tohdmitx_spdif_mux),
-+	SND_SOC_DAPM_SWITCH("SPDIF OUT EN", SND_SOC_NOPM, 0, 0,
-+			    &g12a_tohdmitx_out_enable),
-+};
-+
-+static int g12a_tohdmitx_input_probe(struct snd_soc_dai *dai)
-+{
-+	struct g12a_tohdmitx_input *data;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	dai->playback_dma_data = data;
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_input_remove(struct snd_soc_dai *dai)
-+{
-+	kfree(dai->playback_dma_data);
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_input_hw_params(struct snd_pcm_substream *substream,
-+					 struct snd_pcm_hw_params *params,
-+					 struct snd_soc_dai *dai)
-+{
-+	struct g12a_tohdmitx_input *data = dai->playback_dma_data;
-+
-+	/* Save the stream params for the downstream link */
-+	memcpy(&data->params, params, sizeof(*params));
-+
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_output_hw_params(struct snd_pcm_substream *substream,
-+					  struct snd_pcm_hw_params *params,
-+					  struct snd_soc_dai *dai)
-+{
-+	struct g12a_tohdmitx_input *in_data =
-+		g12a_tohdmitx_get_input_data(dai->capture_widget);
-+
-+	if (!in_data)
-+		return -ENODEV;
-+
-+	memcpy(params, &in_data->params, sizeof(*params));
-+
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_input_set_fmt(struct snd_soc_dai *dai,
-+				       unsigned int fmt)
-+{
-+	struct g12a_tohdmitx_input *data = dai->playback_dma_data;
-+
-+	/* Save the source stream format for the downstream link */
-+	data->fmt = fmt;
-+	return 0;
-+}
-+
-+static int g12a_tohdmitx_output_startup(struct snd_pcm_substream *substream,
-+					struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct g12a_tohdmitx_input *in_data =
-+		g12a_tohdmitx_get_input_data(dai->capture_widget);
-+
-+	if (!in_data)
-+		return -ENODEV;
-+
-+	if (!in_data->fmt)
-+		return 0;
-+
-+	return snd_soc_runtime_set_dai_fmt(rtd, in_data->fmt);
-+}
-+
-+static const struct snd_soc_dai_ops g12a_tohdmitx_input_ops = {
-+	.hw_params	= g12a_tohdmitx_input_hw_params,
-+	.set_fmt	= g12a_tohdmitx_input_set_fmt,
-+};
-+
-+static const struct snd_soc_dai_ops g12a_tohdmitx_output_ops = {
-+	.hw_params	= g12a_tohdmitx_output_hw_params,
-+	.startup	= g12a_tohdmitx_output_startup,
-+};
-+
-+#define TOHDMITX_SPDIF_FORMATS					\
-+	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |	\
-+	 SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S24_LE)
-+
-+#define TOHDMITX_I2S_FORMATS					\
-+	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |	\
-+	 SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S24_LE |	\
-+	 SNDRV_PCM_FMTBIT_S32_LE)
-+
-+#define TOHDMITX_STREAM(xname, xsuffix, xfmt, xchmax)		\
-+{								\
-+	.stream_name	= xname " " xsuffix,			\
-+	.channels_min	= 1,					\
-+	.channels_max	= (xchmax),				\
-+	.rate_min       = 8000,					\
-+	.rate_max	= 192000,				\
-+	.formats	= (xfmt),				\
-+}
-+
-+#define TOHDMITX_IN(xname, xid, xfmt, xchmax) {				\
-+	.name = xname,							\
-+	.id = (xid),							\
-+	.playback = TOHDMITX_STREAM(xname, "Playback", xfmt, xchmax),	\
-+	.ops = &g12a_tohdmitx_input_ops,				\
-+	.probe = g12a_tohdmitx_input_probe,				\
-+	.remove = g12a_tohdmitx_input_remove,				\
-+}
-+
-+#define TOHDMITX_OUT(xname, xid, xfmt, xchmax) {			\
-+	.name = xname,							\
-+	.id = (xid),							\
-+	.capture = TOHDMITX_STREAM(xname, "Capture", xfmt, xchmax),	\
-+	.ops = &g12a_tohdmitx_output_ops,				\
-+}
-+
-+static struct snd_soc_dai_driver g12a_tohdmitx_dai_drv[] = {
-+	TOHDMITX_IN("I2S IN A", TOHDMITX_I2S_IN_A,
-+		    TOHDMITX_I2S_FORMATS, 8),
-+	TOHDMITX_IN("I2S IN B", TOHDMITX_I2S_IN_B,
-+		    TOHDMITX_I2S_FORMATS, 8),
-+	TOHDMITX_IN("I2S IN C", TOHDMITX_I2S_IN_C,
-+		    TOHDMITX_I2S_FORMATS, 8),
-+	TOHDMITX_OUT("I2S OUT", TOHDMITX_I2S_OUT,
-+		     TOHDMITX_I2S_FORMATS, 8),
-+	TOHDMITX_IN("SPDIF IN A", TOHDMITX_SPDIF_IN_A,
-+		    TOHDMITX_SPDIF_FORMATS, 2),
-+	TOHDMITX_IN("SPDIF IN B", TOHDMITX_SPDIF_IN_B,
-+		    TOHDMITX_SPDIF_FORMATS, 2),
-+	TOHDMITX_OUT("SPDIF OUT", TOHDMITX_SPDIF_OUT,
-+		     TOHDMITX_SPDIF_FORMATS, 2),
-+};
-+
-+static int g12a_tohdmi_component_probe(struct snd_soc_component *c)
-+{
-+	/* Initialize the static clock parameters */
-+	return snd_soc_component_write(c, TOHDMITX_CTRL0,
-+		     CTRL0_I2S_BLK_CAP_INV | CTRL0_SPDIF_CLK_CAP_INV);
-+}
-+
-+static const struct snd_soc_dapm_route g12a_tohdmitx_routes[] = {
-+	{ "I2S SRC", "I2S A", "I2S IN A Playback" },
-+	{ "I2S SRC", "I2S B", "I2S IN B Playback" },
-+	{ "I2S SRC", "I2S C", "I2S IN C Playback" },
-+	{ "I2S OUT EN", "Switch", "I2S SRC" },
-+	{ "I2S OUT Capture", NULL, "I2S OUT EN" },
-+	{ "SPDIF SRC", "SPDIF A", "SPDIF IN A Playback" },
-+	{ "SPDIF SRC", "SPDIF B", "SPDIF IN B Playback" },
-+	{ "SPDIF OUT EN", "Switch", "SPDIF SRC" },
-+	{ "SPDIF OUT Capture", NULL, "SPDIF OUT EN" },
-+};
-+
-+static const struct snd_soc_component_driver g12a_tohdmitx_component_drv = {
-+	.probe			= g12a_tohdmi_component_probe,
-+	.dapm_widgets		= g12a_tohdmitx_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(g12a_tohdmitx_widgets),
-+	.dapm_routes		= g12a_tohdmitx_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(g12a_tohdmitx_routes),
-+	.endianness		= 1,
-+	.non_legacy_dai_naming	= 1,
-+};
-+
-+static const struct regmap_config g12a_tohdmitx_regmap_cfg = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+};
-+
-+static const struct of_device_id g12a_tohdmitx_of_match[] = {
-+	{ .compatible = "amlogic,g12a-tohdmitx", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, g12a_tohdmitx_of_match);
-+
-+static int g12a_tohdmitx_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *regs;
-+	struct regmap *map;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	map = devm_regmap_init_mmio(dev, regs, &g12a_tohdmitx_regmap_cfg);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "failed to init regmap: %ld\n",
-+			PTR_ERR(map));
-+		return PTR_ERR(map);
-+	}
-+
-+	return devm_snd_soc_register_component(dev,
-+			&g12a_tohdmitx_component_drv, g12a_tohdmitx_dai_drv,
-+			ARRAY_SIZE(g12a_tohdmitx_dai_drv));
-+}
-+
-+static struct platform_driver g12a_tohdmitx_pdrv = {
-+	.driver = {
-+		.name = G12A_TOHDMITX_DRV_NAME,
-+		.of_match_table = g12a_tohdmitx_of_match,
-+	},
-+	.probe = g12a_tohdmitx_probe,
-+};
-+module_platform_driver(g12a_tohdmitx_pdrv);
-+
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_DESCRIPTION("Amlogic G12a To HDMI Tx Control Codec Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.20.1
-
+SGksDQoNClcgZG5pdSAyNi4wNC4yMDE5IG/CoDEwOjQyLCBMZWNoIFBlcmN6YWsgcGlzemU6DQo+
+IENjIGxpbnV4LW1tQGt2YWNrLm9yZw0KPg0KPiBXIGRuaXUgMjUuMDQuMjAxOSBvwqAxMToyNSwg
+TGVjaCBQZXJjemFrIHBpc3plOg0KPj4gSGVsbG8sDQo+Pg0KPj4gU29tZSB0aW1lIGFnbywgYWZ0
+ZXIgdXBncmFkaW5nIHRoZSBLZXJuZWwgb24gb3VyIGkuTVg2US1iYXNlZCBib2FyZHMgdG8gbWFp
+bmxpbmUgNC4xOCwgYW5kIG5vdyB0byBMVFMgNC4xOSBsaW5lLCBkdXJpbmcgc3RyZXNzIHRlc3Rz
+IHdlIHN0YXJ0ZWQgbm90aWNpbmcgc3RyYW5nZSB3YXJuaW5ncyBjb21pbmcgZnJvbSAncmVhZCcg
+c3lzY2FsbCwgd2hlbiBwYWdlX2NvcHlfc2FuZSgpIGNoZWNrIGZhaWxlZC4gVHlwaWNhbCByZXBy
+b2R1Y2liaWxpdHkgaXMgdXAgdG8gfjQgZXZlbnRzIHBlciAyNGguIFdhcm5pbmdzIG9yaWdpbiBm
+cm9tIGRpZmZlcmVudCBwcm9jZXNzZXMsIG1vc3RseSBpbnZvbHZlZCB3aXRoIHRoZSBzdHJlc3Mg
+dGVzdHMsIGJ1dCBub3QgbmVjZXNzYXJpbHkgd2l0aCBibG9jayBkZXZpY2VzIHdlJ3JlIHN0cmVz
+c2luZy4gSWYgdGhlIHdhcm5pbmcgYXBwZWFyZWQgaW4gcHJvY2VzcyByZWxhdGluZyB0byBibG9j
+ayBkZXZpY2Ugc3RyZXNzIHRlc3QsIGl0IHdvdWxkIGJlIGFjY29tcGFuaWVkIGJ5IGNvcnJ1cHRl
+ZCBkYXRhLCBhcyB0aGUgcmVhZCBvcGVyYXRpb24gZ2V0cyBhYm9ydGVkLiANCj4+IE91ciByZWFz
+b24gZm9yIGRyb3BwaW5nIGNhY2hlcyBpcyB0byBlbnN1cmUgdGhhdCB0aGUgYWN0dWFsIGJsb2Nr
+IGRldmljZSBnZXRzIGFjY2Vzc2VkIGR1cmluZyB0aGUgdGVzdCB3aXRob3V0IHJlc29ydGluZyB0
+byBPX0RJUkVDVC4NCj4+IFdoZW4gZHJvcHBpbmcgY2FjaGVzIHdhcyBkaXNhYmxlZCBpbiB0aGUg
+dGVzdHMsIHRoZSBpc3N1ZSB3b3VsZCBhbHNvIGRpc2FwcGVhciwgYXQgbGVhc3QgaW4gYSBzaW5n
+bGUtd2VlayBydW4uDQo+Pg0KPj4gRXhhbXBsZSBwcm9jZXNzZXMgY2F1Z2h0IGluIHRoZSBsYXN0
+IHJ1biAoZ3JlcHBlZCBmcm9tIHN0YWNrdHJhY2VzKToNCj4+IFszODEyOC40MzA2OTRdIENQVTog
+MiBQSUQ6IDMyNzM1IENvbW06IGdsbWFyazIgTm90IHRhaW50ZWQgNC4xOS4zMi1kZXZib2FyZGlt
+eDZxK2cwYTY0ZTM3MTc5ODUgIzENCj4+IFs0NDE2OC4wODE4MjFdIENQVTogMiBQSUQ6IDIxNTU1
+IENvbW06IGNhdCBUYWludGVkOiBHwqDCoMKgwqDCoMKgwqAgV8KgwqDCoMKgwqDCoMKgwqAgNC4x
+OS4zMi1kZXZib2FyZGlteDZxK2cwYTY0ZTM3MTc5ODUgIzENCj4+IFs3NTg3OS40MjQwNzZdIENQ
+VTogMyBQSUQ6IDE0NzggQ29tbTogZmxhc2hjcCBUYWludGVkOiBHwqDCoMKgwqDCoMKgwqAgV8Kg
+wqDCoMKgwqDCoMKgwqAgNC4xOS4zMi1kZXZib2FyZGlteDZxK2cwYTY0ZTM3MTc5ODUgIzENCj4+
+IFsxMTcwNjAuOTUxMzMzXSBDUFU6IDEgUElEOiAxNDE1MCBDb21tOiBjYXQgVGFpbnRlZDogR8Kg
+wqDCoMKgwqDCoMKgIFfCoMKgwqDCoMKgwqDCoMKgIDQuMTkuMzItZGV2Ym9hcmRpbXg2cStnMGE2
+NGUzNzE3OTg1ICMxDQo+PiBbMjAxNjY4LjQzODIxOV0gQ1BVOiAxIFBJRDogMTQzNzAgQ29tbTog
+Z2xtYXJrMiBUYWludGVkOiBHwqDCoMKgwqDCoMKgwqAgV8KgwqDCoMKgwqDCoMKgwqAgNC4xOS4z
+Mi1kZXZib2FyZGlteDZxK2cwYTY0ZTM3MTc5ODUgIzENCj4+IFsyMTQzMzIuMjEyOTYwXSBDUFU6
+IDAgUElEOiAyNTYzMyBDb21tOiBjcCBUYWludGVkOiBHwqDCoMKgwqDCoMKgwqAgV8KgwqDCoMKg
+wqDCoMKgwqAgNC4xOS4zMi1kZXZib2FyZGlteDZxK2cwYTY0ZTM3MTc5ODUgIzENCj4+IFsyODM0
+ODQuNjE5MDU4XSBDUFU6IDAgUElEOiA1MDkxIENvbW06IGdsbWFyazIgVGFpbnRlZDogR8KgwqDC
+oMKgwqDCoMKgIFfCoMKgwqDCoMKgwqDCoMKgIDQuMTkuMzItZGV2Ym9hcmRpbXg2cStnMGE2NGUz
+NzE3OTg1ICMxDQo+PiBbMzMwMjU2LjcwOTEyNF0gQ1BVOiAyIFBJRDogNDU2NSBDb21tOiBzZW5z
+b3JzIFRhaW50ZWQ6IEfCoMKgwqDCoMKgwqDCoCBXwqDCoMKgwqDCoMKgwqDCoCA0LjE5LjMyLWRl
+dmJvYXJkaW14NnErZzBhNjRlMzcxNzk4NSAjMQ0KPj4gWzMzNzY4NS41NDk1NTZdIENQVTogMiBQ
+SUQ6IDMwMTMyIENvbW06IHNlbnNvcnMgVGFpbnRlZDogR8KgwqDCoMKgwqDCoMKgIFfCoMKgwqDC
+oMKgwqDCoMKgIDQuMTkuMzItZGV2Ym9hcmRpbXg2cStnMGE2NGUzNzE3OTg1ICMxDQo+Pg0KPj4g
+V2hlbiBJIHN0YXJ0ZWQgZGVidWdnaW5nIHRoZSBpc3N1ZSwgSSBub3RpY2VkIHRoYXQgaW4gYWxs
+IGNhc2VzIHdlJ3JlIGRlYWxpbmcgd2l0aCBoaWdobWVtIHplcm8tb3JkZXIgcGFnZXMuIEluIHRo
+aXMgY2FzZSwgcGFnZV9oZWFkKHBhZ2UpID09IHBhZ2UsIHNvIHBhZ2VfYWRkcmVzcyhwYWdlKSBz
+aG91bGQgYmUgZXF1YWwgdG8gcGFnZV9hZGRyZXNzKGhlYWQpLg0KPj4gSG93ZXZlciwgaXQgaXNu
+J3QgdGhlIGNhc2UsIGFzIHBhZ2VfYWRkcmVzcyhoZWFkKSBpbiBlYWNoIGNhc2UgcmV0dXJucyB6
+ZXJvLCBjYXVzaW5nIHRoZSB2YWx1ZSBvZiAidiIgdG8gZXhwbG9kZSwgYW5kIHRoZSBjaGVjayB0
+byBmYWlsLg0KPj4NCj4+IEF0IGZpcnN0IEkgdGhvdWdodCwgdGhhdCBpdCBjb3VsZCBiZSBjYXVz
+ZWQgYnkgbW9kaWZpY2F0aW9uIG9mIHN0cnVjdCBwYWdlIGl0c2VsZiwgYnV0IGl0IHR1cm5lZCBv
+dXQgdG8gbm90IGJlIHRoZSBjYXNlIC0gc29tZXRpbWVzIHN0cnVjdCBwYWdlIHdvdWxkIGJlIHVu
+bW9kaWZpZWQgZHVyaW5nIGR1cmF0aW9uIG9mIHRoZSBjaGVjay4gV2l0aCBsb3dtZW0gcGFnZXMs
+IHRoaXMgd291bGRuJ3QgYWxzbyBoYXBwZW4sIGJlY2F1c2UgcGFnZV9hZGRyZXNzIGlzIGRlcml2
+ZWQgZGlyZWN0bHkgZnJvbSBzdHJ1Y3QgcGFnZSBwb2ludGVyIGl0c2VsZi4NCj4+DQo+PiBGaW5h
+bGx5LCBhZnRlciBnYXRoZXJpbmcgYSBmZXcgdHJhY2VzIHdpdGggYWRkZWQgZGVidWcgbG9ncyBJ
+IGRlY2lkZWQgdG8gdHJpZ2dlciBhIHBhbmljIG9uIHRoZSB3YXJuaW5nIGFuZCBjYXB0dXJlIGEg
+dm1jb3JlLg0KPj4gV2hlbiBhbmFseXppbmcgdGhlIHZtY29yZSwgSSBjb25maXJtZWQgdGhhdCB0
+aGUgc3RydWN0IHBhZ2VfYWRkcmVzc19zbG90IGNvcnJlc3BvbmRpbmcgdG8gdGhlIHN0cnVjdCBw
+YWdlIGhhZCBhbiBlbXB0eSBsaXN0IG9mIG1hcHBpbmdzLCBleHBsYWluaW5nIE5VTEwgcmV0dXJu
+ZWQgZnJvbSBwYWdlX2FkZHJlc3MoaGVhZCkgaW4gcGFnZV9jb3B5X3NhbmUoKS4NCj4+IFllYWgs
+IEkgaGFkIHRvIG1hbnVhbGx5IGNhbGN1bGF0ZSBoYXNoIG9mIHN0cnVjdCBwYWdlIHBvaW50ZXIg
+OykNCj4+DQo+PiBJbiB0aGUgbWVhbnRpbWUgSSBub3RpY2VkIGEgcGF0Y2ggYnkgRXJpYyBEdW1h
+emV0ICgiaW92X2l0ZXI6IG9wdGltaXplIHBhZ2VfY29weV9zYW5lKCkiKSBbMV0uIEFwcGx5aW5n
+IHRoaXMgcGF0Y2ggc2lsZW5jZWQgdGhlIHdhcm5pbmdzLCBhdCBsZWFzdCBmb3IgdGVzdCBydW4g
+Z29pbmcgZm9yIG92ZXIgYSB3ZWVrLiBUaGlzIGlzIHF1aXRlIGV4cGVjdGVkLCBhcyB3aXRoIHRo
+aXMgY2hhbmdlICdwYWdlJyBpc24ndCBkZXJlZmVyZW5jZWQgYXQgYWxsLCBub3IgaXMgcGFnZV9h
+ZGRyZXNzKCkgY2FsbGVkLiBIZXJlIEkgc3VzcGVjdCB0aGF0IGFwcGx5aW5nIHRoaXMgcGF0Y2gg
+bWF5IG9ubHkgaGlkZSBhIHJlYWwgaXNzdWUgSSdtIGZhY2luZywgYW5kIG1pZ2h0IGJlIG1pc3Np
+bmcgdGhlIGNhc2Ugb2YgaGlnaG1lbSBwYWdlcyBhcyB3ZWxsLg0KPj4NCj4+IEFuIGV4YW1wbGUg
+c3RhY2t0cmFjZSBJIGNhcHR1cmVkLCB3aXRoIGFkZGVkIGRlYnVnIGxvZ3MgYW5kIGNvcHkgb2Yg
+c3RydWN0IHBhZ2UgYmVmb3JlIGFuZCBhZnRlciB0aGUgY2hlY2sgaW4gcGFnZV9jb3B5X3NhbmU6
+DQo+Pg0KPj4gVGhpcyBsYXN0IG9uZSBzaG93cyBubyBjaGFuZ2VzIHRvIHN0cnVjdCBwYWdlIG92
+ZXIgdGhlIGNhbGwgdG8gcGFnZV9jb3B5X3NhbmUoKSwgd2hlcmUgZmlyc3QgY2FsbCB0byBwYWdl
+X2FkZHJlc3MocGFnZSkgcmV0dXJucyBhIHZhbGlkIHBhZ2UgYWRkcmVzcyAocGFnZV9hZGRyZXNz
+PTIxNDY5OTYyMjQpIGFuZCBzZWNvbmQgY2FsbCByZXR1cm5zIDAgKGhlYWRfYWRkcmVzcz0wKS4g
+U3Vic2VxdWVudCBjYWxscyB0byBwYWdlX2FkZHJlc3MgaW5zaWRlIFdBUk4oKSBhcmd1bWVudCBs
+aXN0IGFsc28gcmV0dXJuIDAuIFRoZSBzYW1lIHdhcyB0cnVlIGZvciB0aGUgb2NjdXJlbmNlIEkg
+Y2FwdHVyZWQgdm1jb3JlIGZvci4NCj4+DQo+PiAoRm9yIHlvdXIgcmVmZXJlbmNlLCBhIHBhdGNo
+IGNvbnRhaW5pbmcgbXkgZGVidWcgcHJpbnRzIGlzIGF0IHRoZSBlbmQgb2YgdGhlIG1lc3NhZ2Up
+DQo+Pg0KPj4gWzMzNzY4NS4zNDQyMDRdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0t
+LS0tLQ0KPj4gWzMzNzY4NS4zNTY4NzBdIFdBUk5JTkc6IENQVTogMCBQSUQ6IDMwMTMyIGF0IC9t
+bnQvd29yay9naXQvcGxhdGZvcm1zLW1hbmlmZXN0L2J1aWxkX2RldmJvYXJkaW14NnEvdG1wL3dv
+cmstc2hhcmVkL2RldmJvYXJkaW14NnEva2VybmVsLXNvdXJjZS9saWIvaW92X2l0ZXIuYzo4MzQg
+cGFnZV9jb3B5X3NhbmUrMHgxM2MvMHgxNzgNCj4+IFszMzc2ODUuNDIwNzA2XSBwYWdlX2NvcHlf
+c2FuZTogcGFnZT03NzIxMTIzZSwgb2Zmc2V0PTAsIG49NDA5Niwgdj0yMTQ3MDAwMzIwLCBoZWFk
+PTc3MjExMjNlLCBwYWdlX2FkZHJlc3M9MjE0Njk5NjIyNCwgaGVhZF9hZGRyZXNzPTAsIGNvbXBv
+dW5kX29yZGVyKGhlYWQpPTAsIHBhZ2VfYWRkcmVzcyhwYWdlKT0wLCBwYWdlX2FkZHJlc3MoaGVh
+ZCk9MCBwYWdlX2FkZHJlc3MocGFnZV9jb3B5KT0wLCBmbGFncyhwYWdlKT1yZWZlcmVuY2VkfHVw
+dG9kYXRlfGxydXxhY3RpdmV8YXJjaF8xLCBmbGFncyhwYWdlX2NvcHkpPXJlZmVyZW5jZWR8dXB0
+b2RhdGV8bHJ1fGFjdGl2ZXxhcmNoXzENCj4+IFszMzc2ODUuNDk0NzM2XSBNb2R1bGVzIGxpbmtl
+ZCBpbjogeHRfbmF0IGlwdGFibGVfbmF0IG5mX25hdF9pcHY0IG5mX25hdCBuZl9jb25udHJhY2sg
+bmZfZGVmcmFnX2lwdjYgbmZfZGVmcmFnX2lwdjQgaXBfdGFibGVzIHhfdGFibGVzIHVzYl9mX21h
+c3Nfc3RvcmFnZSB1c2JfZl9ybmRpcyB1X2V0aGVyIGNpX2hkcmNfaW14IGNpX2hkcmMgdXNibWlz
+Y19pbXggdWxwaSBsaWJjb21wb3NpdGUgY29uZmlnZnMgdWRjX2NvcmUNCj4+IFszMzc2ODUuNTQ5
+NTU2XSBDUFU6IDIgUElEOiAzMDEzMiBDb21tOiBzZW5zb3JzIFRhaW50ZWQ6IEfCoMKgwqDCoMKg
+wqDCoCBXwqDCoMKgwqDCoMKgwqDCoCA0LjE5LjMyLWRldmJvYXJkaW14NnErZzBhNjRlMzcxNzk4
+NSAjMQ0KPj4gWzMzNzY4NS41NTgzMTRdIEhhcmR3YXJlIG5hbWU6IEZyZWVzY2FsZSBpLk1YNiBR
+dWFkL0R1YWxMaXRlIChEZXZpY2UgVHJlZSkNCj4+IFszMzc2ODUuNTYzNjAwXSBbPDgwMTBmZTQ0
+Pl0gKHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzw4MDEwYjg0MD5dIChzaG93X3N0YWNrKzB4MTAv
+MHgxNCkNCj4+IFszMzc2ODUuNTcwMDgxXSBbPDgwMTBiODQwPl0gKHNob3dfc3RhY2spIGZyb20g
+Wzw4MDdhNTk1OD5dIChkdW1wX3N0YWNrKzB4ODgvMHg5YykNCj4+IFszMzc2ODUuNTc2MDMzXSBb
+PDgwN2E1OTU4Pl0gKGR1bXBfc3RhY2spIGZyb20gWzw4MDExZjUwMD5dIChfX3dhcm4rMHhmYy8w
+eDExNCkNCj4+IFszMzc2ODUuNTgxNzIxXSBbPDgwMTFmNTAwPl0gKF9fd2FybikgZnJvbSBbPDgw
+MTFmNTYwPl0gKHdhcm5fc2xvd3BhdGhfZm10KzB4NDgvMHg2YykNCj4+IFszMzc2ODUuNTg3OTM2
+XSBbPDgwMTFmNTYwPl0gKHdhcm5fc2xvd3BhdGhfZm10KSBmcm9tIFs8ODAzYTA2NjQ+XSAocGFn
+ZV9jb3B5X3NhbmUrMHgxM2MvMHgxNzgpDQo+PiBbMzM3Njg1LjU5NTAwNF0gWzw4MDNhMDY2ND5d
+IChwYWdlX2NvcHlfc2FuZSkgZnJvbSBbPDgwM2EyZmU0Pl0gKGNvcHlfcGFnZV90b19pdGVyKzB4
+MTgvMHg0NzQpDQo+PiBbMzM3Njg1LjYwMjAyMF0gWzw4MDNhMmZlND5dIChjb3B5X3BhZ2VfdG9f
+aXRlcikgZnJvbSBbPDgwMWJkOWQ0Pl0gKGdlbmVyaWNfZmlsZV9yZWFkX2l0ZXIrMHgyY2MvMHg5
+ODApDQo+PiBbMzM3Njg1LjYwOTc5NF0gWzw4MDFiZDlkND5dIChnZW5lcmljX2ZpbGVfcmVhZF9p
+dGVyKSBmcm9tIFs8ODAyMDk0OWM+XSAoX192ZnNfcmVhZCsweGY4LzB4MTU4KQ0KPj4gWzMzNzY4
+NS42MTY4NjZdIFs8ODAyMDk0OWM+XSAoX192ZnNfcmVhZCkgZnJvbSBbPDgwMjA5NTg4Pl0gKHZm
+c19yZWFkKzB4OGMvMHgxMTgpDQo+PiBbMzM3Njg1LjYyMjcxN10gWzw4MDIwOTU4OD5dICh2ZnNf
+cmVhZCkgZnJvbSBbPDgwMjA5YWFjPl0gKGtzeXNfcmVhZCsweDRjLzB4YWMpDQo+PiBbMzM3Njg1
+LjYyODM5Nl0gWzw4MDIwOWFhYz5dIChrc3lzX3JlYWQpIGZyb20gWzw4MDEwMTAwMD5dIChyZXRf
+ZmFzdF9zeXNjYWxsKzB4MC8weDU0KQ0KPj4gWzMzNzY4NS42MzQ2NjhdIEV4Y2VwdGlvbiBzdGFj
+aygweGE0ZTc5ZmE4IHRvIDB4YTRlNzlmZjApDQo+PiBbMzM3Njg1LjYzODQyN10gOWZhMDrCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMDAwMDAwMDggMDAwMDAwMDAgMDAwMDAw
+MDMgN2VkMDMyMDggMDAwMDAyMDAgMDAwMDAwMDANCj4+IFszMzc2ODUuNjQ1MzE4XSA5ZmMwOiAw
+MDAwMDAwOCAwMDAwMDAwMCA3NmZlODk1OCAwMDAwMDAwMyAwMDAwMDAwMCA3ZWQwMzIwOCA3NmZl
+NTY0MCA3ZWQwMzFiNA0KPj4gWzMzNzY4NS42NTIyMDVdIDlmZTA6IDc2ZmU3Y2YwIDdlZDAzMTZj
+IDc2ZmJlZWUwIDc2ZmQxYjFjDQo+PiBbMzM3Njg1LjcxNzA4MF0gLS0tWyBlbmQgdHJhY2UgNjYw
+ZDA3MmU1N2IzZDE2OCBdLS0tDQo+PiBbMzM3Njg1LjcyMDY5OF0gcGFnZV9jb3B5IDAwMDAwMDAw
+OiA2YyAwNCAwMCA0MCA4NCAxZiBmNCBlZiBkYyBhYSBjNCA4MCA1YyBlNiA5YiBlZMKgIGwuLkAu
+Li4uLi4uLlwuLi4NCj4+IFszMzc2ODUuNzIwNzEzXSBwYWdlX2NvcHkgMDAwMDAwMTA6IDAwIDAw
+IDAwIDAwIDAwIDAwIDAwIDAwIGZmIGZmIGZmIGZmIDAyIDAwIDAwIDAwwqAgLi4uLi4uLi4uLi4u
+Li4uLg0KPj4gWzMzNzY4NS43MjA3MjFdICpwYWdlwqDCoMKgwqAgMDAwMDAwMDA6IDZjIDA0IDAw
+IDQwIDg0IDFmIGY0IGVmIGRjIGFhIGM0IDgwIDVjIGU2IDliIGVkwqAgbC4uQC4uLi4uLi4uXC4u
+Lg0KPj4gWzMzNzY4NS43MjA3MjhdICpwYWdlwqDCoMKgwqAgMDAwMDAwMTA6IDAwIDAwIDAwIDAw
+IDAwIDAwIDAwIDAwIGZmIGZmIGZmIGZmIDAyIDAwIDAwIDAwwqAgLi4uLi4uLi4uLi4uLi4uLg0K
+Pj4NCj4+IFRoZSBzY2VuYXJpbyB3aXRoIGRyb3BwaW5nIGNhY2hlcyB2aWEgL3Byb2Mvc3lzL3Zt
+L2Ryb3BfY2FjaGVzIHNlZW1zIHRvIGJlIHJhcmVseSB1c2VkIChhbmQgdGVzdGVkKSwgaG93ZXZl
+ciBJIHN1c3BlY3QgdGhhdCBkdXJpbmcgZHJvcHBpbmcgY2FjaGVzLCBzb21lIHBhZ2VzIG1pZ2h0
+IGJlIHVubWFwcGVkIHRvbyBlYXJseSBjYXVzaW5nIG90aGVyIGhhcmQtdG8gbm90aWNlIHByb2Js
+ZW1zLg0KPj4NCj4+IEFzIG15IGZpbmRpbmdzIGFyZSBxdWl0ZSB3b3JyaXNvbWUsIEknZCBiZSBn
+bGFkIHRvIGhlYXIgaWYgbXkgYW5hbHlzaXMgaXMgdmFsaWQsIGFuZCBpZiBvcHRpbWl6YXRpb24g
+bWFkZSBieSBFcmljIGNhbiBiZSBjb25zaWRlcmVkICd0aGUgZml4Jywgb3IgbWF5YmUgaXQgaXMg
+dG9vIG9wdGltaXN0aWMuDQo+PiBBbHNvIGFzIEknZCBsaWtlIHRvIGludmVzdGlnYXRlIHRoZSBp
+c3N1ZSBmdXJ0aGVyLCBJJ2QgYmUgZ2xhZCBmb3IgYW55IGhpbnRzIG9uIHdoZXJlIHRvIGNvbnRp
+bnVlLg0KPj4NCj4+IFsxXSBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOS8yLzI2LzY4NiwgbWVy
+Z2VkIGFzIDZkYWVmOTViOGM5MSBpbiBtYXN0ZXINCj4+DQo+PiBQYXRjaCBjb250YWluaW5nIGRl
+YnVnIGxvZ3M6DQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2xpYi9pb3ZfaXRlci5jIGIvbGliL2lvdl9p
+dGVyLmMNCj4+IGluZGV4IDhiZTE3NWRmMzA3NS4uZGVkN2UwNzM0MzRjIDEwMDY0NA0KPj4gLS0t
+IGEvbGliL2lvdl9pdGVyLmMNCj4+ICsrKyBiL2xpYi9pb3ZfaXRlci5jDQo+PiBAQCAtODE1LDE0
+ICs4MTUsMjUgQEAgYm9vbCBfY29weV9mcm9tX2l0ZXJfZnVsbF9ub2NhY2hlKHZvaWQgKmFkZHIs
+IHNpemVfdCBieXRlcywgc3RydWN0IGlvdl9pdGVyICppKQ0KPj4gwqB9DQo+PiDCoEVYUE9SVF9T
+WU1CT0woX2NvcHlfZnJvbV9pdGVyX2Z1bGxfbm9jYWNoZSk7DQo+PiDCoA0KPj4gLXN0YXRpYyBp
+bmxpbmUgYm9vbCBwYWdlX2NvcHlfc2FuZShzdHJ1Y3QgcGFnZSAqcGFnZSwgc2l6ZV90IG9mZnNl
+dCwgc2l6ZV90IG4pDQo+PiArc3RhdGljIG5vaW5saW5lIGJvb2wgcGFnZV9jb3B5X3NhbmUoc3Ry
+dWN0IHBhZ2UgKnBhZ2UsIHNpemVfdCBvZmZzZXQsIHNpemVfdCBuKQ0KPj4gwqB7DQo+PiArwqDC
+oMKgwqDCoMKgIHN0cnVjdCBwYWdlIHBhZ2VfY29weSA9ICpwYWdlOw0KPj4gwqDCoMKgwqDCoMKg
+wqAgc3RydWN0IHBhZ2UgKmhlYWQgPSBjb21wb3VuZF9oZWFkKHBhZ2UpOw0KPj4gLcKgwqDCoMKg
+wqDCoCBzaXplX3QgdiA9IG4gKyBvZmZzZXQgKyBwYWdlX2FkZHJlc3MocGFnZSkgLSBwYWdlX2Fk
+ZHJlc3MoaGVhZCk7DQo+PiArwqDCoMKgwqDCoMKgIHNpemVfdCBwYWdlX2FkZHIgPSAoc2l6ZV90
+KSBwYWdlX2FkZHJlc3MocGFnZSk7DQo+PiArwqDCoMKgwqDCoMKgIHNpemVfdCBoZWFkX2FkZHIg
+PSAoc2l6ZV90KSBwYWdlX2FkZHJlc3MoaGVhZCk7DQo+PiArwqDCoMKgwqDCoMKgIHNpemVfdCB2
+ID0gbiArIG9mZnNldCArIHBhZ2VfYWRkciAtIGhlYWRfYWRkcjsNCj4+ICvCoMKgwqDCoMKgwqAg
+dW5zaWduZWQgaW50IG9yZGVyID0gY29tcG91bmRfb3JkZXIoaGVhZCk7DQo+PiDCoA0KPj4gLcKg
+wqDCoMKgwqDCoCBpZiAobGlrZWx5KG4gPD0gdiAmJiB2IDw9IChQQUdFX1NJWkUgPDwgY29tcG91
+bmRfb3JkZXIoaGVhZCkpKSkNCj4+ICvCoMKgwqDCoMKgwqAgaWYgKGxpa2VseShuIDw9IHYgJiYg
+diA8PSAoUEFHRV9TSVpFIDw8IG9yZGVyKSkpDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmV0dXJuIHRydWU7DQo+PiAtwqDCoMKgwqDCoMKgIFdBUk5fT04oMSk7DQo+PiArwqDC
+oMKgwqDCoMKgIFdBUk4oMSwgIiVzOiBwYWdlPSVwLCBvZmZzZXQ9JXp1LCBuPSV6dSwgdj0lenUs
+IGhlYWQ9JXAsIHBhZ2VfYWRkcmVzcz0lenUsIg0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgIiBoZWFkX2FkZHJlc3M9JXp1LCBjb21wb3VuZF9vcmRlcihoZWFkKT0ldSwgcGFnZV9h
+ZGRyZXNzKHBhZ2UpPSV6dSwiDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiIHBh
+Z2VfYWRkcmVzcyhoZWFkKT0lenUgcGFnZV9hZGRyZXNzKHBhZ2VfY29weSk9JXp1LCBmbGFncyhw
+YWdlKT0lcEdwLCBmbGFncyhwYWdlX2NvcHkpPSVwR3BcbiIsDQo+PiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBfX2Z1bmNfXywgcGFnZSwgb2Zmc2V0LCBuLCB2LCBoZWFkLCBwYWdlX2FkZHIsIGhl
+YWRfYWRkciwgb3JkZXIsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqAgKHNpemVfdCkgcGFnZV9h
+ZGRyZXNzKHBhZ2UpLCAoc2l6ZV90KSBwYWdlX2FkZHJlc3MoaGVhZCksDQo+PiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgKHNpemVfdCkgcGFnZV9hZGRyZXNzKCZwYWdlX2NvcHkpLCAmcGFnZS0+Zmxh
+Z3MsICZwYWdlX2NvcHkuZmxhZ3MpOw0KPj4gK8KgwqDCoMKgwqDCoCBwcmludF9oZXhfZHVtcF9i
+eXRlcygicGFnZV9jb3B5ICIsIERVTVBfUFJFRklYX09GRlNFVCwgJnBhZ2VfY29weSwgc2l6ZW9m
+KHBhZ2VfY29weSkpOw0KPj4gK8KgwqDCoMKgwqDCoCBwcmludF9oZXhfZHVtcF9ieXRlcygiKnBh
+Z2XCoMKgwqDCoCAiLCBEVU1QX1BSRUZJWF9PRkZTRVQsIHBhZ2UsIHNpemVvZigqcGFnZSkpOw0K
+Pj4gwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGZhbHNlOw0KPj4gwqB9DQo+Pg0KPj4gLS0gUG96ZHJh
+d2lhbS9XaXRoIGtpbmQgcmVnYXJkcywgTGVjaCBQZXJjemFrIFNyLiBTb2Z0d2FyZSBFbmdpbmVl
+ciBDYW1saW4gVGVjaG5vbG9naWVzIFBvbGFuZCBMaW1pdGVkIFNwLiB6IG8uby4NCj4+DQpBcyBt
+eSBxdWVzdGlvbiB3ZW50IGluIGR1cmluZyBMaW51eCBNTSAmIEZTIHN1bW1pdCwgaXQgbWlnaHQg
+aGF2ZSBnb25lIHVubm90aWNlZC4gU28ganVzdCBhIGtpbmQgcmVtaW5kZXIgOikNCk1heWJlIHNv
+bWVvbmUgZ290IGEgY2hhbmNlIHRvIGxvb2sgYXQgaXQ/DQoNCi0tIA0KUG96ZHJhd2lhbS9XaXRo
+IGtpbmQgcmVnYXJkcywNCkxlY2ggUGVyY3phaw0KDQpTci4gU29mdHdhcmUgRW5naW5lZXINCkNh
+bWxpbiBUZWNobm9sb2dpZXMgUG9sYW5kIExpbWl0ZWQgU3AuIHogby5vLg0KDQo=
