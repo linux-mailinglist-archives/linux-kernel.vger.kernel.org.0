@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0B41EE90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B60571ECB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731577AbfEOLXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
+        id S1727481AbfEOLAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731557AbfEOLW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:58 -0400
+        id S1727455AbfEOLAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A4C120818;
-        Wed, 15 May 2019 11:22:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E638020881;
+        Wed, 15 May 2019 11:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919377;
-        bh=tv5sSD4QG+b2/BgGkiVVFz8fwcDGrsiYsFuS41YjUJs=;
+        s=default; t=1557918032;
+        bh=Rgk/QmC5wuH4m2huAqS/Q36BitkKH5LjgBwJaV2cB7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtajeGnQSk7ZofYvkNTGvcyZpSc4PeF1CV2Zg7dgfjebjezc59O8Iphzy17AW5+aK
-         xzTuu1UO5vlZ3Yg+IwpaJg35KL1+/j28p4dlsg8RczAUOoaGVXWeMUm9ja1VACKEzE
-         xRaO26XFGtTaG2jFcaaAG1m0xfq0q2iktvPFw4do=
+        b=kdAl6cN7ddlnGbcvraY2uFYGde9E53Iysc5YEPFuYNVNEjybliefSr0qvWubJHSDc
+         MRvSYCoaMIitpk7SvxVVg3fwF136b9AUzxeVAo7sMiv5ayJggQayICWPhSkPZOqUzr
+         aeQXxOSqbEeFnKbAdNuQhmd7+k5FljAQ2d7a4ScM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/113] drm/sun4i: Fix component unbinding and component master deletion
+Subject: [PATCH 3.18 67/86] s390/dasd: Fix capacity calculation for large volumes
 Date:   Wed, 15 May 2019 12:55:44 +0200
-Message-Id: <20190515090657.671008019@linuxfoundation.org>
+Message-Id: <20190515090654.762720869@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f5a9ed867c83875546c9aadd4ed8e785e9adcc3c ]
+[ Upstream commit 2cc9637ce825f3a9f51f8f78af7474e9e85bfa5f ]
 
-For our component-backed driver to be properly removed, we need to
-delete the component master in sun4i_drv_remove and make sure to call
-component_unbind_all in the master's unbind so that all components are
-unbound when the master is.
+The DASD driver incorrectly limits the maximum number of blocks of ECKD
+DASD volumes to 32 bit numbers. Volumes with a capacity greater than
+2^32-1 blocks are incorrectly recognized as smaller volumes.
 
-Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190418132727.5128-4-paul.kocialkowski@bootlin.com
+This results in the following volume capacity limits depending on the
+formatted block size:
+
+  BLKSIZE  MAX_GB   MAX_CYL
+      512    2047   5843492
+     1024    4095   8676701
+     2048    8191  13634816
+     4096   16383  23860929
+
+The same problem occurs when a volume with more than 17895697 cylinders
+is accessed in raw-track-access mode.
+
+Fix this problem by adding an explicit type cast when calculating the
+maximum number of blocks.
+
+Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/s390/block/dasd_eckd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 7cac01c72c027..62703630090aa 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -160,6 +160,8 @@ static void sun4i_drv_unbind(struct device *dev)
- 	drm_mode_config_cleanup(drm);
- 	of_reserved_mem_device_release(dev);
- 	drm_dev_put(drm);
-+
-+	component_unbind_all(dev, NULL);
- }
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index 4bbcdf991c262..4856e5bbb42fa 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -2031,14 +2031,14 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
+ 	blk_per_trk = recs_per_track(&private->rdc_data, 0, block->bp_block);
  
- static const struct component_master_ops sun4i_drv_master_ops = {
-@@ -407,6 +409,8 @@ static int sun4i_drv_probe(struct platform_device *pdev)
+ raw:
+-	block->blocks = (private->real_cyl *
++	block->blocks = ((unsigned long) private->real_cyl *
+ 			  private->rdc_data.trk_per_cyl *
+ 			  blk_per_trk);
  
- static int sun4i_drv_remove(struct platform_device *pdev)
- {
-+	component_master_del(&pdev->dev, &sun4i_drv_master_ops);
-+
- 	return 0;
- }
- 
+ 	dev_info(&device->cdev->dev,
+-		 "DASD with %d KB/block, %d KB total size, %d KB/track, "
++		 "DASD with %u KB/block, %lu KB total size, %u KB/track, "
+ 		 "%s\n", (block->bp_block >> 10),
+-		 ((private->real_cyl *
++		 (((unsigned long) private->real_cyl *
+ 		   private->rdc_data.trk_per_cyl *
+ 		   blk_per_trk * (block->bp_block >> 9)) >> 1),
+ 		 ((blk_per_trk * block->bp_block) >> 10),
 -- 
 2.20.1
 
