@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 346C31EF17
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C8191EE3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfEOL3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:29:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41144 "EHLO mail.kernel.org"
+        id S1730851AbfEOLSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732314AbfEOL3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:29:47 -0400
+        id S1730450AbfEOLSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0342B216F4;
-        Wed, 15 May 2019 11:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E16C1206BF;
+        Wed, 15 May 2019 11:18:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919786;
-        bh=eOT/cH2Rj/MbeOz0BDKtEkQDlgNJp2D9ELE24IIFEX8=;
+        s=default; t=1557919127;
+        bh=ytNF6xKI+l+Ujvw5o99E9RlODx9tEh/MtVIcw+U3ptI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZp7q2Xv/B+5TCx9c0qRH9HU9Rih1N11hpc07dR2g7ixHIaoukTDUbVFuJAB285+P
-         1M9RRBSsJZqWzAKCC6HCagLCnOi1PL4O764ENJsJtETuH80XmxaTqypdGV15vv1+3w
-         bc8Ek5Nbay3+vIsfSplwHHZWqVmeU7XX5qvmXGC4=
+        b=xaMuoR+SXwqOqASXqedbx2Niuynyx2fmXPNnmSNjmX2FCHuntKKXtZCyMY8TlpPOj
+         TqZOxBPTlWAi6dO84n4sUkw/+bx81MbehUBoOkmeYxAudT/fKjbpfd3XmnE2VdeYrE
+         kKfv57hmez1nRLIRlTcymoGShNjjqPTpokI1Q0T8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Po-Hsu Lin <po-hsu.lin@canonical.com>,
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 076/137] selftests/net: correct the return value for run_afpackettests
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 077/115] gtp: change NET_UDP_TUNNEL dependency to select
 Date:   Wed, 15 May 2019 12:55:57 +0200
-Message-Id: <20190515090658.949905307@linuxfoundation.org>
+Message-Id: <20190515090704.995704200@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c03557c3f25271e62e39154af66ebdd1b59c9ca ]
+[ Upstream commit c22da36688d6298f2e546dcc43fdc1ad35036467 ]
 
-The run_afpackettests will be marked as passed regardless the return
-value of those sub-tests in the script:
-    --------------------
-    running psock_tpacket test
-    --------------------
-    [FAIL]
-    selftests: run_afpackettests [PASS]
+Similarly to commit a7603ac1fc8c ("geneve: change NET_UDP_TUNNEL
+dependency to select"), GTP has a dependency on NET_UDP_TUNNEL which
+makes impossible to compile it if no other protocol depending on
+NET_UDP_TUNNEL is selected.
 
-Fix this by changing the return value for each tests.
+Fix this by changing the depends to a select, and drop NET_IP_TUNNEL from
+the select list, as it already depends on NET_UDP_TUNNEL.
 
-Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/testing/selftests/net/run_afpackettests | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/net/run_afpackettests b/tools/testing/selftests/net/run_afpackettests
-index 2dc95fda7ef76..ea5938ec009a5 100755
---- a/tools/testing/selftests/net/run_afpackettests
-+++ b/tools/testing/selftests/net/run_afpackettests
-@@ -6,12 +6,14 @@ if [ $(id -u) != 0 ]; then
- 	exit 0
- fi
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index aba0d652095b0..f3357091e9d18 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -212,8 +212,8 @@ config GENEVE
  
-+ret=0
- echo "--------------------"
- echo "running psock_fanout test"
- echo "--------------------"
- ./in_netns.sh ./psock_fanout
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
-+	ret=1
- else
- 	echo "[PASS]"
- fi
-@@ -22,6 +24,7 @@ echo "--------------------"
- ./in_netns.sh ./psock_tpacket
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
-+	ret=1
- else
- 	echo "[PASS]"
- fi
-@@ -32,6 +35,8 @@ echo "--------------------"
- ./in_netns.sh ./txring_overwrite
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
-+	ret=1
- else
- 	echo "[PASS]"
- fi
-+exit $ret
+ config GTP
+ 	tristate "GPRS Tunneling Protocol datapath (GTP-U)"
+-	depends on INET && NET_UDP_TUNNEL
+-	select NET_IP_TUNNEL
++	depends on INET
++	select NET_UDP_TUNNEL
+ 	---help---
+ 	  This allows one to create gtp virtual interfaces that provide
+ 	  the GPRS Tunneling Protocol datapath (GTP-U). This tunneling protocol
 -- 
 2.20.1
 
