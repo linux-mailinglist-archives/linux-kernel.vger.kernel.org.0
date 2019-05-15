@@ -2,57 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 384F11F2A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B031EE6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbfEOMF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:05:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44456 "EHLO mail.kernel.org"
+        id S1730680AbfEOLVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfEOLKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:10:33 -0400
+        id S1730751AbfEOLV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 182F12084E;
-        Wed, 15 May 2019 11:10:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B966F206BF;
+        Wed, 15 May 2019 11:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918632;
-        bh=MgVXG+k1LpdZbb6fZwHxZMdGrI8cIham04J2qJfV5bw=;
+        s=default; t=1557919288;
+        bh=llpclzGwnL3zP91thyCqSmhhwD6Du3MwcCp19NEdLtE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IuMqGT586SC+qlqwKb2OwoOd+ee/fdtoMBCsFkz/Lk42S8UQOGXucC55Znq+RkAK6
-         fmux848WD0NR1NfupA5lR71r7hubtXE+VPi3PTKZKR/arhrheMutthJLFp3EStvq4O
-         ZuDD2mbgSl7GYOEmusfNdKU35AvODlg/ifs4lQaE=
+        b=p2Y5JQhstPuY3Ac66HkvSNV0XbhJ9HE2LoUbficFDzNoCMlmHO8VJ+Gf90RcEa09+
+         SR5wOUmDdrAqw9Zyxb3+fvDiO4NhCvCLibTGnbCB89Z/nA/kO5Cy8QxM2a2jlOnITS
+         W+WDtKswUK3eQDW0y1o1okLXbCDHK/xWxMrVn4P0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 203/266] x86/speculation: Remove unnecessary ret variable in cpu_show_common()
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 019/113] mac80211: fix unaligned access in mesh table hash function
 Date:   Wed, 15 May 2019 12:55:10 +0200
-Message-Id: <20190515090729.823464451@linuxfoundation.org>
+Message-Id: <20190515090654.939869893@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,63 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tim Chen <tim.c.chen@linux.intel.com>
+[ Upstream commit 40586e3fc400c00c11151804dcdc93f8c831c808 ]
 
-commit b86bda0426853bfe8a3506c7d2a5b332760ae46b upstream.
+The pointer to the last four bytes of the address is not guaranteed to be
+aligned, so we need to use __get_unaligned_cpu32 here
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185003.783903657@linutronix.de
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ net/mac80211/mesh_pathtbl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -762,8 +762,6 @@ static void __init l1tf_select_mitigatio
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
+diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
+index c3a7396fb9556..49a90217622bd 100644
+--- a/net/mac80211/mesh_pathtbl.c
++++ b/net/mac80211/mesh_pathtbl.c
+@@ -23,7 +23,7 @@ static void mesh_path_free_rcu(struct mesh_table *tbl, struct mesh_path *mpath);
+ static u32 mesh_table_hash(const void *addr, u32 len, u32 seed)
  {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
+ 	/* Use last four bytes of hw addr as hash index */
+-	return jhash_1word(*(u32 *)(addr+2), seed);
++	return jhash_1word(__get_unaligned_cpu32((u8 *)addr + 2), seed);
+ }
  
-@@ -778,13 +776,12 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+ static const struct rhashtable_params mesh_rht_params = {
+-- 
+2.20.1
+
 
 
