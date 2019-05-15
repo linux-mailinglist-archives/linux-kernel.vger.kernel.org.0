@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8030F1EF5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85211EF24
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733165AbfEOLdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:33:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
+        id S1732733AbfEOLaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732808AbfEOLdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:33:04 -0400
+        id S1732722AbfEOLa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1C272084F;
-        Wed, 15 May 2019 11:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D10E20843;
+        Wed, 15 May 2019 11:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919984;
-        bh=Rw5aZz2Yzs6QVR9aXm4MlXZDJk78bhm1T0dAQyRCfG0=;
+        s=default; t=1557919825;
+        bh=JDCjz2uejUGz1Wl/+wSooTpOrcmdF/YYT9dMSQKOIF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=beCzEpb3mFsaOIoX+dHM2yf/7tzkGIQ7ibXQIE1tb7+EGQIjeiSygRADM1FP0CGMR
-         Cz3x2onHWP1vfaLSynauSbgClzwSnOFmSe6YXjSM7xJ32/OKGtYN0SEFMd97FOht1p
-         eCA3DmW04n4fgqHqyW6hriZqpel5mTFeiq7K5qk4=
+        b=qJphTH4aw5YX6A6+kZFVtmY2WKcFGDCbVYHTZ73EDeBiSAD5Rl/tNIx4YIVRKDg77
+         kIKRZ0TZWOX501za6V7OY5HgU+U0TfmgS2jyPf5nz/Bmap58LbglIEZ1aSl1HRkdsr
+         XzYqS4eSck6yKDrFz9QDwedLKZRjvlR89A8LOgJw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pepijn de Vos <pepijndevos@gmail.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>
-Subject: [PATCH 5.1 03/46] platform/x86: dell-laptop: fix rfkill functionality
-Date:   Wed, 15 May 2019 12:56:27 +0200
-Message-Id: <20190515090618.617681245@linuxfoundation.org>
+        stable@vger.kernel.org, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 107/137] dpaa_eth: fix SG frame cleanup
+Date:   Wed, 15 May 2019 12:56:28 +0200
+Message-Id: <20190515090701.337352286@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mario Limonciello <mario.limonciello@dell.com>
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-commit 6cc13c28da5beee0f706db6450e190709700b34a upstream.
+[ Upstream commit 17170e6570c082717c142733d9a638bcd20551f8 ]
 
-When converting the driver two arguments were transposed leading
-to rfkill not working.
+Fix issue with the entry indexing in the sg frame cleanup code being
+off-by-1. This problem showed up when doing some basic iperf tests and
+manifested in traffic coming to a halt.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=201427
-Reported-by: Pepijn de Vos <pepijndevos@gmail.com>
-Fixes: 549b49 ("platform/x86: dell-smbios: Introduce dispatcher for SMM calls")
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Acked-by: Pali Rohár <pali.rohar@gmail.com>
-Cc: <stable@vger.kernel.org> # 4.14.x
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/platform/x86/dell-laptop.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -531,7 +531,7 @@ static void dell_rfkill_query(struct rfk
- 		return;
- 	}
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1648,7 +1648,7 @@ static struct sk_buff *dpaa_cleanup_tx_f
+ 				 qm_sg_entry_get_len(&sgt[0]), dma_dir);
  
--	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	dell_fill_request(&buffer, 0x2, 0, 0, 0);
- 	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	hwswitch = buffer.output[1];
+ 		/* remaining pages were mapped with skb_frag_dma_map() */
+-		for (i = 1; i < nr_frags; i++) {
++		for (i = 1; i <= nr_frags; i++) {
+ 			WARN_ON(qm_sg_entry_is_ext(&sgt[i]));
  
-@@ -562,7 +562,7 @@ static int dell_debugfs_show(struct seq_
- 		return ret;
- 	status = buffer.output[1];
- 
--	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	dell_fill_request(&buffer, 0x2, 0, 0, 0);
- 	hwswitch_ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	if (hwswitch_ret)
- 		return hwswitch_ret;
-@@ -647,7 +647,7 @@ static void dell_update_rfkill(struct wo
- 	if (ret != 0)
- 		return;
- 
--	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	dell_fill_request(&buffer, 0x2, 0, 0, 0);
- 	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 
- 	if (ret == 0 && (status & BIT(0)))
+ 			dma_unmap_page(dev, qm_sg_addr(&sgt[i]),
 
 
