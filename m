@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D25E1EDFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D84421F0DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbfEOLPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:15:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
+        id S1731916AbfEOLsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:48:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730315AbfEOLPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:15:33 -0400
+        id S1731754AbfEOLYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2BE220644;
-        Wed, 15 May 2019 11:15:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 396AA20818;
+        Wed, 15 May 2019 11:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918933;
-        bh=zqQoN131saNSYS/pt4U54XR9qZdMRzLTkdcDYSFm1T8=;
+        s=default; t=1557919443;
+        bh=x78V6glkD3FrZhsB1aPYUajBeskWtj2i4dms4jnPZ8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yWZB4t7b5w/5d21r1if/LtxkB7Nfeqb1J29NwrYoO5TuFVYTLX0JZU79Ta1NKOmUi
-         8kZlMAWmSOpJcWaUyh6WRvMOKOwHfqZZND12PhYKaVdwlkAiUAhMY8QgsfxXVxb3MJ
-         5rYZt2KgLfsmujyrSZmn/ADV1IOciJ2lNepRcidY=
+        b=eozuOcJ8pBdh+Wom+j0TmTevZBGMxzqCqdOkNZrvxoWKxRWqNRE5IAQTO96KcaPnb
+         dGDrPLRFGqtfCJ1A5+oQOlSruGjOL2YB174iCebQvxg0AhrTADz96jKGpFnEvUANRW
+         gKWjeY0oX0pM1GIUmRsvSEMnDUUW8RtGK3lwffAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 32/51] rtlwifi: rtl8723ae: Fix missing break in switch statement
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.19 076/113] mlxsw: core: Do not use WQ_MEM_RECLAIM for mlxsw workqueue
 Date:   Wed, 15 May 2019 12:56:07 +0200
-Message-Id: <20190515090626.172154640@linuxfoundation.org>
+Message-Id: <20190515090659.330723241@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+[ Upstream commit b442fed1b724af0de087912a5718ddde1b87acbb ]
 
-commit 84242b82d81c54e009a2aaa74d3d9eff70babf56 upstream.
+The workqueue is used to periodically update the networking stack about
+activity / statistics of various objects such as neighbours and TC
+actions.
 
-Add missing break statement in order to prevent the code from falling
-through to case 0x1025, and erroneously setting rtlhal->oem_id to
-RT_CID_819X_ACER when rtlefuse->eeprom_svid is equal to 0x10EC and
-none of the cases in switch (rtlefuse->eeprom_smid) match.
+It should not be called as part of memory reclaim path, so remove the
+WQ_MEM_RECLAIM flag.
 
-This bug was found thanks to the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Fixes: 238ad2ddf34b ("rtlwifi: rtl8723ae: Clean up the hardware info routine")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 3d5479e92087 ("mlxsw: core: Remove deprecated create_workqueue")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlxsw/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
-@@ -1703,6 +1703,7 @@ static void _rtl8723e_read_adapter_info(
- 					rtlhal->oem_id = RT_CID_819X_LENOVO;
- 					break;
- 				}
-+				break;
- 			case 0x1025:
- 				rtlhal->oem_id = RT_CID_819X_ACER;
- 				break;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
+index 7482db0767afb..2e6df5804b356 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1875,7 +1875,7 @@ static int __init mlxsw_core_module_init(void)
+ {
+ 	int err;
+ 
+-	mlxsw_wq = alloc_workqueue(mlxsw_core_driver_name, WQ_MEM_RECLAIM, 0);
++	mlxsw_wq = alloc_workqueue(mlxsw_core_driver_name, 0, 0);
+ 	if (!mlxsw_wq)
+ 		return -ENOMEM;
+ 	mlxsw_owq = alloc_ordered_workqueue("%s_ordered", 0,
+-- 
+2.20.1
+
 
 
