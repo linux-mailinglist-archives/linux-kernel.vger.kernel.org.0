@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF6ED1EF0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 513D41EE18
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732498AbfEOL3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:29:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40314 "EHLO mail.kernel.org"
+        id S1730613AbfEOLRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731818AbfEOL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:29:07 -0400
+        id S1730336AbfEOLQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 358CF206BF;
-        Wed, 15 May 2019 11:29:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 925DD20644;
+        Wed, 15 May 2019 11:16:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919746;
-        bh=pT8pxS8klidPn33smoRvZdqbifKG/O564mOdrnLgpaY=;
+        s=default; t=1557919019;
+        bh=150jhkgBPAGqDHBLd7kUBOwIldgeC8zcqCG3Pz6Cp34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lxFDV+DIfFrFFj3Smg8Y25++mK+05hn8eGqn5Lwxu6+Dj9QCazN1XSX2bl/QhUE8U
-         LOC+HDUw9keFdJfcJ3KiziQ9x0XlqQ8KNnF9EY5IsabGh1hZA3mtmrKGKRT2bA8Z5x
-         5QEoR6BfUOHp0ukplYvdLPNpUmQK+mZbzqaef7Yk=
+        b=ocFETi6ZxNI4los/12x0wHy+uJ04R8grc6OibKYWG6oj2bKI7kKGjDERtVqKBata0
+         F3MacK5Cloy5TISd9FpxrqPPOK86Ky+eGxZe3bK1kOpHWRVoaNIwedbYtJEV2wgGuA
+         5b3cIBUvtzdz3udRi4bhkvjxG6dOR/G3xjZDmEBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 034/137] selftests: fib_tests: Fix Command line is not complete errors
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>
+Subject: [PATCH 4.14 035/115] gpu: ipu-v3: dp: fix CSC handling
 Date:   Wed, 15 May 2019 12:55:15 +0200
-Message-Id: <20190515090655.830958831@linuxfoundation.org>
+Message-Id: <20190515090701.968455671@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,177 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a5f622984a623df9a84cf43f6b098d8dd76fbe05 ]
+[ Upstream commit d4fad0a426c6e26f48c9a7cdd21a7fe9c198d645 ]
 
-A couple of tests are verifying a route has been removed. The helper
-expects the prefix as the first part of the expected output. When
-checking that a route has been deleted the prefix is empty leading
-to an invalid ip command:
+Initialize the flow input colorspaces to unknown and reset to that value
+when the channel gets disabled. This avoids the state getting mixed up
+with a previous mode.
 
-  $ ip ro ls match
-  Command line is not complete. Try option "help"
+Also keep the CSC settings for the background flow intact when disabling
+the foreground flow.
 
-Fix by moving the comparison of expected output and output to a new
-function that is used by both check_route and check_route6. Use the
-new helper for the 2 checks on route removal.
-
-Also, remove the reset of 'set -x' in route_setup which overrides the
-user managed setting.
-
-Fixes: d69faad76584c ("selftests: fib_tests: Add prefix route tests with metric")
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Root-caused-by: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/fib_tests.sh | 94 ++++++++++--------------
- 1 file changed, 40 insertions(+), 54 deletions(-)
+ drivers/gpu/ipu-v3/ipu-dp.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/net/fib_tests.sh b/tools/testing/selftests/net/fib_tests.sh
-index 1080ff55a788f..0d2a5f4f1e638 100755
---- a/tools/testing/selftests/net/fib_tests.sh
-+++ b/tools/testing/selftests/net/fib_tests.sh
-@@ -605,6 +605,39 @@ run_cmd()
- 	return $rc
- }
+diff --git a/drivers/gpu/ipu-v3/ipu-dp.c b/drivers/gpu/ipu-v3/ipu-dp.c
+index 9b2b3fa479c46..5e44ff1f20851 100644
+--- a/drivers/gpu/ipu-v3/ipu-dp.c
++++ b/drivers/gpu/ipu-v3/ipu-dp.c
+@@ -195,7 +195,8 @@ int ipu_dp_setup_channel(struct ipu_dp *dp,
+ 		ipu_dp_csc_init(flow, flow->foreground.in_cs, flow->out_cs,
+ 				DP_COM_CONF_CSC_DEF_BOTH);
+ 	} else {
+-		if (flow->foreground.in_cs == flow->out_cs)
++		if (flow->foreground.in_cs == IPUV3_COLORSPACE_UNKNOWN ||
++		    flow->foreground.in_cs == flow->out_cs)
+ 			/*
+ 			 * foreground identical to output, apply color
+ 			 * conversion on background
+@@ -261,6 +262,8 @@ void ipu_dp_disable_channel(struct ipu_dp *dp, bool sync)
+ 	struct ipu_dp_priv *priv = flow->priv;
+ 	u32 reg, csc;
  
-+check_expected()
-+{
-+	local out="$1"
-+	local expected="$2"
-+	local rc=0
++	dp->in_cs = IPUV3_COLORSPACE_UNKNOWN;
 +
-+	[ "${out}" = "${expected}" ] && return 0
-+
-+	if [ -z "${out}" ]; then
-+		if [ "$VERBOSE" = "1" ]; then
-+			printf "\nNo route entry found\n"
-+			printf "Expected:\n"
-+			printf "    ${expected}\n"
-+		fi
-+		return 1
-+	fi
-+
-+	# tricky way to convert output to 1-line without ip's
-+	# messy '\'; this drops all extra white space
-+	out=$(echo ${out})
-+	if [ "${out}" != "${expected}" ]; then
-+		rc=1
-+		if [ "${VERBOSE}" = "1" ]; then
-+			printf "    Unexpected route entry. Have:\n"
-+			printf "        ${out}\n"
-+			printf "    Expected:\n"
-+			printf "        ${expected}\n\n"
-+		fi
-+	fi
-+
-+	return $rc
-+}
-+
- # add route for a prefix, flushing any existing routes first
- # expected to be the first step of a test
- add_route6()
-@@ -652,31 +685,7 @@ check_route6()
- 	pfx=$1
+ 	if (!dp->foreground)
+ 		return;
  
- 	out=$($IP -6 ro ls match ${pfx} | sed -e 's/ pref medium//')
--	[ "${out}" = "${expected}" ] && return 0
--
--	if [ -z "${out}" ]; then
--		if [ "$VERBOSE" = "1" ]; then
--			printf "\nNo route entry found\n"
--			printf "Expected:\n"
--			printf "    ${expected}\n"
--		fi
--		return 1
--	fi
--
--	# tricky way to convert output to 1-line without ip's
--	# messy '\'; this drops all extra white space
--	out=$(echo ${out})
--	if [ "${out}" != "${expected}" ]; then
--		rc=1
--		if [ "${VERBOSE}" = "1" ]; then
--			printf "    Unexpected route entry. Have:\n"
--			printf "        ${out}\n"
--			printf "    Expected:\n"
--			printf "        ${expected}\n\n"
--		fi
--	fi
--
--	return $rc
-+	check_expected "${out}" "${expected}"
- }
+@@ -268,8 +271,9 @@ void ipu_dp_disable_channel(struct ipu_dp *dp, bool sync)
  
- route_cleanup()
-@@ -725,7 +734,7 @@ route_setup()
- 	ip -netns ns2 addr add 172.16.103.2/24 dev veth4
- 	ip -netns ns2 addr add 172.16.104.1/24 dev dummy1
+ 	reg = readl(flow->base + DP_COM_CONF);
+ 	csc = reg & DP_COM_CONF_CSC_DEF_MASK;
+-	if (csc == DP_COM_CONF_CSC_DEF_FG)
+-		reg &= ~DP_COM_CONF_CSC_DEF_MASK;
++	reg &= ~DP_COM_CONF_CSC_DEF_MASK;
++	if (csc == DP_COM_CONF_CSC_DEF_BOTH || csc == DP_COM_CONF_CSC_DEF_BG)
++		reg |= DP_COM_CONF_CSC_DEF_BG;
  
--	set +ex
-+	set +e
- }
+ 	reg &= ~DP_COM_CONF_FG_EN;
+ 	writel(reg, flow->base + DP_COM_CONF);
+@@ -347,6 +351,8 @@ int ipu_dp_init(struct ipu_soc *ipu, struct device *dev, unsigned long base)
+ 	mutex_init(&priv->mutex);
  
- # assumption is that basic add of a single path route works
-@@ -960,7 +969,8 @@ ipv6_addr_metric_test()
- 	run_cmd "$IP li set dev dummy2 down"
- 	rc=$?
- 	if [ $rc -eq 0 ]; then
--		check_route6 ""
-+		out=$($IP -6 ro ls match 2001:db8:104::/64)
-+		check_expected "${out}" ""
- 		rc=$?
- 	fi
- 	log_test $rc 0 "Prefix route removed on link down"
-@@ -1091,38 +1101,13 @@ check_route()
- 	local pfx
- 	local expected="$1"
- 	local out
--	local rc=0
- 
- 	set -- $expected
- 	pfx=$1
- 	[ "${pfx}" = "unreachable" ] && pfx=$2
- 
- 	out=$($IP ro ls match ${pfx})
--	[ "${out}" = "${expected}" ] && return 0
--
--	if [ -z "${out}" ]; then
--		if [ "$VERBOSE" = "1" ]; then
--			printf "\nNo route entry found\n"
--			printf "Expected:\n"
--			printf "    ${expected}\n"
--		fi
--		return 1
--	fi
--
--	# tricky way to convert output to 1-line without ip's
--	# messy '\'; this drops all extra white space
--	out=$(echo ${out})
--	if [ "${out}" != "${expected}" ]; then
--		rc=1
--		if [ "${VERBOSE}" = "1" ]; then
--			printf "    Unexpected route entry. Have:\n"
--			printf "        ${out}\n"
--			printf "    Expected:\n"
--			printf "        ${expected}\n\n"
--		fi
--	fi
--
--	return $rc
-+	check_expected "${out}" "${expected}"
- }
- 
- # assumption is that basic add of a single path route works
-@@ -1387,7 +1372,8 @@ ipv4_addr_metric_test()
- 	run_cmd "$IP li set dev dummy2 down"
- 	rc=$?
- 	if [ $rc -eq 0 ]; then
--		check_route ""
-+		out=$($IP ro ls match 172.16.104.0/24)
-+		check_expected "${out}" ""
- 		rc=$?
- 	fi
- 	log_test $rc 0 "Prefix route removed on link down"
+ 	for (i = 0; i < IPUV3_NUM_FLOWS; i++) {
++		priv->flow[i].background.in_cs = IPUV3_COLORSPACE_UNKNOWN;
++		priv->flow[i].foreground.in_cs = IPUV3_COLORSPACE_UNKNOWN;
+ 		priv->flow[i].foreground.foreground = true;
+ 		priv->flow[i].base = priv->base + ipu_dp_flow_base[i];
+ 		priv->flow[i].priv = priv;
 -- 
 2.20.1
 
