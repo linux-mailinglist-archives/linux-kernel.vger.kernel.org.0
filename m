@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A09D1EF4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 926F61F0A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733025AbfEOLc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:32:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
+        id S1732118AbfEOLqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:46:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733005AbfEOLcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:32:20 -0400
+        id S1731995AbfEOLZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:25:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD220206BF;
-        Wed, 15 May 2019 11:32:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCB812084F;
+        Wed, 15 May 2019 11:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919939;
-        bh=LxcjEKip1v8N/ANBHPxLhn8/Pw2YaorBIk4I7k7IVPI=;
+        s=default; t=1557919525;
+        bh=EA6NedQph8PMX3qsnEJopeDYubZLnPwmefdEEmbJ5RY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZWQwTQhpkd6R1rW05m+xxQsEXfCpGoGfDyNf1ZNuaFSW39iyIk3/GLtG7CO8WEz4r
-         zQ+vVgtesRWLvUWsYGHaCegIsn2jQvNhmBzjo6EF6FCotOwDuQoMSGHjs5kXUWqrqk
-         Fw5JUYXkjrJ4dbigMCyy4u0GGyWCRkCWTr3ykJOY=
+        b=P2m/3vszLu1F1BTj0CtRo8Dny7Yct94igUq97KSK6xOKWo0RzcmTqXkssW6xWtGxG
+         ZrXi2RGqwabCPlGNQmF9iNB40abPSNOeOmBc+eddgkRpGgN6gDaCZJgQvIINwoIP1g
+         2C3XeiJFBsIKv5H7shFgBGBK4m//y2h+fHEKQZV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>
-Subject: [PATCH 5.1 14/46] bonding: fix arp_validate toggling in active-backup mode
-Date:   Wed, 15 May 2019 12:56:38 +0200
-Message-Id: <20190515090622.798553525@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rick Lindsley <ricklind@vnet.linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 108/113] powerpc/book3s/64: check for NULL pointer in pgd_alloc()
+Date:   Wed, 15 May 2019 12:56:39 +0200
+Message-Id: <20190515090701.876183332@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
+From: Rick Lindsley <ricklind@linux.vnet.ibm.com>
 
-[ Upstream commit a9b8a2b39ce65df45687cf9ef648885c2a99fe75 ]
+commit f39356261c265a0689d7ee568132d516e8b6cecc upstream.
 
-There's currently a problem with toggling arp_validate on and off with an
-active-backup bond. At the moment, you can start up a bond, like so:
+When the memset code was added to pgd_alloc(), it failed to consider
+that kmem_cache_alloc() can return NULL. It's uncommon, but not
+impossible under heavy memory contention. Example oops:
 
-modprobe bonding mode=1 arp_interval=100 arp_validate=0 arp_ip_targets=192.168.1.1
-ip link set bond0 down
-echo "ens4f0" > /sys/class/net/bond0/bonding/slaves
-echo "ens4f1" > /sys/class/net/bond0/bonding/slaves
-ip link set bond0 up
-ip addr add 192.168.1.2/24 dev bond0
+  Unable to handle kernel paging request for data at address 0x00000000
+  Faulting instruction address: 0xc0000000000a4000
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  LE SMP NR_CPUS=2048 NUMA pSeries
+  CPU: 70 PID: 48471 Comm: entrypoint.sh Kdump: loaded Not tainted 4.14.0-115.6.1.el7a.ppc64le #1
+  task: c000000334a00000 task.stack: c000000331c00000
+  NIP:  c0000000000a4000 LR: c00000000012f43c CTR: 0000000000000020
+  REGS: c000000331c039c0 TRAP: 0300   Not tainted  (4.14.0-115.6.1.el7a.ppc64le)
+  MSR:  800000010280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 44022840  XER: 20040000
+  CFAR: c000000000008874 DAR: 0000000000000000 DSISR: 42000000 SOFTE: 1
+  ...
+  NIP [c0000000000a4000] memset+0x68/0x104
+  LR [c00000000012f43c] mm_init+0x27c/0x2f0
+  Call Trace:
+    mm_init+0x260/0x2f0 (unreliable)
+    copy_mm+0x11c/0x638
+    copy_process.isra.28.part.29+0x6fc/0x1080
+    _do_fork+0xdc/0x4c0
+    ppc_clone+0x8/0xc
+  Instruction dump:
+  409e000c b0860000 38c60002 409d000c 90860000 38c60004 78a0d183 78a506a0
+  7c0903a6 41820034 60000000 60420000 <f8860000> f8860008 f8860010 f8860018
 
-Pings to 192.168.1.1 work just fine. Now turn on arp_validate:
-
-echo 1 > /sys/class/net/bond0/bonding/arp_validate
-
-Pings to 192.168.1.1 continue to work just fine. Now when you go to turn
-arp_validate off again, the link falls flat on it's face:
-
-echo 0 > /sys/class/net/bond0/bonding/arp_validate
-dmesg
-...
-[133191.911987] bond0: Setting arp_validate to none (0)
-[133194.257793] bond0: bond_should_notify_peers: slave ens4f0
-[133194.258031] bond0: link status definitely down for interface ens4f0, disabling it
-[133194.259000] bond0: making interface ens4f1 the new active one
-[133197.330130] bond0: link status definitely down for interface ens4f1, disabling it
-[133197.331191] bond0: now running without any active interface!
-
-The problem lies in bond_options.c, where passing in arp_validate=0
-results in bond->recv_probe getting set to NULL. This flies directly in
-the face of commit 3fe68df97c7f, which says we need to set recv_probe =
-bond_arp_recv, even if we're not using arp_validate. Said commit fixed
-this in bond_option_arp_interval_set, but missed that we can get to that
-same state in bond_option_arp_validate_set as well.
-
-One solution would be to universally set recv_probe = bond_arp_recv here
-as well, but I don't think bond_option_arp_validate_set has any business
-touching recv_probe at all, and that should be left to the arp_interval
-code, so we can just make things much tidier here.
-
-Fixes: 3fe68df97c7f ("bonding: always set recv_probe to bond_arp_rcv in arp monitor")
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fc5c2f4a55a2 ("powerpc/mm/hash64: Zero PGD pages on allocation")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Rick Lindsley <ricklind@vnet.linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/bonding/bond_options.c |    7 -------
- 1 file changed, 7 deletions(-)
 
---- a/drivers/net/bonding/bond_options.c
-+++ b/drivers/net/bonding/bond_options.c
-@@ -1098,13 +1098,6 @@ static int bond_option_arp_validate_set(
- {
- 	netdev_dbg(bond->dev, "Setting arp_validate to %s (%llu)\n",
- 		   newval->string, newval->value);
--
--	if (bond->dev->flags & IFF_UP) {
--		if (!newval->value)
--			bond->recv_probe = NULL;
--		else if (bond->params.arp_interval)
--			bond->recv_probe = bond_arp_rcv;
--	}
- 	bond->params.arp_validate = newval->value;
+---
+ arch/powerpc/include/asm/book3s/64/pgalloc.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -83,6 +83,9 @@ static inline pgd_t *pgd_alloc(struct mm
  
- 	return 0;
+ 	pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+ 			       pgtable_gfp_flags(mm, GFP_KERNEL));
++	if (unlikely(!pgd))
++		return pgd;
++
+ 	/*
+ 	 * Don't scan the PGD for pointers, it contains references to PUDs but
+ 	 * those references are not full pointers and so can't be recognised by
 
 
