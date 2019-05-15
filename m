@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D31C1F851
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C226B1F854
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfEOQRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:17:54 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40672 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbfEOQRx (ORCPT
+        id S1727047AbfEOQSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:18:11 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45117 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfEOQSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:17:53 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u17so217869pfn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:17:53 -0700 (PDT)
+        Wed, 15 May 2019 12:18:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id j1so308708qkk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:18:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7vq4AlrJPt4Dwx7WQQ5gbytONnLDP5sNc25GZicQR2c=;
-        b=j0XrHxsd4qrp8xmr3LTznq8e7py2bTdDHS5A/boMDtTVxOojkbpeL5DBwOcSKCFNCh
-         qAj/Dtzw5eSOpOswrw6cSbg+0umNScGnedAyBWq8jxsEADlP0R0FD+Hty9e59yk7kDUf
-         nC0epe20wvojigw7tlMa9G8+liH42frhfmqPPCLq9YeA+qR0em+rynLXX27cgXUmNFoU
-         1Jlt7s5z26CanSGpunYO6bNGBcsnoqUMs/NHpQmetgNBCP2wH+og3ZyznTwqm71ESs7m
-         oaNay9NWN5OTctyrFTCZK8FIFrHbtTsnq4AC5iO1M8NQ+OuFg/N78mO3GX9WMk0z0Bo3
-         hDzA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wKJWA2gYy8hkL7h9RJYBNbZLfdoFycnmyjs/dg+DBhI=;
+        b=nqADupGETekpQGxSasrfeywHHy3SYg0lZm05IeXauZpYwkicj0KwonpEd1x2ET9RhQ
+         50LV0Qm23En3mVyamgg4DrsgqAIARvRC650+m7BvHXoYYg6AS5TI7cw/VUAKJN/17wgw
+         HzrQ4/m4lX2iLB2MmUZPu1aHzEQS7j9t8fkSM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7vq4AlrJPt4Dwx7WQQ5gbytONnLDP5sNc25GZicQR2c=;
-        b=mp0gViKl8QgR2p+qcxGlpIs90yX191A1ivcqrfK+13R6MOZ39CyDYsGXXDJSCEyTt4
-         XsgDokCQ/NzYgbLIe/7gWc+wWs/6WBZa2a5zTeFSiGOE50KwMqj+/rfRw6vAd+ZM50rX
-         8kthOLDDwz6TK68Ka/F04POqZ1hmJgNMpFbPO5avpeOrAetG6f8Ru+r4P8OoED/+C4CV
-         Ip4d+PXn4dtbez88wdKp3mddYhdVhb/QE/hY/cCirioUjD6Zz6wb4rHyvA93LuURFsZ7
-         Ow48Uip4869tBj4fZ5a2pvlFG6zeLwmZBy9Ic4IZIrMK4FqkvWp5ka8JG13gRCRN3D0y
-         QeNw==
-X-Gm-Message-State: APjAAAVcvQ9pS+83/fFwE2IT0E/8bc4HpH/0OyA3cvi2HWPtgbRBhgOE
-        YTvAMa6nu8+BV7AtxSFmj6E=
-X-Google-Smtp-Source: APXvYqww8NkFW5yc1etXwL0rZQ+1hElVX5Nm5zcgVJk30J62idi2EhK9JgjRW8MHNjtj5l3S5MzLfw==
-X-Received: by 2002:aa7:9f01:: with SMTP id g1mr35481640pfr.259.1557937072867;
-        Wed, 15 May 2019 09:17:52 -0700 (PDT)
-Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id b4sm3261807pfd.120.2019.05.15.09.17.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 09:17:52 -0700 (PDT)
-From:   parna.naveenkumar@gmail.com
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
-Subject: [PATCH v3 1/1] bsr: do not use assignment in if condition
-Date:   Wed, 15 May 2019 21:47:46 +0530
-Message-Id: <20190515161746.29034-1-parna.naveenkumar@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wKJWA2gYy8hkL7h9RJYBNbZLfdoFycnmyjs/dg+DBhI=;
+        b=SF1rezyhOnRbUozhcV0S8R2TORupI5x5mk0+WhTvARkR+9+atYIdviZohbBTQHKWk0
+         f4CR1+w6dJrYc5hUiFAAd2a3usWzH3e7a315h9oZ9mxALrSw9AjDSVh73SLs8r2PRN0l
+         51a4UASJSNS2XaTRVXWjMbIt3gPvaMLJ5wtKYcS2398h7YMaK7eg0EbJYFdQDsmYpypG
+         Jg6UNSIGfuH/dUIpzWU8Iu8I7evGwDt8l8Km9DVUK0JyaGGIvYAryXKm9WVr85zlFX0O
+         3cRQaQM0HoVQW+TY+aifo3KAgV+zZWgfPiEXz2V6TJrVT9SNtv4E1glqP9Z+Lx2zzywl
+         kDig==
+X-Gm-Message-State: APjAAAVf8108I/SfN+drC90tzxnJwV1Um0Y4UDqgU8d/SY/vyB4XzXEw
+        sEOi/yZ52sXoJ/8kT8fm9BnnRaXe/R5SJ+T/x+37IQ==
+X-Google-Smtp-Source: APXvYqzxBO3O/axKZZPrkz1SErSLRjHPViiYzVfRAlQlCkiJUzYIqsT0KwYglti9YjSfrpCPHE4czG8MNoAoAPztlNI=
+X-Received: by 2002:a37:a5c6:: with SMTP id o189mr34016558qke.318.1557937090254;
+ Wed, 15 May 2019 09:18:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190513220610.177489-1-ravisadineni@chromium.org> <CAKdAkRQ_J6QWxtWpoRQnNWKcJpXox6xVDZWcWYOXkBhPSn99Rw@mail.gmail.com>
+In-Reply-To: <CAKdAkRQ_J6QWxtWpoRQnNWKcJpXox6xVDZWcWYOXkBhPSn99Rw@mail.gmail.com>
+From:   Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Date:   Wed, 15 May 2019 09:17:59 -0700
+Message-ID: <CAEZbON4Z5GKYvMZJ8ojko_f1xzv2rf4uR6cDz2LMxu+XvzTzog@mail.gmail.com>
+Subject: Re: [PATCH V1] elan_i2c: Increment wakeup count if wake source.
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Abhishek Bhardwaj <abhishekbh@google.com>,
+        Todd Broch <tbroch@google.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Hi Dmitry,
 
-checkpatch.pl does not like assignment in if condition
+On Mon, May 13, 2019 at 4:29 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Hi Ravi,
+>
+> On Mon, May 13, 2019 at 3:06 PM Ravi Chandra Sadineni
+> <ravisadineni@chromium.org> wrote:
+> >
+> > Notify the PM core that this dev is the wake source. This helps
+> > userspace daemon tracking the wake source to identify the origin of the
+> > wake.
+>
+> I wonder if we could do that form the i2c core instead of individual drivers?
+I am sorry, I don't see a way how this could be done.
+>
+> >
+> > Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+> > ---
+> >  drivers/input/mouse/elan_i2c_core.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
+> > index f9525d6f0bfe..2c0561e20b7f 100644
+> > --- a/drivers/input/mouse/elan_i2c_core.c
+> > +++ b/drivers/input/mouse/elan_i2c_core.c
+> > @@ -981,6 +981,8 @@ static irqreturn_t elan_isr(int irq, void *dev_id)
+> >         if (error)
+> >                 goto out;
+> >
+> > +       pm_wakeup_event(dev, 0);
+> > +
+> >         switch (report[ETP_REPORT_ID_OFFSET]) {
+> >         case ETP_REPORT_ID:
+> >                 elan_report_absolute(data, report);
+> > --
+> > 2.20.1
+> >
+>
+> Thanks.
+>
+> --
+> Dmitry
 
-Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
----
-Changes in v3:
-The first patch has an extra space in if statement, so fixed it in v2 but 
-forgot add what changed from the previous version. In v3 added the
-complete change history.
-
- drivers/char/bsr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
-index a6cef548e01e..70de334554a8 100644
---- a/drivers/char/bsr.c
-+++ b/drivers/char/bsr.c
-@@ -322,7 +322,8 @@ static int __init bsr_init(void)
- 		goto out_err_2;
- 	}
- 
--	if ((ret = bsr_create_devs(np)) < 0) {
-+	ret = bsr_create_devs(np);
-+	if (ret < 0) {
- 		np = NULL;
- 		goto out_err_3;
- 	}
--- 
-2.17.1
-
+Thanks,
+Ravi
