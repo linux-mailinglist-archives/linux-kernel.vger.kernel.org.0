@@ -2,152 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1771E93E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 09:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 035431E953
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 09:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbfEOHlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 03:41:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37564 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfEOHlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 03:41:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 941F1374;
-        Wed, 15 May 2019 00:41:41 -0700 (PDT)
-Received: from [10.163.1.137] (unknown [10.163.1.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B9F93F71E;
-        Wed, 15 May 2019 00:41:36 -0700 (PDT)
-Subject: Re: [PATCH] mm: refactor __vunmap() to avoid duplicated call to
- find_vm_area()
-To:     Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <20190514235111.2817276-1-guro@fb.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <7ad2b16d-c1a3-b826-df4d-6d9ed1d9fc9f@arm.com>
-Date:   Wed, 15 May 2019 13:11:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190514235111.2817276-1-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726290AbfEOHqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 03:46:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33156 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725912AbfEOHqJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 03:46:09 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4F7ge2g051761
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 03:46:08 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sgbw5q2ca-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 03:46:08 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 15 May 2019 08:46:07 +0100
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 May 2019 08:46:04 +0100
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4F7k3vs6619434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 May 2019 07:46:03 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C30ABE053;
+        Wed, 15 May 2019 07:46:03 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBCEEBE051;
+        Wed, 15 May 2019 07:46:02 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.248])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 15 May 2019 07:46:02 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 351052E3579; Wed, 15 May 2019 13:15:59 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v3] powerpc/pseries: Fix cpu_hotplug_lock acquisition in resize_hpt()
+Date:   Wed, 15 May 2019 13:15:52 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 19051507-0036-0000-0000-00000ABA5ECD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011100; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01203565; UDB=6.00631764; IPR=6.00984492;
+ MB=3.00026899; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-15 07:46:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051507-0037-0000-0000-00004BCB7361
+Message-Id: <1557906352-29048-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905150050
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
+The calls to arch_add_memory()/arch_remove_memory() are always made
+with the read-side cpu_hotplug_lock acquired via
+memory_hotplug_begin().  On pSeries,
+arch_add_memory()/arch_remove_memory() eventually call resize_hpt()
+which in turn calls stop_machine() which acquires the read-side
+cpu_hotplug_lock again, thereby resulting in the recursive acquisition
+of this lock.
 
-On 05/15/2019 05:21 AM, Roman Gushchin wrote:
-> __vunmap() calls find_vm_area() twice without an obvious reason:
-> first directly to get the area pointer, second indirectly by calling
-> vm_remove_mappings()->remove_vm_area(), which is again searching
-> for the area.
-> 
-> To remove this redundancy, let's split remove_vm_area() into
-> __remove_vm_area(struct vmap_area *), which performs the actual area
-> removal, and remove_vm_area(const void *addr) wrapper, which can
-> be used everywhere, where it has been used before. Let's pass
-> a pointer to the vm_area instead of vm_struct to vm_remove_mappings(),
-> so it can pass it to __remove_vm_area() and avoid the redundant area
-> lookup.
-> 
-> On my test setup, I've got 5-10% speed up on vfree()'ing 1000000
-> of 4-pages vmalloc blocks.
-> 
-> Perf report before:
->   29.44%  cat      [kernel.kallsyms]  [k] free_unref_page
->   11.88%  cat      [kernel.kallsyms]  [k] find_vmap_area
->    9.28%  cat      [kernel.kallsyms]  [k] __free_pages
->    7.44%  cat      [kernel.kallsyms]  [k] __slab_free
->    7.28%  cat      [kernel.kallsyms]  [k] vunmap_page_range
->    4.56%  cat      [kernel.kallsyms]  [k] __vunmap
->    3.64%  cat      [kernel.kallsyms]  [k] __purge_vmap_area_lazy
->    3.04%  cat      [kernel.kallsyms]  [k] __free_vmap_area
-> 
-> Perf report after:
->   32.41%  cat      [kernel.kallsyms]  [k] free_unref_page
->    7.79%  cat      [kernel.kallsyms]  [k] find_vmap_area
->    7.40%  cat      [kernel.kallsyms]  [k] __slab_free
->    7.31%  cat      [kernel.kallsyms]  [k] vunmap_page_range
->    6.84%  cat      [kernel.kallsyms]  [k] __free_pages
->    6.01%  cat      [kernel.kallsyms]  [k] __vunmap
->    3.98%  cat      [kernel.kallsyms]  [k] smp_call_function_single
->    3.81%  cat      [kernel.kallsyms]  [k] __purge_vmap_area_lazy
->    2.77%  cat      [kernel.kallsyms]  [k] __free_vmap_area
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/vmalloc.c | 52 +++++++++++++++++++++++++++++-----------------------
->  1 file changed, 29 insertions(+), 23 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index c42872ed82ac..8d4907865614 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2075,6 +2075,22 @@ struct vm_struct *find_vm_area(const void *addr)
->  	return NULL;
->  }
->  
-> +static struct vm_struct *__remove_vm_area(struct vmap_area *va)
-> +{
-> +	struct vm_struct *vm = va->vm;
-> +
-> +	spin_lock(&vmap_area_lock);
-> +	va->vm = NULL;
-> +	va->flags &= ~VM_VM_AREA;
-> +	va->flags |= VM_LAZY_FREE;
-> +	spin_unlock(&vmap_area_lock);
-> +
-> +	kasan_free_shadow(vm);
-> +	free_unmap_vmap_area(va);
-> +
-> +	return vm;
-> +}
-> +
->  /**
->   * remove_vm_area - find and remove a continuous kernel virtual area
->   * @addr:	    base address
-> @@ -2087,26 +2103,14 @@ struct vm_struct *find_vm_area(const void *addr)
->   */
->  struct vm_struct *remove_vm_area(const void *addr)
->  {
-> +	struct vm_struct *vm = NULL;
->  	struct vmap_area *va;
->  
-> -	might_sleep();
+Lockdep complains as follows in these code-paths.
 
-Is not this necessary any more ?
+ swapper/0/1 is trying to acquire lock:
+ (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: stop_machine+0x2c/0x60
 
-> -
->  	va = find_vmap_area((unsigned long)addr);
-> -	if (va && va->flags & VM_VM_AREA) {
-> -		struct vm_struct *vm = va->vm;
-> -
-> -		spin_lock(&vmap_area_lock);
-> -		va->vm = NULL;
-> -		va->flags &= ~VM_VM_AREA;
-> -		va->flags |= VM_LAZY_FREE;
-> -		spin_unlock(&vmap_area_lock);
-> -
-> -		kasan_free_shadow(vm);
-> -		free_unmap_vmap_area(va);
-> +	if (va && va->flags & VM_VM_AREA)
-> +		vm = __remove_vm_area(va);
->  
-> -		return vm;
-> -	}
-> -	return NULL;
-> +	return vm;
->  }
+but task is already holding lock:
+(____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: mem_hotplug_begin+0x20/0x50
 
-Other callers of remove_vm_area() cannot use __remove_vm_area() directly as well
-to save a look up ?
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(cpu_hotplug_lock.rw_sem);
+   lock(cpu_hotplug_lock.rw_sem);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+ 3 locks held by swapper/0/1:
+  #0: (____ptrval____) (&dev->mutex){....}, at: __driver_attach+0x12c/0x1b0
+  #1: (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: mem_hotplug_begin+0x20/0x50
+  #2: (____ptrval____) (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x54/0x1a0
+
+stack backtrace:
+ CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc5-58373-gbc99402235f3-dirty #166
+ Call Trace:
+ [c0000000feb03150] [c000000000e32bd4] dump_stack+0xe8/0x164 (unreliable)
+ [c0000000feb031a0] [c00000000020d6c0] __lock_acquire+0x1110/0x1c70
+ [c0000000feb03320] [c00000000020f080] lock_acquire+0x240/0x290
+ [c0000000feb033e0] [c00000000017f554] cpus_read_lock+0x64/0xf0
+ [c0000000feb03420] [c00000000029ebac] stop_machine+0x2c/0x60
+ [c0000000feb03460] [c0000000000d7f7c] pseries_lpar_resize_hpt+0x19c/0x2c0
+ [c0000000feb03500] [c0000000000788d0] resize_hpt_for_hotplug+0x70/0xd0
+ [c0000000feb03570] [c000000000e5d278] arch_add_memory+0x58/0xfc
+ [c0000000feb03610] [c0000000003553a8] devm_memremap_pages+0x5e8/0x8f0
+ [c0000000feb036c0] [c0000000009c2394] pmem_attach_disk+0x764/0x830
+ [c0000000feb037d0] [c0000000009a7c38] nvdimm_bus_probe+0x118/0x240
+ [c0000000feb03860] [c000000000968500] really_probe+0x230/0x4b0
+ [c0000000feb038f0] [c000000000968aec] driver_probe_device+0x16c/0x1e0
+ [c0000000feb03970] [c000000000968ca8] __driver_attach+0x148/0x1b0
+ [c0000000feb039f0] [c0000000009650b0] bus_for_each_dev+0x90/0x130
+ [c0000000feb03a50] [c000000000967dd4] driver_attach+0x34/0x50
+ [c0000000feb03a70] [c000000000967068] bus_add_driver+0x1a8/0x360
+ [c0000000feb03b00] [c00000000096a498] driver_register+0x108/0x170
+ [c0000000feb03b70] [c0000000009a7400] __nd_driver_register+0xd0/0xf0
+ [c0000000feb03bd0] [c00000000128aa90] nd_pmem_driver_init+0x34/0x48
+ [c0000000feb03bf0] [c000000000010a10] do_one_initcall+0x1e0/0x45c
+ [c0000000feb03cd0] [c00000000122462c] kernel_init_freeable+0x540/0x64c
+ [c0000000feb03db0] [c00000000001110c] kernel_init+0x2c/0x160
+ [c0000000feb03e20] [c00000000000bed4] ret_from_kernel_thread+0x5c/0x68
+
+Fix this issue by
+  1) Requiring all the calls to pseries_lpar_resize_hpt() be made
+     with cpu_hotplug_lock held.
+
+  2) In pseries_lpar_resize_hpt() invoke stop_machine_cpuslocked()
+     as a consequence of 1)
+
+  3) To satisfy 1), in hpt_order_set(), call mmu_hash_ops.resize_hpt()
+     with cpu_hotplug_lock held.
+
+Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+---
+v2 -> v3 : Updated the comment for pseries_lpar_resize_hpt()
+           Updated the commit-log with the full backtrace.
+v1 -> v2 : Rebased against powerpc/next instead of linux/master
+
+ arch/powerpc/mm/book3s64/hash_utils.c | 9 ++++++++-
+ arch/powerpc/platforms/pseries/lpar.c | 8 ++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+index 919a861..d07fcafd 100644
+--- a/arch/powerpc/mm/book3s64/hash_utils.c
++++ b/arch/powerpc/mm/book3s64/hash_utils.c
+@@ -38,6 +38,7 @@
+ #include <linux/libfdt.h>
+ #include <linux/pkeys.h>
+ #include <linux/hugetlb.h>
++#include <linux/cpu.h>
+ 
+ #include <asm/debugfs.h>
+ #include <asm/processor.h>
+@@ -1928,10 +1929,16 @@ static int hpt_order_get(void *data, u64 *val)
+ 
+ static int hpt_order_set(void *data, u64 val)
+ {
++	int ret;
++
+ 	if (!mmu_hash_ops.resize_hpt)
+ 		return -ENODEV;
+ 
+-	return mmu_hash_ops.resize_hpt(val);
++	cpus_read_lock();
++	ret = mmu_hash_ops.resize_hpt(val);
++	cpus_read_unlock();
++
++	return ret;
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(fops_hpt_order, hpt_order_get, hpt_order_set, "%llu\n");
+diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
+index 1034ef1..557d592 100644
+--- a/arch/powerpc/platforms/pseries/lpar.c
++++ b/arch/powerpc/platforms/pseries/lpar.c
+@@ -859,7 +859,10 @@ static int pseries_lpar_resize_hpt_commit(void *data)
+ 	return 0;
+ }
+ 
+-/* Must be called in user context */
++/*
++ * Must be called in process context. The caller must hold the
++ * cpus_lock.
++ */
+ static int pseries_lpar_resize_hpt(unsigned long shift)
+ {
+ 	struct hpt_resize_state state = {
+@@ -913,7 +916,8 @@ static int pseries_lpar_resize_hpt(unsigned long shift)
+ 
+ 	t1 = ktime_get();
+ 
+-	rc = stop_machine(pseries_lpar_resize_hpt_commit, &state, NULL);
++	rc = stop_machine_cpuslocked(pseries_lpar_resize_hpt_commit,
++				     &state, NULL);
+ 
+ 	t2 = ktime_get();
+ 
+-- 
+1.9.4
+
