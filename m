@@ -2,57 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E25E81ED89
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 122921EC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbfEOLKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:10:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44558 "EHLO mail.kernel.org"
+        id S1727065AbfEOK7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:59:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729431AbfEOLKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:10:36 -0400
+        id S1726594AbfEOK7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:59:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BA412084F;
-        Wed, 15 May 2019 11:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD4A3216F4;
+        Wed, 15 May 2019 10:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918634;
-        bh=N93FoCanKW+t8w2WAwAyPKBHEcqsnpdW47AZe0O+MdY=;
+        s=default; t=1557917942;
+        bh=LOD1V+6gL9WXMN4zviTvrNZvb9jMmiuHBYDaYzfhRek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HSUKpxuddJW7lNUW4KJD173YV+LJwti0n+zB1KHsLAfBTCBeqwDhmIAe8P1o5Tz0T
-         W1tTPDgVC1C8+hlsCMh+xt0A6lK0vx3POMLNgXcqAtcyQcYcP8z2IBvKhiEwPmt7yc
-         eyBVfVyUzlq6Sc9SgD6o6vBQcDTL+JDt7JArvEPg=
+        b=ylD7FiX5X+skZEkYUAwdsmIrjF5dGlFbuG4rtkdVkZx79gIYXPBmDlf0E18U6R/6I
+         MdgyBmORIUG3iVtKVXZCISmwdyoabCXXK2NH+Ap7Sp7mZqZVE4EvIyX0XWfTZ/VpTU
+         bJHChZbndAJ5tYOb3xKVzsaMyTqzmwlu3GGf1Kl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 204/266] x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        syzbot+b75b85111c10b8d680f1@syzkaller.appspotmail.com
+Subject: [PATCH 3.18 34/86] USB: core: Fix unterminated string returned by usb_string()
 Date:   Wed, 15 May 2019 12:55:11 +0200
-Message-Id: <20190515090729.858917277@linuxfoundation.org>
+Message-Id: <20190515090649.590467216@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,82 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tim Chen <tim.c.chen@linux.intel.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream.
+commit c01c348ecdc66085e44912c97368809612231520 upstream.
 
-The Spectre V2 printout in cpu_show_common() handles conditionals for the
-various mitigation methods directly in the sprintf() argument list. That's
-hard to read and will become unreadable if more complex decisions need to
-be made for a particular method.
+Some drivers (such as the vub300 MMC driver) expect usb_string() to
+return a properly NUL-terminated string, even when an error occurs.
+(In fact, vub300's probe routine doesn't bother to check the return
+code from usb_string().)  When the driver goes on to use an
+unterminated string, it leads to kernel errors such as
+stack-out-of-bounds, as found by the syzkaller USB fuzzer.
 
-Move the conditionals for STIBP and IBPB string selection into helper
-functions, so they can be extended later on.
+An out-of-range string index argument is not at all unlikely, given
+that some devices don't provide string descriptors and therefore list
+0 as the value for their string indexes.  This patch makes
+usb_string() return a properly terminated empty string along with the
+-EINVAL error code when an out-of-range index is encountered.
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+And since a USB string index is a single-byte value, indexes >= 256
+are just as invalid as values of 0 or below.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: syzbot+b75b85111c10b8d680f1@syzkaller.appspotmail.com
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -759,6 +759,22 @@ static void __init l1tf_select_mitigatio
+---
+ drivers/usb/core/message.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -820,9 +820,11 @@ int usb_string(struct usb_device *dev, i
  
- #ifdef CONFIG_SYSFS
- 
-+static char *stibp_state(void)
-+{
-+	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
-+		return ", STIBP";
-+	else
-+		return "";
-+}
-+
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
-+		return ", IBPB";
-+	else
-+		return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-@@ -777,9 +793,9 @@ static ssize_t cpu_show_common(struct de
- 
- 	case X86_BUG_SPECTRE_V2:
- 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 
+ 	if (dev->state == USB_STATE_SUSPENDED)
+ 		return -EHOSTUNREACH;
+-	if (size <= 0 || !buf || !index)
++	if (size <= 0 || !buf)
+ 		return -EINVAL;
+ 	buf[0] = 0;
++	if (index <= 0 || index >= 256)
++		return -EINVAL;
+ 	tbuf = kmalloc(256, GFP_NOIO);
+ 	if (!tbuf)
+ 		return -ENOMEM;
 
 
