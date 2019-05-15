@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8DEA1F404
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E156D1F23F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbfEOMSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:18:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58578 "EHLO mail.kernel.org"
+        id S1730265AbfEOMBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbfEOLBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:01:32 -0400
+        id S1729241AbfEOLOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFEE620881;
-        Wed, 15 May 2019 11:01:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A60B720843;
+        Wed, 15 May 2019 11:14:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918092;
-        bh=0TjL81IqbnAkiwaGUHAMMPYNKAiIgC8Ggtg0x3pthj8=;
+        s=default; t=1557918861;
+        bh=ItPj+Nbvo0KNZmmn+28rj26rGJqd7jzYZpfB+8lrKk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0HRCxhtow9y3mttV/hbZW2TGDpn1C64Cz/vlF8gaFLKC/DBcUHl3cwlT9TeimDLsF
-         chS7ufSBm4tQJ8y0N9y7euNR0DhCf2o5ClwxQkNqGjFY/QUxbtfOgMlWSSOOPUwbZp
-         r5/JHefHIELzZhe2kkRDhj2KlmGarihLmtUlOnDU=
+        b=L5JrIk+dz/PA0sEIbrO6C4CYHsBYg6mXGNVLvQIfvIA10TFzSa0ImVjiNwkhffzAM
+         pqIN9IwYp0mgGJ/gM3F/6afgcmVxFaaN261POyLVchwmbAxy+j5kA91vvZCwxExSIg
+         /KmX/bhsvDJS+UFSAAV0ZZnYtivUQuegOAxEmjJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 3.18 62/86] timer/debug: Change /proc/timer_stats from 0644 to 0600
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.9 04/51] platform/x86: sony-laptop: Fix unintentional fall-through
 Date:   Wed, 15 May 2019 12:55:39 +0200
-Message-Id: <20190515090654.500455106@linuxfoundation.org>
+Message-Id: <20190515090618.650346484@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,34 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-The timer_stats facility should filter and translate PIDs if opened
-from a non-initial PID namespace, to avoid leaking information about
-the wider system.  It should also not show kernel virtual addresses.
-Unfortunately it has now been removed upstream (as redundant)
-instead of being fixed.
+commit 1cbd7a64959d33e7a2a1fa2bf36a62b350a9fcbd upstream.
 
-For stable, fix the leak by restricting access to root only.  A
-similar change was already made for the /proc/timer_list file.
+It seems that the default case should return AE_CTRL_TERMINATE, instead
+of falling through to case ACPI_RESOURCE_TYPE_END_TAG and returning AE_OK;
+otherwise the line of code at the end of the function is unreachable and
+makes no sense:
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+return AE_CTRL_TERMINATE;
+
+This fix is based on the following thread of discussion:
+
+https://lore.kernel.org/patchwork/patch/959782/
+
+Fixes: 33a04454527e ("sony-laptop: Add SNY6001 device handling (sonypi reimplementation)")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/timer_stats.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/sony-laptop.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/kernel/time/timer_stats.c
-+++ b/kernel/time/timer_stats.c
-@@ -417,7 +417,7 @@ static int __init init_tstats_procfs(voi
- {
- 	struct proc_dir_entry *pe;
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -4422,14 +4422,16 @@ sony_pic_read_possible_resource(struct a
+ 			}
+ 			return AE_OK;
+ 		}
++
++	case ACPI_RESOURCE_TYPE_END_TAG:
++		return AE_OK;
++
+ 	default:
+ 		dprintk("Resource %d isn't an IRQ nor an IO port\n",
+ 			resource->type);
++		return AE_CTRL_TERMINATE;
  
--	pe = proc_create("timer_stats", 0644, NULL, &tstats_fops);
-+	pe = proc_create("timer_stats", 0600, NULL, &tstats_fops);
- 	if (!pe)
- 		return -ENOMEM;
- 	return 0;
+-	case ACPI_RESOURCE_TYPE_END_TAG:
+-		return AE_OK;
+ 	}
+-	return AE_CTRL_TERMINATE;
+ }
+ 
+ static int sony_pic_possible_resources(struct acpi_device *device)
 
 
