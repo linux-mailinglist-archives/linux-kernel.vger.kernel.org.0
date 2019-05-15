@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF191EEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A72D91EE4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbfEOLYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35462 "EHLO mail.kernel.org"
+        id S1731027AbfEOLTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731874AbfEOLYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:24:49 -0400
+        id S1730818AbfEOLTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAC3220843;
-        Wed, 15 May 2019 11:24:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90BEB20862;
+        Wed, 15 May 2019 11:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919488;
+        s=default; t=1557919188;
         bh=CwKmjeNc1xs6XBSFabOt0+UWXuBe99oN0HyQ1p5eFkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fJsGwV+UxBb1JmJn/UpXUWrdEzDhzohWqAqMByqX33FLEK3HagcbF7rW4zx7AUWJL
-         Tn6sPJEllxSPLy2b/eCQsNGJe2/SDuPxztoX4qgy3DvDGMWtq+nbjd4yHa1aNc5l2v
-         estynlbh/XBZ7kIRCsEBcr4yo3cL5BzFcMF2NPeA=
+        b=Sdtvklx0p/D8kY0Y+73H8UHLiT81AwKc4Emh+1mhdk0xHNNEXUSjqxRb3D6a3V+Lq
+         xTky5ROuljMeLWXvSiRH6oUR+GIsM/aO0Xmylj8r3UvBiLmMOxofZ5OPoMEkNUOLeo
+         1H6E8GDyQnZSuwS7OxNAjgFyAuREo0SPMQ6p+mlQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joel Stanley <joel@jms.id.au>,
         Nathan Chancellor <natechancellor@gmail.com>,
         Major Hayden <major@redhat.com>
-Subject: [PATCH 4.19 087/113] powerpc/64s: Include cpu header
+Subject: [PATCH 4.14 098/115] powerpc/64s: Include cpu header
 Date:   Wed, 15 May 2019 12:56:18 +0200
-Message-Id: <20190515090700.266144541@linuxfoundation.org>
+Message-Id: <20190515090706.285431349@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
