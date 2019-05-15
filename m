@@ -2,77 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 177621F714
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF6A1F716
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfEOPEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 11:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbfEOPEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 11:04:10 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D396720818;
-        Wed, 15 May 2019 15:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557932649;
-        bh=35dYv7cUrj9box5GYfZLkLxBHkEcek2CZmiVu9HLksA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u8ZxO+aIhqlvTlqv5offOKjWeovz/LLOQMt+n6wfRE3fY6Id8zD51XO3GFgKVxRBd
-         +OBfpOCFQHP4uYuF5BdcEv4Nyid7GcUUVqS5LhlbJaoIiy8XgNtIBbbBfFg1oXxZ07
-         B+ETbWC1AsIJB/rVtskuygrba2bnCMpjLU/Jfr1o=
-Date:   Wed, 15 May 2019 17:04:06 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Lech Perczak <l.perczak@camlintechnologies.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Dumazet <edumazet@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Piotr Figiel <p.figiel@camlintechnologies.com>,
-        Krzysztof =?utf-8?Q?Drobi=C5=84ski?= 
-        <k.drobinski@camlintechnologies.com>,
-        Pawel Lenkow <p.lenkow@camlintechnologies.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: Recurring warning in page_copy_sane (inside copy_page_to_iter)
- when running stress tests involving drop_caches
-Message-ID: <20190515150406.GA22540@kroah.com>
-References: <d68c83ba-bf5a-f6e8-44dd-be98f45fc97a@camlintechnologies.com>
- <14c9e6f4-3fb8-ca22-91cc-6970f1d52265@camlintechnologies.com>
- <011a16e4-6aff-104c-a19b-d2bd11caba99@camlintechnologies.com>
- <20190515144352.GC31704@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190515144352.GC31704@bombadil.infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1727324AbfEOPE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 11:04:26 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:43646 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfEOPEX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 11:04:23 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x4FF488T014964;
+        Thu, 16 May 2019 00:04:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x4FF488T014964
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557932649;
+        bh=ITVoB4ARtru8MvDGlH7GHuPioR1vApBXy9yDov2equA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=u1ihwE4en+5gK6+cbg2gHlR8n2Kqc2lvY2RubMwCn8WV9dsT9K4SYLSwIBPCnmoNt
+         ypytTe5EEa6WYAEkid/YL+0qFbbImEBE6qoTqFcr94yxhDbuAgOg45Ojj/NTaaKCVW
+         XuoCwo6c0GChF+i22gQEIKSeXEDdQemKp9p2VfnaVFxQvClcDWU9CWWlkL7XOVBQJr
+         ckoP1iLXsc6rhir4l8sougeXH8+Aqkg8VouU4j4SVJz7l7c7L3VW1/HOfPPogo4zJ1
+         Tp+8b47bEr2U6yo9Vwp0qqdWzRDWWhOuvHyV6FsYDEsd1GJY1p/0I/cngvdYTyfhuZ
+         jABIOoo1Rnwlg==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Santosh Shilimkar <ssantosh@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] memory: move jedec_ddr.h from include/memory to drivers/memory/
+Date:   Thu, 16 May 2019 00:04:06 +0900
+Message-Id: <1557932646-29752-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557932646-29752-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1557932646-29752-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 07:43:52AM -0700, Matthew Wilcox wrote:
-> > > W dniu 25.04.2019 o 11:25, Lech Perczak pisze:
-> > >> Some time ago, after upgrading the Kernel on our i.MX6Q-based boards to mainline 4.18, and now to LTS 4.19 line, during stress tests we started noticing strange warnings coming from 'read' syscall, when page_copy_sane() check failed. Typical reproducibility is up to ~4 events per 24h. Warnings origin from different processes, mostly involved with the stress tests, but not necessarily with block devices we're stressing. If the warning appeared in process relating to block device stress test, it would be accompanied by corrupted data, as the read operation gets aborted. 
-> > >>
-> > >> When I started debugging the issue, I noticed that in all cases we're dealing with highmem zero-order pages. In this case, page_head(page) == page, so page_address(page) should be equal to page_address(head).
-> > >> However, it isn't the case, as page_address(head) in each case returns zero, causing the value of "v" to explode, and the check to fail.
-> 
-> You're seeing a race between page_address(page) being called twice.
-> Between those two calls, something has caused the page to be removed from
-> the page_address_map() list.  Eric's patch avoids calling page_address(),
-> so apply it and be happy.
-> 
-> Greg, can you consider 6daef95b8c914866a46247232a048447fff97279 for
-> backporting to stable?  Nobody realised it was a bugfix at the time it
-> went in.  I suspect there aren't too many of us running HIGHMEM kernels
-> any more.
-> 
+Now that jedec_ddr_data.c was moved from lib/ to drivers/memory/,
+<memory/jedec_ddr.h> is included only from drivers/memory/.
 
-Sure, what kernel version(s) should this go to?  4.19 and newer?
+Make it a local header of drivers/memory/.
 
-thanks,
+While I am here, I also changed #include <linux/module.h> to
+<linux/export.h>. Because CONFIG_DDR is bool, jedec_ddr_data.c is
+never compiled as a module.
 
-greg k-h
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/memory/emif.c                   | 3 ++-
+ {include => drivers}/memory/jedec_ddr.h | 6 +++---
+ drivers/memory/jedec_ddr_data.c         | 5 +++--
+ drivers/memory/of_memory.c              | 3 ++-
+ 4 files changed, 10 insertions(+), 7 deletions(-)
+ rename {include => drivers}/memory/jedec_ddr.h (97%)
+
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 2f21444..32cad75 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -26,8 +26,9 @@
+ #include <linux/list.h>
+ #include <linux/spinlock.h>
+ #include <linux/pm.h>
+-#include <memory/jedec_ddr.h>
++
+ #include "emif.h"
++#include "jedec_ddr.h"
+ #include "of_memory.h"
+ 
+ /**
+diff --git a/include/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
+similarity index 97%
+rename from include/memory/jedec_ddr.h
+rename to drivers/memory/jedec_ddr.h
+index ddad0f8..a2094a9 100644
+--- a/include/memory/jedec_ddr.h
++++ b/drivers/memory/jedec_ddr.h
+@@ -9,8 +9,8 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#ifndef __LINUX_JEDEC_DDR_H
+-#define __LINUX_JEDEC_DDR_H
++#ifndef __JEDEC_DDR_H
++#define __JEDEC_DDR_H
+ 
+ #include <linux/types.h>
+ 
+@@ -172,4 +172,4 @@ extern const struct lpddr2_timings
+ 	lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
+ extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
+ 
+-#endif /* __LINUX_JEDEC_DDR_H */
++#endif /* __JEDEC_DDR_H */
+diff --git a/drivers/memory/jedec_ddr_data.c b/drivers/memory/jedec_ddr_data.c
+index 6d2cbf1..1f9ca0f 100644
+--- a/drivers/memory/jedec_ddr_data.c
++++ b/drivers/memory/jedec_ddr_data.c
+@@ -10,8 +10,9 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include <memory/jedec_ddr.h>
+-#include <linux/module.h>
++#include <linux/export.h>
++
++#include "jedec_ddr.h"
+ 
+ /* LPDDR2 addressing details from JESD209-2 section 2.4 */
+ const struct lpddr2_addressing
+diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+index 2f5ed73..2190b8e 100644
+--- a/drivers/memory/of_memory.c
++++ b/drivers/memory/of_memory.c
+@@ -14,8 +14,9 @@
+ #include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/gfp.h>
+-#include <memory/jedec_ddr.h>
+ #include <linux/export.h>
++
++#include "jedec_ddr.h"
+ #include "of_memory.h"
+ 
+ /**
+-- 
+2.7.4
+
