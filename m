@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76BAA1EEF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE961ECAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbfEOL2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38934 "EHLO mail.kernel.org"
+        id S1727378AbfEOLAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732319AbfEOL16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:58 -0400
+        id S1726829AbfEOLAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89208206BF;
-        Wed, 15 May 2019 11:27:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3344820881;
+        Wed, 15 May 2019 11:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919678;
-        bh=YDQ2ngK1QaSob0KNPoRruPyPknGp2T+wTE2haMEmfcs=;
+        s=default; t=1557918011;
+        bh=LT2bawOVJl/b8ORT3it4NHAjP0LodpxSyMJCcL7tz0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fi0BhKCQBLviAJgKnaV2Hrzc47bki2fFKNTOCDO5hqXImZ8xdj5tlWgykzF5XUdv8
-         VwFNRuy4irO4fQNaCi9QRz4WHVvtgLRalpUSffiQjXt40TjwgQMjlvqmtFJybfPZsH
-         8Jyoo8nyF0tvI8+hWM/ovq3+/UAkFRbwGsdo8lck=
+        b=frRoBhMEozRz6+hj1rIIrfzqR3vf9jQvrqK5l84z6htcTmKzk2guSM4WKxKBVSq6N
+         JTbwUOftgNpGEPwnEBiL4S5TK2yJx3i7xeO6kNFohsc8FGFGH5jT/jteoxQaUm5FUt
+         qsQUOJ3kq7j8pDsyf3cUrgPt6fiWKczlchn92uss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 052/137] KVM: x86: avoid misreporting level-triggered irqs as edge-triggered in tracing
+Subject: [PATCH 3.18 56/86] scsi: csiostor: fix missing data copy in csio_scsi_err_handler()
 Date:   Wed, 15 May 2019 12:55:33 +0200
-Message-Id: <20190515090657.257653881@linuxfoundation.org>
+Message-Id: <20190515090653.710104328@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7a223e06b1a411cef6c4cd7a9b9a33c8d225b10e ]
+[ Upstream commit 5c2442fd78998af60e13aba506d103f7f43f8701 ]
 
-In __apic_accept_irq() interface trig_mode is int and actually on some code
-paths it is set above u8:
+If scsi cmd sglist is not suitable for DDP then csiostor driver uses
+preallocated buffers for DDP, because of this data copy is required from
+DDP buffer to scsi cmd sglist before calling ->scsi_done().
 
-kvm_apic_set_irq() extracts it from 'struct kvm_lapic_irq' where trig_mode
-is u16. This is done on purpose as e.g. kvm_set_msi_irq() sets it to
-(1 << 15) & e->msi.data
-
-kvm_apic_local_deliver sets it to reg & (1 << 15).
-
-Fix the immediate issue by making 'tm' into u16. We may also want to adjust
-__apic_accept_irq() interface and use proper sizes for vector, level,
-trig_mode but this is not urgent.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/trace.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/csiostor/csio_scsi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-index 6432d08c7de79..4d47a2631d1fb 100644
---- a/arch/x86/kvm/trace.h
-+++ b/arch/x86/kvm/trace.h
-@@ -438,13 +438,13 @@ TRACE_EVENT(kvm_apic_ipi,
- );
+diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
+index 86103c8475d8e..fbb2052bc4129 100644
+--- a/drivers/scsi/csiostor/csio_scsi.c
++++ b/drivers/scsi/csiostor/csio_scsi.c
+@@ -1737,8 +1737,11 @@ csio_scsi_err_handler(struct csio_hw *hw, struct csio_ioreq *req)
+ 	}
  
- TRACE_EVENT(kvm_apic_accept_irq,
--	    TP_PROTO(__u32 apicid, __u16 dm, __u8 tm, __u8 vec),
-+	    TP_PROTO(__u32 apicid, __u16 dm, __u16 tm, __u8 vec),
- 	    TP_ARGS(apicid, dm, tm, vec),
+ out:
+-	if (req->nsge > 0)
++	if (req->nsge > 0) {
+ 		scsi_dma_unmap(cmnd);
++		if (req->dcopy && (host_status == DID_OK))
++			host_status = csio_scsi_copy_to_sgl(hw, req);
++	}
  
- 	TP_STRUCT__entry(
- 		__field(	__u32,		apicid		)
- 		__field(	__u16,		dm		)
--		__field(	__u8,		tm		)
-+		__field(	__u16,		tm		)
- 		__field(	__u8,		vec		)
- 	),
- 
+ 	cmnd->result = (((host_status) << 16) | scsi_status);
+ 	cmnd->scsi_done(cmnd);
 -- 
 2.20.1
 
