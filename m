@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B4B1ECAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B951EE95
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfEOLAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56892 "EHLO mail.kernel.org"
+        id S1731608AbfEOLXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:23:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbfEOLAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:00:09 -0400
+        id S1731600AbfEOLXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:23:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EBD120881;
-        Wed, 15 May 2019 11:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9D22173C;
+        Wed, 15 May 2019 11:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918009;
-        bh=sWeYgxjONtNO9TyWpgXckBg2wtzesN461NHgPLQ7ZGw=;
+        s=default; t=1557919393;
+        bh=K2IkrEi/tD2IaYZmqAfSJbHk+BOVouzFnQkxLuBR1/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nxc3mX7HwFLuCVlWZRXJLViW1hARcSuNnj3XeIDILOQwDoQHWoiWMVOu5eIgjxPe4
-         gJFu4Z/KODflOvdW1rLyUulI7T8gLsiPQTTQv52TldwZ4eUhjlSAM11O+9vBB31lSt
-         eoKAhZlzwkbvG0IGqt2jqkZNDMbK/rpz+iuhFhoM=
+        b=R/AmU3Uuxzh0loV85j20P4HVXXHNddoLr/zBG1vPR06iv+4zsqGH9s3+p/5EbjZpH
+         iY4tIA5VVJL5Qh1n5ptddY6lb2RndwCdtV8u95+XWrtsnUhkQZyzEXyhJ4REH/5MCt
+         +Ypk9ZqJeJU4beZ9OUBTV6KCp4VD/XVLlsNQpLnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Annaliese McDermond <nh6z@nh6z.net>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Tony Camuso <tcamuso@redhat.com>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 55/86] ASoC: tlv320aic32x4: Fix Common Pins
+Subject: [PATCH 4.19 041/113] ipmi: ipmi_si_hardcode.c: init si_type array to fix a crash
 Date:   Wed, 15 May 2019 12:55:32 +0200
-Message-Id: <20190515090653.202466076@linuxfoundation.org>
+Message-Id: <20190515090656.736553667@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c63adb28f6d913310430f14c69f0a2ea55eed0cc ]
+[ Upstream commit a885bcfd152f97b25005298ab2d6b741aed9b49c ]
 
-The common pins were mistakenly not added to the DAPM graph.
-Adding these pins will allow valid graphs to be created.
+The intended behavior of function ipmi_hardcode_init_one() is to default
+to kcs interface when no type argument is presented when initializing
+ipmi with hard coded addresses.
 
-Signed-off-by: Annaliese McDermond <nh6z@nh6z.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+However, the array of char pointers allocated on the stack by function
+ipmi_hardcode_init() was not inited to zeroes, so it contained stack
+debris.
+
+Consequently, passing the cruft stored in this array to function
+ipmi_hardcode_init_one() caused a crash when it was unable to detect
+that the char * being passed was nonsense and tried to access the
+address specified by the bogus pointer.
+
+The fix is simply to initialize the si_type array to zeroes, so if
+there were no type argument given to at the command line, function
+ipmi_hardcode_init_one() could properly default to the kcs interface.
+
+Signed-off-by: Tony Camuso <tcamuso@redhat.com>
+Message-Id: <1554837603-40299-1-git-send-email-tcamuso@redhat.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/tlv320aic32x4.c | 2 ++
+ drivers/char/ipmi/ipmi_si_hardcode.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
-index 6ea662db24107..fdce75d5c6753 100644
---- a/sound/soc/codecs/tlv320aic32x4.c
-+++ b/sound/soc/codecs/tlv320aic32x4.c
-@@ -234,6 +234,8 @@ static const struct snd_soc_dapm_widget aic32x4_dapm_widgets[] = {
- 	SND_SOC_DAPM_INPUT("IN2_R"),
- 	SND_SOC_DAPM_INPUT("IN3_L"),
- 	SND_SOC_DAPM_INPUT("IN3_R"),
-+	SND_SOC_DAPM_INPUT("CM_L"),
-+	SND_SOC_DAPM_INPUT("CM_R"),
- };
+diff --git a/drivers/char/ipmi/ipmi_si_hardcode.c b/drivers/char/ipmi/ipmi_si_hardcode.c
+index 9ae2405c28bbd..0c28e872ad3ae 100644
+--- a/drivers/char/ipmi/ipmi_si_hardcode.c
++++ b/drivers/char/ipmi/ipmi_si_hardcode.c
+@@ -200,6 +200,8 @@ void __init ipmi_hardcode_init(void)
+ 	char *str;
+ 	char *si_type[SI_MAX_PARMS];
  
- static const struct snd_soc_dapm_route aic32x4_dapm_routes[] = {
++	memset(si_type, 0, sizeof(si_type));
++
+ 	/* Parse out the si_type string into its components. */
+ 	str = si_type_str;
+ 	if (*str != '\0') {
 -- 
 2.20.1
 
