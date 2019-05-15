@@ -2,115 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E766C1E7E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29AB61E7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfEOFX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 01:23:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:47843 "EHLO ozlabs.org"
+        id S1726425AbfEOF3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 01:29:34 -0400
+Received: from mout.web.de ([212.227.17.11]:49897 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbfEOFX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 01:23:56 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 453jdj3H7kz9s3q;
-        Wed, 15 May 2019 15:23:53 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1557897833;
-        bh=HKtRqT95fMWpgGUEtteCItQk0zAydtyXJGGCafMscX0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=dnFPVfJQbzRfXlUg7ATgT+BOW9lbkra54pAKTFukx3atJlEaG196IA8ZZs0WVkxE1
-         qpeeWFHqcbAZUs7SjDOhiW5pu2UP/6sC99ea4RhRoiJg0jPombZev5kHxd2CxL1bpF
-         uyiLFFIR13ZvT65eeHjtrlsnvNzQXOFdmnEfj5DwlmPu5VUvBquSP8jk2km09wHu5z
-         ne9+nhAh+REz/4EaQkAidbsfnQ7QdyyAKawgzAx/8VOiUOeiHpJXqkxBtjKBwpbN/w
-         9UTTz1ZP/3xnruamWL6LRyqgHIsy2CsrYFU0vhCvCp4Gik8gVmu27OH5TQhXjJljNe
-         WiGv5Jcw+AzLw==
-Date:   Wed, 15 May 2019 15:23:52 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus <torvalds@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] kernel/compat.c: mark expected switch fall-throughs
-Message-ID: <20190515152352.26dac479@canb.auug.org.au>
+        id S1725781AbfEOF3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 01:29:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1557898140;
+        bh=K6jf9wcl1gWqhF/evycgw8MbZRFJh+TymydNN25q2vY=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=FKrtxFNPCYTmGmd54fHI7EZjG1uQf0MTib06UfjQCI6zSuF1qVFG9ygShijnAPzqn
+         Az4VKuIyvLOLbgSdngcAPrn0bpX9W7Lm+QoP11/WIz7d4JSNzVqqOvH0QhATkH8FcS
+         VBy8sqwW0YwQsA0fKmAwXS1DQ9O+w1lQ7AyEiLL0=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([2.244.73.153]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M8iH2-1hYSW01tkq-00C8Du; Wed, 15
+ May 2019 07:29:00 +0200
+Subject: Re: [1/3] Coccinelle: pci_free_consistent: Use formatted strings
+ directly in SmPL rules
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Coccinelle <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yi Wang <wang.yi59@zte.com.cn>
+References: <e30b9777-6440-b041-9df9-f1a27ce06c6c@web.de>
+ <a91f9a9b-57be-59a8-1755-37936512ff20@web.de>
+ <alpine.DEB.2.21.1905142148460.2612@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <94e36a1e-0550-2782-aefc-4ac0b858c843@web.de>
+Date:   Wed, 15 May 2019 07:27:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o=5Dr.yTyRmquu8K7bXatxC"; protocol="application/pgp-signature"
+In-Reply-To: <alpine.DEB.2.21.1905142148460.2612@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:xxwJ9uqEM+ZfZNAxWnTND2tHeKG4qdrKOPt+wDJXD+c5BYxHeCE
+ lKgzyl1vexnvnyOq6KBkaYd0Cb2jmogdSylUKntUG+mZla7iku7Fq00WVu+uVRJvIoDSfgj
+ BOrQB2fPcjzsb0gQ99i/ONHLXNSDWfrdV3UIEiDyVm8CfxVC+xlxcyqTwoRNvZrHXJA45aK
+ XaTTWjBHpufj+7Z2ffFhQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oTO4y/waDmw=:f9X81HTlH3Ngw9sdTDJpaY
+ m8azmlU3km0zBCW/QiOMUSTqP209nla04kRqxmxtr3Wg5W9uQcJ8jpKg0dV9kfxgOl7xHHQmA
+ yx0eJN2+8hgrpiFsK3UtIDmabk8R39SFmSMqJmaOFc8VQn7WyR+fLFLBPtJK7+TSYdFVAvNFo
+ 7XeaU060HePR6XPqfUBDlcWYhmbO6xN1huUGVbkByABAoeYVVHErV2QLXbN+Tw4uebH8Xkzeh
+ 2T6UFHfdPSJdrZ/u3Ssnd79NHVYvyDvixtsEM1FRXohEG1Gi7g3del0RbRLL6mWbV69pwefFF
+ 3A5ssImJrZV46KZEYDVgTkuLs5RVIk8ErJ+J/ZJ7xHnIGgSFMELs3gTwJQcumyuUrIy50Vovh
+ lKwTT8R01u1VTii59pkJELBLWuzoCocAWjCQwfjaYyXNcgq0hphQkQEPmFBtUC45A0EpJ75l3
+ YnIUzJFp+tcX2yzVn/Um8Qww9VHdDFHA4QwbJ2BKuLRoZvfa4oOxAHg7eD8MJ0AYhctvjJosT
+ R4fk1t2qt2x1eUXFfaVLpKwWkVSRlVBbyaOrbKa87+GbjW2xbooy8OfzwqaSmhsv1bWXYexQN
+ UrfmBz7GbPoFS/SzCQiAh0tyQRjObCKTD2nuJf5+DGvkJT3faOsqTl9tP2PBeLQ3xWVD3W+HS
+ SDZuFADi028TXusmdjvtZx9maeLHFL+irAmJUCsZQ4kgKoZ6F6uBcTh2RH+4D/cwB/9rmjxhs
+ rdBAiIRce1WAtMEWM7dK1H+r+IXZ8/kNY/VIyc2YUkvMRkn1EzYdxdRGbnmo+6U4DQIAto70Q
+ DYvsIdz3pXVZSMml4DZhmOU0peWsEpCYqqM+pIzLhEUVyByFSlc4Dfur0wWKqURSLcB367nKs
+ lU8fUMm5NrXbnhjVSJ+VTRkDGvyjgcnQIX7H9vY/jr/GC4PPY8VjMt2R/NDBnTv2PzDgxJETb
+ 8vu/zv9U1Gg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/o=5Dr.yTyRmquu8K7bXatxC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> NACK.  If the code is going to change, I would rather it come closer to
+> staying within 80 characters.
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Do you really prefer then to deviate from the Linux coding style
+at such source code places?
 
-This patch aims to suppress 3 missing-break-in-switch false positives
-on some architectures.
+Would you like to split affected string literals over multiple lines?
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/compat.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-Hi Linus,
-
-This has been sitting in my fixes tree in linux-next for quite some
-time.  It silences some warnings that irritated me in my builds since I
-am building with -Wimplicit-fallthrough to help Gustavo catch new
-additions.
-
-diff --git a/kernel/compat.c b/kernel/compat.c
-index d8a36c6ad7c9..b5f7063c0db6 100644
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -346,8 +346,11 @@ get_compat_sigset(sigset_t *set, const compat_sigset_t=
- __user *compat)
- 		return -EFAULT;
- 	switch (_NSIG_WORDS) {
- 	case 4: set->sig[3] =3D v.sig[6] | (((long)v.sig[7]) << 32 );
-+		/* fall through */
- 	case 3: set->sig[2] =3D v.sig[4] | (((long)v.sig[5]) << 32 );
-+		/* fall through */
- 	case 2: set->sig[1] =3D v.sig[2] | (((long)v.sig[3]) << 32 );
-+		/* fall through */
- 	case 1: set->sig[0] =3D v.sig[0] | (((long)v.sig[1]) << 32 );
- 	}
- #else
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/o=5Dr.yTyRmquu8K7bXatxC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzbomgACgkQAVBC80lX
-0GzjMgf+KB+cFxudcloxl70eUYKsHDk/IQkVO5qgPeQgW5wIcoxQEnf595I8IYUh
-7UktGpfs7pRpS6L3pHuLorMA7/ZVFoz9YTXJv8S6tv1aTNJNcW4Zs0hLgkiRSKl+
-uCM9ydXEjtN6P2FMYJnn1dxaPaZezxaOycpVFffXr1XT0h6uSiEwYKT7BkOBILZC
-LxsoUEtG5PKlR700QgkAaIPZSGf00IrkHxz4G9lu4gRG4jXTYASZRPzTR5X9cu6R
-X4hNxJALHlFo9dYyC2ni1pB/LX0ekim/055Z9TyjYVvPDhAIRxThWbuJR2nLI29Q
-GHFIBsa6nlqMqP/n/0Sc6kXUgzwXTQ==
-=HenF
------END PGP SIGNATURE-----
-
---Sig_/o=5Dr.yTyRmquu8K7bXatxC--
+Regards,
+Markus
