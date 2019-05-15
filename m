@@ -2,83 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715D41F237
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FC301F1BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbfEOMA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:00:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46178 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730176AbfEOLOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:47 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h21so2095439ljk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=JZxB086EqwggOhFxHexHkttok94oso/OJUjNF3aMwEw=;
-        b=SlWMkZO0NyRYv7qICWGSh++5Zi8+7R3oKxXcZ9+KhhZYU250CR11qNBwz+rXDAuT6C
-         Xqu672PFvC2GjahgiNoNuW+NQAwUkaUTgGxzrlrecppsg7v28PIxURdyOha350W1tksj
-         zKE1GmGYlXMObrHbnO30DZmUh7BaDiLjkOG3X5UWf69H30F/JLN0wdHtBgUdBXZmwln8
-         Uz+Mab6mr7ZAbsBtc26f6leQ04LYBFoERfXP59q4K+v/msGokMRFwTAXxd3ZpX4+5byX
-         gwKrcrnZthl7A/VN02W/Vg+0tQd/xsUh5qkvLvU7bhS5U7nLl1SwcTuT9vnG2j+yvgGE
-         7ueA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JZxB086EqwggOhFxHexHkttok94oso/OJUjNF3aMwEw=;
-        b=W+jNvZyJvkreqsHDuL0M8ZIXbwfHBPROmOjcYsEiYCXPIiSyJqSG229RF60isEbVJL
-         1V/7znkuBDfgTneCisnNH7whSwcePD/r1XGGn6PmeWY3SpGY+OOY3LmiYhVHeTju/yXr
-         IrR1r9MS+V3KG48AxO1/kmZ9CMz07IyqHIF2yGFA/93KLSILWJkvvNkD0hM9t0ACWnlZ
-         CKa+6cLbo1mcfK1sfl55Y6TU6Mt3cAgyPJ0FjrvgG+9IiY3RR6F47AB5KxAlW8NXH0nX
-         hhmFxNSq/CviSdrlOeC/zRpNHBLG04tOk3KUQzFqynRdI/22ImlQ62ROKfR7DIxmstTr
-         Bx8Q==
-X-Gm-Message-State: APjAAAX1T1kfHuG9aQEpdzQGyirnUdA3KbarhOD2BrenUayi67I680cI
-        /YjarzHaH2Gkbm7B7eOy3JK14w==
-X-Google-Smtp-Source: APXvYqzsq1cLndnKfy+6j5tMGL0/yPrXCABoyJowsorG4ompSJaSfGcWbabzviCRJp1SQmcaFCE9Zw==
-X-Received: by 2002:a2e:85c9:: with SMTP id h9mr7217175ljj.110.1557918885495;
-        Wed, 15 May 2019 04:14:45 -0700 (PDT)
-Received: from roman-VirtualBox.synapse.com ([195.238.92.107])
-        by smtp.gmail.com with ESMTPSA id q26sm376027lfd.54.2019.05.15.04.14.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 04:14:44 -0700 (PDT)
-From:   roman.stratiienko@globallogic.com
-To:     a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Roman Stratiienko <roman.stratiienko@globallogic.com>
-Subject: [PATCH] rtc: test: enable wakeup flags
-Date:   Wed, 15 May 2019 14:14:36 +0300
-Message-Id: <20190515111436.14513-1-roman.stratiienko@globallogic.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730717AbfEOLRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:65294 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727141AbfEOLRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 04:17:46 -0700
+X-ExtLoop1: 1
+Received: from um.fi.intel.com (HELO localhost) ([10.237.72.63])
+  by fmsmga004.fm.intel.com with ESMTP; 15 May 2019 04:17:42 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org, acme@kernel.org, jolsa@redhat.com,
+        songliubraving@fb.com, eranian@google.com, tglx@linutronix.de,
+        alexey.budankov@linux.intel.com, mark.rutland@arm.com,
+        megha.dey@intel.com, frederic@kernel.org,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
+In-Reply-To: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+Date:   Wed, 15 May 2019 14:17:42 +0300
+Message-ID: <875zqcx8yx.fsf@ashishki-desk.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+Peter Zijlstra <peterz@infradead.org> writes:
 
-Alarmtimer interface uses only the RTC with wekeup flags enabled.
-Allow to use rtc-test driver with alarmtimer interface.
+> +	// XXX think about exclusive
+> +	if ((pmu->capabilities & PERF_PMU_CAP_EXCLUSIVE) && group_leader) {
+> +		err = -EBUSY;
+> +		goto err_context;
+>  	}
 
-Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
----
- drivers/rtc/rtc-test.c | 2 ++
- 1 file changed, 2 insertions(+)
+This used to be a problem, because group_leader could have caused
+move_group, which could then potentially violate the
+exclusive_event_installable() half way through installing siblings onto
+the new context (gctx -> ctx). But, with the proposed new order, it's
+the same context (ctx), but different epc, which is not a problem; any
+potential violations would be caught by
 
-diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
-index 6c5f09c815e8..c839ae575c77 100644
---- a/drivers/rtc/rtc-test.c
-+++ b/drivers/rtc/rtc-test.c
-@@ -123,6 +123,8 @@ static int test_probe(struct platform_device *plat_dev)
- 
- 	platform_set_drvdata(plat_dev, rtd);
- 
-+	device_init_wakeup(&plat_dev->dev, 1);
-+
- 	rtd->rtc = devm_rtc_allocate_device(&plat_dev->dev);
- 	if (IS_ERR(rtd->rtc))
- 		return PTR_ERR(rtd->rtc);
--- 
-2.17.1
+  if (!exclusive_event_installable(event, ctx))
 
+that preceeds the move_group block.
+
+It also makes sense that exclusive_event_installable() looks on
+ctx->event_list and not epc lists for this exact reason.
+
+In retrospect, we can probably also fix this better in the current code
+like:
+
+  if (!exclusive_event_installable(event, ctx) ||
+      !exclusive_event_installable(event, gctx)) /* do -EBUSY */
+
+and get rid of the above restriction to allow grouping "exclusive"
+events.
+
+Regards,
+--
+Alex
