@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD511EF0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 643101F150
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbfEOL3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:29:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40220 "EHLO mail.kernel.org"
+        id S1731546AbfEOLvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:51:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbfEOL3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:29:01 -0400
+        id S1729194AbfEOLVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E696F206BF;
-        Wed, 15 May 2019 11:29:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54DBB20818;
+        Wed, 15 May 2019 11:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919741;
-        bh=Vs33h3HMAQVmJ+SIVLTPU0qa4/O/E42YM7/d53qafYg=;
+        s=default; t=1557919298;
+        bh=UjCmd7J2iUazaY7PNJkpgdb79FJriDZ/S84sBfScR5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AuAxY9m3TRoPcSFQxvzl9eg7Bsy9cROU3Z6nnsX+EMwcxGbq2zp+moxdWQZhVJTU9
-         Pad1yW+/6vrH8hqVDBZMo/KHG4LZ70d/BCPTf5P1Cjz0MVO+ngX14n25IyK2JXI9wO
-         /Qdko3VgiWnKLCpEkTzqnqUIf/ntBvaLsd0aSpb0=
+        b=ht/nBkAQmJazDAph1gAFhJe497MVrXnHiDkrZtb1OWqrOIvmia/pxS3cKs1ZHlTg7
+         nZpAXv6JKnU1GAD/l0k5bmSmAW13Shk802fZKy2tpraTiYlKyBlsXU/xem0giUslBl
+         DvJjhTprQC1ARrQuL7Dqg6cgeqgqFL9ePoyifPOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 032/137] clocksource/drivers/npcm: select TIMER_OF
+Subject: [PATCH 4.19 022/113] mac80211: fix memory accounting with A-MSDU aggregation
 Date:   Wed, 15 May 2019 12:55:13 +0200
-Message-Id: <20190515090655.659546612@linuxfoundation.org>
+Message-Id: <20190515090655.165980920@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 99834eead2a04e93a120abb112542b87c42ff5e1 ]
+[ Upstream commit eb9b64e3a9f8483e6e54f4e03b2ae14ae5db2690 ]
 
-When this is disabled, we get a link failure:
+skb->truesize can change due to memory reallocation or when adding extra
+fragments. Adjust fq->memory_usage accordingly
 
-drivers/clocksource/timer-npcm7xx.o: In function `npcm7xx_timer_init':
-timer-npcm7xx.c:(.init.text+0xf): undefined reference to `timer_of_init'
-
-Fixes: 1c00289ecd12 ("clocksource/drivers/npcm: Add NPCM7xx timer driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/tx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 8dfd3bc448d04..9df90daa9c030 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -144,6 +144,7 @@ config VT8500_TIMER
- config NPCM7XX_TIMER
- 	bool "NPCM7xx timer driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
-+	select TIMER_OF
- 	select CLKSRC_MMIO
- 	help
- 	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx architecture,
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index 743cde66aaf62..2f726cde9998b 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3185,6 +3185,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	u8 max_subframes = sta->sta.max_amsdu_subframes;
+ 	int max_frags = local->hw.max_tx_fragments;
+ 	int max_amsdu_len = sta->sta.max_amsdu_len;
++	int orig_truesize;
+ 	__be16 len;
+ 	void *data;
+ 	bool ret = false;
+@@ -3218,6 +3219,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	if (!head)
+ 		goto out;
+ 
++	orig_truesize = head->truesize;
+ 	orig_len = head->len;
+ 
+ 	if (skb->len + head->len > max_amsdu_len)
+@@ -3272,6 +3274,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	*frag_tail = skb;
+ 
+ out_recalc:
++	fq->memory_usage += head->truesize - orig_truesize;
+ 	if (head->len != orig_len) {
+ 		flow->backlog += head->len - orig_len;
+ 		tin->backlog_bytes += head->len - orig_len;
 -- 
 2.20.1
 
