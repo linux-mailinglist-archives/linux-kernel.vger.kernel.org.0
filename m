@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD561EDF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB5D1F0A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730268AbfEOLPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:15:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51636 "EHLO mail.kernel.org"
+        id S1731787AbfEOLp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:45:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730049AbfEOLPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:15:13 -0400
+        id S1732038AbfEOLZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:25:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 505DC2084F;
-        Wed, 15 May 2019 11:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCBFC20818;
+        Wed, 15 May 2019 11:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918912;
-        bh=CyirzXpZWQ7zOZyGYOeYCELwu7mMB5pwbOhDbHTmkpE=;
+        s=default; t=1557919546;
+        bh=kndu8SAtUtlE6O5XFX8Lvk1NrcXtcxLc7hvEAE7f7uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Aq1meVb8cwTcrBRzNE6ZJhN6fPgK5N/zdo56YACFb+3ZFSFm9an3BUjbc0NBci79s
-         NSYxdjX7zGq8D9bcW0KbOWKAhShZuV2TvlhXV8d1dg1rAnEmOHj0m/YQ7ztJuFU96g
-         YAWITh4fc4THZ7zEsvXcOdQ6cq2Wbw7qzwtWNeo8=
+        b=rrVGil3f0xxXfuHmiHR/UnBzhU5L2qSZxHM8STjL3nO3pHCiCxpu1wxO1XzcMhark
+         Hq+saB1mK0OYYwg+97ZDpxC5N1bfHdJGZR01PKgIrI5R4slNTLZ5+VDu/LsnQuMnnF
+         P9px8e88EQAXHUkO16HBs3JXC/qgnftaXr0PF4GQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>
-Subject: [PATCH 4.9 47/51] bonding: fix arp_validate toggling in active-backup mode
+        stable@vger.kernel.org, Thomas Haller <thaller@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 091/113] fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied
 Date:   Wed, 15 May 2019 12:56:22 +0200
-Message-Id: <20190515090629.438794995@linuxfoundation.org>
+Message-Id: <20190515090700.540421230@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit a9b8a2b39ce65df45687cf9ef648885c2a99fe75 ]
+[ Upstream commit e9919a24d3022f72bcadc407e73a6ef17093a849 ]
 
-There's currently a problem with toggling arp_validate on and off with an
-active-backup bond. At the moment, you can start up a bond, like so:
+With commit 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to
+fib_nl_newrule") we now able to check if a rule already exists. But this
+only works with iproute2. For other tools like libnl, NetworkManager,
+it still could add duplicate rules with only NLM_F_CREATE flag, like
 
-modprobe bonding mode=1 arp_interval=100 arp_validate=0 arp_ip_targets=192.168.1.1
-ip link set bond0 down
-echo "ens4f0" > /sys/class/net/bond0/bonding/slaves
-echo "ens4f1" > /sys/class/net/bond0/bonding/slaves
-ip link set bond0 up
-ip addr add 192.168.1.2/24 dev bond0
+[localhost ~ ]# ip rule
+0:      from all lookup local
+32766:  from all lookup main
+32767:  from all lookup default
+100000: from 192.168.7.5 lookup 5
+100000: from 192.168.7.5 lookup 5
 
-Pings to 192.168.1.1 work just fine. Now turn on arp_validate:
+As it doesn't make sense to create two duplicate rules, let's just return
+0 if the rule exists.
 
-echo 1 > /sys/class/net/bond0/bonding/arp_validate
-
-Pings to 192.168.1.1 continue to work just fine. Now when you go to turn
-arp_validate off again, the link falls flat on it's face:
-
-echo 0 > /sys/class/net/bond0/bonding/arp_validate
-dmesg
-...
-[133191.911987] bond0: Setting arp_validate to none (0)
-[133194.257793] bond0: bond_should_notify_peers: slave ens4f0
-[133194.258031] bond0: link status definitely down for interface ens4f0, disabling it
-[133194.259000] bond0: making interface ens4f1 the new active one
-[133197.330130] bond0: link status definitely down for interface ens4f1, disabling it
-[133197.331191] bond0: now running without any active interface!
-
-The problem lies in bond_options.c, where passing in arp_validate=0
-results in bond->recv_probe getting set to NULL. This flies directly in
-the face of commit 3fe68df97c7f, which says we need to set recv_probe =
-bond_arp_recv, even if we're not using arp_validate. Said commit fixed
-this in bond_option_arp_interval_set, but missed that we can get to that
-same state in bond_option_arp_validate_set as well.
-
-One solution would be to universally set recv_probe = bond_arp_recv here
-as well, but I don't think bond_option_arp_validate_set has any business
-touching recv_probe at all, and that should be left to the arp_interval
-code, so we can just make things much tidier here.
-
-Fixes: 3fe68df97c7f ("bonding: always set recv_probe to bond_arp_rcv in arp monitor")
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Fixes: 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to fib_nl_newrule")
+Reported-by: Thomas Haller <thaller@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_options.c |    7 -------
- 1 file changed, 7 deletions(-)
+ net/core/fib_rules.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/bonding/bond_options.c
-+++ b/drivers/net/bonding/bond_options.c
-@@ -1065,13 +1065,6 @@ static int bond_option_arp_validate_set(
- {
- 	netdev_info(bond->dev, "Setting arp_validate to %s (%llu)\n",
- 		    newval->string, newval->value);
--
--	if (bond->dev->flags & IFF_UP) {
--		if (!newval->value)
--			bond->recv_probe = NULL;
--		else if (bond->params.arp_interval)
--			bond->recv_probe = bond_arp_rcv;
--	}
- 	bond->params.arp_validate = newval->value;
+--- a/net/core/fib_rules.c
++++ b/net/core/fib_rules.c
+@@ -756,9 +756,9 @@ int fib_nl_newrule(struct sk_buff *skb,
+ 	if (err)
+ 		goto errout;
  
- 	return 0;
+-	if ((nlh->nlmsg_flags & NLM_F_EXCL) &&
+-	    rule_exists(ops, frh, tb, rule)) {
+-		err = -EEXIST;
++	if (rule_exists(ops, frh, tb, rule)) {
++		if (nlh->nlmsg_flags & NLM_F_EXCL)
++			err = -EEXIST;
+ 		goto errout_free;
+ 	}
+ 
 
 
