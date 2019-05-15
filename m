@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D09AB1EED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 973D41EE0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfEOL0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:26:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37420 "EHLO mail.kernel.org"
+        id S1730479AbfEOLQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbfEOL0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:34 -0400
+        id S1730463AbfEOLQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B1D420818;
-        Wed, 15 May 2019 11:26:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB8A620843;
+        Wed, 15 May 2019 11:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919593;
-        bh=iZAie2W+rzg4FGdoNL38HQHKFa6Z3pHS17qji7jKVeY=;
+        s=default; t=1557918977;
+        bh=pVBVLh20Pc7GiGl5VXRw7hLGQlU0e4RrX6Aj/99BoY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h3N3OEwiU5uV53IktewQHy0WmcJhWik6zDOYTyRt+m2Y87EQRU+dsgBwwigtH3Xg7
-         lW6gGg+ptrImwa1lqc0AB6NNOI46iV/FVoGrO22dSIE9oCQcDcn9dii9kHnKPmebTz
-         DPsvzybfA7SOQEfVQ9UN+OjH8Uaj6FJ+UI1FsXQk=
+        b=BLIAcLs9s4Xwm9Ag/39xNDbtc2/BeVNkAtD+LQlRZdqWaHTAcuTn9RONWNEHhK5OQ
+         Lmkf6h8LpEdnYUXxWJTTFLAlO21ujSrB4y0XNkupLmt1w5SCHVk6RWA3G5Q7wyuQhS
+         rjM78Se1INGQsUcCHKUF9L0TbW4UnGtuZBvdEhuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christian Rund <Christian.Rund@de.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 020/137] s390/dasd: Fix capacity calculation for large volumes
+Subject: [PATCH 4.14 021/115] s390/pkey: add one more argument space for debug feature entry
 Date:   Wed, 15 May 2019 12:55:01 +0200
-Message-Id: <20190515090654.743686696@linuxfoundation.org>
+Message-Id: <20190515090700.825336863@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2cc9637ce825f3a9f51f8f78af7474e9e85bfa5f ]
+[ Upstream commit 6b1f16ba730d4c0cda1247568c3a1bf4fa3a2f2f ]
 
-The DASD driver incorrectly limits the maximum number of blocks of ECKD
-DASD volumes to 32 bit numbers. Volumes with a capacity greater than
-2^32-1 blocks are incorrectly recognized as smaller volumes.
+The debug feature entries have been used with up to 5 arguents
+(including the pointer to the format string) but there was only
+space reserved for 4 arguemnts. So now the registration does
+reserve space for 5 times a long value.
 
-This results in the following volume capacity limits depending on the
-formatted block size:
+This fixes a sometime appearing weired value as the last
+value of an debug feature entry like this:
 
-  BLKSIZE  MAX_GB   MAX_CYL
-      512    2047   5843492
-     1024    4095   8676701
-     2048    8191  13634816
-     4096   16383  23860929
+... pkey_sec2protkey zcrypt_send_cprb (cardnr=10 domain=12)
+   failed with errno -2143346254
 
-The same problem occurs when a volume with more than 17895697 cylinders
-is accessed in raw-track-access mode.
-
-Fix this problem by adding an explicit type cast when calculating the
-maximum number of blocks.
-
-Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Reported-by: Christian Rund <Christian.Rund@de.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/block/dasd_eckd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/s390/crypto/pkey_api.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 6e294b4d3635f..f89f9d02e7884 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -2004,14 +2004,14 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
- 	blk_per_trk = recs_per_track(&private->rdc_data, 0, block->bp_block);
+diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
+index f61fa47135a6c..bd0376dc7e1e3 100644
+--- a/drivers/s390/crypto/pkey_api.c
++++ b/drivers/s390/crypto/pkey_api.c
+@@ -49,7 +49,8 @@ static debug_info_t *debug_info;
  
- raw:
--	block->blocks = (private->real_cyl *
-+	block->blocks = ((unsigned long) private->real_cyl *
- 			  private->rdc_data.trk_per_cyl *
- 			  blk_per_trk);
- 
- 	dev_info(&device->cdev->dev,
--		 "DASD with %d KB/block, %d KB total size, %d KB/track, "
-+		 "DASD with %u KB/block, %lu KB total size, %u KB/track, "
- 		 "%s\n", (block->bp_block >> 10),
--		 ((private->real_cyl *
-+		 (((unsigned long) private->real_cyl *
- 		   private->rdc_data.trk_per_cyl *
- 		   blk_per_trk * (block->bp_block >> 9)) >> 1),
- 		 ((blk_per_trk * block->bp_block) >> 10),
+ static void __init pkey_debug_init(void)
+ {
+-	debug_info = debug_register("pkey", 1, 1, 4 * sizeof(long));
++	/* 5 arguments per dbf entry (including the format string ptr) */
++	debug_info = debug_register("pkey", 1, 1, 5 * sizeof(long));
+ 	debug_register_view(debug_info, &debug_sprintf_view);
+ 	debug_set_level(debug_info, 3);
+ }
 -- 
 2.20.1
 
