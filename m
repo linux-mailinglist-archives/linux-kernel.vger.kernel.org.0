@@ -2,73 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE31B1EA46
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A599E1EA4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:41:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfEOIi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 04:38:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35728 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbfEOIi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 04:38:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B52BAAF95;
-        Wed, 15 May 2019 08:38:27 +0000 (UTC)
-Date:   Wed, 15 May 2019 10:38:26 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     khlebnikov@yandex-team.ru
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, oleg@redhat.com
-Subject: Re: mm: use down_read_killable for locking mmap_sem in
- access_remote_vm
-Message-ID: <20190515083825.GJ13687@blackbody.suse.cz>
+        id S1726124AbfEOIk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 04:40:57 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:38785 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfEOIk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 04:40:56 -0400
+Received: by mail-lf1-f41.google.com with SMTP id y19so1334391lfy.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 01:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=PqVaSFiBytC8hxBsEh/HgINdW7HiuF2nkdZ+Xr3sRJM=;
+        b=c4eMVd1cLxlB6SJBmNhemOrHGlx22bRWlhjGFOgNaLhbLW2OsPnJ6q7IN/0qHO2SJT
+         44NH8SW7Cz7C3NbkZ6LUVyuc+HzNnulv1amtnBP+4BzX65YCeVqIiFPthbsIvGNRastI
+         FbjiJSRIsNnOy55OzOM24lwDTwQ8e3guvD/twvzX8/U23YRpw/0O0FdUM5g8ol8rvtGT
+         3HQfxeXNsLpmFjaOI0s2beybpvYsZWr56AL1iTqZnKWFCOtzAIRlXYsgw/i9aL/6NEPD
+         g7GWfCO0vCdWKEMkUAxLxifdzh0t3jxTgaNvygX4vDQBbW/QJM0RreiOZzIYruK6B9fL
+         hGdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=PqVaSFiBytC8hxBsEh/HgINdW7HiuF2nkdZ+Xr3sRJM=;
+        b=PkKjxky2OoT0OMedOoCH/OCgwpM6b3zSjThO3d+2NeFmRNHcPXduacl4GSz12gNkWg
+         eYHeY4TMOD9KhAHJ9VLx7FU7SYGxZhCyhWzWrYYglXurRHAAT0o7X4Ngf8OpsQGNH/Tt
+         LjNO4i/8fbUHsrsDvLNou5OKkN1vO9eo1507v1DMsrROD5JEXiQKoY++Z93WzWe0GS5/
+         /rUOZ1feMkZQcnoeDKGJUIhLGTBSec+/z4cL42WonXcGOdjcpp/Gm5nOeu4L4X4EHhA8
+         ovjIGngBCYEPy71ZpYoXqtTu4wTiUPN7gbFldVXPAx1d/xkcR98Z0YIVHw9yuFwmxIc4
+         N+KQ==
+X-Gm-Message-State: APjAAAVM5XBtPPOzvLcL3isMP0oslSEiWv8lb8tWZ2OIuJQNeiBVut78
+        w6Q9WlNSgKnYgtoN6P9z4S0hJzr49cGmpg7BuMLWpg==
+X-Google-Smtp-Source: APXvYqz27fihyYyeqJzcm9uZcyrM35iaJPBOLqtP38PCvZvb3HdahvBJTwe31L0dHMb3DcwxQ1okZ20YuVymiVG6A6k=
+X-Received: by 2002:a19:6b0e:: with SMTP id d14mr16922584lfa.137.1557909654616;
+ Wed, 15 May 2019 01:40:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="451BZW+OUuJBCAYj"
-Content-Disposition: inline
-In-Reply-To: <155790847881.2798.7160461383704600177.stgit@buzz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 15 May 2019 14:10:43 +0530
+Message-ID: <CA+G9fYu254sYc77jOVifOmxrd_jNmr4wNHTrqnW54a8F=EQZ6Q@mail.gmail.com>
+Subject: LTP: mm: overcommit_memory01, 03...06 failed
+To:     ltp@lists.linux.it, linux-mm@kvack.org
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Jan Stancek <jstancek@redhat.com>,
+        lkft-triage@lists.linaro.org, dengke.du@windriver.com,
+        petr.vorel@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ltp-mm-tests failed on Linux mainline kernel  5.1.0,
+  * overcommit_memory01 overcommit_memory
+  * overcommit_memory03 overcommit_memory -R 30
+  * overcommit_memory04 overcommit_memory -R 80
+  * overcommit_memory05 overcommit_memory -R 100
+  * overcommit_memory06 overcommit_memory -R 200
 
---451BZW+OUuJBCAYj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+mem.c:814: INFO: set overcommit_memory to 0
+overcommit_memory.c:185: INFO: malloc 8094844 kB successfully
+overcommit_memory.c:204: PASS: alloc passed as expected
+overcommit_memory.c:189: INFO: malloc 32379376 kB failed
+overcommit_memory.c:210: PASS: alloc failed as expected
+overcommit_memory.c:185: INFO: malloc 16360216 kB successfully
+overcommit_memory.c:212: FAIL: alloc passed, expected to fail
 
-Hi,
-making this holder of mmap_sem killable was for the reasons of /proc/...
-diagnostics was an idea I was pondeering too. However, I think the
-approach of pretending we read 0 bytes is not correct. The API would IMO
-need to be extended to allow pass a result such as EINTR to the end
-caller.
-Why do you think it's safe to return just 0?
+Failed test log,
+https://lkft.validation.linaro.org/scheduler/job/726417#L22852
 
-Michal
+LTP version 20190115
 
+Test case link,
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/tunable/overcommit_memory.c#L212
 
---451BZW+OUuJBCAYj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+First bad commit:
+git branch master
+git commit e0654264c4806dc436b291294a0fbf9be7571ab6
+git describe v5.1-10706-ge0654264c480
+git repo https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
------BEGIN PGP SIGNATURE-----
+Last good commit:
+git branch master
+git commit 7e9890a3500d95c01511a4c45b7e7192dfa47ae2
+git describe v5.1-10326-g7e9890a3500d
+git repo https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-iQIzBAEBCAAdFiEE+amhwRV4jZeXdUhoK2l36XSZ9y4FAlzbz/sACgkQK2l36XSZ
-9y72Dw//WSCQl+uR7hQKCcZgc6M3EGW5FhKKiFTfagIYPeGFx8co6rAG2XFCBn89
-PiCHJjcjY5BtRaCnLV/AmLbSGSj/j7aX0FIM/nKkP7z78HTrSBjkd30HIXV1Vig8
-wQY4JGC5bK2rUkd/D5Fjjrg93wMvwRfyj3wZ6/dXObPU8tfbrbOTeD+JNFlk1WZf
-WitkTbX3mD/xC3P3ItZ9+mTRXK+0MCMu/Bazf90yDFRB2uXvA788CTGVzsqzyfpG
-vkZmBDTzT/jJJhYKd4gR4ecaQbD3zzZdJiz5AEZFGJFSpK6nwYXz9jarjIWP2T6e
-OSZ4mGj+RjL3YBk9sqNgHPXMMS6IQoIgbpjVxwQlNN+6sSfGVm4qVGLn5N+69LwR
-iQtCQSv2JS5afnWSaahWQsxzvmkE/6OC6Qs1D1EdclP7ph1PgrkV2NJ+0VVBZfRA
-m0VNzZ6APLLoPc7yGaBP36yw6pjgycrVQaDtgZa1hqf1bpLnoqwrSlUQTTN2475Q
-ig/ZEnDjlB/X85OkdEB26SLw5CtH35EL64DhfNU9l1dZ5Ygw5O4nOevkPwL2XC3F
-mtftFgxxtFN2zDqg3s5gz7K5AAef7jn9TySNze2l7OVFwfpd96b8SXfyPxRMOgcy
-aUFG3qyAdXEoPQHQPWtTrKsnhbu+qNCaIbhxZAL9j5iVKnHc/cA=
-=vcUI
------END PGP SIGNATURE-----
-
---451BZW+OUuJBCAYj--
+Best regards
+Naresh Kamboju
