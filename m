@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F399E1EDE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD96E1EE54
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbfEOLOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:14:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
+        id S1731066AbfEOLUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbfEOLO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:27 -0400
+        id S1729438AbfEOLUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:20:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0965C20862;
-        Wed, 15 May 2019 11:14:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F0DB2084F;
+        Wed, 15 May 2019 11:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918866;
-        bh=IQiKbuEWVm4f7lw5bzZBPzwaZrsJiLU5nh71iDFy38o=;
+        s=default; t=1557919203;
+        bh=Mdzso0n6Y2cRilWrPApcH6XZH0UplbFVE/NfqqY9/s8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ozho1urFN/HrG/xNNu2+EKrOBC4RYKuuJJj2t99puA+KoJ1Owlj+6cNUtu4F++phW
-         eD9sOFmusfXmz+cKhGIYjsvQXVgo+LZ/TCCGunfW5LTqRQa4SqOpOtsVtMF8H3YYqA
-         Tfq+2f2F9e3D5h+vZt+rst/iz12uPjzTMRDM9sbE=
+        b=mEs9W5eX/qm/W94pLyGkzh8HzasM8TrMu0rhIKxsl1Hz85ZTgywSbC73SqfaKFgGx
+         y4+tgJjBTxZkxAO8y/52W1p2FLHwEKrohsSKalxqTxeaD0+5d4DbagevVMfgbYz5eE
+         xbiKEjw1z9LlR8czUBZHyt48K6m1WzDWQQaZ7QkA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 06/51] iio: adc: xilinx: fix potential use-after-free on remove
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 061/115] staging: olpc_dcon: add a missing dependency
 Date:   Wed, 15 May 2019 12:55:41 +0200
-Message-Id: <20190515090619.305087626@linuxfoundation.org>
+Message-Id: <20190515090703.975269496@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 62039b6aef63380ba7a37c113bbaeee8a55c5342 ]
+[ Upstream commit 33f49571d75024b1044cd02689ad2bdb4924cc80 ]
 
-When cancel_delayed_work() returns, the delayed work may still
-be running. This means that the core could potentially free
-the private structure (struct xadc) while the delayed work
-is still using it. This is a potential use-after-free.
+  WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
+    Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
+    Selected by [y]:
+    - FB_OLPC_DCON [=y] && STAGING [=y] && X86 [=y] && OLPC [=y] && FB [=y]
+                        && I2C [=y] && (GPIO_CS5535 [=n] || GPIO_CS5535 [=n]=n)
 
-Fix by calling cancel_delayed_work_sync(), which waits for
-any residual work to finish before returning.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/iio/adc/xilinx-xadc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/olpc_dcon/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-index 56cf5907a5f01..143894a315d9b 100644
---- a/drivers/iio/adc/xilinx-xadc-core.c
-+++ b/drivers/iio/adc/xilinx-xadc-core.c
-@@ -1299,7 +1299,7 @@ static int xadc_remove(struct platform_device *pdev)
- 	}
- 	free_irq(irq, indio_dev);
- 	clk_disable_unprepare(xadc->clk);
--	cancel_delayed_work(&xadc->zynq_unmask_work);
-+	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
- 	kfree(xadc->data);
- 	kfree(indio_dev->channels);
- 
+diff --git a/drivers/staging/olpc_dcon/Kconfig b/drivers/staging/olpc_dcon/Kconfig
+index d277f048789e6..8c6cc61d634bf 100644
+--- a/drivers/staging/olpc_dcon/Kconfig
++++ b/drivers/staging/olpc_dcon/Kconfig
+@@ -2,6 +2,7 @@ config FB_OLPC_DCON
+ 	tristate "One Laptop Per Child Display CONtroller support"
+ 	depends on OLPC && FB
+ 	depends on I2C
++	depends on BACKLIGHT_LCD_SUPPORT
+ 	depends on (GPIO_CS5535 || GPIO_CS5535=n)
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	---help---
 -- 
 2.20.1
 
