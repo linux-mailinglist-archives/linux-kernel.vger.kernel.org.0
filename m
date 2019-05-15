@@ -2,227 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B661EFBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EBBA1EC75
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:57:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732973AbfEOLfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:35:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45794 "EHLO mail.kernel.org"
+        id S1726335AbfEOK53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:57:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:40662 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732859AbfEOLdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:33:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 669B72084A;
-        Wed, 15 May 2019 11:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557920028;
-        bh=EEptWLvXtcTT+wCyIiDf9pjsHOcJnWWtsF9TgBhjmb0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAw8YA8GGNnVwHe0JF4s/N7eCdBsZ7JAqZg49Us0sP66UrzkrSSk177J4GKiyYdRz
-         dDKL8Jw1qzvRwdjttDjh1NfJdLiQd6a/7oUMuDdoSPac3874fyUVC9vqyvunQapckg
-         AstAlQi972TjBuFL7UuwdZSMagPq597i2Fnd1RJw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5.1 46/46] f2fs: Fix use of number of devices
-Date:   Wed, 15 May 2019 12:57:10 +0200
-Message-Id: <20190515090629.749479039@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1725953AbfEOK53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:57:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 543A580D;
+        Wed, 15 May 2019 03:57:28 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C83613F703;
+        Wed, 15 May 2019 03:57:25 -0700 (PDT)
+Date:   Wed, 15 May 2019 11:57:24 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
+        rui.zhang@intel.com, javi.merino@kernel.org,
+        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
+        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
+        ionela.voinescu@arm.com, mka@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
+Message-ID: <20190515105723.3ltui3l75hbuskmk@queper01-lin>
+References: <20190515082318.7993-1-quentin.perret@arm.com>
+ <20190515082318.7993-3-quentin.perret@arm.com>
+ <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
+ <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
+ <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
+ <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
+ <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
+ <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
+ <20190515104043.vogspxgkapp6qsny@queper01-lin>
+ <b7e91d70-cd16-791c-94e1-3667ff264e49@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7e91d70-cd16-791c-94e1-3667ff264e49@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+On Wednesday 15 May 2019 at 12:54:10 (+0200), Daniel Lezcano wrote:
+> On 15/05/2019 12:40, Quentin Perret wrote:
+> > On Wednesday 15 May 2019 at 15:52:00 (+0530), Viresh Kumar wrote:
+> >> On 15-05-19, 12:16, Daniel Lezcano wrote:
+> >>> Viresh what do you think ?
+> >>
+> >> I agree with your last suggestions. They do make sense.
+> > 
+> > Good :-)
+> > 
+> > So, FWIW, the below compiles w/ or w/o THERMAL_GOV_POWER_ALLOCATOR. I'll
+> > test it and clean it up some more and put it as patch 1 in the series if
+> > that's OK.
+> > 
+> > Thanks,
+> > Quentin
+> > 
+> > 
+> > diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+> > index f7c1f49ec87f..ee431848ef71 100644
+> > --- a/drivers/thermal/cpu_cooling.c
+> > +++ b/drivers/thermal/cpu_cooling.c
+> > @@ -58,7 +58,9 @@
+> >   */
+> >  struct freq_table {
+> >         u32 frequency;
+> 
+> I suspect we will have a problem here as cpufreq_set_cur_state uses the
+> frequency and when switching to EM, we will still need a freq table.
 
-commit 0916878da355650d7e77104a7ac0fa1784eca852 upstream.
+Indeed, I'll need a bit of ifdefery in the get_state_freq() function
+introduced in patch 3, but nothing too horrible I hope.
 
-For a single device mount using a zoned block device, the zone
-information for the device is stored in the sbi->devs single entry
-array and sbi->s_ndevs is set to 1. This differs from a single device
-mount using a regular block device which does not allocate sbi->devs
-and sets sbi->s_ndevs to 0.
-
-However, sbi->s_devs == 0 condition is used throughout the code to
-differentiate a single device mount from a multi-device mount where
-sbi->s_ndevs is always larger than 1. This results in problems with
-single zoned block device volumes as these are treated as multi-device
-mounts but do not have the start_blk and end_blk information set. One
-of the problem observed is skipping of zone discard issuing resulting in
-write commands being issued to full zones or unaligned to a zone write
-pointer.
-
-Fix this problem by simply treating the cases sbi->s_ndevs == 0 (single
-regular block device mount) and sbi->s_ndevs == 1 (single zoned block
-device mount) in the same manner. This is done by introducing the
-helper function f2fs_is_multi_device() and using this helper in place
-of direct tests of sbi->s_ndevs value, improving code readability.
-
-Fixes: 7bb3a371d199 ("f2fs: Fix zoned block device support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/f2fs/data.c    |   17 +++++++++++------
- fs/f2fs/f2fs.h    |   13 ++++++++++++-
- fs/f2fs/file.c    |    2 +-
- fs/f2fs/gc.c      |    2 +-
- fs/f2fs/segment.c |   13 +++++++------
- 5 files changed, 32 insertions(+), 15 deletions(-)
-
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -220,12 +220,14 @@ struct block_device *f2fs_target_device(
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	int i;
- 
--	for (i = 0; i < sbi->s_ndevs; i++) {
--		if (FDEV(i).start_blk <= blk_addr &&
--					FDEV(i).end_blk >= blk_addr) {
--			blk_addr -= FDEV(i).start_blk;
--			bdev = FDEV(i).bdev;
--			break;
-+	if (f2fs_is_multi_device(sbi)) {
-+		for (i = 0; i < sbi->s_ndevs; i++) {
-+			if (FDEV(i).start_blk <= blk_addr &&
-+			    FDEV(i).end_blk >= blk_addr) {
-+				blk_addr -= FDEV(i).start_blk;
-+				bdev = FDEV(i).bdev;
-+				break;
-+			}
- 		}
- 	}
- 	if (bio) {
-@@ -239,6 +241,9 @@ int f2fs_target_device_index(struct f2fs
- {
- 	int i;
- 
-+	if (!f2fs_is_multi_device(sbi))
-+		return 0;
-+
- 	for (i = 0; i < sbi->s_ndevs; i++)
- 		if (FDEV(i).start_blk <= blkaddr && FDEV(i).end_blk >= blkaddr)
- 			return i;
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1366,6 +1366,17 @@ static inline bool time_to_inject(struct
- }
- #endif
- 
-+/*
-+ * Test if the mounted volume is a multi-device volume.
-+ *   - For a single regular disk volume, sbi->s_ndevs is 0.
-+ *   - For a single zoned disk volume, sbi->s_ndevs is 1.
-+ *   - For a multi-device volume, sbi->s_ndevs is always 2 or more.
-+ */
-+static inline bool f2fs_is_multi_device(struct f2fs_sb_info *sbi)
-+{
-+	return sbi->s_ndevs > 1;
-+}
-+
- /* For write statistics. Suppose sector size is 512 bytes,
-  * and the return value is in kbytes. s is of struct f2fs_sb_info.
-  */
-@@ -3615,7 +3626,7 @@ static inline bool f2fs_force_buffered_i
- 
- 	if (f2fs_post_read_required(inode))
- 		return true;
--	if (sbi->s_ndevs)
-+	if (f2fs_is_multi_device(sbi))
- 		return true;
- 	/*
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2573,7 +2573,7 @@ static int f2fs_ioc_flush_device(struct
- 							sizeof(range)))
- 		return -EFAULT;
- 
--	if (sbi->s_ndevs <= 1 || sbi->s_ndevs - 1 <= range.dev_num ||
-+	if (!f2fs_is_multi_device(sbi) || sbi->s_ndevs - 1 <= range.dev_num ||
- 			__is_large_section(sbi)) {
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 			"Can't flush %u in %d for segs_per_sec %u != 1\n",
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1346,7 +1346,7 @@ void f2fs_build_gc_manager(struct f2fs_s
- 	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
- 
- 	/* give warm/cold data area from slower device */
--	if (sbi->s_ndevs && !__is_large_section(sbi))
-+	if (f2fs_is_multi_device(sbi) && !__is_large_section(sbi))
- 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
- 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
- }
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -580,7 +580,7 @@ static int submit_flush_wait(struct f2fs
- 	int ret = 0;
- 	int i;
- 
--	if (!sbi->s_ndevs)
-+	if (!f2fs_is_multi_device(sbi))
- 		return __submit_flush_wait(sbi, sbi->sb->s_bdev);
- 
- 	for (i = 0; i < sbi->s_ndevs; i++) {
-@@ -648,7 +648,8 @@ int f2fs_issue_flush(struct f2fs_sb_info
- 		return ret;
- 	}
- 
--	if (atomic_inc_return(&fcc->queued_flush) == 1 || sbi->s_ndevs > 1) {
-+	if (atomic_inc_return(&fcc->queued_flush) == 1 ||
-+	    f2fs_is_multi_device(sbi)) {
- 		ret = submit_flush_wait(sbi, ino);
- 		atomic_dec(&fcc->queued_flush);
- 
-@@ -754,7 +755,7 @@ int f2fs_flush_device_cache(struct f2fs_
- {
- 	int ret = 0, i;
- 
--	if (!sbi->s_ndevs)
-+	if (!f2fs_is_multi_device(sbi))
- 		return 0;
- 
- 	for (i = 1; i < sbi->s_ndevs; i++) {
-@@ -1369,7 +1370,7 @@ static int __queue_discard_cmd(struct f2
- 
- 	trace_f2fs_queue_discard(bdev, blkstart, blklen);
- 
--	if (sbi->s_ndevs) {
-+	if (f2fs_is_multi_device(sbi)) {
- 		int devi = f2fs_target_device_index(sbi, blkstart);
- 
- 		blkstart -= FDEV(devi).start_blk;
-@@ -1732,7 +1733,7 @@ static int __f2fs_issue_discard_zone(str
- 	block_t lblkstart = blkstart;
- 	int devi = 0;
- 
--	if (sbi->s_ndevs) {
-+	if (f2fs_is_multi_device(sbi)) {
- 		devi = f2fs_target_device_index(sbi, blkstart);
- 		blkstart -= FDEV(devi).start_blk;
- 	}
-@@ -3089,7 +3090,7 @@ static void update_device_state(struct f
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 	unsigned int devidx;
- 
--	if (!sbi->s_ndevs)
-+	if (!f2fs_is_multi_device(sbi))
- 		return;
- 
- 	devidx = f2fs_target_device_index(sbi, fio->new_blkaddr);
-
-
+Thanks,
+Quentin
