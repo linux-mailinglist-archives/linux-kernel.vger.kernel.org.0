@@ -2,168 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8514D1FC06
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 23:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343061FC0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 23:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfEOVCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 17:02:15 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:56102 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfEOVCP (ORCPT
+        id S1726764AbfEOVGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 17:06:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46157 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfEOVGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 17:02:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 48EB71801442B;
-        Wed, 15 May 2019 23:02:11 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michele Dionisio <michele.dionisio@gmail.com>,
-        Sebastian Andrzej Siewior <sebastian@breakpoint.cc>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH] ubifs: Add support for zstd compression.
-Date:   Wed, 15 May 2019 23:02:02 +0200
-Message-Id: <20190515210202.21169-1-richard@nod.at>
-X-Mailer: git-send-email 2.16.4
+        Wed, 15 May 2019 17:06:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r7so935572wrr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KN7Op8lE6XgA0shW6xktX/J0QHQnjwUaX3FOZZZptkU=;
+        b=W1oRFTFB+24xB+dtaPBmivucI2kyqv7HBmqrRT6TiBIAZepFI8cpCTuHRSujHsiFFw
+         kF1ynOa5KxIzHoc+FiWvomXszb3JbiTBHQWj/ASpd7QsZetKDscojrxmGgpLSLu7+SvX
+         my4zgYux7+/Q1Jz0SvTVb33f6s7XPup0ZI9KzAb9jrvWtjZsFjH7gVrkHSTj4b6eXpaZ
+         DLZAnMbwXMsnfIeKJg5zC3I+0Wo0Vy93w8ujem1zPrXmjrMxSUzmLym3MgpXgBjGEAgX
+         bqjstVLBAQ+0iCAaUpB2nsSI8AhEoDAYYQN3NxM5hAJNdwv0jhivgUUqLGfSj8oZjWTv
+         0uKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KN7Op8lE6XgA0shW6xktX/J0QHQnjwUaX3FOZZZptkU=;
+        b=nwAIK48sz9reXFJQ31c/aN4GVEe2FBTgzNDQDWmk60caKNXQfbJCSL9TXNbBNrndbi
+         hwghxLLUUK/+Uym2KVzAAu68TfX0LSUYsAM71kGgwqOCfVAjB99XWz/lApgcD473Bzmm
+         kFsi0ao7ALdAWLJ+pmvI9AxGBekTK2dmrwm0IvcNTvWZBDK8r0bGyb2beWjFXF/wXgJh
+         +6GxHw0mf3uMcIlrnSXPX1RIM+OOP65FtUvkKccmKudsxFW0gnvlriHX+0RhU+gSzBd1
+         /KYHmEBj72ALHObr+uKJ79MzRNiueBwek/Lq7PZazT8e2kwjfC+DaQ++VpVT9rvIJ+sv
+         J35A==
+X-Gm-Message-State: APjAAAWiNaodsXvbS6lXpPU2bJ2HJw3oST8UMFB+8YSEiY8urxqFmqOV
+        i25cn+f8BRW/jM4H8ybrsjnuOH1oSKbP8Ss/ugk=
+X-Google-Smtp-Source: APXvYqwAMzD0Lt4RMl1/MNnHtLMYf029HK7zHQSyGiKTKart3sXQ5sO9KRXCgQBrjKViszRocXAsqK+ObAN9qtsIUVE=
+X-Received: by 2002:adf:eb91:: with SMTP id t17mr9729539wrn.203.1557954373482;
+ Wed, 15 May 2019 14:06:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190506212327.6480-1-bnvandana@gmail.com>
+In-Reply-To: <20190506212327.6480-1-bnvandana@gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Wed, 15 May 2019 23:06:02 +0200
+Message-ID: <CAFLxGvzW=Z3Lk==NXS159DF4WUJqzAELS_E++ruKDVio_hfo4A@mail.gmail.com>
+Subject: Re: [PATCH] fs: ubifs: Resolve sparse warning for using plain integer
+ as NULL pointer
+To:     Vandana BN <bnvandana@gmail.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michele Dionisio <michele.dionisio@gmail.com>
+On Mon, May 6, 2019 at 11:24 PM Vandana BN <bnvandana@gmail.com> wrote:
+>
+> fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
+>
+> Signed-off-by: Vandana BN <bnvandana@gmail.com>
+> ---
+>  fs/ubifs/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index f5ad1ede7990..066a5666c50f 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
+>         int err;
+>
+>         err = security_inode_init_security(inode, dentry, qstr,
+> -                                          &init_xattrs, 0);
+> +                                          &init_xattrs, NULL);
+>         if (err) {
+>                 struct ubifs_info *c = dentry->i_sb->s_fs_info;
+>                 ubifs_err(c, "cannot initialize security for inode %lu, error %d",
+> --
+> 2.17.1
 
-zstd shows a good compression rate and is faster than lzo,
-also on slow ARM cores.
+Applied.
 
-Cc: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Signed-off-by: Michele Dionisio <michele.dionisio@gmail.com>
-[rw: rewrote commit message]
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- fs/ubifs/Kconfig       | 10 ++++++++++
- fs/ubifs/compress.c    | 27 ++++++++++++++++++++++++++-
- fs/ubifs/super.c       |  2 ++
- fs/ubifs/ubifs-media.h |  2 ++
- 4 files changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
-index 9da2f135121b..8d84d2ed096d 100644
---- a/fs/ubifs/Kconfig
-+++ b/fs/ubifs/Kconfig
-@@ -5,8 +5,10 @@ config UBIFS_FS
- 	select CRYPTO if UBIFS_FS_ADVANCED_COMPR
- 	select CRYPTO if UBIFS_FS_LZO
- 	select CRYPTO if UBIFS_FS_ZLIB
-+	select CRYPTO if UBIFS_FS_ZSTD
- 	select CRYPTO_LZO if UBIFS_FS_LZO
- 	select CRYPTO_DEFLATE if UBIFS_FS_ZLIB
-+	select CRYPTO_ZSTD if UBIFS_FS_ZSTD
- 	select CRYPTO_HASH_INFO
- 	select UBIFS_FS_XATTR if FS_ENCRYPTION
- 	depends on MTD_UBI
-@@ -37,6 +39,14 @@ config UBIFS_FS_ZLIB
- 	help
- 	  Zlib compresses better than LZO but it is slower. Say 'Y' if unsure.
- 
-+config UBIFS_FS_ZSTD
-+	bool "ZSTD compression support" if UBIFS_FS_ADVANCED_COMPR
-+	depends on UBIFS_FS
-+	default y
-+	help
-+	  ZSTD compresses is a big win in speed over Zlib and
-+	  in compression ratio over LZO. Say 'Y' if unsure.
-+
- config UBIFS_ATIME_SUPPORT
- 	bool "Access time support"
- 	default n
-diff --git a/fs/ubifs/compress.c b/fs/ubifs/compress.c
-index 565cb56d7225..89183aeeeb7a 100644
---- a/fs/ubifs/compress.c
-+++ b/fs/ubifs/compress.c
-@@ -71,6 +71,24 @@ static struct ubifs_compressor zlib_compr = {
- };
- #endif
- 
-+#ifdef CONFIG_UBIFS_FS_ZSTD
-+static DEFINE_MUTEX(zstd_enc_mutex);
-+static DEFINE_MUTEX(zstd_dec_mutex);
-+
-+static struct ubifs_compressor zstd_compr = {
-+	.compr_type = UBIFS_COMPR_ZSTD,
-+	.comp_mutex = &zstd_enc_mutex,
-+	.decomp_mutex = &zstd_dec_mutex,
-+	.name = "zstd",
-+	.capi_name = "zstd",
-+};
-+#else
-+static struct ubifs_compressor zstd_compr = {
-+	.compr_type = UBIFS_COMPR_ZSTD,
-+	.name = "zstd",
-+};
-+#endif
-+
- /* All UBIFS compressors */
- struct ubifs_compressor *ubifs_compressors[UBIFS_COMPR_TYPES_CNT];
- 
-@@ -228,13 +246,19 @@ int __init ubifs_compressors_init(void)
- 	if (err)
- 		return err;
- 
--	err = compr_init(&zlib_compr);
-+	err = compr_init(&zstd_compr);
- 	if (err)
- 		goto out_lzo;
- 
-+	err = compr_init(&zlib_compr);
-+	if (err)
-+		goto out_zstd;
-+
- 	ubifs_compressors[UBIFS_COMPR_NONE] = &none_compr;
- 	return 0;
- 
-+out_zstd:
-+	compr_exit(&zstd_compr);
- out_lzo:
- 	compr_exit(&lzo_compr);
- 	return err;
-@@ -247,4 +271,5 @@ void ubifs_compressors_exit(void)
- {
- 	compr_exit(&lzo_compr);
- 	compr_exit(&zlib_compr);
-+	compr_exit(&zstd_compr);
- }
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index 04b8ecfd3470..ea8615261936 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1055,6 +1055,8 @@ static int ubifs_parse_options(struct ubifs_info *c, char *options,
- 				c->mount_opts.compr_type = UBIFS_COMPR_LZO;
- 			else if (!strcmp(name, "zlib"))
- 				c->mount_opts.compr_type = UBIFS_COMPR_ZLIB;
-+			else if (!strcmp(name, "zstd"))
-+				c->mount_opts.compr_type = UBIFS_COMPR_ZSTD;
- 			else {
- 				ubifs_err(c, "unknown compressor \"%s\"", name); //FIXME: is c ready?
- 				kfree(name);
-diff --git a/fs/ubifs/ubifs-media.h b/fs/ubifs/ubifs-media.h
-index 8b7c1844014f..697b1b89066a 100644
---- a/fs/ubifs/ubifs-media.h
-+++ b/fs/ubifs/ubifs-media.h
-@@ -348,12 +348,14 @@ enum {
-  * UBIFS_COMPR_NONE: no compression
-  * UBIFS_COMPR_LZO: LZO compression
-  * UBIFS_COMPR_ZLIB: ZLIB compression
-+ * UBIFS_COMPR_ZSTD: ZSTD compression
-  * UBIFS_COMPR_TYPES_CNT: count of supported compression types
-  */
- enum {
- 	UBIFS_COMPR_NONE,
- 	UBIFS_COMPR_LZO,
- 	UBIFS_COMPR_ZLIB,
-+	UBIFS_COMPR_ZSTD,
- 	UBIFS_COMPR_TYPES_CNT,
- };
- 
 -- 
-2.16.4
-
+Thanks,
+//richard
