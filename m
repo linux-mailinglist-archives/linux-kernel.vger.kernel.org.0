@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25AD21EE84
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C261F2BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731503AbfEOLWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:22:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32792 "EHLO mail.kernel.org"
+        id S1729342AbfEOLKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:10:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731489AbfEOLWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:37 -0400
+        id S1726571AbfEOLJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:09:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32C1D206BF;
-        Wed, 15 May 2019 11:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A23BD21473;
+        Wed, 15 May 2019 11:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919356;
-        bh=U+cZlY8muUchaepQ07mFSd7U+l0+CHSxVPLR5nRyDus=;
+        s=default; t=1557918597;
+        bh=l4JtLHfLDj9majz6351VQqqQ6ALmlPCCirmKccmeIso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KvpnudDFlTOq5iXIZDLUS0ZrYMttEeBRwdAt4s1JvFHQGS3CvIsWEDpOLRWLyTiYt
-         I6T7PscKV4MyIYeBM1Y5I7NkOvoH68xEw3T8Z+5vheMJjKM63oWe8SUQd06qvXXpN2
-         v9CxmSEi/VihX9u1Pir7sfohI1SKwS0d8Oyd13g8=
+        b=gnYCzIrttodkOwkdwktDBXYtz+cmhMH/bPJrqHGH9vWD526ZRvxqmBGXfTfeoRcGH
+         YeRuFm5qSH/Kuorlyff1uQwxHX7B1snhyhFYXo6P7hR/VJtLjWwqzepP4b7QnQa3n/
+         1rgyCve0E99CJ3gOIFnFAIeI6nMkBtK+yl9jATlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 008/113] USB: serial: fix unthrottle races
+        stable@vger.kernel.org, Jiang Biao <jiang.biao2@zte.com.cn>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        dwmw2@amazon.co.uk, konrad.wilk@oracle.com, bp@suse.de,
+        zhong.weidong@zte.com.cn, Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 192/266] x86/speculation: Remove SPECTRE_V2_IBRS in enum spectre_v2_mitigation
 Date:   Wed, 15 May 2019 12:54:59 +0200
-Message-Id: <20190515090654.083402466@linuxfoundation.org>
+Message-Id: <20190515090729.438146456@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,132 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Jiang Biao <jiang.biao2@zte.com.cn>
 
-commit 3f5edd58d040bfa4b74fb89bc02f0bc6b9cd06ab upstream.
+commit d9f4426c73002957be5dd39936f44a09498f7560 upstream.
 
-Fix two long-standing bugs which could potentially lead to memory
-corruption or leave the port throttled until it is reopened (on weakly
-ordered systems), respectively, when read-URB completion races with
-unthrottle().
+SPECTRE_V2_IBRS in enum spectre_v2_mitigation is never used. Remove it.
 
-First, the URB must not be marked as free before processing is complete
-to prevent it from being submitted by unthrottle() on another CPU.
-
-	CPU 1				CPU 2
-	================		================
-	complete()			unthrottle()
-	  process_urb();
-	  smp_mb__before_atomic();
-	  set_bit(i, free);		  if (test_and_clear_bit(i, free))
-	  					  submit_urb();
-
-Second, the URB must be marked as free before checking the throttled
-flag to prevent unthrottle() on another CPU from failing to observe that
-the URB needs to be submitted if complete() sees that the throttled flag
-is set.
-
-	CPU 1				CPU 2
-	================		================
-	complete()			unthrottle()
-	  set_bit(i, free);		  throttled = 0;
-	  smp_mb__after_atomic();	  smp_mb();
-	  if (throttled)		  if (test_and_clear_bit(i, free))
-	  	  return;			  submit_urb();
-
-Note that test_and_clear_bit() only implies barriers when the test is
-successful. To handle the case where the URB is still in use an explicit
-barrier needs to be added to unthrottle() for the second race condition.
-
-Fixes: d83b405383c9 ("USB: serial: add support for multiple read urbs")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: hpa@zytor.com
+Cc: dwmw2@amazon.co.uk
+Cc: konrad.wilk@oracle.com
+Cc: bp@suse.de
+Cc: zhong.weidong@zte.com.cn
+Link: https://lkml.kernel.org/r/1531872194-39207-1-git-send-email-jiang.biao2@zte.com.cn
+[bwh: Backported to 4.4: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/generic.c |   39 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 32 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/usb/serial/generic.c
-+++ b/drivers/usb/serial/generic.c
-@@ -376,6 +376,7 @@ void usb_serial_generic_read_bulk_callba
- 	struct usb_serial_port *port = urb->context;
- 	unsigned char *data = urb->transfer_buffer;
- 	unsigned long flags;
-+	bool stopped = false;
- 	int status = urb->status;
- 	int i;
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -169,7 +169,6 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
+ 	SPECTRE_V2_IBRS_ENHANCED,
+ };
  
-@@ -383,33 +384,51 @@ void usb_serial_generic_read_bulk_callba
- 		if (urb == port->read_urbs[i])
- 			break;
- 	}
--	set_bit(i, &port->read_urbs_free);
- 
- 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
- 							urb->actual_length);
- 	switch (status) {
- 	case 0:
-+		usb_serial_debug_data(&port->dev, __func__, urb->actual_length,
-+							data);
-+		port->serial->type->process_read_urb(urb);
- 		break;
- 	case -ENOENT:
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
- 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
- 							__func__, status);
--		return;
-+		stopped = true;
-+		break;
- 	case -EPIPE:
- 		dev_err(&port->dev, "%s - urb stopped: %d\n",
- 							__func__, status);
--		return;
-+		stopped = true;
-+		break;
- 	default:
- 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
- 							__func__, status);
--		goto resubmit;
-+		break;
- 	}
- 
--	usb_serial_debug_data(&port->dev, __func__, urb->actual_length, data);
--	port->serial->type->process_read_urb(urb);
-+	/*
-+	 * Make sure URB processing is done before marking as free to avoid
-+	 * racing with unthrottle() on another CPU. Matches the barriers
-+	 * implied by the test_and_clear_bit() in
-+	 * usb_serial_generic_submit_read_urb().
-+	 */
-+	smp_mb__before_atomic();
-+	set_bit(i, &port->read_urbs_free);
-+	/*
-+	 * Make sure URB is marked as free before checking the throttled flag
-+	 * to avoid racing with unthrottle() on another CPU. Matches the
-+	 * smp_mb() in unthrottle().
-+	 */
-+	smp_mb__after_atomic();
-+
-+	if (stopped)
-+		return;
- 
--resubmit:
- 	/* Throttle the device if requested by tty */
- 	spin_lock_irqsave(&port->lock, flags);
- 	port->throttled = port->throttle_req;
-@@ -484,6 +503,12 @@ void usb_serial_generic_unthrottle(struc
- 	port->throttled = port->throttle_req = 0;
- 	spin_unlock_irq(&port->lock);
- 
-+	/*
-+	 * Matches the smp_mb__after_atomic() in
-+	 * usb_serial_generic_read_bulk_callback().
-+	 */
-+	smp_mb();
-+
- 	if (was_throttled)
- 		usb_serial_generic_submit_read_urbs(port, GFP_KERNEL);
- }
 
 
