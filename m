@@ -2,183 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389DE1EE36
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60941F174
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbfEOLSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54428 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730797AbfEOLS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=XueWC9NaAC+a0tui5U5SBbamkvqq+xEVAEG1fYGi7Q0=; b=cTl3bAQnWO80
-        JrRi8wG+XyPxS1+2l9ILterwGc4TVopTiVu/a8aLhDOSELEa9VlfdRpHlFZXabb9Od5/o3JfKgQ5V
-        XUfRgaZ2TXmeQRwo5BQFC1wIyN8+R0n4LoVaJlTzil958dV0qzdOrQICcxWoL5MDYWwcFH941U3kP
-        B14K0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hQrvU-0003bw-NW; Wed, 15 May 2019 11:18:24 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1C34E1126D6D; Wed, 15 May 2019 12:18:24 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     broonie@kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        thierry.reding@gmail.com
-Subject: Applied "spi: tegra114: add support for hw based cs" to the spi tree
-In-Reply-To: <1557810235-16401-3-git-send-email-skomatineni@nvidia.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190515111824.1C34E1126D6D@debutante.sirena.org.uk>
-Date:   Wed, 15 May 2019 12:18:24 +0100 (BST)
+        id S1730901AbfEOLTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:10 -0400
+Received: from mout.web.de ([212.227.15.4]:56111 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730026AbfEOLTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1557919120;
+        bh=d6u9u+w3i5KSQsXRywri1KozcOmgXuFIGy3QZEQsoFw=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=rSauEkOz4Q+16gj2VdJg46TOGVD7QNeq5cgDlK8GHwlGqJW+egfru9pKemjrxp1BT
+         JVFXnPTHAbrjAXBhBqjjfRWsOWxPCkKJWa9P10BtgiHIPqL937vMBtrBxv3oI+T8Ae
+         Ms/qXR3/v/weq9NsDqSkkLzUaS6AsMGZXVdJjKIM=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([2.244.73.153]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LaZQd-1gyNY71Lp9-00mIm8; Wed, 15
+ May 2019 13:18:40 +0200
+Subject: Re: [3/3] Coccinelle: pci_free_consistent: Extend when constraints
+ for two SmPL ellipses
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Coccinelle <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Ma Jiang <ma.jiang@zte.com.cn>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Yi Wang <wang.yi59@zte.com.cn>
+References: <201905151043340243098@zte.com.cn>
+ <alpine.DEB.2.21.1905150808180.2591@hadrien>
+ <bfde9b91-0c5d-31a0-4b1b-5f675152b2f8@web.de>
+ <alpine.DEB.2.20.1905151119070.3231@hadrien>
+ <c53d5a80-7f80-535c-8394-a3289399feba@web.de>
+ <alpine.DEB.2.20.1905151217380.3231@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <86e6bf17-966b-06fe-287a-3df7e35736cb@web.de>
+Date:   Wed, 15 May 2019 13:18:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1905151217380.3231@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:siYj/9osA6E3fIm5ClA8b+CBYwNpqG8CWdYvoAjnZFrjwltUxn4
+ WZpCkIa7MmSqsu90wM8zSulG1uogaoXIO2i+p6L3wOGihsqPt+bvEfa1VPaA4hBfhqNyGi4
+ O79e6PtLK70pgoHkA6qTXXE2qTT/Rdpm8Fx6QRRldqIcL9lFnBRnanYjfC4OKcHpyvOBWnO
+ tCS2zW5zJIOAHMXG0Gq8Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zXa/qJSa7dE=:LlsWw3LG0KmOVsa5r8RtAR
+ zCSJdenE5SXCYztvoY2Lr6Ugxt3gzTxDB7gvOjC+O1T2Ycgf0TSWfFKBhLK6gs43vpFtPyYxm
+ +zs++N7pPXZjayqhSbUH9fe5UJCJVs13NaNlitxtnu2ZGSL+mFqqrty6MsXKtWNEwPBjeMwsQ
+ hCCYz1YOVNicBzZan5hwu+t9N30y/hAzvQtoqVrhLgj2QxUUmOpbsFjV2IezDP+U27eD8eXYh
+ rMIlA41dCJGi3IJokHpPfStHmqlVQkolzlyjP9hguypU9Vibp/FUM/Tnqp1b146vG10o47A6y
+ hgqYKI1GPXM6MfXgnGeVmyuFmH8+DkuetE6I006P5dmPOPgbTLarrV/9BzCiO+MKzUZar6v5u
+ RMrwZPTCOPm4I7IxzHV2n32YIMt++gxj6jfWEdG/75kYbYoV2BEJIy/zZDFiLXUPpgxaMSvHl
+ fdBgZOfAdubKXPxq4AR+Fy5QEUTgZ53MkL+FOpPg28hu4o6pz0BHNY0/7aLT2/rarwvngCWW7
+ 0XZHW4A7/rY2KQQ07pYzY7l97Pquu2fFJPr6MGm8P/NaPCEoQ6N4ukCRiIpGnQXNP6acWIWbK
+ DAeVpUV1vafrs5ZIltMYThZFfkaIEk3+1Uv1rciDgNrFMi0iJsBq1X6ibp2vlVDGzDHdzu56d
+ YoT1JrpcDkncQOWqPNv13i9aBhShvbIrn2HaBhrkeJN3mMsKEMDW4vXcJsnM86oPsu+TU9ZxG
+ C+GpHBvedU+iC7ow65NoE9OpA+GookaLHO1trwz99p1OpsTrmH1uxS+De/tlX6tt7mLJgJhMX
+ EUV94GS0z95JIJ98IySG7pt6YsCfDBB8E8n5QgJ3XGgTZ4OTZalmEsrD4+zJM+UbpRrfsVeWV
+ D9kyiyz+ESaRBx5GV9PnoFDRKY5Oi1lieVsZAbuWzdA35UUv7pGhHS2D4sY3FvsqSzeR3MhdD
+ 9jtKIZjEBMw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   spi: tegra114: add support for hw based cs
 
-has been applied to the spi tree at
+Am 15.05.19 um 12:19 schrieb Julia Lawall:
+>
+>
+> On Wed, 15 May 2019, Markus Elfring wrote:
+>
+>>>>> On the other hand, I do care about causing false negatives.
+>>>>
+>>>> Do you find the missing warning after the addition of such an exclusi=
+on
+>>>> specification interesting?
+>>>
+>>> I already suggested how to improve the code.
+>>
+>> I find that the idea =E2=80=9Ce2->fld=E2=80=9D needs further clarificat=
+ion.
+>> Such a SmPL specification will be resolved also to an expression,
+>> won't it?
+>
+> Saving in a local variable doesn't impact the need to free the object.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+I suggest to reconsider this view.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Would we like to introduce additional case distinctions for the handling
+of reassignments to local variables (as shown in Wen's test case)?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> A field is the most obvious case where the object may not need freeing.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+A corresponding resource release should probably be performed by
+an other function then.
 
-Thanks,
-Mark
 
-From 1bf9f3c9232d08651aa6990001e7b042c95303dc Mon Sep 17 00:00:00 2001
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Mon, 13 May 2019 22:03:53 -0700
-Subject: [PATCH] spi: tegra114: add support for hw based cs
+> But there are many expressions that e2->fld will not match.
 
-Tegra SPI controller supports both HW and SW based CS control
-for SPI transfers.
+Data structure members can eventually belong also to a local variable.
+Would they become relevant for further SmPL exclusion specifications?
 
-This patch adds support for HW based CS control where CS is driven
-to active state during the transfer and is driven inactive at the
-end of the transfer directly by the HW.
-
-This patch enables the use of HW based CS only for single transfers
-without cs_change request.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-tegra114.c | 39 ++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index f47417dd9edb..0cb0932d32fd 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -193,6 +193,7 @@ struct tegra_spi_data {
- 	unsigned				dma_buf_size;
- 	unsigned				max_buf_size;
- 	bool					is_curr_dma_xfer;
-+	bool					use_hw_based_cs;
- 
- 	struct completion			rx_dma_complete;
- 	struct completion			tx_dma_complete;
-@@ -723,7 +724,9 @@ static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
- }
- 
- static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
--		struct spi_transfer *t, bool is_first_of_msg)
-+					struct spi_transfer *t,
-+					bool is_first_of_msg,
-+					bool is_single_xfer)
- {
- 	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
- 	u32 speed = t->speed_hz;
-@@ -780,11 +783,17 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
- 		if (spi->cs_gpiod)
- 			gpiod_set_value(spi->cs_gpiod, 1);
- 
--		command1 |= SPI_CS_SW_HW;
--		if (spi->mode & SPI_CS_HIGH)
--			command1 |= SPI_CS_SW_VAL;
--		else
--			command1 &= ~SPI_CS_SW_VAL;
-+		if (is_single_xfer && !(t->cs_change)) {
-+			tspi->use_hw_based_cs = true;
-+			command1 &= ~(SPI_CS_SW_HW | SPI_CS_SW_VAL);
-+		} else {
-+			tspi->use_hw_based_cs = false;
-+			command1 |= SPI_CS_SW_HW;
-+			if (spi->mode & SPI_CS_HIGH)
-+				command1 |= SPI_CS_SW_VAL;
-+			else
-+				command1 &= ~SPI_CS_SW_VAL;
-+		}
- 
- 		tegra_spi_writel(tspi, 0, SPI_COMMAND2);
- 	} else {
-@@ -905,11 +914,14 @@ static void tegra_spi_transfer_end(struct spi_device *spi)
- 	if (spi->cs_gpiod)
- 		gpiod_set_value(spi->cs_gpiod, 0);
- 
--	if (cs_val)
--		tspi->command1_reg |= SPI_CS_SW_VAL;
--	else
--		tspi->command1_reg &= ~SPI_CS_SW_VAL;
--	tegra_spi_writel(tspi, tspi->command1_reg, SPI_COMMAND1);
-+	if (!tspi->use_hw_based_cs) {
-+		if (cs_val)
-+			tspi->command1_reg |= SPI_CS_SW_VAL;
-+		else
-+			tspi->command1_reg &= ~SPI_CS_SW_VAL;
-+		tegra_spi_writel(tspi, tspi->command1_reg, SPI_COMMAND1);
-+	}
-+
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- }
- 
-@@ -936,16 +948,19 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 	struct spi_device *spi = msg->spi;
- 	int ret;
- 	bool skip = false;
-+	int single_xfer;
- 
- 	msg->status = 0;
- 	msg->actual_length = 0;
- 
-+	single_xfer = list_is_singular(&msg->transfers);
- 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
- 		u32 cmd1;
- 
- 		reinit_completion(&tspi->xfer_completion);
- 
--		cmd1 = tegra_spi_setup_transfer_one(spi, xfer, is_first_msg);
-+		cmd1 = tegra_spi_setup_transfer_one(spi, xfer, is_first_msg,
-+						    single_xfer);
- 
- 		if (!xfer->len) {
- 			ret = 0;
--- 
-2.20.1
-
+Regards,
+Markus
