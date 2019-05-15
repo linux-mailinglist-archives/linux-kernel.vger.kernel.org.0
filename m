@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578141ED9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD2461EEFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfEOLLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46632 "EHLO mail.kernel.org"
+        id S1732402AbfEOL23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbfEOLLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:52 -0400
+        id S1732395AbfEOL20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAF422084E;
-        Wed, 15 May 2019 11:11:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21B672084F;
+        Wed, 15 May 2019 11:28:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918711;
-        bh=ZX9NEV59F5PkBseRNrlUQ9+nRUkhfdE89pgMCav3VNU=;
+        s=default; t=1557919704;
+        bh=tP/OVEYcS1Z+hedFvdTXtUtRievtQUzy9tUv2flpNPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H5ImNQM62eXgrCJFfh5xsyRBjq7Z7mAsijJYMin3RsJttT46NTw2WI/H4aLxMKJR0
-         n2G16smFAssLANTuK2E10Ha+xbUkDQK4vhrUqKxHxa9KI55z8ZpsFgCsMe9hBP39OZ
-         PmbSEdyam+oCx+i9NgHyC0/MTYXc9beJwC+ZSzXg=
+        b=sBF1/7n6RhQDfVDWFRFIF+Zewy/0V1JL3mrCB/MsS5v6u4Kkeso87Id2CrPR5MUdf
+         uLYpZXmlGDSp7O+pe2GUBDKpbSJkqy4eFXsB5CEy078WDA5Ld4rWxUH7CoMFm2qnvs
+         EFcnQooLYWKVBOMIHz1Tr85T8N4LkntO/vSdyGZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jon Masters <jcm@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 235/266] x86/speculation/mds: Conditionally clear CPU buffers on idle entry
+        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 061/137] mm: fix inactive list balancing between NUMA nodes and cgroups
 Date:   Wed, 15 May 2019 12:55:42 +0200
-Message-Id: <20190515090730.951474215@linuxfoundation.org>
+Message-Id: <20190515090657.915361996@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,218 +47,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 3b991208b897f52507168374033771a984b947b1 ]
 
-commit 07f07f55a29cb705e221eda7894dd67ab81ef343 upstream.
+During !CONFIG_CGROUP reclaim, we expand the inactive list size if it's
+thrashing on the node that is about to be reclaimed.  But when cgroups
+are enabled, we suddenly ignore the node scope and use the cgroup scope
+only.  The result is that pressure bleeds between NUMA nodes depending
+on whether cgroups are merely compiled into Linux.  This behavioral
+difference is unexpected and undesirable.
 
-Add a static key which controls the invocation of the CPU buffer clear
-mechanism on idle entry. This is independent of other MDS mitigations
-because the idle entry invocation to mitigate the potential leakage due to
-store buffer repartitioning is only necessary on SMT systems.
+When the refault adaptivity of the inactive list was first introduced,
+there were no statistics at the lruvec level - the intersection of node
+and memcg - so it was better than nothing.
 
-Add the actual invocations to the different halt/mwait variants which
-covers all usage sites. mwaitx is not patched as it's not available on
-Intel CPUs.
+But now that we have that infrastructure, use lruvec_page_state() to
+make the list balancing decision always NUMA aware.
 
-The buffer clear is only invoked before entering the C-State to prevent
-that stale data from the idling CPU is spilled to the Hyper-Thread sibling
-after the Store buffer got repartitioned and all entries are available to
-the non idle sibling.
-
-When coming out of idle the store buffer is partitioned again so each
-sibling has half of it available. Now CPU which returned from idle could be
-speculatively exposed to contents of the sibling, but the buffers are
-flushed either on exit to user space or on VMENTER.
-
-When later on conditional buffer clearing is implemented on top of this,
-then there is no action required either because before returning to user
-space the context switch will set the condition flag which causes a flush
-on the return to user path.
-
-Note, that the buffer clearing on idle is only sensible on CPUs which are
-solely affected by MSBDS and not any other variant of MDS because the other
-MDS variants cannot be mitigated when SMT is enabled, so the buffer
-clearing on idle would be a window dressing exercise.
-
-This intentionally does not handle the case in the acpi/processor_idle
-driver which uses the legacy IO port interface for C-State transitions for
-two reasons:
-
- - The acpi/processor_idle driver was replaced by the intel_idle driver
-   almost a decade ago. Anything Nehalem upwards supports it and defaults
-   to that new driver.
-
- - The legacy IO port interface is likely to be used on older and therefore
-   unaffected CPUs or on systems which do not receive microcode updates
-   anymore, so there is no point in adding that.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Jon Masters <jcm@redhat.com>
-Tested-by: Jon Masters <jcm@redhat.com>
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[hannes@cmpxchg.org: fix bisection hole]
+  Link: http://lkml.kernel.org/r/20190417155241.GB23013@cmpxchg.org
+Link: http://lkml.kernel.org/r/20190412144438.2645-1-hannes@cmpxchg.org
+Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/x86/mds.rst            |   42 +++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/irqflags.h      |    5 ++++
- arch/x86/include/asm/mwait.h         |    7 +++++
- arch/x86/include/asm/nospec-branch.h |   12 ++++++++++
- arch/x86/kernel/cpu/bugs.c           |    3 ++
- 5 files changed, 69 insertions(+)
+ mm/vmscan.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
---- a/Documentation/x86/mds.rst
-+++ b/Documentation/x86/mds.rst
-@@ -149,3 +149,45 @@ Mitigation points
-      This takes the paranoid exit path only when the INT1 breakpoint is in
-      kernel space. #DB on a user space address takes the regular exit path,
-      so no extra mitigation required.
-+
-+
-+2. C-State transition
-+^^^^^^^^^^^^^^^^^^^^^
-+
-+   When a CPU goes idle and enters a C-State the CPU buffers need to be
-+   cleared on affected CPUs when SMT is active. This addresses the
-+   repartitioning of the store buffer when one of the Hyper-Threads enters
-+   a C-State.
-+
-+   When SMT is inactive, i.e. either the CPU does not support it or all
-+   sibling threads are offline CPU buffer clearing is not required.
-+
-+   The idle clearing is enabled on CPUs which are only affected by MSBDS
-+   and not by any other MDS variant. The other MDS variants cannot be
-+   protected against cross Hyper-Thread attacks because the Fill Buffer and
-+   the Load Ports are shared. So on CPUs affected by other variants, the
-+   idle clearing would be a window dressing exercise and is therefore not
-+   activated.
-+
-+   The invocation is controlled by the static key mds_idle_clear which is
-+   switched depending on the chosen mitigation mode and the SMT state of
-+   the system.
-+
-+   The buffer clear is only invoked before entering the C-State to prevent
-+   that stale data from the idling CPU from spilling to the Hyper-Thread
-+   sibling after the store buffer got repartitioned and all entries are
-+   available to the non idle sibling.
-+
-+   When coming out of idle the store buffer is partitioned again so each
-+   sibling has half of it available. The back from idle CPU could be then
-+   speculatively exposed to contents of the sibling. The buffers are
-+   flushed either on exit to user space or on VMENTER so malicious code
-+   in user space or the guest cannot speculatively access them.
-+
-+   The mitigation is hooked into all variants of halt()/mwait(), but does
-+   not cover the legacy ACPI IO-Port mechanism because the ACPI idle driver
-+   has been superseded by the intel_idle driver around 2010 and is
-+   preferred on all affected CPUs which are expected to gain the MD_CLEAR
-+   functionality in microcode. Aside of that the IO-Port mechanism is a
-+   legacy interface which is only used on older systems which are either
-+   not affected or do not receive microcode updates anymore.
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -4,6 +4,9 @@
- #include <asm/processor-flags.h>
- 
- #ifndef __ASSEMBLY__
-+
-+#include <asm/nospec-branch.h>
-+
- /*
-  * Interrupt control:
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index e979705bbf325..022afabac3f69 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2199,7 +2199,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
+  *   10TB     320        32GB
   */
-@@ -49,11 +52,13 @@ static inline void native_irq_enable(voi
- 
- static inline void native_safe_halt(void)
+ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+-				 struct mem_cgroup *memcg,
+ 				 struct scan_control *sc, bool actual_reclaim)
  {
-+	mds_idle_clear_cpu_buffers();
- 	asm volatile("sti; hlt": : :"memory");
+ 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
+@@ -2220,16 +2219,12 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+ 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
+ 	active = lruvec_lru_size(lruvec, active_lru, sc->reclaim_idx);
+ 
+-	if (memcg)
+-		refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-	else
+-		refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 	/*
+ 	 * When refaults are being observed, it means a new workingset
+ 	 * is being established. Disable active list protection to get
+ 	 * rid of the stale workingset quickly.
+ 	 */
++	refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 	if (file && actual_reclaim && lruvec->refaults != refaults) {
+ 		inactive_ratio = 0;
+ 	} else {
+@@ -2250,12 +2245,10 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
  }
  
- static inline void native_halt(void)
+ static unsigned long shrink_list(enum lru_list lru, unsigned long nr_to_scan,
+-				 struct lruvec *lruvec, struct mem_cgroup *memcg,
+-				 struct scan_control *sc)
++				 struct lruvec *lruvec, struct scan_control *sc)
  {
-+	mds_idle_clear_cpu_buffers();
- 	asm volatile("hlt": : :"memory");
+ 	if (is_active_lru(lru)) {
+-		if (inactive_list_is_low(lruvec, is_file_lru(lru),
+-					 memcg, sc, true))
++		if (inactive_list_is_low(lruvec, is_file_lru(lru), sc, true))
+ 			shrink_active_list(nr_to_scan, lruvec, sc, lru);
+ 		return 0;
+ 	}
+@@ -2355,7 +2348,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			 * anonymous pages on the LRU in eligible zones.
+ 			 * Otherwise, the small LRU gets thrashed.
+ 			 */
+-			if (!inactive_list_is_low(lruvec, false, memcg, sc, false) &&
++			if (!inactive_list_is_low(lruvec, false, sc, false) &&
+ 			    lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, sc->reclaim_idx)
+ 					>> sc->priority) {
+ 				scan_balance = SCAN_ANON;
+@@ -2373,7 +2366,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 	 * lruvec even if it has plenty of old anonymous pages unless the
+ 	 * system is under heavy pressure.
+ 	 */
+-	if (!inactive_list_is_low(lruvec, true, memcg, sc, false) &&
++	if (!inactive_list_is_low(lruvec, true, sc, false) &&
+ 	    lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, sc->reclaim_idx) >> sc->priority) {
+ 		scan_balance = SCAN_FILE;
+ 		goto out;
+@@ -2526,7 +2519,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 				nr[lru] -= nr_to_scan;
+ 
+ 				nr_reclaimed += shrink_list(lru, nr_to_scan,
+-							    lruvec, memcg, sc);
++							    lruvec, sc);
+ 			}
+ 		}
+ 
+@@ -2593,7 +2586,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 	 * Even if we did not try to evict anon pages at all, we want to
+ 	 * rebalance the anon lru active/inactive ratio.
+ 	 */
+-	if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++	if (inactive_list_is_low(lruvec, false, sc, true))
+ 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 				   sc, LRU_ACTIVE_ANON);
  }
+@@ -2993,12 +2986,8 @@ static void snapshot_refaults(struct mem_cgroup *root_memcg, pg_data_t *pgdat)
+ 		unsigned long refaults;
+ 		struct lruvec *lruvec;
  
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -4,6 +4,7 @@
- #include <linux/sched.h>
- 
- #include <asm/cpufeature.h>
-+#include <asm/nospec-branch.h>
- 
- #define MWAIT_SUBSTATE_MASK		0xf
- #define MWAIT_CSTATE_MASK		0xf
-@@ -38,6 +39,8 @@ static inline void __monitorx(const void
- 
- static inline void __mwait(unsigned long eax, unsigned long ecx)
- {
-+	mds_idle_clear_cpu_buffers();
-+
- 	/* "mwait %eax, %ecx;" */
- 	asm volatile(".byte 0x0f, 0x01, 0xc9;"
- 		     :: "a" (eax), "c" (ecx));
-@@ -72,6 +75,8 @@ static inline void __mwait(unsigned long
- static inline void __mwaitx(unsigned long eax, unsigned long ebx,
- 			    unsigned long ecx)
- {
-+	/* No MDS buffer clear as this is AMD/HYGON only */
-+
- 	/* "mwaitx %eax, %ebx, %ecx;" */
- 	asm volatile(".byte 0x0f, 0x01, 0xfb;"
- 		     :: "a" (eax), "b" (ebx), "c" (ecx));
-@@ -79,6 +84,8 @@ static inline void __mwaitx(unsigned lon
- 
- static inline void __sti_mwait(unsigned long eax, unsigned long ecx)
- {
-+	mds_idle_clear_cpu_buffers();
-+
- 	trace_hardirqs_on();
- 	/* "mwait %eax, %ecx;" */
- 	asm volatile("sti; .byte 0x0f, 0x01, 0xc9;"
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -263,6 +263,7 @@ DECLARE_STATIC_KEY_FALSE(switch_mm_cond_
- DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
- 
- DECLARE_STATIC_KEY_FALSE(mds_user_clear);
-+DECLARE_STATIC_KEY_FALSE(mds_idle_clear);
- 
- #include <asm/segment.h>
- 
-@@ -300,6 +301,17 @@ static inline void mds_user_clear_cpu_bu
- 		mds_clear_cpu_buffers();
+-		if (memcg)
+-			refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-		else
+-			refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 		lruvec = mem_cgroup_lruvec(pgdat, memcg);
++		refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 		lruvec->refaults = refaults;
+ 	} while ((memcg = mem_cgroup_iter(root_memcg, memcg, NULL)));
  }
+@@ -3363,7 +3352,7 @@ static void age_active_anon(struct pglist_data *pgdat,
+ 	do {
+ 		struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
  
-+/**
-+ * mds_idle_clear_cpu_buffers - Mitigation for MDS vulnerability
-+ *
-+ * Clear CPU buffers if the corresponding static key is enabled
-+ */
-+static inline void mds_idle_clear_cpu_buffers(void)
-+{
-+	if (static_branch_likely(&mds_idle_clear))
-+		mds_clear_cpu_buffers();
-+}
-+
- #endif /* __ASSEMBLY__ */
+-		if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++		if (inactive_list_is_low(lruvec, false, sc, true))
+ 			shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 					   sc, LRU_ACTIVE_ANON);
  
- /*
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -60,6 +60,9 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_always
- 
- /* Control MDS CPU buffer clear before returning to user space */
- DEFINE_STATIC_KEY_FALSE(mds_user_clear);
-+/* Control MDS CPU buffer clear before idling (halt, mwait) */
-+DEFINE_STATIC_KEY_FALSE(mds_idle_clear);
-+EXPORT_SYMBOL_GPL(mds_idle_clear);
- 
- void __init check_bugs(void)
- {
+-- 
+2.20.1
+
 
 
