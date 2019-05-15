@@ -2,128 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC331E886
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD6A1E88A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbfEOGtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 02:49:24 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37467 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbfEOGtX (ORCPT
+        id S1726547AbfEOGuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 02:50:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57972 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725876AbfEOGuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 02:49:23 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w37so2601310edw.4;
-        Tue, 14 May 2019 23:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=48yngF/FDRHAZXmLQeAd7al+O7G8keCIP9i3ThoJUc0=;
-        b=LGUa1zFkrH3jKWKDUjMTeEjsC/TlXPx0BnRMqmbcD1UUhz9G00wMfivuh7kOnTIE32
-         9IKhX6YbzKkr8lwSyL25gAgB3i2WvwSOFDNtWBTQtUgqyYbCDoTeBOyvr4aP7ZUxg+uv
-         +N64zR5wJyxxJGy3Ef3Kq6VmLBcrdtj31YTPt+obg7TNlUBSgqrMp4ggo1UGBLoRuDCm
-         U5Jx+iQ0OlIFJb/kwVvvhpd7E2ZrLB4SmToQlNuw9fCtHXxjsvdseubOvWLdgBGeEabg
-         MQ8++JSL8UR8KkjRQnG9EDfWgmJptg2BZJYvMaGSEHzE3KF9fBkYCoaQ0mNjo9o9BBJL
-         Om2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=48yngF/FDRHAZXmLQeAd7al+O7G8keCIP9i3ThoJUc0=;
-        b=rwWoSXvkAv5KOefExdZkWbUZ1SqdUaM4XpeiE8yZUURoksyKepqPamHROANPb99w7D
-         I0LTuvntGHdzn5HiR+PJgy/opiXGtwv4AzzRjPvz8x2XkdAiWt1AYa9er0RaFOwdXTEm
-         gXo0nNjZJ3L3B3e3bO70wsgVwND909Qku6A3L5Z/WFH7D0eFCJwpP245KAUBTMCW4EfD
-         5WbVKMeOhsQsP79oCvksT+sTlNU7N7Gj453CVClQUGIwotucsFG6XHoc/GgiVjqrqMtH
-         gMvZqh5L6HQNtkqw2/dEFz/6Is3kN09rBzpAJxyPYRqsqR3DIn7yBm4dbRAnTYJbdxRR
-         CGgQ==
-X-Gm-Message-State: APjAAAX6kNxpbvIECEjTUR8Ls0k3IMmIXrFT7lx+gCxONBcgLw08mSiN
-        ymjwG0XRArI2WaNv/1sFFco=
-X-Google-Smtp-Source: APXvYqyzQg3zls+zCwHTtJdq53njIRbmjK8QuPiTOncJ6GxqCxscmIWrCjf63NXtTCy/hmAcnSov1w==
-X-Received: by 2002:a17:906:6b18:: with SMTP id q24mr31582277ejr.225.1557902961514;
-        Tue, 14 May 2019 23:49:21 -0700 (PDT)
-Received: from archlinux-i9 ([2a01:4f9:2b:2b84::2])
-        by smtp.gmail.com with ESMTPSA id k18sm470133eda.92.2019.05.14.23.49.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 14 May 2019 23:49:20 -0700 (PDT)
-Date:   Tue, 14 May 2019 23:49:18 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "fengguang.wu@intel.com" <fengguang.wu@intel.com>,
-        "kbuild@01.org" <kbuild@01.org>,
-        Ariel Levkovich <lariel@mellanox.com>,
-        Eli Cohen <eli@mellanox.com>, Mark Bloch <markb@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: undefined reference to `__aeabi_uldivmod' after 25c13324d03d
- ("IB/mlx5: Add steering SW ICM device memory type")
-Message-ID: <20190515064918.GA4807@archlinux-i9>
-References: <20190514194510.GA15465@archlinux-i9>
- <20190515003202.GA14522@ziepe.ca>
- <20190515050331.GC5225@mtr-leonro.mtl.com>
- <CAK8P3a0aH9Ezur3r7TDVMPreVKMip2HMEWhUsC_pKhOq7mE+3A@mail.gmail.com>
- <20190515064043.GA944@archlinux-i9>
- <CAK8P3a1r3QD=pwZqG+SfDkVr_V3P7ueRT8SLss9z+M6OEQst4A@mail.gmail.com>
+        Wed, 15 May 2019 02:50:09 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4F6g2Ll116201
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 02:50:09 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sgdaysg69-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 02:50:08 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 15 May 2019 07:50:06 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 May 2019 07:50:03 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4F6o2hg53477432
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 May 2019 06:50:02 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32F434203F;
+        Wed, 15 May 2019 06:50:02 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAD4D42042;
+        Wed, 15 May 2019 06:49:59 +0000 (GMT)
+Received: from [9.85.89.71] (unknown [9.85.89.71])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 15 May 2019 06:49:59 +0000 (GMT)
+Subject: Re: [PATCH V2 1/3] perf parse-regs: Split parse_regs
+To:     kan.liang@linux.intel.com, acme@kernel.org
+Cc:     jolsa@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 15 May 2019 12:19:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1r3QD=pwZqG+SfDkVr_V3P7ueRT8SLss9z+M6OEQst4A@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051506-0020-0000-0000-0000033CD12B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051506-0021-0000-0000-0000218F90CD
+Message-Id: <02cd8171-3dbf-b835-3fe0-245f6fbea1cb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=841 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905150043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 08:42:13AM +0200, Arnd Bergmann wrote:
-> On Wed, May 15, 2019 at 8:40 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> > On Wed, May 15, 2019 at 08:31:49AM +0200, Arnd Bergmann wrote:
-> > > On Wed, May 15, 2019 at 7:04 AM Leon Romanovsky <leonro@mellanox.com> wrote:
-> > > > On Tue, May 14, 2019 at 09:32:02PM -0300, Jason Gunthorpe wrote:
-> > > > > On Tue, May 14, 2019 at 12:45:10PM -0700, Nathan Chancellor wrote:
-> > > > > > Hi all,
-> > > > > >
-> > > > > > I checked the RDMA mailing list and trees and I haven't seen this
-> > > > > > reported/fixed yet (forgive me if it has) but when building for arm32
-> > > > > > with multi_v7_defconfig and the following configs (distilled from
-> > > > > > allyesconfig):
-> > > > > >
-> > > > > > CONFIG_INFINIBAND=y
-> > > > > > CONFIG_INFINIBAND_ON_DEMAND_PAGING=y
-> > > > > > CONFIG_INFINIBAND_USER_ACCESS=y
-> > > > > > CONFIG_MLX5_CORE=y
-> > > > > > CONFIG_MLX5_INFINIBAND=y
-> > > > > >
-> > > > > > The following link time errors occur:
-> > > > > >
-> > > > > > arm-linux-gnueabi-ld: drivers/infiniband/hw/mlx5/main.o: in function `mlx5_ib_alloc_dm':
-> > > > > > main.c:(.text+0x60c): undefined reference to `__aeabi_uldivmod'
-> > > > > > arm-linux-gnueabi-ld: drivers/infiniband/hw/mlx5/cmd.o: in function `mlx5_cmd_alloc_sw_icm':
-> > > > > > cmd.c:(.text+0x6d4): undefined reference to `__aeabi_uldivmod'
-> > > > > > arm-linux-gnueabi-ld: drivers/infiniband/hw/mlx5/cmd.o: in function `mlx5_cmd_dealloc_sw_icm':
-> > > > > > cmd.c:(.text+0x9ec): undefined reference to `__aeabi_uldivmod'
-> > > > >
-> > > > > Fengguang, I'm surprised that 0-day didn't report this earlier..
-> > > >
-> > > > I got many successful emails after I pushed this patch to 0-day testing.
-> > >
-> > > The long division warnings can compiler specific, and depend on certain
-> > > optimization options, as compilers can optimize out certain divisions and
-> > > replace them with multiplications and/or shifts, or prove that they can be
-> > > replaced with a 32-bit division. If this is a case that gcc manages to
-> > > optimize but clang does not, it might be worth looking into whether an
-> > > optimization can be added to clang, in addition to improving the source.
-> >
-> > While I did run initially run into this with clang, the errors above are
-> > with gcc (mainly to show this was going to be a universal problem and
-> > not just something with clang).
-> 
-> Which gcc version did you use here? Anything particularly old or particularly
-> new? I think 0-day is on a fairly recent gcc-8, but not the latest gcc-9
-> release.
 
-8.2.0 it seems (I've been meaning to build from the 9.x branch though
-since it appears that Arch's arm-linux-gnueabi-gcc isn't going to get
-updated since it's in the AUR).
+On 5/15/19 1:49 AM, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> The available registers for --int-regs and --user-regs may be different,
+> e.g. XMM registers.
+> 
+> Split parse_regs into two dedicated functions for --int-regs and
+> --user-regs respectively.
+> 
+> Modify the warning message. "--user-regs=?" should be applied to show
+> the available registers for --user-regs.
+> 
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+
+For patch 1 and 2,
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+
+Minor neat. Should we update document as well? May be something like:
+
+  tools/perf/Documentation/perf-record.txt
+
+  --user-regs::
+  Similar to -I, but capture user registers at sample time. To list the available
+  user registers use --user-regs=\?.
+
+Ravi
+
