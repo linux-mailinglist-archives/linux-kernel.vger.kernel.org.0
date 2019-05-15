@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B261EDFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0521F119
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbfEOLP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:15:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51862 "EHLO mail.kernel.org"
+        id S1731158AbfEOLUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730261AbfEOLPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:15:23 -0400
+        id S1730800AbfEOLUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:20:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DE7920644;
-        Wed, 15 May 2019 11:15:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40748206BF;
+        Wed, 15 May 2019 11:20:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918923;
-        bh=6zO7tVXG4/5IUdBroFzjK/pJRlz3x3muihcqwl8q3JA=;
+        s=default; t=1557919248;
+        bh=c73fBmBoUFbpJi5x/+IpwqKCWz6Hyese2gMWQna4xCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DROwB0RJHYJpTUXoN+svIIHhRXYWsTqTNJphOE6tKPGSPnD/H0AtBZtKATw5xnSky
-         FIzLs8cUL/DgsnWzrpyaqzFM1o54NfyaM1jJlHIAc91Cb7sKGjd8lm4ee4lqDVxEDb
-         MP/M+NhWBf4vZR0jmWIRfdQjSnYhcptwQNXMgJjk=
+        b=HvYQdqSTDt2W0cxU1rhKHzHbYs2JIawSr5DdAo3puR0LjOsTJOjmOcCUMG3LQNdCL
+         9VgHGtTfdZHo3+UXWLJOp9rzuvlEG/KYp2bZxolJ3Vw62mW681hlryiroIKzLcUKvz
+         MnQ93CJ60xHb4jgrc6JlTbV9RCvXKsqTAB3iYQd0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 51/51] powerpc/booke64: set RI in default MSR
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 106/115] net: seeq: fix crash caused by not set dev.parent
 Date:   Wed, 15 May 2019 12:56:26 +0200
-Message-Id: <20190515090630.242063612@linuxfoundation.org>
+Message-Id: <20190515090706.834096793@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-commit 5266e58d6cd90ac85c187d673093ad9cb649e16d upstream.
+[ Upstream commit 5afcd14cfc7fed1bcc8abcee2cef82732772bfc2 ]
 
-Set RI in the default kernel's MSR so that the architected way of
-detecting unrecoverable machine check interrupts has a chance to work.
-This is inline with the MSR setup of the rest of booke powerpc
-architectures configured here.
+The old MIPS implementation of dma_cache_sync() didn't use the dev argument,
+but commit c9eb6172c328 ("dma-mapping: turn dma_cache_sync into a
+dma_map_ops method") changed that, so we now need to set dev.parent.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/include/asm/reg_booke.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/seeq/sgiseeq.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/include/asm/reg_booke.h
-+++ b/arch/powerpc/include/asm/reg_booke.h
-@@ -41,7 +41,7 @@
- #if defined(CONFIG_PPC_BOOK3E_64)
- #define MSR_64BIT	MSR_CM
+--- a/drivers/net/ethernet/seeq/sgiseeq.c
++++ b/drivers/net/ethernet/seeq/sgiseeq.c
+@@ -734,6 +734,7 @@ static int sgiseeq_probe(struct platform
+ 	}
  
--#define MSR_		(MSR_ME | MSR_CE)
-+#define MSR_		(MSR_ME | MSR_RI | MSR_CE)
- #define MSR_KERNEL	(MSR_ | MSR_64BIT)
- #define MSR_USER32	(MSR_ | MSR_PR | MSR_EE)
- #define MSR_USER64	(MSR_USER32 | MSR_64BIT)
+ 	platform_set_drvdata(pdev, dev);
++	SET_NETDEV_DEV(dev, &pdev->dev);
+ 	sp = netdev_priv(dev);
+ 
+ 	/* Make private data page aligned */
 
 
