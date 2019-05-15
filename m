@@ -2,119 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 271EE1EA61
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B621EA70
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfEOIqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 04:46:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34660 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfEOIqN (ORCPT
+        id S1726360AbfEOIsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 04:48:36 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:58292 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725912AbfEOIsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 04:46:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id j187so4154670wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 01:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SjTzfocxmV9Q3qyS3D6y8G341QPk5z6P8wHPvkJzRmA=;
-        b=vQ9ihMC4KeD1sH00RphG8WvBfibZMVI/ROw8bblIJDIs8HTOvbDXNSMqLjOxF4bNk9
-         TsH5l1YoWQZsBNaLx7rJtxAaKPc6SvWC+hWDrYXHPvhWJFRowZ1/Spgad36aezY0tnaR
-         4xlJODtu7vv9+bIolowJECSdosWGHjI0WB4F52pdrrl2G1B6LYFvNZB7lnKDxnUuOaLl
-         fUzbGxZPiWSl88ur7+527fb37qoDhotzbeWTKHZlbjoP/jMXMPMZxlPK+slNWKZcMcPF
-         mmFxRulwbNrCCp/Rr/K/miufZnZWsLUBUE+4DM9vWh1ugs8GaxiAGdRp9Jw3/IVSKxeY
-         vfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SjTzfocxmV9Q3qyS3D6y8G341QPk5z6P8wHPvkJzRmA=;
-        b=Ve6djPWqwOnjuALb2VV8R9FhD5v/tjLJD+A1p+U22JUjs0L9kjAZiskAoYZvrfsGpD
-         L8QRNKw6DfNTDzpDxotPvOVmtYOg+akB2J95TpEQGesaBYAlYct1T/cJRrz9cPvvWnI2
-         7dxFMBiffVVoIwNxFTW6DE0VMrqezfvZuzwho3Uzz88/fT/IHsozHmapihQemdff6BSW
-         F78ua1MQvgTi7pjQ7CwXql/IfWSmqMKSofNlKr0QrhHeKtCOdptuEUkdRl9iOXF4dCRB
-         peUkbGaYrA6n5Wtawsb1Do3S1dg7Juead5+I+xqxDdjYIYx1drbFCiu2VEeDqTHGnhJu
-         0x4Q==
-X-Gm-Message-State: APjAAAVq8xcZKfdMliBXGs583CnUFVetKgZimTgTqEx92LNMQTFAkI9+
-        89/5Selo7B0/uNzJLyN8dpQ72E5TWDw=
-X-Google-Smtp-Source: APXvYqykhcOsSF5cy288Wi7AKFIvGeafQ6EecV8kQ8OJaAyCvPprwNnZr8e/TsvC0TI1SiLtaInomA==
-X-Received: by 2002:a1c:ac07:: with SMTP id v7mr21293143wme.49.1557909971165;
-        Wed, 15 May 2019 01:46:11 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id l16sm2111672wrb.40.2019.05.15.01.46.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 01:46:10 -0700 (PDT)
-Subject: Re: [PATCH v4 1/3] arm64: defconfig: Enable CONFIG_ENERGY_MODEL
-To:     Quentin Perret <quentin.perret@arm.com>, edubezval@gmail.com,
-        rui.zhang@intel.com, javi.merino@kernel.org,
-        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
-        mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190515082318.7993-1-quentin.perret@arm.com>
- <20190515082318.7993-2-quentin.perret@arm.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <2f598ea3-752d-0f1d-fd33-f07cda3b7bd0@linaro.org>
-Date:   Wed, 15 May 2019 10:46:09 +0200
+        Wed, 15 May 2019 04:48:36 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id E97EF2E146D;
+        Wed, 15 May 2019 11:48:33 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id Q7pQ1sTs55-mXwKadUT;
+        Wed, 15 May 2019 11:48:33 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1557910113; bh=RBKOGGXjvQMTQzfr1KxZ/9oyUSl618uUSUuLqd4U4J4=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=xS6pYk6lclpU7VNMA86o90Cjw5stbFWI+4tB+0YsgkUrheiouBQ8AFz8MpyH3KX6B
+         cYl8QrQFZIGVKhNgLsQ5GI7hC5vZalPybRoqEZphXJ6kxTMy+pJlDcuospumbfhH/6
+         AX9OFu7taypLf891OGXJ8oBpDBEjmuIz6A49Iw8Q=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ed19:3833:7ce1:2324])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id F0Vfe9DM2Y-mXlCWMAt;
+        Wed, 15 May 2019 11:48:33 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: mm: use down_read_killable for locking mmap_sem in
+ access_remote_vm
+To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, oleg@redhat.com
+References: <20190515083825.GJ13687@blackbody.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <11ee83c8-5f0f-0950-a588-037bdcf9084e@yandex-team.ru>
+Date:   Wed, 15 May 2019 11:48:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190515082318.7993-2-quentin.perret@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190515083825.GJ13687@blackbody.suse.cz>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/2019 10:23, Quentin Perret wrote:
-> The recently introduced Energy Model (EM) framework manages power cost
-> tables for the CPUs of the system. Its only user right now is the
-> scheduler, in the context of Energy Aware Scheduling (EAS).
+On 15.05.2019 11:38, Michal Koutný wrote:
+> Hi,
+> making this holder of mmap_sem killable was for the reasons of /proc/...
+> diagnostics was an idea I was pondeering too. However, I think the
+> approach of pretending we read 0 bytes is not correct. The API would IMO
+> need to be extended to allow pass a result such as EINTR to the end
+> caller.
+> Why do you think it's safe to return just 0?
+
+This function ignores any error like reading from unmapped area and
+returns only size of successful transfer. It never returned any error codes.
+
 > 
-> However, the EM framework also offers a generic infrastructure that
-> could replace subsystem-specific implementations of the same concepts,
-> as this is the case in the thermal framework.
+> Michal
 > 
-> So, in order to prepare the migration of the thermal subsystem to use
-> the EM framework, enable it in the default arm64 defconfig, which is the
-> most commonly used architecture for IPA. This will also compile-in all
-> of the EAS code, although it won't be enabled by default -- EAS requires
-> to use the 'schedutil' CPUFreq governor while arm64 defaults to
-> 'performance'.
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 2d9c39033c1a..4881a752ab3f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -97,6 +97,7 @@ CONFIG_XEN=y
->  CONFIG_COMPAT=y
->  CONFIG_HIBERNATION=y
->  CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-> +CONFIG_ENERGY_MODEL=y
->  CONFIG_ARM_CPUIDLE=y
->  CONFIG_CPU_FREQ=y
->  CONFIG_CPU_FREQ_STAT=y
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
