@@ -2,92 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF151F09B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DF21F0AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732306AbfEOLpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:45:31 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:2983 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732296AbfEOLp0 (ORCPT
+        id S1731985AbfEOLqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:46:34 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59972 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731686AbfEOLqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:45:26 -0400
-X-IronPort-AV: E=Sophos;i="5.60,472,1549897200"; 
-   d="scan'208";a="16013224"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 15 May 2019 20:45:24 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B688E424CA39;
-        Wed, 15 May 2019 20:45:20 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Wed, 15 May 2019 07:46:32 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4FBk9X7066201;
+        Wed, 15 May 2019 06:46:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1557920769;
+        bh=ErZPSnkvpW1ltnGA1FPiw4W2WDwUubKfvtcFuldMMbo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JeFk7xcC5uF8iif4I2oxfzx5DC25I04BKsRowLeWGNJiOLKwhsC9BszWU9wc2hyhQ
+         tmocg2hT+SJRAtzTALA3XtvHx+8ofLS4OlrR5xYHTThVMrti7e6vOhmHWmdoQOVKP1
+         KGS+N7F+oBTZVQUNX7E3U2vBnMv5dM14Wt8DGKpM=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4FBk9UR066924
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 May 2019 06:46:09 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 15
+ May 2019 06:46:09 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 15 May 2019 06:46:09 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4FBk4qH020658;
+        Wed, 15 May 2019 06:46:05 -0500
+Subject: Re: [PATCH] clk: Remove io.h from clk-provider.h
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
-Subject: [PATCH 2/2] dt-bindings: arm: renesas: Add HopeRun RZ/G2[M] boards
-Date:   Wed, 15 May 2019 12:44:57 +0100
-Message-Id: <1557920697-18057-3-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557920697-18057-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1557920697-18057-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Heiko Stuebner <heiko@sntech.de>
+References: <20190514170931.56312-1-sboyd@kernel.org>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7d38658e-02f5-d6f4-ca66-5fdb57fb0352@ti.com>
+Date:   Wed, 15 May 2019 17:16:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190514170931.56312-1-sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds board HiHope RZ/G2M (the main board, powered by
-the R8A774A1) and board HiHope RZ/G2 EX (the expansion board
-that sits on top of the HiHope RZ/G2M). Both boards are made
-by Jiangsu HopeRun Software Co., Ltd. (a.k.a. HopeRun).
+On 14/05/19 10:39 PM, Stephen Boyd wrote:
+> Now that we've gotten rid of clk_readl() we can remove io.h from the
+> clk-provider header and push out the io.h include to any code that isn't
+> already including the io.h header but using things like readl/writel,
+> etc.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+For mach-davinci and drivers/clk/davinci
 
----
-Useful links:
-http://hihope.org/product/detail/rzg2
-https://item.taobao.com/item.htm?spm=a2oq0.12575281.0.0.6bcf1debQpzkRS&ft=t&id=592177498472
-http://www.hoperun.com/Cn/news/id/379
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 
-We already know that the HiHope RZ/G2 EX will also sit on the
-HiHope RZ/G2N, even though the HiHope RZ/G2N doesn't exist just
-yet.
----
- Documentation/devicetree/bindings/arm/renesas.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index 19f3798..95302b9 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -106,6 +106,14 @@ properties:
- 
-       - description: RZ/G2M (R8A774A1)
-         items:
-+          - enum:
-+              - hoperun,hihope-rzg2m # HopeRun HiHope RZ/G2M platform
-+          - const: renesas,r8a774a1
-+
-+        items:
-+          - enum:
-+              - hoperun,hihope-rzg2-ex # HopeRun expansion board for HiHope RZ/G2 platforms
-+          - const: hoperun,hihope-rzg2m
-           - const: renesas,r8a774a1
- 
-       - description: RZ/G2E (R8A774C0)
--- 
-2.7.4
-
+Thanks,
+Sekhar
