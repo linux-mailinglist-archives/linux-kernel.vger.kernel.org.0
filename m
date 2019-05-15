@@ -2,24 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F541F808
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BBE1F80E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbfEOP5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 11:57:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24524 "EHLO mga14.intel.com"
+        id S1728571AbfEOP6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 11:58:19 -0400
+Received: from mga06.intel.com ([134.134.136.31]:26191 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbfEOP5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 11:57:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726335AbfEOP6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 11:58:18 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 08:57:44 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 08:58:17 -0700
 X-ExtLoop1: 1
 Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orsmga004.jf.intel.com with ESMTP; 15 May 2019 08:57:43 -0700
-Date:   Wed, 15 May 2019 08:56:04 -0700
+  by orsmga004.jf.intel.com with ESMTP; 15 May 2019 08:58:16 -0700
+Date:   Wed, 15 May 2019 08:56:37 -0700
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -32,118 +31,56 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
         Ricardo Neri <ricardo.neri@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
         Stephane Eranian <eranian@google.com>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Subject: Re: [RFC PATCH v3 04/21] x86/hpet: Add hpet_set_comparator() for
- periodic and one-shot modes
-Message-ID: <20190515155604.GB10526@ranerica-svr.sc.intel.com>
+Subject: Re: [RFC PATCH v3 11/21] x86/watchdog/hardlockup: Add an HPET-based
+ hardlockup detector
+Message-ID: <20190515155637.GC10526@ranerica-svr.sc.intel.com>
 References: <1557842534-4266-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1557842534-4266-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <3c82f3e0-999c-b389-aa9b-f06919800bb4@infradead.org>
+ <1557842534-4266-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <62576937-50fc-fded-784b-d691e455dfc1@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c82f3e0-999c-b389-aa9b-f06919800bb4@infradead.org>
+In-Reply-To: <62576937-50fc-fded-784b-d691e455dfc1@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 07:24:38AM -0700, Randy Dunlap wrote:
-> On 5/14/19 7:01 AM, Ricardo Neri wrote:
-> > Instead of setting the timer period directly in hpet_set_periodic(), add a
-> > new helper function hpet_set_comparator() that only sets the accumulator
-> > and comparator. hpet_set_periodic() will only prepare the timer for
-> > periodic mode and leave the expiration programming to
-> > hpet_set_comparator().
-> > 
-> > This new function can also be used by other components (e.g., the HPET-
-> > based hardlockup detector) which also need to configure HPET timers. Thus,
-> > add its declaration into the hpet header file.
-> > 
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Ashok Raj <ashok.raj@intel.com>
-> > Cc: Andi Kleen <andi.kleen@intel.com>
-> > Cc: Tony Luck <tony.luck@intel.com>
-> > Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> > Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> > Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> > Cc: Stephane Eranian <eranian@google.com>
-> > Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-> > Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-> > Cc: x86@kernel.org
-> > Originally-by: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
-> >  arch/x86/include/asm/hpet.h |  1 +
-> >  arch/x86/kernel/hpet.c      | 57 ++++++++++++++++++++++++++++---------
-> >  2 files changed, 45 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
-> > index f132fbf984d4..e7098740f5ee 100644
-> > --- a/arch/x86/include/asm/hpet.h
-> > +++ b/arch/x86/include/asm/hpet.h
-> > @@ -102,6 +102,7 @@ extern int hpet_rtc_timer_init(void);
-> >  extern irqreturn_t hpet_rtc_interrupt(int irq, void *dev_id);
-> >  extern int hpet_register_irq_handler(rtc_irq_handler handler);
-> >  extern void hpet_unregister_irq_handler(rtc_irq_handler handler);
-> > +extern void hpet_set_comparator(int num, unsigned int cmp, unsigned int period);
+On Tue, May 14, 2019 at 07:26:58AM -0700, Randy Dunlap wrote:
+> On 5/14/19 7:02 AM, Ricardo Neri wrote:
+> > diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+> > index 15d0fbe27872..376a5db81aec 100644
+> > --- a/arch/x86/Kconfig.debug
+> > +++ b/arch/x86/Kconfig.debug
+> > @@ -169,6 +169,17 @@ config IOMMU_LEAK
+> >  config HAVE_MMIOTRACE_SUPPORT
+> >  	def_bool y
 > >  
-> >  #endif /* CONFIG_HPET_EMULATE_RTC */
-> >  
-> > diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-> > index 560fc28e1d13..c5c5fc150193 100644
-> > --- a/arch/x86/kernel/hpet.c
-> > +++ b/arch/x86/kernel/hpet.c
-> > @@ -289,6 +289,46 @@ static void hpet_legacy_clockevent_register(void)
-> >  	printk(KERN_DEBUG "hpet clockevent registered\n");
-> >  }
-> >  
-> > +/**
-> > + * hpet_set_comparator() - Helper function for setting comparator register
-> > + * @num:	The timer ID
-> > + * @cmp:	The value to be written to the comparator/accumulator
-> > + * @period:	The value to be written to the period (0 = oneshot mode)
-> > + *
-> > + * Helper function for updating comparator, accumulator and period values.
-> > + *
-> > + * In periodic mode, HPET needs HPET_TN_SETVAL to be set before writing
-> > + * to the Tn_CMP to update the accumulator. Then, HPET needs a second
-> > + * write (with HPET_TN_SETVAL cleared) to Tn_CMP to set the period.
-> > + * The HPET_TN_SETVAL bit is automatically cleared after the first write.
-> > + *
-> > + * For one-shot mode, HPET_TN_SETVAL does not need to be set.
-> > + *
-> > + * See the following documents:
-> > + *   - Intel IA-PC HPET (High Precision Event Timers) Specification
-> > + *   - AMD-8111 HyperTransport I/O Hub Data Sheet, Publication # 24674
-> > + */
-> > +void hpet_set_comparator(int num, unsigned int cmp, unsigned int period)
-> > +{
-> > +	if (period) {
-> > +		unsigned int v = hpet_readl(HPET_Tn_CFG(num));
-> > +
-> > +		hpet_writel(v | HPET_TN_SETVAL, HPET_Tn_CFG(num));
-> > +	}
-> > +
-> > +	hpet_writel(cmp, HPET_Tn_CMP(num));
-> > +
-> > +	if (!period)
-> > +		return;
-> > +
-> > +	/* This delay is seldom used: never in one-shot mode and in periodic
-> > +	 * only when reprogramming the timer.
-> > +	 */
+> > +config X86_HARDLOCKUP_DETECTOR_HPET
+> > +	bool "Use HPET Timer for Hard Lockup Detection"
+> > +	select SOFTLOCKUP_DETECTOR
+> > +	select HARDLOCKUP_DETECTOR
+> > +	select HARDLOCKUP_DETECTOR_CORE
+> > +	depends on HPET_TIMER && HPET && X86_64
+> > +	help
+> > +	  Say y to enable a hardlockup detector that is driven by an High-
 > 
-> comment style warning ;)
->
-
-Uh! I'll correct this. Strangely, I reran checkpatch and it didn't catch
-it.
+> 	                                                       by a
+> 
+I'll correct.
 
 Thanks and BR,
 Ricardo
