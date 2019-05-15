@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302331EF1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6C01F018
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732665AbfEOLaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41326 "EHLO mail.kernel.org"
+        id S1732412AbfEOLjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:39:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbfEOL35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:29:57 -0400
+        id S1732638AbfEOLaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 763FB20881;
-        Wed, 15 May 2019 11:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C683206BF;
+        Wed, 15 May 2019 11:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919796;
-        bh=ZXfI5rOLK+JAyxi0GMFDARkhQbo+4KCbdDkLOuPMubI=;
+        s=default; t=1557919799;
+        bh=ayrtaRKLFTddBdapRIYDnBNthvhOC139DJzg+GvaDf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aw1dyJjv57zo79um3izrNAt5cqdy+vvDE8x8lW45zfU/dHVAOOAzoTMpJwGBdTf2K
-         qjl2vUOMSjDJnN8IfBDbVuqk8QUZ8QjidjFM9iCAXiC/5Ixc61y49rBksJNA5TjJT6
-         LyfyCI1UKXhxPn85xLdoleQIB9cFMxshxweJjwj0=
+        b=GTbCbOTpPPKGdvKShm+YAJ8vZL8rUHSTeEQxd1G5hyZoy0oh3C43z4uO3dBrIhZkG
+         Q53UFhu87UTDipMqVDxOJNMgB7uVr6axlSH8EtwS+oWFc1Ctqho2HjalVEHsTZCddE
+         AraGnwIM2pzUBW9QjEY5+ivZ5oIx9ErISkKC97tg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, John Hurley <john.hurley@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 5.0 097/137] bpf: only test gso type on gso packets
-Date:   Wed, 15 May 2019 12:56:18 +0200
-Message-Id: <20190515090700.580924077@linuxfoundation.org>
+Subject: [PATCH 5.0 098/137] net: sched: fix cleanup NULL pointer exception in act_mirr
+Date:   Wed, 15 May 2019 12:56:19 +0200
+Message-Id: <20190515090700.644808978@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
 References: <20190515090651.633556783@linuxfoundation.org>
@@ -45,79 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c3024debf62de4c6ac6d3cb4c0063be21d4f652 ]
+[ Upstream commit 064c5d6881e897077639e04973de26440ee205e6 ]
 
-BPF can adjust gso only for tcp bytestreams. Fail on other gso types.
+A new mirred action is created by the tcf_mirred_init function. This
+contains a list head struct which is inserted into a global list on
+successful creation of a new action. However, after a creation, it is
+still possible to error out and call the tcf_idr_release function. This,
+in turn, calls the act_mirr cleanup function via __tcf_idr_release and
+__tcf_action_put. This cleanup function tries to delete the list entry
+which is as yet uninitialised, leading to a NULL pointer exception.
 
-But only on gso packets. It does not touch this field if !gso_size.
+Fix this by initialising the list entry on creation of a new action.
 
-Fixes: b90efd225874 ("bpf: only adjust gso_size on bytestream protocols")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Bug report:
+
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+PGD 8000000840c73067 P4D 8000000840c73067 PUD 858dcc067 PMD 0
+Oops: 0002 [#1] SMP PTI
+CPU: 32 PID: 5636 Comm: handler194 Tainted: G           OE     5.0.0+ #186
+Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 1.3.6 06/03/2015
+RIP: 0010:tcf_mirred_release+0x42/0xa7 [act_mirred]
+Code: f0 90 39 c0 e8 52 04 57 c8 48 c7 c7 b8 80 39 c0 e8 94 fa d4 c7 48 8b 93 d0 00 00 00 48 8b 83 d8 00 00 00 48 c7 c7 f0 90 39 c0 <48> 89 42 08 48 89 10 48 b8 00 01 00 00 00 00 ad de 48 89 83 d0 00
+RSP: 0018:ffffac4aa059f688 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff9dcd1b214d00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff9dcd1fa165f8 RDI: ffffffffc03990f0
+RBP: ffff9dccf9c7af80 R08: 0000000000000a3b R09: 0000000000000000
+R10: ffff9dccfa11f420 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff9dcd16b433c0 R14: ffff9dcd1b214d80 R15: 0000000000000000
+FS:  00007f441bfff700(0000) GS:ffff9dcd1fa00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000008 CR3: 0000000839e64004 CR4: 00000000001606e0
+Call Trace:
+tcf_action_cleanup+0x59/0xca
+__tcf_action_put+0x54/0x6b
+__tcf_idr_release.cold.33+0x9/0x12
+tcf_mirred_init.cold.20+0x22e/0x3b0 [act_mirred]
+tcf_action_init_1+0x3d0/0x4c0
+tcf_action_init+0x9c/0x130
+tcf_exts_validate+0xab/0xc0
+fl_change+0x1ca/0x982 [cls_flower]
+tc_new_tfilter+0x647/0x8d0
+? load_balance+0x14b/0x9e0
+rtnetlink_rcv_msg+0xe3/0x370
+? __switch_to_asm+0x40/0x70
+? __switch_to_asm+0x34/0x70
+? _cond_resched+0x15/0x30
+? __kmalloc_node_track_caller+0x1d4/0x2b0
+? rtnl_calcit.isra.31+0xf0/0xf0
+netlink_rcv_skb+0x49/0x110
+netlink_unicast+0x16f/0x210
+netlink_sendmsg+0x1df/0x390
+sock_sendmsg+0x36/0x40
+___sys_sendmsg+0x27b/0x2c0
+? futex_wake+0x80/0x140
+? do_futex+0x2b9/0xac0
+? ep_scan_ready_list.constprop.22+0x1f2/0x210
+? ep_poll+0x7a/0x430
+__sys_sendmsg+0x47/0x80
+do_syscall_64+0x55/0x100
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: 4e232818bd32 ("net: sched: act_mirred: remove dependency on rtnl lock")
+Signed-off-by: John Hurley <john.hurley@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/linux/skbuff.h | 4 ++--
- net/core/filter.c      | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ net/sched/act_mirred.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index bdb9563c64a01..b8679dcba96f8 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -4212,10 +4212,10 @@ static inline bool skb_is_gso_sctp(const struct sk_buff *skb)
- 	return skb_shinfo(skb)->gso_type & SKB_GSO_SCTP;
- }
+diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
+index c8cf4d10c4355..971dc03304f42 100644
+--- a/net/sched/act_mirred.c
++++ b/net/sched/act_mirred.c
+@@ -159,6 +159,9 @@ static int tcf_mirred_init(struct net *net, struct nlattr *nla,
+ 	}
+ 	m = to_mirred(*a);
  
-+/* Note: Should be called only if skb_is_gso(skb) is true */
- static inline bool skb_is_gso_tcp(const struct sk_buff *skb)
- {
--	return skb_is_gso(skb) &&
--	       skb_shinfo(skb)->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6);
-+	return skb_shinfo(skb)->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6);
- }
- 
- static inline void skb_gso_reset(struct sk_buff *skb)
-diff --git a/net/core/filter.c b/net/core/filter.c
-index f7d0004fc1609..ff07996515f2d 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -2789,7 +2789,7 @@ static int bpf_skb_proto_4_to_6(struct sk_buff *skb)
- 	u32 off = skb_mac_header_len(skb);
- 	int ret;
- 
--	if (!skb_is_gso_tcp(skb))
-+	if (skb_is_gso(skb) && !skb_is_gso_tcp(skb))
- 		return -ENOTSUPP;
- 
- 	ret = skb_cow(skb, len_diff);
-@@ -2830,7 +2830,7 @@ static int bpf_skb_proto_6_to_4(struct sk_buff *skb)
- 	u32 off = skb_mac_header_len(skb);
- 	int ret;
- 
--	if (!skb_is_gso_tcp(skb))
-+	if (skb_is_gso(skb) && !skb_is_gso_tcp(skb))
- 		return -ENOTSUPP;
- 
- 	ret = skb_unclone(skb, GFP_ATOMIC);
-@@ -2955,7 +2955,7 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 len_diff)
- 	u32 off = skb_mac_header_len(skb) + bpf_skb_net_base_len(skb);
- 	int ret;
- 
--	if (!skb_is_gso_tcp(skb))
-+	if (skb_is_gso(skb) && !skb_is_gso_tcp(skb))
- 		return -ENOTSUPP;
- 
- 	ret = skb_cow(skb, len_diff);
-@@ -2984,7 +2984,7 @@ static int bpf_skb_net_shrink(struct sk_buff *skb, u32 len_diff)
- 	u32 off = skb_mac_header_len(skb) + bpf_skb_net_base_len(skb);
- 	int ret;
- 
--	if (!skb_is_gso_tcp(skb))
-+	if (skb_is_gso(skb) && !skb_is_gso_tcp(skb))
- 		return -ENOTSUPP;
- 
- 	ret = skb_unclone(skb, GFP_ATOMIC);
++	if (ret == ACT_P_CREATED)
++		INIT_LIST_HEAD(&m->tcfm_list);
++
+ 	spin_lock_bh(&m->tcf_lock);
+ 	m->tcf_action = parm->action;
+ 	m->tcfm_eaction = parm->eaction;
 -- 
 2.20.1
 
