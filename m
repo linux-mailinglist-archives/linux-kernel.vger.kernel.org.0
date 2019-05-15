@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A73F1EE9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3AF1F40A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:21:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbfEOLXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
+        id S1728119AbfEOMSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:18:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbfEOLXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:41 -0400
+        id S1727644AbfEOLBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65A9420862;
-        Wed, 15 May 2019 11:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87DD720881;
+        Wed, 15 May 2019 11:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919419;
-        bh=judf+XwGOFgEc1K8XR07gJwpkpBZHL9DDk/Stit+E5s=;
+        s=default; t=1557918074;
+        bh=ZSxDdku1pIRQ+plPPBMgrIp8eq/1m2CAf4sNxgHP3kA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DdqAtKzTO0NCx3fkQNUEXW4R7n3EoB80XOBwRmFhtlpb2czuyNvi9ExJyhZuzLQjO
-         Z951yYW9EYF0wTCF+IWsDrtFwdLWiSN4AcibilQHTqCfC/crRQ2wrTg3HMBHx94/Uc
-         MnAS01PcckLeEd2rO+Mx5MfBwNRA079K8pvVvjDE=
+        b=qr0/DdqjfnjZHffF1FUQkZk4v09/95wZTuMnHwLiWSj1Zw+G6VK8GbezBMrbCWvor
+         lh1nzQ4lj7duItNBzowG3AnR3r1ytVW+0oMtKvyFaMHv2yY99s1p6cnFjHhXCOScl5
+         Nr39eYGJSYo6Dv22/lBZtSdKfh+Ng88bE72lIIM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Chandan Rajendra <chandan@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.19 068/113] mm/memory.c: fix modifying of page protection by insert_pfn()
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 82/86] ipv4: Fix raw socket lookup for local traffic
 Date:   Wed, 15 May 2019 12:55:59 +0200
-Message-Id: <20190515090658.700487167@linuxfoundation.org>
+Message-Id: <20190515090655.943557607@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,79 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cae85cb8add35f678cf487139d05e083ce2f570a ]
+From: David Ahern <dsahern@gmail.com>
 
-Aneesh has reported that PPC triggers the following warning when
-excercising DAX code:
+[ Upstream commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f ]
 
-  IP set_pte_at+0x3c/0x190
-  LR insert_pfn+0x208/0x280
-  Call Trace:
-     insert_pfn+0x68/0x280
-     dax_iomap_pte_fault.isra.7+0x734/0xa40
-     __xfs_filemap_fault+0x280/0x2d0
-     do_wp_page+0x48c/0xa40
-     __handle_mm_fault+0x8d0/0x1fd0
-     handle_mm_fault+0x140/0x250
-     __do_page_fault+0x300/0xd60
-     handle_page_fault+0x18
+inet_iif should be used for the raw socket lookup. inet_iif considers
+rt_iif which handles the case of local traffic.
 
-Now that is WARN_ON in set_pte_at which is
+As it stands, ping to a local address with the '-I <dev>' option fails
+ever since ping was changed to use SO_BINDTODEVICE instead of
+cmsg + IP_PKTINFO.
 
-        VM_WARN_ON(pte_hw_valid(*ptep) && !pte_protnone(*ptep));
+IPv6 works fine.
 
-The problem is that on some architectures set_pte_at() cannot cope with
-a situation where there is already some (different) valid entry present.
-
-Use ptep_set_access_flags() instead to modify the pfn which is built to
-deal with modifying existing PTE.
-
-Link: http://lkml.kernel.org/r/20190311084537.16029-1-jack@suse.cz
-Fixes: b2770da64254 "mm: add vm_insert_mixed_mkwrite()"
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reported-by: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Cc: Chandan Rajendra <chandan@linux.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/memory.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/ipv4/raw.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 9c69278173b78..e0010cb870e05 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1796,10 +1796,12 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(*pte)));
- 				goto out_unlock;
- 			}
--			entry = *pte;
--			goto out_mkwrite;
--		} else
--			goto out_unlock;
-+			entry = pte_mkyoung(*pte);
-+			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-+			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
-+				update_mmu_cache(vma, addr, pte);
-+		}
-+		goto out_unlock;
- 	}
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -158,6 +158,7 @@ static int icmp_filter(const struct sock
+  */
+ static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
+ {
++	int dif = inet_iif(skb);
+ 	struct sock *sk;
+ 	struct hlist_head *head;
+ 	int delivered = 0;
+@@ -170,8 +171,7 @@ static int raw_v4_input(struct sk_buff *
  
- 	/* Ok, finally just insert the thing.. */
-@@ -1808,7 +1810,6 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 	else
- 		entry = pte_mkspecial(pfn_t_pte(pfn, prot));
+ 	net = dev_net(skb->dev);
+ 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
+-			     iph->saddr, iph->daddr,
+-			     skb->dev->ifindex);
++			     iph->saddr, iph->daddr, dif);
  
--out_mkwrite:
- 	if (mkwrite) {
- 		entry = pte_mkyoung(entry);
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
--- 
-2.20.1
-
+ 	while (sk) {
+ 		delivered = 1;
 
 
