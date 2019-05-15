@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C281EE04
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B77FF1EED5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfEOLQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:16:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52660 "EHLO mail.kernel.org"
+        id S1731890AbfEOL0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:26:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729738AbfEOLQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:02 -0400
+        id S1732090AbfEOL0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:26:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5801620843;
-        Wed, 15 May 2019 11:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAE6120818;
+        Wed, 15 May 2019 11:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918961;
-        bh=FEcgngtZEuyg9UX8fft4+eshJZJxiuhsK5c2ub4emgc=;
+        s=default; t=1557919575;
+        bh=oiJOyLPDWRvk2Wus+Qtzhl3VbMKgPsCI12Y4tdz2gjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=swZjVYmOhAYnUw/2FzdtGg2spOEmeamW0J7GLpcg1jKBtApa1C9RhfTRlN2jBkQLN
-         4IUEBJTp/dj6hdE+MkJWlQ7vO9srhx71zUWJo1hY0RScKuCMwWXL0kjDzZN+cXPaAx
-         RA13jA6DP4eE8e09Sv7orWjsJHNPPyWMUHT1NG4g=
+        b=o+IQD9uAJk9Jzizx1gUtbBVS9zgGuUOkXKnv4Bdc+6CvtIXVQ6/BDpsq0iA+nWSjp
+         nErpBzn3OJWO/dYoUETZpKiWI7m9hBU7yHhhviOUCYoSFhQNq4ZWa1KdzphMUnRVRF
+         b+LZ/o+Atn/z9WFgVJKMPtiCw93bEp7L8Sh6Z7Gk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 015/115] mac80211: Increase MAX_MSG_LEN
+Subject: [PATCH 5.0 014/137] acpi/nfit: Always dump _DSM output payload
 Date:   Wed, 15 May 2019 12:54:55 +0200
-Message-Id: <20190515090700.395972086@linuxfoundation.org>
+Message-Id: <20190515090654.386390171@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78be2d21cc1cd3069c6138dcfecec62583130171 ]
+[ Upstream commit 351f339faa308c1c1461314a18c832239a841ca0 ]
 
-Looks that 100 chars isn't enough for messages, as we keep getting
-warnings popping from different places due to message shortening.
-Instead of trying to shorten the prints, just increase the buffer size.
+The dynamic-debug statements for command payload output only get emitted
+when the command is not ND_CMD_CALL. Move the output payload dumping
+ahead of the early return path for ND_CMD_CALL.
 
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 31eca76ba2fc9 ("...whitelisted dimm command marshaling mechanism")
+Reported-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/trace_msg.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/acpi/nfit/core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/mac80211/trace_msg.h b/net/mac80211/trace_msg.h
-index 366b9e6f043e2..40141df09f255 100644
---- a/net/mac80211/trace_msg.h
-+++ b/net/mac80211/trace_msg.h
-@@ -1,4 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Portions of this file
-+ * Copyright (C) 2019 Intel Corporation
-+ */
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 4be4dc3e8aa62..38ec79bb3edde 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -563,6 +563,12 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+ 		goto out;
+ 	}
+ 
++	dev_dbg(dev, "%s cmd: %s output length: %d\n", dimm_name,
++			cmd_name, out_obj->buffer.length);
++	print_hex_dump_debug(cmd_name, DUMP_PREFIX_OFFSET, 4, 4,
++			out_obj->buffer.pointer,
++			min_t(u32, 128, out_obj->buffer.length), true);
 +
- #ifdef CONFIG_MAC80211_MESSAGE_TRACING
+ 	if (call_pkg) {
+ 		call_pkg->nd_fw_size = out_obj->buffer.length;
+ 		memcpy(call_pkg->nd_payload + call_pkg->nd_size_in,
+@@ -581,12 +587,6 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+ 		return 0;
+ 	}
  
- #if !defined(__MAC80211_MSG_DRIVER_TRACE) || defined(TRACE_HEADER_MULTI_READ)
-@@ -11,7 +16,7 @@
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM mac80211_msg
- 
--#define MAX_MSG_LEN	100
-+#define MAX_MSG_LEN	120
- 
- DECLARE_EVENT_CLASS(mac80211_msg_event,
- 	TP_PROTO(struct va_format *vaf),
+-	dev_dbg(dev, "%s cmd: %s output length: %d\n", dimm_name,
+-			cmd_name, out_obj->buffer.length);
+-	print_hex_dump_debug(cmd_name, DUMP_PREFIX_OFFSET, 4, 4,
+-			out_obj->buffer.pointer,
+-			min_t(u32, 128, out_obj->buffer.length), true);
+-
+ 	for (i = 0, offset = 0; i < desc->out_num; i++) {
+ 		u32 out_size = nd_cmd_out_size(nvdimm, cmd, desc, i, buf,
+ 				(u32 *) out_obj->buffer.pointer,
 -- 
 2.20.1
 
