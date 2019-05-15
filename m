@@ -2,158 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3AF11FA33
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 20:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E495B1FA39
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 20:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbfEOSq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 14:46:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49686 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726392AbfEOSqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 14:46:55 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4FIgaWe009139
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:46:54 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2sgq6skgmy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:46:54 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Wed, 15 May 2019 19:46:53 +0100
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 May 2019 19:46:49 +0100
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4FIkmGI10092890
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 May 2019 18:46:48 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BCB4BE053;
-        Wed, 15 May 2019 18:46:48 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A52B6BE058;
-        Wed, 15 May 2019 18:46:47 +0000 (GMT)
-Received: from [9.85.187.56] (unknown [9.85.187.56])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 May 2019 18:46:47 +0000 (GMT)
-Subject: Re: [PATCH v2 1/3] iio: Add driver for Infineon DPS310
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@jms.id.au, pmeerw@pmeerw.net, lars@metafoo.de, knaack.h@gmx.de
-References: <1557344128-690-1-git-send-email-eajames@linux.ibm.com>
- <1557344128-690-2-git-send-email-eajames@linux.ibm.com>
- <20190511102236.4c5f9585@archlinux>
-From:   Eddie James <eajames@linux.ibm.com>
-Date:   Wed, 15 May 2019 13:46:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1727091AbfEOStv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 14:49:51 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:65315 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726392AbfEOStu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 14:49:50 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4543Wc4Kftz9vBmK;
+        Wed, 15 May 2019 20:49:48 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=HaT1YcGr; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id XQfzn5YHrpCM; Wed, 15 May 2019 20:49:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4543Wc3BsCz9vBmJ;
+        Wed, 15 May 2019 20:49:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1557946188; bh=wBrpo1MoExfTHDTOuQ8khRkI2TENEgtLi5T2igaQbeQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HaT1YcGrmwozmMTALTyVjfG7UY2ZwxBgHEhiznnF1Rkkcv99Yvl13jdwMLRBwHQr7
+         /N70qxjjLAiibtIyWXco+5MBOfXNOMQUW9pB1e50lbHz2G0TJstQdW0H1X/PqSmhRe
+         8T4ZXBEcxNUX6Wy5Mb9RUMSxLVho5RdXsZGxfNYk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 75A228B914;
+        Wed, 15 May 2019 20:49:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id RaVwrqDXustf; Wed, 15 May 2019 20:49:48 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 120318B918;
+        Wed, 15 May 2019 20:49:48 +0200 (CEST)
+Subject: Re: [PATCH] crypto: talitos - fix skcipher failure due to wrong
+ output IV
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <a5b0d31d8fc9fc9bc2b69baa5330466090825a39.1557923113.git.christophe.leroy@c-s.fr>
+ <VI1PR0402MB34858D80A15D4B55F64570E398090@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <29db3f20-f931-efc6-02a8-fe160ab8b484@c-s.fr>
+Date:   Wed, 15 May 2019 20:49:48 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190511102236.4c5f9585@archlinux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19051518-0004-0000-0000-0000150F21D2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011102; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000285; SDB=6.01203786; UDB=6.00631896; IPR=6.00984712;
- MB=3.00026906; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-15 18:46:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051518-0005-0000-0000-00008BACCF8F
-Message-Id: <cf108058-dd50-4651-6c97-a5c7e82ef085@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905150113
+In-Reply-To: <VI1PR0402MB34858D80A15D4B55F64570E398090@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 5/11/19 4:22 AM, Jonathan Cameron wrote:
-> On Wed,  8 May 2019 14:35:26 -0500
-> Eddie James <eajames@linux.ibm.com> wrote:
->
->> From: Joel Stanley <joel@jms.id.au>
+
+Le 15/05/2019 à 16:05, Horia Geanta a écrit :
+> On 5/15/2019 3:29 PM, Christophe Leroy wrote:
+>> Selftests report the following:
 >>
->> The DPS310 is a temperature and pressure sensor. It can be accessed over
->> i2c and SPI.
+>> [    2.984845] alg: skcipher: cbc-aes-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
+>> [    2.995377] 00000000: 3d af ba 42 9d 9e b4 30 b4 22 da 80 2c 9f ac 41
+>> [    3.032673] alg: skcipher: cbc-des-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
+>> [    3.043185] 00000000: fe dc ba 98 76 54 32 10
+>> [    3.063238] alg: skcipher: cbc-3des-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
+>> [    3.073818] 00000000: 7d 33 88 93 0f 93 b2 42
 >>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> Hi Eddie,
->
-> Ideally we'll get a sign off form Joel as well on this.
->
-> A few comments inline.
->
-> I 'think' this is probably fine without any locking to prevent simultaneous reads
-> and /or writes to the registers because the few functions that do multiple reads
-> and writes look fine.  Please do take another look at that though to confirm there
-> are no corner cases.
->
-> Otherwise there is a race in the remove path that needs fixing.
-> Various minor bits and bobs inline.
->
-> thanks,
->
-> Jonathan
->
->
->
->> ---
->>   MAINTAINERS                   |   6 +
->>   drivers/iio/pressure/Kconfig  |  10 +
->>   drivers/iio/pressure/Makefile |   1 +
->>   drivers/iio/pressure/dps310.c | 429 ++++++++++++++++++++++++++++++++++++++++++
->>   4 files changed, 446 insertions(+)
->>   create mode 100644 drivers/iio/pressure/dps310.c
+>> This above dumps show that the actual output IV is indeed the input IV.
+>> This is due to the IV not being copied back into the request.
 >>
+>> This patch fixes that.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
 
->> +};
->> +MODULE_DEVICE_TABLE(i2c, dps310_id);
->> +
->> +static const unsigned short normal_i2c[] = {
->> +	0x77, 0x76, I2C_CLIENT_END
->> +};
->> +
->> +static struct i2c_driver dps310_driver = {
->> +	.driver = {
->> +		.name = "dps310",
->> +	},
->> +	.probe = dps310_probe,
->> +	.remove = dps310_remove,
->> +	.address_list = normal_i2c,
-> I'm fairly sure the address list is only used along with the detection
-> infrastructure.  As such it doesn't actually provide any value unless
-> you have a detect callback.  Please remove.
->
-> I would like to see a DT and/or ACPI binding though as that is the
-> means most people will use to find the device.
+It's missing a Fixes: tag and a Cc: to stable.
 
+I'll resend tomorrow.
 
-Somehow the device is already present in the witherspoon device tree 
-where it's currently being used, so I don't have anything to add. 
-arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
+> 
+> While here, could you please check ecb mode (which by definition does not have
+> an IV) is behaving correctly?
+> Looking in driver_algs[] list of crypto algorithms supported by talitos,
+> ecb(aes,des,3des) are declared with ivsize != 0.
 
-Thanks,
+According to /proc/crypto, test are passed for ecb.
 
-Eddie
+Christophe
 
-
->
->> +	.id_table = dps310_id,
->> +};
->> +module_i2c_driver(dps310_driver);
->> +
->> +MODULE_AUTHOR("Joel Stanley <joel@jms.id.au>");
->> +MODULE_DESCRIPTION("Infineon DPS310 pressure and temperature sensor");
->> +MODULE_LICENSE("GPL v2");
-
+> 
+> Thanks,
+> Horia
+> 
