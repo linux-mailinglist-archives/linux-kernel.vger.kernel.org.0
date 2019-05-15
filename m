@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B48ED1F113
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EB71EF2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731124AbfEOLUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:20:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58410 "EHLO mail.kernel.org"
+        id S1732786AbfEOLat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730734AbfEOLUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:20:33 -0400
+        id S1732766AbfEOLam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53FE220881;
-        Wed, 15 May 2019 11:20:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35A2820843;
+        Wed, 15 May 2019 11:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919232;
-        bh=fiDHXySjVpTAbNFg99WlCR3XY3EOyc0ANX0y622B1Ys=;
+        s=default; t=1557919841;
+        bh=A5n4mTZtTb5EEfrTR3AlfarJ5yVRdt4gFPUi2LZqFk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rFzNuJ8bPbDjGy9nlHdR+2tSKkGLmwCxlWnduex5y0pFW/gQFUv7zj0msEl21uABt
-         psS7x+NAzxFc94kFWPrZeGeHorP9dO5pHXjFf0uXTJ+5nEPUKslS7tsymsvyTE5U2j
-         r27N7cSVD8fbontOCOj/UyxSgujcLs6dlcbhroWE=
+        b=vO3RnjZYHACO5+TldRahTeO0EiRn9ACQodE0t6zNFSZTDidut5rOH9ymeLgEP0QF5
+         KEwbLIwl2JDY8L+eZ7JBwz5DjiZph/pwyYqtOEXBREffXWh8sXlmN7uA8CnQ9Sm9+G
+         50oKzH3E7G2uH6HwVIPG6aBDMnkYE+DBnDT26z+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 114/115] powerpc/powernv/idle: Restore IAMR after idle
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 113/137] net: seeq: fix crash caused by not set dev.parent
 Date:   Wed, 15 May 2019 12:56:34 +0200
-Message-Id: <20190515090707.277746502@linuxfoundation.org>
+Message-Id: <20190515090701.794869633@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,79 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell Currey <ruscur@russell.cc>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-commit a3f3072db6cad40895c585dce65e36aab997f042 upstream.
+[ Upstream commit 5afcd14cfc7fed1bcc8abcee2cef82732772bfc2 ]
 
-Without restoring the IAMR after idle, execution prevention on POWER9
-with Radix MMU is overwritten and the kernel can freely execute
-userspace without faulting.
+The old MIPS implementation of dma_cache_sync() didn't use the dev argument,
+but commit c9eb6172c328 ("dma-mapping: turn dma_cache_sync into a
+dma_map_ops method") changed that, so we now need to set dev.parent.
 
-This is necessary when returning from any stop state that modifies
-user state, as well as hypervisor state.
-
-To test how this fails without this patch, load the lkdtm driver and
-do the following:
-
-  $ echo EXEC_USERSPACE > /sys/kernel/debug/provoke-crash/DIRECT
-
-which won't fault, then boot the kernel with powersave=off, where it
-will fault. Applying this patch will fix this.
-
-Fixes: 3b10d0095a1e ("powerpc/mm/radix: Prevent kernel execution of user space")
-Cc: stable@vger.kernel.org # v4.10+
-Signed-off-by: Russell Currey <ruscur@russell.cc>
-Reviewed-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/kernel/idle_book3s.S |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/net/ethernet/seeq/sgiseeq.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kernel/idle_book3s.S
-+++ b/arch/powerpc/kernel/idle_book3s.S
-@@ -163,6 +163,9 @@ core_idle_lock_held:
- 	bne-	core_idle_lock_held
- 	blr
+--- a/drivers/net/ethernet/seeq/sgiseeq.c
++++ b/drivers/net/ethernet/seeq/sgiseeq.c
+@@ -735,6 +735,7 @@ static int sgiseeq_probe(struct platform
+ 	}
  
-+/* Reuse an unused pt_regs slot for IAMR */
-+#define PNV_POWERSAVE_IAMR	_DAR
-+
- /*
-  * Pass requested state in r3:
-  *	r3 - PNV_THREAD_NAP/SLEEP/WINKLE in POWER8
-@@ -193,6 +196,12 @@ pnv_powersave_common:
- 	/* Continue saving state */
- 	SAVE_GPR(2, r1)
- 	SAVE_NVGPRS(r1)
-+
-+BEGIN_FTR_SECTION
-+	mfspr	r5, SPRN_IAMR
-+	std	r5, PNV_POWERSAVE_IAMR(r1)
-+END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
-+
- 	mfcr	r5
- 	std	r5,_CCR(r1)
- 	std	r1,PACAR1(r13)
-@@ -940,6 +949,17 @@ BEGIN_FTR_SECTION
- END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
- 	REST_NVGPRS(r1)
- 	REST_GPR(2, r1)
-+
-+BEGIN_FTR_SECTION
-+	/* IAMR was saved in pnv_powersave_common() */
-+	ld	r5, PNV_POWERSAVE_IAMR(r1)
-+	mtspr	SPRN_IAMR, r5
-+	/*
-+	 * We don't need an isync here because the upcoming mtmsrd is
-+	 * execution synchronizing.
-+	 */
-+END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
-+
- 	ld	r4,PACAKMSR(r13)
- 	ld	r5,_LINK(r1)
- 	ld	r6,_CCR(r1)
+ 	platform_set_drvdata(pdev, dev);
++	SET_NETDEV_DEV(dev, &pdev->dev);
+ 	sp = netdev_priv(dev);
+ 
+ 	/* Make private data page aligned */
 
 
