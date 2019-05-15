@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBBA1EC75
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A911ECA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfEOK53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:57:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:40662 "EHLO foss.arm.com"
+        id S1727340AbfEOLAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:04 -0400
+Received: from mga11.intel.com ([192.55.52.93]:37157 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbfEOK53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:57:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 543A580D;
-        Wed, 15 May 2019 03:57:28 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C83613F703;
-        Wed, 15 May 2019 03:57:25 -0700 (PDT)
-Date:   Wed, 15 May 2019 11:57:24 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
-        rui.zhang@intel.com, javi.merino@kernel.org,
-        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
-        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
-        ionela.voinescu@arm.com, mka@chromium.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
-Message-ID: <20190515105723.3ltui3l75hbuskmk@queper01-lin>
-References: <20190515082318.7993-1-quentin.perret@arm.com>
- <20190515082318.7993-3-quentin.perret@arm.com>
- <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
- <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
- <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
- <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
- <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
- <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
- <20190515104043.vogspxgkapp6qsny@queper01-lin>
- <b7e91d70-cd16-791c-94e1-3667ff264e49@linaro.org>
+        id S1727316AbfEOLAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 04:00:02 -0700
+X-ExtLoop1: 1
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
+  by fmsmga006.fm.intel.com with ESMTP; 15 May 2019 03:59:56 -0700
+Date:   Wed, 15 May 2019 14:00:05 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v20 00/28] Intel SGX1 support
+Message-ID: <20190515110005.GA14718@linux.intel.com>
+References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
+ <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com>
+ <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
+ <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com>
+ <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com>
+ <20190515103531.GB10917@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b7e91d70-cd16-791c-94e1-3667ff264e49@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20190515103531.GB10917@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 15 May 2019 at 12:54:10 (+0200), Daniel Lezcano wrote:
-> On 15/05/2019 12:40, Quentin Perret wrote:
-> > On Wednesday 15 May 2019 at 15:52:00 (+0530), Viresh Kumar wrote:
-> >> On 15-05-19, 12:16, Daniel Lezcano wrote:
-> >>> Viresh what do you think ?
-> >>
-> >> I agree with your last suggestions. They do make sense.
-> > 
-> > Good :-)
-> > 
-> > So, FWIW, the below compiles w/ or w/o THERMAL_GOV_POWER_ALLOCATOR. I'll
-> > test it and clean it up some more and put it as patch 1 in the series if
-> > that's OK.
-> > 
-> > Thanks,
-> > Quentin
-> > 
-> > 
-> > diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> > index f7c1f49ec87f..ee431848ef71 100644
-> > --- a/drivers/thermal/cpu_cooling.c
-> > +++ b/drivers/thermal/cpu_cooling.c
-> > @@ -58,7 +58,9 @@
-> >   */
-> >  struct freq_table {
-> >         u32 frequency;
-> 
-> I suspect we will have a problem here as cpufreq_set_cur_state uses the
-> frequency and when switching to EM, we will still need a freq table.
+On Wed, May 15, 2019 at 01:35:31PM +0300, Jarkko Sakkinen wrote:
+> This brings me to an open question in Andy's model: lets say that we
+> change the source for SIGSTRUCT from memory address to fd. How can the
+> policy prevent the use not creating a file containing a SIGSTRUCT and
+> passing fd of that to the EINIT ioctl?
 
-Indeed, I'll need a bit of ifdefery in the get_state_freq() function
-introduced in patch 3, but nothing too horrible I hope.
+Also wondering if a path would be better than plain fd for defining a
+reasonable policy i.e. have sigstruct_path as part of the ioctl
+parameters and not sigstruct_fd.
 
-Thanks,
-Quentin
+/Jarkko
