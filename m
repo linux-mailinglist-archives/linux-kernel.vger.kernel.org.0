@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A03311F2A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51A1A1EEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfEOLKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44020 "EHLO mail.kernel.org"
+        id S1730208AbfEOL0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:26:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729167AbfEOLKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:10:15 -0400
+        id S1729763AbfEOL0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:26:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAED821726;
-        Wed, 15 May 2019 11:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A77DC206BF;
+        Wed, 15 May 2019 11:26:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918614;
-        bh=thvOr7Hp/0reyBoea1gsug2/SCALyYgn8KZc0DpQ55A=;
+        s=default; t=1557919607;
+        bh=uOm5BvuEI4DDXppf2ixzVjQaw/JN4hbVR5wVHhA3v+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MFU9tlqn4EV0td+jg8yIqVW6uGLUm4ipmFFIAvnfKC6RPNouvLtQQrGjIhKYENU8Z
-         EO8ntHhDaT9CT9pCwDXs9xTu6H/kobUsDUWbgx/3mQUDsIZm7m3JdhbMOZoZEHf2IV
-         pmbIHrs1aTEhVH+WvBgM1WM9y21qkW0CJhCsG3t4=
+        b=JVA+x4vGXy9pT6+m1RHd31ZlWyda0hnTpxBDeuJSnOLUKSHUv5lSt0/Cj6WfzccDH
+         t4LsKfuxozTLtSjREvmqsPR0YPcd5XkeL4XKqqlxKrigB/TFhX+dJQszfHi6nl0Nsh
+         bScWfvc/ernyjSKbLypd9CeTb0z2sU4JVBAF+7uw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "SchauflerCasey" <casey.schaufler@intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 199/266] x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+        stable@vger.kernel.org, Sunil Dutt <usdutt@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 025/137] nl80211: Add NL80211_FLAG_CLEAR_SKB flag for other NL commands
 Date:   Wed, 15 May 2019 12:55:06 +0200
-Message-Id: <20190515090729.686124279@linuxfoundation.org>
+Message-Id: <20190515090655.104251473@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,147 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+[ Upstream commit d6db02a88a4aaa1cd7105137c67ddec7f3bdbc05 ]
 
-commit 53c613fe6349994f023245519265999eed75957f upstream.
+This commit adds NL80211_FLAG_CLEAR_SKB flag to other NL commands
+that carry key data to ensure they do not stick around on heap
+after the SKB is freed.
 
-STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
-(once enabled) prevents cross-hyperthread control of decisions made by
-indirect branch predictors.
+Also introduced this flag for NL80211_CMD_VENDOR as there are sub
+commands which configure the keys.
 
-Enable this feature if
-
-- the CPU is vulnerable to spectre v2
-- the CPU supports SMT and has SMT siblings online
-- spectre_v2 mitigation autoselection is enabled (default)
-
-After some previous discussion, this leaves STIBP on all the time, as wrmsr
-on crossing kernel boundary is a no-no. This could perhaps later be a bit
-more optimized (like disabling it in NOHZ, experiment with disabling it in
-idle, etc) if needed.
-
-Note that the synchronization of the mask manipulation via newly added
-spec_ctrl_mutex is currently not strictly needed, as the only updater is
-already being serialized by cpu_add_remove_lock, but let's make this a
-little bit more future-proof.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
-[bwh: Backported to 4.4:
- - Don't add any calls to arch_smt_update() yet. They will be introduced by
-   "x86/speculation: Rework SMT state change".
- - Use IS_ENABLED(CONFIG_SMP) instead of cpu_smt_control for now. This
-   will be fixed by "x86/speculation: Rework SMT state change".]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sunil Dutt <usdutt@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   55 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 5 deletions(-)
+ net/wireless/nl80211.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -32,12 +32,10 @@ static void __init spectre_v2_select_mit
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- 
--/*
-- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-- * writes to SPEC_CTRL contain whatever reserved bits have been set.
-- */
-+/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
- u64 x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
-+static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -315,6 +313,46 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void update_stibp_msr(void *info)
-+{
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+
-+void arch_smt_update(void)
-+{
-+	u64 mask;
-+
-+	if (!stibp_needed())
-+		return;
-+
-+	mutex_lock(&spec_ctrl_mutex);
-+	mask = x86_spec_ctrl_base;
-+	if (IS_ENABLED(CONFIG_SMP))
-+		mask |= SPEC_CTRL_STIBP;
-+	else
-+		mask &= ~SPEC_CTRL_STIBP;
-+
-+	if (mask != x86_spec_ctrl_base) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
-+				IS_ENABLED(CONFIG_SMP) ?
-+				"Enabling" : "Disabling");
-+		x86_spec_ctrl_base = mask;
-+		on_each_cpu(update_stibp_msr, NULL, 1);
-+	}
-+	mutex_unlock(&spec_ctrl_mutex);
-+}
-+
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -414,6 +452,9 @@ specv2_set_mode:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-+
-+	/* Enable STIBP if appropriate */
-+	arch_smt_update();
- }
- 
- #undef pr_fmt
-@@ -722,6 +763,8 @@ static void __init l1tf_select_mitigatio
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-+	int ret;
-+
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -736,10 +779,12 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
-+			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
-+		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index d91a408db113e..156ce708b5330 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -13596,7 +13596,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.policy = nl80211_policy,
+ 		.flags = GENL_UNS_ADMIN_PERM,
+ 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_DEAUTHENTICATE,
+@@ -13647,7 +13648,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.policy = nl80211_policy,
+ 		.flags = GENL_UNS_ADMIN_PERM,
+ 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_UPDATE_CONNECT_PARAMS,
+@@ -13655,7 +13657,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.policy = nl80211_policy,
+ 		.flags = GENL_ADMIN_PERM,
+ 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_DISCONNECT,
+@@ -13684,7 +13687,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.policy = nl80211_policy,
+ 		.flags = GENL_UNS_ADMIN_PERM,
+ 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_DEL_PMKSA,
+@@ -14036,7 +14040,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.policy = nl80211_policy,
+ 		.flags = GENL_UNS_ADMIN_PERM,
+ 		.internal_flags = NL80211_FLAG_NEED_WIPHY |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_SET_QOS_MAP,
+@@ -14091,7 +14096,8 @@ static const struct genl_ops nl80211_ops[] = {
+ 		.doit = nl80211_set_pmk,
+ 		.policy = nl80211_policy,
+ 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
+-				  NL80211_FLAG_NEED_RTNL,
++				  NL80211_FLAG_NEED_RTNL |
++				  NL80211_FLAG_CLEAR_SKB,
+ 	},
+ 	{
+ 		.cmd = NL80211_CMD_DEL_PMK,
+-- 
+2.20.1
+
 
 
