@@ -2,96 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C87431EAFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A77A1EB09
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfEOJf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 05:35:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50890 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfEOJf1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 05:35:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=h6tbazTbo2wFwWyE9fnl5htOCMABGokXLkWNr2arzpU=; b=xKOja/nU32roMxp3sGAIfk0pT
-        e8z52PIxjOZoe8uytGhx4H5amhlD8MgtXrkbfnbCJ1bo1CBSdgAnJ9zCjQcTEmNcQ+6Yul7w8qAo3
-        HIYEEjIjJ9C+/p7ZufngpGmsluK21EjB1jeAAeYbnmmFe3/UCPl9GZrFDy/IcT3SNn6cM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hQqJo-0003Jh-5B; Wed, 15 May 2019 09:35:24 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 90C3F1126D5D; Wed, 15 May 2019 10:35:22 +0100 (BST)
-Date:   Wed, 15 May 2019 10:35:22 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Message-ID: <20190515093522.GC5613@sirena.org.uk>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
- <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
- <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
- <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
+        id S1726487AbfEOJgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 05:36:48 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8197 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725977AbfEOJgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 05:36:46 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 16B02876CAAD1739BACF;
+        Wed, 15 May 2019 17:36:44 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 May 2019
+ 17:36:34 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <wensong@linux-vs.org>,
+        <horms@verge.net.au>, <ja@ssi.bg>, <pablo@netfilter.org>,
+        <kadlec@blackhole.kfki.hu>, <fw@strlen.de>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <lvs-devel@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+        <coreteam@netfilter.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] ipvs: Fix use-after-free in ip_vs_in
+Date:   Wed, 15 May 2019 17:36:14 +0800
+Message-ID: <20190515093614.21176-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
-X-Cookie: You will lose an important tape file.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+BUG: KASAN: use-after-free in ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
+Read of size 4 at addr ffff8881e9b26e2c by task sshd/5603
 
---raC6veAxrt5nqIoY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CPU: 0 PID: 5603 Comm: sshd Not tainted 4.19.39+ #30
+Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+Call Trace:
+ dump_stack+0x71/0xab
+ print_address_description+0x6a/0x270
+ kasan_report+0x179/0x2c0
+ ? ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
+ ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
+ ? tcp_in_window+0xfe0/0xfe0 [nf_conntrack]
+ ? ip_vs_in_icmp+0xcc0/0xcc0 [ip_vs]
+ ? ipt_do_table+0x4f1/0xad0 [ip_tables]
+ ? ip_vs_out+0x126/0x8f0 [ip_vs]
+ ? common_interrupt+0xa/0xf
+ ip_vs_in+0xd8/0x170 [ip_vs]
+ ? ip_vs_in.part.29+0xd20/0xd20 [ip_vs]
+ ? nf_nat_ipv4_fn+0x21/0xc0 [nf_nat_ipv4]
+ ? nf_nat_packet+0x4b/0x90 [nf_nat]
+ ? nf_nat_ipv4_local_fn+0xf9/0x160 [nf_nat_ipv4]
+ ? ip_vs_remote_request4+0x50/0x50 [ip_vs]
+ nf_hook_slow+0x5f/0xe0
+ ? sock_write_iter+0x121/0x1c0
+ __ip_local_out+0x1d5/0x250
+ ? ip_finish_output+0x430/0x430
+ ? ip_forward_options+0x2d0/0x2d0
+ ? ip_copy_addrs+0x2d/0x40
+ ? __ip_queue_xmit+0x2ca/0x730
+ ip_local_out+0x19/0x60
+ __tcp_transmit_skb+0xba1/0x14f0
+ ? __tcp_select_window+0x330/0x330
+ ? pvclock_clocksource_read+0xd1/0x180
+ ? kvm_sched_clock_read+0xd/0x20
+ ? sched_clock+0x5/0x10
+ ? sched_clock_cpu+0x18/0x100
+ tcp_write_xmit+0x41f/0x1ed0
+ ? _copy_from_iter_full+0xca/0x340
+ __tcp_push_pending_frames+0x52/0x140
+ tcp_sendmsg_locked+0x787/0x1600
+ ? __wake_up_common_lock+0x80/0x130
+ ? tcp_sendpage+0x60/0x60
+ ? remove_wait_queue+0x84/0xb0
+ ? mutex_unlock+0x1d/0x40
+ ? n_tty_read+0x4f7/0xd20
+ ? check_stack_object+0x21/0x60
+ ? inet_sk_set_state+0xb0/0xb0
+ tcp_sendmsg+0x27/0x40
+ sock_sendmsg+0x6d/0x80
+ sock_write_iter+0x121/0x1c0
+ ? sock_sendmsg+0x80/0x80
+ ? ldsem_up_read+0x13/0x40
+ ? iov_iter_init+0x77/0xb0
+ __vfs_write+0x23e/0x370
+ ? kernel_read+0xa0/0xa0
+ ? do_vfs_ioctl+0x134/0x900
+ ? __set_current_blocked+0x7e/0x90
+ ? __audit_syscall_entry+0x18e/0x1f0
+ ? ktime_get_coarse_real_ts64+0x51/0x70
+ vfs_write+0xe7/0x230
+ ksys_write+0xa1/0x120
+ ? __ia32_sys_read+0x50/0x50
+ ? __audit_syscall_exit+0x3ce/0x450
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7ff6f6147c60
+Code: 73 01 c3 48 8b 0d 28 12 2d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 5d 73 2d 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83
+RSP: 002b:00007ffd772ead18 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000034 RCX: 00007ff6f6147c60
+RDX: 0000000000000034 RSI: 000055df30a31270 RDI: 0000000000000003
+RBP: 000055df30a31270 R08: 0000000000000000 R09: 0000000000000000
+R10: 00007ffd772ead70 R11: 0000000000000246 R12: 00007ffd772ead74
+R13: 00007ffd772eae20 R14: 00007ffd772eae24 R15: 000055df2f12ddc0
 
-On Tue, May 14, 2019 at 05:18:48PM +0000, Sowjanya Komatineni wrote:
+Allocated by task 6052:
+ kasan_kmalloc+0xa0/0xd0
+ __kmalloc+0x10a/0x220
+ ops_init+0x97/0x190
+ register_pernet_operations+0x1ac/0x360
+ register_pernet_subsys+0x24/0x40
+ 0xffffffffc0ea016d
+ do_one_initcall+0x8b/0x253
+ do_init_module+0xe3/0x335
+ load_module+0x2fc0/0x3890
+ __do_sys_finit_module+0x192/0x1c0
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> Tegra SPI doesn=E2=80=99t support inter byte delay directly to meet some =
-SPI slave requirements.
-> So we use GPIO control CS in parallel with a dummy HW CS and use inactive=
- cycles delay of SPI controller to mimic inter byte delay.
+Freed by task 6067:
+ __kasan_slab_free+0x130/0x180
+ kfree+0x90/0x1a0
+ ops_free_list.part.7+0xa6/0xc0
+ unregister_pernet_operations+0x18b/0x1f0
+ unregister_pernet_subsys+0x1d/0x30
+ ip_vs_cleanup+0x1d/0xd2f [ip_vs]
+ __x64_sys_delete_module+0x20c/0x300
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+The buggy address belongs to the object at ffff8881e9b26600 which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 2092 bytes inside of 4096-byte region [ffff8881e9b26600, ffff8881e9b27600)
+The buggy address belongs to the page:
+page:ffffea0007a6c800 count:1 mapcount:0 mapping:ffff888107c0e600 index:0x0 compound_mapcount: 0
+flags: 0x17ffffc0008100(slab|head)
+raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff888107c0e600
+raw: 0000000000000000 0000000080070007 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Please don't ignore review comments, people are generally making them
-for a reason and are likely to have the same concerns if issues remain
-unaddressed.  Having to repeat the same comments can get repetitive and
-make people question the value of time spent reviewing.  If you disagree
-with the review comments that's fine but you need to reply and discuss
-your concerns so that the reviewer can understand your decisions.
+Memory state around the buggy address:
+ ffff8881e9b26d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881e9b26d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8881e9b26e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                  ^
+ ffff8881e9b26e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881e9b26f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 
---raC6veAxrt5nqIoY
-Content-Type: application/pgp-signature; name="signature.asc"
+while unregistering ipvs module, ops_free_list calls
+__ip_vs_cleanup, then nf_unregister_net_hooks be called to
+do remove nf hook entries. It need a RCU period to finish,
+however net->ipvs is set to NULL immediately, which will
+trigger NULL pointer dereference when a packet is hooked
+and handled by ip_vs_in where net->ipvs is dereferenced.
 
------BEGIN PGP SIGNATURE-----
+Another scene is ops_free_list call ops_free to free the
+net_generic directly while __ip_vs_cleanup finished, then
+calling ip_vs_in will triggers use-after-free.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb3VkACgkQJNaLcl1U
-h9DDwgf+IgSDwzI5qR9A6I3NzqXiuPcYQwmgXzmah1o3/xQ9fvEAUz4bAkK2FkqX
-VtvQy+JWAMR/3O5ydxa3czZfwgWVTXvwM45kwrgye/uuc6plpsJmsHPNraBuy28z
-iPEJZSuAWrhTYT/5sHrjAv4tEapzYRBMs/HIYxXclBbz3mvHy9TvgF49iwgScJF/
-p2GZVLoX2cfaxzvhdFzV2HZrJA/838DdOp06vKR1PPr7csfwDtTBOnjpMd6WLEJ1
-pi/+g/kRW7qCzshGjqBhKGorhPo5HONC9qap8+D1RU8ol7p4JjuxgDhjgaSDa/rY
-x/RgG+BBwZjujStSaE/v31pqdFUAzA==
-=GuwL
------END PGP SIGNATURE-----
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: efe41606184e ("ipvs: convert to use pernet nf_hook api")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/netfilter/ipvs/ip_vs_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---raC6veAxrt5nqIoY--
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index 1445755..33205db 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -2320,6 +2320,7 @@ static void __net_exit __ip_vs_cleanup(struct net *net)
+ 	ip_vs_control_net_cleanup(ipvs);
+ 	ip_vs_estimator_net_cleanup(ipvs);
+ 	IP_VS_DBG(2, "ipvs netns %d released\n", ipvs->gen);
++	synchronize_net();
+ 	net->ipvs = NULL;
+ }
+ 
+-- 
+2.7.4
+
+
