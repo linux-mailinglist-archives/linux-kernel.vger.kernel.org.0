@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A15681EE39
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4111EDDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:14:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbfEOLSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56044 "EHLO mail.kernel.org"
+        id S1730055AbfEOLN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730833AbfEOLSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:34 -0400
+        id S1728897AbfEOLNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:13:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B997D2084F;
-        Wed, 15 May 2019 11:18:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D63012084E;
+        Wed, 15 May 2019 11:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919114;
-        bh=if+cigsVb9L5vqMDI0IdmjwNkCaIJB4Q0xkEqqjUYls=;
+        s=default; t=1557918832;
+        bh=Lngxvj9aDcojAtm97Ea3iz5LdfpXYW2n78C2GqWzHoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtWSk8fIAWESpEZ8pFIHjqEXV7CNRbDqv+X5IeSSod2CSlTKVMlwd9zXjeQvRb6nK
-         BeANFnZIysUTkjdcjT87/qxLA6pr+T7m5J4IxDZfBjkXKwf4kO8OGadNd4aYrIvalG
-         4Cj+7lP3oq4zLRysCoJoMj4OgO/cxlVzhjQ5HjGI=
+        b=nGtvYzanUyjK9W8+uFm8uoUMreR6gJUYJu39RPcr6TtkWK3vzcRueoJ7tL1yUqdQD
+         DOfpUzFPeZC8kfOXeEEYXOmr7xEt1WCZ+F1N1ZI7DQzQytINMBXg7Vi8gEtXgMt3DV
+         m/C1QQcYCmzUCcI+gQ1n0QCOvZii6BgBjU1uqeZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 072/115] arm64: dts: marvell: armada-ap806: reserve PSCI area
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 17/51] KVM: x86: avoid misreporting level-triggered irqs as edge-triggered in tracing
 Date:   Wed, 15 May 2019 12:55:52 +0200
-Message-Id: <20190515090704.676783539@linuxfoundation.org>
+Message-Id: <20190515090622.715265324@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 132ac39cffbcfed80ada38ef0fc6d34d95da7be6 ]
+[ Upstream commit 7a223e06b1a411cef6c4cd7a9b9a33c8d225b10e ]
 
-The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
-attempt to access it from Linux leads to an immediate crash.
+In __apic_accept_irq() interface trig_mode is int and actually on some code
+paths it is set above u8:
 
-So let's make the same memory reservation as the vendor kernel.
+kvm_apic_set_irq() extracts it from 'struct kvm_lapic_irq' where trig_mode
+is u16. This is done on purpose as e.g. kvm_set_msi_irq() sets it to
+(1 << 15) & e->msi.data
 
-[gregory: added as comment that this region matches the mainline U-boot]
-Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+kvm_apic_local_deliver sets it to reg & (1 << 15).
+
+Fix the immediate issue by making 'tm' into u16. We may also want to adjust
+__apic_accept_irq() interface and use proper sizes for vector, level,
+trig_mode but this is not urgent.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/x86/kvm/trace.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 30d48ecf46e08..27d2bd85d1ae9 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -65,6 +65,23 @@
- 		method = "smc";
- 	};
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index 0a6cc6754ec5a..ea618b713b6f2 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -434,13 +434,13 @@ TRACE_EVENT(kvm_apic_ipi,
+ );
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/*
-+		 * This area matches the mapping done with a
-+		 * mainline U-Boot, and should be updated by the
-+		 * bootloader.
-+		 */
-+
-+		psci-area@4000000 {
-+			reg = <0x0 0x4000000 0x0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
- 	ap806 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
+ TRACE_EVENT(kvm_apic_accept_irq,
+-	    TP_PROTO(__u32 apicid, __u16 dm, __u8 tm, __u8 vec),
++	    TP_PROTO(__u32 apicid, __u16 dm, __u16 tm, __u8 vec),
+ 	    TP_ARGS(apicid, dm, tm, vec),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	__u32,		apicid		)
+ 		__field(	__u16,		dm		)
+-		__field(	__u8,		tm		)
++		__field(	__u16,		tm		)
+ 		__field(	__u8,		vec		)
+ 	),
+ 
 -- 
 2.20.1
 
