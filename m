@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176091EE3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE991F17D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbfEOLS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56370 "EHLO mail.kernel.org"
+        id S1730874AbfEOLTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730400AbfEOLSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:51 -0400
+        id S1729422AbfEOLSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 846CE206BF;
-        Wed, 15 May 2019 11:18:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CE2420818;
+        Wed, 15 May 2019 11:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919130;
-        bh=1daR3BF2dO/1u7K6IxBHv9ObefRc1KdNfMU6URtTw6o=;
+        s=default; t=1557919132;
+        bh=HmAkxD5WGmy/RoY864NLyadG6VXokwA+13jgf0iy0Co=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fz1RoWPZDIOreZjpe/yhy22jjacdq7ptP+9tDl6rbwNdJpuAKnNbgejBAdN0DbZFM
-         9bP3d0Ud3LEpnBclyBgEwAIvxbMituPgnv9dLgyEe21Cnb3kY6KWCYaB/nSEl+UZfE
-         /jCl3ycGh+TRYO/oFfaYQPDKa9FjbwovJnV3uQJY=
+        b=DHAIw/BW7dd0f+zrYViEALHN/Q0aypX1hdquGm/aaz3+qY4SxhAkJmqm+pf/Ha/st
+         YZzr1RQRM3KhN/vvKDLh0XetJEyj5uQoMYQ1aQ4GFJYuxlhvzoaxFMoj7wG/W/AID3
+         /xDcyjRW+J1k71nuC+uWsl+EWiDc0rfP+T58qIyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael J Gruber <mjg@fedoraproject.org>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 078/115] ACPICA: Namespace: remove address node from global list after method termination
-Date:   Wed, 15 May 2019 12:55:58 +0200
-Message-Id: <20190515090705.057141163@linuxfoundation.org>
+Subject: [PATCH 4.14 079/115] Input: elan_i2c - add hardware ID for multiple Lenovo laptops
+Date:   Wed, 15 May 2019 12:55:59 +0200
+Message-Id: <20190515090705.130414779@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
 References: <20190515090659.123121100@linuxfoundation.org>
@@ -46,62 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c5781ffbbd4f742a58263458145fe7f0ac01d9e0 ]
+[ Upstream commit 738c06d0e4562e0acf9f2c7438a22b2d5afc67aa ]
 
-ACPICA commit b233720031a480abd438f2e9c643080929d144c3
+There are many Lenovo laptops which need elan_i2c support, this patch adds
+relevant IDs to the Elan driver so that touchpads are recognized.
 
-ASL operation_regions declare a range of addresses that it uses. In a
-perfect world, the range of addresses should be used exclusively by
-the AML interpreter. The OS can use this information to decide which
-drivers to load so that the AML interpreter and device drivers use
-different regions of memory.
-
-During table load, the address information is added to a global
-address range list. Each node in this list contains an address range
-as well as a namespace node of the operation_region. This list is
-deleted at ACPI shutdown.
-
-Unfortunately, ASL operation_regions can be declared inside of control
-methods. Although this is not recommended, modern firmware contains
-such code. New module level code changes unintentionally removed the
-functionality of adding and removing nodes to the global address
-range list.
-
-A few months ago, support for adding addresses has been re-
-implemented. However, the removal of the address range list was
-missed and resulted in some systems to crash due to the address list
-containing bogus namespace nodes from operation_regions declared in
-control methods. In order to fix the crash, this change removes
-dynamic operation_regions after control method termination.
-
-Link: https://github.com/acpica/acpica/commit/b2337200
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=202475
-Fixes: 4abb951b73ff ("ACPICA: AML interpreter: add region addresses in global list during initialization")
-Reported-by: Michael J Gruber <mjg@fedoraproject.org>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Cc: 4.20+ <stable@vger.kernel.org> # 4.20+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/acpi/acpica/nsobject.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/mouse/elan_i2c_core.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/acpi/acpica/nsobject.c b/drivers/acpi/acpica/nsobject.c
-index 707b2aa501e1b..099be64242556 100644
---- a/drivers/acpi/acpica/nsobject.c
-+++ b/drivers/acpi/acpica/nsobject.c
-@@ -222,6 +222,10 @@ void acpi_ns_detach_object(struct acpi_namespace_node *node)
- 		}
- 	}
- 
-+	if (obj_desc->common.type == ACPI_TYPE_REGION) {
-+		acpi_ut_remove_address_range(obj_desc->region.space_id, node);
-+	}
-+
- 	/* Clear the Node entry in all cases */
- 
- 	node->object = NULL;
+diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
+index 2ce805d31ed13..ad89ba143a0e3 100644
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1254,22 +1254,47 @@ static const struct acpi_device_id elan_acpi_id[] = {
+ 	{ "ELAN0600", 0 },
+ 	{ "ELAN0601", 0 },
+ 	{ "ELAN0602", 0 },
++	{ "ELAN0603", 0 },
++	{ "ELAN0604", 0 },
+ 	{ "ELAN0605", 0 },
++	{ "ELAN0606", 0 },
++	{ "ELAN0607", 0 },
+ 	{ "ELAN0608", 0 },
+ 	{ "ELAN0605", 0 },
+ 	{ "ELAN0609", 0 },
+ 	{ "ELAN060B", 0 },
+ 	{ "ELAN060C", 0 },
++	{ "ELAN060F", 0 },
++	{ "ELAN0610", 0 },
+ 	{ "ELAN0611", 0 },
+ 	{ "ELAN0612", 0 },
++	{ "ELAN0615", 0 },
++	{ "ELAN0616", 0 },
+ 	{ "ELAN0617", 0 },
+ 	{ "ELAN0618", 0 },
++	{ "ELAN0619", 0 },
++	{ "ELAN061A", 0 },
++	{ "ELAN061B", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
+ 	{ "ELAN061E", 0 },
++	{ "ELAN061F", 0 },
+ 	{ "ELAN0620", 0 },
+ 	{ "ELAN0621", 0 },
+ 	{ "ELAN0622", 0 },
++	{ "ELAN0623", 0 },
++	{ "ELAN0624", 0 },
++	{ "ELAN0625", 0 },
++	{ "ELAN0626", 0 },
++	{ "ELAN0627", 0 },
++	{ "ELAN0628", 0 },
++	{ "ELAN0629", 0 },
++	{ "ELAN062A", 0 },
++	{ "ELAN062B", 0 },
++	{ "ELAN062C", 0 },
++	{ "ELAN062D", 0 },
++	{ "ELAN0631", 0 },
++	{ "ELAN0632", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
+ };
 -- 
 2.20.1
 
