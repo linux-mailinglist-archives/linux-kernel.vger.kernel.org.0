@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCDA1EFE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A5D1F3DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733059AbfEOLiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:38:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43048 "EHLO mail.kernel.org"
+        id S1727657AbfEOLBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:01:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732882AbfEOLbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:31:19 -0400
+        id S1727092AbfEOLBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4817620818;
-        Wed, 15 May 2019 11:31:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7B8220881;
+        Wed, 15 May 2019 11:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919878;
-        bh=+q5u+2UcGhkagMxcTbdXzR+8uh8vvl0/OzsgokY/tEM=;
+        s=default; t=1557918066;
+        bh=EkxhnBWCf7u5Dfk0q5o+FUIQZF3yV0qzuLvDXWN/rXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQGvpb8TCVr5XPXWTijpzePVBJ6R8EklP/eUUH2XopB2sdb+ufxJ2eMSfrj2FBU89
-         pND2NQ0Bh6V7kxAkItSJJqJ4kN0IwNnWBOvNIR730WlPO5Dde5FOpQfOawMNOKm68e
-         3/LZG1xowehKtvR6OYfdfTJHIwkwTjt8ZbICpesY=
+        b=GKv6puYjGc49Zoaq33K+fyyGK96klhtOJiuy+LOVu5iPY4iV5Uckls2YpCJu4/+Y2
+         OZ3Sjxj2wzdyQ/hBaUDN9XoPNci3Ue0R92/eUJWFXxB6ZrtcsfsTF200T6rRiboTJm
+         CVN7n5+FkiQBGsL6j2BlmE/zfW/X69G/J3LJDeWE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 074/137] of_net: Fix residues after of_get_nvmem_mac_address removal
-Date:   Wed, 15 May 2019 12:55:55 +0200
-Message-Id: <20190515090658.805681603@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 79/86] net: ucc_geth - fix Oops when changing number of buffers in the ring
+Date:   Wed, 15 May 2019 12:55:56 +0200
+Message-Id: <20190515090655.701983779@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,94 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 36ad7022536e0c65f8baeeaa5efde11dec44808a ]
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-I've discovered following discrepancy in the bindings/net/ethernet.txt
-documentation, where it states following:
+[ Upstream commit ee0df19305d9fabd9479b785918966f6e25b733b ]
 
- - nvmem-cells: phandle, reference to an nvmem node for the MAC address;
- - nvmem-cell-names: string, should be "mac-address" if nvmem is to be..
+When changing the number of buffers in the RX ring while the interface
+is running, the following Oops is encountered due to the new number
+of buffers being taken into account immediately while their allocation
+is done when opening the device only.
 
-which is actually misleading and confusing. There are only two ethernet
-drivers in the tree, cadence/macb and davinci which supports this
-properties.
+[   69.882706] Unable to handle kernel paging request for data at address 0xf0000100
+[   69.890172] Faulting instruction address: 0xc033e164
+[   69.895122] Oops: Kernel access of bad area, sig: 11 [#1]
+[   69.900494] BE PREEMPT CMPCPRO
+[   69.907120] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.115-00006-g179ade8ce3-dirty #269
+[   69.915956] task: c0684310 task.stack: c06da000
+[   69.920470] NIP:  c033e164 LR: c02e44d0 CTR: c02e41fc
+[   69.925504] REGS: dfff1e20 TRAP: 0300   Not tainted  (4.14.115-00006-g179ade8ce3-dirty)
+[   69.934161] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 22004428  XER: 20000000
+[   69.940869] DAR: f0000100 DSISR: 20000000
+[   69.940869] GPR00: c0352d70 dfff1ed0 c0684310 f00000a4 00000040 dfff1f68 00000000 0000001f
+[   69.940869] GPR08: df53f410 1cc00040 00000021 c0781640 42004424 100c82b6 f00000a4 df53f5b0
+[   69.940869] GPR16: df53f6c0 c05daf84 00000040 00000000 00000040 c0782be4 00000000 00000001
+[   69.940869] GPR24: 00000000 df53f400 000001b0 df53f410 df53f000 0000003f df708220 1cc00044
+[   69.978348] NIP [c033e164] skb_put+0x0/0x5c
+[   69.982528] LR [c02e44d0] ucc_geth_poll+0x2d4/0x3f8
+[   69.987384] Call Trace:
+[   69.989830] [dfff1ed0] [c02e4554] ucc_geth_poll+0x358/0x3f8 (unreliable)
+[   69.996522] [dfff1f20] [c0352d70] net_rx_action+0x248/0x30c
+[   70.002099] [dfff1f80] [c04e93e4] __do_softirq+0xfc/0x310
+[   70.007492] [dfff1fe0] [c0021124] irq_exit+0xd0/0xd4
+[   70.012458] [dfff1ff0] [c000e7e0] call_do_irq+0x24/0x3c
+[   70.017683] [c06dbe80] [c0006bac] do_IRQ+0x64/0xc4
+[   70.022474] [c06dbea0] [c001097c] ret_from_except+0x0/0x14
+[   70.027964] --- interrupt: 501 at rcu_idle_exit+0x84/0x90
+[   70.027964]     LR = rcu_idle_exit+0x74/0x90
+[   70.037585] [c06dbf60] [20000000] 0x20000000 (unreliable)
+[   70.042984] [c06dbf80] [c004bb0c] do_idle+0xb4/0x11c
+[   70.047945] [c06dbfa0] [c004bd14] cpu_startup_entry+0x18/0x1c
+[   70.053682] [c06dbfb0] [c05fb034] start_kernel+0x370/0x384
+[   70.059153] [c06dbff0] [00003438] 0x3438
+[   70.063062] Instruction dump:
+[   70.066023] 38a00000 38800000 90010014 4bfff015 80010014 7c0803a6 3123ffff 7c691910
+[   70.073767] 38210010 4e800020 38600000 4e800020 <80e3005c> 80c30098 3107ffff 7d083910
+[   70.081690] ---[ end trace be7ccd9c1e1a9f12 ]---
 
-This nvmem-cell* properties were introduced in commit 9217e566bdee
-("of_net: Implement of_get_nvmem_mac_address helper"), but
-commit afa64a72b862 ("of: net: kill of_get_nvmem_mac_address()")
-forget to properly clean up this parts.
+This patch forbids the modification of the number of buffers in the
+ring while the interface is running.
 
-So this patch fixes the documentation by moving the nvmem-cell*
-properties at the appropriate places.  While at it, I've removed unused
-include as well.
-
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Fixes: afa64a72b862 ("of: net: kill of_get_nvmem_mac_address()")
-Signed-off-by: Petr Štetiar <ynezz@true.cz>
+Fixes: ac421852b3a0 ("ucc_geth: add ethtool support")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/net/davinci_emac.txt | 2 ++
- Documentation/devicetree/bindings/net/ethernet.txt     | 2 --
- Documentation/devicetree/bindings/net/macb.txt         | 4 ++++
- drivers/of/of_net.c                                    | 1 -
- 4 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/ucc_geth_ethtool.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/davinci_emac.txt b/Documentation/devicetree/bindings/net/davinci_emac.txt
-index 24c5cdaba8d27..ca83dcc84fb8e 100644
---- a/Documentation/devicetree/bindings/net/davinci_emac.txt
-+++ b/Documentation/devicetree/bindings/net/davinci_emac.txt
-@@ -20,6 +20,8 @@ Required properties:
- Optional properties:
- - phy-handle: See ethernet.txt file in the same directory.
-               If absent, davinci_emac driver defaults to 100/FULL.
-+- nvmem-cells: phandle, reference to an nvmem node for the MAC address
-+- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used
- - ti,davinci-rmii-en: 1 byte, 1 means use RMII
- - ti,davinci-no-bd-ram: boolean, does EMAC have BD RAM?
+--- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
++++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
+@@ -253,14 +253,12 @@ uec_set_ringparam(struct net_device *net
+ 		return -EINVAL;
+ 	}
  
-diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
-index cfc376bc977aa..2974e63ba311a 100644
---- a/Documentation/devicetree/bindings/net/ethernet.txt
-+++ b/Documentation/devicetree/bindings/net/ethernet.txt
-@@ -10,8 +10,6 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
-   the boot program; should be used in cases where the MAC address assigned to
-   the device by the boot program is different from the "local-mac-address"
-   property;
--- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
--- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
- - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
- - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
-   the maximum frame size (there's contradiction in the Devicetree
-diff --git a/Documentation/devicetree/bindings/net/macb.txt b/Documentation/devicetree/bindings/net/macb.txt
-index 3e17ac1d5d58c..1a914116f4c2c 100644
---- a/Documentation/devicetree/bindings/net/macb.txt
-+++ b/Documentation/devicetree/bindings/net/macb.txt
-@@ -26,6 +26,10 @@ Required properties:
- 	Optional elements: 'tsu_clk'
- - clocks: Phandles to input clocks.
- 
-+Optional properties:
-+- nvmem-cells: phandle, reference to an nvmem node for the MAC address
-+- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used
++	if (netif_running(netdev))
++		return -EBUSY;
 +
- Optional properties for PHY child node:
- - reset-gpios : Should specify the gpio for phy reset
- - magic-packet : If present, indicates that the hardware supports waking
-diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
-index 810ab0fbcccbf..d820f3edd4311 100644
---- a/drivers/of/of_net.c
-+++ b/drivers/of/of_net.c
-@@ -7,7 +7,6 @@
-  */
- #include <linux/etherdevice.h>
- #include <linux/kernel.h>
--#include <linux/nvmem-consumer.h>
- #include <linux/of_net.h>
- #include <linux/phy.h>
- #include <linux/export.h>
--- 
-2.20.1
-
+ 	ug_info->bdRingLenRx[queue] = ring->rx_pending;
+ 	ug_info->bdRingLenTx[queue] = ring->tx_pending;
+ 
+-	if (netif_running(netdev)) {
+-		/* FIXME: restart automatically */
+-		netdev_info(netdev, "Please re-open the interface\n");
+-	}
+-
+ 	return ret;
+ }
+ 
 
 
