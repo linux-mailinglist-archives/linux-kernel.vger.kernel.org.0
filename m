@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BFD1EE5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B01CD1EF20
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731141AbfEOLUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:20:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        id S1732691AbfEOLaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730947AbfEOLUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:20:38 -0400
+        id S1731730AbfEOLaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B481206BF;
-        Wed, 15 May 2019 11:20:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1F5320843;
+        Wed, 15 May 2019 11:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919238;
-        bh=mmGx9nuyYK0Z3uaZTIzF0eWLA+6eKo+Wh2LzkIO1VY0=;
+        s=default; t=1557919810;
+        bh=dVQBo5mtvrTupR7EEWhapQ5svi0kusxcNoYyTDZh03o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lrkvV/62mUS+rocEBM64kTg0JeB3nLh5XieilkKzt+IE7KDxf3s1no5dDkpQyBtYM
-         81VGr5NXwkbzZ22dL3vtKn/bvek6inhBpFrv8LimOtydaKfEIbAuRWN7RNVVBDKdLB
-         M2qD+7xFJB5u5MrZKCM4V943IcOYMDfuBYq4iqtA=
+        b=ONLGU2JHinEj9dV5SaEgmI/wuw0sQXUNSYc/PW/OYaTkLXhtr7O2pFBA72vQEIelX
+         s+peQay5IW8EK5YXgvT2C0fiVt8plrQrSDa1OpSZD4jH7hapP9OyEmXx0BrHaxyCMy
+         21MI5hhXvvuixJksej8pA3Csa//7f5pHf1XHS9rw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Haller <thaller@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 102/115] fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied
-Date:   Wed, 15 May 2019 12:56:22 +0200
-Message-Id: <20190515090706.526248412@linuxfoundation.org>
+        stable@vger.kernel.org, Eubert Bao <bunnier@gmail.com>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.0 102/137] mwl8k: Fix rate_idx underflow
+Date:   Wed, 15 May 2019 12:56:23 +0200
+Message-Id: <20190515090700.931485945@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Petr Štetiar <ynezz@true.cz>
 
-[ Upstream commit e9919a24d3022f72bcadc407e73a6ef17093a849 ]
+commit 6b583201fa219b7b1b6aebd8966c8fd9357ef9f4 upstream.
 
-With commit 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to
-fib_nl_newrule") we now able to check if a rule already exists. But this
-only works with iproute2. For other tools like libnl, NetworkManager,
-it still could add duplicate rules with only NLM_F_CREATE flag, like
+It was reported on OpenWrt bug tracking system[1], that several users
+are affected by the endless reboot of their routers if they configure
+5GHz interface with channel 44 or 48.
 
-[localhost ~ ]# ip rule
-0:      from all lookup local
-32766:  from all lookup main
-32767:  from all lookup default
-100000: from 192.168.7.5 lookup 5
-100000: from 192.168.7.5 lookup 5
+The reboot loop is caused by the following excessive number of WARN_ON
+messages:
 
-As it doesn't make sense to create two duplicate rules, let's just return
-0 if the rule exists.
+ WARNING: CPU: 0 PID: 0 at backports-4.19.23-1/net/mac80211/rx.c:4516
+                             ieee80211_rx_napi+0x1fc/0xa54 [mac80211]
 
-Fixes: 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to fib_nl_newrule")
-Reported-by: Thomas Haller <thaller@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+as the messages are being correctly emitted by the following guard:
+
+ case RX_ENC_LEGACY:
+      if (WARN_ON(status->rate_idx >= sband->n_bitrates))
+
+as the rate_idx is in this case erroneously set to 251 (0xfb). This fix
+simply converts previously used magic number to proper constant and
+guards against substraction which is leading to the currently observed
+underflow.
+
+1. https://bugs.openwrt.org/index.php?do=details&task_id=2218
+
+Fixes: 854783444bab ("mwl8k: properly set receive status rate index on 5 GHz receive")
+Cc: <stable@vger.kernel.org>
+Tested-by: Eubert Bao <bunnier@gmail.com>
+Reported-by: Eubert Bao <bunnier@gmail.com>
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/fib_rules.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/core/fib_rules.c
-+++ b/net/core/fib_rules.c
-@@ -563,9 +563,9 @@ int fib_nl_newrule(struct sk_buff *skb,
- 		rule->uid_range = fib_kuid_range_unset;
- 	}
+---
+ drivers/net/wireless/marvell/mwl8k.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/wireless/marvell/mwl8k.c
++++ b/drivers/net/wireless/marvell/mwl8k.c
+@@ -441,6 +441,9 @@ static const struct ieee80211_rate mwl8k
+ #define MWL8K_CMD_UPDATE_STADB		0x1123
+ #define MWL8K_CMD_BASTREAM		0x1125
  
--	if ((nlh->nlmsg_flags & NLM_F_EXCL) &&
--	    rule_exists(ops, frh, tb, rule)) {
--		err = -EEXIST;
-+	if (rule_exists(ops, frh, tb, rule)) {
-+		if (nlh->nlmsg_flags & NLM_F_EXCL)
-+			err = -EEXIST;
- 		goto errout_free;
- 	}
++#define MWL8K_LEGACY_5G_RATE_OFFSET \
++	(ARRAY_SIZE(mwl8k_rates_24) - ARRAY_SIZE(mwl8k_rates_50))
++
+ static const char *mwl8k_cmd_name(__le16 cmd, char *buf, int bufsize)
+ {
+ 	u16 command = le16_to_cpu(cmd);
+@@ -1016,8 +1019,9 @@ mwl8k_rxd_ap_process(void *_rxd, struct
  
+ 	if (rxd->channel > 14) {
+ 		status->band = NL80211_BAND_5GHZ;
+-		if (!(status->encoding == RX_ENC_HT))
+-			status->rate_idx -= 5;
++		if (!(status->encoding == RX_ENC_HT) &&
++		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
++			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
+ 	} else {
+ 		status->band = NL80211_BAND_2GHZ;
+ 	}
+@@ -1124,8 +1128,9 @@ mwl8k_rxd_sta_process(void *_rxd, struct
+ 
+ 	if (rxd->channel > 14) {
+ 		status->band = NL80211_BAND_5GHZ;
+-		if (!(status->encoding == RX_ENC_HT))
+-			status->rate_idx -= 5;
++		if (!(status->encoding == RX_ENC_HT) &&
++		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
++			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
+ 	} else {
+ 		status->band = NL80211_BAND_2GHZ;
+ 	}
 
 
