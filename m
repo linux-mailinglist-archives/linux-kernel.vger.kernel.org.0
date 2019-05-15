@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651F21F139
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1827F1ECA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfEOLWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:22:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60488 "EHLO mail.kernel.org"
+        id S1727270AbfEOK7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:59:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730766AbfEOLWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:16 -0400
+        id S1727242AbfEOK7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:59:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A9F32084F;
-        Wed, 15 May 2019 11:22:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82EDE2084F;
+        Wed, 15 May 2019 10:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919335;
-        bh=OvkSBB7K7hW8SJ8tMYZbKKhX0P9yKk386rOjr/OaGk4=;
+        s=default; t=1557917986;
+        bh=MkJAxibFcQEvGbfg4UeaKGxJxd+hEz/ZojEKY43Dfq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mloF8jMLpzjQ0QSdswlehra5tZZS5QDiplVagyFZwo1h4RLyVgqatIU12tBlugQV6
-         g1/eLpGQ44a1+B/CuEcrfmu9lJcNQP6ncChTgMswfw0+hDIMnNwbxChhjJxS4iYHze
-         v5ng3Y1Yh/CV9bVBpIA5RCRAtD2y0puqsPkBGTBo=
+        b=ARJNEqpCY09w9VAZYQz8uWhI7yQ6OnpkBAGhHdPj44/PzoBu3mKJT53SkDijzHsYQ
+         9gpe01AG4AxSzI2Fz6JnrVgi5V1unmM3Lxj/C20kDL6eiel17S1wsPUrFvKbzCD7Gz
+         phYVq7JnKePwq4U0SL7oG9XDufZm/b1BIDbBhEmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christian Rund <Christian.Rund@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 035/113] s390/pkey: add one more argument space for debug feature entry
+        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 3.18 49/86] staging: iio: adt7316: fix the dac read calculation
 Date:   Wed, 15 May 2019 12:55:26 +0200
-Message-Id: <20190515090656.262044590@linuxfoundation.org>
+Message-Id: <20190515090652.214503157@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b1f16ba730d4c0cda1247568c3a1bf4fa3a2f2f ]
+From: Jeremy Fertic <jeremyfertic@gmail.com>
 
-The debug feature entries have been used with up to 5 arguents
-(including the pointer to the format string) but there was only
-space reserved for 4 arguemnts. So now the registration does
-reserve space for 5 times a long value.
+commit 45130fb030aec26ac28b4bb23344901df3ec3b7f upstream.
 
-This fixes a sometime appearing weired value as the last
-value of an debug feature entry like this:
+The calculation of the current dac value is using the wrong bits of the
+dac lsb register. Create two macros to shift the lsb register value into
+lsb position, depending on whether the dac is 10 or 12 bit. Initialize
+data to 0 so, with an 8 bit dac, the msb register value can be bitwise
+ORed with data.
 
-... pkey_sec2protkey zcrypt_send_cprb (cardnr=10 domain=12)
-   failed with errno -2143346254
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
-Reported-by: Christian Rund <Christian.Rund@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/crypto/pkey_api.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/iio/addac/adt7316.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
-index 1b4001e0285fe..b16344479959b 100644
---- a/drivers/s390/crypto/pkey_api.c
-+++ b/drivers/s390/crypto/pkey_api.c
-@@ -45,7 +45,8 @@ static debug_info_t *debug_info;
- 
- static void __init pkey_debug_init(void)
+--- a/drivers/staging/iio/addac/adt7316.c
++++ b/drivers/staging/iio/addac/adt7316.c
+@@ -47,6 +47,8 @@
+ #define ADT7516_MSB_AIN3		0xA
+ #define ADT7516_MSB_AIN4		0xB
+ #define ADT7316_DA_DATA_BASE		0x10
++#define ADT7316_DA_10_BIT_LSB_SHIFT	6
++#define ADT7316_DA_12_BIT_LSB_SHIFT	4
+ #define ADT7316_DA_MSB_DATA_REGS	4
+ #define ADT7316_LSB_DAC_A		0x10
+ #define ADT7316_MSB_DAC_A		0x11
+@@ -1414,7 +1416,7 @@ static IIO_DEVICE_ATTR(ex_analog_temp_of
+ static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
+ 		int channel, char *buf)
  {
--	debug_info = debug_register("pkey", 1, 1, 4 * sizeof(long));
-+	/* 5 arguments per dbf entry (including the format string ptr) */
-+	debug_info = debug_register("pkey", 1, 1, 5 * sizeof(long));
- 	debug_register_view(debug_info, &debug_sprintf_view);
- 	debug_set_level(debug_info, 3);
+-	u16 data;
++	u16 data = 0;
+ 	u8 msb, lsb, offset;
+ 	int ret;
+ 
+@@ -1439,7 +1441,11 @@ static ssize_t adt7316_show_DAC(struct a
+ 	if (ret)
+ 		return -EIO;
+ 
+-	data = (msb << offset) + (lsb & ((1 << offset) - 1));
++	if (chip->dac_bits == 12)
++		data = lsb >> ADT7316_DA_12_BIT_LSB_SHIFT;
++	else if (chip->dac_bits == 10)
++		data = lsb >> ADT7316_DA_10_BIT_LSB_SHIFT;
++	data |= msb << offset;
+ 
+ 	return sprintf(buf, "%d\n", data);
  }
--- 
-2.20.1
-
 
 
