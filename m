@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147871F25B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B92A1F172
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730435AbfEOMDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:03:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48362 "EHLO mail.kernel.org"
+        id S1731321AbfEOLyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:54:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729840AbfEOLMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:12:48 -0400
+        id S1730521AbfEOLTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FD7F216F4;
-        Wed, 15 May 2019 11:12:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F8DA2084F;
+        Wed, 15 May 2019 11:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918767;
-        bh=0ywGC9Yqkg12L/7St2LmkxMzLNi5o8y1OqY36oPd8S0=;
+        s=default; t=1557919153;
+        bh=CD+3kVeGxnZBiQsOmKpXFQTDnw/usWuj2LsIib3Ubzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jpiGzf9bZCGPWbe6MZcaK6yq76qCoPeiKmiw9y9RI8CM/iauZZcir64Q9OIk9pc0F
-         MlJBVy4IHFsBYJh5JOtIaCWVaadpgXYax7jCvZZ00G9U6pah/KvIT893PkhreQ1S+9
-         wJY4+ps/0bsS3GNxZ1FLUnr+yhDv22kNQ1ghUXBM=
+        b=FoZbPcQAamxROJ+qQHwQv+yMCKUPXjMMFLFH6/Hn5PR78pOcBCu9g3WLSH0EkCC3C
+         crrLy1Xwifw9P1DuTIKMD+cK8DFjdLsjaxYyeTGqyqI4ftMubBV7bsvEo8+dgpzXnE
+         9R8ylL3lAEuhGj4jlpMbU3cda9TiRqhOllqvjpP8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 259/266] packet: Fix error path in packet_init
+        stable@vger.kernel.org, Fugang Duan <fugang.duan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 086/115] net: fec: manage ahb clock in runtime pm
 Date:   Wed, 15 May 2019 12:56:06 +0200
-Message-Id: <20190515090731.778326344@linuxfoundation.org>
+Message-Id: <20190515090705.580979329@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+[ Upstream commit d7c3a206e6338e4ccdf030719dec028e26a521d5 ]
 
-[ Upstream commit 36096f2f4fa05f7678bc87397665491700bae757 ]
+Some SOC like i.MX6SX clock have some limits:
+- ahb clock should be disabled before ipg.
+- ahb and ipg clocks are required for MAC MII bus.
+So, move the ahb clock to runtime management together with
+ipg clock.
 
-kernel BUG at lib/list_debug.c:47!
-invalid opcode: 0000 [#1
-CPU: 0 PID: 12914 Comm: rmmod Tainted: G        W         5.1.0+ #47
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:__list_del_entry_valid+0x53/0x90
-Code: 48 8b 32 48 39 fe 75 35 48 8b 50 08 48 39 f2 75 40 b8 01 00 00 00 5d c3 48
-89 fe 48 89 c2 48 c7 c7 18 75 fe 82 e8 cb 34 78 ff <0f> 0b 48 89 fe 48 c7 c7 50 75 fe 82 e8 ba 34 78 ff 0f 0b 48 89 f2
-RSP: 0018:ffffc90001c2fe40 EFLAGS: 00010286
-RAX: 000000000000004e RBX: ffffffffa0184000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffff888237a17788 RDI: 00000000ffffffff
-RBP: ffffc90001c2fe40 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffc90001c2fe10 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffc90001c2fe50 R14: ffffffffa0184000 R15: 0000000000000000
-FS:  00007f3d83634540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555c350ea818 CR3: 0000000231677000 CR4: 00000000000006f0
-Call Trace:
- unregister_pernet_operations+0x34/0x120
- unregister_pernet_subsys+0x1c/0x30
- packet_exit+0x1c/0x369 [af_packet
- __x64_sys_delete_module+0x156/0x260
- ? lockdep_hardirqs_on+0x133/0x1b0
- ? do_syscall_64+0x12/0x1f0
- do_syscall_64+0x6e/0x1f0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-When modprobe af_packet, register_pernet_subsys
-fails and does a cleanup, ops->list is set to LIST_POISON1,
-but the module init is considered to success, then while rmmod it,
-BUG() is triggered in __list_del_entry_valid which is called from
-unregister_pernet_subsys. This patch fix error handing path in
-packet_init to avoid possilbe issue if some error occur.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/packet/af_packet.c |   25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/freescale/fec_main.c | 30 ++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4523,14 +4523,29 @@ static void __exit packet_exit(void)
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index ce55c8f7f33a4..ad3aabc39cc24 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1851,13 +1851,9 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
+ 	int ret;
  
- static int __init packet_init(void)
+ 	if (enable) {
+-		ret = clk_prepare_enable(fep->clk_ahb);
+-		if (ret)
+-			return ret;
+-
+ 		ret = clk_prepare_enable(fep->clk_enet_out);
+ 		if (ret)
+-			goto failed_clk_enet_out;
++			return ret;
+ 
+ 		if (fep->clk_ptp) {
+ 			mutex_lock(&fep->ptp_clk_mutex);
+@@ -1875,7 +1871,6 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
+ 		if (ret)
+ 			goto failed_clk_ref;
+ 	} else {
+-		clk_disable_unprepare(fep->clk_ahb);
+ 		clk_disable_unprepare(fep->clk_enet_out);
+ 		if (fep->clk_ptp) {
+ 			mutex_lock(&fep->ptp_clk_mutex);
+@@ -1894,8 +1889,6 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
+ failed_clk_ptp:
+ 	if (fep->clk_enet_out)
+ 		clk_disable_unprepare(fep->clk_enet_out);
+-failed_clk_enet_out:
+-		clk_disable_unprepare(fep->clk_ahb);
+ 
+ 	return ret;
+ }
+@@ -3455,6 +3448,9 @@ fec_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(fep->clk_ipg);
+ 	if (ret)
+ 		goto failed_clk_ipg;
++	ret = clk_prepare_enable(fep->clk_ahb);
++	if (ret)
++		goto failed_clk_ahb;
+ 
+ 	fep->reg_phy = devm_regulator_get(&pdev->dev, "phy");
+ 	if (!IS_ERR(fep->reg_phy)) {
+@@ -3546,6 +3542,9 @@ fec_probe(struct platform_device *pdev)
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ failed_regulator:
++	clk_disable_unprepare(fep->clk_ahb);
++failed_clk_ahb:
++	clk_disable_unprepare(fep->clk_ipg);
+ failed_clk_ipg:
+ 	fec_enet_clk_enable(ndev, false);
+ failed_clk:
+@@ -3669,6 +3668,7 @@ static int __maybe_unused fec_runtime_suspend(struct device *dev)
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
+ 
++	clk_disable_unprepare(fep->clk_ahb);
+ 	clk_disable_unprepare(fep->clk_ipg);
+ 
+ 	return 0;
+@@ -3678,8 +3678,20 @@ static int __maybe_unused fec_runtime_resume(struct device *dev)
  {
--	int rc = proto_register(&packet_proto, 0);
-+	int rc;
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
++	int ret;
  
--	if (rc != 0)
-+	rc = proto_register(&packet_proto, 0);
-+	if (rc)
- 		goto out;
-+	rc = sock_register(&packet_family_ops);
-+	if (rc)
-+		goto out_proto;
-+	rc = register_pernet_subsys(&packet_net_ops);
-+	if (rc)
-+		goto out_sock;
-+	rc = register_netdevice_notifier(&packet_netdev_notifier);
-+	if (rc)
-+		goto out_pernet;
- 
--	sock_register(&packet_family_ops);
--	register_pernet_subsys(&packet_net_ops);
--	register_netdevice_notifier(&packet_netdev_notifier);
+-	return clk_prepare_enable(fep->clk_ipg);
++	ret = clk_prepare_enable(fep->clk_ahb);
++	if (ret)
++		return ret;
++	ret = clk_prepare_enable(fep->clk_ipg);
++	if (ret)
++		goto failed_clk_ipg;
++
 +	return 0;
 +
-+out_pernet:
-+	unregister_pernet_subsys(&packet_net_ops);
-+out_sock:
-+	sock_unregister(PF_PACKET);
-+out_proto:
-+	proto_unregister(&packet_proto);
- out:
- 	return rc;
++failed_clk_ipg:
++	clk_disable_unprepare(fep->clk_ahb);
++	return ret;
  }
+ 
+ static const struct dev_pm_ops fec_pm_ops = {
+-- 
+2.20.1
+
 
 
