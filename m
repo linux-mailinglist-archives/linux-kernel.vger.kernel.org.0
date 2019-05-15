@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7634E1F102
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF3DA1F406
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730976AbfEOLTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:19:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57194 "EHLO mail.kernel.org"
+        id S1728067AbfEOMSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:18:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730572AbfEOLTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:30 -0400
+        id S1726290AbfEOLB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28EB0206BF;
-        Wed, 15 May 2019 11:19:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 868D420881;
+        Wed, 15 May 2019 11:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919169;
-        bh=rM3Wb2qCqHGGq8V5wW4paFWyDqiCvYc1efac+ZgWVqg=;
+        s=default; t=1557918087;
+        bh=m5v/VQDEu53kIn8smOqM7gN/gtLhfkr4W9EBM+BYU1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tMnfXsQFjGdoir38Ku4KLQhGQ1tqzLljIUC+AOhAe7FeTlShUvMXuq66qY0NJZnTQ
-         0U+HFpt4C3AcFL0gyKC4/CTjw94DPHzn6D5ExFMQdid70BLxNSyPzZKxrH1ee4cCH0
-         R/ehY+dNmhLqHNAK7ViCTK/MXsvHYFQZQJJx0n2c=
+        b=mu8hAB/WV9M7Cm3BvXYGy9lKQGBO9w3d6duY62z6aIszRmG5HWUpBv73/U+xjE86Z
+         U0ADae159oOxhJ0DCVzjzy/C2U/n9wVK5qKJUV0wsqSqF5J4jDHbBpfObvEYByQhDG
+         2Rswdf7vQ7Msp9yEgPaf+eH2kBMjRUP+1C+GN8dQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/115] media: ov5640: fix auto controls values when switching to manual mode
-Date:   Wed, 15 May 2019 12:55:36 +0200
-Message-Id: <20190515090703.664617652@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 3.18 60/86] Bluetooth: hidp: fix buffer overflow
+Date:   Wed, 15 May 2019 12:55:37 +0200
+Message-Id: <20190515090654.266276064@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8f438c684eaa4cbe6c98828eb996d5ec53e24fb ]
+From: Young Xiao <YangX92@hotmail.com>
 
-When switching from auto to manual mode, V4L2 core is calling
-g_volatile_ctrl() in manual mode in order to get the manual initial value.
-Remove the manual mode check/return to not break this behaviour.
+commit a1616a5ac99ede5d605047a9012481ce7ff18b16 upstream.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Tested-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Struct ca is copied from userspace. It is not checked whether the "name"
+field is NULL terminated, which allows local users to obtain potentially
+sensitive information from kernel stack memory, via a HIDPCONNADD command.
+
+This vulnerability is similar to CVE-2011-1079.
+
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/i2c/ov5640.c | 4 ----
- 1 file changed, 4 deletions(-)
+ net/bluetooth/hidp/sock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index 0366c8dc6ecf7..acf5c8a55bbd2 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -1900,16 +1900,12 @@ static int ov5640_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+--- a/net/bluetooth/hidp/sock.c
++++ b/net/bluetooth/hidp/sock.c
+@@ -76,6 +76,7 @@ static int hidp_sock_ioctl(struct socket
+ 			sockfd_put(csock);
+ 			return err;
+ 		}
++		ca.name[sizeof(ca.name)-1] = 0;
  
- 	switch (ctrl->id) {
- 	case V4L2_CID_AUTOGAIN:
--		if (!ctrl->val)
--			return 0;
- 		val = ov5640_get_gain(sensor);
- 		if (val < 0)
- 			return val;
- 		sensor->ctrls.gain->val = val;
- 		break;
- 	case V4L2_CID_EXPOSURE_AUTO:
--		if (ctrl->val == V4L2_EXPOSURE_MANUAL)
--			return 0;
- 		val = ov5640_get_exposure(sensor);
- 		if (val < 0)
- 			return val;
--- 
-2.20.1
-
+ 		err = hidp_connection_add(&ca, csock, isock);
+ 		if (!err && copy_to_user(argp, &ca, sizeof(ca)))
 
 
