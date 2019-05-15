@@ -2,116 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F111FA2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 20:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFE01FA35
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 20:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbfEOSnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 14:43:50 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:39101 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfEOSnu (ORCPT
+        id S1727208AbfEOSrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 14:47:03 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36051 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfEOSrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 14:43:50 -0400
-Received: by mail-vs1-f68.google.com with SMTP id m1so603218vsr.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 11:43:49 -0700 (PDT)
+        Wed, 15 May 2019 14:47:02 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c3so1019922otr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 11:47:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vNECGk8CnSY+BUMqx/A6sNJnXy1K+tE5/+q6NrpNAeg=;
-        b=BQ9VXLFElWFzf7izK1ym/zFCq1WxsSoI7IZR/etFVJ3c6xH3PwVo3az6lB+MkUP/Gj
-         PxZMwkXe1rl5EjO3Kxfks/TZY3oYrwLodR/8iZJr/9CDD59tWt7jhU4zsZs0BYYwMRNN
-         Iey0Dt7PXFPRad8sX/uvZhi1xQzvN9Br//u9s=
+        bh=eOydKc/WsPS/4UYaw0lrBxS07NNolXo/TbnO9qPBOqA=;
+        b=BB0dY/8FNByRR2LvoUO/dEX3U9iTwiAuD6aHdfRN6ftwVYsE1IArfACRpd3ZCZsY6K
+         iY3gRSmuhRSwx1CCfGKDmeD+9JrqnQ2zFP92vPEOcQ5dHRWplBxKaMngMkcjtvxNhwfT
+         wL6ijfW2WUojZfxbnR6DoqNlpDaHF5luAmcZLddGp/55FRptVwDp2UodImztRLRvOzPs
+         e5IB+BeCcv9nlxmyfXT8di+B21J2cX9v6Gd5YYKTdpx0iAi8XF81A8RwPD7taUw9keMH
+         LkGSy82DcXdG4vNpjS9JmmDLH853rSylPUd3weZDpNk+E1kXpdMxe0+rTLTqf9jCo9H0
+         cZ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vNECGk8CnSY+BUMqx/A6sNJnXy1K+tE5/+q6NrpNAeg=;
-        b=DII7QA+WmkGJqfiSxDmJtwJuoxg1GziA9Crl1+rHICKGaiSFyIFyQPNADRq/aACDSj
-         aVJlAkUjhlsgZqt3G7ViKrDpy4mhsH/ut8LAc1XWhBpj08KFS1jjPOUXHIbzPDXDh899
-         zIF1jm0XTinYC8IcF2UwCj286aUn1JDuY06+NiFG3lFIF/SBKPK9pOOTpvEO2YXCxW3z
-         8OU3yNRBCGludNbkoBkWEPZ/xsudnfQSDpa33vfjgl6o894ztwfxu11H7tZ6sk6sZ/5g
-         8gygPAmc4dsdW6MCtN0uxTgv67yMj6HCkaV4uHkV0n2alcu9oP9fkLVu5c+L1jMeNuaX
-         0KZA==
-X-Gm-Message-State: APjAAAXrusLaIydCi1HzPjxdd0omQtksUfa6ujMZr318c9xfwlYYz2PC
-        pAnlOEjuj5g3Y80i2YzENUNV8R5Q58Q=
-X-Google-Smtp-Source: APXvYqyckGZ/HC/khmRPlka1IPm1juJRRL3yoU+C3vijIcm3iI80vkFqDcOxIpObt+7w0e40WEmynA==
-X-Received: by 2002:a67:8008:: with SMTP id b8mr13756714vsd.33.1557945828925;
-        Wed, 15 May 2019 11:43:48 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id g3sm2295945vkb.9.2019.05.15.11.43.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 11:43:41 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id t15so254474uao.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 11:43:41 -0700 (PDT)
-X-Received: by 2002:ab0:2692:: with SMTP id t18mr5386901uao.106.1557945821179;
- Wed, 15 May 2019 11:43:41 -0700 (PDT)
+        bh=eOydKc/WsPS/4UYaw0lrBxS07NNolXo/TbnO9qPBOqA=;
+        b=O5tlK8PBZfbksDlemMZFu9KDR4JOmo/qaE03PhUu99Y2naf4SB968AOfylVUhSCT7A
+         ooBWINDacZNz6r51T5UMJw4vt+bwpoMdGmFQXap3mr/PWccPxieRYAslXoNBsEIlvM05
+         paNqpjbaCgKQgO/euCwxQ+jIrUgaMCybhJpofIFyGjUESzUNGAfVKvjhW+5i+8BgERjQ
+         9MeUXn4ayp24bevWxZ1KS5DVvFXdEMG18cQntbN9DWs49o8qCGKY0wWd60VfPEQuNU9i
+         nCHfn+WVN3lmrB9jbHqFiOlUzyfNMnyuwVJEklSsAr0eYggQ5EsoExXynn4AtyGnxWe9
+         fxDA==
+X-Gm-Message-State: APjAAAXzSdaEY5/oq9ijf7lTxhwja3Q2lUOGpoq4qYaChdN1wTZlcQSX
+        ENv3CKuPzjszMfkdoo925LNUfCn87b2836MFkDVrNg==
+X-Google-Smtp-Source: APXvYqyal1aN8n2OsssxIrvSlvaLMFF5ulsVEFJWHTDanNfWzlN/kwAPewVzo8zGug4MCn40y4+zwPV0F7AvsRqjAxs=
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr26196019oti.18.1557946021528;
+ Wed, 15 May 2019 11:47:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190424162827.5297-1-mka@chromium.org> <CAD=FV=W+QGLmhEaqGc-=wNFzmaCr_f4rb5e8KQ4ZmeRaNi_xCw@mail.gmail.com>
-In-Reply-To: <CAD=FV=W+QGLmhEaqGc-=wNFzmaCr_f4rb5e8KQ4ZmeRaNi_xCw@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 15 May 2019 11:43:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WQ-yAeB_xU5UVHGWgsC=a9t_CtN9bHvZnoxkfuA9=zGw@mail.gmail.com>
-Message-ID: <CAD=FV=WQ-yAeB_xU5UVHGWgsC=a9t_CtN9bHvZnoxkfuA9=zGw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: rockchip: Add #cooling-cells entry for rk3288 GPU
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <155793276388.13922.18064660723547377633.stgit@localhost.localdomain>
+In-Reply-To: <155793276388.13922.18064660723547377633.stgit@localhost.localdomain>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 15 May 2019 20:46:35 +0200
+Message-ID: <CAG48ez20Nu76Q8Tye9Hd3HGCmvfUYH+Ubp2EWbnhLp+J6wqRvw@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm: process_vm_mmap() -- syscall for duplication
+ a process mapping
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>, keith.busch@intel.com,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        pasha.tatashin@oracle.com,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        ira.weiny@intel.com, Andrey Konovalov <andreyknvl@google.com>,
+        arunks@codeaurora.org, Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Rik van Riel <riel@surriel.com>,
+        Kees Cook <keescook@chromium.org>, hannes@cmpxchg.org,
+        npiggin@gmail.com,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        shakeelb@google.com, Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        daniel.m.jordan@oracle.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, May 15, 2019 at 10:59 AM Doug Anderson <dianders@chromium.org> wrote:
-
-> Hi,
+On Wed, May 15, 2019 at 5:11 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> This patchset adds a new syscall, which makes possible
+> to clone a mapping from a process to another process.
+> The syscall supplements the functionality provided
+> by process_vm_writev() and process_vm_readv() syscalls,
+> and it may be useful in many situation.
 >
-> On Wed, Apr 24, 2019 at 9:28 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> > The Mali GPU of the rk3288 can be used as cooling device, add
-> > a #cooling-cells entry for it.
-> >
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  arch/arm/boot/dts/rk3288.dtsi | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-> > index ca7d52daa8fb..767e62908a6e 100644
-> > --- a/arch/arm/boot/dts/rk3288.dtsi
-> > +++ b/arch/arm/boot/dts/rk3288.dtsi
-> > @@ -1275,6 +1275,7 @@
-> >                 interrupt-names = "job", "mmu", "gpu";
-> >                 clocks = <&cru ACLK_GPU>;
-> >                 operating-points-v2 = <&gpu_opp_table>;
-> > +               #cooling-cells = <2>; /* min followed by max */
-> >                 power-domains = <&power RK3288_PD_GPU>;
-> >                 status = "disabled";
-> >         };
->
-> Seems like a good idea to me.  Presumably we should also add this to
-> the bindings?
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> For example, it allows to make a zero copy of data,
+> when process_vm_writev() was previously used:
+[...]
+> This syscall may be used for page servers like in example
+> above, for migration (I assume, even virtual machines may
+> want something like this), for zero-copy desiring users
+> of process_vm_writev() and process_vm_readv(), for debug
+> purposes, etc. It requires the same permittions like
+> existing proc_vm_xxx() syscalls have.
 
-I guess we could now also do a follow-up CL that starts using the GPU
-as a cooling device.  Presumably it's still OK to specify this and it
-will just be ignored if there's no GPU driver?  It's a little funny
-because the upstream device tree uses the CPU to cool things down if
-the GPU temperature sensor trips.  Downstream uses the GPU to cool
-down the GPU.  ...though, of course, it's not really all that simple
-since everything is packed in so tightly.
-
-The other case that sticks as a sore thumb is the upstream
-"rk3288-veyron-mickey" where all the comments still talk about the GPU
-cooling but we have only the CPU cooling actually in the device tree.
-:-)
-
--Doug
+Have you considered using userfaultfd instead? userfaultfd has
+interfaces (UFFDIO_COPY and UFFDIO_ZERO) for directly shoving pages
+into the VMAs of other processes. This works without the churn of
+creating and merging VMAs all the time. userfaultfd is the interface
+that was written to support virtual machine migration (and it supports
+live migration, too).
