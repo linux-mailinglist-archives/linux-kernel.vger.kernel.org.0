@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A1C1EED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF4D1ECB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732164AbfEOL0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:26:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37248 "EHLO mail.kernel.org"
+        id S1727421AbfEOLAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731372AbfEOL00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:26 -0400
+        id S1726871AbfEOLAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 762C2206BF;
-        Wed, 15 May 2019 11:26:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 006062173C;
+        Wed, 15 May 2019 11:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919586;
-        bh=OViN2952whJRxYkxTvW+Qiqgi1Tliog5o+GZ38Mu6gs=;
+        s=default; t=1557918019;
+        bh=vo7pB0BKLG9yBOtmC9NETLZsnrgre1dFnVX5xGVxn7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fx1jBEFXJyCRJFKxgQ9/Dwo8X2Cem9c4SgNrVgnddh5y91U8B6RmTF7ipyU8x6XeY
-         u61Yb2taMjduevjGNfCn9DghVfQThzwf1nxXpsn/etwr4rWfr4qilQ0gP2K7ZuFVhC
-         3HYujv68W0Rqg25j0KKs0bxw+xEJy5f6z6UonCv0=
+        b=Ediuh3tiM+UiPAq6hW7l1G+pSWAoGfq/l90QkSn5sS622dEqaQAyxhMnhTA3GzT5g
+         nmu8q3T1r4gQxLloUmgLjLzcVjePx4pMg+7B8aNYoUn4GWUSLOZ+4l6Pa7Cn6Cgo2L
+         vtPYSGjjDeFB04atdSRW/fzmxGWAhoxklwT+a5gw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 018/137] HID: input: add mapping for "Toggle Display" key
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Manish Rangankar <mrangankar@marvell.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 3.18 22/86] scsi: qla4xxx: fix a potential NULL pointer dereference
 Date:   Wed, 15 May 2019 12:54:59 +0200
-Message-Id: <20190515090654.620889118@linuxfoundation.org>
+Message-Id: <20190515090647.105586549@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c01908a14bf735b871170092807c618bb9dae654 ]
+[ Upstream commit fba1bdd2a9a93f3e2181ec1936a3c2f6b37e7ed6 ]
 
-According to HUT 1.12 usage 0xb5 from the generic desktop page is reserved
-for switching between external and internal display, so let's add the
-mapping.
+In case iscsi_lookup_endpoint fails, the fix returns -EINVAL to avoid NULL
+pointer dereference.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/hid/hid-input.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/scsi/qla4xxx/ql4_os.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 290efac7e6bfd..4f119300ce3f5 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -677,6 +677,14 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 			break;
- 		}
- 
-+		if ((usage->hid & 0xf0) == 0xb0) {	/* SC - Display */
-+			switch (usage->hid & 0xf) {
-+			case 0x05: map_key_clear(KEY_SWITCHVIDEOMODE); break;
-+			default: goto ignore;
-+			}
-+			break;
-+		}
-+
- 		/*
- 		 * Some lazy vendors declare 255 usages for System Control,
- 		 * leading to the creation of ABS_X|Y axis and too many others.
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index a9fac1eb8306..28f6d5ef04e0 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -3213,6 +3213,8 @@ static int qla4xxx_conn_bind(struct iscsi_cls_session *cls_session,
+ 	if (iscsi_conn_bind(cls_session, cls_conn, is_leading))
+ 		return -EINVAL;
+ 	ep = iscsi_lookup_endpoint(transport_fd);
++	if (!ep)
++		return -EINVAL;
+ 	conn = cls_conn->dd_data;
+ 	qla_conn = conn->dd_data;
+ 	qla_conn->qla_ep = ep->dd_data;
 -- 
-2.20.1
+2.19.1
 
 
 
