@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9181F23D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CF21ECCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbfEOMAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:00:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
+        id S1727768AbfEOLBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729914AbfEOLO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:29 -0400
+        id S1727754AbfEOLBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A15F1216FD;
-        Wed, 15 May 2019 11:14:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BA8F216FD;
+        Wed, 15 May 2019 11:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918869;
-        bh=KRNbchKjvaq9cxfAHE0Ungleyk2I7CgG96cii6I6HJY=;
+        s=default; t=1557918100;
+        bh=oHPELByl9M22/Gl9ucSlDkC3SSx/IiY/03J/tm8ILx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mW7VAdvsLLGqf1MIuw4DSYHgJ0VYiZQyP4YvG+W6EAEuwtJvjOmK3FR3Aj7BZJ4GA
-         umxDNFLpftAsgFiYdEOMgHOuyV5HcMUOtYiAF5A0/+lrA045oCqmgkb4vZkHYkzaST
-         wjhy/OmpQBTCYsMwI/xpVFJE8ifH5NvcmAK3fqF4=
+        b=JjWuzzo9vm+w1HBU6NE4MTsBB3i2vx0zlNftbM+Eyir7GBtIBIZeWaR/dkBBnZaOl
+         O0+nwisRKEAynxDhFdaEH02gVuceEDGnh6sQOh39HMneZN+/MkBpTXgxZ+eAOpx1xG
+         iN4YACqySrcyKudJ/pyK1PV/rFsPGCcsMeaQYSGg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/51] libnvdimm/namespace: Fix a potential NULL pointer dereference
+Subject: [PATCH 3.18 65/86] iio: adc: xilinx: fix potential use-after-free on remove
 Date:   Wed, 15 May 2019 12:55:42 +0200
-Message-Id: <20190515090619.522764942@linuxfoundation.org>
+Message-Id: <20190515090654.643286016@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 55c1fc0af29a6c1b92f217b7eb7581a882e0c07c ]
+[ Upstream commit 62039b6aef63380ba7a37c113bbaeee8a55c5342 ]
 
-In case kmemdup fails, the fix goes to blk_err to avoid NULL
-pointer dereference.
+When cancel_delayed_work() returns, the delayed work may still
+be running. This means that the core could potentially free
+the private structure (struct xadc) while the delayed work
+is still using it. This is a potential use-after-free.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fix by calling cancel_delayed_work_sync(), which waits for
+any residual work to finish before returning.
+
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvdimm/namespace_devs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/iio/adc/xilinx-xadc-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index 9bc5f555ee686..cf4a90b50f8b8 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -2028,9 +2028,12 @@ struct device *create_namespace_blk(struct nd_region *nd_region,
- 	if (!nsblk->uuid)
- 		goto blk_err;
- 	memcpy(name, nd_label->name, NSLABEL_NAME_LEN);
--	if (name[0])
-+	if (name[0]) {
- 		nsblk->alt_name = kmemdup(name, NSLABEL_NAME_LEN,
- 				GFP_KERNEL);
-+		if (!nsblk->alt_name)
-+			goto blk_err;
-+	}
- 	res = nsblk_add_resource(nd_region, ndd, nsblk,
- 			__le64_to_cpu(nd_label->dpa));
- 	if (!res)
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index a483747cdc9b9..b520de11fc17f 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -1315,7 +1315,7 @@ static int xadc_remove(struct platform_device *pdev)
+ 	}
+ 	free_irq(irq, indio_dev);
+ 	clk_disable_unprepare(xadc->clk);
+-	cancel_delayed_work(&xadc->zynq_unmask_work);
++	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
+ 	kfree(xadc->data);
+ 	kfree(indio_dev->channels);
+ 
 -- 
 2.20.1
 
