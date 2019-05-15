@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF9E1EE97
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3B41EF08
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731640AbfEOLXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33704 "EHLO mail.kernel.org"
+        id S1732469AbfEOL25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731630AbfEOLXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:22 -0400
+        id S1732455AbfEOL2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06D41206BF;
-        Wed, 15 May 2019 11:23:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB77120818;
+        Wed, 15 May 2019 11:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919401;
-        bh=/6v4q7HorDwUbu/gg1s9GVvcdOTHYUySSEJ4nqN5lH0=;
+        s=default; t=1557919733;
+        bh=0Fnyoql+kdy/sAypx07YxOWkmMw4biyzyM65/a7OMAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WZMm8QtjGwyj27XjgsjHaxc76FWoW7nCg1fLhNAGQpnr1EthcTvXV5qdREFKMhiCJ
-         4tCbMZBILBMKSDr8AEv9KlAvxcZKKLIHY8h79qwD2jFugSSy/C2E1KZNkJgKWAWbZR
-         qC0QzMb3xJORjqVd1Qoqm80XVo3Us1FOIAyO0ASo=
+        b=WbAbmEbtO9nhIYS373egcRV8Q48OkhKRz5HIRSdmhaV5xO4+GHbUS40tgDTTfwt2a
+         +c8UF1vGN6r6PnE4rY6dORrk0EJA5uW4Dfx9gwK/hqMUhyiYsEwAvTYSb4vpCWaP2V
+         QG9RqPf1hY9BY0SBHoOiYKfCrrD8pH0h1s2KeNkQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 061/113] drm/sun4i: Unbind components before releasing DRM and memory
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 071/137] s390: ctcm: fix ctcm_new_device error return code
 Date:   Wed, 15 May 2019 12:55:52 +0200
-Message-Id: <20190515090658.200297776@linuxfoundation.org>
+Message-Id: <20190515090658.590949153@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e02bc29b2cfa7806830d6da8b2322cddd67e8dfe ]
+[ Upstream commit 27b141fc234a3670d21bd742c35d7205d03cbb3a ]
 
-Our components may still be using the DRM device driver (if only to
-access our driver's private data), so make sure to unbind them before
-the final drm_dev_put.
+clang points out that the return code from this function is
+undefined for one of the error paths:
 
-Also release our reserved memory after component unbind instead of
-before to match reverse creation order.
+../drivers/s390/net/ctcm_main.c:1595:7: warning: variable 'result' is used uninitialized whenever 'if' condition is true
+      [-Wsometimes-uninitialized]
+                if (priv->channel[direction] == NULL) {
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/s390/net/ctcm_main.c:1638:9: note: uninitialized use occurs here
+        return result;
+               ^~~~~~
+../drivers/s390/net/ctcm_main.c:1595:3: note: remove the 'if' if its condition is always false
+                if (priv->channel[direction] == NULL) {
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/s390/net/ctcm_main.c:1539:12: note: initialize the variable 'result' to silence this warning
+        int result;
+                  ^
 
-Fixes: f5a9ed867c83 ("drm/sun4i: Fix component unbinding and component master deletion")
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190424090413.6918-1-paul.kocialkowski@bootlin.com
+Make it return -ENODEV here, as in the related failure cases.
+gcc has a known bug in underreporting some of these warnings
+when it has already eliminated the assignment of the return code
+based on some earlier optimization step.
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/s390/net/ctcm_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 62703630090aa..57f61ec4bc6be 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -158,10 +158,11 @@ static void sun4i_drv_unbind(struct device *dev)
- 	drm_kms_helper_poll_fini(drm);
- 	sun4i_framebuffer_free(drm);
- 	drm_mode_config_cleanup(drm);
--	of_reserved_mem_device_release(dev);
--	drm_dev_put(drm);
- 
- 	component_unbind_all(dev, NULL);
-+	of_reserved_mem_device_release(dev);
-+
-+	drm_dev_put(drm);
- }
- 
- static const struct component_master_ops sun4i_drv_master_ops = {
+diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+index 7617d21cb2960..f63c5c871d3dd 100644
+--- a/drivers/s390/net/ctcm_main.c
++++ b/drivers/s390/net/ctcm_main.c
+@@ -1595,6 +1595,7 @@ static int ctcm_new_device(struct ccwgroup_device *cgdev)
+ 		if (priv->channel[direction] == NULL) {
+ 			if (direction == CTCM_WRITE)
+ 				channel_free(priv->channel[CTCM_READ]);
++			result = -ENODEV;
+ 			goto out_dev;
+ 		}
+ 		priv->channel[direction]->netdev = dev;
 -- 
 2.20.1
 
