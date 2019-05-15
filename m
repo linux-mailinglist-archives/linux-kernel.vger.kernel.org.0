@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FAE1FAE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 21:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DA421FAF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 21:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfEOTbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 15:31:12 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35150 "EHLO
+        id S1727842AbfEOTcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 15:32:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37650 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfEOTa5 (ORCPT
+        with ESMTP id S1726124AbfEOTcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 15:30:57 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a39so1119401qtk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 12:30:56 -0700 (PDT)
+        Wed, 15 May 2019 15:32:21 -0400
+Received: by mail-qt1-f193.google.com with SMTP id o7so1105994qtp.4;
+        Wed, 15 May 2019 12:32:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8i34PFO8890f2DOSMIKiAp2ts8+TxOyU8H3VqXgs+U0=;
-        b=OE6zYhP57X1qHRwZD8QXzWlD6mYEAYk6nn7C/ILMT+/KpUqmtcVd/J68w+g2rsDnch
-         ZVFSNAJ4QhyVX0qX8LujWxvvD7s/s6dYO3bGQozXXFtiglUJI0/dCGSYNjx9xWJqVseX
-         L7tIAC0fBA6w2mN8q/Ylrsa6w+H69N4kNhb4K+avmkNEQ6293tjhIjasi3QqScqrGw7w
-         fJ9tOQmzdjFU1BQ1HvLoVHdelcit0WQxG2824WFZUIWAiNCgttlfsCnzgilbrFkIoogN
-         lOc30i8Pcz0wcdX5GX6MHZN1FcNhmz0iSzg50x1syEYnTSOTsE8tty0OEWPdg46WDyrd
-         DXeg==
+        bh=gzpcBe/FuCRcBmmlscvWqZ1cuF+a9s/93eQ2vkoMdBg=;
+        b=QtF+5tgNf9v/pOLbGmN/KkniYbjrTT3+zG+tsS6Kms+1PFJMvcfqBzH1n9jCpYjLPN
+         rUJJ+CE6pK+4Csxpxh5JKbYHnYbwj2zKrcq8mt6Y+2O5wJ9y7cJ6X913mLznQu1+hmrA
+         729oInNbB9ALcMRxLQigEACcaOaj0PEs9PTANqHWLj7reIDQJLX5BCeEvzKhegDNLTsd
+         IjZkBfMCh9iyDLwT7Cw/hZbaIVRS61r9Hr5qf8c/gaLztb2dbtKL+YD+VxvtHaMhKSau
+         IdtAJTdE3xKXUoXSUDusffpw6c8MSFgE9qgqzrMZacApD//bevsHU8IoOKtApxEzyOSb
+         NXRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8i34PFO8890f2DOSMIKiAp2ts8+TxOyU8H3VqXgs+U0=;
-        b=Qs9Aw/5Jb/h68jHOBcd0aDWHSPDQT6MpZPt8p9AbArGYCEJIP9oimmL4qOBCWMUbfq
-         NPigA/ewP38B3+c0D/HsY0ZVQetfVEMiX04MkPauqN2TSP5x5q5bmVinfzvp1HKi6kBG
-         NcQsNZwEPf/HbQp9Kb7pggkFYEDMhxndYkkUWwrXID0NYM2fRso0Chwb7PagWjR1s5JZ
-         bS4bwgY2tFJupq8xlRUWTJILYWrTbCOVkZ2v2rMj9dH2+kqRmzLyyrVfTuelke8HxpCE
-         CJyW0xxL/t6sx1OOyo/fIFYou2wxINJuBkO3Fggny/0L/3cIWiTEmnC1pKXbzpuaArzT
-         m01Q==
-X-Gm-Message-State: APjAAAWIz2Z/VEVi71YuIgGhOf+00NYqT3FiTmvzaiCkOMVkE2PDJOUf
-        d6dFaPcqcDCh+S9057M71vnscauT
-X-Google-Smtp-Source: APXvYqwUR9N72T9FplreY0Q5d54UdKkdVUt8LgiMArzd489UIsTJvP4O6uZIy8Z/4oMC1SDQUxXaPA==
-X-Received: by 2002:ac8:17eb:: with SMTP id r40mr22840243qtk.140.1557948656101;
-        Wed, 15 May 2019 12:30:56 -0700 (PDT)
+        bh=gzpcBe/FuCRcBmmlscvWqZ1cuF+a9s/93eQ2vkoMdBg=;
+        b=aNLCPIsLZXDzhdTxYCS6yPUAiB7ALABkYzif2Y9Bhw69axGVXN5ALzbrT+IFiMg6ex
+         HRLIXN2XHfsZfhXsCoHf7y3XpSjM/6536rde7YPxK20xZjHXJwFMFQdYxKUxhyscKDPb
+         Fo91HieR9FofiH+J7FjPM2T4IJqiCEc0vDHkD5uXI2sMCmLPA2ju2fbiWckezl9/tO43
+         yg+Ie+zyCt+TM65bqDWGrIMBqQEUejfRj5rIX6RfcWP9Xd0kD5K6EWXxiFwFq1zPuRpe
+         fsM7pr516JNItxN5UIPAZy7w7WYBeQuQFH5NyrTSg+1uk6QmI5fCr6CTUVoOR0Mxaw8M
+         gMEw==
+X-Gm-Message-State: APjAAAVsjInLD+nmAMfMAtRkbbUanB2N6usuPtuuLgj8PkTFqfPxPT97
+        RpP+Rtesn/qJI/lVFxgTdX4=
+X-Google-Smtp-Source: APXvYqzIAHhWJNUUfCmZY70fFSGLSaJ/WlMHpaIUQbVegDmEP+0LWpkvXn1BZFJ52H/pXcLteY5cbg==
+X-Received: by 2002:ac8:610e:: with SMTP id a14mr35361096qtm.51.1557948740959;
+        Wed, 15 May 2019 12:32:20 -0700 (PDT)
 Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id 65sm948542qkd.1.2019.05.15.12.30.54
+        by smtp.gmail.com with ESMTPSA id t2sm1426001qkm.11.2019.05.15.12.32.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 May 2019 12:30:55 -0700 (PDT)
+        Wed, 15 May 2019 12:32:19 -0700 (PDT)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 74F65404A1; Wed, 15 May 2019 16:30:45 -0300 (-03)
-Date:   Wed, 15 May 2019 16:30:45 -0300
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] perf intel-pt: Intel PT fixes
-Message-ID: <20190515193045.GF23162@kernel.org>
-References: <20190510124143.27054-1-adrian.hunter@intel.com>
+        id 739F9404A1; Wed, 15 May 2019 16:32:17 -0300 (-03)
+Date:   Wed, 15 May 2019 16:32:17 -0300
+To:     Thomas Richter <tmricht@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH] perf docu: Add description for stderr
+Message-ID: <20190515193217.GG23162@kernel.org>
+References: <20190513080220.91966-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190510124143.27054-1-adrian.hunter@intel.com>
+In-Reply-To: <20190513080220.91966-1-tmricht@linux.ibm.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,28 +68,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, May 10, 2019 at 03:41:40PM +0300, Adrian Hunter escreveu:
-> Hi
+Em Mon, May 13, 2019 at 10:02:20AM +0200, Thomas Richter escreveu:
+> Perf report displays recorded data on the screen and emits
+> warnings and debug messages in the status line (last one on screen).
+> Perf also supports the possibility to write all debug messages
+> to stderr (instead of writing them to the status line).
+> This is achieved with the following command:
 > 
-> Here are 3 non-urgent fixes for Intel PT.
+>  # ./perf --debug stderr=1 report -vvvvv -i ~/fast.data 2>/tmp/2
+>  # ll /tmp/2
+>  -rw-rw-r-- 1 tmricht tmricht 5420835 May  7 13:46 /tmp/2
+>  #
 
 Thanks, applied.
-
-- Arnaldo
- 
-> 
-> Adrian Hunter (3):
->       perf intel-pt: Fix instructions sampling rate
->       perf intel-pt: Fix improved sample timestamp
->       perf intel-pt: Fix sample timestamp wrt non-taken branches
-> 
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.c  | 31 +++++++++++++++++-----
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
-> 
-> Regards
-> Adrian
-
--- 
 
 - Arnaldo
