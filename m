@@ -2,121 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 950481F8AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E9051F8A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:28:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbfEOQbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:31:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
+        id S1727160AbfEOQ2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:28:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22059 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbfEOQbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:31:08 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEFD220818;
-        Wed, 15 May 2019 16:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557937867;
-        bh=oXIY+mWZAJM18zAlnx3Vpiv5R60H6x3FTXcrG/cdL6I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T0ZjblAvtCU6LxqojVR9If6yhXX0jEF/u0rEPiHhPvJNwg7d8e8cq3aH3DrMmJuTt
-         pT47h+v4nM7VeSvLHmIDlP0mHQlXhC9fnhGcrpoi//2ME94xl2AUPeFJs9ZSl33qbW
-         8kbLFhCDWbf7o/XgneclAQbcF9kKsHmEsEvKtG1g=
-Date:   Wed, 15 May 2019 18:31:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jinpu Wang <jinpuwang@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "v3.14+, only the raid10 part" <stable@vger.kernel.org>,
-        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.14 067/115] crypto: testmgr - add AES-CFB tests
-Message-ID: <20190515163105.GB30626@kroah.com>
-References: <20190515090659.123121100@linuxfoundation.org>
- <20190515090704.367472403@linuxfoundation.org>
- <CAD9gYJ+zOgwe5mxns=0m=Lpz0Dthn0f1_YkyR+n0w7JaAswL1w@mail.gmail.com>
+        id S1726387AbfEOQ2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 12:28:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 09:28:20 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 15 May 2019 09:28:20 -0700
+Date:   Wed, 15 May 2019 09:31:14 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 00/16] Shared virtual address IOMMU and VT-d support
+Message-ID: <20190515093114.520fe627@jacob-builder>
+In-Reply-To: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD9gYJ+zOgwe5mxns=0m=Lpz0Dthn0f1_YkyR+n0w7JaAswL1w@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 05:59:38PM +0200, Jinpu Wang wrote:
-> Hi Greg,
-> 
-> This patch causes build failure for me:
-> 
-> In file included from crypto/testmgr.c:54:
-> crypto/testmgr.h:16081:4: error: 'const struct cipher_testvec' has no
-> member named 'ptext'
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->     ^~~~~
-> crypto/testmgr.h:16089:4: error: 'const struct cipher_testvec' has no
-> member named 'ctext'
->    .ctext = "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
->     ^~~~~
-> crypto/testmgr.h:16097:4: error: 'const struct cipher_testvec' has no
-> member named 'len'; did you mean 'klen'?
->    .len = 64,
->     ^~~
->     klen
-> crypto/testmgr.h:16097:10: warning: initialization of 'const char *'
-> from 'int' makes pointer from integer without a cast
-> [-Wint-conversion]
->    .len = 64,
->           ^~
-> crypto/testmgr.h:16097:10: note: (near initialization for
-> 'aes_cfb_tv_template[0].result')
-> crypto/testmgr.h:16105:4: error: 'const struct cipher_testvec' has no
-> member named 'ptext'
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->     ^~~~~
-> crypto/testmgr.h:16113:4: error: 'const struct cipher_testvec' has no
-> member named 'ctext'
->    .ctext = "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
->     ^~~~~
-> crypto/testmgr.h:16121:4: error: 'const struct cipher_testvec' has no
-> member named 'len'; did you mean 'klen'?
->    .len = 64,
->     ^~~
->     klen
-> crypto/testmgr.h:16121:10: warning: initialization of 'const char *'
-> from 'int' makes pointer from integer without a cast
-> [-Wint-conversion]
->    .len = 64,
->           ^~
-> crypto/testmgr.h:16121:10: note: (near initialization for
-> 'aes_cfb_tv_template[1].result')
-> crypto/testmgr.h:16130:4: error: 'const struct cipher_testvec' has no
-> member named 'ptext'
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->     ^~~~~
-> crypto/testmgr.h:16138:4: error: 'const struct cipher_testvec' has no
-> member named 'ctext'
->    .ctext = "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
->     ^~~~~
-> crypto/testmgr.h:16146:4: error: 'const struct cipher_testvec' has no
-> member named 'len'; did you mean 'klen'?
->    .len = 64,
->     ^~~
->     klen
-> crypto/testmgr.h:16146:10: warning: initialization of 'const char *'
-> from 'int' makes pointer from integer without a cast
-> [-Wint-conversion]
->    .len = 64,
->           ^~
-> crypto/testmgr.h:16146:10: note: (near initialization for
-> 'aes_cfb_tv_template[2].result')
->   CC      drivers/edac/wq.o
-> crypto/testmgr.c:2353:23: error: 'struct cipher_test_suite' has no
-> member named 'vecs'; did you mean 'dec'?
->  #define __VECS(tv) { .vecs = tv, .count = ARRAY_SIZE(tv) }
-> 
-> Can you drop the patch?
+Hi all,
+Just wondering if you have any more feedbacks other than the cache
+invalidate API change for archid?
+I plan to do the next version on top of Jean's sva/api branch (common
+iommu APIs) with minor tweak to support non-identity guest-host PASID
+mapping. It would be great if I can address additional comments
+together.
 
-Yes, now dropped.  Sasha, I think I did this same thing in the past :)
+Thanks!
+
+Jacob
+
+On Fri,  3 May 2019 15:32:01 -0700
+Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+
+> Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on
+> Intel platforms allow address space sharing between device DMA and
+> applications. SVA can reduce programming complexity and enhance
+> security. This series is intended to enable SVA virtualization, i.e.
+> shared guest application address space and physical device DMA
+> address. Only IOMMU portion of the changes are included in this
+> series. Additional support is needed in VFIO and QEMU (will be
+> submitted separately) to complete this functionality.
+> 
+> To make incremental changes and reduce the size of each patchset.
+> This series does not inlcude support for page request services.
+> 
+> In VT-d implementation, PASID table is per device and maintained in
+> the host. Guest PASID table is shadowed in VMM where virtual IOMMU is
+> emulated.
+> 
+>     .-------------.  .---------------------------.
+>     |   vIOMMU    |  | Guest process CR3, FL only|
+>     |             |  '---------------------------'
+>     .----------------/
+>     | PASID Entry |--- PASID cache flush -
+>     '-------------'                       |
+>     |             |                       V
+>     |             |                CR3 in GPA
+>     '-------------'
+> Guest
+> ------| Shadow |--------------------------|--------
+>       v        v                          v
+> Host
+>     .-------------.  .----------------------.
+>     |   pIOMMU    |  | Bind FL for GVA-GPA  |
+>     |             |  '----------------------'
+>     .----------------/  |
+>     | PASID Entry |     V (Nested xlate)
+>     '----------------\.------------------------------.
+>     |             |   |SL for GPA-HPA, default domain|
+>     |             |   '------------------------------'
+>     '-------------'
+> Where:
+>  - FL = First level/stage one page tables
+>  - SL = Second level/stage two page tables
+> 
+> 
+> This work is based on collaboration with other developers on the IOMMU
+> mailing list. Notably,
+> 
+> [1] [PATCH v6 00/22] SMMUv3 Nested Stage Setup by Eric Auger
+> https://lkml.org/lkml/2019/3/17/124
+> 
+> [2] [RFC PATCH 2/6] drivers core: Add I/O ASID allocator by
+> Jean-Philippe Brucker
+> https://www.spinics.net/lists/iommu/msg30639.html
+> 
+> [3] [RFC PATCH 0/5] iommu: APIs for paravirtual PASID allocation by
+> Lu Baolu https://lkml.org/lkml/2018/11/12/1921
+> 
+> [4] [PATCH v5 00/23] IOMMU and VT-d driver support for Shared Virtual
+>     Address (SVA)
+>     https://lwn.net/Articles/754331/
+> 
+> There are roughly three parts:
+> 1. Generic PASID allocator [1] with extension to support custom
+> allocator 2. IOMMU cache invalidation passdown from guest to host
+> 3. Guest PASID bind for nested translation
+> 
+> All generic IOMMU APIs are reused from [1], which has a v7 just
+> published with no real impact to the patches used here. It is worth
+> noting that unlike sMMU nested stage setup, where PASID table is
+> owned by the guest, VT-d PASID table is owned by the host, individual
+> PASIDs are bound instead of the PASID table.
+> 
+> This series is based on the new VT-d 3.0 Specification
+> (https://software.intel.com/sites/default/files/managed/c5/15/vt-directed-io-spec.pdf).
+> This is different than the older series in [4] which was based on the
+> older specification that does not have scalable mode.
+> 
+> 
+> ChangeLog:
+> 	- V3
+> 	  - Addressed thorough review comments from Eric Auger (Thank
+> you!)
+> 	  - Moved IOASID allocator from driver core to IOMMU code per
+> 	    suggestion by Christoph Hellwig
+> 	    (https://lkml.org/lkml/2019/4/26/462)
+> 	  - Rebased on top of Jean's SVA API branch and Eric's v7[1]
+> 	    (git://linux-arm.org/linux-jpb.git sva/api)
+> 	  - All IOMMU APIs are unmodified (except the new bind guest
+> PASID call in patch 9/16)
+> 
+> 	- V2
+> 	  - Rebased on Joerg's IOMMU x86/vt-d branch v5.1-rc4
+> 	  - Integrated with Eric Auger's new v7 series for common APIs
+> 	  (https://github.com/eauger/linux/tree/v5.1-rc3-2stage-v7)
+> 	  - Addressed review comments from Andy Shevchenko and Alex
+> Williamson on IOASID custom allocator.
+> 	  - Support multiple custom IOASID allocators (vIOMMUs) and
+> dynamic registration.
+> 
+> 
+> Jacob Pan (13):
+>   iommu: Introduce attach/detach_pasid_table API
+>   ioasid: Add custom IOASID allocator
+>   iommu/vt-d: Add custom allocator for IOASID
+>   iommu/vtd: Optimize tlb invalidation for vIOMMU
+>   iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+>   iommu: Introduce guest PASID bind function
+>   iommu/vt-d: Move domain helper to header
+>   iommu/vt-d: Avoid duplicated code for PASID setup
+>   iommu/vt-d: Add nested translation helper function
+>   iommu/vt-d: Clean up for SVM device list
+>   iommu/vt-d: Add bind guest PASID support
+>   iommu/vt-d: Support flushing more translation cache types
+>   iommu/vt-d: Add svm/sva invalidate function
+> 
+> Jean-Philippe Brucker (1):
+>   iommu: Add I/O ASID allocator
+> 
+> Liu, Yi L (1):
+>   iommu: Introduce cache_invalidate API
+> 
+> Lu Baolu (1):
+>   iommu/vt-d: Enlightened PASID allocation
+> 
+>  drivers/iommu/Kconfig       |   7 ++
+>  drivers/iommu/Makefile      |   1 +
+>  drivers/iommu/dmar.c        |  50 ++++++++
+>  drivers/iommu/intel-iommu.c | 241
+> ++++++++++++++++++++++++++++++++++-- drivers/iommu/intel-pasid.c |
+> 223 +++++++++++++++++++++++++-------- drivers/iommu/intel-pasid.h |
+> 24 +++- drivers/iommu/intel-svm.c   | 293
+> +++++++++++++++++++++++++++++++++++---------
+> drivers/iommu/ioasid.c      | 265
+> +++++++++++++++++++++++++++++++++++++++ drivers/iommu/iommu.c
+> |  53 ++++++++ include/linux/intel-iommu.h |  41 ++++++-
+> include/linux/intel-svm.h   |   7 ++ include/linux/ioasid.h      |
+> 67 ++++++++++ include/linux/iommu.h       |  43 ++++++-
+>  include/uapi/linux/iommu.h  | 140 +++++++++++++++++++++
+>  14 files changed, 1328 insertions(+), 127 deletions(-)
+>  create mode 100644 drivers/iommu/ioasid.c
+>  create mode 100644 include/linux/ioasid.h
+> 
+
+[Jacob Pan]
