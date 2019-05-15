@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 411BE1EE58
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1E91EF1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbfEOLUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:20:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58094 "EHLO mail.kernel.org"
+        id S1732681AbfEOLaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730701AbfEOLUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:20:20 -0400
+        id S1732675AbfEOLaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0016D206BF;
-        Wed, 15 May 2019 11:20:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 157A0206BF;
+        Wed, 15 May 2019 11:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919219;
-        bh=VOzyVEwaHQ3QiLL2gypp87BN0AL/CMY/laDhtadXgN8=;
+        s=default; t=1557919807;
+        bh=5lQQSp2MY0e8p5PILottSeNZMveQFwsHmlVtymy3HyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z/PdCQB+hw0k4EhuHB4DnLiilUJoiiDYFv/mutTPh/CxxFgC+PZLc5nbaoKlkTG8P
-         Wwpo9sV6MgXaF9iqB/xnll5JG8pjFtQYCopm4hN0P7EHc6yxjhvB1wPagbrSiYtip9
-         3J2kll7NT+CG70JFLY7R/YZIxuNSpy5c8ewP9QQo=
+        b=ZCzR+OUXXxn8boGouc1bCBM0hiR8Zm2SieIfQlJv9dyoOmc3l6Lwz/Kw3Wnc2mkuy
+         s4xPHSf+yCszb4tj9+jxh7yzwmn0YT2h5NbPIafOtMXgeVMu3YOAjJeioGB+EhZTe3
+         T+MgLT1Jl2vrQ9m0Ze/goOhvYVkdVKsWS5+bRNw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 101/115] dpaa_eth: fix SG frame cleanup
-Date:   Wed, 15 May 2019 12:56:21 +0200
-Message-Id: <20190515090706.461075029@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.0 101/137] cw1200: fix missing unlock on error in cw1200_hw_scan()
+Date:   Wed, 15 May 2019 12:56:22 +0200
+Message-Id: <20190515090700.860655131@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 17170e6570c082717c142733d9a638bcd20551f8 ]
+commit 51c8d24101c79ffce3e79137e2cee5dfeb956dd7 upstream.
 
-Fix issue with the entry indexing in the sg frame cleanup code being
-off-by-1. This problem showed up when doing some basic iperf tests and
-manifested in traffic coming to a halt.
+Add the missing unlock before return from function cw1200_hw_scan()
+in the error handling case.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 4f68ef64cd7f ("cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1639,7 +1639,7 @@ static struct sk_buff *dpaa_cleanup_tx_f
- 				 qm_sg_entry_get_len(&sgt[0]), dma_dir);
+---
+ drivers/net/wireless/st/cw1200/scan.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -84,8 +84,11 @@ int cw1200_hw_scan(struct ieee80211_hw *
  
- 		/* remaining pages were mapped with skb_frag_dma_map() */
--		for (i = 1; i < nr_frags; i++) {
-+		for (i = 1; i <= nr_frags; i++) {
- 			WARN_ON(qm_sg_entry_is_ext(&sgt[i]));
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+-	if (!frame.skb)
++	if (!frame.skb) {
++		mutex_unlock(&priv->conf_mutex);
++		up(&priv->scan.lock);
+ 		return -ENOMEM;
++	}
  
- 			dma_unmap_page(dev, qm_sg_addr(&sgt[i]),
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
 
 
