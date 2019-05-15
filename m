@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 040AA1EFA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86481F11C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfEOLdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:33:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
+        id S1731178AbfEOLU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733176AbfEOLdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:33:20 -0400
+        id S1730354AbfEOLUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:20:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2965D2084A;
-        Wed, 15 May 2019 11:33:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73F09206BF;
+        Wed, 15 May 2019 11:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919999;
-        bh=U+bVO08RSkFhXJCb1d6WIQYF9KG8SlPWxmTuRrDvIx0=;
+        s=default; t=1557919253;
+        bh=e9SlbsSwwGqGYGbtJo8NT4Zf+Ol+2sOs+dlgoDuvKFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C0tYWMNXAOBKku63FGGQxvK3vopt2wbyvIghiU6enAzbCoW5Tcn3/teUYCFXwErWz
-         PYsoFVb381RaK+I2HNt+ddz38AJv4GUHcE78IdfLJIK/bhrWijnILpol7KRmpwh92p
-         pxt/2zkcmvFEkUoQhcnzpL+cGPwdblVe7zaufnf0=
+        b=DZWwMpAvBRgTqANX9CvCtF8WqeEH0aUzaMS7PLi0KIImlN4Nc0MGVmnxdfXl2kXpA
+         j2XmfG6J/gm6c0k9CgkegumTacjxJ7t6laYL991b0CV7wnU84h8E7z5lLpLABO+b1J
+         DRymqKzNwSgWGvt2+9CSPF4AWeK2hBxrbjaoWoQs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Rock <linux@roeck-us.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 5.1 04/46] hwmon: (pwm-fan) Disable PWM if fetching cooling data fails
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 108/115] packet: Fix error path in packet_init
 Date:   Wed, 15 May 2019 12:56:28 +0200
-Message-Id: <20190515090619.129811625@linuxfoundation.org>
+Message-Id: <20190515090706.952441016@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 53f1647da3e8fb3e89066798f0fdc045064d353d upstream.
+[ Upstream commit 36096f2f4fa05f7678bc87397665491700bae757 ]
 
-In case pwm_fan_of_get_cooling_data() fails we should disable the PWM
-just like in the other error cases.
+kernel BUG at lib/list_debug.c:47!
+invalid opcode: 0000 [#1
+CPU: 0 PID: 12914 Comm: rmmod Tainted: G        W         5.1.0+ #47
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:__list_del_entry_valid+0x53/0x90
+Code: 48 8b 32 48 39 fe 75 35 48 8b 50 08 48 39 f2 75 40 b8 01 00 00 00 5d c3 48
+89 fe 48 89 c2 48 c7 c7 18 75 fe 82 e8 cb 34 78 ff <0f> 0b 48 89 fe 48 c7 c7 50 75 fe 82 e8 ba 34 78 ff 0f 0b 48 89 f2
+RSP: 0018:ffffc90001c2fe40 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffffffffa0184000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff888237a17788 RDI: 00000000ffffffff
+RBP: ffffc90001c2fe40 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffc90001c2fe10 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffc90001c2fe50 R14: ffffffffa0184000 R15: 0000000000000000
+FS:  00007f3d83634540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555c350ea818 CR3: 0000000231677000 CR4: 00000000000006f0
+Call Trace:
+ unregister_pernet_operations+0x34/0x120
+ unregister_pernet_subsys+0x1c/0x30
+ packet_exit+0x1c/0x369 [af_packet
+ __x64_sys_delete_module+0x156/0x260
+ ? lockdep_hardirqs_on+0x133/0x1b0
+ ? do_syscall_64+0x12/0x1f0
+ do_syscall_64+0x6e/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 2e5219c77183 ("hwmon: (pwm-fan) Read PWM FAN configuration from device tree")
-Cc: <stable@vger.kernel.org> # 4.14+
-Reported-by: Guenter Rock <linux@roeck-us.net>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+When modprobe af_packet, register_pernet_subsys
+fails and does a cleanup, ops->list is set to LIST_POISON1,
+but the module init is considered to success, then while rmmod it,
+BUG() is triggered in __list_del_entry_valid which is called from
+unregister_pernet_subsys. This patch fix error handing path in
+packet_init to avoid possilbe issue if some error occur.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hwmon/pwm-fan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/packet/af_packet.c |   25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -271,7 +271,7 @@ static int pwm_fan_probe(struct platform
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4629,14 +4629,29 @@ static void __exit packet_exit(void)
  
- 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
- 	if (ret)
--		return ret;
-+		goto err_pwm_disable;
+ static int __init packet_init(void)
+ {
+-	int rc = proto_register(&packet_proto, 0);
++	int rc;
  
- 	ctx->pwm_fan_state = ctx->pwm_fan_max_state;
- 	if (IS_ENABLED(CONFIG_THERMAL)) {
+-	if (rc != 0)
++	rc = proto_register(&packet_proto, 0);
++	if (rc)
+ 		goto out;
++	rc = sock_register(&packet_family_ops);
++	if (rc)
++		goto out_proto;
++	rc = register_pernet_subsys(&packet_net_ops);
++	if (rc)
++		goto out_sock;
++	rc = register_netdevice_notifier(&packet_netdev_notifier);
++	if (rc)
++		goto out_pernet;
+ 
+-	sock_register(&packet_family_ops);
+-	register_pernet_subsys(&packet_net_ops);
+-	register_netdevice_notifier(&packet_netdev_notifier);
++	return 0;
++
++out_pernet:
++	unregister_pernet_subsys(&packet_net_ops);
++out_sock:
++	sock_unregister(PF_PACKET);
++out_proto:
++	proto_unregister(&packet_proto);
+ out:
+ 	return rc;
+ }
 
 
