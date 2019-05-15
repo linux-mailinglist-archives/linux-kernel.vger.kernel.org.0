@@ -2,117 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA6FA1EC6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C41041F2E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfEOKyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:54:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37628 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfEOKyO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:54:14 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 7so2013507wmo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 03:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yCGaHsCBgstblM6mBuRdN67cN8JHM7IAOcSPPHfwyxk=;
-        b=ycvY7sZwj/lO/v1FWXvxEh3TFW351keKaPN0WjyORa91GJS7lYUvz9ErzxnVOWcmNu
-         Hb3lLuRHWl2koQYmjB5BVSP23O8rstj2YEiT464J3sf7p0fmLS5eDvpYQ+vhD2Wcd3KB
-         +ftoa7BUra3VE+K7xh/0wGwlIhCm8FaSfACLmc/CV2C/BKjJUa98HBSik+sJSKOSUm6Z
-         n5+UkSOgBN5TCCMUzvuWnFdzw7fZ/Avp7d8gmAb8uRJSTrfSwjp1BV/iVbDxg1coEVtZ
-         Ojz9DrV4/06srKWY2PE3ywMKzf74iNoTBcJvMNmUmvICDM/bck3Wld9LznaGQRjEAKap
-         a5GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yCGaHsCBgstblM6mBuRdN67cN8JHM7IAOcSPPHfwyxk=;
-        b=PcfnPIdpnC0v8D5nrETwJmzMdnrlYIMQxy9+Wl0B44gEFNomvMG29lie2WTl7wl1gA
-         GBaMp+KM6q7cmy6LLUwMu5vB3O5iRtiaxIC5zna4nOkUrEjrYkiisogGUGl1IFvcZZZv
-         UuHeM8PiNYK0CThfCPX/m5bIkFCRyw+yQt5EpbW/of6qLfQnsVY7PEN5t3V5IeL+Ym5s
-         iKQlMC9XhM1TXC5rjvhWjIU7qOIuBQng/t1/KS5UwoiaAkV4YNexAoSdjFlywPRwPC2K
-         GzK8ioc27+IhX2IiqInTYux/mKUVSzReuV9fkpmZf8Bx0tG552Bt0Swqk6eUHBY22lEY
-         yzZg==
-X-Gm-Message-State: APjAAAW9IfbYKqwVVn8NoOnPQXKYCFRMGe6bxYHT3KNo8JxPrJfMk54D
-        RajuVqkZeDh/Hgp4YboPHOYeNdUfZfU=
-X-Google-Smtp-Source: APXvYqzD3cJ6A0k7/klH/RClkLZ4g1NFiBt0lsDFFnyPi3JyILtCZkiLU9LHGjDbYsOjgC3ryTj9BQ==
-X-Received: by 2002:a7b:ce03:: with SMTP id m3mr21051346wmc.99.1557917652174;
-        Wed, 15 May 2019 03:54:12 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id y17sm1691446wrp.70.2019.05.15.03.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 03:54:11 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
-To:     Quentin Perret <quentin.perret@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
-        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
-        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
-        ionela.voinescu@arm.com, mka@chromium.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190515082318.7993-1-quentin.perret@arm.com>
- <20190515082318.7993-3-quentin.perret@arm.com>
- <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
- <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
- <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
- <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
- <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
- <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
- <20190515104043.vogspxgkapp6qsny@queper01-lin>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b7e91d70-cd16-791c-94e1-3667ff264e49@linaro.org>
+        id S1728185AbfEOLH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:07:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728454AbfEOLHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:07:52 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC89720843;
+        Wed, 15 May 2019 11:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557918471;
+        bh=EMkLnOSZMMv4MZEje/xzNx+RTKH8T3X3TlZQylSguD4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hQxKYp7mxch0BKRZIz/cvYifdoyljBIBFjUpz50Oi53IjwfmuqrWlzeuXlqZF7ssX
+         y5iCzhDh3fKXfs1/bm3TGf3TRwfV2MjWULz8FF1pI7WSLX5hqJP/iWWfglgiKVPIRN
+         A+riTtZEAvtXlLIYAnxYxczMbJKVn8QesKANNk1o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, chenxiang <chenxiang66@hisilicon.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ewan Milne <emilne@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Tomas Henzl <thenzl@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 143/266] scsi: libsas: fix a race condition when smp task timeout
 Date:   Wed, 15 May 2019 12:54:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Message-Id: <20190515090727.740821768@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <20190515104043.vogspxgkapp6qsny@queper01-lin>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/2019 12:40, Quentin Perret wrote:
-> On Wednesday 15 May 2019 at 15:52:00 (+0530), Viresh Kumar wrote:
->> On 15-05-19, 12:16, Daniel Lezcano wrote:
->>> Viresh what do you think ?
->>
->> I agree with your last suggestions. They do make sense.
-> 
-> Good :-)
-> 
-> So, FWIW, the below compiles w/ or w/o THERMAL_GOV_POWER_ALLOCATOR. I'll
-> test it and clean it up some more and put it as patch 1 in the series if
-> that's OK.
-> 
-> Thanks,
-> Quentin
-> 
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index f7c1f49ec87f..ee431848ef71 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -58,7 +58,9 @@
->   */
->  struct freq_table {
->         u32 frequency;
+From: Jason Yan <yanaijie@huawei.com>
 
-I suspect we will have a problem here as cpufreq_set_cur_state uses the
-frequency and when switching to EM, we will still need a freq table.
+commit b90cd6f2b905905fb42671009dc0e27c310a16ae upstream.
 
+When the lldd is processing the complete sas task in interrupt and set the
+task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to be
+triggered at the same time. And smp_task_timedout() will complete the task
+wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may freed
+before lldd end the interrupt process. Thus a use-after-free will happen.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
+set. And remove the check of the return value of the del_timer(). Once the
+LLDD sets DONE, it must call task->done(), which will call
+smp_task_done()->complete() and the task will be completed and freed
+correctly.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reported-by: chenxiang <chenxiang66@hisilicon.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Guenter Roeck <linux@roeck-us.net
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/scsi/libsas/sas_expander.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -47,17 +47,16 @@ static void smp_task_timedout(unsigned l
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
+-	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
++	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+ 		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
++		complete(&task->slow_task->completion);
++	}
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+-
+-	complete(&task->slow_task->completion);
+ }
+ 
+ static void smp_task_done(struct sas_task *task)
+ {
+-	if (!del_timer(&task->slow_task->timer))
+-		return;
++	del_timer(&task->slow_task->timer);
+ 	complete(&task->slow_task->completion);
+ }
+ 
+
 
