@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E451F291
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFBF1EEB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbfEOMEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:04:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46134 "EHLO mail.kernel.org"
+        id S1731848AbfEOLYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:24:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729602AbfEOLLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:31 -0400
+        id S1731574AbfEOLYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABB232084F;
-        Wed, 15 May 2019 11:11:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E31F2084F;
+        Wed, 15 May 2019 11:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918690;
-        bh=9K0RVnznWSyChC0FPTgjfB1He7nEVcXkv08C4J1qHeY=;
+        s=default; t=1557919472;
+        bh=EtUP67P8wt9s2WphVTu++Es0OiQkOn53JC7oz1oKVBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oLYzB5DWCd+sHK1k00ZezIGA/qZRXjK4pkAein33e7gQ63yUp+AW9mJG7JT5yDAqS
-         aGPClFEh+Rvuqrqb/qxpO+VjPy1gDvbN1Ww65I+ouPlWzsmnd4T31fZatK0IJm3G8t
-         YLqM3kTzFxXVUbrLpz4asqdUMMy3vIr5QuVEqHWw=
+        b=ZkNuBHJA3STdzeqRUPh1PzfQlioAYxAVDrdZXiyj9ACcLp/2DxJ/KGFX5RWyYBQtL
+         3rH6vJp9DmTEdzBkY/TfMkrEOixykOi1ZDJk0yTGq+CItpogKmJWn+o/HdJUF9yLUo
+         WGgp0/HrIFz81qqcuejl0Xvded6lAEWFgj2uwPgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jon Masters <jcm@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 228/266] x86/msr-index: Cleanup bit defines
+        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 044/113] mm: fix inactive list balancing between NUMA nodes and cgroups
 Date:   Wed, 15 May 2019 12:55:35 +0200
-Message-Id: <20190515090730.714224576@linuxfoundation.org>
+Message-Id: <20190515090656.965140174@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,96 +47,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 3b991208b897f52507168374033771a984b947b1 ]
 
-commit d8eabc37310a92df40d07c5a8afc53cebf996716 upstream.
+During !CONFIG_CGROUP reclaim, we expand the inactive list size if it's
+thrashing on the node that is about to be reclaimed.  But when cgroups
+are enabled, we suddenly ignore the node scope and use the cgroup scope
+only.  The result is that pressure bleeds between NUMA nodes depending
+on whether cgroups are merely compiled into Linux.  This behavioral
+difference is unexpected and undesirable.
 
-Greg pointed out that speculation related bit defines are using (1 << N)
-format instead of BIT(N). Aside of that (1 << N) is wrong as it should use
-1UL at least.
+When the refault adaptivity of the inactive list was first introduced,
+there were no statistics at the lruvec level - the intersection of node
+and memcg - so it was better than nothing.
 
-Clean it up.
+But now that we have that infrastructure, use lruvec_page_state() to
+make the list balancing decision always NUMA aware.
 
-[ Josh Poimboeuf: Fix tools build ]
-
-Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Jon Masters <jcm@redhat.com>
-Tested-by: Jon Masters <jcm@redhat.com>
-[bwh: Backported to 4.4:
- - Drop change to x86_energy_perf_policy, which doesn't use msr-index.h here
- - Drop changes to flush MSRs which we haven't defined]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[hannes@cmpxchg.org: fix bisection hole]
+  Link: http://lkml.kernel.org/r/20190417155241.GB23013@cmpxchg.org
+Link: http://lkml.kernel.org/r/20190412144438.2645-1-hannes@cmpxchg.org
+Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/msr-index.h   |   24 +++++++++++++-----------
- tools/power/x86/turbostat/Makefile |    2 +-
- 2 files changed, 14 insertions(+), 12 deletions(-)
+ mm/vmscan.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -1,6 +1,8 @@
- #ifndef _ASM_X86_MSR_INDEX_H
- #define _ASM_X86_MSR_INDEX_H
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 3830066018c15..ee545d1e9894d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2190,7 +2190,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
+  *   10TB     320        32GB
+  */
+ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+-				 struct mem_cgroup *memcg,
+ 				 struct scan_control *sc, bool actual_reclaim)
+ {
+ 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
+@@ -2211,16 +2210,12 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+ 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
+ 	active = lruvec_lru_size(lruvec, active_lru, sc->reclaim_idx);
  
-+#include <linux/bits.h>
-+
- /* CPU model specific register (MSR) numbers */
+-	if (memcg)
+-		refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-	else
+-		refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 	/*
+ 	 * When refaults are being observed, it means a new workingset
+ 	 * is being established. Disable active list protection to get
+ 	 * rid of the stale workingset quickly.
+ 	 */
++	refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 	if (file && actual_reclaim && lruvec->refaults != refaults) {
+ 		inactive_ratio = 0;
+ 	} else {
+@@ -2241,12 +2236,10 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+ }
  
- /* x86-64 specific MSRs */
-@@ -33,14 +35,14 @@
+ static unsigned long shrink_list(enum lru_list lru, unsigned long nr_to_scan,
+-				 struct lruvec *lruvec, struct mem_cgroup *memcg,
+-				 struct scan_control *sc)
++				 struct lruvec *lruvec, struct scan_control *sc)
+ {
+ 	if (is_active_lru(lru)) {
+-		if (inactive_list_is_low(lruvec, is_file_lru(lru),
+-					 memcg, sc, true))
++		if (inactive_list_is_low(lruvec, is_file_lru(lru), sc, true))
+ 			shrink_active_list(nr_to_scan, lruvec, sc, lru);
+ 		return 0;
+ 	}
+@@ -2346,7 +2339,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			 * anonymous pages on the LRU in eligible zones.
+ 			 * Otherwise, the small LRU gets thrashed.
+ 			 */
+-			if (!inactive_list_is_low(lruvec, false, memcg, sc, false) &&
++			if (!inactive_list_is_low(lruvec, false, sc, false) &&
+ 			    lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, sc->reclaim_idx)
+ 					>> sc->priority) {
+ 				scan_balance = SCAN_ANON;
+@@ -2364,7 +2357,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 	 * lruvec even if it has plenty of old anonymous pages unless the
+ 	 * system is under heavy pressure.
+ 	 */
+-	if (!inactive_list_is_low(lruvec, true, memcg, sc, false) &&
++	if (!inactive_list_is_low(lruvec, true, sc, false) &&
+ 	    lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, sc->reclaim_idx) >> sc->priority) {
+ 		scan_balance = SCAN_FILE;
+ 		goto out;
+@@ -2517,7 +2510,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 				nr[lru] -= nr_to_scan;
  
- /* Intel MSRs. Some also available on other CPUs */
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
--#define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
-+#define SPEC_CTRL_IBRS			BIT(0)	   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
--#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
-+#define SPEC_CTRL_STIBP			BIT(SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
- #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
--#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
-+#define SPEC_CTRL_SSBD			BIT(SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
+ 				nr_reclaimed += shrink_list(lru, nr_to_scan,
+-							    lruvec, memcg, sc);
++							    lruvec, sc);
+ 			}
+ 		}
  
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
--#define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-+#define PRED_CMD_IBPB			BIT(0)	   /* Indirect Branch Prediction Barrier */
+@@ -2584,7 +2577,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 	 * Even if we did not try to evict anon pages at all, we want to
+ 	 * rebalance the anon lru active/inactive ratio.
+ 	 */
+-	if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++	if (inactive_list_is_low(lruvec, false, sc, true))
+ 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 				   sc, LRU_ACTIVE_ANON);
+ }
+@@ -2982,12 +2975,8 @@ static void snapshot_refaults(struct mem_cgroup *root_memcg, pg_data_t *pgdat)
+ 		unsigned long refaults;
+ 		struct lruvec *lruvec;
  
- #define MSR_IA32_PERFCTR0		0x000000c1
- #define MSR_IA32_PERFCTR1		0x000000c2
-@@ -57,13 +59,13 @@
- #define MSR_MTRRcap			0x000000fe
+-		if (memcg)
+-			refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-		else
+-			refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 		lruvec = mem_cgroup_lruvec(pgdat, memcg);
++		refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 		lruvec->refaults = refaults;
+ 	} while ((memcg = mem_cgroup_iter(root_memcg, memcg, NULL)));
+ }
+@@ -3344,7 +3333,7 @@ static void age_active_anon(struct pglist_data *pgdat,
+ 	do {
+ 		struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
  
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
--#define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
--#define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
--#define ARCH_CAP_SSB_NO			(1 << 4)   /*
--						    * Not susceptible to Speculative Store Bypass
--						    * attack, so no Speculative Store Bypass
--						    * control required.
--						    */
-+#define ARCH_CAP_RDCL_NO		BIT(0)	/* Not susceptible to Meltdown */
-+#define ARCH_CAP_IBRS_ALL		BIT(1)	/* Enhanced IBRS support */
-+#define ARCH_CAP_SSB_NO			BIT(4)	/*
-+						 * Not susceptible to Speculative Store Bypass
-+						 * attack, so no Speculative Store Bypass
-+						 * control required.
-+						 */
+-		if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++		if (inactive_list_is_low(lruvec, false, sc, true))
+ 			shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 					   sc, LRU_ACTIVE_ANON);
  
- #define MSR_IA32_BBL_CR_CTL		0x00000119
- #define MSR_IA32_BBL_CR_CTL3		0x0000011e
---- a/tools/power/x86/turbostat/Makefile
-+++ b/tools/power/x86/turbostat/Makefile
-@@ -8,7 +8,7 @@ ifeq ("$(origin O)", "command line")
- endif
- 
- turbostat : turbostat.c
--CFLAGS +=	-Wall
-+CFLAGS +=	-Wall -I../../../include
- CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
- 
- %: %.c
+-- 
+2.20.1
+
 
 
