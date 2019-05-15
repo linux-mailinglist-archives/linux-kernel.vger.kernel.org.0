@@ -2,96 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD6D1EA74
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 838061EA6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 10:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfEOIta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 04:49:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49270 "EHLO mail.kernel.org"
+        id S1726212AbfEOIrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 04:47:45 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39150 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfEOIta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 04:49:30 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BA4C2084F;
-        Wed, 15 May 2019 08:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557910169;
-        bh=5yrVffrVhaiJci/m6e+eB28C+yVItJeTAl4JbS9fw8s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TYDo7u5Y1hG5Mhzio5nl+T0ybgMm0U6Qx8bXqmM92WKd1sfC/bTUtnb66E3AiGXAa
-         INb7avaebiiMa90I3+rOWtfipKFf/05lPqHpuiorv849dIf77GBJ4dR6VO8YTpB2+P
-         FeTWcD2kfmuRkM7UrR7BBE4TRn2WhjRItYNAqqkk=
-Date:   Wed, 15 May 2019 17:49:23 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Joel Fernandes <joel@joelfernandes.org>, yhs@fb.com
-Subject: Re: [PATCH -tip v9 0/6] tracing/probes: uaccess: Add support
- user-space access
-Message-Id: <20190515174923.609532fe901b1e28761a2e6f@kernel.org>
-In-Reply-To: <20190515055534.GA39270@gmail.com>
-References: <155789866428.26965.8344923934342528416.stgit@devnote2>
-        <20190515055534.GA39270@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1725912AbfEOIrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 04:47:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4C0961A0171;
+        Wed, 15 May 2019 10:47:43 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A30A1A006B;
+        Wed, 15 May 2019 10:47:37 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C17CA4029A;
+        Wed, 15 May 2019 16:47:30 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        yangbo.lu@nxp.com, jiafei.pan@nxp.com,
+        Ashish Kumar <Ashish.Kumar@nxp.com>
+Subject: [PATCH v3] arm64: dts: ls1028a: Add esdhc node in dts
+Date:   Wed, 15 May 2019 16:49:25 +0800
+Message-Id: <20190515084925.30155-1-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
+From: Ashish Kumar <Ashish.Kumar@nxp.com>
 
-On Wed, 15 May 2019 07:55:34 +0200
-Ingo Molnar <mingo@kernel.org> wrote:
+This patch is to add esdhc node and enable SD UHS-I,
+eMMC HS200 for ls1028ardb/ls1028aqds board.
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hi,
-> > 
-> > Here is the v9 series of probe-event to support user-space access.
-> > Previous version is here.
-> > 
-> > https://lkml.kernel.org/r/155741476971.28419.15837024173365724167.stgit@devnote2
-> > 
-> > In this version, I fixed more typos/style issues.
-> > 
-> > Changes in v9:
-> >  [3/6]
-> >       - Fix other style & coding issues (Thanks Ingo!)
-> >       - Update fetch_store_string() for style consistency.
-> >  [4/6]
-> >       - Remove an unneeded line break.
-> >       - Move || and && in if-condition at the end of line.
-> 
-> LGTM:
-> 
-> Acked-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+Change in v3:
+		replace "esdhc@" with "mmc@"
 
-Thank you for your Ack!
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |    8 ++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   13 ++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   27 +++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 0 deletions(-)
 
-> 
-> Thanks,
-> 
-> 	Ingo
-
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+index 14c79f4..180e5d2 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+@@ -42,6 +42,14 @@
+ 	status = "okay";
+ };
+ 
++&esdhc {
++	status = "okay";
++};
++
++&esdhc1 {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+index f86b054..1bfaf42 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+@@ -30,6 +30,19 @@
+ 	};
+ };
+ 
++&esdhc {
++	status = "okay";
++	sd-uhs-sdr104;
++	sd-uhs-sdr50;
++	sd-uhs-sdr25;
++	sd-uhs-sdr12;
++	};
++
++&esdhc1 {
++	status = "okay";
++	mmc-hs200-1_8v;
++	};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 2896bbc..462833c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -274,6 +274,33 @@
+ 			status = "disabled";
+ 		};
+ 
++		esdhc: mmc@2140000 {
++			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
++			reg = <0x0 0x2140000 0x0 0x10000>;
++			interrupts = <0 28 0x4>; /* Level high type */
++			clock-frequency = <0>; /* fixed up by bootloader */
++			clocks = <&clockgen 2 1>;
++			voltage-ranges = <1800 1800 3300 3300>;
++			sdhci,auto-cmd12;
++			little-endian;
++			bus-width = <4>;
++			status = "disabled";
++		};
++
++		esdhc1: mmc@2150000 {
++			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
++			reg = <0x0 0x2150000 0x0 0x10000>;
++			interrupts = <0 63 0x4>; /* Level high type */
++			clock-frequency = <0>; /* fixed up by bootloader */
++			clocks = <&clockgen 2 1>;
++			voltage-ranges = <1800 1800 3300 3300>;
++			sdhci,auto-cmd12;
++			broken-cd;
++			little-endian;
++			bus-width = <4>;
++			status = "disabled";
++		};
++
+ 		sata: sata@3200000 {
+ 			compatible = "fsl,ls1028a-ahci";
+ 			reg = <0x0 0x3200000 0x0 0x10000>,
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.7.1
+
