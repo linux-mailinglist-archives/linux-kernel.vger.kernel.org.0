@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6825E1E64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9F71E628
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfEOAbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 20:31:40 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:38622 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726467AbfEOAaK (ORCPT
+        id S1726546AbfEOAaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 20:30:14 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:38828 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726449AbfEOAaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 20:30:10 -0400
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        Tue, 14 May 2019 20:30:12 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 2BD98C01E5;
-        Wed, 15 May 2019 00:30:15 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 4A762C0A63;
+        Wed, 15 May 2019 00:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557880215; bh=zoCTft68JktbsggQz6TW+TG89hjYIxyCWbFeh7G+lg4=;
+        t=1557880202; bh=RoccKNAJvfR7aO06ihmHoprPEDJVe9pUK1rEpE7cTA4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=EpYk8kaWid8FQBKfJdGrhLXxVpGOeb1N4dWenHNLmFcJioi4AS39WFurV1uxKVlIm
-         V5wM6MKd80saj10PfiNlsgi//Pu0DRYsDZZqej121oDgyoM8BDohqL3KVLdX/YGp2H
-         VsGadn4JiLz65/sb/QYi7G/sEtCKLjBUu/Y+FOvQ0c+XrOHo1m22f0JHQxgn42e2Q8
-         E+I5bO7/WijqDxswUmuaIJoFiTMB+FS14U8EFgbqptKTOvOOenGZyszSyVehmduL50
-         EPXc/lT2VwRWbrTmoi4P/UViXmXjRNF818JklZPvQA/emHA+OB7CEGodW7gJB9+j7A
-         u0EUIfSNEAlYQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        b=WKDI7fIfSmaOO0nu5LtbmO7YIFy0DRhPpjNaYmstTeATTprbl/orhFgQZBf4l6gU8
+         3o0dJYDKaZhse+x7iumnQxyu08Dz4FTGc+fgax27Ea054X9lEtdUww/w1Kj9Ue4p1f
+         jkRd30SP9qtFH+4LPcuPzlc0j1WT2Legu+9vZMkPkKU9jWIf4YFxDEG4HjpbXlLFHa
+         HbzQx+4VL8efP/AEwqZEC3Z+KqEysDL0B+U7kbEXziA9JtVoIKPjh/cX9tmsTA4yzt
+         3UVFJDsaS9nhYHE5xHxjQWrYyTpvu2p4/7EOzjTwCEKNwgQrYQ0SkOozNpe1JHWEt7
+         zEqemSynABAeg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id B2CF7A0378;
-        Wed, 15 May 2019 00:30:08 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id B68F5A023C;
+        Wed, 15 May 2019 00:30:11 +0000 (UTC)
 Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 14 May 2019 17:30:08 -0700
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 14 May 2019 17:30:10 -0700
 Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
  IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:04 +0530
+ (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:08 +0530
 Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.13.182.230) by
  IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:16 +0530
+ (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:19 +0530
 From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
 To:     <linux-snps-arc@lists.infradead.org>
 CC:     <paltsev@snyopsys.com>, <linux-kernel@vger.kernel.org>,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [PATCH 4/9] ARC: mm: do_page_fault refactor #3: tidyup vma access permission code
-Date:   Tue, 14 May 2019 17:29:31 -0700
-Message-ID: <1557880176-24964-5-git-send-email-vgupta@synopsys.com>
+Subject: [PATCH 5/9] ARC: mm: do_page_fault refactor #4: consolidate retry related logic
+Date:   Tue, 14 May 2019 17:29:32 -0700
+Message-ID: <1557880176-24964-6-git-send-email-vgupta@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
 References: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
@@ -58,84 +58,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The coding pattern to NOT intialize variables at declaration time but
-rather near code which makes us eof them makes it much easier to grok
-the overall logic, specially when the init is not simply 0 or 1
+stats update code can now elide "retry" check and additional level of
+indentation since all retry handling is done ahead of it already
 
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 ---
- arch/arc/mm/fault.c | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
+ arch/arc/mm/fault.c | 60 +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 29 deletions(-)
 
 diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index f1175685d914..ae890a8d5ebf 100644
+index ae890a8d5ebf..7f211b493170 100644
 --- a/arch/arc/mm/fault.c
 +++ b/arch/arc/mm/fault.c
-@@ -67,9 +67,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	struct task_struct *tsk = current;
+@@ -68,8 +68,8 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
  	struct mm_struct *mm = tsk->mm;
  	int si_code = SEGV_MAPERR;
-+	unsigned int write = 0, exec = 0, mask;
- 	vm_fault_t fault;
--	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
--	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
-+	unsigned int flags;
+ 	unsigned int write = 0, exec = 0, mask;
+-	vm_fault_t fault;
+-	unsigned int flags;
++	vm_fault_t fault;			/* handle_mm_fault() output */
++	unsigned int flags;			/* handle_mm_fault() input */
  
  	/*
  	 * NOTE! We MUST NOT take any locks for this case. We may
-@@ -91,8 +91,18 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	if (faulthandler_disabled() || !mm)
- 		goto no_context;
- 
-+	if (regs->ecr_cause & ECR_C_PROTV_STORE)	/* ST/EX */
-+		write = 1;
-+	else if ((regs->ecr_vec == ECR_V_PROTV) &&
-+	         (regs->ecr_cause == ECR_C_PROTV_INST_FETCH))
-+		exec = 1;
-+
-+	flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
- 	if (user_mode(regs))
- 		flags |= FAULT_FLAG_USER;
-+	if (write)
-+		flags |= FAULT_FLAG_WRITE;
-+
- retry:
- 	down_read(&mm->mmap_sem);
- 
-@@ -105,24 +115,17 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	}
- 
- 	/*
--	 * Ok, we have a good vm_area for this memory access, so
--	 * we can handle it..
-+	 * vm_area is good, now check permissions for this memory access
- 	 */
--	si_code = SEGV_ACCERR;
--
--	/* Handle protection violation, execute on heap or stack */
--
--	if ((regs->ecr_vec == ECR_V_PROTV) &&
--	    (regs->ecr_cause == ECR_C_PROTV_INST_FETCH))
-+	mask = VM_READ;
-+	if (write)
-+		mask = VM_WRITE;
-+	if (exec)
-+		mask = VM_EXEC;
-+
-+	if (!(vma->vm_flags & mask)) {
-+		si_code = SEGV_ACCERR;
+@@ -128,49 +128,51 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
  		goto bad_area;
--
--	if (write) {
--		if (!(vma->vm_flags & VM_WRITE))
--			goto bad_area;
--		flags |= FAULT_FLAG_WRITE;
--	} else {
--		if (!(vma->vm_flags & (VM_READ | VM_EXEC)))
--			goto bad_area;
  	}
  
- 	/*
+-	/*
+-	 * If for any reason at all we couldn't handle the fault,
+-	 * make sure we exit gracefully rather than endlessly redo
+-	 * the fault.
+-	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if (fatal_signal_pending(current)) {
++	/*
++	 * Fault retry nuances
++	 */
++	if (unlikely(fault & VM_FAULT_RETRY)) {
+ 
+ 		/*
+-		 * if fault retry, mmap_sem already relinquished by core mm
+-		 * so OK to return to user mode (with signal handled first)
++		 * If fault needs to be retried, handle any pending signals
++		 * first (by returning to user mode).
++		 * mmap_sem already relinquished by core mm for RETRY case
+ 		 */
+-		if (fault & VM_FAULT_RETRY) {
++		if (fatal_signal_pending(current)) {
+ 			if (!user_mode(regs))
+ 				goto no_context;
+ 			return;
+ 		}
++		/*
++		 * retry state machine
++		 */
++		if (flags & FAULT_FLAG_ALLOW_RETRY) {
++			flags &= ~FAULT_FLAG_ALLOW_RETRY;
++			flags |= FAULT_FLAG_TRIED;
++			goto retry;
++		}
+ 	}
+ 
++	/*
++	 * Major/minor page fault accounting
++	 * (in case of retry we only land here once)
++	 */
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+ 
+ 	if (likely(!(fault & VM_FAULT_ERROR))) {
+-		if (flags & FAULT_FLAG_ALLOW_RETRY) {
+-			/* To avoid updating stats twice for retry case */
+-			if (fault & VM_FAULT_MAJOR) {
+-				tsk->maj_flt++;
+-				perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1,
+-					      regs, address);
+-			} else {
+-				tsk->min_flt++;
+-				perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1,
+-					      regs, address);
+-			}
+-
+-			if (fault & VM_FAULT_RETRY) {
+-				flags &= ~FAULT_FLAG_ALLOW_RETRY;
+-				flags |= FAULT_FLAG_TRIED;
+-				goto retry;
+-			}
++		if (fault & VM_FAULT_MAJOR) {
++			tsk->maj_flt++;
++			perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1,
++				      regs, address);
++		} else {
++			tsk->min_flt++;
++			perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1,
++				      regs, address);
+ 		}
+ 
+-		/* Fault Handled Gracefully */
++		/* Normal return path: fault Handled Gracefully */
+ 		up_read(&mm->mmap_sem);
+ 		return;
+ 	}
 -- 
 2.7.4
 
