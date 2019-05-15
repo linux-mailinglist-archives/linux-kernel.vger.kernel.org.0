@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1161EE22
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4CF1F06B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbfEOLRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54650 "EHLO mail.kernel.org"
+        id S1732256AbfEOLny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:43:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730293AbfEOLR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:26 -0400
+        id S1731294AbfEOL1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E3042070D;
-        Wed, 15 May 2019 11:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B4CA20862;
+        Wed, 15 May 2019 11:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919045;
-        bh=u7u4Dz4YT91VRcG84O/hfdq+TWT2v1ljyr3+Li6aAaE=;
+        s=default; t=1557919625;
+        bh=vVfQY6gZu/OlDcM6tuuouwA74XHWGJMpGlcOZoThUis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ht646VU6GfH3E/Yc9+s/EVg67WWdeJZZGUzUhEfiqDJ5UWIpfwJfoNY8LXCeZhIlA
-         WDWWo1aetLJCyIKNyhl15ayvgfXulGXLMVUsoq8qmZOgY/aUN/PFOHa1BXlgIVhpIM
-         Pj2ZOR+UtwTAF0ABKttwbBvdaurHTE2vP7m6fuPM=
+        b=gqoFVGP7NORUzlFoXlprtjs6Fy1Uqi7iA0eByrEItMC+YsHiEWB7WWBrZ39atPEfj
+         EEK+QAG5jHyYqWRguiuPMsjMhhIFusI/Xxt5czMEBBDdWSpRjf/EL2pYyf0O1CntjJ
+         zX1JsH6mhSq8rhBqjJnBb6vM/B3bfJ59MBE0c/Zk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 009/115] HID: input: add mapping for Expose/Overview key
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 5.0 008/137] kernfs: fix barrier usage in __kernfs_new_node()
 Date:   Wed, 15 May 2019 12:54:49 +0200
-Message-Id: <20190515090659.939631733@linuxfoundation.org>
+Message-Id: <20190515090653.432205540@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 96dd86871e1fffbc39e4fa61c9c75ec54ee9af0f ]
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-According to HUTRR77 usage 0x29f from the consumer page is reserved for
-the Desktop application to present all running user’s application windows.
-Linux defines KEY_SCALE to request Compiz Scale (Expose) mode, so let's
-add the mapping.
+commit 998267900cee901c5d1dfa029a6304d00acbc29f upstream.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+smp_mb__before_atomic() can not be applied to atomic_set().  Remove the
+barrier and rely on RELEASE synchronization.
+
+Fixes: ba16b2846a8c6 ("kernfs: add an API to get kernfs node from inode number")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/hid-input.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/kernfs/dir.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 1aa7d268686b9..693cd19e9dd40 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1017,6 +1017,8 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 		case 0x2cb: map_key_clear(KEY_KBDINPUTASSIST_ACCEPT);	break;
- 		case 0x2cc: map_key_clear(KEY_KBDINPUTASSIST_CANCEL);	break;
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -650,11 +650,10 @@ static struct kernfs_node *__kernfs_new_
+ 	kn->id.generation = gen;
  
-+		case 0x29f: map_key_clear(KEY_SCALE);		break;
-+
- 		default: map_key_clear(KEY_UNKNOWN);
- 		}
- 		break;
--- 
-2.20.1
-
+ 	/*
+-	 * set ino first. This barrier is paired with atomic_inc_not_zero in
++	 * set ino first. This RELEASE is paired with atomic_inc_not_zero in
+ 	 * kernfs_find_and_get_node_by_ino
+ 	 */
+-	smp_mb__before_atomic();
+-	atomic_set(&kn->count, 1);
++	atomic_set_release(&kn->count, 1);
+ 	atomic_set(&kn->active, KN_DEACTIVATED_BIAS);
+ 	RB_CLEAR_NODE(&kn->rb);
+ 
 
 
