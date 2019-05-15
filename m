@@ -2,126 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B53251FCC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 01:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DCB11FCBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 01:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfEOXad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 19:30:33 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35343 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbfEOX2c (ORCPT
+        id S1726541AbfEOXYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 19:24:35 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40075 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfEOXWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 19:28:32 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h1so567295pgs.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 16:28:31 -0700 (PDT)
+        Wed, 15 May 2019 19:22:34 -0400
+Received: by mail-oi1-f194.google.com with SMTP id r136so1111924oie.7;
+        Wed, 15 May 2019 16:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VP1NFQHy4JKVhFQCt2SvEPh1FtfBgQTCzFt7PPPiHN0=;
-        b=r19YdC+4jFPF4C6oNXLtZiD/yJ01hydYRuZk1MseAZx+4lHCzKKfKNBqPCMiQNgjjw
-         y+XUOAL2LYXIoPZ2sDD87sMC4hU7uwfIsW+GbDN3Lxx25GfJYmgqSEwk8laVGuzLl4vX
-         0hCVm86fR4TNkcInpQp1gG0DWLrZ0uMAV5XWLtpdvU3qYpnRYRyDd7Fh8z3B5vI8EJtQ
-         pXVbEsVbyX6IMqN9PY5FbeJoBScWxUxMuaKgtBq3XMAr17PSL1OzQgkOyr6KfM4rP8BI
-         RtKHJFbfs0eeqWp+thjyfqgO9ssQPHOhxUH8I9XKAsaxTsqvDudU6xuThvMRoR4HXqP9
-         bu+g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DekUZ017XlDHupokZoz03njj8bKbhio2eWZPwNPjcUk=;
+        b=TW2unDWBNncdq8n3xbltWxzgP3f+WBm2Wwu2p901/hslhXWUx1pzOaey+SEv8I/fHb
+         VBVIYuOZYqS/gzJemgxPhhffOM18B6uwdrD6hooAggFrw18kMreZqYdQZytxSshhpU9o
+         t9z7G9pq8rEljqypIwgDaNWeiHyNpTRU+YQU5skrz1+X6xwn1PwlXrakWgYr5dPp5AuS
+         /zwoiV1DtazDQ+OADaw09/LEnyyJkZcV4ERtLsrcjRI36IKn66m7pc5hagh7iwrQ7Rvg
+         a+8A0a0NaVsNWO/6vCVzOZfoBPsD6BrOQc9sBVWHCT0hFnadetIkE0LPV9pJzWwB8jM5
+         rugw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VP1NFQHy4JKVhFQCt2SvEPh1FtfBgQTCzFt7PPPiHN0=;
-        b=rYvJJLqGg/VW3P/o+DPjiXZembK+pIoloUui5D7e2BcbQPbw1GKHQXz1ihmCY+4qZf
-         s05NoouF3Qu15gZ9nVl88YoBXYe4FT3cWqnfuReRM9DTB9h9Fv46zB3cCgQKX59KsEbV
-         epbc+RuZDqpt3HdBQj88AjIgkHEPtqVqXWU5hNrYn45UEpS6rxzGhuRqq8q/6IlIlpXT
-         2e5khkM1/uFhuMJo8irpFlOWJYj5BxLpyR2+D3F9/qoIR+FI9OX2zZGYuUUQaNe9mWxN
-         rZVqTH+M7JKCDT0XpYWVfvGT8xOOa97H5BC6ejlZDH77yLrFZYKbcMdkqEPUqXrTgpGX
-         w0Qg==
-X-Gm-Message-State: APjAAAVlbsRcKuYfjQBog047w9s6gODUGKM2WgjSNa61sTi3Wl6Gw0+U
-        d9Wf5DA/INzAvhb9oe5PPWNL3w==
-X-Google-Smtp-Source: APXvYqyfISGJkEneRhKoTrm95W3GwtHgtb8DnEpPiMopvw65z/c6R+ndccT+6r5I+RscVIxx1q1EjQ==
-X-Received: by 2002:a62:f247:: with SMTP id y7mr49632055pfl.18.1557962368601;
-        Wed, 15 May 2019 16:19:28 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
-        by smtp.gmail.com with ESMTPSA id j19sm4304797pfr.155.2019.05.15.16.19.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 15 May 2019 16:19:27 -0700 (PDT)
-Date:   Wed, 15 May 2019 16:19:23 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     shuah <shuah@kernel.org>
-Cc:     Dhaval Giani <dhaval.giani@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Carpenter,Dan" <dan.carpenter@oracle.com>, willy@infradead.org,
-        gustavo.padovan@collabora.co.uk,
-        Dmitry Vyukov <dvyukov@google.com>, knut.omang@oracle.com
-Subject: Re: Linux Testing Microconference at LPC
-Message-ID: <20190515231923.GA193527@google.com>
-References: <CAPhKKr_uVTFAzne0QkZFUGfb8RxQdVFx41G9kXRY7sFN-=pZ6w@mail.gmail.com>
- <3c6c9405-7e90-fb03-aa1c-0ada13203980@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DekUZ017XlDHupokZoz03njj8bKbhio2eWZPwNPjcUk=;
+        b=uAfegABbFz9gJK7MZZ4D5zvEQy/Bg0nwqQvW5W6Y7vhJjEgKcFy2aP/qd/kD6kTG5J
+         SdvopXNO28UGdIGLnYlU9s1N6tomQDo9JRjGXOgwgPpMZRfIRFzVZqHVhwL1IOYelvzt
+         bQqrqapqZD+c+WFwrmAQ6GwIdsovUtykIFk0kwRcCCu3hP7vtc3rc1rvZecFoKEGLn1J
+         9J8APwI554vE0pRpg1mtR1/OiKsMa8SDuk0FG9KxKeLo7DGFCXNjcDvvqYy3IG25Jvcn
+         808hSi1eRP9wWdQuUqOrNuKhDYbjplMXL0iaiHHdbnquN3/PWUJmAhGCPxLZ2n3fobrx
+         xjUQ==
+X-Gm-Message-State: APjAAAW0EIrHwSq3K/xmaSdkatiShJ5q1WyXZbqLaRxmrW+4aZuAM76U
+        VgKE1C70EHkuOFMkqRfX1HbUJ5kAfCcXOVHcx7E=
+X-Google-Smtp-Source: APXvYqxcJdXBjfI/NQOG54NjdcZMKv2rzobwN/fANlkeKUWtlr4xoy6TQzlw7osgjOY6kacmpcOb0Tz99iKvfhuIlXU=
+X-Received: by 2002:aca:5ed7:: with SMTP id s206mr8333849oib.122.1557962553793;
+ Wed, 15 May 2019 16:22:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c6c9405-7e90-fb03-aa1c-0ada13203980@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190512174608.10083-1-peron.clem@gmail.com> <20190513151405.GW17751@phenom.ffwll.local>
+ <de50a9da-669f-ab25-2ef2-5ffb90f8ee03@baylibre.com> <CAJiuCccuEw0BK6MwROR+XUDvu8AJTmZ5tu=pYwZbGAuvO31pgg@mail.gmail.com>
+ <CAJiuCccWa5UTML68JDQq6q8SyNZzVWwQWTOL=+84Bh4EMHGC3A@mail.gmail.com>
+ <3c2c9094-69d4-bace-d5ee-c02b7f56ac82@arm.com> <CAJiuCcd=gCQJ4mxn3wNhHXveOhFLnYSEs+cnOMHcALPvd7bQZw@mail.gmail.com>
+In-Reply-To: <CAJiuCcd=gCQJ4mxn3wNhHXveOhFLnYSEs+cnOMHcALPvd7bQZw@mail.gmail.com>
+From:   Rob Herring <rob.e.herring@gmail.com>
+Date:   Wed, 15 May 2019 18:22:22 -0500
+Message-ID: <CAC=3edbn1yXih5vP0SwsDkqRB0j5q0c4FL0jhCq9DQ9Wt2-hAA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Allwinner H6 Mali GPU support
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 04:44:19PM -0600, shuah wrote:
-> Hi Sasha and Dhaval,
-> 
-> On 4/11/19 11:37 AM, Dhaval Giani wrote:
-> > Hi Folks,
-> > 
-> > This is a call for participation for the Linux Testing microconference
-> > at LPC this year.
-> > 
-> > For those who were at LPC last year, as the closing panel mentioned,
-> > testing is probably the next big push needed to improve quality. From
-> > getting more selftests in, to regression testing to ensure we don't
-> > break realtime as more of PREEMPT_RT comes in, to more stable distros,
-> > we need more testing around the kernel.
-> > 
-> > We have talked about different efforts around testing, such as fuzzing
-> > (using syzkaller and trinity), automating fuzzing with syzbot, 0day
-> > testing, test frameworks such as ktests, smatch to find bugs in the
-> > past. We want to push this discussion further this year and are
-> > interested in hearing from you what you want to talk about, and where
-> > kernel testing needs to go next.
-> > 
-> > Please let us know what topics you believe should be a part of the
-> > micro conference this year.
-> > 
-> > Thanks!
-> > Sasha and Dhaval
-> > 
-> 
-> A talk on KUnit from Brendan Higgins will be good addition to this
-> Micro-conference. I am cc'ing Brendan on this thread.
-> 
-> Please consider adding it.
+On Wed, May 15, 2019 at 5:06 PM Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.c=
+om> wrote:
+>
+> Hi Robin,
+>
+> On Tue, 14 May 2019 at 23:57, Robin Murphy <robin.murphy@arm.com> wrote:
+> >
+> > On 2019-05-14 10:22 pm, Cl=C3=A9ment P=C3=A9ron wrote:
+> > > Hi,
+> > >
+> > > On Tue, 14 May 2019 at 17:17, Cl=C3=A9ment P=C3=A9ron <peron.clem@gma=
+il.com> wrote:
+> > >>
+> > >> Hi,
+> > >>
+> > >> On Tue, 14 May 2019 at 12:29, Neil Armstrong <narmstrong@baylibre.co=
+m> wrote:
+> > >>>
+> > >>> Hi,
+> > >>>
+> > >>> On 13/05/2019 17:14, Daniel Vetter wrote:
+> > >>>> On Sun, May 12, 2019 at 07:46:00PM +0200, peron.clem@gmail.com wro=
+te:
+> > >>>>> From: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> > >>>>>
+> > >>>>> Hi,
+> > >>>>>
+> > >>>>> The Allwinner H6 has a Mali-T720 MP2. The drivers are
+> > >>>>> out-of-tree so this series only introduce the dt-bindings.
+> > >>>>
+> > >>>> We do have an in-tree midgard driver now (since 5.2). Does this st=
+uff work
+> > >>>> together with your dt changes here?
+> > >>>
+> > >>> No, but it should be easy to add.
+> > >> I will give it a try and let you know.
+> > > Added the bus_clock and a ramp delay to the gpu_vdd but the driver
+> > > fail at probe.
+> > >
+> > > [    3.052919] panfrost 1800000.gpu: clock rate =3D 432000000
+> > > [    3.058278] panfrost 1800000.gpu: bus_clock rate =3D 100000000
+> > > [    3.179772] panfrost 1800000.gpu: mali-t720 id 0x720 major 0x1
+> > > minor 0x1 status 0x0
+> > > [    3.187432] panfrost 1800000.gpu: features: 00000000,10309e40,
+> > > issues: 00000000,21054400
+> > > [    3.195531] panfrost 1800000.gpu: Features: L2:0x07110206
+> > > Shader:0x00000000 Tiler:0x00000809 Mem:0x1 MMU:0x00002821 AS:0xf
+> > > JS:0x7
+> > > [    3.207178] panfrost 1800000.gpu: shader_present=3D0x3 l2_present=
+=3D0x1
+> > > [    3.238257] panfrost 1800000.gpu: Fatal error during GPU init
+> > > [    3.244165] panfrost: probe of 1800000.gpu failed with error -12
+> > >
+> > > The ENOMEM is coming from "panfrost_mmu_init"
+> > > alloc_io_pgtable_ops(ARM_MALI_LPAE, &pfdev->mmu->pgtbl_cfg,
+> > >                                           pfdev);
+> > >
+> > > Which is due to a check in the pgtable alloc "cfg->ias !=3D 48"
+> > > arm-lpae io-pgtable: arm_mali_lpae_alloc_pgtable cfg->ias 33 cfg->oas=
+ 40
+> > >
+> > > DRI stack is totally new for me, could you give me a little clue abou=
+t
+> > > this issue ?
+> >
+> > Heh, this is probably the one bit which doesn't really count as "DRI st=
+ack".
+> >
+> > That's merely a somewhat-conservative sanity check - I'm pretty sure it
+> > *should* be fine to change the test to "cfg->ias > 48" (io-pgtable
+> > itself ought to cope). You'll just get to be the first to actually test
+> > a non-48-bit configuration here :)
+>
+> Thanks a lot, the probe seems fine now :)
+>
+> I try to run glmark2 :
+> # glmark2-es2-drm
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>     glmark2 2017.07
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>     OpenGL Information
+>     GL_VENDOR:     panfrost
+>     GL_RENDERER:   panfrost
+>     GL_VERSION:    OpenGL ES 2.0 Mesa 19.1.0-rc2
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> [build] use-vbo=3Dfalse:
+>
+> But it seems that H6 is not so easy to add :(.
+>
+> [  345.204813] panfrost 1800000.gpu: mmu irq status=3D1
+> [  345.209617] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002400400
+> [  345.209617] Reason: TODO
+> [  345.209617] raw fault status: 0x800002C1
+> [  345.209617] decoded fault status: SLAVE FAULT
+> [  345.209617] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  345.209617] access type 0x2: READ
+> [  345.209617] source id 0x8000
+> [  345.729957] panfrost 1800000.gpu: gpu sched timeout, js=3D0,
+> status=3D0x8, head=3D0x2400400, tail=3D0x2400400, sched_job=3D000000009e2=
+04de9
+> [  346.055876] panfrost 1800000.gpu: mmu irq status=3D1
+> [  346.060680] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002C00A00
+> [  346.060680] Reason: TODO
+> [  346.060680] raw fault status: 0x810002C1
+> [  346.060680] decoded fault status: SLAVE FAULT
+> [  346.060680] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  346.060680] access type 0x2: READ
+> [  346.060680] source id 0x8100
+> [  346.561955] panfrost 1800000.gpu: gpu sched timeout, js=3D1,
+> status=3D0x8, head=3D0x2c00a00, tail=3D0x2c00a00, sched_job=3D00000000b55=
+a9a85
+> [  346.573913] panfrost 1800000.gpu: mmu irq status=3D1
+> [  346.578707] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002C00B80
+> [  346.578707] Reason: TODO
+> [  346.578707] raw fault status: 0x800002C1
+> [  346.578707] decoded fault status: SLAVE FAULT
+> [  346.578707] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  346.578707] access type 0x2: READ
+> [  346.578707] source id 0x8000
+> [  347.073947] panfrost 1800000.gpu: gpu sched timeout, js=3D0,
+> status=3D0x8, head=3D0x2c00b80, tail=3D0x2c00b80, sched_job=3D00000000cf6=
+af8e8
+> [  347.104125] panfrost 1800000.gpu: mmu irq status=3D1
+> [  347.108930] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002800900
+> [  347.108930] Reason: TODO
+> [  347.108930] raw fault status: 0x810002C1
+> [  347.108930] decoded faultn thi status: SLAVE FAULT
+> [  347.108930] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  347.108930] access type 0x2: READ
+> [  347.108930] source id 0x8100
+> [  347.617950] panfrost 1800000.gpu: gpu sched timeout, js=3D1,
+> status=3D0x8, head=3D0x2800900, tail=3D0x2800900, sched_job=3D00000000932=
+5fdb7
+> [  347.629902] panfrost 1800000.gpu: mmu irq status=3D1
+> [  347.634696] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002800A80
 
-Thanks Shuah!
+Is this 32 or 64 bit userspace? I think 64-bit does not work with
+T7xx. You might need this[1]. You may also be the first to try T720,
+so it could be something else.
 
-Presumably I should still submit the talk on the website (however, it
-looks like the Testing Microconference isn't available as a track option
-yet...)? Or is it okay if I just post the proposal here?
+Rob
 
-Also, for the framing of the talk (assuming people are indeed
-interested). I figure people will want an intro along with some
-background context, and a discussion of future work. Nevertheless, would
-people like more of a demo talk or more of an audience driven discussion
-on where we should go and what we should do? Or something else? Really,
-I am open to talk about whatever everyone else wants.
-
-For context on KUnit, you can read the LWN article about it here[1], or
-you can see the current version of the patchset here[2].
-
-Thanks!
-
-[1] https://lwn.net/Articles/780985/
-[2] https://lkml.org/lkml/2019/5/14/834
+[1] https://gitlab.freedesktop.org/mesa/mesa/merge_requests/650
