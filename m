@@ -2,145 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE041F68E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 16:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AC91F621
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 16:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfEOO3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 10:29:17 -0400
-Received: from ou.quest-ce.net ([195.154.187.82]:38486 "EHLO ou.quest-ce.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfEOO3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 10:29:16 -0400
-X-Greylist: delayed 1655 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 May 2019 10:29:13 EDT
-Received: from [2a01:e35:39f2:1220:2452:dd6c:fe2f:be2c] (helo=opteyam2)
-        by ou.quest-ce.net with esmtpsa (TLS1.1:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <ydroneaud@opteya.com>)
-        id 1hQuSD-0003J6-UX; Wed, 15 May 2019 16:00:22 +0200
-Message-ID: <4c5ae46657e1931a832def5645db61eb0bf1accd.camel@opteya.com>
-From:   Yann Droneaud <ydroneaud@opteya.com>
-To:     Christian Brauner <christian@brauner.io>, jannh@google.com,
-        oleg@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, dhowells@redhat.com
-Cc:     akpm@linux-foundation.org, cyphar@cyphar.com,
-        ebiederm@xmission.com, elena.reshetova@intel.com,
-        keescook@chromium.org, luto@amacapital.net, luto@kernel.org,
-        tglx@linutronix.de, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Date:   Wed, 15 May 2019 16:00:20 +0200
-In-Reply-To: <20190515100400.3450-1-christian@brauner.io>
-References: <20190515100400.3450-1-christian@brauner.io>
-Organization: OPTEYA
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1728066AbfEOOAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 10:00:43 -0400
+Received: from mail-eopbgr10051.outbound.protection.outlook.com ([40.107.1.51]:23205
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726834AbfEOOAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 10:00:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aJh/8vQoHaVocWkVoibMP2JxnCvIFr4nQtQKT8JoNMs=;
+ b=dy6XE5ef7GQNuMSDMsmKhRnsGOtk431QfTHJKGibw27HWkKFYXO3IFlcgrHSZejKlPtxl3BT3oWV/VZUl44gYLMak5b2WCVroF0tbPmcIGdYHwOSpdd1ZWxpJ9y9pcowyA1Cxv/Y4mg6kM8iBsjnGt84tVt3h+HkWA/tu+mMTC0=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB5262.eurprd04.prod.outlook.com (20.177.51.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 14:00:38 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872%7]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 14:00:38 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 2/2] crypto: caam - strip input without changing crypto
+ request
+Thread-Topic: [PATCH v2 2/2] crypto: caam - strip input without changing
+ crypto request
+Thread-Index: AQHVCxD1rkBi6ZHI30+wWLoL2LqnOQ==
+Date:   Wed, 15 May 2019 14:00:38 +0000
+Message-ID: <VI1PR04MB4445FB86FB1FF3EA412241E48C090@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1557919546-360-1-git-send-email-iuliana.prodan@nxp.com>
+ <1557919546-360-2-git-send-email-iuliana.prodan@nxp.com>
+ <VI1PR0402MB348547115B62EB41C7DC2D8798090@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 91d19de9-c57e-46c2-54cb-08d6d93db5f0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5262;
+x-ms-traffictypediagnostic: VI1PR04MB5262:
+x-microsoft-antispam-prvs: <VI1PR04MB526255317B05A8724B9AEC1B8C090@VI1PR04MB5262.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:983;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(39860400002)(136003)(396003)(199004)(189003)(76176011)(446003)(486006)(6116002)(3846002)(4744005)(8676002)(9686003)(44832011)(5660300002)(2906002)(25786009)(55016002)(71190400001)(6506007)(53546011)(52536014)(71200400001)(110136005)(86362001)(14444005)(256004)(99286004)(476003)(7696005)(8936002)(54906003)(66066001)(186003)(4326008)(6246003)(478600001)(68736007)(102836004)(73956011)(26005)(64756008)(66556008)(66476007)(33656002)(66946007)(76116006)(305945005)(66446008)(7736002)(74316002)(53936002)(14454004)(81166006)(81156014)(316002)(6436002)(6636002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5262;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4rxnZ+dDmFVS1FbWt3LkuXe5otmZylj1D4uiVshgxqdwBo31JgVE/liJwPOHeLpXXVz1SlWsfOCCqJjAfL3M91S/LPnj9lx/VRdc6CHyoKSWilI7H8rvtMDSKq5H2T7NVYkDEbtiqKkTrd1kDMWRwRiYt8k2bvqmWaG0lFDupQoUj+Wrp02oQRVAgCU3Qe6rRBlY8Jm3Aqcw3J61TYqCkY0JUX/RLp2LvYkTyZk+c6hi9CyGzNHGJF3Dk0Sr/zVjhej92NldQx5vhZf9UKfSNuL8PodkiAXl7XdqeHIZXBW/oXM9lYyGGPT+E5bEVC8zSINnaCj/k7H80wH4/k7vPwqbpJYMTiKpv+qvQFyhagKSaIsoT453BnEOUcwS54xHeZno4r7ZGbp1++9wmwpAKclk3N6dMpzI5gpQt+PKCkk=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a01:e35:39f2:1220:2452:dd6c:fe2f:be2c
-X-SA-Exim-Mail-From: ydroneaud@opteya.com
-X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on ou.quest-ce.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham version=3.3.2
-Subject: Re: [PATCH 1/2] pid: add pidfd_open()
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on ou.quest-ce.net)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91d19de9-c57e-46c2-54cb-08d6d93db5f0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 14:00:38.7213
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5262
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Le mercredi 15 mai 2019 à 12:03 +0200, Christian Brauner a écrit :
-> 
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 20881598bdfa..237d18d6ecb8 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -451,6 +452,53 @@ struct pid *find_ge_pid(int nr, struct
-> pid_namespace *ns)
->  	return idr_get_next(&ns->idr, &nr);
->  }
->  
-> +/**
-> + * pidfd_open() - Open new pid file descriptor.
-> + *
-> + * @pid:   pid for which to retrieve a pidfd
-> + * @flags: flags to pass
-> + *
-> + * This creates a new pid file descriptor with the O_CLOEXEC flag set for
-> + * the process identified by @pid. Currently, the process identified by
-> + * @pid must be a thread-group leader. This restriction currently exists
-> + * for all aspects of pidfds including pidfd creation (CLONE_PIDFD cannot
-> + * be used with CLONE_THREAD) and pidfd polling (only supports thread group
-> + * leaders).
-> + *
-
-Would it be possible to create file descriptor with "restricted"
-operation ?
-
-- O_RDONLY: waiting for process completion allowed (for example)
-- O_WRONLY: sending process signal allowed
-
-For example, a process could send over a Unix socket a process a pidfd,
-allowing this to only wait for completion, but not sending signal ?
-
-I see the permission check is not done in pidfd_open(), so what prevent
-a user from sending a signal to another user owned process ?
-
-If it's in pidfd_send_signal(), then, passing the socket through
-SCM_RIGHT won't be useful if the target process is not owned by the
-same user, or root.
-
-> + * Return: On success, a cloexec pidfd is returned.
-> + *         On error, a negative errno number will be returned.
-> + */
-> +SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
-> +{
-> +	int fd, ret;
-> +	struct pid *p;
-> +	struct task_struct *tsk;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (pid <= 0)
-> +		return -EINVAL;
-> +
-> +	p = find_get_pid(pid);
-> +	if (!p)
-> +		return -ESRCH;
-> +
-> +	rcu_read_lock();
-> +	tsk = pid_task(p, PIDTYPE_PID);
-> +	if (!tsk)
-> +		ret = -ESRCH;
-> +	else if (unlikely(!thread_group_leader(tsk)))
-> +		ret = -EINVAL;
-> +	else
-> +		ret = 0;
-> +	rcu_read_unlock();
-> +
-> +	fd = ret ?: pidfd_create(p);
-> +	put_pid(p);
-> +	return fd;
-> +}
-> +
->  void __init pid_idr_init(void)
->  {
->  	/* Verify no one has done anything silly: */
-
-Regards.
-
--- 
-Yann Droneaud
-OPTEYA
-
-
+On 5/15/2019 3:59 PM, Horia Geanta wrote:=0A=
+> On 5/15/2019 2:25 PM, Iuliana Prodan wrote:=0A=
+>> For rsa/pkcs1pad(rsa-caam, sha256), CAAM expects an input of modulus siz=
+e.=0A=
+> Only for sha256?=0A=
+No, is not just sha256. Is a combination of rsa-caam and a hash =0A=
+algorithm. I'll send a new version to fix the commit message.=0A=
+> =0A=
+>> For this we strip the leading zeros in case the size is more than modulu=
+s.=0A=
+>> This commit avoids modifying the crypto request while striping zeros fro=
+m=0A=
+>                                                          ^^^ stripping=0A=
+> =0A=
+> Horia=0A=
+> =0A=
+=0A=
