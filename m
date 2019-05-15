@@ -2,80 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E371F041
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BB21F021
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732318AbfEOLmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:42:09 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58026 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732360AbfEOL2Q (ORCPT
+        id S1732611AbfEOLk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:40:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44110 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732489AbfEOL3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:28:16 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4FBS9Dv062207;
-        Wed, 15 May 2019 06:28:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1557919689;
-        bh=uD0hOed8qFjFZXDyYgxx1HKj4YC6mZZmhn8u4YqN9qU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ke2sSvoKvQdNApcRuZbt00b15JHzYjRrbKyKiQaUjvsD6pEcmlO2m1zyf10Wi2ZtT
-         IsAknwHtjexvMkkeZIH9JYdR/gcMhM/JaLNJO3/nnisZkSadaGqo2UpAFh5jl02PZn
-         LMsRSj9BKzuzHMqHCVxEwkWKIlpqXu6+TfvPrnNk=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4FBS9Y2079097
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 May 2019 06:28:09 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 15
- May 2019 06:28:08 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 15 May 2019 06:28:08 -0500
-Received: from [172.22.173.234] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4FBS72p125930;
-        Wed, 15 May 2019 06:28:07 -0500
-Subject: Re: [PATCH 4.14 053/115] i2c: omap: Enable for ARCH_K3
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <stable@vger.kernel.org>, Vignesh R <vigneshr@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-References: <20190515090659.123121100@linuxfoundation.org>
- <20190515090703.440094029@linuxfoundation.org>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <b97de7c6-fb95-33a9-3ac6-4df45eec82c5@ti.com>
-Date:   Wed, 15 May 2019 14:28:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 15 May 2019 07:29:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=c2nb29zF7zxfX/kIeJWPumZNWap+6etEox+DI/tfr/E=; b=oKXIs7i6XSRQmXCCL9OwSOOuy
+        pWSF/98Q3Ej9L5o9E1vHpkn4OVxa4tBNlkjcSoo5DaMKMxuu//hFb4nJ/3l9PFOALBtRVVsh/4lJc
+        G5ewaW8I22P63tq4/U/oejQ5EtO/H9q7Xe8ipFwch4Xol801IcYTWjDNPZX76UFVbAIA4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hQs5k-0003dJ-PD; Wed, 15 May 2019 11:29:00 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 362941126D6A; Wed, 15 May 2019 12:29:00 +0100 (BST)
+Date:   Wed, 15 May 2019 12:29:00 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
+Message-ID: <20190515112900.GE5613@sirena.org.uk>
+References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
+ <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
+ <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
+ <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190515093522.GC5613@sirena.org.uk>
+ <BYAPR12MB3398ED52051F5BFA08D7B3A6C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190515090703.440094029@linuxfoundation.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5oH/S/bF6lOfqCQb"
+Content-Disposition: inline
+In-Reply-To: <BYAPR12MB3398ED52051F5BFA08D7B3A6C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
+X-Cookie: You will lose an important tape file.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
 
-On 15.05.19 13:55, Greg Kroah-Hartman wrote:
-> [ Upstream commit 5b277402deac0691226a947df71c581686bd4020 ]
-> 
-> Allow I2C_OMAP to be built for K3 platforms.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+--5oH/S/bF6lOfqCQb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is not v4.14 material as there no support for ARCH_K3.
-Could you drop it pls.
+On Wed, May 15, 2019 at 11:24:22AM +0000, Sowjanya Komatineni wrote:
 
--- 
-Best regards,
-grygorii
+> > Please fix your mail client to word wrap within paragraphs at something
+> substantially less than 80 columns.  Doing this makes your messages much
+> easier to read and reply to.
+
+> I did changed but looks like it didn't made diff. Will try with different=
+ email client.
+
+Yeah, the behaviour is exactly the same - it's not only not wrapping
+your content but also reflowing quoted content.
+
+> > Please don't ignore review comments, people are generally making them
+> for a reason and are likely to have the same concerns if issues remain
+> unaddressed.  Having to repeat the same comments can get repetitive and
+> make people question the value of time spent reviewing.  If you disagree
+> with the review comments that's fine but you need to reply and discuss
+> your concerns so that the reviewer can understand your decisions.
+
+> If you are referring to comment from Jon on updating commit, I didn't ign=
+ored. I am just waiting if any more comments from you or others before post=
+ing updated patch.=20
+
+That was more about the continuing issues with mail formatting.
+
+> But I see you applied patch now. So how should I post with updated commit?
+
+No, it's fine.  It would have been better to have a clearer commit
+message but I think the usage makes it reasonably clear in the final
+code why that was done and honestly "the hardware doesn't support all
+the features we need to properly control devices" is an extremely common
+reason for using GPIO chip selects even when hardware support is
+available.
+
+--5oH/S/bF6lOfqCQb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb9/sACgkQJNaLcl1U
+h9BUDwf/bPfCyFuksT4NWyI8p6GWwFAUqqbX6kRmGX6QVE+z2hnkF6KlYKBRlIV6
+lgYs5tiInlHAw7ZLHeqzL0i6R+OzTGprmMKnl+Tjh1JmwwVbbpe4MX2i0EM575Yo
+tySU55KRQjtCC9pDBjqbND2Drh7PcAQqZNnj2izJyimjcQrCNTlZaUeWDbdptqVI
+JInzZFPpsdvgSMMj7RTAmo22RzO2jdNNZncxo86MXp8zCvBupMDZTem3aXL9PFCJ
+qVP1LJ8JvHPGZcyCag9ForjT5XTHqygCSupKrqol9X2QXsJMNFMqcB5tsJkINGXk
+pZdS55eooHyxJvRybmtWPKzsiGJCww==
+=2+CF
+-----END PGP SIGNATURE-----
+
+--5oH/S/bF6lOfqCQb--
