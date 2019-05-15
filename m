@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B32401EDBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A26D1F0D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfEOLNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48626 "EHLO mail.kernel.org"
+        id S1732251AbfEOLr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729896AbfEOLNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:01 -0400
+        id S1730919AbfEOLYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29BA820644;
-        Wed, 15 May 2019 11:13:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C93D206BF;
+        Wed, 15 May 2019 11:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918780;
-        bh=dA8wClFlcVmH5G+TxKZZMt7dnaDSO9bdLEfH2ZHkTi4=;
+        s=default; t=1557919459;
+        bh=eu6WPjH6QeN8z+zr1b68zeeSpgmD1RvoZj6MJ4ltsSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vc9PotsvNWtge+zCqAkR0blxlroZS3b0go992ZpAKMvwYXHwZKdZUJ2zC59a6lGuM
-         LZC3S7k7sZ71GGPGWVgZ1mgQqYp13Bqjof/Gzolg5UUVMJYcum0NfbmETyplspTaSa
-         n/DzP8HyqGYfKoooD7B8hp+NwqhsmZNtVq1h9Y1w=
+        b=1hjOtM0qRW6NkfOQc1ofDlHRbhFfTHRNvlmMLp1bk6zknh7e5CxUuwNSlVt78COBw
+         0c/Flxyjzwq90Gj1SM06SvZkxRS3OJ5MrIZTg3k3rkkHufb7NkrqSFedZl3ruQKf0+
+         cqBIpiMX1w7ASaSdUiikgVuxrvajdbedkQoaLtFA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Timur Tabi <timur@freescale.com>,
-        Mihai Caraman <mihai.caraman@freescale.com>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 264/266] drivers/virt/fsl_hypervisor.c: dereferencing error pointers in ioctl
-Date:   Wed, 15 May 2019 12:56:11 +0200
-Message-Id: <20190515090731.948065390@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Righi <righi.andrea@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.19 081/113] x86/kprobes: Avoid kretprobe recursion bug
+Date:   Wed, 15 May 2019 12:56:12 +0200
+Message-Id: <20190515090659.766584028@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,104 +50,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+[ Upstream commit b191fa96ea6dc00d331dcc28c1f7db5e075693a0 ]
 
-commit c8ea3663f7a8e6996d44500ee818c9330ac4fd88 upstream.
+Avoid kretprobe recursion loop bg by setting a dummy
+kprobes to current_kprobe per-CPU variable.
 
-strndup_user() returns error pointers on error, and then in the error
-handling we pass the error pointers to kfree().  It will cause an Oops.
+This bug has been introduced with the asm-coded trampoline
+code, since previously it used another kprobe for hooking
+the function return placeholder (which only has a nop) and
+trampoline handler was called from that kprobe.
 
-Link: http://lkml.kernel.org/r/20181218082003.GD32567@kadam
-Fixes: 6db7199407ca ("drivers/virt: introduce Freescale hypervisor management driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Timur Tabi <timur@freescale.com>
-Cc: Mihai Caraman <mihai.caraman@freescale.com>
-Cc: Kumar Gala <galak@kernel.crashing.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This revives the old lost kprobe again.
 
+With this fix, we don't see deadlock anymore.
+
+And you can see that all inner-called kretprobe are skipped.
+
+  event_1                                  235               0
+  event_2                                19375           19612
+
+The 1st column is recorded count and the 2nd is missed count.
+Above shows (event_1 rec) + (event_2 rec) ~= (event_2 missed)
+(some difference are here because the counter is racy)
+
+Reported-by: Andrea Righi <righi.andrea@gmail.com>
+Tested-by: Andrea Righi <righi.andrea@gmail.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Fixes: c9becf58d935 ("[PATCH] kretprobe: kretprobe-booster")
+Link: http://lkml.kernel.org/r/155094064889.6137.972160690963039.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/virt/fsl_hypervisor.c |   26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ arch/x86/kernel/kprobes/core.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---- a/drivers/virt/fsl_hypervisor.c
-+++ b/drivers/virt/fsl_hypervisor.c
-@@ -335,8 +335,8 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	struct fsl_hv_ioctl_prop param;
- 	char __user *upath, *upropname;
- 	void __user *upropval;
--	char *path = NULL, *propname = NULL;
--	void *propval = NULL;
-+	char *path, *propname;
-+	void *propval;
- 	int ret = 0;
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index acb901b43ce4d..544bc2dfe4082 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -749,11 +749,16 @@ asm(
+ NOKPROBE_SYMBOL(kretprobe_trampoline);
+ STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
  
- 	/* Get the parameters from the user. */
-@@ -348,32 +348,30 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	upropval = (void __user *)(uintptr_t)param.propval;
++static struct kprobe kretprobe_kprobe = {
++	.addr = (void *)kretprobe_trampoline,
++};
++
+ /*
+  * Called from kretprobe_trampoline
+  */
+ __visible __used void *trampoline_handler(struct pt_regs *regs)
+ {
++	struct kprobe_ctlblk *kcb;
+ 	struct kretprobe_instance *ri = NULL;
+ 	struct hlist_head *head, empty_rp;
+ 	struct hlist_node *tmp;
+@@ -763,6 +768,17 @@ __visible __used void *trampoline_handler(struct pt_regs *regs)
+ 	void *frame_pointer;
+ 	bool skipped = false;
  
- 	path = strndup_user(upath, FH_DTPROP_MAX_PATHLEN);
--	if (IS_ERR(path)) {
--		ret = PTR_ERR(path);
--		goto out;
--	}
-+	if (IS_ERR(path))
-+		return PTR_ERR(path);
- 
- 	propname = strndup_user(upropname, FH_DTPROP_MAX_PATHLEN);
- 	if (IS_ERR(propname)) {
- 		ret = PTR_ERR(propname);
--		goto out;
-+		goto err_free_path;
- 	}
- 
- 	if (param.proplen > FH_DTPROP_MAX_PROPLEN) {
- 		ret = -EINVAL;
--		goto out;
-+		goto err_free_propname;
- 	}
- 
- 	propval = kmalloc(param.proplen, GFP_KERNEL);
- 	if (!propval) {
- 		ret = -ENOMEM;
--		goto out;
-+		goto err_free_propname;
- 	}
- 
- 	if (set) {
- 		if (copy_from_user(propval, upropval, param.proplen)) {
- 			ret = -EFAULT;
--			goto out;
-+			goto err_free_propval;
++	preempt_disable();
++
++	/*
++	 * Set a dummy kprobe for avoiding kretprobe recursion.
++	 * Since kretprobe never run in kprobe handler, kprobe must not
++	 * be running at this point.
++	 */
++	kcb = get_kprobe_ctlblk();
++	__this_cpu_write(current_kprobe, &kretprobe_kprobe);
++	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
++
+ 	INIT_HLIST_HEAD(&empty_rp);
+ 	kretprobe_hash_lock(current, &head, &flags);
+ 	/* fixup registers */
+@@ -838,10 +854,9 @@ __visible __used void *trampoline_handler(struct pt_regs *regs)
+ 		orig_ret_address = (unsigned long)ri->ret_addr;
+ 		if (ri->rp && ri->rp->handler) {
+ 			__this_cpu_write(current_kprobe, &ri->rp->kp);
+-			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
+ 			ri->ret_addr = correct_ret_addr;
+ 			ri->rp->handler(ri, regs);
+-			__this_cpu_write(current_kprobe, NULL);
++			__this_cpu_write(current_kprobe, &kretprobe_kprobe);
  		}
  
- 		param.ret = fh_partition_set_dtprop(param.handle,
-@@ -392,7 +390,7 @@ static long ioctl_dtprop(struct fsl_hv_i
- 			if (copy_to_user(upropval, propval, param.proplen) ||
- 			    put_user(param.proplen, &p->proplen)) {
- 				ret = -EFAULT;
--				goto out;
-+				goto err_free_propval;
- 			}
- 		}
- 	}
-@@ -400,10 +398,12 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	if (put_user(param.ret, &p->ret))
- 		ret = -EFAULT;
+ 		recycle_rp_inst(ri, &empty_rp);
+@@ -857,6 +872,9 @@ __visible __used void *trampoline_handler(struct pt_regs *regs)
  
--out:
--	kfree(path);
-+err_free_propval:
- 	kfree(propval);
-+err_free_propname:
- 	kfree(propname);
-+err_free_path:
-+	kfree(path);
+ 	kretprobe_hash_unlock(current, &flags);
  
- 	return ret;
- }
++	__this_cpu_write(current_kprobe, NULL);
++	preempt_enable();
++
+ 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
+ 		hlist_del(&ri->hlist);
+ 		kfree(ri);
+-- 
+2.20.1
+
 
 
