@@ -2,156 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2703D1F40D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A05B81F3F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfEOMTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:19:00 -0400
-Received: from mail-eopbgr820055.outbound.protection.outlook.com ([40.107.82.55]:23472
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727561AbfEOLA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:00:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1tFl3U+VPCLjhy3mqEjsrRLfgkn9WmSgkmkQvgrNZS4=;
- b=tN//8xvmLhOFFGLuPqxVBOvijT5C/T0lxkjkgRabqbcaIrIF4GOlhM0smbGnzaB9YUEYjWebheNmNw0pEJ5QXrtOARxLefq/dgJnW71nJvxeWk0FUwuIrHWTMDlrgup8gOmaTzc9NLr5ebtjmZAA6WGCNm4ICzZayOGCyWwzfv0=
-Received: from DM5PR03CA0038.namprd03.prod.outlook.com (2603:10b6:4:3b::27) by
- CY1PR03MB2268.namprd03.prod.outlook.com (2a01:111:e400:c614::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1900.16; Wed, 15 May
- 2019 11:00:54 +0000
-Received: from CY1NAM02FT030.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by DM5PR03CA0038.outlook.office365.com
- (2603:10b6:4:3b::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1900.16 via Frontend
- Transport; Wed, 15 May 2019 11:00:54 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT030.mail.protection.outlook.com (10.152.75.163) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1856.11
- via Frontend Transport; Wed, 15 May 2019 11:00:53 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x4FB0qYX019576
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 15 May 2019 04:00:52 -0700
-Received: from linux.ad.analog.com (10.32.224.122) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 15 May 2019 07:00:52 -0400
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
-        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefan.popa@analog.com>
-Subject: [PATCH 2/2] dt-bindings: iio: frequency: Add docs for ADF4371 PLL
-Date:   Wed, 15 May 2019 14:00:43 +0300
-Message-ID: <1557918043-25733-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727333AbfEOLCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:02:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:40818 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727836AbfEOLCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:02:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF55080D;
+        Wed, 15 May 2019 04:02:02 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60A463F703;
+        Wed, 15 May 2019 04:02:00 -0700 (PDT)
+Date:   Wed, 15 May 2019 12:01:58 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
+        rui.zhang@intel.com, javi.merino@kernel.org,
+        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
+        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
+        ionela.voinescu@arm.com, mka@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
+Message-ID: <20190515110156.ru2wxqvwffqgq3t3@queper01-lin>
+References: <20190515082318.7993-3-quentin.perret@arm.com>
+ <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
+ <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
+ <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
+ <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
+ <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
+ <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
+ <20190515104043.vogspxgkapp6qsny@queper01-lin>
+ <20190515104651.tv5odug7ce4zlupc@queper01-lin>
+ <5b55e432-f8b0-91ae-a7de-fe02e0cad322@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(136003)(2980300002)(199004)(189003)(316002)(53376002)(70206006)(4326008)(70586007)(110136005)(44832011)(107886003)(7416002)(7636002)(2906002)(47776003)(478600001)(16586007)(186003)(26005)(305945005)(77096007)(48376002)(426003)(966005)(336012)(476003)(2616005)(36756003)(126002)(5660300002)(486006)(106002)(6666004)(7696005)(356004)(50466002)(6306002)(50226002)(54906003)(72206003)(51416003)(8936002)(8676002)(246002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB2268;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 19fb89fd-5de2-4487-9461-08d6d92499a2
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4709054)(2017052603328);SRVR:CY1PR03MB2268;
-X-MS-TrafficTypeDiagnostic: CY1PR03MB2268:
-X-MS-Exchange-PUrlCount: 3
-X-Microsoft-Antispam-PRVS: <CY1PR03MB2268E65149BCCBE2D6CD18B49D090@CY1PR03MB2268.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
-X-Forefront-PRVS: 0038DE95A2
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: Ej4uRLsvDIM7cAFPY5yG2YKg4Ar4N+w5qNKA7eZ8guLsn+N2Vgt5QM5TcRS/YVe4kfrmL4Y9CDIM8y3Z2Nxea9ZEvTNYe8wO4H6oG6WZPyW0rfmWw+enJ45y9HwWAj90rO619aD0m97VqCJKQ5dEaSdGEpdc3OKStlpv6DxASDB6Llj/xt/atasfuD0QiwCP/RP9Zq1O9yjQRGZH1216lAc8DuXxzGdI19NPaBDVj4EblDnyo3jI/6cy32zjaaxkqgWX8UHRPok4rfpelAjt1XyPqcthGX15vDymehrN4cF8aSYKnUz39Ma45Tl+Qv8mjOnBf74Y3EoPG1o3IDqPdB2RLBLo1fgen0D8LOhllaHSaEH7qztow3FVyNGIlfUpI4B30P4PF1MSit3UKnPRn1vc66dJccGMJDOky9Nas3M=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2019 11:00:53.2667
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19fb89fd-5de2-4487-9461-08d6d92499a2
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB2268
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b55e432-f8b0-91ae-a7de-fe02e0cad322@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document support for Analog Devices ADF4371 SPI Wideband Synthesizer.
+On Wednesday 15 May 2019 at 12:51:57 (+0200), Daniel Lezcano wrote:
+> On 15/05/2019 12:46, Quentin Perret wrote:
+> > On Wednesday 15 May 2019 at 11:40:44 (+0100), Quentin Perret wrote:
+> 
+> [ ... ]
+> 
+> >> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
+> >>         if (capacitance) {
+> >>                 ret = update_freq_table(cpufreq_cdev, capacitance);
+> >>                 if (ret) {
+> >>                         cdev = ERR_PTR(ret);
+> >>                         goto remove_ida;
+> >>                 }
+> >> -
+> >> -               cooling_ops = &cpufreq_power_cooling_ops;
+> >> -       } else {
+> >> -               cooling_ops = &cpufreq_cooling_ops;
+> >>         }
+> >> +#endif
+> >> +       cooling_ops = &cpufreq_cooling_ops;
+> > 
+> > Argh, that is actually broken with !capacitance and
+> > THERMAL_GOV_POWER_ALLOCATOR=y ... Perhaps it's best to keep the two
+> > thermal_cooling_device_ops struct separated in the end.
+> 
+> Or alternatively you can keep one structure but instead of filling the
+> state2power,power2state and getrequestedpower fields in the declaration,
+> you fill them in the if (capacitance) block, no?
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
----
- .../devicetree/bindings/iio/frequency/adf4371.yaml | 54 ++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+Something like the below ? Yes, that works too. I'll write a proper
+patch and send that next week or so.
 
-diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-new file mode 100644
-index 0000000..d7adf074
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/frequency/adf4371.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices ADF4371 Wideband Synthesizer
-+
-+maintainers:
-+  - Popa Stefan <stefan.popa@analog.com>
-+
-+description: |
-+  Analog Devices ADF4371 SPI Wideband Synthesizer
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/adf4371.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,adf4371
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    description:
-+      Definition of the external clock (see clock/clock-bindings.txt)
-+    maxItems: 1
-+
-+  clock-names:
-+    description:
-+      Must be "clkin"
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        frequency@0 {
-+                compatible = "adi,adf4371";
-+                reg = <0>;
-+                spi-max-frequency = <1000000>;
-+                clocks = <&adf4371_clkin>;
-+                clock-names = "clkin";
-+        };
-+    };
-+...
--- 
-2.7.4
+Thanks,
+Quentin
 
+--->8---
+
+ /* Bind cpufreq callbacks to thermal cooling device ops */
+
+ static struct thermal_cooling_device_ops cpufreq_cooling_ops = {
+-       .get_max_state = cpufreq_get_max_state,
+-       .get_cur_state = cpufreq_get_cur_state,
+-       .set_cur_state = cpufreq_set_cur_state,
+-};
+-
+-static struct thermal_cooling_device_ops cpufreq_power_cooling_ops = {
+        .get_max_state          = cpufreq_get_max_state,
+        .get_cur_state          = cpufreq_get_cur_state,
+        .set_cur_state          = cpufreq_set_cur_state,
+-       .get_requested_power    = cpufreq_get_requested_power,
+-       .state2power            = cpufreq_state2power,
+-       .power2state            = cpufreq_power2state,
+ };
+
+ /* Notifier for cpufreq policy change */
+@@ -674,18 +667,19 @@ __cpufreq_cooling_register(struct device_node *np,
+                        pr_debug("%s: freq:%u KHz\n", __func__, freq);
+        }
+
++       cooling_ops = &cpufreq_cooling_ops;
++#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
+        if (capacitance) {
+                ret = update_freq_table(cpufreq_cdev, capacitance);
+                if (ret) {
+                        cdev = ERR_PTR(ret);
+                        goto remove_ida;
+                }
+-
+-               cooling_ops = &cpufreq_power_cooling_ops;
+-       } else {
+-               cooling_ops = &cpufreq_cooling_ops;
++               cooling_ops->get_requested_power = cpufreq_get_requested_power;
++               cooling_ops->state2power = cpufreq_state2power;
++               cooling_ops->power2state = cpufreq_power2state;
+        }
+-
++#endif
+        cdev = thermal_of_cooling_device_register(np, dev_name, cpufreq_cdev,
+                                                  cooling_ops);
+        if (IS_ERR(cdev))
