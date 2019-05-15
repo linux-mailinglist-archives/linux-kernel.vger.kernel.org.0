@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988EA1ECAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73131EE81
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfEOLAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:00:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57012 "EHLO mail.kernel.org"
+        id S1731484AbfEOLWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727376AbfEOLAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:00:14 -0400
+        id S1730212AbfEOLWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFD5320843;
-        Wed, 15 May 2019 11:00:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D606120843;
+        Wed, 15 May 2019 11:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918014;
-        bh=0LLQCSE2fNasj2xKeMezdrIxH17F8BSitWgnINPgfHM=;
+        s=default; t=1557919351;
+        bh=vVfQY6gZu/OlDcM6tuuouwA74XHWGJMpGlcOZoThUis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ocv1vtKwCfyLNdvygGXiOULha6tNR9wEMIcfxAzH2HgpLC7vwydMrijI2zALiOmwl
-         OjceWdsBpEgrZv/sG/K5EF+P7acIw+vMaE6ESNwQLKOP7RcHUfwpGiyF66wAifO2lJ
-         tthI6q1hVOaXQsipzwphVgJXlnLwjwW3b+kQdBfo=
+        b=RUd3jlIX9sMybvGlQhTq7gpWF77r2hUPHtxLPbt1KLupHPX6k4L0zq33vmNDjN2EQ
+         Xr3p+EwztI8MrPmpKzm49g1evnVFatJ2aJC7GytxXzl0J+uCDFBZ2ue5cl6VEtotO9
+         i1zu3Jm0/5CRPg9Vled1QJArZDhCJ66sSArUV3nA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 3.18 20/86] net: ks8851: Set initial carrier state to down
+        stable@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.19 006/113] kernfs: fix barrier usage in __kernfs_new_node()
 Date:   Wed, 15 May 2019 12:54:57 +0200
-Message-Id: <20190515090646.601766733@linuxfoundation.org>
+Message-Id: <20190515090653.700227815@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,54 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9624bafa5f6418b9ca5b3f66d1f6a6a2e8bf6d4c ]
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-The ks8851 chip's initial carrier state is down. A Link Change Interrupt
-is signaled once interrupts are enabled if the carrier is up.
+commit 998267900cee901c5d1dfa029a6304d00acbc29f upstream.
 
-The ks8851 driver has it backwards by assuming that the initial carrier
-state is up. The state is therefore misrepresented if the interface is
-opened with no cable attached. Fix it.
+smp_mb__before_atomic() can not be applied to atomic_set().  Remove the
+barrier and rely on RELEASE synchronization.
 
-The Link Change interrupt is sometimes not signaled unless the P1MBSR
-register (which contains the Link Status bit) is read on ->ndo_open().
-This might be a hardware erratum. Read the register by calling
-mii_check_link(), which has the desirable side effect of setting the
-carrier state to down if the cable was detached while the interface was
-closed.
+Fixes: ba16b2846a8c6 ("kernfs: add an API to get kernfs node from inode number")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Tristram Ha <Tristram.Ha@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/net/ethernet/micrel/ks8851.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/kernfs/dir.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
-index f90a1396535a..8a94add287de 100644
---- a/drivers/net/ethernet/micrel/ks8851.c
-+++ b/drivers/net/ethernet/micrel/ks8851.c
-@@ -870,6 +870,7 @@ static int ks8851_net_open(struct net_device *dev)
- 	netif_dbg(ks, ifup, ks->netdev, "network device up\n");
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -650,11 +650,10 @@ static struct kernfs_node *__kernfs_new_
+ 	kn->id.generation = gen;
  
- 	mutex_unlock(&ks->lock);
-+	mii_check_link(&ks->mii);
- 	return 0;
- }
+ 	/*
+-	 * set ino first. This barrier is paired with atomic_inc_not_zero in
++	 * set ino first. This RELEASE is paired with atomic_inc_not_zero in
+ 	 * kernfs_find_and_get_node_by_ino
+ 	 */
+-	smp_mb__before_atomic();
+-	atomic_set(&kn->count, 1);
++	atomic_set_release(&kn->count, 1);
+ 	atomic_set(&kn->active, KN_DEACTIVATED_BIAS);
+ 	RB_CLEAR_NODE(&kn->rb);
  
-@@ -1527,6 +1528,7 @@ static int ks8851_probe(struct spi_device *spi)
- 
- 	spi_set_drvdata(spi, ks);
- 
-+	netif_carrier_off(ks->netdev);
- 	ndev->if_port = IF_PORT_100BASET;
- 	ndev->netdev_ops = &ks8851_netdev_ops;
- 	ndev->irq = spi->irq;
--- 
-2.19.1
-
 
 
