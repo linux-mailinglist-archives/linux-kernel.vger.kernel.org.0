@@ -2,70 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9F31F01D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBA81F024
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732445AbfEOLkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:40:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41954 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727580AbfEOLkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:40:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54D7680D;
-        Wed, 15 May 2019 04:40:39 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F169B3F71E;
-        Wed, 15 May 2019 04:40:37 -0700 (PDT)
-Date:   Wed, 15 May 2019 12:40:35 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] arm64: use the correct function type for
- __arm64_sys_ni_syscall
-Message-ID: <20190515114035.GG24357@fuggles.cambridge.arm.com>
-References: <20190503191225.6684-1-samitolvanen@google.com>
- <20190503191225.6684-4-samitolvanen@google.com>
- <20190507172512.GA35803@lakrids.cambridge.arm.com>
- <20190507183227.GA10191@google.com>
+        id S1732818AbfEOLlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:41:00 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:40668 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732491AbfEOLk5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:40:57 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 225C12E0464;
+        Wed, 15 May 2019 14:40:54 +0300 (MSK)
+Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 08gEU9pJ8f-er0GLCfw;
+        Wed, 15 May 2019 14:40:54 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1557920454; bh=OSHZ1+IwIacwVlIgWbLEW2/VGId4KBozS/H+7QUKVY0=;
+        h=Message-ID:Date:To:From:Subject;
+        b=V5lqzoByyCilaEh1pURelX2t3ayYGtJn4oGqQJB0r26wOsNxalgH/GtFCbT40cmct
+         nZe9YLXlz7duPOMJCDloVh0zRUQ7Z76bVTWUmSJD10XP0aqopsDZ+VUZ4qsKx93mdi
+         OLGDd+vYSKm6wxxXMXRej09kinTtg2NGl8xxyzr8=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ed19:3833:7ce1:2324])
+        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id cPqsRtmpGc-er8ePror;
+        Wed, 15 May 2019 14:40:53 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] net: bpfilter: fallback to netfilter if failed to load
+ bpfilter kernel module
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+Date:   Wed, 15 May 2019 14:40:52 +0300
+Message-ID: <155792045295.940.7526963251434168966.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507183227.GA10191@google.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 07, 2019 at 11:32:27AM -0700, Sami Tolvanen wrote:
-> On Tue, May 07, 2019 at 06:25:12PM +0100, Mark Rutland wrote:
-> > I strongly think that we cant to fix up the common definition in
-> > kernel/sys_ni.c rather than having a point-hack in arm64. Other
-> > architectures (e.g. x86, s390) will want the same for CFI, and I'd like
-> > to ensure that our approached don't diverge.
-> 
-> s390 already has the following in arch/s390/kernel/sys_s390.c:
-> 
->   SYSCALL_DEFINE0(ni_syscall)
->   {
->         return -ENOSYS;
->   }
-> 
-> Which, I suppose, is cleaner than calling sys_ni_syscall.
-> 
-> > I took a quick look, and it looks like it's messy but possible to fix
-> > up the core.
-> 
-> OK. How would you propose fixing this?
+If bpfilter is not available return ENOPROTOOPT to fallback to netfilter.
 
-In the absence of a patch from Mark, I'd suggest just adding a SYS_NI macro
-to our asm/syscall_wrapper.h file which avoids the error injection stuff. It
-doesn't preclude moving this to the core later on, but it unblocks the CFI
-work.
+Function request_module() returns both errors and userspace exit codes.
+Just ignore them. Rechecking bpfilter_ops is enough.
 
-Will
+Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ net/ipv4/bpfilter/sockopt.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
+index 15427163a041..0480918bfc7c 100644
+--- a/net/ipv4/bpfilter/sockopt.c
++++ b/net/ipv4/bpfilter/sockopt.c
+@@ -30,13 +30,11 @@ static int bpfilter_mbox_request(struct sock *sk, int optname,
+ 	mutex_lock(&bpfilter_ops.lock);
+ 	if (!bpfilter_ops.sockopt) {
+ 		mutex_unlock(&bpfilter_ops.lock);
+-		err = request_module("bpfilter");
++		request_module("bpfilter");
+ 		mutex_lock(&bpfilter_ops.lock);
+ 
+-		if (err)
+-			goto out;
+ 		if (!bpfilter_ops.sockopt) {
+-			err = -ECHILD;
++			err = -ENOPROTOOPT;
+ 			goto out;
+ 		}
+ 	}
+
