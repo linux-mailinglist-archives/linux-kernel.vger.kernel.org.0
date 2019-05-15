@@ -2,57 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E179B1ED9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CD411F12E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbfEOLLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
+        id S1731349AbfEOLVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729637AbfEOLLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:49 -0400
+        id S1731334AbfEOLVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 191DC2184C;
-        Wed, 15 May 2019 11:11:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83C3C20818;
+        Wed, 15 May 2019 11:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918708;
-        bh=ZE/wyIpieYWpS3jmasNG/txzYJIV0+xGGC7dW8gk/1Q=;
+        s=default; t=1557919304;
+        bh=UmMYLfISrXlZixYjykw0EVKAEAFriWONhw33thiL0oU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p0irSYnWxrE5ntedmw8IbGsotfd2wxh/QfP2uiIShFJF93Z7V9wQg1JaYiD5JzSpu
-         QUy4fPzTLoFxallxuBBUnqAdgRygp656f3h4SA8sixhQ4I1pGQVKfk5GsHNKIgaciZ
-         EPkQmvnqk+4oTB3TUAyedeGNLyvap1+UBuzBj3EI=
+        b=2Q0E/pYulkTKFRYKUEE4WZElqaBJ2yLRRF5O744d8BnO6GrI3pK+cjHQlxqgHdGRy
+         r/xXXKgkULxNiaArVRur+FTLgyQZ1Fs+QAN6CjAHwJeno07B75z2tNzyGaD9Z1yVuU
+         dv4Zcht5RfV25nxj9qMES4Cmi2l7NNsNaGqDX4c8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 208/266] x86/Kconfig: Select SCHED_SMT if SMP enabled
+        stable@vger.kernel.org, Liang ZhiCheng <liangzhicheng@baidu.com>,
+        Li RongQing <lirongqing@baidu.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 024/113] libnvdimm/pmem: fix a possible OOB access when read and write pmem
 Date:   Wed, 15 May 2019 12:55:15 +0200
-Message-Id: <20190515090729.996216353@linuxfoundation.org>
+Message-Id: <20190515090655.323788736@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,64 +47,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 9dc6488e84b0f64df17672271664752488cd6a25 ]
 
-commit dbe733642e01dd108f71436aaea7b328cb28fd87 upstream.
+If offset is not zero and length is bigger than PAGE_SIZE,
+this will cause to out of boundary access to a page memory
 
-CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
-have it configurable. The runtime overhead in the core scheduler code is
-minimal because the actual SMT scheduling parts are conditional on a static
-key.
-
-This allows to expose the scheduler's SMT state static key to the
-speculation control code. Alternatively the scheduler's static key could be
-made always available when CONFIG_SMP is enabled, but that's just adding an
-unused static key to every other architecture for nothing.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185004.337452245@linutronix.de
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 98cc093cba1e ("block, THP: make block_device_operations.rw_page support THP")
+Co-developed-by: Liang ZhiCheng <liangzhicheng@baidu.com>
+Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/Kconfig |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/nvdimm/pmem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -893,13 +893,7 @@ config NR_CPUS
- 	  approximately eight kilobytes to the kernel image.
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 1d432c5ed2753..cff027fc26761 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -113,13 +113,13 @@ static void write_pmem(void *pmem_addr, struct page *page,
  
- config SCHED_SMT
--	bool "SMT (Hyperthreading) scheduler support"
--	depends on SMP
--	---help---
--	  SMT scheduler support improves the CPU scheduler's decision making
--	  when dealing with Intel Pentium 4 chips with HyperThreading at a
--	  cost of slightly increased overhead in some places. If unsure say
--	  N here.
-+	def_bool y if SMP
+ 	while (len) {
+ 		mem = kmap_atomic(page);
+-		chunk = min_t(unsigned int, len, PAGE_SIZE);
++		chunk = min_t(unsigned int, len, PAGE_SIZE - off);
+ 		memcpy_flushcache(pmem_addr, mem + off, chunk);
+ 		kunmap_atomic(mem);
+ 		len -= chunk;
+ 		off = 0;
+ 		page++;
+-		pmem_addr += PAGE_SIZE;
++		pmem_addr += chunk;
+ 	}
+ }
  
- config SCHED_MC
- 	def_bool y
+@@ -132,7 +132,7 @@ static blk_status_t read_pmem(struct page *page, unsigned int off,
+ 
+ 	while (len) {
+ 		mem = kmap_atomic(page);
+-		chunk = min_t(unsigned int, len, PAGE_SIZE);
++		chunk = min_t(unsigned int, len, PAGE_SIZE - off);
+ 		rem = memcpy_mcsafe(mem + off, pmem_addr, chunk);
+ 		kunmap_atomic(mem);
+ 		if (rem)
+@@ -140,7 +140,7 @@ static blk_status_t read_pmem(struct page *page, unsigned int off,
+ 		len -= chunk;
+ 		off = 0;
+ 		page++;
+-		pmem_addr += PAGE_SIZE;
++		pmem_addr += chunk;
+ 	}
+ 	return BLK_STS_OK;
+ }
+-- 
+2.20.1
+
 
 
