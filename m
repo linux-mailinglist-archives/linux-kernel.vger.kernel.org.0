@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51A1A1EEDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFD51EE69
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbfEOL0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:26:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37670 "EHLO mail.kernel.org"
+        id S1731264AbfEOLVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729763AbfEOL0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:48 -0400
+        id S1731253AbfEOLVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A77DC206BF;
-        Wed, 15 May 2019 11:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D1A4206BF;
+        Wed, 15 May 2019 11:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919607;
-        bh=uOm5BvuEI4DDXppf2ixzVjQaw/JN4hbVR5wVHhA3v+M=;
+        s=default; t=1557919277;
+        bh=je8p31gH2UTFUNYAyL0F90Tk0r4btja7y6rAk0kldCQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JVA+x4vGXy9pT6+m1RHd31ZlWyda0hnTpxBDeuJSnOLUKSHUv5lSt0/Cj6WfzccDH
-         t4LsKfuxozTLtSjREvmqsPR0YPcd5XkeL4XKqqlxKrigB/TFhX+dJQszfHi6nl0Nsh
-         bScWfvc/ernyjSKbLypd9CeTb0z2sU4JVBAF+7uw=
+        b=N6iVsUMBPxF/Fc1kh0ZFlWGeoGmcVsee7rrQb2Abu6qasBOCZWVCcySH0F8R3QCOu
+         oZjGEA0TUN74at796j1OCRPCZvVEufXT5gX8wfTAcNA9zev8rGdJjl76UXMp5H5rWG
+         KxufBVgA416qMiQay1JgfRfD9kE1gUDI9yreOp9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sunil Dutt <usdutt@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 025/137] nl80211: Add NL80211_FLAG_CLEAR_SKB flag for other NL commands
+Subject: [PATCH 4.19 015/113] HID: input: add mapping for keyboard Brightness Up/Down/Toggle keys
 Date:   Wed, 15 May 2019 12:55:06 +0200
-Message-Id: <20190515090655.104251473@linuxfoundation.org>
+Message-Id: <20190515090654.663691680@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6db02a88a4aaa1cd7105137c67ddec7f3bdbc05 ]
+[ Upstream commit 7975a1d6a7afeb3eb61c971a153d24dd8fa032f3 ]
 
-This commit adds NL80211_FLAG_CLEAR_SKB flag to other NL commands
-that carry key data to ensure they do not stick around on heap
-after the SKB is freed.
+According to HUTRR73 usages 0x79, 0x7a and 0x7c from the consumer page
+correspond to Brightness Up/Down/Toggle keys, so let's add the mappings.
 
-Also introduced this flag for NL80211_CMD_VENDOR as there are sub
-commands which configure the keys.
-
-Signed-off-by: Sunil Dutt <usdutt@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/hid/hid-input.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d91a408db113e..156ce708b5330 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -13596,7 +13596,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.policy = nl80211_policy,
- 		.flags = GENL_UNS_ADMIN_PERM,
- 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_DEAUTHENTICATE,
-@@ -13647,7 +13648,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.policy = nl80211_policy,
- 		.flags = GENL_UNS_ADMIN_PERM,
- 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_UPDATE_CONNECT_PARAMS,
-@@ -13655,7 +13657,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.policy = nl80211_policy,
- 		.flags = GENL_ADMIN_PERM,
- 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_DISCONNECT,
-@@ -13684,7 +13687,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.policy = nl80211_policy,
- 		.flags = GENL_UNS_ADMIN_PERM,
- 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_DEL_PMKSA,
-@@ -14036,7 +14040,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.policy = nl80211_policy,
- 		.flags = GENL_UNS_ADMIN_PERM,
- 		.internal_flags = NL80211_FLAG_NEED_WIPHY |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_SET_QOS_MAP,
-@@ -14091,7 +14096,8 @@ static const struct genl_ops nl80211_ops[] = {
- 		.doit = nl80211_set_pmk,
- 		.policy = nl80211_policy,
- 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
--				  NL80211_FLAG_NEED_RTNL,
-+				  NL80211_FLAG_NEED_RTNL |
-+				  NL80211_FLAG_CLEAR_SKB,
- 	},
- 	{
- 		.cmd = NL80211_CMD_DEL_PMK,
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index a9892cabe7cd8..55e6f18ff627d 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -895,6 +895,10 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
+ 		case 0x074: map_key_clear(KEY_BRIGHTNESS_MAX);		break;
+ 		case 0x075: map_key_clear(KEY_BRIGHTNESS_AUTO);		break;
+ 
++		case 0x079: map_key_clear(KEY_KBDILLUMUP);	break;
++		case 0x07a: map_key_clear(KEY_KBDILLUMDOWN);	break;
++		case 0x07c: map_key_clear(KEY_KBDILLUMTOGGLE);	break;
++
+ 		case 0x082: map_key_clear(KEY_VIDEO_NEXT);	break;
+ 		case 0x083: map_key_clear(KEY_LAST);		break;
+ 		case 0x084: map_key_clear(KEY_ENTER);		break;
 -- 
 2.20.1
 
