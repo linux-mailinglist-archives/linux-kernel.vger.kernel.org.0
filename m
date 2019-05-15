@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F1E1FC9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 00:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5E61FC9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 00:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfEOWoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 18:44:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34840 "EHLO mail.kernel.org"
+        id S1726447AbfEOWrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 18:47:09 -0400
+Received: from namei.org ([65.99.196.166]:39390 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbfEOWoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 18:44:39 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C817820862;
-        Wed, 15 May 2019 22:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557960278;
-        bh=RD/BsQzuTKMqyx5gPDoTRwO4+h8UvnjsTAjiA4VH+dg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LhV5qBs8pKqjgncDeKAmibIV69CTrusSWRPh93xY7VBDQkKGjDxTiZ/FncfOxjMCs
-         3Yfzmtz29l+sKYfhD8THMKoQwc8pnMywTG5ttCrzX6dW9e+EpWOniSwYeLCzmvEomX
-         BC8c7i4KWwWOWt2kwd58MPu7X8iAzRAkttnoyO0Q=
-Subject: Re: Linux Testing Microconference at LPC
-To:     Dhaval Giani <dhaval.giani@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Carpenter,Dan" <dan.carpenter@oracle.com>, willy@infradead.org,
-        gustavo.padovan@collabora.co.uk,
-        Dmitry Vyukov <dvyukov@google.com>, knut.omang@oracle.com,
-        shuah <shuah@kernel.org>
-References: <CAPhKKr_uVTFAzne0QkZFUGfb8RxQdVFx41G9kXRY7sFN-=pZ6w@mail.gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <3c6c9405-7e90-fb03-aa1c-0ada13203980@kernel.org>
-Date:   Wed, 15 May 2019 16:44:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726188AbfEOWrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 18:47:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x4FMkS7O029404;
+        Wed, 15 May 2019 22:46:28 GMT
+Date:   Thu, 16 May 2019 08:46:28 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+In-Reply-To: <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1905160844130.29250@namei.org>
+References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com> <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com> <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
+ <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com> <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com> <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com> <20190514204527.GC1977@linux.intel.com>
+ <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com> <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org>
+ <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAPhKKr_uVTFAzne0QkZFUGfb8RxQdVFx41G9kXRY7sFN-=pZ6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha and Dhaval,
+On Wed, 15 May 2019, Andy Lutomirski wrote:
 
-On 4/11/19 11:37 AM, Dhaval Giani wrote:
-> Hi Folks,
+> > Why not just use an xattr, like security.sgx ?
 > 
-> This is a call for participation for the Linux Testing microconference
-> at LPC this year.
-> 
-> For those who were at LPC last year, as the closing panel mentioned,
-> testing is probably the next big push needed to improve quality. From
-> getting more selftests in, to regression testing to ensure we don't
-> break realtime as more of PREEMPT_RT comes in, to more stable distros,
-> we need more testing around the kernel.
-> 
-> We have talked about different efforts around testing, such as fuzzing
-> (using syzkaller and trinity), automating fuzzing with syzbot, 0day
-> testing, test frameworks such as ktests, smatch to find bugs in the
-> past. We want to push this discussion further this year and are
-> interested in hearing from you what you want to talk about, and where
-> kernel testing needs to go next.
-> 
-> Please let us know what topics you believe should be a part of the
-> micro conference this year.
-> 
-> Thanks!
-> Sasha and Dhaval
+> Wouldn't this make it so that only someone with CAP_MAC_ADMIN could
+> install an enclave?  I think that this decision should be left up the
+> administrator, and it should be easy to set up a loose policy where
+> anyone can load whatever enclave they want.  That's what would happen
+> in my proposal if there was no LSM loaded or of the LSM policy didn't
+> restrict what .sigstruct files were acceptable.
 > 
 
-A talk on KUnit from Brendan Higgins will be good addition to this
-Micro-conference. I am cc'ing Brendan on this thread.
+You could try user.sigstruct, which does not require any privs.
 
-Please consider adding it.
+-- 
+James Morris
+<jmorris@namei.org>
 
-thanks,
--- Shuah
