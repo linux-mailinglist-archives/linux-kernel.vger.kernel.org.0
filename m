@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D881F53C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9A21F541
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfEONOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 09:14:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47304 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbfEONOo (ORCPT
+        id S1727470AbfEONPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 09:15:32 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36100 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbfEONPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 09:14:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qShoqLt0JmHyoHgAq3sjRJ0pBZKTFY+W/Ie1+Gslfcs=; b=rYCXmxJt7WIVkj4UyET3hLn4H
-        OmfbIB7jIAwSa9Jv4QvcOVmdEuLtr4hR6GYVoIViMZ7bWW94ldFI3s2GeCcXaveKviEIC88Yi5364
-        90FxvdcJw6lodstcqCiNE2IioHmGFIGm1uVuP+hLxOXY/UrQHLUWMASdv6psi37jJPfIip/Wxz3Xc
-        BTzsy2JNdKHNbhpUAFNeSMPGbiElM4NDeYb8AH1+3ZiU8nrOih5wfVNc1BQUc3TgRe7/4oBj52ZV3
-        FJPXQm7UWb0JuyMa2ZJNdmKpwTqgwGQEB9yNibzD05AHHDBxIA4D78Dc377GEBv4O6nuBOghgN5kd
-        Y8Kp+Ki5Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQtk1-0000z1-RR; Wed, 15 May 2019 13:14:41 +0000
-Date:   Wed, 15 May 2019 06:14:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc: silence a -Wcast-function-type warning in
- dawr_write_file_bool
-Message-ID: <20190515131441.GA3072@infradead.org>
-References: <20190515120942.3812-1-malat@debian.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190515120942.3812-1-malat@debian.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 15 May 2019 09:15:32 -0400
+Received: by mail-pf1-f195.google.com with SMTP id v80so1367256pfa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 06:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=AyFACiWTp3aKjfUBwEnUu0WG1DOJlwF3PCOsQcuUqWA=;
+        b=YWZQTkhWIqwZYS3NJiPxmflNVTDKBAgSM0ZG2CbE+UQZOeSt7jhlAR+znBPfjI6QmS
+         wUlxiaK6skwmXDz5Rbv2RtDx+j5lyAZObR6S0CbC4T6h4baeF3fBEhRAReZUSpr1f2fI
+         inYxaMfEBy8eAykUr2JXl78hAlpmvrYIvaTlVim3BzD3lR1WiyHT7Srf/q6HtIwnniJq
+         TupTXlCE9dWa6PjctkfkPMQmfzj0WmekOEdOH7MUn3UVF/FUld/+AdVMVKySXOfx/vjx
+         ErPmqVC9cSaI/2Nuq+05G+e7yXMKEdXh3p3mH04X3HT/BlE3R/rVKqSV4J5uChX94vlp
+         hAdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AyFACiWTp3aKjfUBwEnUu0WG1DOJlwF3PCOsQcuUqWA=;
+        b=kQoXw2pV5LNX5u3fXMQqHywrSKYSD0ntvZ+YyocHhJ/mFLeb4a5zbOAqUTDsK9oCm1
+         +FynrgPYssEblgtBuQ+uJVWyzhXp2dbpTLCzOwiVdLfXrKVDSyENdFk+piw7tTD9l26s
+         EFCEeHFjJ++LEDuHG/jpEiN168fe2xaEgToUl6Ql/ubGnGidQps9BFiVzppy5JlR3MQ0
+         p5Y4fRIh1/gv09BOD6ZeNZH57vicVFVYMQrYmiCO+cxXJ3iV7ICV5d8/5zqldp3VTjSM
+         g7BzJw7q+ThSjVf4D3icT8gSsrTWucjrtkA6loTDes6vS8tDTcToDRQlM3YXCwG7ayvQ
+         r7qA==
+X-Gm-Message-State: APjAAAWInE8RFLOtJnlvP6//fckvUpxk2ZvqxHmky7HVHkJOajPOkZS4
+        uW9M8j/pFzvNE1gQ/EuLoX0=
+X-Google-Smtp-Source: APXvYqxmvof4fRRspg+ye1j0yVT94uaBDV/MGhX/xl4UG5qV7M2rzl3aePo6tL8fewaGSrtdb8PWDg==
+X-Received: by 2002:a63:318b:: with SMTP id x133mr44446918pgx.297.1557926131728;
+        Wed, 15 May 2019 06:15:31 -0700 (PDT)
+Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id k26sm2687147pfi.136.2019.05.15.06.15.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 06:15:30 -0700 (PDT)
+From:   parna.naveenkumar@gmail.com
+To:     arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Subject: [PATCH] bsr: do not use assignment in if condition
+Date:   Wed, 15 May 2019 18:45:24 +0530
+Message-Id: <20190515131524.26679-1-parna.naveenkumar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 02:09:42PM +0200, Mathieu Malaterre wrote:
-> In commit c1fe190c0672 ("powerpc: Add force enable of DAWR on P9
-> option") the following piece of code was added:
-> 
->    smp_call_function((smp_call_func_t)set_dawr, &null_brk, 0);
-> 
-> Since GCC 8 this trigger the following warning about incompatible
-> function types:
+From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
 
-And the warning is there for a reason, and should not be hidden
-behind a cast.  This should instead be fixed by something like this:
+checkpatch.pl does not like assignment in if condition
 
-diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-index da307dd93ee3..a26b67a1be83 100644
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -384,6 +384,12 @@ void hw_breakpoint_pmu_read(struct perf_event *bp)
- bool dawr_force_enable;
- EXPORT_SYMBOL_GPL(dawr_force_enable);
+Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+---
+ drivers/char/bsr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
+index a6cef548e01e..2b00748b83d2 100644
+--- a/drivers/char/bsr.c
++++ b/drivers/char/bsr.c
+@@ -322,7 +322,8 @@ static int __init bsr_init(void)
+ 		goto out_err_2;
+ 	}
  
-+
-+static void set_dawr_cb(void *info)
-+{
-+	set_dawr(info);
-+}
-+
- static ssize_t dawr_write_file_bool(struct file *file,
- 				    const char __user *user_buf,
- 				    size_t count, loff_t *ppos)
-@@ -403,7 +409,7 @@ static ssize_t dawr_write_file_bool(struct file *file,
- 
- 	/* If we are clearing, make sure all CPUs have the DAWR cleared */
- 	if (!dawr_force_enable)
--		smp_call_function((smp_call_func_t)set_dawr, &null_brk, 0);
-+		smp_call_function(set_dawr_cb, &null_brk, 0);
- 
- 	return rc;
- }
+-	if ((ret = bsr_create_devs(np)) < 0) {
++	ret = bsr_create_devs(np);
++	if (ret  < 0) {
+ 		np = NULL;
+ 		goto out_err_3;
+ 	}
+-- 
+2.17.1
+
