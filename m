@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC8881EE25
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4571F14A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbfEOLRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54900 "EHLO mail.kernel.org"
+        id S1731624AbfEOLue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:50:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730680AbfEOLRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:37 -0400
+        id S1729153AbfEOLWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC3BC2084F;
-        Wed, 15 May 2019 11:17:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EAE321473;
+        Wed, 15 May 2019 11:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919056;
-        bh=GPqaO2UIdUX3g9xRzGR2B1sFPsogSBi6kpP2gp5v34c=;
+        s=default; t=1557919340;
+        bh=r8cVeMBCukKCuY2dTVNCx5/k5K50UNORfuoANlTQb8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0+InU4IABBHZ1ABZJf0vclLfL0SJvPT5UWiLKjp2FuObmTZG+r9Mk538YGObjLTGJ
-         PMYRFG9+3A+GBSESZKqlv3anPw3P/OtnO2R49mdnIWKOEBjANnNSiQhD1WbxsiWMVL
-         NQ9hMPt+eFl2GeRA9aiV8S+RwLIgtt6rEzAqhiLA=
+        b=EOONPdwIFJwdxnxoM2RoSoLNgW3B2ATf840usZeVSqLsuzU9ivnTMq8o2dasfAv+H
+         FeI4eqlope+Xyj9xLmFvFBs/7gM2eGNPMFFS31vAfSh+nrOXi4r22gbvMk5mjZLDgo
+         +DqrnWsWPUockV13dKRckw/KPob+f511HSDqqbhs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/115] media: cec: make cec_get_edid_spa_location() an inline function
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux@endlessm.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 037/113] x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
 Date:   Wed, 15 May 2019 12:55:28 +0200
-Message-Id: <20190515090703.081752191@linuxfoundation.org>
+Message-Id: <20190515090656.429469518@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,176 +51,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b915bf575d5b7774d0f22d57d6c143e07dcaade2 ]
+[ Upstream commit 0082517fa4bce073e7cf542633439f26538a14cc ]
 
-This function is needed by both V4L2 and CEC, so move this to
-cec.h as a static inline since there are no obvious shared
-modules between the two subsystems.
+Upon reboot, the Acer TravelMate X514-51T laptop appears to complete the
+shutdown process, but then it hangs in BIOS POST with a black screen.
 
-This patch, together with the following ones, fixes a
-dependency bug: if CEC_CORE is disabled, then building adv7604
-(and other HDMI receivers) will fail because an essential
-function is now stubbed out.
+The problem is intermittent - at some points it has appeared related to
+Secure Boot settings or different kernel builds, but ultimately we have
+not been able to identify the exact conditions that trigger the issue to
+come and go.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.17 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Besides, the EFI mode cannot be disabled in the BIOS of this model.
+
+However, after extensive testing, we observe that using the EFI reboot
+method reliably avoids the issue in all cases.
+
+So add a boot time quirk to use EFI reboot on such systems.
+
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203119
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux@endlessm.com
+Link: http://lkml.kernel.org/r/20190412080152.3718-1-jian-hong@endlessm.com
+[ Fix !CONFIG_EFI build failure, clarify the code and the changelog a bit. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/cec-edid.c | 60 -------------------------------
- include/media/cec.h          | 70 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+), 60 deletions(-)
+ arch/x86/kernel/reboot.c | 21 +++++++++++++++++++++
+ include/linux/efi.h      |  7 ++++++-
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/cec/cec-edid.c b/drivers/media/cec/cec-edid.c
-index 38e3fec6152b5..19a31d4c86035 100644
---- a/drivers/media/cec/cec-edid.c
-+++ b/drivers/media/cec/cec-edid.c
-@@ -22,66 +22,6 @@
- #include <linux/types.h>
- #include <media/cec.h>
- 
--/*
-- * This EDID is expected to be a CEA-861 compliant, which means that there are
-- * at least two blocks and one or more of the extensions blocks are CEA-861
-- * blocks.
-- *
-- * The returned location is guaranteed to be < size - 1.
-- */
--static unsigned int cec_get_edid_spa_location(const u8 *edid, unsigned int size)
--{
--	unsigned int blocks = size / 128;
--	unsigned int block;
--	u8 d;
--
--	/* Sanity check: at least 2 blocks and a multiple of the block size */
--	if (blocks < 2 || size % 128)
--		return 0;
--
--	/*
--	 * If there are fewer extension blocks than the size, then update
--	 * 'blocks'. It is allowed to have more extension blocks than the size,
--	 * since some hardware can only read e.g. 256 bytes of the EDID, even
--	 * though more blocks are present. The first CEA-861 extension block
--	 * should normally be in block 1 anyway.
--	 */
--	if (edid[0x7e] + 1 < blocks)
--		blocks = edid[0x7e] + 1;
--
--	for (block = 1; block < blocks; block++) {
--		unsigned int offset = block * 128;
--
--		/* Skip any non-CEA-861 extension blocks */
--		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
--			continue;
--
--		/* search Vendor Specific Data Block (tag 3) */
--		d = edid[offset + 2] & 0x7f;
--		/* Check if there are Data Blocks */
--		if (d <= 4)
--			continue;
--		if (d > 4) {
--			unsigned int i = offset + 4;
--			unsigned int end = offset + d;
--
--			/* Note: 'end' is always < 'size' */
--			do {
--				u8 tag = edid[i] >> 5;
--				u8 len = edid[i] & 0x1f;
--
--				if (tag == 3 && len >= 5 && i + len <= end &&
--				    edid[i + 1] == 0x03 &&
--				    edid[i + 2] == 0x0c &&
--				    edid[i + 3] == 0x00)
--					return i + 4;
--				i += len + 1;
--			} while (i < end);
--		}
--	}
--	return 0;
--}
--
- u16 cec_get_edid_phys_addr(const u8 *edid, unsigned int size,
- 			   unsigned int *offset)
- {
-diff --git a/include/media/cec.h b/include/media/cec.h
-index df6b3bd312849..b7339cc6fd3d6 100644
---- a/include/media/cec.h
-+++ b/include/media/cec.h
-@@ -435,4 +435,74 @@ static inline void cec_phys_addr_invalidate(struct cec_adapter *adap)
- 	cec_s_phys_addr(adap, CEC_PHYS_ADDR_INVALID, false);
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 725624b6c0c05..8fd3cedd9accd 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -81,6 +81,19 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
+ 	return 0;
  }
  
-+/**
-+ * cec_get_edid_spa_location() - find location of the Source Physical Address
-+ *
-+ * @edid: the EDID
-+ * @size: the size of the EDID
-+ *
-+ * This EDID is expected to be a CEA-861 compliant, which means that there are
-+ * at least two blocks and one or more of the extensions blocks are CEA-861
-+ * blocks.
-+ *
-+ * The returned location is guaranteed to be <= size-2.
-+ *
-+ * This is an inline function since it is used by both CEC and V4L2.
-+ * Ideally this would go in a module shared by both, but it is overkill to do
-+ * that for just a single function.
++/*
++ * Some machines don't handle the default ACPI reboot method and
++ * require the EFI reboot method:
 + */
-+static inline unsigned int cec_get_edid_spa_location(const u8 *edid,
-+						     unsigned int size)
++static int __init set_efi_reboot(const struct dmi_system_id *d)
 +{
-+	unsigned int blocks = size / 128;
-+	unsigned int block;
-+	u8 d;
-+
-+	/* Sanity check: at least 2 blocks and a multiple of the block size */
-+	if (blocks < 2 || size % 128)
-+		return 0;
-+
-+	/*
-+	 * If there are fewer extension blocks than the size, then update
-+	 * 'blocks'. It is allowed to have more extension blocks than the size,
-+	 * since some hardware can only read e.g. 256 bytes of the EDID, even
-+	 * though more blocks are present. The first CEA-861 extension block
-+	 * should normally be in block 1 anyway.
-+	 */
-+	if (edid[0x7e] + 1 < blocks)
-+		blocks = edid[0x7e] + 1;
-+
-+	for (block = 1; block < blocks; block++) {
-+		unsigned int offset = block * 128;
-+
-+		/* Skip any non-CEA-861 extension blocks */
-+		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
-+			continue;
-+
-+		/* search Vendor Specific Data Block (tag 3) */
-+		d = edid[offset + 2] & 0x7f;
-+		/* Check if there are Data Blocks */
-+		if (d <= 4)
-+			continue;
-+		if (d > 4) {
-+			unsigned int i = offset + 4;
-+			unsigned int end = offset + d;
-+
-+			/* Note: 'end' is always < 'size' */
-+			do {
-+				u8 tag = edid[i] >> 5;
-+				u8 len = edid[i] & 0x1f;
-+
-+				if (tag == 3 && len >= 5 && i + len <= end &&
-+				    edid[i + 1] == 0x03 &&
-+				    edid[i + 2] == 0x0c &&
-+				    edid[i + 3] == 0x00)
-+					return i + 4;
-+				i += len + 1;
-+			} while (i < end);
-+		}
++	if (reboot_type != BOOT_EFI && !efi_runtime_disabled()) {
++		reboot_type = BOOT_EFI;
++		pr_info("%s series board detected. Selecting EFI-method for reboot.\n", d->ident);
 +	}
 +	return 0;
 +}
 +
- #endif /* _MEDIA_CEC_H */
+ void __noreturn machine_real_restart(unsigned int type)
+ {
+ 	local_irq_disable();
+@@ -166,6 +179,14 @@ static const struct dmi_system_id reboot_dmi_table[] __initconst = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "AOA110"),
+ 		},
+ 	},
++	{	/* Handle reboot issue on Acer TravelMate X514-51T */
++		.callback = set_efi_reboot,
++		.ident = "Acer TravelMate X514-51T",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate X514-51T"),
++		},
++	},
+ 
+ 	/* Apple */
+ 	{	/* Handle problems with rebooting on Apple MacBook5 */
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 401e4b254e30b..cc3391796c0b8 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1564,7 +1564,12 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
+ 			   struct screen_info *si, efi_guid_t *proto,
+ 			   unsigned long size);
+ 
+-bool efi_runtime_disabled(void);
++#ifdef CONFIG_EFI
++extern bool efi_runtime_disabled(void);
++#else
++static inline bool efi_runtime_disabled(void) { return true; }
++#endif
++
+ extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
+ 
+ enum efi_secureboot_mode {
 -- 
 2.20.1
 
