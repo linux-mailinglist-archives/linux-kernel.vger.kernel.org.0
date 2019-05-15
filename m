@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B46701EFF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 176091EE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732715AbfEOLaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41756 "EHLO mail.kernel.org"
+        id S1730862AbfEOLS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731730AbfEOLaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:16 -0400
+        id S1730400AbfEOLSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDEAB20843;
-        Wed, 15 May 2019 11:30:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 846CE206BF;
+        Wed, 15 May 2019 11:18:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919815;
-        bh=65IKoUZNXVPF67/475Vnhey3/pmbGHM3rpBodDdc3BY=;
+        s=default; t=1557919130;
+        bh=1daR3BF2dO/1u7K6IxBHv9ObefRc1KdNfMU6URtTw6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqQr+gTJ0VVkLoVKA6dDDXSqFS5xCS2tq+9Hw7yOGOtDgI07OXrZ6LXDo4HRikThs
-         y+Rra0eeP6/h1h8HeNIFbIpwloERwnUEcZ7klNmwuVXIjxGiJEHUvXVxZ8r5Nb7tYu
-         3E2T4op6Waoc3WTSfpVraXWm55FqMCeol1bhe5I0=
+        b=fz1RoWPZDIOreZjpe/yhy22jjacdq7ptP+9tDl6rbwNdJpuAKnNbgejBAdN0DbZFM
+         9bP3d0Ud3LEpnBclyBgEwAIvxbMituPgnv9dLgyEe21Cnb3kY6KWCYaB/nSEl+UZfE
+         /jCl3ycGh+TRYO/oFfaYQPDKa9FjbwovJnV3uQJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Michal Soltys <soltys@ziu.info>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 077/137] netfilter: never get/set skb->tstamp
+        stable@vger.kernel.org, Michael J Gruber <mjg@fedoraproject.org>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Bob Moore <robert.moore@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 078/115] ACPICA: Namespace: remove address node from global list after method termination
 Date:   Wed, 15 May 2019 12:55:58 +0200
-Message-Id: <20190515090659.027066676@linuxfoundation.org>
+Message-Id: <20190515090705.057141163@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,119 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 916f6efae62305796e012e7c3a7884a267cbacbf ]
+[ Upstream commit c5781ffbbd4f742a58263458145fe7f0ac01d9e0 ]
 
-setting net.netfilter.nf_conntrack_timestamp=1 breaks xmit with fq
-scheduler.  skb->tstamp might be "refreshed" using ktime_get_real(),
-but fq expects CLOCK_MONOTONIC.
+ACPICA commit b233720031a480abd438f2e9c643080929d144c3
 
-This patch removes all places in netfilter that check/set skb->tstamp:
+ASL operation_regions declare a range of addresses that it uses. In a
+perfect world, the range of addresses should be used exclusively by
+the AML interpreter. The OS can use this information to decide which
+drivers to load so that the AML interpreter and device drivers use
+different regions of memory.
 
-1. To fix the bogus "start" time seen with conntrack timestamping for
-   outgoing packets, never use skb->tstamp and always use current time.
-2. In nfqueue and nflog, only use skb->tstamp for incoming packets,
-   as determined by current hook (prerouting, input, forward).
-3. xt_time has to use system clock as well rather than skb->tstamp.
-   We could still use skb->tstamp for prerouting/input/foward, but
-   I see no advantage to make this conditional.
+During table load, the address information is added to a global
+address range list. Each node in this list contains an address range
+as well as a namespace node of the operation_region. This list is
+deleted at ACPI shutdown.
 
-Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
-Cc: Eric Dumazet <edumazet@google.com>
-Reported-by: Michal Soltys <soltys@ziu.info>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Unfortunately, ASL operation_regions can be declared inside of control
+methods. Although this is not recommended, modern firmware contains
+such code. New module level code changes unintentionally removed the
+functionality of adding and removing nodes to the global address
+range list.
+
+A few months ago, support for adding addresses has been re-
+implemented. However, the removal of the address range list was
+missed and resulted in some systems to crash due to the address list
+containing bogus namespace nodes from operation_regions declared in
+control methods. In order to fix the crash, this change removes
+dynamic operation_regions after control method termination.
+
+Link: https://github.com/acpica/acpica/commit/b2337200
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202475
+Fixes: 4abb951b73ff ("ACPICA: AML interpreter: add region addresses in global list during initialization")
+Reported-by: Michael J Gruber <mjg@fedoraproject.org>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Cc: 4.20+ <stable@vger.kernel.org> # 4.20+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/netfilter/nf_conntrack_core.c |  7 ++-----
- net/netfilter/nfnetlink_log.c     |  2 +-
- net/netfilter/nfnetlink_queue.c   |  2 +-
- net/netfilter/xt_time.c           | 23 ++++++++++++++---------
- 4 files changed, 18 insertions(+), 16 deletions(-)
+ drivers/acpi/acpica/nsobject.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 1982faf21ebb5..d7ac2f82bb6d8 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -983,12 +983,9 @@ __nf_conntrack_confirm(struct sk_buff *skb)
- 
- 	/* set conntrack timestamp, if enabled. */
- 	tstamp = nf_conn_tstamp_find(ct);
--	if (tstamp) {
--		if (skb->tstamp == 0)
--			__net_timestamp(skb);
-+	if (tstamp)
-+		tstamp->start = ktime_get_real_ns();
- 
--		tstamp->start = ktime_to_ns(skb->tstamp);
--	}
- 	/* Since the lookup is lockless, hash insertion must be done after
- 	 * starting the timer and setting the CONFIRMED bit. The RCU barriers
- 	 * guarantee that no other CPU can find the conntrack before the above
-diff --git a/net/netfilter/nfnetlink_log.c b/net/netfilter/nfnetlink_log.c
-index b1f9c5303f026..0b3347570265c 100644
---- a/net/netfilter/nfnetlink_log.c
-+++ b/net/netfilter/nfnetlink_log.c
-@@ -540,7 +540,7 @@ __build_packet_message(struct nfnl_log_net *log,
- 			goto nla_put_failure;
+diff --git a/drivers/acpi/acpica/nsobject.c b/drivers/acpi/acpica/nsobject.c
+index 707b2aa501e1b..099be64242556 100644
+--- a/drivers/acpi/acpica/nsobject.c
++++ b/drivers/acpi/acpica/nsobject.c
+@@ -222,6 +222,10 @@ void acpi_ns_detach_object(struct acpi_namespace_node *node)
+ 		}
  	}
  
--	if (skb->tstamp) {
-+	if (hooknum <= NF_INET_FORWARD && skb->tstamp) {
- 		struct nfulnl_msg_packet_timestamp ts;
- 		struct timespec64 kts = ktime_to_timespec64(skb->tstamp);
- 		ts.sec = cpu_to_be64(kts.tv_sec);
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 0dcc3592d053f..e057b2961d313 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -582,7 +582,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	if (nfqnl_put_bridge(entry, skb) < 0)
- 		goto nla_put_failure;
++	if (obj_desc->common.type == ACPI_TYPE_REGION) {
++		acpi_ut_remove_address_range(obj_desc->region.space_id, node);
++	}
++
+ 	/* Clear the Node entry in all cases */
  
--	if (entskb->tstamp) {
-+	if (entry->state.hook <= NF_INET_FORWARD && entskb->tstamp) {
- 		struct nfqnl_msg_packet_timestamp ts;
- 		struct timespec64 kts = ktime_to_timespec64(entskb->tstamp);
- 
-diff --git a/net/netfilter/xt_time.c b/net/netfilter/xt_time.c
-index c13bcd0ab4913..8dbb4d48f2ed5 100644
---- a/net/netfilter/xt_time.c
-+++ b/net/netfilter/xt_time.c
-@@ -163,19 +163,24 @@ time_mt(const struct sk_buff *skb, struct xt_action_param *par)
- 	s64 stamp;
- 
- 	/*
--	 * We cannot use get_seconds() instead of __net_timestamp() here.
-+	 * We need real time here, but we can neither use skb->tstamp
-+	 * nor __net_timestamp().
-+	 *
-+	 * skb->tstamp and skb->skb_mstamp_ns overlap, however, they
-+	 * use different clock types (real vs monotonic).
-+	 *
- 	 * Suppose you have two rules:
--	 * 	1. match before 13:00
--	 * 	2. match after 13:00
-+	 *	1. match before 13:00
-+	 *	2. match after 13:00
-+	 *
- 	 * If you match against processing time (get_seconds) it
- 	 * may happen that the same packet matches both rules if
--	 * it arrived at the right moment before 13:00.
-+	 * it arrived at the right moment before 13:00, so it would be
-+	 * better to check skb->tstamp and set it via __net_timestamp()
-+	 * if needed.  This however breaks outgoing packets tx timestamp,
-+	 * and causes them to get delayed forever by fq packet scheduler.
- 	 */
--	if (skb->tstamp == 0)
--		__net_timestamp((struct sk_buff *)skb);
--
--	stamp = ktime_to_ns(skb->tstamp);
--	stamp = div_s64(stamp, NSEC_PER_SEC);
-+	stamp = get_seconds();
- 
- 	if (info->flags & XT_TIME_LOCAL_TZ)
- 		/* Adjust for local timezone */
+ 	node->object = NULL;
 -- 
 2.20.1
 
