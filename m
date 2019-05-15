@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BEB1F147
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5131ECAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731682AbfEOLuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:50:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60822 "EHLO mail.kernel.org"
+        id S1727353AbfEOLAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbfEOLW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:29 -0400
+        id S1727316AbfEOLAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A8AF20862;
-        Wed, 15 May 2019 11:22:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A3312084E;
+        Wed, 15 May 2019 11:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919348;
-        bh=bm66xKRLhd7zHtRL+0BEHuLQckw6arjnAi9uTkJzrAg=;
+        s=default; t=1557918006;
+        bh=MutqT2n7jn8yjfQNslKMhQrXlo4Dl9tXlg8BSGnTsaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YnV8xpLYDLMQ691b5MmnDo4Cwo5/YXVDom+ZdoYtQhdRlhwXq/GyT9ZGUnagr7CFd
-         7aqtF+s3lvdLndU2yqFp6xBa0ef/p6Puh6ErTw3Ttq8733ZWoQYhDzHwopjCJcQoY8
-         URXaW7PjWYTHdSQrnUMQMrOk6wM2Ybi59WcicHc0=
+        b=IG4H8mPUWYFZt8hSF9W7KZJo2gg0T70JDVWfXWZY+nlL9ykShCDHx/+RZTkNUOkZC
+         B81EERCotTI+ZU5MyHqHMrXZV4xchShJwB3J0+o4X4x7roo66xT35oDE/cVQqQrD9r
+         wJOsysO07vcmvtsGF4CZYQzVKmVwrjICsITHQoRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Rock <linux@roeck-us.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 4.19 005/113] hwmon: (pwm-fan) Disable PWM if fetching cooling data fails
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 3.18 19/86] net: ks8851: Delay requesting IRQ until opened
 Date:   Wed, 15 May 2019 12:54:56 +0200
-Message-Id: <20190515090653.460107239@linuxfoundation.org>
+Message-Id: <20190515090646.415819394@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +47,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+[ Upstream commit d268f31552794abf5b6aa5af31021643411f25f5 ]
 
-commit 53f1647da3e8fb3e89066798f0fdc045064d353d upstream.
+The ks8851 driver currently requests the IRQ before registering the
+net_device.  Because the net_device name is used as IRQ name and is
+still "eth%d" when the IRQ is requested, it's impossibe to tell IRQs
+apart if multiple ks8851 chips are present.  Most other drivers delay
+requesting the IRQ until the net_device is opened.  Do the same.
 
-In case pwm_fan_of_get_cooling_data() fails we should disable the PWM
-just like in the other error cases.
+The driver doesn't enable interrupts on the chip before opening the
+net_device and disables them when closing it, so there doesn't seem to
+be a need to request the IRQ already on probe.
 
-Fixes: 2e5219c77183 ("hwmon: (pwm-fan) Read PWM FAN configuration from device tree")
-Cc: <stable@vger.kernel.org> # 4.14+
-Reported-by: Guenter Rock <linux@roeck-us.net>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Tristram Ha <Tristram.Ha@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/hwmon/pwm-fan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/micrel/ks8851.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -250,7 +250,7 @@ static int pwm_fan_probe(struct platform
+diff --git a/drivers/net/ethernet/micrel/ks8851.c b/drivers/net/ethernet/micrel/ks8851.c
+index e218e45dcf35..f90a1396535a 100644
+--- a/drivers/net/ethernet/micrel/ks8851.c
++++ b/drivers/net/ethernet/micrel/ks8851.c
+@@ -797,6 +797,15 @@ static void ks8851_tx_work(struct work_struct *work)
+ static int ks8851_net_open(struct net_device *dev)
+ {
+ 	struct ks8851_net *ks = netdev_priv(dev);
++	int ret;
++
++	ret = request_threaded_irq(dev->irq, NULL, ks8851_irq,
++				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++				   dev->name, ks);
++	if (ret < 0) {
++		netdev_err(dev, "failed to get irq\n");
++		return ret;
++	}
  
- 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
- 	if (ret)
--		return ret;
-+		goto err_pwm_disable;
+ 	/* lock the card, even if we may not actually be doing anything
+ 	 * else at the moment */
+@@ -911,6 +920,8 @@ static int ks8851_net_stop(struct net_device *dev)
+ 		dev_kfree_skb(txb);
+ 	}
  
- 	ctx->pwm_fan_state = ctx->pwm_fan_max_state;
- 	if (IS_ENABLED(CONFIG_THERMAL)) {
++	free_irq(dev->irq, ks);
++
+ 	return 0;
+ }
+ 
+@@ -1542,14 +1553,6 @@ static int ks8851_probe(struct spi_device *spi)
+ 	ks8851_read_selftest(ks);
+ 	ks8851_init_mac(ks);
+ 
+-	ret = request_threaded_irq(spi->irq, NULL, ks8851_irq,
+-				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+-				   ndev->name, ks);
+-	if (ret < 0) {
+-		dev_err(&spi->dev, "failed to get irq\n");
+-		goto err_irq;
+-	}
+-
+ 	ret = register_netdev(ndev);
+ 	if (ret) {
+ 		dev_err(&spi->dev, "failed to register network device\n");
+@@ -1562,11 +1565,7 @@ static int ks8851_probe(struct spi_device *spi)
+ 
+ 	return 0;
+ 
+-
+ err_netdev:
+-	free_irq(ndev->irq, ks);
+-
+-err_irq:
+ err_id:
+ 	if (gpio_is_valid(gpio))
+ 		gpio_set_value(gpio, 0);
+@@ -1587,7 +1586,6 @@ static int ks8851_remove(struct spi_device *spi)
+ 		dev_info(&spi->dev, "remove\n");
+ 
+ 	unregister_netdev(priv->netdev);
+-	free_irq(spi->irq, priv);
+ 	if (gpio_is_valid(priv->gpio))
+ 		gpio_set_value(priv->gpio, 0);
+ 	regulator_disable(priv->vdd_reg);
+-- 
+2.19.1
+
 
 
