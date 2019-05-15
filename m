@@ -2,118 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC561FAB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 21:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2EF1FAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 21:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfEOT3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 15:29:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53902 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727636AbfEOT1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 15:27:34 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1DE5F3003C77;
-        Wed, 15 May 2019 19:27:34 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EE03919C71;
-        Wed, 15 May 2019 19:27:33 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 31BA8225492; Wed, 15 May 2019 15:27:30 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-nvdimm@lists.01.org
-Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, swhiteho@redhat.com
-Subject: [PATCH v2 30/30] virtio-fs: Do not provide abort interface in fusectl
-Date:   Wed, 15 May 2019 15:27:15 -0400
-Message-Id: <20190515192715.18000-31-vgoyal@redhat.com>
-In-Reply-To: <20190515192715.18000-1-vgoyal@redhat.com>
-References: <20190515192715.18000-1-vgoyal@redhat.com>
+        id S1728029AbfEOT2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 15:28:35 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43279 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbfEOT2d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 15:28:33 -0400
+Received: by mail-qt1-f195.google.com with SMTP id i26so1031142qtr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 12:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=STSjYwvZPuyl75wjWMZHV1XwXZxjAw1KyH4vRRF0KX8=;
+        b=apiHQfMAlW6NdEEAax9R6re99NyJOcDdZy2jTV4CwwZbr5QQmEx9ZV6HEhtBs1Q03Y
+         U5uEDfUOSlz8ay5Rwj8vd5iOQWeRCpNQl/IxxaCJ3KZyM+p4OdzcmbZGN3gWMiqxkRvD
+         U0c95D8dcuW7veGpMiyZv+OW7I6AvfEhUFzGyJ7FPZuwZcO1bBmx3l+lGsOMJqW1Y7u6
+         XEEkrybeb5tdDMEzc82NwAoue4e/8reaAnLXRHlWrXN5gI02kNx0HE9ZzQZyIwR/OHKg
+         na2f6YEic01lBMtZQUBgOyBsoNbMdD8kr+wcQKVpej2PTS1y07g26hPA+S87MhOShJQ2
+         KdZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=STSjYwvZPuyl75wjWMZHV1XwXZxjAw1KyH4vRRF0KX8=;
+        b=XBG4VHJPO22r5KbqD6bdYkSOwgFfDECZtkQM1wcfy1p0jLvATljBbZGcJgMj5wfPCd
+         o//akoqAl3gMdI3Y3eCw6Y8vWdDydtg/EemaQ/87ZP0q7cFOwP4vwfbmH3ImP5/D+BKF
+         RjLYiZDEKk5lYdMZRTERaO+GZi51XaSb3m+OyfDwKOl295L4QZTsXDUelXnQcktOJuNT
+         RFCjsqs0xoXEm7PouKs8La9bbCT9HCYzMTh3TSk5vg5YA0J+5hTw00T+BPELWgwcMa+W
+         8Fo6d9pkr9fKFyod8RSJiQLAxKL1QLjyJS/OXa4Y5fo51XTn/eRhRbgteq08xVqJQtR3
+         3hgA==
+X-Gm-Message-State: APjAAAWEmHZOzCqiBvIsDxTe3xmC5NqE0590fkQpB/B5dgKpwMka0fzZ
+        vFlat8+pwAH5RJ7XuAxEOQw=
+X-Google-Smtp-Source: APXvYqwBunKfIfD9LvK+AmQpafx+LF47puQRVgGLx/4jbjVbwI60YZ1g50Gxjt9XL+VPCKE5s9li3A==
+X-Received: by 2002:a0c:ff44:: with SMTP id y4mr33761774qvt.238.1557948511961;
+        Wed, 15 May 2019 12:28:31 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.11])
+        by smtp.gmail.com with ESMTPSA id o37sm2141805qta.86.2019.05.15.12.28.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 12:28:30 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 9D795404A1; Wed, 15 May 2019 16:28:26 -0300 (-03)
+Date:   Wed, 15 May 2019 16:28:26 -0300
+To:     kan.liang@linux.intel.com
+Cc:     jolsa@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com
+Subject: Re: [PATCH V2 3/3] perf regs x86: Add X86 specific
+ arch__intr_reg_mask()
+Message-ID: <20190515192826.GE23162@kernel.org>
+References: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
+ <1557865174-56264-3-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 15 May 2019 19:27:34 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557865174-56264-3-git-send-email-kan.liang@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio-fs does not support aborting requests which are being processed. That
-is requests which have been sent to fuse daemon on host.
+Em Tue, May 14, 2019 at 01:19:34PM -0700, kan.liang@linux.intel.com escreveu:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> XMM registers can be collected on Icelake and later platforms.
+> 
+> Add specific arch__intr_reg_mask(), which creating an event to check if
+> the kernel and hardware can collect XMM registers.
+> 
+> Test on Skylake which doesn't support XMM registers collection. There is
+> nothing changed.
 
-So do not provide "abort" interface for virtio-fs in fusectl.
+Thanks a lot for doing this and tested on both a machine without these
+registers as well as on one with it.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/control.c   | 4 ++--
- fs/fuse/fuse_i.h    | 4 ++++
- fs/fuse/inode.c     | 1 +
- fs/fuse/virtio_fs.c | 1 +
- 4 files changed, 8 insertions(+), 2 deletions(-)
+Applied, together with Ravi's tested-by for the first two and the change
+in the --user-regs doc,
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index fe80bea4ad89..c1423f2ebc5e 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -278,8 +278,8 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+Regards,
+
+- Arnaldo
  
- 	if (!fuse_ctl_add_dentry(parent, fc, "waiting", S_IFREG | 0400, 1,
- 				 NULL, &fuse_ctl_waiting_ops) ||
--	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
--				 NULL, &fuse_ctl_abort_ops) ||
-+	    (!fc->no_abort && !fuse_ctl_add_dentry(parent, fc, "abort",
-+			S_IFREG | 0200, 1, NULL, &fuse_ctl_abort_ops)) ||
- 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
- 				 1, NULL, &fuse_conn_max_background_ops) ||
- 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index b4a5728444bb..7ac7f9a0b81b 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -86,6 +86,7 @@ struct fuse_mount_data {
- 	unsigned allow_other:1;
- 	unsigned dax:1;
- 	unsigned destroy:1;
-+	unsigned no_abort:1;
- 	unsigned max_read;
- 	unsigned blksize;
- 
-@@ -847,6 +848,9 @@ struct fuse_conn {
- 	/** Does the filesystem support copy_file_range? */
- 	unsigned no_copy_file_range:1;
- 
-+	/** Do not create abort file in fuse control fs */
-+	unsigned no_abort:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 8af7f31c6e19..302f7e04b645 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1272,6 +1272,7 @@ int fuse_fill_super_common(struct super_block *sb,
- 	fc->user_id = mount_data->user_id;
- 	fc->group_id = mount_data->group_id;
- 	fc->max_read = max_t(unsigned, 4096, mount_data->max_read);
-+	fc->no_abort = mount_data->no_abort;
- 
- 	/* Used by get_root_inode() */
- 	sb->s_fs_info = fc;
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 76c46edcc8ac..18fc0dca0abc 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1042,6 +1042,7 @@ static int virtio_fs_fill_super(struct super_block *sb, void *data,
- 	d.fiq_priv = fs;
- 	d.fudptr = (void **)&fs->vqs[VQ_REQUEST].fud;
- 	d.destroy = true; /* Send destroy request on unmount */
-+	d.no_abort = 1;
- 	err = fuse_fill_super_common(sb, &d);
- 	if (err < 0)
- 		goto err_free_init_req;
+>    #perf record -I?
+>    available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9
+>    R10 R11 R12 R13 R14 R15
+> 
+>    Usage: perf record [<options>] [<command>]
+>     or: perf record [<options>] -- <command> [<options>]
+> 
+>     -I, --intr-regs[=<any register>]
+>                           sample selected machine registers on
+>    interrupt, use '-I?' to list register names
+> 
+>    #perf record -I
+>    [ perf record: Woken up 1 times to write data ]
+>    [ perf record: Captured and wrote 0.905 MB perf.data (2520 samples) ]
+> 
+>    #perf evlist -v
+>    cycles: size: 112, { sample_period, sample_freq }: 4000, sample_type:
+>    IP|TID|TIME|CPU|PERIOD|REGS_INTR, read_format: ID, disabled: 1,
+>    inherit: 1, mmap: 1, comm: 1, freq: 1, task: 1, precise_ip: 3,
+>    sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol:
+>    1, bpf_event: 1, sample_regs_intr: 0xff0fff
+> 
+> Test on Icelake which support XMM registers collection.
+> 
+>    #perf record -I?
+>    available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9 R10
+>    R11 R12 R13 R14 R15 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6 XMM7 XMM8 XMM9
+>    XMM10 XMM11 XMM12 XMM13 XMM14 XMM15
+> 
+>    Usage: perf record [<options>] [<command>]
+>     or: perf record [<options>] -- <command> [<options>]
+> 
+>     -I, --intr-regs[=<any register>]
+>                           sample selected machine registers on
+>    interrupt, use '-I?' to list register names
+> 
+>    #perf record -I
+>    [ perf record: Woken up 1 times to write data ]
+>    [ perf record: Captured and wrote 0.800 MB perf.data (318 samples) ]
+> 
+>    #perf evlist -v
+>    cycles: size: 112, { sample_period, sample_freq }: 4000, sample_type:
+>    IP|TID|TIME|CPU|PERIOD|REGS_INTR, read_format: ID, disabled: 1,
+>    inherit: 1, mmap: 1, comm: 1, freq: 1, task: 1, precise_ip: 3,
+>    sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol:
+>    1, bpf_event: 1, sample_regs_intr: 0xffffffff00ff0fff
+> 
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+> 
+> Changes since V1:
+> - Add specific arch__intr_reg_mask() support
+>   Drop specific has_non_gprs_support() and non_gprs_mask()
+> 
+>  tools/perf/arch/x86/include/perf_regs.h |  1 +
+>  tools/perf/arch/x86/util/perf_regs.c    | 25 +++++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/tools/perf/arch/x86/include/perf_regs.h b/tools/perf/arch/x86/include/perf_regs.h
+> index b732133..b7cd91a 100644
+> --- a/tools/perf/arch/x86/include/perf_regs.h
+> +++ b/tools/perf/arch/x86/include/perf_regs.h
+> @@ -9,6 +9,7 @@
+>  void perf_regs_load(u64 *regs);
+>  
+>  #define PERF_REGS_MAX PERF_REG_X86_XMM_MAX
+> +#define PERF_XMM_REGS_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
+>  #ifndef HAVE_ARCH_X86_64_SUPPORT
+>  #define PERF_REGS_MASK ((1ULL << PERF_REG_X86_32_MAX) - 1)
+>  #define PERF_SAMPLE_REGS_ABI PERF_SAMPLE_REGS_ABI_32
+> diff --git a/tools/perf/arch/x86/util/perf_regs.c b/tools/perf/arch/x86/util/perf_regs.c
+> index 71d7604..c3d7479 100644
+> --- a/tools/perf/arch/x86/util/perf_regs.c
+> +++ b/tools/perf/arch/x86/util/perf_regs.c
+> @@ -270,3 +270,28 @@ int arch_sdt_arg_parse_op(char *old_op, char **new_op)
+>  
+>  	return SDT_ARG_VALID;
+>  }
+> +
+> +uint64_t arch__intr_reg_mask(void)
+> +{
+> +	struct perf_event_attr attr = {
+> +		.type			= PERF_TYPE_HARDWARE,
+> +		.config			= PERF_COUNT_HW_CPU_CYCLES,
+> +		.sample_period		= 1,
+> +		.sample_type		= PERF_SAMPLE_REGS_INTR,
+> +		.sample_regs_intr	= PERF_XMM_REGS_MASK,
+> +		.precise_ip		= 1,
+> +		.disabled 		= 1,
+> +		.exclude_kernel		= 1,
+> +	};
+> +	int fd;
+> +
+> +	event_attr_init(&attr);
+> +
+> +	fd = sys_perf_event_open(&attr, 0, -1, -1, 0);
+> +	if (fd != -1) {
+> +		close(fd);
+> +		return (PERF_XMM_REGS_MASK | PERF_REGS_MASK);
+> +	}
+> +
+> +	return PERF_REGS_MASK;
+> +}
+> -- 
+> 2.7.4
+
 -- 
-2.20.1
 
+- Arnaldo
