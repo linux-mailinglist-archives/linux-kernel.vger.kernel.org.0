@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DD31EEB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DB31EE4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbfEOLY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35038 "EHLO mail.kernel.org"
+        id S1729287AbfEOLTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731783AbfEOLY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:24:26 -0400
+        id S1730959AbfEOLTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E20F2084F;
-        Wed, 15 May 2019 11:24:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07126217F5;
+        Wed, 15 May 2019 11:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919464;
-        bh=dVQBo5mtvrTupR7EEWhapQ5svi0kusxcNoYyTDZh03o=;
+        s=default; t=1557919177;
+        bh=5lQQSp2MY0e8p5PILottSeNZMveQFwsHmlVtymy3HyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xCgx9aktsvgjKFwQ+D9uw4FGkMy5OykDJRfQRSJVFJpyHT71JDHZvIlaS0OWkmVOd
-         yUhXBetLxo/17PDbiEoWVYl25enATvcj9ItTZzNlQaxBBdS46kVge8y+aldXjTHf0k
-         zB3TYEex9mT8o/r1h2RGuONLj5Wc/sg0ov7H9xH4=
+        b=upnSgj356feRaoS786CMBUHXqxBvRqV5WLvGBxpxqpFwTfD5diLCjU/uMG/krnFzf
+         mfDXttkDWikMa9tA2T37qTn1MdJHNK9V0WhldQJ4cfcjXlUGj1JVFYBNwDLZZRco2p
+         v025KgG9to02x9BPIbefF9nuNvV3EbXxX8fmkjvM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eubert Bao <bunnier@gmail.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 083/113] mwl8k: Fix rate_idx underflow
+Subject: [PATCH 4.14 094/115] cw1200: fix missing unlock on error in cw1200_hw_scan()
 Date:   Wed, 15 May 2019 12:56:14 +0200
-Message-Id: <20190515090659.931745665@linuxfoundation.org>
+Message-Id: <20190515090706.049215152@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,79 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Štetiar <ynezz@true.cz>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 6b583201fa219b7b1b6aebd8966c8fd9357ef9f4 upstream.
+commit 51c8d24101c79ffce3e79137e2cee5dfeb956dd7 upstream.
 
-It was reported on OpenWrt bug tracking system[1], that several users
-are affected by the endless reboot of their routers if they configure
-5GHz interface with channel 44 or 48.
+Add the missing unlock before return from function cw1200_hw_scan()
+in the error handling case.
 
-The reboot loop is caused by the following excessive number of WARN_ON
-messages:
-
- WARNING: CPU: 0 PID: 0 at backports-4.19.23-1/net/mac80211/rx.c:4516
-                             ieee80211_rx_napi+0x1fc/0xa54 [mac80211]
-
-as the messages are being correctly emitted by the following guard:
-
- case RX_ENC_LEGACY:
-      if (WARN_ON(status->rate_idx >= sband->n_bitrates))
-
-as the rate_idx is in this case erroneously set to 251 (0xfb). This fix
-simply converts previously used magic number to proper constant and
-guards against substraction which is leading to the currently observed
-underflow.
-
-1. https://bugs.openwrt.org/index.php?do=details&task_id=2218
-
-Fixes: 854783444bab ("mwl8k: properly set receive status rate index on 5 GHz receive")
-Cc: <stable@vger.kernel.org>
-Tested-by: Eubert Bao <bunnier@gmail.com>
-Reported-by: Eubert Bao <bunnier@gmail.com>
-Signed-off-by: Petr Štetiar <ynezz@true.cz>
+Fixes: 4f68ef64cd7f ("cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwl8k.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/net/wireless/st/cw1200/scan.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwl8k.c
-+++ b/drivers/net/wireless/marvell/mwl8k.c
-@@ -441,6 +441,9 @@ static const struct ieee80211_rate mwl8k
- #define MWL8K_CMD_UPDATE_STADB		0x1123
- #define MWL8K_CMD_BASTREAM		0x1125
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -84,8 +84,11 @@ int cw1200_hw_scan(struct ieee80211_hw *
  
-+#define MWL8K_LEGACY_5G_RATE_OFFSET \
-+	(ARRAY_SIZE(mwl8k_rates_24) - ARRAY_SIZE(mwl8k_rates_50))
-+
- static const char *mwl8k_cmd_name(__le16 cmd, char *buf, int bufsize)
- {
- 	u16 command = le16_to_cpu(cmd);
-@@ -1016,8 +1019,9 @@ mwl8k_rxd_ap_process(void *_rxd, struct
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+-	if (!frame.skb)
++	if (!frame.skb) {
++		mutex_unlock(&priv->conf_mutex);
++		up(&priv->scan.lock);
+ 		return -ENOMEM;
++	}
  
- 	if (rxd->channel > 14) {
- 		status->band = NL80211_BAND_5GHZ;
--		if (!(status->encoding == RX_ENC_HT))
--			status->rate_idx -= 5;
-+		if (!(status->encoding == RX_ENC_HT) &&
-+		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
-+			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
- 	} else {
- 		status->band = NL80211_BAND_2GHZ;
- 	}
-@@ -1124,8 +1128,9 @@ mwl8k_rxd_sta_process(void *_rxd, struct
- 
- 	if (rxd->channel > 14) {
- 		status->band = NL80211_BAND_5GHZ;
--		if (!(status->encoding == RX_ENC_HT))
--			status->rate_idx -= 5;
-+		if (!(status->encoding == RX_ENC_HT) &&
-+		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
-+			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
- 	} else {
- 		status->band = NL80211_BAND_2GHZ;
- 	}
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
 
 
