@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B101EDA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA6B1EDCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbfEOLL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46798 "EHLO mail.kernel.org"
+        id S1729529AbfEOLNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:13:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729673AbfEOLL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:57 -0400
+        id S1729988AbfEOLNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:13:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFDBB20843;
-        Wed, 15 May 2019 11:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 930F72084E;
+        Wed, 15 May 2019 11:13:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918716;
-        bh=lUJwJXLleX1GoZA5bjxOOiZuWZ48uRlI6KfbkI/IBX8=;
+        s=default; t=1557918814;
+        bh=/AiU08ka8+dVsEJGtAMl6vYttxKX5SWO+2AiJuBBxEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2Qv3bkdVaOO2ve/u+hRlyXN2HnCnHsS16TqWg2kK5LyZYpZgr8kXl0qmBaUypCD4
-         /PnJGhVmB5mU3GBCB9plsORAK22Y4LqAs1JphAfp4aZsbgt4l5dWGpWelfmriUNB0w
-         P2ZW6dB2fKWWXgMhEMiBvn4Ri4TGpMStfqh5j2nw=
+        b=mpDAQLsU2BcDNjHrjVb5RFAPvCBD5GwanKY5ijj5vQ+0fWl+cRDehlra5Kgre29M9
+         kqjuG3nZj/GJQouB15MJy1HGUYUb+GCFRhy2Pyo0XOepUv4gdlIB/9QL5eSgUHBydj
+         X2/oj4QYSoPdLyF/mx2MwMEuCUxFxAogMwmxxbTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 237/266] x86/speculation/l1tf: Document l1tf in sysfs
-Date:   Wed, 15 May 2019 12:55:44 +0200
-Message-Id: <20190515090731.018358379@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 10/51] HID: input: add mapping for "Toggle Display" key
+Date:   Wed, 15 May 2019 12:55:45 +0200
+Message-Id: <20190515090620.495149719@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,31 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+[ Upstream commit c01908a14bf735b871170092807c618bb9dae654 ]
 
-The vulnerabilties/l1tf attribute was added by commit 17dbca119312
-"x86/speculation/l1tf: Add sysfs reporting for l1tf", which has
-already been backported to 3.16, but only documented in commit
-d90a7a0ec83f "x86/bugs, kvm: Introduce boot-time control of L1TF
-mitigations", which has not and probbaly won't be.
+According to HUT 1.12 usage 0xb5 from the generic desktop page is reserved
+for switching between external and internal display, so let's add the
+mapping.
 
-Add just that line of documentation for now.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-devices-system-cpu |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-input.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -277,6 +277,7 @@ What:		/sys/devices/system/cpu/vulnerabi
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
- 		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
-+		/sys/devices/system/cpu/vulnerabilities/l1tf
- Date:		January 2018
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
- Description:	Information about CPU vulnerabilities
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 302a24931147b..9f7b1cf726a8d 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -607,6 +607,14 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
+ 			break;
+ 		}
+ 
++		if ((usage->hid & 0xf0) == 0xb0) {	/* SC - Display */
++			switch (usage->hid & 0xf) {
++			case 0x05: map_key_clear(KEY_SWITCHVIDEOMODE); break;
++			default: goto ignore;
++			}
++			break;
++		}
++
+ 		/*
+ 		 * Some lazy vendors declare 255 usages for System Control,
+ 		 * leading to the creation of ABS_X|Y axis and too many others.
+-- 
+2.20.1
+
 
 
