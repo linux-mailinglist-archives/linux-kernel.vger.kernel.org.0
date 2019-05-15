@@ -2,131 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6360A1F6A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 16:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 006AD1F6BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 16:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfEOOgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 10:36:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49246 "EHLO mx1.suse.de"
+        id S1728260AbfEOOjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 10:39:55 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47382 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726753AbfEOOgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 10:36:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A56DAFBC;
-        Wed, 15 May 2019 14:36:32 +0000 (UTC)
-Date:   Wed, 15 May 2019 16:36:31 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCHv2 3/4] printk: factor out register_console() code
-Message-ID: <20190515143631.vuhbda6btucrkskx@pathway.suse.cz>
-References: <20190426053302.4332-1-sergey.senozhatsky@gmail.com>
- <20190426053302.4332-4-sergey.senozhatsky@gmail.com>
+        id S1726452AbfEOOjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 10:39:54 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AF3D9B02FB4AF1FEF342;
+        Wed, 15 May 2019 22:39:45 +0800 (CST)
+Received: from huawei.com (10.184.227.228) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 May 2019
+ 22:39:37 +0800
+From:   Wang Hai <wanghai26@huawei.com>
+To:     <maximlevitsky@gmail.com>, <oakad@yahoo.com>,
+        <ulf.hansson@linaro.org>, <kai.heng.feng@canonical.com>
+CC:     <wanghai26@huawei.com>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] memstick: Fix error cleanup path of memstick_init
+Date:   Wed, 15 May 2019 22:37:25 +0800
+Message-ID: <20190515143725.18872-1-wanghai26@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190426053302.4332-4-sergey.senozhatsky@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
+X-Originating-IP: [10.184.227.228]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-04-26 14:33:01, Sergey Senozhatsky wrote:
-> We need to take console_sem lock when we iterate console drivers
-> list. Otherwise, another CPU can concurrently modify console drivers
-> list or console drivers. Current register_console() has several
-> race conditions - for_each_console() must be done under console_sem.
-> 
-> Factor out console registration code and hold console_sem throughout
-> entire registration process. Note that we need to unlock console_sem
-> and lock it again after we added new console to the list and before
-> we unregister boot consoles. This might look a bit weird, but this
-> is how we print pending logbuf messages to all registered and
-> available consoles.
+If bus_register fails. On its error handling path, it has cleaned up
+what it has done. There is no need to call bus_unregister again.
+Otherwise, if bus_unregister is called, issues such as null-ptr-deref
+will arise.
 
-My main concern was whether we could call newcon->setup() under
-console_lock. I checked many console drivers and all looked safe.
-There should not be much reasons to do it.
+Syzkaller report this:
+
+kobject_add_internal failed for memstick (error: -12 parent: bus)
+BUG: KASAN: null-ptr-deref in sysfs_remove_file_ns+0x1b/0x40 fs/sysfs/file.c:467
+Read of size 8 at addr 0000000000000078 by task syz-executor.0/4460
+
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xa9/0x10e lib/dump_stack.c:113
+ __kasan_report+0x171/0x18d mm/kasan/report.c:321
+ kasan_report+0xe/0x20 mm/kasan/common.c:614
+ sysfs_remove_file_ns+0x1b/0x40 fs/sysfs/file.c:467
+ sysfs_remove_file include/linux/sysfs.h:519 [inline]
+ bus_remove_file+0x6c/0x90 drivers/base/bus.c:145
+ remove_probe_files drivers/base/bus.c:599 [inline]
+ bus_unregister+0x6e/0x100 drivers/base/bus.c:916 ? 0xffffffffc1590000
+ memstick_init+0x7a/0x1000 [memstick]
+ do_one_initcall+0xb9/0x3b5 init/main.c:914
+ do_init_module+0xe0/0x330 kernel/module.c:3468
+ load_module+0x38eb/0x4270 kernel/module.c:3819
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
+ do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: baf8532a147d ("memstick: initial commit for Sony MemoryStick support")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wang Hai <wanghai26@huawei.com>
+---
+ drivers/memstick/core/memstick.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
+index 1246d69ba187..b1564cacd19e 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -629,13 +629,18 @@ static int __init memstick_init(void)
+ 		return -ENOMEM;
+ 
+ 	rc = bus_register(&memstick_bus_type);
+-	if (!rc)
+-		rc = class_register(&memstick_host_class);
++	if (rc)
++		goto error_destroy_workqueue;
+ 
+-	if (!rc)
+-		return 0;
++	rc = class_register(&memstick_host_class);
++	if (rc)
++		goto error_bus_unregister;
++
++	return 0;
+ 
++error_bus_unregister:
+ 	bus_unregister(&memstick_bus_type);
++error_destroy_workqueue:
+ 	destroy_workqueue(workqueue);
+ 
+ 	return rc;
+-- 
+2.17.1
 
 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> ---
->  kernel/printk/printk.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 3ac71701afa3..3b36e26d4a51 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2771,7 +2771,6 @@ void register_console(struct console *newcon)
->  	 *	Put this console in the list - keep the
->  	 *	preferred driver at the head of the list.
->  	 */
-> -	console_lock();
->  	if ((newcon->flags & CON_CONSDEV) || console_drivers == NULL) {
->  		newcon->next = console_drivers;
->  		console_drivers = newcon;
-> @@ -2818,6 +2817,7 @@ void register_console(struct console *newcon)
->  
->  	console_unlock();
->  	console_sysfs_notify();
-> +	console_lock();
-
-I have got an idea how to get rid of this weirdness:
-
-1. The check for bcon seems to be just an optimization. There is not need
-   to remove boot consoles when there are none.
-
-2. The condition (newcon->flags & (CON_CONSDEV|CON_BOOT)) == CON_CONSDEV)
-   is valid only when the preferred console was really added.
-
-Therefore we could move the code to a separate function, e.g.
-
-void unregister_boot_consoles(void)
-{
-	struct console *bcon;
-
-	console_lock();
-	for_each_console(bcon)
-		if (bcon->flags & CON_BOOT)
-			__unregister_console(bcon);
-	}
-	console_unlock();
-	console_sysfs_notify();
-}
-
-Then we could do something like:
-
-void register_console(struct console *newcon)
-{
-	bool newcon_is_preferred = false;
-
-	console_lock();
-	__register_console(newcon);
-	if ((newcon->flags & (CON_CONSDEV|CON_BOOT)) == CON_CONSDEV)
-		newcon_is_preferred = true;
-	console_unlock();
-	console_sysfs_notify();
-
-	/*
-	 * By unregistering the bootconsoles after we enable the real console
-	 * we get the "console xxx enabled" message on all the consoles -
-	 * boot consoles, real consoles, etc - this is to ensure that end
-	 * users know there might be something in the kernel's log buffer that
-	 * went to the bootconsole (that they do not see on the real console)
-	 */
-	if (newcon_is_preferred && !keep_bootcon)
-		unregister_boot_consoles();
-}
-
-How does that sound?
-
-Otherwise, the patch looks fine to me.
-
-Best Regards,
-Petr
