@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D0601F2B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4DA41EE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfEOLKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43284 "EHLO mail.kernel.org"
+        id S1731495AbfEOLWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbfEOLJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:09:55 -0400
+        id S1731487AbfEOLWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E08E20862;
-        Wed, 15 May 2019 11:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97F3F206BF;
+        Wed, 15 May 2019 11:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918594;
-        bh=Jz9Qd95EASPYMKe7kvk/pqXF6X102gSFsEGbQLd1EkI=;
+        s=default; t=1557919354;
+        bh=DbwY/2dsRSUHdWbmCl2Fd6AwkrDpeN9dQi8yPvzeVZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eciQlGLNbqxH8juHyIP3qZa1M3fTHtlBBk0Bh1Y4+EZbnrGyyBWiP/W3OvU14j2iz
-         E4Xdy7hcYbw8P7R5Xche9KZnuZGt2WXrNHKq8+El8MQzWOhvW1kl4zfz84mjeW+WqD
-         uymjxtia7N0W7vc87M8Y+RQXeJ/4gLzf4eMATmB8=
+        b=yltHimiL+uHsdkDTBQ5AbU/g8Quh7rsEQiNvfPk/nkpMtKK47ikfOQDyGYCXAMsY7
+         6L6muCZC/VY/m8eXL2M6RJn5RvFBmAeA4VLm8f9oQ9fNdYjXEbmReOqLnGJrm0VvDY
+         ocgB64jkEfB93F+SjfWlbWD0XoTAV8tgoZLqmtlY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Borislav Petkov <bpetkov@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 191/266] x86/bugs: Fix the AMD SSBD usage of the SPEC_CTRL MSR
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.19 007/113] virt: vbox: Sanity-check parameter types for hgcm-calls coming from userspace
 Date:   Wed, 15 May 2019 12:54:58 +0200
-Message-Id: <20190515090729.403842435@linuxfoundation.org>
+Message-Id: <20190515090653.827655565@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,58 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 612bc3b3d4be749f73a513a17d9b3ee1330d3487 upstream.
+commit cf4f2ad6b87dda2dbe0573b1ebeb0273f8d4aac6 upstream.
 
-On AMD, the presence of the MSR_SPEC_CTRL feature does not imply that the
-SSBD mitigation support should use the SPEC_CTRL MSR. Other features could
-have caused the MSR_SPEC_CTRL feature to be set, while a different SSBD
-mitigation option is in place.
+Userspace can make host function calls, called hgcm-calls through the
+/dev/vboxguest device.
 
-Update the SSBD support to check for the actual SSBD features that will
-use the SPEC_CTRL MSR.
+In this case we should not accept all hgcm-function-parameter-types, some
+are only valid for in kernel calls.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 6ac2f49edb1e ("x86/bugs: Add AMD's SPEC_CTRL MSR usage")
-Link: http://lkml.kernel.org/r/20180702213602.29202.33151.stgit@tlendack-t1.amdoffice.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+This commit adds proper hgcm-function-parameter-type validation to the
+ioctl for doing a hgcm-call from userspace.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -157,7 +157,8 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
- 		guestval |= guest_spec_ctrl & x86_spec_ctrl_mask;
+---
+ drivers/virt/vboxguest/vboxguest_core.c |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+--- a/drivers/virt/vboxguest/vboxguest_core.c
++++ b/drivers/virt/vboxguest/vboxguest_core.c
+@@ -1263,6 +1263,20 @@ static int vbg_ioctl_hgcm_disconnect(str
+ 	return ret;
+ }
  
- 		/* SSBD controlled in MSR_SPEC_CTRL */
--		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
-+		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+		    static_cpu_has(X86_FEATURE_AMD_SSBD))
- 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
++static bool vbg_param_valid(enum vmmdev_hgcm_function_parameter_type type)
++{
++	switch (type) {
++	case VMMDEV_HGCM_PARM_TYPE_32BIT:
++	case VMMDEV_HGCM_PARM_TYPE_64BIT:
++	case VMMDEV_HGCM_PARM_TYPE_LINADDR:
++	case VMMDEV_HGCM_PARM_TYPE_LINADDR_IN:
++	case VMMDEV_HGCM_PARM_TYPE_LINADDR_OUT:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
+ 			       struct vbg_session *session, bool f32bit,
+ 			       struct vbg_ioctl_hgcm_call *call)
+@@ -1298,6 +1312,23 @@ static int vbg_ioctl_hgcm_call(struct vb
+ 	}
+ 	call->hdr.size_out = actual_size;
  
- 		if (hostval != guestval) {
-@@ -526,9 +527,10 @@ static enum ssb_mitigation __init __ssb_
- 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD may
- 		 * use a completely different MSR and bit dependent on family.
- 		 */
--		if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
-+		if (!static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) &&
-+		    !static_cpu_has(X86_FEATURE_AMD_SSBD)) {
- 			x86_amd_ssb_disable();
--		else {
-+		} else {
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
- 			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++	/* Validate parameter types */
++	if (f32bit) {
++		struct vmmdev_hgcm_function_parameter32 *parm =
++			VBG_IOCTL_HGCM_CALL_PARMS32(call);
++
++		for (i = 0; i < call->parm_count; i++)
++			if (!vbg_param_valid(parm[i].type))
++				return -EINVAL;
++	} else {
++		struct vmmdev_hgcm_function_parameter *parm =
++			VBG_IOCTL_HGCM_CALL_PARMS(call);
++
++		for (i = 0; i < call->parm_count; i++)
++			if (!vbg_param_valid(parm[i].type))
++				return -EINVAL;
++	}
++
+ 	/*
+ 	 * Validate the client id.
+ 	 */
 
 
