@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48AC11EF2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A3F61EFD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732464AbfEOLax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42430 "EHLO mail.kernel.org"
+        id S1732171AbfEOLg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:36:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732793AbfEOLau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:50 -0400
+        id S1732992AbfEOLcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4229420843;
-        Wed, 15 May 2019 11:30:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7DC120843;
+        Wed, 15 May 2019 11:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919849;
-        bh=QfVRAJ/Ne52ihoN9sOBFHEmzsb56LqJqKscfzZHqdsU=;
+        s=default; t=1557919934;
+        bh=x2IW5V1R7abNeKNENdkQGPFxlDV0i+9VcjNCq4UwCTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3aRyHvywP6x48C2Xn2hYFEwXGeZWUEqaabYiXCGAnl3p8eA6yGG+gpHpVpCKoXyq
-         0Sqfqd4NGfq9wzCih2n1srLkpIl3c+MF8L1iYRTv1wHKOmYOjg/Q1EpxTyBzObgVQO
-         3ie4geU8xE0z+FgzfQ4J94Doj8JS4gNiOmS1fNbY=
+        b=sMBFNGXxzqvxBVDpdzcg+Oll8y9b2y3WUgC4IeXRpzEXAI1XDOe6oBSsix921lBqy
+         1ffwLp4YPBlDnvIvpwYlrnPqMjBmQ6vfP9h+b/zHLhBIB0nWxzhUobs8bvMCntlaCn
+         ezy0DPXV6zogmpeg5KBZ6vehLLN2Y8gPGeHmvkCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 115/137] packet: Fix error path in packet_init
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.1 12/46] rtlwifi: rtl8723ae: Fix missing break in switch statement
 Date:   Wed, 15 May 2019 12:56:36 +0200
-Message-Id: <20190515090701.986217985@linuxfoundation.org>
+Message-Id: <20190515090622.164708788@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
+References: <20190515090616.670410738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 36096f2f4fa05f7678bc87397665491700bae757 ]
+commit 84242b82d81c54e009a2aaa74d3d9eff70babf56 upstream.
 
-kernel BUG at lib/list_debug.c:47!
-invalid opcode: 0000 [#1
-CPU: 0 PID: 12914 Comm: rmmod Tainted: G        W         5.1.0+ #47
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
-RIP: 0010:__list_del_entry_valid+0x53/0x90
-Code: 48 8b 32 48 39 fe 75 35 48 8b 50 08 48 39 f2 75 40 b8 01 00 00 00 5d c3 48
-89 fe 48 89 c2 48 c7 c7 18 75 fe 82 e8 cb 34 78 ff <0f> 0b 48 89 fe 48 c7 c7 50 75 fe 82 e8 ba 34 78 ff 0f 0b 48 89 f2
-RSP: 0018:ffffc90001c2fe40 EFLAGS: 00010286
-RAX: 000000000000004e RBX: ffffffffa0184000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffff888237a17788 RDI: 00000000ffffffff
-RBP: ffffc90001c2fe40 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffc90001c2fe10 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffc90001c2fe50 R14: ffffffffa0184000 R15: 0000000000000000
-FS:  00007f3d83634540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555c350ea818 CR3: 0000000231677000 CR4: 00000000000006f0
-Call Trace:
- unregister_pernet_operations+0x34/0x120
- unregister_pernet_subsys+0x1c/0x30
- packet_exit+0x1c/0x369 [af_packet
- __x64_sys_delete_module+0x156/0x260
- ? lockdep_hardirqs_on+0x133/0x1b0
- ? do_syscall_64+0x12/0x1f0
- do_syscall_64+0x6e/0x1f0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Add missing break statement in order to prevent the code from falling
+through to case 0x1025, and erroneously setting rtlhal->oem_id to
+RT_CID_819X_ACER when rtlefuse->eeprom_svid is equal to 0x10EC and
+none of the cases in switch (rtlefuse->eeprom_smid) match.
 
-When modprobe af_packet, register_pernet_subsys
-fails and does a cleanup, ops->list is set to LIST_POISON1,
-but the module init is considered to success, then while rmmod it,
-BUG() is triggered in __list_del_entry_valid which is called from
-unregister_pernet_subsys. This patch fix error handing path in
-packet_init to avoid possilbe issue if some error occur.
+This bug was found thanks to the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 238ad2ddf34b ("rtlwifi: rtl8723ae: Clean up the hardware info routine")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |   25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4604,14 +4604,29 @@ static void __exit packet_exit(void)
- 
- static int __init packet_init(void)
- {
--	int rc = proto_register(&packet_proto, 0);
-+	int rc;
- 
--	if (rc != 0)
-+	rc = proto_register(&packet_proto, 0);
-+	if (rc)
- 		goto out;
-+	rc = sock_register(&packet_family_ops);
-+	if (rc)
-+		goto out_proto;
-+	rc = register_pernet_subsys(&packet_net_ops);
-+	if (rc)
-+		goto out_sock;
-+	rc = register_netdevice_notifier(&packet_netdev_notifier);
-+	if (rc)
-+		goto out_pernet;
- 
--	sock_register(&packet_family_ops);
--	register_pernet_subsys(&packet_net_ops);
--	register_netdevice_notifier(&packet_netdev_notifier);
-+	return 0;
-+
-+out_pernet:
-+	unregister_pernet_subsys(&packet_net_ops);
-+out_sock:
-+	sock_unregister(PF_PACKET);
-+out_proto:
-+	proto_unregister(&packet_proto);
- out:
- 	return rc;
- }
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
+@@ -1675,6 +1675,7 @@ static void _rtl8723e_read_adapter_info(
+ 					rtlhal->oem_id = RT_CID_819X_LENOVO;
+ 					break;
+ 				}
++				break;
+ 			case 0x1025:
+ 				rtlhal->oem_id = RT_CID_819X_ACER;
+ 				break;
 
 
