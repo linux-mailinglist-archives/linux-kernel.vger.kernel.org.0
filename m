@@ -2,159 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5C3B1E805
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA761E80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfEOFqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 01:46:46 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51202 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbfEOFqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 01:46:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 22:46:45 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 May 2019 22:46:45 -0700
-Received: from [10.252.16.172] (abudanko-mobl.ccr.corp.intel.com [10.252.16.172])
-        by linux.intel.com (Postfix) with ESMTP id 9ED8F5800CB;
-        Tue, 14 May 2019 22:46:42 -0700 (PDT)
-Subject: Re: [PATCH v10 09/12] perf record: implement
- -z,--compression_level[=<n>] option
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <12cce142-6238-475b-b9aa-236531c12c2b@linux.intel.com>
- <9ff06518-ae63-a908-e44d-5d9e56dd66d9@linux.intel.com>
- <20190514200424.GB8945@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <08ee0c0f-fc4b-c8cb-4ab4-6f976d156004@linux.intel.com>
-Date:   Wed, 15 May 2019 08:46:41 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726286AbfEOFzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 01:55:31 -0400
+Received: from twhmllg4.macronix.com ([122.147.135.202]:58032 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfEOFzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 01:55:31 -0400
+Received: from twhfmnt1.mxic.com.tw (twhfm1p2.macronix.com [172.17.20.92])
+        by TWHMLLG4.macronix.com with ESMTP id x4F5t4Y4029231;
+        Wed, 15 May 2019 13:55:04 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
+        by Forcepoint Email with ESMTP id 0114B7DFC3239B44020E;
+        Wed, 15 May 2019 13:55:05 +0800 (CST)
+In-Reply-To: <20190514065216.GL4319@dell>
+References: <1556092536-17095-1-git-send-email-masonccyang@mxic.com.tw> <1556092536-17095-3-git-send-email-masonccyang@mxic.com.tw> <20190514065216.GL4319@dell>
+To:     "Lee Jones" <lee.jones@linaro.org>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        devicetree@vger.kernel.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        sergei.shtylyov@cogentembedded.com, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v12 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
 MIME-Version: 1.0
-In-Reply-To: <20190514200424.GB8945@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-KeepSent: 794FCFCD:155B914B-482583FB:001EDBB3;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF794FCFCD.155B914B-ON482583FB.001EDBB3-482583FB.0020821B@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Wed, 15 May 2019 13:55:05 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/05/15 PM 01:55:05,
+        Serialize complete at 2019/05/15 PM 01:55:05
+Content-Type: text/plain; charset="GB2312"
+Content-Transfer-Encoding: base64
+X-MAIL: TWHMLLG4.macronix.com x4F5t4Y4029231
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.05.2019 23:04, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Mar 18, 2019 at 08:44:42PM +0300, Alexey Budankov escreveu:
->>
->> Implemented -z,--compression_level[=<n>] option that enables compression
->> of mmaped kernel data buffers content in runtime during perf record
->> mode collection. Default option value is 1 (fastest compression).
->>
->> Compression overhead has been measured for serial and AIO streaming
->> when profiling matrix multiplication workload:
->>
->>     -------------------------------------------------------------
->>     | SERIAL			  | AIO-1                       |
->> ----------------------------------------------------------------|
-> 
-> Please don't have lines starting with --- in the cset comment log
-> message, breaks scripts, fixing it up now.
 
-Oops, will do my best about that. Thanks.
+SGkgSm9uZXMsDQoNCg0KPiA+ICsNCj4gPiArc3RydWN0IHJwY19zcGkgew0KPiA+ICsgICBzdHJ1
+Y3QgcnBjX21mZCAqbWZkOw0KPiANCj4gVGhlIHRlcm0gTUZEIGlzbid0IGEgcmVhbCB0aGluZy4g
+IFdoYXQgeW91J3JlIG9idGFpbmluZyBiZWxvdyBpcw0KPiBkcml2ZXIgZGF0YSBhbmQgaXMgbm9y
+bWFsbHkgYXJ0aWN1bGF0ZWQgYXMgJ2RkYXRhJyBpbiBkcml2ZXJzLg0KDQp5ZXMsIGl0J3MganVz
+dCBpbXBseSB0aGF0IGRhdGEgaXMgZnJvbSBNRkQuDQoNClNob3VsZCBJIHJlbmFtZSAibWZkIiA/
+DQoNCj4gDQo+ID4gKyAgIHUzMiBjdXJfc3BlZWRfaHo7DQo+ID4gKyAgIHUzMiBjbWQ7DQo+ID4g
+KyAgIHUzMiBhZGRyOw0KPiA+ICsgICB1MzIgZHVtbXk7DQo+ID4gKyAgIHUzMiBzbWNyOw0KPiA+
+ICsgICB1MzIgc21lbnI7DQo+ID4gKyAgIHUzMiB4ZmVybGVuOw0KPiA+ICsgICB1MzIgdG90YWx4
+ZmVybGVuOw0KPiA+ICsgICBlbnVtIHNwaV9tZW1fZGF0YV9kaXIgeGZlcl9kaXI7DQo+ID4gK307
+DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiArc3RhdGljIHZvaWQgcnBjX3NwaV9od19pbml0KHN0cnVj
+dCBycGNfc3BpICpycGMpDQo+ID4gK3sNCj4gPiArICAgLy8NCj4gPiArICAgLy8gTk9URTogVGhl
+IDB4MjYwIGFyZSB1bmRvY3VtZW50ZWQgYml0cywgYnV0IHRoZXkgbXVzdCBiZSBzZXQuDQo+ID4g
+KyAgIC8vICAgIFJQQ19QSFlDTlRfU1RSVElNIGlzIHN0cm9iZSB0aW1pbmcgYWRqdXN0bWVudCBi
+aXQsDQo+ID4gKyAgIC8vICAgIDB4MCA6IHRoZSBkZWxheSBpcyBiaWdnZXN0LA0KPiA+ICsgICAv
+LyAgICAweDEgOiB0aGUgZGVsYXkgaXMgMm5kIGJpZ2dlc3QsDQo+ID4gKyAgIC8vICAgIE9uIEgz
+IEVTMS54LCB0aGUgdmFsdWUgc2hvdWxkIGJlIDAsIHdoaWxlIG9uIG90aGVycywNCj4gPiArICAg
+Ly8gICAgdGhlIHZhbHVlIHNob3VsZCBiZSA2Lg0KPiA+ICsgICAvLw0KPiANCj4gQysrIHN0eWxl
+IGNvbW1lbnRzPyAgSXMgdGhhdCBhIHRoaW5nIG5vdz8NCg0KSXQncyBraW5kIG9mIE1hcmsncyBw
+cmV2aW91cyBjb21tZW50cy4NCg0KPiANCj4gPiArICAgcmVnbWFwX3dyaXRlKHJwYy0+bWZkLT5y
+ZWdtYXAsIFJQQ19QSFlDTlQsIFJQQ19QSFlDTlRfQ0FMIHwNCj4gPiArICAgICAgICAgICAgICBS
+UENfUEhZQ05UX1NUUlRJTSg2KSB8IDB4MjYwKTsNCj4gPiArDQo+ID4gKyAgIC8vDQo+ID4gKyAg
+IC8vIE5PVEU6IFRoZSAweDE1MTExNDQgYXJlIHVuZG9jdW1lbnRlZCBiaXRzLCBidXQgdGhleSBt
+dXN0IGJlIHNldA0KPiA+ICsgICAvLyAgICAgICBmb3IgUlBDX1BIWU9GRlNFVDEuDQo+ID4gKyAg
+IC8vICAgIFRoZSAweDMxIGFyZSB1bmRvY3VtZW50ZWQgYml0cywgYnV0IHRoZXkgbXVzdCBiZSBz
+ZXQNCj4gPiArICAgLy8gICAgZm9yIFJQQ19QSFlPRkZTRVQyLg0KPiA+ICsgICAvLw0KPiA+ICsg
+ICByZWdtYXBfd3JpdGUocnBjLT5tZmQtPnJlZ21hcCwgUlBDX1BIWU9GRlNFVDEsDQo+ID4gKyAg
+ICAgICAgICAgUlBDX1BIWU9GRlNFVDFfRERSVE1HKDMpIHwgMHgxNTExMTQ0KTsNCj4gPiArICAg
+cmVnbWFwX3dyaXRlKHJwYy0+bWZkLT5yZWdtYXAsIFJQQ19QSFlPRkZTRVQyLCAweDMxIHwNCj4g
+PiArICAgICAgICAgICBSUENfUEhZT0ZGU0VUMl9PQ1RUTUcoNCkpOw0KPiA+ICsgICByZWdtYXBf
+d3JpdGUocnBjLT5tZmQtPnJlZ21hcCwgUlBDX1NTTERSLCBSUENfU1NMRFJfU1BOREwoNykgfA0K
+PiA+ICsgICAgICAgICAgIFJQQ19TU0xEUl9TTE5ETCg3KSB8IFJQQ19TU0xEUl9TQ0tETCg3KSk7
+DQo+ID4gKyAgIHJlZ21hcF93cml0ZShycGMtPm1mZC0+cmVnbWFwLCBSUENfQ01OQ1IsIFJQQ19D
+TU5DUl9NRCB8DQo+ID4gKyAgICAgICAgICAgUlBDX0NNTkNSX1NGREUgfCBSUENfQ01OQ1JfTU9J
+SU9fSElaIHwgUlBDX0NNTkNSX0lPRlZfSElaIA0KfA0KPiA+ICsgICAgICAgICAgIFJQQ19DTU5D
+Ul9CU1ooMCkpOw0KPiA+ICt9DQo+IA0KPiAtLSANCj4gTGVlIEpvbmVzIFvA7sfty7ldDQo+IExp
+bmFybyBTZXJ2aWNlcyBUZWNobmljYWwgTGVhZA0KPiBMaW5hcm8ub3JnIKmmIE9wZW4gc291cmNl
+IHNvZnR3YXJlIGZvciBBUk0gU29Dcw0KPiBGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0
+ZXIgfCBCbG9nDQoNCnRoYW5rcyAmIGJlc3QgcmVnYXJkcywNCk1hc29uDQoNCkNPTkZJREVOVElB
+TElUWSBOT1RFOg0KDQpUaGlzIGUtbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIG1heSBjb250YWlu
+IGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiANCmFuZC9vciBwZXJzb25hbCBkYXRhLCB3aGljaCBp
+cyBwcm90ZWN0ZWQgYnkgYXBwbGljYWJsZSBsYXdzLiBQbGVhc2UgYmUgDQpyZW1pbmRlZCB0aGF0
+IGR1cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVzZSBvZiB0aGlzIGUt
+bWFpbCANCihhbmQvb3IgaXRzIGF0dGFjaG1lbnRzKSBvciBhbnkgcGFydCB0aGVyZW9mIGlzIHBy
+b2hpYml0ZWQuIElmIHlvdSByZWNlaXZlIA0KdGhpcyBlLW1haWwgaW4gZXJyb3IsIHBsZWFzZSBu
+b3RpZnkgdXMgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSB0aGlzIG1haWwgYXMgDQp3ZWxsIGFzIGl0
+cyBhdHRhY2htZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9uLCBwbGVhc2UgYmUg
+DQppbmZvcm1lZCB0aGF0IGNvbGxlY3Rpb24sIHByb2Nlc3NpbmcsIGFuZC9vciB1c2Ugb2YgcGVy
+c29uYWwgZGF0YSBpcyANCnByb2hpYml0ZWQgdW5sZXNzIGV4cHJlc3NseSBwZXJtaXR0ZWQgYnkg
+cGVyc29uYWwgZGF0YSBwcm90ZWN0aW9uIGxhd3MuIA0KVGhhbmsgeW91IGZvciB5b3VyIGF0dGVu
+dGlvbiBhbmQgY29vcGVyYXRpb24uDQoNCk1hY3Jvbml4IEludGVybmF0aW9uYWwgQ28uLCBMdGQu
+DQoNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PQ0KDQoNCg0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQpDT05GSURFTlRJ
+QUxJVFkgTk9URToNCg0KVGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFp
+biBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gYW5kL29yIHBlcnNvbmFsIGRhdGEsIHdoaWNoIGlz
+IHByb3RlY3RlZCBieSBhcHBsaWNhYmxlIGxhd3MuIFBsZWFzZSBiZSByZW1pbmRlZCB0aGF0IGR1
+cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVzZSBvZiB0aGlzIGUtbWFp
+bCAoYW5kL29yIGl0cyBhdHRhY2htZW50cykgb3IgYW55IHBhcnQgdGhlcmVvZiBpcyBwcm9oaWJp
+dGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB1
+cyBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIHRoaXMgbWFpbCBhcyB3ZWxsIGFzIGl0cyBhdHRhY2ht
+ZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9uLCBwbGVhc2UgYmUgaW5mb3JtZWQg
+dGhhdCBjb2xsZWN0aW9uLCBwcm9jZXNzaW5nLCBhbmQvb3IgdXNlIG9mIHBlcnNvbmFsIGRhdGEg
+aXMgcHJvaGliaXRlZCB1bmxlc3MgZXhwcmVzc2x5IHBlcm1pdHRlZCBieSBwZXJzb25hbCBkYXRh
+IHByb3RlY3Rpb24gbGF3cy4gVGhhbmsgeW91IGZvciB5b3VyIGF0dGVudGlvbiBhbmQgY29vcGVy
+YXRpb24uDQoNCk1hY3Jvbml4IEludGVybmF0aW9uYWwgQ28uLCBMdGQuDQoNCj09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PQ0K
 
-~Alexey
-
-> 
-> - Arnaldo
-> 
->> |-z | OVH(x) | ratio(x) size(MiB) | OVH(x) | ratio(x) size(MiB) |
->> |---------------------------------------------------------------|
->> | 0 | 1,00   | 1,000    179,424   | 1,00   | 1,000    187,527   |
->> | 1 | 1,04   | 8,427    181,148   | 1,01   | 8,474    188,562   |
->> | 2 | 1,07   | 8,055    186,953   | 1,03   | 7,912    191,773   |
->> | 3 | 1,04   | 8,283    181,908   | 1,03   | 8,220    191,078   |
->> | 5 | 1,09   | 8,101    187,705   | 1,05   | 7,780    190,065   |
->> | 8 | 1,05   | 9,217    179,191   | 1,12   | 6,111    193,024   |
->> -----------------------------------------------------------------
->>
->> OVH = (Execution time with -z N) / (Execution time with -z 0)
->>
->> ratio - compression ratio
->> size  - number of bytes that was compressed
->>
->> 	size ~= trace size x ratio
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  tools/perf/Documentation/perf-record.txt |  5 +++++
->>  tools/perf/builtin-record.c              | 25 ++++++++++++++++++++++++
->>  2 files changed, 30 insertions(+)
->>
->> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
->> index 18fceb49434e..0567bacc2ae6 100644
->> --- a/tools/perf/Documentation/perf-record.txt
->> +++ b/tools/perf/Documentation/perf-record.txt
->> @@ -471,6 +471,11 @@ Also at some cases executing less trace write syscalls with bigger data size can
->>  shorter than executing more trace write syscalls with smaller data size thus lowering
->>  runtime profiling overhead.
->>  
->> +-z::
->> +--compression-level[=n]::
->> +Produce compressed trace using specified level n (default: 1 - fastest compression,
->> +22 - smallest trace)
->> +
->>  --all-kernel::
->>  Configure all used events to run in kernel space.
->>  
->> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
->> index 2e083891affa..7258f2964a3b 100644
->> --- a/tools/perf/builtin-record.c
->> +++ b/tools/perf/builtin-record.c
->> @@ -440,6 +440,26 @@ static int record__mmap_flush_parse(const struct option *opt,
->>  	return 0;
->>  }
->>  
->> +#ifdef HAVE_ZSTD_SUPPORT
->> +static unsigned int comp_level_default = 1;
->> +static int record__parse_comp_level(const struct option *opt,
->> +				    const char *str,
->> +				    int unset)
->> +{
->> +	struct record_opts *opts = (struct record_opts *)opt->value;
->> +
->> +	if (unset) {
->> +		opts->comp_level = 0;
->> +	} else {
->> +		if (str)
->> +			opts->comp_level = strtol(str, NULL, 0);
->> +		if (!opts->comp_level)
->> +			opts->comp_level = comp_level_default;
->> +	}
->> +
->> +	return 0;
->> +}
->> +#endif
->>  static unsigned int comp_level_max = 22;
->>  
->>  static int record__comp_enabled(struct record *rec)
->> @@ -2169,6 +2189,11 @@ static struct option __record_options[] = {
->>  	OPT_CALLBACK(0, "affinity", &record.opts, "node|cpu",
->>  		     "Set affinity mask of trace reading thread to NUMA node cpu mask or cpu of processed mmap buffer",
->>  		     record__parse_affinity),
->> +#ifdef HAVE_ZSTD_SUPPORT
->> +	OPT_CALLBACK_OPTARG('z', "compression-level", &record.opts, &comp_level_default,
->> +		     "n", "Produce compressed trace using specified level (default: 1 - fastest compression, 22 - smallest trace)",
->> +		     record__parse_comp_level),
->> +#endif
->>  	OPT_END()
->>  };
->>  
->> -- 
->> 2.20.1
-> 
