@@ -2,130 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A7C1FD7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54BA61FD83
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfEPBqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 21:46:22 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41005 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbfEOXl2 (ORCPT
+        id S1727157AbfEPBqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 21:46:23 -0400
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:33326 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfEOXpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 19:41:28 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f12so617425plt.8
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 16:41:28 -0700 (PDT)
+        Wed, 15 May 2019 19:45:51 -0400
+Received: by mail-lj1-f174.google.com with SMTP id w1so1407042ljw.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 16:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZjzAq2AO1sRBqrHJUjIMR4JCd00dysDTYDWKUQqEjMQ=;
-        b=bXMgsHQyNMU2fM0Ue9SNrNhQp2QCv7JSxc5jzX0IZmgsg2OidZNzsm8l3jUm1uE6nJ
-         lWaqMUHtNuGJqztJtHFz8qq0mDt/CiCZpfad5s4Lar/0LSp9YNJ4LfCfOyPKjC1m6mz1
-         3ptuYCoxX+8Jb5kFkHkJRuLa8Cb48QvPHkyzvL/aOFptkBfoE1sfSG/DH75K0zkMGOCk
-         UKLn1z8DM2/dwHP26TVmBpEDMUleMKoGHiO5SPFdigIH4tDV5uYGfhAUHlUkpBA9aeGT
-         zfHAkEmYsHIQ8owAl5TDHSjfDoC//9ZGpi9UGnLUd1nHfq3vJ58bJ/rhc01P05NZBFF2
-         oyyQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XvNT9HlDb1U3GFh1Fv/LSA0RjY1svVk5+rl3ZUL9cA0=;
+        b=d4uPRGGPWp4sUCTPgCXRTo/SOy5wf3Fv3B24MNLSC/6oIZK+kGJ5H/g6Cy5bu0jwtC
+         t12fdaj6McFSwM/i/4KHSkKe8Vk/GTvEffEy8RfjMxOfX6JTSsWMg0lOIBFg3sVIn4rh
+         /wYdFilszy8spI2+EvIEbchFFAUvwvDelxLGw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZjzAq2AO1sRBqrHJUjIMR4JCd00dysDTYDWKUQqEjMQ=;
-        b=maXBaK2VrnVZSgTaEQEIMU6gf5IZsYCUgfMmtZYcGtQAJI28IoXeesNtKLoVikV+or
-         vd8QYUmxRDbzmy7izHWuW2GvfNQTdn+YjewZyU/zWTWB3C1rDCBbzb4ks/SXY+dIUv/z
-         plP0pz1kkVFYiwrbMNMBdm4RevLvtXkUBVKk3Vv/Cpj0Uyb6M0U6eNFZL0zGP5hbvMUA
-         egEsIQDjdcF312a7rCLiOejheSR7aP2aE6iqJnUBnUNtYlTSYdReQMwp7xr/b6fGyOLy
-         4iErHiAq1mwSjMjGy12EPWhGG3jA3yMvv1lcOv79T/O1mErsX97BMrj25OpTGKqINPq3
-         z+GQ==
-X-Gm-Message-State: APjAAAUedyE8cBgOnDnfGv32HoZmQcBkvCp3R5Z9VUHS7xjFdLtdUNdy
-        XpFygYdfac/7CaH4E/qA5qxDWg==
-X-Google-Smtp-Source: APXvYqyRpmmXxhxDQ6tCx1u6g4+IFs/LWvWFlwdifLuOAObsUDyvgkOgAz2yesijZ/zlqJKH0WhsiQ==
-X-Received: by 2002:a17:902:2d03:: with SMTP id o3mr11064877plb.309.1557963687169;
-        Wed, 15 May 2019 16:41:27 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g22sm4011790pfo.28.2019.05.15.16.41.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 May 2019 16:41:25 -0700 (PDT)
-Date:   Wed, 15 May 2019 16:41:23 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 2/3] arm64: dts: qcom: sdm845-cheza: Re-add reserved memory
-Message-ID: <20190515234123.GP31438@minitux>
-References: <20190509184415.11592-1-robdclark@gmail.com>
- <20190509184415.11592-3-robdclark@gmail.com>
- <CAD=FV=WXW3aApS=c7baxhtfr1Nf-UnBN2s=rEBBkjj4=TCdT+g@mail.gmail.com>
- <CAJs_Fx5PDj+T+DVixzHjun_wCG5fhZsxH8xUqRwmkfwN87UP_A@mail.gmail.com>
- <CAD=FV=Vgiej=+hCZ_Eekoa4FJfpKxhOge8Wy29EEmtjB8JeF9g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XvNT9HlDb1U3GFh1Fv/LSA0RjY1svVk5+rl3ZUL9cA0=;
+        b=UJDjvLk4lJf4BcgrxtyQpVBWb1aCFpudLi018E7rhGcLgl7DtdS4/1HzUpVvas9lDa
+         fAP6MC224WjgACFKxz+VAF+4iKqSHvZG9OxYRlGtNQEitmcsRykdGAP4mqq6sGJDeroP
+         /DdVfcuSflp7y0G/H2/s0iTERqdAx4MQGxR5kA3C/d2TB8sDr2m6wEVCZuSblVirDN0m
+         yEVhwqQTR7L7Yb4mU66sxP8RFG0G9lS0FLWYF+Uzxmk3gfg8jZWCzSYYPxidwvshXDkp
+         jtEnR4kTSjw7Xkx94NuT3f/yN13ehYyelFZ+tnCL7Q/0JWemBy0BaYZLHq+B9Fj4Uxmr
+         bqxg==
+X-Gm-Message-State: APjAAAWsAaunSoDAna0NbtZS/DYTYMGCRxKvpOkVIpCvCElUh+hrSbGq
+        9ps2uCO0L1ZvAzN+04kMBJ+wLD15yJg=
+X-Google-Smtp-Source: APXvYqyBGMxn4xej32gAKM4it4HZ+Ql9l49Zm893cbejpovwYvBjbLtFGZsYh9Q9m/pg/5ukVZzvJw==
+X-Received: by 2002:a2e:5d49:: with SMTP id r70mr23441189ljb.102.1557963949035;
+        Wed, 15 May 2019 16:45:49 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id e14sm652965ljk.45.2019.05.15.16.45.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 16:45:47 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id a10so1367010ljf.6
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 16:45:47 -0700 (PDT)
+X-Received: by 2002:a2e:9a94:: with SMTP id p20mr11981537lji.2.1557963947423;
+ Wed, 15 May 2019 16:45:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Vgiej=+hCZ_Eekoa4FJfpKxhOge8Wy29EEmtjB8JeF9g@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190515135602.2a6e6012@oasis.local.home>
+In-Reply-To: <20190515135602.2a6e6012@oasis.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 May 2019 16:45:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjbT4ZsWM=Rmz40+_umLmKz70ksEMnEOhLWJzQWudyNUA@mail.gmail.com>
+Message-ID: <CAHk-=wjbT4ZsWM=Rmz40+_umLmKz70ksEMnEOhLWJzQWudyNUA@mail.gmail.com>
+Subject: Re: [GIT PULL] ktest: Updates for 5.2
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Warthog9 Hawley <warthog9@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15 May 14:50 PDT 2019, Doug Anderson wrote:
+On Wed, May 15, 2019 at 10:56 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> Updates to ktest.pl
 
-> Hi,
-> 
-> On Tue, May 14, 2019 at 9:10 PM Rob Clark <robdclark@chromium.org> wrote:
-> 
-> > On Mon, May 13, 2019 at 3:48 PM Doug Anderson <dianders@chromium.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Thu, May 9, 2019 at 11:44 AM Rob Clark <robdclark@gmail.com> wrote:
-> > >
-> > > > From: Douglas Anderson <dianders@chromium.org>
-> > > >
-> > > > Let's fixup the reserved memory to re-add the things we deleted in
-> > > > ("CHROMIUM: arm64: dts: qcom: sdm845-cheza: Temporarily delete
-> > > > reserved-mem changes") in a way that plays nicely with the new
-> > > > upstream definitions.
-> > >
-> > > The message above makes no sense since that commit you reference isn't
-> > > in upstream.
-> > >
-> > > ...but in any case, why not squash this in with the previous commit?
-> >
-> > Yeah, I should have mentioned this was my intention, I just left it
-> > unsquashed since (at the time) it was something I had cherry-picked on
-> > top of current 4.19 cros kernel..
-> >
-> > anyways, I pushed an (unsquashed, converted to fixup!'s) update to:
-> >
-> > https://github.com/freedreno/kernel-msm/commits/wip/cheza-dtb-upstreaming
-> >
-> > which has updates based on you're review comments (at least assuming I
-> > understood them correctly).. plus some unrelated to cheza-dt patches
-> > on top to get things actually working (ie. ignore everything on top of
-> > the fixup!'s)
-> 
-> Looks OK to me.  Are you going to post this?  Bjorn / Andy: do you
-> guys have opinions here?
-> 
+Your pull request is showing stale data.
 
-I think this is a good opportunity to get people with Cheza off 4.19, so
-I'm all for landing this upstream.
+>  - Handle meta data in GRUB_MENU
+>
+>  - Add variable to cusomize what return value the reboot code should return.
 
-Regards,
-Bjorn
+These were already long merged, from your first pull request last Monday.
 
-> 
-> > I didn't see any comments on the 'delete zap-shader' patch, so
-> > hopefully that means what I did there was a sane (or at least not
-> > insane) way to handle android/linux tz vs what we have on cheza?
-> 
-> I wasn't CCed, so I assumed you were looking for feedback from others
-> on that one.  ;-)  Oh, but I guess Jordan and Bjorn also weren't
-> CCed...  In any case, I replied now.
+See
+
+  68253e718c27 ("Merge tag 'ktest-v5.1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest")
+
+and your own pull request
+
+  Message-ID: <20190506133837.55832171@gandalf.local.home>
+
+Hmm?
+
+                Linus
