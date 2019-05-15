@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63FAB1EEBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53C61EF2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731927AbfEOLZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
+        id S1732780AbfEOLaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729575AbfEOLZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:25:04 -0400
+        id S1732752AbfEOLaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B76B820818;
-        Wed, 15 May 2019 11:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EDE920843;
+        Wed, 15 May 2019 11:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919504;
-        bh=GlqbzxP1iKRD9SbG11QnA4E7zsVZc8ZExrGnkid4cR4=;
+        s=default; t=1557919839;
+        bh=X8flbAO2akxSEzZQ8zHamo1pcx8klqpvg+NacVqQhnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gI3RTzhTIULFBRkfNRCx6Qa/E1UfvJ857CS1eAatPKbf/yzy0BGedHI69H19gNB+o
-         lKVpM2EsumyBL4093dxFXdAk+Q43lRU9cZWuw0pGEOiGeUHutZ5Ne2TWR6U/UqMMlI
-         XLwynICkKcUag0BnqGaz4n3Vhuw+nk8gFcZOdVFw=
+        b=JMEZAO+UIRwKqg+BiZZnXQXWOjtppPJoIuPCGqsCl8pVgXmIgE5R13wyObxEbGQua
+         NMuOc6EJBro2El++8krvlQurm64hKfhqlR1MZZB0do6cGZh18vSmYefOvZOdkRhqso
+         BPgRw2k0Csj5E/QOGx961QRgc9WRJV3gbxm4GoS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Suryaputra <ssuryaextr@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 101/113] vrf: sit mtu should not be updated when vrf netdev is the link
-Date:   Wed, 15 May 2019 12:56:32 +0200
-Message-Id: <20190515090701.290309582@linuxfoundation.org>
+Subject: [PATCH 5.0 112/137] net: macb: Change interrupt and napi enable order in open
+Date:   Wed, 15 May 2019 12:56:33 +0200
+Message-Id: <20190515090701.711180496@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Suryaputra <ssuryaextr@gmail.com>
+From: Harini Katakam <harini.katakam@xilinx.com>
 
-[ Upstream commit ff6ab32bd4e073976e4d8797b4d514a172cfe6cb ]
+[ Upstream commit 0504453139ef5a593c9587e1e851febee859c7d8 ]
 
-VRF netdev mtu isn't typically set and have an mtu of 65536. When the
-link of a tunnel is set, the tunnel mtu is changed from 1480 to the link
-mtu minus tunnel header. In the case of VRF netdev is the link, then the
-tunnel mtu becomes 65516. So, fix it by not setting the tunnel mtu in
-this case.
+Current order in open:
+-> Enable interrupts (macb_init_hw)
+-> Enable NAPI
+-> Start PHY
 
-Signed-off-by: Stephen Suryaputra <ssuryaextr@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Sequence of RX handling:
+-> RX interrupt occurs
+-> Interrupt is cleared and interrupt bits disabled in handler
+-> NAPI is scheduled
+-> In NAPI, RX budget is processed and RX interrupts are re-enabled
+
+With the above, on QEMU or fixed link setups (where PHY state doesn't
+matter), there's a chance macb RX interrupt occurs before NAPI is
+enabled. This will result in NAPI being scheduled before it is enabled.
+Fix this macb open by changing the order.
+
+Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/sit.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cadence/macb_main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1084,7 +1084,7 @@ static void ipip6_tunnel_bind_dev(struct
- 	if (!tdev && tunnel->parms.link)
- 		tdev = __dev_get_by_index(tunnel->net, tunnel->parms.link);
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -2414,12 +2414,12 @@ static int macb_open(struct net_device *
+ 		return err;
+ 	}
  
--	if (tdev) {
-+	if (tdev && !netif_is_l3_master(tdev)) {
- 		int t_hlen = tunnel->hlen + sizeof(struct iphdr);
+-	bp->macbgem_ops.mog_init_rings(bp);
+-	macb_init_hw(bp);
+-
+ 	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
+ 		napi_enable(&queue->napi);
  
- 		dev->hard_header_len = tdev->hard_header_len + sizeof(struct iphdr);
++	bp->macbgem_ops.mog_init_rings(bp);
++	macb_init_hw(bp);
++
+ 	/* schedule a link state check */
+ 	phy_start(dev->phydev);
+ 
 
 
