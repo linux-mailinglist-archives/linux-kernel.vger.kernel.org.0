@@ -2,180 +2,412 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD741E732
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 05:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C0F1E741
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 06:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfEODlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 23:41:24 -0400
-Received: from mail-eopbgr00088.outbound.protection.outlook.com ([40.107.0.88]:37253
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726265AbfEODlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 23:41:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fr315o55oJr/ZeC36GAm8zwIaMtnrdlJ6SK7C/SRW9o=;
- b=ImN1hPoeIG8PMi9WVTM+Mi6gqIZ/pJ0XSGZrhwlMfVFriIMJveKgKmGgRGjLmB9X4JAtDoCEFVZuiUhV3HO2x0Jvf8ZwA9hYvuGh+ez4NFJg5FwoaxB1ySxsIcmvyzEYfuEY3w0+2NsR/eBWGSTDeIR7EiKa6LW3zGT0tvKw2JU=
-Received: from DB7PR04MB4153.eurprd04.prod.outlook.com (52.135.130.150) by
- DB7PR04MB4044.eurprd04.prod.outlook.com (52.135.130.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.22; Wed, 15 May 2019 03:41:06 +0000
-Received: from DB7PR04MB4153.eurprd04.prod.outlook.com
- ([fe80::f8be:f6a1:bb9f:ad48]) by DB7PR04MB4153.eurprd04.prod.outlook.com
- ([fe80::f8be:f6a1:bb9f:ad48%3]) with mapi id 15.20.1878.024; Wed, 15 May 2019
- 03:41:06 +0000
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "Y.b. Lu" <yangbo.lu@nxp.com>, Jiafei Pan <jiafei.pan@nxp.com>,
-        Ashish Kumar <ashish.kumar@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v1] arm64: ls1028: dtsi: Add esdhc node in dtsi
-Thread-Topic: [EXT] Re: [PATCH v1] arm64: ls1028: dtsi: Add esdhc node in dtsi
-Thread-Index: AQHU+cmuEJQ1seVcO0uOXKGj5Q3IF6ZWmSeAgAWDyjCAD473oA==
-Date:   Wed, 15 May 2019 03:41:06 +0000
-Message-ID: <DB7PR04MB415311EAA94DDE209B42729FE9090@DB7PR04MB4153.eurprd04.prod.outlook.com>
-References: <20190423114424.3578-1-yinbo.zhu@nxp.com>
- <CAL_Jsq+4g+inxc+qcC3oLrXuR+L9AMvXFShGaU5Y3iRDsK3P6A@mail.gmail.com>
- <VI1PR04MB415896DA3F0AF8BA6AB149C9E9370@VI1PR04MB4158.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB415896DA3F0AF8BA6AB149C9E9370@VI1PR04MB4158.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yinbo.zhu@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5fbabde7-170a-4d68-8ccc-08d6d8e7298a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4044;
-x-ms-traffictypediagnostic: DB7PR04MB4044:
-x-microsoft-antispam-prvs: <DB7PR04MB4044B6BF8E760FFD0014DB40E9090@DB7PR04MB4044.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:608;
-x-forefront-prvs: 0038DE95A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(39860400002)(396003)(346002)(136003)(189003)(199004)(13464003)(66946007)(76116006)(52536014)(6246003)(86362001)(64756008)(66446008)(68736007)(66556008)(2906002)(446003)(71190400001)(54906003)(33656002)(66476007)(229853002)(76176011)(476003)(5660300002)(14454004)(71200400001)(53936002)(7696005)(11346002)(8676002)(73956011)(14444005)(99286004)(486006)(53546011)(102836004)(186003)(478600001)(25786009)(26005)(66066001)(74316002)(44832011)(7736002)(6116002)(6436002)(8936002)(3846002)(316002)(81156014)(6506007)(256004)(305945005)(81166006)(9686003)(55016002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4044;H:DB7PR04MB4153.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pfqWCkDNWGOsx42zb1+ivIq8QmgZR74/cu6vGPm5yBWN+IjTHki66Pn6g/WZ3MpTfToSzt8nnaAL1Wx+U5KhHqoEq33Eq5tDCKv/Z60bx/z4SaqAFB3cNY/ZWgFjH9oXJyaGl4A4GNPtvWEuCeKR0x/dkPytLPgsOULHA1ZXCi3uTP7SlOR9HL+PPVq4sNNCO+F9ayTGQ8FLyR+0adv9QlblRkM/EeD4YGeAFWl8aL9wnlXx8Akixb5YCT1W0/Dw2jNpX4wbg8g+vejHqf0jQP4k7cVyDbo0eNW7m18ai5HE3FicIrnFXg3rQd+Ldkwfpawhz84f7SbKVmrzkxGcQs9Tknol1+nCxNItByIuDYE8zpVK6xOVUOeKR6VGamk2BZ7Gfpy5wxjkqxtQejj+rRL4bPxDEb1Z8Z0plATFq2Q=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726394AbfEOECi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 00:02:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:26399 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfEOECh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 00:02:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 21:02:37 -0700
+X-ExtLoop1: 1
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga005.fm.intel.com with ESMTP; 14 May 2019 21:02:36 -0700
+Subject: [PATCH] dax: Arrange for dax_supported check to span multiple
+ devices
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     snitzer@redhat.com
+Cc:     stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Date:   Tue, 14 May 2019 20:48:49 -0700
+Message-ID: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fbabde7-170a-4d68-8ccc-08d6d8e7298a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 03:41:06.4604
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4044
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWWluYm8gWmh1DQo+IFNl
-bnQ6IDIwMTnlubQ15pyINeaXpSAxNDowNw0KPiBUbzogUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2Vy
-bmVsLm9yZz4NCj4gQ2M6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz47IExlbyBMaSA8
-bGVveWFuZy5saUBueHAuY29tPjsgWGlhb2JvDQo+IFhpZSA8eGlhb2JvLnhpZUBueHAuY29tPjsg
-TWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47DQo+IGxpbnV4LWFybS1rZXJuZWxA
-bGlzdHMuaW5mcmFkZWFkLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
-LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IFkuYi4g
-THUNCj4gPHlhbmdiby5sdUBueHAuY29tPjsgSmlhZmVpIFBhbiA8amlhZmVpLnBhbkBueHAuY29t
-PjsgQXNoaXNoIEt1bWFyDQo+IDxhc2hpc2gua3VtYXJAbnhwLmNvbT4NCj4gU3ViamVjdDogUkU6
-IFtFWFRdIFJlOiBbUEFUQ0ggdjFdIGFybTY0OiBsczEwMjg6IGR0c2k6IEFkZCBlc2RoYyBub2Rl
-IGluIGR0c2kNCj4gDQo+IA0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+
-IEZyb206IFJvYiBIZXJyaW5nIFttYWlsdG86cm9iaCtkdEBrZXJuZWwub3JnXQ0KPiA+IFNlbnQ6
-IDIwMTnlubQ15pyIMuaXpSAxOjUwDQo+ID4gVG86IFlpbmJvIFpodSA8eWluYm8uemh1QG54cC5j
-b20+DQo+ID4gQ2M6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz47IExlbyBMaSA8bGVv
-eWFuZy5saUBueHAuY29tPjsNCj4gPiBYaWFvYm8gWGllIDx4aWFvYm8ueGllQG54cC5jb20+OyBN
-YXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsNCj4gPiBsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOw0KPiA+IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IFku
-Yi4gTHUNCj4gPiA8eWFuZ2JvLmx1QG54cC5jb20+OyBKaWFmZWkgUGFuIDxqaWFmZWkucGFuQG54
-cC5jb20+OyBBc2hpc2ggS3VtYXINCj4gPiA8YXNoaXNoLmt1bWFyQG54cC5jb20+DQo+ID4gU3Vi
-amVjdDogW0VYVF0gUmU6IFtQQVRDSCB2MV0gYXJtNjQ6IGxzMTAyODogZHRzaTogQWRkIGVzZGhj
-IG5vZGUgaW4NCj4gPiBkdHNpDQo+ID4NCj4gPiBDYXV0aW9uOiBFWFQgRW1haWwNCj4gPg0KPiA+
-IE9uIFR1ZSwgQXByIDIzLCAyMDE5IGF0IDY6NDIgQU0gWWluYm8gWmh1IDx5aW5iby56aHVAbnhw
-LmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gRnJvbTogQXNoaXNoIEt1bWFyIDxBc2hpc2guS3Vt
-YXJAbnhwLmNvbT4NCj4gPiA+DQo+ID4gPiBUaGlzIHBhdGNoIGlzIHRvIGFkZCBlc2RoYyBub2Rl
-IGFuZCBlbmFibGUgU0QgVUhTLUksIGVNTUMgSFMyMDAgZm9yDQo+ID4gPiBsczEwMjhhcmRiL2xz
-MTAyOGFxZHMgYm9hcmQuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogQXNoaXNoIEt1bWFy
-IDxBc2hpc2guS3VtYXJAbnhwLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFlhbmdibyBMdSA8
-eWFuZ2JvLmx1QG54cC5jb20+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBZaW5ibyBaaHUgPHlpbmJv
-LnpodUBueHAuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgLi4uL2Jvb3QvZHRzL2ZyZWVzY2FsZS9m
-c2wtbHMxMDI4YS1xZHMuZHRzICAgIHwgIDggKysrKysrDQo+ID4gPiAgLi4uL2Jvb3QvZHRzL2Zy
-ZWVzY2FsZS9mc2wtbHMxMDI4YS1yZGIuZHRzICAgIHwgMTMgKysrKysrKysrDQo+ID4gPiAgLi4u
-L2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDI4YS5kdHNpIHwgMjcNCj4gPiA+ICsr
-KysrKysrKysrKysrKysrKysNCj4gPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDQ4IGluc2VydGlvbnMo
-KykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2Nh
-bGUvZnNsLWxzMTAyOGEtcWRzLmR0cw0KPiA+ID4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
-Y2FsZS9mc2wtbHMxMDI4YS1xZHMuZHRzDQo+ID4gPiBpbmRleCAxNGM3OWY0NjkxZWEuLjE4MGU1
-ZDJhMDBkMSAxMDA2NDQNCj4gPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxl
-L2ZzbC1sczEwMjhhLXFkcy5kdHMNCj4gPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJl
-ZXNjYWxlL2ZzbC1sczEwMjhhLXFkcy5kdHMNCj4gPiA+IEBAIC00Miw2ICs0MiwxNCBAQA0KPiA+
-ID4gICAgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gPiAgfTsNCj4gPiA+DQo+ID4gPiArJmVz
-ZGhjIHsNCj4gPiA+ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ID4gK307DQo+ID4gPiAr
-DQo+ID4gPiArJmVzZGhjMSB7DQo+ID4gPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gPiA+
-ICt9Ow0KPiA+ID4gKw0KPiA+ID4gICZpMmMwIHsNCj4gPiA+ICAgICAgICAgc3RhdHVzID0gIm9r
-YXkiOw0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
-Y2FsZS9mc2wtbHMxMDI4YS1yZGIuZHRzDQo+ID4gPiBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJl
-ZXNjYWxlL2ZzbC1sczEwMjhhLXJkYi5kdHMNCj4gPiA+IGluZGV4IGY4NmIwNTRhNzRhZS4uMWJm
-YWY0Mjk0ZGI0IDEwMDY0NA0KPiA+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2Nh
-bGUvZnNsLWxzMTAyOGEtcmRiLmR0cw0KPiA+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9m
-cmVlc2NhbGUvZnNsLWxzMTAyOGEtcmRiLmR0cw0KPiA+ID4gQEAgLTMwLDYgKzMwLDE5IEBADQo+
-ID4gPiAgICAgICAgIH07DQo+ID4gPiAgfTsNCj4gPiA+DQo+ID4gPiArJmVzZGhjIHsNCj4gPiA+
-ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ID4gKyAgICAgICBzZC11aHMtc2RyMTA0Ow0K
-PiA+ID4gKyAgICAgICBzZC11aHMtc2RyNTA7DQo+ID4gPiArICAgICAgIHNkLXVocy1zZHIyNTsN
-Cj4gPiA+ICsgICAgICAgc2QtdWhzLXNkcjEyOw0KPiA+ID4gKyAgICAgICB9Ow0KPiA+ID4gKw0K
-PiA+ID4gKyZlc2RoYzEgew0KPiA+ID4gKyAgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gPiAr
-ICAgICAgIG1tYy1oczIwMC0xXzh2Ow0KPiA+ID4gKyAgICAgICB9Ow0KPiA+ID4gKw0KPiA+ID4g
-ICZpMmMwIHsNCj4gPiA+ICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ID4NCj4gPiA+IGRp
-ZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDI4YS5kdHNp
-DQo+ID4gPiBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLmR0c2kN
-Cj4gPiA+IGluZGV4IDI4OTZiYmNmYTNiYi4uZDEzY2QzZmI0NTViIDEwMDY0NA0KPiA+ID4gLS0t
-IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaQ0KPiA+ID4g
-KysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaQ0KPiA+
-ID4gQEAgLTI3NCw2ICsyNzQsMzMgQEANCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHN0
-YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gPiAgICAgICAgICAgICAgICAgfTsNCj4gPiA+DQo+ID4g
-PiArICAgICAgICAgICAgICAgZXNkaGM6IGVzZGhjQDIxNDAwMDAgew0KPiA+DQo+ID4gbW1jQC4u
-Lg0KPiA+DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImZzbCxs
-czEwMjhhLWVzZGhjIiwgImZzbCxlc2RoYyI7DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICByZWcgPSA8MHgwIDB4MjE0MDAwMCAweDAgMHgxMDAwMD47DQo+ID4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgMjggMHg0PjsgLyogTGV2ZWwgaGlnaCB0eXBlICov
-DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1mcmVxdWVuY3kgPSA8MD47DQo+
-ID4NCj4gPiBGaWxsZWQgaW4gYnkgYm9vdGxvYWRlcj8gSWYgc28sIGFkZCBhIGNvbW1lbnQuDQo+
-IEhpIHJvYiwNCj4gRmlsbGVkIGluIGJ5IGtlcm5lbCwgcGxlYXNlIHlvdSBub3RlLg0KPiANCj4g
-UmVnYXJkcywNCj4gWWluYm8uDQoNCkhpIHJvYiwNCg0KSSdtIHNvcnJ5LCBJdCBpcyBmaXhlZCB1
-cCBieSBib290bG9hZGVyIGFjdHVhbGx5Lg0KQW5kIEkgd2lsbCBhZGQgYSBjb21tb250Lg0KDQp5
-aW5ibw0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjbG9ja2dlbiAy
-IDE+Ow0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdm9sdGFnZS1yYW5nZXMgPSA8MTgw
-MCAxODAwIDMzMDAgMzMwMD47DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBzZGhjaSxh
-dXRvLWNtZDEyOw0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgbGl0dGxlLWVuZGlhbjsN
-Cj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGJ1cy13aWR0aCA9IDw0PjsNCj4gPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gPiArICAgICAg
-ICAgICAgICAgfTsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAgICAgICAgICBlc2RoYzE6IGVzZGhj
-QDIxNTAwMDAgew0KPiA+DQo+ID4gbW1jQC4uLg0KPiA+DQo+ID4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICBjb21wYXRpYmxlID0gImZzbCxsczEwMjhhLWVzZGhjIiwgImZzbCxlc2RoYyI7DQo+
-ID4gPiArICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgwIDB4MjE1MDAwMCAweDAgMHgx
-MDAwMD47DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgNjMg
-MHg0PjsgLyogTGV2ZWwgaGlnaCB0eXBlICovDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICBjbG9jay1mcmVxdWVuY3kgPSA8MD47DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBj
-bG9ja3MgPSA8JmNsb2NrZ2VuIDIgMT47DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICB2
-b2x0YWdlLXJhbmdlcyA9IDwxODAwIDE4MDAgMzMwMCAzMzAwPjsNCj4gPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIHNkaGNpLGF1dG8tY21kMTI7DQo+ID4gPiArICAgICAgICAgICAgICAgICAg
-ICAgICBicm9rZW4tY2Q7DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBsaXR0bGUtZW5k
-aWFuOw0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgYnVzLXdpZHRoID0gPDQ+Ow0KPiA+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiA+ICsg
-ICAgICAgICAgICAgICB9Ow0KPiA+ID4gKw0KPiA+ID4gICAgICAgICAgICAgICAgIHNhdGE6IHNh
-dGFAMzIwMDAwMCB7DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0g
-ImZzbCxsczEwMjhhLWFoY2kiOw0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmVnID0g
-PDB4MCAweDMyMDAwMDAgMHgwIDB4MTAwMDA+LA0KPiA+ID4gLS0NCj4gPiA+IDIuMTcuMQ0KPiA+
-ID4NCg==
+Pankaj reports that starting with commit ad428cdb525a "dax: Check the
+end of the block-device capacity with dax_direct_access()" device-mapper
+no longer allows dax operation. This results from the stricter checks in
+__bdev_dax_supported() that validate that the start and end of a
+block-device map to the same 'pagemap' instance.
+
+Teach the dax-core and device-mapper to validate the 'pagemap' on a
+per-target basis. This is accomplished by refactoring the
+bdev_dax_supported() internals into generic_fsdax_supported() which
+takes a sector range to validate. Consequently generic_fsdax_supported()
+is suitable to be used in a device-mapper ->iterate_devices() callback.
+A new ->dax_supported() operation is added to allow composite devices to
+split and route upper-level bdev_dax_supported() requests.
+
+Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
+Cc: <stable@vger.kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: Pankaj Gupta <pagupta@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Hi Mike,
+
+Another day another new dax operation to allow device-mapper to better
+scope dax operations.
+
+Let me know if the device-mapper changes look sane. This passes a new
+unit test that indeed fails on current mainline.
+
+https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
+
+ drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
+ drivers/md/dm-table.c        |   17 +++++---
+ drivers/md/dm.c              |   20 ++++++++++
+ drivers/md/dm.h              |    1 
+ drivers/nvdimm/pmem.c        |    1 
+ drivers/s390/block/dcssblk.c |    1 
+ include/linux/dax.h          |   19 +++++++++
+ 7 files changed, 110 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 0a339b85133e..ec2f2262e3a9 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -73,22 +73,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+ #endif
+ 
+-/**
+- * __bdev_dax_supported() - Check if the device supports dax for filesystem
+- * @bdev: block device to check
+- * @blocksize: The block size of the device
+- *
+- * This is a library function for filesystems to check if the block device
+- * can be mounted with dax option.
+- *
+- * Return: true if supported, false if unsupported
+- */
+-bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
++bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors)
+ {
+-	struct dax_device *dax_dev;
+ 	bool dax_enabled = false;
+ 	pgoff_t pgoff, pgoff_end;
+-	struct request_queue *q;
+ 	char buf[BDEVNAME_SIZE];
+ 	void *kaddr, *end_kaddr;
+ 	pfn_t pfn, end_pfn;
+@@ -102,21 +92,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
+ 
+-	q = bdev_get_queue(bdev);
+-	if (!q || !blk_queue_dax(q)) {
+-		pr_debug("%s: error: request queue doesn't support dax\n",
+-				bdevname(bdev, buf));
+-		return false;
+-	}
+-
+-	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
++	err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
+ 	if (err) {
+ 		pr_debug("%s: error: unaligned partition for dax\n",
+ 				bdevname(bdev, buf));
+ 		return false;
+ 	}
+ 
+-	last_page = PFN_DOWN(i_size_read(bdev->bd_inode) - 1) * 8;
++	last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
+ 	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
+ 	if (err) {
+ 		pr_debug("%s: error: unaligned partition for dax\n",
+@@ -124,20 +107,11 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
+ 
+-	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+-	if (!dax_dev) {
+-		pr_debug("%s: error: device does not support dax\n",
+-				bdevname(bdev, buf));
+-		return false;
+-	}
+-
+ 	id = dax_read_lock();
+ 	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
+ 	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
+ 	dax_read_unlock(id);
+ 
+-	put_dax(dax_dev);
+-
+ 	if (len < 1 || len2 < 1) {
+ 		pr_debug("%s: error: dax access failed (%ld)\n",
+ 				bdevname(bdev, buf), len < 1 ? len : len2);
+@@ -178,6 +152,49 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	}
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(generic_fsdax_supported);
++
++/**
++ * __bdev_dax_supported() - Check if the device supports dax for filesystem
++ * @bdev: block device to check
++ * @blocksize: The block size of the device
++ *
++ * This is a library function for filesystems to check if the block device
++ * can be mounted with dax option.
++ *
++ * Return: true if supported, false if unsupported
++ */
++bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
++{
++	struct dax_device *dax_dev;
++	struct request_queue *q;
++	char buf[BDEVNAME_SIZE];
++	bool ret;
++	int id;
++
++	q = bdev_get_queue(bdev);
++	if (!q || !blk_queue_dax(q)) {
++		pr_debug("%s: error: request queue doesn't support dax\n",
++				bdevname(bdev, buf));
++		return false;
++	}
++
++	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
++	if (!dax_dev) {
++		pr_debug("%s: error: device does not support dax\n",
++				bdevname(bdev, buf));
++		return false;
++	}
++
++	id = dax_read_lock();
++	ret = dax_supported(dax_dev, bdev, blocksize, 0,
++			i_size_read(bdev->bd_inode) / 512);
++	dax_read_unlock(id);
++
++	put_dax(dax_dev);
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+ #endif
+ 
+@@ -303,6 +320,15 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ }
+ EXPORT_SYMBOL_GPL(dax_direct_access);
+ 
++bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len)
++{
++	if (!dax_alive(dax_dev))
++		return false;
++
++	return dax_dev->ops->dax_supported(dax_dev, bdev, blocksize, start, len);
++}
++
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i)
+ {
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index cde3b49b2a91..350cf0451456 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -880,13 +880,17 @@ void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type)
+ }
+ EXPORT_SYMBOL_GPL(dm_table_set_type);
+ 
++/* validate the dax capability of the target device span */
+ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+-			       sector_t start, sector_t len, void *data)
++				       sector_t start, sector_t len, void *data)
+ {
+-	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
++	int blocksize = *(int *) data;
++
++	return generic_fsdax_supported(dev->dax_dev, dev->bdev, blocksize,
++			start, len);
+ }
+ 
+-static bool dm_table_supports_dax(struct dm_table *t)
++bool dm_table_supports_dax(struct dm_table *t, int blocksize)
+ {
+ 	struct dm_target *ti;
+ 	unsigned i;
+@@ -899,7 +903,8 @@ static bool dm_table_supports_dax(struct dm_table *t)
+ 			return false;
+ 
+ 		if (!ti->type->iterate_devices ||
+-		    !ti->type->iterate_devices(ti, device_supports_dax, NULL))
++		    !ti->type->iterate_devices(ti, device_supports_dax,
++			    &blocksize))
+ 			return false;
+ 	}
+ 
+@@ -979,7 +984,7 @@ static int dm_table_determine_type(struct dm_table *t)
+ verify_bio_based:
+ 		/* We must use this table as bio-based */
+ 		t->type = DM_TYPE_BIO_BASED;
+-		if (dm_table_supports_dax(t) ||
++		if (dm_table_supports_dax(t, PAGE_SIZE) ||
+ 		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
+ 			t->type = DM_TYPE_DAX_BIO_BASED;
+ 		} else {
+@@ -1905,7 +1910,7 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	}
+ 	blk_queue_write_cache(q, wc, fua);
+ 
+-	if (dm_table_supports_dax(t))
++	if (dm_table_supports_dax(t, PAGE_SIZE))
+ 		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
+ 	else
+ 		blk_queue_flag_clear(QUEUE_FLAG_DAX, q);
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 043f0761e4a0..c28787f5357b 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1105,6 +1105,25 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	return ret;
+ }
+ 
++static bool dm_dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len)
++{
++	struct mapped_device *md = dax_get_private(dax_dev);
++	struct dm_table *map;
++	int srcu_idx;
++	bool ret;
++
++	map = dm_get_live_table(md, &srcu_idx);
++	if (!map)
++		return false;
++
++	ret = dm_table_supports_dax(map, blocksize);
++
++	dm_put_live_table(md, srcu_idx);
++
++	return ret;
++}
++
+ static size_t dm_dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 				    void *addr, size_t bytes, struct iov_iter *i)
+ {
+@@ -3192,6 +3211,7 @@ static const struct block_device_operations dm_blk_dops = {
+ 
+ static const struct dax_operations dm_dax_ops = {
+ 	.direct_access = dm_dax_direct_access,
++	.dax_supported = dm_dax_supported,
+ 	.copy_from_iter = dm_dax_copy_from_iter,
+ 	.copy_to_iter = dm_dax_copy_to_iter,
+ };
+diff --git a/drivers/md/dm.h b/drivers/md/dm.h
+index 2d539b82ec08..e5e240bfa2d0 100644
+--- a/drivers/md/dm.h
++++ b/drivers/md/dm.h
+@@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
+ void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
+ enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
+ struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
++bool dm_table_supports_dax(struct dm_table *t, int blocksize);
+ 
+ int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
+ 
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 0279eb1da3ef..845c5b430cdd 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -295,6 +295,7 @@ static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 
+ static const struct dax_operations pmem_dax_ops = {
+ 	.direct_access = pmem_dax_direct_access,
++	.dax_supported = generic_fsdax_supported,
+ 	.copy_from_iter = pmem_copy_from_iter,
+ 	.copy_to_iter = pmem_copy_to_iter,
+ };
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 4e8aedd50cb0..d04d4378ca50 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -59,6 +59,7 @@ static size_t dcssblk_dax_copy_to_iter(struct dax_device *dax_dev,
+ 
+ static const struct dax_operations dcssblk_dax_ops = {
+ 	.direct_access = dcssblk_dax_direct_access,
++	.dax_supported = generic_fsdax_supported,
+ 	.copy_from_iter = dcssblk_dax_copy_from_iter,
+ 	.copy_to_iter = dcssblk_dax_copy_to_iter,
+ };
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 0dd316a74a29..f5544fc62319 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -19,6 +19,12 @@ struct dax_operations {
+ 	 */
+ 	long (*direct_access)(struct dax_device *, pgoff_t, long,
+ 			void **, pfn_t *);
++	/*
++	 * Validate whether this device is usable as an fsdax backing
++	 * device.
++	 */
++	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
++			sector_t, sector_t);
+ 	/* copy_from_iter: required operation for fs-dax direct-i/o */
+ 	size_t (*copy_from_iter)(struct dax_device *, pgoff_t, void *, size_t,
+ 			struct iov_iter *);
+@@ -75,6 +81,10 @@ static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	return __bdev_dax_supported(bdev, blocksize);
+ }
+ 
++bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors);
++
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+ {
+ 	return dax_get_by_host(host);
+@@ -99,6 +109,13 @@ static inline bool bdev_dax_supported(struct block_device *bdev,
+ 	return false;
+ }
+ 
++static inline bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors)
++{
++	return false;
++}
++
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+ {
+ 	return NULL;
+@@ -142,6 +159,8 @@ bool dax_alive(struct dax_device *dax_dev);
+ void *dax_get_private(struct dax_device *dax_dev);
+ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ 		void **kaddr, pfn_t *pfn);
++bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len);
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+
