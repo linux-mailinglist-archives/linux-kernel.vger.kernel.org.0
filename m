@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F491EFCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1EF1EF54
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbfEOLgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:36:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
+        id S1733065AbfEOLck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:32:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733028AbfEOLc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:32:27 -0400
+        id S1733038AbfEOLca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B92F7206BF;
-        Wed, 15 May 2019 11:32:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F2372053B;
+        Wed, 15 May 2019 11:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919947;
-        bh=kndu8SAtUtlE6O5XFX8Lvk1NrcXtcxLc7hvEAE7f7uk=;
+        s=default; t=1557919949;
+        bh=D2wjTzLY+6BhBi4u1J9Nm0dZ/GGBbMLUC2F6GZL8Gug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z0L8jsMIcJBTjfLYMA6JVl5h2gHlg/SUsgwEKscHuI6UquwUAyBp2W7H1dpsE2JMe
-         vIqHgWjjWEXP4tnh7pxGavOgoSLGpGc4823lfvqJ50jBal7wHcFsYy9nUc23igixz/
-         NCF548m+UNExj5M17woA3ur7ZRaIznVAqAKTxKZw=
+        b=TN6d9sSMRE1P2DaS0oL/EZq43jnlKUtwSYfDAm5tuUsPTM+CwvyIEjstdWcCrgOtk
+         kLOTzcEYZxCteWXBFx9rKIn0rbT9wFM89ssxrQDNVa4PGTUhxww+autNX+g3GcB+Aj
+         hUejl8Qy0evdFbIRT1APPDZA5QViFIK8blolAy80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Haller <thaller@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 17/46] fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied
-Date:   Wed, 15 May 2019 12:56:41 +0200
-Message-Id: <20190515090623.324742464@linuxfoundation.org>
+Subject: [PATCH 5.1 18/46] ipv4: Fix raw socket lookup for local traffic
+Date:   Wed, 15 May 2019 12:56:42 +0200
+Message-Id: <20190515090623.514601590@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
 References: <20190515090616.670410738@linuxfoundation.org>
@@ -44,48 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit e9919a24d3022f72bcadc407e73a6ef17093a849 ]
+[ Upstream commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f ]
 
-With commit 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to
-fib_nl_newrule") we now able to check if a rule already exists. But this
-only works with iproute2. For other tools like libnl, NetworkManager,
-it still could add duplicate rules with only NLM_F_CREATE flag, like
+inet_iif should be used for the raw socket lookup. inet_iif considers
+rt_iif which handles the case of local traffic.
 
-[localhost ~ ]# ip rule
-0:      from all lookup local
-32766:  from all lookup main
-32767:  from all lookup default
-100000: from 192.168.7.5 lookup 5
-100000: from 192.168.7.5 lookup 5
+As it stands, ping to a local address with the '-I <dev>' option fails
+ever since ping was changed to use SO_BINDTODEVICE instead of
+cmsg + IP_PKTINFO.
 
-As it doesn't make sense to create two duplicate rules, let's just return
-0 if the rule exists.
+IPv6 works fine.
 
-Fixes: 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to fib_nl_newrule")
-Reported-by: Thomas Haller <thaller@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/fib_rules.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/ipv4/raw.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/core/fib_rules.c
-+++ b/net/core/fib_rules.c
-@@ -756,9 +756,9 @@ int fib_nl_newrule(struct sk_buff *skb,
- 	if (err)
- 		goto errout;
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -173,6 +173,7 @@ static int icmp_filter(const struct sock
+ static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
+ {
+ 	int sdif = inet_sdif(skb);
++	int dif = inet_iif(skb);
+ 	struct sock *sk;
+ 	struct hlist_head *head;
+ 	int delivered = 0;
+@@ -185,8 +186,7 @@ static int raw_v4_input(struct sk_buff *
  
--	if ((nlh->nlmsg_flags & NLM_F_EXCL) &&
--	    rule_exists(ops, frh, tb, rule)) {
--		err = -EEXIST;
-+	if (rule_exists(ops, frh, tb, rule)) {
-+		if (nlh->nlmsg_flags & NLM_F_EXCL)
-+			err = -EEXIST;
- 		goto errout_free;
- 	}
+ 	net = dev_net(skb->dev);
+ 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
+-			     iph->saddr, iph->daddr,
+-			     skb->dev->ifindex, sdif);
++			     iph->saddr, iph->daddr, dif, sdif);
  
+ 	while (sk) {
+ 		delivered = 1;
 
 
