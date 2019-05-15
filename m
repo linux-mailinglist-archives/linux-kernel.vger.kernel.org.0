@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F241EECD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300E81EF21
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732062AbfEOLZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:25:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36622 "EHLO mail.kernel.org"
+        id S1732698AbfEOLaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732049AbfEOLZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:25:50 -0400
+        id S1726584AbfEOLaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D284206BF;
-        Wed, 15 May 2019 11:25:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 468C22084A;
+        Wed, 15 May 2019 11:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919549;
-        bh=RgwmXrYQ83zdOZuHtIQ2WDfOT51GhqHrvZ5TTmhItSk=;
+        s=default; t=1557919812;
+        bh=Z4GpA9J3EViTNKyAvolCiSzizfWdwFOlxZxX4c3O2tI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o3vQonviCxucFC5HCUhszZJGsCC1DrFGCKgi+Ib+u2/m5qsCtXtTjcOZLATNMg3xl
-         jvr7V6vp4zvLTiFVzD3W5BSiXh8QGZbWXmY0sOvDaEF5JA9nhkjTj0d2D1m3gGhifJ
-         ITqa/3zoexvswdaYNZT2uwbExZGJ6BG/YzvYbVf4=
+        b=C+GnVcqusfSc856TGPe/cx48VQO0Ra4z/8cjFMarg7XQebMm1nBAn74XN/ieBbE0c
+         Xvsfqw96zwtGRHU31FpyK0DZmA73cbNY4MkTt380gj5xt1w965lsjzC8muTYfYBqNP
+         DEE+Yx1pG5xTvH59YHMMdzvutOJOI4Bz9CT27GYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 092/113] ipv4: Fix raw socket lookup for local traffic
-Date:   Wed, 15 May 2019 12:56:23 +0200
-Message-Id: <20190515090700.606264137@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.0 103/137] rtlwifi: rtl8723ae: Fix missing break in switch statement
+Date:   Wed, 15 May 2019 12:56:24 +0200
+Message-Id: <20190515090701.007123281@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f ]
+commit 84242b82d81c54e009a2aaa74d3d9eff70babf56 upstream.
 
-inet_iif should be used for the raw socket lookup. inet_iif considers
-rt_iif which handles the case of local traffic.
+Add missing break statement in order to prevent the code from falling
+through to case 0x1025, and erroneously setting rtlhal->oem_id to
+RT_CID_819X_ACER when rtlefuse->eeprom_svid is equal to 0x10EC and
+none of the cases in switch (rtlefuse->eeprom_smid) match.
 
-As it stands, ping to a local address with the '-I <dev>' option fails
-ever since ping was changed to use SO_BINDTODEVICE instead of
-cmsg + IP_PKTINFO.
+This bug was found thanks to the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-IPv6 works fine.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 238ad2ddf34b ("rtlwifi: rtl8723ae: Clean up the hardware info routine")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/raw.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -174,6 +174,7 @@ static int icmp_filter(const struct sock
- static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
- {
- 	int sdif = inet_sdif(skb);
-+	int dif = inet_iif(skb);
- 	struct sock *sk;
- 	struct hlist_head *head;
- 	int delivered = 0;
-@@ -186,8 +187,7 @@ static int raw_v4_input(struct sk_buff *
- 
- 	net = dev_net(skb->dev);
- 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
--			     iph->saddr, iph->daddr,
--			     skb->dev->ifindex, sdif);
-+			     iph->saddr, iph->daddr, dif, sdif);
- 
- 	while (sk) {
- 		delivered = 1;
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
+@@ -1697,6 +1697,7 @@ static void _rtl8723e_read_adapter_info(
+ 					rtlhal->oem_id = RT_CID_819X_LENOVO;
+ 					break;
+ 				}
++				break;
+ 			case 0x1025:
+ 				rtlhal->oem_id = RT_CID_819X_ACER;
+ 				break;
 
 
