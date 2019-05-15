@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF891EE2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C9181F23D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbfEOLSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
+        id S1730622AbfEOMAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:00:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730754AbfEOLSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:06 -0400
+        id S1729914AbfEOLO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E604C206BF;
-        Wed, 15 May 2019 11:18:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A15F1216FD;
+        Wed, 15 May 2019 11:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919085;
-        bh=fEl58TO3qbyRhsWQ3MIb3kKu4P+hvOm4yJGY1tFADg8=;
+        s=default; t=1557918869;
+        bh=KRNbchKjvaq9cxfAHE0Ungleyk2I7CgG96cii6I6HJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EXEqGlyo5BP7RGchqrN2tZL9q856fijiOS1zNKdPK5074ThNiod/y997TuGLppcpY
-         sFlf94YuQYe3yJUnwo1wUcNTB16Wih7c683P+Lc2KyYQN4rUvDzkuLlIK0ndhdghIA
-         yhz+0yt9NZk6VFV7XAskxY80YbY7Tny9L0OxITtU=
+        b=mW7VAdvsLLGqf1MIuw4DSYHgJ0VYiZQyP4YvG+W6EAEuwtJvjOmK3FR3Aj7BZJ4GA
+         umxDNFLpftAsgFiYdEOMgHOuyV5HcMUOtYiAF5A0/+lrA045oCqmgkb4vZkHYkzaST
+         wjhy/OmpQBTCYsMwI/xpVFJE8ifH5NvcmAK3fqF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/115] net: stmmac: Move debugfs init/exit to ->probe()/->remove()
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 07/51] libnvdimm/namespace: Fix a potential NULL pointer dereference
 Date:   Wed, 15 May 2019 12:55:42 +0200
-Message-Id: <20190515090704.047782660@linuxfoundation.org>
+Message-Id: <20190515090619.522764942@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,95 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5f2b8b62786853341a20d4cd4948f9cbca3db002 ]
+[ Upstream commit 55c1fc0af29a6c1b92f217b7eb7581a882e0c07c ]
 
-Setting up and tearing down debugfs is current unbalanced, as seen by
-this error during resume from suspend:
+In case kmemdup fails, the fix goes to blk_err to avoid NULL
+pointer dereference.
 
-    [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
-    [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
-
-The imbalance happens because the driver creates the debugfs hierarchy
-when the device is opened and tears it down when the device is closed.
-There's little gain in that, and it could be argued that it is even
-surprising because it's not usually done for other devices. Fix the
-imbalance by moving the debugfs creation and teardown to the driver's
-->probe() and ->remove() implementations instead.
-
-Note that the ring descriptors cannot be read while the interface is
-down, so make sure to return an empty file when the descriptors_status
-debugfs file is read.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/nvdimm/namespace_devs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 0f85e540001ff..f4df9ab0aed5f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2530,12 +2530,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
- 			netdev_warn(priv->dev, "PTP init failed\n");
- 	}
- 
--#ifdef CONFIG_DEBUG_FS
--	ret = stmmac_init_fs(dev);
--	if (ret < 0)
--		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
--			    __func__);
--#endif
- 	priv->tx_lpi_timer = STMMAC_DEFAULT_TWT_LS;
- 
- 	if ((priv->use_riwt) && (priv->hw->dma->rx_watchdog)) {
-@@ -2729,10 +2723,6 @@ static int stmmac_release(struct net_device *dev)
- 
- 	netif_carrier_off(dev);
- 
--#ifdef CONFIG_DEBUG_FS
--	stmmac_exit_fs(dev);
--#endif
--
- 	stmmac_release_ptp(priv);
- 
- 	return 0;
-@@ -3839,6 +3829,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
- 	u32 tx_count = priv->plat->tx_queues_to_use;
- 	u32 queue;
- 
-+	if ((dev->flags & IFF_UP) == 0)
-+		return 0;
-+
- 	for (queue = 0; queue < rx_count; queue++) {
- 		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
- 
-@@ -4310,6 +4303,13 @@ int stmmac_dvr_probe(struct device *device,
- 		goto error_netdev_register;
- 	}
- 
-+#ifdef CONFIG_DEBUG_FS
-+	ret = stmmac_init_fs(ndev);
-+	if (ret < 0)
-+		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
-+			    __func__);
-+#endif
-+
- 	return ret;
- 
- error_netdev_register:
-@@ -4343,6 +4343,9 @@ int stmmac_dvr_remove(struct device *dev)
- 
- 	netdev_info(priv->dev, "%s: removing driver", __func__);
- 
-+#ifdef CONFIG_DEBUG_FS
-+	stmmac_exit_fs(ndev);
-+#endif
- 	stmmac_stop_all_dma(priv);
- 
- 	priv->hw->mac->set_mac(priv->ioaddr, false);
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 9bc5f555ee686..cf4a90b50f8b8 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2028,9 +2028,12 @@ struct device *create_namespace_blk(struct nd_region *nd_region,
+ 	if (!nsblk->uuid)
+ 		goto blk_err;
+ 	memcpy(name, nd_label->name, NSLABEL_NAME_LEN);
+-	if (name[0])
++	if (name[0]) {
+ 		nsblk->alt_name = kmemdup(name, NSLABEL_NAME_LEN,
+ 				GFP_KERNEL);
++		if (!nsblk->alt_name)
++			goto blk_err;
++	}
+ 	res = nsblk_add_resource(nd_region, ndd, nsblk,
+ 			__le64_to_cpu(nd_label->dpa));
+ 	if (!res)
 -- 
 2.20.1
 
