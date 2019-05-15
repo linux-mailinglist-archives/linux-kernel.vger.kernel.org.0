@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3AF1F40A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 332AD1EDE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbfEOMSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:18:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
+        id S1730110AbfEOLOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:14:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbfEOLBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:01:14 -0400
+        id S1730085AbfEOLON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87DD720881;
-        Wed, 15 May 2019 11:01:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA92120881;
+        Wed, 15 May 2019 11:14:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918074;
-        bh=ZSxDdku1pIRQ+plPPBMgrIp8eq/1m2CAf4sNxgHP3kA=;
+        s=default; t=1557918853;
+        bh=2h4RZBvYY35P/AdQ40WgdooKRgk8s+apePeMFdS1hiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qr0/DdqjfnjZHffF1FUQkZk4v09/95wZTuMnHwLiWSj1Zw+G6VK8GbezBMrbCWvor
-         lh1nzQ4lj7duItNBzowG3AnR3r1ytVW+0oMtKvyFaMHv2yY99s1p6cnFjHhXCOScl5
-         Nr39eYGJSYo6Dv22/lBZtSdKfh+Ng88bE72lIIM8=
+        b=qL1LA2snmI73JoZ8EyOdFcMjMtSJhEOCmqq5FiEypRqEKm6q4UQYTssWRIC9loQl8
+         BlRD6FB5Oq2AYttHr7x7cEKpB1JWqnJcVHFbMCjt+sX/mB3w9o5YKmFN6UWJzbX6dX
+         IYRH5mTXuIPnZuJUsAk/WQKIUXLsjhqKGdQyK14U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 82/86] ipv4: Fix raw socket lookup for local traffic
+        stable@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 24/51] drm/sun4i: Set device driver data at bind time for use in unbind
 Date:   Wed, 15 May 2019 12:55:59 +0200
-Message-Id: <20190515090655.943557607@linuxfoundation.org>
+Message-Id: <20190515090624.134510798@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+[ Upstream commit 02b92adbe33e6dbd15dc6e32540b22f47c4ff0a2 ]
 
-[ Upstream commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f ]
+Our sun4i_drv_unbind gets the drm device using dev_get_drvdata.
+However, that driver data is never set in sun4i_drv_bind.
 
-inet_iif should be used for the raw socket lookup. inet_iif considers
-rt_iif which handles the case of local traffic.
+Set it there to avoid getting a NULL pointer at unbind time.
 
-As it stands, ping to a local address with the '-I <dev>' option fails
-ever since ping was changed to use SO_BINDTODEVICE instead of
-cmsg + IP_PKTINFO.
-
-IPv6 works fine.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190418132727.5128-3-paul.kocialkowski@bootlin.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/raw.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -158,6 +158,7 @@ static int icmp_filter(const struct sock
-  */
- static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
- {
-+	int dif = inet_iif(skb);
- 	struct sock *sk;
- 	struct hlist_head *head;
- 	int delivered = 0;
-@@ -170,8 +171,7 @@ static int raw_v4_input(struct sk_buff *
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 97828faf2a1ff..d58991b06a470 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -137,6 +137,8 @@ static int sun4i_drv_bind(struct device *dev)
+ 		ret = -ENOMEM;
+ 		goto free_drm;
+ 	}
++
++	dev_set_drvdata(dev, drm);
+ 	drm->dev_private = drv;
  
- 	net = dev_net(skb->dev);
- 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
--			     iph->saddr, iph->daddr,
--			     skb->dev->ifindex);
-+			     iph->saddr, iph->daddr, dif);
- 
- 	while (sk) {
- 		delivered = 1;
+ 	drm_vblank_init(drm, 1);
+-- 
+2.20.1
+
 
 
