@@ -2,124 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB33B1ECE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78AA31EC67
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfEOLCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:02:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbfEOLCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:02:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E054321773;
-        Wed, 15 May 2019 11:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918163;
-        bh=C/41zQokk2RkWXL4oom5Y6XlHM52K9uDoMPwKvbFLmM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IOp9LwCLQ1D8NpZ9Us6Gszmine5TTNUAt5xYZ0z7UH34RMs+IYTWzkvvHQk9adSzL
-         nmea41HzeNBP+wFdjAi79wzDbld5QHcfjPZL5damy3otOHgqHRo2rdDXLEnNwUYWZP
-         jnjt4U5kIV98ByvAY8VrgPEvWAX4lumwpG3ovtVU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.4 009/266] nfsd: Dont release the callback slot unless it was actually held
-Date:   Wed, 15 May 2019 12:51:56 +0200
-Message-Id: <20190515090722.973000199@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726557AbfEOKwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:52:01 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51356 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfEOKwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:52:01 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o189so2165475wmb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 03:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IY0nzwi9vKnpYmNvcMep+bJnSeq0GrA/o59QaEDPfVQ=;
+        b=K2uR2Hju4uVhWUovulzfQOZU2sVFJxpNv9FmCPIwXXyr2OfVIG8MmyjhceWV5Qcgwc
+         m/6Oie/dGfo/vulbf6FK7clXnTUuHqH3HmdEQDkPMbH+FWOYiSBzAeBrBpgs8RFhLFt3
+         I6nQbdna/eXio9Em1jQnzxl9jBTf0Cj38IBW5kQDc0QXS4ehFL+iKKP7MVR4gQU8jnoa
+         grpahXWuL73Jw6za1/HUgCW/4HKMq7mEW4Q2EelfNaUTf7RJneR/o/BbpQ9V3OudxzsY
+         X3vt87hz8kGlqdhIj0R9F18XwKuvKvZddF7io6HzFP+Ywxmlw4d5cJWgf0IvKyBo/L4a
+         c1Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IY0nzwi9vKnpYmNvcMep+bJnSeq0GrA/o59QaEDPfVQ=;
+        b=FZ5g+tvjimuKQ3qQPZcXPNN883NpGiAdyv18lfebmTQBabzhbejju69o9HbJ6zH++i
+         noZkKotW7MRORgTy9agJXF2OrpZww5DWTe0uxHwpLCswTRaNPSpJekJQOcmPfVspn7V3
+         bQfnZ+tsR2Xom2B2t1rGQftMurrU3QE/rxUr1mwlSHWafL5r3CL8Srs2TTWQQCNZoBEf
+         narTiet1B6XUE3mT8QagIC5nBvufDyGLNOe+FH8iwqbctCtcGJ42d7dj/synlT34czid
+         zyJlYWo/+BVMhzfKdo3FhypbLLvWHVL51oiUzSRJHBFBQbIi0+Ihg3Jn7Bv64hULWKek
+         Dx2A==
+X-Gm-Message-State: APjAAAUAOGq/T9nQ6Dl+lVON9UlHsLFc64whba1oFS9dcivSeZ9bFtdb
+        VEsK7Vq6CZMD2EqwiJDdU4G+YQ==
+X-Google-Smtp-Source: APXvYqwa5QWMFUDmftHE7rA4C0Yvc38krvWgUpgyt9+ZE5+St4UDo8Ytls1Q4BoTcgwZtiLaO+iAWg==
+X-Received: by 2002:a1c:eb07:: with SMTP id j7mr22011249wmh.138.1557917519110;
+        Wed, 15 May 2019 03:51:59 -0700 (PDT)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id y184sm2071278wmg.7.2019.05.15.03.51.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 03:51:58 -0700 (PDT)
+Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
+To:     Quentin Perret <quentin.perret@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
+        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
+        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
+        ionela.voinescu@arm.com, mka@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190515082318.7993-1-quentin.perret@arm.com>
+ <20190515082318.7993-3-quentin.perret@arm.com>
+ <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
+ <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
+ <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
+ <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
+ <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
+ <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
+ <20190515104043.vogspxgkapp6qsny@queper01-lin>
+ <20190515104651.tv5odug7ce4zlupc@queper01-lin>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <5b55e432-f8b0-91ae-a7de-fe02e0cad322@linaro.org>
+Date:   Wed, 15 May 2019 12:51:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190515104651.tv5odug7ce4zlupc@queper01-lin>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+On 15/05/2019 12:46, Quentin Perret wrote:
+> On Wednesday 15 May 2019 at 11:40:44 (+0100), Quentin Perret wrote:
 
-commit e6abc8caa6deb14be2a206253f7e1c5e37e9515b upstream.
+[ ... ]
 
-If there are multiple callbacks queued, waiting for the callback
-slot when the callback gets shut down, then they all currently
-end up acting as if they hold the slot, and call
-nfsd4_cb_sequence_done() resulting in interesting side-effects.
+>> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
+>>         if (capacitance) {
+>>                 ret = update_freq_table(cpufreq_cdev, capacitance);
+>>                 if (ret) {
+>>                         cdev = ERR_PTR(ret);
+>>                         goto remove_ida;
+>>                 }
+>> -
+>> -               cooling_ops = &cpufreq_power_cooling_ops;
+>> -       } else {
+>> -               cooling_ops = &cpufreq_cooling_ops;
+>>         }
+>> +#endif
+>> +       cooling_ops = &cpufreq_cooling_ops;
+> 
+> Argh, that is actually broken with !capacitance and
+> THERMAL_GOV_POWER_ALLOCATOR=y ... Perhaps it's best to keep the two
+> thermal_cooling_device_ops struct separated in the end.
 
-In addition, the 'retry_nowait' path in nfsd4_cb_sequence_done()
-causes a loop back to nfsd4_cb_prepare() without first freeing the
-slot, which causes a deadlock when nfsd41_cb_get_slot() gets called
-a second time.
+Or alternatively you can keep one structure but instead of filling the
+state2power,power2state and getrequestedpower fields in the declaration,
+you fill them in the if (capacitance) block, no?
 
-This patch therefore adds a boolean to track whether or not the
-callback did pick up the slot, so that it can do the right thing
-in these 2 cases.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/nfsd/nfs4callback.c |    8 +++++++-
- fs/nfsd/state.h        |    1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4callback.c
-+++ b/fs/nfsd/nfs4callback.c
-@@ -874,8 +874,9 @@ static void nfsd4_cb_prepare(struct rpc_
- 	cb->cb_seq_status = 1;
- 	cb->cb_status = 0;
- 	if (minorversion) {
--		if (!nfsd41_cb_get_slot(clp, task))
-+		if (!cb->cb_holds_slot && !nfsd41_cb_get_slot(clp, task))
- 			return;
-+		cb->cb_holds_slot = true;
- 	}
- 	rpc_call_start(task);
- }
-@@ -902,6 +903,9 @@ static bool nfsd4_cb_sequence_done(struc
- 		return true;
- 	}
- 
-+	if (!cb->cb_holds_slot)
-+		goto need_restart;
-+
- 	switch (cb->cb_seq_status) {
- 	case 0:
- 		/*
-@@ -939,6 +943,7 @@ static bool nfsd4_cb_sequence_done(struc
- 			cb->cb_seq_status);
- 	}
- 
-+	cb->cb_holds_slot = false;
- 	clear_bit(0, &clp->cl_cb_slot_busy);
- 	rpc_wake_up_next(&clp->cl_cb_waitq);
- 	dprintk("%s: freed slot, new seqid=%d\n", __func__,
-@@ -1146,6 +1151,7 @@ void nfsd4_init_cb(struct nfsd4_callback
- 	cb->cb_seq_status = 1;
- 	cb->cb_status = 0;
- 	cb->cb_need_restart = false;
-+	cb->cb_holds_slot = false;
- }
- 
- void nfsd4_run_cb(struct nfsd4_callback *cb)
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -70,6 +70,7 @@ struct nfsd4_callback {
- 	int cb_seq_status;
- 	int cb_status;
- 	bool cb_need_restart;
-+	bool cb_holds_slot;
- };
- 
- struct nfsd4_callback_ops {
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
