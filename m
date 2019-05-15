@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC32E1F838
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4262D1F839
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfEOQKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:10:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
+        id S1727640AbfEOQKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727383AbfEOQKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:10:18 -0400
-Subject: Re: [GIT PULL] More ACPI updates for v5.2-rc1
+        id S1727414AbfEOQKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 12:10:19 -0400
+Subject: Re: [GIT PULL] Kconfig updates for v5.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557936617;
-        bh=IaS8SR4msxQ33KhgErr361vWjOFHO3roJYspVJGIp78=;
+        s=default; t=1557936618;
+        bh=Oj1eADJ6J449F6bnEHMxmVxhjw3v/MGetE1yQnwKJnY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mTIuRhR/4ousfpQhbsLvP0zGTJOdB3Hf8LkRedlEDPOXnT9iMaaNV0pduFOr8L8xA
-         5cPVtNGJAXWoPMkWD/5x0zoicODAqxPRzbl0jGsjlnlx8NjVeSkGV8pQ0MvAB9fn6l
-         r4ycikdv9Q96APtQEf98FYVGC5eWyEau53y1Uh94=
+        b=LsOgKGVQhd9EsaUHusE296iydXKDMCkxuTSMzROIFtiRNy1eDUsag2q1mghanYD4L
+         r1BirHTo2+gK6F1sc7UmAGmNt3Gyeb3AM9F7D1A5w5qYd2gPhRjl8oPXzHnCc2N095
+         /qVdKoDwgkjpk94m4S9gpQ/o8usXM+eXvsHTgEA0=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0j3pD8rqiQoR7e3FbQx3JjaBh32f4+bHjxza00RsYBmcQ@mail.gmail.com>
-References: <CAJZ5v0j3pD8rqiQoR7e3FbQx3JjaBh32f4+bHjxza00RsYBmcQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAQoi24VYEVdwvmjD3CP=Q7_91KQ1o47ocL+MFPKnVBOKA@mail.gmail.com>
+References: <CAK7LNAQoi24VYEVdwvmjD3CP=Q7_91KQ1o47ocL+MFPKnVBOKA@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0j3pD8rqiQoR7e3FbQx3JjaBh32f4+bHjxza00RsYBmcQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
- acpi-5.2-rc1-2
-X-PR-Tracked-Commit-Id: e3e28670bb28ad52d0d0224e86ec11c3f31ff1ff
+X-PR-Tracked-Message-Id: <CAK7LNAQoi24VYEVdwvmjD3CP=Q7_91KQ1o47ocL+MFPKnVBOKA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+ tags/kconfig-v5.2
+X-PR-Tracked-Commit-Id: 9b9f5948afcdf583cb1b58e0c4cc327aa1820f5a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fcdec14365ec96f490cf1c8d9b618643ec88a95e
-Message-Id: <155793661754.5377.8436869417444896027.pr-tracker-bot@kernel.org>
-Date:   Wed, 15 May 2019 16:10:17 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+X-PR-Merge-Commit-Id: 2bbacd1a92788ee334c7e92b765ea16ebab68dfe
+Message-Id: <155793661882.5377.9104640459605426470.pr-tracker-bot@kernel.org>
+Date:   Wed, 15 May 2019 16:10:18 +0000
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        masahiroy@kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 15 May 2019 12:14:39 +0200:
+The pull request you sent on Thu, 16 May 2019 00:56:47 +0900:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-5.2-rc1-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kconfig-v5.2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fcdec14365ec96f490cf1c8d9b618643ec88a95e
+https://git.kernel.org/torvalds/c/2bbacd1a92788ee334c7e92b765ea16ebab68dfe
 
 Thank you!
 
