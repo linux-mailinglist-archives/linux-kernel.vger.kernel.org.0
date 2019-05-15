@@ -2,114 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1A71F480
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C611F484
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfEOMfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:35:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48316 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfEOMfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 08:35:37 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9CDD360ACE; Wed, 15 May 2019 12:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557923736;
-        bh=RPwOPoT9uzbHUfPdrm1EKq6ZA6S73yRB5cU5ZE4vTFQ=;
+        id S1726941AbfEOMfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:35:43 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9697 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726381AbfEOMfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 08:35:42 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 453vCw0wY9z9v07b;
+        Wed, 15 May 2019 14:35:40 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=rsqC9yrY; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id RtIn3Axkd-Ld; Wed, 15 May 2019 14:35:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 453vCv6fg6z9v07Y;
+        Wed, 15 May 2019 14:35:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1557923739; bh=/GdjFATaS1UOIQzQ8sKieXWhI3vCPWGoYpxxEpdcrnU=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hXOSew52hkHFmro4K45EZX8n2Xm075JUoCkLjcaAKoLLcASa4BpoTgbgjiP1ZYkC+
-         TtOzCbicrRfkNNC2KK/akgmlr+WlsSeGet0Zy3mEWGJk4imwFsAaClDpKury5EZm5v
-         JjA8STUgQvrKLGczmgwgPYK9mhvLimVRVrZLipDc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 89E8660850;
-        Wed, 15 May 2019 12:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557923736;
-        bh=RPwOPoT9uzbHUfPdrm1EKq6ZA6S73yRB5cU5ZE4vTFQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hXOSew52hkHFmro4K45EZX8n2Xm075JUoCkLjcaAKoLLcASa4BpoTgbgjiP1ZYkC+
-         TtOzCbicrRfkNNC2KK/akgmlr+WlsSeGet0Zy3mEWGJk4imwFsAaClDpKury5EZm5v
-         JjA8STUgQvrKLGczmgwgPYK9mhvLimVRVrZLipDc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89E8660850
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH] objtool: Allow AR to be overridden with HOSTAR
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
-References: <20190514224047.28505-1-natechancellor@gmail.com>
-From:   Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <2bdc6dfa-bbe8-208f-fab5-30d67573345c@codeaurora.org>
-Date:   Wed, 15 May 2019 18:05:30 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        b=rsqC9yrYPBMpJ5pM8DIy1XAhTeOQnA9pRBs8Cz6bscwAoIWyo5+QCGacntC3SJPBc
+         D17NDN/jTH7NuGGQEsgUqto4i6UhlU7EpFmqpB5zK9DFYCT3dJKaMlB3CjEHeg3U+Q
+         yA/ke3rxoVkHXrEps/nrhMEDngrDN5aPDo1GEd50=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 415D78B905;
+        Wed, 15 May 2019 14:35:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Mavw7iuCReRH; Wed, 15 May 2019 14:35:40 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1B9A38B904;
+        Wed, 15 May 2019 14:35:40 +0200 (CEST)
+Subject: Re: [PATCH stable 4.9] powerpc/lib: fix book3s/32 boot failure due to
+ code patching
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, erhard_f@mailbox.org,
+        Michael Neuling <mikey@neuling.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <629c2acb1fcd09c2d2e3352370c3d9853372cf39.1557902321.git.christophe.leroy@c-s.fr>
+ <20190515082931.GA28349@kroah.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <9e58348f-da2d-34bc-d016-7817b3566e01@c-s.fr>
+Date:   Wed, 15 May 2019 14:35:36 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190514224047.28505-1-natechancellor@gmail.com>
+In-Reply-To: <20190515082931.GA28349@kroah.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 5/15/2019 4:10 AM, Nathan Chancellor wrote:
-> Currently, this Makefile hardcodes GNU ar, meaning that if it is not
-> available, there is no way to supply a different one and the build will
-> fail.
->
-> $ make AR=llvm-ar CC=clang LD=ld.lld HOSTAR=llvm-ar HOSTCC=clang \
->         HOSTLD=ld.lld HOSTLDFLAGS=-fuse-ld=lld defconfig modules_prepare
-> ...
->    AR       /out/tools/objtool/libsubcmd.a
-> /bin/sh: 1: ar: not found
-> ...
->
-> Follow the logic of HOST{CC,LD} and allow the user to specify a
-> different ar tool via HOSTAR (which is used elsewhere in other
-> tools/ Makefiles).
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/481
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
+Le 15/05/2019 à 10:29, Greg KH a écrit :
+> On Wed, May 15, 2019 at 06:40:47AM +0000, Christophe Leroy wrote:
+>> [Backport of upstream commit b45ba4a51cde29b2939365ef0c07ad34c8321789]
+>>
+>> On powerpc32, patch_instruction() is called by apply_feature_fixups()
+>> which is called from early_init()
+>>
+>> There is the following note in front of early_init():
+>>   * Note that the kernel may be running at an address which is different
+>>   * from the address that it was linked at, so we must use RELOC/PTRRELOC
+>>   * to access static data (including strings).  -- paulus
+>>
+>> Therefore init_mem_is_free must be accessed with PTRRELOC()
+>>
+>> Fixes: 1c38a84d4586 ("powerpc: Avoid code patching freed init sections")
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203597
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>
+>> ---
+>> Can't apply the upstream commit as such due to several other unrelated stuff
+>> like for instance STRICT_KERNEL_RWX which are missing.
+>> So instead, using same approach as for commit 252eb55816a6f69ef9464cad303cdb3326cdc61d
+> 
+> Now queued up, thanks.
+> 
 
-Nice catch.
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Should go to 4.4 as well since the commit it fixes is now queued for 4.4 
+([PATCH 4.4 056/266] powerpc: Avoid code patching freed init sections)
 
-Cheers,
--Mukesh
-
-> ---
->   tools/objtool/Makefile | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> index 53f8be0f4a1f..88158239622b 100644
-> --- a/tools/objtool/Makefile
-> +++ b/tools/objtool/Makefile
-> @@ -7,11 +7,12 @@ ARCH := x86
->   endif
->   
->   # always use the host compiler
-> +HOSTAR	?= ar
->   HOSTCC	?= gcc
->   HOSTLD	?= ld
-> +AR	 = $(HOSTAR)
->   CC	 = $(HOSTCC)
->   LD	 = $(HOSTLD)
-> -AR	 = ar
->   
->   ifeq ($(srctree),)
->   srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+Christophe
