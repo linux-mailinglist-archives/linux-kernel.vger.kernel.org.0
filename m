@@ -2,48 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291161F03F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DF71EE50
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732151AbfEOL2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:28:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39244 "EHLO mail.kernel.org"
+        id S1731055AbfEOLUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731867AbfEOL2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:28:15 -0400
+        id S1731034AbfEOLT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7096021473;
-        Wed, 15 May 2019 11:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7448620881;
+        Wed, 15 May 2019 11:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919693;
-        bh=ydrEjqHEAiyBRNf7KIBx4f+PYX63jEF42xjZ88975Do=;
+        s=default; t=1557919195;
+        bh=ElrGX+Yq9aMBxYZVBJ4UYV8jxQRo0ImO0s1prI7VPgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mteid7n3fzJM6LqLMpk9CwYXhL33QLMeYot/RmxinrsmJtMqqiT9ZcBa4Ec6YpnsH
-         xUnSTotoiuoYXN1YYir+drHYKiGXweA6mGGkS5dkEpmIEJeImM4rg0oOcx5cuBmOkz
-         LGBUAupvNu1yizcx6M/grmrmag1U1FL92OuFpE1o=
+        b=Jk4CALB9FNmvs0VOdPCjNvQV4L1NRNxfnKmoyaUbChG1rrCcb1gAdMzWSejQkr9K/
+         rVizrAsh/9+l+gKAjmIicWPGHu1iDyc5kwFJhAQIYLcQWTn+6rhCj9sxaSfA4XQ1qQ
+         vWVrdmfy1UvQmTSbYqei/lYYgBTue3rKTVqKLTLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 057/137] perf tools: Fix map reference counting
+        stable@vger.kernel.org, stable@kernel.org,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 058/115] tracing/fgraph: Fix set_graph_function from showing interrupts
 Date:   Wed, 15 May 2019 12:55:38 +0200
-Message-Id: <20190515090657.634665827@linuxfoundation.org>
+Message-Id: <20190515090703.787490309@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,73 +45,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b9abbdfa88024d52c8084d8f46ea4f161606c692 ]
+[ Upstream commit 5cf99a0f3161bc3ae2391269d134d6bf7e26f00e ]
 
-By calling maps__insert() we assume to get 2 references on the map,
-which we relese within maps__remove call.
+The tracefs file set_graph_function is used to only function graph functions
+that are listed in that file (or all functions if the file is empty). The
+way this is implemented is that the function graph tracer looks at every
+function, and if the current depth is zero and the function matches
+something in the file then it will trace that function. When other functions
+are called, the depth will be greater than zero (because the original
+function will be at depth zero), and all functions will be traced where the
+depth is greater than zero.
 
-However if there's already same map name, we currently don't bump the
-reference and can crash, like:
+The issue is that when a function is first entered, and the handler that
+checks this logic is called, the depth is set to zero. If an interrupt comes
+in and a function in the interrupt handler is traced, its depth will be
+greater than zero and it will automatically be traced, even if the original
+function was not. But because the logic only looks at depth it may trace
+interrupts when it should not be.
 
-  Program received signal SIGABRT, Aborted.
-  0x00007ffff75e60f5 in raise () from /lib64/libc.so.6
+The recent design change of the function graph tracer to fix other bugs
+caused the depth to be zero while the function graph callback handler is
+being called for a longer time, widening the race of this happening. This
+bug was actually there for a longer time, but because the race window was so
+small it seldom happened. The Fixes tag below is for the commit that widen
+the race window, because that commit belongs to a series that will also help
+fix the original bug.
 
-  (gdb) bt
-  #0  0x00007ffff75e60f5 in raise () from /lib64/libc.so.6
-  #1  0x00007ffff75d0895 in abort () from /lib64/libc.so.6
-  #2  0x00007ffff75d0769 in __assert_fail_base.cold () from /lib64/libc.so.6
-  #3  0x00007ffff75de596 in __assert_fail () from /lib64/libc.so.6
-  #4  0x00000000004fc006 in refcount_sub_and_test (i=1, r=0x1224e88) at tools/include/linux/refcount.h:131
-  #5  refcount_dec_and_test (r=0x1224e88) at tools/include/linux/refcount.h:148
-  #6  map__put (map=0x1224df0) at util/map.c:299
-  #7  0x00000000004fdb95 in __maps__remove (map=0x1224df0, maps=0xb17d80) at util/map.c:953
-  #8  maps__remove (maps=0xb17d80, map=0x1224df0) at util/map.c:959
-  #9  0x00000000004f7d8a in map_groups__remove (map=<optimized out>, mg=<optimized out>) at util/map_groups.h:65
-  #10 machine__process_ksymbol_unregister (sample=<optimized out>, event=0x7ffff7279670, machine=<optimized out>) at util/machine.c:728
-  #11 machine__process_ksymbol (machine=<optimized out>, event=0x7ffff7279670, sample=<optimized out>) at util/machine.c:741
-  #12 0x00000000004fffbb in perf_session__deliver_event (session=0xb11390, event=0x7ffff7279670, tool=0x7fffffffc7b0, file_offset=13936) at util/session.c:1362
-  #13 0x00000000005039bb in do_flush (show_progress=false, oe=0xb17e80) at util/ordered-events.c:243
-  #14 __ordered_events__flush (oe=0xb17e80, how=OE_FLUSH__ROUND, timestamp=<optimized out>) at util/ordered-events.c:322
-  #15 0x00000000005005e4 in perf_session__process_user_event (session=session@entry=0xb11390, event=event@entry=0x7ffff72a4af8,
-  ...
-
-Add the map to the list and getting the reference event if we find the
-map with same name.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Fixes: 1e6285699b30 ("perf symbols: Fix slowness due to -ffunction-section")
-Link: http://lkml.kernel.org/r/20190416160127.30203-10-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@kernel.org
+Fixes: 39eb456dacb5 ("function_graph: Use new curr_ret_depth to manage depth instead of curr_ret_stack")
+Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/perf/util/map.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/trace/trace.h                 | 57 ++++++++++++++++++++++++++--
+ kernel/trace/trace_functions_graph.c |  4 ++
+ kernel/trace/trace_irqsoff.c         |  2 +
+ kernel/trace/trace_sched_wakeup.c    |  2 +
+ 4 files changed, 62 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 2b37f56f05493..e33f20d16c8d6 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -904,10 +904,8 @@ static void __maps__insert_name(struct maps *maps, struct map *map)
- 		rc = strcmp(m->dso->short_name, map->dso->short_name);
- 		if (rc < 0)
- 			p = &(*p)->rb_left;
--		else if (rc  > 0)
--			p = &(*p)->rb_right;
- 		else
--			return;
-+			p = &(*p)->rb_right;
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 851cd16050857..a51e32de7c5f7 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -504,12 +504,44 @@ enum {
+  * can only be modified by current, we can reuse trace_recursion.
+  */
+ 	TRACE_IRQ_BIT,
++
++	/* Set if the function is in the set_graph_function file */
++	TRACE_GRAPH_BIT,
++
++	/*
++	 * In the very unlikely case that an interrupt came in
++	 * at a start of graph tracing, and we want to trace
++	 * the function in that interrupt, the depth can be greater
++	 * than zero, because of the preempted start of a previous
++	 * trace. In an even more unlikely case, depth could be 2
++	 * if a softirq interrupted the start of graph tracing,
++	 * followed by an interrupt preempting a start of graph
++	 * tracing in the softirq, and depth can even be 3
++	 * if an NMI came in at the start of an interrupt function
++	 * that preempted a softirq start of a function that
++	 * preempted normal context!!!! Luckily, it can't be
++	 * greater than 3, so the next two bits are a mask
++	 * of what the depth is when we set TRACE_GRAPH_BIT
++	 */
++
++	TRACE_GRAPH_DEPTH_START_BIT,
++	TRACE_GRAPH_DEPTH_END_BIT,
+ };
+ 
+ #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
+ #define trace_recursion_clear(bit)	do { (current)->trace_recursion &= ~(1<<(bit)); } while (0)
+ #define trace_recursion_test(bit)	((current)->trace_recursion & (1<<(bit)))
+ 
++#define trace_recursion_depth() \
++	(((current)->trace_recursion >> TRACE_GRAPH_DEPTH_START_BIT) & 3)
++#define trace_recursion_set_depth(depth) \
++	do {								\
++		current->trace_recursion &=				\
++			~(3 << TRACE_GRAPH_DEPTH_START_BIT);		\
++		current->trace_recursion |=				\
++			((depth) & 3) << TRACE_GRAPH_DEPTH_START_BIT;	\
++	} while (0)
++
+ #define TRACE_CONTEXT_BITS	4
+ 
+ #define TRACE_FTRACE_START	TRACE_FTRACE_BIT
+@@ -839,8 +871,9 @@ extern void __trace_graph_return(struct trace_array *tr,
+ extern struct ftrace_hash *ftrace_graph_hash;
+ extern struct ftrace_hash *ftrace_graph_notrace_hash;
+ 
+-static inline int ftrace_graph_addr(unsigned long addr)
++static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+ {
++	unsigned long addr = trace->func;
+ 	int ret = 0;
+ 
+ 	preempt_disable_notrace();
+@@ -851,6 +884,14 @@ static inline int ftrace_graph_addr(unsigned long addr)
  	}
- 	rb_link_node(&map->rb_node_name, parent, p);
- 	rb_insert_color(&map->rb_node_name, &maps->names);
+ 
+ 	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
++
++		/*
++		 * This needs to be cleared on the return functions
++		 * when the depth is zero.
++		 */
++		trace_recursion_set(TRACE_GRAPH_BIT);
++		trace_recursion_set_depth(trace->depth);
++
+ 		/*
+ 		 * If no irqs are to be traced, but a set_graph_function
+ 		 * is set, and called by an interrupt handler, we still
+@@ -868,6 +909,13 @@ static inline int ftrace_graph_addr(unsigned long addr)
+ 	return ret;
+ }
+ 
++static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
++{
++	if (trace_recursion_test(TRACE_GRAPH_BIT) &&
++	    trace->depth == trace_recursion_depth())
++		trace_recursion_clear(TRACE_GRAPH_BIT);
++}
++
+ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ {
+ 	int ret = 0;
+@@ -881,7 +929,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ 	return ret;
+ }
+ #else
+-static inline int ftrace_graph_addr(unsigned long addr)
++static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+ {
+ 	return 1;
+ }
+@@ -890,6 +938,8 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ {
+ 	return 0;
+ }
++static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
++{ }
+ #endif /* CONFIG_DYNAMIC_FTRACE */
+ 
+ extern unsigned int fgraph_max_depth;
+@@ -897,7 +947,8 @@ extern unsigned int fgraph_max_depth;
+ static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
+ {
+ 	/* trace it when it is-nested-in or is a function enabled. */
+-	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
++	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
++		 ftrace_graph_addr(trace)) ||
+ 		(trace->depth < 0) ||
+ 		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
+ }
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 169b3c44ee97f..72d0d477f5c16 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -482,6 +482,8 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
+ 	int cpu;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	local_irq_save(flags);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
+@@ -505,6 +507,8 @@ void set_graph_array(struct trace_array *tr)
+ 
+ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
+ {
++	ftrace_graph_addr_finish(trace);
++
+ 	if (tracing_thresh &&
+ 	    (trace->rettime - trace->calltime < tracing_thresh))
+ 		return;
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 7758bc0617cb1..2d9e12380dc3b 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -204,6 +204,8 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	if (!func_prolog_dec(tr, &data, &flags))
+ 		return;
+ 
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index 7d461dcd48318..0fa9dadf3f4f2 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -270,6 +270,8 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	if (!func_prolog_preempt_disable(tr, &data, &pc))
+ 		return;
+ 
 -- 
 2.20.1
 
