@@ -2,39 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EADE1EDE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F30B1F1D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbfEOLOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50714 "EHLO mail.kernel.org"
+        id S1731022AbfEOL4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:56:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfEOLOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:34 -0400
+        id S1730581AbfEOLSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E63B320644;
-        Wed, 15 May 2019 11:14:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFC22206BF;
+        Wed, 15 May 2019 11:18:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918874;
-        bh=lk1Uf4zzSURzti2jY3EY/WMJP1XeQtaGBpeS83/XbuA=;
+        s=default; t=1557919090;
+        bh=ZdlgUYYrg5Dgeru0jn3XYz+piIt2uQk0pzg45Hi95yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sYJ0eLEu8tjZDbdhjpHx1Ac3pZuuxmqG7Lum54rOV0kqFEFArC+OB4dxwfOW6ETrM
-         t533KHufjkNbgTUKcscTiPobr5QlT50FxMTgdFtIt6s+aKwPGWqtIILC+QSMVG2y30
-         vsdCxCYfLlMa1EH2zKNmnEChaBQMW2xMM/MPOMX4=
+        b=x+zTDlQDopXdr5btLbspE7MhYiaKPFSR9tFa/5PpNw8kZtVzi09so1YNwQ8kETH1X
+         y0JWwCeEN4JONeTImR2AvFNg7+bJpDplFllp71rVTFeK3IiNujVeeoTiCodoxZTx6d
+         NnzQ9oxjWBku6nCX1s9eTgZjGZNRjazis4eHjxjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 09/51] HID: input: add mapping for keyboard Brightness Up/Down/Toggle keys
+        stable@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
+        Carlos ODonell <carlos@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        kernel-team@android.com, Thomas Gleixner <tglx@linutronix.de>,
+        X86 ML <x86@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 064/115] x86/vdso: Pass --eh-frame-hdr to the linker
 Date:   Wed, 15 May 2019 12:55:44 +0200
-Message-Id: <20190515090620.180254085@linuxfoundation.org>
+Message-Id: <20190515090704.175034368@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +53,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7975a1d6a7afeb3eb61c971a153d24dd8fa032f3 ]
+[ Upstream commit cd01544a268ad8ee5b1dfe42c4393f1095f86879 ]
 
-According to HUTRR73 usages 0x79, 0x7a and 0x7c from the consumer page
-correspond to Brightness Up/Down/Toggle keys, so let's add the mappings.
+Commit
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+
+accidentally broke unwinding from userspace, because ld would strip the
+.eh_frame sections when linking.
+
+Originally, the compiler would implicitly add --eh-frame-hdr when
+invoking the linker, but when this Makefile was converted from invoking
+ld via the compiler, to invoking it directly (like vmlinux does),
+the flag was missed. (The EH_FRAME section is important for the VDSO
+shared libraries, but not for vmlinux.)
+
+Fix the problem by explicitly specifying --eh-frame-hdr, which restores
+parity with the old method.
+
+See relevant bug reports for additional info:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=201741
+  https://bugzilla.redhat.com/show_bug.cgi?id=1659295
+
+Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Reported-by: Florian Weimer <fweimer@redhat.com>
+Reported-by: Carlos O'Donell <carlos@redhat.com>
+Reported-by: "H. J. Lu" <hjl.tools@gmail.com>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Carlos O'Donell <carlos@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: X86 ML <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181214223637.35954-1-astrachan@google.com
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/hid/hid-input.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/entry/vdso/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index d31725c4e7b1e..302a24931147b 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -802,6 +802,10 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 		case 0x074: map_key_clear(KEY_BRIGHTNESS_MAX);		break;
- 		case 0x075: map_key_clear(KEY_BRIGHTNESS_AUTO);		break;
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 839015f1b0de0..ab7f730cf7f22 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -182,7 +182,8 @@ quiet_cmd_vdso = VDSO    $@
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
  
-+		case 0x079: map_key_clear(KEY_KBDILLUMUP);	break;
-+		case 0x07a: map_key_clear(KEY_KBDILLUMDOWN);	break;
-+		case 0x07c: map_key_clear(KEY_KBDILLUMTOGGLE);	break;
-+
- 		case 0x082: map_key_clear(KEY_VIDEO_NEXT);	break;
- 		case 0x083: map_key_clear(KEY_LAST);		break;
- 		case 0x084: map_key_clear(KEY_ENTER);		break;
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+-	$(call ld-option, --build-id) -Bsymbolic
++	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
++	-Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
 -- 
 2.20.1
 
