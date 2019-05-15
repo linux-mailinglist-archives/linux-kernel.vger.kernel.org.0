@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71641E819
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B471E81E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfEOGCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 02:02:52 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:51096 "EHLO inva021.nxp.com"
+        id S1726084AbfEOGGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 02:06:02 -0400
+Received: from orcrist.hmeau.com ([5.180.42.13]:34972 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfEOGCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 02:02:52 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B8162200196;
-        Wed, 15 May 2019 08:02:50 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0463B200012;
-        Wed, 15 May 2019 08:02:47 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 064C24029A;
-        Wed, 15 May 2019 14:02:41 +0800 (SGT)
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
-Subject: [RESEND][PATCH] arm64: dts: lx2160a: Enable usb3-lpm-capable for usb3 node
-Date:   Wed, 15 May 2019 14:04:34 +0800
-Message-Id: <20190515060434.33581-1-ran.wang_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725857AbfEOGGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 02:06:01 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hQn37-0001Sz-Tb; Wed, 15 May 2019 14:05:57 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hQn32-0004ja-LG; Wed, 15 May 2019 14:05:52 +0800
+Date:   Wed, 15 May 2019 14:05:52 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT] Crypto Fixes for 5.2
+Message-ID: <20190515060552.ecfwhazt2fnthepg@gondor.apana.org.au>
+References: <20180212031702.GA26153@gondor.apana.org.au>
+ <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
+ <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+ <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
+ <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
+ <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
+ <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
+ <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
+ <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
+ <20190312045818.bgpiuxogmaxyscdv@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190312045818.bgpiuxogmaxyscdv@gondor.apana.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable USB3 HW LPM feature for lx2160a and active patch for
-snps erratum A-010131. It will disable U1/U2 temperary when
-initiate U3 request.
+Hi Linus: 
 
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
----
-Depend on: https://lore.kernel.org/patchwork/patch/870134/
+This push fixes a number of issues in the chelsio driver and the
+caam driver.
 
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-index 125a8cc..0073df3 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -696,6 +696,8 @@
- 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
-+			usb3-lpm-capable;
-+			snps,dis-u1u2-when-u3-quirk;
- 			snps,dis_rxdet_inp3_quirk;
- 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 			status = "disabled";
-@@ -707,6 +709,8 @@
- 			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 			dr_mode = "host";
- 			snps,quirk-frame-length-adjustment = <0x20>;
-+			usb3-lpm-capable;
-+			snps,dis-u1u2-when-u3-quirk;
- 			snps,dis_rxdet_inp3_quirk;
- 			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
- 			status = "disabled";
+Please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+
+
+Atul Gupta (4):
+      crypto: chelsio - Fix NULL pointer dereference
+      crypto: chelsio - Fix softlockup with heavy I/O
+      crypto: chelsio - count incomplete block in IV
+      MAINTAINERS: Maintainer for Chelsio crypto driver
+
+Herbert Xu (2):
+      crypto: caam - fix DKP detection logic
+      Revert "crypto: caam/jr - Remove extra memory barrier during job ring dequeue"
+
+Iuliana Prodan (1):
+      crypto: caam - fix caam_dump_sg that iterates through scatterlist
+
+ MAINTAINERS                         |  2 +-
+ drivers/crypto/caam/caamalg.c       |  9 +++++++--
+ drivers/crypto/caam/caamalg_qi.c    |  7 +++++--
+ drivers/crypto/caam/caamalg_qi2.c   |  8 +++++++-
+ drivers/crypto/caam/error.c         |  2 +-
+ drivers/crypto/caam/jr.c            |  2 +-
+ drivers/crypto/caam/regs.h          |  8 --------
+ drivers/crypto/chelsio/chcr_algo.c  | 17 +++++------------
+ drivers/crypto/chelsio/chcr_core.c  |  4 ----
+ drivers/crypto/chelsio/chcr_ipsec.c |  3 ++-
+ 10 files changed, 29 insertions(+), 33 deletions(-)
+
+Thanks,
 -- 
-1.7.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
