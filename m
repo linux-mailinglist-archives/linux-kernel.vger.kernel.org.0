@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C731ECC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E09D91EF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfEOLB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:01:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58430 "EHLO mail.kernel.org"
+        id S1732595AbfEOLbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:31:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727699AbfEOLBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:01:25 -0400
+        id S1732866AbfEOLbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:31:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E307A2173C;
-        Wed, 15 May 2019 11:01:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E36CE20818;
+        Wed, 15 May 2019 11:31:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918084;
-        bh=6zO7tVXG4/5IUdBroFzjK/pJRlz3x3muihcqwl8q3JA=;
+        s=default; t=1557919873;
+        bh=OVadQS8FRq9U3Y0HptqM8n/noUKP+J7NSlQ65DfLFaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TX5RBK60FmreAgva6/P1Lzra+/Bej6xEcYgZ4CoRUTc95OThfU47XJ7IYqtNvasEK
-         9+eQ0WdwkQljS/iBfH640HImLseOtVw+l4/3yoJUZm7XKygjKR/LN7K06obdDgb8tk
-         U30qUK9adelDYpJssiAkDjkrtLPtzrRaVs+gccvk=
+        b=LufkawC4ptpJorKECUN8ZzsD43U128s6UsYDXN00YnOrHerf9WozE9iKB6pJiiXHj
+         1hqnEGEgzqnJ1w6SipLBu3glZ5mo6+RenSH3wDH9dtdlhhlOslccR+lcDuOJz3mIDc
+         8vq5xUGnfHpQ+W6U/UCYrmCe2vNhO8i1ZjfcSEig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 86/86] powerpc/booke64: set RI in default MSR
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 082/137] drm/imx: dont skip DP channel disable for background plane
 Date:   Wed, 15 May 2019 12:56:03 +0200
-Message-Id: <20190515090656.280594555@linuxfoundation.org>
+Message-Id: <20190515090659.462701393@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+[ Upstream commit 7bcde275eb1d0ac8793c77c7e666a886eb16633d ]
 
-commit 5266e58d6cd90ac85c187d673093ad9cb649e16d upstream.
+In order to make sure that the plane color space gets reset correctly.
 
-Set RI in the default kernel's MSR so that the architected way of
-detecting unrecoverable machine check interrupts has a chance to work.
-This is inline with the MSR setup of the rest of booke powerpc
-architectures configured here.
-
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/reg_booke.h |    2 +-
+ drivers/gpu/drm/imx/ipuv3-crtc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/reg_booke.h
-+++ b/arch/powerpc/include/asm/reg_booke.h
-@@ -41,7 +41,7 @@
- #if defined(CONFIG_PPC_BOOK3E_64)
- #define MSR_64BIT	MSR_CM
+diff --git a/drivers/gpu/drm/imx/ipuv3-crtc.c b/drivers/gpu/drm/imx/ipuv3-crtc.c
+index 058b53c0aa7ec..1bb3e598cb843 100644
+--- a/drivers/gpu/drm/imx/ipuv3-crtc.c
++++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
+@@ -70,7 +70,7 @@ static void ipu_crtc_disable_planes(struct ipu_crtc *ipu_crtc,
+ 	if (disable_partial)
+ 		ipu_plane_disable(ipu_crtc->plane[1], true);
+ 	if (disable_full)
+-		ipu_plane_disable(ipu_crtc->plane[0], false);
++		ipu_plane_disable(ipu_crtc->plane[0], true);
+ }
  
--#define MSR_		(MSR_ME | MSR_CE)
-+#define MSR_		(MSR_ME | MSR_RI | MSR_CE)
- #define MSR_KERNEL	(MSR_ | MSR_64BIT)
- #define MSR_USER32	(MSR_ | MSR_PR | MSR_EE)
- #define MSR_USER64	(MSR_USER32 | MSR_64BIT)
+ static void ipu_crtc_atomic_disable(struct drm_crtc *crtc,
+-- 
+2.20.1
+
 
 
