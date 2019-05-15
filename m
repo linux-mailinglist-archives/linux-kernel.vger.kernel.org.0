@@ -2,168 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24AE1208B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537131FBC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 22:52:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfEPN4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:56:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51804 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbfEPN4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:56:06 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1626C37EEB;
-        Thu, 16 May 2019 13:56:06 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 796B160BE0;
-        Thu, 16 May 2019 13:55:58 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 753F0105183;
-        Wed, 15 May 2019 17:44:03 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x4FKhx2W011002;
-        Wed, 15 May 2019 17:43:59 -0300
-Date:   Wed, 15 May 2019 17:43:59 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Ankur Arora <ankur.a.arora@oracle.com>
-Cc:     Wanpeng Li <kernellwp@gmail.com>, kvm-devel <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Bandan Das <bsd@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] sched: introduce configurable delay before entering idle
-Message-ID: <20190515204356.GB31128@amt.cnet>
-References: <20190507185647.GA29409@amt.cnet>
- <CANRm+Cx8zCDG6Oz1m9eukkmx_uVFYcQOdMwZrHwsQcbLm_kuPA@mail.gmail.com>
- <20190514135022.GD4392@amt.cnet>
- <7e390fef-e0df-963f-4e18-e44ac2766be3@oracle.com>
+        id S1727105AbfEOUwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 16:52:36 -0400
+Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:13892 "EHLO
+        rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfEOUwg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 16:52:36 -0400
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 May 2019 16:52:36 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=830; q=dns/txt; s=iport;
+  t=1557953555; x=1559163155;
+  h=from:to:cc:subject:date:message-id:content-id:
+   content-transfer-encoding:mime-version;
+  bh=1EW9TDbzRse7TuuGkbStZdCP/HtthI7NcbjgmX//ktw=;
+  b=TQyMq4EVleS+nUmu94foB+/u0+mXVxX8REBkb0u4HRAubFRAt5iZ7L1S
+   12md6mTNEYYG0DX6+Am9yrBaWcjh+GV1qBPS5VgktHYGq8BP7cNOniQ26
+   yDXiQa/PrMne8ycNMBYOv97l1+lkqG+P6MTBlv9YOSu+rTUyeZ3VydeXh
+   g=;
+IronPort-PHdr: =?us-ascii?q?9a23=3AEtOF/hDQqbSWv3TG3Z/+UyQJPHJ1sqjoPgMT9p?=
+ =?us-ascii?q?ssgq5PdaLm5Zn5IUjD/qs03kTRU9Dd7PRJw6rNvqbsVHZIwK7JsWtKMfkuHw?=
+ =?us-ascii?q?QAld1QmgUhBMCfDkiuN/7lZio1FcJqX15+9Hb9Ok9QS47z?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AVDwC1edxc/4sNJK1kHQIfBQeBTQK?=
+ =?us-ascii?q?BKBRQA4E+IAQLKIQRg0cDjnKCMpdKglIDVAkBAQEMAQEtAgEBhEAZghQjNwY?=
+ =?us-ascii?q?OAQMBAQQBAQIBBG0cAQuFTRYREQwBATcBEQEiAiYCBDAVEgQOJ4MAgWsDHQE?=
+ =?us-ascii?q?CoRoCgTWIX3GBL4J5AQEFgkeCOhiCDwmBCyYCAQEBAYtLF4FAP4E4DBOCTIg?=
+ =?us-ascii?q?MMoImixuCRYZokxUJAoIJApJcFAeCBJNqLYwHlQoCBAIEBQIOAQEFgWUiKYE?=
+ =?us-ascii?q?ucBVlAYJBghgag0yKU3KBKY9GAQE?=
+X-IronPort-AV: E=Sophos;i="5.60,474,1549929600"; 
+   d="scan'208";a="558122177"
+Received: from alln-core-6.cisco.com ([173.36.13.139])
+  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 15 May 2019 20:45:30 +0000
+Received: from XCH-RCD-016.cisco.com (xch-rcd-016.cisco.com [173.37.102.26])
+        by alln-core-6.cisco.com (8.15.2/8.15.2) with ESMTPS id x4FKjU44019581
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 15 May 2019 20:45:30 GMT
+Received: from xhs-aln-002.cisco.com (173.37.135.119) by XCH-RCD-016.cisco.com
+ (173.37.102.26) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 May
+ 2019 15:45:30 -0500
+Received: from xhs-rtp-001.cisco.com (64.101.210.228) by xhs-aln-002.cisco.com
+ (173.37.135.119) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 May
+ 2019 15:45:29 -0500
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (64.101.32.56) by
+ xhs-rtp-001.cisco.com (64.101.210.228) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Wed, 15 May 2019 16:45:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.onmicrosoft.com;
+ s=selector2-cisco-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1EW9TDbzRse7TuuGkbStZdCP/HtthI7NcbjgmX//ktw=;
+ b=r7vy1Nrs1R3m/ImOZpXhhJZ7NeUeqxuVUnFNBbWDasHlHs7CL5yFrdp8aclRmpDT/38A4efNcgEqYNwnY4bkUp0VlEh/HYu1OSAimQXiClcuzXDnb9ERfh4f75e8qAc2MR6Y5ekXpCurEjO25gcG4xunxilf0F28LqfjWE5sAdk=
+Received: from BYAPR11MB3461.namprd11.prod.outlook.com (20.177.187.14) by
+ BYAPR11MB3752.namprd11.prod.outlook.com (20.178.238.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 20:45:27 +0000
+Received: from BYAPR11MB3461.namprd11.prod.outlook.com
+ ([fe80::494e:92a0:85c6:a3dd]) by BYAPR11MB3461.namprd11.prod.outlook.com
+ ([fe80::494e:92a0:85c6:a3dd%7]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 20:45:27 +0000
+From:   "Shreya Gangan (shgangan)" <shgangan@cisco.com>
+To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Removal of dump_stack()s from  /fs/ubifs/io.c
+Thread-Topic: Removal of dump_stack()s from  /fs/ubifs/io.c
+Thread-Index: AQHVC18gL8Dvs2CcT0+L+hHPz5/XQA==
+Date:   Wed, 15 May 2019 20:45:27 +0000
+Message-ID: <E44E4181-1CFB-493C-8023-147472049D19@cisco.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shgangan@cisco.com; 
+x-originating-ip: [2001:420:30d:1254:f50a:d60e:60dd:2496]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c7ce545e-ebef-448c-ca29-08d6d9764344
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR11MB3752;
+x-ms-traffictypediagnostic: BYAPR11MB3752:
+x-microsoft-antispam-prvs: <BYAPR11MB3752F0BD46529599D446FA6BDB090@BYAPR11MB3752.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(199004)(189003)(6436002)(73956011)(66946007)(4744005)(5640700003)(66556008)(64756008)(66476007)(66446008)(102836004)(186003)(478600001)(53936002)(6486002)(33656002)(2906002)(4326008)(76116006)(8676002)(81166006)(81156014)(316002)(2351001)(8936002)(82746002)(86362001)(71190400001)(46003)(305945005)(14454004)(5660300002)(83716004)(71200400001)(6512007)(6916009)(99286004)(36756003)(6506007)(6116002)(25786009)(2616005)(476003)(14444005)(68736007)(256004)(7736002)(2501003)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB3752;H:BYAPR11MB3461.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cisco.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XC1KO1Izp0yu1EXerufzRIZfTaL/MifG1FG8EOeEU6DEBDIZHbl5/BF4UaluqE5aMAISVDnTPhH/cELGHfMbsQSbPpMcQ/O8txlTsmVMScoLEcwYhgXo3Fzx9o2QZ91+aF8XDXCqj8DY/a7wfbNHaMKes+5rxDs/ZTtvjbsRzgmHrukplVDxlP0TdD1Pn/HWEdIHXrS/x9fr44cp0E2kepHscrynmt4qkIQKWBmv5u/7oco9s7de6Cb63o9c7Q5HcFf6aKiGIfEWdm+mUr2Q0hlSly7KLTTMceGW6/X7TxGUp8QFkay03ZUV9Rj+B76tz+Hj/nuZPgGOfZ+rluDImhbWQHDddTmAX7SM1fVMkeSSm1Lg711rGjvFA6ci6vbWrKW2qV90oHLNOUIafvnpo12vZ+IE+iXuG1Seh87iTWE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9B57E62027753246B31A0AEF8BAB1A0A@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e390fef-e0df-963f-4e18-e44ac2766be3@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 16 May 2019 13:56:06 +0000 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7ce545e-ebef-448c-ca29-08d6d9764344
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 20:45:27.5355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3752
+X-OriginatorOrg: cisco.com
+X-Outbound-SMTP-Client: 173.37.102.26, xch-rcd-016.cisco.com
+X-Outbound-Node: alln-core-6.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 11:42:56AM -0700, Ankur Arora wrote:
-> On 5/14/19 6:50 AM, Marcelo Tosatti wrote:
-> >On Mon, May 13, 2019 at 05:20:37PM +0800, Wanpeng Li wrote:
-> >>On Wed, 8 May 2019 at 02:57, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> >>>
-> >>>
-> >>>Certain workloads perform poorly on KVM compared to baremetal
-> >>>due to baremetal's ability to perform mwait on NEED_RESCHED
-> >>>bit of task flags (therefore skipping the IPI).
-> >>
-> >>KVM supports expose mwait to the guest, if it can solve this?
-> >>
-> >>Regards,
-> >>Wanpeng Li
-> >
-> >Unfortunately mwait in guest is not feasible (uncompatible with multiple
-> >guests). Checking whether a paravirt solution is possible.
-
-Hi Ankur,
-
-> 
-> Hi Marcelo,
-> 
-> I was also looking at making MWAIT available to guests in a safe manner:
-> whether through emulation or a PV-MWAIT. My (unsolicited) thoughts
-
-What use-case are you interested in? 
-
-> 
-> We basically want to handle this sequence:
-> 
->     monitor(monitor_address);
->     if (*monitor_address == base_value)
->          mwaitx(max_delay);
-> 
-> Emulation seems problematic because, AFAICS this would happen:
-> 
->     guest                                   hypervisor
->     =====                                   ====
-> 
->     monitor(monitor_address);
->         vmexit  ===>                        monitor(monitor_address)
->     if (*monitor_address == base_value)
->          mwait();
->               vmexit    ====>               mwait()
-> 
-> There's a context switch back to the guest in this sequence which seems
-> problematic. Both the AMD and Intel specs list system calls and
-> far calls as events which would lead to the MWAIT being woken up:
-> "Voluntary transitions due to fast system call and far calls
-> (occurring prior to issuing MWAIT but after setting the monitor)".
-> 
-> 
-> We could do this instead:
-> 
->     guest                                   hypervisor
->     =====                                   ====
-> 
->     monitor(monitor_address);
->         vmexit  ===>                        cache monitor_address
->     if (*monitor_address == base_value)
->          mwait();
->               vmexit    ====>              monitor(monitor_address)
->                                            mwait()
-> 
-> But, this would miss the "if (*monitor_address == base_value)" check in
-> the host which is problematic if *monitor_address changed simultaneously
-> when monitor was executed.
-> (Similar problem if we cache both the monitor_address and
-> *monitor_address.)
-> 
-> 
-> So, AFAICS, the only thing that would work is the guest offloading the
-> whole PV-MWAIT operation.
-> 
-> AFAICS, that could be a paravirt operation which needs three parameters:
-> (monitor_address, base_value, max_delay.)
-> 
-> This would allow the guest to offload this whole operation to
-> the host:
->     monitor(monitor_address);
->     if (*monitor_address == base_value)
->          mwaitx(max_delay);
-> 
-> I'm guessing you are thinking on similar lines?
-
-Sort of: only trying to avoid the IPI to wake a remote vCPU.
-
-Problem is that MWAIT works only on a contiguous range 
-of bits in memory (512 bits max on current CPUs).
-
-So if you execute mwait on the host on behalf of the guest,
-the region of memory monitored must include both host
-and guest bits.
-
-> 
-> 
-> High level semantics: If the CPU doesn't have any runnable threads, then
-> we actually do this version of PV-MWAIT -- arming a timer if necessary
-> so we only sleep until the time-slice expires or the MWAIT max_delay does.
-
-That would kill the sched_wake_idle_without_ipi optimization for the
-host.
-
-> If the CPU has any runnable threads then this could still finish its
-> time-quanta or we could just do a schedule-out.
-> 
-> 
-> So the semantics guaranteed to the host would be that PV-MWAIT
-> returns after >= max_delay OR with the *monitor_address changed.
-> 
-> 
-> 
-> Ankur
+SGksDQogICAgDQogL2ZzL3ViaWZzL2lvLmMgaGFzIGR1bXBfc3RhY2soKSBpbiBtdWx0aXBsZSBm
+dW5jdGlvbnMgdXBvbiBlcnJvcnMgYW5kIHNvbWV0aW1lcyB3YXJuaW5ncy4gDQpTaW5jZSB0aGUg
+ZXJyb3IgYW5kIHdhcm5pbmcgbWVzc2FnZXMgc2VlbSB0byBiZSB1bmlxdWUsIHRoZSBmdW5jdGlv
+bmFsIHZhbHVlIG9mIHRoZXNlIGR1bXBfc3RhY2tzIGlzIG5vdCBhcHBhcmVudC4NCldoeSBhcmUg
+dGhlc2UgZHVtcF9zdGFja3MgcmVxdWlyZWQgYW5kIHdoYXQgaXNzdWVzIG1pZ2h0IG9jY3VyIHVw
+b24gdGhlIHJlbW92YWwgb2YgdGhlc2U/DQoNCkV4YW1wbGU6IA0KV2hhdCBpcyB0aGUgdXNlY2Fz
+ZSBvZiB0aGUgZHVtcF9zdGFjayBpbiB0aGUgZm9sbG93aW5nIGNvZGUgc25pcHBldCBpbiBmaWxl
+IC9mcy91Ymlmcy9pby5jPw0KICAgIGlmIChlcnIpIHsNCiAgICAJCXViaWZzX2VycihjLCAiY2hh
+bmdpbmcgJWQgYnl0ZXMgaW4gTEVCICVkIGZhaWxlZCwgZXJyb3IgJWQiLA0KICAgIAkJCSAgbGVu
+LCBsbnVtLCBlcnIpOw0KICAgIAkJdWJpZnNfcm9fbW9kZShjLCBlcnIpOw0KICAgIAkJZHVtcF9z
+dGFjaygpOw0KICAgIAl9DQogICAgDQpSZWdhcmRzLA0KDQo=
