@@ -2,116 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E07A1F96D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 19:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 721F11F968
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 19:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfEORkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 13:40:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbfEORk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 13:40:26 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17E972166E;
-        Wed, 15 May 2019 17:40:26 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hQxtB-0006R6-8I; Wed, 15 May 2019 13:40:25 -0400
-Message-Id: <20190515174025.143536583@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 15 May 2019 13:39:57 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: [for-next][PATCH 6/6] ktest: update sample.conf for grub2bls
-References: <20190515173951.753467660@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1727161AbfEORkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 13:40:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50546 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfEORkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 13:40:07 -0400
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hQxsr-0007KM-GK
+        for linux-kernel@vger.kernel.org; Wed, 15 May 2019 17:40:05 +0000
+Received: by mail-pg1-f200.google.com with SMTP id o1so352580pgv.15
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 10:40:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=mFpR4rTTfMsJJxbiWGfgKAelVVLvVLyIq7PoT3hLjvs=;
+        b=Nl73wAuZ001dVsMXiFuPjvmemk0Gx1M+HdmrXGB9B8rUlqUlRLBfaxEfo9GaVyTVQ7
+         SA3FOpTVPniaAm/nrpI+GEoWbFEWBvvaQJhmF7JK2hQdQtefXm1v3OobDo9n+ISAUgxu
+         1X/a83ew3d4gytd5tBtEVrZZgrPkbrE9hYUlB64v8LSbCSLdxiezUKmYl3iszgPQdHV7
+         Vb6t6PUfdXOPIj29TSusBPNWmBWgELCnhrDYQLXVIEyhx5mbGjwBcQd/aVUd4vR3eqXm
+         BRwLffOEKHeJ3/kSoP7bnRhJE5MqQoHr7BovYZLvGjk3ENB6u+KBIzLVqeKxo5sXoxae
+         YnXQ==
+X-Gm-Message-State: APjAAAXQbz6OVJAVZkzsaSo+JPoWgYlO1MumzcrsWDz8gj9UGW3u2uE3
+        G4FDfyrhuHOMSgHozo7+ws8Y+HaztEXf3FocAAFCeL+374i75EO29PfQ+P0Bkz2k2Gavj12Tmzb
+        J+9gN6+csgm58fybm50+LAVA18JdHnbtfA5wO42Z82Q==
+X-Received: by 2002:a63:1706:: with SMTP id x6mr45185327pgl.280.1557942003811;
+        Wed, 15 May 2019 10:40:03 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxsUVkNTfD0Bk+OztecBhfR6QBmKx2bNzjxcA0XCAQqd4jt2var1pXK1zpOslEiQ0pYLuZwsA==
+X-Received: by 2002:a63:1706:: with SMTP id x6mr45185298pgl.280.1557942003437;
+        Wed, 15 May 2019 10:40:03 -0700 (PDT)
+Received: from 2001-b011-380f-14b9-2dec-a462-2693-8ecd.dynamic-ip6.hinet.net (2001-b011-380f-14b9-2dec-a462-2693-8ecd.dynamic-ip6.hinet.net. [2001:b011:380f:14b9:2dec:a462:2693:8ecd])
+        by smtp.gmail.com with ESMTPSA id a13sm6270608pfj.169.2019.05.15.10.40.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 10:40:02 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: [PATCH] staging: Add rtl8821ce PCIe WiFi driver
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190515163945.GA5719@kroah.com>
+Date:   Thu, 16 May 2019 01:40:00 +0800
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Content-Transfer-Encoding: 8bit
+Message-Id: <C6B4FA3D-A590-47F1-9F94-916862DD15CD@canonical.com>
+References: <20190515112401.15373-1-kai.heng.feng@canonical.com>
+ <20190515114022.GA18824@kroah.com>
+ <6D5557B8-8140-48A8-BED7-9587936902D8@canonical.com>
+ <20190515123319.GA435@kroah.com>
+ <63833AA2-AC8B-4EEA-AF36-EF2A9BFD4F9F@canonical.com>
+ <20190515163945.GA5719@kroah.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+at 00:39, Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Update sample.conf for grub2bls
+> On Wed, May 15, 2019 at 09:06:44PM +0800, Kai-Heng Feng wrote:
+>> at 20:33, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>>> On Wed, May 15, 2019 at 07:54:58PM +0800, Kai-Heng Feng wrote:
+>>>> at 19:40, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>>
+>>>>> On Wed, May 15, 2019 at 07:24:01PM +0800, Kai-Heng Feng wrote:
+>>>>>> The rtl8821ce can be found on many HP and Lenovo laptops.
+>>>>>> Users have been using out-of-tree module for a while,
+>>>>>>
+>>>>>> The new Realtek WiFi driver, rtw88, will support rtl8821ce in 2020 or
+>>>>>> later.
+>>>>>
+>>>>> Where is that driver, and why is it going to take so long to get  
+>>>>> merged?
+>>>>
+>>>> rtw88 is in 5.2 now, but it doesn’t support 8821ce yet.
+>>>>
+>>>> They plan to add the support in 2020.
+>>>
+>>> Who is "they" and what is needed to support this device and why wait a
+>>> full year?
+>>
+>> “They” refers to Realtek.
+>> It’s their plan so I can’t really answer that on behalf of Realtek.
+>
+> Where did they say that?  Any reason their developers are not on this
+> patch?
+>
+>>>>>> 296 files changed, 206166 insertions(+)
+>>>>>
+>>>>> Ugh, why do we keep having to add the whole mess for every single one  
+>>>>> of
+>>>>> these devices?
+>>>>
+>>>> Because Realtek devices are unfortunately ubiquitous so the support is
+>>>> better come from kernel.
+>>>
+>>> That's not the issue here.  The issue is that we keep adding the same
+>>> huge driver files to the kernel tree, over and over, with no real change
+>>> at all.  We have seen almost all of these files in other realtek
+>>> drivers, right?
+>>
+>> Yes. They use one single driver to support different SoCs, different
+>> architectures and even different OSes.
+>
+> Well, they try to, it doesn't always work :(
+>
+>> That’s why it’s a mess.
+>
+> Oh we all know why this is a mess.  But they have been saying for
+> _years_ they would clean up this mess.  So push back, I'm not going to
+> take another 200k lines for a simple wifi driver, again.
+>
+> Along those lines, we should probably just delete the other old realtek
+> drivers that don't seem to be going anywhere from staging as well,
+> because those are just confusing people.
+>
+>>> Why not use the ones we already have?
+>>
+>> It’s virtually impossible because Realtek’s mega wifi driver uses tons of
+>> #ifdefs, only one chip can be selected to be supported at compile time.
+>
+> That's not what I asked.
+>
+> I want to know why they can't just add support for their new devices to
+> one of the many existing realtek drivers we already have.  That is the
+> simpler way, and the correct way to do this.  We don't do this by adding
+> 200k lines, again.
+>
+>>> But better yet, why not add proper support for this hardware and not use
+>>> a staging driver?
+>>
+>> Realtek plans to add the support in 2020, if everything goes well.
+>
+> Device "goes well" please.  And when in 2020?  And why 2020?  Why not
+> 2022?  2024?
+>
+>> Meanwhile, many users of HP and Lenovo laptops are using out-of-tree  
+>> driver,
+>> some of them are stuck to older kernels because they don’t know how to fix
+>> the driver. So I strongly think having this in kernel is beneficial to  
+>> many
+>> users, even it’s only for a year.
+>
+> So who is going to be responsible for "fixing the driver" for all new
+> kernel api updates?  I'm tired of seeing new developers get lost in the
+> maze of yet-another realtek wifi driver.  We've been putting up with
+> this crud for years, and it has not gotten any better if you want to add
+> another 200k lines for some unknown amount of time with the hope that a
+> driver might magically show up one day.
 
-Link: http://lkml.kernel.org/r/20190509213647.6276-7-msys.mizuma@gmail.com
+I have no idea why they haven’t made everything upstream, and I do hope  
+they did a better job, so I don’t need to cleanup their driver and send it  
+upstream :(
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/testing/ktest/sample.conf | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+So basically I can’t answer any of your questions. As Larry suggested,  
+their driver should be hosted separately and maybe by downstream distro.
 
-diff --git a/tools/testing/ktest/sample.conf b/tools/testing/ktest/sample.conf
-index 8c893a58b68e..c3bc933d437b 100644
---- a/tools/testing/ktest/sample.conf
-+++ b/tools/testing/ktest/sample.conf
-@@ -349,13 +349,13 @@
- # option to boot to with GRUB_REBOOT
- #GRUB_FILE = /boot/grub2/grub.cfg
- 
--# The tool for REBOOT_TYPE = grub2 to set the next reboot kernel
-+# The tool for REBOOT_TYPE = grub2 or grub2bls to set the next reboot kernel
- # to boot into (one shot mode).
- # (default grub2_reboot)
- #GRUB_REBOOT = grub2_reboot
- 
- # The grub title name for the test kernel to boot
--# (Only mandatory if REBOOT_TYPE = grub or grub2)
-+# (Only mandatory if REBOOT_TYPE = grub or grub2 or grub2bls)
- #
- # Note, ktest.pl will not update the grub menu.lst, you need to
- # manually add an option for the test. ktest.pl will search
-@@ -374,6 +374,10 @@
- # do a: GRUB_MENU = 'Test Kernel'
- # For customizing, add your entry in /etc/grub.d/40_custom.
- #
-+# For grub2bls, a search of "title"s are done. The menu is found
-+# by searching for the contents of GRUB_MENU in the line that starts
-+# with "title".
-+#
- #GRUB_MENU = Test Kernel
- 
- # For REBOOT_TYPE = syslinux, the name of the syslinux executable
-@@ -479,6 +483,11 @@
- # default (undefined)
- #POST_KTEST = ${SSH} ~/dismantle_test
- 
-+# If you want to remove the kernel entry in Boot Loader Specification (BLS)
-+# environment, use kernel-install command.
-+# Here's the example:
-+#POST_KTEST = ssh root@Test "/usr/bin/kernel-install remove $KERNEL_VERSION"
-+
- # The default test type (default test)
- # The test types may be:
- #   build   - only build the kernel, do nothing else
-@@ -530,6 +539,11 @@
- # or on some systems:
- #POST_INSTALL = ssh user@target /sbin/dracut -f /boot/initramfs-test.img $KERNEL_VERSION
- 
-+# If you want to add the kernel entry in Boot Loader Specification (BLS)
-+# environment, use kernel-install command.
-+# Here's the example:
-+#POST_INSTALL = ssh root@Test "/usr/bin/kernel-install add $KERNEL_VERSION /boot/vmlinuz-$KERNEL_VERSION"
-+
- # If for some reason you just want to boot the kernel and you do not
- # want the test to install anything new. For example, you may just want
- # to boot test the same kernel over and over and do not want to go through
-@@ -593,6 +607,8 @@
- # For REBOOT_TYPE = grub2, you must define both GRUB_MENU and
- # GRUB_FILE.
- #
-+# For REBOOT_TYPE = grub2bls, you must define GRUB_MENU.
-+#
- # For REBOOT_TYPE = syslinux, you must define SYSLINUX_LABEL, and
- # perhaps modify SYSLINUX (default extlinux) and SYSLINUX_PATH
- # (default /boot/extlinux)
--- 
-2.20.1
+Kai-Heng
+
+>
+> thanks,
+>
+> greg k-h
 
 
