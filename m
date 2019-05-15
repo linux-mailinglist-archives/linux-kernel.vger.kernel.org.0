@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF161EE32
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D10A1EF02
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730793AbfEOLSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
+        id S1732424AbfEOL2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728176AbfEOLST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:19 -0400
+        id S1727376AbfEOL2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E68322084F;
-        Wed, 15 May 2019 11:18:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41F0620843;
+        Wed, 15 May 2019 11:28:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919098;
-        bh=D7EnULU8oBcN9EbF/XpSx7OzJ9YpRX7s1ZUymWx+6Kw=;
+        s=default; t=1557919717;
+        bh=8WcMDF/PXPpdVisfIhIjlmXv/zbwSAypEvVBSJOhkK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tOANTBhpF0pJx+iDYa03Op/YAxr/PEirzv0phTAbhoUEyhfIc7rtnaeqPLpaaZtOb
-         9UAXiWqaZ6UIRnSq7/iLjKtIS1WnIzMn42jAmx8Fe9PpJM0QiBH+T/hIkhHJ0F5Mqa
-         Bctgz8fJD4/uR55dBE0WCsew8Ntc4VRdxiWFBo74=
+        b=pHgmUbAoWB0mhsT9pDivjVT26GMSglaUden57hJr7oJCbl+Fot5YBJ3MqTvAYRRqd
+         WhNxEzXrGAIXtaLznBpoiOaIQCHe6vBkoQwLEVdI5B6HW6WjKRZmIjDiPkQx8RgYq3
+         dFyfM+0wrNv8Y0OkzS7aIB6yV+6wZ+psIP3OPLyo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 067/115] crypto: testmgr - add AES-CFB tests
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 066/137] netfilter: ctnetlink: dont use conntrack/expect object addresses as id
 Date:   Wed, 15 May 2019 12:55:47 +0200
-Message-Id: <20190515090704.367472403@linuxfoundation.org>
+Message-Id: <20190515090658.251430186@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,149 +44,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7da66670775d201f633577f5b15a4bbeebaaa2b0 ]
+[ Upstream commit 3c79107631db1f7fd32cf3f7368e4672004a3010 ]
 
-Add AES128/192/256-CFB testvectors from NIST SP800-38A.
+else, we leak the addresses to userspace via ctnetlink events
+and dumps.
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Compute an ID on demand based on the immutable parts of nf_conn struct.
+
+Another advantage compared to using an address is that there is no
+immediate re-use of the same ID in case the conntrack entry is freed and
+reallocated again immediately.
+
+Fixes: 3583240249ef ("[NETFILTER]: nf_conntrack_expect: kill unique ID")
+Fixes: 7f85f914721f ("[NETFILTER]: nf_conntrack: kill unique ID")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/tcrypt.c  |  5 ++++
- crypto/testmgr.c |  7 +++++
- crypto/testmgr.h | 76 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
+ include/net/netfilter/nf_conntrack.h |  2 ++
+ net/netfilter/nf_conntrack_core.c    | 35 ++++++++++++++++++++++++++++
+ net/netfilter/nf_conntrack_netlink.c | 34 +++++++++++++++++++++++----
+ 3 files changed, 66 insertions(+), 5 deletions(-)
 
-diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
-index f7affe7cf0b47..76df552f099ba 100644
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -1099,6 +1099,7 @@ static int do_test(const char *alg, u32 type, u32 mask, int m)
- 		ret += tcrypt_test("xts(aes)");
- 		ret += tcrypt_test("ctr(aes)");
- 		ret += tcrypt_test("rfc3686(ctr(aes))");
-+		ret += tcrypt_test("cfb(aes)");
- 		break;
+diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
+index 249d0a5b12b82..63fd47e924b92 100644
+--- a/include/net/netfilter/nf_conntrack.h
++++ b/include/net/netfilter/nf_conntrack.h
+@@ -318,6 +318,8 @@ struct nf_conn *nf_ct_tmpl_alloc(struct net *net,
+ 				 gfp_t flags);
+ void nf_ct_tmpl_free(struct nf_conn *tmpl);
  
- 	case 11:
-@@ -1422,6 +1423,10 @@ static int do_test(const char *alg, u32 type, u32 mask, int m)
- 				speed_template_16_24_32);
- 		test_cipher_speed("ctr(aes)", DECRYPT, sec, NULL, 0,
- 				speed_template_16_24_32);
-+		test_cipher_speed("cfb(aes)", ENCRYPT, sec, NULL, 0,
-+				speed_template_16_24_32);
-+		test_cipher_speed("cfb(aes)", DECRYPT, sec, NULL, 0,
-+				speed_template_16_24_32);
- 		break;
- 
- 	case 201:
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index d91278c01ea89..e65c8228ea47a 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -2631,6 +2631,13 @@ static const struct alg_test_desc alg_test_descs[] = {
- 				.dec = __VECS(aes_ccm_dec_tv_template)
- 			}
- 		}
-+	}, {
-+		.alg = "cfb(aes)",
-+		.test = alg_test_skcipher,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.cipher = __VECS(aes_cfb_tv_template)
-+		},
- 	}, {
- 		.alg = "chacha20",
- 		.test = alg_test_skcipher,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 12835f072614f..5bd9c1400fee0 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -16071,6 +16071,82 @@ static const struct cipher_testvec aes_cbc_dec_tv_template[] = {
- 	},
- };
- 
-+static const struct cipher_testvec aes_cfb_tv_template[] = {
-+	{ /* From NIST SP800-38A */
-+		.key	= "\x2b\x7e\x15\x16\x28\xae\xd2\xa6"
-+			  "\xab\xf7\x15\x88\x09\xcf\x4f\x3c",
-+		.klen	= 16,
-+		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
-+			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
-+		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
-+			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
-+			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
-+			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
-+			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
-+			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
-+			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
-+			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
-+		.ctext	= "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
-+			  "\x33\x34\x49\xf8\xe8\x3c\xfb\x4a"
-+			  "\xc8\xa6\x45\x37\xa0\xb3\xa9\x3f"
-+			  "\xcd\xe3\xcd\xad\x9f\x1c\xe5\x8b"
-+			  "\x26\x75\x1f\x67\xa3\xcb\xb1\x40"
-+			  "\xb1\x80\x8c\xf1\x87\xa4\xf4\xdf"
-+			  "\xc0\x4b\x05\x35\x7c\x5d\x1c\x0e"
-+			  "\xea\xc4\xc6\x6f\x9f\xf7\xf2\xe6",
-+		.len	= 64,
-+	}, {
-+		.key	= "\x8e\x73\xb0\xf7\xda\x0e\x64\x52"
-+			  "\xc8\x10\xf3\x2b\x80\x90\x79\xe5"
-+			  "\x62\xf8\xea\xd2\x52\x2c\x6b\x7b",
-+		.klen	= 24,
-+		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
-+			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
-+		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
-+			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
-+			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
-+			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
-+			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
-+			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
-+			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
-+			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
-+		.ctext	= "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
-+			  "\x34\xc2\x59\x09\xc9\x9a\x41\x74"
-+			  "\x67\xce\x7f\x7f\x81\x17\x36\x21"
-+			  "\x96\x1a\x2b\x70\x17\x1d\x3d\x7a"
-+			  "\x2e\x1e\x8a\x1d\xd5\x9b\x88\xb1"
-+			  "\xc8\xe6\x0f\xed\x1e\xfa\xc4\xc9"
-+			  "\xc0\x5f\x9f\x9c\xa9\x83\x4f\xa0"
-+			  "\x42\xae\x8f\xba\x58\x4b\x09\xff",
-+		.len	= 64,
-+	}, {
-+		.key	= "\x60\x3d\xeb\x10\x15\xca\x71\xbe"
-+			  "\x2b\x73\xae\xf0\x85\x7d\x77\x81"
-+			  "\x1f\x35\x2c\x07\x3b\x61\x08\xd7"
-+			  "\x2d\x98\x10\xa3\x09\x14\xdf\xf4",
-+		.klen	= 32,
-+		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
-+			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
-+		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
-+			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
-+			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
-+			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
-+			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
-+			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
-+			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
-+			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
-+		.ctext	= "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
-+			  "\x7e\xcd\x84\x86\x98\x5d\x38\x60"
-+			  "\x39\xff\xed\x14\x3b\x28\xb1\xc8"
-+			  "\x32\x11\x3c\x63\x31\xe5\x40\x7b"
-+			  "\xdf\x10\x13\x24\x15\xe5\x4b\x92"
-+			  "\xa1\x3e\xd0\xa8\x26\x7a\xe2\xf9"
-+			  "\x75\xa3\x85\x74\x1a\xb9\xce\xf8"
-+			  "\x20\x31\x62\x3d\x55\xb1\xe4\x71",
-+		.len	= 64,
-+	},
-+};
++u32 nf_ct_get_id(const struct nf_conn *ct);
 +
- static const struct aead_testvec hmac_md5_ecb_cipher_null_enc_tv_template[] = {
- 	{ /* Input data from RFC 2410 Case 1 */
- #ifdef __LITTLE_ENDIAN
+ static inline void
+ nf_ct_set(struct sk_buff *skb, struct nf_conn *ct, enum ip_conntrack_info info)
+ {
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 9dd4c2048a2ba..1982faf21ebb5 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -25,6 +25,7 @@
+ #include <linux/slab.h>
+ #include <linux/random.h>
+ #include <linux/jhash.h>
++#include <linux/siphash.h>
+ #include <linux/err.h>
+ #include <linux/percpu.h>
+ #include <linux/moduleparam.h>
+@@ -424,6 +425,40 @@ nf_ct_invert_tuple(struct nf_conntrack_tuple *inverse,
+ }
+ EXPORT_SYMBOL_GPL(nf_ct_invert_tuple);
+ 
++/* Generate a almost-unique pseudo-id for a given conntrack.
++ *
++ * intentionally doesn't re-use any of the seeds used for hash
++ * table location, we assume id gets exposed to userspace.
++ *
++ * Following nf_conn items do not change throughout lifetime
++ * of the nf_conn after it has been committed to main hash table:
++ *
++ * 1. nf_conn address
++ * 2. nf_conn->ext address
++ * 3. nf_conn->master address (normally NULL)
++ * 4. tuple
++ * 5. the associated net namespace
++ */
++u32 nf_ct_get_id(const struct nf_conn *ct)
++{
++	static __read_mostly siphash_key_t ct_id_seed;
++	unsigned long a, b, c, d;
++
++	net_get_random_once(&ct_id_seed, sizeof(ct_id_seed));
++
++	a = (unsigned long)ct;
++	b = (unsigned long)ct->master ^ net_hash_mix(nf_ct_net(ct));
++	c = (unsigned long)ct->ext;
++	d = (unsigned long)siphash(&ct->tuplehash, sizeof(ct->tuplehash),
++				   &ct_id_seed);
++#ifdef CONFIG_64BIT
++	return siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &ct_id_seed);
++#else
++	return siphash_4u32((u32)a, (u32)b, (u32)c, (u32)d, &ct_id_seed);
++#endif
++}
++EXPORT_SYMBOL_GPL(nf_ct_get_id);
++
+ static void
+ clean_from_lists(struct nf_conn *ct)
+ {
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index 1213beb5a7146..36619ad8ab8c2 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -29,6 +29,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
++#include <linux/siphash.h>
+ 
+ #include <linux/netfilter.h>
+ #include <net/netlink.h>
+@@ -485,7 +486,9 @@ static int ctnetlink_dump_ct_synproxy(struct sk_buff *skb, struct nf_conn *ct)
+ 
+ static int ctnetlink_dump_id(struct sk_buff *skb, const struct nf_conn *ct)
+ {
+-	if (nla_put_be32(skb, CTA_ID, htonl((unsigned long)ct)))
++	__be32 id = (__force __be32)nf_ct_get_id(ct);
++
++	if (nla_put_be32(skb, CTA_ID, id))
+ 		goto nla_put_failure;
+ 	return 0;
+ 
+@@ -1286,8 +1289,9 @@ static int ctnetlink_del_conntrack(struct net *net, struct sock *ctnl,
+ 	}
+ 
+ 	if (cda[CTA_ID]) {
+-		u_int32_t id = ntohl(nla_get_be32(cda[CTA_ID]));
+-		if (id != (u32)(unsigned long)ct) {
++		__be32 id = nla_get_be32(cda[CTA_ID]);
++
++		if (id != (__force __be32)nf_ct_get_id(ct)) {
+ 			nf_ct_put(ct);
+ 			return -ENOENT;
+ 		}
+@@ -2694,6 +2698,25 @@ static int ctnetlink_exp_dump_mask(struct sk_buff *skb,
+ 
+ static const union nf_inet_addr any_addr;
+ 
++static __be32 nf_expect_get_id(const struct nf_conntrack_expect *exp)
++{
++	static __read_mostly siphash_key_t exp_id_seed;
++	unsigned long a, b, c, d;
++
++	net_get_random_once(&exp_id_seed, sizeof(exp_id_seed));
++
++	a = (unsigned long)exp;
++	b = (unsigned long)exp->helper;
++	c = (unsigned long)exp->master;
++	d = (unsigned long)siphash(&exp->tuple, sizeof(exp->tuple), &exp_id_seed);
++
++#ifdef CONFIG_64BIT
++	return (__force __be32)siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &exp_id_seed);
++#else
++	return (__force __be32)siphash_4u32((u32)a, (u32)b, (u32)c, (u32)d, &exp_id_seed);
++#endif
++}
++
+ static int
+ ctnetlink_exp_dump_expect(struct sk_buff *skb,
+ 			  const struct nf_conntrack_expect *exp)
+@@ -2741,7 +2764,7 @@ ctnetlink_exp_dump_expect(struct sk_buff *skb,
+ 	}
+ #endif
+ 	if (nla_put_be32(skb, CTA_EXPECT_TIMEOUT, htonl(timeout)) ||
+-	    nla_put_be32(skb, CTA_EXPECT_ID, htonl((unsigned long)exp)) ||
++	    nla_put_be32(skb, CTA_EXPECT_ID, nf_expect_get_id(exp)) ||
+ 	    nla_put_be32(skb, CTA_EXPECT_FLAGS, htonl(exp->flags)) ||
+ 	    nla_put_be32(skb, CTA_EXPECT_CLASS, htonl(exp->class)))
+ 		goto nla_put_failure;
+@@ -3046,7 +3069,8 @@ static int ctnetlink_get_expect(struct net *net, struct sock *ctnl,
+ 
+ 	if (cda[CTA_EXPECT_ID]) {
+ 		__be32 id = nla_get_be32(cda[CTA_EXPECT_ID]);
+-		if (ntohl(id) != (u32)(unsigned long)exp) {
++
++		if (id != nf_expect_get_id(exp)) {
+ 			nf_ct_expect_put(exp);
+ 			return -ENOENT;
+ 		}
 -- 
 2.20.1
 
