@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCB01EE31
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF161EE32
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730784AbfEOLSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55732 "EHLO mail.kernel.org"
+        id S1730793AbfEOLSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbfEOLSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:17 -0400
+        id S1728176AbfEOLST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 587D020843;
-        Wed, 15 May 2019 11:18:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E68322084F;
+        Wed, 15 May 2019 11:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919095;
-        bh=RUjFcZedm/DHGZEI4mAnk2xx6EnytiQFO8cs0KMFwLQ=;
+        s=default; t=1557919098;
+        bh=D7EnULU8oBcN9EbF/XpSx7OzJ9YpRX7s1ZUymWx+6Kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PTJMCmc/G9kEazcTOHXIp4Rc60lRDIheNoD9uF9pa03YVwHQt0m1XuZavWIpaUBX5
-         fg/XpoVMcoRJg0z+RbSijcE7GE1H7G7/X90UGn2IIoUG23a3fjOZ951fqNZnLZLQXT
-         hr4fLyX8cxm8Y6xHSxCbv9MxDbugCBGk8Z+/LkYo=
+        b=tOANTBhpF0pJx+iDYa03Op/YAxr/PEirzv0phTAbhoUEyhfIc7rtnaeqPLpaaZtOb
+         9UAXiWqaZ6UIRnSq7/iLjKtIS1WnIzMn42jAmx8Fe9PpJM0QiBH+T/hIkhHJ0F5Mqa
+         Bctgz8fJD4/uR55dBE0WCsew8Ntc4VRdxiWFBo74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/115] arm64: KVM: Make VHE Stage-2 TLB invalidation operations non-interruptible
-Date:   Wed, 15 May 2019 12:55:46 +0200
-Message-Id: <20190515090704.311449914@linuxfoundation.org>
+Subject: [PATCH 4.14 067/115] crypto: testmgr - add AES-CFB tests
+Date:   Wed, 15 May 2019 12:55:47 +0200
+Message-Id: <20190515090704.367472403@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
 References: <20190515090659.123121100@linuxfoundation.org>
@@ -47,148 +45,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c987876a80e7bcb98a839f10dca9ce7fda4feced ]
+[ Upstream commit 7da66670775d201f633577f5b15a4bbeebaaa2b0 ]
 
-Contrary to the non-VHE version of the TLB invalidation helpers, the VHE
-code  has interrupts enabled, meaning that we can take an interrupt in
-the middle of such a sequence, and start running something else with
-HCR_EL2.TGE cleared.
+Add AES128/192/256-CFB testvectors from NIST SP800-38A.
 
-That's really not a good idea.
-
-Take the heavy-handed option and disable interrupts in
-__tlb_switch_to_guest_vhe, restoring them in __tlb_switch_to_host_vhe.
-The latter also gain an ISB in order to make sure that TGE really has
-taken effect.
-
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 Cc: stable@vger.kernel.org
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm64/kvm/hyp/tlb.c | 35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+ crypto/tcrypt.c  |  5 ++++
+ crypto/testmgr.c |  7 +++++
+ crypto/testmgr.h | 76 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+)
 
-diff --git a/arch/arm64/kvm/hyp/tlb.c b/arch/arm64/kvm/hyp/tlb.c
-index 73464a96c3657..db23c6e5c885c 100644
---- a/arch/arm64/kvm/hyp/tlb.c
-+++ b/arch/arm64/kvm/hyp/tlb.c
-@@ -15,13 +15,18 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index f7affe7cf0b47..76df552f099ba 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -1099,6 +1099,7 @@ static int do_test(const char *alg, u32 type, u32 mask, int m)
+ 		ret += tcrypt_test("xts(aes)");
+ 		ret += tcrypt_test("ctr(aes)");
+ 		ret += tcrypt_test("rfc3686(ctr(aes))");
++		ret += tcrypt_test("cfb(aes)");
+ 		break;
  
-+#include <linux/irqflags.h>
+ 	case 11:
+@@ -1422,6 +1423,10 @@ static int do_test(const char *alg, u32 type, u32 mask, int m)
+ 				speed_template_16_24_32);
+ 		test_cipher_speed("ctr(aes)", DECRYPT, sec, NULL, 0,
+ 				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", ENCRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
++		test_cipher_speed("cfb(aes)", DECRYPT, sec, NULL, 0,
++				speed_template_16_24_32);
+ 		break;
+ 
+ 	case 201:
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index d91278c01ea89..e65c8228ea47a 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2631,6 +2631,13 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 				.dec = __VECS(aes_ccm_dec_tv_template)
+ 			}
+ 		}
++	}, {
++		.alg = "cfb(aes)",
++		.test = alg_test_skcipher,
++		.fips_allowed = 1,
++		.suite = {
++			.cipher = __VECS(aes_cfb_tv_template)
++		},
+ 	}, {
+ 		.alg = "chacha20",
+ 		.test = alg_test_skcipher,
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index 12835f072614f..5bd9c1400fee0 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -16071,6 +16071,82 @@ static const struct cipher_testvec aes_cbc_dec_tv_template[] = {
+ 	},
+ };
+ 
++static const struct cipher_testvec aes_cfb_tv_template[] = {
++	{ /* From NIST SP800-38A */
++		.key	= "\x2b\x7e\x15\x16\x28\xae\xd2\xa6"
++			  "\xab\xf7\x15\x88\x09\xcf\x4f\x3c",
++		.klen	= 16,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
++			  "\x33\x34\x49\xf8\xe8\x3c\xfb\x4a"
++			  "\xc8\xa6\x45\x37\xa0\xb3\xa9\x3f"
++			  "\xcd\xe3\xcd\xad\x9f\x1c\xe5\x8b"
++			  "\x26\x75\x1f\x67\xa3\xcb\xb1\x40"
++			  "\xb1\x80\x8c\xf1\x87\xa4\xf4\xdf"
++			  "\xc0\x4b\x05\x35\x7c\x5d\x1c\x0e"
++			  "\xea\xc4\xc6\x6f\x9f\xf7\xf2\xe6",
++		.len	= 64,
++	}, {
++		.key	= "\x8e\x73\xb0\xf7\xda\x0e\x64\x52"
++			  "\xc8\x10\xf3\x2b\x80\x90\x79\xe5"
++			  "\x62\xf8\xea\xd2\x52\x2c\x6b\x7b",
++		.klen	= 24,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
++			  "\x34\xc2\x59\x09\xc9\x9a\x41\x74"
++			  "\x67\xce\x7f\x7f\x81\x17\x36\x21"
++			  "\x96\x1a\x2b\x70\x17\x1d\x3d\x7a"
++			  "\x2e\x1e\x8a\x1d\xd5\x9b\x88\xb1"
++			  "\xc8\xe6\x0f\xed\x1e\xfa\xc4\xc9"
++			  "\xc0\x5f\x9f\x9c\xa9\x83\x4f\xa0"
++			  "\x42\xae\x8f\xba\x58\x4b\x09\xff",
++		.len	= 64,
++	}, {
++		.key	= "\x60\x3d\xeb\x10\x15\xca\x71\xbe"
++			  "\x2b\x73\xae\xf0\x85\x7d\x77\x81"
++			  "\x1f\x35\x2c\x07\x3b\x61\x08\xd7"
++			  "\x2d\x98\x10\xa3\x09\x14\xdf\xf4",
++		.klen	= 32,
++		.iv	= "\x00\x01\x02\x03\x04\x05\x06\x07"
++			  "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f",
++		.ptext	= "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
++			  "\xe9\x3d\x7e\x11\x73\x93\x17\x2a"
++			  "\xae\x2d\x8a\x57\x1e\x03\xac\x9c"
++			  "\x9e\xb7\x6f\xac\x45\xaf\x8e\x51"
++			  "\x30\xc8\x1c\x46\xa3\x5c\xe4\x11"
++			  "\xe5\xfb\xc1\x19\x1a\x0a\x52\xef"
++			  "\xf6\x9f\x24\x45\xdf\x4f\x9b\x17"
++			  "\xad\x2b\x41\x7b\xe6\x6c\x37\x10",
++		.ctext	= "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
++			  "\x7e\xcd\x84\x86\x98\x5d\x38\x60"
++			  "\x39\xff\xed\x14\x3b\x28\xb1\xc8"
++			  "\x32\x11\x3c\x63\x31\xe5\x40\x7b"
++			  "\xdf\x10\x13\x24\x15\xe5\x4b\x92"
++			  "\xa1\x3e\xd0\xa8\x26\x7a\xe2\xf9"
++			  "\x75\xa3\x85\x74\x1a\xb9\xce\xf8"
++			  "\x20\x31\x62\x3d\x55\xb1\xe4\x71",
++		.len	= 64,
++	},
++};
 +
- #include <asm/kvm_hyp.h>
- #include <asm/tlbflush.h>
- 
--static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm,
-+						 unsigned long *flags)
- {
- 	u64 val;
- 
-+	local_irq_save(*flags);
-+
- 	/*
- 	 * With VHE enabled, we have HCR_EL2.{E2H,TGE} = {1,1}, and
- 	 * most TLB operations target EL2/EL0. In order to affect the
-@@ -36,7 +41,8 @@ static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm)
- 	isb();
- }
- 
--static void __hyp_text __tlb_switch_to_guest_nvhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_guest_nvhe(struct kvm *kvm,
-+						  unsigned long *flags)
- {
- 	write_sysreg(kvm->arch.vttbr, vttbr_el2);
- 	isb();
-@@ -47,7 +53,8 @@ static hyp_alternate_select(__tlb_switch_to_guest,
- 			    __tlb_switch_to_guest_vhe,
- 			    ARM64_HAS_VIRT_HOST_EXTN);
- 
--static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm,
-+						unsigned long flags)
- {
- 	/*
- 	 * We're done with the TLB operation, let's restore the host's
-@@ -55,9 +62,12 @@ static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm)
- 	 */
- 	write_sysreg(0, vttbr_el2);
- 	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
-+	isb();
-+	local_irq_restore(flags);
- }
- 
--static void __hyp_text __tlb_switch_to_host_nvhe(struct kvm *kvm)
-+static void __hyp_text __tlb_switch_to_host_nvhe(struct kvm *kvm,
-+						 unsigned long flags)
- {
- 	write_sysreg(0, vttbr_el2);
- }
-@@ -69,11 +79,13 @@ static hyp_alternate_select(__tlb_switch_to_host,
- 
- void __hyp_text __kvm_tlb_flush_vmid_ipa(struct kvm *kvm, phys_addr_t ipa)
- {
-+	unsigned long flags;
-+
- 	dsb(ishst);
- 
- 	/* Switch to requested VMID */
- 	kvm = kern_hyp_va(kvm);
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
- 
- 	/*
- 	 * We could do so much better if we had the VA as well.
-@@ -116,36 +128,39 @@ void __hyp_text __kvm_tlb_flush_vmid_ipa(struct kvm *kvm, phys_addr_t ipa)
- 	if (!has_vhe() && icache_is_vpipt())
- 		__flush_icache_all();
- 
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
- }
- 
- void __hyp_text __kvm_tlb_flush_vmid(struct kvm *kvm)
- {
-+	unsigned long flags;
-+
- 	dsb(ishst);
- 
- 	/* Switch to requested VMID */
- 	kvm = kern_hyp_va(kvm);
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
- 
- 	__tlbi(vmalls12e1is);
- 	dsb(ish);
- 	isb();
- 
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
- }
- 
- void __hyp_text __kvm_tlb_flush_local_vmid(struct kvm_vcpu *vcpu)
- {
- 	struct kvm *kvm = kern_hyp_va(kern_hyp_va(vcpu)->kvm);
-+	unsigned long flags;
- 
- 	/* Switch to requested VMID */
--	__tlb_switch_to_guest()(kvm);
-+	__tlb_switch_to_guest()(kvm, &flags);
- 
- 	__tlbi(vmalle1);
- 	dsb(nsh);
- 	isb();
- 
--	__tlb_switch_to_host()(kvm);
-+	__tlb_switch_to_host()(kvm, flags);
- }
- 
- void __hyp_text __kvm_flush_vm_context(void)
+ static const struct aead_testvec hmac_md5_ecb_cipher_null_enc_tv_template[] = {
+ 	{ /* Input data from RFC 2410 Case 1 */
+ #ifdef __LITTLE_ENDIAN
 -- 
 2.20.1
 
