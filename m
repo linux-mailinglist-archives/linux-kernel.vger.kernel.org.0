@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F6D1EC88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2121EE70
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfEOK6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:58:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54908 "EHLO mail.kernel.org"
+        id S1731312AbfEOLVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:21:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726899AbfEOK6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:58:36 -0400
+        id S1731295AbfEOLVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:21:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E35C216FD;
-        Wed, 15 May 2019 10:58:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F404206BF;
+        Wed, 15 May 2019 11:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917915;
-        bh=XbHFDS6p7UpHsE3PAgEs/qcaXGxKbFDyyumsitjBcCc=;
+        s=default; t=1557919290;
+        bh=pL0hkTf2rl78dlcSOKzwSlb/2Hh1mO15LS8IoPCp9ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x5pIJu+W8lunyckCToCclqidJi0SznedfF48lnNS1qqqiKdEBU0re0aPYa8e8U3LI
-         UWoA32r3dxR/CwcOAiMTziz1gqJfv/KuWefV1OfA76jpoSW2RXvaTcMmjv6qOb7ZQH
-         Vy4W1IuusYxr3ofC/iyOmQpJKBk16+DjQVxrVeYM=
+        b=w66YnCRVKToR7yR5oWEohRJA3hZAhZwjpzU73v6lm3JanzqraO57nTxkMf8ON/fH8
+         9x7/bSt+4XRRcN11WIG5v3Jv7QdG1Zhv+9pXGxpXKMRpa7ZCCCsiP9kiO0rXbr9acq
+         TUZHG/fe350AWIVxy7ec7xy7DthQmWNV13L6uLl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Guido Kiener <guido.kiener@rohde-schwarz.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        "Sasha Levin (Microsoft)" <sashal@kernel.org>
-Subject: [PATCH 3.18 16/86] usb: gadget: net2272: Fix net2272_dequeue()
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 002/113] platform/x86: sony-laptop: Fix unintentional fall-through
 Date:   Wed, 15 May 2019 12:54:53 +0200
-Message-Id: <20190515090645.846966532@linuxfoundation.org>
+Message-Id: <20190515090652.993636012@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 091dacc3cc10979ab0422f0a9f7fcc27eee97e69 ]
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Restore the status of ep->stopped in function net2272_dequeue().
+commit 1cbd7a64959d33e7a2a1fa2bf36a62b350a9fcbd upstream.
 
-When the given request is not found in the endpoint queue
-the function returns -EINVAL without restoring the state of
-ep->stopped. Thus the endpoint keeps blocked and does not transfer
-any data anymore.
+It seems that the default case should return AE_CTRL_TERMINATE, instead
+of falling through to case ACPI_RESOURCE_TYPE_END_TAG and returning AE_OK;
+otherwise the line of code at the end of the function is unreachable and
+makes no sense:
 
-This fix is only compile-tested, since we do not have a
-corresponding hardware. An analogous fix was tested in the sibling
-driver. See "usb: gadget: net2280: Fix net2280_dequeue()"
+return AE_CTRL_TERMINATE;
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Guido Kiener <guido.kiener@rohde-schwarz.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+This fix is based on the following thread of discussion:
+
+https://lore.kernel.org/patchwork/patch/959782/
+
+Fixes: 33a04454527e ("sony-laptop: Add SNY6001 device handling (sonypi reimplementation)")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/gadget/udc/net2272.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/sony-laptop.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
-index 4b2444e75840..83d0544338ca 100644
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -962,6 +962,7 @@ net2272_dequeue(struct usb_ep *_ep, struct usb_request *_req)
- 			break;
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -4424,14 +4424,16 @@ sony_pic_read_possible_resource(struct a
+ 			}
+ 			return AE_OK;
+ 		}
++
++	case ACPI_RESOURCE_TYPE_END_TAG:
++		return AE_OK;
++
+ 	default:
+ 		dprintk("Resource %d isn't an IRQ nor an IO port\n",
+ 			resource->type);
++		return AE_CTRL_TERMINATE;
+ 
+-	case ACPI_RESOURCE_TYPE_END_TAG:
+-		return AE_OK;
  	}
- 	if (&req->req != _req) {
-+		ep->stopped = stopped;
- 		spin_unlock_irqrestore(&ep->dev->lock, flags);
- 		return -EINVAL;
- 	}
--- 
-2.19.1
-
+-	return AE_CTRL_TERMINATE;
+ }
+ 
+ static int sony_pic_possible_resources(struct acpi_device *device)
 
 
