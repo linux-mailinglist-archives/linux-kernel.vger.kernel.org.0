@@ -2,172 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFE41F2FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E0E1F2D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfEOLHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:07:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40899 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728954AbfEOLHm (ORCPT
+        id S1729414AbfEOMIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:08:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38396 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729172AbfEOLI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:07:42 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h11so2032161wmb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WLYROLqwvq+iq4Tg13SMOpkpNE1f0nENSLKE//G0bsk=;
-        b=euq/YjOxetpfM+ZIRd16tqOJMUNMAQ639aAlV8Z7Ibig9LpEwqAJTeSnRJZv9QFR0A
-         n3DaSssaT4KUsdSZYEJF2jvAGai5fUuS8T0WPRkz4o4p20gpJt7tecOOpF/0sXYuCt4c
-         +gkH9sxfIb3PHS15GjRWakzRNBq90imKo8mOxdUlQBch12slcyqyLT1bNw+kIeI5Y2BK
-         hqlOAm4od8MxLkFSusv/wFPi/FAd6Jl5afhpMqIgF782USJg1GQqr6rRATkZmQKNyr4T
-         Reyohk2YroZHi9UP9N4sj4WdzXhQOZgyYey7kYxrPMDf/koP7KIAwgEvhf/7CifOKhnp
-         mmaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WLYROLqwvq+iq4Tg13SMOpkpNE1f0nENSLKE//G0bsk=;
-        b=TWsABmJDGlhvgJW3QE1XpUY3DzE2hp/epANn/BpEWr5b8zaw852rd4kN88oW9fsG6J
-         yclOkch17h2uUKs3BqhlD1i95GfoP4944JfDbjrS4/YfFVmwTzl4bTFCY/UmjGbvgVBn
-         5H+4uP+XdJRb/4ZZ6Ymj/hf5dmX7/2NwmWCQ3Nwcw2n/UUiGj1L10Tq9mAkFNu2d1smY
-         pP7ezDnm7SNgcakmbrecpOf2lCmOyYCjI2/KED8EflXpmBMDHImNuKEQDte9LcGliEwE
-         r6AsSnnxeoYCAKcJP/NRL0fH0QorFPXDjgs11xNFe7l60K4dbPG4D4uYDVIeFeC33ycp
-         pvMg==
-X-Gm-Message-State: APjAAAXv+LeoF0eVgpHMHsG/hoWxedaXpFd8CPtNaqSs4NMQGpUlueRo
-        aDMGvni1aM/nFHzV1WT4qEfAyg==
-X-Google-Smtp-Source: APXvYqyk+jOEfdcEqATmFYCA0jxw/O5gBV5d9uEck/eUQUqWql3DtCIln4vAuhSqj4YJxAvSRHH8IQ==
-X-Received: by 2002:a1c:f407:: with SMTP id z7mr22070590wma.34.1557918459197;
-        Wed, 15 May 2019 04:07:39 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id 130sm1924399wmd.15.2019.05.15.04.07.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 04:07:38 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
-        rui.zhang@intel.com, javi.merino@kernel.org,
-        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
-        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
-        ionela.voinescu@arm.com, mka@chromium.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190515082318.7993-3-quentin.perret@arm.com>
- <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
- <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
- <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
- <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
- <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
- <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
- <20190515104043.vogspxgkapp6qsny@queper01-lin>
- <20190515104651.tv5odug7ce4zlupc@queper01-lin>
- <5b55e432-f8b0-91ae-a7de-fe02e0cad322@linaro.org>
- <20190515110156.ru2wxqvwffqgq3t3@queper01-lin>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a4c0ab68-f8d0-a70d-58e5-b8de55199000@linaro.org>
-Date:   Wed, 15 May 2019 13:07:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 15 May 2019 07:08:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ToVh8Upo0GLQhDEVaV9MC0FbfEVVYTO7nwOGlhyfbKM=; b=FKKAFpRcA4vfKWW+aLFvmH42Q
+        UC5vKw4w7g5FDQP75Xxz2BoSkqC++3N5akLiOMlKsVDSd5ChPubvwsv9OrOIi2ksD5rOtN3FXWcR1
+        2+JsIq+JpZtLIc6uv7B7IzqB8Uorrvze2xNwCE4fbtCXY10Jzyg1uZFFX0aYHB9uU3hq4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hQrmF-0003av-Qk; Wed, 15 May 2019 11:08:51 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 320B91126D6A; Wed, 15 May 2019 12:08:51 +0100 (BST)
+Date:   Wed, 15 May 2019 12:08:51 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, t-kristo@ti.com
+Subject: Re: [PATCH 3/3] regulator: lp87565: Add 4-phase lp87561 regulator
+ support
+Message-ID: <20190515110851.GD5613@sirena.org.uk>
+References: <20190515100848.19560-1-j-keerthy@ti.com>
+ <20190515100848.19560-4-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190515110156.ru2wxqvwffqgq3t3@queper01-lin>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="q9KOos5vDmpwPx9o"
+Content-Disposition: inline
+In-Reply-To: <20190515100848.19560-4-j-keerthy@ti.com>
+X-Cookie: You will lose an important tape file.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/05/2019 13:01, Quentin Perret wrote:
-> On Wednesday 15 May 2019 at 12:51:57 (+0200), Daniel Lezcano wrote:
->> On 15/05/2019 12:46, Quentin Perret wrote:
->>> On Wednesday 15 May 2019 at 11:40:44 (+0100), Quentin Perret wrote:
->>
->> [ ... ]
->>
->>>> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
->>>>         if (capacitance) {
->>>>                 ret = update_freq_table(cpufreq_cdev, capacitance);
->>>>                 if (ret) {
->>>>                         cdev = ERR_PTR(ret);
->>>>                         goto remove_ida;
->>>>                 }
->>>> -
->>>> -               cooling_ops = &cpufreq_power_cooling_ops;
->>>> -       } else {
->>>> -               cooling_ops = &cpufreq_cooling_ops;
->>>>         }
->>>> +#endif
->>>> +       cooling_ops = &cpufreq_cooling_ops;
->>>
->>> Argh, that is actually broken with !capacitance and
->>> THERMAL_GOV_POWER_ALLOCATOR=y ... Perhaps it's best to keep the two
->>> thermal_cooling_device_ops struct separated in the end.
->>
->> Or alternatively you can keep one structure but instead of filling the
->> state2power,power2state and getrequestedpower fields in the declaration,
->> you fill them in the if (capacitance) block, no?
-> 
-> Something like the below ? Yes, that works too. I'll write a proper
-> patch and send that next week or so.
 
-Yes, exactly. And IMHO, that helps for the understanding of code also.
+--q9KOos5vDmpwPx9o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> --->8---
-> 
->  /* Bind cpufreq callbacks to thermal cooling device ops */
-> 
->  static struct thermal_cooling_device_ops cpufreq_cooling_ops = {
-> -       .get_max_state = cpufreq_get_max_state,
-> -       .get_cur_state = cpufreq_get_cur_state,
-> -       .set_cur_state = cpufreq_set_cur_state,
-> -};
-> -
-> -static struct thermal_cooling_device_ops cpufreq_power_cooling_ops = {
->         .get_max_state          = cpufreq_get_max_state,
->         .get_cur_state          = cpufreq_get_cur_state,
->         .set_cur_state          = cpufreq_set_cur_state,
-> -       .get_requested_power    = cpufreq_get_requested_power,
-> -       .state2power            = cpufreq_state2power,
-> -       .power2state            = cpufreq_power2state,
->  };
-> 
->  /* Notifier for cpufreq policy change */
-> @@ -674,18 +667,19 @@ __cpufreq_cooling_register(struct device_node *np,
->                         pr_debug("%s: freq:%u KHz\n", __func__, freq);
->         }
-> 
-> +       cooling_ops = &cpufreq_cooling_ops;
-> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
->         if (capacitance) {
->                 ret = update_freq_table(cpufreq_cdev, capacitance);
->                 if (ret) {
->                         cdev = ERR_PTR(ret);
->                         goto remove_ida;
->                 }
-> -
-> -               cooling_ops = &cpufreq_power_cooling_ops;
-> -       } else {
-> -               cooling_ops = &cpufreq_cooling_ops;
-> +               cooling_ops->get_requested_power = cpufreq_get_requested_power;
-> +               cooling_ops->state2power = cpufreq_state2power;
-> +               cooling_ops->power2state = cpufreq_power2state;
->         }
-> -
-> +#endif
->         cdev = thermal_of_cooling_device_register(np, dev_name, cpufreq_cdev,
->                                                   cooling_ops);
->         if (IS_ERR(cdev))
-> 
+On Wed, May 15, 2019 at 03:38:48PM +0530, Keerthy wrote:
 
+> @@ -172,6 +178,9 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+>  	if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87565_Q1) {
+>  		min_idx = LP87565_BUCK_10;
+>  		max_idx = LP87565_BUCK_23;
+> +	} else if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87561_Q1) {
+> +		min_idx = LP87565_BUCK_3210;
+> +		max_idx = LP87565_BUCK_3210;
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+This if/else chain should be a switch statement.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--q9KOos5vDmpwPx9o
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb80IACgkQJNaLcl1U
+h9A6lAf/e30hsZKGBDMeaM6cCqdg269DLgcFARjKCZ3zp0sp3UYHDCU7I7eBAscT
+wMqHKpBrhHVyS6swCG7Lbsy2xywm6b77fSxxvZiWPnsdgpDHjLrzbqu2nZvA8UpD
+8eXgfB8yOY1Pqw0Z9zJ55C26c+sjROltuBsJ1fGLo2HcAlSAPZtFu+zehJYKRUVq
+lrDGdgNGnXlxnZMVNnnAWNFCFZONW+rwZOVI9tdV8VqDX8g096T4/ZhFxVdTW3jU
+yMTcqq/1o12IRB26NToSf262mMa0g5ppI0k/Gq9SOFwhsi4ssXsHik2yceV0jOcA
+KadxC1Bmn6nfUWoNpZx2mjgylXOV8g==
+=dLEO
+-----END PGP SIGNATURE-----
+
+--q9KOos5vDmpwPx9o--
