@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 018671EECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72AA91EFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbfEOLZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:25:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36416 "EHLO mail.kernel.org"
+        id S1731782AbfEOLgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:36:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732018AbfEOLZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:25:36 -0400
+        id S1730842AbfEOLci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 584152084F;
-        Wed, 15 May 2019 11:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D2812053B;
+        Wed, 15 May 2019 11:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919535;
-        bh=FojP+nXiRvBcWpMCM3FS04aD2Od+btT7ex4k/BSAnjA=;
+        s=default; t=1557919957;
+        bh=tNIhxY8N0aSxd42ZQzJBvBfueaEFS+wqtYU5w+0ZFnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHBTeqeHpUPHjvHMp0TMcxcs2DovgIzDNdhH3GBSIeIPxgz8atlh5AV4jQ6+cVt8z
-         Lz766A63xErDrQauYgWO8Z5xGpg7tMgEInLKP9xWh7XeKXJW8LxSkWDydIF2YIy/ep
-         1QOYVZS0jmfSuXPcEnQxH6uaFZ0GgExPTpe0ibC0=
+        b=WMzkXaTKUUjmqpFsOMW8noY3oSmXK1FfuBP8Mnn0tsKpJDfDpUuHjgk83CyYRQoXx
+         TaU8lnpiOjmRJ26YRUr8rh4KmP/9ULGO1fmCz4QTkB/NBcfIsJW1I8RFIcbEnSqa8Y
+         +UULtyQOo7Dpe7lIHy8fXbiwJmar8Dhe7UVgXnKQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 4.19 112/113] PCI: hv: Add hv_pci_remove_slots() when we unload the driver
-Date:   Wed, 15 May 2019 12:56:43 +0200
-Message-Id: <20190515090702.219380752@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 20/46] net: ethernet: stmmac: dwmac-sun8i: enable support of unicast filtering
+Date:   Wed, 15 May 2019 12:56:44 +0200
+Message-Id: <20190515090623.902014753@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
+References: <20190515090616.670410738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,78 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-commit 15becc2b56c6eda3d9bf5ae993bafd5661c1fad1 upstream.
+[ Upstream commit d4c26eb6e721683a0f93e346ce55bc8dc3cbb175 ]
 
-When we unload the pci-hyperv host controller driver, the host does not
-send us a PCI_EJECT message.
+When adding more MAC addresses to a dwmac-sun8i interface, the device goes
+directly in promiscuous mode.
+This is due to IFF_UNICAST_FLT missing flag.
 
-In this case we also need to make sure the sysfs PCI slot directory is
-removed, otherwise a command on a slot file eg:
+So since the hardware support unicast filtering, let's add IFF_UNICAST_FLT.
 
-"cat /sys/bus/pci/slots/2/address"
-
-will trigger a
-
-"BUG: unable to handle kernel paging request"
-
-and, if we unload/reload the driver several times we would end up with
-stale slot entries in PCI slot directories in /sys/bus/pci/slots/
-
-root@localhost:~# ls -rtl  /sys/bus/pci/slots/
-total 0
-drwxr-xr-x 2 root root 0 Feb  7 10:49 2
-drwxr-xr-x 2 root root 0 Feb  7 10:49 2-1
-drwxr-xr-x 2 root root 0 Feb  7 10:51 2-2
-
-Add the missing code to remove the PCI slot and fix the current
-behaviour.
-
-Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-[lorenzo.pieralisi@arm.com: reformatted the log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
+Fixes: 9f93ac8d4085 ("net-next: stmmac: Add dwmac-sun8i")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/controller/pci-hyperv.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -1491,6 +1491,21 @@ static void hv_pci_assign_slots(struct h
- 	}
- }
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -1015,6 +1015,8 @@ static struct mac_device_info *sun8i_dwm
+ 	mac->mac = &sun8i_dwmac_ops;
+ 	mac->dma = &sun8i_dwmac_dma_ops;
  
-+/*
-+ * Remove entries in sysfs pci slot directory.
-+ */
-+static void hv_pci_remove_slots(struct hv_pcibus_device *hbus)
-+{
-+	struct hv_pci_dev *hpdev;
++	priv->dev->priv_flags |= IFF_UNICAST_FLT;
 +
-+	list_for_each_entry(hpdev, &hbus->children, list_entry) {
-+		if (!hpdev->pci_slot)
-+			continue;
-+		pci_destroy_slot(hpdev->pci_slot);
-+		hpdev->pci_slot = NULL;
-+	}
-+}
-+
- /**
-  * create_root_hv_pci_bus() - Expose a new root PCI bus
-  * @hbus:	Root PCI bus, as understood by this driver
-@@ -2685,6 +2700,7 @@ static int hv_pci_remove(struct hv_devic
- 		pci_lock_rescan_remove();
- 		pci_stop_root_bus(hbus->pci_bus);
- 		pci_remove_root_bus(hbus->pci_bus);
-+		hv_pci_remove_slots(hbus);
- 		pci_unlock_rescan_remove();
- 		hbus->state = hv_pcibus_removed;
- 	}
+ 	/* The loopback bit seems to be re-set when link change
+ 	 * Simply mask it each time
+ 	 * Speed 10/100/1000 are set in BIT(2)/BIT(3)
 
 
