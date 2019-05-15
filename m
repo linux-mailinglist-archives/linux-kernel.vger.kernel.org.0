@@ -2,88 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D88031EAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE841EAD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfEOJQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 05:16:19 -0400
-Received: from relay.sw.ru ([185.231.240.75]:49850 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfEOJQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 05:16:19 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hQq1H-00071z-GC; Wed, 15 May 2019 12:16:15 +0300
-Subject: Re: [PATCH 1/5] proc: use down_read_killable for /proc/pid/maps
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <155790967258.1319.11531787078240675602.stgit@buzz>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <77650cec-70cc-149a-74e9-2256c6138032@virtuozzo.com>
-Date:   Wed, 15 May 2019 12:16:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726283AbfEOJSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 05:18:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725912AbfEOJSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 05:18:17 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 339C08B7995CE51A24C9;
+        Wed, 15 May 2019 17:18:15 +0800 (CST)
+Received: from FRA1000014316.huawei.com (100.126.230.97) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 15 May 2019 17:18:04 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     <shameerali.kolothum.thodi@huawei.com>
+CC:     Wen Yang <wen.yang99@zte.com.cn>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 07/60] arm64: cpu_ops: fix a leaked reference by adding missing of_node_put
+Date:   Wed, 15 May 2019 17:16:44 +0800
+Message-ID: <20190515091737.18578-7-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190515091737.18578-1-Jonathan.Cameron@huawei.com>
+References: <20190515091737.18578-1-Jonathan.Cameron@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <155790967258.1319.11531787078240675602.stgit@buzz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [100.126.230.97]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.05.2019 11:41, Konstantin Khlebnikov wrote:
-> Do not stuck forever if something wrong.
-> This function also used for /proc/pid/smaps.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-For the series:
+The call to of_get_next_child returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Detected by coccinelle with the following warnings:
+  ./arch/arm64/kernel/cpu_ops.c:102:1-7: ERROR: missing of_node_put;
+  acquired a node pointer with refcount incremented on line 69, but
+  without a corresponding object release within this function.
 
-> ---
->  fs/proc/task_mmu.c   |    6 +++++-
->  fs/proc/task_nommu.c |    6 +++++-
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 01d4eb0e6bd1..2bf210229daf 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -166,7 +166,11 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
->  	if (!mm || !mmget_not_zero(mm))
->  		return NULL;
->  
-> -	down_read(&mm->mmap_sem);
-> +	if (down_read_killable(&mm->mmap_sem)) {
-> +		mmput(mm);
-> +		return ERR_PTR(-EINTR);
-> +	}
-> +
->  	hold_task_mempolicy(priv);
->  	priv->tail_vma = get_gate_vma(mm);
->  
-> diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-> index 36bf0f2e102e..7907e6419e57 100644
-> --- a/fs/proc/task_nommu.c
-> +++ b/fs/proc/task_nommu.c
-> @@ -211,7 +211,11 @@ static void *m_start(struct seq_file *m, loff_t *pos)
->  	if (!mm || !mmget_not_zero(mm))
->  		return NULL;
->  
-> -	down_read(&mm->mmap_sem);
-> +	if (down_read_killable(&mm->mmap_sem)) {
-> +		mmput(mm);
-> +		return ERR_PTR(-EINTR);
-> +	}
-> +
->  	/* start from the Nth VMA */
->  	for (p = rb_first(&mm->mm_rb); p; p = rb_next(p))
->  		if (n-- == 0)
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+ arch/arm64/kernel/cpu_ops.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/kernel/cpu_ops.c b/arch/arm64/kernel/cpu_ops.c
+index ea001241bdd47..00f8b8612b69f 100644
+--- a/arch/arm64/kernel/cpu_ops.c
++++ b/arch/arm64/kernel/cpu_ops.c
+@@ -85,6 +85,7 @@ static const char *__init cpu_read_enable_method(int cpu)
+ 				pr_err("%pOF: missing enable-method property\n",
+ 					dn);
+ 		}
++		of_node_put(dn);
+ 	} else {
+ 		enable_method = acpi_get_enable_method(cpu);
+ 		if (!enable_method) {
+-- 
+2.19.1
 
