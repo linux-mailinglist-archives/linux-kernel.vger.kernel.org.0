@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95EF1F1A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4FFF1F2C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbfEOLQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:16:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53082 "EHLO mail.kernel.org"
+        id S1729838AbfEOMGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:06:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730473AbfEOLQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:20 -0400
+        id S1728925AbfEOLKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:10:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C0E120843;
-        Wed, 15 May 2019 11:16:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 954602166E;
+        Wed, 15 May 2019 11:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918979;
-        bh=JgBM/wCgs/2NqfkScBOeU3yDhKLS3px3A4CeR1lsOek=;
+        s=default; t=1557918607;
+        bh=r8UsJHeobUmrU9dWDtYjj8wQqq1tEaW8hScVYrx/nBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j+n52R4PWFaweeSXLwcGWaUGDu4wWGuoA2vjHc7cc1MiyCD5kt0057H3lPqdbUazZ
-         rQMQGK43VQG/NPC8Sj6DP2jZAJfhTk35Ce8hoZW7kSeUSyh6nCM3ofJRB92QuKE5TN
-         OANxWPVDV8ZtZJykco1Fn5gDWIXAlB1hXB2n+00M=
+        b=1rIPjNqdTk8gWAaAjLxEeF4AIHjBppXF12ViJepG7n3nOreyQ0VKvoA5qr9bsqk0J
+         BlNFZLxGBlwRycPdSbxrkU+ZhqRx/oD7Irdsu2tIum9VAyhbvrFWjXLNOaet0WP2FQ
+         bjhypkJwMfPAvq2Uf9QGzUgrLe4saEtN8Rxff87w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux@endlessm.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 022/115] x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
-Date:   Wed, 15 May 2019 12:55:02 +0200
-Message-Id: <20190515090700.904928784@linuxfoundation.org>
+        Joerg Roedel <joro@8bytes.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org,
+        x86@kernel.org, Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 196/266] KVM: x86: SVM: Call x86_spec_ctrl_set_guest/host() with interrupts disabled
+Date:   Wed, 15 May 2019 12:55:03 +0200
+Message-Id: <20190515090729.575734497@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,102 +52,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0082517fa4bce073e7cf542633439f26538a14cc ]
+From: Thomas Gleixner <tglx@xxxxxxxxxxxxx>
 
-Upon reboot, the Acer TravelMate X514-51T laptop appears to complete the
-shutdown process, but then it hangs in BIOS POST with a black screen.
+commit 024d83cadc6b2af027e473720f3c3da97496c318 upstream.
 
-The problem is intermittent - at some points it has appeared related to
-Secure Boot settings or different kernel builds, but ultimately we have
-not been able to identify the exact conditions that trigger the issue to
-come and go.
+Mikhail reported the following lockdep splat:
 
-Besides, the EFI mode cannot be disabled in the BIOS of this model.
+WARNING: possible irq lock inversion dependency detected
+CPU 0/KVM/10284 just changed the state of lock:
+  000000000d538a88 (&st->lock){+...}, at:
+  speculative_store_bypass_update+0x10b/0x170
 
-However, after extensive testing, we observe that using the EFI reboot
-method reliably avoids the issue in all cases.
+but this lock was taken by another, HARDIRQ-safe lock
+in the past:
 
-So add a boot time quirk to use EFI reboot on such systems.
+(&(&sighand->siglock)->rlock){-.-.}
 
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203119
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux@endlessm.com
-Link: http://lkml.kernel.org/r/20190412080152.3718-1-jian-hong@endlessm.com
-[ Fix !CONFIG_EFI build failure, clarify the code and the changelog a bit. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+   and interrupts could create inverse lock ordering between them.
+
+Possible interrupt unsafe locking scenario:
+
+    CPU0                    CPU1
+    ----                    ----
+   lock(&st->lock);
+                           local_irq_disable();
+                           lock(&(&sighand->siglock)->rlock);
+                           lock(&st->lock);
+    <Interrupt>
+     lock(&(&sighand->siglock)->rlock);
+     *** DEADLOCK ***
+
+The code path which connects those locks is:
+
+   speculative_store_bypass_update()
+   ssb_prctl_set()
+   do_seccomp()
+   do_syscall_64()
+
+In svm_vcpu_run() speculative_store_bypass_update() is called with
+interupts enabled via x86_virt_spec_ctrl_set_guest/host().
+
+This is actually a false positive, because GIF=0 so interrupts are
+disabled even if IF=1; however, we can easily move the invocations of
+x86_virt_spec_ctrl_set_guest/host() into the interrupt disabled region to
+cure it, and it's a good idea to keep the GIF=0/IF=1 area as small
+and self-contained as possible.
+
+Fixes: 1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
+Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: x86@kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/reboot.c | 21 +++++++++++++++++++++
- include/linux/efi.h      |  7 ++++++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 2126b9d27c340..c663d5fcff2ee 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -81,6 +81,19 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
- 	return 0;
- }
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3928,8 +3928,6 @@ static void svm_vcpu_run(struct kvm_vcpu
  
-+/*
-+ * Some machines don't handle the default ACPI reboot method and
-+ * require the EFI reboot method:
-+ */
-+static int __init set_efi_reboot(const struct dmi_system_id *d)
-+{
-+	if (reboot_type != BOOT_EFI && !efi_runtime_disabled()) {
-+		reboot_type = BOOT_EFI;
-+		pr_info("%s series board detected. Selecting EFI-method for reboot.\n", d->ident);
-+	}
-+	return 0;
-+}
+ 	clgi();
+ 
+-	local_irq_enable();
+-
+ 	/*
+ 	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
+ 	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
+@@ -3938,6 +3936,8 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 */
+ 	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
++	local_irq_enable();
 +
- void __noreturn machine_real_restart(unsigned int type)
- {
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -4060,12 +4060,12 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
+-
+ 	reload_tss(vcpu);
+ 
  	local_irq_disable();
-@@ -166,6 +179,14 @@ static const struct dmi_system_id reboot_dmi_table[] __initconst = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "AOA110"),
- 		},
- 	},
-+	{	/* Handle reboot issue on Acer TravelMate X514-51T */
-+		.callback = set_efi_reboot,
-+		.ident = "Acer TravelMate X514-51T",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate X514-51T"),
-+		},
-+	},
  
- 	/* Apple */
- 	{	/* Handle problems with rebooting on Apple MacBook5 */
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index b68b7d199feea..2dab158b74c45 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1518,7 +1518,12 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
- 			   struct screen_info *si, efi_guid_t *proto,
- 			   unsigned long size);
- 
--bool efi_runtime_disabled(void);
-+#ifdef CONFIG_EFI
-+extern bool efi_runtime_disabled(void);
-+#else
-+static inline bool efi_runtime_disabled(void) { return true; }
-+#endif
++	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
 +
- extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
- 
- enum efi_secureboot_mode {
--- 
-2.20.1
-
+ 	vcpu->arch.cr2 = svm->vmcb->save.cr2;
+ 	vcpu->arch.regs[VCPU_REGS_RAX] = svm->vmcb->save.rax;
+ 	vcpu->arch.regs[VCPU_REGS_RSP] = svm->vmcb->save.rsp;
 
 
