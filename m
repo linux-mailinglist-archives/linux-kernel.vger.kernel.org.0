@@ -2,135 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70F621F393
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFE41F2FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbfEOMOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:14:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40930 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728352AbfEOLEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:04:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D949D80D;
-        Wed, 15 May 2019 04:04:08 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37E733F703;
-        Wed, 15 May 2019 04:04:07 -0700 (PDT)
-Subject: Re: [PATCH v3 02/16] iommu: Introduce cache_invalidate API
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     Auger Eric <eric.auger@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1556922737-76313-3-git-send-email-jacob.jun.pan@linux.intel.com>
- <d32d3d19-11c9-4af9-880b-bb8ebefd4f7f@redhat.com>
- <44d5ba37-a9e9-cc7a-2a3a-d32b840afa29@arm.com>
- <7807afe9-efab-9f48-4ca0-2332a7a54950@redhat.com>
- <1a5a5fad-ed21-5c79-9a9e-ff21fadfb95f@arm.com>
- <20190513151637.79c273e2@jacob-builder>
- <0da76e57-76f6-06fa-d34e-30cd0c294984@redhat.com>
- <f319bd4c-3092-84e1-233a-34832551249e@arm.com>
- <20190514104401.79d563f4@jacob-builder>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <c068af08-15bd-c7c0-f5c2-7414832a6e9c@arm.com>
-Date:   Wed, 15 May 2019 12:03:45 +0100
+        id S1728973AbfEOLHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:07:45 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40899 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728954AbfEOLHm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:07:42 -0400
+Received: by mail-wm1-f66.google.com with SMTP id h11so2032161wmb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WLYROLqwvq+iq4Tg13SMOpkpNE1f0nENSLKE//G0bsk=;
+        b=euq/YjOxetpfM+ZIRd16tqOJMUNMAQ639aAlV8Z7Ibig9LpEwqAJTeSnRJZv9QFR0A
+         n3DaSssaT4KUsdSZYEJF2jvAGai5fUuS8T0WPRkz4o4p20gpJt7tecOOpF/0sXYuCt4c
+         +gkH9sxfIb3PHS15GjRWakzRNBq90imKo8mOxdUlQBch12slcyqyLT1bNw+kIeI5Y2BK
+         hqlOAm4od8MxLkFSusv/wFPi/FAd6Jl5afhpMqIgF782USJg1GQqr6rRATkZmQKNyr4T
+         Reyohk2YroZHi9UP9N4sj4WdzXhQOZgyYey7kYxrPMDf/koP7KIAwgEvhf/7CifOKhnp
+         mmaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WLYROLqwvq+iq4Tg13SMOpkpNE1f0nENSLKE//G0bsk=;
+        b=TWsABmJDGlhvgJW3QE1XpUY3DzE2hp/epANn/BpEWr5b8zaw852rd4kN88oW9fsG6J
+         yclOkch17h2uUKs3BqhlD1i95GfoP4944JfDbjrS4/YfFVmwTzl4bTFCY/UmjGbvgVBn
+         5H+4uP+XdJRb/4ZZ6Ymj/hf5dmX7/2NwmWCQ3Nwcw2n/UUiGj1L10Tq9mAkFNu2d1smY
+         pP7ezDnm7SNgcakmbrecpOf2lCmOyYCjI2/KED8EflXpmBMDHImNuKEQDte9LcGliEwE
+         r6AsSnnxeoYCAKcJP/NRL0fH0QorFPXDjgs11xNFe7l60K4dbPG4D4uYDVIeFeC33ycp
+         pvMg==
+X-Gm-Message-State: APjAAAXv+LeoF0eVgpHMHsG/hoWxedaXpFd8CPtNaqSs4NMQGpUlueRo
+        aDMGvni1aM/nFHzV1WT4qEfAyg==
+X-Google-Smtp-Source: APXvYqyk+jOEfdcEqATmFYCA0jxw/O5gBV5d9uEck/eUQUqWql3DtCIln4vAuhSqj4YJxAvSRHH8IQ==
+X-Received: by 2002:a1c:f407:: with SMTP id z7mr22070590wma.34.1557918459197;
+        Wed, 15 May 2019 04:07:39 -0700 (PDT)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id 130sm1924399wmd.15.2019.05.15.04.07.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 04:07:38 -0700 (PDT)
+Subject: Re: [PATCH v4 2/3] PM / EM: Expose perf domain struct
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
+        rui.zhang@intel.com, javi.merino@kernel.org,
+        amit.kachhap@gmail.com, rjw@rjwysocki.net, will.deacon@arm.com,
+        catalin.marinas@arm.com, dietmar.eggemann@arm.com,
+        ionela.voinescu@arm.com, mka@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190515082318.7993-3-quentin.perret@arm.com>
+ <0ced18eb-e424-fe6b-b11e-165a3c108170@linaro.org>
+ <20190515091658.sbpg6qiovhtblqyr@queper01-lin>
+ <698400c0-e0a4-4a86-b9df-cdb9bd683c0f@linaro.org>
+ <20190515100748.q3t4kt72h2akdpcs@queper01-lin>
+ <cf1474cb-7e31-7070-b988-a0c4d3f6f081@linaro.org>
+ <20190515102200.s6uq63qnwea6xtpl@vireshk-i7>
+ <20190515104043.vogspxgkapp6qsny@queper01-lin>
+ <20190515104651.tv5odug7ce4zlupc@queper01-lin>
+ <5b55e432-f8b0-91ae-a7de-fe02e0cad322@linaro.org>
+ <20190515110156.ru2wxqvwffqgq3t3@queper01-lin>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a4c0ab68-f8d0-a70d-58e5-b8de55199000@linaro.org>
+Date:   Wed, 15 May 2019 13:07:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190514104401.79d563f4@jacob-builder>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20190515110156.ru2wxqvwffqgq3t3@queper01-lin>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/2019 18:44, Jacob Pan wrote:
-> Hi Thank you both for the explanation.
-> 
-> On Tue, 14 May 2019 11:41:24 +0100
-> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-> 
->> On 14/05/2019 08:36, Auger Eric wrote:
->>> Hi Jacob,
+On 15/05/2019 13:01, Quentin Perret wrote:
+> On Wednesday 15 May 2019 at 12:51:57 (+0200), Daniel Lezcano wrote:
+>> On 15/05/2019 12:46, Quentin Perret wrote:
+>>> On Wednesday 15 May 2019 at 11:40:44 (+0100), Quentin Perret wrote:
+>>
+>> [ ... ]
+>>
+>>>> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
+>>>>         if (capacitance) {
+>>>>                 ret = update_freq_table(cpufreq_cdev, capacitance);
+>>>>                 if (ret) {
+>>>>                         cdev = ERR_PTR(ret);
+>>>>                         goto remove_ida;
+>>>>                 }
+>>>> -
+>>>> -               cooling_ops = &cpufreq_power_cooling_ops;
+>>>> -       } else {
+>>>> -               cooling_ops = &cpufreq_cooling_ops;
+>>>>         }
+>>>> +#endif
+>>>> +       cooling_ops = &cpufreq_cooling_ops;
 >>>
->>> On 5/14/19 12:16 AM, Jacob Pan wrote:  
->>>> On Mon, 13 May 2019 18:09:48 +0100
->>>> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
->>>>  
->>>>> On 13/05/2019 17:50, Auger Eric wrote:  
->>>>>>> struct iommu_inv_pasid_info {
->>>>>>> #define IOMMU_INV_PASID_FLAGS_PASID	(1 << 0)
->>>>>>> #define IOMMU_INV_PASID_FLAGS_ARCHID	(1 << 1)
->>>>>>> 	__u32	flags;
->>>>>>> 	__u32	archid;
->>>>>>> 	__u64	pasid;
->>>>>>> };    
->>>>>> I agree it does the job now. However it looks a bit strange to
->>>>>> do a PASID based invalidation in my case - SMMUv3 nested stage -
->>>>>> where I don't have any PASID involved.
->>>>>>
->>>>>> Couldn't we call it context based invalidation then? A context
->>>>>> can be tagged by a PASID or/and an ARCHID.    
->>>>>
->>>>> I think calling it "context" would be confusing as well (I
->>>>> shouldn't have used it earlier), since VT-d uses that name for
->>>>> device table entries (=STE on Arm SMMU). Maybe "addr_space"?
->>>>>  
->>>> I am still struggling to understand what ARCHID is after scanning
->>>> through SMMUv3.1 spec. It seems to be a constant for a given SMMU.
->>>> Why do you need to pass it down every time? Could you point to me
->>>> the document or explain a little more on ARCHID use cases.
->>>> We have three fileds called pasid under this struct
->>>> iommu_cache_invalidate_info{}
->>>> Gets confusing :)  
->>> archid is a generic term. That's why you did not find it in the
->>> spec ;-)
->>>
->>> On ARM SMMU the archid is called the ASID (Address Space ID, up to
->>> 16 bits. The ASID is stored in the Context Descriptor Entry (your
->>> PASID entry) and thus characterizes a given stage 1 translation
->>> "context"/"adress space".  
+>>> Argh, that is actually broken with !capacitance and
+>>> THERMAL_GOV_POWER_ALLOCATOR=y ... Perhaps it's best to keep the two
+>>> thermal_cooling_device_ops struct separated in the end.
 >>
->> Yes, another way to look at it is, for a given address space:
->> * PASID tags device-IOTLB (ATC) entries.
->> * ASID (here called archid) tags IOTLB entries.
->>
->> They could have the same value, but it depends on the guest's
->> allocation policy which isn't in our control. With my PASID patches
->> for SMMUv3, they have different values. So we need both fields if we
->> intend to invalidate both ATC and IOTLB with a single call.
->>
-> For ASID invalidation, there is also page/address selective within an
-> ASID, right? I guess it is CMD_TLBI_NH_VA?
-> So the single call to invalidate both ATC & IOTLB should share the same
-> address information. i.e.
-> struct iommu_inv_addr_info {}
+>> Or alternatively you can keep one structure but instead of filling the
+>> state2power,power2state and getrequestedpower fields in the declaration,
+>> you fill them in the if (capacitance) block, no?
 > 
-> Just out of curiosity, what is the advantage of having guest tag its
-> ATC with its own PASID? I thought you were planning to use custom
-> ioasid allocator to get PASID from host.
+> Something like the below ? Yes, that works too. I'll write a proper
+> patch and send that next week or so.
 
-Hm, for the moment I mostly considered the custom ioasid allocator for
-Intel platforms. On Arm platforms the SR-IOV model where each VM has its
-own PASID space is still very much on the table. This would be the only
-model supported by a vSMMU emulation for example, since the SMMU doesn't
-have PASID allocation commands.
+Yes, exactly. And IMHO, that helps for the understanding of code also.
 
-> Also ASID is 16 bit as Eric said and PASID (substreamID?) is 20 bit,
-> right?
+> --->8---
+> 
+>  /* Bind cpufreq callbacks to thermal cooling device ops */
+> 
+>  static struct thermal_cooling_device_ops cpufreq_cooling_ops = {
+> -       .get_max_state = cpufreq_get_max_state,
+> -       .get_cur_state = cpufreq_get_cur_state,
+> -       .set_cur_state = cpufreq_set_cur_state,
+> -};
+> -
+> -static struct thermal_cooling_device_ops cpufreq_power_cooling_ops = {
+>         .get_max_state          = cpufreq_get_max_state,
+>         .get_cur_state          = cpufreq_get_cur_state,
+>         .set_cur_state          = cpufreq_set_cur_state,
+> -       .get_requested_power    = cpufreq_get_requested_power,
+> -       .state2power            = cpufreq_state2power,
+> -       .power2state            = cpufreq_power2state,
+>  };
+> 
+>  /* Notifier for cpufreq policy change */
+> @@ -674,18 +667,19 @@ __cpufreq_cooling_register(struct device_node *np,
+>                         pr_debug("%s: freq:%u KHz\n", __func__, freq);
+>         }
+> 
+> +       cooling_ops = &cpufreq_cooling_ops;
+> +#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
+>         if (capacitance) {
+>                 ret = update_freq_table(cpufreq_cdev, capacitance);
+>                 if (ret) {
+>                         cdev = ERR_PTR(ret);
+>                         goto remove_ida;
+>                 }
+> -
+> -               cooling_ops = &cpufreq_power_cooling_ops;
+> -       } else {
+> -               cooling_ops = &cpufreq_cooling_ops;
+> +               cooling_ops->get_requested_power = cpufreq_get_requested_power;
+> +               cooling_ops->state2power = cpufreq_state2power;
+> +               cooling_ops->power2state = cpufreq_power2state;
+>         }
+> -
+> +#endif
+>         cdev = thermal_of_cooling_device_register(np, dev_name, cpufreq_cdev,
+>                                                   cooling_ops);
+>         if (IS_ERR(cdev))
+> 
 
-Yes. Some implementations have 8-bit ASIDs, but I think those would be
-on embedded rather than server class platforms. And yes, if it wasn't
-confusing enough, the Arm SMMU uses "SubstreamID" (SSID) for PASIDs :)
 
-Thanks,
-Jean
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
