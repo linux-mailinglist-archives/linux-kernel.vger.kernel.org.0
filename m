@@ -2,76 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9CF31EAAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A31991EAAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfEOJIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 05:08:04 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:55418 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726338AbfEOJID (ORCPT
+        id S1726466AbfEOJHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 05:07:54 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42041 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfEOJHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 05:08:03 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TRnXhzE_1557911268;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TRnXhzE_1557911268)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 15 May 2019 17:07:48 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-To:     alex.shi@linux.alibaba.com
-Cc:     Shuah Khan <shuah@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Tejun Heo <tj@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jay Kamat <jgkamat@fb.com>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Claudio Zumbo <claudioz@fb.com>,
-        Claudio <claudiozumbo@gmail.com>
-Subject: [PATCH 3/3] kselftest/cgroup: fix incorrect test_core skip
-Date:   Wed, 15 May 2019 17:07:04 +0800
-Message-Id: <20190515090704.56929-3-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.856.g8858448bb
-In-Reply-To: <20190515090704.56929-1-alex.shi@linux.alibaba.com>
-References: <20190515090704.56929-1-alex.shi@linux.alibaba.com>
+        Wed, 15 May 2019 05:07:53 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j53so2360015qta.9
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 02:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sbQtz0/a90pIaMSCWP84iVzFuP3XKcJmSksz/GcBaK0=;
+        b=M4RbnVlDKOEx9SpprG/yztIqOThSh+PXtYU/A1m2flZulmsPxxYArIr39yKexfC4pA
+         cmwOmpGLegz8F6VpHrz8MeJNeKVNWm3vsNwQztlv6YrT93c6ZMUgkUxH77A1JR0sIt2d
+         49XheDHbU3/+MqkMrzDMV0cYtgGt8H2hAimUM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sbQtz0/a90pIaMSCWP84iVzFuP3XKcJmSksz/GcBaK0=;
+        b=YKo3Smpc4bto/bAxLg5lHS0f6BEa8b0sXZR2JGC9oqvdk8oMglZnufGtk/Svkv767C
+         ckSicGuTrtVX92/rrM/kWpg2RhsVpkHM2ZQN8/qUyvCPy+hW4mGO0bH6jHCtubxO9jNY
+         thNAF1NXwl9MbvSXIMiJNUFKvZMrQZV84TppkLLX834IBZlPtdUkXXsd1w1/hr5VltJF
+         K7v96cFIuRktyw6d3d++IFhXzcyqRvlC2E+3Kls+MawQoj6bASdS7Y5bkbll9PAwIKs7
+         iSbeQGyfmjaoYGEakc1reMwP+z8eItKO4wUXkCm/KBD0M7W972sM4wzfqAYXxm6hhU7N
+         P/Ng==
+X-Gm-Message-State: APjAAAXOwSXbMNaOJIr8gJ09v0alSKKGK8KMu/+rWilvrspJzyuH/SHC
+        GvmklaM83EbUdZ/T2AruoNj25+IU2UyzLwKeYqnEqQ==
+X-Google-Smtp-Source: APXvYqyXl9+Efyxlf2al2/kO4uZaNzAovVvLGkNka+wUbkkqJvcl3CuDnIvDXQ6VyY6lb4I0Ezw26J8OV7wIwh0ZW1o=
+X-Received: by 2002:aed:24ae:: with SMTP id t43mr34214820qtc.187.1557911272310;
+ Wed, 15 May 2019 02:07:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190513003819.356-1-hsinyi@chromium.org> <CAL_Jsq+Z5+M7fYCrkRKqN1yKTu6uyMKRKh-R4b-cj46y18hXOw@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+Z5+M7fYCrkRKqN1yKTu6uyMKRKh-R4b-cj46y18hXOw@mail.gmail.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Wed, 15 May 2019 17:07:26 +0800
+Message-ID: <CAJMQK-jei0j5R6sgn4GfxnqK127J5dtzcuiw8XP6hzLf_9vRAw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fdt: add support for rng-seed
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test_core will skip the
-test_cgcore_no_internal_process_constraint_on_threads test case if the
-'cpu' controller missing in root's subtree_control. In fact we need to
-set the 'cpu' in subtree_control, then the testing is meaningful.
+On Mon, May 13, 2019 at 9:14 PM Rob Herring <robh+dt@kernel.org> wrote:
 
-./test_core
-...
-ok 4 # skip test_cgcore_no_internal_process_constraint_on_threads
-...
-
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Claudio Zumbo <claudioz@fb.com>
-Cc: Claudio <claudiozumbo@gmail.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- tools/testing/selftests/cgroup/test_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/cgroup/test_core.c b/tools/testing/selftests/cgroup/test_core.c
-index b1a570d7c557..2ffc3e07d98d 100644
---- a/tools/testing/selftests/cgroup/test_core.c
-+++ b/tools/testing/selftests/cgroup/test_core.c
-@@ -198,7 +198,7 @@ static int test_cgcore_no_internal_process_constraint_on_threads(const char *roo
- 	char *parent = NULL, *child = NULL;
- 
- 	if (cg_read_strstr(root, "cgroup.controllers", "cpu") ||
--	    cg_read_strstr(root, "cgroup.subtree_control", "cpu")) {
-+	    cg_write(root, "cgroup.subtree_control", "+cpu")) {
- 		ret = KSFT_SKIP;
- 		goto cleanup;
- 	}
--- 
-2.19.1.856.g8858448bb
-
+> > +        fdt_nop_property(initial_boot_params, node, "rng-seed");
+>
+> I'd just delete the property.
+>
+> Also, what about kexec? Don't you need to add a new seed?
+>
+Will update in v3. Thanks.
