@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1391ECA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275671F1E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfEOLAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:00:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56652 "EHLO mail.kernel.org"
+        id S1730971AbfEOL4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:56:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfEOK77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:59:59 -0400
+        id S1728287AbfEOLRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65AE32084E;
-        Wed, 15 May 2019 10:59:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9414320644;
+        Wed, 15 May 2019 11:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917998;
-        bh=1FA4MIz3CQzJCCADgU/KVoD/cf8oj05WHxeaSFbTaBA=;
+        s=default; t=1557919064;
+        bh=zumhebDlMS+1xOtQgAdOJf5PiuJ3GAZZf018nQT37s8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GKjHXcjFYwrd64efV+1PLrwH+P77ys95dNdTP6YXeN86wCDsC6yOLDZHpGn4FBEwR
-         dCGj4+OPD3AFG8hmXekMEjeMU2JepacCtNTGWrv5U0Oyy6pj/si8h6z4pT+V5WqGdG
-         xfhhBVwI5SdpU8+LJWbvJIf+u0HE2EOoT+jlH2mo=
+        b=FssqqGYWu7DipBd8B3M69Tc56riIo8yu6EWtYvt/eulqakU8d5civH1oJ+3n5apyL
+         7ZFUh2TlcjRQkWHGOL26f6qqHDOyIR1P9WAKGqTqnRoWte7a0JnUAISgkTzW6DS6lH
+         rvZRfMAxwuIkinwnZZFqMjeN04WTEIpedY+KzsBo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 54/86] ASoC: cs4270: Set auto-increment bit for register writes
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 051/115] media: adv7842: when the EDID is cleared, unconfigure CEC as well
 Date:   Wed, 15 May 2019 12:55:31 +0200
-Message-Id: <20190515090653.006917756@linuxfoundation.org>
+Message-Id: <20190515090703.304859002@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f0f2338a9cfaf71db895fa989ea7234e8a9b471d ]
+[ Upstream commit ab83203e181015b099720aff43ffabc1812e0fb3 ]
 
-The CS4270 does not by default increment the register address on
-consecutive writes. During normal operation it doesn't matter as all
-register accesses are done individually. At resume time after suspend,
-however, the regcache code gathers the biggest possible block of
-registers to sync and sends them one on one go.
+When there is no EDID the CEC adapter should be unconfigured as
+well. So call cec_phys_addr_invalidate() when this happens.
 
-To fix this, set the INCR bit in all cases.
-
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.18 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/codecs/cs4270.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/i2c/adv7842.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
-index 736c1ea8e31e2..756796c064136 100644
---- a/sound/soc/codecs/cs4270.c
-+++ b/sound/soc/codecs/cs4270.c
-@@ -641,6 +641,7 @@ static const struct regmap_config cs4270_regmap = {
- 	.reg_defaults =		cs4270_reg_defaults,
- 	.num_reg_defaults =	ARRAY_SIZE(cs4270_reg_defaults),
- 	.cache_type =		REGCACHE_RBTREE,
-+	.write_flag_mask =	CS4270_I2C_INCR,
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index f9c23173c9fa0..dcce8d030e5db 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -799,8 +799,10 @@ static int edid_write_hdmi_segment(struct v4l2_subdev *sd, u8 port)
+ 	/* Disable I2C access to internal EDID ram from HDMI DDC ports */
+ 	rep_write_and_or(sd, 0x77, 0xf3, 0x00);
  
- 	.readable_reg =		cs4270_reg_is_readable,
- 	.volatile_reg =		cs4270_reg_is_volatile,
+-	if (!state->hdmi_edid.present)
++	if (!state->hdmi_edid.present) {
++		cec_phys_addr_invalidate(state->cec_adap);
+ 		return 0;
++	}
+ 
+ 	pa = cec_get_edid_phys_addr(edid, 256, &spa_loc);
+ 	err = cec_phys_addr_validate(pa, &pa, NULL);
 -- 
 2.20.1
 
