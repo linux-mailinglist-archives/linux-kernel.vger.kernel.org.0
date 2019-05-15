@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C661F1D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9081EDDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:14:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731425AbfEOLzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
+        id S1730043AbfEOLNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbfEOLSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:30 -0400
+        id S1730029AbfEOLNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:13:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A287320818;
-        Wed, 15 May 2019 11:18:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9CD020843;
+        Wed, 15 May 2019 11:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919109;
-        bh=dTmFT7TKTriO5IZguRXx5X7JbuvISHT99RvkbIsNXhs=;
+        s=default; t=1557918829;
+        bh=C3pjdgoM05E/pFgWcXmBFJyVyCqrBL4TcyQyem672PM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BvJX9HCUS7qgP3xRymKYbhD44EHsnZLhd66oJNad7ePhtnIHSRI/zPgRJAZE3Cdr8
-         Q4Omaztq648DNyWNwRcJ9wlN1reTh82TIbONa/+QAQZReM9HQrfEWXzC5VvhaxAyUy
-         1+vfcnR4gfXgzCXZLG46IufdOCaNdzeKTqKMEz/o=
+        b=UPXiDK+9MuPfq3AKPDqt3bCzm7VW8iWk1U3l28EykNFT5heIlQn5n9BB0od2JWDBx
+         yzhz9Bz/ENqa0HJF/dBfEgCn2ZailPWlQcHR/tUwrUgXgRtXvtHGjlKo/n+sRwfhAa
+         QgQcvkfiDY26gOSM5FJQDjoDUTy10EZ9LzQ8veY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ruishuang Wang <ruishuangw@vmware.com>,
-        Bryan Tan <bryantan@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 071/115] RDMA/vmw_pvrdma: Return the correct opcode when creating WR
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux@endlessm.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 16/51] x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
 Date:   Wed, 15 May 2019 12:55:51 +0200
-Message-Id: <20190515090704.619087084@linuxfoundation.org>
+Message-Id: <20190515090622.504518229@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,101 +51,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6325e01b6cdf4636b721cf7259c1616e3cf28ce2 ]
+[ Upstream commit 0082517fa4bce073e7cf542633439f26538a14cc ]
 
-Since the IB_WR_REG_MR opcode value changed, let's set the PVRDMA device
-opcodes explicitly.
+Upon reboot, the Acer TravelMate X514-51T laptop appears to complete the
+shutdown process, but then it hangs in BIOS POST with a black screen.
 
-Reported-by: Ruishuang Wang <ruishuangw@vmware.com>
-Fixes: 9a59739bd01f ("IB/rxe: Revise the ib_wr_opcode enum")
-Cc: stable@vger.kernel.org
-Reviewed-by: Bryan Tan <bryantan@vmware.com>
-Reviewed-by: Ruishuang Wang <ruishuangw@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Adit Ranadive <aditr@vmware.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+The problem is intermittent - at some points it has appeared related to
+Secure Boot settings or different kernel builds, but ultimately we have
+not been able to identify the exact conditions that trigger the issue to
+come and go.
+
+Besides, the EFI mode cannot be disabled in the BIOS of this model.
+
+However, after extensive testing, we observe that using the EFI reboot
+method reliably avoids the issue in all cases.
+
+So add a boot time quirk to use EFI reboot on such systems.
+
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203119
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux@endlessm.com
+Link: http://lkml.kernel.org/r/20190412080152.3718-1-jian-hong@endlessm.com
+[ Fix !CONFIG_EFI build failure, clarify the code and the changelog a bit. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/vmw_pvrdma/pvrdma.h    | 35 +++++++++++++++++++-
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c |  6 ++++
- include/uapi/rdma/vmw_pvrdma-abi.h           |  1 +
- 3 files changed, 41 insertions(+), 1 deletion(-)
+ arch/x86/kernel/reboot.c | 21 +++++++++++++++++++++
+ include/linux/efi.h      |  7 ++++++-
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h b/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
-index 984aa3484928d..4463e1c1a764e 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
-@@ -407,7 +407,40 @@ static inline enum ib_qp_state pvrdma_qp_state_to_ib(enum pvrdma_qp_state state)
- 
- static inline enum pvrdma_wr_opcode ib_wr_opcode_to_pvrdma(enum ib_wr_opcode op)
- {
--	return (enum pvrdma_wr_opcode)op;
-+	switch (op) {
-+	case IB_WR_RDMA_WRITE:
-+		return PVRDMA_WR_RDMA_WRITE;
-+	case IB_WR_RDMA_WRITE_WITH_IMM:
-+		return PVRDMA_WR_RDMA_WRITE_WITH_IMM;
-+	case IB_WR_SEND:
-+		return PVRDMA_WR_SEND;
-+	case IB_WR_SEND_WITH_IMM:
-+		return PVRDMA_WR_SEND_WITH_IMM;
-+	case IB_WR_RDMA_READ:
-+		return PVRDMA_WR_RDMA_READ;
-+	case IB_WR_ATOMIC_CMP_AND_SWP:
-+		return PVRDMA_WR_ATOMIC_CMP_AND_SWP;
-+	case IB_WR_ATOMIC_FETCH_AND_ADD:
-+		return PVRDMA_WR_ATOMIC_FETCH_AND_ADD;
-+	case IB_WR_LSO:
-+		return PVRDMA_WR_LSO;
-+	case IB_WR_SEND_WITH_INV:
-+		return PVRDMA_WR_SEND_WITH_INV;
-+	case IB_WR_RDMA_READ_WITH_INV:
-+		return PVRDMA_WR_RDMA_READ_WITH_INV;
-+	case IB_WR_LOCAL_INV:
-+		return PVRDMA_WR_LOCAL_INV;
-+	case IB_WR_REG_MR:
-+		return PVRDMA_WR_FAST_REG_MR;
-+	case IB_WR_MASKED_ATOMIC_CMP_AND_SWP:
-+		return PVRDMA_WR_MASKED_ATOMIC_CMP_AND_SWP;
-+	case IB_WR_MASKED_ATOMIC_FETCH_AND_ADD:
-+		return PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD;
-+	case IB_WR_REG_SIG_MR:
-+		return PVRDMA_WR_REG_SIG_MR;
-+	default:
-+		return PVRDMA_WR_ERROR;
-+	}
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 4a12362a194af..c55b11fe8e9f6 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -82,6 +82,19 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
+ 	return 0;
  }
  
- static inline enum ib_wc_status pvrdma_wc_status_to_ib(
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-index d7162f2b7979a..4d9c99dd366b1 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-@@ -695,6 +695,12 @@ int pvrdma_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 		    wr->opcode == IB_WR_RDMA_WRITE_WITH_IMM)
- 			wqe_hdr->ex.imm_data = wr->ex.imm_data;
- 
-+		if (unlikely(wqe_hdr->opcode == PVRDMA_WR_ERROR)) {
-+			*bad_wr = wr;
-+			ret = -EINVAL;
-+			goto out;
-+		}
++/*
++ * Some machines don't handle the default ACPI reboot method and
++ * require the EFI reboot method:
++ */
++static int __init set_efi_reboot(const struct dmi_system_id *d)
++{
++	if (reboot_type != BOOT_EFI && !efi_runtime_disabled()) {
++		reboot_type = BOOT_EFI;
++		pr_info("%s series board detected. Selecting EFI-method for reboot.\n", d->ident);
++	}
++	return 0;
++}
 +
- 		switch (qp->ibqp.qp_type) {
- 		case IB_QPT_GSI:
- 		case IB_QPT_UD:
-diff --git a/include/uapi/rdma/vmw_pvrdma-abi.h b/include/uapi/rdma/vmw_pvrdma-abi.h
-index 912ea1556a0b0..fd801c7be1204 100644
---- a/include/uapi/rdma/vmw_pvrdma-abi.h
-+++ b/include/uapi/rdma/vmw_pvrdma-abi.h
-@@ -76,6 +76,7 @@ enum pvrdma_wr_opcode {
- 	PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD,
- 	PVRDMA_WR_BIND_MW,
- 	PVRDMA_WR_REG_SIG_MR,
-+	PVRDMA_WR_ERROR,
- };
+ void __noreturn machine_real_restart(unsigned int type)
+ {
+ 	local_irq_disable();
+@@ -167,6 +180,14 @@ static struct dmi_system_id __initdata reboot_dmi_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "AOA110"),
+ 		},
+ 	},
++	{	/* Handle reboot issue on Acer TravelMate X514-51T */
++		.callback = set_efi_reboot,
++		.ident = "Acer TravelMate X514-51T",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate X514-51T"),
++		},
++	},
  
- enum pvrdma_wc_status {
+ 	/* Apple */
+ 	{	/* Handle problems with rebooting on Apple MacBook5 */
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 80b1b8faf503f..e6711bf9f0d12 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1433,7 +1433,12 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
+ 			   struct screen_info *si, efi_guid_t *proto,
+ 			   unsigned long size);
+ 
+-bool efi_runtime_disabled(void);
++#ifdef CONFIG_EFI
++extern bool efi_runtime_disabled(void);
++#else
++static inline bool efi_runtime_disabled(void) { return true; }
++#endif
++
+ extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
+ 
+ /*
 -- 
 2.20.1
 
