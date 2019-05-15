@@ -2,111 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 993CF1F59A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AC941F59D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfEONbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 09:31:23 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:41955 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbfEONbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 09:31:22 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 453wS71l9Vz9v04S;
-        Wed, 15 May 2019 15:31:19 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=V7GC4L4C; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 11McXCPOjVpO; Wed, 15 May 2019 15:31:19 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 453wS70gZbz9ttBf;
-        Wed, 15 May 2019 15:31:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1557927079; bh=KQitmtthjuKTf463KvElMEOKYH20lPWCTF0h8ZSiqcY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V7GC4L4CSy3P8iNMnOOfhOihAw0EVxnwShKMdDN7u6Am7h6ReBv2icF0Kct7O6f+d
-         lrD/wS3nbhaQ7pxCAaJ3UdLNQvGWbOOMS9iKikKe9vetT7ovOK5LVWZtAYJf+eqtjv
-         pYd/d4C2Mbm2rBsNEQhu41D+dg2r+w6pjKt80mPY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7EB0B8B90E;
-        Wed, 15 May 2019 15:31:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id d5MnKMJxUo6j; Wed, 15 May 2019 15:31:20 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 444688B90B;
-        Wed, 15 May 2019 15:31:20 +0200 (CEST)
-Subject: Re: [PATCH stable 4.9] powerpc/lib: fix book3s/32 boot failure due to
- code patching
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, erhard_f@mailbox.org,
-        Michael Neuling <mikey@neuling.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <629c2acb1fcd09c2d2e3352370c3d9853372cf39.1557902321.git.christophe.leroy@c-s.fr>
- <20190515082931.GA28349@kroah.com>
- <9e58348f-da2d-34bc-d016-7817b3566e01@c-s.fr>
- <20190515130825.GA3794@kroah.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <35dceff2-cff9-d237-41aa-1743ec1db5f5@c-s.fr>
-Date:   Wed, 15 May 2019 15:31:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        id S1727711AbfEONcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 09:32:35 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40111 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbfEONce (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 09:32:34 -0400
+Received: by mail-it1-f193.google.com with SMTP id g71so72480ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 06:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ge6EYu+idJkuiSql+JEbZghal5x65pcJTMYe5g45ui0=;
+        b=FMxfbIWYpWTwgI22BmGs8Yiq8MAHLoEtv+5G7MRX86Ka/JQf4g7OTdAnYP1PGFAqyQ
+         uNK6W4sefjl9Rv/K95nmfN4QKCxF23slGuZUJRaxzJbpJYODaz9A4hCji7Ff6KkWOo2A
+         BB968g3ehKaYUYb3P5gxwlnmXavUJ0cnpCqxvxL6CHjg5fXWvhoIR3rwvMFTR8z4uiDD
+         2UwSK4XmSUx5QixaB3aNBAoOJ2oGDD85odPqgIxBH+BItzlmNUrpGUiy8Tc12RyTALGT
+         MHuRwgbbSntAbv/gazcAlTrFfgi7L2/bxoKfkixAJdTRzKIBO8bLKBHsrBNTAvBAR8BE
+         847Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ge6EYu+idJkuiSql+JEbZghal5x65pcJTMYe5g45ui0=;
+        b=mIZVagUdmvT9HcAZB6orMMHF+yDuMWIhw/Hez0EkuJMfyc/yLAEh9tebtaEdRWVwXo
+         PLFfupNEtG8xH0X/EftDfNsJ+SN9382V7pkRGzrFGXltyUfxp55cRjXd9OXT9aICdGr7
+         Pci3aouV1pb+iR5RNpGGWWYzhNZCXX7GXxtQEAlGHslH9L6Pss1l0sIChjS17qCUk7IU
+         Mmo8mICG1nArIpy187uO+cYXrt8qGigECZ8aTmfKNMBHmdKyrzO8fyL0fLIf09cR0ZMr
+         PW5+54SO6URPa0ajVrp7jTIJLCbsp3NOKiXz/8Wc1S8kCgGsOWlnV5eptnkjCzHBER3q
+         m7fg==
+X-Gm-Message-State: APjAAAVuWwJfqXIojyEwlCn+0P9aPRM9W4I6jt266OUOimcUYpAJsxOe
+        5Ly9aK3wjkLvyRaegi/fLuuPKGgVkCM=
+X-Google-Smtp-Source: APXvYqwIvHM6F1lUXVh8Y9vJVNajF38jzsuciqQS1yZ15j0SXKUvMHuSSNK59P486JV3CvYkAsnbrA==
+X-Received: by 2002:a05:660c:12ce:: with SMTP id k14mr7812071itd.149.1557927152234;
+        Wed, 15 May 2019 06:32:32 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id z19sm676468iol.24.2019.05.15.06.32.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 06:32:31 -0700 (PDT)
+Subject: Re: [PATCH 08/18] soc: qcom: ipa: the generic software interface
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190512012508.10608-1-elder@linaro.org>
+ <20190512012508.10608-9-elder@linaro.org>
+ <CAK8P3a0r5rg-_Vet+aUUzq3S9g=TJHPz9-0yQ0sY21NGd+4J0w@mail.gmail.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <fc8ad575-9ad6-27ab-3255-ef0f41f5b1c5@linaro.org>
+Date:   Wed, 15 May 2019 08:32:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190515130825.GA3794@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a0r5rg-_Vet+aUUzq3S9g=TJHPz9-0yQ0sY21NGd+4J0w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 15/05/2019 à 15:08, Greg KH a écrit :
-> On Wed, May 15, 2019 at 02:35:36PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 15/05/2019 à 10:29, Greg KH a écrit :
->>> On Wed, May 15, 2019 at 06:40:47AM +0000, Christophe Leroy wrote:
->>>> [Backport of upstream commit b45ba4a51cde29b2939365ef0c07ad34c8321789]
->>>>
->>>> On powerpc32, patch_instruction() is called by apply_feature_fixups()
->>>> which is called from early_init()
->>>>
->>>> There is the following note in front of early_init():
->>>>    * Note that the kernel may be running at an address which is different
->>>>    * from the address that it was linked at, so we must use RELOC/PTRRELOC
->>>>    * to access static data (including strings).  -- paulus
->>>>
->>>> Therefore init_mem_is_free must be accessed with PTRRELOC()
->>>>
->>>> Fixes: 1c38a84d4586 ("powerpc: Avoid code patching freed init sections")
->>>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203597
->>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>>
->>>> ---
->>>> Can't apply the upstream commit as such due to several other unrelated stuff
->>>> like for instance STRICT_KERNEL_RWX which are missing.
->>>> So instead, using same approach as for commit 252eb55816a6f69ef9464cad303cdb3326cdc61d
->>>
->>> Now queued up, thanks.
->>>
->>
->> Should go to 4.4 as well since the commit it fixes is now queued for 4.4
->> ([PATCH 4.4 056/266] powerpc: Avoid code patching freed init sections)
+On 5/15/19 5:47 AM, Arnd Bergmann wrote:
+> On Sun, May 12, 2019 at 3:25 AM Alex Elder <elder@linaro.org> wrote:
 > 
-> Ok, can someone send me a backport that actually applies there?
+> The per-event interrupt handling seems to be more complex than
+> necessary:
+
+I just noticed this message.  I'll take another look at this
+whole interrupt control mechanism and will try to streamline
+it along the lines of what you describe.
+
+Thanks.
+
+					-Alex
+
+> 
+>> +/* Enable or disable an event interrupt */
+>> +static void
+>> +_gsi_irq_control_event(struct gsi *gsi, u32 evt_ring_id, bool enable)
+>> +{
+>> +       u32 mask = BIT(evt_ring_id);
+>> +       u32 val;
+>> +
+>> +       if (enable)
+>> +               gsi->event_enable_bitmap |= mask;
+>> +       else
+>> +               gsi->event_enable_bitmap &= ~mask;
+>> +
+>> +       val = gsi->event_enable_bitmap;
+>> +       iowrite32(val, gsi->virt + GSI_CNTXT_SRC_IEOB_IRQ_MSK_OFFSET);
+>> +}
+>> +
+>> +static void gsi_irq_enable_event(struct gsi *gsi, u32 evt_ring_id)
+>> +{
+>> +       _gsi_irq_control_event(gsi, evt_ring_id, true);
+> 
+> You maintain a bitmap here of the enabled-state, and have
+> to use a spinlock to ensure that the two are in sync.
+> 
+>> +/* Returns true if the interrupt state (enabled or not) changed */
+>> +static bool gsi_channel_intr(struct gsi_channel *channel, bool enable)
+>> +{
+>> +       u32 evt_ring_id = channel->evt_ring_id;
+>> +       struct gsi *gsi = channel->gsi;
+>> +       u32 mask = BIT(evt_ring_id);
+>> +       unsigned long flags;
+>> +       bool different;
+>> +       u32 enabled;
+>> +
+>> +       spin_lock_irqsave(&gsi->spinlock, flags);
+>> +
+>> +       enabled = gsi->event_enable_bitmap & mask;
+>> +       different = enable == !enabled;
+>> +
+>> +       if (different) {
+>> +               if (enabled)
+>> +                       gsi_irq_disable_event(channel->gsi, evt_ring_id);
+>> +               else
+>> +                       gsi_irq_enable_event(channel->gsi, evt_ring_id);
+>> +       }
+>> +
+>> +       spin_unlock_irqrestore(&gsi->spinlock, flags);
+>> +
+>> +       return different;
+>> +}
+> 
+> This gets called for each active channel, so you repeatedly
+> have to get the spinlock and read the irq-enabled state for it.
+> 
+>> +static void gsi_isr_ieob(struct gsi *gsi)
+>> +{
+>> +       u32 evt_mask;
+>> +
+>> +       evt_mask = ioread32(gsi->virt + GSI_CNTXT_SRC_IEOB_IRQ_OFFSET);
+>> +       evt_mask &= ioread32(gsi->virt + GSI_CNTXT_SRC_IEOB_IRQ_MSK_OFFSET);
+>> +       iowrite32(evt_mask, gsi->virt + GSI_CNTXT_SRC_IEOB_IRQ_CLR_OFFSET);
+>> +
+>> +       while (evt_mask) {
+>> +               u32 evt_ring_id = __ffs(evt_mask);
+>> +
+>> +               evt_mask ^= BIT(evt_ring_id);
+>> +
+>> +               gsi_event_handle(gsi, evt_ring_id);
+>> +       }
+>> +}
+> 
+> However, you start out by clearing all bits here.
+> 
+> Why not skip the clearing and and leave the interrupts enabled,
+> while moving the GSI_CNTXT_SRC_IEOB_IRQ_CLR_OFFSET
+> write (for a single channel that was completed) to the end of
+> gsi_channel_poll()?
+> 
+> Something like
+> 
+> static void gsi_isr_ieob(struct gsi *gsi)
+> {
+>       u32 evt_mask;
+> 
+>       evt_mask = ioread32(gsi->virt + GSI_CNTXT_SRC_IEOB_IRQ_OFFSET);
+>       while (evt_mask) {
+>                u32 evt_ring_id = __ffs(evt_mask);
+>                evt_mask ^= BIT(evt_ring_id);
+> 
+>                napi_schedule(gsi->evt_ring[evt_ring_id].channel.napi);
+>       }
+> }
+> 
+> I also removed the GSI_CNTXT_SRC_IEOB_IRQ_MSK_OFFSET
+> read here, as that is probably more expensive than calling napi_schedule()
+> for a channel that is already scheduled. Most of the time, I'd expect the
+> interrupt to only signal a single channel anyway.
+> 
+>         Arnd
 > 
 
-Done
-
-Christophe
