@@ -2,41 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3421F058
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC061ED91
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbfEOLnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:43:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38328 "EHLO mail.kernel.org"
+        id S1729511AbfEOLLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:11:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732224AbfEOL11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:27 -0400
+        id S1729479AbfEOLK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:10:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2219820843;
-        Wed, 15 May 2019 11:27:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C6272084F;
+        Wed, 15 May 2019 11:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919646;
-        bh=T2QqfvhbHzDVSRQbMsQ6S98gh0+Bw32FInU2Ut6QmSA=;
+        s=default; t=1557918655;
+        bh=q/6myu8hZwS8nbFqjqDz7VZF/11WE19K62F6nr+8bo4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tl07EyPDif8UjhZFPdsCa7Ot4/mwcbmPar9EmZ2PCaQlGc2Jx4cU8ZvcZOuerBefR
-         KUtCzBt1g1+B9iQzpb4/ighVQsH6sjP+zzcoJQ8XUUCDr4ca3CWprisjTFq35sAnBp
-         swsylspcTblIwR6COa2FNwH7QQSKIfspYnYDDkus=
+        b=khxd9DkRH4n4qof3Lfse7LB/b3mFGG7qI6YS7HzlEePwYdAL2nAVRxzu2MrCbOcQY
+         M7AcvOi/p197BJ/bbnuNu5zfw9Guagc9fOC+b/s0MvPQ3kEckVP/97I0QwrF027j/q
+         Kv3ELBdBIEJSUk0VyM8PcfffZgIwW0T0ccoEzTTg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
-        Michal Kalderon <mkalderon@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 041/137] qed: Delete redundant doorbell recovery types
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: [PATCH 4.4 215/266] x86/speculation: Add command line control for indirect branch speculation
 Date:   Wed, 15 May 2019 12:55:22 +0200
-Message-Id: <20190515090656.397170610@linuxfoundation.org>
+Message-Id: <20190515090730.252499711@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,186 +62,329 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9ac6bb1414ac0d45fe9cefbd1f5b06f0e1a3c98a ]
+From: Thomas Gleixner <tglx@linutronix.de>
 
-DB_REC_DRY_RUN (running doorbell recovery without sending doorbells) is
-never used. DB_REC_ONCE (send a single doorbell from the doorbell recovery)
-is not needed anymore because by running the periodic handler we make sure
-we check the overflow status later instead.
-This patch is needed because in the next patches, the only doorbell
-recovery type being used is DB_REC_REAL_DEAL, and the fixes are much
-cleaner without this enum.
+commit fa1202ef224391b6f5b26cdd44cc50495e8fab54 upstream.
 
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Michal Kalderon <mkalderon@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add command line control for user space indirect branch speculation
+mitigations. The new option is: spectre_v2_user=
+
+The initial options are:
+
+    -  on:   Unconditionally enabled
+    - off:   Unconditionally disabled
+    -auto:   Kernel selects mitigation (default off for now)
+
+When the spectre_v2= command line argument is either 'on' or 'off' this
+implies that the application to application control follows that state even
+if a contradicting spectre_v2_user= argument is supplied.
+
+Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185005.082720373@linutronix.de
+[bwh: Backported to 4.4:
+ - Don't use __ro_after_init or cpu_smt_control
+ - Adjust filename]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed.h     |  3 +-
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 69 +++++++++--------------
- drivers/net/ethernet/qlogic/qed/qed_int.c |  6 +-
- drivers/net/ethernet/qlogic/qed/qed_int.h |  4 +-
- 4 files changed, 31 insertions(+), 51 deletions(-)
+ Documentation/kernel-parameters.txt  |   32 ++++++++
+ arch/x86/include/asm/nospec-branch.h |   10 ++
+ arch/x86/kernel/cpu/bugs.c           |  131 ++++++++++++++++++++++++++++++-----
+ 3 files changed, 154 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed.h b/drivers/net/ethernet/qlogic/qed/qed.h
-index 2d8a77cc156ba..d5fece7eb1698 100644
---- a/drivers/net/ethernet/qlogic/qed/qed.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed.h
-@@ -918,8 +918,7 @@ u16 qed_get_cm_pq_idx_llt_mtc(struct qed_hwfn *p_hwfn, u8 tc);
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -3604,9 +3604,13 @@ bytes respectively. Such letter suffixes
  
- /* doorbell recovery mechanism */
- void qed_db_recovery_dp(struct qed_hwfn *p_hwfn);
--void qed_db_recovery_execute(struct qed_hwfn *p_hwfn,
--			     enum qed_db_rec_exec db_exec);
-+void qed_db_recovery_execute(struct qed_hwfn *p_hwfn);
- bool qed_edpm_enabled(struct qed_hwfn *p_hwfn);
+ 	spectre_v2=	[X86] Control mitigation of Spectre variant 2
+ 			(indirect branch speculation) vulnerability.
++			The default operation protects the kernel from
++			user space attacks.
  
- /* Other Linux specific common definitions */
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index 2ecaaaa4469a6..ff0bbf8d073d6 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -300,26 +300,19 @@ void qed_db_recovery_dp(struct qed_hwfn *p_hwfn)
+-			on   - unconditionally enable
+-			off  - unconditionally disable
++			on   - unconditionally enable, implies
++			       spectre_v2_user=on
++			off  - unconditionally disable, implies
++			       spectre_v2_user=off
+ 			auto - kernel detects whether your CPU model is
+ 			       vulnerable
  
- /* Ring the doorbell of a single doorbell recovery entry */
- static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
--				 struct qed_db_recovery_entry *db_entry,
--				 enum qed_db_rec_exec db_exec)
--{
--	if (db_exec != DB_REC_ONCE) {
--		/* Print according to width */
--		if (db_entry->db_width == DB_REC_WIDTH_32B) {
--			DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
--				   "%s doorbell address %p data %x\n",
--				   db_exec == DB_REC_DRY_RUN ?
--				   "would have rung" : "ringing",
--				   db_entry->db_addr,
--				   *(u32 *)db_entry->db_data);
--		} else {
--			DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
--				   "%s doorbell address %p data %llx\n",
--				   db_exec == DB_REC_DRY_RUN ?
--				   "would have rung" : "ringing",
--				   db_entry->db_addr,
--				   *(u64 *)(db_entry->db_data));
--		}
-+				 struct qed_db_recovery_entry *db_entry)
-+{
-+	/* Print according to width */
-+	if (db_entry->db_width == DB_REC_WIDTH_32B) {
-+		DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
-+			   "ringing doorbell address %p data %x\n",
-+			   db_entry->db_addr,
-+			   *(u32 *)db_entry->db_data);
-+	} else {
-+		DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
-+			   "ringing doorbell address %p data %llx\n",
-+			   db_entry->db_addr,
-+			   *(u64 *)(db_entry->db_data));
- 	}
+@@ -3616,6 +3620,12 @@ bytes respectively. Such letter suffixes
+ 			CONFIG_RETPOLINE configuration option, and the
+ 			compiler with which the kernel was built.
  
- 	/* Sanity */
-@@ -334,14 +327,12 @@ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
- 	wmb();
++			Selecting 'on' will also enable the mitigation
++			against user space to user space task attacks.
++
++			Selecting 'off' will disable both the kernel and
++			the user space protections.
++
+ 			Specific mitigations can also be selected manually:
  
- 	/* Ring the doorbell */
--	if (db_exec == DB_REC_REAL_DEAL || db_exec == DB_REC_ONCE) {
--		if (db_entry->db_width == DB_REC_WIDTH_32B)
--			DIRECT_REG_WR(db_entry->db_addr,
--				      *(u32 *)(db_entry->db_data));
--		else
--			DIRECT_REG_WR64(db_entry->db_addr,
--					*(u64 *)(db_entry->db_data));
--	}
-+	if (db_entry->db_width == DB_REC_WIDTH_32B)
-+		DIRECT_REG_WR(db_entry->db_addr,
-+			      *(u32 *)(db_entry->db_data));
-+	else
-+		DIRECT_REG_WR64(db_entry->db_addr,
-+				*(u64 *)(db_entry->db_data));
+ 			retpoline	  - replace indirect branches
+@@ -3625,6 +3635,24 @@ bytes respectively. Such letter suffixes
+ 			Not specifying this option is equivalent to
+ 			spectre_v2=auto.
  
- 	/* Flush the write combined buffer. Next doorbell may come from a
- 	 * different entity to the same address...
-@@ -350,29 +341,21 @@ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
- }
++	spectre_v2_user=
++			[X86] Control mitigation of Spectre variant 2
++		        (indirect branch speculation) vulnerability between
++		        user space tasks
++
++			on	- Unconditionally enable mitigations. Is
++				  enforced by spectre_v2=on
++
++			off     - Unconditionally disable mitigations. Is
++				  enforced by spectre_v2=off
++
++			auto    - Kernel selects the mitigation depending on
++				  the available CPU features and vulnerability.
++				  Default is off.
++
++			Not specifying this option is equivalent to
++			spectre_v2_user=auto.
++
+ 	spec_store_bypass_disable=
+ 			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
+ 			(Speculative Store Bypass vulnerability)
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -3,6 +3,8 @@
+ #ifndef _ASM_X86_NOSPEC_BRANCH_H_
+ #define _ASM_X86_NOSPEC_BRANCH_H_
  
- /* Traverse the doorbell recovery entry list and ring all the doorbells */
--void qed_db_recovery_execute(struct qed_hwfn *p_hwfn,
--			     enum qed_db_rec_exec db_exec)
-+void qed_db_recovery_execute(struct qed_hwfn *p_hwfn)
++#include <linux/static_key.h>
++
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
+@@ -172,6 +174,12 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_IBRS_ENHANCED,
+ };
+ 
++/* The indirect branch speculation control variants */
++enum spectre_v2_user_mitigation {
++	SPECTRE_V2_USER_NONE,
++	SPECTRE_V2_USER_STRICT,
++};
++
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+@@ -248,6 +256,8 @@ do {									\
+ 	preempt_enable();						\
+ } while (0)
+ 
++DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++
+ #endif /* __ASSEMBLY__ */
+ 
+ /*
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -51,6 +51,9 @@ static u64 x86_spec_ctrl_mask = SPEC_CTR
+ u64 x86_amd_ls_cfg_base;
+ u64 x86_amd_ls_cfg_ssbd_mask;
+ 
++/* Control conditional STIPB in switch_to() */
++DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++
+ void __init check_bugs(void)
  {
- 	struct qed_db_recovery_entry *db_entry = NULL;
+ 	identify_boot_cpu();
+@@ -189,6 +192,8 @@ static void x86_amd_ssb_disable(void)
  
--	if (db_exec != DB_REC_ONCE) {
--		DP_NOTICE(p_hwfn,
--			  "Executing doorbell recovery. Counter was %d\n",
--			  p_hwfn->db_recovery_info.db_recovery_counter);
-+	DP_NOTICE(p_hwfn, "Executing doorbell recovery. Counter was %d\n",
-+		  p_hwfn->db_recovery_info.db_recovery_counter);
+ static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
  
--		/* Track amount of times recovery was executed */
--		p_hwfn->db_recovery_info.db_recovery_counter++;
--	}
-+	/* Track amount of times recovery was executed */
-+	p_hwfn->db_recovery_info.db_recovery_counter++;
++static enum spectre_v2_user_mitigation spectre_v2_user = SPECTRE_V2_USER_NONE;
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
  
- 	/* Protect the list */
- 	spin_lock_bh(&p_hwfn->db_recovery_info.lock);
- 	list_for_each_entry(db_entry,
--			    &p_hwfn->db_recovery_info.list, list_entry) {
--		qed_db_recovery_ring(p_hwfn, db_entry, db_exec);
--		if (db_exec == DB_REC_ONCE)
--			break;
+@@ -227,6 +232,103 @@ enum spectre_v2_mitigation_cmd {
+ 	SPECTRE_V2_CMD_RETPOLINE_AMD,
+ };
+ 
++enum spectre_v2_user_cmd {
++	SPECTRE_V2_USER_CMD_NONE,
++	SPECTRE_V2_USER_CMD_AUTO,
++	SPECTRE_V2_USER_CMD_FORCE,
++};
++
++static const char * const spectre_v2_user_strings[] = {
++	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
++	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
++};
++
++static const struct {
++	const char			*option;
++	enum spectre_v2_user_cmd	cmd;
++	bool				secure;
++} v2_user_options[] __initdata = {
++	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
++	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
++	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
++};
++
++static void __init spec_v2_user_print_cond(const char *reason, bool secure)
++{
++	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
++		pr_info("spectre_v2_user=%s forced on command line.\n", reason);
++}
++
++static enum spectre_v2_user_cmd __init
++spectre_v2_parse_user_cmdline(enum spectre_v2_mitigation_cmd v2_cmd)
++{
++	char arg[20];
++	int ret, i;
++
++	switch (v2_cmd) {
++	case SPECTRE_V2_CMD_NONE:
++		return SPECTRE_V2_USER_CMD_NONE;
++	case SPECTRE_V2_CMD_FORCE:
++		return SPECTRE_V2_USER_CMD_FORCE;
++	default:
++		break;
++	}
++
++	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
++				  arg, sizeof(arg));
++	if (ret < 0)
++		return SPECTRE_V2_USER_CMD_AUTO;
++
++	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
++		if (match_option(arg, ret, v2_user_options[i].option)) {
++			spec_v2_user_print_cond(v2_user_options[i].option,
++						v2_user_options[i].secure);
++			return v2_user_options[i].cmd;
++		}
++	}
++
++	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
++	return SPECTRE_V2_USER_CMD_AUTO;
++}
++
++static void __init
++spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
++{
++	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
++	bool smt_possible = IS_ENABLED(CONFIG_SMP);
++
++	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
++		return;
++
++	if (!IS_ENABLED(CONFIG_SMP))
++		smt_possible = false;
++
++	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_NONE:
++		goto set_mode;
++	case SPECTRE_V2_USER_CMD_FORCE:
++		mode = SPECTRE_V2_USER_STRICT;
++		break;
++	}
++
++	/* Initialize Indirect Branch Prediction Barrier */
++	if (boot_cpu_has(X86_FEATURE_IBPB)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
++		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
++	}
++
++	/* If enhanced IBRS is enabled no STIPB required */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return;
++
++set_mode:
++	spectre_v2_user = mode;
++	/* Only print the STIBP mode when SMT possible */
++	if (smt_possible)
++		pr_info("%s\n", spectre_v2_user_strings[mode]);
++}
++
+ static const char * const spectre_v2_strings[] = {
+ 	[SPECTRE_V2_NONE]			= "Vulnerable",
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
+@@ -382,12 +484,6 @@ specv2_set_mode:
+ 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+ 
+-	/* Initialize Indirect Branch Prediction Barrier if supported */
+-	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+-		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+-		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
 -	}
 -
-+			    &p_hwfn->db_recovery_info.list, list_entry)
-+		qed_db_recovery_ring(p_hwfn, db_entry);
- 	spin_unlock_bh(&p_hwfn->db_recovery_info.lock);
+ 	/*
+ 	 * Retpoline means the kernel is safe because it has no indirect
+ 	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
+@@ -404,23 +500,21 @@ specv2_set_mode:
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+ 
++	/* Set up IBPB and STIBP depending on the general spectre V2 command */
++	spectre_v2_user_select_mitigation(cmd);
++
+ 	/* Enable STIBP if appropriate */
+ 	arch_smt_update();
  }
  
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
-index 92340919d8521..b994f81eb51c3 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_int.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
-@@ -409,10 +409,8 @@ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ static bool stibp_needed(void)
+ {
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
+-
+ 	/* Enhanced IBRS makes using STIBP unnecessary. */
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return false;
  
- 	overflow = qed_rd(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY);
- 	DP_NOTICE(p_hwfn, "PF Overflow sticky 0x%x\n", overflow);
--	if (!overflow) {
--		qed_db_recovery_execute(p_hwfn, DB_REC_ONCE);
-+	if (!overflow)
- 		return 0;
--	}
- 
- 	if (qed_edpm_enabled(p_hwfn)) {
- 		rc = qed_db_rec_flush_queue(p_hwfn, p_ptt);
-@@ -427,7 +425,7 @@ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
- 	qed_wr(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY, 0x0);
- 
- 	/* Repeat all last doorbells (doorbell drop recovery) */
--	qed_db_recovery_execute(p_hwfn, DB_REC_REAL_DEAL);
-+	qed_db_recovery_execute(p_hwfn);
- 
- 	return 0;
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
++	/* Check for strict user mitigation mode */
++	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
  }
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.h b/drivers/net/ethernet/qlogic/qed/qed_int.h
-index d81a62ebd5244..df26bf333893d 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_int.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_int.h
-@@ -192,8 +192,8 @@ void qed_int_disable_post_isr_release(struct qed_dev *cdev);
  
- /**
-  * @brief - Doorbell Recovery handler.
-- *          Run DB_REAL_DEAL doorbell recovery in case of PF overflow
-- *          (and flush DORQ if needed), otherwise run DB_REC_ONCE.
-+ *          Run doorbell recovery in case of PF overflow (and flush DORQ if
-+ *          needed).
-  *
-  * @param p_hwfn
-  * @param p_ptt
--- 
-2.20.1
-
+ static void update_stibp_msr(void *info)
+@@ -758,10 +852,13 @@ static char *stibp_state(void)
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return "";
+ 
+-	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
+-		return ", STIBP";
+-	else
+-		return "";
++	switch (spectre_v2_user) {
++	case SPECTRE_V2_USER_NONE:
++		return ", STIBP: disabled";
++	case SPECTRE_V2_USER_STRICT:
++		return ", STIBP: forced";
++	}
++	return "";
+ }
+ 
+ static char *ibpb_state(void)
 
 
