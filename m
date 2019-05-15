@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226061EF63
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A171EF8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbfEOLde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:33:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45504 "EHLO mail.kernel.org"
+        id S1732995AbfEOLcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:32:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733212AbfEOLdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:33:33 -0400
+        id S1732968AbfEOLcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6952053B;
-        Wed, 15 May 2019 11:33:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A35620843;
+        Wed, 15 May 2019 11:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557920013;
-        bh=5q/4lCuESOKzJV/pBrj6LtYk+b0+YBNGowgFkki6/z8=;
+        s=default; t=1557919929;
+        bh=U+cZlY8muUchaepQ07mFSd7U+l0+CHSxVPLR5nRyDus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ohc5fPmz6rTnfiFxDMhf8rV3xpjkA2mOR5mf3HQrBiGNQ8YzS6pCuksFKShae7mnU
-         uArtre4Flv8SHvD8zjcX2mzS6b40YEjdwDREC5hvx5C1REpZJQBOy2yiaL0oZQ/2hJ
-         ev69tePJO295zMzmTrkcAnWz9S5ldxaNhcpzTOY8=
+        b=f1vVnTq77qVHq+Kg2gUsoy+4Fbm6PG2CrHTNQ+ri/XHZoSNL/+uYgqMUC0ChyZtmI
+         RD+G/2YoysSH2muyHYy12ZLp/ObY9hin+Xvyr0iWXLRtM8YFXbtDf7ylTKQedQnr2B
+         pUDOXNOmD/sIpNuOnUZvD7BHd8brltz+n0XKSz14=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 5.1 09/46] virt: vbox: Sanity-check parameter types for hgcm-calls coming from userspace
-Date:   Wed, 15 May 2019 12:56:33 +0200
-Message-Id: <20190515090621.462758083@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.1 10/46] USB: serial: fix unthrottle races
+Date:   Wed, 15 May 2019 12:56:34 +0200
+Message-Id: <20190515090621.586245951@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
 References: <20190515090616.670410738@linuxfoundation.org>
@@ -42,73 +42,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit cf4f2ad6b87dda2dbe0573b1ebeb0273f8d4aac6 upstream.
+commit 3f5edd58d040bfa4b74fb89bc02f0bc6b9cd06ab upstream.
 
-Userspace can make host function calls, called hgcm-calls through the
-/dev/vboxguest device.
+Fix two long-standing bugs which could potentially lead to memory
+corruption or leave the port throttled until it is reopened (on weakly
+ordered systems), respectively, when read-URB completion races with
+unthrottle().
 
-In this case we should not accept all hgcm-function-parameter-types, some
-are only valid for in kernel calls.
+First, the URB must not be marked as free before processing is complete
+to prevent it from being submitted by unthrottle() on another CPU.
 
-This commit adds proper hgcm-function-parameter-type validation to the
-ioctl for doing a hgcm-call from userspace.
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  process_urb();
+	  smp_mb__before_atomic();
+	  set_bit(i, free);		  if (test_and_clear_bit(i, free))
+	  					  submit_urb();
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Second, the URB must be marked as free before checking the throttled
+flag to prevent unthrottle() on another CPU from failing to observe that
+the URB needs to be submitted if complete() sees that the throttled flag
+is set.
+
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  set_bit(i, free);		  throttled = 0;
+	  smp_mb__after_atomic();	  smp_mb();
+	  if (throttled)		  if (test_and_clear_bit(i, free))
+	  	  return;			  submit_urb();
+
+Note that test_and_clear_bit() only implies barriers when the test is
+successful. To handle the case where the URB is still in use an explicit
+barrier needs to be added to unthrottle() for the second race condition.
+
+Fixes: d83b405383c9 ("USB: serial: add support for multiple read urbs")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/virt/vboxguest/vboxguest_core.c |   31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/usb/serial/generic.c |   39 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
 
---- a/drivers/virt/vboxguest/vboxguest_core.c
-+++ b/drivers/virt/vboxguest/vboxguest_core.c
-@@ -1298,6 +1298,20 @@ static int vbg_ioctl_hgcm_disconnect(str
- 	return ret;
- }
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@ -376,6 +376,7 @@ void usb_serial_generic_read_bulk_callba
+ 	struct usb_serial_port *port = urb->context;
+ 	unsigned char *data = urb->transfer_buffer;
+ 	unsigned long flags;
++	bool stopped = false;
+ 	int status = urb->status;
+ 	int i;
  
-+static bool vbg_param_valid(enum vmmdev_hgcm_function_parameter_type type)
-+{
-+	switch (type) {
-+	case VMMDEV_HGCM_PARM_TYPE_32BIT:
-+	case VMMDEV_HGCM_PARM_TYPE_64BIT:
-+	case VMMDEV_HGCM_PARM_TYPE_LINADDR:
-+	case VMMDEV_HGCM_PARM_TYPE_LINADDR_IN:
-+	case VMMDEV_HGCM_PARM_TYPE_LINADDR_OUT:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
- 			       struct vbg_session *session, bool f32bit,
- 			       struct vbg_ioctl_hgcm_call *call)
-@@ -1333,6 +1347,23 @@ static int vbg_ioctl_hgcm_call(struct vb
+@@ -383,33 +384,51 @@ void usb_serial_generic_read_bulk_callba
+ 		if (urb == port->read_urbs[i])
+ 			break;
  	}
- 	call->hdr.size_out = actual_size;
+-	set_bit(i, &port->read_urbs_free);
  
-+	/* Validate parameter types */
-+	if (f32bit) {
-+		struct vmmdev_hgcm_function_parameter32 *parm =
-+			VBG_IOCTL_HGCM_CALL_PARMS32(call);
+ 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
+ 							urb->actual_length);
+ 	switch (status) {
+ 	case 0:
++		usb_serial_debug_data(&port->dev, __func__, urb->actual_length,
++							data);
++		port->serial->type->process_read_urb(urb);
+ 		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	case -EPIPE:
+ 		dev_err(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	default:
+ 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
+ 							__func__, status);
+-		goto resubmit;
++		break;
+ 	}
+ 
+-	usb_serial_debug_data(&port->dev, __func__, urb->actual_length, data);
+-	port->serial->type->process_read_urb(urb);
++	/*
++	 * Make sure URB processing is done before marking as free to avoid
++	 * racing with unthrottle() on another CPU. Matches the barriers
++	 * implied by the test_and_clear_bit() in
++	 * usb_serial_generic_submit_read_urb().
++	 */
++	smp_mb__before_atomic();
++	set_bit(i, &port->read_urbs_free);
++	/*
++	 * Make sure URB is marked as free before checking the throttled flag
++	 * to avoid racing with unthrottle() on another CPU. Matches the
++	 * smp_mb() in unthrottle().
++	 */
++	smp_mb__after_atomic();
 +
-+		for (i = 0; i < call->parm_count; i++)
-+			if (!vbg_param_valid(parm[i].type))
-+				return -EINVAL;
-+	} else {
-+		struct vmmdev_hgcm_function_parameter *parm =
-+			VBG_IOCTL_HGCM_CALL_PARMS(call);
++	if (stopped)
++		return;
+ 
+-resubmit:
+ 	/* Throttle the device if requested by tty */
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	port->throttled = port->throttle_req;
+@@ -484,6 +503,12 @@ void usb_serial_generic_unthrottle(struc
+ 	port->throttled = port->throttle_req = 0;
+ 	spin_unlock_irq(&port->lock);
+ 
++	/*
++	 * Matches the smp_mb__after_atomic() in
++	 * usb_serial_generic_read_bulk_callback().
++	 */
++	smp_mb();
 +
-+		for (i = 0; i < call->parm_count; i++)
-+			if (!vbg_param_valid(parm[i].type))
-+				return -EINVAL;
-+	}
-+
- 	/*
- 	 * Validate the client id.
- 	 */
+ 	if (was_throttled)
+ 		usb_serial_generic_submit_read_urbs(port, GFP_KERNEL);
+ }
 
 
