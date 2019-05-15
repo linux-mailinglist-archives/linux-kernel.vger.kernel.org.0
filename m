@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2E21EE93
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE761EF07
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbfEOLXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
+        id S1732202AbfEOL24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731326AbfEOLXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:11 -0400
+        id S1732071AbfEOL2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 763F7206BF;
-        Wed, 15 May 2019 11:23:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26B8820818;
+        Wed, 15 May 2019 11:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919390;
-        bh=jkLFPE0Btsk4k/1uPATuEs2Vl549eC/EjkT7x9ITssY=;
+        s=default; t=1557919725;
+        bh=akPbtu2m/5AOg/1NNH29ydnBj+HXAz/HUtkMhjTCuc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EuCxPZoMJ2NOlqz2V365ZsttsprpBH4UvWpcS6vVyJO1sR7xW1arMKPiNafwvBA8A
-         c04yMoEE/2/7rFbBtGdArHJ/pMeMkzxPPn0q0A3NC/V5CIHNiom7zqV64uu5nkaLZi
-         nuwAICe6iLEA0WFl5iv7Fux7mnfKIlWKCO1pbjQI=
+        b=BDvJ0KAMdT+9AryMmsgD4iuVjlskMPzWur+8r9lIfhYqZTZ6UD19wwATUc/vSsZ4r
+         bvh2rHG90smR9kzUNNLpL2eMtSLHZB44CWhDh54y4PIZypLMMIPL6vnV+BOdPxBGMW
+         gZ/a64W/nHDhP8JzQ3i7HLiBEAo5biaVXVRpM89c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tigran Tadevosyan <tigran.tadevosyan@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Sven Auhagen <sven.auhagen@voleatech.de>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/113] ARM: 8856/1: NOMMU: Fix CCR register faulty initialization when MPU is disabled
+Subject: [PATCH 5.0 068/137] netfilter: nat: fix icmp id randomization
 Date:   Wed, 15 May 2019 12:55:49 +0200
-Message-Id: <20190515090658.008272513@linuxfoundation.org>
+Message-Id: <20190515090658.388711972@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +45,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c3143967807adb1357c36b68a7563fc0c4e1f615 ]
+[ Upstream commit 5bdac418f33f60b07a34e01e722889140ee8fac9 ]
 
-When CONFIG_ARM_MPU is not defined, the base address of v7M SCB register
-is not initialized with correct value. This prevents enabling I/D caches
-when the L1 cache poilcy is applied in kernel.
+Sven Auhagen reported that a 2nd ping request will fail if 'fully-random'
+mode is used.
 
-Fixes: 3c24121039c9da14692eb48f6e39565b28c0f3cf ("ARM: 8756/1: NOMMU: Postpone MPU activation till __after_proc_init")
-Signed-off-by: Tigran Tadevosyan <tigran.tadevosyan@arm.com>
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reason is that if no proto information is given, min/max are both 0,
+so we set the icmp id to 0 instead of chosing a random value between
+0 and 65535.
+
+Update test case as well to catch this, without fix this yields:
+[..]
+ERROR: cannot ping ns1 from ns2 with ip masquerade fully-random (attempt 2)
+ERROR: cannot ping ns1 from ns2 with ipv6 masquerade fully-random (attempt 2)
+
+... becaus 2nd ping clashes with existing 'id 0' icmp conntrack and gets
+dropped.
+
+Fixes: 203f2e78200c27e ("netfilter: nat: remove l4proto->unique_tuple")
+Reported-by: Sven Auhagen <sven.auhagen@voleatech.de>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/head-nommu.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_nat_core.c                  | 11 ++++--
+ tools/testing/selftests/netfilter/nft_nat.sh | 36 +++++++++++++++-----
+ 2 files changed, 35 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
-index ec29de2500764..cab89479d15ef 100644
---- a/arch/arm/kernel/head-nommu.S
-+++ b/arch/arm/kernel/head-nommu.S
-@@ -133,9 +133,9 @@ __secondary_data:
-  */
- 	.text
- __after_proc_init:
--#ifdef CONFIG_ARM_MPU
- M_CLASS(movw	r12, #:lower16:BASEADDR_V7M_SCB)
- M_CLASS(movt	r12, #:upper16:BASEADDR_V7M_SCB)
-+#ifdef CONFIG_ARM_MPU
- M_CLASS(ldr	r3, [r12, 0x50])
- AR_CLASS(mrc	p15, 0, r3, c0, c1, 4)          @ Read ID_MMFR0
- 	and	r3, r3, #(MMFR0_PMSA)           @ PMSA field
+diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+index d159e9e7835b4..ade527565127b 100644
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -358,9 +358,14 @@ static void nf_nat_l4proto_unique_tuple(struct nf_conntrack_tuple *tuple,
+ 	case IPPROTO_ICMPV6:
+ 		/* id is same for either direction... */
+ 		keyptr = &tuple->src.u.icmp.id;
+-		min = range->min_proto.icmp.id;
+-		range_size = ntohs(range->max_proto.icmp.id) -
+-			     ntohs(range->min_proto.icmp.id) + 1;
++		if (!(range->flags & NF_NAT_RANGE_PROTO_SPECIFIED)) {
++			min = 0;
++			range_size = 65536;
++		} else {
++			min = ntohs(range->min_proto.icmp.id);
++			range_size = ntohs(range->max_proto.icmp.id) -
++				     ntohs(range->min_proto.icmp.id) + 1;
++		}
+ 		goto find_free_id;
+ #if IS_ENABLED(CONFIG_NF_CT_PROTO_GRE)
+ 	case IPPROTO_GRE:
+diff --git a/tools/testing/selftests/netfilter/nft_nat.sh b/tools/testing/selftests/netfilter/nft_nat.sh
+index 8ec76681605cc..3194007cf8d1b 100755
+--- a/tools/testing/selftests/netfilter/nft_nat.sh
++++ b/tools/testing/selftests/netfilter/nft_nat.sh
+@@ -321,6 +321,7 @@ EOF
+ 
+ test_masquerade6()
+ {
++	local natflags=$1
+ 	local lret=0
+ 
+ 	ip netns exec ns0 sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
+@@ -354,13 +355,13 @@ ip netns exec ns0 nft -f - <<EOF
+ table ip6 nat {
+ 	chain postrouting {
+ 		type nat hook postrouting priority 0; policy accept;
+-		meta oif veth0 masquerade
++		meta oif veth0 masquerade $natflags
+ 	}
+ }
+ EOF
+ 	ip netns exec ns2 ping -q -c 1 dead:1::99 > /dev/null # ping ns2->ns1
+ 	if [ $? -ne 0 ] ; then
+-		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerading"
++		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerade $natflags"
+ 		lret=1
+ 	fi
+ 
+@@ -397,19 +398,26 @@ EOF
+ 		fi
+ 	done
+ 
++	ip netns exec ns2 ping -q -c 1 dead:1::99 > /dev/null # ping ns2->ns1
++	if [ $? -ne 0 ] ; then
++		echo "ERROR: cannot ping ns1 from ns2 with active ipv6 masquerade $natflags (attempt 2)"
++		lret=1
++	fi
++
+ 	ip netns exec ns0 nft flush chain ip6 nat postrouting
+ 	if [ $? -ne 0 ]; then
+ 		echo "ERROR: Could not flush ip6 nat postrouting" 1>&2
+ 		lret=1
+ 	fi
+ 
+-	test $lret -eq 0 && echo "PASS: IPv6 masquerade for ns2"
++	test $lret -eq 0 && echo "PASS: IPv6 masquerade $natflags for ns2"
+ 
+ 	return $lret
+ }
+ 
+ test_masquerade()
+ {
++	local natflags=$1
+ 	local lret=0
+ 
+ 	ip netns exec ns0 sysctl net.ipv4.conf.veth0.forwarding=1 > /dev/null
+@@ -417,7 +425,7 @@ test_masquerade()
+ 
+ 	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
+ 	if [ $? -ne 0 ] ; then
+-		echo "ERROR: canot ping ns1 from ns2"
++		echo "ERROR: cannot ping ns1 from ns2 $natflags"
+ 		lret=1
+ 	fi
+ 
+@@ -443,13 +451,13 @@ ip netns exec ns0 nft -f - <<EOF
+ table ip nat {
+ 	chain postrouting {
+ 		type nat hook postrouting priority 0; policy accept;
+-		meta oif veth0 masquerade
++		meta oif veth0 masquerade $natflags
+ 	}
+ }
+ EOF
+ 	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
+ 	if [ $? -ne 0 ] ; then
+-		echo "ERROR: cannot ping ns1 from ns2 with active ip masquerading"
++		echo "ERROR: cannot ping ns1 from ns2 with active ip masquere $natflags"
+ 		lret=1
+ 	fi
+ 
+@@ -485,13 +493,19 @@ EOF
+ 		fi
+ 	done
+ 
++	ip netns exec ns2 ping -q -c 1 10.0.1.99 > /dev/null # ping ns2->ns1
++	if [ $? -ne 0 ] ; then
++		echo "ERROR: cannot ping ns1 from ns2 with active ip masquerade $natflags (attempt 2)"
++		lret=1
++	fi
++
+ 	ip netns exec ns0 nft flush chain ip nat postrouting
+ 	if [ $? -ne 0 ]; then
+ 		echo "ERROR: Could not flush nat postrouting" 1>&2
+ 		lret=1
+ 	fi
+ 
+-	test $lret -eq 0 && echo "PASS: IP masquerade for ns2"
++	test $lret -eq 0 && echo "PASS: IP masquerade $natflags for ns2"
+ 
+ 	return $lret
+ }
+@@ -750,8 +764,12 @@ test_local_dnat
+ test_local_dnat6
+ 
+ reset_counters
+-test_masquerade
+-test_masquerade6
++test_masquerade ""
++test_masquerade6 ""
++
++reset_counters
++test_masquerade "fully-random"
++test_masquerade6 "fully-random"
+ 
+ reset_counters
+ test_redirect
 -- 
 2.20.1
 
