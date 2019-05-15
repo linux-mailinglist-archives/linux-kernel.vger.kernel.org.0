@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8191EE3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE591ECC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbfEOLSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:18:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56336 "EHLO mail.kernel.org"
+        id S1727152AbfEOLBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730450AbfEOLSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:48 -0400
+        id S1727633AbfEOLBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E16C1206BF;
-        Wed, 15 May 2019 11:18:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA8C220881;
+        Wed, 15 May 2019 11:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919127;
-        bh=ytNF6xKI+l+Ujvw5o99E9RlODx9tEh/MtVIcw+U3ptI=;
+        s=default; t=1557918071;
+        bh=F8OCAH8LSQaGPAz3FzY/maYOYkQxcbr473s13hz57MA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xaMuoR+SXwqOqASXqedbx2Niuynyx2fmXPNnmSNjmX2FCHuntKKXtZCyMY8TlpPOj
-         TqZOxBPTlWAi6dO84n4sUkw/+bx81MbehUBoOkmeYxAudT/fKjbpfd3XmnE2VdeYrE
-         kKfv57hmez1nRLIRlTcymoGShNjjqPTpokI1Q0T8=
+        b=UCUNHE8WMsuTREVZnonfshdPBSzPsPL8JbB8/WtQr9OajUCtBiPu/519JIXyDjA4U
+         NYc32bidaOh1Gpq8Ou59u955c8omLA4lnKhgsmwpgB8bsQNKEynCyx183F6h+Hrjf5
+         4XhOxZTzO+lCzyjg+bHrCWonmrTAoNqJHySIPie0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/115] gtp: change NET_UDP_TUNNEL dependency to select
-Date:   Wed, 15 May 2019 12:55:57 +0200
-Message-Id: <20190515090704.995704200@linuxfoundation.org>
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 81/86] vlan: disable SIOCSHWTSTAMP in container
+Date:   Wed, 15 May 2019 12:55:58 +0200
+Message-Id: <20190515090655.851644169@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c22da36688d6298f2e546dcc43fdc1ad35036467 ]
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-Similarly to commit a7603ac1fc8c ("geneve: change NET_UDP_TUNNEL
-dependency to select"), GTP has a dependency on NET_UDP_TUNNEL which
-makes impossible to compile it if no other protocol depending on
-NET_UDP_TUNNEL is selected.
+[ Upstream commit 873017af778439f2f8e3d87f28ddb1fcaf244a76 ]
 
-Fix this by changing the depends to a select, and drop NET_IP_TUNNEL from
-the select list, as it already depends on NET_UDP_TUNNEL.
+With NET_ADMIN enabled in container, a normal user could be mapped to
+root and is able to change the real device's rx filter via ioctl on
+vlan, which would affect the other ptp process on host. Fix it by
+disabling SIOCSHWTSTAMP in container.
 
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Fixes: a6111d3c93d0 ("vlan: Pass SIOC[SG]HWTSTAMP ioctls to real device")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/8021q/vlan_dev.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index aba0d652095b0..f3357091e9d18 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -212,8 +212,8 @@ config GENEVE
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -394,10 +394,12 @@ static int vlan_dev_ioctl(struct net_dev
+ 	ifrr.ifr_ifru = ifr->ifr_ifru;
  
- config GTP
- 	tristate "GPRS Tunneling Protocol datapath (GTP-U)"
--	depends on INET && NET_UDP_TUNNEL
--	select NET_IP_TUNNEL
-+	depends on INET
-+	select NET_UDP_TUNNEL
- 	---help---
- 	  This allows one to create gtp virtual interfaces that provide
- 	  the GPRS Tunneling Protocol datapath (GTP-U). This tunneling protocol
--- 
-2.20.1
-
+ 	switch (cmd) {
++	case SIOCSHWTSTAMP:
++		if (!net_eq(dev_net(dev), &init_net))
++			break;
+ 	case SIOCGMIIPHY:
+ 	case SIOCGMIIREG:
+ 	case SIOCSMIIREG:
+-	case SIOCSHWTSTAMP:
+ 	case SIOCGHWTSTAMP:
+ 		if (netif_device_present(real_dev) && ops->ndo_do_ioctl)
+ 			err = ops->ndo_do_ioctl(real_dev, &ifrr, cmd);
 
 
