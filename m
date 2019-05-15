@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EE41EC79
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F85B1ED64
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfEOK56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:57:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54032 "EHLO mail.kernel.org"
+        id S1726487AbfEOLJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:09:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbfEOK56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:57:58 -0400
+        id S1728938AbfEOLJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:09:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C664A20843;
-        Wed, 15 May 2019 10:57:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D736820881;
+        Wed, 15 May 2019 11:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917877;
-        bh=zdqV+gGM1iZKehcvajFQ2Xm8334zHYYzni/D26PO5eA=;
+        s=default; t=1557918540;
+        bh=ycjVYMMnakQBQ/R+7ABnGRNKe4hzqllmuRlmrHPK5f4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IAVXNqPBMmVpR/WdPgwKgxgw6c5QpB98ufkKNKT5hRUCUyjXoYwWYybdjRxSMqE7K
-         2tBokGy2DiRQ2KkU9FUpqUgqU437Po4e0I7zJUIMk0IsijPG0dCJjNcZTKv11/4wXk
-         4LcmPgSkiuBiIhMOvcFbYMIIy9+RQtxUhZG4qIEU=
+        b=Q+6Mf7tdL7ycmoMl/Ib2VAxHUObsAvpp/9mAZPvhFIgrtfGLco0AOvA72TcAbBC+j
+         Yhf+7ID6P6mBnXSzII6Kq9KKlytftqYsLTriaWnaxi1vGyGG37IFeGCqo6xB/L/3uO
+         kK8NJLzJQY3Rrr632Xal4r00+IW2c+v9J/m9EkLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Jarno <aurelien@aurel32.net>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH 3.18 01/86] MIPS: scall64-o32: Fix indirect syscall number load
-Date:   Wed, 15 May 2019 12:54:38 +0200
-Message-Id: <20190515090642.619754300@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 172/266] s390: ctcm: fix ctcm_new_device error return code
+Date:   Wed, 15 May 2019 12:54:39 +0200
+Message-Id: <20190515090728.740614546@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,50 +47,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aurelien Jarno <aurelien@aurel32.net>
+[ Upstream commit 27b141fc234a3670d21bd742c35d7205d03cbb3a ]
 
-commit 79b4a9cf0e2ea8203ce777c8d5cfa86c71eae86e upstream.
+clang points out that the return code from this function is
+undefined for one of the error paths:
 
-Commit 4c21b8fd8f14 (MIPS: seccomp: Handle indirect system calls (o32))
-added indirect syscall detection for O32 processes running on MIPS64,
-but it did not work correctly for big endian kernel/processes. The
-reason is that the syscall number is loaded from ARG1 using the lw
-instruction while this is a 64-bit value, so zero is loaded instead of
-the syscall number.
+../drivers/s390/net/ctcm_main.c:1595:7: warning: variable 'result' is used uninitialized whenever 'if' condition is true
+      [-Wsometimes-uninitialized]
+                if (priv->channel[direction] == NULL) {
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/s390/net/ctcm_main.c:1638:9: note: uninitialized use occurs here
+        return result;
+               ^~~~~~
+../drivers/s390/net/ctcm_main.c:1595:3: note: remove the 'if' if its condition is always false
+                if (priv->channel[direction] == NULL) {
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/s390/net/ctcm_main.c:1539:12: note: initialize the variable 'result' to silence this warning
+        int result;
+                  ^
 
-Fix the code by using the ld instruction instead. When running a 32-bit
-processes on a 64 bit CPU, the values are properly sign-extended, so it
-ensures the value passed to syscall_trace_enter is correct.
+Make it return -ENODEV here, as in the related failure cases.
+gcc has a known bug in underreporting some of these warnings
+when it has already eliminated the assignment of the return code
+based on some earlier optimization step.
 
-Recent systemd versions with seccomp enabled whitelist the getpid
-syscall for their internal  processes (e.g. systemd-journald), but call
-it through syscall(SYS_getpid). This fix therefore allows O32 big endian
-systems with a 64-bit kernel to run recent systemd versions.
-
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-Cc: <stable@vger.kernel.org> # v3.15+
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/kernel/scall64-o32.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/ctcm_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/mips/kernel/scall64-o32.S
-+++ b/arch/mips/kernel/scall64-o32.S
-@@ -124,7 +124,7 @@ trace_a_syscall:
- 	subu	t1, v0,  __NR_O32_Linux
- 	move	a1, v0
- 	bnez	t1, 1f /* __NR_syscall at offset 0 */
--	lw	a1, PT_R4(sp) /* Arg1 for __NR_syscall case */
-+	ld	a1, PT_R4(sp) /* Arg1 for __NR_syscall case */
- 	.set	pop
- 
- 1:	jal	syscall_trace_enter
+diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+index 05c37d6d4afef..a31821d946775 100644
+--- a/drivers/s390/net/ctcm_main.c
++++ b/drivers/s390/net/ctcm_main.c
+@@ -1595,6 +1595,7 @@ static int ctcm_new_device(struct ccwgroup_device *cgdev)
+ 		if (priv->channel[direction] == NULL) {
+ 			if (direction == CTCM_WRITE)
+ 				channel_free(priv->channel[CTCM_READ]);
++			result = -ENODEV;
+ 			goto out_dev;
+ 		}
+ 		priv->channel[direction]->netdev = dev;
+-- 
+2.20.1
+
 
 
