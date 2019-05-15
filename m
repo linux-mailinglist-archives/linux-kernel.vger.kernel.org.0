@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA41E1E639
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BABA1E62E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfEOAad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 20:30:33 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:38848 "EHLO
+        id S1726808AbfEOAa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 20:30:28 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:38642 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726838AbfEOAac (ORCPT
+        by vger.kernel.org with ESMTP id S1726709AbfEOAaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 20:30:32 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        Tue, 14 May 2019 20:30:24 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 98629C0A74;
-        Wed, 15 May 2019 00:30:22 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B03D3C125E;
+        Wed, 15 May 2019 00:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557880222; bh=4Uok3nJEPZvjzWu786MUXGhW5I+RXAihVDhKrqpraSM=;
+        t=1557880228; bh=CkssZQXbYGkx2a0Vqjl+j1ujpM6IPwBxaO1c+mSzFC8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=MO0L1yuAeVCJb8LJ/JMkMGL3IDUc9f+b2ft1UasnB9zCjzE/pctSfIV6la9jxUpqk
-         ctcKo/Kkcq7G7NPrrCrk62eXOy3SgGjfOHGeuDYVeJxo0wVpBfMotMHnUl2fbZoDiG
-         vfr8a5y+pMeDPr0K8NXdxUTjSu5R0keHtK4PBa1nWhKsa/Wywevb/73sGKdxjl0NLY
-         HmQs6zqqJSKXOYq1DKvCQkbD5YjsKpayZKh9S6FH4QI7AUFQpeKBzEPJdPxsTk5uTy
-         DXkY+u29aQ2wMWjlH/ZkKI1osXYtfJlPE68XNm98wYCcNFGpru03wjks3E8h8jCSs1
-         io6ufqVh6GxSQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        b=iAAAIgADu34z/litm3pucblHNQRXJlaflfx52hSVCbmaB1nNtutAfZ4AO8V91VFkT
+         UPiirFkjjjLb3rWrp+3wYOfvDNyOJA7Lo37dKWIMLAHYLQLVss7al+CWoDfsnqO0j7
+         /brEta0Gkb0ajB0JbfwWuO428hPdnIGuEb5jKSyl6SLG+wuFq9LJwTWCJHdbodQ1+Q
+         5xRfD8jj92p5RhNBJMuDH0kY9gQ8HVNsl1cOYstUkagSlv367SfY2LygaWqon58rcJ
+         iVSj2uY9bSDUreQpAM8UTCiElm0YJ7cGGTelAA84OgZarcc0phXPsmF6/yUuGGtdWB
+         KErzE9oY9CcfQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 1DA85A0069;
-        Wed, 15 May 2019 00:30:32 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 8F22CA023D;
+        Wed, 15 May 2019 00:30:23 +0000 (UTC)
 Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 14 May 2019 17:30:18 -0700
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 14 May 2019 17:30:21 -0700
 Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
  IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:14 +0530
+ (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:18 +0530
 Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.13.182.230) by
  IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:26 +0530
+ (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:29 +0530
 From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
 To:     <linux-snps-arc@lists.infradead.org>
 CC:     <paltsev@snyopsys.com>, <linux-kernel@vger.kernel.org>,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [PATCH 7/9] ARC: mm: do_page_fault refactor #6: error handlers to use same pattern
-Date:   Tue, 14 May 2019 17:29:34 -0700
-Message-ID: <1557880176-24964-8-git-send-email-vgupta@synopsys.com>
+Subject: [PATCH 8/9] ARC: mm: do_page_fault refactor #7: fold the various error handling
+Date:   Tue, 14 May 2019 17:29:35 -0700
+Message-ID: <1557880176-24964-9-git-send-email-vgupta@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
 References: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
@@ -58,52 +58,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - up_read
- - if !user_mode
- - whatever error handling
+ - single up_read() call vs. 4
+ - so much easier on eyes
+
+Technically it seems like @bad_area label moved up, but even in old
+regime, it was a special case of delivering SIGSEGV unconditionally
+which we now do as well, although with checks.
 
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 ---
- arch/arc/mm/fault.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/arc/mm/fault.c | 46 +++++++++++++---------------------------------
+ 1 file changed, 13 insertions(+), 33 deletions(-)
 
 diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index c0a60aeb4abd..0e1a222a97ad 100644
+index 0e1a222a97ad..20402217d9da 100644
 --- a/arch/arc/mm/fault.c
 +++ b/arch/arc/mm/fault.c
-@@ -194,22 +194,21 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	struct vm_area_struct *vma = NULL;
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+-	int si_code = SEGV_MAPERR;
++	int sig, si_code = SEGV_MAPERR;
+ 	unsigned int write = 0, exec = 0, mask;
+ 	vm_fault_t fault;			/* handle_mm_fault() output */
+ 	unsigned int flags;			/* handle_mm_fault() input */
+@@ -177,47 +177,27 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 		return;
+ 	}
+ 
+-	if (fault & VM_FAULT_OOM)
+-		goto out_of_memory;
+-	else if (fault & VM_FAULT_SIGSEGV)
+-		goto bad_area;
+-	else if (fault & VM_FAULT_SIGBUS)
+-		goto do_sigbus;
+-
+-	/* no man's land */
+-	BUG();
+-
+-	/*
+-	 * Something tried to access memory that isn't in our memory map..
+-	 * Fix it, but check if it's kernel or user first..
+-	 */
  bad_area:
  	up_read(&mm->mmap_sem);
  
--	/* User mode accesses just cause a SIGSEGV */
--	if (user_mode(regs)) {
--		tsk->thread.fault_address = address;
--		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
--		return;
--	}
-+	if (!user_mode(regs))
-+		goto no_context;
-+
-+	tsk->thread.fault_address = address;
-+	force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
-+	return;
+ 	if (!user_mode(regs))
+ 		goto no_context;
  
- out_of_memory:
- 	up_read(&mm->mmap_sem);
+-	tsk->thread.fault_address = address;
+-	force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
+-	return;
+-
+-out_of_memory:
+-	up_read(&mm->mmap_sem);
+-
+-	if (!user_mode(regs))
+-		goto no_context;
+-
+-	pagefault_out_of_memory();
+-	return;
+-
+-do_sigbus:
+-	up_read(&mm->mmap_sem);
++	if (fault & VM_FAULT_OOM) {
++		pagefault_out_of_memory();
++		return;
++	}
  
--	if (user_mode(regs)) {
--		pagefault_out_of_memory();
--		return;
--	}
-+	if (!user_mode(regs))
-+		goto no_context;
+-	if (!user_mode(regs))
+-		goto no_context;
++	if (fault & VM_FAULT_SIGBUS) {
++		sig = SIGBUS;
++		si_code = BUS_ADRERR;
++	}
++	else {
++		sig = SIGSEGV;
++	}
  
--	goto no_context;
-+	pagefault_out_of_memory();
-+	return;
+ 	tsk->thread.fault_address = address;
+-	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address, tsk);
++	force_sig_fault(sig, si_code, (void __user *)address, tsk);
+ 	return;
  
- do_sigbus:
- 	up_read(&mm->mmap_sem);
+ no_context:
 -- 
 2.7.4
 
