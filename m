@@ -2,121 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4511F295
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46181F2F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfEOME6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:04:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52626 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729869AbfEOMEy (ORCPT
+        id S1729503AbfEOMJL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 May 2019 08:09:11 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:49093 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729362AbfEOMJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 08:04:54 -0400
-Received: by mail-it1-f194.google.com with SMTP id q65so2760167itg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 05:04:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gWDGHQlINMY637LA0rkzmHJ184n+4lXL69Jz1SVmEeg=;
-        b=Akbiq8u5JFtbaEC1MDoNI4f4D7f7lBbSGAF9vRhIGnRTC+IrcgwYeCbvHl1DlPGrd/
-         uLlMVXOol3moj0DitDDLOTcdB/zL11V1ry4lDhtpBU7Ty72egPL9gLXZtr2KsD0pbt8Y
-         ujJG/oLEFjuMICLG2racJPZIDBjmUK0W9bsefTQLk9da9Pmn9iaJzeM23AcM7jyxogBv
-         GEFZTu8ZmJZs0XCtXOla1MzrFNArPIaD+Hq9XJ+vzb9BKZqK33+eub/o+xi8kpB605O0
-         XT2jezPKFug2wmK21/WeVXOZcEZpE+YO+pMJDbiTHM5EIiv80p+FXtvfl7CwLEaIc7bs
-         lgaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gWDGHQlINMY637LA0rkzmHJ184n+4lXL69Jz1SVmEeg=;
-        b=eLAXo4BZZa5dJsKs/6bT0I1O+Wh91/Qs9l5vuKkuQGhuzRO7QDiWSuC2Q/yIuPiwUQ
-         xUf93uJvmU6WROm9JAxbskRMT6uhEca5AFMeu3JRUBY+F6FTOib0Go0sqJJqRn390CGm
-         IxMzHuVHLHynJ9XVZrPYVSt9rMWXSKUS0eLDyCdToQL1FlgKmQy4W4ZbfGwt4D7ZKm2S
-         yaqBPdrfpv7pKiC3qOyLV1e1p6h7NfC7WZtNIYGgIHehnONNCR4tUw7dOoYsOS/b993e
-         KsNtJO7IKh5u4Pe6EwX1hf2yPve252rTpjGW1qgrN17+eHLZpxjUaJ6zh2uzjmYZ7bA7
-         wFrw==
-X-Gm-Message-State: APjAAAUZZ4XKOuhELwH0KNDpK/F/lMNWY/PVBrLA4yTqmuIHrSk1i13P
-        mqm6ayWCcTd3qekhK8a7oOb+rqztKno=
-X-Google-Smtp-Source: APXvYqztxRurLYFbNqlUSgw9PHMnGWQUtrrC+MpUHTY7IRcD8rWRKxZEIo9cIrTPKoHE1Nxs+Ou5wA==
-X-Received: by 2002:a24:5255:: with SMTP id d82mr8296250itb.104.1557921892588;
-        Wed, 15 May 2019 05:04:52 -0700 (PDT)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id x77sm41767ita.1.2019.05.15.05.04.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 05:04:51 -0700 (PDT)
-Subject: Re: [PATCH 03/18] dt-bindings: soc: qcom: add IPA bindings
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, syadagir@codeaurora.org,
-        mjavid@codeaurora.org, evgreen@chromium.org, benchan@google.com,
-        ejcaruso@google.com, abhishek.esse@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190512012508.10608-1-elder@linaro.org>
- <20190512012508.10608-4-elder@linaro.org>
- <CAK8P3a3KLj5x-5VS5eUQfNVhPL101Dg_rezEzra4GFY5Dva2Cg@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <fa75eb5e-90bc-b164-740f-4dbba8bccc46@linaro.org>
-Date:   Wed, 15 May 2019 07:04:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 15 May 2019 08:09:09 -0400
+X-Originating-IP: 77.136.197.83
+Received: from xps13 (83.197.136.77.rev.sfr.net [77.136.197.83])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 981291C0013;
+        Wed, 15 May 2019 12:08:59 +0000 (UTC)
+Date:   Wed, 15 May 2019 14:08:58 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        christophe.kerello@st.com, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        geert@linux-m68k.org, juliensu@mxic.com.tw, lee.jones@linaro.org,
+        liang.yang@amlogic.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marcel.ziswiler@toradex.com, marek.vasut@gmail.com,
+        mark.rutland@arm.com, paul.burton@mips.com, richard@nod.at,
+        robh+dt@kernel.org, stefan@agner.ch, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 2/4] mtd: rawnand: Add Macronix MX25F0A NAND
+ controller
+Message-ID: <20190515140858.77213af9@xps13>
+In-Reply-To: <OF8A566F14.A2F0F576-ON482583FB.002E7E32-482583FB.003068BA@mxic.com.tw>
+References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
+        <1555320234-15802-3-git-send-email-masonccyang@mxic.com.tw>
+        <20190512151820.4f2dd9da@xps13>
+        <OF8A566F14.A2F0F576-ON482583FB.002E7E32-482583FB.003068BA@mxic.com.tw>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3KLj5x-5VS5eUQfNVhPL101Dg_rezEzra4GFY5Dva2Cg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/15/19 2:03 AM, Arnd Bergmann wrote:
-> On Sun, May 12, 2019 at 3:25 AM Alex Elder <elder@linaro.org> wrote:
->>
->> Add the binding definitions for the "qcom,ipa" device tree node.
->>
->> Signed-off-by: Alex Elder <elder@linaro.org>
->> ---
->>  .../devicetree/bindings/net/qcom,ipa.txt      | 164 ++++++++++++++++++
->>  1 file changed, 164 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/net/qcom,ipa.txt
->>
->> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.txt b/Documentation/devicetree/bindings/net/qcom,ipa.txt
->> new file mode 100644
->> index 000000000000..2705e198f12e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.txt
+Hi masonccyang@mxic.com.tw,
+
+masonccyang@mxic.com.tw wrote on Wed, 15 May 2019 16:48:46 +0800:
+
+> Hi Miquel,
 > 
-> For new bindings, we should use the yaml format so we can verify the
-> device tree files against the binding.
-
-OK.  I didn't realize that was upstream yet.  I will convert.
-
->> +
->> +- reg:
->> +       Resources specifying the physical address spaces of the IPA and GSI.
->> +
->> +- reg-names:
->> +       The names of the two address space ranges defined by the "reg"
->> +       property.  Must be:
->> +               "ipa-reg"
->> +               "ipa-shared"
->> +               "gsi"
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +//
+> > > +// Copyright (C) 2019 Macronix International Co., Ltd.
+> > > +//
+> > > +// Authors:
+> > > +//   Mason Yang <masonccyang@mxic.com.tw>
+> > > +//   zhengxunli <zhengxunli@mxic.com.tw>  
+> > 
+> > This is not a valid name.
+> > 
+> > Also if he appears here I suppose he should be credited in the
+> > module_authors() macro too.  
 > 
-> Those are three, not two ;-)
+> I think Li should maintain this NAND driver later, 
 
-Oops!  I added one recently and I guess I missed that.  Thanks
-for catching it.
+This entry is for the authors of the driver.
 
-					-Alex
+If he will maintain the driver, then add a new entry in MAINTAINERS.
 
+> > > +}
+> > > +
+> > > +static const struct nand_controller_ops mxic_nand_controller_ops = {
+> > > +   .exec_op = mxic_nand_exec_op,
+> > > +};
+> > > +
+> > > +static int mx25f0a_nand_probe(struct platform_device *pdev)
+> > > +{
+> > > +   struct mtd_info *mtd;
+> > > +   struct mx25f0a_mfd *mfd = dev_get_drvdata(pdev->dev.parent);
+> > > +   struct mxic_nand_ctlr *mxic;
+> > > +   struct nand_chip *nand_chip;
+> > > +   int err;
+> > > +
+> > > +   mxic = devm_kzalloc(&pdev->dev, sizeof(struct mxic_nand_ctlr),
+> > > +             GFP_KERNEL);  
+> > 
+> > mxic for a NAND controller structure is probably not a name meaningful
+> > enough.  
 > 
->         Arnd
-> 
+> How about *fmc or *mxic_fmc ?
 
+fmc is fine, even if I personally prefer nfc for NAND flash controller.
+Here the 'm' in fmc stands for 'memory' but I am not sure if the
+controller can manage something else than NAND flash anyway?
+
+
+Thanks,
+Miquèl
