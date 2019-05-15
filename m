@@ -2,38 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC301EEF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FA2C1ED96
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbfEOL16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:27:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38866 "EHLO mail.kernel.org"
+        id S1729593AbfEOLL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:11:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732310AbfEOL14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:56 -0400
+        id S1729573AbfEOLLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:11:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDEB920818;
-        Wed, 15 May 2019 11:27:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE55420644;
+        Wed, 15 May 2019 11:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919675;
-        bh=28Vm++MlZt1uGEMJTvXfOXiB6pqeZd25I+LDhIaXEJg=;
+        s=default; t=1557918682;
+        bh=Qb4qIwvhSifkqHSWaarVNQNRIDxQgVLbsHuAewCk//c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4tMNK/5QEHUcOzg9BIWtB2K/ofREvX95QCPdAKwDfDLSOJbD5GfEZqFGNcf51KJt
-         UI5qv/E/m9QSNluuRb/zS7qdC36xd0ODu3s1Nxzh60i/Xsb6pkkBpC/azkSyTlZVdS
-         ENDNqhSH8SaU2R8X62KLwJ3vrTS547Ov7n8qFTQ8=
+        b=mLvJRt93yQIWa1Di07ID+QIF1cQl6ErwCOEm8hofTok93AOj4nDqBK6EnaoWX1nNc
+         /BPTRt5nnHKHAItA0vHU+L5tXPy7qQtwCnYTQvK/a932wXVmcgBAbt/oVjxsrB3ySM
+         IFPAdIzMEwcJQI/OxFga694msQ3WKYN+QSmzYTGo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 051/137] KVM: fix spectrev1 gadgets
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 225/266] x86/speculation: Add seccomp Spectre v2 user space protection mode
 Date:   Wed, 15 May 2019 12:55:32 +0200
-Message-Id: <20190515090657.186636144@linuxfoundation.org>
+Message-Id: <20190515090730.608765884@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,133 +62,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1d487e9bf8ba66a7174c56a0029c54b1eca8f99c ]
+From: Thomas Gleixner <tglx@linutronix.de>
 
-These were found with smatch, and then generalized when applicable.
+commit 6b3e64c237c072797a9ec918654a60e3a46488e2 upstream.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If 'prctl' mode of user space protection from spectre v2 is selected
+on the kernel command-line, STIBP and IBPB are applied on tasks which
+restrict their indirect branch speculation via prctl.
+
+SECCOMP enables the SSBD mitigation for sandboxed tasks already, so it
+makes sense to prevent spectre v2 user space to user space attacks as
+well.
+
+The Intel mitigation guide documents how STIPB works:
+
+   Setting bit 1 (STIBP) of the IA32_SPEC_CTRL MSR on a logical processor
+   prevents the predicted targets of indirect branches on any logical
+   processor of that core from being controlled by software that executes
+   (or executed previously) on another logical processor of the same core.
+
+Ergo setting STIBP protects the task itself from being attacked from a task
+running on a different hyper-thread and protects the tasks running on
+different hyper-threads from being attacked.
+
+While the document suggests that the branch predictors are shielded between
+the logical processors, the observed performance regressions suggest that
+STIBP simply disables the branch predictor more or less completely. Of
+course the document wording is vague, but the fact that there is also no
+requirement for issuing IBPB when STIBP is used points clearly in that
+direction. The kernel still issues IBPB even when STIBP is used until Intel
+clarifies the whole mechanism.
+
+IBPB is issued when the task switches out, so malicious sandbox code cannot
+mistrain the branch predictor for the next user space task on the same
+logical processor.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185006.051663132@linutronix.de
+[bwh: Backported to 4.4: adjust filename]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/lapic.c     |  4 +++-
- include/linux/kvm_host.h | 10 ++++++----
- virt/kvm/irqchip.c       |  5 +++--
- virt/kvm/kvm_main.c      |  6 ++++--
- 4 files changed, 16 insertions(+), 9 deletions(-)
+ Documentation/kernel-parameters.txt  |    9 ++++++++-
+ arch/x86/include/asm/nospec-branch.h |    1 +
+ arch/x86/kernel/cpu/bugs.c           |   17 ++++++++++++++++-
+ 3 files changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 3339697de6e52..235687f3388fa 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -137,6 +137,7 @@ static inline bool kvm_apic_map_get_logical_dest(struct kvm_apic_map *map,
- 		if (offset <= max_apic_id) {
- 			u8 cluster_size = min(max_apic_id - offset + 1, 16U);
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -3651,9 +3651,16 @@ bytes respectively. Such letter suffixes
+ 				  per thread.  The mitigation control state
+ 				  is inherited on fork.
  
-+			offset = array_index_nospec(offset, map->max_apic_id + 1);
- 			*cluster = &map->phys_map[offset];
- 			*mask = dest_id & (0xffff >> (16 - cluster_size));
- 		} else {
-@@ -899,7 +900,8 @@ static inline bool kvm_apic_map_get_dest_lapic(struct kvm *kvm,
- 		if (irq->dest_id > map->max_apic_id) {
- 			*bitmap = 0;
- 		} else {
--			*dst = &map->phys_map[irq->dest_id];
-+			u32 dest_id = array_index_nospec(irq->dest_id, map->max_apic_id + 1);
-+			*dst = &map->phys_map[dest_id];
- 			*bitmap = 1;
- 		}
- 		return true;
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index cf761ff582248..e41503b2c5a16 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -28,6 +28,7 @@
- #include <linux/irqbypass.h>
- #include <linux/swait.h>
- #include <linux/refcount.h>
-+#include <linux/nospec.h>
- #include <asm/signal.h>
- 
- #include <linux/kvm.h>
-@@ -492,10 +493,10 @@ static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
- 
- static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
- {
--	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu, in case
--	 * the caller has read kvm->online_vcpus before (as is the case
--	 * for kvm_for_each_vcpu, for example).
--	 */
-+	int num_vcpus = atomic_read(&kvm->online_vcpus);
-+	i = array_index_nospec(i, num_vcpus);
++			seccomp
++				- Same as "prctl" above, but all seccomp
++				  threads will enable the mitigation unless
++				  they explicitly opt out.
 +
-+	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu.  */
- 	smp_rmb();
- 	return kvm->vcpus[i];
+ 			auto    - Kernel selects the mitigation depending on
+ 				  the available CPU features and vulnerability.
+-				  Default is prctl.
++
++			Default mitigation:
++			If CONFIG_SECCOMP=y then "seccomp", otherwise "prctl"
+ 
+ 			Not specifying this option is equivalent to
+ 			spectre_v2_user=auto.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -179,6 +179,7 @@ enum spectre_v2_user_mitigation {
+ 	SPECTRE_V2_USER_NONE,
+ 	SPECTRE_V2_USER_STRICT,
+ 	SPECTRE_V2_USER_PRCTL,
++	SPECTRE_V2_USER_SECCOMP,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -245,12 +245,14 @@ enum spectre_v2_user_cmd {
+ 	SPECTRE_V2_USER_CMD_AUTO,
+ 	SPECTRE_V2_USER_CMD_FORCE,
+ 	SPECTRE_V2_USER_CMD_PRCTL,
++	SPECTRE_V2_USER_CMD_SECCOMP,
+ };
+ 
+ static const char * const spectre_v2_user_strings[] = {
+ 	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
+ 	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
+ 	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
++	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
+ };
+ 
+ static const struct {
+@@ -262,6 +264,7 @@ static const struct {
+ 	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
+ 	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
+ 	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
++	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
+ };
+ 
+ static void __init spec_v2_user_print_cond(const char *reason, bool secure)
+@@ -320,10 +323,16 @@ spectre_v2_user_select_mitigation(enum s
+ 	case SPECTRE_V2_USER_CMD_FORCE:
+ 		mode = SPECTRE_V2_USER_STRICT;
+ 		break;
+-	case SPECTRE_V2_USER_CMD_AUTO:
+ 	case SPECTRE_V2_USER_CMD_PRCTL:
+ 		mode = SPECTRE_V2_USER_PRCTL;
+ 		break;
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_SECCOMP:
++		if (IS_ENABLED(CONFIG_SECCOMP))
++			mode = SPECTRE_V2_USER_SECCOMP;
++		else
++			mode = SPECTRE_V2_USER_PRCTL;
++		break;
+ 	}
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier */
+@@ -335,6 +344,7 @@ spectre_v2_user_select_mitigation(enum s
+ 			static_branch_enable(&switch_mm_always_ibpb);
+ 			break;
+ 		case SPECTRE_V2_USER_PRCTL:
++		case SPECTRE_V2_USER_SECCOMP:
+ 			static_branch_enable(&switch_mm_cond_ibpb);
+ 			break;
+ 		default:
+@@ -586,6 +596,7 @@ void arch_smt_update(void)
+ 		update_stibp_strict();
+ 		break;
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		update_indir_branch_cond();
+ 		break;
+ 	}
+@@ -828,6 +839,8 @@ void arch_seccomp_spec_mitigate(struct t
+ {
+ 	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
+ 		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++	if (spectre_v2_user == SPECTRE_V2_USER_SECCOMP)
++		ib_prctl_set(task, PR_SPEC_FORCE_DISABLE);
  }
-@@ -579,6 +580,7 @@ void kvm_put_kvm(struct kvm *kvm);
+ #endif
  
- static inline struct kvm_memslots *__kvm_memslots(struct kvm *kvm, int as_id)
- {
-+	as_id = array_index_nospec(as_id, KVM_ADDRESS_SPACE_NUM);
- 	return srcu_dereference_check(kvm->memslots[as_id], &kvm->srcu,
- 			lockdep_is_held(&kvm->slots_lock) ||
- 			!refcount_read(&kvm->users_count));
-diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
-index b1286c4e07122..0bd0683640bdf 100644
---- a/virt/kvm/irqchip.c
-+++ b/virt/kvm/irqchip.c
-@@ -144,18 +144,19 @@ static int setup_routing_entry(struct kvm *kvm,
- {
- 	struct kvm_kernel_irq_routing_entry *ei;
- 	int r;
-+	u32 gsi = array_index_nospec(ue->gsi, KVM_MAX_IRQ_ROUTES);
- 
- 	/*
- 	 * Do not allow GSI to be mapped to the same irqchip more than once.
- 	 * Allow only one to one mapping between GSI and non-irqchip routing.
- 	 */
--	hlist_for_each_entry(ei, &rt->map[ue->gsi], link)
-+	hlist_for_each_entry(ei, &rt->map[gsi], link)
- 		if (ei->type != KVM_IRQ_ROUTING_IRQCHIP ||
- 		    ue->type != KVM_IRQ_ROUTING_IRQCHIP ||
- 		    ue->u.irqchip.irqchip == ei->irqchip.irqchip)
- 			return -EINVAL;
- 
--	e->gsi = ue->gsi;
-+	e->gsi = gsi;
- 	e->type = ue->type;
- 	r = kvm_set_routing_entry(kvm, e, ue);
- 	if (r)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index b4f2d892a1d36..ff68b07e94e97 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2974,12 +2974,14 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
- 	struct kvm_device_ops *ops = NULL;
- 	struct kvm_device *dev;
- 	bool test = cd->flags & KVM_CREATE_DEVICE_TEST;
-+	int type;
- 	int ret;
- 
- 	if (cd->type >= ARRAY_SIZE(kvm_device_ops_table))
- 		return -ENODEV;
- 
--	ops = kvm_device_ops_table[cd->type];
-+	type = array_index_nospec(cd->type, ARRAY_SIZE(kvm_device_ops_table));
-+	ops = kvm_device_ops_table[type];
- 	if (ops == NULL)
- 		return -ENODEV;
- 
-@@ -2994,7 +2996,7 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
- 	dev->kvm = kvm;
- 
- 	mutex_lock(&kvm->lock);
--	ret = ops->create(dev, cd->type);
-+	ret = ops->create(dev, type);
- 	if (ret < 0) {
- 		mutex_unlock(&kvm->lock);
- 		kfree(dev);
--- 
-2.20.1
-
+@@ -859,6 +872,7 @@ static int ib_prctl_get(struct task_stru
+ 	case SPECTRE_V2_USER_NONE:
+ 		return PR_SPEC_ENABLE;
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		if (task_spec_ib_force_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
+ 		if (task_spec_ib_disable(task))
+@@ -975,6 +989,7 @@ static char *stibp_state(void)
+ 	case SPECTRE_V2_USER_STRICT:
+ 		return ", STIBP: forced";
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		if (static_key_enabled(&switch_to_cond_stibp))
+ 			return ", STIBP: conditional";
+ 	}
 
 
