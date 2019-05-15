@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCE81EF4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11C2D1F0AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733001AbfEOLcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:32:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44044 "EHLO mail.kernel.org"
+        id S1731971AbfEOLZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732514AbfEOLcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:32:12 -0400
+        id S1731937AbfEOLZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:25:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1672320881;
-        Wed, 15 May 2019 11:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 363262089E;
+        Wed, 15 May 2019 11:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919931;
-        bh=dVQBo5mtvrTupR7EEWhapQ5svi0kusxcNoYyTDZh03o=;
+        s=default; t=1557919514;
+        bh=3dqHaKVa6Z5MG2ih8ovPRqksXJrBN+i9N0bdLmVtv70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J92v7wfr1/tgFluT3UnbIPTy3pQ6huuFyBrM27zjC3zpS03Pk1NohfL7/M70CeqzU
-         UKvl0Bm8MRTSZlL0l98NHldd3uBy8p5O9mq95ykdhnq85zju7TCwTelQX9GZcZanKp
-         tb05DWr4f1lihpBmyHAn1ApYs4lna53koYag7VLg=
+        b=Q7Hd0BQa3Zig2G4FJEObFdg/KFh3oXMTVWh1OA9Xh+5p0ZcIkmkXPYu9ikFARXXCx
+         gpyGBn2kcSNcbS8e/UlvfG8M41EEH5Mv3yeu7NqrLjLyD7+DHwbM6mbhgIwJvUFN/P
+         cPtVfapl59mnKdMf0DRHoSA7TqabOuOVDJvDmjCQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eubert Bao <bunnier@gmail.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.1 11/46] mwl8k: Fix rate_idx underflow
-Date:   Wed, 15 May 2019 12:56:35 +0200
-Message-Id: <20190515090621.817267128@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@gmail.com>,
+        Jon Maloy <jon.maloy@ericsson.se>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 105/113] tipc: fix hanging clients using poll with EPOLLOUT flag
+Date:   Wed, 15 May 2019 12:56:36 +0200
+Message-Id: <20190515090701.630455848@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,79 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Štetiar <ynezz@true.cz>
+From: Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@gmail.com>
 
-commit 6b583201fa219b7b1b6aebd8966c8fd9357ef9f4 upstream.
+[ Upstream commit ff946833b70e0c7f93de9a3f5b329b5ae2287b38 ]
 
-It was reported on OpenWrt bug tracking system[1], that several users
-are affected by the endless reboot of their routers if they configure
-5GHz interface with channel 44 or 48.
+commit 517d7c79bdb398 ("tipc: fix hanging poll() for stream sockets")
+introduced a regression for clients using non-blocking sockets.
+After the commit, we send EPOLLOUT event to the client even in
+TIPC_CONNECTING state. This causes the subsequent send() to fail
+with ENOTCONN, as the socket is still not in TIPC_ESTABLISHED state.
 
-The reboot loop is caused by the following excessive number of WARN_ON
-messages:
+In this commit, we:
+- improve the fix for hanging poll() by replacing sk_data_ready()
+  with sk_state_change() to wake up all clients.
+- revert the faulty updates introduced by commit 517d7c79bdb398
+  ("tipc: fix hanging poll() for stream sockets").
 
- WARNING: CPU: 0 PID: 0 at backports-4.19.23-1/net/mac80211/rx.c:4516
-                             ieee80211_rx_napi+0x1fc/0xa54 [mac80211]
-
-as the messages are being correctly emitted by the following guard:
-
- case RX_ENC_LEGACY:
-      if (WARN_ON(status->rate_idx >= sband->n_bitrates))
-
-as the rate_idx is in this case erroneously set to 251 (0xfb). This fix
-simply converts previously used magic number to proper constant and
-guards against substraction which is leading to the currently observed
-underflow.
-
-1. https://bugs.openwrt.org/index.php?do=details&task_id=2218
-
-Fixes: 854783444bab ("mwl8k: properly set receive status rate index on 5 GHz receive")
-Cc: <stable@vger.kernel.org>
-Tested-by: Eubert Bao <bunnier@gmail.com>
-Reported-by: Eubert Bao <bunnier@gmail.com>
-Signed-off-by: Petr Štetiar <ynezz@true.cz>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 517d7c79bdb398 ("tipc: fix hanging poll() for stream sockets")
+Signed-off-by: Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@gmail.com>
+Acked-by: Jon Maloy <jon.maloy@ericsson.se>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/marvell/mwl8k.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/tipc/socket.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwl8k.c
-+++ b/drivers/net/wireless/marvell/mwl8k.c
-@@ -441,6 +441,9 @@ static const struct ieee80211_rate mwl8k
- #define MWL8K_CMD_UPDATE_STADB		0x1123
- #define MWL8K_CMD_BASTREAM		0x1125
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -726,11 +726,11 @@ static __poll_t tipc_poll(struct file *f
  
-+#define MWL8K_LEGACY_5G_RATE_OFFSET \
-+	(ARRAY_SIZE(mwl8k_rates_24) - ARRAY_SIZE(mwl8k_rates_50))
-+
- static const char *mwl8k_cmd_name(__le16 cmd, char *buf, int bufsize)
- {
- 	u16 command = le16_to_cpu(cmd);
-@@ -1016,8 +1019,9 @@ mwl8k_rxd_ap_process(void *_rxd, struct
+ 	switch (sk->sk_state) {
+ 	case TIPC_ESTABLISHED:
+-	case TIPC_CONNECTING:
+ 		if (!tsk->cong_link_cnt && !tsk_conn_cong(tsk))
+ 			revents |= EPOLLOUT;
+ 		/* fall thru' */
+ 	case TIPC_LISTEN:
++	case TIPC_CONNECTING:
+ 		if (!skb_queue_empty(&sk->sk_receive_queue))
+ 			revents |= EPOLLIN | EPOLLRDNORM;
+ 		break;
+@@ -2039,7 +2039,7 @@ static bool tipc_sk_filter_connect(struc
+ 			return true;
  
- 	if (rxd->channel > 14) {
- 		status->band = NL80211_BAND_5GHZ;
--		if (!(status->encoding == RX_ENC_HT))
--			status->rate_idx -= 5;
-+		if (!(status->encoding == RX_ENC_HT) &&
-+		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
-+			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
- 	} else {
- 		status->band = NL80211_BAND_2GHZ;
- 	}
-@@ -1124,8 +1128,9 @@ mwl8k_rxd_sta_process(void *_rxd, struct
+ 		/* If empty 'ACK-' message, wake up sleeping connect() */
+-		sk->sk_data_ready(sk);
++		sk->sk_state_change(sk);
  
- 	if (rxd->channel > 14) {
- 		status->band = NL80211_BAND_5GHZ;
--		if (!(status->encoding == RX_ENC_HT))
--			status->rate_idx -= 5;
-+		if (!(status->encoding == RX_ENC_HT) &&
-+		    status->rate_idx >= MWL8K_LEGACY_5G_RATE_OFFSET)
-+			status->rate_idx -= MWL8K_LEGACY_5G_RATE_OFFSET;
- 	} else {
- 		status->band = NL80211_BAND_2GHZ;
- 	}
+ 		/* 'ACK-' message is neither accepted nor rejected: */
+ 		msg_set_dest_droppable(hdr, 1);
 
 
