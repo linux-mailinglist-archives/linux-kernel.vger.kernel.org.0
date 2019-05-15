@@ -2,38 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 128B21EC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA281ED90
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfEOK7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:59:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
+        id S1729487AbfEOLK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727078AbfEOK7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:59:11 -0400
+        id S1728667AbfEOLKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:10:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E31B21734;
-        Wed, 15 May 2019 10:59:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F11121473;
+        Wed, 15 May 2019 11:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917950;
-        bh=XEgC1akUgDk6eg6J3iDKPeR8TJpWmsZfhQeLSULYamA=;
+        s=default; t=1557918653;
+        bh=xqudcWSb995m6RwyxRbs+GSoDAko/e7aSCkNgs9Qjeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vp1HoJwpJSHT7VDDglwHZ7s4PtQDrGALKsKqVV5WCj7HwJ2FRY6Ld2WrsSjx0GD6x
-         fq/ZzoRRGktYI232a/7/0MazoWn6JrO/FNR1dk0cbYvpRreeDsDGf/nWANwojldWuo
-         cRJKfAYBsA+yBUwp3pZJpYLxQz70/wtUrZ+z8gD8=
+        b=tLB7sFRDVeQtN61rMcvtNVYaxSf8Rm+K4D5x2exUFDl5WLKo4jrKGhdyk0B/FG2yA
+         ca/zm/SjQsi64z1r06vn9490i7724lliph7kku+Ib9rtwTj3Uvw1etzZ7LipvuUw8C
+         Y/Y4D0foGrBuEKswMk1NvEp2HIgFmh5RyAREi9Hk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+7634edaea4d0b341c625@syzkaller.appspotmail.com
-Subject: [PATCH 3.18 36/86] USB: core: Fix bug caused by duplicate interface PM usage counter
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 206/266] x86/speculation: Rename SSBD update functions
 Date:   Wed, 15 May 2019 12:55:13 +0200
-Message-Id: <20190515090649.925009250@linuxfoundation.org>
+Message-Id: <20190515090729.927816259@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,212 +62,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit c2b71462d294cf517a0bc6e4fd6424d7cee5596f upstream.
+commit 26c4d75b234040c11728a8acb796b3a85ba7507c upstream.
 
-The syzkaller fuzzer reported a bug in the USB hub driver which turned
-out to be caused by a negative runtime-PM usage counter.  This allowed
-a hub to be runtime suspended at a time when the driver did not expect
-it.  The symptom is a WARNING issued because the hub's status URB is
-submitted while it is already active:
+During context switch, the SSBD bit in SPEC_CTRL MSR is updated according
+to changes of the TIF_SSBD flag in the current and next running task.
 
-	URB 0000000031fb463e submitted while active
-	WARNING: CPU: 0 PID: 2917 at drivers/usb/core/urb.c:363
+Currently, only the bit controlling speculative store bypass disable in
+SPEC_CTRL MSR is updated and the related update functions all have
+"speculative_store" or "ssb" in their names.
 
-The negative runtime-PM usage count was caused by an unfortunate
-design decision made when runtime PM was first implemented for USB.
-At that time, USB class drivers were allowed to unbind from their
-interfaces without balancing the usage counter (i.e., leaving it with
-a positive count).  The core code would take care of setting the
-counter back to 0 before allowing another driver to bind to the
-interface.
+For enhanced mitigation control other bits in SPEC_CTRL MSR need to be
+updated as well, which makes the SSB names inadequate.
 
-Later on when runtime PM was implemented for the entire kernel, the
-opposite decision was made: Drivers were required to balance their
-runtime-PM get and put calls.  In order to maintain backward
-compatibility, however, the USB subsystem adapted to the new
-implementation by keeping an independent usage counter for each
-interface and using it to automatically adjust the normal usage
-counter back to 0 whenever a driver was unbound.
+Rename the "speculative_store*" functions to a more generic name. No
+functional change.
 
-This approach involves duplicating information, but what is worse, it
-doesn't work properly in cases where a USB class driver delays
-decrementing the usage counter until after the driver's disconnect()
-routine has returned and the counter has been adjusted back to 0.
-Doing so would cause the usage counter to become negative.  There's
-even a warning about this in the USB power management documentation!
-
-As it happens, this is exactly what the hub driver does.  The
-kick_hub_wq() routine increments the runtime-PM usage counter, and the
-corresponding decrement is carried out by hub_event() in the context
-of the hub_wq work-queue thread.  This work routine may sometimes run
-after the driver has been unbound from its interface, and when it does
-it causes the usage counter to go negative.
-
-It is not possible for hub_disconnect() to wait for a pending
-hub_event() call to finish, because hub_disconnect() is called with
-the device lock held and hub_event() acquires that lock.  The only
-feasible fix is to reverse the original design decision: remove the
-duplicate interface-specific usage counter and require USB drivers to
-balance their runtime PM gets and puts.  As far as I know, all
-existing drivers currently do this.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+7634edaea4d0b341c625@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185004.058866968@linutronix.de
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- Documentation/usb/power-management.txt |   14 +++++++++-----
- drivers/usb/core/driver.c              |   13 -------------
- drivers/usb/storage/realtek_cr.c       |   13 +++++--------
- include/linux/usb.h                    |    2 --
- 4 files changed, 14 insertions(+), 28 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h |    6 +++---
+ arch/x86/kernel/cpu/bugs.c       |    4 ++--
+ arch/x86/kernel/process.c        |   12 ++++++------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
---- a/Documentation/usb/power-management.txt
-+++ b/Documentation/usb/power-management.txt
-@@ -364,11 +364,15 @@ autosuspend the interface's device.  Whe
- then the interface is considered to be idle, and the kernel may
- autosuspend the device.
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -70,11 +70,11 @@ extern void speculative_store_bypass_ht_
+ static inline void speculative_store_bypass_ht_init(void) { }
+ #endif
  
--Drivers need not be concerned about balancing changes to the usage
--counter; the USB core will undo any remaining "get"s when a driver
--is unbound from its interface.  As a corollary, drivers must not call
--any of the usb_autopm_* functions after their disconnect() routine has
--returned.
-+Drivers must be careful to balance their overall changes to the usage
-+counter.  Unbalanced "get"s will remain in effect when a driver is
-+unbound from its interface, preventing the device from going into
-+runtime suspend should the interface be bound to a driver again.  On
-+the other hand, drivers are allowed to achieve this balance by calling
-+the ``usb_autopm_*`` functions even after their ``disconnect`` routine
-+has returned -- say from within a work-queue routine -- provided they
-+retain an active reference to the interface (via ``usb_get_intf`` and
-+``usb_put_intf``).
+-extern void speculative_store_bypass_update(unsigned long tif);
++extern void speculation_ctrl_update(unsigned long tif);
  
- Drivers using the async routines are responsible for their own
- synchronization and mutual exclusion.
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -467,11 +467,6 @@ static int usb_unbind_interface(struct d
- 		pm_runtime_disable(dev);
- 	pm_runtime_set_suspended(dev);
- 
--	/* Undo any residual pm_autopm_get_interface_* calls */
--	for (r = atomic_read(&intf->pm_usage_cnt); r > 0; --r)
--		usb_autopm_put_interface_no_suspend(intf);
--	atomic_set(&intf->pm_usage_cnt, 0);
--
- 	if (!error)
- 		usb_autosuspend_device(udev);
- 
-@@ -1604,7 +1599,6 @@ void usb_autopm_put_interface(struct usb
- 	int			status;
- 
- 	usb_mark_last_busy(udev);
--	atomic_dec(&intf->pm_usage_cnt);
- 	status = pm_runtime_put_sync(&intf->dev);
- 	dev_vdbg(&intf->dev, "%s: cnt %d -> %d\n",
- 			__func__, atomic_read(&intf->dev.power.usage_count),
-@@ -1633,7 +1627,6 @@ void usb_autopm_put_interface_async(stru
- 	int			status;
- 
- 	usb_mark_last_busy(udev);
--	atomic_dec(&intf->pm_usage_cnt);
- 	status = pm_runtime_put(&intf->dev);
- 	dev_vdbg(&intf->dev, "%s: cnt %d -> %d\n",
- 			__func__, atomic_read(&intf->dev.power.usage_count),
-@@ -1655,7 +1648,6 @@ void usb_autopm_put_interface_no_suspend
- 	struct usb_device	*udev = interface_to_usbdev(intf);
- 
- 	usb_mark_last_busy(udev);
--	atomic_dec(&intf->pm_usage_cnt);
- 	pm_runtime_put_noidle(&intf->dev);
+-static inline void speculative_store_bypass_update_current(void)
++static inline void speculation_ctrl_update_current(void)
+ {
+-	speculative_store_bypass_update(current_thread_info()->flags);
++	speculation_ctrl_update(current_thread_info()->flags);
  }
- EXPORT_SYMBOL_GPL(usb_autopm_put_interface_no_suspend);
-@@ -1686,8 +1678,6 @@ int usb_autopm_get_interface(struct usb_
- 	status = pm_runtime_get_sync(&intf->dev);
- 	if (status < 0)
- 		pm_runtime_put_sync(&intf->dev);
--	else
--		atomic_inc(&intf->pm_usage_cnt);
- 	dev_vdbg(&intf->dev, "%s: cnt %d -> %d\n",
- 			__func__, atomic_read(&intf->dev.power.usage_count),
- 			status);
-@@ -1721,8 +1711,6 @@ int usb_autopm_get_interface_async(struc
- 	status = pm_runtime_get(&intf->dev);
- 	if (status < 0 && status != -EINPROGRESS)
- 		pm_runtime_put_noidle(&intf->dev);
--	else
--		atomic_inc(&intf->pm_usage_cnt);
- 	dev_vdbg(&intf->dev, "%s: cnt %d -> %d\n",
- 			__func__, atomic_read(&intf->dev.power.usage_count),
- 			status);
-@@ -1746,7 +1734,6 @@ void usb_autopm_get_interface_no_resume(
- 	struct usb_device	*udev = interface_to_usbdev(intf);
  
- 	usb_mark_last_busy(udev);
--	atomic_inc(&intf->pm_usage_cnt);
- 	pm_runtime_get_noresume(&intf->dev);
+ #endif
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -192,7 +192,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+ 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
+ 				 ssbd_spec_ctrl_to_tif(hostval);
+ 
+-		speculative_store_bypass_update(tif);
++		speculation_ctrl_update(tif);
+ 	}
  }
- EXPORT_SYMBOL_GPL(usb_autopm_get_interface_no_resume);
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -769,18 +769,16 @@ static void rts51x_suspend_timer_fn(unsi
- 		break;
- 	case RTS51X_STAT_IDLE:
- 	case RTS51X_STAT_SS:
--		usb_stor_dbg(us, "RTS51X_STAT_SS, intf->pm_usage_cnt:%d, power.usage:%d\n",
--			     atomic_read(&us->pusb_intf->pm_usage_cnt),
-+		usb_stor_dbg(us, "RTS51X_STAT_SS, power.usage:%d\n",
- 			     atomic_read(&us->pusb_intf->dev.power.usage_count));
+ EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
+@@ -629,7 +629,7 @@ static int ssb_prctl_set(struct task_str
+ 	 * mitigation until it is next scheduled.
+ 	 */
+ 	if (task == current && update)
+-		speculative_store_bypass_update_current();
++		speculation_ctrl_update_current();
  
--		if (atomic_read(&us->pusb_intf->pm_usage_cnt) > 0) {
-+		if (atomic_read(&us->pusb_intf->dev.power.usage_count) > 0) {
- 			usb_stor_dbg(us, "Ready to enter SS state\n");
- 			rts51x_set_stat(chip, RTS51X_STAT_SS);
- 			/* ignore mass storage interface's children */
- 			pm_suspend_ignore_children(&us->pusb_intf->dev, true);
- 			usb_autopm_put_interface_async(us->pusb_intf);
--			usb_stor_dbg(us, "RTS51X_STAT_SS 01, intf->pm_usage_cnt:%d, power.usage:%d\n",
--				     atomic_read(&us->pusb_intf->pm_usage_cnt),
-+			usb_stor_dbg(us, "RTS51X_STAT_SS 01, power.usage:%d\n",
- 				     atomic_read(&us->pusb_intf->dev.power.usage_count));
- 		}
- 		break;
-@@ -813,11 +811,10 @@ static void rts51x_invoke_transport(stru
- 	int ret;
+ 	return 0;
+ }
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -317,27 +317,27 @@ static __always_inline void amd_set_ssb_
+ 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
+ }
  
- 	if (working_scsi(srb)) {
--		usb_stor_dbg(us, "working scsi, intf->pm_usage_cnt:%d, power.usage:%d\n",
--			     atomic_read(&us->pusb_intf->pm_usage_cnt),
-+		usb_stor_dbg(us, "working scsi, power.usage:%d\n",
- 			     atomic_read(&us->pusb_intf->dev.power.usage_count));
+-static __always_inline void intel_set_ssb_state(unsigned long tifn)
++static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+ {
+ 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
  
--		if (atomic_read(&us->pusb_intf->pm_usage_cnt) <= 0) {
-+		if (atomic_read(&us->pusb_intf->dev.power.usage_count) <= 0) {
- 			ret = usb_autopm_get_interface(us->pusb_intf);
- 			usb_stor_dbg(us, "working scsi, ret=%d\n", ret);
- 		}
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -125,7 +125,6 @@ enum usb_interface_condition {
-  * @dev: driver model's view of this device
-  * @usb_dev: if an interface is bound to the USB major, this will point
-  *	to the sysfs representation for that device.
-- * @pm_usage_cnt: PM usage counter for this interface
-  * @reset_ws: Used for scheduling resets from atomic context.
-  * @resetting_device: USB core reset the device, so use alt setting 0 as
-  *	current; needs bandwidth alloc after reset.
-@@ -181,7 +180,6 @@ struct usb_interface {
+ 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
  
- 	struct device dev;		/* interface specific device info */
- 	struct device *usb_dev;
--	atomic_t pm_usage_cnt;		/* usage counter for autosuspend */
- 	struct work_struct reset_ws;	/* for resets in atomic context */
- };
- #define	to_usb_interface(d) container_of(d, struct usb_interface, dev)
+-static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+ {
+ 	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+ 		amd_set_ssb_virt_state(tifn);
+ 	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 		amd_set_core_ssb_state(tifn);
+ 	else
+-		intel_set_ssb_state(tifn);
++		spec_ctrl_update_msr(tifn);
+ }
+ 
+-void speculative_store_bypass_update(unsigned long tif)
++void speculation_ctrl_update(unsigned long tif)
+ {
+ 	preempt_disable();
+-	__speculative_store_bypass_update(tif);
++	__speculation_ctrl_update(tif);
+ 	preempt_enable();
+ }
+ 
+@@ -371,7 +371,7 @@ void __switch_to_xtra(struct task_struct
+ 		cr4_toggle_bits(X86_CR4_TSD);
+ 
+ 	if ((tifp ^ tifn) & _TIF_SSBD)
+-		__speculative_store_bypass_update(tifn);
++		__speculation_ctrl_update(tifn);
+ }
+ 
+ /*
 
 
