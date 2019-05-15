@@ -2,56 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB9D1ED94
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 763F61EE7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfEOLLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45592 "EHLO mail.kernel.org"
+        id S1731457AbfEOLW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729538AbfEOLLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:14 -0400
+        id S1731441AbfEOLWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A962084F;
-        Wed, 15 May 2019 11:11:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE44A20843;
+        Wed, 15 May 2019 11:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918672;
-        bh=nLP5alnns8TN9xP24VV+pZjoydCx2K0Thsww2XBVqMU=;
+        s=default; t=1557919343;
+        bh=6yewCPOiOdHUs0aQTSaM5h9YTqiRcgLS4eo6foYu5Is=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXO0nhLgVSGryQOjGECfjggwt6VR/xiyJW/J6lGQw74K9pQuu5bgqA4WDaHRMp874
-         Op75g9jKIVNAIschH7YCn+aDXEUa1mnvGqfm1sJDHKIjDh9i9bvDwJbR13z4Vefgo6
-         tt8dydDnFSUhloVfbfoF9u393/vF5LxJBVd2o6U4=
+        b=zr1QImUvtVe1HHFmCVpAcfe/QzvkI9z+Dl/nPI5ALdbSkfxtQwRjJrrflk95l4sW3
+         RRoVv830u5A/ngtjW/zTF9aCuUWZLFBKihqReDQFC9TrUps7KixRMK/EF9rNr7urhj
+         b1V0JLMtult+dUPzputSumj+QzUJnlLCAirChUsU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 222/266] x86/speculation: Prevent stale SPEC_CTRL msr content
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 038/113] KVM: fix spectrev1 gadgets
 Date:   Wed, 15 May 2019 12:55:29 +0200
-Message-Id: <20190515090730.504905487@linuxfoundation.org>
+Message-Id: <20190515090656.509320646@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,223 +43,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 1d487e9bf8ba66a7174c56a0029c54b1eca8f99c ]
 
-commit 6d991ba509ebcfcc908e009d1db51972a4f7a064 upstream.
+These were found with smatch, and then generalized when applicable.
 
-The seccomp speculation control operates on all tasks of a process, but
-only the current task of a process can update the MSR immediately. For the
-other threads the update is deferred to the next context switch.
-
-This creates the following situation with Process A and B:
-
-Process A task 2 and Process B task 1 are pinned on CPU1. Process A task 2
-does not have the speculation control TIF bit set. Process B task 1 has the
-speculation control TIF bit set.
-
-CPU0					CPU1
-					MSR bit is set
-					ProcB.T1 schedules out
-					ProcA.T2 schedules in
-					MSR bit is cleared
-ProcA.T1
-  seccomp_update()
-  set TIF bit on ProcA.T2
-					ProcB.T1 schedules in
-					MSR is not updated  <-- FAIL
-
-This happens because the context switch code tries to avoid the MSR update
-if the speculation control TIF bits of the incoming and the outgoing task
-are the same. In the worst case ProcB.T1 and ProcA.T2 are the only tasks
-scheduling back and forth on CPU1, which keeps the MSR stale forever.
-
-In theory this could be remedied by IPIs, but chasing the remote task which
-could be migrated is complex and full of races.
-
-The straight forward solution is to avoid the asychronous update of the TIF
-bit and defer it to the next context switch. The speculation control state
-is stored in task_struct::atomic_flags by the prctl and seccomp updates
-already.
-
-Add a new TIF_SPEC_FORCE_UPDATE bit and set this after updating the
-atomic_flags. Check the bit on context switch and force a synchronous
-update of the speculation control if set. Use the same mechanism for
-updating the current task.
-
-Reported-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/spec-ctrl.h   |    6 +-----
- arch/x86/include/asm/thread_info.h |    4 +++-
- arch/x86/kernel/cpu/bugs.c         |   18 +++++++-----------
- arch/x86/kernel/process.c          |   30 +++++++++++++++++++++++++++++-
- 4 files changed, 40 insertions(+), 18 deletions(-)
+ arch/x86/kvm/lapic.c     |  4 +++-
+ include/linux/kvm_host.h | 10 ++++++----
+ virt/kvm/irqchip.c       |  5 +++--
+ virt/kvm/kvm_main.c      |  6 ++++--
+ 4 files changed, 16 insertions(+), 9 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -83,10 +83,6 @@ static inline void speculative_store_byp
- #endif
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 3692de84c4201..d2f5aa220355f 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -133,6 +133,7 @@ static inline bool kvm_apic_map_get_logical_dest(struct kvm_apic_map *map,
+ 		if (offset <= max_apic_id) {
+ 			u8 cluster_size = min(max_apic_id - offset + 1, 16U);
  
- extern void speculation_ctrl_update(unsigned long tif);
--
--static inline void speculation_ctrl_update_current(void)
--{
--	speculation_ctrl_update(current_thread_info()->flags);
--}
-+extern void speculation_ctrl_update_current(void);
++			offset = array_index_nospec(offset, map->max_apic_id + 1);
+ 			*cluster = &map->phys_map[offset];
+ 			*mask = dest_id & (0xffff >> (16 - cluster_size));
+ 		} else {
+@@ -896,7 +897,8 @@ static inline bool kvm_apic_map_get_dest_lapic(struct kvm *kvm,
+ 		if (irq->dest_id > map->max_apic_id) {
+ 			*bitmap = 0;
+ 		} else {
+-			*dst = &map->phys_map[irq->dest_id];
++			u32 dest_id = array_index_nospec(irq->dest_id, map->max_apic_id + 1);
++			*dst = &map->phys_map[dest_id];
+ 			*bitmap = 1;
+ 		}
+ 		return true;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 23c242a7ac524..30efb36638923 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -28,6 +28,7 @@
+ #include <linux/irqbypass.h>
+ #include <linux/swait.h>
+ #include <linux/refcount.h>
++#include <linux/nospec.h>
+ #include <asm/signal.h>
  
- #endif
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -97,6 +97,7 @@ struct thread_info {
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
- #define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
-+#define TIF_SPEC_FORCE_UPDATE	10	/* Force speculation MSR update in context switch */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_NOTSC		16	/* TSC is not accessible in userland */
-@@ -123,6 +124,7 @@ struct thread_info {
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
- #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
-+#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_NOTSC		(1 << TIF_NOTSC)
-@@ -152,7 +154,7 @@ struct thread_info {
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP|			\
--	 _TIF_SSBD)
-+	 _TIF_SSBD | _TIF_SPEC_FORCE_UPDATE)
+ #include <linux/kvm.h>
+@@ -491,10 +492,10 @@ static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
  
- /*
-  * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -701,14 +701,10 @@ static void ssb_select_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "Speculation prctl: " fmt
- 
--static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
-+static void task_update_spec_tif(struct task_struct *tsk)
+ static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
  {
--	bool update;
--
--	if (on)
--		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
--	else
--		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
-+	/* Force the update of the real TIF bits */
-+	set_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE);
+-	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu, in case
+-	 * the caller has read kvm->online_vcpus before (as is the case
+-	 * for kvm_for_each_vcpu, for example).
+-	 */
++	int num_vcpus = atomic_read(&kvm->online_vcpus);
++	i = array_index_nospec(i, num_vcpus);
++
++	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu.  */
+ 	smp_rmb();
+ 	return kvm->vcpus[i];
+ }
+@@ -578,6 +579,7 @@ void kvm_put_kvm(struct kvm *kvm);
+ 
+ static inline struct kvm_memslots *__kvm_memslots(struct kvm *kvm, int as_id)
+ {
++	as_id = array_index_nospec(as_id, KVM_ADDRESS_SPACE_NUM);
+ 	return srcu_dereference_check(kvm->memslots[as_id], &kvm->srcu,
+ 			lockdep_is_held(&kvm->slots_lock) ||
+ 			!refcount_read(&kvm->users_count));
+diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
+index b1286c4e07122..0bd0683640bdf 100644
+--- a/virt/kvm/irqchip.c
++++ b/virt/kvm/irqchip.c
+@@ -144,18 +144,19 @@ static int setup_routing_entry(struct kvm *kvm,
+ {
+ 	struct kvm_kernel_irq_routing_entry *ei;
+ 	int r;
++	u32 gsi = array_index_nospec(ue->gsi, KVM_MAX_IRQ_ROUTES);
  
  	/*
- 	 * Immediately update the speculation control MSRs for the current
-@@ -718,7 +714,7 @@ static void task_update_spec_tif(struct
- 	 * This can only happen for SECCOMP mitigation. For PRCTL it's
- 	 * always the current task.
+ 	 * Do not allow GSI to be mapped to the same irqchip more than once.
+ 	 * Allow only one to one mapping between GSI and non-irqchip routing.
  	 */
--	if (tsk == current && update)
-+	if (tsk == current)
- 		speculation_ctrl_update_current();
- }
+-	hlist_for_each_entry(ei, &rt->map[ue->gsi], link)
++	hlist_for_each_entry(ei, &rt->map[gsi], link)
+ 		if (ei->type != KVM_IRQ_ROUTING_IRQCHIP ||
+ 		    ue->type != KVM_IRQ_ROUTING_IRQCHIP ||
+ 		    ue->u.irqchip.irqchip == ei->irqchip.irqchip)
+ 			return -EINVAL;
  
-@@ -734,16 +730,16 @@ static int ssb_prctl_set(struct task_str
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, false);
-+		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, true);
-+		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, true);
-+		task_update_spec_tif(task);
- 		break;
- 	default:
- 		return -ERANGE;
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -365,6 +365,18 @@ static __always_inline void __speculatio
- 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
+-	e->gsi = ue->gsi;
++	e->gsi = gsi;
+ 	e->type = ue->type;
+ 	r = kvm_set_routing_entry(kvm, e, ue);
+ 	if (r)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6a79df88b5469..e909d9907b506 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2887,12 +2887,14 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
+ 	struct kvm_device_ops *ops = NULL;
+ 	struct kvm_device *dev;
+ 	bool test = cd->flags & KVM_CREATE_DEVICE_TEST;
++	int type;
+ 	int ret;
  
-+static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
-+{
-+	if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
-+		if (task_spec_ssb_disable(tsk))
-+			set_tsk_thread_flag(tsk, TIF_SSBD);
-+		else
-+			clear_tsk_thread_flag(tsk, TIF_SSBD);
-+	}
-+	/* Return the updated threadinfo flags*/
-+	return task_thread_info(tsk)->flags;
-+}
-+
- void speculation_ctrl_update(unsigned long tif)
- {
- 	/* Forced update. Make sure all relevant TIF flags are different */
-@@ -373,6 +385,14 @@ void speculation_ctrl_update(unsigned lo
- 	preempt_enable();
- }
+ 	if (cd->type >= ARRAY_SIZE(kvm_device_ops_table))
+ 		return -ENODEV;
  
-+/* Called from seccomp/prctl update */
-+void speculation_ctrl_update_current(void)
-+{
-+	preempt_disable();
-+	speculation_ctrl_update(speculation_ctrl_update_tif(current));
-+	preempt_enable();
-+}
-+
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
- 	struct thread_struct *prev, *next;
-@@ -401,7 +421,15 @@ void __switch_to_xtra(struct task_struct
- 	if ((tifp ^ tifn) & _TIF_NOTSC)
- 		cr4_toggle_bits(X86_CR4_TSD);
+-	ops = kvm_device_ops_table[cd->type];
++	type = array_index_nospec(cd->type, ARRAY_SIZE(kvm_device_ops_table));
++	ops = kvm_device_ops_table[type];
+ 	if (ops == NULL)
+ 		return -ENODEV;
  
--	__speculation_ctrl_update(tifp, tifn);
-+	if (likely(!((tifp | tifn) & _TIF_SPEC_FORCE_UPDATE))) {
-+		__speculation_ctrl_update(tifp, tifn);
-+	} else {
-+		speculation_ctrl_update_tif(prev_p);
-+		tifn = speculation_ctrl_update_tif(next_p);
-+
-+		/* Enforce MSR update to ensure consistent state */
-+		__speculation_ctrl_update(~tifn, tifn);
-+	}
- }
+@@ -2907,7 +2909,7 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
+ 	dev->kvm = kvm;
  
- /*
+ 	mutex_lock(&kvm->lock);
+-	ret = ops->create(dev, cd->type);
++	ret = ops->create(dev, type);
+ 	if (ret < 0) {
+ 		mutex_unlock(&kvm->lock);
+ 		kfree(dev);
+-- 
+2.20.1
+
 
 
