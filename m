@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CF91F27E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BA51EDC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfEOLLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42930 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729102AbfEOLLL (ORCPT
+        id S1729948AbfEOLNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:13:17 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:56526 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729655AbfEOLNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l2so2184300wrb.9;
-        Wed, 15 May 2019 04:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RfpyiRccRRz5dbumgmGOhQSt6RCKbWXqfWgcImNA2S8=;
-        b=K8t4CDah4BvgpilXqXw5zfSnz0BO2nlRqhLz2gBt2pODiwL4kv8u3l6llr5cwm1NMz
-         cgjs8gfhoBuBlaXma2hIzzXKOHnJIY55Z/RQyQEz9GQRx0FTCMyRfQQ0kZoQLqZ8toG2
-         URD0M9gTxxP3ivyMbkmXAVXh0xlkLqK7wON2A/Md2d7bN+7V1FSBsJFbiLEfdAPl11HY
-         q2QgOryr7QcwIHGew7YmpsJY2YsmBnZh4byZbIyNgyt2awx0qzkJlOcGGENIf8hH0k41
-         E2/+zrNVGv5uXVDKvKDWd8knOGnk3aafQyO7ChMWO5weTw5myZirdUM1jeu643nFh8mW
-         qWlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RfpyiRccRRz5dbumgmGOhQSt6RCKbWXqfWgcImNA2S8=;
-        b=F8PeZ7ZZN9eBEaEvWcJIFwXcUz79YIhgpoZ7jNxQXYzFWHuilcIRl86zFam2ihalUW
-         gmYw81Zo1U45ogI4h5F3ppaBAtUyYZn7quUND+5X4Du+k9GN7xU6PdQH8G+u7Yiij7G9
-         j5aNvdFEPkheTOmoe2AvyrcDlgLMzMxGYLPGeI+P9vwY2vMmUouHdXc+CZGQ6DJ0vjEO
-         3HxOKZAxXYZNXUQbwf1KBVvOmasuoQ5TZ9t4up5/GQ6GQDhtlyNIXREgLATRMid33Fi6
-         54bLAjYYx9fvBkGvqmsmR5+tA886O0vj4x8/2IxHT4JUEDgtYI1MBJEPo2B+fRmaI3RK
-         eedA==
-X-Gm-Message-State: APjAAAWWAGWS8TF8NWT/yNzrZBQ91zB3pOPb1YGDGSzOUf5k1RgLk+2b
-        27tYawGyK1pqYJrG7nW8Ty1M3ZcsoCEV/GxODMs=
-X-Google-Smtp-Source: APXvYqwy9wBDuoVo1pQ2ozYfDPbfcbqcr1FX+HUxx/FMBvDgFydGuewMLp2+gLO8zuWIDfWHm/LYc3Kw0RoFoklukJQ=
-X-Received: by 2002:a5d:440a:: with SMTP id z10mr10309482wrq.157.1557918668653;
- Wed, 15 May 2019 04:11:08 -0700 (PDT)
+        Wed, 15 May 2019 07:13:11 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4FBD9OR058630;
+        Wed, 15 May 2019 06:13:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1557918789;
+        bh=1EvbyRlsOqqU6Qy/FHZ8ilhfbNaV4fjqsgFD0Yxvf2A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rD3y0QGhw60LU1XY/6XAij8GRBUZDJy42D2GvTRWThdPSiq6tIanINLhC9EIz5GTm
+         o7D9TlkFevQqwpKkjDriajzd9spp5YQ83urcdlqL8ESFasPJzYwjhVzzzGJYTh/K82
+         /T1QtgqD9z0JULaRfuzEzddPxPFlXDABnecu8SIQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4FBD9tk040276
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 May 2019 06:13:09 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 15
+ May 2019 06:13:09 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 15 May 2019 06:13:09 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4FBD6dI110173;
+        Wed, 15 May 2019 06:13:07 -0500
+Subject: Re: [PATCH 3/3] regulator: lp87565: Add 4-phase lp87561 regulator
+ support
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <t-kristo@ti.com>
+References: <20190515100848.19560-1-j-keerthy@ti.com>
+ <20190515100848.19560-4-j-keerthy@ti.com>
+ <20190515110851.GD5613@sirena.org.uk>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <82581f9a-5aaa-b56c-f9d5-4188b60b3e6b@ti.com>
+Date:   Wed, 15 May 2019 16:43:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190509173849.11825-1-hch@lst.de> <20190509173849.11825-3-hch@lst.de>
-In-Reply-To: <20190509173849.11825-3-hch@lst.de>
-From:   Manuel Lauss <manuel.lauss@gmail.com>
-Date:   Wed, 15 May 2019 13:10:32 +0200
-Message-ID: <CAOLZvyG14NvbgX4PA5aafk=reLcHbqDswqS-8j4+7QJMx02d7A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] au1200fb: fix DMA API abuse
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux-MIPS <linux-mips@vger.kernel.org>,
-        linux-fbdev <linux-fbdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190515110851.GD5613@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Servus Christoph,
 
-On Thu, May 9, 2019 at 7:39 PM Christoph Hellwig <hch@lst.de> wrote:
-> Virtual addresses return from dma(m)_alloc_attrs are opaque in what
-> backs then, and drivers must not poke into them.  Similarly caching
-> modes are not supposed to be directly set by the driver.  Switch the
-> driver to use the generic DMA API mmap helper to avoid these problems.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/video/fbdev/au1200fb.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
 
-Runs fine on my test system.
+On 15/05/19 4:38 PM, Mark Brown wrote:
+> On Wed, May 15, 2019 at 03:38:48PM +0530, Keerthy wrote:
+> 
+>> @@ -172,6 +178,9 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+>>   	if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87565_Q1) {
+>>   		min_idx = LP87565_BUCK_10;
+>>   		max_idx = LP87565_BUCK_23;
+>> +	} else if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87561_Q1) {
+>> +		min_idx = LP87565_BUCK_3210;
+>> +		max_idx = LP87565_BUCK_3210;
+> 
+> This if/else chain should be a switch statement.
 
-Tested-by: Manuel Lauss <manuel.lauss@gmail.com>
+Okay. I will convert that in v2.
+
+Thanks,
+Keerthy
+
+> 
