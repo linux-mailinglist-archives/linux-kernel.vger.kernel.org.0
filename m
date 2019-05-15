@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFBD71EEB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95C81EEFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbfEOLYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
+        id S1732159AbfEOL2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731304AbfEOLYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:24:44 -0400
+        id S1732362AbfEOL2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6729206BF;
-        Wed, 15 May 2019 11:24:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3469020881;
+        Wed, 15 May 2019 11:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919483;
-        bh=QRIcsYA0LLSvrk8VqBiIl1h66y0bmjVOy1B1lOgme4Y=;
+        s=default; t=1557919696;
+        bh=2nKhsu9tMWEjLlvM99c5ERV5jFbUMSCrYu3qMJU9t5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W0GxEHjYIF65PxecHj93V50KAZYoZUdb/i4Pm4V6NIcrC0HVd80l7oI2Kd4UitjMc
-         7sR0it+kCPtcuDQt4AkA8HYy7kLrnj1kaDj8/Yf1/o9Q/n/V0PJ4+goWcQ76taTYKl
-         E18lsXlVggmV54bLqxAg2WgeP0knBYlcqwqJ2w1g=
+        b=mTfJgbh8/xT7Rr1JcB3FTwHiRzUpnCVywPs9Q6t7O1GoDusS39lmuzMft5GiHpYRz
+         Ir326ioHlyZlC1euyn+i3wRykSJrxMjoKtdpvBwutjQLULtV842Rut301DBPR5EkCB
+         kAHtBTofWcuaGoqIdwXyKKWZjXiR+MgUc7eOkmCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 048/113] netfilter: ctnetlink: dont use conntrack/expect object addresses as id
+Subject: [PATCH 5.0 058/137] scsi: aic7xxx: fix EISA support
 Date:   Wed, 15 May 2019 12:55:39 +0200
-Message-Id: <20190515090657.286176213@linuxfoundation.org>
+Message-Id: <20190515090657.699637201@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,174 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3c79107631db1f7fd32cf3f7368e4672004a3010 ]
+[ Upstream commit 144ec97493af34efdb77c5aba146e9c7de8d0a06 ]
 
-else, we leak the addresses to userspace via ctnetlink events
-and dumps.
+Instead of relying on the now removed NULL argument to
+pci_alloc_consistent, switch to the generic DMA API, and store the struct
+device so that we can pass it.
 
-Compute an ID on demand based on the immutable parts of nf_conn struct.
-
-Another advantage compared to using an address is that there is no
-immediate re-use of the same ID in case the conntrack entry is freed and
-reallocated again immediately.
-
-Fixes: 3583240249ef ("[NETFILTER]: nf_conntrack_expect: kill unique ID")
-Fixes: 7f85f914721f ("[NETFILTER]: nf_conntrack: kill unique ID")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 4167b2ad5182 ("PCI: Remove NULL device handling from PCI DMA API")
+Reported-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/netfilter/nf_conntrack.h |  2 ++
- net/netfilter/nf_conntrack_core.c    | 35 ++++++++++++++++++++++++++++
- net/netfilter/nf_conntrack_netlink.c | 34 +++++++++++++++++++++++----
- 3 files changed, 66 insertions(+), 5 deletions(-)
+ drivers/scsi/aic7xxx/aic7770_osm.c     |  1 +
+ drivers/scsi/aic7xxx/aic7xxx.h         |  1 +
+ drivers/scsi/aic7xxx/aic7xxx_osm.c     | 10 ++++------
+ drivers/scsi/aic7xxx/aic7xxx_osm_pci.c |  1 +
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index 7e012312cd610..f45141bdbb837 100644
---- a/include/net/netfilter/nf_conntrack.h
-+++ b/include/net/netfilter/nf_conntrack.h
-@@ -313,6 +313,8 @@ struct nf_conn *nf_ct_tmpl_alloc(struct net *net,
- 				 gfp_t flags);
- void nf_ct_tmpl_free(struct nf_conn *tmpl);
+diff --git a/drivers/scsi/aic7xxx/aic7770_osm.c b/drivers/scsi/aic7xxx/aic7770_osm.c
+index 3d401d02c0195..bdd177e3d7622 100644
+--- a/drivers/scsi/aic7xxx/aic7770_osm.c
++++ b/drivers/scsi/aic7xxx/aic7770_osm.c
+@@ -91,6 +91,7 @@ aic7770_probe(struct device *dev)
+ 	ahc = ahc_alloc(&aic7xxx_driver_template, name);
+ 	if (ahc == NULL)
+ 		return (ENOMEM);
++	ahc->dev = dev;
+ 	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
+ 			       eisaBase);
+ 	if (error != 0) {
+diff --git a/drivers/scsi/aic7xxx/aic7xxx.h b/drivers/scsi/aic7xxx/aic7xxx.h
+index 5614921b4041a..88b90f9806c99 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx.h
++++ b/drivers/scsi/aic7xxx/aic7xxx.h
+@@ -943,6 +943,7 @@ struct ahc_softc {
+ 	 * Platform specific device information.
+ 	 */
+ 	ahc_dev_softc_t		  dev_softc;
++	struct device		  *dev;
  
-+u32 nf_ct_get_id(const struct nf_conn *ct);
-+
- static inline void
- nf_ct_set(struct sk_buff *skb, struct nf_conn *ct, enum ip_conntrack_info info)
+ 	/*
+ 	 * Bus specific device information.
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+index 3c9c17450bb39..d5c4a0d237062 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+@@ -860,8 +860,8 @@ int
+ ahc_dmamem_alloc(struct ahc_softc *ahc, bus_dma_tag_t dmat, void** vaddr,
+ 		 int flags, bus_dmamap_t *mapp)
  {
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 9a249478abf28..27eff89fad01c 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/random.h>
- #include <linux/jhash.h>
-+#include <linux/siphash.h>
- #include <linux/err.h>
- #include <linux/percpu.h>
- #include <linux/moduleparam.h>
-@@ -424,6 +425,40 @@ nf_ct_invert_tuple(struct nf_conntrack_tuple *inverse,
- }
- EXPORT_SYMBOL_GPL(nf_ct_invert_tuple);
- 
-+/* Generate a almost-unique pseudo-id for a given conntrack.
-+ *
-+ * intentionally doesn't re-use any of the seeds used for hash
-+ * table location, we assume id gets exposed to userspace.
-+ *
-+ * Following nf_conn items do not change throughout lifetime
-+ * of the nf_conn after it has been committed to main hash table:
-+ *
-+ * 1. nf_conn address
-+ * 2. nf_conn->ext address
-+ * 3. nf_conn->master address (normally NULL)
-+ * 4. tuple
-+ * 5. the associated net namespace
-+ */
-+u32 nf_ct_get_id(const struct nf_conn *ct)
-+{
-+	static __read_mostly siphash_key_t ct_id_seed;
-+	unsigned long a, b, c, d;
-+
-+	net_get_random_once(&ct_id_seed, sizeof(ct_id_seed));
-+
-+	a = (unsigned long)ct;
-+	b = (unsigned long)ct->master ^ net_hash_mix(nf_ct_net(ct));
-+	c = (unsigned long)ct->ext;
-+	d = (unsigned long)siphash(&ct->tuplehash, sizeof(ct->tuplehash),
-+				   &ct_id_seed);
-+#ifdef CONFIG_64BIT
-+	return siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &ct_id_seed);
-+#else
-+	return siphash_4u32((u32)a, (u32)b, (u32)c, (u32)d, &ct_id_seed);
-+#endif
-+}
-+EXPORT_SYMBOL_GPL(nf_ct_get_id);
-+
- static void
- clean_from_lists(struct nf_conn *ct)
- {
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index 036207ecaf166..47e5a076522d8 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -29,6 +29,7 @@
- #include <linux/spinlock.h>
- #include <linux/interrupt.h>
- #include <linux/slab.h>
-+#include <linux/siphash.h>
- 
- #include <linux/netfilter.h>
- #include <net/netlink.h>
-@@ -487,7 +488,9 @@ static int ctnetlink_dump_ct_synproxy(struct sk_buff *skb, struct nf_conn *ct)
- 
- static int ctnetlink_dump_id(struct sk_buff *skb, const struct nf_conn *ct)
- {
--	if (nla_put_be32(skb, CTA_ID, htonl((unsigned long)ct)))
-+	__be32 id = (__force __be32)nf_ct_get_id(ct);
-+
-+	if (nla_put_be32(skb, CTA_ID, id))
- 		goto nla_put_failure;
+-	*vaddr = pci_alloc_consistent(ahc->dev_softc,
+-				      dmat->maxsize, mapp);
++	/* XXX: check if we really need the GFP_ATOMIC and unwind this mess! */
++	*vaddr = dma_alloc_coherent(ahc->dev, dmat->maxsize, mapp, GFP_ATOMIC);
+ 	if (*vaddr == NULL)
+ 		return ENOMEM;
  	return 0;
+@@ -871,8 +871,7 @@ void
+ ahc_dmamem_free(struct ahc_softc *ahc, bus_dma_tag_t dmat,
+ 		void* vaddr, bus_dmamap_t map)
+ {
+-	pci_free_consistent(ahc->dev_softc, dmat->maxsize,
+-			    vaddr, map);
++	dma_free_coherent(ahc->dev, dmat->maxsize, vaddr, map);
+ }
  
-@@ -1275,8 +1278,9 @@ static int ctnetlink_del_conntrack(struct net *net, struct sock *ctnl,
- 	}
+ int
+@@ -1123,8 +1122,7 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
  
- 	if (cda[CTA_ID]) {
--		u_int32_t id = ntohl(nla_get_be32(cda[CTA_ID]));
--		if (id != (u32)(unsigned long)ct) {
-+		__be32 id = nla_get_be32(cda[CTA_ID]);
-+
-+		if (id != (__force __be32)nf_ct_get_id(ct)) {
- 			nf_ct_put(ct);
- 			return -ENOENT;
+ 	host->transportt = ahc_linux_transport_template;
+ 
+-	retval = scsi_add_host(host,
+-			(ahc->dev_softc ? &ahc->dev_softc->dev : NULL));
++	retval = scsi_add_host(host, ahc->dev);
+ 	if (retval) {
+ 		printk(KERN_WARNING "aic7xxx: scsi_add_host failed\n");
+ 		scsi_host_put(host);
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
+index 0fc14dac7070c..717d8d1082ce1 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
+@@ -250,6 +250,7 @@ ahc_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
  		}
-@@ -2675,6 +2679,25 @@ static int ctnetlink_exp_dump_mask(struct sk_buff *skb,
- 
- static const union nf_inet_addr any_addr;
- 
-+static __be32 nf_expect_get_id(const struct nf_conntrack_expect *exp)
-+{
-+	static __read_mostly siphash_key_t exp_id_seed;
-+	unsigned long a, b, c, d;
-+
-+	net_get_random_once(&exp_id_seed, sizeof(exp_id_seed));
-+
-+	a = (unsigned long)exp;
-+	b = (unsigned long)exp->helper;
-+	c = (unsigned long)exp->master;
-+	d = (unsigned long)siphash(&exp->tuple, sizeof(exp->tuple), &exp_id_seed);
-+
-+#ifdef CONFIG_64BIT
-+	return (__force __be32)siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &exp_id_seed);
-+#else
-+	return (__force __be32)siphash_4u32((u32)a, (u32)b, (u32)c, (u32)d, &exp_id_seed);
-+#endif
-+}
-+
- static int
- ctnetlink_exp_dump_expect(struct sk_buff *skb,
- 			  const struct nf_conntrack_expect *exp)
-@@ -2722,7 +2745,7 @@ ctnetlink_exp_dump_expect(struct sk_buff *skb,
  	}
- #endif
- 	if (nla_put_be32(skb, CTA_EXPECT_TIMEOUT, htonl(timeout)) ||
--	    nla_put_be32(skb, CTA_EXPECT_ID, htonl((unsigned long)exp)) ||
-+	    nla_put_be32(skb, CTA_EXPECT_ID, nf_expect_get_id(exp)) ||
- 	    nla_put_be32(skb, CTA_EXPECT_FLAGS, htonl(exp->flags)) ||
- 	    nla_put_be32(skb, CTA_EXPECT_CLASS, htonl(exp->class)))
- 		goto nla_put_failure;
-@@ -3027,7 +3050,8 @@ static int ctnetlink_get_expect(struct net *net, struct sock *ctnl,
- 
- 	if (cda[CTA_EXPECT_ID]) {
- 		__be32 id = nla_get_be32(cda[CTA_EXPECT_ID]);
--		if (ntohl(id) != (u32)(unsigned long)exp) {
-+
-+		if (id != nf_expect_get_id(exp)) {
- 			nf_ct_expect_put(exp);
- 			return -ENOENT;
- 		}
+ 	ahc->dev_softc = pci;
++	ahc->dev = &pci->dev;
+ 	error = ahc_pci_config(ahc, entry);
+ 	if (error != 0) {
+ 		ahc_free(ahc);
 -- 
 2.20.1
 
