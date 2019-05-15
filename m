@@ -2,162 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EED11F966
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 19:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD4C1F96B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 19:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfEORjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 13:39:53 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44525 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfEORjw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 13:39:52 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c5so199640pll.11
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 10:39:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:cc:from:to:message-id;
-        bh=OyqkAInMJ4afJyiF2nb2YB2wdpcRhAB6c/71WOYyPas=;
-        b=h2TiBIUd9T8geImxIN/sm5NZfWgzAsl4xr9UBeUV1OMK5YHWPb5SGj1tTIRSxv0fp0
-         6xACpgnG2TaC07XJnwh8SBvDJOfupVXaVOWwWe+2IqVEwcxG86VP2YKNji1p3MqsovpN
-         0095UdkuSRAuCeO0yXNYHAs56Xb1C/nA+IZEU/E9hmfegIWDoLnAiE76bfafzGKfz4QM
-         jMDeA4tXs5Nun1RQs/+PySPnp/UQ8+blyFXGPaVFpXJcCj5eDy3uDgbtyxJR7EMsN3U+
-         YOfZ7XOlXH1PGchds37VeMLIkUxJBCk5L4OyOLVoKOPp4PWA0TAylndUUPpdJEvEWM6R
-         0mPQ==
-X-Gm-Message-State: APjAAAVoVTSRRHE2fZpgeoFK8l1iTs7gP/bii1Z8EpzGoQt8XWMozeL8
-        4PvPLR4sKWoSLSZPPa5wK0M7ZEaA+uA=
-X-Google-Smtp-Source: APXvYqxw3U/LSU65RQOQnp/SYsPweUz6pC7uNamYkvPZJkQpsNN8ZvCjzx14hDJGNFqN+j/m23GEhg==
-X-Received: by 2002:a17:902:bd95:: with SMTP id q21mr8947972pls.159.1557941990986;
-        Wed, 15 May 2019 10:39:50 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id m123sm5011080pfm.39.2019.05.15.10.39.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 May 2019 10:39:50 -0700 (PDT)
-Date:   Wed, 15 May 2019 10:39:50 -0700 (PDT)
-X-Google-Original-Date: Wed, 15 May 2019 10:39:46 PDT (-0700)
-Subject: [GIT PULL] RISC-V Patches for the 5.2 Merge Window, Part 1
-CC:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-d6bbd5f4-7409-4d3e-94a0-7ff0c6a71c9e@palmer-si-x1e>
+        id S1727368AbfEORk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 13:40:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725974AbfEORkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 13:40:25 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A09F2084F;
+        Wed, 15 May 2019 17:40:25 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hQxtA-0006O9-Cj; Wed, 15 May 2019 13:40:24 -0400
+Message-Id: <20190515173951.753467660@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 15 May 2019 13:39:51 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "John Warthog9 Hawley" <warthog9@kernel.org>
+Subject: [for-next][PATCH 0/6] ktest: Final updates for this merge window
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+for-next
 
-  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
+Head SHA1: d20f6b41b7c2715b3d900f2da02029dbc14cd60a
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-5.2-mw0
+Masayoshi Mizuma (6):
+      ktest: introduce _get_grub_index
+      ktest: cleanup get_grub_index
+      ktest: introduce grub2bls REBOOT_TYPE option
+      ktest: pass KERNEL_VERSION to POST_KTEST
+      ktest: remove get_grub2_index
+      ktest: update sample.conf for grub2bls
 
-for you to fetch changes up to e23fc917f04ffac8c156fdb4ee8b56f3867fa50b:
-
-  RISC-V: Avoid using invalid intermediate translations (2019-05-08 15:06:18 -0700)
-
-----------------------------------------------------------------
-RISC-V Patches for the 5.2 Merge Window, Part 1
-
-This patch set contains an assortment of RISC-V related patches that I'd
-like to target for the 5.2 merge window.  Most of the patches are
-cleanups, but there are a handful of user-visible changes:
-
-* The nosmp and nr_cpus command-line arguments are now supported, which
-  work like normal.
-* The SBI console no longer installs itself as a preferred console, we
-  rely on standard mechanisms (/chosen, command-line, hueristics)
-  instead.
-* sfence_remove_sfence_vma{,_asid} now pass their arguments along to the
-  SBI call.
-* Modules now support BUG().
-* A missing sfence.vma during boot has been added.  This bug only
-  manifests during boot.
-
-I've only tested this on QEMU again, as I didn't have time to get things
-running on the Unleashed.  The latest master from this morning merges in
-cleanly and passes the tests as well.
-
-----------------------------------------------------------------
-Anup Patel (4):
-      RISC-V: Use tabs to align macro values in asm/csr.h
-      RISC-V: Add interrupt related SCAUSE defines in asm/csr.h
-      RISC-V: Access CSRs using CSR numbers
-      tty: Don't force RISCV SBI console as preferred console
-
-Atish Patra (4):
-      RISC-V: Add RISC-V specific arch_match_cpu_phys_id
-      RISC-V: Implement nosmp commandline option.
-      RISC-V: Support nr_cpus command line option.
-      RISC-V: Fix minor checkpatch issues.
-
-Christoph Hellwig (11):
-      riscv: use asm-generic/extable.h
-      riscv: turn mm_segment_t into a struct
-      riscv: remove unreachable big endian code
-      riscv: remove CONFIG_RISCV_ISA_A
-      riscv: clear all pending interrupts when booting
-      riscv: simplify the stack pointer setup in head.S
-      riscv: cleanup the parse_dtb calling conventions
-      riscv: remove unreachable !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR code
-      riscv: remove duplicate macros from ptrace.h
-      riscv: print the unexpected interrupt cause
-      riscv: call pm_power_off from machine_halt / machine_power_off
-
-Gary Guo (3):
-      riscv: move flush_icache_{all,mm} to cacheflush.c
-      riscv: move switch_mm to its own file
-      riscv: fix sbi_remote_sfence_vma{,_asid}.
-
-Guo Ren (1):
-      riscv/signal: Fixup additional syscall restarting
-
-Nick Desaulniers (1):
-      riscv: vdso: drop unnecessary cc-ldoption
-
-Palmer Dabbelt (1):
-      RISC-V: Avoid using invalid intermediate translations
-
-Vincent Chen (3):
-      riscv: support trap-based WARN()
-      riscv: Add the support for c.ebreak check in is_valid_bugaddr()
-      riscv: Support BUG() in kernel module
-
- arch/riscv/Kconfig                   |   6 +-
- arch/riscv/Makefile                  |   5 +-
- arch/riscv/include/asm/Kbuild        |   1 +
- arch/riscv/include/asm/bug.h         |  35 ++++++----
- arch/riscv/include/asm/cacheflush.h  |   2 +-
- arch/riscv/include/asm/csr.h         | 123 ++++++++++++++++++++++-------------
- arch/riscv/include/asm/elf.h         |   6 --
- arch/riscv/include/asm/futex.h       |  13 ----
- arch/riscv/include/asm/irqflags.h    |  10 +--
- arch/riscv/include/asm/mmu_context.h |  59 +----------------
- arch/riscv/include/asm/ptrace.h      |  21 ++----
- arch/riscv/include/asm/sbi.h         |  19 ++++--
- arch/riscv/include/asm/thread_info.h |   4 +-
- arch/riscv/include/asm/uaccess.h     |  28 +++-----
- arch/riscv/kernel/asm-offsets.c      |   3 -
- arch/riscv/kernel/cpu.c              |   3 +-
- arch/riscv/kernel/entry.S            |  22 +++----
- arch/riscv/kernel/head.S             |  33 ++++++----
- arch/riscv/kernel/irq.c              |  19 ++----
- arch/riscv/kernel/perf_event.c       |   4 +-
- arch/riscv/kernel/reset.c            |  15 +++--
- arch/riscv/kernel/setup.c            |   6 +-
- arch/riscv/kernel/signal.c           |   6 ++
- arch/riscv/kernel/smp.c              |  61 +++--------------
- arch/riscv/kernel/smpboot.           |   0
- arch/riscv/kernel/smpboot.c          |  22 ++++++-
- arch/riscv/kernel/stacktrace.c       |  14 ++--
- arch/riscv/kernel/traps.c            |  30 ++++++---
- arch/riscv/kernel/vdso/Makefile      |   2 +-
- arch/riscv/mm/Makefile               |   1 +
- arch/riscv/mm/cacheflush.c           |  61 +++++++++++++++++
- arch/riscv/mm/context.c              |  69 ++++++++++++++++++++
- arch/riscv/mm/fault.c                |   6 +-
- drivers/tty/hvc/hvc_riscv_sbi.c      |   1 -
- 34 files changed, 390 insertions(+), 320 deletions(-)
- create mode 100644 arch/riscv/kernel/smpboot.
- create mode 100644 arch/riscv/mm/context.c
+----
+ tools/testing/ktest/ktest.pl    | 89 ++++++++++++++++++++---------------------
+ tools/testing/ktest/sample.conf | 20 ++++++++-
+ 2 files changed, 62 insertions(+), 47 deletions(-)
