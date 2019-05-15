@@ -2,57 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02F981F275
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 209DC1F1E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbfEOLLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
+        id S1730869AbfEOL5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:57:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729502AbfEOLLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:01 -0400
+        id S1728459AbfEOLR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2017120881;
-        Wed, 15 May 2019 11:11:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA8E8206BF;
+        Wed, 15 May 2019 11:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918660;
-        bh=/FP2QQNc5LkcV9UVCtUNaecoh3TWdaP/PJrRnDtC0e4=;
+        s=default; t=1557919048;
+        bh=lRWpwBxAKkzSsOcpMD/arrQGly+y9KLqL+kJlimOI38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PILpWqgmuMFAUa4jdmz+b/rQdi0oYen+PsoQM5oiKDih5Yp6zh8JLledtBDUdZV4r
-         jIE2qOyrLmc6upi6+u3XI2aH891ZCov4WmD/F4mM8jXLzCJlXl6NO/SjRz0vcAqFZ7
-         sto+GLdQpQxtihH9fpo+qUNBhmFFdip07aQExbgg=
+        b=GEKZSknXB0Cf9iDB/YX2LLDRPZWiyFa6lVMwXfKkR9dQzCL3TOw6UzFEG0k0hUc8e
+         6DdE4O+vVbpKCFLoEXdCTV6SjNoAouXHmjLKVVcIt4Lzw2W1vvO1aAUT8i1o5H7zUv
+         AZXz8atjJNXnRv61r5g16VPPDDb9vvHrtsxpiWXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 217/266] x86/process: Consolidate and simplify switch_to_xtra() code
-Date:   Wed, 15 May 2019 12:55:24 +0200
-Message-Id: <20190515090730.323553185@linuxfoundation.org>
+        stable@vger.kernel.org, Seth Howell <seth.howell@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 045/115] IB/rxe: Revise the ib_wr_opcode enum
+Date:   Wed, 15 May 2019 12:55:25 +0200
+Message-Id: <20190515090702.763611027@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,190 +44,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 9a59739bd01f77db6fbe2955a4fce165f0f43568 ]
 
-commit ff16701a29cba3aafa0bd1656d766813b2d0a811 upstream.
+This enum has become part of the uABI, as both RXE and the
+ib_uverbs_post_send() command expect userspace to supply values from this
+enum. So it should be properly placed in include/uapi/rdma.
 
-Move the conditional invocation of __switch_to_xtra() into an inline
-function so the logic can be shared between 32 and 64 bit.
+In userspace this enum is called 'enum ibv_wr_opcode' as part of
+libibverbs.h. That enum defines different values for IB_WR_LOCAL_INV,
+IB_WR_SEND_WITH_INV, and IB_WR_LSO. These were introduced (incorrectly, it
+turns out) into libiberbs in 2015.
 
-Remove the handthrough of the TSS pointer and retrieve the pointer directly
-in the bitmap handling function. Use this_cpu_ptr() instead of the
-per_cpu() indirection.
+The kernel has changed its mind on the numbering for several of the IB_WC
+values over the years, but has remained stable on IB_WR_LOCAL_INV and
+below.
 
-This is a preparatory change so integration of conditional indirect branch
-speculation optimization happens only in one place.
+Based on this we can conclude that there is no real user space user of the
+values beyond IB_WR_ATOMIC_FETCH_AND_ADD, as they have never worked via
+rdma-core. This is confirmed by inspection, only rxe uses the kernel enum
+and implements the latter operations. rxe has clearly never worked with
+these attributes from userspace. Other drivers that support these opcodes
+implement the functionality without calling out to the kernel.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.280855518@linutronix.de
-[bwh: Backported to 4.4:
- - Use cpu_tss instead of cpu_tss_rw
- - __switch_to() still uses the tss variable, so don't delete it
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To make IB_WR_SEND_WITH_INV and related work for RXE in userspace we
+choose to renumber the IB_WR enum in the kernel to match the uABI that
+userspace has bee using since before Soft RoCE was merged. This is an
+overall simpler configuration for the whole software stack, and obviously
+can't break anything existing.
+
+Reported-by: Seth Howell <seth.howell@intel.com>
+Tested-by: Seth Howell <seth.howell@intel.com>
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/include/asm/switch_to.h |    3 ---
- arch/x86/kernel/process.c        |   12 +++++++-----
- arch/x86/kernel/process.h        |   24 ++++++++++++++++++++++++
- arch/x86/kernel/process_32.c     |    9 +++------
- arch/x86/kernel/process_64.c     |    9 +++------
- 5 files changed, 37 insertions(+), 20 deletions(-)
- create mode 100644 arch/x86/kernel/process.h
+ include/rdma/ib_verbs.h           | 34 ++++++++++++++++++-------------
+ include/uapi/rdma/ib_user_verbs.h | 20 +++++++++++++++++-
+ 2 files changed, 39 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -6,9 +6,6 @@
- struct task_struct; /* one of the stranger aspects of C forward declarations */
- __visible struct task_struct *__switch_to(struct task_struct *prev,
- 					   struct task_struct *next);
--struct tss_struct;
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss);
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 5a24b4c700e59..9e76b2410d03f 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -1251,21 +1251,27 @@ struct ib_qp_attr {
+ };
  
- #ifdef CONFIG_X86_32
- 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -33,6 +33,8 @@
- #include <asm/vm86.h>
- #include <asm/spec-ctrl.h>
- 
-+#include "process.h"
+ enum ib_wr_opcode {
+-	IB_WR_RDMA_WRITE,
+-	IB_WR_RDMA_WRITE_WITH_IMM,
+-	IB_WR_SEND,
+-	IB_WR_SEND_WITH_IMM,
+-	IB_WR_RDMA_READ,
+-	IB_WR_ATOMIC_CMP_AND_SWP,
+-	IB_WR_ATOMIC_FETCH_AND_ADD,
+-	IB_WR_LSO,
+-	IB_WR_SEND_WITH_INV,
+-	IB_WR_RDMA_READ_WITH_INV,
+-	IB_WR_LOCAL_INV,
+-	IB_WR_REG_MR,
+-	IB_WR_MASKED_ATOMIC_CMP_AND_SWP,
+-	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD,
++	/* These are shared with userspace */
++	IB_WR_RDMA_WRITE = IB_UVERBS_WR_RDMA_WRITE,
++	IB_WR_RDMA_WRITE_WITH_IMM = IB_UVERBS_WR_RDMA_WRITE_WITH_IMM,
++	IB_WR_SEND = IB_UVERBS_WR_SEND,
++	IB_WR_SEND_WITH_IMM = IB_UVERBS_WR_SEND_WITH_IMM,
++	IB_WR_RDMA_READ = IB_UVERBS_WR_RDMA_READ,
++	IB_WR_ATOMIC_CMP_AND_SWP = IB_UVERBS_WR_ATOMIC_CMP_AND_SWP,
++	IB_WR_ATOMIC_FETCH_AND_ADD = IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD,
++	IB_WR_LSO = IB_UVERBS_WR_TSO,
++	IB_WR_SEND_WITH_INV = IB_UVERBS_WR_SEND_WITH_INV,
++	IB_WR_RDMA_READ_WITH_INV = IB_UVERBS_WR_RDMA_READ_WITH_INV,
++	IB_WR_LOCAL_INV = IB_UVERBS_WR_LOCAL_INV,
++	IB_WR_MASKED_ATOMIC_CMP_AND_SWP =
++		IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP,
++	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD =
++		IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD,
 +
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-  * no more per-task TSS's. The TSS size is kept cacheline-aligned
-@@ -179,11 +181,12 @@ int set_tsc_mode(unsigned int val)
- 	return 0;
- }
- 
--static inline void switch_to_bitmap(struct tss_struct *tss,
--				    struct thread_struct *prev,
-+static inline void switch_to_bitmap(struct thread_struct *prev,
- 				    struct thread_struct *next,
- 				    unsigned long tifp, unsigned long tifn)
- {
-+	struct tss_struct *tss = this_cpu_ptr(&cpu_tss);
++	/* These are kernel only and can not be issued by userspace */
++	IB_WR_REG_MR = 0x20,
+ 	IB_WR_REG_SIG_MR,
 +
- 	if (tifn & _TIF_IO_BITMAP) {
- 		/*
- 		 * Copy the relevant range of the IO bitmap.
-@@ -370,8 +373,7 @@ void speculation_ctrl_update(unsigned lo
- 	preempt_enable();
- }
+ 	/* reserve values for low level drivers' internal use.
+ 	 * These values will not be used at all in the ib core layer.
+ 	 */
+diff --git a/include/uapi/rdma/ib_user_verbs.h b/include/uapi/rdma/ib_user_verbs.h
+index e0e83a105953a..e11b4def8630f 100644
+--- a/include/uapi/rdma/ib_user_verbs.h
++++ b/include/uapi/rdma/ib_user_verbs.h
+@@ -751,10 +751,28 @@ struct ib_uverbs_sge {
+ 	__u32 lkey;
+ };
  
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss)
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
- 	struct thread_struct *prev, *next;
- 	unsigned long tifp, tifn;
-@@ -381,7 +383,7 @@ void __switch_to_xtra(struct task_struct
- 
- 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
- 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
--	switch_to_bitmap(tss, prev, next, tifp, tifn);
-+	switch_to_bitmap(prev, next, tifp, tifn);
- 
- 	propagate_user_return_notify(prev_p, next_p);
- 
---- /dev/null
-+++ b/arch/x86/kernel/process.h
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Code shared between 32 and 64 bit
++enum ib_uverbs_wr_opcode {
++	IB_UVERBS_WR_RDMA_WRITE = 0,
++	IB_UVERBS_WR_RDMA_WRITE_WITH_IMM = 1,
++	IB_UVERBS_WR_SEND = 2,
++	IB_UVERBS_WR_SEND_WITH_IMM = 3,
++	IB_UVERBS_WR_RDMA_READ = 4,
++	IB_UVERBS_WR_ATOMIC_CMP_AND_SWP = 5,
++	IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD = 6,
++	IB_UVERBS_WR_LOCAL_INV = 7,
++	IB_UVERBS_WR_BIND_MW = 8,
++	IB_UVERBS_WR_SEND_WITH_INV = 9,
++	IB_UVERBS_WR_TSO = 10,
++	IB_UVERBS_WR_RDMA_READ_WITH_INV = 11,
++	IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP = 12,
++	IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD = 13,
++	/* Review enum ib_wr_opcode before modifying this */
++};
 +
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
-+
-+/*
-+ * This needs to be inline to optimize for the common case where no extra
-+ * work needs to be done.
-+ */
-+static inline void switch_to_extra(struct task_struct *prev,
-+				   struct task_struct *next)
-+{
-+	unsigned long next_tif = task_thread_info(next)->flags;
-+	unsigned long prev_tif = task_thread_info(prev)->flags;
-+
-+	/*
-+	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
-+	 * speculation mitigations etc.
-+	 */
-+	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
-+		     prev_tif & _TIF_WORK_CTXSW_PREV))
-+		__switch_to_xtra(prev, next);
-+}
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -55,6 +55,8 @@
- #include <asm/switch_to.h>
- #include <asm/vm86.h>
- 
-+#include "process.h"
-+
- asmlinkage void ret_from_fork(void) __asm__("ret_from_fork");
- asmlinkage void ret_from_kernel_thread(void) __asm__("ret_from_kernel_thread");
- 
-@@ -279,12 +281,7 @@ __switch_to(struct task_struct *prev_p,
- 	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
- 		set_iopl_mask(next->iopl);
- 
--	/*
--	 * Now maybe handle debug registers and/or IO bitmaps
--	 */
--	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
--		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- 	/*
- 	 * Leave lazy mode, flushing any hypercalls made here.
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -50,6 +50,8 @@
- #include <asm/switch_to.h>
- #include <asm/xen/hypervisor.h>
- 
-+#include "process.h"
-+
- asmlinkage extern void ret_from_fork(void);
- 
- __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
-@@ -406,12 +408,7 @@ __switch_to(struct task_struct *prev_p,
- 	/* Reload esp0 and ss1.  This changes current_thread_info(). */
- 	load_sp0(tss, next);
- 
--	/*
--	 * Now maybe reload the debug registers and handle I/O bitmaps
--	 */
--	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT ||
--		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- #ifdef CONFIG_XEN
- 	/*
+ struct ib_uverbs_send_wr {
+ 	__u64 wr_id;
+ 	__u32 num_sge;
+-	__u32 opcode;
++	__u32 opcode;		/* see enum ib_uverbs_wr_opcode */
+ 	__u32 send_flags;
+ 	union {
+ 		__u32 imm_data;
+-- 
+2.20.1
+
 
 
