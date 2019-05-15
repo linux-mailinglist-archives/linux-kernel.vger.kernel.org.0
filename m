@@ -2,135 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A740C1EEB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62BB81EECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbfEOLYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:33 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19659 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731805AbfEOLY1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:24:27 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cdbf6c20000>; Wed, 15 May 2019 04:23:46 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 15 May 2019 04:24:26 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 15 May 2019 04:24:26 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 May
- 2019 11:24:26 +0000
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.54) by
- HQMAIL109.nvidia.com (172.20.187.15) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Wed, 15 May 2019 11:24:26 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB2888.namprd12.prod.outlook.com (20.179.91.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.21; Wed, 15 May 2019 11:24:22 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e843:91f7:56c:73e8]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e843:91f7:56c:73e8%5]) with mapi id 15.20.1900.010; Wed, 15 May 2019
- 11:24:22 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Jonathan Hunter <jonathanh@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "Krishna Yarlagadda" <kyarlagadda@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Thread-Topic: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Thread-Index: AQHVChJyTuikRwKAUUyx+CcmS+4wvqZqXBUAgACAP+CAARKPAIAAHQTz
-Date:   Wed, 15 May 2019 11:24:22 +0000
-Message-ID: <BYAPR12MB3398ED52051F5BFA08D7B3A6C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
- <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
- <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
- <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>,<20190515093522.GC5613@sirena.org.uk>
-In-Reply-To: <20190515093522.GC5613@sirena.org.uk>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [24.176.232.13]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9a389552-fcc3-42fd-d114-08d6d927e157
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR12MB2888;
-x-ms-traffictypediagnostic: BYAPR12MB2888:
-x-microsoft-antispam-prvs: <BYAPR12MB2888F1D7A3D1AB4DE35F95E1C2090@BYAPR12MB2888.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0038DE95A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(39860400002)(396003)(199004)(189003)(6916009)(102836004)(66066001)(54906003)(229853002)(256004)(6506007)(478600001)(14454004)(71200400001)(71190400001)(86362001)(6116002)(2906002)(7736002)(66476007)(4326008)(186003)(9686003)(81166006)(8676002)(68736007)(11346002)(81156014)(446003)(486006)(8936002)(3846002)(73956011)(55016002)(52536014)(5660300002)(66446008)(99286004)(64756008)(66556008)(6436002)(66946007)(76116006)(7696005)(76176011)(25786009)(74316002)(53936002)(6246003)(26005)(33656002)(305945005)(476003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2888;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: h+6GLRc1A+sEBDIzX0BGHQksHEmu8SyHtqJdQTrYbCy5w9fnmgKKWV9geCxLUqWmCDSN+k/hGfkaowDvFnYejaHWaHOYzBr58WZw8aync2jTaK0M/wS6GbTkpHjvS5J+3rM0qBYDKDctYaOam57ksl2uhp1qQKZ3uAz8k0Ng1eDMMD1c+/dWkdp2vaEOCN/IOsPJ50pYb4/qWO+rB2SOPTSnCQYP+othZjVei6HPgBMHWDvp60jymgNkxd8eMg7Ub/NK1ffkzZ8Z9HWEgwBibRVlU7tYzbVRAnCWSzpANeSSceWPmYuk9UAD+bv/ZLeNIo/l6KQjzBGmvVu6/amDgBlahCRFDPD2nJCwnZrIegozGvuIDjygWWVuuJvESTTI5gbxoVffK2E+5+3BpRDsFaJQbKZgcf7zjwK6sT6+toU=
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a389552-fcc3-42fd-d114-08d6d927e157
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 11:24:22.5275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2888
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1557919426; bh=JeH8eqv+lXYcPjDvBywwbC9f2Ip3KnltI9obfH5lE+Q=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-ms-office365-filtering-correlation-id:
-         x-microsoft-antispam:x-ms-traffictypediagnostic:
-         x-microsoft-antispam-prvs:x-ms-oob-tlc-oobclassifiers:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=U2X6HEGgqdYQjZYMzAPA48gRYv9szkbYqpuKbWc3M/LQGd6cpKq8K59xTRajIKSKu
-         kwl5g9tS6vZIr4SzneQwhGWa/+XGHAoWDBYuS1rGCGHKW8aqQrUdf0Gae7mWMB3fll
-         Rcd90mnxTxDw9IkJ1DTJ0MOGnQMiuk8bv0K4pKzO2yTywCJuXBBiJUUPuP5eS4VsN2
-         MH7+Ign8JrE/IBBvJM7TNK1nXNwUO0UtIH90MgGrUFtpoF0AZZ3LWnpVuzo9AHnal/
-         0tG8QjRDn0pyBQgMsD6PJu4oqaGtG4rf8wM8yKBF/y4mT3awBp+kK3bmW62x3g/tUW
-         LyLYZllAW7w5A==
+        id S1732096AbfEOL0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:26:00 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51932 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732065AbfEOLZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:25:55 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 07262200114;
+        Wed, 15 May 2019 13:25:53 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ED6B62000D3;
+        Wed, 15 May 2019 13:25:52 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A26FD205F4;
+        Wed, 15 May 2019 13:25:52 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v2 1/2] crypto: caam - fix pkcs1pad(rsa-caam, sha256) failure because of invalid input
+Date:   Wed, 15 May 2019 14:25:45 +0300
+Message-Id: <1557919546-360-1-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Tegra SPI doesn=92t support inter byte delay directly to meet some SPI =
-slave requirements.
-> > So we use GPIO control CS in parallel with a dummy HW CS and use inacti=
-ve cycles delay of SPI controller to mimic inter byte delay.
+The problem is with the input data size sent to CAAM for encrypt/decrypt.
+Pkcs1pad is failing due to pkcs1 padding done in SW starting with0x01
+instead of 0x00 0x01.
+CAAM expects an input of modulus size. For this we strip the leading
+zeros in case the size is more than modulus or pad the input with zeros
+until the modulus size is reached.
 
-> Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+---
+Changes since V1:
+	- remove not needed initialization of a variable;
+	- free resources on error path.
+---
+ drivers/crypto/caam/caampkc.c | 84 +++++++++++++++++++++++++++++++++++--------
+ drivers/crypto/caam/caampkc.h |  2 ++
+ 2 files changed, 72 insertions(+), 14 deletions(-)
 
-I did changed but looks like it didn't made diff. Will try with different e=
-mail client.
+diff --git a/drivers/crypto/caam/caampkc.c b/drivers/crypto/caam/caampkc.c
+index fe24485..e356413 100644
+--- a/drivers/crypto/caam/caampkc.c
++++ b/drivers/crypto/caam/caampkc.c
+@@ -24,6 +24,10 @@
+ 				 sizeof(struct rsa_priv_f2_pdb))
+ #define DESC_RSA_PRIV_F3_LEN	(2 * CAAM_CMD_SZ + \
+ 				 sizeof(struct rsa_priv_f3_pdb))
++#define CAAM_RSA_MAX_INPUT_SIZE	512 /* for a 4096-bit modulus */
++
++/* buffer filled with zeros, used for padding */
++static u8 *zero_buffer;
+ 
+ static void rsa_io_unmap(struct device *dev, struct rsa_edesc *edesc,
+ 			 struct akcipher_request *req)
+@@ -168,6 +172,13 @@ static void rsa_priv_f3_done(struct device *dev, u32 *desc, u32 err,
+ 	akcipher_request_complete(req, err);
+ }
+ 
++/**
++ * Count leading zeros, need it to strip, from a given scatterlist
++ *
++ * @sgl   : scatterlist to count zeros from
++ * @nbytes: number of zeros, in bytes, to strip
++ * @flags : operation flags
++ */
+ static int caam_rsa_count_leading_zeros(struct scatterlist *sgl,
+ 					unsigned int nbytes,
+ 					unsigned int flags)
+@@ -187,7 +198,8 @@ static int caam_rsa_count_leading_zeros(struct scatterlist *sgl,
+ 	lzeros = 0;
+ 	len = 0;
+ 	while (nbytes > 0) {
+-		while (len && !*buff) {
++		/* do not strip more than given bytes */
++		while (len && !*buff && lzeros < nbytes) {
+ 			lzeros++;
+ 			len--;
+ 			buff++;
+@@ -218,6 +230,7 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	struct caam_rsa_ctx *ctx = akcipher_tfm_ctx(tfm);
+ 	struct device *dev = ctx->dev;
+ 	struct caam_rsa_req_ctx *req_ctx = akcipher_request_ctx(req);
++	struct caam_rsa_key *key = &ctx->key;
+ 	struct rsa_edesc *edesc;
+ 	gfp_t flags = (req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP) ?
+ 		       GFP_KERNEL : GFP_ATOMIC;
+@@ -225,20 +238,37 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	int sgc;
+ 	int sec4_sg_index, sec4_sg_len = 0, sec4_sg_bytes;
+ 	int src_nents, dst_nents;
++	unsigned int diff_size = 0;
+ 	int lzeros;
+ 
+-	lzeros = caam_rsa_count_leading_zeros(req->src, req->src_len, sg_flags);
+-	if (lzeros < 0)
+-		return ERR_PTR(lzeros);
+-
+-	req->src_len -= lzeros;
+-	req->src = scatterwalk_ffwd(req_ctx->src, req->src, lzeros);
++	if (req->src_len > key->n_sz) {
++		/*
++		 * strip leading zeros and
++		 * return the number of zeros to skip
++		 */
++		lzeros = caam_rsa_count_leading_zeros(req->src, req->src_len -
++						      key->n_sz, sg_flags);
++		if (lzeros < 0)
++			return ERR_PTR(lzeros);
++
++		req->src_len -= lzeros;
++		req->src = scatterwalk_ffwd(req_ctx->src, req->src, lzeros);
++	} else {
++		/*
++		 * input src is less then n key modulus,
++		 * so there will be zero padding
++		 */
++		diff_size = key->n_sz - req->src_len;
++	}
+ 
+ 	src_nents = sg_nents_for_len(req->src, req->src_len);
+ 	dst_nents = sg_nents_for_len(req->dst, req->dst_len);
+ 
+-	if (src_nents > 1)
+-		sec4_sg_len = src_nents;
++	if (!diff_size && src_nents == 1)
++		sec4_sg_len = 0; /* no need for an input hw s/g table */
++	else
++		sec4_sg_len = src_nents + !!diff_size;
++	sec4_sg_index = sec4_sg_len;
+ 	if (dst_nents > 1)
+ 		sec4_sg_len += dst_nents;
+ 
+@@ -263,12 +293,14 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	}
+ 
+ 	edesc->sec4_sg = (void *)edesc + sizeof(*edesc) + desclen;
++	if (diff_size)
++		dma_to_sec4_sg_one(edesc->sec4_sg, ctx->padding_dma, diff_size,
++				   0);
++
++	if (sec4_sg_index)
++		sg_to_sec4_sg_last(req->src, src_nents, edesc->sec4_sg +
++				   !!diff_size, 0);
+ 
+-	sec4_sg_index = 0;
+-	if (src_nents > 1) {
+-		sg_to_sec4_sg_last(req->src, src_nents, edesc->sec4_sg, 0);
+-		sec4_sg_index += src_nents;
+-	}
+ 	if (dst_nents > 1)
+ 		sg_to_sec4_sg_last(req->dst, dst_nents,
+ 				   edesc->sec4_sg + sec4_sg_index, 0);
+@@ -289,6 +321,10 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 
+ 	edesc->sec4_sg_bytes = sec4_sg_bytes;
+ 
++	print_hex_dump_debug("caampkc sec4_sg@" __stringify(__LINE__) ": ",
++			     DUMP_PREFIX_ADDRESS, 16, 4, edesc->sec4_sg,
++			     edesc->sec4_sg_bytes, 1);
++
+ 	return edesc;
+ 
+ sec4_sg_fail:
+@@ -978,6 +1014,15 @@ static int caam_rsa_init_tfm(struct crypto_akcipher *tfm)
+ 		return PTR_ERR(ctx->dev);
+ 	}
+ 
++	ctx->padding_dma = dma_map_single(ctx->dev, zero_buffer,
++					  CAAM_RSA_MAX_INPUT_SIZE - 1,
++					  DMA_TO_DEVICE);
++	if (dma_mapping_error(ctx->dev, ctx->padding_dma)) {
++		dev_err(ctx->dev, "unable to map padding\n");
++		caam_jr_free(ctx->dev);
++		return -ENOMEM;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -987,6 +1032,8 @@ static void caam_rsa_exit_tfm(struct crypto_akcipher *tfm)
+ 	struct caam_rsa_ctx *ctx = akcipher_tfm_ctx(tfm);
+ 	struct caam_rsa_key *key = &ctx->key;
+ 
++	dma_unmap_single(ctx->dev, ctx->padding_dma, CAAM_RSA_MAX_INPUT_SIZE -
++			 1, DMA_TO_DEVICE);
+ 	caam_rsa_free_key(key);
+ 	caam_jr_free(ctx->dev);
+ }
+@@ -1058,6 +1105,14 @@ static int __init caam_pkc_init(void)
+ 		goto out_put_dev;
+ 	}
+ 
++	/* allocate zero buffer, used for padding input */
++	zero_buffer = kzalloc(CAAM_RSA_MAX_INPUT_SIZE - 1, GFP_DMA |
++			      GFP_KERNEL);
++	if (!zero_buffer) {
++		err = -ENOMEM;
++		goto out_put_dev;
++	}
++
+ 	err = crypto_register_akcipher(&caam_rsa);
+ 	if (err)
+ 		dev_warn(ctrldev, "%s alg registration failed\n",
+@@ -1072,6 +1127,7 @@ static int __init caam_pkc_init(void)
+ 
+ static void __exit caam_pkc_exit(void)
+ {
++	kfree(zero_buffer);
+ 	crypto_unregister_akcipher(&caam_rsa);
+ }
+ 
+diff --git a/drivers/crypto/caam/caampkc.h b/drivers/crypto/caam/caampkc.h
+index 82645bc..5ac7201 100644
+--- a/drivers/crypto/caam/caampkc.h
++++ b/drivers/crypto/caam/caampkc.h
+@@ -89,10 +89,12 @@ struct caam_rsa_key {
+  * caam_rsa_ctx - per session context.
+  * @key         : RSA key in DMA zone
+  * @dev         : device structure
++ * @padding_dma : dma address of padding, for adding it to the input
+  */
+ struct caam_rsa_ctx {
+ 	struct caam_rsa_key key;
+ 	struct device *dev;
++	dma_addr_t padding_dma;
+ };
+ 
+ /**
+-- 
+2.1.0
 
-> Please don't ignore review comments, people are generally making them
-for a reason and are likely to have the same concerns if issues remain
-unaddressed.  Having to repeat the same comments can get repetitive and
-make people question the value of time spent reviewing.  If you disagree
-with the review comments that's fine but you need to reply and discuss
-your concerns so that the reviewer can understand your decisions.
-
-
-If you are referring to comment from Jon on updating commit, I didn't ignor=
-ed. I am just waiting if any more comments from you or others before postin=
-g updated patch.=20
-
-But I see you applied patch now. So how should I post with updated commit?=
