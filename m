@@ -2,57 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75EC21F293
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5523C1EE57
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbfEOMEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:04:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45760 "EHLO mail.kernel.org"
+        id S1730475AbfEOLUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729564AbfEOLLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:18 -0400
+        id S1730864AbfEOLUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:20:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEEFD20881;
-        Wed, 15 May 2019 11:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C7E206BF;
+        Wed, 15 May 2019 11:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918677;
-        bh=7BFzbaLC0yakN2DUl3F+/sEjUg4rbbg9o+p02h4w2cw=;
+        s=default; t=1557919216;
+        bh=SKZ9qeeTBySRAnlYi0jC94wl+mrFfYTefmuPbd65elQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wjjPM9QIqUhYf00tLkymMzlZy8sQ/h9hP9nqwhfWD7fK27BMBjDOetmUR7H29/bHE
-         LYTJQd4M5HjQmlLJhL1H6Dvho3gsXpiy5GC0ehvwPtaDD/0DkCtqCZoltW/gLj+VMQ
-         +nD9cbrNgsJLDgam4LoLJzU01AgMOkUh60KsUACQ=
+        b=0EP862omoafKtwlaxxEZ0+a7vEx9nkVspr5CxNiDgfUAvzVdVTn3icChZA2K3PNr4
+         6FmwVJTQB9DVV8OSXbtmrBt6grgGIUtUa2TN9HHwjyL4dqVmScJfiyzYgWerHJtKVk
+         5Z6K1tluJa9cXXvml3owhVBJHawFuc7cYoqNgDok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 224/266] x86/speculation: Enable prctl mode for spectre_v2_user
-Date:   Wed, 15 May 2019 12:55:31 +0200
-Message-Id: <20190515090730.573725348@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 052/115] fuse: fix possibly missed wake-up after abort
+Date:   Wed, 15 May 2019 12:55:32 +0200
+Message-Id: <20190515090703.370416818@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,186 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 2d84a2d19b6150c6dbac1e6ebad9c82e4c123772 ]
 
-commit 7cc765a67d8e04ef7d772425ca5a2a1e2b894c15 upstream.
+In current fuse_drop_waiting() implementation it's possible that
+fuse_wait_aborted() will not be woken up in the unlikely case that
+fuse_abort_conn() + fuse_wait_aborted() runs in between checking
+fc->connected and calling atomic_dec(&fc->num_waiting).
 
-Now that all prerequisites are in place:
+Do the atomic_dec_and_test() unconditionally, which also provides the
+necessary barrier against reordering with the fc->connected check.
 
- - Add the prctl command line option
+The explicit smp_mb() in fuse_wait_aborted() is not actually needed, since
+the spin_unlock() in fuse_abort_conn() provides the necessary RELEASE
+barrier after resetting fc->connected.  However, this is not a performance
+sensitive path, and adding the explicit barrier makes it easier to
+document.
 
- - Default the 'auto' mode to 'prctl'
-
- - When SMT state changes, update the static key which controls the
-   conditional STIBP evaluation on context switch.
-
- - At init update the static key which controls the conditional IBPB
-   evaluation on context switch.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.958421388@linutronix.de
-[bwh: Backported to 4.4: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: b8f95e5d13f5 ("fuse: umount should wait for all requests")
+Cc: <stable@vger.kernel.org> #v4.19
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- Documentation/kernel-parameters.txt |    7 +++++-
- arch/x86/kernel/cpu/bugs.c          |   41 ++++++++++++++++++++++++++++--------
- 2 files changed, 38 insertions(+), 10 deletions(-)
+ fs/fuse/dev.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -3646,9 +3646,14 @@ bytes respectively. Such letter suffixes
- 			off     - Unconditionally disable mitigations. Is
- 				  enforced by spectre_v2=off
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 770733106d6d4..c934fab444529 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -133,9 +133,13 @@ static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
  
-+			prctl   - Indirect branch speculation is enabled,
-+				  but mitigation can be enabled via prctl
-+				  per thread.  The mitigation control state
-+				  is inherited on fork.
-+
- 			auto    - Kernel selects the mitigation depending on
- 				  the available CPU features and vulnerability.
--				  Default is off.
-+				  Default is prctl.
- 
- 			Not specifying this option is equivalent to
- 			spectre_v2_user=auto.
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -244,11 +244,13 @@ enum spectre_v2_user_cmd {
- 	SPECTRE_V2_USER_CMD_NONE,
- 	SPECTRE_V2_USER_CMD_AUTO,
- 	SPECTRE_V2_USER_CMD_FORCE,
-+	SPECTRE_V2_USER_CMD_PRCTL,
- };
- 
- static const char * const spectre_v2_user_strings[] = {
- 	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
- 	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
-+	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
- };
- 
- static const struct {
-@@ -259,6 +261,7 @@ static const struct {
- 	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
- 	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
- 	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
-+	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
- };
- 
- static void __init spec_v2_user_print_cond(const char *reason, bool secure)
-@@ -312,12 +315,15 @@ spectre_v2_user_select_mitigation(enum s
- 		smt_possible = false;
- 
- 	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
--	case SPECTRE_V2_USER_CMD_AUTO:
- 	case SPECTRE_V2_USER_CMD_NONE:
- 		goto set_mode;
- 	case SPECTRE_V2_USER_CMD_FORCE:
- 		mode = SPECTRE_V2_USER_STRICT;
- 		break;
-+	case SPECTRE_V2_USER_CMD_AUTO:
-+	case SPECTRE_V2_USER_CMD_PRCTL:
-+		mode = SPECTRE_V2_USER_PRCTL;
-+		break;
- 	}
- 
- 	/* Initialize Indirect Branch Prediction Barrier */
-@@ -328,6 +334,9 @@ spectre_v2_user_select_mitigation(enum s
- 		case SPECTRE_V2_USER_STRICT:
- 			static_branch_enable(&switch_mm_always_ibpb);
- 			break;
-+		case SPECTRE_V2_USER_PRCTL:
-+			static_branch_enable(&switch_mm_cond_ibpb);
-+			break;
- 		default:
- 			break;
- 		}
-@@ -340,6 +349,12 @@ spectre_v2_user_select_mitigation(enum s
- 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
- 
+ static void fuse_drop_waiting(struct fuse_conn *fc)
+ {
+-	if (fc->connected) {
+-		atomic_dec(&fc->num_waiting);
+-	} else if (atomic_dec_and_test(&fc->num_waiting)) {
 +	/*
-+	 * If SMT is not possible or STIBP is not available clear the STIPB
-+	 * mode.
++	 * lockess check of fc->connected is okay, because atomic_dec_and_test()
++	 * provides a memory barrier mached with the one in fuse_wait_aborted()
++	 * to ensure no wake-up is missed.
 +	 */
-+	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
-+		mode = SPECTRE_V2_USER_NONE;
- set_mode:
- 	spectre_v2_user = mode;
- 	/* Only print the STIBP mode when SMT possible */
-@@ -547,6 +562,15 @@ static void update_stibp_strict(void)
- 	on_each_cpu(update_stibp_msr, NULL, 1);
++	if (atomic_dec_and_test(&fc->num_waiting) &&
++	    !READ_ONCE(fc->connected)) {
+ 		/* wake up aborters */
+ 		wake_up_all(&fc->blocked_waitq);
+ 	}
+@@ -2170,6 +2174,8 @@ EXPORT_SYMBOL_GPL(fuse_abort_conn);
+ 
+ void fuse_wait_aborted(struct fuse_conn *fc)
+ {
++	/* matches implicit memory barrier in fuse_drop_waiting() */
++	smp_mb();
+ 	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
  }
  
-+/* Update the static key controlling the evaluation of TIF_SPEC_IB */
-+static void update_indir_branch_cond(void)
-+{
-+	if (sched_smt_active())
-+		static_branch_enable(&switch_to_cond_stibp);
-+	else
-+		static_branch_disable(&switch_to_cond_stibp);
-+}
-+
- void arch_smt_update(void)
- {
- 	/* Enhanced IBRS implies STIBP. No update required. */
-@@ -562,6 +586,7 @@ void arch_smt_update(void)
- 		update_stibp_strict();
- 		break;
- 	case SPECTRE_V2_USER_PRCTL:
-+		update_indir_branch_cond();
- 		break;
- 	}
- 
-@@ -950,7 +975,8 @@ static char *stibp_state(void)
- 	case SPECTRE_V2_USER_STRICT:
- 		return ", STIBP: forced";
- 	case SPECTRE_V2_USER_PRCTL:
--		return "";
-+		if (static_key_enabled(&switch_to_cond_stibp))
-+			return ", STIBP: conditional";
- 	}
- 	return "";
- }
-@@ -958,14 +984,11 @@ static char *stibp_state(void)
- static char *ibpb_state(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
--		switch (spectre_v2_user) {
--		case SPECTRE_V2_USER_NONE:
--			return ", IBPB: disabled";
--		case SPECTRE_V2_USER_STRICT:
-+		if (static_key_enabled(&switch_mm_always_ibpb))
- 			return ", IBPB: always-on";
--		case SPECTRE_V2_USER_PRCTL:
--			return "";
--		}
-+		if (static_key_enabled(&switch_mm_cond_ibpb))
-+			return ", IBPB: conditional";
-+		return ", IBPB: disabled";
- 	}
- 	return "";
- }
+-- 
+2.20.1
+
 
 
