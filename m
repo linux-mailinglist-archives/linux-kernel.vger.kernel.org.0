@@ -2,136 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA771EB46
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DF81EB6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 11:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfEOJq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 05:46:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39496 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbfEOJqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 05:46:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A67580D;
-        Wed, 15 May 2019 02:46:25 -0700 (PDT)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 629CA3F703;
-        Wed, 15 May 2019 02:46:22 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v9 16/16] sched/core: uclamp: Update CPU's refcount on TG's clamp changes
-Date:   Wed, 15 May 2019 10:44:59 +0100
-Message-Id: <20190515094459.10317-17-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515094459.10317-1-patrick.bellasi@arm.com>
-References: <20190515094459.10317-1-patrick.bellasi@arm.com>
+        id S1726296AbfEOJvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 05:51:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56828 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfEOJvt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 05:51:49 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4F9iIYM108706;
+        Wed, 15 May 2019 09:51:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=hTSKDL8zkeZ4HUn7umTph6LN7jixr5+DzfTaKalFJUg=;
+ b=oG7eN65wu9iqD+5CbxfZghtCGh+tzsvaQy7ytoPvzLlmC2lA+bx75unguEMMJd+OghgY
+ QkH20/NOAnRsuzhYUNAXOwAl+YlrwpzS6topKKvaDHmJ+Guwd6FoR+WHI8yHzhfhj5Tq
+ jHjbYpRxG+vBMGVhteYO2Y1vayR2wxyNvoFvz9fKa8x9+s3XHhNCMOSNPNn9Kq7fUrWX
+ UhToDeHcaqhPTsv5CvSulGupHL/BG6FDE1GQKNwJEQGz8FeM8GT2x53cDIjwBRWJjAkS
+ HUFFyyUc0Pl8RDxa/bMblLY0GG5qI0WjAVfY7jqsUUP33f5jJMEIPV6BXjXwQEBEPgcS bQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2sdnttuph6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 May 2019 09:51:43 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4F9pMKt020222;
+        Wed, 15 May 2019 09:51:42 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2sggdur2nm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 May 2019 09:51:42 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4F9pdcq005716;
+        Wed, 15 May 2019 09:51:39 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 May 2019 02:51:39 -0700
+Date:   Wed, 15 May 2019 12:51:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        Kevin Wang <kevin1.wang@amd.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Huang Rui <ray.huang@amd.com>,
+        Likun Gao <Likun.Gao@amd.com>,
+        Chengming Gui <Jack.Gui@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/powerplay: fix locking in smu_feature_set_supported()
+Message-ID: <20190515095130.GF3409@mwanda>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9257 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905150063
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9257 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905150063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On updates of task group (TG) clamp values, ensure that these new values
-are enforced on all RUNNABLE tasks of the task group, i.e. all RUNNABLE
-tasks are immediately boosted and/or clamped as requested.
+There is a typo so the code unlocks twice instead of taking the lock and
+then releasing it.
 
-Do that by slightly refactoring uclamp_bucket_inc(). An additional
-parameter *cgroup_subsys_state (css) is used to walk the list of tasks
-in the TGs and update the RUNNABLE ones. Do that by taking the rq
-lock for each task, the same mechanism used for cpu affinity masks
-updates.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
+Fixes: f14a323db5b0 ("drm/amd/powerplay: implement update enabled feature state to smc for smu11")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- kernel/sched/core.c | 48 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 354d925a6ba8..0c078d586f36 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1031,6 +1031,51 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
- 		uclamp_rq_dec_id(rq, p, clamp_id);
- }
+diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
+index 52d919a8b70a..85ac29af5363 100644
+--- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
++++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
+@@ -310,7 +310,7 @@ int smu_feature_set_supported(struct smu_context *smu, int feature_id,
  
-+static inline void
-+uclamp_update_active(struct task_struct *p, unsigned int clamp_id)
-+{
-+	struct rq_flags rf;
-+	struct rq *rq;
-+
-+	/*
-+	 * Lock the task and the rq where the task is (or was) queued.
-+	 *
-+	 * We might lock the (previous) rq of a !RUNNABLE task, but that's the
-+	 * price to pay to safely serialize util_{min,max} updates with
-+	 * enqueues, dequeues and migration operations.
-+	 * This is the same locking schema used by __set_cpus_allowed_ptr().
-+	 */
-+	rq = task_rq_lock(p, &rf);
-+
-+	/*
-+	 * Setting the clamp bucket is serialized by task_rq_lock().
-+	 * If the task is not yet RUNNABLE and its task_struct is not
-+	 * affecting a valid clamp bucket, the next time it's enqueued,
-+	 * it will already see the updated clamp bucket value.
-+	 */
-+	if (!p->uclamp[clamp_id].active)
-+		goto done;
-+
-+	uclamp_rq_dec_id(rq, p, clamp_id);
-+	uclamp_rq_inc_id(rq, p, clamp_id);
-+
-+done:
-+
-+	task_rq_unlock(rq, p, &rf);
-+}
-+
-+static inline void
-+uclamp_update_active_tasks(struct cgroup_subsys_state *css, int clamp_id)
-+{
-+	struct css_task_iter it;
-+	struct task_struct *p;
-+
-+	css_task_iter_start(css, 0, &it);
-+	while ((p = css_task_iter_next(&it)))
-+		uclamp_update_active(p, clamp_id);
-+	css_task_iter_end(&it);
-+}
-+
- #ifdef CONFIG_UCLAMP_TASK_GROUP
- static void cpu_util_update_eff(struct cgroup_subsys_state *css,
- 				unsigned int clamp_id);
-@@ -7044,6 +7089,9 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css,
+ 	WARN_ON(feature_id > feature->feature_num);
  
- 		uc_se->value = value;
- 		uc_se->bucket_id = uclamp_bucket_id(value);
-+
-+		/* Immediately update descendants RUNNABLE tasks */
-+		uclamp_update_active_tasks(css, clamp_id);
- 	}
- }
- 
+-	mutex_unlock(&feature->mutex);
++	mutex_lock(&feature->mutex);
+ 	if (enable)
+ 		test_and_set_bit(feature_id, feature->supported);
+ 	else
 -- 
-2.21.0
+2.20.1
 
