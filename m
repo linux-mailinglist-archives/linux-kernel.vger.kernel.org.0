@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB6B1F20A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DF41EE4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbfEOLPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:15:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51250 "EHLO mail.kernel.org"
+        id S1731012AbfEOLTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729552AbfEOLO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:58 -0400
+        id S1730959AbfEOLTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1341D20644;
-        Wed, 15 May 2019 11:14:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF4BC20862;
+        Wed, 15 May 2019 11:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918897;
-        bh=J3f9r01nX+Zo4/kwKNagRFruOmmjmmmf3WnXjJ4vyUo=;
+        s=default; t=1557919185;
+        bh=qWglezqHnqwnAG3+q6dzjt0VM7y2yamRGcUyrHCtAZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l//nQRVzc5lASAXztKgBZQkbM0e7MtZ/XbEgTo3D3hDzyzTuksG8PIGjicI44HXcQ
-         mxWTzNvlASlc1x9gRBj4kOevrzMWva0ZPiGCc6wm9slvee8L1kLpohKiolSdNm4SP7
-         0CPJlUq9p1t9/QzidHbKnCe9G4RxhCYUW2u+oXpo=
+        b=PIVNkEMUBUIIN6wYmI/AscHWSbez/egNZ4aQZKC4zTOh68oUB7wZBm1cZRB33YtH3
+         p+TjI6fSbkEtklZTfdHwQ4jiBuE5vgaW68kERsb/8jIM80LVGDnKHX3meWRhWMg2Pr
+         M1eygEh0japMbzSBTJef7p7wpX8rYR/Mod5b0/z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 42/51] net: ucc_geth - fix Oops when changing number of buffers in the ring
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        David Jeffery <djeffery@redhat.com>,
+        Nigel Croxon <ncroxon@redhat.com>,
+        Song Liu <songliubraving@fb.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 097/115] Dont jump to compute_result state from check_result state
 Date:   Wed, 15 May 2019 12:56:17 +0200
-Message-Id: <20190515090628.339987206@linuxfoundation.org>
+Message-Id: <20190515090706.227940873@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +45,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Nigel Croxon <ncroxon@redhat.com>
 
-[ Upstream commit ee0df19305d9fabd9479b785918966f6e25b733b ]
+commit 4f4fd7c5798bbdd5a03a60f6269cf1177fbd11ef upstream.
 
-When changing the number of buffers in the RX ring while the interface
-is running, the following Oops is encountered due to the new number
-of buffers being taken into account immediately while their allocation
-is done when opening the device only.
+Changing state from check_state_check_result to
+check_state_compute_result not only is unsafe but also doesn't
+appear to serve a valid purpose.  A raid6 check should only be
+pushing out extra writes if doing repair and a mis-match occurs.
+The stripe dev management will already try and do repair writes
+for failing sectors.
 
-[   69.882706] Unable to handle kernel paging request for data at address 0xf0000100
-[   69.890172] Faulting instruction address: 0xc033e164
-[   69.895122] Oops: Kernel access of bad area, sig: 11 [#1]
-[   69.900494] BE PREEMPT CMPCPRO
-[   69.907120] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.115-00006-g179ade8ce3-dirty #269
-[   69.915956] task: c0684310 task.stack: c06da000
-[   69.920470] NIP:  c033e164 LR: c02e44d0 CTR: c02e41fc
-[   69.925504] REGS: dfff1e20 TRAP: 0300   Not tainted  (4.14.115-00006-g179ade8ce3-dirty)
-[   69.934161] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 22004428  XER: 20000000
-[   69.940869] DAR: f0000100 DSISR: 20000000
-[   69.940869] GPR00: c0352d70 dfff1ed0 c0684310 f00000a4 00000040 dfff1f68 00000000 0000001f
-[   69.940869] GPR08: df53f410 1cc00040 00000021 c0781640 42004424 100c82b6 f00000a4 df53f5b0
-[   69.940869] GPR16: df53f6c0 c05daf84 00000040 00000000 00000040 c0782be4 00000000 00000001
-[   69.940869] GPR24: 00000000 df53f400 000001b0 df53f410 df53f000 0000003f df708220 1cc00044
-[   69.978348] NIP [c033e164] skb_put+0x0/0x5c
-[   69.982528] LR [c02e44d0] ucc_geth_poll+0x2d4/0x3f8
-[   69.987384] Call Trace:
-[   69.989830] [dfff1ed0] [c02e4554] ucc_geth_poll+0x358/0x3f8 (unreliable)
-[   69.996522] [dfff1f20] [c0352d70] net_rx_action+0x248/0x30c
-[   70.002099] [dfff1f80] [c04e93e4] __do_softirq+0xfc/0x310
-[   70.007492] [dfff1fe0] [c0021124] irq_exit+0xd0/0xd4
-[   70.012458] [dfff1ff0] [c000e7e0] call_do_irq+0x24/0x3c
-[   70.017683] [c06dbe80] [c0006bac] do_IRQ+0x64/0xc4
-[   70.022474] [c06dbea0] [c001097c] ret_from_except+0x0/0x14
-[   70.027964] --- interrupt: 501 at rcu_idle_exit+0x84/0x90
-[   70.027964]     LR = rcu_idle_exit+0x74/0x90
-[   70.037585] [c06dbf60] [20000000] 0x20000000 (unreliable)
-[   70.042984] [c06dbf80] [c004bb0c] do_idle+0xb4/0x11c
-[   70.047945] [c06dbfa0] [c004bd14] cpu_startup_entry+0x18/0x1c
-[   70.053682] [c06dbfb0] [c05fb034] start_kernel+0x370/0x384
-[   70.059153] [c06dbff0] [00003438] 0x3438
-[   70.063062] Instruction dump:
-[   70.066023] 38a00000 38800000 90010014 4bfff015 80010014 7c0803a6 3123ffff 7c691910
-[   70.073767] 38210010 4e800020 38600000 4e800020 <80e3005c> 80c30098 3107ffff 7d083910
-[   70.081690] ---[ end trace be7ccd9c1e1a9f12 ]---
+This patch makes the raid6 check_state_check_result handling
+work more like raid5's.  If somehow too many failures for a
+check, just quit the check operation for the stripe.  When any
+checks pass, don't try and use check_state_compute_result for
+a purpose it isn't needed for and is unsafe for.  Just mark the
+stripe as in sync for passing its parity checks and let the
+stripe dev read/write code and the bad blocks list do their
+job handling I/O errors.
 
-This patch forbids the modification of the number of buffers in the
-ring while the interface is running.
+Repro steps from Xiao:
 
-Fixes: ac421852b3a0 ("ucc_geth: add ethtool support")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+These are the steps to reproduce this problem:
+1. redefined OPT_MEDIUM_ERR_ADDR to 12000 in scsi_debug.c
+2. insmod scsi_debug.ko dev_size_mb=11000  max_luns=1 num_tgts=1
+3. mdadm --create /dev/md127 --level=6 --raid-devices=5 /dev/sde1 /dev/sde2 /dev/sde3 /dev/sde5 /dev/sde6
+sde is the disk created by scsi_debug
+4. echo "2" >/sys/module/scsi_debug/parameters/opts
+5. raid-check
+
+It panic:
+[ 4854.730899] md: data-check of RAID array md127
+[ 4854.857455] sd 5:0:0:0: [sdr] tag#80 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[ 4854.859246] sd 5:0:0:0: [sdr] tag#80 Sense Key : Medium Error [current]
+[ 4854.860694] sd 5:0:0:0: [sdr] tag#80 Add. Sense: Unrecovered read error
+[ 4854.862207] sd 5:0:0:0: [sdr] tag#80 CDB: Read(10) 28 00 00 00 2d 88 00 04 00 00
+[ 4854.864196] print_req_error: critical medium error, dev sdr, sector 11656 flags 0
+[ 4854.867409] sd 5:0:0:0: [sdr] tag#100 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[ 4854.869469] sd 5:0:0:0: [sdr] tag#100 Sense Key : Medium Error [current]
+[ 4854.871206] sd 5:0:0:0: [sdr] tag#100 Add. Sense: Unrecovered read error
+[ 4854.872858] sd 5:0:0:0: [sdr] tag#100 CDB: Read(10) 28 00 00 00 2e e0 00 00 08 00
+[ 4854.874587] print_req_error: critical medium error, dev sdr, sector 12000 flags 4000
+[ 4854.876456] sd 5:0:0:0: [sdr] tag#101 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[ 4854.878552] sd 5:0:0:0: [sdr] tag#101 Sense Key : Medium Error [current]
+[ 4854.880278] sd 5:0:0:0: [sdr] tag#101 Add. Sense: Unrecovered read error
+[ 4854.881846] sd 5:0:0:0: [sdr] tag#101 CDB: Read(10) 28 00 00 00 2e e8 00 00 08 00
+[ 4854.883691] print_req_error: critical medium error, dev sdr, sector 12008 flags 4000
+[ 4854.893927] sd 5:0:0:0: [sdr] tag#166 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[ 4854.896002] sd 5:0:0:0: [sdr] tag#166 Sense Key : Medium Error [current]
+[ 4854.897561] sd 5:0:0:0: [sdr] tag#166 Add. Sense: Unrecovered read error
+[ 4854.899110] sd 5:0:0:0: [sdr] tag#166 CDB: Read(10) 28 00 00 00 2e e0 00 00 10 00
+[ 4854.900989] print_req_error: critical medium error, dev sdr, sector 12000 flags 0
+[ 4854.902757] md/raid:md127: read error NOT corrected!! (sector 9952 on sdr1).
+[ 4854.904375] md/raid:md127: read error NOT corrected!! (sector 9960 on sdr1).
+[ 4854.906201] ------------[ cut here ]------------
+[ 4854.907341] kernel BUG at drivers/md/raid5.c:4190!
+
+raid5.c:4190 above is this BUG_ON:
+
+    handle_parity_checks6()
+        ...
+        BUG_ON(s->uptodate < disks - 1); /* We don't need Q to recover */
+
+Cc: <stable@vger.kernel.org> # v3.16+
+OriginalAuthor: David Jeffery <djeffery@redhat.com>
+Cc: Xiao Ni <xni@redhat.com>
+Tested-by: David Jeffery <djeffery@redhat.com>
+Signed-off-by: David Jeffy <djeffery@redhat.com>
+Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/freescale/ucc_geth_ethtool.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-@@ -250,14 +250,12 @@ uec_set_ringparam(struct net_device *net
- 		return -EINVAL;
- 	}
+---
+ drivers/md/raid5.c |   19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
+
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4218,26 +4218,15 @@ static void handle_parity_checks6(struct
+ 	case check_state_check_result:
+ 		sh->check_state = check_state_idle;
  
-+	if (netif_running(netdev))
-+		return -EBUSY;
-+
- 	ug_info->bdRingLenRx[queue] = ring->rx_pending;
- 	ug_info->bdRingLenTx[queue] = ring->tx_pending;
- 
--	if (netif_running(netdev)) {
--		/* FIXME: restart automatically */
--		netdev_info(netdev, "Please re-open the interface\n");
--	}
--
- 	return ret;
- }
- 
++		if (s->failed > 1)
++			break;
+ 		/* handle a successful check operation, if parity is correct
+ 		 * we are done.  Otherwise update the mismatch count and repair
+ 		 * parity if !MD_RECOVERY_CHECK
+ 		 */
+ 		if (sh->ops.zero_sum_result == 0) {
+-			/* both parities are correct */
+-			if (!s->failed)
+-				set_bit(STRIPE_INSYNC, &sh->state);
+-			else {
+-				/* in contrast to the raid5 case we can validate
+-				 * parity, but still have a failure to write
+-				 * back
+-				 */
+-				sh->check_state = check_state_compute_result;
+-				/* Returning at this point means that we may go
+-				 * off and bring p and/or q uptodate again so
+-				 * we make sure to check zero_sum_result again
+-				 * to verify if p or q need writeback
+-				 */
+-			}
++			/* Any parity checked was correct */
++			set_bit(STRIPE_INSYNC, &sh->state);
+ 		} else {
+ 			atomic64_add(STRIPE_SECTORS, &conf->mddev->resync_mismatches);
+ 			if (test_bit(MD_RECOVERY_CHECK, &conf->mddev->recovery)) {
 
 
