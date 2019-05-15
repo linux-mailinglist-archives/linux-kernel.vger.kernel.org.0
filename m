@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DAC1F098
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655FB1EF23
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732337AbfEOLp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:45:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36766 "EHLO mail.kernel.org"
+        id S1732721AbfEOLaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732082AbfEOLZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:25:57 -0400
+        id S1732034AbfEOLaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:30:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7013520818;
-        Wed, 15 May 2019 11:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2635D20818;
+        Wed, 15 May 2019 11:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919556;
-        bh=kXgHbfct4FOXsns1n39DH89GsG5ssCfDOBzqB+6qeIU=;
+        s=default; t=1557919820;
+        bh=LxcjEKip1v8N/ANBHPxLhn8/Pw2YaorBIk4I7k7IVPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=thMh7uqdpch/DuOUeRDNeKtWiCRq5fX7Nm5DaGgnIBUB2Dzvpk6jDiIKj0jOF30zI
-         xbrnWlBpbrXwjCL6wm2HBgGSv1Rh3I2pUcbWKJsj0a3TCw6GPuVYDgChVBUoltykX7
-         9wjgm/EMv++HNGvlZ+XO3/jxmUupWFzauDxg6Nb8=
+        b=qXgH3Wv2bK7wn49xtsV1GSqxYV4ASkBOyijWItvF5bvkJSG5XuQrPJFK6dxHJZO/K
+         vP5MwhESldBHXWR+iFwFzz93FwQVdLkwxHzLDd8Ssh/k0oABQYa94sTMaLRlpgddtq
+         MeVF+FRAJPlcA9d6E2nol3PViihyN+A3aypsq1rQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 095/113] net: macb: Change interrupt and napi enable order in open
+        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jarod Wilson <jarod@redhat.com>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>
+Subject: [PATCH 5.0 105/137] bonding: fix arp_validate toggling in active-backup mode
 Date:   Wed, 15 May 2019 12:56:26 +0200
-Message-Id: <20190515090700.812315936@linuxfoundation.org>
+Message-Id: <20190515090701.174042490@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +47,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+From: Jarod Wilson <jarod@redhat.com>
 
-[ Upstream commit 0504453139ef5a593c9587e1e851febee859c7d8 ]
+[ Upstream commit a9b8a2b39ce65df45687cf9ef648885c2a99fe75 ]
 
-Current order in open:
--> Enable interrupts (macb_init_hw)
--> Enable NAPI
--> Start PHY
+There's currently a problem with toggling arp_validate on and off with an
+active-backup bond. At the moment, you can start up a bond, like so:
 
-Sequence of RX handling:
--> RX interrupt occurs
--> Interrupt is cleared and interrupt bits disabled in handler
--> NAPI is scheduled
--> In NAPI, RX budget is processed and RX interrupts are re-enabled
+modprobe bonding mode=1 arp_interval=100 arp_validate=0 arp_ip_targets=192.168.1.1
+ip link set bond0 down
+echo "ens4f0" > /sys/class/net/bond0/bonding/slaves
+echo "ens4f1" > /sys/class/net/bond0/bonding/slaves
+ip link set bond0 up
+ip addr add 192.168.1.2/24 dev bond0
 
-With the above, on QEMU or fixed link setups (where PHY state doesn't
-matter), there's a chance macb RX interrupt occurs before NAPI is
-enabled. This will result in NAPI being scheduled before it is enabled.
-Fix this macb open by changing the order.
+Pings to 192.168.1.1 work just fine. Now turn on arp_validate:
 
-Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+echo 1 > /sys/class/net/bond0/bonding/arp_validate
+
+Pings to 192.168.1.1 continue to work just fine. Now when you go to turn
+arp_validate off again, the link falls flat on it's face:
+
+echo 0 > /sys/class/net/bond0/bonding/arp_validate
+dmesg
+...
+[133191.911987] bond0: Setting arp_validate to none (0)
+[133194.257793] bond0: bond_should_notify_peers: slave ens4f0
+[133194.258031] bond0: link status definitely down for interface ens4f0, disabling it
+[133194.259000] bond0: making interface ens4f1 the new active one
+[133197.330130] bond0: link status definitely down for interface ens4f1, disabling it
+[133197.331191] bond0: now running without any active interface!
+
+The problem lies in bond_options.c, where passing in arp_validate=0
+results in bond->recv_probe getting set to NULL. This flies directly in
+the face of commit 3fe68df97c7f, which says we need to set recv_probe =
+bond_arp_recv, even if we're not using arp_validate. Said commit fixed
+this in bond_option_arp_interval_set, but missed that we can get to that
+same state in bond_option_arp_validate_set as well.
+
+One solution would be to universally set recv_probe = bond_arp_recv here
+as well, but I don't think bond_option_arp_validate_set has any business
+touching recv_probe at all, and that should be left to the arp_interval
+code, so we can just make things much tidier here.
+
+Fixes: 3fe68df97c7f ("bonding: always set recv_probe to bond_arp_rcv in arp monitor")
+CC: Jay Vosburgh <j.vosburgh@gmail.com>
+CC: Veaceslav Falico <vfalico@gmail.com>
+CC: Andy Gospodarek <andy@greyhouse.net>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/bonding/bond_options.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -2419,12 +2419,12 @@ static int macb_open(struct net_device *
- 		return err;
- 	}
- 
--	bp->macbgem_ops.mog_init_rings(bp);
--	macb_init_hw(bp);
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -1098,13 +1098,6 @@ static int bond_option_arp_validate_set(
+ {
+ 	netdev_dbg(bond->dev, "Setting arp_validate to %s (%llu)\n",
+ 		   newval->string, newval->value);
 -
- 	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
- 		napi_enable(&queue->napi);
+-	if (bond->dev->flags & IFF_UP) {
+-		if (!newval->value)
+-			bond->recv_probe = NULL;
+-		else if (bond->params.arp_interval)
+-			bond->recv_probe = bond_arp_rcv;
+-	}
+ 	bond->params.arp_validate = newval->value;
  
-+	bp->macbgem_ops.mog_init_rings(bp);
-+	macb_init_hw(bp);
-+
- 	/* schedule a link state check */
- 	phy_start(dev->phydev);
- 
+ 	return 0;
 
 
