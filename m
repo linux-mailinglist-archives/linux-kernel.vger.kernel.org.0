@@ -2,82 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DF21F0AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08AD51F0B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbfEOLqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:46:34 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59972 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731686AbfEOLqc (ORCPT
+        id S1731587AbfEOLqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:46:54 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43163 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfEOLqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:46:32 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4FBk9X7066201;
-        Wed, 15 May 2019 06:46:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1557920769;
-        bh=ErZPSnkvpW1ltnGA1FPiw4W2WDwUubKfvtcFuldMMbo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JeFk7xcC5uF8iif4I2oxfzx5DC25I04BKsRowLeWGNJiOLKwhsC9BszWU9wc2hyhQ
-         tmocg2hT+SJRAtzTALA3XtvHx+8ofLS4OlrR5xYHTThVMrti7e6vOhmHWmdoQOVKP1
-         KGS+N7F+oBTZVQUNX7E3U2vBnMv5dM14Wt8DGKpM=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4FBk9UR066924
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 May 2019 06:46:09 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 15
- May 2019 06:46:09 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 15 May 2019 06:46:09 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4FBk4qH020658;
-        Wed, 15 May 2019 06:46:05 -0500
-Subject: Re: [PATCH] clk: Remove io.h from clk-provider.h
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Heiko Stuebner <heiko@sntech.de>
-References: <20190514170931.56312-1-sboyd@kernel.org>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7d38658e-02f5-d6f4-ca66-5fdb57fb0352@ti.com>
-Date:   Wed, 15 May 2019 17:16:03 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 15 May 2019 07:46:53 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i8so1912214oth.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=si9T0jm5a9bwRXYNfp4qceYIc28/OVStfp0p3dtPwMA=;
+        b=PCmXAjQhHr3A63jiQSop3yS3YJB6kaWbry29nGX94c+nkxolsRh48hfccy80WEKcye
+         n5AgawCAjmyVijuj3clzqnIxsgjiL0Cr+Tkfr2H1VVeU9HZh7lAk8Z7RJzcMcN/Bvf/X
+         GG1GaVinsifouo2JcEV2AWZEBLYWCmgAVSgrQlEG2uIPEOCs1+zlS5EriWeJLVeBFifM
+         7EtVyXYC7QfKl77XLnvK3Hlv6AcNj4kXqKC6esyT//WPZFdi4G2I+Pr/CrB+boCpjVkq
+         TuW7fo96PuAXH906Pzf7GXj6QANb3C2ioiBwsgUEE7eOM+PK47qZVzNiy4NtGRboYCgT
+         bepQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=si9T0jm5a9bwRXYNfp4qceYIc28/OVStfp0p3dtPwMA=;
+        b=RyJUX/dc4//ha8H4QYoiuOIrC8qli6fRxW32Y/X3clMHuWpLadXv4610dkAid9veqN
+         J5AGbJ3fVcjw0Mx/ml/43yLDlGqzx1FmglUprR5xkAhvmO41aQOtKkm1E25IfpDLQMqv
+         OxOZt0vpYKAXSIfQ1QQGRgL7BhGGtEodBASTgM8MZAEZISTi/EvaqEmsXHCsuDsUX6mw
+         Rzc/hQdKhG3LVpjk+gQs/EfzEezM9iePZksAiKZ7tq3pCzkDL+6K9PcqweH0QUqtb+0F
+         aNI3dJ9oqqDcnOO1DkWfTqdLoILaBzCI6D8dyKbC0ORPcwJtnXKbKdsuYh2wSPc8jX6X
+         3F4Q==
+X-Gm-Message-State: APjAAAXF5XYwmQnJ5CqMUMJKNzuzJRXx46p5JYDUSINZ0DoblzM0QHsA
+        a4NJI+3xekHcEh3M4DgOZ+ikX4HU5hjXIKrJOqXUm4EH
+X-Google-Smtp-Source: APXvYqzJT4hw93CXYPJ/Jz+wFHBYUSgePQfPs96t26dah/FfVeoXrBMXEcGZD7xRpcHz/VyaedudF9Bw+1Pd7mNLjYI=
+X-Received: by 2002:a9d:4d02:: with SMTP id n2mr64043otf.332.1557920811912;
+ Wed, 15 May 2019 04:46:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190514170931.56312-1-sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190509234357.24025f65@tamaverik>
+In-Reply-To: <20190509234357.24025f65@tamaverik>
+From:   Alibek Amaev <alibek.a@gmail.com>
+Date:   Wed, 15 May 2019 14:46:41 +0300
+Message-ID: <CA+TYKz2KtEq4MjaW7sx21AuQ9sMc6Tx8ibdpmgMNdBvY=c+uTQ@mail.gmail.com>
+Subject: Re: Block device naming
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/19 10:39 PM, Stephen Boyd wrote:
-> Now that we've gotten rid of clk_readl() we can remove io.h from the
-> clk-provider header and push out the io.h include to any code that isn't
-> already including the io.h header but using things like readl/writel,
-> etc.
+Is there really no comment or suggestions how to avoid server failure
+when changing the LUN number?
 
-For mach-davinci and drivers/clk/davinci
 
-Acked-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+On Thu, May 9, 2019 at 11:43 PM Alibek A. <alibek.a@gmail.com> wrote:
+>
+> Hi!
+>
+> I want to address the following problem:
+> On the system with hot-attached new storage volume, such as FC-switch upd=
+ate configuration for connected FC-HBA on servers, linux kernel reorder blo=
+ck devices and change names of block devices. Becouse scsi-id, wwn-id and o=
+ther is a symbol links to block device names than on change block device na=
+me change path to device.
+> This causes the server to stop working.
+>
+> For example, on server present ZFS pool with attached device by scsi-id
+> # zpool status
+>   pool: pool
+>  state: ONLINE
+>   scan: scrub repaired 0 in 1h39m with 0 errors on Sun Oct  8 02:03:34 20=
+17
+> config:
+>
+>     NAME                                      STATE     READ WRITE CKSUM
+>     pool                                      ONLINE       0     0     0
+>       scsi-3600144f0c7a5bc61000058d3b96d001d  ONLINE       0     0     0
+>
+> Before export new block device from storage to hba, scsi-id have next pat=
+h to device:
+> /dev/disk/by-id/scsi-3600144f0c7a5bc61000058d3b96d001d -> ../../sdd
+>
+> When added new block device by FC-switch, FC-HBA kernel change block devi=
+ce names:
+> /dev/disk/by-id/scsi-3600144f0c7a5bc61000058d3b96d001d -> ../../sdf
+>
+> and ZFS can't access to device until reboot (partprobe, zpool online -e p=
+ool scsi-3600144f0c7a5bc61000058d3b96d001d - may help or may not help)
+>
+> Is there any way to fix or change this behavior of the kernel?
+>
+> It may be more reasonable to immediately assign an unique persistent iden=
+tifier of device and linking other identifiers with it?
+>
+>
+> With regards, Alibek!
+>
