@@ -2,39 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8AF51EE52
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F541F036
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731062AbfEOLUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:20:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57820 "EHLO mail.kernel.org"
+        id S1726528AbfEOL2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729438AbfEOLUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:20:02 -0400
+        id S1732368AbfEOL2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE17821473;
-        Wed, 15 May 2019 11:20:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FEB22168B;
+        Wed, 15 May 2019 11:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919201;
-        bh=fdAxxYuQHXHBmmCsWwGri8WNL8YF7p9yqpkK8dCSjMw=;
+        s=default; t=1557919699;
+        bh=Va9CcQ3RtxWIJb9CuaOAPa/ilx+ReI6V6h1zZAwbByM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VBIG9AeEzdZjR3hhfUsuqMRTOdcfZ25vsD605WiPxN4tdPmtRy3FGatymyauFJZyW
-         dR6o6lbmofRWAjBp6cx6ntlEW01tgW1euum6Qy3KXjOU7wIE3td3a4QTXfotC4FhqI
-         pFFtyII3VOw/T8wXrkLFc9CmoDQdzGCgtoOHlAhY=
+        b=ADWkq4D/pKfTqj97znpQVQgF6DyxC9S1SqCrse013rVQnd3yaial6/bIvV7EaF/Qq
+         k/zrbprxlKEY2jmLbsmXtazfWgMzC1+HXcLrIhIsJXchawYM1ehofaKzYTiJ0S4zDn
+         GjeZUT21etk1fyeTi8bmCQU0/fd+SR5Aiw8nH7ac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 060/115] scsi: raid_attrs: fix unused variable warning
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 059/137] slab: store tagged freelist for off-slab slabmgmt
 Date:   Wed, 15 May 2019 12:55:40 +0200
-Message-Id: <20190515090703.912770000@linuxfoundation.org>
+Message-Id: <20190515090657.761132513@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +53,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0eeec01488da9b1403c8c29e73eacac8af9e4bf2 ]
+[ Upstream commit 1a62b18d51e5c5ecc0345c85bb9fef870ab721ed ]
 
-I ran into a new warning on randconfig kernels:
+Commit 51dedad06b5f ("kasan, slab: make freelist stored without tags")
+calls kasan_reset_tag() for off-slab slab management object leading to
+freelist being stored non-tagged.
 
-drivers/scsi/raid_class.c: In function 'raid_match':
-drivers/scsi/raid_class.c:64:24: error: unused variable 'i' [-Werror=unused-variable]
+However, cache_grow_begin() calls alloc_slabmgmt() which calls
+kmem_cache_alloc_node() assigns a tag for the address and stores it in
+the shadow address.  As the result, it causes endless errors below
+during boot due to drain_freelist() -> slab_destroy() ->
+kasan_slab_free() which compares already untagged freelist against the
+stored tag in the shadow address.
 
-This looks like a very old problem that for some reason was very hard to
-run into, but it is very easy to fix, by replacing the incorrect #ifdef
-with a simpler IS_ENABLED() check.
+Since off-slab slab management object freelist is such a special case,
+just store it tagged.  Non-off-slab management object freelist is still
+stored untagged which has not been assigned a tag and should not cause
+any other troubles with this inconsistency.
 
-Fixes: fac829fdcaf4 ("[SCSI] raid_attrs: fix dependency problems")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  BUG: KASAN: double-free or invalid-free in slab_destroy+0x84/0x88
+  Pointer tag: [ff], memory tag: [99]
+
+  CPU: 0 PID: 1376 Comm: kworker/0:4 Tainted: G        W 5.1.0-rc3+ #8
+  Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
+  Workqueue: cgroup_destroy css_killed_work_fn
+  Call trace:
+   print_address_description+0x74/0x2a4
+   kasan_report_invalid_free+0x80/0xc0
+   __kasan_slab_free+0x204/0x208
+   kasan_slab_free+0xc/0x18
+   kmem_cache_free+0xe4/0x254
+   slab_destroy+0x84/0x88
+   drain_freelist+0xd0/0x104
+   __kmem_cache_shrink+0x1ac/0x224
+   __kmemcg_cache_deactivate+0x1c/0x28
+   memcg_deactivate_kmem_caches+0xa0/0xe8
+   memcg_offline_kmem+0x8c/0x3d4
+   mem_cgroup_css_offline+0x24c/0x290
+   css_killed_work_fn+0x154/0x618
+   process_one_work+0x9cc/0x183c
+   worker_thread+0x9b0/0xe38
+   kthread+0x374/0x390
+   ret_from_fork+0x10/0x18
+
+  Allocated by task 1625:
+   __kasan_kmalloc+0x168/0x240
+   kasan_slab_alloc+0x18/0x20
+   kmem_cache_alloc_node+0x1f8/0x3a0
+   cache_grow_begin+0x4fc/0xa24
+   cache_alloc_refill+0x2f8/0x3e8
+   kmem_cache_alloc+0x1bc/0x3bc
+   sock_alloc_inode+0x58/0x334
+   alloc_inode+0xb8/0x164
+   new_inode_pseudo+0x20/0xec
+   sock_alloc+0x74/0x284
+   __sock_create+0xb0/0x58c
+   sock_create+0x98/0xb8
+   __sys_socket+0x60/0x138
+   __arm64_sys_socket+0xa4/0x110
+   el0_svc_handler+0x2c0/0x47c
+   el0_svc+0x8/0xc
+
+  Freed by task 1625:
+   __kasan_slab_free+0x114/0x208
+   kasan_slab_free+0xc/0x18
+   kfree+0x1a8/0x1e0
+   single_release+0x7c/0x9c
+   close_pdeo+0x13c/0x43c
+   proc_reg_release+0xec/0x108
+   __fput+0x2f8/0x784
+   ____fput+0x1c/0x28
+   task_work_run+0xc0/0x1b0
+   do_notify_resume+0xb44/0x1278
+   work_pending+0x8/0x10
+
+  The buggy address belongs to the object at ffff809681b89e00
+   which belongs to the cache kmalloc-128 of size 128
+  The buggy address is located 0 bytes inside of
+   128-byte region [ffff809681b89e00, ffff809681b89e80)
+  The buggy address belongs to the page:
+  page:ffff7fe025a06e00 count:1 mapcount:0 mapping:01ff80082000fb00
+  index:0xffff809681b8fe04
+  flags: 0x17ffffffc000200(slab)
+  raw: 017ffffffc000200 ffff7fe025a06d08 ffff7fe022ef7b88 01ff80082000fb00
+  raw: ffff809681b8fe04 ffff809681b80000 00000001000000e0 0000000000000000
+  page dumped because: kasan: bad access detected
+  page allocated via order 0, migratetype Unmovable, gfp_mask
+  0x2420c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_COMP|__GFP_THISNODE)
+   prep_new_page+0x4e0/0x5e0
+   get_page_from_freelist+0x4ce8/0x50d4
+   __alloc_pages_nodemask+0x738/0x38b8
+   cache_grow_begin+0xd8/0xa24
+   ____cache_alloc_node+0x14c/0x268
+   __kmalloc+0x1c8/0x3fc
+   ftrace_free_mem+0x408/0x1284
+   ftrace_free_init_mem+0x20/0x28
+   kernel_init+0x24/0x548
+   ret_from_fork+0x10/0x18
+
+  Memory state around the buggy address:
+   ffff809681b89c00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+   ffff809681b89d00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+  >ffff809681b89e00: 99 99 99 99 99 99 99 99 fe fe fe fe fe fe fe fe
+                     ^
+   ffff809681b89f00: 43 43 43 43 43 fe fe fe fe fe fe fe fe fe fe fe
+   ffff809681b8a000: 6d fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+
+Link: http://lkml.kernel.org/r/20190403022858.97584-1-cai@lca.pw
+Fixes: 51dedad06b5f ("kasan, slab: make freelist stored without tags")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/raid_class.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ mm/slab.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/raid_class.c b/drivers/scsi/raid_class.c
-index 2c146b44d95fc..cddd78893b46c 100644
---- a/drivers/scsi/raid_class.c
-+++ b/drivers/scsi/raid_class.c
-@@ -63,8 +63,7 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
- 	 * emulated RAID devices, so start with SCSI */
- 	struct raid_internal *i = ac_to_raid_internal(cont);
- 
--#if defined(CONFIG_SCSI) || defined(CONFIG_SCSI_MODULE)
--	if (scsi_is_sdev_device(dev)) {
-+	if (IS_ENABLED(CONFIG_SCSI) && scsi_is_sdev_device(dev)) {
- 		struct scsi_device *sdev = to_scsi_device(dev);
- 
- 		if (i->f->cookie != sdev->host->hostt)
-@@ -72,7 +71,6 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
- 
- 		return i->f->is_raid(dev);
- 	}
--#endif
- 	/* FIXME: look at other subsystems too */
- 	return 0;
- }
+diff --git a/mm/slab.c b/mm/slab.c
+index 188c4b65255dc..f4bbc53008f3b 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -2371,7 +2371,6 @@ static void *alloc_slabmgmt(struct kmem_cache *cachep,
+ 		/* Slab management obj is off-slab. */
+ 		freelist = kmem_cache_alloc_node(cachep->freelist_cache,
+ 					      local_flags, nodeid);
+-		freelist = kasan_reset_tag(freelist);
+ 		if (!freelist)
+ 			return NULL;
+ 	} else {
 -- 
 2.20.1
 
