@@ -2,63 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6715F1E7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 06:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA3C1E7AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 06:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfEOE1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 00:27:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36246 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbfEOE1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 00:27:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2DD2374;
-        Tue, 14 May 2019 21:27:05 -0700 (PDT)
-Received: from [10.163.1.137] (unknown [10.163.1.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 844E43F703;
-        Tue, 14 May 2019 21:27:01 -0700 (PDT)
-Subject: Re: [PATCH] mm: refactor __vunmap() to avoid duplicated call to
- find_vm_area()
-To:     Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <20190514235111.2817276-1-guro@fb.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <78d9b650-4b47-60c5-4212-601c1719dba5@arm.com>
-Date:   Wed, 15 May 2019 09:57:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190514235111.2817276-1-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726739AbfEOE2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 00:28:31 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:53238 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfEOE2b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 00:28:31 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x4F4RRTk023688;
+        Wed, 15 May 2019 13:27:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x4F4RRTk023688
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557894448;
+        bh=d7cf3ix/fLXBYCnmiBpWjAAdbjJ/zdoToHsAdljU21Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ijSPLNUGoR3AMWOtp+aLwtzs84dlUcGxJXpH4F/wn0MI26y3Gb29inD3DopI9h9Cn
+         /1tJpAnkst09vBH0bVB8Io1PF0rmV1oiOIjdl6sJ9iPthDfklQi9cyQ2WYUBsADXep
+         V2hy7lfXg+9NryC/CZEWVopRUHSvADaOfd2iExNj/zO7yeah/S4OB9Rs2EJveG6C9q
+         lScDMn0D9jIc3uvnBUhz8rXXM2PhgrHjaI+C5i4ZPTduM2hz5cDopTnOnNzvGryGCk
+         kDdHLy0orS4SnS2kdbey2yKWJz+UP3taOo4bt2g0JNQo2KBFOWgnSA+RhwME4lxuEp
+         MIaqnbRuDAB4w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: drop unneeded -Wall addition
+Date:   Wed, 15 May 2019 13:27:21 +0900
+Message-Id: <20190515042721.8752-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The top level Makefile adds -Wall globally:
 
+  KBUILD_CFLAGS   := -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs \
 
-On 05/15/2019 05:21 AM, Roman Gushchin wrote:
-> __vunmap() calls find_vm_area() twice without an obvious reason:
-> first directly to get the area pointer, second indirectly by calling
-> vm_remove_mappings()->remove_vm_area(), which is again searching
-> for the area.
-> 
-> To remove this redundancy, let's split remove_vm_area() into
-> __remove_vm_area(struct vmap_area *), which performs the actual area
-> removal, and remove_vm_area(const void *addr) wrapper, which can
-> be used everywhere, where it has been used before. Let's pass
-> a pointer to the vm_area instead of vm_struct to vm_remove_mappings(),
-> so it can pass it to __remove_vm_area() and avoid the redundant area
-> lookup.
-> 
-> On my test setup, I've got 5-10% speed up on vfree()'ing 1000000
-> of 4-pages vmalloc blocks.
+For riscv, I see two "-Wall" added for compiling each object.
 
-Though results from  1000000 single page vmalloc blocks remain inconclusive,
-4-page based vmalloc block's result shows improvement in the range of 5-10%.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/riscv/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index c6342e638ef7..8f7368575bf6 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -36,8 +36,6 @@ else
+ 	KBUILD_LDFLAGS += -melf32lriscv
+ endif
+ 
+-KBUILD_CFLAGS += -Wall
+-
+ # ISA string setting
+ riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32im
+ riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64im
+-- 
+2.17.1
+
