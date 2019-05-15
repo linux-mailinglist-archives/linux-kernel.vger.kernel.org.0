@@ -2,38 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 923351F235
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06A31F013
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730498AbfEOMAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51154 "EHLO mail.kernel.org"
+        id S1732646AbfEOLaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:30:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbfEOLOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:14:52 -0400
+        id S1732170AbfEOL3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:29:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5EAE20843;
-        Wed, 15 May 2019 11:14:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 109A72089E;
+        Wed, 15 May 2019 11:29:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918892;
-        bh=rfHNivLtK0FwOga3PE75e8224BeOh40qOTB60qT6/uk=;
+        s=default; t=1557919791;
+        bh=4qey7BEirvvuZtcb0Q9zTx7XfYJvoEad57AKvq0X7uA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=esqfv/I6y0CjA6H48Yl55kSUJSp9AmxpxkNOQsxShgmRVKE5EtOHmBwQl3huUxuOh
-         ADFX5tMMtaN51lzlZK+QAi87sEtf7tBkDHo4vH+tZ6G5KKLkrEWyY6Kemb2h/O0/dq
-         ToWSUZ8kM95m8UiiWLL+Vtaib+2A6WMpFIx5PHR4=
+        b=pbj9TE7rkz4MFzvr82qW61VUrHWhAjAVyjCq1tsiXLLdMp27bcVXa6zz+p+qnGgA0
+         g8XvZ9dRQpMqbzXFxE+nDyOvxuzbYWn77SBQtFp+jPLdvpwwm4ZTmtpy8Jzhn9YrQ1
+         oAXQvi3UAQDEtyAk9yAEKqZDCODQIIrVysbGfjP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 40/51] bridge: Fix error path for kobject_init_and_add()
-Date:   Wed, 15 May 2019 12:56:15 +0200
-Message-Id: <20190515090627.915124616@linuxfoundation.org>
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Qian Cai <cai@lca.pw>, Arun KS <arunks@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 095/137] mm/memory_hotplug.c: drop memory device reference after find_memory_block()
+Date:   Wed, 15 May 2019 12:56:16 +0200
+Message-Id: <20190515090700.430914342@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tobin C. Harding" <tobin@kernel.org>
+[ Upstream commit 89c02e69fc5245f8a2f34b58b42d43a737af1a5e ]
 
-[ Upstream commit bdfad5aec1392b93495b77b864d58d7f101dc1c1 ]
+Right now we are using find_memory_block() to get the node id for the
+pfn range to online.  We are missing to drop a reference to the memory
+block device.  While the device still gets unregistered via
+device_unregister(), resulting in no user visible problem, the device is
+never released via device_release(), resulting in a memory leak.  Fix
+that by properly using a put_device().
 
-Currently error return from kobject_init_and_add() is not followed by a
-call to kobject_put().  This means there is a memory leak.  We currently
-set p to NULL so that kfree() may be called on it as a noop, the code is
-arguably clearer if we move the kfree() up closer to where it is
-called (instead of after goto jump).
-
-Remove a goto label 'err1' and jump to call to kobject_put() in error
-return from kobject_init_and_add() fixing the memory leak.  Re-name goto
-label 'put_back' to 'err1' now that we don't use err1, following current
-nomenclature (err1, err2 ...).  Move call to kfree out of the error
-code at bottom of function up to closer to where memory was allocated.
-Add comment to clarify call to kfree().
-
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/20190411110955.1430-1-david@redhat.com
+Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Pankaj Gupta <pagupta@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Arun KS <arunks@codeaurora.org>
+Cc: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_if.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ mm/memory_hotplug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/bridge/br_if.c
-+++ b/net/bridge/br_if.c
-@@ -519,13 +519,15 @@ int br_add_if(struct net_bridge *br, str
- 	call_netdevice_notifiers(NETDEV_JOIN, dev);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 11593a03c051f..7493f50ee8800 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -858,6 +858,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	 */
+ 	mem = find_memory_block(__pfn_to_section(pfn));
+ 	nid = mem->nid;
++	put_device(&mem->dev);
  
- 	err = dev_set_allmulti(dev, 1);
--	if (err)
--		goto put_back;
-+	if (err) {
-+		kfree(p);	/* kobject not yet init'd, manually free */
-+		goto err1;
-+	}
- 
- 	err = kobject_init_and_add(&p->kobj, &brport_ktype, &(dev->dev.kobj),
- 				   SYSFS_BRIDGE_PORT_ATTR);
- 	if (err)
--		goto err1;
-+		goto err2;
- 
- 	err = br_sysfs_addif(p);
- 	if (err)
-@@ -608,12 +610,9 @@ err3:
- 	sysfs_remove_link(br->ifobj, p->dev->name);
- err2:
- 	kobject_put(&p->kobj);
--	p = NULL; /* kobject_put frees */
--err1:
- 	dev_set_allmulti(dev, -1);
--put_back:
-+err1:
- 	dev_put(dev);
--	kfree(p);
- 	return err;
- }
- 
+ 	/* associate pfn range with the zone */
+ 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
+-- 
+2.20.1
+
 
 
