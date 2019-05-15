@@ -2,130 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 343DB1F862
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD7E51F86C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfEOQU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:20:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49660 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfEOQU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:20:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E137985A03;
-        Wed, 15 May 2019 16:20:57 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54516608B9;
-        Wed, 15 May 2019 16:20:55 +0000 (UTC)
-Date:   Wed, 15 May 2019 12:20:54 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Helen Koike <helen.koike@collabora.com>
-Cc:     dm-devel@redhat.com, kernel@collabora.com,
-        linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>
-Subject: Re: dm ioctl: fix hang in early create error condition
-Message-ID: <20190515162054.GA14934@redhat.com>
-References: <20190513192530.1167-1-helen.koike@collabora.com>
- <20190514013716.GA10260@lobo>
- <78dda04b-925f-49eb-f88a-6d940bcc4754@collabora.com>
+        id S1726590AbfEOQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:22:18 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43867 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfEOQWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 12:22:17 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i8so536258oth.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mvista-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WYwUsFSH86jSsfL1qchJ6LUvivM63x63FlzlKbdmfas=;
+        b=uOrgnAPc8uE+qBTcPGAZ/2bMJlapwUBTljMhCFiyEwWUGqnQvxXHV8F+8obCeEJm8s
+         4YEBF0qNhKDuYxgiEBDbbH6EhCxggKc1eEW4sDFugrOG2PktbT5uc67ibB2sLTrcPf+5
+         ZhSA3Ngg82GvDbiMSF0TfjCxvmNMjxxAn2XNp3eOw4nhOFt9CDOK010JZ0FTXf2jMdFR
+         NOlzt+CwucWaXURdPwb34To7dVoBPfvl45gkPIpLbI3iacAWIKZ//joKraLZuIchN8It
+         LQY55M8O5+xi3GZO/972ZZM7qsHCyEvyUDOEBFPoUSvVfj8cTfhWkg7X6MFdUOSrPYNd
+         IzOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WYwUsFSH86jSsfL1qchJ6LUvivM63x63FlzlKbdmfas=;
+        b=SCb+WiBtd1WYDsPAWoheAg3aQ8zk+F6TGCoDaEay460aj4Y6IU/biWamPIk1o4mShz
+         Aud7S/BI2zeCKFNpSaPVZTLQ/B93ScF9vOsQUGFyL6pj8iIxaEa/BQzLAOlLkoht9WfV
+         bNpSXnbBr91aMwYvXL3wb9n9MxvDvockaolTaFtzNrHr8WgTCgV5xb4FL4FK/JDZ7GvO
+         96mpk52Kt8wkytJGMTn0JB1SCYl0Q7rgT61qIP2EzKdrXQuqaNyqLntGpbQmvEvjjv6D
+         hrLzw4uhWzG77dwQ11O7F8nFf8fujwojmlOhssd5qeYPslo8zFEZP+KHSFcVGKPf6Z/H
+         /pdw==
+X-Gm-Message-State: APjAAAW37Zx+MJvBg2KXWPHpmThpWPS4YGMNsHD+Z5Ar1Gutdkefi/C9
+        XcXil6/sO5bk3d1SF5k5zG+ccQJpDtbZMw==
+X-Google-Smtp-Source: APXvYqx9YX6jALD3ezMYYUSQ97jbTW9srhfNABwloH1YvDooZkHcqR7PZkAP4Lndj8fbIzC9xyZS+w==
+X-Received: by 2002:a9d:7657:: with SMTP id o23mr26614794otl.358.1557937334761;
+        Wed, 15 May 2019 09:22:14 -0700 (PDT)
+Received: from minyard.net ([2001:470:b8f6:1b:9c84:ae86:ff6:562c])
+        by smtp.gmail.com with ESMTPSA id r23sm885582otg.49.2019.05.15.09.22.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 09:22:13 -0700 (PDT)
+Date:   Wed, 15 May 2019 11:22:12 -0500
+From:   Corey Minyard <cminyard@mvista.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>, minyard@acm.org,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH RT v2] Fix a lockup in wait_for_completion() and friends
+Message-ID: <20190515162212.GB6050@minyard.net>
+Reply-To: cminyard@mvista.com
+References: <20190508205728.25557-1-minyard@acm.org>
+ <20190509161925.kul66w54wpjcinuc@linutronix.de>
+ <20190514084356.GJ2589@hirez.programming.kicks-ass.net>
+ <20190514091219.nesriqe7qplk3476@linutronix.de>
+ <20190514121350.GA6050@minyard.net>
+ <20190514153647.wri6ivffbq7r263y@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78dda04b-925f-49eb-f88a-6d940bcc4754@collabora.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 15 May 2019 16:20:57 +0000 (UTC)
+In-Reply-To: <20190514153647.wri6ivffbq7r263y@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15 2019 at 12:12pm -0400,
-Helen Koike <helen.koike@collabora.com> wrote:
-
-> Hi,
-> 
-> On 5/13/19 10:37 PM, Mike Snitzer wrote:
-> > On Mon, May 13 2019 at  3:25P -0400,
-> > Helen Koike <helen.koike@collabora.com> wrote:
+On Tue, May 14, 2019 at 05:36:47PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-05-14 07:13:50 [-0500], Corey Minyard wrote:
+> > > Corey, would it make any change which waiter is going to be woken up?
 > > 
-> >> The dm_early_create() function (which deals with "dm-mod.create=" kernel
-> >> command line option) calls dm_hash_insert() who gets an extra reference
-> >> to the md object.
-> >>
-> >> In case of failure, this reference wasn't being released, causing
-> >> dm_destroy() to hang, thus hanging the whole boot process.
-> >>
-> >> Fix this by calling __hash_remove() in the error path.
-> >>
-> >> Fixes: 6bbc923dfcf57d ("dm: add support to directly boot to a mapped device")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> >>
-> >> ---
-> >> Hi,
-> >>
-> >> I tested this patch by adding a new test case in the following test
-> >> script:
-> >>
-> >> https://gitlab.collabora.com/koike/dm-cmdline-test/commit/d2d7a0ee4a49931cdb59f08a837b516c2d5d743d
-> >>
-> >> This test was failing, but with this patch it works correctly.
-> >>
-> >> Thanks
-> >> Helen
+> > In the application that found this, the wake order probably isn't
+> > relevant.
+> 
+> what I expected.
+> 
+> > For other applications, I really doubt that very many are using multiple
+> > waiters.  If so, this bug would have been reported sooner, I think.
+> 
+> most other do either one waiter/waker pair or one waker and multiple
+> waiter. And then reinit_completion() is used for the next round.
+> 
+> > As you mention, for RT you would want waiter woken by priority and FIFO
+> > within priority.  I don't think POSIX says anything about FIFO within
+> > priority, but that's probably a good idea.  That's no longer a simple
+> > wait queue  The way it is now is probably closer to that than what Peter
+> > suggested, but not really that close.
 > > 
-> > Thanks for the patch but I'd prefer the following simpler fix.  What do
-> > you think?
+> > This is heavily used in drivers and fs code, where it probably doesn't
+> > matter.  I looked through a few users in mm and kernel, and they had
+> > one waiter or were init/shutdown type things where order is not important.
 > > 
-> > That said, I can provide a follow-on patch (inspired by the patch you
-> > provided) that encourages more code sharing between dm_early_create()
-> > and dev_create() by factoring out __dev_create().
+> > So I'm not sure it's important.
 > 
-> Sounds great.
-> 
-> > 
-> > diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-> > index c740153b4e52..0eb0b462c736 100644
-> > --- a/drivers/md/dm-ioctl.c
-> > +++ b/drivers/md/dm-ioctl.c
-> > @@ -2117,6 +2117,7 @@ int __init dm_early_create(struct dm_ioctl *dmi,
-> >  err_destroy_table:
-> >  	dm_table_destroy(t);
-> >  err_destroy_dm:
-> > +	(void) __hash_remove(__find_device_hash_cell(dmi));
-> >  	dm_put(md);
-> >  	dm_destroy(md);
-> >  	return r;
-> > 
-> 
-> This doesn't really work for two reasons:
-> 
-> 1) __find_device_hash_cell() requires a mutual exclusivity between name,
-> uuid and dev. In dm_early_create(), dmi can have more then one of these.
+> Why did you bring POSIX into this? This isn't an API exported to
+> userland which would fall into that category.
 
-__find_device_hash_cell's exclusivity requirements are strange; I'll try
-to understand what requires this.
+My understanding is that POSIX.1b scheduling classes affect everything.
+So if you have two processes blocked on the same things for any reason,
+you need to wake up the higher priority one first.  In reality, it
+probably doesn't matter unless something more critical uses completions. 
 
-> 2) I can fix (1) by calling __get_name_cell(), as the name is mandatory
-> anyway, but this function also grabs another reference to the md object,
-> so I need to add an extra dm_put(md) there:
 > 
->  err_destroy_table:
->         dm_table_destroy(t);
-> +err_hash_remove:
-> +       (void) __hash_remove(__get_name_cell(dmi->name));
-> +       dm_put(md);
->  err_destroy_dm:
->         dm_put(md);
->         dm_destroy(md);
-> 
-> 
-> What do you think? Is this ok?
+> Peter's suggestion for FIFO is that we probably don't want to starve one
+> thread/waiter if it is always enqueued at the end of the list. As you
+> said, in your case it does not matter because (I assume) each waiter is
+> equal and the outcome would be the same.
 
-I think so.  Please submit a v2 and I'll rebase my followon patch
-accordingly and will get it posted.
+Yeah, my case is not relevant to this, I'm more concerned with the cases
+that are.
 
-Thanks,
-Mike
+-corey
+
+> 
+> > -corey
+> 
+> Sebastian
