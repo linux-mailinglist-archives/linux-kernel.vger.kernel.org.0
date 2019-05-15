@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08AD51F0B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9E91F0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731587AbfEOLqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:46:54 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43163 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfEOLqx (ORCPT
+        id S1732150AbfEOLrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:47:35 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46054 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732132AbfEOLrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:46:53 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i8so1912214oth.10
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:46:52 -0700 (PDT)
+        Wed, 15 May 2019 07:47:31 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g57so3635412edc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=si9T0jm5a9bwRXYNfp4qceYIc28/OVStfp0p3dtPwMA=;
-        b=PCmXAjQhHr3A63jiQSop3yS3YJB6kaWbry29nGX94c+nkxolsRh48hfccy80WEKcye
-         n5AgawCAjmyVijuj3clzqnIxsgjiL0Cr+Tkfr2H1VVeU9HZh7lAk8Z7RJzcMcN/Bvf/X
-         GG1GaVinsifouo2JcEV2AWZEBLYWCmgAVSgrQlEG2uIPEOCs1+zlS5EriWeJLVeBFifM
-         7EtVyXYC7QfKl77XLnvK3Hlv6AcNj4kXqKC6esyT//WPZFdi4G2I+Pr/CrB+boCpjVkq
-         TuW7fo96PuAXH906Pzf7GXj6QANb3C2ioiBwsgUEE7eOM+PK47qZVzNiy4NtGRboYCgT
-         bepQ==
+         :cc;
+        bh=UybbNuVimaoZe/obsoU7tb4m5ZUy6LvzQm9jzE+0RrA=;
+        b=P3zOusdb1eGvSqR4PHA6LNUt17i57cozISGL1Z2ZbAkKaLsynOH1YiRqPEmYHygXes
+         Hoa8kM/IxL3+ytbz2M0n7R9YbChiOVSJCp3VZ6Gf8HDYfa//Mp6Znqahdoc4KmJ2Vyem
+         Bsr0HxWRZKVkRvadCyEoeC9SrEmqJ3WTJdyxvLr07Gf5+OfWZrc4EJ6fti3irFy78AyJ
+         46eUcKL0bU7ZNnHqaZTw9zVlBkYTTlJ41VvvXTuzFQbAIYt30iDeB4wpgkBE2gspCAcA
+         YrAmUx1dZsiJeL4mYNHQGjKmcyOsMb8RlwYN2r9g41m5PLXGQaiAcmK0BPS3UcOGgSVd
+         oheA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=si9T0jm5a9bwRXYNfp4qceYIc28/OVStfp0p3dtPwMA=;
-        b=RyJUX/dc4//ha8H4QYoiuOIrC8qli6fRxW32Y/X3clMHuWpLadXv4610dkAid9veqN
-         J5AGbJ3fVcjw0Mx/ml/43yLDlGqzx1FmglUprR5xkAhvmO41aQOtKkm1E25IfpDLQMqv
-         OxOZt0vpYKAXSIfQ1QQGRgL7BhGGtEodBASTgM8MZAEZISTi/EvaqEmsXHCsuDsUX6mw
-         Rzc/hQdKhG3LVpjk+gQs/EfzEezM9iePZksAiKZ7tq3pCzkDL+6K9PcqweH0QUqtb+0F
-         aNI3dJ9oqqDcnOO1DkWfTqdLoILaBzCI6D8dyKbC0ORPcwJtnXKbKdsuYh2wSPc8jX6X
-         3F4Q==
-X-Gm-Message-State: APjAAAXF5XYwmQnJ5CqMUMJKNzuzJRXx46p5JYDUSINZ0DoblzM0QHsA
-        a4NJI+3xekHcEh3M4DgOZ+ikX4HU5hjXIKrJOqXUm4EH
-X-Google-Smtp-Source: APXvYqzJT4hw93CXYPJ/Jz+wFHBYUSgePQfPs96t26dah/FfVeoXrBMXEcGZD7xRpcHz/VyaedudF9Bw+1Pd7mNLjYI=
-X-Received: by 2002:a9d:4d02:: with SMTP id n2mr64043otf.332.1557920811912;
- Wed, 15 May 2019 04:46:51 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=UybbNuVimaoZe/obsoU7tb4m5ZUy6LvzQm9jzE+0RrA=;
+        b=gnDFOXz/mvNBbl8OfPdvquJSnB8VIu9PJXeMwf0xiWqMe78P83jpnZRWSeGYSMPM+/
+         3Gu5arif5e1jNTmA8hRKEB9eWAoh0As0ZKfVh2MDyTd9Cswtp/y6w/3KXBxPf7eve+68
+         DsCNmGzp+QTQ0+QHaU5cudv7bHLMZRCNnhSq4B1THbIyRcth11RNqXStjB742PC3i9Td
+         F0AJdvb+Xf2uu+YnAaR50/YnB8ES4yvN0qeH3Pf7M8ysmEkWnBmzv/CsGYV2F/BNuUhW
+         CgRClBykKydc4jXMG/54kjGOZqebjaqVPzzl5vnWMWGT8ADKKVh3EpKTXAeZa7ehs/G5
+         2ypw==
+X-Gm-Message-State: APjAAAVzOIFE98vyVWt82M52shoFrFu0fy0udq4K2q5nNjY1lulvw8Kr
+        UL0nV2z9SZ9TSgz28C8ZY3EgiDbufmf5uwlf+7s=
+X-Google-Smtp-Source: APXvYqz7aau2riG59uJ1ZUCEP38Mjgz0Ag9fasTQcc+poBDGFEgxyAXaYkwAR0bpXuEEJ7AfA9/qKPJ9PDSBAMX5sEs=
+X-Received: by 2002:a50:9441:: with SMTP id q1mr42373727eda.101.1557920849482;
+ Wed, 15 May 2019 04:47:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190509234357.24025f65@tamaverik>
-In-Reply-To: <20190509234357.24025f65@tamaverik>
-From:   Alibek Amaev <alibek.a@gmail.com>
-Date:   Wed, 15 May 2019 14:46:41 +0300
-Message-ID: <CA+TYKz2KtEq4MjaW7sx21AuQ9sMc6Tx8ibdpmgMNdBvY=c+uTQ@mail.gmail.com>
-Subject: Re: Block device naming
-To:     linux-kernel@vger.kernel.org
+References: <1557908823-11349-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1557908823-11349-1-git-send-email-Anson.Huang@nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 15 May 2019 14:47:18 +0300
+Message-ID: <CAEnQRZAL4BuHP8MDDBfOXTcub8LVdZ-CyZxdzt-5dseVjMMDQA@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] soc: imx: Add SCU SoC info driver support
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Is there really no comment or suggestions how to avoid server failure
-when changing the LUN number?
+Hi Anson,
 
+Since you are going to send a new version for this please consider my
+comment inline.
 
-On Thu, May 9, 2019 at 11:43 PM Alibek A. <alibek.a@gmail.com> wrote:
->
-> Hi!
->
-> I want to address the following problem:
-> On the system with hot-attached new storage volume, such as FC-switch upd=
-ate configuration for connected FC-HBA on servers, linux kernel reorder blo=
-ck devices and change names of block devices. Becouse scsi-id, wwn-id and o=
-ther is a symbol links to block device names than on change block device na=
-me change path to device.
-> This causes the server to stop working.
->
-> For example, on server present ZFS pool with attached device by scsi-id
-> # zpool status
->   pool: pool
->  state: ONLINE
->   scan: scrub repaired 0 in 1h39m with 0 errors on Sun Oct  8 02:03:34 20=
-17
-> config:
->
->     NAME                                      STATE     READ WRITE CKSUM
->     pool                                      ONLINE       0     0     0
->       scsi-3600144f0c7a5bc61000058d3b96d001d  ONLINE       0     0     0
->
-> Before export new block device from storage to hba, scsi-id have next pat=
-h to device:
-> /dev/disk/by-id/scsi-3600144f0c7a5bc61000058d3b96d001d -> ../../sdd
->
-> When added new block device by FC-switch, FC-HBA kernel change block devi=
-ce names:
-> /dev/disk/by-id/scsi-3600144f0c7a5bc61000058d3b96d001d -> ../../sdf
->
-> and ZFS can't access to device until reboot (partprobe, zpool online -e p=
-ool scsi-3600144f0c7a5bc61000058d3b96d001d - may help or may not help)
->
-> Is there any way to fix or change this behavior of the kernel?
->
-> It may be more reasonable to immediately assign an unique persistent iden=
-tifier of device and linking other identifiers with it?
->
->
-> With regards, Alibek!
->
+<snip>
+
+> +static u32 imx8qxp_soc_revision(void)
+> +{
+> +       struct imx_sc_msg_misc_get_soc_id msg;
+> +       struct imx_sc_rpc_msg *hdr = &msg.hdr;
+> +       u32 rev = 0;
+
+No need to initialize this here.
+
+> +       int ret;
+> +
+> +       hdr->ver = IMX_SC_RPC_VERSION;
+> +       hdr->svc = IMX_SC_RPC_SVC_MISC;
+> +       hdr->func = IMX_SC_MISC_FUNC_GET_CONTROL;
+> +       hdr->size = 3;
+> +
+> +       msg.data.send.control = IMX_SC_C_ID;
+> +       msg.data.send.resource = IMX_SC_R_SYSTEM;
+> +
+> +       ret = imx_scu_call_rpc(soc_ipc_handle, &msg, true);
+> +       if (ret) {
+> +               dev_err(&imx_scu_soc_pdev->dev,
+> +                       "get soc info failed, ret %d\n", ret);
+> +               /* return 0 means getting revision failed */
+
+Just return 0 here. No need for rev.
+> +               return rev;
+> +       }
+> +
