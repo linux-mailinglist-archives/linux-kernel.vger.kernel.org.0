@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD861EF1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DF81F206
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732198AbfEOLaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41548 "EHLO mail.kernel.org"
+        id S1730593AbfEOL75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:59:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbfEOLaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:05 -0400
+        id S1730013AbfEOLPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:15:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4588D206BF;
-        Wed, 15 May 2019 11:30:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB7EB20644;
+        Wed, 15 May 2019 11:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919804;
-        bh=27o0n0tSSQ4ROIQfDrmsXsWggqIdruEl+279LB0TF+k=;
+        s=default; t=1557918910;
+        bh=BrGBuaBYFEbSew5mma2LdrWM9G9Zzz1MNTXJovmdlt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IFvyisip33+i5RlxfVdAHSm42NKd4XcaIAmqh1nfWWQhwTVOFEL2tklgV/W4kkB8b
-         jt3Q8njUR5SEQ/aIoFDgU3YuhDNTsI2f0fCR+tJvvR7m/vfMIMAEKOz9U89mfBJBr+
-         EzY/oe3OwSaT9yPecJw7jh1bgwYt5vEzcq9Y//VI=
+        b=b8f4eRUoEBhKb98CWNCUs5R55rAJ92i77noHnGz7OkdG+yuRKlhmWyLKnLPPayXmW
+         50yzbk7vTgZwPG6T3A+/FEHO517vRCR+cR7MY/Hpuy++Gdj+4DNMxSibr5UFJKo7uf
+         J6dGszvzkz5ovgEr0WjXb5HqwftoIS1Dzn2dKdSs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damian Kos <dkos@cadence.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 5.0 100/137] drm/rockchip: fix for mailbox read validation.
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 46/51] ipv4: Fix raw socket lookup for local traffic
 Date:   Wed, 15 May 2019 12:56:21 +0200
-Message-Id: <20190515090700.786125615@linuxfoundation.org>
+Message-Id: <20190515090629.253646048@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e4056bbb6719fe713bfc4030ac78e8e97ddf7574 ]
+From: David Ahern <dsahern@gmail.com>
 
-This is basically the same fix as in
-commit fa68d4f8476b ("drm/rockchip: fix for mailbox read size")
-but for cdn_dp_mailbox_validate_receive function.
+[ Upstream commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f ]
 
-See patchwork.kernel.org/patch/10671981/ for details.
+inet_iif should be used for the raw socket lookup. inet_iif considers
+rt_iif which handles the case of local traffic.
 
-Signed-off-by: Damian Kos <dkos@cadence.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/1542640463-18332-1-git-send-email-dkos@cadence.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+As it stands, ping to a local address with the '-I <dev>' option fails
+ever since ping was changed to use SO_BINDTODEVICE instead of
+cmsg + IP_PKTINFO.
+
+IPv6 works fine.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/rockchip/cdn-dp-reg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/raw.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-index 5a485489a1e23..6c8b14fb1d2f3 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-@@ -113,7 +113,7 @@ static int cdp_dp_mailbox_write(struct cdn_dp_device *dp, u8 val)
- 
- static int cdn_dp_mailbox_validate_receive(struct cdn_dp_device *dp,
- 					   u8 module_id, u8 opcode,
--					   u8 req_size)
-+					   u16 req_size)
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -169,6 +169,7 @@ static int icmp_filter(const struct sock
+  */
+ static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
  {
- 	u32 mbox_size, i;
- 	u8 header[4];
--- 
-2.20.1
-
++	int dif = inet_iif(skb);
+ 	struct sock *sk;
+ 	struct hlist_head *head;
+ 	int delivered = 0;
+@@ -181,8 +182,7 @@ static int raw_v4_input(struct sk_buff *
+ 
+ 	net = dev_net(skb->dev);
+ 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
+-			     iph->saddr, iph->daddr,
+-			     skb->dev->ifindex);
++			     iph->saddr, iph->daddr, dif);
+ 
+ 	while (sk) {
+ 		delivered = 1;
 
 
