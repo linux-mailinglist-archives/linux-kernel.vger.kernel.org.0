@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF611EEE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC87A1EE1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732217AbfEOL1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38248 "EHLO mail.kernel.org"
+        id S1730644AbfEOLRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731373AbfEOL1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:21 -0400
+        id S1730631AbfEOLRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA71F206BF;
-        Wed, 15 May 2019 11:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6B602084E;
+        Wed, 15 May 2019 11:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919641;
-        bh=ODSkC85um+xb2HLufxlD81zot8WRz6w5P6oSyh8mHLs=;
+        s=default; t=1557919032;
+        bh=6e0KJ9qdVyxIwIx3iB73d1TJGGtIu0OJ8kF/k9AbIrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xX77/xBWfewgRtlK6lYfilAfvAod4FJXpOxuslnbRo6eOaqz7847eO6mjecjE2XAO
-         w/JJTw5zaWLyWJejzB9nnim2bhaCP5GrnANmEJNNRU4VFGLKoO1QOfspXHBswd8p85
-         uYjPTi5up38IuZev58SPfeCsg4Q6l2yqpljvu8FI=
+        b=eQaOtBuMEkAw6uCuupHC67pWyM95naJ0+YHHByZ8Xeqk3tbDDLb72AhAJ54KGaucE
+         Ty194/2NOrB/u0SP07j2VWG44HFmLPmxg/Qe6SXdRcMyjC3PtZDGRsSVHjcR6XTgp2
+         ZpSdv79KF9PDpZrNycQiOIJWucfBfcFqiCu/rHOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Jonathan Billings <jsbillin@umich.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 039/137] afs: Unlock pages for __pagevec_release()
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 040/115] sparc64: Export __node_distance.
 Date:   Wed, 15 May 2019 12:55:20 +0200
-Message-Id: <20190515090656.231699539@linuxfoundation.org>
+Message-Id: <20190515090702.397924596@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 21bd68f196ca91fc0f3d9bd1b32f6e530e8c1c88 ]
+[ Upstream commit 2b4792eaa9f553764047d157365ed8b7787751a3 ]
 
-__pagevec_release() complains loudly if any page in the vector is still
-locked.  The pages need to be locked for generic_error_remove_page(), but
-that function doesn't actually unlock them.
+Some drivers reference it via node_distance(), for example the
+NVME host driver core.
 
-Unlock the pages afterwards.
+ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
 
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Jonathan Billings <jsbillin@umich.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/afs/write.c | 1 +
+ arch/sparc/mm/init_64.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 72efcfcf9f95e..0122d7445fba1 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -264,6 +264,7 @@ static void afs_kill_pages(struct address_space *mapping,
- 				first = page->index + 1;
- 			lock_page(page);
- 			generic_error_remove_page(mapping, page);
-+			unlock_page(page);
- 		}
+diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
+index 984e9d65ea0d1..76977296dc9c6 100644
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@ -1383,6 +1383,7 @@ int __node_distance(int from, int to)
+ 	}
+ 	return numa_latency[from][to];
+ }
++EXPORT_SYMBOL(__node_distance);
  
- 		__pagevec_release(&pv);
+ static int __init find_best_numa_node_for_mlgroup(struct mdesc_mlgroup *grp)
+ {
 -- 
 2.20.1
 
