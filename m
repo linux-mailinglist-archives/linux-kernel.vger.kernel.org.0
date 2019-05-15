@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 204931EDD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5241F1D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbfEOLNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:13:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49480 "EHLO mail.kernel.org"
+        id S1731461AbfEOLzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:55:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730013AbfEOLNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:42 -0400
+        id S1730785AbfEOLSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F5C12084E;
-        Wed, 15 May 2019 11:13:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92467206BF;
+        Wed, 15 May 2019 11:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918821;
-        bh=CFP61ogKUaFlMEANdTpgbEgjc/Z+NZmy6sxfd+TvkqE=;
+        s=default; t=1557919101;
+        bh=J+nK/4lcna/xPxlZvuEpylB8TdIZIaAJLF4+tVeBSWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lyDuUxsnf9MBjLA9fOJmpZJXhN752t3Fa1b6LJf4BagGG3jhyWLSYkeT9qMnGYSvr
-         0YmfolmVMZdLqbORBxyywnXsOZN+Oi/05q4mdAznbiD73rA2ceA+fOL8NAYrhWFXyQ
-         0EJ8shtWX28UPJx1a9cS3Y3xzVifyC3awIU/S+Qw=
+        b=Y6mYe2IHPKKJxzPxedyT6C33/HWitkdskH2iGYi8kT/Rts1PeE6Suq+svMfD7BxYM
+         ESZydsbWaTREqldn6YrxWzA2JC9oA3zDbjdAxqEVKSLmS6MrT9qgEJq56K1r7y6zWD
+         1R8D1ChRWOeGG/sQd3gjL3IglcD6Z4c6oS2O+oqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 13/51] mac80211: fix unaligned access in mesh table hash function
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 068/115] powerpc: remove old GCC version checks
 Date:   Wed, 15 May 2019 12:55:48 +0200
-Message-Id: <20190515090621.557590829@linuxfoundation.org>
+Message-Id: <20190515090704.423340712@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 40586e3fc400c00c11151804dcdc93f8c831c808 ]
+[ Upstream commit f2910f0e6835339e6ce82cef22fa15718b7e3bfa ]
 
-The pointer to the last four bytes of the address is not guaranteed to be
-aligned, so we need to use __get_unaligned_cpu32 here
+GCC 4.6 is the minimum supported now.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/mac80211/mesh_pathtbl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/Makefile | 31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
-diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
-index 197753ad50b4e..8c17d498df301 100644
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -23,7 +23,7 @@ static void mesh_path_free_rcu(struct mesh_table *tbl, struct mesh_path *mpath);
- static u32 mesh_table_hash(const void *addr, u32 len, u32 seed)
- {
- 	/* Use last four bytes of hw addr as hash index */
--	return jhash_1word(*(u32 *)(addr+2), seed);
-+	return jhash_1word(__get_unaligned_cpu32((u8 *)addr + 2), seed);
- }
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 7452e50f4d1f8..0f04c878113ef 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -396,36 +396,9 @@ archprepare: checkbin
+ # to stdout and these checks are run even on install targets.
+ TOUT	:= .tmp_gas_check
  
- static const struct rhashtable_params mesh_rht_params = {
+-# Check gcc and binutils versions:
+-# - gcc-3.4 and binutils-2.14 are a fatal combination
+-# - Require gcc 4.0 or above on 64-bit
+-# - gcc-4.2.0 has issues compiling modules on 64-bit
++# Check toolchain versions:
++# - gcc-4.6 is the minimum kernel-wide version so nothing required.
+ checkbin:
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-version)" = "0304" ; then \
+-		if ! /bin/echo mftb 5 | $(AS) -v -mppc -many -o $(TOUT) >/dev/null 2>&1 ; then \
+-			echo -n '*** ${VERSION}.${PATCHLEVEL} kernels no longer build '; \
+-			echo 'correctly with gcc-3.4 and your version of binutils.'; \
+-			echo '*** Please upgrade your binutils or downgrade your gcc'; \
+-			false; \
+-		fi ; \
+-	fi
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-version)" -lt "0400" \
+-	    && test "x${CONFIG_PPC64}" = "xy" ; then \
+-                echo -n "Sorry, GCC v4.0 or above is required to build " ; \
+-                echo "the 64-bit powerpc kernel." ; \
+-                false ; \
+-        fi
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-fullversion)" = "040200" \
+-	    && test "x${CONFIG_MODULES}${CONFIG_PPC64}" = "xyy" ; then \
+-		echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
+-		echo 'kernel with modules enabled.' ; \
+-		echo -n '*** Please use a different GCC version or ' ; \
+-		echo 'disable kernel modules' ; \
+-		false ; \
+-	fi
+ 	@if test "x${CONFIG_CPU_LITTLE_ENDIAN}" = "xy" \
+ 	    && $(LD) --version | head -1 | grep ' 2\.24$$' >/dev/null ; then \
+ 		echo -n '*** binutils 2.24 miscompiles weak symbols ' ; \
 -- 
 2.20.1
 
