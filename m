@@ -2,57 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A52751ED92
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B1081F054
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfEOLLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45322 "EHLO mail.kernel.org"
+        id S1732286AbfEOLnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:43:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729513AbfEOLLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:04 -0400
+        id S1731306AbfEOL1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C6DA20843;
-        Wed, 15 May 2019 11:11:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 202AF20818;
+        Wed, 15 May 2019 11:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918662;
-        bh=fPtg07mn5JXl1EnPfOeUz+GMrsIXGxbmZlTK9Er5cfk=;
+        s=default; t=1557919654;
+        bh=D8dQ+KSEvbP22k2LL3YU1+HslayP/1uvJ8PmgsXlCL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jd+oaGlUMSQAbJb2y9im+COaccDk8ckbSUmPUw0DV0CXFvPupMu95WUoGiMmjcs8p
-         oTlOSZxT7eaDCShk2HKbw0W3mZRiDa1EGMwrujL0GDw6a6eu0Jvj+sxUFHsgfPuI6I
-         /LyI2W08Rt4EPQZDHKY6lclfVuFZWzTGn904NtRo=
+        b=qH/y3/fyeCELxBiJAF3JLgvUoATIVGZhkrzHxZoLsjBx0Hcybzyg8r/MdbHBhEQNZ
+         EMN6JFmbDn7miU6BIQu/A/oNwcpqJ6lTs1T3OirER/AasI1N15P4oCB7ShdrfwL1v5
+         swe048T00thZ6EY6NePU8SPIVz3kWQscnZdWNiXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 218/266] x86/speculation: Avoid __switch_to_xtra() calls
+        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
+        Michal Kalderon <mkalderon@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 044/137] qed: Fix the DORQs attentions handling
 Date:   Wed, 15 May 2019 12:55:25 +0200
-Message-Id: <20190515090730.359208837@linuxfoundation.org>
+Message-Id: <20190515090656.640334411@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,108 +46,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 0d72c2ac89185f179da1e8a91c40c82f3fa38f0b ]
 
-commit 5635d99953f04b550738f6f4c1c532667c3fd872 upstream.
+Separate the overflow handling from the hardware interrupt status analysis.
+The interrupt status is a single register and is common for all PFs. The
+first PF reading the register is not necessarily the one who overflowed.
+All PFs must check their overflow status on every attention.
+In this change we clear the sticky indication in the attention handler to
+allow doorbells to be processed again as soon as possible, but running
+the doorbell recovery is scheduled for the periodic handler to reduce the
+time spent in the attention handler.
+Checking the need for DORQ flush was changed to "db_bar_no_edpm" because
+qed_edpm_enabled()'s result could change dynamically and might have
+prevented a needed flush.
 
-The TIF_SPEC_IB bit does not need to be evaluated in the decision to invoke
-__switch_to_xtra() when:
-
- - CONFIG_SMP is disabled
-
- - The conditional STIPB mode is disabled
-
-The TIF_SPEC_IB bit still controls IBPB in both cases so the TIF work mask
-checks might invoke __switch_to_xtra() for nothing if TIF_SPEC_IB is the
-only set bit in the work masks.
-
-Optimize it out by masking the bit at compile time for CONFIG_SMP=n and at
-run time when the static key controlling the conditional STIBP mode is
-disabled.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.374062201@linutronix.de
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
+Signed-off-by: Michal Kalderon <mkalderon@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/thread_info.h |   13 +++++++++++--
- arch/x86/kernel/process.h          |   15 +++++++++++++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed.h     |  3 ++
+ drivers/net/ethernet/qlogic/qed/qed_int.c | 61 +++++++++++++++++------
+ 2 files changed, 48 insertions(+), 16 deletions(-)
 
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -150,9 +150,18 @@ struct thread_info {
- 	_TIF_NOHZ)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed.h b/drivers/net/ethernet/qlogic/qed/qed.h
+index 07ae600d0f357..f458c9776a89c 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed.h
++++ b/drivers/net/ethernet/qlogic/qed/qed.h
+@@ -431,6 +431,8 @@ struct qed_qm_info {
+ 	u8 num_pf_rls;
+ };
  
- /* flags to check in __switch_to() */
--#define _TIF_WORK_CTXSW							\
-+#define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP|			\
--	 _TIF_SSBD|_TIF_SPEC_IB)
-+	 _TIF_SSBD)
++#define QED_OVERFLOW_BIT	1
 +
-+/*
-+ * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
-+ */
-+#ifdef CONFIG_SMP
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE | _TIF_SPEC_IB)
-+#else
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE)
-+#endif
+ struct qed_db_recovery_info {
+ 	struct list_head list;
  
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/kernel/process.h
-+++ b/arch/x86/kernel/process.h
-@@ -2,6 +2,8 @@
- //
- // Code shared between 32 and 64 bit
+@@ -438,6 +440,7 @@ struct qed_db_recovery_info {
+ 	spinlock_t lock;
+ 	bool dorq_attn;
+ 	u32 db_recovery_counter;
++	unsigned long overflow;
+ };
  
-+#include <asm/spec-ctrl.h>
+ struct storm_stats {
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
+index 00688f4c04645..a7e95f239317f 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
+@@ -376,6 +376,9 @@ static int qed_db_rec_flush_queue(struct qed_hwfn *p_hwfn,
+ 	u32 count = QED_DB_REC_COUNT;
+ 	u32 usage = 1;
+ 
++	/* Flush any pending (e)dpms as they may never arrive */
++	qed_wr(p_hwfn, p_ptt, DORQ_REG_DPM_FORCE_ABORT, 0x1);
 +
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
+ 	/* wait for usage to zero or count to run out. This is necessary since
+ 	 * EDPM doorbell transactions can take multiple 64b cycles, and as such
+ 	 * can "split" over the pci. Possibly, the doorbell drop can happen with
+@@ -404,23 +407,24 @@ static int qed_db_rec_flush_queue(struct qed_hwfn *p_hwfn,
  
- /*
-@@ -14,6 +16,19 @@ static inline void switch_to_extra(struc
- 	unsigned long next_tif = task_thread_info(next)->flags;
- 	unsigned long prev_tif = task_thread_info(prev)->flags;
+ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 overflow;
++	u32 attn_ovfl, cur_ovfl;
+ 	int rc;
  
-+	if (IS_ENABLED(CONFIG_SMP)) {
-+		/*
-+		 * Avoid __switch_to_xtra() invocation when conditional
-+		 * STIPB is disabled and the only different bit is
-+		 * TIF_SPEC_IB. For CONFIG_SMP=n TIF_SPEC_IB is not
-+		 * in the TIF_WORK_CTXSW masks.
-+		 */
-+		if (!static_branch_likely(&switch_to_cond_stibp)) {
-+			prev_tif &= ~_TIF_SPEC_IB;
-+			next_tif &= ~_TIF_SPEC_IB;
-+		}
+-	overflow = qed_rd(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY);
+-	DP_NOTICE(p_hwfn, "PF Overflow sticky 0x%x\n", overflow);
+-	if (!overflow)
++	attn_ovfl = test_and_clear_bit(QED_OVERFLOW_BIT,
++				       &p_hwfn->db_recovery_info.overflow);
++	cur_ovfl = qed_rd(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY);
++	if (!cur_ovfl && !attn_ovfl)
+ 		return 0;
+ 
+-	if (qed_edpm_enabled(p_hwfn)) {
++	DP_NOTICE(p_hwfn, "PF Overflow sticky: attn %u current %u\n",
++		  attn_ovfl, cur_ovfl);
++
++	if (cur_ovfl && !p_hwfn->db_bar_no_edpm) {
+ 		rc = qed_db_rec_flush_queue(p_hwfn, p_ptt);
+ 		if (rc)
+ 			return rc;
+ 	}
+ 
+-	/* Flush any pending (e)dpm as they may never arrive */
+-	qed_wr(p_hwfn, p_ptt, DORQ_REG_DPM_FORCE_ABORT, 0x1);
+-
+ 	/* Release overflow sticky indication (stop silently dropping everything) */
+ 	qed_wr(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY, 0x0);
+ 
+@@ -430,13 +434,35 @@ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ 	return 0;
+ }
+ 
+-static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
++static void qed_dorq_attn_overflow(struct qed_hwfn *p_hwfn)
+ {
+-	u32 int_sts, first_drop_reason, details, address, all_drops_reason;
+ 	struct qed_ptt *p_ptt = p_hwfn->p_dpc_ptt;
++	u32 overflow;
+ 	int rc;
+ 
+-	p_hwfn->db_recovery_info.dorq_attn = true;
++	overflow = qed_rd(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY);
++	if (!overflow)
++		goto out;
++
++	/* Run PF doorbell recovery in next periodic handler */
++	set_bit(QED_OVERFLOW_BIT, &p_hwfn->db_recovery_info.overflow);
++
++	if (!p_hwfn->db_bar_no_edpm) {
++		rc = qed_db_rec_flush_queue(p_hwfn, p_ptt);
++		if (rc)
++			goto out;
 +	}
 +
- 	/*
- 	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
- 	 * speculation mitigations etc.
++	qed_wr(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY, 0x0);
++out:
++	/* Schedule the handler even if overflow was not detected */
++	qed_periodic_db_rec_start(p_hwfn);
++}
++
++static int qed_dorq_attn_int_sts(struct qed_hwfn *p_hwfn)
++{
++	u32 int_sts, first_drop_reason, details, address, all_drops_reason;
++	struct qed_ptt *p_ptt = p_hwfn->p_dpc_ptt;
+ 
+ 	/* int_sts may be zero since all PFs were interrupted for doorbell
+ 	 * overflow but another one already handled it. Can abort here. If
+@@ -475,11 +501,6 @@ static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
+ 			  GET_FIELD(details, QED_DORQ_ATTENTION_SIZE) * 4,
+ 			  first_drop_reason, all_drops_reason);
+ 
+-		rc = qed_db_rec_handler(p_hwfn, p_ptt);
+-		qed_periodic_db_rec_start(p_hwfn);
+-		if (rc)
+-			return rc;
+-
+ 		/* Clear the doorbell drop details and prepare for next drop */
+ 		qed_wr(p_hwfn, p_ptt, DORQ_REG_DB_DROP_DETAILS_REL, 0);
+ 
+@@ -505,6 +526,14 @@ static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
+ 	return -EINVAL;
+ }
+ 
++static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
++{
++	p_hwfn->db_recovery_info.dorq_attn = true;
++	qed_dorq_attn_overflow(p_hwfn);
++
++	return qed_dorq_attn_int_sts(p_hwfn);
++}
++
+ static void qed_dorq_attn_handler(struct qed_hwfn *p_hwfn)
+ {
+ 	if (p_hwfn->db_recovery_info.dorq_attn)
+-- 
+2.20.1
+
 
 
