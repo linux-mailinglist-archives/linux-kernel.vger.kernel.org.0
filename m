@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F821F168
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F83A1F239
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731412AbfEOLxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:53:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
+        id S1730674AbfEOMAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:00:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730963AbfEOLT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:27 -0400
+        id S1726975AbfEOLOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69C7120843;
-        Wed, 15 May 2019 11:19:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 968E520843;
+        Wed, 15 May 2019 11:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919166;
-        bh=h3xdNg/q9zhRaJaNp3VWSoaqbdpc4FxgzygEbgsDw2c=;
+        s=default; t=1557918882;
+        bh=mIA+ijLf2ja/Iq0cq7ACxz8V/vsqmwrX8eLerHHUmQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bsZQBtRe+sJxpZpx5a4OtpG+Xf1VE5ZQTmVKejEQUPhYv+RubP9HZcgVt1FqhWfNy
-         ANu/laCs0dxkXlJDb9I+qAMz7JIX/H8gyNi8/JW7QWmH4JhYvDiJQWTqFFNIk1mTwU
-         KCWPtabiamskDeLLiFJA8zJUXbr1Wx6qTb6yWTLY=
+        b=jnCHTuuvURrSMhtvaIr3oREV+SEeMOGt9oAqqbOSogp221VE6JCd9QTB6fuBKXQCJ
+         X+n9sNDNB9TE4LXJBM5ogQ77IknBCOFIqyaK6I5+jnGB/BP6T7X1rCZ0gw5gSlPhi3
+         3GLYDije/kz/38WwEVBlQQ80QErMsr59bmr20x5I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 091/115] NFC: nci: Add some bounds checking in nci_hci_cmd_received()
+        stable@vger.kernel.org, Alistair Strachan <astrachan@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, kernel-team@android.com,
+        joel@joelfernandes.org, Andi Kleen <andi.kleen@intel.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 36/51] x86: vdso: Use $LD instead of $CC to link
 Date:   Wed, 15 May 2019 12:56:11 +0200
-Message-Id: <20190515090705.861199865@linuxfoundation.org>
+Message-Id: <20190515090627.121123141@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +48,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d7ee81ad09f072eab1681877fc71ec05f9c1ae92 ]
+commit 379d98ddf41344273d9718556f761420f4dc80b3 upstream.
 
-This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
-corruption when handling SHDLC I-Frame commands").
+The vdso{32,64}.so can fail to link with CC=clang when clang tries to find
+a suitable GCC toolchain to link these libraries with.
 
-I'm not totally sure, but I think that commit description may have
-overstated the danger.  I was under the impression that this data came
-from the firmware?  If you can't trust your networking firmware, then
-you're already in trouble.
+/usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
+  access beyond end of merged section (782)
 
-Anyway, these days we add bounds checking where ever we can and we call
-it kernel hardening.  Better safe than sorry.
+This happens because the host environment leaked into the cross compiler
+environment due to the way clang searches for suitable GCC toolchains.
 
-Fixes: 11f54f228643 ("NFC: nci: Add HCI over NCI protocol support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Clang is a retargetable compiler, and each invocation of it must provide
+--target=<something> --gcc-toolchain=<something> to allow it to find the
+correct binutils for cross compilation. These flags had been added to
+KBUILD_CFLAGS, but the vdso code uses CC and not KBUILD_CFLAGS (for various
+reasons) which breaks clang's ability to find the correct linker when cross
+compiling.
+
+Most of the time this goes unnoticed because the host linker is new enough
+to work anyway, or is incompatible and skipped, but this cannot be reliably
+assumed.
+
+This change alters the vdso makefile to just use LD directly, which
+bypasses clang and thus the searching problem. The makefile will just use
+${CROSS_COMPILE}ld instead, which is always what we want. This matches the
+method used to link vmlinux.
+
+This drops references to DISABLE_LTO; this option doesn't seem to be set
+anywhere, and not knowing what its possible values are, it's not clear how
+to convert it from CC to LD flag.
+
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-team@android.com
+Cc: joel@joelfernandes.org
+Cc: Andi Kleen <andi.kleen@intel.com>
+Link: https://lkml.kernel.org/r/20180803173931.117515-1-astrachan@google.com
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/nfc/nci/hci.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/entry/vdso/Makefile | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/net/nfc/nci/hci.c b/net/nfc/nci/hci.c
-index ddfc52ac1f9b4..c0d323b58e732 100644
---- a/net/nfc/nci/hci.c
-+++ b/net/nfc/nci/hci.c
-@@ -312,6 +312,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
- 		create_info = (struct nci_hci_create_pipe_resp *)skb->data;
- 		dest_gate = create_info->dest_gate;
- 		new_pipe = create_info->pipe;
-+		if (new_pipe >= NCI_HCI_MAX_PIPES) {
-+			status = NCI_HCI_ANY_E_NOK;
-+			goto exit;
-+		}
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index d5409660f5de6..2ae92c6b1de6d 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -47,10 +47,8 @@ targets += $(vdso_img_sodbg)
  
- 		/* Save the new created pipe and bind with local gate,
- 		 * the description for skb->data[3] is destination gate id
-@@ -336,6 +340,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
- 			goto exit;
- 		}
- 		delete_info = (struct nci_hci_delete_pipe_noti *)skb->data;
-+		if (delete_info->pipe >= NCI_HCI_MAX_PIPES) {
-+			status = NCI_HCI_ANY_E_NOK;
-+			goto exit;
-+		}
+ export CPPFLAGS_vdso.lds += -P -C
  
- 		ndev->hci_dev->pipes[delete_info->pipe].gate =
- 						NCI_HCI_INVALID_GATE;
+-VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+-			-Wl,--no-undefined \
+-			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
+-			$(DISABLE_LTO)
++VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
++			-z max-page-size=4096 -z common-page-size=4096
+ 
+ $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
+ 	$(call if_changed,vdso)
+@@ -96,10 +94,8 @@ CFLAGS_REMOVE_vvar.o = -pg
+ #
+ 
+ CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
+-VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
+-			   -Wl,-soname=linux-vdso.so.1 \
+-			   -Wl,-z,max-page-size=4096 \
+-			   -Wl,-z,common-page-size=4096
++VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
++			   -z max-page-size=4096 -z common-page-size=4096
+ 
+ # 64-bit objects to re-brand as x32
+ vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
+@@ -127,7 +123,7 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
+ 	$(call if_changed,vdso)
+ 
+ CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
+-VDSO_LDFLAGS_vdso32.lds = -m32 -Wl,-m,elf_i386 -Wl,-soname=linux-gate.so.1
++VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
+ 
+ # This makes sure the $(obj) subdirectory exists even though vdso32/
+ # is not a kbuild sub-make subdirectory.
+@@ -165,13 +161,13 @@ $(obj)/vdso32.so.dbg: FORCE \
+ # The DSO images are built using a special linker script.
+ #
+ quiet_cmd_vdso = VDSO    $@
+-      cmd_vdso = $(CC) -nostdlib -o $@ \
++      cmd_vdso = $(LD) -nostdlib -o $@ \
+ 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
+-		       -Wl,-T,$(filter %.lds,$^) $(filter %.o,$^) && \
++		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+ 
+-VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
+-	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
++VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
++	$(call ld-option, --build-id) -Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
 -- 
 2.20.1
 
