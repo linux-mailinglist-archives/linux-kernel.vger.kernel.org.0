@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD2A1F0EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD151EDB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbfEOLXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33676 "EHLO mail.kernel.org"
+        id S1729777AbfEOLM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:12:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730404AbfEOLXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:19 -0400
+        id S1729740AbfEOLMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:12:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D444206BF;
-        Wed, 15 May 2019 11:23:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99BA22084E;
+        Wed, 15 May 2019 11:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919398;
-        bh=OGmgcPDYmpGZoe6b7p5Kka/NjwDpmejKew+gZBRRk08=;
+        s=default; t=1557918740;
+        bh=cXkUWaJKFNGT0UDCgndx8rzLPOQvubfRIOTueJoC8eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGq4N46bitv9NeYqupu4MqBpqI8/kkWvhjBxjxgi2V1hiSEq/Kbm00nE2p5M9oBOQ
-         by1mMPnOmlD1UhxdFOIpJuY/5BY/Ic59FczU+vjj7rf0xPTv5yexuLnlLk+ATITcIv
-         Uz4a0n5jQWj2CuGDeS97zp5BGTgE4qD10JZ4aqCk=
+        b=Y/HmI9G8fsBMMMcqTq2DwDPofahND40EbptZGcpYpanjVcitbiNDwMhD04Jf9FPNG
+         1SSlzEDqyBt4w40DbsBbfp34MTWo75GPB0uF+et1arl5XTHvkNHAhH7kRXQzCCbp1Y
+         cmBdcHltcGxcxEXBzyXaVAvRMlIGwVd24YPLGw8Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Daniel Gomez <dagmcr@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 060/113] spi: ST ST95HF NFC: declare missing of table
-Date:   Wed, 15 May 2019 12:55:51 +0200
-Message-Id: <20190515090658.139662955@linuxfoundation.org>
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 245/266] x86/speculation/mds: Fix comment
+Date:   Wed, 15 May 2019 12:55:52 +0200
+Message-Id: <20190515090731.296093965@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +48,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d04830531d0c4a99c897a44038e5da3d23331d2f ]
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-Add missing <of_device_id> table for SPI driver relying on SPI
-device match since compatible is in a DT binding or in a DTS.
+commit cae5ec342645746d617dd420d206e1588d47768a upstream.
 
-Before this patch:
-modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
-alias:          spi:st95hf
+s/L1TF/MDS/
 
-After this patch:
-modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
-alias:          spi:st95hf
-alias:          of:N*T*Cst,st95hfC*
-alias:          of:N*T*Cst,st95hf
-
-Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+[bwh: Backported to 4.4: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/st95hf/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/cpu/bugs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-index 2b26f762fbc3b..01acb6e533655 100644
---- a/drivers/nfc/st95hf/core.c
-+++ b/drivers/nfc/st95hf/core.c
-@@ -1074,6 +1074,12 @@ static const struct spi_device_id st95hf_id[] = {
- };
- MODULE_DEVICE_TABLE(spi, st95hf_id);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -210,7 +210,7 @@ static void x86_amd_ssb_disable(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"MDS: " fmt
  
-+static const struct of_device_id st95hf_spi_of_match[] = {
-+        { .compatible = "st,st95hf" },
-+        { },
-+};
-+MODULE_DEVICE_TABLE(of, st95hf_spi_of_match);
-+
- static int st95hf_probe(struct spi_device *nfc_spi_dev)
- {
- 	int ret;
-@@ -1260,6 +1266,7 @@ static struct spi_driver st95hf_driver = {
- 	.driver = {
- 		.name = "st95hf",
- 		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(st95hf_spi_of_match),
- 	},
- 	.id_table = st95hf_id,
- 	.probe = st95hf_probe,
--- 
-2.20.1
-
+-/* Default mitigation for L1TF-affected CPUs */
++/* Default mitigation for MDS-affected CPUs */
+ static enum mds_mitigations mds_mitigation = MDS_MITIGATION_FULL;
+ 
+ static const char * const mds_strings[] = {
 
 
