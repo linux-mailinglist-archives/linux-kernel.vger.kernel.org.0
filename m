@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 180081F1B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3421F058
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbfEOLRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54436 "EHLO mail.kernel.org"
+        id S1731799AbfEOLnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730641AbfEOLRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:15 -0400
+        id S1732224AbfEOL11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7445920644;
-        Wed, 15 May 2019 11:17:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2219820843;
+        Wed, 15 May 2019 11:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919034;
-        bh=xFiCKmtsOvgoT4wK1Uqxsoxvd2pdKj+Zjdqq4SnKHgk=;
+        s=default; t=1557919646;
+        bh=T2QqfvhbHzDVSRQbMsQ6S98gh0+Bw32FInU2Ut6QmSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LO/beIkktyGom5i/y9W4mkJMx+PgeSCqk9+r3VeE5bIjqhWHr0cOPSSi1tRFmLwac
-         KoEPW9okYpvYP6xjotdSRcfuUq2rNhXe1y7eFh5y8LClwdFYYMiPezf4XUCr4VLPwz
-         vT7vdrp7VijHkGEaIOG6ibBNMgvZ79EUWQGShd8k=
+        b=tl07EyPDif8UjhZFPdsCa7Ot4/mwcbmPar9EmZ2PCaQlGc2Jx4cU8ZvcZOuerBefR
+         KUtCzBt1g1+B9iQzpb4/ighVQsH6sjP+zzcoJQ8XUUCDr4ca3CWprisjTFq35sAnBp
+         swsylspcTblIwR6COa2FNwH7QQSKIfspYnYDDkus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 041/115] sparc64: Make corrupted user stacks more debuggable.
-Date:   Wed, 15 May 2019 12:55:21 +0200
-Message-Id: <20190515090702.483620383@linuxfoundation.org>
+        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
+        Michal Kalderon <mkalderon@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 041/137] qed: Delete redundant doorbell recovery types
+Date:   Wed, 15 May 2019 12:55:22 +0200
+Message-Id: <20190515090656.397170610@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,168 +46,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5b4fc3882a649c9411dd0dcad2ddb78e911d340e ]
+[ Upstream commit 9ac6bb1414ac0d45fe9cefbd1f5b06f0e1a3c98a ]
 
-Right now if we get a corrupted user stack frame we do a
-do_exit(SIGILL) which is not helpful.
+DB_REC_DRY_RUN (running doorbell recovery without sending doorbells) is
+never used. DB_REC_ONCE (send a single doorbell from the doorbell recovery)
+is not needed anymore because by running the periodic handler we make sure
+we check the overflow status later instead.
+This patch is needed because in the next patches, the only doorbell
+recovery type being used is DB_REC_REAL_DEAL, and the fixes are much
+cleaner without this enum.
 
-If under a debugger, this behavior causes the inferior process to
-exit.  So the register and other state cannot be examined at the time
-of the event.
-
-Instead, conditionally log a rate limited kernel log message and then
-force a SIGSEGV.
-
-With bits and ideas borrowed (as usual) from powerpc.
-
+Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
+Signed-off-by: Michal Kalderon <mkalderon@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/include/asm/switch_to_64.h |  3 ++-
- arch/sparc/kernel/process_64.c        | 25 +++++++++++++++++++------
- arch/sparc/kernel/rtrap_64.S          |  1 +
- arch/sparc/kernel/signal32.c          | 12 ++++++++++--
- arch/sparc/kernel/signal_64.c         |  6 +++++-
- 5 files changed, 37 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed.h     |  3 +-
+ drivers/net/ethernet/qlogic/qed/qed_dev.c | 69 +++++++++--------------
+ drivers/net/ethernet/qlogic/qed/qed_int.c |  6 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.h |  4 +-
+ 4 files changed, 31 insertions(+), 51 deletions(-)
 
-diff --git a/arch/sparc/include/asm/switch_to_64.h b/arch/sparc/include/asm/switch_to_64.h
-index 4ff29b1406a9b..b1d4e2e3210fb 100644
---- a/arch/sparc/include/asm/switch_to_64.h
-+++ b/arch/sparc/include/asm/switch_to_64.h
-@@ -67,6 +67,7 @@ do {	save_and_clear_fpu();						\
- } while(0)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed.h b/drivers/net/ethernet/qlogic/qed/qed.h
+index 2d8a77cc156ba..d5fece7eb1698 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed.h
++++ b/drivers/net/ethernet/qlogic/qed/qed.h
+@@ -918,8 +918,7 @@ u16 qed_get_cm_pq_idx_llt_mtc(struct qed_hwfn *p_hwfn, u8 tc);
  
- void synchronize_user_stack(void);
--void fault_in_user_windows(void);
-+struct pt_regs;
-+void fault_in_user_windows(struct pt_regs *);
+ /* doorbell recovery mechanism */
+ void qed_db_recovery_dp(struct qed_hwfn *p_hwfn);
+-void qed_db_recovery_execute(struct qed_hwfn *p_hwfn,
+-			     enum qed_db_rec_exec db_exec);
++void qed_db_recovery_execute(struct qed_hwfn *p_hwfn);
+ bool qed_edpm_enabled(struct qed_hwfn *p_hwfn);
  
- #endif /* __SPARC64_SWITCH_TO_64_H */
-diff --git a/arch/sparc/kernel/process_64.c b/arch/sparc/kernel/process_64.c
-index 318efd784a0b3..5640131e2abf3 100644
---- a/arch/sparc/kernel/process_64.c
-+++ b/arch/sparc/kernel/process_64.c
-@@ -36,6 +36,7 @@
- #include <linux/sysrq.h>
- #include <linux/nmi.h>
- #include <linux/context_tracking.h>
-+#include <linux/signal.h>
+ /* Other Linux specific common definitions */
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+index 2ecaaaa4469a6..ff0bbf8d073d6 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -300,26 +300,19 @@ void qed_db_recovery_dp(struct qed_hwfn *p_hwfn)
  
- #include <linux/uaccess.h>
- #include <asm/page.h>
-@@ -528,7 +529,12 @@ static void stack_unaligned(unsigned long sp)
- 	force_sig_info(SIGBUS, &info, current);
+ /* Ring the doorbell of a single doorbell recovery entry */
+ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
+-				 struct qed_db_recovery_entry *db_entry,
+-				 enum qed_db_rec_exec db_exec)
+-{
+-	if (db_exec != DB_REC_ONCE) {
+-		/* Print according to width */
+-		if (db_entry->db_width == DB_REC_WIDTH_32B) {
+-			DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
+-				   "%s doorbell address %p data %x\n",
+-				   db_exec == DB_REC_DRY_RUN ?
+-				   "would have rung" : "ringing",
+-				   db_entry->db_addr,
+-				   *(u32 *)db_entry->db_data);
+-		} else {
+-			DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
+-				   "%s doorbell address %p data %llx\n",
+-				   db_exec == DB_REC_DRY_RUN ?
+-				   "would have rung" : "ringing",
+-				   db_entry->db_addr,
+-				   *(u64 *)(db_entry->db_data));
+-		}
++				 struct qed_db_recovery_entry *db_entry)
++{
++	/* Print according to width */
++	if (db_entry->db_width == DB_REC_WIDTH_32B) {
++		DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
++			   "ringing doorbell address %p data %x\n",
++			   db_entry->db_addr,
++			   *(u32 *)db_entry->db_data);
++	} else {
++		DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
++			   "ringing doorbell address %p data %llx\n",
++			   db_entry->db_addr,
++			   *(u64 *)(db_entry->db_data));
+ 	}
+ 
+ 	/* Sanity */
+@@ -334,14 +327,12 @@ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
+ 	wmb();
+ 
+ 	/* Ring the doorbell */
+-	if (db_exec == DB_REC_REAL_DEAL || db_exec == DB_REC_ONCE) {
+-		if (db_entry->db_width == DB_REC_WIDTH_32B)
+-			DIRECT_REG_WR(db_entry->db_addr,
+-				      *(u32 *)(db_entry->db_data));
+-		else
+-			DIRECT_REG_WR64(db_entry->db_addr,
+-					*(u64 *)(db_entry->db_data));
+-	}
++	if (db_entry->db_width == DB_REC_WIDTH_32B)
++		DIRECT_REG_WR(db_entry->db_addr,
++			      *(u32 *)(db_entry->db_data));
++	else
++		DIRECT_REG_WR64(db_entry->db_addr,
++				*(u64 *)(db_entry->db_data));
+ 
+ 	/* Flush the write combined buffer. Next doorbell may come from a
+ 	 * different entity to the same address...
+@@ -350,29 +341,21 @@ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
  }
  
--void fault_in_user_windows(void)
-+static const char uwfault32[] = KERN_INFO \
-+	"%s[%d]: bad register window fault: SP %08lx (orig_sp %08lx) TPC %08lx O7 %08lx\n";
-+static const char uwfault64[] = KERN_INFO \
-+	"%s[%d]: bad register window fault: SP %016lx (orig_sp %016lx) TPC %08lx O7 %016lx\n";
-+
-+void fault_in_user_windows(struct pt_regs *regs)
+ /* Traverse the doorbell recovery entry list and ring all the doorbells */
+-void qed_db_recovery_execute(struct qed_hwfn *p_hwfn,
+-			     enum qed_db_rec_exec db_exec)
++void qed_db_recovery_execute(struct qed_hwfn *p_hwfn)
  {
- 	struct thread_info *t = current_thread_info();
- 	unsigned long window;
-@@ -541,9 +547,9 @@ void fault_in_user_windows(void)
- 		do {
- 			struct reg_window *rwin = &t->reg_window[window];
- 			int winsize = sizeof(struct reg_window);
--			unsigned long sp;
-+			unsigned long sp, orig_sp;
+ 	struct qed_db_recovery_entry *db_entry = NULL;
  
--			sp = t->rwbuf_stkptrs[window];
-+			orig_sp = sp = t->rwbuf_stkptrs[window];
+-	if (db_exec != DB_REC_ONCE) {
+-		DP_NOTICE(p_hwfn,
+-			  "Executing doorbell recovery. Counter was %d\n",
+-			  p_hwfn->db_recovery_info.db_recovery_counter);
++	DP_NOTICE(p_hwfn, "Executing doorbell recovery. Counter was %d\n",
++		  p_hwfn->db_recovery_info.db_recovery_counter);
  
- 			if (test_thread_64bit_stack(sp))
- 				sp += STACK_BIAS;
-@@ -554,8 +560,16 @@ void fault_in_user_windows(void)
- 				stack_unaligned(sp);
+-		/* Track amount of times recovery was executed */
+-		p_hwfn->db_recovery_info.db_recovery_counter++;
+-	}
++	/* Track amount of times recovery was executed */
++	p_hwfn->db_recovery_info.db_recovery_counter++;
  
- 			if (unlikely(copy_to_user((char __user *)sp,
--						  rwin, winsize)))
-+						  rwin, winsize))) {
-+				if (show_unhandled_signals)
-+					printk_ratelimited(is_compat_task() ?
-+							   uwfault32 : uwfault64,
-+							   current->comm, current->pid,
-+							   sp, orig_sp,
-+							   regs->tpc,
-+							   regs->u_regs[UREG_I7]);
- 				goto barf;
-+			}
- 		} while (window--);
- 	}
- 	set_thread_wsaved(0);
-@@ -563,8 +577,7 @@ void fault_in_user_windows(void)
- 
- barf:
- 	set_thread_wsaved(window + 1);
--	user_exit();
--	do_exit(SIGILL);
-+	force_sig(SIGSEGV, current);
+ 	/* Protect the list */
+ 	spin_lock_bh(&p_hwfn->db_recovery_info.lock);
+ 	list_for_each_entry(db_entry,
+-			    &p_hwfn->db_recovery_info.list, list_entry) {
+-		qed_db_recovery_ring(p_hwfn, db_entry, db_exec);
+-		if (db_exec == DB_REC_ONCE)
+-			break;
+-	}
+-
++			    &p_hwfn->db_recovery_info.list, list_entry)
++		qed_db_recovery_ring(p_hwfn, db_entry);
+ 	spin_unlock_bh(&p_hwfn->db_recovery_info.lock);
  }
  
- asmlinkage long sparc_do_fork(unsigned long clone_flags,
-diff --git a/arch/sparc/kernel/rtrap_64.S b/arch/sparc/kernel/rtrap_64.S
-index 0b21042ab181b..ad88d60bb740c 100644
---- a/arch/sparc/kernel/rtrap_64.S
-+++ b/arch/sparc/kernel/rtrap_64.S
-@@ -30,6 +30,7 @@ __handle_preemption:
- 		 wrpr			%g0, RTRAP_PSTATE_IRQOFF, %pstate
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
+index 92340919d8521..b994f81eb51c3 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
+@@ -409,10 +409,8 @@ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
  
- __handle_user_windows:
-+		add			%sp, PTREGS_OFF, %o0
- 		call			fault_in_user_windows
- 		 wrpr			%g0, RTRAP_PSTATE, %pstate
- 		ba,pt			%xcc, __handle_preemption_continue
-diff --git a/arch/sparc/kernel/signal32.c b/arch/sparc/kernel/signal32.c
-index 5c572de64c748..879f8d86bc21c 100644
---- a/arch/sparc/kernel/signal32.c
-+++ b/arch/sparc/kernel/signal32.c
-@@ -442,7 +442,11 @@ static int setup_frame32(struct ksignal *ksig, struct pt_regs *regs,
- 		get_sigframe(ksig, regs, sigframe_size);
- 	
- 	if (invalid_frame_pointer(sf, sigframe_size)) {
--		do_exit(SIGILL);
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_frame32: %08lx TPC %08lx O7 %08lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
+ 	overflow = qed_rd(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY);
+ 	DP_NOTICE(p_hwfn, "PF Overflow sticky 0x%x\n", overflow);
+-	if (!overflow) {
+-		qed_db_recovery_execute(p_hwfn, DB_REC_ONCE);
++	if (!overflow)
+ 		return 0;
+-	}
  
-@@ -573,7 +577,11 @@ static int setup_rt_frame32(struct ksignal *ksig, struct pt_regs *regs,
- 		get_sigframe(ksig, regs, sigframe_size);
- 	
- 	if (invalid_frame_pointer(sf, sigframe_size)) {
--		do_exit(SIGILL);
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_rt_frame32: %08lx TPC %08lx O7 %08lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
+ 	if (qed_edpm_enabled(p_hwfn)) {
+ 		rc = qed_db_rec_flush_queue(p_hwfn, p_ptt);
+@@ -427,7 +425,7 @@ int qed_db_rec_handler(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ 	qed_wr(p_hwfn, p_ptt, DORQ_REG_PF_OVFL_STICKY, 0x0);
  
-diff --git a/arch/sparc/kernel/signal_64.c b/arch/sparc/kernel/signal_64.c
-index 20426a1c28f29..2d0a50bde3f96 100644
---- a/arch/sparc/kernel/signal_64.c
-+++ b/arch/sparc/kernel/signal_64.c
-@@ -373,7 +373,11 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
- 		get_sigframe(ksig, regs, sf_size);
+ 	/* Repeat all last doorbells (doorbell drop recovery) */
+-	qed_db_recovery_execute(p_hwfn, DB_REC_REAL_DEAL);
++	qed_db_recovery_execute(p_hwfn);
  
- 	if (invalid_frame_pointer (sf)) {
--		do_exit(SIGILL);	/* won't return, actually */
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_rt_frame: %016lx TPC %016lx O7 %016lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.h b/drivers/net/ethernet/qlogic/qed/qed_int.h
+index d81a62ebd5244..df26bf333893d 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.h
+@@ -192,8 +192,8 @@ void qed_int_disable_post_isr_release(struct qed_dev *cdev);
  
+ /**
+  * @brief - Doorbell Recovery handler.
+- *          Run DB_REAL_DEAL doorbell recovery in case of PF overflow
+- *          (and flush DORQ if needed), otherwise run DB_REC_ONCE.
++ *          Run doorbell recovery in case of PF overflow (and flush DORQ if
++ *          needed).
+  *
+  * @param p_hwfn
+  * @param p_ptt
 -- 
 2.20.1
 
