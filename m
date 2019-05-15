@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407B71F014
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB6B1F20A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbfEOLaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41298 "EHLO mail.kernel.org"
+        id S1730216AbfEOLPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:15:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfEOL3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:29:55 -0400
+        id S1729552AbfEOLO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5A74206BF;
-        Wed, 15 May 2019 11:29:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1341D20644;
+        Wed, 15 May 2019 11:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919794;
-        bh=A2HWa2eMV8cNpLlt3TpLLCMT1YnL9BzX46XVNAsJMbk=;
+        s=default; t=1557918897;
+        bh=J3f9r01nX+Zo4/kwKNagRFruOmmjmmmf3WnXjJ4vyUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsMIWM2qtrzIN07IT2uJdI7FyOpBP6H6AOeV1nvLrZ2mtWfJDEXkpZKxp2T9XkJXq
-         e6qBs+exVuDuV9f0eSvuu2l1ZDqSzHzf78N/CawTx4O+Duq+s/C3YIGdfXVrEoVXEx
-         ccYIQLhhRBHCUsJ1ZhZ+gsQrKOzo0vCb4eK3oZ+o=
+        b=l//nQRVzc5lASAXztKgBZQkbM0e7MtZ/XbEgTo3D3hDzyzTuksG8PIGjicI44HXcQ
+         mxWTzNvlASlc1x9gRBj4kOevrzMWva0ZPiGCc6wm9slvee8L1kLpohKiolSdNm4SP7
+         0CPJlUq9p1t9/QzidHbKnCe9G4RxhCYUW2u+oXpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 096/137] mm/page_alloc.c: avoid potential NULL pointer dereference
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 42/51] net: ucc_geth - fix Oops when changing number of buffers in the ring
 Date:   Wed, 15 May 2019 12:56:17 +0200
-Message-Id: <20190515090700.506837533@linuxfoundation.org>
+Message-Id: <20190515090628.339987206@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8139ad043d632c0e9e12d760068a7a8e91659aa1 ]
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-ac.preferred_zoneref->zone passed to alloc_flags_nofragment() can be NULL.
-'zone' pointer unconditionally derefernced in alloc_flags_nofragment().
-Bail out on NULL zone to avoid potential crash.  Currently we don't see
-any crashes only because alloc_flags_nofragment() has another bug which
-allows compiler to optimize away all accesses to 'zone'.
+[ Upstream commit ee0df19305d9fabd9479b785918966f6e25b733b ]
 
-Link: http://lkml.kernel.org/r/20190423120806.3503-1-aryabinin@virtuozzo.com
-Fixes: 6bb154504f8b ("mm, page_alloc: spread allocations across zones before introducing fragmentation")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When changing the number of buffers in the RX ring while the interface
+is running, the following Oops is encountered due to the new number
+of buffers being taken into account immediately while their allocation
+is done when opening the device only.
+
+[   69.882706] Unable to handle kernel paging request for data at address 0xf0000100
+[   69.890172] Faulting instruction address: 0xc033e164
+[   69.895122] Oops: Kernel access of bad area, sig: 11 [#1]
+[   69.900494] BE PREEMPT CMPCPRO
+[   69.907120] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.115-00006-g179ade8ce3-dirty #269
+[   69.915956] task: c0684310 task.stack: c06da000
+[   69.920470] NIP:  c033e164 LR: c02e44d0 CTR: c02e41fc
+[   69.925504] REGS: dfff1e20 TRAP: 0300   Not tainted  (4.14.115-00006-g179ade8ce3-dirty)
+[   69.934161] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 22004428  XER: 20000000
+[   69.940869] DAR: f0000100 DSISR: 20000000
+[   69.940869] GPR00: c0352d70 dfff1ed0 c0684310 f00000a4 00000040 dfff1f68 00000000 0000001f
+[   69.940869] GPR08: df53f410 1cc00040 00000021 c0781640 42004424 100c82b6 f00000a4 df53f5b0
+[   69.940869] GPR16: df53f6c0 c05daf84 00000040 00000000 00000040 c0782be4 00000000 00000001
+[   69.940869] GPR24: 00000000 df53f400 000001b0 df53f410 df53f000 0000003f df708220 1cc00044
+[   69.978348] NIP [c033e164] skb_put+0x0/0x5c
+[   69.982528] LR [c02e44d0] ucc_geth_poll+0x2d4/0x3f8
+[   69.987384] Call Trace:
+[   69.989830] [dfff1ed0] [c02e4554] ucc_geth_poll+0x358/0x3f8 (unreliable)
+[   69.996522] [dfff1f20] [c0352d70] net_rx_action+0x248/0x30c
+[   70.002099] [dfff1f80] [c04e93e4] __do_softirq+0xfc/0x310
+[   70.007492] [dfff1fe0] [c0021124] irq_exit+0xd0/0xd4
+[   70.012458] [dfff1ff0] [c000e7e0] call_do_irq+0x24/0x3c
+[   70.017683] [c06dbe80] [c0006bac] do_IRQ+0x64/0xc4
+[   70.022474] [c06dbea0] [c001097c] ret_from_except+0x0/0x14
+[   70.027964] --- interrupt: 501 at rcu_idle_exit+0x84/0x90
+[   70.027964]     LR = rcu_idle_exit+0x74/0x90
+[   70.037585] [c06dbf60] [20000000] 0x20000000 (unreliable)
+[   70.042984] [c06dbf80] [c004bb0c] do_idle+0xb4/0x11c
+[   70.047945] [c06dbfa0] [c004bd14] cpu_startup_entry+0x18/0x1c
+[   70.053682] [c06dbfb0] [c05fb034] start_kernel+0x370/0x384
+[   70.059153] [c06dbff0] [00003438] 0x3438
+[   70.063062] Instruction dump:
+[   70.066023] 38a00000 38800000 90010014 4bfff015 80010014 7c0803a6 3123ffff 7c691910
+[   70.073767] 38210010 4e800020 38600000 4e800020 <80e3005c> 80c30098 3107ffff 7d083910
+[   70.081690] ---[ end trace be7ccd9c1e1a9f12 ]---
+
+This patch forbids the modification of the number of buffers in the
+ring while the interface is running.
+
+Fixes: ac421852b3a0 ("ucc_geth: add ethtool support")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/page_alloc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/freescale/ucc_geth_ethtool.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index eedb57f9b40b5..d59be95ba45cf 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3385,6 +3385,9 @@ alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- 		alloc_flags |= ALLOC_KSWAPD;
+--- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
++++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
+@@ -250,14 +250,12 @@ uec_set_ringparam(struct net_device *net
+ 		return -EINVAL;
+ 	}
  
- #ifdef CONFIG_ZONE_DMA32
-+	if (!zone)
-+		return alloc_flags;
++	if (netif_running(netdev))
++		return -EBUSY;
 +
- 	if (zone_idx(zone) != ZONE_NORMAL)
- 		goto out;
+ 	ug_info->bdRingLenRx[queue] = ring->rx_pending;
+ 	ug_info->bdRingLenTx[queue] = ring->tx_pending;
  
--- 
-2.20.1
-
+-	if (netif_running(netdev)) {
+-		/* FIXME: restart automatically */
+-		netdev_info(netdev, "Please re-open the interface\n");
+-	}
+-
+ 	return ret;
+ }
+ 
 
 
