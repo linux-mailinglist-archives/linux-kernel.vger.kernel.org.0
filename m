@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19DF41EE4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3581C1F20C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbfEOLTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57510 "EHLO mail.kernel.org"
+        id S1730606AbfEOMAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730959AbfEOLTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:46 -0400
+        id S1730012AbfEOLPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:15:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF4BC20862;
-        Wed, 15 May 2019 11:19:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 758832084E;
+        Wed, 15 May 2019 11:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919185;
-        bh=qWglezqHnqwnAG3+q6dzjt0VM7y2yamRGcUyrHCtAZk=;
+        s=default; t=1557918899;
+        bh=Y7dQ3JoNXOqLMwYaqAhM/oyX57p+juN8prrUDw2nv3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PIVNkEMUBUIIN6wYmI/AscHWSbez/egNZ4aQZKC4zTOh68oUB7wZBm1cZRB33YtH3
-         p+TjI6fSbkEtklZTfdHwQ4jiBuE5vgaW68kERsb/8jIM80LVGDnKHX3meWRhWMg2Pr
-         M1eygEh0japMbzSBTJef7p7wpX8rYR/Mod5b0/z0=
+        b=MDUhjj4vhdjIi03MKgXMjbGfL0RpVzu3yjC74PN5qXaQ0xvT7uF7a/3+I1epIYNOE
+         DtaCzQRw0xJma5xSVBThAVUsNY+oqstCiOsa20TlklCepl0Bz0ut0UDG2rOmTjjehh
+         tzIlMArtaZ2wEu4poSOtNLsLtkNHnJwvDAFd4Bb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        David Jeffery <djeffery@redhat.com>,
-        Nigel Croxon <ncroxon@redhat.com>,
-        Song Liu <songliubraving@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 097/115] Dont jump to compute_result state from check_result state
-Date:   Wed, 15 May 2019 12:56:17 +0200
-Message-Id: <20190515090706.227940873@linuxfoundation.org>
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 43/51] packet: Fix error path in packet_init
+Date:   Wed, 15 May 2019 12:56:18 +0200
+Message-Id: <20190515090628.491325386@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,115 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nigel Croxon <ncroxon@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 4f4fd7c5798bbdd5a03a60f6269cf1177fbd11ef upstream.
+[ Upstream commit 36096f2f4fa05f7678bc87397665491700bae757 ]
 
-Changing state from check_state_check_result to
-check_state_compute_result not only is unsafe but also doesn't
-appear to serve a valid purpose.  A raid6 check should only be
-pushing out extra writes if doing repair and a mis-match occurs.
-The stripe dev management will already try and do repair writes
-for failing sectors.
+kernel BUG at lib/list_debug.c:47!
+invalid opcode: 0000 [#1
+CPU: 0 PID: 12914 Comm: rmmod Tainted: G        W         5.1.0+ #47
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:__list_del_entry_valid+0x53/0x90
+Code: 48 8b 32 48 39 fe 75 35 48 8b 50 08 48 39 f2 75 40 b8 01 00 00 00 5d c3 48
+89 fe 48 89 c2 48 c7 c7 18 75 fe 82 e8 cb 34 78 ff <0f> 0b 48 89 fe 48 c7 c7 50 75 fe 82 e8 ba 34 78 ff 0f 0b 48 89 f2
+RSP: 0018:ffffc90001c2fe40 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffffffffa0184000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff888237a17788 RDI: 00000000ffffffff
+RBP: ffffc90001c2fe40 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffc90001c2fe10 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffc90001c2fe50 R14: ffffffffa0184000 R15: 0000000000000000
+FS:  00007f3d83634540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555c350ea818 CR3: 0000000231677000 CR4: 00000000000006f0
+Call Trace:
+ unregister_pernet_operations+0x34/0x120
+ unregister_pernet_subsys+0x1c/0x30
+ packet_exit+0x1c/0x369 [af_packet
+ __x64_sys_delete_module+0x156/0x260
+ ? lockdep_hardirqs_on+0x133/0x1b0
+ ? do_syscall_64+0x12/0x1f0
+ do_syscall_64+0x6e/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This patch makes the raid6 check_state_check_result handling
-work more like raid5's.  If somehow too many failures for a
-check, just quit the check operation for the stripe.  When any
-checks pass, don't try and use check_state_compute_result for
-a purpose it isn't needed for and is unsafe for.  Just mark the
-stripe as in sync for passing its parity checks and let the
-stripe dev read/write code and the bad blocks list do their
-job handling I/O errors.
+When modprobe af_packet, register_pernet_subsys
+fails and does a cleanup, ops->list is set to LIST_POISON1,
+but the module init is considered to success, then while rmmod it,
+BUG() is triggered in __list_del_entry_valid which is called from
+unregister_pernet_subsys. This patch fix error handing path in
+packet_init to avoid possilbe issue if some error occur.
 
-Repro steps from Xiao:
-
-These are the steps to reproduce this problem:
-1. redefined OPT_MEDIUM_ERR_ADDR to 12000 in scsi_debug.c
-2. insmod scsi_debug.ko dev_size_mb=11000  max_luns=1 num_tgts=1
-3. mdadm --create /dev/md127 --level=6 --raid-devices=5 /dev/sde1 /dev/sde2 /dev/sde3 /dev/sde5 /dev/sde6
-sde is the disk created by scsi_debug
-4. echo "2" >/sys/module/scsi_debug/parameters/opts
-5. raid-check
-
-It panic:
-[ 4854.730899] md: data-check of RAID array md127
-[ 4854.857455] sd 5:0:0:0: [sdr] tag#80 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[ 4854.859246] sd 5:0:0:0: [sdr] tag#80 Sense Key : Medium Error [current]
-[ 4854.860694] sd 5:0:0:0: [sdr] tag#80 Add. Sense: Unrecovered read error
-[ 4854.862207] sd 5:0:0:0: [sdr] tag#80 CDB: Read(10) 28 00 00 00 2d 88 00 04 00 00
-[ 4854.864196] print_req_error: critical medium error, dev sdr, sector 11656 flags 0
-[ 4854.867409] sd 5:0:0:0: [sdr] tag#100 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[ 4854.869469] sd 5:0:0:0: [sdr] tag#100 Sense Key : Medium Error [current]
-[ 4854.871206] sd 5:0:0:0: [sdr] tag#100 Add. Sense: Unrecovered read error
-[ 4854.872858] sd 5:0:0:0: [sdr] tag#100 CDB: Read(10) 28 00 00 00 2e e0 00 00 08 00
-[ 4854.874587] print_req_error: critical medium error, dev sdr, sector 12000 flags 4000
-[ 4854.876456] sd 5:0:0:0: [sdr] tag#101 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[ 4854.878552] sd 5:0:0:0: [sdr] tag#101 Sense Key : Medium Error [current]
-[ 4854.880278] sd 5:0:0:0: [sdr] tag#101 Add. Sense: Unrecovered read error
-[ 4854.881846] sd 5:0:0:0: [sdr] tag#101 CDB: Read(10) 28 00 00 00 2e e8 00 00 08 00
-[ 4854.883691] print_req_error: critical medium error, dev sdr, sector 12008 flags 4000
-[ 4854.893927] sd 5:0:0:0: [sdr] tag#166 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[ 4854.896002] sd 5:0:0:0: [sdr] tag#166 Sense Key : Medium Error [current]
-[ 4854.897561] sd 5:0:0:0: [sdr] tag#166 Add. Sense: Unrecovered read error
-[ 4854.899110] sd 5:0:0:0: [sdr] tag#166 CDB: Read(10) 28 00 00 00 2e e0 00 00 10 00
-[ 4854.900989] print_req_error: critical medium error, dev sdr, sector 12000 flags 0
-[ 4854.902757] md/raid:md127: read error NOT corrected!! (sector 9952 on sdr1).
-[ 4854.904375] md/raid:md127: read error NOT corrected!! (sector 9960 on sdr1).
-[ 4854.906201] ------------[ cut here ]------------
-[ 4854.907341] kernel BUG at drivers/md/raid5.c:4190!
-
-raid5.c:4190 above is this BUG_ON:
-
-    handle_parity_checks6()
-        ...
-        BUG_ON(s->uptodate < disks - 1); /* We don't need Q to recover */
-
-Cc: <stable@vger.kernel.org> # v3.16+
-OriginalAuthor: David Jeffery <djeffery@redhat.com>
-Cc: Xiao Ni <xni@redhat.com>
-Tested-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: David Jeffy <djeffery@redhat.com>
-Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/raid5.c |   19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ net/packet/af_packet.c |   25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -4218,26 +4218,15 @@ static void handle_parity_checks6(struct
- 	case check_state_check_result:
- 		sh->check_state = check_state_idle;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4624,14 +4624,29 @@ static void __exit packet_exit(void)
  
-+		if (s->failed > 1)
-+			break;
- 		/* handle a successful check operation, if parity is correct
- 		 * we are done.  Otherwise update the mismatch count and repair
- 		 * parity if !MD_RECOVERY_CHECK
- 		 */
- 		if (sh->ops.zero_sum_result == 0) {
--			/* both parities are correct */
--			if (!s->failed)
--				set_bit(STRIPE_INSYNC, &sh->state);
--			else {
--				/* in contrast to the raid5 case we can validate
--				 * parity, but still have a failure to write
--				 * back
--				 */
--				sh->check_state = check_state_compute_result;
--				/* Returning at this point means that we may go
--				 * off and bring p and/or q uptodate again so
--				 * we make sure to check zero_sum_result again
--				 * to verify if p or q need writeback
--				 */
--			}
-+			/* Any parity checked was correct */
-+			set_bit(STRIPE_INSYNC, &sh->state);
- 		} else {
- 			atomic64_add(STRIPE_SECTORS, &conf->mddev->resync_mismatches);
- 			if (test_bit(MD_RECOVERY_CHECK, &conf->mddev->recovery)) {
+ static int __init packet_init(void)
+ {
+-	int rc = proto_register(&packet_proto, 0);
++	int rc;
+ 
+-	if (rc != 0)
++	rc = proto_register(&packet_proto, 0);
++	if (rc)
+ 		goto out;
++	rc = sock_register(&packet_family_ops);
++	if (rc)
++		goto out_proto;
++	rc = register_pernet_subsys(&packet_net_ops);
++	if (rc)
++		goto out_sock;
++	rc = register_netdevice_notifier(&packet_netdev_notifier);
++	if (rc)
++		goto out_pernet;
+ 
+-	sock_register(&packet_family_ops);
+-	register_pernet_subsys(&packet_net_ops);
+-	register_netdevice_notifier(&packet_netdev_notifier);
++	return 0;
++
++out_pernet:
++	unregister_pernet_subsys(&packet_net_ops);
++out_sock:
++	sock_unregister(PF_PACKET);
++out_proto:
++	proto_unregister(&packet_proto);
+ out:
+ 	return rc;
+ }
 
 
