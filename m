@@ -2,149 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686BB1FBB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 22:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6C31FBBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 22:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbfEOUtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 16:49:09 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34050 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfEOUtI (ORCPT
+        id S1727752AbfEOUug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 16:50:36 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46335 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfEOUuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 16:49:08 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v10so877705oib.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 13:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e4kuu9yC2IGARpDlHp3ONWA+CXX8IcBRGF2a1wpOmUI=;
-        b=Xrsk/LtY64WEnj9luwHstQr/vldj3FFs0v4BjRZAzdGdLcSlF9SqwRFLIkegzPHAwK
-         4BwtJSHQVRbiUejXql7JFlZJLxJDitd+1N9vZBZp9AH7V4H3tF8C8YrWWR2scfqIvklg
-         K3++RgNbjyAcHvsO/gtBY9KzOiuwBdRxZ9uNTFcjGbcpIU3ySWcKBqx1i7aYED7uA8We
-         wfFf0dayHlB1izT9baOTeQixtzK3OgVjTQ6b6HX+qmLkPmX0ef8xTCNg+LPpZh1HotLT
-         NK2turIQ2FHb03Mu3tIJfJn8adJ/JeZmQFe6DvMuBLC9/f4qF9rSl3qlHKudtMX7ueMn
-         BOXg==
+        Wed, 15 May 2019 16:50:35 -0400
+Received: by mail-qt1-f196.google.com with SMTP id z19so1314649qtz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 13:50:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=e4kuu9yC2IGARpDlHp3ONWA+CXX8IcBRGF2a1wpOmUI=;
-        b=V5MVelG7J1ClgFoE0aah0TTtKGwWQxriExATWDJi9irIEvXl+pOXQ4jYiyFRJA2a2S
-         KvvGq5dvZeMSItDTGBdd1HK4W+AGbxnSlB45DYA/tVxDcY6hVGt+zK0bH15glTOQ7po1
-         GONhnXRBKvhYUNB1eLK4HZeAzpMWJ5UpRx2B9DW6BE7MT7ra6+EPczjAmap5c32fI1PP
-         LDD31yBsXv1KOZLbkbSxT8f/FNbCBJnN29T2iRHFhkZ+i8RMnY90jwsid87oGA1qUWJ1
-         ITa3vDQHYyHip970kl43xaVbESQIBJDlmNqWA3iIfj9hYYQNV3AQyTHNXxljdf/zsyvG
-         NWqw==
-X-Gm-Message-State: APjAAAX8Y1wnVhZhq3h5G/fIPgTYHCoOl6hNLEqc9euyvVxwyhrEFnkH
-        naEvVTAwkGDLp+2UcgaRwJUWVSLIO+EB+xUHkY6gOg==
-X-Google-Smtp-Source: APXvYqyO6g2r/WhDKBmVOOTl4sYnhhJyyQJvRNxhfafK8+4MMPFpeaS+xqdpic/meUQecZLwA+0URassFkWkwJjqLWc=
-X-Received: by 2002:aca:b641:: with SMTP id g62mr5296871oif.149.1557953347952;
- Wed, 15 May 2019 13:49:07 -0700 (PDT)
+        bh=PoiUAmeKPw/pdD40GLo8HG1mUfQRJDhIA9wodB2uBqc=;
+        b=XDKmng0nisemBZJP4hJWv9+86G/C2bkI2Svz0jg0k1P9EAU+iPG6RoHkFXrekuhr/B
+         7vYwdDN9rmKAvICMmkqpHy6LnwuslrbjZPIDOR77n9PLbMWKxIGauHXPoJqNP0nTbAri
+         nZ4EqGfwX4XjeGK3N7LKZmamQBb3PF8eWXbA43++aEk/4Rezq+ypPaNITVXllDyD34n7
+         OJjZXmAKRtBrk0YlQIeFhpDWn1dtbcnL/hJlOY8x23hf1ngSJ/bazVQOZWgEdsfMRkDg
+         FDlSqUiinZS6My+9q6WF3g+qgE+PE3PqZz63iqGwPpBipeyLyG8if9XZqYtF+EUR6Jw9
+         c3jA==
+X-Gm-Message-State: APjAAAU+kBJZOOBfLOXEZwo8Kelgfkj+S3wCGkjtNkDP0H8EHzaxnZ6K
+        ywT5c24cu3pNUzyVpxVYBOfrisQ/dFMl32ade2sFAU0u64zQZg==
+X-Google-Smtp-Source: APXvYqynPLvdllc3+4rsPV6FfaJGtw4zvsaFmKz0WuH0vIyP7RzXIFVXsn22W7leanGKtMd7HDesnJDdcojcXnCzJtw=
+X-Received: by 2002:a0c:f40a:: with SMTP id h10mr10605409qvl.180.1557953434378;
+ Wed, 15 May 2019 13:50:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-5-pagupta@redhat.com>
-In-Reply-To: <20190514145422.16923-5-pagupta@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 May 2019 13:48:57 -0700
-Message-ID: <CAPcyv4jp+9eBQMX+KXhT1oZRkxLeCp9r9g9hFUCRw=OcuQ9wmQ@mail.gmail.com>
-Subject: Re: [PATCH v9 4/7] dm: enable synchronous dax
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        KVM list <kvm@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Christoph Hellwig <hch@infradead.org>,
-        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        jmoyer <jmoyer@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        david <david@fromorbit.com>, cohuck@redhat.com,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com,
-        Pankaj Gupta <pagupta@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>
+References: <20190512012508.10608-1-elder@linaro.org> <20190512012508.10608-10-elder@linaro.org>
+ <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com> <58b03138-d99f-b22f-5f8a-969612163135@linaro.org>
+In-Reply-To: <58b03138-d99f-b22f-5f8a-969612163135@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 15 May 2019 22:50:17 +0200
+Message-ID: <CAK8P3a1CD2CjLzvWAeZcpEo5U2-fX1wgjKQ2-1oyigwE_KwBqg@mail.gmail.com>
+Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
+To:     Alex Elder <elder@linaro.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ add Mike and dm-devel ]
+On Wed, May 15, 2019 at 2:26 PM Alex Elder <elder@linaro.org> wrote:
+> On 5/15/19 2:34 AM, Arnd Bergmann wrote:
+> >> +/* Cancel a channel's pending transactions */
+> >> +void gsi_channel_trans_cancel_pending(struct gsi_channel *channel)
+> >> +{
+> >> +       struct gsi_trans_info *trans_info = &channel->trans_info;
+> >> +       u32 evt_ring_id = channel->evt_ring_id;
+> >> +       struct gsi *gsi = channel->gsi;
+> >> +       struct gsi_evt_ring *evt_ring;
+> >> +       struct gsi_trans *trans;
+> >> +       unsigned long flags;
+> >> +
+> >> +       evt_ring = &gsi->evt_ring[evt_ring_id];
+> >> +
+> >> +       spin_lock_irqsave(&evt_ring->ring.spinlock, flags);
+> >> +
+> >> +       list_for_each_entry(trans, &trans_info->pending, links)
+> >> +               trans->result = -ECANCELED;
+> >> +
+> >> +       list_splice_tail_init(&trans_info->pending, &trans_info->complete);
+> >> +
+> >> +       spin_unlock_irqrestore(&evt_ring->ring.spinlock, flags);
+> >> +
+> >> +       spin_lock_irqsave(&gsi->spinlock, flags);
+> >> +
+> >> +       if (gsi->event_enable_bitmap & BIT(evt_ring_id))
+> >> +               gsi_event_handle(gsi, evt_ring_id);
+> >> +
+> >> +       spin_unlock_irqrestore(&gsi->spinlock, flags);
+> >> +}
+> >
+> > That is a lot of irqsave()/irqrestore() operations. Do you actually call
+> > all of these functions from hardirq context?
+>
+> The transaction list is definitely updated in IRQ context,
+> but I think it is no longer updated in hardirq context (the
+> softirq was a recent change).  This particular function is
+> definitely not called in a hardirq context, so I can remove
+> the irqsave/irqrestore.
 
-Mike, any concerns with the below addition to the device-mapper-dax
-implementation?
+If you want to protect against concurrent softirqs, you still
+need spin_lock_bh(), which is cheaper than spin_lock_irqsave()
+but still requires writing to the shared cache line for the
+atomic update of the lock.
 
-On Tue, May 14, 2019 at 7:58 AM Pankaj Gupta <pagupta@redhat.com> wrote:
->
->  This patch sets dax device 'DAXDEV_SYNC' flag if all the target
->  devices of device mapper support synchrononous DAX. If device
->  mapper consists of both synchronous and asynchronous dax devices,
->  we don't set 'DAXDEV_SYNC' flag.
->
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
->  drivers/md/dm-table.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index cde3b49b2a91..1cce626ff576 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -886,10 +886,17 @@ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
->         return bdev_dax_supported(dev->bdev, PAGE_SIZE);
->  }
->
-> +static int device_synchronous(struct dm_target *ti, struct dm_dev *dev,
-> +                              sector_t start, sector_t len, void *data)
-> +{
-> +       return dax_synchronous(dev->dax_dev);
-> +}
-> +
->  static bool dm_table_supports_dax(struct dm_table *t)
->  {
->         struct dm_target *ti;
->         unsigned i;
-> +       bool dax_sync = true;
->
->         /* Ensure that all targets support DAX. */
->         for (i = 0; i < dm_table_get_num_targets(t); i++) {
-> @@ -901,7 +908,14 @@ static bool dm_table_supports_dax(struct dm_table *t)
->                 if (!ti->type->iterate_devices ||
->                     !ti->type->iterate_devices(ti, device_supports_dax, NULL))
->                         return false;
-> +
-> +               /* Check devices support synchronous DAX */
-> +               if (dax_sync &&
-> +                   !ti->type->iterate_devices(ti, device_synchronous, NULL))
-> +                       dax_sync = false;
->         }
-> +       if (dax_sync)
-> +               set_dax_synchronous(t->md->dax_dev);
->
->         return true;
->  }
-> --
-> 2.20.1
->
+> I'll survey my spinlock use throughout the driver and will
+> remove any irqsave/irqrestore used in non-hardirq contexts.
+
+Ok. I actually hope that most of the spinlocks can be
+removed from the data path entirely. I just replied on the
+ring.spinlock, which I think can go away and be replaced
+either with two atomic_t values (rp_local and wp_local
+only; 'wp' appears to be unused), or even just an smp_rmb()/
+smp_wmb() pair for each access. The gsi register spinlock
+can probably be avoided as well if we stop disabling and
+renabling the interrupts as I suggested.
+
+gsi_trans_info->spinlock is harder to get rid of unfortunately,
+as that would require changing the way you do the doubly linked
+lists.
+
+     Arnd
