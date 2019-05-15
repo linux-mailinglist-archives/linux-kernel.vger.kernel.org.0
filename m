@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B92111F084
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C281EE04
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbfEOLo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:44:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37072 "EHLO mail.kernel.org"
+        id S1730167AbfEOLQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731851AbfEOL0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:13 -0400
+        id S1729738AbfEOLQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 321E62084F;
-        Wed, 15 May 2019 11:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5801620843;
+        Wed, 15 May 2019 11:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919572;
-        bh=CERp3i2iLB2TEaVHKwjI6GCZatALGM64HOa2MbAtixU=;
+        s=default; t=1557918961;
+        bh=FEcgngtZEuyg9UX8fft4+eshJZJxiuhsK5c2ub4emgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYCiECqqCKyhIDyuwrOj9/ohcUQyLvY5UTK3ZZjX+S5xG8/QSGwiGpRpJsjil38PY
-         4zqrCnuAq88/TsxrbISan0gtf/zJzJDlfGEBL6iBT1QPUHWV9X/KDWYs2ieCHU5RTs
-         J7g8iBbwhj6xse07BeIlKtKN7ekNYSeHoBk0hZdE=
+        b=swZjVYmOhAYnUw/2FzdtGg2spOEmeamW0J7GLpcg1jKBtApa1C9RhfTRlN2jBkQLN
+         4IUEBJTp/dj6hdE+MkJWlQ7vO9srhx71zUWJo1hY0RScKuCMwWXL0kjDzZN+cXPaAx
+         RA13jA6DP4eE8e09Sv7orWjsJHNPPyWMUHT1NG4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 013/137] iio: adc: xilinx: prevent touching unclocked h/w on remove
-Date:   Wed, 15 May 2019 12:54:54 +0200
-Message-Id: <20190515090654.305543987@linuxfoundation.org>
+Subject: [PATCH 4.14 015/115] mac80211: Increase MAX_MSG_LEN
+Date:   Wed, 15 May 2019 12:54:55 +0200
+Message-Id: <20190515090700.395972086@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2e4b88f73966adead360e47621df0183586fac32 ]
+[ Upstream commit 78be2d21cc1cd3069c6138dcfecec62583130171 ]
 
-In remove, the clock is disabled before canceling the
-delayed work. This means that the delayed work may be
-touching unclocked hardware.
+Looks that 100 chars isn't enough for messages, as we keep getting
+warnings popping from different places due to message shortening.
+Instead of trying to shorten the prints, just increase the buffer size.
 
-Fix by disabling the clock after the delayed work is
-fully canceled. This is consistent with the probe error
-path order.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/xilinx-xadc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/trace_msg.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-index 15e1a103f37da..1ae86e7359f73 100644
---- a/drivers/iio/adc/xilinx-xadc-core.c
-+++ b/drivers/iio/adc/xilinx-xadc-core.c
-@@ -1320,8 +1320,8 @@ static int xadc_remove(struct platform_device *pdev)
- 		iio_triggered_buffer_cleanup(indio_dev);
- 	}
- 	free_irq(xadc->irq, indio_dev);
--	clk_disable_unprepare(xadc->clk);
- 	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
-+	clk_disable_unprepare(xadc->clk);
- 	kfree(xadc->data);
- 	kfree(indio_dev->channels);
+diff --git a/net/mac80211/trace_msg.h b/net/mac80211/trace_msg.h
+index 366b9e6f043e2..40141df09f255 100644
+--- a/net/mac80211/trace_msg.h
++++ b/net/mac80211/trace_msg.h
+@@ -1,4 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Portions of this file
++ * Copyright (C) 2019 Intel Corporation
++ */
++
+ #ifdef CONFIG_MAC80211_MESSAGE_TRACING
  
+ #if !defined(__MAC80211_MSG_DRIVER_TRACE) || defined(TRACE_HEADER_MULTI_READ)
+@@ -11,7 +16,7 @@
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM mac80211_msg
+ 
+-#define MAX_MSG_LEN	100
++#define MAX_MSG_LEN	120
+ 
+ DECLARE_EVENT_CLASS(mac80211_msg_event,
+ 	TP_PROTO(struct va_format *vaf),
 -- 
 2.20.1
 
