@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D6A1EED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3281EE2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbfEOL0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:26:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37010 "EHLO mail.kernel.org"
+        id S1730742AbfEOLSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbfEOL0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:10 -0400
+        id S1730731AbfEOLR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EE3A20818;
-        Wed, 15 May 2019 11:26:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE17020862;
+        Wed, 15 May 2019 11:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919570;
-        bh=7zpMCgIPMTHieUH/kBsQzSjOK6LEHevYPbzwmbMoFgQ=;
+        s=default; t=1557919077;
+        bh=RiVvXlT1rWAM581dP90M99R4bVG9de482DvhP8acFcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ug2sRnOY1umVHdC5H7CwLrOGUXAJFzuPSohaLdpKS8e1hiB/HdfjI7g4rtz5vwSVE
-         WsAa2ofiWqyB50em5gFztEjOqdAu6dWFuvrl33NqYcqO1cT9fK9aQ6Yz+HOmQkLSrc
-         VH56F6YiSPm31oRP5HgLYY8sFwU68v7GQIolnXkY=
+        b=OACK4pTR4mljf+ow2IfxZKEf6MHhMMoVeNshwVfJFKwFZ35zuN5+SVMAf2mAK8yV/
+         90sIgRIhJ4+xhzogkCh36US0bk6ac9N688D0l/lDJjO9lw7jfb52tmpSuAfWJ3Jllc
+         Y/I4cBe8YVc00yOAtSe+flZ5WHMJtGbM3+fax76M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 012/137] iio: adc: xilinx: fix potential use-after-free on probe
-Date:   Wed, 15 May 2019 12:54:53 +0200
-Message-Id: <20190515090654.181268620@linuxfoundation.org>
+Subject: [PATCH 4.14 014/115] mac80211: fix unaligned access in mesh table hash function
+Date:   Wed, 15 May 2019 12:54:54 +0200
+Message-Id: <20190515090700.320632007@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 862e4644fd2d7df8998edc65e0963ea2f567bde9 ]
+[ Upstream commit 40586e3fc400c00c11151804dcdc93f8c831c808 ]
 
-If probe errors out after request_irq(), its error path
-does not explicitly cancel the delayed work, which may
-have been scheduled by the interrupt handler.
+The pointer to the last four bytes of the address is not guaranteed to be
+aligned, so we need to use __get_unaligned_cpu32 here
 
-This means the delayed work may still be running when
-the core frees the private structure (struct xadc).
-This is a potential use-after-free.
-
-Fix by inserting cancel_delayed_work_sync() in the probe
-error path.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/xilinx-xadc-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/mesh_pathtbl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-index 1960694e80076..15e1a103f37da 100644
---- a/drivers/iio/adc/xilinx-xadc-core.c
-+++ b/drivers/iio/adc/xilinx-xadc-core.c
-@@ -1290,6 +1290,7 @@ static int xadc_probe(struct platform_device *pdev)
+diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
+index 1ce068865629b..1300220912051 100644
+--- a/net/mac80211/mesh_pathtbl.c
++++ b/net/mac80211/mesh_pathtbl.c
+@@ -23,7 +23,7 @@ static void mesh_path_free_rcu(struct mesh_table *tbl, struct mesh_path *mpath);
+ static u32 mesh_table_hash(const void *addr, u32 len, u32 seed)
+ {
+ 	/* Use last four bytes of hw addr as hash index */
+-	return jhash_1word(*(u32 *)(addr+2), seed);
++	return jhash_1word(__get_unaligned_cpu32((u8 *)addr + 2), seed);
+ }
  
- err_free_irq:
- 	free_irq(xadc->irq, indio_dev);
-+	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
- err_clk_disable_unprepare:
- 	clk_disable_unprepare(xadc->clk);
- err_free_samplerate_trigger:
+ static const struct rhashtable_params mesh_rht_params = {
 -- 
 2.20.1
 
