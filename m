@@ -2,117 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B310F1F805
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:57:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473801F80B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfEOP5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 11:57:32 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:20132 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfEOP5b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 11:57:31 -0400
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x4FFvOU9020916;
-        Thu, 16 May 2019 00:57:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4FFvOU9020916
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557935845;
-        bh=CVB3einOzSmQkAArZSEfGiIV/vsSTw25G7oWKEkq1vI=;
-        h=From:Date:Subject:To:Cc:From;
-        b=hOyUz0NdF61A4cywMn5qZ57MWTCccptp3aOTVVbNd5yW2kgbIRAGRXby+5sfST71r
-         aMsLOY4ryK7OY8YV/XdllwNRPADnJHT8PnI4SORLj30Q+vpHL6VKL1C6V1/PNTXRWY
-         aiOYZf+nJxUnQbwuoGQYV9sVzkaEXmpimLVIHAA4h1C2Ba+vENUEqyVlPfqkP1xB+A
-         7rn8yUPOgUQfqIuPnzGgofz/YpCP3oOdQzEh/lrEVlVD3wJarbz9UhgeUo+u1FtyF4
-         GUl06x0zj8kZOR9qJTi+OvuSvcJWDo1YM+6oQT/UVNcnE3tjMOMZLqSn7UaJ/TTVRX
-         Og+GP1Tu+rxXA==
-X-Nifty-SrcIP: [209.85.222.53]
-Received: by mail-ua1-f53.google.com with SMTP id 49so61309uas.0;
-        Wed, 15 May 2019 08:57:24 -0700 (PDT)
-X-Gm-Message-State: APjAAAXFFbt4CGpa+wZPsRYLSuXTuAk/Xp5Q0c3DZRSLH5RJrhz7CdCg
-        bOIXVi2LoYh9+gEubZF42cs+msxdWzkF6K+qnow=
-X-Google-Smtp-Source: APXvYqx3aK73SbT9SWJfHOr39Jpll5rf8qsj5YOMwfZDhWxmjsyNsTEEfby+AdNsTOEvUyTBn01zsc9pw028RG02Dp4=
-X-Received: by 2002:ab0:20c1:: with SMTP id z1mr18626427ual.109.1557935843938;
- Wed, 15 May 2019 08:57:23 -0700 (PDT)
+        id S1728544AbfEOP6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 11:58:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47634 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbfEOP6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 11:58:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A615374;
+        Wed, 15 May 2019 08:58:13 -0700 (PDT)
+Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16E9D3F703;
+        Wed, 15 May 2019 08:58:09 -0700 (PDT)
+Subject: Re: [PATCH v7 04/23] iommu: Introduce attach/detach_pasid_table API
+To:     Auger Eric <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     peter.maydell@linaro.org, kevin.tian@intel.com,
+        vincent.stehle@arm.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com
+References: <20190408121911.24103-1-eric.auger@redhat.com>
+ <20190408121911.24103-5-eric.auger@redhat.com>
+ <21bfdab4-846c-1dc7-6dff-62a46cc9c829@arm.com>
+ <b4c47851-0269-5aa2-682a-77677f756205@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <9fedefb7-e13c-7ea7-b2ae-50a8f1a7e09b@arm.com>
+Date:   Wed, 15 May 2019 16:57:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 16 May 2019 00:56:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQoi24VYEVdwvmjD3CP=Q7_91KQ1o47ocL+MFPKnVBOKA@mail.gmail.com>
-Message-ID: <CAK7LNAQoi24VYEVdwvmjD3CP=Q7_91KQ1o47ocL+MFPKnVBOKA@mail.gmail.com>
-Subject: [GIT PULL] Kconfig updates for v5.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     masahiroy@kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b4c47851-0269-5aa2-682a-77677f756205@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 15/05/2019 14:06, Auger Eric wrote:
+> Hi Jean-Philippe,
+> 
+> On 5/15/19 2:09 PM, Jean-Philippe Brucker wrote:
+>> On 08/04/2019 13:18, Eric Auger wrote:
+>>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>>> index edcc0dda7993..532a64075f23 100644
+>>> --- a/include/uapi/linux/iommu.h
+>>> +++ b/include/uapi/linux/iommu.h
+>>> @@ -112,4 +112,51 @@ struct iommu_fault {
+>>>  		struct iommu_fault_page_request prm;
+>>>  	};
+>>>  };
+>>> +
+>>> +/**
+>>> + * SMMUv3 Stream Table Entry stage 1 related information
+>>> + * The PASID table is referred to as the context descriptor (CD) table.
+>>> + *
+>>> + * @s1fmt: STE s1fmt (format of the CD table: single CD, linear table
+>>> +   or 2-level table)
+>>
+>> Running "scripts/kernel-doc -v -none" on this header produces some
+>> warnings. Not sure if we want to get rid of all of them, but we should
+>> at least fix the coding style for this comment (line must start with
+>> " * "). I'm fixing it up on my sva/api branch
+> Thanks!
+> 
+> Let me know if you want me to do the job for additional fixes.
 
-Please pull Kconfig updates for v5.2
+I fixed the others warnings as well, in case we ever want to include
+this into the kernel doc
 
-Thanks.
+Thanks,
+Jean
 
-
-
-The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
-
-  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kconfig-v5.2
-
-for you to fetch changes up to 9b9f5948afcdf583cb1b58e0c4cc327aa1820f5a:
-
-  kconfig: make conf_get_autoconfig_name() static (2019-05-14 23:23:25 +0900)
-
-----------------------------------------------------------------
-Kconfig updates for v5.2
-
- - error out if a user specifies a directory instead of a file from
-   "Save" menu of GUI interfaces
-
- - do not overwrite .config if there is no change in the configuration
-
- - create parent directories as needed when a user specifies a new file
-   path from "Save" menu of menuconfig/nconfig
-
- - fix potential buffer overflow
-
- - some trivial cleanups
-
-----------------------------------------------------------------
-Jacob Garber (1):
-      kconfig: use snprintf for formatting pathnames
-
-Masahiro Yamada (6):
-      kconfig: remove trailing whitespaces
-      kconfig: do not accept a directory for configuration output
-      kconfig: do not write .config if the content is the same
-      kconfig: make parent directories for the saved .config as needed
-      kconfig: remove useless NULL pointer check in conf_write_dep()
-      kconfig: make conf_get_autoconfig_name() static
-
-Petr Vorel (1):
-      kconfig: Make nconf-cfg.sh executable
-
- scripts/kconfig/confdata.c               | 121 ++++++++++++++-------
- scripts/kconfig/gconf.c                  |   2 +-
- scripts/kconfig/lexer.l                  |   3 +-
- scripts/kconfig/lkc.h                    |   1 -
- scripts/kconfig/lxdialog/BIG.FAT.WARNING |   2 +-
- scripts/kconfig/mconf.c                  |   2 +-
- scripts/kconfig/nconf-cfg.sh             |   0
- scripts/kconfig/nconf.c                  |   3 +-
- 8 files changed, 89 insertions(+), 45 deletions(-)
- mode change 100644 => 100755 scripts/kconfig/nconf-cfg.sh
-
-
--- 
-Best Regards
-Masahiro Yamada
