@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3981ED9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF891EE2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfEOLLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46496 "EHLO mail.kernel.org"
+        id S1730759AbfEOLSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729414AbfEOLLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:47 -0400
+        id S1730754AbfEOLSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87DBC20843;
-        Wed, 15 May 2019 11:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E604C206BF;
+        Wed, 15 May 2019 11:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918706;
-        bh=FTEsq0Izl/156k72JmWu9fo5PR4FGCZvEiY5YIAEHuk=;
+        s=default; t=1557919085;
+        bh=fEl58TO3qbyRhsWQ3MIb3kKu4P+hvOm4yJGY1tFADg8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NiNE72SpCcZnRsaOS1X4EN7nNM4XZrMMnTwoMtoBoGNfYHblNW7NsXBnIxADmK55A
-         trcElUgGdjEnanqaJ4Q+xjoot01HRj6avf8CK+MONSqc2FKMFfaj6o2zSfpNDE47Pz
-         ASyj0D0rOTFdQe7Sv+cY2Cl66RQAkHfvGEzgh7Y4=
+        b=EXEqGlyo5BP7RGchqrN2tZL9q856fijiOS1zNKdPK5074ThNiod/y997TuGLppcpY
+         sFlf94YuQYe3yJUnwo1wUcNTB16Wih7c683P+Lc2KyYQN4rUvDzkuLlIK0ndhdghIA
+         yhz+0yt9NZk6VFV7XAskxY80YbY7Tny9L0OxITtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jon Masters <jcm@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 234/266] x86/speculation/mds: Clear CPU buffers on exit to user
-Date:   Wed, 15 May 2019 12:55:41 +0200
-Message-Id: <20190515090730.918029836@linuxfoundation.org>
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 062/115] net: stmmac: Move debugfs init/exit to ->probe()/->remove()
+Date:   Wed, 15 May 2019 12:55:42 +0200
+Message-Id: <20190515090704.047782660@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,196 +45,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 5f2b8b62786853341a20d4cd4948f9cbca3db002 ]
 
-commit 04dcbdb8057827b043b3c71aa397c4c63e67d086 upstream.
+Setting up and tearing down debugfs is current unbalanced, as seen by
+this error during resume from suspend:
 
-Add a static key which controls the invocation of the CPU buffer clear
-mechanism on exit to user space and add the call into
-prepare_exit_to_usermode() and do_nmi() right before actually returning.
+    [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+    [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
 
-Add documentation which kernel to user space transition this covers and
-explain why some corner cases are not mitigated.
+The imbalance happens because the driver creates the debugfs hierarchy
+when the device is opened and tears it down when the device is closed.
+There's little gain in that, and it could be argued that it is even
+surprising because it's not usually done for other devices. Fix the
+imbalance by moving the debugfs creation and teardown to the driver's
+->probe() and ->remove() implementations instead.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Jon Masters <jcm@redhat.com>
-Tested-by: Jon Masters <jcm@redhat.com>
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Note that the ring descriptors cannot be read while the interface is
+down, so make sure to return an empty file when the descriptors_status
+debugfs file is read.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- Documentation/x86/mds.rst            |   52 +++++++++++++++++++++++++++++++++++
- arch/x86/entry/common.c              |    3 ++
- arch/x86/include/asm/nospec-branch.h |   13 ++++++++
- arch/x86/kernel/cpu/bugs.c           |    3 ++
- arch/x86/kernel/nmi.c                |    4 ++
- arch/x86/kernel/traps.c              |    8 +++++
- 6 files changed, 83 insertions(+)
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
---- a/Documentation/x86/mds.rst
-+++ b/Documentation/x86/mds.rst
-@@ -97,3 +97,55 @@ According to current knowledge additiona
- itself are not required because the necessary gadgets to expose the leaked
- data cannot be controlled in a way which allows exploitation from malicious
- user space or VM guests.
-+
-+Mitigation points
-+-----------------
-+
-+1. Return to user space
-+^^^^^^^^^^^^^^^^^^^^^^^
-+
-+   When transitioning from kernel to user space the CPU buffers are flushed
-+   on affected CPUs when the mitigation is not disabled on the kernel
-+   command line. The migitation is enabled through the static key
-+   mds_user_clear.
-+
-+   The mitigation is invoked in prepare_exit_to_usermode() which covers
-+   most of the kernel to user space transitions. There are a few exceptions
-+   which are not invoking prepare_exit_to_usermode() on return to user
-+   space. These exceptions use the paranoid exit code.
-+
-+   - Non Maskable Interrupt (NMI):
-+
-+     Access to sensible data like keys, credentials in the NMI context is
-+     mostly theoretical: The CPU can do prefetching or execute a
-+     misspeculated code path and thereby fetching data which might end up
-+     leaking through a buffer.
-+
-+     But for mounting other attacks the kernel stack address of the task is
-+     already valuable information. So in full mitigation mode, the NMI is
-+     mitigated on the return from do_nmi() to provide almost complete
-+     coverage.
-+
-+   - Double fault (#DF):
-+
-+     A double fault is usually fatal, but the ESPFIX workaround, which can
-+     be triggered from user space through modify_ldt(2) is a recoverable
-+     double fault. #DF uses the paranoid exit path, so explicit mitigation
-+     in the double fault handler is required.
-+
-+   - Machine Check Exception (#MC):
-+
-+     Another corner case is a #MC which hits between the CPU buffer clear
-+     invocation and the actual return to user. As this still is in kernel
-+     space it takes the paranoid exit path which does not clear the CPU
-+     buffers. So the #MC handler repopulates the buffers to some
-+     extent. Machine checks are not reliably controllable and the window is
-+     extremly small so mitigation would just tick a checkbox that this
-+     theoretical corner case is covered. To keep the amount of special
-+     cases small, ignore #MC.
-+
-+   - Debug Exception (#DB):
-+
-+     This takes the paranoid exit path only when the INT1 breakpoint is in
-+     kernel space. #DB on a user space address takes the regular exit path,
-+     so no extra mitigation required.
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -28,6 +28,7 @@
- #include <asm/vdso.h>
- #include <asm/uaccess.h>
- #include <asm/cpufeature.h>
-+#include <asm/nospec-branch.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
-@@ -295,6 +296,8 @@ __visible inline void prepare_exit_to_us
- #endif
- 
- 	user_enter();
-+
-+	mds_user_clear_cpu_buffers();
- }
- 
- #define SYSCALL_EXIT_WORK_FLAGS				\
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -262,6 +262,8 @@ DECLARE_STATIC_KEY_FALSE(switch_to_cond_
- DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
- DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
- 
-+DECLARE_STATIC_KEY_FALSE(mds_user_clear);
-+
- #include <asm/segment.h>
- 
- /**
-@@ -287,6 +289,17 @@ static inline void mds_clear_cpu_buffers
- 	asm volatile("verw %[ds]" : : [ds] "m" (ds) : "cc");
- }
- 
-+/**
-+ * mds_user_clear_cpu_buffers - Mitigation for MDS vulnerability
-+ *
-+ * Clear CPU buffers if the corresponding static key is enabled
-+ */
-+static inline void mds_user_clear_cpu_buffers(void)
-+{
-+	if (static_branch_likely(&mds_user_clear))
-+		mds_clear_cpu_buffers();
-+}
-+
- #endif /* __ASSEMBLY__ */
- 
- /*
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -58,6 +58,9 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_i
- /* Control unconditional IBPB in switch_mm() */
- DEFINE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
- 
-+/* Control MDS CPU buffer clear before returning to user space */
-+DEFINE_STATIC_KEY_FALSE(mds_user_clear);
-+
- void __init check_bugs(void)
- {
- 	identify_boot_cpu();
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -29,6 +29,7 @@
- #include <asm/mach_traps.h>
- #include <asm/nmi.h>
- #include <asm/x86_init.h>
-+#include <asm/nospec-branch.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/nmi.h>
-@@ -522,6 +523,9 @@ nmi_restart:
- 		write_cr2(this_cpu_read(nmi_cr2));
- 	if (this_cpu_dec_return(nmi_state))
- 		goto nmi_restart;
-+
-+	if (user_mode(regs))
-+		mds_user_clear_cpu_buffers();
- }
- NOKPROBE_SYMBOL(do_nmi);
- 
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -61,6 +61,7 @@
- #include <asm/alternative.h>
- #include <asm/fpu/xstate.h>
- #include <asm/trace/mpx.h>
-+#include <asm/nospec-branch.h>
- #include <asm/mpx.h>
- #include <asm/vm86.h>
- 
-@@ -337,6 +338,13 @@ dotraplinkage void do_double_fault(struc
- 		regs->ip = (unsigned long)general_protection;
- 		regs->sp = (unsigned long)&normal_regs->orig_ax;
- 
-+		/*
-+		 * This situation can be triggered by userspace via
-+		 * modify_ldt(2) and the return does not take the regular
-+		 * user space exit, so a CPU buffer clear is required when
-+		 * MDS mitigation is enabled.
-+		 */
-+		mds_user_clear_cpu_buffers();
- 		return;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 0f85e540001ff..f4df9ab0aed5f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2530,12 +2530,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
+ 			netdev_warn(priv->dev, "PTP init failed\n");
  	}
- #endif
+ 
+-#ifdef CONFIG_DEBUG_FS
+-	ret = stmmac_init_fs(dev);
+-	if (ret < 0)
+-		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
+-			    __func__);
+-#endif
+ 	priv->tx_lpi_timer = STMMAC_DEFAULT_TWT_LS;
+ 
+ 	if ((priv->use_riwt) && (priv->hw->dma->rx_watchdog)) {
+@@ -2729,10 +2723,6 @@ static int stmmac_release(struct net_device *dev)
+ 
+ 	netif_carrier_off(dev);
+ 
+-#ifdef CONFIG_DEBUG_FS
+-	stmmac_exit_fs(dev);
+-#endif
+-
+ 	stmmac_release_ptp(priv);
+ 
+ 	return 0;
+@@ -3839,6 +3829,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
+ 	u32 tx_count = priv->plat->tx_queues_to_use;
+ 	u32 queue;
+ 
++	if ((dev->flags & IFF_UP) == 0)
++		return 0;
++
+ 	for (queue = 0; queue < rx_count; queue++) {
+ 		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
+ 
+@@ -4310,6 +4303,13 @@ int stmmac_dvr_probe(struct device *device,
+ 		goto error_netdev_register;
+ 	}
+ 
++#ifdef CONFIG_DEBUG_FS
++	ret = stmmac_init_fs(ndev);
++	if (ret < 0)
++		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
++			    __func__);
++#endif
++
+ 	return ret;
+ 
+ error_netdev_register:
+@@ -4343,6 +4343,9 @@ int stmmac_dvr_remove(struct device *dev)
+ 
+ 	netdev_info(priv->dev, "%s: removing driver", __func__);
+ 
++#ifdef CONFIG_DEBUG_FS
++	stmmac_exit_fs(ndev);
++#endif
+ 	stmmac_stop_all_dma(priv);
+ 
+ 	priv->hw->mac->set_mac(priv->ioaddr, false);
+-- 
+2.20.1
+
 
 
