@@ -2,118 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176071F562
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB741F572
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 15:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbfEONSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 09:18:34 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56542 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727405AbfEONSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 09:18:32 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E35A1A00E6;
-        Wed, 15 May 2019 15:18:30 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 717CE1A00DD;
-        Wed, 15 May 2019 15:18:30 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E58EA205F4;
-        Wed, 15 May 2019 15:18:29 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, marex@denx.de
-Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 3/3] usb: host: ohci-tmio: init genalloc for local memory
-Date:   Wed, 15 May 2019 16:18:06 +0300
-Message-Id: <20190515131806.2404-4-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190515131806.2404-1-laurentiu.tudor@nxp.com>
-References: <20190515131806.2404-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728111AbfEONTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 09:19:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44838 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727661AbfEONTF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 09:19:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c5so2624125wrs.11
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 06:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JG2kah723rKt+6zVIVINToTJ1x5sX35cOTL/TkyEYK4=;
+        b=vZJh22fkqgxxzQYvoRgM2gvXtNWcFHA4w/ZhpXhg3KcO5ZYtjNKkseZoctyABSvJYM
+         JNXexdB8b7YXqUh/5OWvK48RZeoIDCCWPoWronkJubu2sqLNjPQOW88bdogK8PEQiGMc
+         zo18n9fcq58uSAzG5iop6qietQv3MER71K3ppvb1yVZfJU6VdcoOQw+MQJ5O8306Lvma
+         zamrxMsrIEPwYPooRGHEPa8l06Q2BaP/8XZRivdDkyAdSFUNR7NzuEmlMhamIM5YXg0N
+         xZpBDhwzk3jHq7UNVDBVdogplW0YEikZzTMBBfQpXXSVQWmKU8oFYxHSHbA6GbytzTEi
+         Eqag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JG2kah723rKt+6zVIVINToTJ1x5sX35cOTL/TkyEYK4=;
+        b=aDkfWf+j3DrL8GLTH5yS6RimxDi/B+/gepYFCnnoUbP6aIYX54/HEgUk8L6iR5stF9
+         NkeHJyeV26/lC72VN4rwg72yAoqGNwsQUZm/E3n9yA0BRSVnQD8+u6hG+JBfEJOZNnWa
+         qzEBzJaBCFrxrsRcOb9L9cT/r7J26g8ydWDlMNJX8ic/ZswA5vdvbXaMZrNxmpRYy/3Q
+         Vx/3lgKzaLCYpK8w8wDIBVGZbZXoztnuMjLDuGPDEdCGgliOqY7Lm2vydm8BM5Mf5YNS
+         bfFUHDBr9W20Qb60tkWly8E7926+iRNRiUhXRQTHK9IDjmggnNTdNCbvE+WGjA1o+TNz
+         BUAA==
+X-Gm-Message-State: APjAAAU/ng5BaY4WwdDsXULUQELzkCjIN6NDf/y/IZcqJSeQ32nyHD9p
+        FqpuFWBzOld8WDd30sBJggZ4Tg==
+X-Google-Smtp-Source: APXvYqwBEr5yG88UvIos7c0fJnIW12gLKqi73L00zTVXIyfiLBv41bjumlNMgrgZkorOKeNy3+7XIw==
+X-Received: by 2002:a5d:4e50:: with SMTP id r16mr189913wrt.197.1557926342964;
+        Wed, 15 May 2019 06:19:02 -0700 (PDT)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id b206sm2789848wmd.28.2019.05.15.06.19.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 06:19:02 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 0/5] ASoC: meson: add hdmitx glue support
+Date:   Wed, 15 May 2019 15:18:53 +0200
+Message-Id: <20190515131858.32130-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+On the Amlogic SoC, there is a glue between the SoC audio outputs and the
+input of the embedded Synopsys HDMI controller.
 
-In preparation for dropping the existing "coherent" dma mem declaration
-APIs, replace the current dma_declare_coherent_memory() based mechanism
-with the creation of a genalloc pool that will be used in the OHCI
-subsystem as replacement for the DMA APIs.
+On the g12a, this glue is mostly a couple of muxes to select the i2s and
+spdif inputs of the hdmi controller. Each of these inputs may have
+different hw_params and fmt which makes our life a little bit more
+interesting, especially when switching between to active inputs.
 
-For context, see thread here: https://lkml.org/lkml/2019/4/22/357
+This glue is modeled as codec driver and uses codec-to-codec links to
+connect to the Synopsys controller. This allows to use the regular
+hdmi-codec driver (used by dw-hdmi i2s).
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
----
- drivers/usb/host/ohci-tmio.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+To avoid glitches while switching input, the trick is to temporarily
+force a disconnection of the mux output, which shutdowns the output dai
+link. This also ensure that the stream parameters and fmt are updated
+when the output is connected back.
 
-diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-index f88a0370659f..34869382618f 100644
---- a/drivers/usb/host/ohci-tmio.c
-+++ b/drivers/usb/host/ohci-tmio.c
-@@ -30,6 +30,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/tmio.h>
- #include <linux/dma-mapping.h>
-+#include <linux/genalloc.h>
- 
- /*-------------------------------------------------------------------------*/
- 
-@@ -224,11 +225,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 		goto err_ioremap_regs;
- 	}
- 
--	ret = dma_declare_coherent_memory(&dev->dev, sram->start, sram->start,
--				resource_size(sram));
--	if (ret)
--		goto err_dma_declare;
--
- 	if (cell->enable) {
- 		ret = cell->enable(dev);
- 		if (ret)
-@@ -239,6 +235,20 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 	ohci = hcd_to_ohci(hcd);
- 	ohci_hcd_init(ohci);
- 
-+	hcd->localmem_pool = devm_gen_pool_create(&dev->dev, PAGE_SHIFT,
-+						  dev_to_node(&dev->dev),
-+						  "ohci-sm501");
-+	if (IS_ERR(hcd->localmem_pool)) {
-+		ret = PTR_ERR(hcd->localmem_pool);
-+		goto err_enable;
-+	}
-+	ret = gen_pool_add_virt(hcd->localmem_pool, sram->start, sram->start,
-+				resource_size(sram), dev_to_node(&dev->dev));
-+	if (ret < 0) {
-+		dev_err(&dev->dev, "failed to add to pool: %d\n", ret);
-+		goto err_enable;
-+	}
-+
- 	ret = usb_add_hcd(hcd, irq, 0);
- 	if (ret)
- 		goto err_add_hcd;
-@@ -254,8 +264,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
- 	if (cell->disable)
- 		cell->disable(dev);
- err_enable:
--	dma_release_declared_memory(&dev->dev);
--err_dma_declare:
- 	iounmap(hcd->regs);
- err_ioremap_regs:
- 	iounmap(tmio->ccr);
-@@ -276,7 +284,6 @@ static int ohci_hcd_tmio_drv_remove(struct platform_device *dev)
- 	tmio_stop_hc(dev);
- 	if (cell->disable)
- 		cell->disable(dev);
--	dma_release_declared_memory(&dev->dev);
- 	iounmap(hcd->regs);
- 	iounmap(tmio->ccr);
- 	usb_put_hcd(hcd);
+Jerome Brunet (5):
+  ASoC: meson: axg-card: set link name based on link node name
+  ASoC: dapm: allow muxes to force a disconnect
+  ASoC: meson: add tohdmitx DT bindings
+  ASoC: meson: axg-card: add basic codec-to-codec link support
+  ASoC: meson: add g12a tohdmitx control
+
+ .../bindings/sound/amlogic,g12a-tohdmitx.txt  |  55 +++
+ .../dt-bindings/sound/meson-g12a-tohdmitx.h   |  13 +
+ sound/soc/meson/Kconfig                       |   8 +
+ sound/soc/meson/Makefile                      |   2 +
+ sound/soc/meson/axg-card.c                    |  31 +-
+ sound/soc/meson/g12a-tohdmitx.c               | 413 ++++++++++++++++++
+ sound/soc/soc-dapm.c                          |   2 +-
+ 7 files changed, 518 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+ create mode 100644 include/dt-bindings/sound/meson-g12a-tohdmitx.h
+ create mode 100644 sound/soc/meson/g12a-tohdmitx.c
+
 -- 
-2.17.1
+2.20.1
 
