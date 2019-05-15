@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A701EE1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B0BE1F1E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbfEOLRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54496 "EHLO mail.kernel.org"
+        id S1730945AbfEOL5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:57:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728459AbfEOLRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:18 -0400
+        id S1730377AbfEOLRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 160EE20644;
-        Wed, 15 May 2019 11:17:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEC452084E;
+        Wed, 15 May 2019 11:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919037;
-        bh=gL9fh4TwALpqLAAxA7aWBb2Vf8cfztxpiqmNPtMFfm0=;
+        s=default; t=1557919040;
+        bh=1UczZCQc5x+59X5jdJ/yq07EnrU2Dd/9+SuVc8m4S8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2wj7GfZf/B09Ftw4gZRomfFGOaZgt8oUad8dN/45VyF1tzElPgO+GIlRWL+qQp/D
-         o2L+l4Xjdqg+ePiK/IWNJ71yz52fn0HJGZvH4Q/4O0qE4y6UrYy1SWtM7mo4+sxTlB
-         7GQ/eDBNlaEWwV5CiAoiS3MlbagDiZNfh1xP44yc=
+        b=zDrX+sCHyVJ+mAsY7B2h03YU89pY2QIkF7n3FnGAd8mAlmz5q4mGqv1XKgbYal6//
+         jd2EGUxIyQA4TkomFeLVqJHxeaBa1QYDzATuTc3xYX40J+TVOQEGwoSOSGg6Gj5K+g
+         5N8M1AIbwXNakYaVopuilEb+FZ994Q+JjZ42Vl7w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 042/115] MIPS: VDSO: Reduce VDSO_RANDOMIZE_SIZE to 64MB for 64bit
-Date:   Wed, 15 May 2019 12:55:22 +0200
-Message-Id: <20190515090702.550889538@linuxfoundation.org>
+Subject: [PATCH 4.14 043/115] bcache: correct dirty data statistics
+Date:   Wed, 15 May 2019 12:55:23 +0200
+Message-Id: <20190515090702.631103131@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
 References: <20190515090659.123121100@linuxfoundation.org>
@@ -49,44 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c61c7def1fa0a722610d89790e0255b74f3c07dd ]
+[ Upstream commit 2e17a262a2371d38d2ec03614a2675a32cef9912 ]
 
-Commit ea7e0480a4b6 ("MIPS: VDSO: Always map near top of user memory")
-set VDSO_RANDOMIZE_SIZE to 256MB for 64bit kernel. But take a look at
-arch/mips/mm/mmap.c we can see that MIN_GAP is 128MB, which means the
-mmap_base may be at (user_address_top - 128MB). This make the stack be
-surrounded by mmaped areas, then stack expanding fails and causes a
-segmentation fault. Therefore, VDSO_RANDOMIZE_SIZE should be less than
-MIN_GAP and this patch reduce it to 64MB.
+When bcache device is clean, dirty keys may still exist after
+journal replay, so we need to count these dirty keys even
+device in clean status, otherwise after writeback, the amount
+of dirty data would be incorrect.
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: ea7e0480a4b6 ("MIPS: VDSO: Always map near top of user memory")
-Patchwork: https://patchwork.linux-mips.org/patch/20910/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
+Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/include/asm/processor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/include/asm/processor.h b/arch/mips/include/asm/processor.h
-index 8bbbab611a3f1..0b86a01de9562 100644
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -81,7 +81,7 @@ extern unsigned int vced_count, vcei_count;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index fe6e4c319b7cf..9e875aba41b9b 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1045,12 +1045,13 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 	}
  
- #endif
+ 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_DIRTY) {
+-		bch_sectors_dirty_init(&dc->disk);
+ 		atomic_set(&dc->has_dirty, 1);
+ 		atomic_inc(&dc->count);
+ 		bch_writeback_queue(dc);
+ 	}
  
--#define VDSO_RANDOMIZE_SIZE	(TASK_IS_32BIT_ADDR ? SZ_1M : SZ_256M)
-+#define VDSO_RANDOMIZE_SIZE	(TASK_IS_32BIT_ADDR ? SZ_1M : SZ_64M)
++	bch_sectors_dirty_init(&dc->disk);
++
+ 	bch_cached_dev_run(dc);
+ 	bcache_device_link(&dc->disk, c, "bdev");
  
- extern unsigned long mips_stack_top(void);
- #define STACK_TOP		mips_stack_top()
 -- 
 2.20.1
 
