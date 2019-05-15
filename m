@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0521F119
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694DB1EFCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbfEOLUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:20:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58656 "EHLO mail.kernel.org"
+        id S1731908AbfEOLgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:36:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730800AbfEOLUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:20:49 -0400
+        id S1730797AbfEOLcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40748206BF;
-        Wed, 15 May 2019 11:20:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0516206BF;
+        Wed, 15 May 2019 11:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919248;
-        bh=c73fBmBoUFbpJi5x/+IpwqKCWz6Hyese2gMWQna4xCI=;
+        s=default; t=1557919955;
+        bh=EwnuNN/iKp732s9E1fnCIgPnDf11zkRNldXEtvvaLrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HvYQdqSTDt2W0cxU1rhKHzHbYs2JIawSr5DdAo3puR0LjOsTJOjmOcCUMG3LQNdCL
-         9VgHGtTfdZHo3+UXWLJOp9rzuvlEG/KYp2bZxolJ3Vw62mW681hlryiroIKzLcUKvz
-         MnQ93CJ60xHb4jgrc6JlTbV9RCvXKsqTAB3iYQd0=
+        b=QTlX1Ctbm9rGQqgRfEyb9hW5SBMKggwnrY9IiFN+TSYTNRsiCpzSV9VesyBjcrtVh
+         AIyO5IWzs0RtkFQiUhNpexSACX3pfH448RFCc+z/gW2x8wopqkgbvGaY9+APIvkP+R
+         ztBhUD2yHJpWcI1AUzzuawrwVwol0egQiFAMFXz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 106/115] net: seeq: fix crash caused by not set dev.parent
+        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.1 02/46] platform/x86: thinkpad_acpi: Disable Bluetooth for some machines
 Date:   Wed, 15 May 2019 12:56:26 +0200
-Message-Id: <20190515090706.834096793@linuxfoundation.org>
+Message-Id: <20190515090618.166336036@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
+References: <20190515090616.670410738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +43,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-[ Upstream commit 5afcd14cfc7fed1bcc8abcee2cef82732772bfc2 ]
+commit f7db839fccf087664e5587966220821289b6a9cb upstream.
 
-The old MIPS implementation of dma_cache_sync() didn't use the dev argument,
-but commit c9eb6172c328 ("dma-mapping: turn dma_cache_sync into a
-dma_map_ops method") changed that, so we now need to set dev.parent.
+Some AMD based ThinkPads have a firmware bug that calling
+"GBDC" will cause Bluetooth on Intel wireless cards blocked.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Probe these models by DMI match and disable Bluetooth subdriver
+if specified Intel wireless card exist.
+
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/seeq/sgiseeq.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -734,6 +734,7 @@ static int sgiseeq_probe(struct platform
- 	}
+---
+ drivers/platform/x86/thinkpad_acpi.c |   72 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 70 insertions(+), 2 deletions(-)
+
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -79,7 +79,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/workqueue.h>
+ #include <linux/acpi.h>
+-#include <linux/pci_ids.h>
++#include <linux/pci.h>
+ #include <linux/power_supply.h>
+ #include <sound/core.h>
+ #include <sound/control.h>
+@@ -4501,6 +4501,74 @@ static void bluetooth_exit(void)
+ 	bluetooth_shutdown();
+ }
  
- 	platform_set_drvdata(pdev, dev);
-+	SET_NETDEV_DEV(dev, &pdev->dev);
- 	sp = netdev_priv(dev);
++static const struct dmi_system_id bt_fwbug_list[] __initconst = {
++	{
++		.ident = "ThinkPad E485",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20KU"),
++		},
++	},
++	{
++		.ident = "ThinkPad E585",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20KV"),
++		},
++	},
++	{
++		.ident = "ThinkPad A285 - 20MW",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20MW"),
++		},
++	},
++	{
++		.ident = "ThinkPad A285 - 20MX",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20MX"),
++		},
++	},
++	{
++		.ident = "ThinkPad A485 - 20MU",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20MU"),
++		},
++	},
++	{
++		.ident = "ThinkPad A485 - 20MV",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_BOARD_NAME, "20MV"),
++		},
++	},
++	{}
++};
++
++static const struct pci_device_id fwbug_cards_ids[] __initconst = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x24F3) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x24FD) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2526) },
++	{}
++};
++
++
++static int __init have_bt_fwbug(void)
++{
++	/*
++	 * Some AMD based ThinkPads have a firmware bug that calling
++	 * "GBDC" will cause bluetooth on Intel wireless cards blocked
++	 */
++	if (dmi_check_system(bt_fwbug_list) && pci_dev_present(fwbug_cards_ids)) {
++		vdbg_printk(TPACPI_DBG_INIT | TPACPI_DBG_RFKILL,
++			FW_BUG "disable bluetooth subdriver for Intel cards\n");
++		return 1;
++	} else
++		return 0;
++}
++
+ static int __init bluetooth_init(struct ibm_init_struct *iibm)
+ {
+ 	int res;
+@@ -4513,7 +4581,7 @@ static int __init bluetooth_init(struct
  
- 	/* Make private data page aligned */
+ 	/* bluetooth not supported on 570, 600e/x, 770e, 770x, A21e, A2xm/p,
+ 	   G4x, R30, R31, R40e, R50e, T20-22, X20-21 */
+-	tp_features.bluetooth = hkey_handle &&
++	tp_features.bluetooth = !have_bt_fwbug() && hkey_handle &&
+ 	    acpi_evalf(hkey_handle, &status, "GBDC", "qd");
+ 
+ 	vdbg_printk(TPACPI_DBG_INIT | TPACPI_DBG_RFKILL,
 
 
