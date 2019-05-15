@@ -2,162 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E60941F174
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59C61EE46
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730901AbfEOLTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:19:10 -0400
-Received: from mout.web.de ([212.227.15.4]:56111 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730026AbfEOLTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1557919120;
-        bh=d6u9u+w3i5KSQsXRywri1KozcOmgXuFIGy3QZEQsoFw=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=rSauEkOz4Q+16gj2VdJg46TOGVD7QNeq5cgDlK8GHwlGqJW+egfru9pKemjrxp1BT
-         JVFXnPTHAbrjAXBhBqjjfRWsOWxPCkKJWa9P10BtgiHIPqL937vMBtrBxv3oI+T8Ae
-         Ms/qXR3/v/weq9NsDqSkkLzUaS6AsMGZXVdJjKIM=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.244.73.153]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LaZQd-1gyNY71Lp9-00mIm8; Wed, 15
- May 2019 13:18:40 +0200
-Subject: Re: [3/3] Coccinelle: pci_free_consistent: Extend when constraints
- for two SmPL ellipses
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Coccinelle <cocci@systeme.lip6.fr>,
+        id S1730524AbfEOLTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:23 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32942 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730926AbfEOLTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:18 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 140A8AC54039E2847CA4;
+        Wed, 15 May 2019 12:19:16 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 15 May
+ 2019 12:19:06 +0100
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+CC:     Rob Landley <rob@landley.net>, Andy Lutomirski <luto@kernel.org>,
+        "Arvind Sankar" <niveditas98@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Ma Jiang <ma.jiang@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>
-References: <201905151043340243098@zte.com.cn>
- <alpine.DEB.2.21.1905150808180.2591@hadrien>
- <bfde9b91-0c5d-31a0-4b1b-5f675152b2f8@web.de>
- <alpine.DEB.2.20.1905151119070.3231@hadrien>
- <c53d5a80-7f80-535c-8394-a3289399feba@web.de>
- <alpine.DEB.2.20.1905151217380.3231@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <86e6bf17-966b-06fe-287a-3df7e35736cb@web.de>
-Date:   Wed, 15 May 2019 13:18:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        "Linux API" <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        <initramfs@vger.kernel.org>,
+        "Silviu Vlasceanu" <Silviu.Vlasceanu@huawei.com>
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+ <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+ <1557861511.3378.19.camel@HansenPartnership.com>
+ <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
+ <1557878052.2873.6.camel@HansenPartnership.com>
+ <20190515005221.GB88615@rani.riverdale.lan>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <a138af12-d983-453e-f0b2-661a80b7e837@huawei.com>
+Date:   Wed, 15 May 2019 13:19:04 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1905151217380.3231@hadrien>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190515005221.GB88615@rani.riverdale.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:siYj/9osA6E3fIm5ClA8b+CBYwNpqG8CWdYvoAjnZFrjwltUxn4
- WZpCkIa7MmSqsu90wM8zSulG1uogaoXIO2i+p6L3wOGihsqPt+bvEfa1VPaA4hBfhqNyGi4
- O79e6PtLK70pgoHkA6qTXXE2qTT/Rdpm8Fx6QRRldqIcL9lFnBRnanYjfC4OKcHpyvOBWnO
- tCS2zW5zJIOAHMXG0Gq8Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zXa/qJSa7dE=:LlsWw3LG0KmOVsa5r8RtAR
- zCSJdenE5SXCYztvoY2Lr6Ugxt3gzTxDB7gvOjC+O1T2Ycgf0TSWfFKBhLK6gs43vpFtPyYxm
- +zs++N7pPXZjayqhSbUH9fe5UJCJVs13NaNlitxtnu2ZGSL+mFqqrty6MsXKtWNEwPBjeMwsQ
- hCCYz1YOVNicBzZan5hwu+t9N30y/hAzvQtoqVrhLgj2QxUUmOpbsFjV2IezDP+U27eD8eXYh
- rMIlA41dCJGi3IJokHpPfStHmqlVQkolzlyjP9hguypU9Vibp/FUM/Tnqp1b146vG10o47A6y
- hgqYKI1GPXM6MfXgnGeVmyuFmH8+DkuetE6I006P5dmPOPgbTLarrV/9BzCiO+MKzUZar6v5u
- RMrwZPTCOPm4I7IxzHV2n32YIMt++gxj6jfWEdG/75kYbYoV2BEJIy/zZDFiLXUPpgxaMSvHl
- fdBgZOfAdubKXPxq4AR+Fy5QEUTgZ53MkL+FOpPg28hu4o6pz0BHNY0/7aLT2/rarwvngCWW7
- 0XZHW4A7/rY2KQQ07pYzY7l97Pquu2fFJPr6MGm8P/NaPCEoQ6N4ukCRiIpGnQXNP6acWIWbK
- DAeVpUV1vafrs5ZIltMYThZFfkaIEk3+1Uv1rciDgNrFMi0iJsBq1X6ibp2vlVDGzDHdzu56d
- YoT1JrpcDkncQOWqPNv13i9aBhShvbIrn2HaBhrkeJN3mMsKEMDW4vXcJsnM86oPsu+TU9ZxG
- C+GpHBvedU+iC7ow65NoE9OpA+GookaLHO1trwz99p1OpsTrmH1uxS+De/tlX6tt7mLJgJhMX
- EUV94GS0z95JIJ98IySG7pt6YsCfDBB8E8n5QgJ3XGgTZ4OTZalmEsrD4+zJM+UbpRrfsVeWV
- D9kyiyz+ESaRBx5GV9PnoFDRKY5Oi1lieVsZAbuWzdA35UUv7pGhHS2D4sY3FvsqSzeR3MhdD
- 9jtKIZjEBMw==
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Am 15.05.19 um 12:19 schrieb Julia Lawall:
->
->
-> On Wed, 15 May 2019, Markus Elfring wrote:
->
->>>>> On the other hand, I do care about causing false negatives.
+On 5/15/2019 2:52 AM, Arvind Sankar wrote:
+> On Tue, May 14, 2019 at 04:54:12PM -0700, James Bottomley wrote:
+>> On Tue, 2019-05-14 at 18:39 -0500, Rob Landley wrote:
+>>> On 5/14/19 2:18 PM, James Bottomley wrote:
+>>>>> I think Rob is right here.  If /init was statically built into
+>>>>> the kernel image, it has no more ability to compromise the kernel
+>>>>> than anything else in the kernel.  What's the problem here?
 >>>>
->>>> Do you find the missing warning after the addition of such an exclusi=
-on
->>>> specification interesting?
+>>>> The specific problem is that unless you own the kernel signing key,
+>>>> which is really untrue for most distribution consumers because the
+>>>> distro owns the key, you cannot build the initrd statically into
+>>>> the kernel.  You can take the distro signed kernel, link it with
+>>>> the initrd then resign the combination with your key, provided you
+>>>> insert your key into the MoK variables as a trusted secure boot
+>>>> key, but the distros have been unhappy recommending this as
+>>>> standard practice.
+>>>>
+>>>> If our model for security is going to be to link the kernel and the
+>>>> initrd statically to give signature protection over the aggregate
+>>>> then we need to figure out how to execute this via the distros.  If
+>>>> we accept that the split model, where the distro owns and signs the
+>>>> kernel but the machine owner builds and is responsible for the
+>>>> initrd, then we need to explore split security models like this
+>>>> proposal.
 >>>
->>> I already suggested how to improve the code.
+>>> You can have a built-in and an external initrd? The second extracts
+>>> over the first? (I know because once upon a time conflicting files
+>>> would append. It sounds like the desired behavior here is O_EXCL fail
+>>> and move on.)
 >>
->> I find that the idea =E2=80=9Ce2->fld=E2=80=9D needs further clarificat=
-ion.
->> Such a SmPL specification will be resolved also to an expression,
->> won't it?
->
-> Saving in a local variable doesn't impact the need to free the object.
+>> Technically yes, because the first initrd could find the second by some
+>> predefined means, extract it to a temporary directory and do a
+>> pivot_root() and then the second would do some stuff, find the real
+>> root and do a pivot_root() again.  However, while possible, wouldn't it
+>> just add to the rendezvous complexity without adding any benefits? even
+>> if the first initrd is built and signed by the distro and the second is
+>> built by you, the first has to verify the second somehow.  I suppose
+>> the second could be tar extracted, which would add xattrs, if that's
+>> the goal?
+>>
+>> James
+>>
+> You can specify multiple initrd's to the boot loader, and they get
+> loaded in sequence into memory and parsed by the kernel before /init is
+> launched. Currently I believe later ones will overwrite the earlier
+> ones, which is why we've been talking about adding an option to prevent
+> that. You don't have to mess with manually finding/parsing initramfs's
+> which wouldn't even be feasible since you may not have the drivers
+> loaded yet to access the device/filesystem on which they live.
+> 
+> Once that's done, the embedded /init is just going to do in userspace
+> wht the current patch does in the kernel. So all the files in the
+> external initramfs(es) would need to have IMA signatures via the special
+> xattr file.
 
-I suggest to reconsider this view.
-
-Would we like to introduce additional case distinctions for the handling
-of reassignments to local variables (as shown in Wen's test case)?
-
-
-> A field is the most obvious case where the object may not need freeing.
-
-A corresponding resource release should probably be performed by
-an other function then.
+So, the scheme you are proposing is not equivalent: using the distro key
+to verify signatures, compared to adding a new user key to verify the
+initramfs he builds. Why would it be necessary for the user to share
+responsibility with the distro, if the only files he uses come from the
+distro?
 
 
-> But there are many expressions that e2->fld will not match.
+> Note that if you want the flexibility to be able to load one or both of
+> two external initramfs's, the current in-kernel proposal wouldn't be
+> enough -- the xattr specification would have to be more flexible (eg
+> reading .xattr-list* to allow each initramfs to specifiy its own
+> xattrs. This sort of enhancement would be much easier to handle with the
+> userspace variant.
 
-Data structure members can eventually belong also to a local variable.
-Would they become relevant for further SmPL exclusion specifications?
+Yes, the alternative solution is to parse .xattr-list at the time it is
+extracted. The .xattr-list of each initramfs will be processed. Also,
+the CPIO parser doesn't have to reopen the file after all other files
+have been extracted.
 
-Regards,
-Markus
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
