@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055771ED83
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC621EE10
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbfEOLKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43944 "EHLO mail.kernel.org"
+        id S1730073AbfEOLQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbfEOLKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:10:13 -0400
+        id S1730509AbfEOLQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FE0820862;
-        Wed, 15 May 2019 11:10:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AB5420644;
+        Wed, 15 May 2019 11:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918611;
-        bh=pRLJzIWzLTADxYCATk03yf++GnwfjR4kFX69bskeVMA=;
+        s=default; t=1557918992;
+        bh=YxO9ejvOV8qZoh6Ip48XjP0macGpbOhi/pIk6GnodX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HU4l6Y01db39ZsW8eRZHaouj6vQSg9/JGobXFMIv8XaXkkG0SCwRlrCMSJHFj7Mfc
-         yBs0OQ+FMTNy178hKu7Rlgy4OgXH6GZClWXbLrqr29fNDMxKa/pYXi5T1GCAb1cmYf
-         tscQtrq7wnOAwaUuzLsLb8/EbMTArjFeHGR/ZAQo=
+        b=ykVfuJZmEQypgTdJMjM4MetaRwscRHBvaSn6Dqpn5u2ihHgFM3Gm8J/Juo7Sj6DMh
+         4XOZaKcQ1V/JUjNHzdz96xrgLU1fkJ8BeixGxvi6C4aOunNHZdVBqYU6YhfE/jyCcc
+         RU1GShNykuHr8lyqDVZNg/m4iyIg2CM3ewHx/ZIY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        "SchauflerCasey" <casey.schaufler@intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: [PATCH 4.4 198/266] x86/speculation: Apply IBPB more strictly to avoid cross-process data leak
-Date:   Wed, 15 May 2019 12:55:05 +0200
-Message-Id: <20190515090729.644961124@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 026/115] mm: fix inactive list balancing between NUMA nodes and cgroups
+Date:   Wed, 15 May 2019 12:55:06 +0200
+Message-Id: <20190515090701.215778388@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,174 +47,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+[ Upstream commit 3b991208b897f52507168374033771a984b947b1 ]
 
-commit dbfe2953f63c640463c630746cd5d9de8b2f63ae upstream.
+During !CONFIG_CGROUP reclaim, we expand the inactive list size if it's
+thrashing on the node that is about to be reclaimed.  But when cgroups
+are enabled, we suddenly ignore the node scope and use the cgroup scope
+only.  The result is that pressure bleeds between NUMA nodes depending
+on whether cgroups are merely compiled into Linux.  This behavioral
+difference is unexpected and undesirable.
 
-Currently, IBPB is only issued in cases when switching into a non-dumpable
-process, the rationale being to protect such 'important and security
-sensitive' processess (such as GPG) from data leaking into a different
-userspace process via spectre v2.
+When the refault adaptivity of the inactive list was first introduced,
+there were no statistics at the lruvec level - the intersection of node
+and memcg - so it was better than nothing.
 
-This is however completely insufficient to provide proper userspace-to-userpace
-spectrev2 protection, as any process can poison branch buffers before being
-scheduled out, and the newly scheduled process immediately becomes spectrev2
-victim.
+But now that we have that infrastructure, use lruvec_page_state() to
+make the list balancing decision always NUMA aware.
 
-In order to minimize the performance impact (for usecases that do require
-spectrev2 protection), issue the barrier only in cases when switching between
-processess where the victim can't be ptraced by the potential attacker (as in
-such cases, the attacker doesn't have to bother with branch buffers at all).
-
-[ tglx: Split up PTRACE_MODE_NOACCESS_CHK into PTRACE_MODE_SCHED and
-  PTRACE_MODE_IBPB to be able to do ptrace() context tracking reasonably
-  fine-grained ]
-
-Fixes: 18bf3c3ea8 ("x86/speculation: Use Indirect Branch Prediction Barrier in context switch")
-Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[hannes@cmpxchg.org: fix bisection hole]
+  Link: http://lkml.kernel.org/r/20190417155241.GB23013@cmpxchg.org
+Link: http://lkml.kernel.org/r/20190412144438.2645-1-hannes@cmpxchg.org
+Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/tlb.c      |   31 ++++++++++++++++++++-----------
- include/linux/ptrace.h |   21 +++++++++++++++++++--
- kernel/ptrace.c        |   10 ++++++++++
- 3 files changed, 49 insertions(+), 13 deletions(-)
+ mm/vmscan.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -7,6 +7,7 @@
- #include <linux/module.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
-+#include <linux/ptrace.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -101,6 +102,19 @@ void switch_mm(struct mm_struct *prev, s
- 	local_irq_restore(flags);
- }
- 
-+static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
-+{
-+	/*
-+	 * Check if the current (previous) task has access to the memory
-+	 * of the @tsk (next) task. If access is denied, make sure to
-+	 * issue a IBPB to stop user->user Spectre-v2 attacks.
-+	 *
-+	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
-+	 */
-+	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
-+		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
-+}
-+
- void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			struct task_struct *tsk)
- {
-@@ -115,18 +129,13 @@ void switch_mm_irqs_off(struct mm_struct
- 		 * one process from doing Spectre-v2 attacks on another.
- 		 *
- 		 * As an optimization, flush indirect branches only when
--		 * switching into processes that disable dumping. This
--		 * protects high value processes like gpg, without having
--		 * too high performance overhead. IBPB is *expensive*!
--		 *
--		 * This will not flush branches when switching into kernel
--		 * threads. It will also not flush if we switch to idle
--		 * thread and back to the same process. It will flush if we
--		 * switch to a different non-dumpable process.
-+		 * switching into a processes that can't be ptrace by the
-+		 * current one (as in such case, attacker has much more
-+		 * convenient way how to tamper with the next process than
-+		 * branch buffer poisoning).
- 		 */
--		if (tsk && tsk->mm &&
--		    tsk->mm->context.ctx_id != last_ctx_id &&
--		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-+		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
-+				ibpb_needed(tsk, last_ctx_id))
- 			indirect_branch_prediction_barrier();
- 
- 		/*
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -57,14 +57,17 @@ extern void exit_ptrace(struct task_stru
- #define PTRACE_MODE_READ	0x01
- #define PTRACE_MODE_ATTACH	0x02
- #define PTRACE_MODE_NOAUDIT	0x04
--#define PTRACE_MODE_FSCREDS 0x08
--#define PTRACE_MODE_REALCREDS 0x10
-+#define PTRACE_MODE_FSCREDS	0x08
-+#define PTRACE_MODE_REALCREDS	0x10
-+#define PTRACE_MODE_SCHED	0x20
-+#define PTRACE_MODE_IBPB	0x40
- 
- /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
- #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
- #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
-+#define PTRACE_MODE_SPEC_IBPB (PTRACE_MODE_ATTACH_REALCREDS | PTRACE_MODE_IBPB)
- 
- /**
-  * ptrace_may_access - check whether the caller is permitted to access
-@@ -82,6 +85,20 @@ extern void exit_ptrace(struct task_stru
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 99837e931f531..7b140c967bca6 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2120,7 +2120,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
+  *   10TB     320        32GB
   */
- extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
- 
-+/**
-+ * ptrace_may_access - check whether the caller is permitted to access
-+ * a target task.
-+ * @task: target task
-+ * @mode: selects type of access and caller credentials
-+ *
-+ * Returns true on success, false on denial.
-+ *
-+ * Similar to ptrace_may_access(). Only to be called from context switch
-+ * code. Does not call into audit and the regular LSM hooks due to locking
-+ * constraints.
-+ */
-+extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
-+
- static inline int ptrace_reparented(struct task_struct *child)
+ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+-				 struct mem_cgroup *memcg,
+ 				 struct scan_control *sc, bool actual_reclaim)
  {
- 	return !same_thread_group(child->real_parent, child->parent);
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -228,6 +228,9 @@ static int ptrace_check_attach(struct ta
+ 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
+@@ -2141,16 +2140,12 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+ 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
+ 	active = lruvec_lru_size(lruvec, active_lru, sc->reclaim_idx);
  
- static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
- {
-+	if (mode & PTRACE_MODE_SCHED)
-+		return false;
-+
- 	if (mode & PTRACE_MODE_NOAUDIT)
- 		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
- 	else
-@@ -295,9 +298,16 @@ ok:
- 	     !ptrace_has_cap(mm->user_ns, mode)))
- 	    return -EPERM;
- 
-+	if (mode & PTRACE_MODE_SCHED)
-+		return 0;
- 	return security_ptrace_access_check(task, mode);
+-	if (memcg)
+-		refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-	else
+-		refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 	/*
+ 	 * When refaults are being observed, it means a new workingset
+ 	 * is being established. Disable active list protection to get
+ 	 * rid of the stale workingset quickly.
+ 	 */
++	refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 	if (file && actual_reclaim && lruvec->refaults != refaults) {
+ 		inactive_ratio = 0;
+ 	} else {
+@@ -2171,12 +2166,10 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
  }
  
-+bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
-+{
-+	return __ptrace_may_access(task, mode | PTRACE_MODE_SCHED);
-+}
-+
- bool ptrace_may_access(struct task_struct *task, unsigned int mode)
+ static unsigned long shrink_list(enum lru_list lru, unsigned long nr_to_scan,
+-				 struct lruvec *lruvec, struct mem_cgroup *memcg,
+-				 struct scan_control *sc)
++				 struct lruvec *lruvec, struct scan_control *sc)
  {
- 	int err;
+ 	if (is_active_lru(lru)) {
+-		if (inactive_list_is_low(lruvec, is_file_lru(lru),
+-					 memcg, sc, true))
++		if (inactive_list_is_low(lruvec, is_file_lru(lru), sc, true))
+ 			shrink_active_list(nr_to_scan, lruvec, sc, lru);
+ 		return 0;
+ 	}
+@@ -2276,7 +2269,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			 * anonymous pages on the LRU in eligible zones.
+ 			 * Otherwise, the small LRU gets thrashed.
+ 			 */
+-			if (!inactive_list_is_low(lruvec, false, memcg, sc, false) &&
++			if (!inactive_list_is_low(lruvec, false, sc, false) &&
+ 			    lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, sc->reclaim_idx)
+ 					>> sc->priority) {
+ 				scan_balance = SCAN_ANON;
+@@ -2294,7 +2287,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 	 * lruvec even if it has plenty of old anonymous pages unless the
+ 	 * system is under heavy pressure.
+ 	 */
+-	if (!inactive_list_is_low(lruvec, true, memcg, sc, false) &&
++	if (!inactive_list_is_low(lruvec, true, sc, false) &&
+ 	    lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, sc->reclaim_idx) >> sc->priority) {
+ 		scan_balance = SCAN_FILE;
+ 		goto out;
+@@ -2447,7 +2440,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 				nr[lru] -= nr_to_scan;
+ 
+ 				nr_reclaimed += shrink_list(lru, nr_to_scan,
+-							    lruvec, memcg, sc);
++							    lruvec, sc);
+ 			}
+ 		}
+ 
+@@ -2514,7 +2507,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 	 * Even if we did not try to evict anon pages at all, we want to
+ 	 * rebalance the anon lru active/inactive ratio.
+ 	 */
+-	if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++	if (inactive_list_is_low(lruvec, false, sc, true))
+ 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 				   sc, LRU_ACTIVE_ANON);
+ }
+@@ -2839,12 +2832,8 @@ static void snapshot_refaults(struct mem_cgroup *root_memcg, pg_data_t *pgdat)
+ 		unsigned long refaults;
+ 		struct lruvec *lruvec;
+ 
+-		if (memcg)
+-			refaults = memcg_page_state(memcg, WORKINGSET_ACTIVATE);
+-		else
+-			refaults = node_page_state(pgdat, WORKINGSET_ACTIVATE);
+-
+ 		lruvec = mem_cgroup_lruvec(pgdat, memcg);
++		refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+ 		lruvec->refaults = refaults;
+ 	} while ((memcg = mem_cgroup_iter(root_memcg, memcg, NULL)));
+ }
+@@ -3192,7 +3181,7 @@ static void age_active_anon(struct pglist_data *pgdat,
+ 	do {
+ 		struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
+ 
+-		if (inactive_list_is_low(lruvec, false, memcg, sc, true))
++		if (inactive_list_is_low(lruvec, false, sc, true))
+ 			shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 					   sc, LRU_ACTIVE_ANON);
+ 
+-- 
+2.20.1
+
 
 
