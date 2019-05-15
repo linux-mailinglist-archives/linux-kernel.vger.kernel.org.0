@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 553DF1EEEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE8D1EE79
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbfEOL1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:27:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38358 "EHLO mail.kernel.org"
+        id S1731417AbfEOLWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732236AbfEOL13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:27:29 -0400
+        id S1730877AbfEOLWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C46CA20818;
-        Wed, 15 May 2019 11:27:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 581EC20818;
+        Wed, 15 May 2019 11:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919649;
-        bh=z1/vCy6CaTxfG8hnPxo0+mWmDejxIMEFV44pwnRF4zY=;
+        s=default; t=1557919327;
+        bh=q6v72+Ja18F0YRjkSCV3jO77DtMZBJHsNepQUcLXMWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FzNWl/3u8qAY5Mbtil1UDA4+ZH52pomB7MIiES533XVRisJyPkPqjUWtM7qpkIwUT
-         ly2iQPZlRJ3QSK3+HyZbISly1rxzQQ5kolkGjZmIdZlPpUfe+WAp32Kso2NFxldyPq
-         sV16HImTS4zUmAwAK6/mNItogMlMyTEGQ3/PVOJM=
+        b=y63PBAf6oMg+ktvkZJuRmqM12l+4VWN2G1lFYxWKnUOqNIursG9VQLQAmYgSUrxkj
+         /Rr6/T9qIiATFgx18iD7KCrCH69gw9QbTx+U/JdiO+GlZAkP5TeL//OXXY7ub84UvN
+         9imavnSPVDGQbXN5AbIq3fk8nl0bZonMPa/R0eUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
-        Michal Kalderon <mkalderon@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 042/137] qed: Fix the doorbell address sanity check
+Subject: [PATCH 4.19 032/113] qede: fix write to freed pointer error and double free of ptp
 Date:   Wed, 15 May 2019 12:55:23 +0200
-Message-Id: <20190515090656.478467316@linuxfoundation.org>
+Message-Id: <20190515090656.019391191@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,72 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b61b04ad81d5f975349d66abbecabf96ba211140 ]
+[ Upstream commit 1dc2b3d65523780ed1972d446c76e62e13f3e8f5 ]
 
-Fix the condition which verifies that doorbell address is inside the
-doorbell bar by checking that the end of the address is within range
-as well.
+The err2 error return path calls qede_ptp_disable that cleans up
+on an error and frees ptp. After this, the free'd ptp is dereferenced
+when ptp->clock is set to NULL and the code falls-through to error
+path err1 that frees ptp again.
 
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Michal Kalderon <mkalderon@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
+Fix this by calling qede_ptp_disable and exiting via an error
+return path that does not set ptp->clock or kfree ptp.
+
+Addresses-Coverity: ("Write to pointer after free")
+Fixes: 035744975aec ("qede: Add support for PTP resource locking.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/qlogic/qede/qede_ptp.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index ff0bbf8d073d6..228891e459bc0 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -102,11 +102,15 @@ static void qed_db_recovery_dp_entry(struct qed_hwfn *p_hwfn,
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ptp.c b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+index 013ff567283c7..5e574c3b625e5 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ptp.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ptp.c
+@@ -490,18 +490,17 @@ int qede_ptp_enable(struct qede_dev *edev, bool init_tc)
  
- /* Doorbell address sanity (address within doorbell bar range) */
- static bool qed_db_rec_sanity(struct qed_dev *cdev,
--			      void __iomem *db_addr, void *db_data)
-+			      void __iomem *db_addr,
-+			      enum qed_db_rec_width db_width,
-+			      void *db_data)
- {
-+	u32 width = (db_width == DB_REC_WIDTH_32B) ? 32 : 64;
-+
- 	/* Make sure doorbell address is within the doorbell bar */
- 	if (db_addr < cdev->doorbells ||
--	    (u8 __iomem *)db_addr >
-+	    (u8 __iomem *)db_addr + width >
- 	    (u8 __iomem *)cdev->doorbells + cdev->db_size) {
- 		WARN(true,
- 		     "Illegal doorbell address: %p. Legal range for doorbell addresses is [%p..%p]\n",
-@@ -159,7 +163,7 @@ int qed_db_recovery_add(struct qed_dev *cdev,
+ 	ptp->clock = ptp_clock_register(&ptp->clock_info, &edev->pdev->dev);
+ 	if (IS_ERR(ptp->clock)) {
+-		rc = -EINVAL;
+ 		DP_ERR(edev, "PTP clock registration failed\n");
++		qede_ptp_disable(edev);
++		rc = -EINVAL;
+ 		goto err2;
  	}
  
- 	/* Sanitize doorbell address */
--	if (!qed_db_rec_sanity(cdev, db_addr, db_data))
-+	if (!qed_db_rec_sanity(cdev, db_addr, db_width, db_data))
- 		return -EINVAL;
+ 	return 0;
  
- 	/* Obtain hwfn from doorbell address */
-@@ -205,10 +209,6 @@ int qed_db_recovery_del(struct qed_dev *cdev,
- 		return 0;
- 	}
+-err2:
+-	qede_ptp_disable(edev);
+-	ptp->clock = NULL;
+ err1:
+ 	kfree(ptp);
++err2:
+ 	edev->ptp = NULL;
  
--	/* Sanitize doorbell address */
--	if (!qed_db_rec_sanity(cdev, db_addr, db_data))
--		return -EINVAL;
--
- 	/* Obtain hwfn from doorbell address */
- 	p_hwfn = qed_db_rec_find_hwfn(cdev, db_addr);
- 
-@@ -317,7 +317,7 @@ static void qed_db_recovery_ring(struct qed_hwfn *p_hwfn,
- 
- 	/* Sanity */
- 	if (!qed_db_rec_sanity(p_hwfn->cdev, db_entry->db_addr,
--			       db_entry->db_data))
-+			       db_entry->db_width, db_entry->db_data))
- 		return;
- 
- 	/* Flush the write combined buffer. Since there are multiple doorbelling
+ 	return rc;
 -- 
 2.20.1
 
