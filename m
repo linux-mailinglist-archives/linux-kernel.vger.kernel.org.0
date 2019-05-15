@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3070B1EE68
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 223771EE0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731246AbfEOLVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:21:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59136 "EHLO mail.kernel.org"
+        id S1729773AbfEOLQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731010AbfEOLVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:21:13 -0400
+        id S1730483AbfEOLQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1EB20881;
-        Wed, 15 May 2019 11:21:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79EB920644;
+        Wed, 15 May 2019 11:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919272;
-        bh=aQ7Ivrvdt+7G0Ib3INo2gzvB2O0EmJ9WgB66ULk7SXs=;
+        s=default; t=1557918985;
+        bh=8rZzTq7tUuVNcSHC5GQUDhwPoWvuFiAGLYnpctVVhD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PJNOy9t0LYftwZ9nNmhLEBj+avTDOCG45+B+utn2e5OA91/eG5o2dcdjbUrF4MZRe
-         EbdYhy7Ltb83/GksKjCKPAZ5V7g25OmN9QSiMcvDsmTq9pWODPUQ7h4FJZUIEzpqcR
-         BK4ggPEg50M3+A31jN/DqOQulDFJbPWGTrxQvG4o=
+        b=x4C/C12gbF/IyFO45kGVoi8CpTDrmB7uusFfm2Jezr1iuABU5YY/ZtiUgy0DX2KE5
+         IyUp9fH5ujmSUegFMlbsEUjZhSWAELoFb9sfis6gH6KGUvFszCfNAuwvrrfHuShAz9
+         E8yWm6FXViKxsKV9VRcAMYN4uqN4DlO9vAVOMrkI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 013/113] libnvdimm/namespace: Fix a potential NULL pointer dereference
+Subject: [PATCH 4.14 024/115] KVM: x86: avoid misreporting level-triggered irqs as edge-triggered in tracing
 Date:   Wed, 15 May 2019 12:55:04 +0200
-Message-Id: <20190515090654.545193363@linuxfoundation.org>
+Message-Id: <20190515090701.029640487@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 55c1fc0af29a6c1b92f217b7eb7581a882e0c07c ]
+[ Upstream commit 7a223e06b1a411cef6c4cd7a9b9a33c8d225b10e ]
 
-In case kmemdup fails, the fix goes to blk_err to avoid NULL
-pointer dereference.
+In __apic_accept_irq() interface trig_mode is int and actually on some code
+paths it is set above u8:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+kvm_apic_set_irq() extracts it from 'struct kvm_lapic_irq' where trig_mode
+is u16. This is done on purpose as e.g. kvm_set_msi_irq() sets it to
+(1 << 15) & e->msi.data
+
+kvm_apic_local_deliver sets it to reg & (1 << 15).
+
+Fix the immediate issue by making 'tm' into u16. We may also want to adjust
+__apic_accept_irq() interface and use proper sizes for vector, level,
+trig_mode but this is not urgent.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvdimm/namespace_devs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kvm/trace.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index 54d79837f7c6b..73a444c41cde9 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -2251,9 +2251,12 @@ static struct device *create_namespace_blk(struct nd_region *nd_region,
- 	if (!nsblk->uuid)
- 		goto blk_err;
- 	memcpy(name, nd_label->name, NSLABEL_NAME_LEN);
--	if (name[0])
-+	if (name[0]) {
- 		nsblk->alt_name = kmemdup(name, NSLABEL_NAME_LEN,
- 				GFP_KERNEL);
-+		if (!nsblk->alt_name)
-+			goto blk_err;
-+	}
- 	res = nsblk_add_resource(nd_region, ndd, nsblk,
- 			__le64_to_cpu(nd_label->dpa));
- 	if (!res)
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index 9807c314c4788..3bf41413ab151 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -438,13 +438,13 @@ TRACE_EVENT(kvm_apic_ipi,
+ );
+ 
+ TRACE_EVENT(kvm_apic_accept_irq,
+-	    TP_PROTO(__u32 apicid, __u16 dm, __u8 tm, __u8 vec),
++	    TP_PROTO(__u32 apicid, __u16 dm, __u16 tm, __u8 vec),
+ 	    TP_ARGS(apicid, dm, tm, vec),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	__u32,		apicid		)
+ 		__field(	__u16,		dm		)
+-		__field(	__u8,		tm		)
++		__field(	__u16,		tm		)
+ 		__field(	__u8,		vec		)
+ 	),
+ 
 -- 
 2.20.1
 
