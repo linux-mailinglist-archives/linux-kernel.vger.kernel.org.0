@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A550D1EE85
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7741F19D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731512AbfEOLWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32864 "EHLO mail.kernel.org"
+        id S1730467AbfEOLQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731498AbfEOLWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:39 -0400
+        id S1730451AbfEOLQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D67E5206BF;
-        Wed, 15 May 2019 11:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 295EA20843;
+        Wed, 15 May 2019 11:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919359;
-        bh=yFUPSDZ95GbfUlJh8l0YvnrDeDlNtW1xQQ7ma0Nb+8Y=;
+        s=default; t=1557918974;
+        bh=nnG+DvjAJ9qVkRFgGBKetcEYfjrpO9Pss2Q1PNcUGl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BGRe/lqJdWkoBA++lbpwDYEPcxZ71kOZtnHN6MqXA2iPVT7cPEgM33oHNgQhcZMdL
-         QgRvjtPmLVyZe9xj4kd6gRWeG11l+yAFJqU7MwbhKQMpJR8iUts2x4l7ZQ6WEl/Ufn
-         B7Xj/3N6VvGovZyxle0a7GSemJv/nIeeo5O+GIDc=
+        b=ARweiS4wjm6sWqypTRasLsgRdi6UdG+2UOHtreZ7PvsNdDExF3ssgYy1UxDH5LcL5
+         gR00JJP73bXus2195H68WmqDhHbk0sohFvqdi9iQnFK3poC3Dh12eQ7zd8BzQQzd8m
+         JCpFlomx9ZwK+JH/agVnpabmnyEtI7ru3OU1/xWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/113] iio: adc: xilinx: fix potential use-after-free on remove
+Subject: [PATCH 4.14 020/115] mISDN: Check address length before reading address family
 Date:   Wed, 15 May 2019 12:55:00 +0200
-Message-Id: <20190515090654.166330986@linuxfoundation.org>
+Message-Id: <20190515090700.761782330@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 62039b6aef63380ba7a37c113bbaeee8a55c5342 ]
+[ Upstream commit 238ffdc49ef98b15819cfd5e3fb23194e3ea3d39 ]
 
-When cancel_delayed_work() returns, the delayed work may still
-be running. This means that the core could potentially free
-the private structure (struct xadc) while the delayed work
-is still using it. This is a potential use-after-free.
+KMSAN will complain if valid address length passed to bind() is shorter
+than sizeof("struct sockaddr_mISDN"->family) bytes.
 
-Fix by calling cancel_delayed_work_sync(), which waits for
-any residual work to finish before returning.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/xilinx-xadc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/mISDN/socket.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-index 3f6be5ac049a8..1960694e80076 100644
---- a/drivers/iio/adc/xilinx-xadc-core.c
-+++ b/drivers/iio/adc/xilinx-xadc-core.c
-@@ -1320,7 +1320,7 @@ static int xadc_remove(struct platform_device *pdev)
- 	}
- 	free_irq(xadc->irq, indio_dev);
- 	clk_disable_unprepare(xadc->clk);
--	cancel_delayed_work(&xadc->zynq_unmask_work);
-+	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
- 	kfree(xadc->data);
- 	kfree(indio_dev->channels);
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index c5603d1a07d6e..65cb4aac8dce7 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -712,10 +712,10 @@ base_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
+ 	struct sock *sk = sock->sk;
+ 	int err = 0;
  
+-	if (!maddr || maddr->family != AF_ISDN)
++	if (addr_len < sizeof(struct sockaddr_mISDN))
+ 		return -EINVAL;
+ 
+-	if (addr_len < sizeof(struct sockaddr_mISDN))
++	if (!maddr || maddr->family != AF_ISDN)
+ 		return -EINVAL;
+ 
+ 	lock_sock(sk);
 -- 
 2.20.1
 
