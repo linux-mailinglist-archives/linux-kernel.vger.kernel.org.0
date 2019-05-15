@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BA51EDC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 353C51F242
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbfEOLNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:13:17 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56526 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729655AbfEOLNL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:11 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4FBD9OR058630;
-        Wed, 15 May 2019 06:13:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1557918789;
-        bh=1EvbyRlsOqqU6Qy/FHZ8ilhfbNaV4fjqsgFD0Yxvf2A=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rD3y0QGhw60LU1XY/6XAij8GRBUZDJy42D2GvTRWThdPSiq6tIanINLhC9EIz5GTm
-         o7D9TlkFevQqwpKkjDriajzd9spp5YQ83urcdlqL8ESFasPJzYwjhVzzzGJYTh/K82
-         /T1QtgqD9z0JULaRfuzEzddPxPFlXDABnecu8SIQ=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4FBD9tk040276
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 May 2019 06:13:09 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 15
- May 2019 06:13:09 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 15 May 2019 06:13:09 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4FBD6dI110173;
-        Wed, 15 May 2019 06:13:07 -0500
-Subject: Re: [PATCH 3/3] regulator: lp87565: Add 4-phase lp87561 regulator
- support
-To:     Mark Brown <broonie@kernel.org>
-CC:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <t-kristo@ti.com>
-References: <20190515100848.19560-1-j-keerthy@ti.com>
- <20190515100848.19560-4-j-keerthy@ti.com>
- <20190515110851.GD5613@sirena.org.uk>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <82581f9a-5aaa-b56c-f9d5-4188b60b3e6b@ti.com>
-Date:   Wed, 15 May 2019 16:43:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190515110851.GD5613@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+        id S1730387AbfEOMBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:01:12 -0400
+Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:51366
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729410AbfEOLOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i7BGuuaGOnQc9nBqNlL/Om1S/Ms76Y+ujewO4AU7h2c=;
+ b=oXaVrloNKQ4B8a2I5UPJZs9OAGKZWNSYKb+MySAEp257/SnMykcRmTOXCIObO426o+mn66tFJ3O4Zc9aWthmE99yfiGLak6dahylkh1S3uW1wa5yt4OLNHGbK7cSAIf/3LioXrQpe3/J+akKVnNJ8sCE0A/gMGuTZpkdHzawuDQ=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3673.eurprd04.prod.outlook.com (52.134.70.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Wed, 15 May 2019 11:14:06 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d035:3bd0:a56a:189d%2]) with mapi id 15.20.1900.010; Wed, 15 May 2019
+ 11:14:06 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: RE: [PATCH 1/3] dt-bindings: clock: imx8mm: Add SNVS clock
+Thread-Topic: [PATCH 1/3] dt-bindings: clock: imx8mm: Add SNVS clock
+Thread-Index: AQHVCr2yrHCSJQGcuE+Cdq63vYcty6ZsCLIA
+Date:   Wed, 15 May 2019 11:14:05 +0000
+Message-ID: <DB3PR0402MB39164F45F288EB251D5C10F4F5090@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1557883490-22360-1-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB6434DFD7728BD5B105EF2A31EE090@AM0PR04MB6434.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB6434DFD7728BD5B105EF2A31EE090@AM0PR04MB6434.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 70ea0596-93f0-4071-98ff-08d6d92671c4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3673;
+x-ms-traffictypediagnostic: DB3PR0402MB3673:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <DB3PR0402MB367364FD467C714C023798CAF5090@DB3PR0402MB3673.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0038DE95A2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(13464003)(199004)(189003)(76116006)(66556008)(64756008)(66446008)(52536014)(66476007)(66946007)(68736007)(7736002)(81166006)(446003)(305945005)(11346002)(8676002)(81156014)(66066001)(476003)(102836004)(6116002)(3846002)(44832011)(4326008)(256004)(25786009)(53546011)(6506007)(14444005)(186003)(26005)(76176011)(486006)(6636002)(71200400001)(71190400001)(7696005)(110136005)(54906003)(14454004)(2501003)(99286004)(7416002)(316002)(2906002)(6436002)(53936002)(966005)(2201001)(73956011)(33656002)(86362001)(478600001)(5660300002)(8936002)(6246003)(55016002)(229853002)(74316002)(6306002)(9686003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3673;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ln/s82RfGRvJbVZsY8XVAE9J5rY+MqCGo7Kg/II+VlSWJoik8QFFlOg06ZmHTQBrE78gT03hdfGCtQ4GiZhTQpg9kXw94z2wulqRKs4v0Lr3dBad7ODoLteNGqG2rctbIgMwIdAqUufgabytKPMrKKSrEK/B+39TgMoLM4FbGJmIu+5+E3aIe6ZeTXE55TXUKcez1LWgh8EZQVjXVRlOY47nVj/08iFTnlqbaB8BFP92Cgx6ttxUFrRMJojgIUvlgFVD1tBhaNm1uevoNYY2EG0MGeOSK+GoJXadS3DQPkdFjU3BSASu0Alh4IksJkZd2L5JjZ/8qk9QURwEi22QKnuF4yEbUVJePQb/2rMrLJAikZEoJjshgMbNtes+r07txCcx7IgXMtDg1r5vqEq8el4vKCzIvuAiY3GHTdgV6xM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70ea0596-93f0-4071-98ff-08d6d92671c4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 11:14:05.9137
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3673
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15/05/19 4:38 PM, Mark Brown wrote:
-> On Wed, May 15, 2019 at 03:38:48PM +0530, Keerthy wrote:
-> 
->> @@ -172,6 +178,9 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
->>   	if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87565_Q1) {
->>   		min_idx = LP87565_BUCK_10;
->>   		max_idx = LP87565_BUCK_23;
->> +	} else if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87561_Q1) {
->> +		min_idx = LP87565_BUCK_3210;
->> +		max_idx = LP87565_BUCK_3210;
-> 
-> This if/else chain should be a switch statement.
-
-Okay. I will convert that in v2.
-
-Thanks,
-Keerthy
-
-> 
+SGksIExlb25hcmQNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMZW9u
+YXJkIENyZXN0ZXoNCj4gU2VudDogV2VkbmVzZGF5LCBNYXkgMTUsIDIwMTkgNjoxOCBQTQ0KPiBU
+bzogQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBzaGF3bmd1b0BrZXJuZWwub3Jn
+Ow0KPiBzYm95ZEBrZXJuZWwub3JnOyBKYWNreSBCYWkgPHBpbmcuYmFpQG54cC5jb20+DQo+IENj
+OiByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBzLmhhdWVyQHBlbmd1
+dHJvbml4LmRlOw0KPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IGZlc3RldmFtQGdtYWlsLmNvbTsg
+bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBkbC1saW51eC1pbXggPGxp
+bnV4LQ0KPiBpbXhAbnhwLmNvbT47IEFiZWwgVmVzYSA8YWJlbC52ZXNhQG54cC5jb20+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggMS8zXSBkdC1iaW5kaW5nczogY2xvY2s6IGlteDhtbTogQWRkIFNO
+VlMgY2xvY2sNCj4gDQo+IE9uIDE1LjA1LjIwMTkgMDQ6MjksIEFuc29uIEh1YW5nIHdyb3RlOg0K
+PiA+IEFkZCBtYWNybyBmb3IgdGhlIFNOVlMgY2xvY2sgb2YgdGhlIGkuTVg4TU0uDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPiAt
+LS0NCj4gPiBUaGlzIHBhdGNoIGlzIGJhc2VkIG9uIHBhdGNoOg0KPiA+IGh0dHBzOi8vcGF0Y2h3
+b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA5Mzk5OTcvDQo+IA0KPiBOdW1iZXJpbmcgYWxzbyBjb25m
+bGljdHMgd2l0aCBvbmUgb2YgbXkgcGF0Y2hlczoNCj4gDQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmtl
+cm5lbC5vcmcvcGF0Y2gvMTA5NDAzMDMvDQo+IA0KPiBUaGUgY29uZmxpY3QgaXMgZWFzeSB0byBy
+ZXNvbHZlIGJ1dCBJIGRvbid0IG1pbmQgcmVzZW5kaW5nIGlmIHlvdXIgcGF0Y2hlcyBnZXQNCj4g
+YWNjZXB0ZWQgZmlyc3QuIElmIHNob3VsZCBwcm9iYWJseSByZXNlbmQgYW55d2F5IHRvIGFsc28g
+YWRkIGdpYyBjbGsgdG8gOG1xLg0KDQpUaGFua3MsIEkgZGlkIE5PVCBub3RpY2UgdGhpcywgZmVl
+bCBmcmVlIGlmIHdhbnQgbWUgdG8gcmVzZW5kIHRoZSBwYXRjaCBzZXQsIGJvdGgNCnRoZSBHUElP
+IGNsb2NrIGFuZCBTTlZTIGNsb2NrIHBhdGNoIHNlcmllcy4NCg0KVGhhbmtzLA0KQW5zb24uDQo+
+IA0KPiBGb3Igc2VyaWVzOg0KPiANCj4gUmV2aWV3ZWQtYnk6IExlb25hcmQgQ3Jlc3RleiA8bGVv
+bmFyZC5jcmVzdGV6QG54cC5jb20+DQo=
