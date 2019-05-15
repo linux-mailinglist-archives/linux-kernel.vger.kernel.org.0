@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60901F283
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96B451F046
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfEOLLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46070 "EHLO mail.kernel.org"
+        id S1726523AbfEOLmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:42:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729573AbfEOLL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:28 -0400
+        id S1732322AbfEOL2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D2A2168B;
-        Wed, 15 May 2019 11:11:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B250206BF;
+        Wed, 15 May 2019 11:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918687;
-        bh=L5efsXyWbGWe11uTyaShAqVCdeuPOgEDJwqmXQ0SoCE=;
+        s=default; t=1557919680;
+        bh=Zzwu0lQza0Dk0N4IkQenYME2SbLJibUQ7DVqa5x/odY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f3B+OJQsxg5N0VHSdoDonZhxKktAx5AzqFZYnT/8uboKJaPZYkKjON2pJ72TNMijK
-         zw1/c/Lido34uIEUjU8NPZr2LQfNkLXQo15RjkX39H92xSrhUH9/lZtuT6fMHNhCYZ
-         Ig5dhRJaxIzUb2TyU/joFGJ5k8YC+RGDnuJ9JQn8=
+        b=wtL/r0H8hk/fd6/m/O4ut3gOEim4f+h6ZdJHRKc/sN8MMDGKUWPwa0nbDjPXtg3LS
+         Nxvr4XlRGr9yMdFz7xd3Y5hKw1qfoR5hCGLlKzuARQdDeMuSpeappJaDW/6z4GC6a1
+         +Ckw1hDjYXhe0+bowMbjYn9D/O5jwfRq9/XGuCiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eduardo Habkost <ehabkost@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 227/266] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
+        stable@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 053/137] tools lib traceevent: Fix missing equality check for strcmp
 Date:   Wed, 15 May 2019 12:55:34 +0200
-Message-Id: <20190515090730.680064304@linuxfoundation.org>
+Message-Id: <20190515090657.347481345@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,52 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eduardo Habkost <ehabkost@redhat.com>
+[ Upstream commit f32c2877bcb068a718bb70094cd59ccc29d4d082 ]
 
-commit d7b09c827a6cf291f66637a36f46928dd1423184 upstream.
+There was a missing comparison with 0 when checking if type is "s64" or
+"u64". Therefore, the body of the if-statement was entered if "type" was
+"u64" or not "s64", which made the first strcmp() redundant since if
+type is "u64", it's not "s64".
 
-Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
-to the guest, which makes STIBP available to guests.  This was implemented
-by commits d28b387fb74d ("KVM/VMX: Allow direct access to
-MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
-MSR_IA32_SPEC_CTRL").
+If type is "s64", the body of the if-statement is not entered but since
+the remainder of the function consists of if-statements which will not
+be entered if type is "s64", we will just return "val", which is
+correct, albeit at the cost of a few more calls to strcmp(), i.e., it
+will behave just as if the if-statement was entered.
 
-However, we never updated GET_SUPPORTED_CPUID to let userspace know that
-STIBP can be enabled in CPUID.  Fix that by updating
-kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
+If type is neither "s64" or "u64", the body of the if-statement will be
+entered incorrectly and "val" returned. This means that any type that is
+checked after "s64" and "u64" is handled the same way as "s64" and
+"u64", i.e., the limiting of "val" to fit in for example "s8" is never
+reached.
 
-Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 4.4: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This was introduced in the kernel tree when the sources were copied from
+trace-cmd in commit f7d82350e597 ("tools/events: Add files to create
+libtraceevent.a"), and in the trace-cmd repo in 1cdbae6035cei
+("Implement typecasting in parser") when the function was introduced,
+i.e., it has always behaved the wrong way.
+
+Detected by cppcheck.
+
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
+Link: http://lkml.kernel.org/r/20190409091529.2686-1-rikard.falkeborn@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/cpuid.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/lib/traceevent/event-parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -344,7 +344,7 @@ static inline int __do_cpuid_ent(struct
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
- 		F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
--		F(AMD_SSB_NO);
-+		F(AMD_SSB_NO) | F(AMD_STIBP);
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 87494c7c619d8..981c6ce2da2c7 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -2233,7 +2233,7 @@ eval_type_str(unsigned long long val, const char *type, int pointer)
+ 		return val & 0xffffffff;
  
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_supported_word5_x86_features =
-@@ -365,7 +365,8 @@ static inline int __do_cpuid_ent(struct
+ 	if (strcmp(type, "u64") == 0 ||
+-	    strcmp(type, "s64"))
++	    strcmp(type, "s64") == 0)
+ 		return val;
  
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(SPEC_CTRL) | F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
-+		F(SPEC_CTRL) | F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) |
-+		F(INTEL_STIBP);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
+ 	if (strcmp(type, "s8") == 0)
+-- 
+2.20.1
+
 
 
