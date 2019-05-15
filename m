@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C632B1F06D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C7D1EE11
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731245AbfEOLoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:44:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37698 "EHLO mail.kernel.org"
+        id S1730528AbfEOLQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:16:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbfEOL0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:50 -0400
+        id S1730515AbfEOLQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:16:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E9CB206BF;
-        Wed, 15 May 2019 11:26:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01F292084E;
+        Wed, 15 May 2019 11:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919609;
-        bh=M1A+x2isSaTGTVAoH+Dy0WZMUUpWQu43cxkqdxAixws=;
+        s=default; t=1557918995;
+        bh=12Axfxaj2ZreBYI3TqlwI2dgzfb4nwHY8+g5938RwFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lIHYYSHhR3HAOhEiIEynNFMKyS98eVIzCfnuM3AIOu5VWriTJkDPkcys7yFhrVrOE
-         GoCI32IhbXNKeUDTf46eFEIkJ4L3CmHt4+MXHPzDucc5GtBNRCcv//1naD/rL1cF19
-         fUrFQXw0MP8cTbp+58n83kAMwbuEpdCKIGHZnrsc=
+        b=nwuryJ4Ql1xF1ONApZdNLVB4vA88tagF/ccsiN5r7snD6X+r79ojVpLScb8atiqjS
+         s84SjBsniNnygz8Fz5caRSareupG2toegzp7Ilh5T4jFZLrDJtt+HMFnTHmkUaVPym
+         uFJHYxtF85kExH3FJtjmnDO9GEPPKPXBOzJTckqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Guenter Roeck <groeck@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 026/137] libnvdimm/security: provide fix for secure-erase to use zero-key
+Subject: [PATCH 4.14 027/115] init: initialize jump labels before command line option parsing
 Date:   Wed, 15 May 2019 12:55:07 +0200
-Message-Id: <20190515090655.178173486@linuxfoundation.org>
+Message-Id: <20190515090701.305102004@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +51,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 037c8489ade669e0f09ad40d5b91e5e1159a14b1 ]
+[ Upstream commit 6041186a32585fc7a1d0f6cfe2f138b05fdc3c82 ]
 
-Add a zero key in order to standardize hardware that want a key of 0's to
-be passed. Some platforms defaults to a zero-key with security enabled
-rather than allow the OS to enable the security. The zero key would allow
-us to manage those platform as well. This also adds a fix to secure erase
-so it can use the zero key to do crypto erase. Some other security commands
-already use zero keys. This introduces a standard zero-key to allow
-unification of semantics cross nvdimm security commands.
+When a module option, or core kernel argument, toggles a static-key it
+requires jump labels to be initialized early.  While x86, PowerPC, and
+ARM64 arrange for jump_label_init() to be called before parse_args(),
+ARM does not.
 
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+  Kernel command line: rdinit=/sbin/init page_alloc.shuffle=1 panic=-1 console=ttyAMA0,115200 page_alloc.shuffle=1
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at ./include/linux/jump_label.h:303
+  page_alloc_shuffle+0x12c/0x1ac
+  static_key_enable(): static key 'page_alloc_shuffle_key+0x0/0x4' used
+  before call to jump_label_init()
+  Modules linked in:
+  CPU: 0 PID: 0 Comm: swapper Not tainted
+  5.1.0-rc4-next-20190410-00003-g3367c36ce744 #1
+  Hardware name: ARM Integrator/CP (Device Tree)
+  [<c0011c68>] (unwind_backtrace) from [<c000ec48>] (show_stack+0x10/0x18)
+  [<c000ec48>] (show_stack) from [<c07e9710>] (dump_stack+0x18/0x24)
+  [<c07e9710>] (dump_stack) from [<c001bb1c>] (__warn+0xe0/0x108)
+  [<c001bb1c>] (__warn) from [<c001bb88>] (warn_slowpath_fmt+0x44/0x6c)
+  [<c001bb88>] (warn_slowpath_fmt) from [<c0b0c4a8>]
+  (page_alloc_shuffle+0x12c/0x1ac)
+  [<c0b0c4a8>] (page_alloc_shuffle) from [<c0b0c550>] (shuffle_store+0x28/0x48)
+  [<c0b0c550>] (shuffle_store) from [<c003e6a0>] (parse_args+0x1f4/0x350)
+  [<c003e6a0>] (parse_args) from [<c0ac3c00>] (start_kernel+0x1c0/0x488)
+
+Move the fallback call to jump_label_init() to occur before
+parse_args().
+
+The redundant calls to jump_label_init() in other archs are left intact
+in case they have static key toggling use cases that are even earlier
+than option parsing.
+
+Link: http://lkml.kernel.org/r/155544804466.1032396.13418949511615676665.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: Guenter Roeck <groeck@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Russell King <rmk@armlinux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvdimm/security.c        | 17 ++++++++++++-----
- tools/testing/nvdimm/test/nfit.c | 11 +++++++++--
- 2 files changed, 21 insertions(+), 7 deletions(-)
+ init/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
-index f8bb746a549f7..6bea6852bf278 100644
---- a/drivers/nvdimm/security.c
-+++ b/drivers/nvdimm/security.c
-@@ -22,6 +22,8 @@ static bool key_revalidate = true;
- module_param(key_revalidate, bool, 0444);
- MODULE_PARM_DESC(key_revalidate, "Require key validation at init.");
+diff --git a/init/main.c b/init/main.c
+index 3d3d79c5a2324..51067e2db509d 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -550,6 +550,8 @@ asmlinkage __visible void __init start_kernel(void)
+ 	page_alloc_init();
  
-+static const char zero_key[NVDIMM_PASSPHRASE_LEN];
-+
- static void *key_data(struct key *key)
- {
- 	struct encrypted_key_payload *epayload = dereference_key_locked(key);
-@@ -286,8 +288,9 @@ int nvdimm_security_erase(struct nvdimm *nvdimm, unsigned int keyid,
- {
- 	struct device *dev = &nvdimm->dev;
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(dev);
--	struct key *key;
-+	struct key *key = NULL;
- 	int rc;
-+	const void *data;
+ 	pr_notice("Kernel command line: %s\n", boot_command_line);
++	/* parameters may set static keys */
++	jump_label_init();
+ 	parse_early_param();
+ 	after_dashes = parse_args("Booting kernel",
+ 				  static_command_line, __start___param,
+@@ -559,8 +561,6 @@ asmlinkage __visible void __init start_kernel(void)
+ 		parse_args("Setting init args", after_dashes, NULL, 0, -1, -1,
+ 			   NULL, set_init_arg);
  
- 	/* The bus lock should be held at the top level of the call stack */
- 	lockdep_assert_held(&nvdimm_bus->reconfig_mutex);
-@@ -319,11 +322,15 @@ int nvdimm_security_erase(struct nvdimm *nvdimm, unsigned int keyid,
- 		return -EOPNOTSUPP;
- 	}
- 
--	key = nvdimm_lookup_user_key(nvdimm, keyid, NVDIMM_BASE_KEY);
--	if (!key)
--		return -ENOKEY;
-+	if (keyid != 0) {
-+		key = nvdimm_lookup_user_key(nvdimm, keyid, NVDIMM_BASE_KEY);
-+		if (!key)
-+			return -ENOKEY;
-+		data = key_data(key);
-+	} else
-+		data = zero_key;
- 
--	rc = nvdimm->sec.ops->erase(nvdimm, key_data(key), pass_type);
-+	rc = nvdimm->sec.ops->erase(nvdimm, data, pass_type);
- 	dev_dbg(dev, "key: %d erase%s: %s\n", key_serial(key),
- 			pass_type == NVDIMM_MASTER ? "(master)" : "(user)",
- 			rc == 0 ? "success" : "fail");
-diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
-index b579f962451d6..cad719876ef45 100644
---- a/tools/testing/nvdimm/test/nfit.c
-+++ b/tools/testing/nvdimm/test/nfit.c
-@@ -225,6 +225,8 @@ static struct workqueue_struct *nfit_wq;
- 
- static struct gen_pool *nfit_pool;
- 
-+static const char zero_key[NVDIMM_PASSPHRASE_LEN];
-+
- static struct nfit_test *to_nfit_test(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -1059,8 +1061,7 @@ static int nd_intel_test_cmd_secure_erase(struct nfit_test *t,
- 	struct device *dev = &t->pdev.dev;
- 	struct nfit_test_sec *sec = &dimm_sec_info[dimm];
- 
--	if (!(sec->state & ND_INTEL_SEC_STATE_ENABLED) ||
--			(sec->state & ND_INTEL_SEC_STATE_FROZEN)) {
-+	if (sec->state & ND_INTEL_SEC_STATE_FROZEN) {
- 		nd_cmd->status = ND_INTEL_STATUS_INVALID_STATE;
- 		dev_dbg(dev, "secure erase: wrong security state\n");
- 	} else if (memcmp(nd_cmd->passphrase, sec->passphrase,
-@@ -1068,6 +1069,12 @@ static int nd_intel_test_cmd_secure_erase(struct nfit_test *t,
- 		nd_cmd->status = ND_INTEL_STATUS_INVALID_PASS;
- 		dev_dbg(dev, "secure erase: wrong passphrase\n");
- 	} else {
-+		if (!(sec->state & ND_INTEL_SEC_STATE_ENABLED)
-+				&& (memcmp(nd_cmd->passphrase, zero_key,
-+					ND_INTEL_PASSPHRASE_SIZE) != 0)) {
-+			dev_dbg(dev, "invalid zero key\n");
-+			return 0;
-+		}
- 		memset(sec->passphrase, 0, ND_INTEL_PASSPHRASE_SIZE);
- 		memset(sec->master_passphrase, 0, ND_INTEL_PASSPHRASE_SIZE);
- 		sec->state = 0;
+-	jump_label_init();
+-
+ 	/*
+ 	 * These use large bootmem allocations and must precede
+ 	 * kmem_cache_init()
 -- 
 2.20.1
 
