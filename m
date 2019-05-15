@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C33DD1EE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 517B51EEB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730703AbfEOLRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
+        id S1731873AbfEOLYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:24:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730680AbfEOLRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:42 -0400
+        id S1731391AbfEOLYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6EC120644;
-        Wed, 15 May 2019 11:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4079020843;
+        Wed, 15 May 2019 11:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919061;
-        bh=AgWPtJhCmV9gDH7+N7t6urqs1UeMX2JOWmXIAWuPI8E=;
+        s=default; t=1557919485;
+        bh=bMTEZZRW7ZXkpUQBeA+7ULEl5s+uwH9W6lKvEIv/M/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RJvXWSlLbgD8zKZLi8ferpDHlgwiHO+pRch0goH87apJy3tAkEzLynnjayGb6rFBf
-         j979b4NpqUvTYVDATqFin28XhaDhurRAXbx7C8YMA3MOkwekKiTUjBjvgIWk1AROw1
-         1UxzHUHq77MQGwe7JL93gfxEI0HMddZD+6x7Fo0s=
+        b=g+nYdIh1qN9PLQ5aANddrmo1rNJ3+CYaa0Rgv6OLfPnYr+fXKGkA09im/8qKcfZE7
+         7TWNOoFn/LW5cjH0rkudkrTCn8PfoTPsO1GE/Zd/qvTJhfKWRFHBXfmxKTXa4UBAA8
+         W1n2FlGvziNHSfVMIiXHrVGaT8+BKWOj5ruQx+Ic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 050/115] media: adv7604: when the EDID is cleared, unconfigure CEC as well
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 039/113] KVM: x86: avoid misreporting level-triggered irqs as edge-triggered in tracing
 Date:   Wed, 15 May 2019 12:55:30 +0200
-Message-Id: <20190515090703.223751213@linuxfoundation.org>
+Message-Id: <20190515090656.579937088@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e7da89926f6dc6cf855f5ffdf79ef99a1b115ca7 ]
+[ Upstream commit 7a223e06b1a411cef6c4cd7a9b9a33c8d225b10e ]
 
-When there is no EDID the CEC adapter should be unconfigured as
-well. So call cec_phys_addr_invalidate() when this happens.
+In __apic_accept_irq() interface trig_mode is int and actually on some code
+paths it is set above u8:
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+kvm_apic_set_irq() extracts it from 'struct kvm_lapic_irq' where trig_mode
+is u16. This is done on purpose as e.g. kvm_set_msi_irq() sets it to
+(1 << 15) & e->msi.data
+
+kvm_apic_local_deliver sets it to reg & (1 << 15).
+
+Fix the immediate issue by making 'tm' into u16. We may also want to adjust
+__apic_accept_irq() interface and use proper sizes for vector, level,
+trig_mode but this is not urgent.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/adv7604.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kvm/trace.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index d2108aad3c658..26c3ec573a565 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2295,8 +2295,10 @@ static int adv76xx_set_edid(struct v4l2_subdev *sd, struct v4l2_edid *edid)
- 		state->aspect_ratio.numerator = 16;
- 		state->aspect_ratio.denominator = 9;
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index 0f997683404fa..b3f219b7c8408 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -438,13 +438,13 @@ TRACE_EVENT(kvm_apic_ipi,
+ );
  
--		if (!state->edid.present)
-+		if (!state->edid.present) {
- 			state->edid.blocks = 0;
-+			cec_phys_addr_invalidate(state->cec_adap);
-+		}
+ TRACE_EVENT(kvm_apic_accept_irq,
+-	    TP_PROTO(__u32 apicid, __u16 dm, __u8 tm, __u8 vec),
++	    TP_PROTO(__u32 apicid, __u16 dm, __u16 tm, __u8 vec),
+ 	    TP_ARGS(apicid, dm, tm, vec),
  
- 		v4l2_dbg(2, debug, sd, "%s: clear EDID pad %d, edid.present = 0x%x\n",
- 				__func__, edid->pad, state->edid.present);
+ 	TP_STRUCT__entry(
+ 		__field(	__u32,		apicid		)
+ 		__field(	__u16,		dm		)
+-		__field(	__u8,		tm		)
++		__field(	__u16,		tm		)
+ 		__field(	__u8,		vec		)
+ 	),
+ 
 -- 
 2.20.1
 
