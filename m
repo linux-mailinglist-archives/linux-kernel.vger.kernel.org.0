@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B5241F1D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB2E21EE93
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731461AbfEOLzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:55:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55800 "EHLO mail.kernel.org"
+        id S1731599AbfEOLXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730785AbfEOLSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:18:21 -0400
+        id S1731326AbfEOLXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:23:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92467206BF;
-        Wed, 15 May 2019 11:18:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 763F7206BF;
+        Wed, 15 May 2019 11:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919101;
-        bh=J+nK/4lcna/xPxlZvuEpylB8TdIZIaAJLF4+tVeBSWo=;
+        s=default; t=1557919390;
+        bh=jkLFPE0Btsk4k/1uPATuEs2Vl549eC/EjkT7x9ITssY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y6mYe2IHPKKJxzPxedyT6C33/HWitkdskH2iGYi8kT/Rts1PeE6Suq+svMfD7BxYM
-         ESZydsbWaTREqldn6YrxWzA2JC9oA3zDbjdAxqEVKSLmS6MrT9qgEJq56K1r7y6zWD
-         1R8D1ChRWOeGG/sQd3gjL3IglcD6Z4c6oS2O+oqc=
+        b=EuCxPZoMJ2NOlqz2V365ZsttsprpBH4UvWpcS6vVyJO1sR7xW1arMKPiNafwvBA8A
+         c04yMoEE/2/7rFbBtGdArHJ/pMeMkzxPPn0q0A3NC/V5CIHNiom7zqV64uu5nkaLZi
+         nuwAICe6iLEA0WFl5iv7Fux7mnfKIlWKCO1pbjQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/115] powerpc: remove old GCC version checks
-Date:   Wed, 15 May 2019 12:55:48 +0200
-Message-Id: <20190515090704.423340712@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tigran Tadevosyan <tigran.tadevosyan@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 058/113] ARM: 8856/1: NOMMU: Fix CCR register faulty initialization when MPU is disabled
+Date:   Wed, 15 May 2019 12:55:49 +0200
+Message-Id: <20190515090658.008272513@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f2910f0e6835339e6ce82cef22fa15718b7e3bfa ]
+[ Upstream commit c3143967807adb1357c36b68a7563fc0c4e1f615 ]
 
-GCC 4.6 is the minimum supported now.
+When CONFIG_ARM_MPU is not defined, the base address of v7M SCB register
+is not initialized with correct value. This prevents enabling I/D caches
+when the L1 cache poilcy is applied in kernel.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 3c24121039c9da14692eb48f6e39565b28c0f3cf ("ARM: 8756/1: NOMMU: Postpone MPU activation till __after_proc_init")
+Signed-off-by: Tigran Tadevosyan <tigran.tadevosyan@arm.com>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile | 31 ++-----------------------------
- 1 file changed, 2 insertions(+), 29 deletions(-)
+ arch/arm/kernel/head-nommu.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 7452e50f4d1f8..0f04c878113ef 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -396,36 +396,9 @@ archprepare: checkbin
- # to stdout and these checks are run even on install targets.
- TOUT	:= .tmp_gas_check
- 
--# Check gcc and binutils versions:
--# - gcc-3.4 and binutils-2.14 are a fatal combination
--# - Require gcc 4.0 or above on 64-bit
--# - gcc-4.2.0 has issues compiling modules on 64-bit
-+# Check toolchain versions:
-+# - gcc-4.6 is the minimum kernel-wide version so nothing required.
- checkbin:
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-version)" = "0304" ; then \
--		if ! /bin/echo mftb 5 | $(AS) -v -mppc -many -o $(TOUT) >/dev/null 2>&1 ; then \
--			echo -n '*** ${VERSION}.${PATCHLEVEL} kernels no longer build '; \
--			echo 'correctly with gcc-3.4 and your version of binutils.'; \
--			echo '*** Please upgrade your binutils or downgrade your gcc'; \
--			false; \
--		fi ; \
--	fi
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-version)" -lt "0400" \
--	    && test "x${CONFIG_PPC64}" = "xy" ; then \
--                echo -n "Sorry, GCC v4.0 or above is required to build " ; \
--                echo "the 64-bit powerpc kernel." ; \
--                false ; \
--        fi
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-fullversion)" = "040200" \
--	    && test "x${CONFIG_MODULES}${CONFIG_PPC64}" = "xyy" ; then \
--		echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
--		echo 'kernel with modules enabled.' ; \
--		echo -n '*** Please use a different GCC version or ' ; \
--		echo 'disable kernel modules' ; \
--		false ; \
--	fi
- 	@if test "x${CONFIG_CPU_LITTLE_ENDIAN}" = "xy" \
- 	    && $(LD) --version | head -1 | grep ' 2\.24$$' >/dev/null ; then \
- 		echo -n '*** binutils 2.24 miscompiles weak symbols ' ; \
+diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
+index ec29de2500764..cab89479d15ef 100644
+--- a/arch/arm/kernel/head-nommu.S
++++ b/arch/arm/kernel/head-nommu.S
+@@ -133,9 +133,9 @@ __secondary_data:
+  */
+ 	.text
+ __after_proc_init:
+-#ifdef CONFIG_ARM_MPU
+ M_CLASS(movw	r12, #:lower16:BASEADDR_V7M_SCB)
+ M_CLASS(movt	r12, #:upper16:BASEADDR_V7M_SCB)
++#ifdef CONFIG_ARM_MPU
+ M_CLASS(ldr	r3, [r12, 0x50])
+ AR_CLASS(mrc	p15, 0, r3, c0, c1, 4)          @ Read ID_MMFR0
+ 	and	r3, r3, #(MMFR0_PMSA)           @ PMSA field
 -- 
 2.20.1
 
