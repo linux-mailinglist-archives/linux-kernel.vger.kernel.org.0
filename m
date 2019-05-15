@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219F31EE72
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 782281EF03
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfEOLVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59592 "EHLO mail.kernel.org"
+        id S1732435AbfEOL2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730700AbfEOLVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:21:37 -0400
+        id S1732423AbfEOL2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B93E820843;
-        Wed, 15 May 2019 11:21:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7AA5206BF;
+        Wed, 15 May 2019 11:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919296;
-        bh=w5bdYzHACanwOF0KV2kSSzyZ4JFPkznJRKgzkbWXsQ0=;
+        s=default; t=1557919720;
+        bh=yp94k15qVYX917pnAhp4n7gKvHuaedyl+IKE7TfqXws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZKOJbLiw6ps7Gv1hsfN0cOyyz43hgZxLN7qAbB8ql20n3X4UGP8dqjDnCOnW1l7ar
-         TitThzDZ8X9R5wIJ/2e8odqM5WECkoZI4pc76E7P2xNiXCTqSP+svxnes/fbhcVoDA
-         5RB6i2nEs17DzOXZAK6LZWjeCLVueim7gGJSsFPc=
+        b=wrHVYYeoUbxzh5qjZ4f7D8JfhG6cILh4DslRzfK4Z2+ii9pE+naYT7yTlNuJe16z1
+         mnPPsnjC5F7OlyZLWVxSvPUHyeLKNopM0dEhyQEqYmRl36Xl/HZf1p6ixV7KMAToGf
+         qcRE9bNsq0PTIeXwIjEwwDjflCzRTvPZohY3SCqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Martin Leung <martin.leung@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>,
+        Joshua Aberback <Joshua.Aberback@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/113] cfg80211: Handle WMM rules in regulatory domain intersection
+Subject: [PATCH 5.0 031/137] drm/amd/display: extending AUX SW Timeout
 Date:   Wed, 15 May 2019 12:55:12 +0200
-Message-Id: <20190515090655.077512576@linuxfoundation.org>
+Message-Id: <20190515090655.568098205@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +47,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 08a75a887ee46828b54600f4bb7068d872a5edd5 ]
+[ Upstream commit f4bbebf8e7eb4d294b040ab2d2ba71e70e69b930 ]
 
-The support added for regulatory WMM rules did not handle
-the case of regulatory domain intersections. Fix it.
+[Why]
+AUX takes longer to reply when using active DP-DVI dongle on some asics
+resulting in up to 2000+ us edid read (timeout).
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Fixes: 230ebaa189af ("cfg80211: read wmm rules from regulatory database")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[How]
+1. Adjust AUX poll to match spec
+2. Extend the SW timeout. This does not affect normal
+operation since we exit the loop as soon as AUX acks.
+
+Signed-off-by: Martin Leung <martin.leung@amd.com>
+Reviewed-by: Jun Lei <Jun.Lei@amd.com>
+Acked-by: Joshua Aberback <Joshua.Aberback@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 9 ++++++---
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.h | 6 +++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 8002ace7c9f65..8a47297ff206d 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1287,6 +1287,16 @@ reg_intersect_dfs_region(const enum nl80211_dfs_regions dfs_region1,
- 	return dfs_region1;
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+index aaeb7faac0c43..e0fff5744b5f6 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+@@ -189,6 +189,12 @@ static void submit_channel_request(
+ 				1,
+ 				0);
+ 	}
++
++	REG_UPDATE(AUX_INTERRUPT_CONTROL, AUX_SW_DONE_ACK, 1);
++
++	REG_WAIT(AUX_SW_STATUS, AUX_SW_DONE, 0,
++				10, aux110->timeout_period/10);
++
+ 	/* set the delay and the number of bytes to write */
+ 
+ 	/* The length include
+@@ -241,9 +247,6 @@ static void submit_channel_request(
+ 		}
+ 	}
+ 
+-	REG_UPDATE(AUX_INTERRUPT_CONTROL, AUX_SW_DONE_ACK, 1);
+-	REG_WAIT(AUX_SW_STATUS, AUX_SW_DONE, 0,
+-				10, aux110->timeout_period/10);
+ 	REG_UPDATE(AUX_SW_CONTROL, AUX_SW_GO, 1);
  }
  
-+static void reg_wmm_rules_intersect(const struct ieee80211_wmm_ac *wmm_ac1,
-+				    const struct ieee80211_wmm_ac *wmm_ac2,
-+				    struct ieee80211_wmm_ac *intersect)
-+{
-+	intersect->cw_min = max_t(u16, wmm_ac1->cw_min, wmm_ac2->cw_min);
-+	intersect->cw_max = max_t(u16, wmm_ac1->cw_max, wmm_ac2->cw_max);
-+	intersect->cot = min_t(u16, wmm_ac1->cot, wmm_ac2->cot);
-+	intersect->aifsn = max_t(u8, wmm_ac1->aifsn, wmm_ac2->aifsn);
-+}
-+
- /*
-  * Helper for regdom_intersect(), this does the real
-  * mathematical intersection fun
-@@ -1301,6 +1311,8 @@ static int reg_rules_intersect(const struct ieee80211_regdomain *rd1,
- 	struct ieee80211_freq_range *freq_range;
- 	const struct ieee80211_power_rule *power_rule1, *power_rule2;
- 	struct ieee80211_power_rule *power_rule;
-+	const struct ieee80211_wmm_rule *wmm_rule1, *wmm_rule2;
-+	struct ieee80211_wmm_rule *wmm_rule;
- 	u32 freq_diff, max_bandwidth1, max_bandwidth2;
- 
- 	freq_range1 = &rule1->freq_range;
-@@ -1311,6 +1323,10 @@ static int reg_rules_intersect(const struct ieee80211_regdomain *rd1,
- 	power_rule2 = &rule2->power_rule;
- 	power_rule = &intersected_rule->power_rule;
- 
-+	wmm_rule1 = &rule1->wmm_rule;
-+	wmm_rule2 = &rule2->wmm_rule;
-+	wmm_rule = &intersected_rule->wmm_rule;
-+
- 	freq_range->start_freq_khz = max(freq_range1->start_freq_khz,
- 					 freq_range2->start_freq_khz);
- 	freq_range->end_freq_khz = min(freq_range1->end_freq_khz,
-@@ -1354,6 +1370,29 @@ static int reg_rules_intersect(const struct ieee80211_regdomain *rd1,
- 	intersected_rule->dfs_cac_ms = max(rule1->dfs_cac_ms,
- 					   rule2->dfs_cac_ms);
- 
-+	if (rule1->has_wmm && rule2->has_wmm) {
-+		u8 ac;
-+
-+		for (ac = 0; ac < IEEE80211_NUM_ACS; ac++) {
-+			reg_wmm_rules_intersect(&wmm_rule1->client[ac],
-+						&wmm_rule2->client[ac],
-+						&wmm_rule->client[ac]);
-+			reg_wmm_rules_intersect(&wmm_rule1->ap[ac],
-+						&wmm_rule2->ap[ac],
-+						&wmm_rule->ap[ac]);
-+		}
-+
-+		intersected_rule->has_wmm = true;
-+	} else if (rule1->has_wmm) {
-+		*wmm_rule = *wmm_rule1;
-+		intersected_rule->has_wmm = true;
-+	} else if (rule2->has_wmm) {
-+		*wmm_rule = *wmm_rule2;
-+		intersected_rule->has_wmm = true;
-+	} else {
-+		intersected_rule->has_wmm = false;
-+	}
-+
- 	if (!is_valid_reg_rule(intersected_rule))
- 		return -EINVAL;
- 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
+index f7caab85dc801..2c6f50b4245a4 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.h
+@@ -69,11 +69,11 @@ enum {	/* This is the timeout as defined in DP 1.2a,
+ 	 * at most within ~240usec. That means,
+ 	 * increasing this timeout will not affect normal operation,
+ 	 * and we'll timeout after
+-	 * SW_AUX_TIMEOUT_PERIOD_MULTIPLIER * AUX_TIMEOUT_PERIOD = 1600usec.
++	 * SW_AUX_TIMEOUT_PERIOD_MULTIPLIER * AUX_TIMEOUT_PERIOD = 2400usec.
+ 	 * This timeout is especially important for
+-	 * resume from S3 and CTS.
++	 * converters, resume from S3, and CTS.
+ 	 */
+-	SW_AUX_TIMEOUT_PERIOD_MULTIPLIER = 4
++	SW_AUX_TIMEOUT_PERIOD_MULTIPLIER = 6
+ };
+ struct aux_engine_dce110 {
+ 	struct aux_engine base;
 -- 
 2.20.1
 
