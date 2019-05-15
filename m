@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3161EEAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 507301F3E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731307AbfEOLYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34738 "EHLO mail.kernel.org"
+        id S1727779AbfEOLBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:01:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731286AbfEOLYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:24:12 -0400
+        id S1727265AbfEOLBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:01:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1225220818;
-        Wed, 15 May 2019 11:24:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C899C216FD;
+        Wed, 15 May 2019 11:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919451;
-        bh=yLEgRUYyBy3vBCr4yyHkVca5+99CS7Ush3sHyV20CyY=;
+        s=default; t=1557918105;
+        bh=e7y/WSro2eF3J9GEEv3f0dnT2fkMcdnBHSY38CIXJ9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tsT61Fny+RoLH+J0KVt249SBC5c2zav7cQXFHOJyU+Wypce5W+/7NUQ8f3G2cGCI4
-         EihzCoCQ9Yf/eSXGSX3VKo7GZgdJEHMcpRzTMuV9EfmsY0pkOcEl5Zbm1+zrAcbrEm
-         KLFIueoB0/MOu0N+MYOqNcv7aYT396PhLvHkPcAk=
+        b=1AogZBldDfc2RLF5DHNOvf+18h3QLJxu5It27OSoS8hNbMLeiN9GKyIisuDEf/kHZ
+         Z57X94bnlH6EMoxzfUutd+2+4n4CbfFTrmP8jiTLwZUIXUqfqg2PyY5F/v5GccFG6X
+         gAFE9o+Im9iuOgUfzSygWcNzNj33fV3VSpIqFa8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 043/113] scsi: aic7xxx: fix EISA support
+Subject: [PATCH 3.18 57/86] iommu/amd: Set exclusion range correctly
 Date:   Wed, 15 May 2019 12:55:34 +0200
-Message-Id: <20190515090656.890415424@linuxfoundation.org>
+Message-Id: <20190515090653.790224124@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,96 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 144ec97493af34efdb77c5aba146e9c7de8d0a06 ]
+[ Upstream commit 3c677d206210f53a4be972211066c0f1cd47fe12 ]
 
-Instead of relying on the now removed NULL argument to
-pci_alloc_consistent, switch to the generic DMA API, and store the struct
-device so that we can pass it.
+The exlcusion range limit register needs to contain the
+base-address of the last page that is part of the range, as
+bits 0-11 of this register are treated as 0xfff by the
+hardware for comparisons.
 
-Fixes: 4167b2ad5182 ("PCI: Remove NULL device handling from PCI DMA API")
-Reported-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+So correctly set the exclusion range in the hardware to the
+last page which is _in_ the range.
+
+Fixes: b2026aa2dce44 ('x86, AMD IOMMU: add functions for programming IOMMU MMIO space')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aic7xxx/aic7770_osm.c     |  1 +
- drivers/scsi/aic7xxx/aic7xxx.h         |  1 +
- drivers/scsi/aic7xxx/aic7xxx_osm.c     | 10 ++++------
- drivers/scsi/aic7xxx/aic7xxx_osm_pci.c |  1 +
- 4 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/iommu/amd_iommu_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7770_osm.c b/drivers/scsi/aic7xxx/aic7770_osm.c
-index 3d401d02c0195..bdd177e3d7622 100644
---- a/drivers/scsi/aic7xxx/aic7770_osm.c
-+++ b/drivers/scsi/aic7xxx/aic7770_osm.c
-@@ -91,6 +91,7 @@ aic7770_probe(struct device *dev)
- 	ahc = ahc_alloc(&aic7xxx_driver_template, name);
- 	if (ahc == NULL)
- 		return (ENOMEM);
-+	ahc->dev = dev;
- 	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
- 			       eisaBase);
- 	if (error != 0) {
-diff --git a/drivers/scsi/aic7xxx/aic7xxx.h b/drivers/scsi/aic7xxx/aic7xxx.h
-index 4ce4e903a759e..7f6e83296dfa4 100644
---- a/drivers/scsi/aic7xxx/aic7xxx.h
-+++ b/drivers/scsi/aic7xxx/aic7xxx.h
-@@ -949,6 +949,7 @@ struct ahc_softc {
- 	 * Platform specific device information.
- 	 */
- 	ahc_dev_softc_t		  dev_softc;
-+	struct device		  *dev;
- 
- 	/*
- 	 * Bus specific device information.
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
-index c6be3aeb302b5..306d0bf33478c 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
-@@ -861,8 +861,8 @@ int
- ahc_dmamem_alloc(struct ahc_softc *ahc, bus_dma_tag_t dmat, void** vaddr,
- 		 int flags, bus_dmamap_t *mapp)
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 2f3475247f0ff..127f9cc563e9b 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -294,7 +294,7 @@ static void iommu_write_l2(struct amd_iommu *iommu, u8 address, u32 val)
+ static void iommu_set_exclusion_range(struct amd_iommu *iommu)
  {
--	*vaddr = pci_alloc_consistent(ahc->dev_softc,
--				      dmat->maxsize, mapp);
-+	/* XXX: check if we really need the GFP_ATOMIC and unwind this mess! */
-+	*vaddr = dma_alloc_coherent(ahc->dev, dmat->maxsize, mapp, GFP_ATOMIC);
- 	if (*vaddr == NULL)
- 		return ENOMEM;
- 	return 0;
-@@ -872,8 +872,7 @@ void
- ahc_dmamem_free(struct ahc_softc *ahc, bus_dma_tag_t dmat,
- 		void* vaddr, bus_dmamap_t map)
- {
--	pci_free_consistent(ahc->dev_softc, dmat->maxsize,
--			    vaddr, map);
-+	dma_free_coherent(ahc->dev, dmat->maxsize, vaddr, map);
- }
+ 	u64 start = iommu->exclusion_start & PAGE_MASK;
+-	u64 limit = (start + iommu->exclusion_length) & PAGE_MASK;
++	u64 limit = (start + iommu->exclusion_length - 1) & PAGE_MASK;
+ 	u64 entry;
  
- int
-@@ -1124,8 +1123,7 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
- 
- 	host->transportt = ahc_linux_transport_template;
- 
--	retval = scsi_add_host(host,
--			(ahc->dev_softc ? &ahc->dev_softc->dev : NULL));
-+	retval = scsi_add_host(host, ahc->dev);
- 	if (retval) {
- 		printk(KERN_WARNING "aic7xxx: scsi_add_host failed\n");
- 		scsi_host_put(host);
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-index 0fc14dac7070c..717d8d1082ce1 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
-@@ -250,6 +250,7 @@ ahc_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		}
- 	}
- 	ahc->dev_softc = pci;
-+	ahc->dev = &pci->dev;
- 	error = ahc_pci_config(ahc, entry);
- 	if (error != 0) {
- 		ahc_free(ahc);
+ 	if (!iommu->exclusion_start)
 -- 
 2.20.1
 
