@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2941F1ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456731F438
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbfEOL6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:58:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53152 "EHLO mail.kernel.org"
+        id S1726945AbfEOK6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:58:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727222AbfEOLQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:22 -0400
+        id S1726899AbfEOK6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:58:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B50322084E;
-        Wed, 15 May 2019 11:16:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF9CA20843;
+        Wed, 15 May 2019 10:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918982;
-        bh=LbQpxIztwr/8bF5oi72p2pDfyuGFhwEhoZpWbI683ug=;
+        s=default; t=1557917921;
+        bh=CfDOrmqhvB71SpN/Uis/7pUbTsJcuGsoD1/3ZjtSGlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDGprfq+oSk24K1mHAQozDGSr4LoJ/ncBVC0lkpZTIfzLo/DivvpwGNJHVlnxuAAe
-         pHmufL7m6F/IISNTCJJ7ms1bLbcXbDMbPgkskoJkkCq0u2JPEijECQYJLsJfJm0sHJ
-         6BodQDQrO7CXyjTJUhrpmJmDvORCkPtEN+/cVD0w=
+        b=e7Mvd2nIE/ZcETDFcpa+fsXeCxf65NY2KgUUUVqs/EzZuZv3RbmCkVQY37dY+Btuv
+         klU0fCURGQrLGeRuvELTH3tB13yThxX2KHeTLcN88K3CvKE9pQBkKFwEu5Y1luIKuw
+         CWrbTtzWQqJv8nmUwuFdM/64g5nJHbGmossJ52Po=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 023/115] KVM: fix spectrev1 gadgets
+        stable@vger.kernel.org, raymond pang <raymondpangxd@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 3.18 26/86] libata: fix using DMA buffers on stack
 Date:   Wed, 15 May 2019 12:55:03 +0200
-Message-Id: <20190515090700.957801365@linuxfoundation.org>
+Message-Id: <20190515090648.137768940@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,133 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1d487e9bf8ba66a7174c56a0029c54b1eca8f99c ]
+[ Upstream commit dd08a8d9a66de4b54575c294a92630299f7e0fe7 ]
 
-These were found with smatch, and then generalized when applicable.
+When CONFIG_VMAP_STACK=y, __pa() returns incorrect physical address for
+a stack virtual address. Stack DMA buffers must be avoided.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: raymond pang <raymondpangxd@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- arch/x86/kvm/lapic.c     |  4 +++-
- include/linux/kvm_host.h | 10 ++++++----
- virt/kvm/irqchip.c       |  5 +++--
- virt/kvm/kvm_main.c      |  6 ++++--
- 4 files changed, 16 insertions(+), 9 deletions(-)
+ drivers/ata/libata-zpodd.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index f7c34184342a5..053e4937af0cb 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -133,6 +133,7 @@ static inline bool kvm_apic_map_get_logical_dest(struct kvm_apic_map *map,
- 		if (offset <= max_apic_id) {
- 			u8 cluster_size = min(max_apic_id - offset + 1, 16U);
- 
-+			offset = array_index_nospec(offset, map->max_apic_id + 1);
- 			*cluster = &map->phys_map[offset];
- 			*mask = dest_id & (0xffff >> (16 - cluster_size));
- 		} else {
-@@ -829,7 +830,8 @@ static inline bool kvm_apic_map_get_dest_lapic(struct kvm *kvm,
- 		if (irq->dest_id > map->max_apic_id) {
- 			*bitmap = 0;
- 		} else {
--			*dst = &map->phys_map[irq->dest_id];
-+			u32 dest_id = array_index_nospec(irq->dest_id, map->max_apic_id + 1);
-+			*dst = &map->phys_map[dest_id];
- 			*bitmap = 1;
- 		}
- 		return true;
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 753c16633bac5..026615e242d8e 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -27,6 +27,7 @@
- #include <linux/irqbypass.h>
- #include <linux/swait.h>
- #include <linux/refcount.h>
-+#include <linux/nospec.h>
- #include <asm/signal.h>
- 
- #include <linux/kvm.h>
-@@ -483,10 +484,10 @@ static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
- 
- static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index 0ad96c647541..7017a81d53cf 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -51,38 +51,52 @@ static int eject_tray(struct ata_device *dev)
+ /* Per the spec, only slot type and drawer type ODD can be supported */
+ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
  {
--	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu, in case
--	 * the caller has read kvm->online_vcpus before (as is the case
--	 * for kvm_for_each_vcpu, for example).
--	 */
-+	int num_vcpus = atomic_read(&kvm->online_vcpus);
-+	i = array_index_nospec(i, num_vcpus);
+-	char buf[16];
++	char *buf;
+ 	unsigned int ret;
+-	struct rm_feature_desc *desc = (void *)(buf + 8);
++	struct rm_feature_desc *desc;
+ 	struct ata_taskfile tf;
+ 	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
+-			0, sizeof(buf),
++			0, 16,
+ 			0, 0, 0,
+ 	};
+ 
++	buf = kzalloc(16, GFP_KERNEL);
++	if (!buf)
++		return ODD_MECH_TYPE_UNSUPPORTED;
++	desc = (void *)(buf + 8);
 +
-+	/* Pairs with smp_wmb() in kvm_vm_ioctl_create_vcpu.  */
- 	smp_rmb();
- 	return kvm->vcpus[i];
+ 	ata_tf_init(dev, &tf);
+ 	tf.flags = ATA_TFLAG_ISADDR | ATA_TFLAG_DEVICE;
+ 	tf.command = ATA_CMD_PACKET;
+ 	tf.protocol = ATAPI_PROT_PIO;
+-	tf.lbam = sizeof(buf);
++	tf.lbam = 16;
+ 
+ 	ret = ata_exec_internal(dev, &tf, cdb, DMA_FROM_DEVICE,
+-				buf, sizeof(buf), 0);
+-	if (ret)
++				buf, 16, 0);
++	if (ret) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
+ 
+-	if (be16_to_cpu(desc->feature_code) != 3)
++	if (be16_to_cpu(desc->feature_code) != 3) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
+ 
+-	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1)
++	if (desc->mech_type == 0 && desc->load == 0 && desc->eject == 1) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_SLOT;
+-	else if (desc->mech_type == 1 && desc->load == 0 && desc->eject == 1)
++	} else if (desc->mech_type == 1 && desc->load == 0 &&
++		   desc->eject == 1) {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_DRAWER;
+-	else
++	} else {
++		kfree(buf);
+ 		return ODD_MECH_TYPE_UNSUPPORTED;
++	}
  }
-@@ -570,6 +571,7 @@ void kvm_put_kvm(struct kvm *kvm);
  
- static inline struct kvm_memslots *__kvm_memslots(struct kvm *kvm, int as_id)
- {
-+	as_id = array_index_nospec(as_id, KVM_ADDRESS_SPACE_NUM);
- 	return srcu_dereference_check(kvm->memslots[as_id], &kvm->srcu,
- 			lockdep_is_held(&kvm->slots_lock) ||
- 			!refcount_read(&kvm->users_count));
-diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
-index b1286c4e07122..0bd0683640bdf 100644
---- a/virt/kvm/irqchip.c
-+++ b/virt/kvm/irqchip.c
-@@ -144,18 +144,19 @@ static int setup_routing_entry(struct kvm *kvm,
- {
- 	struct kvm_kernel_irq_routing_entry *ei;
- 	int r;
-+	u32 gsi = array_index_nospec(ue->gsi, KVM_MAX_IRQ_ROUTES);
- 
- 	/*
- 	 * Do not allow GSI to be mapped to the same irqchip more than once.
- 	 * Allow only one to one mapping between GSI and non-irqchip routing.
- 	 */
--	hlist_for_each_entry(ei, &rt->map[ue->gsi], link)
-+	hlist_for_each_entry(ei, &rt->map[gsi], link)
- 		if (ei->type != KVM_IRQ_ROUTING_IRQCHIP ||
- 		    ue->type != KVM_IRQ_ROUTING_IRQCHIP ||
- 		    ue->u.irqchip.irqchip == ei->irqchip.irqchip)
- 			return -EINVAL;
- 
--	e->gsi = ue->gsi;
-+	e->gsi = gsi;
- 	e->type = ue->type;
- 	r = kvm_set_routing_entry(kvm, e, ue);
- 	if (r)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index a373c60ef1c06..b91716b1b428e 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2886,12 +2886,14 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
- 	struct kvm_device_ops *ops = NULL;
- 	struct kvm_device *dev;
- 	bool test = cd->flags & KVM_CREATE_DEVICE_TEST;
-+	int type;
- 	int ret;
- 
- 	if (cd->type >= ARRAY_SIZE(kvm_device_ops_table))
- 		return -ENODEV;
- 
--	ops = kvm_device_ops_table[cd->type];
-+	type = array_index_nospec(cd->type, ARRAY_SIZE(kvm_device_ops_table));
-+	ops = kvm_device_ops_table[type];
- 	if (ops == NULL)
- 		return -ENODEV;
- 
-@@ -2906,7 +2908,7 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
- 	dev->kvm = kvm;
- 
- 	mutex_lock(&kvm->lock);
--	ret = ops->create(dev, cd->type);
-+	ret = ops->create(dev, type);
- 	if (ret < 0) {
- 		mutex_unlock(&kvm->lock);
- 		kfree(dev);
+ /* Test if ODD is zero power ready by sense code */
 -- 
-2.20.1
+2.19.1
 
 
 
