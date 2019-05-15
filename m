@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C7D1EFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E9F1EF66
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733042AbfEOLhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
+        id S1733242AbfEOLdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:33:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727939AbfEOLbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:31:38 -0400
+        id S1732631AbfEOLdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:33:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C517C2084F;
-        Wed, 15 May 2019 11:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E637A206BF;
+        Wed, 15 May 2019 11:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919897;
-        bh=hntAyRFrvw6Cr9yi4hm6U6Z3YwulC1viRtaaSaqeOA8=;
+        s=default; t=1557920018;
+        bh=5un5W7faLGTbnVrsHgs32zUEtDbsdaDzzdUCFtETPGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Z/03CD/ogprc5LpOkCqJ6Lt3IpHMI1aS+nZaXWGBNZ1E7Na+JN1f4gBKBR6d6TcB
-         Z2i+hjYY/yVoJ7DUVeiYXPPVoZ6siHNLDrXDIMssFsOsEhSCWPGkkENTNrYg2IWyxZ
-         9hsdtdNG7b3qMjWiF+fwT0ixqnjKhziG8RMsf6T0=
+        b=tvO3fCgibXFhI7sBia0ZwrsB51qQi/g+x1WD1fmaztap3VRDUD02hJJsqERqoEqOw
+         K8EYzapJPWfd42dr2kpnptir+ml/jQlARVRG9ufsRhRSDGS5HG7GCA6Kx76L+t2E/e
+         Y4Ufm/+SevyL2KcHGzc8YM5wCKZKa8L1kmSJyZN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 5.0 136/137] PCI: hv: Add pci_destroy_slot() in pci_devices_present_work(), if necessary
-Date:   Wed, 15 May 2019 12:56:57 +0200
-Message-Id: <20190515090703.727867468@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 34/46] net: phy: fix phy_validate_pause
+Date:   Wed, 15 May 2019 12:56:58 +0200
+Message-Id: <20190515090627.120276402@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
+References: <20190515090616.670410738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-commit 340d455699400f2c2c0f9b3f703ade3085cdb501 upstream.
+[ Upstream commit b4010af981ac8cdf1f7f58eb6b131c482e5dee02 ]
 
-When we hot-remove a device, usually the host sends us a PCI_EJECT message,
-and a PCI_BUS_RELATIONS message with bus_rel->device_count == 0.
+We have valid scenarios where ETHTOOL_LINK_MODE_Pause_BIT doesn't
+need to be supported. Therefore extend the first check to check
+for rx_pause being set.
 
-When we execute the quick hot-add/hot-remove test, the host may not send
-us the PCI_EJECT message if the guest has not fully finished the
-initialization by sending the PCI_RESOURCES_ASSIGNED* message to the
-host, so it's potentially unsafe to only depend on the
-pci_destroy_slot() in hv_eject_device_work() because the code path
+See also phy_set_asym_pause:
+rx=0 and tx=1: advertise asym pause only
+rx=0 and tx=0: stop advertising both pause modes
 
-create_root_hv_pci_bus()
- -> hv_pci_assign_slots()
+The fixed commit isn't wrong, it's just the one that introduced the
+linkmode bitmaps.
 
-is not called in this case. Note: in this case, the host still sends the
-guest a PCI_BUS_RELATIONS message with bus_rel->device_count == 0.
-
-In the quick hot-add/hot-remove test, we can have such a race before
-the code path
-
-pci_devices_present_work()
- -> new_pcichild_device()
-
-adds the new device into the hbus->children list, we may have already
-received the PCI_EJECT message, and since the tasklet handler
-
-hv_pci_onchannelcallback()
-
-may fail to find the "hpdev" by calling
-
-get_pcichild_wslot(hbus, dev_message->wslot.slot)
-
-hv_pci_eject_device() is not called; Later, by continuing execution
-
-create_root_hv_pci_bus()
- -> hv_pci_assign_slots()
-
-creates the slot and the PCI_BUS_RELATIONS message with
-bus_rel->device_count == 0 removes the device from hbus->children, and
-we end up being unable to remove the slot in
-
-hv_pci_remove()
- -> hv_pci_remove_slots()
-
-Remove the slot in pci_devices_present_work() when the device
-is removed to address this race.
-
-pci_devices_present_work() and hv_eject_device_work() run in the
-singled-threaded hbus->wq, so there is not a double-remove issue for the
-slot.
-
-We cannot offload hv_pci_eject_device() from hv_pci_onchannelcallback()
-to the workqueue, because we need the hv_pci_onchannelcallback()
-synchronously call hv_pci_eject_device() to poll the channel
-ringbuffer to work around the "hangs in hv_compose_msi_msg()" issue
-fixed in commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in
-hv_compose_msi_msg()")
-
-Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-[lorenzo.pieralisi@arm.com: rewritten commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
-Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
+Fixes: 3c1bcc8614db ("net: ethernet: Convert phydev advertize and supported from u32 to link mode")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/controller/pci-hyperv.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/phy/phy_device.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -1781,6 +1781,10 @@ static void pci_devices_present_work(str
- 		hpdev = list_first_entry(&removed, struct hv_pci_dev,
- 					 list_entry);
- 		list_del(&hpdev->list_entry);
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -2044,11 +2044,14 @@ bool phy_validate_pause(struct phy_devic
+ 			struct ethtool_pauseparam *pp)
+ {
+ 	if (!linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
+-			       phydev->supported) ||
+-	    (!linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+-				phydev->supported) &&
+-	     pp->rx_pause != pp->tx_pause))
++			       phydev->supported) && pp->rx_pause)
+ 		return false;
 +
-+		if (hpdev->pci_slot)
-+			pci_destroy_slot(hpdev->pci_slot);
++	if (!linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
++			       phydev->supported) &&
++	    pp->rx_pause != pp->tx_pause)
++		return false;
 +
- 		put_pcichild(hpdev);
- 	}
- 
+ 	return true;
+ }
+ EXPORT_SYMBOL(phy_validate_pause);
 
 
