@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9DB1EC85
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 12:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A381EEE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfEOK6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:58:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54796 "EHLO mail.kernel.org"
+        id S1730695AbfEOL1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:27:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbfEOK6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:58:31 -0400
+        id S1730745AbfEOL06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:26:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D2DF2166E;
-        Wed, 15 May 2019 10:58:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29355206BF;
+        Wed, 15 May 2019 11:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917910;
-        bh=IDSfyyVtTppBd7d4I/r6YphAvNbicpX1/1cHlU4Wcao=;
+        s=default; t=1557919617;
+        bh=axUyy+CxM87Y+wbA2jQUgiogIniTnUIy1IaZLqSjRfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vmf3GqIsGaxMMVH6VFEYS5nVVIAlmf/LsSvOZ8MoTNZ2GGjSgHjWwve142KmZNdl1
-         xuJN+tHevMQMAtgFZEeXeuWz0lSn6BCy1u9QXQ+eN/JEhEIjrouH3htKO+qOW/4C5z
-         d6khVaAeZ2mXraQWGDiQy/lT8a4mTEpPTzvYvU4k=
+        b=PixXZy7KS7/FM3Hcv4btt4vtGx+HIfF+8XK+oTHKxd22OM+yQgW/WKTUYvIJ+t20x
+         KO6wYDEhMlxcECiZbJY9Nr4h8j73+DBzPcrCDpFl5eO5nBTw7Sub82OJEDDnY1ECIb
+         80rPwmqJF3+3C1saWFCu+f78ahDf3jaiZFFY/fLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 3.18 09/86] netfilter: ebtables: CONFIG_COMPAT: drop a bogus WARN_ON
+        stable@vger.kernel.org, Guenter Rock <linux@roeck-us.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 5.0 005/137] hwmon: (pwm-fan) Disable PWM if fetching cooling data fails
 Date:   Wed, 15 May 2019 12:54:46 +0200
-Message-Id: <20190515090644.373933627@linuxfoundation.org>
+Message-Id: <20190515090652.767781171@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 7caa56f006e9d712b44f27b32520c66420d5cbc6 upstream.
+commit 53f1647da3e8fb3e89066798f0fdc045064d353d upstream.
 
-It means userspace gave us a ruleset where there is some other
-data after the ebtables target but before the beginning of the next rule.
+In case pwm_fan_of_get_cooling_data() fails we should disable the PWM
+just like in the other error cases.
 
-Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
-Reported-by: syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 2e5219c77183 ("hwmon: (pwm-fan) Read PWM FAN configuration from device tree")
+Cc: <stable@vger.kernel.org> # 4.14+
+Reported-by: Guenter Rock <linux@roeck-us.net>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebtables.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hwmon/pwm-fan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2042,7 +2042,8 @@ static int ebt_size_mwt(struct compat_eb
- 		if (match_kern)
- 			match_kern->match_size = ret;
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -254,7 +254,7 @@ static int pwm_fan_probe(struct platform
  
--		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
-+		/* rule should have no remaining data after target */
-+		if (type == EBT_COMPAT_TARGET && size_left)
- 			return -EINVAL;
+ 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
+ 	if (ret)
+-		return ret;
++		goto err_pwm_disable;
  
- 		match32 = (struct compat_ebt_entry_mwt *) buf;
+ 	ctx->pwm_fan_state = ctx->pwm_fan_max_state;
+ 	if (IS_ENABLED(CONFIG_THERMAL)) {
 
 
