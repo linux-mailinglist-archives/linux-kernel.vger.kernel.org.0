@@ -2,133 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EA01F717
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177621F714
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 17:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfEOPE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 11:04:29 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:43647 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfEOPEX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 11:04:23 -0400
-Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x4FF488S014964;
-        Thu, 16 May 2019 00:04:08 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x4FF488S014964
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557932648;
-        bh=u9dXgGIsSlr/2UJfZm4Hi8PQBr56poeSbRgpr/KP1sc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J8N5T92J5aYJbYx1PB3wAD1wutBLjTXl2mu+Rz24c3UpWk0LZ1E3ZS2nS4ixlTYu0
-         XLZlnU/y9btpPKAG3D2drBKiU9URyd9OpvkqzNGbS0IBFALRUkWhKDA4bOIhyYEK6w
-         5jRzJdV6BVrM8uWCix8WitP2sNvCv+OfCt3b+7zLdh8QfnnXR1AgPZQXB1Ll51uKX7
-         HY8TL9wxXpC5gngryyFd12KL8FlENWlD3Ya7cAdVlnr6WQWMeMU5T1proDMFKm0LbQ
-         Ca3oPbwIVD3nArtT2aGJTwGLXeHErNSG8SafL0WGHX5ap2ea7IGgcIVQcGvRuOHqBH
-         /oXNiXnFZfsWQ==
-X-Nifty-SrcIP: [126.125.154.139]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] memory: move jedec_ddr_data.c from lib/ to drivers/memory/
-Date:   Thu, 16 May 2019 00:04:05 +0900
-Message-Id: <1557932646-29752-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557932646-29752-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1557932646-29752-1-git-send-email-yamada.masahiro@socionext.com>
+        id S1727139AbfEOPEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 11:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726583AbfEOPEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 11:04:10 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D396720818;
+        Wed, 15 May 2019 15:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557932649;
+        bh=35dYv7cUrj9box5GYfZLkLxBHkEcek2CZmiVu9HLksA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u8ZxO+aIhqlvTlqv5offOKjWeovz/LLOQMt+n6wfRE3fY6Id8zD51XO3GFgKVxRBd
+         +OBfpOCFQHP4uYuF5BdcEv4Nyid7GcUUVqS5LhlbJaoIiy8XgNtIBbbBfFg1oXxZ07
+         B+ETbWC1AsIJB/rVtskuygrba2bnCMpjLU/Jfr1o=
+Date:   Wed, 15 May 2019 17:04:06 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Lech Perczak <l.perczak@camlintechnologies.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Dumazet <edumazet@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Piotr Figiel <p.figiel@camlintechnologies.com>,
+        Krzysztof =?utf-8?Q?Drobi=C5=84ski?= 
+        <k.drobinski@camlintechnologies.com>,
+        Pawel Lenkow <p.lenkow@camlintechnologies.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: Recurring warning in page_copy_sane (inside copy_page_to_iter)
+ when running stress tests involving drop_caches
+Message-ID: <20190515150406.GA22540@kroah.com>
+References: <d68c83ba-bf5a-f6e8-44dd-be98f45fc97a@camlintechnologies.com>
+ <14c9e6f4-3fb8-ca22-91cc-6970f1d52265@camlintechnologies.com>
+ <011a16e4-6aff-104c-a19b-d2bd11caba99@camlintechnologies.com>
+ <20190515144352.GC31704@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190515144352.GC31704@bombadil.infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-jedec_ddr_data.c exports the lpddr2_jedec_* symbols, and all of them
-are only referenced from drivers/memory/{emif.c,of_memory.c}
+On Wed, May 15, 2019 at 07:43:52AM -0700, Matthew Wilcox wrote:
+> > > W dniu 25.04.2019 o 11:25, Lech Perczak pisze:
+> > >> Some time ago, after upgrading the Kernel on our i.MX6Q-based boards to mainline 4.18, and now to LTS 4.19 line, during stress tests we started noticing strange warnings coming from 'read' syscall, when page_copy_sane() check failed. Typical reproducibility is up to ~4 events per 24h. Warnings origin from different processes, mostly involved with the stress tests, but not necessarily with block devices we're stressing. If the warning appeared in process relating to block device stress test, it would be accompanied by corrupted data, as the read operation gets aborted. 
+> > >>
+> > >> When I started debugging the issue, I noticed that in all cases we're dealing with highmem zero-order pages. In this case, page_head(page) == page, so page_address(page) should be equal to page_address(head).
+> > >> However, it isn't the case, as page_address(head) in each case returns zero, causing the value of "v" to explode, and the check to fail.
+> 
+> You're seeing a race between page_address(page) being called twice.
+> Between those two calls, something has caused the page to be removed from
+> the page_address_map() list.  Eric's patch avoids calling page_address(),
+> so apply it and be happy.
+> 
+> Greg, can you consider 6daef95b8c914866a46247232a048447fff97279 for
+> backporting to stable?  Nobody realised it was a bugfix at the time it
+> went in.  I suspect there aren't too many of us running HIGHMEM kernels
+> any more.
+> 
 
-drivers/memory/ is a better location than lib/.
+Sure, what kernel version(s) should this go to?  4.19 and newer?
 
-I removed the Kconfig prompt "JEDEC DDR data" because it is only
-select'ed by TI_EMIF, and there is no other user. There is no good
-reason in making it a user-configurable CONFIG option.
+thanks,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/memory/Kconfig                   | 8 ++++++++
- drivers/memory/Makefile                  | 1 +
- {lib => drivers/memory}/jedec_ddr_data.c | 0
- lib/Kconfig                              | 8 --------
- lib/Makefile                             | 2 --
- 5 files changed, 9 insertions(+), 10 deletions(-)
- rename {lib => drivers/memory}/jedec_ddr_data.c (100%)
-
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 2d91b00..fa17b3e 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -7,6 +7,14 @@ menuconfig MEMORY
- 
- if MEMORY
- 
-+config DDR
-+	bool
-+	help
-+	  Data from JEDEC specs for DDR SDRAM memories,
-+	  particularly the AC timing parameters and addressing
-+	  information. This data is useful for drivers handling
-+	  DDR SDRAM controllers.
-+
- config ARM_PL172_MPMC
- 	tristate "ARM PL172 MPMC driver"
- 	depends on ARM_AMBA && OF
-diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-index 91ae4eb..9d5c409 100644
---- a/drivers/memory/Makefile
-+++ b/drivers/memory/Makefile
-@@ -3,6 +3,7 @@
- # Makefile for memory devices
- #
- 
-+obj-$(CONFIG_DDR)		+= jedec_ddr_data.o
- ifeq ($(CONFIG_DDR),y)
- obj-$(CONFIG_OF)		+= of_memory.o
- endif
-diff --git a/lib/jedec_ddr_data.c b/drivers/memory/jedec_ddr_data.c
-similarity index 100%
-rename from lib/jedec_ddr_data.c
-rename to drivers/memory/jedec_ddr_data.c
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 3577609..473f937 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -530,14 +530,6 @@ config LRU_CACHE
- config CLZ_TAB
- 	bool
- 
--config DDR
--	bool "JEDEC DDR data"
--	help
--	  Data from JEDEC specs for DDR SDRAM memories,
--	  particularly the AC timing parameters and addressing
--	  information. This data is useful for drivers handling
--	  DDR SDRAM controllers.
--
- config IRQ_POLL
- 	bool "IRQ polling library"
- 	help
-diff --git a/lib/Makefile b/lib/Makefile
-index fb76970..cb66bc9 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -206,8 +206,6 @@ obj-$(CONFIG_SIGNATURE) += digsig.o
- 
- lib-$(CONFIG_CLZ_TAB) += clz_tab.o
- 
--obj-$(CONFIG_DDR) += jedec_ddr_data.o
--
- obj-$(CONFIG_GENERIC_STRNCPY_FROM_USER) += strncpy_from_user.o
- obj-$(CONFIG_GENERIC_STRNLEN_USER) += strnlen_user.o
- 
--- 
-2.7.4
-
+greg k-h
