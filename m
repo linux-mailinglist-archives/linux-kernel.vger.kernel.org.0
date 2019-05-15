@@ -2,62 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D29321E6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 04:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD3B1E6DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 04:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfEOC2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 22:28:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53542 "EHLO mail.kernel.org"
+        id S1726621AbfEOC2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 22:28:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbfEOC2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726201AbfEOC2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 May 2019 22:28:31 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B8EE2084F;
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C8420879;
         Wed, 15 May 2019 02:28:30 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hQjef-0005My-Fk; Tue, 14 May 2019 22:28:29 -0400
-Message-Id: <20190515022747.719887946@goodmis.org>
+        id 1hQjef-0005NT-Lo; Tue, 14 May 2019 22:28:29 -0400
+Message-Id: <20190515022829.570207954@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 14 May 2019 22:27:47 -0400
+Date:   Tue, 14 May 2019 22:27:48 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 0/5] tracing: Final updates for this merge window
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [for-next][PATCH 1/5] tracing: Simplify "if" macro code
+References: <20190515022747.719887946@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-Head SHA1: 693713cbdb3a4bda5a8a678c31f06560bbb14657
+Peter Zijlstra noticed that with CONFIG_PROFILE_ALL_BRANCHES, the "if"
+macro converts the conditional to an array index.  This can cause GCC
+to create horrible code.  When there are nested ifs, the generated code
+uses register values to encode branching decisions.
+
+Josh Poimboeuf found that replacing the define "if" macro from using
+the condition as an array index and incrementing the branch statics
+with an if statement itself, reduced the asm complexity and shrinks the
+generated code quite a bit.
+
+But this can be simplified even further by replacing the internal if
+statement with a ternary operator.
+
+Link: https://lkml.kernel.org/r/20190307174802.46fmpysxyo35hh43@treble
+Link: http://lkml.kernel.org/r/CAHk-=wiALN3jRuzARpwThN62iKd476Xj-uom+YnLZ4=eqcz7xQ@mail.gmail.com
+
+Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/compiler.h | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 445348facea9..8aaf7cd026b0 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -53,23 +53,24 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * "Define 'is'", Bill Clinton
+  * "Define 'if'", Steven Rostedt
+  */
+-#define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
+-#define __trace_if(cond) \
+-	if (__builtin_constant_p(!!(cond)) ? !!(cond) :			\
+-	({								\
+-		int ______r;						\
+-		static struct ftrace_branch_data			\
+-			__aligned(4)					\
+-			__section("_ftrace_branch")			\
+-			______f = {					\
+-				.func = __func__,			\
+-				.file = __FILE__,			\
+-				.line = __LINE__,			\
+-			};						\
+-		______r = !!(cond);					\
+-		______f.miss_hit[______r]++;					\
+-		______r;						\
+-	}))
++#define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
++
++#define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
++
++#define __trace_if_value(cond) ({			\
++	static struct ftrace_branch_data		\
++		__aligned(4)				\
++		__section("_ftrace_branch")		\
++		__if_trace = {				\
++			.func = __func__,		\
++			.file = __FILE__,		\
++			.line = __LINE__,		\
++		};					\
++	(cond) ?					\
++		(__if_trace.miss_hit[1]++,1) :		\
++		(__if_trace.miss_hit[0]++,0);		\
++})
++
+ #endif /* CONFIG_PROFILE_ALL_BRANCHES */
+ 
+ #else
+-- 
+2.20.1
 
 
-Jiri Kosina (1):
-      livepatch: Remove klp_check_compiler_support()
-
-Linus Torvalds (1):
-      tracing: Simplify "if" macro code
-
-Steven Rostedt (VMware) (3):
-      ftrace/x86_32: Remove support for non DYNAMIC_FTRACE
-      ftrace/x86: Remove mcount support
-      x86: Hide the int3_emulate_call/jmp functions from UML
-
-----
- arch/powerpc/include/asm/livepatch.h |  5 ---
- arch/s390/include/asm/livepatch.h    |  5 ---
- arch/x86/Kconfig                     | 11 ++++++
- arch/x86/include/asm/ftrace.h        |  8 ++--
- arch/x86/include/asm/livepatch.h     |  8 ----
- arch/x86/include/asm/text-patching.h |  4 +-
- arch/x86/kernel/ftrace_32.S          | 75 +++---------------------------------
- arch/x86/kernel/ftrace_64.S          | 28 +-------------
- include/linux/compiler.h             | 35 +++++++++--------
- kernel/livepatch/core.c              |  8 ----
- 10 files changed, 41 insertions(+), 146 deletions(-)
