@@ -2,127 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CBF1FBA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 22:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333171FBBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 22:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfEOUqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 16:46:24 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38018 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfEOUqU (ORCPT
+        id S1727728AbfEOUtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 16:49:18 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:57887 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726290AbfEOUtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 16:46:20 -0400
-Received: by mail-ot1-f68.google.com with SMTP id s19so1348739otq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 13:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kQMkVem+f5BUJTL0ohOK8s/LBe9AOQLQXzJAVF0NO2o=;
-        b=Cy2EIYX1Pq2jZ4OZSz2yQkq0F9kd5atoA7LKrqdgOhRjKiFVlVYA2gODEElFw67K45
-         tpjRxjmowCB5ex6K1svZPmFMGUJvDyewft/V9f+O8H7U1VGbN+OU4Z/xpXBeMQgdofxU
-         HwFKIrN+ZDE05AjnzxypOVzx8FHhxfQfSPDlE24jH7d0yRidX/qCp6tGapcyXMIsQ/FN
-         xTviZEpkXwuB4/hLQMP71dgjub+M7+e9+NQASiodAsRVquNojGSwTZ5hM/gNAMDb2yEk
-         Teybs5bgEInBpgzEo9DC1MccDV1z1SSDczRUyu9xTatdTpheOTQU+jZivdK6ZvGITWFx
-         bOkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kQMkVem+f5BUJTL0ohOK8s/LBe9AOQLQXzJAVF0NO2o=;
-        b=nnKrJwlF8FGczm3j0BJfgDCFYMAEI0IyT0TK2pTC0X1lnbUAG28olDXuAmNnnmLmbm
-         CfGjI6oWjegGAcZM/ghB/vemUB6lYsR0nwOYv9alTHhE0tIoOSL4yquuouFkFTZSaepJ
-         TkOJ0hgE1yeVh/P5AbBt9PZw3Xt03lObxxAWeaEzCRHF3089SXAo34rR4/0TpGs3bx3Q
-         WDXc+DUCILlbN9h2n/+7mHYBFFLNZPMHust7kFm4sBZoyx+L8NKK6IVvUx+uyQtlvq+C
-         y4LNvLf0RazQVuBVvNUMcaT2bxM5lcv0QIpyG7pqltA1/hGVdWDjz/Od5gbju0HIj0nf
-         oBBg==
-X-Gm-Message-State: APjAAAVYE8I32SAMKB5aqJkWKy4c3EO4OLqcjm0AZMUQhQ7p0Df+He8h
-        +vgWxI0iUo+VHY7E844IR3N/ZU4ZtAV218Islgo5mg==
-X-Google-Smtp-Source: APXvYqzmFFlcg/jPSqhKzy3t5czXCo+ojmXW5WVgFrjk+NAmke64X9x4AGwl9LoR92w5/nxaP9HiWHsnxe/dpzoT3CE=
-X-Received: by 2002:a9d:6116:: with SMTP id i22mr26141595otj.13.1557953179336;
- Wed, 15 May 2019 13:46:19 -0700 (PDT)
+        Wed, 15 May 2019 16:49:18 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 409052438C;
+        Wed, 15 May 2019 16:49:17 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 15 May 2019 16:49:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=4DYWIxOWx2bjSXKtJq2DIJnjfb0
+        7mluDbIFzNb7XWk8=; b=BL/5yuWiNwjOvU4jFHmI7rLvnAomYbuItkmAV2xzV6U
+        +HMTmQX067H0vRmAG/6UgabVOQBTSp+cKOacnbNdRQ/OLgArR0IHAApHf2gOlX8a
+        ZYHIV3+/vyZp9UBpDfb/+zsUNivC7uSTiH2CCMVqFskfPG7KoUQCDmg/Z0/hXdVE
+        /mEj8xMWkOh12s36Nuhzy7CNCpnW/uIdiO9Zo70cx/mlt4blc0bVeQHfw4KMPq1N
+        2Tum8dmoL/oEkqYRZauFuC2wXFkWPj+QnVMlx7ar7+o/uLTwz6BiquzArRHRpFYu
+        lsetzqibTGMosxAWaV5F1bsMKybx2kjqFGoTVEfhj3Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=4DYWIx
+        OWx2bjSXKtJq2DIJnjfb07mluDbIFzNb7XWk8=; b=Iv6AjPuOCaeYwZEnLxDmhY
+        KIYmpK+gncszduGeAwu1YCDrj5lmJm2HEzAy2gZiBgqwSi2j8eD1RmZWrFoB9xUf
+        ZKdauatKTGYGH2Njb9+MEnZK0ZnnOgiRmwjpDZCoTwue4BVWGtJK/6RN/P63unr5
+        YgFbdXUosJIIiB7m4/fZMw18yBD7USuRybZrWao6ut/VE01y3yVzuKsREW4w0yiW
+        Wd1PPIn9GtsShnBNeZxIYbnF5WmCDSzAlvgTBAoP9FGaG+z16jfvg7dnSxF2Pq9q
+        K0kbf4w894WBo+2Mql0nsZDqy/tV1DBhJuCG+pWgSl+S4YRccGDR+qLDC/nZcDuQ
+        ==
+X-ME-Sender: <xms:THvcXLe9PfILHqiCvzZt3-SM8HPaiIYnPOPz2NB9gVQ6io3tGs_LCw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrleekgddugeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdludehmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppeduvddurdeggedrvddvkedrvdefheenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:THvcXEGulgIGb_Wi16_-rjZpWV8pCjdQtGnJvLYb3jaZGrFftghRFw>
+    <xmx:THvcXNjKywDKaM1In-4PLN7b9wCSB8aiGrso3IzP7D50ctOH6wDVTw>
+    <xmx:THvcXMd8klvLzix2Wryq9_cHRDKjAQPfJ4Hht6S3UAOXgVfk0DTJBg>
+    <xmx:TXvcXFNSp8PeNgVr5hvUbk3YEGetmuvUXqgicIlrqngdz-xSxkHW8g>
+Received: from localhost (ppp121-44-228-235.bras2.syd2.internode.on.net [121.44.228.235])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2133210378;
+        Wed, 15 May 2019 16:49:15 -0400 (EDT)
+Date:   Thu, 16 May 2019 06:48:40 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 3.18 78/86] bridge: Fix error path for
+ kobject_init_and_add()
+Message-ID: <20190515204840.GE11749@eros.localdomain>
+References: <20190515090642.339346723@linuxfoundation.org>
+ <20190515090655.622147146@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-3-pagupta@redhat.com>
- <c22d42f6-ef94-0310-36f2-e9085d3464c2@infradead.org> <1112624345.28705248.1557847520326.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1112624345.28705248.1557847520326.JavaMail.zimbra@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 May 2019 13:46:08 -0700
-Message-ID: <CAPcyv4iK1ivHkdw3JQV1wVLeLi0TA++VgKDZvYjPGo_i1j_pbA@mail.gmail.com>
-Subject: Re: [Qemu-devel] [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        KVM list <kvm@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, david <david@fromorbit.com>,
-        lcapitulino@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        jmoyer <jmoyer@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Len Brown <lenb@kernel.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Rik van Riel <riel@surriel.com>,
-        yuval shaia <yuval.shaia@oracle.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Kevin Wolf <kwolf@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        cohuck@redhat.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Igor Mammedov <imammedo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515090655.622147146@linuxfoundation.org>
+X-Mailer: Mutt 1.11.4 (2019-03-13)
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 8:25 AM Pankaj Gupta <pagupta@redhat.com> wrote:
->
->
-> > On 5/14/19 7:54 AM, Pankaj Gupta wrote:
-> > > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> > > index 35897649c24f..94bad084ebab 100644
-> > > --- a/drivers/virtio/Kconfig
-> > > +++ b/drivers/virtio/Kconfig
-> > > @@ -42,6 +42,17 @@ config VIRTIO_PCI_LEGACY
-> > >
-> > >       If unsure, say Y.
-> > >
-> > > +config VIRTIO_PMEM
-> > > +   tristate "Support for virtio pmem driver"
-> > > +   depends on VIRTIO
-> > > +   depends on LIBNVDIMM
-> > > +   help
-> > > +   This driver provides access to virtio-pmem devices, storage devices
-> > > +   that are mapped into the physical address space - similar to NVDIMMs
-> > > +    - with a virtio-based flushing interface.
-> > > +
-> > > +   If unsure, say M.
-> >
-> > <beep>
-> > from Documentation/process/coding-style.rst:
-> > "Lines under a ``config`` definition
-> > are indented with one tab, while help text is indented an additional two
-> > spaces."
->
-> ah... I changed help text and 'checkpatch' did not say anything :( .
->
-> Will wait for Dan, If its possible to add two spaces to help text while applying
-> the series.
+On Wed, May 15, 2019 at 12:55:55PM +0200, Greg Kroah-Hartman wrote:
+> From: "Tobin C. Harding" <tobin@kernel.org>
+> 
+> [ Upstream commit bdfad5aec1392b93495b77b864d58d7f101dc1c1 ]
 
-I'm inclined to handle this with a fixup appended to the end of the
-series just so the patchwork-bot does not get confused by the content
-changing from what was sent to the list.
+Greg you are not going to back port all of these kobject fixes are you?
+There is going to be a _lot_ of them.  I'm not super comfortable
+generating all this work for you.  And besides that, I keep making
+mistakes (reference to last nights find of double free in powerpc that
+you reviewed already), then we have to back port those too.
+
+For the record I've been going through all uses of kobject and splitting
+them into categories
+
+ 1. Broken
+ 2. Too complex to immediately tell
+ 3. Done correctly
+
+I'm not getting many in category #3, let's hope that some in #1 and #2 are
+my misunderstanding and that many in #2 should be in #3.  I'm having fun
+fixing them but I shudder at making life hard for other people.
+
+Cheers,
+Tobin.
