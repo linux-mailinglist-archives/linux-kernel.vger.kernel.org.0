@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5854C1EFE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD441F17F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:55:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731938AbfEOLiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:38:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42362 "EHLO mail.kernel.org"
+        id S1731211AbfEOLyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:54:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732777AbfEOLao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:44 -0400
+        id S1730450AbfEOLSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFFC920843;
-        Wed, 15 May 2019 11:30:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF08020843;
+        Wed, 15 May 2019 11:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919844;
-        bh=cCpzihbvXaaWTGpByLsxynU8DRIq2Yq+Ki/HH3TdJGw=;
+        s=default; t=1557919135;
+        bh=dWAXFARmKsgxAQAbufWKnF+IQDUr5TvvHujqLwkQ2a8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scnzcXYecBbUggojG1lCmaCA9QgI5it1rSfcirOymveqoRcYyoOsZVYGXB/TB19u/
-         3dLHYIideyKAAbngZ5APWA0jBHnCCmB22lqMBQ5tfi7hv/+xj6P12bsvozRBxW16Tb
-         rKqfBDGLNpaOYLvt+gs/rB0lZfcHI1PX5y4/K66Q=
+        b=YATBZM9P0CuTQCirIcQZJuWRE49vij7Mxwna5aT1Apj2sfo+9e62aQLhjFK/jB9u5
+         xUDvaQK8U1dOpHhNfvbNcjWczoctMh96YKyKpBSz3saZWnwKQ0j6+tK2dYkqniDpvw
+         K+BdmXqPbM4D9ho0wvSbK0EjItiRffqfKae2E8kA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Andrei Vagin <avagin@gmail.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 078/137] netfilter: fix nf_l4proto_log_invalid to log invalid packets
-Date:   Wed, 15 May 2019 12:55:59 +0200
-Message-Id: <20190515090659.109923422@linuxfoundation.org>
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 080/115] netfilter: nf_tables: warn when expr implements only one of activate/deactivate
+Date:   Wed, 15 May 2019 12:56:00 +0200
+Message-Id: <20190515090705.180918073@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d48668052b2603b6262459625c86108c493588dd ]
+[ Upstream commit 0ef235c71755c5f36c50282fcf2d7d08709be344 ]
 
-It doesn't log a packet if sysctl_log_invalid isn't equal to protonum
-OR sysctl_log_invalid isn't equal to IPPROTO_RAW. This sentence is
-always true. I believe we need to replace OR to AND.
+->destroy is only allowed to free data, or do other cleanups that do not
+have side effects on other state, such as visibility to other netlink
+requests.
 
-Cc: Florian Westphal <fw@strlen.de>
-Fixes: c4f3db1595827 ("netfilter: conntrack: add and use nf_l4proto_log_invalid")
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Acked-by: Florian Westphal <fw@strlen.de>
+Such things need to be done in ->deactivate.
+As a transaction can fail, we need to make sure we can undo such
+operations, therefore ->activate() has to be provided too.
+
+So print a warning and refuse registration if expr->ops provides
+only one of the two operations.
+
+v2: fix nft_expr_check_ops to not repeat same check twice (Jones Desougi)
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/netfilter/nf_conntrack_proto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_proto.c
-index 859f5d07a9159..78361e462e802 100644
---- a/net/netfilter/nf_conntrack_proto.c
-+++ b/net/netfilter/nf_conntrack_proto.c
-@@ -86,7 +86,7 @@ void nf_l4proto_log_invalid(const struct sk_buff *skb,
- 	struct va_format vaf;
- 	va_list args;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index c445d57e3a5bc..b149a72190846 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -220,6 +220,18 @@ static int nft_delchain(struct nft_ctx *ctx)
+ 	return err;
+ }
  
--	if (net->ct.sysctl_log_invalid != protonum ||
-+	if (net->ct.sysctl_log_invalid != protonum &&
- 	    net->ct.sysctl_log_invalid != IPPROTO_RAW)
- 		return;
++/* either expr ops provide both activate/deactivate, or neither */
++static bool nft_expr_check_ops(const struct nft_expr_ops *ops)
++{
++	if (!ops)
++		return true;
++
++	if (WARN_ON_ONCE((!ops->activate ^ !ops->deactivate)))
++		return false;
++
++	return true;
++}
++
+ static void nft_rule_expr_activate(const struct nft_ctx *ctx,
+ 				   struct nft_rule *rule)
+ {
+@@ -1724,6 +1736,9 @@ static int nf_tables_delchain(struct net *net, struct sock *nlsk,
+  */
+ int nft_register_expr(struct nft_expr_type *type)
+ {
++	if (!nft_expr_check_ops(type->ops))
++		return -EINVAL;
++
+ 	nfnl_lock(NFNL_SUBSYS_NFTABLES);
+ 	if (type->family == NFPROTO_UNSPEC)
+ 		list_add_tail_rcu(&type->list, &nf_tables_expressions);
+@@ -1873,6 +1888,10 @@ static int nf_tables_expr_parse(const struct nft_ctx *ctx,
+ 			err = PTR_ERR(ops);
+ 			goto err1;
+ 		}
++		if (!nft_expr_check_ops(ops)) {
++			err = -EINVAL;
++			goto err1;
++		}
+ 	} else
+ 		ops = type->ops;
  
 -- 
 2.20.1
