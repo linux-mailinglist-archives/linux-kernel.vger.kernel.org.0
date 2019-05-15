@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45DE1F082
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A1C1EED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732234AbfEOLoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37218 "EHLO mail.kernel.org"
+        id S1732164AbfEOL0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:26:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732139AbfEOL0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:23 -0400
+        id S1731372AbfEOL00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:26:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6CBB20818;
-        Wed, 15 May 2019 11:26:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 762C2206BF;
+        Wed, 15 May 2019 11:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919583;
-        bh=bBVkt7ke+7BX2VBGJQpe2SV4R2dH9B1EORuNlsATUiA=;
+        s=default; t=1557919586;
+        bh=OViN2952whJRxYkxTvW+Qiqgi1Tliog5o+GZ38Mu6gs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lh9e3ERrEPgkt+2My3HORAscAd+zNq620WN/UZmOcg4/69tCn0J9tou9WHeZXvfRY
-         hO2XUay2vVdRwt2WmTHI62eA4L/MLFz5AdeIs9m1QOWkXfhQsKQPRMTTfLO3LjM+x5
-         LomzdgnDneqaOcA1Zj7lKPaYC6E+Dr0X2QJ1APkU=
+        b=Fx1jBEFXJyCRJFKxgQ9/Dwo8X2Cem9c4SgNrVgnddh5y91U8B6RmTF7ipyU8x6XeY
+         u61Yb2taMjduevjGNfCn9DghVfQThzwf1nxXpsn/etwr4rWfr4qilQ0gP2K7ZuFVhC
+         3HYujv68W0Rqg25j0KKs0bxw+xEJy5f6z6UonCv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 017/137] HID: input: add mapping for keyboard Brightness Up/Down/Toggle keys
-Date:   Wed, 15 May 2019 12:54:58 +0200
-Message-Id: <20190515090654.564437644@linuxfoundation.org>
+Subject: [PATCH 5.0 018/137] HID: input: add mapping for "Toggle Display" key
+Date:   Wed, 15 May 2019 12:54:59 +0200
+Message-Id: <20190515090654.620889118@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
 References: <20190515090651.633556783@linuxfoundation.org>
@@ -44,32 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7975a1d6a7afeb3eb61c971a153d24dd8fa032f3 ]
+[ Upstream commit c01908a14bf735b871170092807c618bb9dae654 ]
 
-According to HUTRR73 usages 0x79, 0x7a and 0x7c from the consumer page
-correspond to Brightness Up/Down/Toggle keys, so let's add the mappings.
+According to HUT 1.12 usage 0xb5 from the generic desktop page is reserved
+for switching between external and internal display, so let's add the
+mapping.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-input.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/hid/hid-input.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 468da6f6765db..290efac7e6bfd 100644
+index 290efac7e6bfd..4f119300ce3f5 100644
 --- a/drivers/hid/hid-input.c
 +++ b/drivers/hid/hid-input.c
-@@ -908,6 +908,10 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 		case 0x074: map_key_clear(KEY_BRIGHTNESS_MAX);		break;
- 		case 0x075: map_key_clear(KEY_BRIGHTNESS_AUTO);		break;
+@@ -677,6 +677,14 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
+ 			break;
+ 		}
  
-+		case 0x079: map_key_clear(KEY_KBDILLUMUP);	break;
-+		case 0x07a: map_key_clear(KEY_KBDILLUMDOWN);	break;
-+		case 0x07c: map_key_clear(KEY_KBDILLUMTOGGLE);	break;
++		if ((usage->hid & 0xf0) == 0xb0) {	/* SC - Display */
++			switch (usage->hid & 0xf) {
++			case 0x05: map_key_clear(KEY_SWITCHVIDEOMODE); break;
++			default: goto ignore;
++			}
++			break;
++		}
 +
- 		case 0x082: map_key_clear(KEY_VIDEO_NEXT);	break;
- 		case 0x083: map_key_clear(KEY_LAST);		break;
- 		case 0x084: map_key_clear(KEY_ENTER);		break;
+ 		/*
+ 		 * Some lazy vendors declare 255 usages for System Control,
+ 		 * leading to the creation of ABS_X|Y axis and too many others.
 -- 
 2.20.1
 
