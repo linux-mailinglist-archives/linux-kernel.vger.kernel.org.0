@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5CC31F21B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28F61EEAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfEOLND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:13:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48566 "EHLO mail.kernel.org"
+        id S1731793AbfEOLYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729893AbfEOLM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:12:58 -0400
+        id S1731781AbfEOLYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:24:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FDAE20843;
-        Wed, 15 May 2019 11:12:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1D57206BF;
+        Wed, 15 May 2019 11:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918778;
-        bh=u50O49oQS7s8YGZIlFL2PkOJScnC2MTMSTTj0YGQ9UM=;
+        s=default; t=1557919454;
+        bh=h3xdNg/q9zhRaJaNp3VWSoaqbdpc4FxgzygEbgsDw2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NMAuUXfjX6qrro7oFBPhxokwYNTAMLDXk7Fmp7IuJJBKX1zK9cbPXBJG+v6KZoYQB
-         D2SoE/TE9DAMn9LO1js1eeBwyRxlIAkJeTwHaz1ENUfOtGHBVJef94GFSjzW2dUig9
-         oQy65fu5IQV0VlYER65P8bmByycxUKSRwzvevqfc=
+        b=DkHWy/TgBRh+H0tzqWMcafDeZqfsMe10+TWzAvT7P0jqKBwL/GlRDJmFLtOrvCrZV
+         aEhgTcG3TKHSrgc5kOlolm/hPBjGeTJ1euuzKoNsQqZBiuzlPB5YuZ8iaZrdPY9Mtl
+         GSZW+jzph8ws3OMzVZaYkGAuDN6/aIBaI6ih0tjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>
-Subject: [PATCH 4.4 263/266] bonding: fix arp_validate toggling in active-backup mode
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.19 079/113] NFC: nci: Add some bounds checking in nci_hci_cmd_received()
 Date:   Wed, 15 May 2019 12:56:10 +0200
-Message-Id: <20190515090731.914332614@linuxfoundation.org>
+Message-Id: <20190515090659.611321443@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
+[ Upstream commit d7ee81ad09f072eab1681877fc71ec05f9c1ae92 ]
 
-[ Upstream commit a9b8a2b39ce65df45687cf9ef648885c2a99fe75 ]
+This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
+corruption when handling SHDLC I-Frame commands").
 
-There's currently a problem with toggling arp_validate on and off with an
-active-backup bond. At the moment, you can start up a bond, like so:
+I'm not totally sure, but I think that commit description may have
+overstated the danger.  I was under the impression that this data came
+from the firmware?  If you can't trust your networking firmware, then
+you're already in trouble.
 
-modprobe bonding mode=1 arp_interval=100 arp_validate=0 arp_ip_targets=192.168.1.1
-ip link set bond0 down
-echo "ens4f0" > /sys/class/net/bond0/bonding/slaves
-echo "ens4f1" > /sys/class/net/bond0/bonding/slaves
-ip link set bond0 up
-ip addr add 192.168.1.2/24 dev bond0
+Anyway, these days we add bounds checking where ever we can and we call
+it kernel hardening.  Better safe than sorry.
 
-Pings to 192.168.1.1 work just fine. Now turn on arp_validate:
-
-echo 1 > /sys/class/net/bond0/bonding/arp_validate
-
-Pings to 192.168.1.1 continue to work just fine. Now when you go to turn
-arp_validate off again, the link falls flat on it's face:
-
-echo 0 > /sys/class/net/bond0/bonding/arp_validate
-dmesg
-...
-[133191.911987] bond0: Setting arp_validate to none (0)
-[133194.257793] bond0: bond_should_notify_peers: slave ens4f0
-[133194.258031] bond0: link status definitely down for interface ens4f0, disabling it
-[133194.259000] bond0: making interface ens4f1 the new active one
-[133197.330130] bond0: link status definitely down for interface ens4f1, disabling it
-[133197.331191] bond0: now running without any active interface!
-
-The problem lies in bond_options.c, where passing in arp_validate=0
-results in bond->recv_probe getting set to NULL. This flies directly in
-the face of commit 3fe68df97c7f, which says we need to set recv_probe =
-bond_arp_recv, even if we're not using arp_validate. Said commit fixed
-this in bond_option_arp_interval_set, but missed that we can get to that
-same state in bond_option_arp_validate_set as well.
-
-One solution would be to universally set recv_probe = bond_arp_recv here
-as well, but I don't think bond_option_arp_validate_set has any business
-touching recv_probe at all, and that should be left to the arp_interval
-code, so we can just make things much tidier here.
-
-Fixes: 3fe68df97c7f ("bonding: always set recv_probe to bond_arp_rcv in arp monitor")
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Fixes: 11f54f228643 ("NFC: nci: Add HCI over NCI protocol support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/bonding/bond_options.c |    7 -------
- 1 file changed, 7 deletions(-)
+ net/nfc/nci/hci.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/bonding/bond_options.c
-+++ b/drivers/net/bonding/bond_options.c
-@@ -1066,13 +1066,6 @@ static int bond_option_arp_validate_set(
- {
- 	netdev_info(bond->dev, "Setting arp_validate to %s (%llu)\n",
- 		    newval->string, newval->value);
--
--	if (bond->dev->flags & IFF_UP) {
--		if (!newval->value)
--			bond->recv_probe = NULL;
--		else if (bond->params.arp_interval)
--			bond->recv_probe = bond_arp_rcv;
--	}
- 	bond->params.arp_validate = newval->value;
+diff --git a/net/nfc/nci/hci.c b/net/nfc/nci/hci.c
+index ddfc52ac1f9b4..c0d323b58e732 100644
+--- a/net/nfc/nci/hci.c
++++ b/net/nfc/nci/hci.c
+@@ -312,6 +312,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
+ 		create_info = (struct nci_hci_create_pipe_resp *)skb->data;
+ 		dest_gate = create_info->dest_gate;
+ 		new_pipe = create_info->pipe;
++		if (new_pipe >= NCI_HCI_MAX_PIPES) {
++			status = NCI_HCI_ANY_E_NOK;
++			goto exit;
++		}
  
- 	return 0;
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+@@ -336,6 +340,10 @@ static void nci_hci_cmd_received(struct nci_dev *ndev, u8 pipe,
+ 			goto exit;
+ 		}
+ 		delete_info = (struct nci_hci_delete_pipe_noti *)skb->data;
++		if (delete_info->pipe >= NCI_HCI_MAX_PIPES) {
++			status = NCI_HCI_ANY_E_NOK;
++			goto exit;
++		}
+ 
+ 		ndev->hci_dev->pipes[delete_info->pipe].gate =
+ 						NCI_HCI_INVALID_GATE;
+-- 
+2.20.1
+
 
 
