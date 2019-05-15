@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 060D91ECCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F399E1EDE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfEOLBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:01:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58678 "EHLO mail.kernel.org"
+        id S1729700AbfEOLOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:14:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfEOLBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:01:38 -0400
+        id S1730139AbfEOLO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB75D20881;
-        Wed, 15 May 2019 11:01:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0965C20862;
+        Wed, 15 May 2019 11:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918097;
-        bh=COjpMTKRrd6+rqyZlyYzLSofHABkiXx5LjRNNSNKVjo=;
+        s=default; t=1557918866;
+        bh=IQiKbuEWVm4f7lw5bzZBPzwaZrsJiLU5nh71iDFy38o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IVoeLQOv1bh9JqgMuN7oo81ydeI+zTqJ5JbkpDeRLpeZwXaBNruRK4hVl4+bWVivU
-         gzvUY3Le79JdxAyozu7y0ZmrOrz/mjzVAJRwFSTHU0Cz4CP6ZNxBV4QZQ4PaaX9HFl
-         b7x1rR1mT5Hm/5OBuQjYFzr8sQABiAaWpGsTy3PI=
+        b=ozho1urFN/HrG/xNNu2+EKrOBC4RYKuuJJj2t99puA+KoJ1Owlj+6cNUtu4F++phW
+         eD9sOFmusfXmz+cKhGIYjsvQXVgo+LZ/TCCGunfW5LTqRQa4SqOpOtsVtMF8H3YYqA
+         Tfq+2f2F9e3D5h+vZt+rst/iz12uPjzTMRDM9sbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 3.18 64/86] platform/x86: sony-laptop: Fix unintentional fall-through
+        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 06/51] iio: adc: xilinx: fix potential use-after-free on remove
 Date:   Wed, 15 May 2019 12:55:41 +0200
-Message-Id: <20190515090654.585128581@linuxfoundation.org>
+Message-Id: <20190515090619.305087626@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+[ Upstream commit 62039b6aef63380ba7a37c113bbaeee8a55c5342 ]
 
-commit 1cbd7a64959d33e7a2a1fa2bf36a62b350a9fcbd upstream.
+When cancel_delayed_work() returns, the delayed work may still
+be running. This means that the core could potentially free
+the private structure (struct xadc) while the delayed work
+is still using it. This is a potential use-after-free.
 
-It seems that the default case should return AE_CTRL_TERMINATE, instead
-of falling through to case ACPI_RESOURCE_TYPE_END_TAG and returning AE_OK;
-otherwise the line of code at the end of the function is unreachable and
-makes no sense:
+Fix by calling cancel_delayed_work_sync(), which waits for
+any residual work to finish before returning.
 
-return AE_CTRL_TERMINATE;
-
-This fix is based on the following thread of discussion:
-
-https://lore.kernel.org/patchwork/patch/959782/
-
-Fixes: 33a04454527e ("sony-laptop: Add SNY6001 device handling (sonypi reimplementation)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/sony-laptop.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/iio/adc/xilinx-xadc-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/platform/x86/sony-laptop.c
-+++ b/drivers/platform/x86/sony-laptop.c
-@@ -4399,14 +4399,16 @@ sony_pic_read_possible_resource(struct a
- 			}
- 			return AE_OK;
- 		}
-+
-+	case ACPI_RESOURCE_TYPE_END_TAG:
-+		return AE_OK;
-+
- 	default:
- 		dprintk("Resource %d isn't an IRQ nor an IO port\n",
- 			resource->type);
-+		return AE_CTRL_TERMINATE;
- 
--	case ACPI_RESOURCE_TYPE_END_TAG:
--		return AE_OK;
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index 56cf5907a5f01..143894a315d9b 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -1299,7 +1299,7 @@ static int xadc_remove(struct platform_device *pdev)
  	}
--	return AE_CTRL_TERMINATE;
- }
+ 	free_irq(irq, indio_dev);
+ 	clk_disable_unprepare(xadc->clk);
+-	cancel_delayed_work(&xadc->zynq_unmask_work);
++	cancel_delayed_work_sync(&xadc->zynq_unmask_work);
+ 	kfree(xadc->data);
+ 	kfree(indio_dev->channels);
  
- static int sony_pic_possible_resources(struct acpi_device *device)
+-- 
+2.20.1
+
 
 
