@@ -2,57 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6BA21F27D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6691ECA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbfEOLLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:11:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45542 "EHLO mail.kernel.org"
+        id S1727282AbfEOK7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 06:59:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbfEOLLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:11:11 -0400
+        id S1726715AbfEOK7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 06:59:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B73FE216F4;
-        Wed, 15 May 2019 11:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C10262084E;
+        Wed, 15 May 2019 10:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918670;
-        bh=I6d+9dKOeglrTD2kyHydzbVP6se/isQi7Sw1aONqFQo=;
+        s=default; t=1557917991;
+        bh=y1m3BZBT5j0xD2ZtXIItUoqNCZhpJTQQhzHyJ1ZirYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5cY4FcCy57vQGSM/s1uhibOL10zRl/azxMxejWWtLum+hY9VED4X+iqnyx1V+EHZ
-         LMYYVCq0uPJISIZhiRqecf6t9x6Az+2HU+TERNkCvMQYS+mLuGSebLnBK0A/f5wWei
-         GHfArRCAPe5KWmHckPrlIGAWQHmczQM4oNbXuE9M=
+        b=j/TJrxDHdU9BgRhRShY8IKvX/OEkOzW7kJic/HMlwxZYzLHLeS1RbVjRqXmIR3yUf
+         YU/JZ9CqvjAzTzsPQbaXmisPviPoDTpwGf04puyythW/YVmPHlcT/OO9TWdgSx3/qB
+         FNjrpg4m5iDz2v5iX1ppCF5N+V+dRQOUW3v+Ai5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 221/266] x86/speculation: Prepare arch_smt_update() for PRCTL mode
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 3.18 51/86] media: v4l2: i2c: ov7670: Fix PLL bypass register values
 Date:   Wed, 15 May 2019 12:55:28 +0200
-Message-Id: <20190515090730.469845973@linuxfoundation.org>
+Message-Id: <20190515090652.463756699@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,111 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 6893a959d7fdebbab5f5aa112c277d5a44435ba1 upstream.
+commit 61da76beef1e4f0b6ba7be4f8d0cf0dac7ce1f55 upstream.
 
-The upcoming fine grained per task STIBP control needs to be updated on CPU
-hotplug as well.
+The following commits:
+commit f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+commit 04ee6d92047e ("[media] media: ov7670: add possibility to bypass pll for ov7675")
+introduced the ability to bypass PLL multiplier and use input clock (xvclk)
+as pixel clock output frequency for ov7675 sensor.
 
-Split out the code which controls the strict mode so the prctl control code
-can be added later. Mark the SMP function call argument __unused while at it.
+PLL is bypassed using register DBLV[7:6], according to ov7670 and ov7675
+sensor manuals. Macros used to set DBLV register seem wrong in the
+driver, as their values do not match what reported in the datasheet.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.759457117@linutronix.de
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fix by changing DBLV_* macros to use bits [7:6] and set bits [3:0] to
+default 0x0a reserved value (according to datasheets).
+
+While at there, remove a write to DBLV register in
+"ov7675_set_framerate()" that over-writes the previous one to the same
+register that takes "info->pll_bypass" flag into account instead of setting PLL
+multiplier to 4x unconditionally.
+
+And, while at there, since "info->pll_bypass" is only used in
+set/get_framerate() functions used by ov7675 only, it is not necessary
+to check for the device id at probe time to make sure that when using
+ov7670 "info->pll_bypass" is set to false.
+
+Fixes: f6dd927f34d6 ("[media] media: ov7670: calculate framerate properly for ov7675")
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |   46 ++++++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -525,40 +525,44 @@ specv2_set_mode:
- 	arch_smt_update();
+---
+ drivers/media/i2c/ov7670.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -155,10 +155,10 @@ MODULE_PARM_DESC(debug, "Debug level (0-
+ #define REG_GFIX	0x69	/* Fix gain control */
+ 
+ #define REG_DBLV	0x6b	/* PLL control an debugging */
+-#define   DBLV_BYPASS	  0x00	  /* Bypass PLL */
+-#define   DBLV_X4	  0x01	  /* clock x4 */
+-#define   DBLV_X6	  0x10	  /* clock x6 */
+-#define   DBLV_X8	  0x11	  /* clock x8 */
++#define   DBLV_BYPASS	  0x0a	  /* Bypass PLL */
++#define   DBLV_X4	  0x4a	  /* clock x4 */
++#define   DBLV_X6	  0x8a	  /* clock x6 */
++#define   DBLV_X8	  0xca	  /* clock x8 */
+ 
+ #define REG_REG76	0x76	/* OV's name */
+ #define   R76_BLKPCOR	  0x80	  /* Black pixel correction enable */
+@@ -833,7 +833,7 @@ static int ov7675_set_framerate(struct v
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return ov7670_write(sd, REG_DBLV, DBLV_X4);
++	return 0;
  }
  
--static bool stibp_needed(void)
-+static void update_stibp_msr(void * __unused)
- {
--	/* Enhanced IBRS makes using STIBP unnecessary. */
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
--		return false;
--
--	/* Check for strict user mitigation mode */
--	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- }
+ static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
+@@ -1540,11 +1540,7 @@ static int ov7670_probe(struct i2c_clien
+ 		if (config->clock_speed)
+ 			info->clock_speed = config->clock_speed;
  
--static void update_stibp_msr(void *info)
-+/* Update x86_spec_ctrl_base in case SMT state changed. */
-+static void update_stibp_strict(void)
- {
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+	u64 mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
-+
-+	if (sched_smt_active())
-+		mask |= SPEC_CTRL_STIBP;
-+
-+	if (mask == x86_spec_ctrl_base)
-+		return;
-+
-+	pr_info("Update user space SMT mitigation: STIBP %s\n",
-+		mask & SPEC_CTRL_STIBP ? "always-on" : "off");
-+	x86_spec_ctrl_base = mask;
-+	on_each_cpu(update_stibp_msr, NULL, 1);
- }
+-		/*
+-		 * It should be allowed for ov7670 too when it is migrated to
+-		 * the new frame rate formula.
+-		 */
+-		if (config->pll_bypass && id->driver_data != MODEL_OV7670)
++		if (config->pll_bypass)
+ 			info->pll_bypass = true;
  
- void arch_smt_update(void)
- {
--	u64 mask;
--
--	if (!stibp_needed())
-+	/* Enhanced IBRS implies STIBP. No update required. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
- 
- 	mutex_lock(&spec_ctrl_mutex);
- 
--	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
--	if (sched_smt_active())
--		mask |= SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		break;
-+	case SPECTRE_V2_USER_STRICT:
-+		update_stibp_strict();
-+		break;
- 	}
-+
- 	mutex_unlock(&spec_ctrl_mutex);
- }
- 
+ 		if (config->pclk_hb_disable)
 
 
