@@ -2,62 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015BB1F144
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C60D21F16D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731886AbfEOLuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:50:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56240 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730379AbfEOLt7 (ORCPT
+        id S1731516AbfEOLx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:53:56 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:37617 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731120AbfEOLxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:49:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mc63LhWg2+r8G6LyepIMoQgzu86nCTP3tUKDYnTysXo=; b=NJTP+oeOJ2KTSYKFCNvyNdWTdl
-        pkNAYs4PuM9AmwDSp+SRpJ2s5RQMLUOl+KvQeTbeCBBsWXMw//5EKv/S1ECv3NJFKztodOWSY+uLL
-        x6LYCjisteMmKVkA80CIMjyz4BJLmCPomB9t/OOkhdsAJ/bWKo979xjvYWMODNwDryd1NyB1llGar
-        THnvqn8pLDBzW6vZ4tX+ssfHbXZ49/xxkOo0JV+TI5LpknghfuJv6cbIJh7CPO5Lot3bObhMxV3Yt
-        Fxo2c5686rUezL0nFqDfxSaVnWqnD555AqmYQNfVM1IDIDTE/CQfBBHzPVUdAf/CZJirFW1pVKzht
-        Sl5ZZM5w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQsPy-0000MW-Qa; Wed, 15 May 2019 11:49:54 +0000
-Date:   Wed, 15 May 2019 04:49:54 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     khlebnikov@yandex-team.ru, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com
-Subject: Re: mm: use down_read_killable for locking mmap_sem in
- access_remote_vm
-Message-ID: <20190515114954.GB31704@bombadil.infradead.org>
-References: <155790847881.2798.7160461383704600177.stgit@buzz>
- <20190515083825.GJ13687@blackbody.suse.cz>
+        Wed, 15 May 2019 07:53:53 -0400
+Received: by mail-vk1-f195.google.com with SMTP id o187so674594vkg.4
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XqTiQWMIUKTMvV3HGe2FXr2QXLkNPTKOj2lPv0DODS0=;
+        b=L44WaYKFencKFL0aLRS4NaNaiepcTeSneyqE/eagATEjv28G/XY8rdrsINJYIQTZ92
+         +PAtHPEVh8jR6qiTWKFFfSP1YkX7lU1GpVic60govDCk0GD9r4cJ91O5J6R1ASoGkJiU
+         pwD0pXq8TRFRlQS5+wFTsIeGJMUFygr0Z/efTjq8sjfpv/HlMMDxuYSkqsFMm5CRpwm1
+         HLqUJbTGo7MXb67aLZ0NYqUVwWM/iGnfiWnM954ZKFJk9wjWdFEtfhfXNzRPB2YT4cX3
+         77AwPyaxeHAs+IgiexzVRguxuEPOP+ojlb2p4XdTHLUFutHRjAJsb04tpSMsrNmvvuQP
+         EpxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XqTiQWMIUKTMvV3HGe2FXr2QXLkNPTKOj2lPv0DODS0=;
+        b=QVe4XGQfiv/yidd/Ndx/QOC6ePbY5vlpgSYtsn5L5+ghmYk6i83IwS/tlBjqdmmpqC
+         MkqHrQKrEYzLGOWWAfcjSN0/cwy3KRcTcRiIx7XAXbz0FSRFyKGZK+I6RnmylpqbErfq
+         rwug7JAIAdFw6VfBQ6iVZNKHAt1C+FpXTxCOTnfJwYtKj/393iW2uQa5txuqIfb1vaID
+         tV0jr+9Y+bOKcQk6qfquXWYozRWxHnoZ1E0vrSS3K0vicwE7nwYyh1CAwIi6R9zHpFTR
+         rAB4ra0R+/qPi8Y4lImchxW3MZ8TS2WjC7Xf44LcA8iINJ4UGceNvEEfGCywbDoVTYYm
+         RBMA==
+X-Gm-Message-State: APjAAAX9ra9pR4PiSBPLguoKNH1/g8j/YhCoYKotLQ6kQF7fvn+PI/Jp
+        gFhfDLhJqCsIvWU09Z8FfFmRG/W724578g6wqGUPtg==
+X-Google-Smtp-Source: APXvYqxLLXp4CbKZ5K2cHxrvSLCedDsciD24l4vc3t7NCOi6h5PckPFbTpLuj6YsLGx3RyREW/4BoB33n9It563S1oQ=
+X-Received: by 2002:a1f:6e4d:: with SMTP id j74mr888394vkc.36.1557921232169;
+ Wed, 15 May 2019 04:53:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190515083825.GJ13687@blackbody.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190509172427.17835-1-scott.branden@broadcom.com>
+In-Reply-To: <20190509172427.17835-1-scott.branden@broadcom.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 15 May 2019 13:53:16 +0200
+Message-ID: <CAPDyKFrmTEkknnmU22xuKaoG1=SbU2MfQANPmtV0wcF1xKaguA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] mmc: sdhci-iproc: fixes for HS50 data hold time
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 10:38:26AM +0200, Michal Koutný wrote:
-> Hi,
-> making this holder of mmap_sem killable was for the reasons of /proc/...
-> diagnostics was an idea I was pondeering too. However, I think the
-> approach of pretending we read 0 bytes is not correct. The API would IMO
-> need to be extended to allow pass a result such as EINTR to the end
-> caller.
-> Why do you think it's safe to return just 0?
+On Thu, 9 May 2019 at 19:24, Scott Branden <scott.branden@broadcom.com> wrote:
+>
+> This patch series fixes data hold timing issues for various sdhci-iproc
+> ip blocks that do not meet the HS50 data hold time.  NO_HISPD bit is set
+> in quirks.
+>
+> Changes from v2:
+>  - Added info to commit message as to stable tag selection decision
+>    as per Adrian Hunter
+>
+> Changes from v1:
+>  - Change fixes tag to Cc: stable@vger.kernel.org to specify version
+>    to backport to
+>
+> Trac Hoang (2):
+>   mmc: sdhci-iproc: cygnus: Set NO_HISPD bit to fix HS50 data hold time
+>     problem
+>   mmc: sdhci-iproc: Set NO_HISPD bit to fix HS50 data hold time problem
+>
+>  drivers/mmc/host/sdhci-iproc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> --
+> 2.17.1
+>
 
-_killable_, not _interruptible_.
+Applied for fixes, thanks!
 
-The return value will never be seen by userspace because it's dead.
-
-
+Kind regards
+Uffe
