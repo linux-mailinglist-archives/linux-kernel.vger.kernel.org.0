@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869461F0F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F34D1EF06
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfEOLtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:49:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33436 "EHLO mail.kernel.org"
+        id S1731997AbfEOL2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:28:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731579AbfEOLXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:08 -0400
+        id S1732434AbfEOL2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:28:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8585206BF;
-        Wed, 15 May 2019 11:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EEEF206BF;
+        Wed, 15 May 2019 11:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919388;
-        bh=G08EOD78zEpORirvpBeVsiOgbsiUyzW0Pne5MwRHESU=;
+        s=default; t=1557919723;
+        bh=2OasU5JmCB1n24w3mQY8vAviPP73G/mzqv6p+ILM9Ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UpMrp+d0tkFACDXjYrRELjCMLaHQWFLnqTWdy8ElZwQiK2rGWYQpGpvbFZTJzymmu
-         YUr2jmpOiggZY0Hhyn1Kun1B11RQRLuJi0W+tcm1A0tu7AJFfR4jYOwfTllqahqTOr
-         QrcVANZNEbQIuWmVz02mnOiW7W59Jhh7VXJ0UxHg=
+        b=ky/JnRbO9i0kdkdGOuOWotIwB6VcRzBS3g/7gLC+fwMp2rDdmn/ZFkhKdrooUZOWK
+         8uOpH3pySzWO9pJTGoDJmw+Zh4M39sv+TiJJV2lyPqOYIza1OhM42UuDrC7Clyzo4w
+         omjUr4Ls8evmpT20mKVzGOBe9pNgLhuXRMeUxjxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 057/113] drm/imx: dont skip DP channel disable for background plane
+Subject: [PATCH 5.0 067/137] netfilter: nf_tables: prevent shift wrap in nft_chain_parse_hook()
 Date:   Wed, 15 May 2019 12:55:48 +0200
-Message-Id: <20190515090657.950294457@linuxfoundation.org>
+Message-Id: <20190515090658.323236652@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7bcde275eb1d0ac8793c77c7e666a886eb16633d ]
+[ Upstream commit 33d1c018179d0a30c39cc5f1682b77867282694b ]
 
-In order to make sure that the plane color space gets reset correctly.
+I believe that "hook->num" can be up to UINT_MAX.  Shifting more than
+31 bits would is undefined in C but in practice it would lead to shift
+wrapping.  That would lead to an array overflow in nf_tables_addchain():
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+	ops->hook       = hook.type->hooks[ops->hooknum];
+
+Fixes: fe19c04ca137 ("netfilter: nf_tables: remove nhooks field from struct nft_af_info")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/imx/ipuv3-crtc.c | 2 +-
+ net/netfilter/nf_tables_api.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imx/ipuv3-crtc.c b/drivers/gpu/drm/imx/ipuv3-crtc.c
-index 7d4b710b837ac..11e2dcdd6b18c 100644
---- a/drivers/gpu/drm/imx/ipuv3-crtc.c
-+++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
-@@ -78,7 +78,7 @@ static void ipu_crtc_disable_planes(struct ipu_crtc *ipu_crtc,
- 	if (disable_partial)
- 		ipu_plane_disable(ipu_crtc->plane[1], true);
- 	if (disable_full)
--		ipu_plane_disable(ipu_crtc->plane[0], false);
-+		ipu_plane_disable(ipu_crtc->plane[0], true);
- }
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index e2aac80f9b7b1..25c2b98b9a960 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1502,7 +1502,7 @@ static int nft_chain_parse_hook(struct net *net,
+ 		if (IS_ERR(type))
+ 			return PTR_ERR(type);
+ 	}
+-	if (!(type->hook_mask & (1 << hook->num)))
++	if (hook->num > NF_MAX_HOOKS || !(type->hook_mask & (1 << hook->num)))
+ 		return -EOPNOTSUPP;
  
- static void ipu_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	if (type->type == NFT_CHAIN_T_NAT &&
 -- 
 2.20.1
 
