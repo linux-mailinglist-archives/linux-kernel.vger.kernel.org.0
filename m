@@ -2,94 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC741E871
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1F21E869
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 08:44:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfEOGpR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 May 2019 02:45:17 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:47498 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfEOGpR (ORCPT
+        id S1726295AbfEOGoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 02:44:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40821 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfEOGoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 02:45:17 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x4F6iUPw006696
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 15 May 2019 15:44:30 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x4F6iUqq006150;
-        Wed, 15 May 2019 15:44:30 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x4F6iUtQ027363;
-        Wed, 15 May 2019 15:44:30 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.138] [10.38.151.138]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-5068272; Wed, 15 May 2019 15:43:51 +0900
-Received: from BPXM12GP.gisp.nec.co.jp ([10.38.151.204]) by
- BPXC10GP.gisp.nec.co.jp ([10.38.151.138]) with mapi id 14.03.0319.002; Wed,
- 15 May 2019 15:43:50 +0900
-From:   Junichi Nomura <j-nomura@ce.jp.nec.com>
-To:     Dave Young <dyoung@redhat.com>, Ingo Molnar <mingo@kernel.org>
-CC:     Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "kasong@redhat.com" <kasong@redhat.com>,
-        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-Thread-Topic: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI
- systab and ACPI tables
-Thread-Index: AQHVCS06YD4lckvUHUCIqj5Wl9aEBaZoC86AgAAHHwCAAATOAIAABLCAgAFCxgCAAFs9gIAAL20AgAAWZYCAABPAAIAAuEgAgABdmIA=
-Date:   Wed, 15 May 2019 06:43:49 +0000
-Message-ID: <19532243-e02a-838a-732a-a47c15339dde@ce.jp.nec.com>
-References: <20190513014248.GA16774@MiWiFi-R3L-srv>
- <20190513070725.GA20105@zn.tnic> <20190513073254.GB16774@MiWiFi-R3L-srv>
- <20190513075006.GB20105@zn.tnic> <20190513080653.GD16774@MiWiFi-R3L-srv>
- <20190514032208.GA25875@dhcp-128-65.nay.redhat.com>
- <20190514084841.GA27876@dhcp-128-65.nay.redhat.com>
- <20190514113826.GM2589@hirez.programming.kicks-ass.net>
- <20190514125835.GA29045@dhcp-128-65.nay.redhat.com>
- <20190514140916.GA90245@gmail.com>
- <20190515010850.GA9159@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190515010850.GA9159@dhcp-128-65.nay.redhat.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.85]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <6C5001855D1CA0499D67A26346A777CB@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 15 May 2019 02:44:21 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g69so834703plb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 23:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZdohzeVgbbKHEv1a2YghmfxHtlO8ojKInm2nc2fqSSY=;
+        b=ZQsLpqrplJtjoMLOoc0l17JwFYvv6aqTNTRukNM+fypvmCZkF7YCRm+bsiagitQLHA
+         CaWoiXAW6FE1bQMzrymKfJUMvD4zDDes6Dh8re/iQMFRFE8Tali/B56G6iDrZ2ys3EIY
+         +PBIj46HwlRtQEZFEnjitSNPAWgwmpQ95i7mcpzxt1sNnKtlRdNBZoNWXAd0lmOhjezi
+         1Hxu6myv4rMJePJRz/6TDuqZl7y0uJxunvxbaTYxWu+S/CxQhBvO5xnL7C60lSMom6SB
+         hpZ2uwt5izTpha4XnTXlf11FA0ceAHldst6/3vsYQuvQxpFveDJRuFGrtQuPnvdF2Wwd
+         z+aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZdohzeVgbbKHEv1a2YghmfxHtlO8ojKInm2nc2fqSSY=;
+        b=V95qMNd5Zggly6PEHSk4x7ibRmloNDg4TVzhMWXVCZH/D7V4mHM201MSq2AmYGT1Bw
+         uwA5/qggICctssjaNbYKOYcY0toywYw5L3UhB0gua1oTWyDtCGjIYiqGreKS5hwZ0X6G
+         cyshPoy1awprAe4r1F9Gn8vOTfQBx17VgUesZ7geKcWm1RcOvPSqeh0F827j1KLwG2Y9
+         0gTMoieFmAYP0w4ZAYszPgtQYPyci733iTuZQy7jCArz1fbVPDyKdbri/PdljBt7klFO
+         wwSXHJZ4LYdaQo0xucD2KITBU5Zg91rJD4JUdgSXjMTRUIiND6K5fK5zMzgZCMJPkjWv
+         M2Ww==
+X-Gm-Message-State: APjAAAVI+rS+Mn0pVrKkxpL4UO52eteJaXZqRoVJaTwFbov2K5yO8kJA
+        weUrEB/pNdFV4485Wuu6nB1Blg==
+X-Google-Smtp-Source: APXvYqw4Iv9Upcf4ZVB3I6Bn93najHUPFoo6jO+ve/0QzP33b8Cawc+JcdY30jXV8D9WZAq1Z7AQIA==
+X-Received: by 2002:a17:902:2884:: with SMTP id f4mr14396889plb.230.1557902661254;
+        Tue, 14 May 2019 23:44:21 -0700 (PDT)
+Received: from localhost.localdomain ([122.174.240.7])
+        by smtp.gmail.com with ESMTPSA id e5sm2180868pgh.35.2019.05.14.23.44.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 23:44:20 -0700 (PDT)
+From:   Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+To:     pablo@netfilter.org
+Cc:     fw@strlen.de, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH v2] selftests: netfilter: missing error check when setting up veth interface
+Date:   Wed, 15 May 2019 12:14:04 +0530
+Message-Id: <20190515064405.3981-1-jeffrin@rajagiritech.edu.in>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/15/19 10:08 AM, Dave Young wrote:
-> On 05/14/19 at 04:09pm, Ingo Molnar wrote:
->>> Hmm, it seems caused by some WIP branch patches, I suspect below:
->>> commit 124d6af5a5f559e516ed2c6ea857e889ed293b43
->>> x86/paravirt: Standardize 'insn_buff' variable names
->>
->> This commit had a bug which I fixed - could you try the latest -tip?
-> 
-> Will do, but I do not use tip tree often, not sure which branch includes
-> the fix.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/
-> Is it tip/master or tip/tip?
+A test for  the basic NAT functionality uses ip command which
+needs veth device.There is a condition where the kernel support
+for veth is not compiled into the kernel and the test script
+breaks.This patch contains code for reasonable error display
+and correct code exit.
 
-Just in case, when I tried tip/master, one of test machines crashed
-in the same way as:
-  https://lkml.org/lkml/2019/5/9/182
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+---
+ tools/testing/selftests/netfilter/nft_nat.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-and I found this patch was needed:
-  [PATCH] x86: intel_epb: Take CONFIG_PM into account
-  https://lore.kernel.org/lkml/3431308.1mSSVdqTRr@kreacher/
-
+diff --git a/tools/testing/selftests/netfilter/nft_nat.sh b/tools/testing/selftests/netfilter/nft_nat.sh
+index 8ec76681605c..f25f72a75cf3 100755
+--- a/tools/testing/selftests/netfilter/nft_nat.sh
++++ b/tools/testing/selftests/netfilter/nft_nat.sh
+@@ -23,7 +23,11 @@ ip netns add ns0
+ ip netns add ns1
+ ip netns add ns2
+ 
+-ip link add veth0 netns ns0 type veth peer name eth0 netns ns1
++ip link add veth0 netns ns0 type veth peer name eth0 netns ns1 > /dev/null 2>&1
++if [ $? -ne 0 ];then
++    echo "SKIP: No virtual ethernet pair device support in kernel"
++    exit $ksft_skip
++fi
+ ip link add veth1 netns ns0 type veth peer name eth0 netns ns2
+ 
+ ip -net ns0 link set lo up
 -- 
-Jun'ichi Nomura, NEC Corporation / NEC Solution Innovators, Ltd.
+2.20.1
+
