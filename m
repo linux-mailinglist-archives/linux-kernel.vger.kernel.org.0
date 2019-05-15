@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1827F1ECA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D611B1F13A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfEOK7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 06:59:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56422 "EHLO mail.kernel.org"
+        id S1731164AbfEOLWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbfEOK7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 06:59:46 -0400
+        id S1730989AbfEOLWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82EDE2084F;
-        Wed, 15 May 2019 10:59:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D2C320862;
+        Wed, 15 May 2019 11:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557917986;
-        bh=MkJAxibFcQEvGbfg4UeaKGxJxd+hEz/ZojEKY43Dfq0=;
+        s=default; t=1557919338;
+        bh=GQkRRwBK3pgeAjujmgIV//akJ5BglEb3ko8fSZgeWuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ARJNEqpCY09w9VAZYQz8uWhI7yQ6OnpkBAGhHdPj44/PzoBu3mKJT53SkDijzHsYQ
-         9gpe01AG4AxSzI2Fz6JnrVgi5V1unmM3Lxj/C20kDL6eiel17S1wsPUrFvKbzCD7Gz
-         phYVq7JnKePwq4U0SL7oG9XDufZm/b1BIDbBhEmA=
+        b=iKQPhPXfITUOYvs4Wkmy5dM2rK6tBGaEq89//YwY/3MJKzZ0nTMfQ7R7LpN76HgnB
+         m9ggy/Sc1RqM1iVF7V5EymUTSkuPwfOEy7M8HF97pVy0eFXlXFjG4HgCgS9cRAlF0z
+         Zczi4Z1vtXyzyAIVIq6D1USlL2ycqx2RX2lv/puk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Fertic <jeremyfertic@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 3.18 49/86] staging: iio: adt7316: fix the dac read calculation
-Date:   Wed, 15 May 2019 12:55:26 +0200
-Message-Id: <20190515090652.214503157@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 036/113] x86/build/lto: Fix truncated .bss with -fdata-sections
+Date:   Wed, 15 May 2019 12:55:27 +0200
+Message-Id: <20190515090656.348155201@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +50,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Fertic <jeremyfertic@gmail.com>
+[ Upstream commit 6a03469a1edc94da52b65478f1e00837add869a3 ]
 
-commit 45130fb030aec26ac28b4bb23344901df3ec3b7f upstream.
+With CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y, we compile the kernel with
+-fdata-sections, which also splits the .bss section.
 
-The calculation of the current dac value is using the wrong bits of the
-dac lsb register. Create two macros to shift the lsb register value into
-lsb position, depending on whether the dac is 10 or 12 bit. Initialize
-data to 0 so, with an 8 bit dac, the msb register value can be bitwise
-ORed with data.
+The new section, with a new .bss.* name, which pattern gets missed by the
+main x86 linker script which only expects the '.bss' name. This results
+in the discarding of the second part and a too small, truncated .bss
+section and an unhappy, non-working kernel.
 
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
-Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Use the common BSS_MAIN macro in the linker script to properly capture
+and merge all the generated BSS sections.
 
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20190415164956.124067-1-samitolvanen@google.com
+[ Extended the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/addac/adt7316.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/x86/kernel/vmlinux.lds.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -47,6 +47,8 @@
- #define ADT7516_MSB_AIN3		0xA
- #define ADT7516_MSB_AIN4		0xB
- #define ADT7316_DA_DATA_BASE		0x10
-+#define ADT7316_DA_10_BIT_LSB_SHIFT	6
-+#define ADT7316_DA_12_BIT_LSB_SHIFT	4
- #define ADT7316_DA_MSB_DATA_REGS	4
- #define ADT7316_LSB_DAC_A		0x10
- #define ADT7316_MSB_DAC_A		0x11
-@@ -1414,7 +1416,7 @@ static IIO_DEVICE_ATTR(ex_analog_temp_of
- static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
- 		int channel, char *buf)
- {
--	u16 data;
-+	u16 data = 0;
- 	u8 msb, lsb, offset;
- 	int ret;
- 
-@@ -1439,7 +1441,11 @@ static ssize_t adt7316_show_DAC(struct a
- 	if (ret)
- 		return -EIO;
- 
--	data = (msb << offset) + (lsb & ((1 << offset) - 1));
-+	if (chip->dac_bits == 12)
-+		data = lsb >> ADT7316_DA_12_BIT_LSB_SHIFT;
-+	else if (chip->dac_bits == 10)
-+		data = lsb >> ADT7316_DA_10_BIT_LSB_SHIFT;
-+	data |= msb << offset;
- 
- 	return sprintf(buf, "%d\n", data);
- }
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index c63bab98780cf..85e6d5620188e 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -372,7 +372,7 @@ SECTIONS
+ 	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+ 		__bss_start = .;
+ 		*(.bss..page_aligned)
+-		*(.bss)
++		*(BSS_MAIN)
+ 		BSS_DECRYPTED
+ 		. = ALIGN(PAGE_SIZE);
+ 		__bss_stop = .;
+-- 
+2.20.1
+
 
 
