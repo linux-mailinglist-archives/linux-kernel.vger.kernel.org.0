@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE141ED71
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1161EE22
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbfEOLJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:09:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42396 "EHLO mail.kernel.org"
+        id S1730672AbfEOLRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:17:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729251AbfEOLJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:09:27 -0400
+        id S1730293AbfEOLR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:17:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D53E3216FD;
-        Wed, 15 May 2019 11:09:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E3042070D;
+        Wed, 15 May 2019 11:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918566;
-        bh=QJLn3MhYYMiQkOw7GCZd4wzuFVq9wPRftRqIVNE/dic=;
+        s=default; t=1557919045;
+        bh=u7u4Dz4YT91VRcG84O/hfdq+TWT2v1ljyr3+Li6aAaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9lEq978+D+iWY6br0pXABJ5xR18IY7HOpOf/UKu4IDdDttKLpA3X5C3+rx5h5C1F
-         5jPV6T+jPs3tGKTTbCOtpi3zm9C3x6Ih9arU4EpR5KddXmhslNaPHGAfbfLDSPAYGE
-         Xm/rVa4luTiGFnbqI0T1E3upFwhPpiQZpMuBU9+4=
+        b=ht646VU6GfH3E/Yc9+s/EVg67WWdeJZZGUzUhEfiqDJ5UWIpfwJfoNY8LXCeZhIlA
+         WDWWo1aetLJCyIKNyhl15ayvgfXulGXLMVUsoq8qmZOgY/aUN/PFOHa1BXlgIVhpIM
+         Pj2ZOR+UtwTAF0ABKttwbBvdaurHTE2vP7m6fuPM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 181/266] bitops: avoid integer overflow in GENMASK(_ULL)
-Date:   Wed, 15 May 2019 12:54:48 +0200
-Message-Id: <20190515090729.051143618@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 009/115] HID: input: add mapping for Expose/Overview key
+Date:   Wed, 15 May 2019 12:54:49 +0200
+Message-Id: <20190515090659.939631733@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Kaehlcke <mka@chromium.org>
+[ Upstream commit 96dd86871e1fffbc39e4fa61c9c75ec54ee9af0f ]
 
-commit c32ee3d9abd284b4fcaacc250b101f93829c7bae upstream.
+According to HUTRR77 usage 0x29f from the consumer page is reserved for
+the Desktop application to present all running user’s application windows.
+Linux defines KEY_SCALE to request Compiz Scale (Expose) mode, so let's
+add the mapping.
 
-GENMASK(_ULL) performs a left-shift of ~0UL(L), which technically
-results in an integer overflow.  clang raises a warning if the overflow
-occurs in a preprocessor expression.  Clear the low-order bits through a
-substraction instead of the left-shift to avoid the overflow.
-
-(akpm: no change in .text size in my testing)
-
-Link: http://lkml.kernel.org/r/20170803212020.24939-1-mka@chromium.org
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bitops.h |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hid/hid-input.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -19,10 +19,11 @@
-  * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-  */
- #define GENMASK(h, l) \
--	(((~0UL) << (l)) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
-+	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 1aa7d268686b9..693cd19e9dd40 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1017,6 +1017,8 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
+ 		case 0x2cb: map_key_clear(KEY_KBDINPUTASSIST_ACCEPT);	break;
+ 		case 0x2cc: map_key_clear(KEY_KBDINPUTASSIST_CANCEL);	break;
  
- #define GENMASK_ULL(h, l) \
--	(((~0ULL) << (l)) & (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
-+	(((~0ULL) - (1ULL << (l)) + 1) & \
-+	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
- 
- extern unsigned int __sw_hweight8(unsigned int w);
- extern unsigned int __sw_hweight16(unsigned int w);
++		case 0x29f: map_key_clear(KEY_SCALE);		break;
++
+ 		default: map_key_clear(KEY_UNKNOWN);
+ 		}
+ 		break;
+-- 
+2.20.1
+
 
 
