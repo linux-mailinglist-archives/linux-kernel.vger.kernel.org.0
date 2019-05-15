@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE0811EFE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC421EEC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732797AbfEOLav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:30:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
+        id S1731956AbfEOLZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:25:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732779AbfEOLas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:48 -0400
+        id S1731944AbfEOLZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:25:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B9132084A;
-        Wed, 15 May 2019 11:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ED922084F;
+        Wed, 15 May 2019 11:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919846;
-        bh=5FMtJThSLK+F+z4iXDndoqJkNHDhzMBT/XAonkQGkOs=;
+        s=default; t=1557919512;
+        bh=N1z1Ctzyryh3Un951cXBMzDdR2Ak9NBVPkBLETOncrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mjsFxTd/TAYQCshSmccDtLiK9d3S3muTmEd+ARiYxvqzSgzXEQt/Q6oKXYqOowo29
-         cO0yINWGYUmMX90sfSvCGABzefWipZm4KfyguY2PbOvRzmXzS/eNFutgtcb+3gr9EE
-         23RrqQMyK3ALlx9boUJwoyIyljKuY+AOrD0/JJnM=
+        b=G803QgZgqvF1Olj95W2yzpIZmgV3B7pjlUGZk1F/UoNbc1kAdrgM8FYdcaIxOmV4h
+         RdnskB24j9vsSml+PtN2+hbmIXmdDc79GxpWfr7Jl6Gm15IICKuOFMT7z4KLL37XvL
+         Q3pJL6Gk8Iafw95yb/jZK1y+t4K54hR9T3HJtpss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        stable@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 114/137] net: ucc_geth - fix Oops when changing number of buffers in the ring
+Subject: [PATCH 4.19 104/113] isdn: bas_gigaset: use usb_fill_int_urb() properly
 Date:   Wed, 15 May 2019 12:56:35 +0200
-Message-Id: <20190515090701.892913844@linuxfoundation.org>
+Message-Id: <20190515090701.557437354@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
+References: <20190515090652.640988966@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +43,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Paul Bolle <pebolle@tiscali.nl>
 
-[ Upstream commit ee0df19305d9fabd9479b785918966f6e25b733b ]
+[ Upstream commit 4014dfae3ccaaf3ec19c9ae0691a3f14e7132eae ]
 
-When changing the number of buffers in the RX ring while the interface
-is running, the following Oops is encountered due to the new number
-of buffers being taken into account immediately while their allocation
-is done when opening the device only.
+The switch to make bas_gigaset use usb_fill_int_urb() - instead of
+filling that urb "by hand" - missed the subtle ordering of the previous
+code.
 
-[   69.882706] Unable to handle kernel paging request for data at address 0xf0000100
-[   69.890172] Faulting instruction address: 0xc033e164
-[   69.895122] Oops: Kernel access of bad area, sig: 11 [#1]
-[   69.900494] BE PREEMPT CMPCPRO
-[   69.907120] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.115-00006-g179ade8ce3-dirty #269
-[   69.915956] task: c0684310 task.stack: c06da000
-[   69.920470] NIP:  c033e164 LR: c02e44d0 CTR: c02e41fc
-[   69.925504] REGS: dfff1e20 TRAP: 0300   Not tainted  (4.14.115-00006-g179ade8ce3-dirty)
-[   69.934161] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 22004428  XER: 20000000
-[   69.940869] DAR: f0000100 DSISR: 20000000
-[   69.940869] GPR00: c0352d70 dfff1ed0 c0684310 f00000a4 00000040 dfff1f68 00000000 0000001f
-[   69.940869] GPR08: df53f410 1cc00040 00000021 c0781640 42004424 100c82b6 f00000a4 df53f5b0
-[   69.940869] GPR16: df53f6c0 c05daf84 00000040 00000000 00000040 c0782be4 00000000 00000001
-[   69.940869] GPR24: 00000000 df53f400 000001b0 df53f410 df53f000 0000003f df708220 1cc00044
-[   69.978348] NIP [c033e164] skb_put+0x0/0x5c
-[   69.982528] LR [c02e44d0] ucc_geth_poll+0x2d4/0x3f8
-[   69.987384] Call Trace:
-[   69.989830] [dfff1ed0] [c02e4554] ucc_geth_poll+0x358/0x3f8 (unreliable)
-[   69.996522] [dfff1f20] [c0352d70] net_rx_action+0x248/0x30c
-[   70.002099] [dfff1f80] [c04e93e4] __do_softirq+0xfc/0x310
-[   70.007492] [dfff1fe0] [c0021124] irq_exit+0xd0/0xd4
-[   70.012458] [dfff1ff0] [c000e7e0] call_do_irq+0x24/0x3c
-[   70.017683] [c06dbe80] [c0006bac] do_IRQ+0x64/0xc4
-[   70.022474] [c06dbea0] [c001097c] ret_from_except+0x0/0x14
-[   70.027964] --- interrupt: 501 at rcu_idle_exit+0x84/0x90
-[   70.027964]     LR = rcu_idle_exit+0x74/0x90
-[   70.037585] [c06dbf60] [20000000] 0x20000000 (unreliable)
-[   70.042984] [c06dbf80] [c004bb0c] do_idle+0xb4/0x11c
-[   70.047945] [c06dbfa0] [c004bd14] cpu_startup_entry+0x18/0x1c
-[   70.053682] [c06dbfb0] [c05fb034] start_kernel+0x370/0x384
-[   70.059153] [c06dbff0] [00003438] 0x3438
-[   70.063062] Instruction dump:
-[   70.066023] 38a00000 38800000 90010014 4bfff015 80010014 7c0803a6 3123ffff 7c691910
-[   70.073767] 38210010 4e800020 38600000 4e800020 <80e3005c> 80c30098 3107ffff 7d083910
-[   70.081690] ---[ end trace be7ccd9c1e1a9f12 ]---
+See, before the switch urb->dev was set to a member somewhere deep in a
+complicated structure and then supplied to usb_rcvisocpipe() and
+usb_sndisocpipe(). After that switch urb->dev wasn't set to anything
+specific before being supplied to those two macros. This triggers a
+nasty oops:
 
-This patch forbids the modification of the number of buffers in the
-ring while the interface is running.
+    BUG: unable to handle kernel NULL pointer dereference at 00000000
+    #PF error: [normal kernel read fault]
+    *pde = 00000000
+    Oops: 0000 [#1] SMP
+    CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.1.0-0.rc4.1.local0.fc28.i686 #1
+    Hardware name: IBM 2525FAG/2525FAG, BIOS 74ET64WW (2.09 ) 12/14/2006
+    EIP: gigaset_init_bchannel+0x89/0x320 [bas_gigaset]
+    Code: 75 07 83 8b 84 00 00 00 40 8d 47 74 c7 07 01 00 00 00 89 45 f0 8b 44 b7 68 85 c0 0f 84 6a 02 00 00 8b 48 28 8b 93 88 00 00 00 <8b> 09 8d 54 12 03 c1 e2 0f c1 e1 08 09 ca 8b 8b 8c 00 00 00 80 ca
+    EAX: f05ec200 EBX: ed404200 ECX: 00000000 EDX: 00000000
+    ESI: 00000000 EDI: f065a000 EBP: f30c9f40 ESP: f30c9f20
+    DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010086
+    CR0: 80050033 CR2: 00000000 CR3: 0ddc7000 CR4: 000006d0
+    Call Trace:
+     <SOFTIRQ>
+     ? gigaset_isdn_connD+0xf6/0x140 [gigaset]
+     gigaset_handle_event+0x173e/0x1b90 [gigaset]
+     tasklet_action_common.isra.16+0x4e/0xf0
+     tasklet_action+0x1e/0x20
+     __do_softirq+0xb2/0x293
+     ? __irqentry_text_end+0x3/0x3
+     call_on_stack+0x45/0x50
+     </SOFTIRQ>
+     ? irq_exit+0xb5/0xc0
+     ? do_IRQ+0x78/0xd0
+     ? acpi_idle_enter_s2idle+0x50/0x50
+     ? common_interrupt+0xd4/0xdc
+     ? acpi_idle_enter_s2idle+0x50/0x50
+     ? sched_cpu_activate+0x1b/0xf0
+     ? acpi_fan_resume.cold.7+0x9/0x18
+     ? cpuidle_enter_state+0x152/0x4c0
+     ? cpuidle_enter+0x14/0x20
+     ? call_cpuidle+0x21/0x40
+     ? do_idle+0x1c8/0x200
+     ? cpu_startup_entry+0x25/0x30
+     ? rest_init+0x88/0x8a
+     ? arch_call_rest_init+0xd/0x19
+     ? start_kernel+0x42f/0x448
+     ? i386_start_kernel+0xac/0xb0
+     ? startup_32_smp+0x164/0x168
+    Modules linked in: ppp_generic slhc capi bas_gigaset gigaset kernelcapi nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_mangle iptable_raw iptable_security ebtable_filter ebtables ip6table_filter ip6_tables sunrpc ipw2200 iTCO_wdt gpio_ich snd_intel8x0 libipw iTCO_vendor_support snd_ac97_codec lib80211 ppdev ac97_bus snd_seq cfg80211 snd_seq_device pcspkr thinkpad_acpi lpc_ich snd_pcm i2c_i801 snd_timer ledtrig_audio snd soundcore rfkill parport_pc parport pcc_cpufreq acpi_cpufreq i915 i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sdhci_pci sysimgblt cqhci fb_sys_fops drm sdhci mmc_core tg3 ata_generic serio_raw yenta_socket pata_acpi video
+    CR2: 0000000000000000
+    ---[ end trace 1fe07487b9200c73 ]---
+    EIP: gigaset_init_bchannel+0x89/0x320 [bas_gigaset]
+    Code: 75 07 83 8b 84 00 00 00 40 8d 47 74 c7 07 01 00 00 00 89 45 f0 8b 44 b7 68 85 c0 0f 84 6a 02 00 00 8b 48 28 8b 93 88 00 00 00 <8b> 09 8d 54 12 03 c1 e2 0f c1 e1 08 09 ca 8b 8b 8c 00 00 00 80 ca
+    EAX: f05ec200 EBX: ed404200 ECX: 00000000 EDX: 00000000
+    ESI: 00000000 EDI: f065a000 EBP: f30c9f40 ESP: cddcb3bc
+    DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010086
+    CR0: 80050033 CR2: 00000000 CR3: 0ddc7000 CR4: 000006d0
+    Kernel panic - not syncing: Fatal exception in interrupt
+    Kernel Offset: 0xcc00000 from 0xc0400000 (relocation range: 0xc0000000-0xf6ffdfff)
+    ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
-Fixes: ac421852b3a0 ("ucc_geth: add ethtool support")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+No-one noticed because this Oops is apparently only triggered by setting
+up an ISDN data connection on a live ISDN line on a gigaset base (ie,
+the PBX that the gigaset driver support). Very few people do that
+running present day kernels.
+
+Anyhow, a little code reorganization makes this problem go away, while
+avoiding the subtle ordering that was used in the past. So let's do
+that.
+
+Fixes: 78c696c19578 ("isdn: gigaset: use usb_fill_int_urb()")
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/ucc_geth_ethtool.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/isdn/gigaset/bas-gigaset.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-@@ -252,14 +252,12 @@ uec_set_ringparam(struct net_device *net
- 		return -EINVAL;
- 	}
- 
-+	if (netif_running(netdev))
-+		return -EBUSY;
-+
- 	ug_info->bdRingLenRx[queue] = ring->rx_pending;
- 	ug_info->bdRingLenTx[queue] = ring->tx_pending;
- 
--	if (netif_running(netdev)) {
--		/* FIXME: restart automatically */
--		netdev_info(netdev, "Please re-open the interface\n");
--	}
--
- 	return ret;
- }
- 
+--- a/drivers/isdn/gigaset/bas-gigaset.c
++++ b/drivers/isdn/gigaset/bas-gigaset.c
+@@ -958,6 +958,7 @@ static void write_iso_callback(struct ur
+  */
+ static int starturbs(struct bc_state *bcs)
+ {
++	struct usb_device *udev = bcs->cs->hw.bas->udev;
+ 	struct bas_bc_state *ubc = bcs->hw.bas;
+ 	struct urb *urb;
+ 	int j, k;
+@@ -975,8 +976,8 @@ static int starturbs(struct bc_state *bc
+ 			rc = -EFAULT;
+ 			goto error;
+ 		}
+-		usb_fill_int_urb(urb, bcs->cs->hw.bas->udev,
+-				 usb_rcvisocpipe(urb->dev, 3 + 2 * bcs->channel),
++		usb_fill_int_urb(urb, udev,
++				 usb_rcvisocpipe(udev, 3 + 2 * bcs->channel),
+ 				 ubc->isoinbuf + k * BAS_INBUFSIZE,
+ 				 BAS_INBUFSIZE, read_iso_callback, bcs,
+ 				 BAS_FRAMETIME);
+@@ -1006,8 +1007,8 @@ static int starturbs(struct bc_state *bc
+ 			rc = -EFAULT;
+ 			goto error;
+ 		}
+-		usb_fill_int_urb(urb, bcs->cs->hw.bas->udev,
+-				 usb_sndisocpipe(urb->dev, 4 + 2 * bcs->channel),
++		usb_fill_int_urb(urb, udev,
++				 usb_sndisocpipe(udev, 4 + 2 * bcs->channel),
+ 				 ubc->isooutbuf->data,
+ 				 sizeof(ubc->isooutbuf->data),
+ 				 write_iso_callback, &ubc->isoouturbs[k],
 
 
