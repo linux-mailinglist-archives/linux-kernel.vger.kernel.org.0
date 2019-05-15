@@ -2,84 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF38B1F852
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DADF01F84E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfEOQSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:18:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56312 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725953AbfEOQSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:18:01 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E38CC4ACC87273627881;
-        Thu, 16 May 2019 00:17:57 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 16 May 2019
- 00:17:49 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <paulmck@linux.ibm.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] kernel/module: Fix mem leak in module_add_modinfo_attrs
-Date:   Thu, 16 May 2019 00:12:12 +0800
-Message-ID: <20190515161212.28040-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726766AbfEOQRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:17:06 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:40229 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfEOQRG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 12:17:06 -0400
+Received: by mail-it1-f200.google.com with SMTP id u10so505101itb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:17:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=/kDWjBB0jCL1YtbOqkI5qZw4O964lNtmlxXi0fZixK4=;
+        b=NVEhxM1Xm4siH3FY0u3ZeLLd88URU0Sw8Z+uAZUS5t9Hq+sJOQdZJQxOlLe+hfhySY
+         bu8P+TJiNd4cLA4KAXimlNdMbvF47RrCpEsvxJpkcoHnKfpWSPa4wQmgOQ/HWs/Gy7PD
+         nEy+IyZNwTSBiBU8ipnGcFsQ5mha6EU7SXN+zYVVkFYynSUgycn4eqGyLGsZbB/0Hgqe
+         JlOYu5GrGPi7ztvpDjwdwtDQNXyGHfR1vgfReN7DITt557OVTjte/3XGDqaPqW4QczKi
+         vxGKx+c7ilrXnbVjw84qZHNCb456U+UwFIMCqWdlkJRb7mn+B7CzoSTZ3oe9jWNSckCw
+         yGbg==
+X-Gm-Message-State: APjAAAVRch4ugxcOkzuiL6RI4b7pT6KMT8KBkERjggL7oJvByZaPG1JX
+        WWiikgMVCfNZ44gvhPqnRmtSc3/0nQL9xpBX7D5Bu5uX3X1K
+X-Google-Smtp-Source: APXvYqykB3D2KbCA7ppkwMbMaz0GBUsa4he0CqdKkR9zOB32utCtFaO9CnEDA1gWJIHqbSHQyKnO4IeewHu+FyaoAvArH2q7TINb
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a24:edcb:: with SMTP id r194mr8724352ith.164.1557937025379;
+ Wed, 15 May 2019 09:17:05 -0700 (PDT)
+Date:   Wed, 15 May 2019 09:17:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000faf6000588ef7a11@google.com>
+Subject: KASAN: slab-out-of-bounds Read in au0828_rc_unregister (2)
+From:   syzbot <syzbot+357d86bcb4cca1a2f572@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, sean@mess.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In module_add_modinfo_attrs if sysfs_create_file
-fails, we forget to free allocated modinfo_attrs
-and roll back the sysfs files.
+Hello,
 
-Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+syzbot found the following crash on:
+
+HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=162ca944a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95aff7278e7ff25e
+dashboard link: https://syzkaller.appspot.com/bug?extid=357d86bcb4cca1a2f572
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+357d86bcb4cca1a2f572@syzkaller.appspotmail.com
+
+au0828: recv_control_msg() Failed receiving control message, error -71.
+au0828: recv_control_msg() Failed receiving control message, error -71.
+au0828: recv_control_msg() Failed receiving control message, error -71.
+au8522_writereg: writereg error (reg == 0x106, val == 0x0001, ret == -5)
+usb 4-1: selecting invalid altsetting 5
+au0828: Failure setting usb interface0 to as5
+au0828: au0828_usb_probe() au0828_analog_register failed to register on V4L2
+==================================================================
+BUG: KASAN: slab-out-of-bounds in au0828_rc_unregister+0x9a/0xb0  
+drivers/media/usb/au0828/au0828-input.c:353
+Read of size 8 at addr ffff8881cb76f308 by task kworker/1:5/5626
+
+CPU: 1 PID: 5626 Comm: kworker/1:5 Not tainted 5.1.0-rc3+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x67/0x231 mm/kasan/report.c:187
+  kasan_report.cold+0x1a/0x35 mm/kasan/report.c:317
+  au0828_rc_unregister+0x9a/0xb0 drivers/media/usb/au0828/au0828-input.c:353
+  au0828_usb_disconnect+0x6a/0x130 drivers/media/usb/au0828/au0828-core.c:189
+  au0828_usb_probe.cold+0x111/0x16e  
+drivers/media/usb/au0828/au0828-core.c:661
+  usb_probe_interface+0x30d/0x7b0 drivers/usb/core/driver.c:361
+  really_probe+0x296/0x680 drivers/base/dd.c:509
+  driver_probe_device+0xf9/0x200 drivers/base/dd.c:671
+  __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:778
+  bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x21e/0x360 drivers/base/dd.c:844
+  bus_probe_device+0x1ec/0x2a0 drivers/base/bus.c:514
+  device_add+0xaf4/0x1700 drivers/base/core.c:2106
+  usb_set_configuration+0xdf2/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0xa8/0x110 drivers/usb/core/driver.c:266
+  really_probe+0x296/0x680 drivers/base/dd.c:509
+  driver_probe_device+0xf9/0x200 drivers/base/dd.c:671
+  __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:778
+  bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x21e/0x360 drivers/base/dd.c:844
+  bus_probe_device+0x1ec/0x2a0 drivers/base/bus.c:514
+  device_add+0xaf4/0x1700 drivers/base/core.c:2106
+  usb_new_device.cold+0x8b8/0x1030 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1ac9/0x35a0 drivers/usb/core/hub.c:5432
+  process_one_work+0x90a/0x1580 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30e/0x420 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the page:
+page:ffffea00072ddb00 count:1 mapcount:0 mapping:0000000000000000 index:0x0  
+compound_mapcount: 0
+flags: 0x200000000010000(head)
+raw: 0200000000010000 dead000000000100 dead000000000200 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881cb76f200: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+  ffff8881cb76f280: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> ffff8881cb76f300: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+                       ^
+  ffff8881cb76f380: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+  ffff8881cb76f400: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+==================================================================
+
+
 ---
- kernel/module.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 0b9aa8a..7da73c4 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1714,15 +1714,29 @@ static int module_add_modinfo_attrs(struct module *mod)
- 		return -ENOMEM;
- 
- 	temp_attr = mod->modinfo_attrs;
--	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
-+	for (i = 0; (attr = modinfo_attrs[i]); i++) {
- 		if (!attr->test || attr->test(mod)) {
- 			memcpy(temp_attr, attr, sizeof(*temp_attr));
- 			sysfs_attr_init(&temp_attr->attr);
- 			error = sysfs_create_file(&mod->mkobj.kobj,
- 					&temp_attr->attr);
-+			if (error)
-+				goto error_out;
- 			++temp_attr;
- 		}
- 	}
-+
-+	return 0;
-+
-+error_out:
-+	for (; (attr = &mod->modinfo_attrs[i]) && i >= 0; i--) {
-+		if (!attr->attr.name)
-+			break;
-+		sysfs_remove_file(&mod->mkobj.kobj, &attr->attr);
-+		if (attr->free)
-+			attr->free(mod);
-+	}
-+	kfree(mod->modinfo_attrs);
- 	return error;
- }
- 
--- 
-1.8.3.1
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
