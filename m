@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 355731EFF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8030F1EF5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732222AbfEOLjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:39:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41928 "EHLO mail.kernel.org"
+        id S1733165AbfEOLdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:33:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732718AbfEOLaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:30:24 -0400
+        id S1732808AbfEOLdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:33:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE8ED206BF;
-        Wed, 15 May 2019 11:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1C272084F;
+        Wed, 15 May 2019 11:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919823;
-        bh=UU3Ny3DXCIZiG/CnTQgtWArACPnuP6EUlUSiPWLi2ss=;
+        s=default; t=1557919984;
+        bh=Rw5aZz2Yzs6QVR9aXm4MlXZDJk78bhm1T0dAQyRCfG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HO+Y8O4jl+P1pdEys36TTI4JGKBsx+vWnTVzJZSCksKdS7IottOiaPPHjLiwW2W0n
-         3ZA3DIXcZPzblVpNzqjMDVzBlwjQVwhi0bSx2QLTwDrlemupq4osao5sBXXFdyoDjv
-         u84UVBLR4LVZTF8oIOxPJOjzDKtXnOQ6kyLPDheQ=
+        b=beCzEpb3mFsaOIoX+dHM2yf/7tzkGIQ7ibXQIE1tb7+EGQIjeiSygRADM1FP0CGMR
+         Cz3x2onHWP1vfaLSynauSbgClzwSnOFmSe6YXjSM7xJ32/OKGtYN0SEFMd97FOht1p
+         eCA3DmW04n4fgqHqyW6hriZqpel5mTFeiq7K5qk4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 106/137] bridge: Fix error path for kobject_init_and_add()
+        stable@vger.kernel.org, Pepijn de Vos <pepijndevos@gmail.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>
+Subject: [PATCH 5.1 03/46] platform/x86: dell-laptop: fix rfkill functionality
 Date:   Wed, 15 May 2019 12:56:27 +0200
-Message-Id: <20190515090701.255944297@linuxfoundation.org>
+Message-Id: <20190515090618.617681245@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
+References: <20190515090616.670410738@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tobin C. Harding" <tobin@kernel.org>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-[ Upstream commit bdfad5aec1392b93495b77b864d58d7f101dc1c1 ]
+commit 6cc13c28da5beee0f706db6450e190709700b34a upstream.
 
-Currently error return from kobject_init_and_add() is not followed by a
-call to kobject_put().  This means there is a memory leak.  We currently
-set p to NULL so that kfree() may be called on it as a noop, the code is
-arguably clearer if we move the kfree() up closer to where it is
-called (instead of after goto jump).
+When converting the driver two arguments were transposed leading
+to rfkill not working.
 
-Remove a goto label 'err1' and jump to call to kobject_put() in error
-return from kobject_init_and_add() fixing the memory leak.  Re-name goto
-label 'put_back' to 'err1' now that we don't use err1, following current
-nomenclature (err1, err2 ...).  Move call to kfree out of the error
-code at bottom of function up to closer to where memory was allocated.
-Add comment to clarify call to kfree().
-
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=201427
+Reported-by: Pepijn de Vos <pepijndevos@gmail.com>
+Fixes: 549b49 ("platform/x86: dell-smbios: Introduce dispatcher for SMM calls")
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Acked-by: Pali Rohár <pali.rohar@gmail.com>
+Cc: <stable@vger.kernel.org> # 4.14.x
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_if.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/net/bridge/br_if.c
-+++ b/net/bridge/br_if.c
-@@ -602,13 +602,15 @@ int br_add_if(struct net_bridge *br, str
- 	call_netdevice_notifiers(NETDEV_JOIN, dev);
+---
+ drivers/platform/x86/dell-laptop.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -531,7 +531,7 @@ static void dell_rfkill_query(struct rfk
+ 		return;
+ 	}
  
- 	err = dev_set_allmulti(dev, 1);
--	if (err)
--		goto put_back;
-+	if (err) {
-+		kfree(p);	/* kobject not yet init'd, manually free */
-+		goto err1;
-+	}
+-	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	dell_fill_request(&buffer, 0x2, 0, 0, 0);
+ 	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	hwswitch = buffer.output[1];
  
- 	err = kobject_init_and_add(&p->kobj, &brport_ktype, &(dev->dev.kobj),
- 				   SYSFS_BRIDGE_PORT_ATTR);
- 	if (err)
--		goto err1;
-+		goto err2;
+@@ -562,7 +562,7 @@ static int dell_debugfs_show(struct seq_
+ 		return ret;
+ 	status = buffer.output[1];
  
- 	err = br_sysfs_addif(p);
- 	if (err)
-@@ -700,12 +702,9 @@ err3:
- 	sysfs_remove_link(br->ifobj, p->dev->name);
- err2:
- 	kobject_put(&p->kobj);
--	p = NULL; /* kobject_put frees */
--err1:
- 	dev_set_allmulti(dev, -1);
--put_back:
-+err1:
- 	dev_put(dev);
--	kfree(p);
- 	return err;
- }
+-	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	dell_fill_request(&buffer, 0x2, 0, 0, 0);
+ 	hwswitch_ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 	if (hwswitch_ret)
+ 		return hwswitch_ret;
+@@ -647,7 +647,7 @@ static void dell_update_rfkill(struct wo
+ 	if (ret != 0)
+ 		return;
  
+-	dell_fill_request(&buffer, 0, 0x2, 0, 0);
++	dell_fill_request(&buffer, 0x2, 0, 0, 0);
+ 	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
+ 
+ 	if (ret == 0 && (status & BIT(0)))
 
 
