@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7741F19D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 522991F3CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfEOLQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:16:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53004 "EHLO mail.kernel.org"
+        id S1727437AbfEOLAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:00:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730451AbfEOLQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:15 -0400
+        id S1726871AbfEOLAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:00:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295EA20843;
-        Wed, 15 May 2019 11:16:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3938420881;
+        Wed, 15 May 2019 11:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918974;
-        bh=nnG+DvjAJ9qVkRFgGBKetcEYfjrpO9Pss2Q1PNcUGl4=;
+        s=default; t=1557918024;
+        bh=6GBlRDutjYYSnUOI+q1Z1S5qJL1lRgpLPV4+WuZIv1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ARweiS4wjm6sWqypTRasLsgRdi6UdG+2UOHtreZ7PvsNdDExF3ssgYy1UxDH5LcL5
-         gR00JJP73bXus2195H68WmqDhHbk0sohFvqdi9iQnFK3poC3Dh12eQ7zd8BzQQzd8m
-         JCpFlomx9ZwK+JH/agVnpabmnyEtI7ru3OU1/xWo=
+        b=cHZ4wULsB9ZnqEjkVFr1ZoHL/DgnDVprL7FW9oLlQ4n92U9duts8yZi5kFxZJcp08
+         QP6qapn4kvPoQJHB4mWiduJjSCbY+n+Gdvas4o4qX6feg2NF79p9VPgDdwLOqLtiav
+         yDO5teq9BI4kqJYfOwhu+LPOW2Z+GDQ74zPTlPr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/115] mISDN: Check address length before reading address family
-Date:   Wed, 15 May 2019 12:55:00 +0200
-Message-Id: <20190515090700.761782330@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Sasha Levin (Microsoft)" <sashal@kernel.org>
+Subject: [PATCH 3.18 24/86] ceph: fix use-after-free on symlink traversal
+Date:   Wed, 15 May 2019 12:55:01 +0200
+Message-Id: <20190515090647.754349132@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+References: <20190515090642.339346723@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 238ffdc49ef98b15819cfd5e3fb23194e3ea3d39 ]
+[ Upstream commit daf5cc27eed99afdea8d96e71b89ba41f5406ef6 ]
 
-KMSAN will complain if valid address length passed to bind() is shorter
-than sizeof("struct sockaddr_mISDN"->family) bytes.
+free the symlink body after the same RCU delay we have for freeing the
+struct inode itself, so that traversal during RCU pathwalk wouldn't step
+into freed memory.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/isdn/mISDN/socket.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ceph/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index c5603d1a07d6e..65cb4aac8dce7 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -712,10 +712,10 @@ base_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_len)
- 	struct sock *sk = sock->sk;
- 	int err = 0;
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 7a1df90c7771..7641fcf83ac8 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -472,6 +472,7 @@ static void ceph_i_callback(struct rcu_head *head)
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
  
--	if (!maddr || maddr->family != AF_ISDN)
-+	if (addr_len < sizeof(struct sockaddr_mISDN))
- 		return -EINVAL;
++	kfree(ci->i_symlink);
+ 	kmem_cache_free(ceph_inode_cachep, ci);
+ }
  
--	if (addr_len < sizeof(struct sockaddr_mISDN))
-+	if (!maddr || maddr->family != AF_ISDN)
- 		return -EINVAL;
+@@ -503,7 +504,6 @@ void ceph_destroy_inode(struct inode *inode)
+ 		ceph_put_snap_realm(mdsc, realm);
+ 	}
  
- 	lock_sock(sk);
+-	kfree(ci->i_symlink);
+ 	while ((n = rb_first(&ci->i_fragtree)) != NULL) {
+ 		frag = rb_entry(n, struct ceph_inode_frag, node);
+ 		rb_erase(n, &ci->i_fragtree);
 -- 
-2.20.1
+2.19.1
 
 
 
