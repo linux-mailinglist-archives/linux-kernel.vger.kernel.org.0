@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D651F3E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86A961EDE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfEOLBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58610 "EHLO mail.kernel.org"
+        id S1729922AbfEOLO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:14:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbfEOLBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:01:35 -0400
+        id S1729767AbfEOLOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:14:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63C64216FD;
-        Wed, 15 May 2019 11:01:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73A2F20862;
+        Wed, 15 May 2019 11:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918094;
-        bh=427/awagArpJ9kZPOTWAEwBxlzuzP0rHbjxBwl5Xzg0=;
+        s=default; t=1557918864;
+        bh=766zlCz6HkQwS701kc6dErgq7Xpt3wNl1UFTIpyPUKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9vkU0vh52knkaPw5iZCmVJt/FARteh0n+Lk2vZH59zp+PolEaOU4c4nSXvbccsP6
-         0Om+ZhwfoAPhNo0Lkw3JTLUi0CQaZm6pE/l152hRf4K8FkWZoZGKhbuB9FVd77V5Aa
-         tgsdpg+OIDMNgE1AH4JZEHN0pMzOk2p2FeExxp4c=
+        b=fn8uDTWDZEGYmUVavOBSVgaWEt4inte7mB9lACaKMo/VEw8MJeclWiA1oCFQQgAyc
+         q1hkMzjjh3JmFrAfScEqPKkrQtE42Oi9rEsrKY0foRbBiItuEPMCKLOQBASinmUKh5
+         uV+OThB4uGZZxiTciTXD6AI8x/F/WtpL4K2j0nfQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Francesco Ruggeri <fruggeri@arista.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Zubin Mithra <zsm@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 63/86] netfilter: compat: initialize all fields in xt_init
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 05/51] USB: serial: fix unthrottle races
 Date:   Wed, 15 May 2019 12:55:40 +0200
-Message-Id: <20190515090654.536311286@linuxfoundation.org>
+Message-Id: <20190515090619.169745441@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
-References: <20190515090642.339346723@linuxfoundation.org>
+In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
+References: <20190515090616.669619870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,70 +42,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 8d29d16d21342a0c86405d46de0c4ac5daf1760f upstream
+From: Johan Hovold <johan@kernel.org>
 
-If a non zero value happens to be in xt[NFPROTO_BRIDGE].cur at init
-time, the following panic can be caused by running
+commit 3f5edd58d040bfa4b74fb89bc02f0bc6b9cd06ab upstream.
 
-% ebtables -t broute -F BROUTING
+Fix two long-standing bugs which could potentially lead to memory
+corruption or leave the port throttled until it is reopened (on weakly
+ordered systems), respectively, when read-URB completion races with
+unthrottle().
 
-from a 32-bit user level on a 64-bit kernel. This patch replaces
-kmalloc_array with kcalloc when allocating xt.
+First, the URB must not be marked as free before processing is complete
+to prevent it from being submitted by unthrottle() on another CPU.
 
-[  474.680846] BUG: unable to handle kernel paging request at 0000000009600920
-[  474.687869] PGD 2037006067 P4D 2037006067 PUD 2038938067 PMD 0
-[  474.693838] Oops: 0000 [#1] SMP
-[  474.697055] CPU: 9 PID: 4662 Comm: ebtables Kdump: loaded Not tainted 4.19.17-11302235.AroraKernelnext.fc18.x86_64 #1
-[  474.707721] Hardware name: Supermicro X9DRT/X9DRT, BIOS 3.0 06/28/2013
-[  474.714313] RIP: 0010:xt_compat_calc_jump+0x2f/0x63 [x_tables]
-[  474.720201] Code: 40 0f b6 ff 55 31 c0 48 6b ff 70 48 03 3d dc 45 00 00 48 89 e5 8b 4f 6c 4c 8b 47 60 ff c9 39 c8 7f 2f 8d 14 08 d1 fa 48 63 fa <41> 39 34 f8 4c 8d 0c fd 00 00 00 00 73 05 8d 42 01 eb e1 76 05 8d
-[  474.739023] RSP: 0018:ffffc9000943fc58 EFLAGS: 00010207
-[  474.744296] RAX: 0000000000000000 RBX: ffffc90006465000 RCX: 0000000002580249
-[  474.751485] RDX: 00000000012c0124 RSI: fffffffff7be17e9 RDI: 00000000012c0124
-[  474.758670] RBP: ffffc9000943fc58 R08: 0000000000000000 R09: ffffffff8117cf8f
-[  474.765855] R10: ffffc90006477000 R11: 0000000000000000 R12: 0000000000000001
-[  474.773048] R13: 0000000000000000 R14: ffffc9000943fcb8 R15: ffffc9000943fcb8
-[  474.780234] FS:  0000000000000000(0000) GS:ffff88a03f840000(0063) knlGS:00000000f7ac7700
-[  474.788612] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-[  474.794632] CR2: 0000000009600920 CR3: 0000002037422006 CR4: 00000000000606e0
-[  474.802052] Call Trace:
-[  474.804789]  compat_do_replace+0x1fb/0x2a3 [ebtables]
-[  474.810105]  compat_do_ebt_set_ctl+0x69/0xe6 [ebtables]
-[  474.815605]  ? try_module_get+0x37/0x42
-[  474.819716]  compat_nf_setsockopt+0x4f/0x6d
-[  474.824172]  compat_ip_setsockopt+0x7e/0x8c
-[  474.828641]  compat_raw_setsockopt+0x16/0x3a
-[  474.833220]  compat_sock_common_setsockopt+0x1d/0x24
-[  474.838458]  __compat_sys_setsockopt+0x17e/0x1b1
-[  474.843343]  ? __check_object_size+0x76/0x19a
-[  474.847960]  __ia32_compat_sys_socketcall+0x1cb/0x25b
-[  474.853276]  do_fast_syscall_32+0xaf/0xf6
-[  474.857548]  entry_SYSENTER_compat+0x6b/0x7a
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  process_urb();
+	  smp_mb__before_atomic();
+	  set_bit(i, free);		  if (test_and_clear_bit(i, free))
+	  					  submit_urb();
 
-Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Second, the URB must be marked as free before checking the throttled
+flag to prevent unthrottle() on another CPU from failing to observe that
+the URB needs to be submitted if complete() sees that the throttled flag
+is set.
+
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  set_bit(i, free);		  throttled = 0;
+	  smp_mb__after_atomic();	  smp_mb();
+	  if (throttled)		  if (test_and_clear_bit(i, free))
+	  	  return;			  submit_urb();
+
+Note that test_and_clear_bit() only implies barriers when the test is
+successful. To handle the case where the URB is still in use an explicit
+barrier needs to be added to unthrottle() for the second race condition.
+
+Fixes: d83b405383c9 ("USB: serial: add support for multiple read urbs")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/netfilter/x_tables.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/generic.c |   39 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
 
-diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-index 97c37cf560199..8669e190ce35a 100644
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -1648,7 +1648,7 @@ static int __init xt_init(void)
- 		seqcount_init(&per_cpu(xt_recseq, i));
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@ -350,6 +350,7 @@ void usb_serial_generic_read_bulk_callba
+ 	struct usb_serial_port *port = urb->context;
+ 	unsigned char *data = urb->transfer_buffer;
+ 	unsigned long flags;
++	bool stopped = false;
+ 	int status = urb->status;
+ 	int i;
+ 
+@@ -357,33 +358,51 @@ void usb_serial_generic_read_bulk_callba
+ 		if (urb == port->read_urbs[i])
+ 			break;
+ 	}
+-	set_bit(i, &port->read_urbs_free);
+ 
+ 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
+ 							urb->actual_length);
+ 	switch (status) {
+ 	case 0:
++		usb_serial_debug_data(&port->dev, __func__, urb->actual_length,
++							data);
++		port->serial->type->process_read_urb(urb);
+ 		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	case -EPIPE:
+ 		dev_err(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	default:
+ 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
+ 							__func__, status);
+-		goto resubmit;
++		break;
  	}
  
--	xt = kmalloc(sizeof(struct xt_af) * NFPROTO_NUMPROTO, GFP_KERNEL);
-+	xt = kcalloc(NFPROTO_NUMPROTO, sizeof(struct xt_af), GFP_KERNEL);
- 	if (!xt)
- 		return -ENOMEM;
+-	usb_serial_debug_data(&port->dev, __func__, urb->actual_length, data);
+-	port->serial->type->process_read_urb(urb);
++	/*
++	 * Make sure URB processing is done before marking as free to avoid
++	 * racing with unthrottle() on another CPU. Matches the barriers
++	 * implied by the test_and_clear_bit() in
++	 * usb_serial_generic_submit_read_urb().
++	 */
++	smp_mb__before_atomic();
++	set_bit(i, &port->read_urbs_free);
++	/*
++	 * Make sure URB is marked as free before checking the throttled flag
++	 * to avoid racing with unthrottle() on another CPU. Matches the
++	 * smp_mb() in unthrottle().
++	 */
++	smp_mb__after_atomic();
++
++	if (stopped)
++		return;
  
--- 
-2.20.1
-
+-resubmit:
+ 	/* Throttle the device if requested by tty */
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	port->throttled = port->throttle_req;
+@@ -458,6 +477,12 @@ void usb_serial_generic_unthrottle(struc
+ 	port->throttled = port->throttle_req = 0;
+ 	spin_unlock_irq(&port->lock);
+ 
++	/*
++	 * Matches the smp_mb__after_atomic() in
++	 * usb_serial_generic_read_bulk_callback().
++	 */
++	smp_mb();
++
+ 	if (was_throttled)
+ 		usb_serial_generic_submit_read_urbs(port, GFP_KERNEL);
+ }
 
 
