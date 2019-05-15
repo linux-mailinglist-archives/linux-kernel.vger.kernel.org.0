@@ -2,162 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B9E1FC56
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 23:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A67D91FC60
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 23:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfEOVjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 17:39:41 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54779 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfEOVjk (ORCPT
+        id S1727237AbfEOVn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 17:43:29 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:33668 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfEOVn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 17:39:40 -0400
-Received: by mail-it1-f196.google.com with SMTP id a190so2661860ite.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:39:40 -0700 (PDT)
+        Wed, 15 May 2019 17:43:28 -0400
+Received: by mail-vs1-f68.google.com with SMTP id y6so975724vsb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to;
-        bh=SiXgF9x2/J3d2aHVUGJadEDzzKTOQ6u3eFYsxUlLv6Y=;
-        b=LtoTuRu+ueQTHokRdPa41+QCP5yRsq+8mJD2uWJQ6yA4dysOm/SWnaxqAIU0BOHKyA
-         EmCHL6Mo2VXSw3kpuiy7K2B1jc/DVOwKsdYnCaiZ8ZIytsTuGlae6qYyXCO82nIqHfaK
-         8KyzDMzo3iKT7HSFnrFh4bcd3pFqKWg9eC9RQ=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kjfknf32vTN6dOCTbKM2s4UhXiubagFxAlST3GyPe/4=;
+        b=GR//cp3pkBQCdrHCiA7U78cbGHrhAthjeR/dCjmIIoD5qYQZuteM3NaBSy+HNbvY48
+         IvgNM0VAE85ycebNJSfBDPE3hfaZSJCDQ23VFwYM5vosvYKqaPXIMso4VLQPi1wCqPof
+         nH2b4nPE7GE05LNfkK8yd9VHThgjZlNPDOpZg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
-        bh=SiXgF9x2/J3d2aHVUGJadEDzzKTOQ6u3eFYsxUlLv6Y=;
-        b=HpkwUi2zd/gMdlWwsuOxbMpYHecm8pFmAV8AXFjxvyNX9T9/qEmqYPA61L8U19oTHy
-         Nuum2VibQvVfmas0s1GeOJQGz2fRp+KW56fChNy3uUp1hEHEep0mfuFyHlEkCs2CJF49
-         inPAWnFtp7eIk94j+jS7AesOz28rUeoRS+u8Nt412CYY5AGZw5n/wSDXzCIXKJ+ha+S+
-         1uAq4+T/Olug4wNgZk6mAtW7d2p2Q1ykSeRvfbXWCAO4Ht40o1y7PXWXeH7YFwTsvdKk
-         k8POlUoMgIaAOERYNwC10uzKwm23EL56YqvXYBQNHVSifzXM8BVP+J7ty2A5g/9FvUBJ
-         b/bw==
-X-Gm-Message-State: APjAAAVcPEpq1ddTZNF0l+9DcK94N0FwPrS6G0ltwpbJVeq3rt1CrGum
-        qzgv4/yOS2FdH2sAW6PVPIvM6g==
-X-Google-Smtp-Source: APXvYqwqSrLBXoegOr6A8dYwtSLbSzWVwvo3JxWRbUWJE52+oTd/kMINHBVQntZPmL2oGN5Ebp/5Tw==
-X-Received: by 2002:a05:6638:29b:: with SMTP id c27mr29205969jaq.112.1557956379848;
-        Wed, 15 May 2019 14:39:39 -0700 (PDT)
-Received: from swap-tester ([178.128.225.14])
-        by smtp.gmail.com with ESMTPSA id p132sm1332175ita.2.2019.05.15.14.39.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 May 2019 14:39:39 -0700 (PDT)
-From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Auld <pauld@redhat.com>
-Subject: Re: [RFC PATCH v2 00/17] Core scheduling v2
-Date:   Wed, 15 May 2019 21:39:36 +0000
-Message-Id: <20190515213936.3454-1-vpillai@digitalocean.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190424111913.1386-1-vpillai@digitalocean.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kjfknf32vTN6dOCTbKM2s4UhXiubagFxAlST3GyPe/4=;
+        b=FQCLMlCfgm3oTe+oUIUDnFYbLA8nvBsF2b2c7WvzMmz0SHSoHHSqGnN17fZyJ7/q5K
+         eg9tZm7nK4xlhlXS7FtPGmxVZUnB2/OrFTjpEjTykp1QUFmwok3BRb1q36+g4RKfw/AO
+         2CBpE/KcG39suaETPodptnMzFoymY7nTx1HKuokeS2N995fxE11CHvijoKFuHp3FJBA/
+         3Rl9vm/4n4kE5IFYb/fURa5aIJ1XJ8KXg+bDh7Jp5yLrHz1Mnat2cp12QWvhYm/k/hQk
+         pstKuoHE27yAvXmM+AMtXJgH0WSXqj/AzPh3l1cTMQZ3SkYiyFUNvQv3lqim9cDbqYdM
+         UOrw==
+X-Gm-Message-State: APjAAAWWiU4+FKGhKXsdzlt7Iu6uPfvsyGlFE1bwQQZP9jfFixqZMWUo
+        2Nny7tuUxxsRDxN+r4haqkJqEyF81Rc=
+X-Google-Smtp-Source: APXvYqzI0DZNHNqaLf2rdm4kPhWCuuigFMQigCu87CWmWJpCHV4PeMMblAahVFMFkVBLztxDoaM5Tg==
+X-Received: by 2002:a67:b904:: with SMTP id q4mr2232958vsn.24.1557956607591;
+        Wed, 15 May 2019 14:43:27 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id q63sm1268776vke.2.2019.05.15.14.43.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 14:43:26 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id e2so913631vsc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 14:43:26 -0700 (PDT)
+X-Received: by 2002:a67:79ca:: with SMTP id u193mr20557958vsc.20.1557956606068;
+ Wed, 15 May 2019 14:43:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190509184415.11592-1-robdclark@gmail.com> <20190509184415.11592-4-robdclark@gmail.com>
+In-Reply-To: <20190509184415.11592-4-robdclark@gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 15 May 2019 14:43:13 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xa0kAReU7CFvO8QiCRkNxGaQY_JohK+psykqeN9e+QJw@mail.gmail.com>
+Message-ID: <CAD=FV=Xa0kAReU7CFvO8QiCRkNxGaQY_JohK+psykqeN9e+QJw@mail.gmail.com>
+Subject: Re: [RFC 3/3] arm64: dts: qcom: sdm845-cheza: delete zap-shader
+To:     Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Thanks for pointing this out. I think the ideal fix would be to
-> correctly initialize/cleanup the coresched attributes in the cpu
-> hotplug code path so that lock could be taken successfully if the
-> sibling is offlined/onlined after coresched was enabled. We are
-> working on another bug related to hotplugpath and shall introduce
-> the fix in v3.
+Hi,
+
+On Thu, May 9, 2019 at 12:08 PM Rob Clark <robdclark@gmail.com> wrote:
+
+> From: Rob Clark <robdclark@chromium.org>
 >
-A possible fix for handling the runqueues during cpu offline/online
-is attached here with.
+> This is unused on cheza.  Delete the node to get rid of the reserved-
+> memory section, and to avoid the driver from attempting to load a zap
+> shader that doesn't exist every time it powers up the GPU.
+>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 2 ++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi       | 2 +-
 
-Thanks,
-Vineeth
+nit: up to Bjorn / Andy, but personally I'd put cheza and non-cheza
+changes in two patches.
 
----
- kernel/sched/core.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e8e5f26db052..1a809849a1e7 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -253,7 +253,7 @@ static int __sched_core_stopper(void *data)
- 	bool enabled = !!(unsigned long)data;
- 	int cpu;
- 
--	for_each_possible_cpu(cpu)
-+	for_each_online_cpu(cpu)
- 		cpu_rq(cpu)->core_enabled = enabled;
- 
- 	return 0;
-@@ -3764,6 +3764,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 			struct rq *rq_i = cpu_rq(i);
- 			struct task_struct *p;
- 
-+			if (cpu_is_offline(i))
-+				continue;
-+
- 			if (rq_i->core_pick)
- 				continue;
- 
-@@ -3866,6 +3869,9 @@ next_class:;
- 	for_each_cpu(i, smt_mask) {
- 		struct rq *rq_i = cpu_rq(i);
- 
-+		if (cpu_is_offline(i))
-+			continue;
-+
- 		WARN_ON_ONCE(!rq_i->core_pick);
- 
- 		rq_i->core_pick->core_occupation = occ;
-@@ -6410,8 +6416,14 @@ int sched_cpu_activate(unsigned int cpu)
- 	/*
- 	 * When going up, increment the number of cores with SMT present.
- 	 */
--	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2) {
- 		static_branch_inc_cpuslocked(&sched_smt_present);
-+#ifdef CONFIG_SCHED_CORE
-+		if (static_branch_unlikely(&__sched_core_enabled)) {
-+			rq->core_enabled = true;
-+		}
-+#endif
-+	}
- #endif
- 	set_cpu_active(cpu, true);
- 
-@@ -6459,8 +6471,15 @@ int sched_cpu_deactivate(unsigned int cpu)
- 	/*
- 	 * When going down, decrement the number of cores with SMT present.
- 	 */
--	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2) {
-+#ifdef CONFIG_SCHED_CORE
-+		struct rq *rq = cpu_rq(cpu);
-+		if (static_branch_unlikely(&__sched_core_enabled)) {
-+			rq->core_enabled = false;
-+		}
-+#endif
- 		static_branch_dec_cpuslocked(&sched_smt_present);
-+	}
- #endif
- 
- 	if (!sched_smp_initialized)
-@@ -6537,6 +6556,9 @@ int sched_cpu_dying(unsigned int cpu)
- 	update_max_interval();
- 	nohz_balance_exit_idle(rq);
- 	hrtick_clear(rq);
-+#ifdef CONFIG_SCHED_CORE
-+	rq->core = NULL;
-+#endif
- 	return 0;
- }
- #endif
--- 
-2.17.1
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+> index 8ccbe246dff4..28c28517b21a 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+> @@ -175,6 +175,8 @@
+>  /delete-node/ &venus_mem;
+>  /delete-node/ &cdsp_mem;
+>  /delete-node/ &cdsp_pas;
+> +/delete-node/ &zap_shader;
+
+nit: I'd probably move the delete of the zap shader to a slightly
+different place just because the rest of the lines here are deleting
+reserved memory regions.
+
+Other than nits this seems OK to me.  Not that I know anything about
+the zap shader or why a zap shader wouldn't be appropriate for cheza.
+
+-Doug
