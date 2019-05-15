@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8B21F0D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 847691EE43
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731755AbfEOLYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:24:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34506 "EHLO mail.kernel.org"
+        id S1730924AbfEOLTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727636AbfEOLX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:59 -0400
+        id S1730906AbfEOLTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEE9E20818;
-        Wed, 15 May 2019 11:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88A7B2084F;
+        Wed, 15 May 2019 11:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919438;
-        bh=z1DY0QMRuBq/BmTsAMZFu6BRozpB8OSNs9uPgTFFqWk=;
+        s=default; t=1557919151;
+        bh=POM2K4kZcnAcbgwQlbFlVZjcYoOsydeLxkdZxyviRk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LJN8gOJHHLTVMf0b/l+sKjdfqTgEiX75+isB3u4nMcqwdLsNPMKhSejYs6f+s105r
-         TKhpazPCuSaXVStNQmYydAyBh6/PK8hl/t9wg7EJkWe6645UW9oEY2FLei5fnlRT9Q
-         8y9jP4TfoKy9vX7Gay9xMZcK4ENg1C6qCN2Bkg3E=
+        b=Xdarh2S6a+SqJjJy0zfu5q8CGtYI9AecV8/MAsQ2VLqhEnMVtfPqWmiKZn8Dggg0x
+         NmArX5uNLhHYma3+zIbkpM5oq19bIP7yxatMdPSjqCXBPaVgoAJz8ptpi+crJRHYVw
+         bg1T/6YiZrX80FnmzW/24n4IDFUvOWAuy3dvdh6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Chandan Rajendra <chandan@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.19 074/113] mlxsw: core: Do not use WQ_MEM_RECLAIM for EMAD workqueue
+Subject: [PATCH 4.14 085/115] mm/memory.c: fix modifying of page protection by insert_pfn()
 Date:   Wed, 15 May 2019 12:56:05 +0200
-Message-Id: <20190515090659.157653104@linuxfoundation.org>
+Message-Id: <20190515090705.499391044@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +48,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a8c133b06183c529c51cd0d54eb57d6b7078370c ]
+[ Upstream commit cae85cb8add35f678cf487139d05e083ce2f570a ]
 
-The EMAD workqueue is used to handle retransmission of EMAD packets that
-contain configuration data for the device's firmware.
+Aneesh has reported that PPC triggers the following warning when
+excercising DAX code:
 
-Given the workers need to allocate these packets and that the code is
-not called as part of memory reclaim path, remove the WQ_MEM_RECLAIM
-flag.
+  IP set_pte_at+0x3c/0x190
+  LR insert_pfn+0x208/0x280
+  Call Trace:
+     insert_pfn+0x68/0x280
+     dax_iomap_pte_fault.isra.7+0x734/0xa40
+     __xfs_filemap_fault+0x280/0x2d0
+     do_wp_page+0x48c/0xa40
+     __handle_mm_fault+0x8d0/0x1fd0
+     handle_mm_fault+0x140/0x250
+     __do_page_fault+0x300/0xd60
+     handle_page_fault+0x18
 
-Fixes: d965465b60ba ("mlxsw: core: Fix possible deadlock")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Now that is WARN_ON in set_pte_at which is
+
+        VM_WARN_ON(pte_hw_valid(*ptep) && !pte_protnone(*ptep));
+
+The problem is that on some architectures set_pte_at() cannot cope with
+a situation where there is already some (different) valid entry present.
+
+Use ptep_set_access_flags() instead to modify the pfn which is built to
+deal with modifying existing PTE.
+
+Link: http://lkml.kernel.org/r/20190311084537.16029-1-jack@suse.cz
+Fixes: b2770da64254 "mm: add vm_insert_mixed_mkwrite()"
+Signed-off-by: Jan Kara <jack@suse.cz>
+Reported-by: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Chandan Rajendra <chandan@linux.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/mellanox/mlxsw/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memory.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
-index f7154f358f276..426aea8ad72c4 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
-@@ -568,7 +568,7 @@ static int mlxsw_emad_init(struct mlxsw_core *mlxsw_core)
- 	if (!(mlxsw_core->bus->features & MLXSW_BUS_F_TXRX))
- 		return 0;
+diff --git a/mm/memory.c b/mm/memory.c
+index f99b64ca13031..e9bce27bc18c3 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1813,10 +1813,12 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+ 				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(*pte)));
+ 				goto out_unlock;
+ 			}
+-			entry = *pte;
+-			goto out_mkwrite;
+-		} else
+-			goto out_unlock;
++			entry = pte_mkyoung(*pte);
++			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
++			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
++				update_mmu_cache(vma, addr, pte);
++		}
++		goto out_unlock;
+ 	}
  
--	emad_wq = alloc_workqueue("mlxsw_core_emad", WQ_MEM_RECLAIM, 0);
-+	emad_wq = alloc_workqueue("mlxsw_core_emad", 0, 0);
- 	if (!emad_wq)
- 		return -ENOMEM;
- 	mlxsw_core->emad_wq = emad_wq;
+ 	/* Ok, finally just insert the thing.. */
+@@ -1825,7 +1827,6 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+ 	else
+ 		entry = pte_mkspecial(pfn_t_pte(pfn, prot));
+ 
+-out_mkwrite:
+ 	if (mkwrite) {
+ 		entry = pte_mkyoung(entry);
+ 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
 -- 
 2.20.1
 
