@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9081EDDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120C51EDAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbfEOLNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:13:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49632 "EHLO mail.kernel.org"
+        id S1729753AbfEOLMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:12:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730029AbfEOLNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:50 -0400
+        id S1729740AbfEOLMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:12:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9CD020843;
-        Wed, 15 May 2019 11:13:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63CF520644;
+        Wed, 15 May 2019 11:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918829;
-        bh=C3pjdgoM05E/pFgWcXmBFJyVyCqrBL4TcyQyem672PM=;
+        s=default; t=1557918734;
+        bh=5PWgMwe3g2N4wvJmSC0DarTOdojbvAXmIDNwIx+bIgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UPXiDK+9MuPfq3AKPDqt3bCzm7VW8iWk1U3l28EykNFT5heIlQn5n9BB0od2JWDBx
-         yzhz9Bz/ENqa0HJF/dBfEgCn2ZailPWlQcHR/tUwrUgXgRtXvtHGjlKo/n+sRwfhAa
-         QgQcvkfiDY26gOSM5FJQDjoDUTy10EZ9LzQ8veY8=
+        b=J18AXwdm6C4DVdVLW1nXxtnBcWsvbwKwnhc+aM6q0EBbdW8SHDG3fD0QIyV3tm6Gy
+         24FwPl//p9VWs09rbM/+uH/an76s6HsoKGbWlQaR4A5FfFPVR6+TWXTsN0uIkXXkRG
+         3tzbYxsiSFmtF4hw2ytF2e+YA9BEHxL7Qm3KyXnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux@endlessm.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/51] x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
+        Tyler Hicks <tyhicks@canonical.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 244/266] x86/speculation/mds: Add SMT warning message
 Date:   Wed, 15 May 2019 12:55:51 +0200
-Message-Id: <20190515090622.504518229@linuxfoundation.org>
+Message-Id: <20190515090731.260623959@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.669619870@linuxfoundation.org>
-References: <20190515090616.669619870@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,102 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0082517fa4bce073e7cf542633439f26538a14cc ]
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Upon reboot, the Acer TravelMate X514-51T laptop appears to complete the
-shutdown process, but then it hangs in BIOS POST with a black screen.
+commit 39226ef02bfb43248b7db12a4fdccb39d95318e3 upstream.
 
-The problem is intermittent - at some points it has appeared related to
-Secure Boot settings or different kernel builds, but ultimately we have
-not been able to identify the exact conditions that trigger the issue to
-come and go.
+MDS is vulnerable with SMT.  Make that clear with a one-time printk
+whenever SMT first gets enabled.
 
-Besides, the EFI mode cannot be disabled in the BIOS of this model.
-
-However, after extensive testing, we observe that using the EFI reboot
-method reliably avoids the issue in all cases.
-
-So add a boot time quirk to use EFI reboot on such systems.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203119
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux@endlessm.com
-Link: http://lkml.kernel.org/r/20190412080152.3718-1-jian-hong@endlessm.com
-[ Fix !CONFIG_EFI build failure, clarify the code and the changelog a bit. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/reboot.c | 21 +++++++++++++++++++++
- include/linux/efi.h      |  7 ++++++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 4a12362a194af..c55b11fe8e9f6 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -82,6 +82,19 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
- 	return 0;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -646,6 +646,9 @@ static void update_indir_branch_cond(voi
+ 		static_branch_disable(&switch_to_cond_stibp);
  }
  
-+/*
-+ * Some machines don't handle the default ACPI reboot method and
-+ * require the EFI reboot method:
-+ */
-+static int __init set_efi_reboot(const struct dmi_system_id *d)
-+{
-+	if (reboot_type != BOOT_EFI && !efi_runtime_disabled()) {
-+		reboot_type = BOOT_EFI;
-+		pr_info("%s series board detected. Selecting EFI-method for reboot.\n", d->ident);
-+	}
-+	return 0;
-+}
++#undef pr_fmt
++#define pr_fmt(fmt) fmt
 +
- void __noreturn machine_real_restart(unsigned int type)
+ /* Update the static key controlling the MDS CPU buffer clear in idle */
+ static void update_mds_branch_idle(void)
  {
- 	local_irq_disable();
-@@ -167,6 +180,14 @@ static struct dmi_system_id __initdata reboot_dmi_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "AOA110"),
- 		},
- 	},
-+	{	/* Handle reboot issue on Acer TravelMate X514-51T */
-+		.callback = set_efi_reboot,
-+		.ident = "Acer TravelMate X514-51T",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate X514-51T"),
-+		},
-+	},
+@@ -666,6 +669,8 @@ static void update_mds_branch_idle(void)
+ 		static_branch_disable(&mds_idle_clear);
+ }
  
- 	/* Apple */
- 	{	/* Handle problems with rebooting on Apple MacBook5 */
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 80b1b8faf503f..e6711bf9f0d12 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1433,7 +1433,12 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
- 			   struct screen_info *si, efi_guid_t *proto,
- 			   unsigned long size);
- 
--bool efi_runtime_disabled(void);
-+#ifdef CONFIG_EFI
-+extern bool efi_runtime_disabled(void);
-+#else
-+static inline bool efi_runtime_disabled(void) { return true; }
-+#endif
++#define MDS_MSG_SMT "MDS CPU bug present and SMT on, data leak possible. See https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.\n"
 +
- extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
+ void arch_smt_update(void)
+ {
+ 	/* Enhanced IBRS implies STIBP. No update required. */
+@@ -689,6 +694,8 @@ void arch_smt_update(void)
+ 	switch (mds_mitigation) {
+ 	case MDS_MITIGATION_FULL:
+ 	case MDS_MITIGATION_VMWERV:
++		if (sched_smt_active() && !boot_cpu_has(X86_BUG_MSBDS_ONLY))
++			pr_warn_once(MDS_MSG_SMT);
+ 		update_mds_branch_idle();
+ 		break;
+ 	case MDS_MITIGATION_OFF:
+@@ -1069,6 +1076,7 @@ static void __init l1tf_select_mitigatio
+ 	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+ }
+ #undef pr_fmt
++#define pr_fmt(fmt) fmt
  
- /*
--- 
-2.20.1
-
+ #ifdef CONFIG_SYSFS
+ 
 
 
