@@ -2,135 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C22C1E63B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E751E654
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 02:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfEOAa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 May 2019 20:30:59 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:38852 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726841AbfEOAac (ORCPT
+        id S1727022AbfEOAcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 May 2019 20:32:09 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:46696 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfEOAcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 May 2019 20:30:32 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D57C2C0A77;
-        Wed, 15 May 2019 00:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1557880222; bh=5nGJv3FYZ4K8QvJw3tH/+4ah4G8NKr7npBJJdtbIcCU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=dxUetF3qUJUHHlevAE6m9jwQCZvx5OOcNg2+jVz5i7cLUOBRhCAhkOzlgeHBt4WDS
-         RHLDjZKA8FU3rDUPnI3vhurYt4wOt6bcBiLfDdMlSMThKlTtlpc90jQY9G3KpXeGsM
-         LPnjSyUJn4h+LP1QkcLiIPRyqBVC87QFt/J4odXpi+Ufu8DhByVj9kpVzgCnCiP1RM
-         QTF7fSscMqlWfHE3VOOyBqq2xtUyqSa/IRDB83We81ZdEBEg7yX+indgkT3S1+ph/W
-         tOrT4Z9gSBRlLv8Zd0X6g75pP8t3JeGYZSRoFGZfwwCHBttf4YZD1u1kpmmg1CwNQ6
-         usCyvNyjo7jrQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 380E6A0068;
-        Wed, 15 May 2019 00:30:32 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 14 May 2019 17:30:26 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:23 +0530
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.13.182.230) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 15 May 2019 06:00:34 +0530
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     <linux-snps-arc@lists.infradead.org>
-CC:     <paltsev@snyopsys.com>, <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 9/9] ARC: mm: do_page_fault refactor #8: release mmap_sem sooner
-Date:   Tue, 14 May 2019 17:29:36 -0700
-Message-ID: <1557880176-24964-10-git-send-email-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
-References: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.13.182.230]
+        Tue, 14 May 2019 20:32:08 -0400
+Received: by mail-pf1-f202.google.com with SMTP id d9so456356pfo.13
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2019 17:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=RTskpJzrqjSfKamQuryjYgpBB8UNg8rBhhyvKDtP8Jc=;
+        b=v/iBtmppsGFx8fleVlGl5FyzcENGHfuP9fHcZoab0NyXIBDYPrxa5R32Jvgpl7IU6F
+         xXjqQZdjrTjRiyYIwg1LJfSqon7Gau5FSrRXq7C84LbOwMIC/DyhUk23yNOdp6647IQj
+         pJHSJlvQD8aItNKPUtiF4HEz14o0wFtx7cDJ1fgmKWvokxJma08MNDOeRRtSsSSJm5VV
+         vxIlYi3Z0x8CfQJS0gcZ7kVdnCRkbt7tVhJx3w1hEAEMWq5HQctSS2j9xy4lqNiq7K80
+         mXoaW5Ytl9RJfZYE8A1Qk3ZF/iauoztRI0B4B8d21HU+sXtfhrH6fj0R0o1kcY+zwOJa
+         oLJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=RTskpJzrqjSfKamQuryjYgpBB8UNg8rBhhyvKDtP8Jc=;
+        b=m4ooY08/MqXpumpiXfzvpsqwC7qh4CaGiJ0ORqizfPVE5qgzp/3mkBOtIqD8Z/G66C
+         W9arQrFVaxWMm8ywxKl5mHtblDX9W033iZcOrBwmx1WCWaThVIcTFZfMwmX36io8lW7h
+         aBfD31dLNjYyp9V3Ks0E4lwFNbOFOI/WjJXPOAA+w7Q6fg5zmcgVHdlH3eUaX1PF0gUM
+         /2n1PskHR8e5AJCSlwOtt58p/slxz0qe6mND+sQISOK2DPT1k41fC1URIoONX5JKiqUW
+         H+9pwH7qocig14hGdy96CEqMtFCnBEIYb3rA7GeTMYeN2U3taKanJciKj+QSrbD2nxpL
+         H+7g==
+X-Gm-Message-State: APjAAAUnJofggfPLlw4YYhSoXW2rMpzZLiH0TeTkmlOEGQexQPlBi02o
+        EK56dsF9NBma1VzJMbFhYyMBrMbnJg==
+X-Google-Smtp-Source: APXvYqxXVEDKuBgb5OQ4XZpudHbVkE8PutAYv0Z8IBFEIzSl+Wtc/MG9h9QzPY0Stjw+V/+iaO6JvwQotSs=
+X-Received: by 2002:a63:4006:: with SMTP id n6mr41416529pga.424.1557880327498;
+ Tue, 14 May 2019 17:32:07 -0700 (PDT)
+Date:   Tue, 14 May 2019 17:30:59 -0700
+Message-Id: <20190515003059.23920-1-yabinc@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH] perf/ring_buffer: Fix exposing a temporarily decreased data_head.
+From:   Yabin Cui <yabinc@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Yabin Cui <yabinc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of successful page fault handling, this patch releases mmap_sem
-before updating the perf stat event for major/minor faults. So even
-though the contention reduction is NOT supe rhigh, it is still an
-improvement.
+In perf_output_put_handle(), an IRQ/NMI can happen in below location and
+write records to the same ring buffer:
+	...
+	local_dec_and_test(&rb->nest)
+	...                          <-- an IRQ/NMI can happen here
+	rb->user_page->data_head = head;
+	...
 
-There's an additional code size improvement as we only have 2 up_read()
-calls now.
+In this case, a value A is written to data_head in the IRQ, then a value
+B is written to data_head after the IRQ. And A > B. As a result,
+data_head is temporarily decreased from A to B. And a reader may see
+data_head < data_tail if it read the buffer frequently enough, which
+creates unexpected behaviors.
 
-Note to myself:
---------------
+This can be fixed by moving dec(&rb->nest) to after updating data_head,
+which prevents the IRQ/NMI above from updating data_head.
 
-1. Given the way it is done, we are forced to move @bad_area label earlier
-   causing the various "goto bad_area" cases to hit perf stat code.
-
- - PERF_COUNT_SW_PAGE_FAULTS is NOW updated for access errors which is what
-   arm/arm64 seem to be doing as well (with slightly different code)
- - PERF_COUNT_SW_PAGE_FAULTS_{MAJ,MIN} must NOT be updated for the
-   error case which is guarded by now setting @fault initial value
-   to VM_FAULT_ERROR which serves both cases when handle_mm_fault()
-   returns error or is not called at all.
-
-2. arm/arm64 use two homebrew fault flags VM_FAULT_BAD{MAP,MAPACCESS}
-   which I was inclined to add too but seems not needed for ARC
-
- - given that we have everything is 1 function we cabn stil use goto
- - we setup si_code at the right place (arm* do that in the end)
- - we init fault already to error value which guards entry into perf
-   stats event update
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Yabin Cui <yabinc@google.com>
 ---
- arch/arc/mm/fault.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ kernel/events/ring_buffer.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index 20402217d9da..e93ea06c214c 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -68,7 +68,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	struct mm_struct *mm = tsk->mm;
- 	int sig, si_code = SEGV_MAPERR;
- 	unsigned int write = 0, exec = 0, mask;
--	vm_fault_t fault;			/* handle_mm_fault() output */
-+	vm_fault_t fault = VM_FAULT_ERROR;	/* handle_mm_fault() output */
- 	unsigned int flags;			/* handle_mm_fault() input */
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 674b35383491..0b9aefe13b04 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -54,8 +54,10 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	 * IRQ/NMI can happen here, which means we can miss a head update.
+ 	 */
+ 
+-	if (!local_dec_and_test(&rb->nest))
++	if (local_read(&rb->nest) > 1) {
++		local_dec(&rb->nest);
+ 		goto out;
++	}
  
  	/*
-@@ -155,6 +155,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 		}
- 	}
+ 	 * Since the mmap() consumer (userspace) can run on a different CPU:
+@@ -86,6 +88,13 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	smp_wmb(); /* B, matches C */
+ 	rb->user_page->data_head = head;
  
-+bad_area:
-+	up_read(&mm->mmap_sem);
++	/*
++	 * Clear rb->nest after updating data_head. This prevents IRQ/NMI from
++	 * updating data_head before us. If that happens, we will expose a
++	 * temporarily decreased data_head.
++	 */
++	local_set(&rb->nest, 0);
 +
  	/*
- 	 * Major/minor page fault accounting
- 	 * (in case of retry we only land here once)
-@@ -173,13 +176,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 		}
- 
- 		/* Normal return path: fault Handled Gracefully */
--		up_read(&mm->mmap_sem);
- 		return;
- 	}
- 
--bad_area:
--	up_read(&mm->mmap_sem);
--
- 	if (!user_mode(regs))
- 		goto no_context;
- 
+ 	 * Now check if we missed an update -- rely on previous implied
+ 	 * compiler barriers to force a re-read.
 -- 
-2.7.4
+2.21.0.1020.gf2820cf01a-goog
 
