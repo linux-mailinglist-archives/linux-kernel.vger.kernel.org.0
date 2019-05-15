@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0981EE20
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFDF91EEEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730663AbfEOLR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
+        id S1732249AbfEOL1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:27:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728459AbfEOLRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:23 -0400
+        id S1731887AbfEOL1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B27B206BF;
-        Wed, 15 May 2019 11:17:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55CA920862;
+        Wed, 15 May 2019 11:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919043;
-        bh=oGHSbytJsiHse1qv2YgnDOtzQdItpFrlh6u6E/WJa2c=;
+        s=default; t=1557919651;
+        bh=CXB5IUkU623dBOmRC9Olz3+gVAQ0n96HHidPJsfDQUk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B56J3S0/FJVYgOlnhJTyNd7qwqZz6GiJOSeXJA0TfM95B0Z/ITTsczwUiWesPDODu
-         XT5F9rfhV1Vxu53Yaw2XG+xl0cFl/QaD0BARbvtSc7Za/cBptszOpFoK90dvf3gSN4
-         XpXYGE0KrgX0/5jU1G3UnCKqUguqhuhwKeQk0d8E=
+        b=dNFxM264PC4ZqgZvtXbzMgdrTVFpuC5PS3Z+yXnWedNyiUulDQvfy5aI4ZERoAskx
+         1oI++MxPVbQ3TvFJ/ni9Hv5DalVgNMddghm72QGVW43s9luijSPAwwhWmXLt7zF7V1
+         NjJeOx/gHLCG/6jqt7Kg5BGD0CXcCQH33BqffbkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/115] ACPICA: AML interpreter: add region addresses in global list during initialization
+        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
+        Michal Kalderon <mkalderon@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 043/137] qed: Fix missing DORQ attentions
 Date:   Wed, 15 May 2019 12:55:24 +0200
-Message-Id: <20190515090702.692348707@linuxfoundation.org>
+Message-Id: <20190515090656.559697485@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +46,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4abb951b73ff0a8a979113ef185651aa3c8da19b ]
+[ Upstream commit d4476b8a6151b2dd86c09b5acec64f66430db55d ]
 
-The table load process omitted adding the operation region address
-range to the global list. This omission is problematic because the OS
-queries the global list to check for address range conflicts before
-deciding which drivers to load. This commit may result in warning
-messages that look like the following:
+When the DORQ (doorbell block) is overflowed, all PFs get attentions at the
+same time. If one PF finished handling the attention before another PF even
+started, the second PF might miss the DORQ's attention bit and not handle
+the attention at all.
+If the DORQ attention is missed and the issue is not resolved, another
+attention will not be sent, therefore each attention is treated as a
+potential DORQ attention.
+As a result, the attention callback is called more frequently so the debug
+print was moved to reduce its quantity.
+The number of periodic doorbell recovery handler schedules was reduced
+because it was the previous way to mitigating the missed attention issue.
 
-[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
-[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
-
-However, these messages do not signify regressions. It is a result of
-properly adding address ranges within the global address list.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
-Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
+Signed-off-by: Michal Kalderon <mkalderon@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpica/dsopcode.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed.h      |  1 +
+ drivers/net/ethernet/qlogic/qed/qed_int.c  | 20 ++++++++++++++++++--
+ drivers/net/ethernet/qlogic/qed/qed_main.c |  2 +-
+ 3 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/acpica/dsopcode.c b/drivers/acpi/acpica/dsopcode.c
-index 0336df7ac47dd..e8070f6ca835e 100644
---- a/drivers/acpi/acpica/dsopcode.c
-+++ b/drivers/acpi/acpica/dsopcode.c
-@@ -451,6 +451,10 @@ acpi_ds_eval_region_operands(struct acpi_walk_state *walk_state,
- 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
- 			  obj_desc->region.length));
+diff --git a/drivers/net/ethernet/qlogic/qed/qed.h b/drivers/net/ethernet/qlogic/qed/qed.h
+index d5fece7eb1698..07ae600d0f357 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed.h
++++ b/drivers/net/ethernet/qlogic/qed/qed.h
+@@ -436,6 +436,7 @@ struct qed_db_recovery_info {
  
-+	status = acpi_ut_add_address_range(obj_desc->region.space_id,
-+					   obj_desc->region.address,
-+					   obj_desc->region.length, node);
+ 	/* Lock to protect the doorbell recovery mechanism list */
+ 	spinlock_t lock;
++	bool dorq_attn;
+ 	u32 db_recovery_counter;
+ };
+ 
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
+index b994f81eb51c3..00688f4c04645 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
+@@ -436,17 +436,19 @@ static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
+ 	struct qed_ptt *p_ptt = p_hwfn->p_dpc_ptt;
+ 	int rc;
+ 
+-	int_sts = qed_rd(p_hwfn, p_ptt, DORQ_REG_INT_STS);
+-	DP_NOTICE(p_hwfn->cdev, "DORQ attention. int_sts was %x\n", int_sts);
++	p_hwfn->db_recovery_info.dorq_attn = true;
+ 
+ 	/* int_sts may be zero since all PFs were interrupted for doorbell
+ 	 * overflow but another one already handled it. Can abort here. If
+ 	 * This PF also requires overflow recovery we will be interrupted again.
+ 	 * The masked almost full indication may also be set. Ignoring.
+ 	 */
++	int_sts = qed_rd(p_hwfn, p_ptt, DORQ_REG_INT_STS);
+ 	if (!(int_sts & ~DORQ_REG_INT_STS_DORQ_FIFO_AFULL))
+ 		return 0;
+ 
++	DP_NOTICE(p_hwfn->cdev, "DORQ attention. int_sts was %x\n", int_sts);
 +
- 	/* Now the address and length are valid for this opregion */
+ 	/* check if db_drop or overflow happened */
+ 	if (int_sts & (DORQ_REG_INT_STS_DB_DROP |
+ 		       DORQ_REG_INT_STS_DORQ_FIFO_OVFL_ERR)) {
+@@ -503,6 +505,17 @@ static int qed_dorq_attn_cb(struct qed_hwfn *p_hwfn)
+ 	return -EINVAL;
+ }
  
- 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
++static void qed_dorq_attn_handler(struct qed_hwfn *p_hwfn)
++{
++	if (p_hwfn->db_recovery_info.dorq_attn)
++		goto out;
++
++	/* Call DORQ callback if the attention was missed */
++	qed_dorq_attn_cb(p_hwfn);
++out:
++	p_hwfn->db_recovery_info.dorq_attn = false;
++}
++
+ /* Instead of major changes to the data-structure, we have a some 'special'
+  * identifiers for sources that changed meaning between adapters.
+  */
+@@ -1076,6 +1089,9 @@ static int qed_int_deassertion(struct qed_hwfn  *p_hwfn,
+ 		}
+ 	}
+ 
++	/* Handle missed DORQ attention */
++	qed_dorq_attn_handler(p_hwfn);
++
+ 	/* Clear IGU indication for the deasserted bits */
+ 	DIRECT_REG_WR((u8 __iomem *)p_hwfn->regview +
+ 				    GTT_BAR0_MAP_REG_IGU_CMD +
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+index 6adf5bda9811e..26bfcbeebc4ca 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -966,7 +966,7 @@ static void qed_update_pf_params(struct qed_dev *cdev,
+ 	}
+ }
+ 
+-#define QED_PERIODIC_DB_REC_COUNT		100
++#define QED_PERIODIC_DB_REC_COUNT		10
+ #define QED_PERIODIC_DB_REC_INTERVAL_MS		100
+ #define QED_PERIODIC_DB_REC_INTERVAL \
+ 	msecs_to_jiffies(QED_PERIODIC_DB_REC_INTERVAL_MS)
 -- 
 2.20.1
 
