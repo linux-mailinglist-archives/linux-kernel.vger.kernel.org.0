@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4571F14A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C5CF1EEF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731624AbfEOLue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:50:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60608 "EHLO mail.kernel.org"
+        id S1731935AbfEOL1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbfEOLWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:21 -0400
+        id S1732275AbfEOL1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EAE321473;
-        Wed, 15 May 2019 11:22:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B7C920818;
+        Wed, 15 May 2019 11:27:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919340;
-        bh=r8cVeMBCukKCuY2dTVNCx5/k5K50UNORfuoANlTQb8U=;
+        s=default; t=1557919665;
+        bh=/DZk7Tjs2OD9MFeDI6pcdJwNuMYfGUliVRI3kPiKr1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOONPdwIFJwdxnxoM2RoSoLNgW3B2ATf840usZeVSqLsuzU9ivnTMq8o2dasfAv+H
-         FeI4eqlope+Xyj9xLmFvFBs/7gM2eGNPMFFS31vAfSh+nrOXi4r22gbvMk5mjZLDgo
-         +DqrnWsWPUockV13dKRckw/KPob+f511HSDqqbhs=
+        b=vzrNBzSYuCh2lIpSdp8TXSNQGwIdEeksr/Wc4glMzU6EQGBw8PYJ+olBwG5AjexcI
+         BtkGA1Nndx4QWLGJWHXAgWg0uAfTYrQ8reKHevV7q82WEAYSKlX03xYXrNFcijkrvp
+         Q6ECx4/IfprA9SmAdnHExNXUKbi/Qk0NNI0fS0cI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
         Borislav Petkov <bp@alien8.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
+        Nicholas Piggin <npiggin@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux@endlessm.com,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/113] x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
+Subject: [PATCH 5.0 047/137] x86/build/lto: Fix truncated .bss with -fdata-sections
 Date:   Wed, 15 May 2019 12:55:28 +0200
-Message-Id: <20190515090656.429469518@linuxfoundation.org>
+Message-Id: <20190515090656.873641624@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,100 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0082517fa4bce073e7cf542633439f26538a14cc ]
+[ Upstream commit 6a03469a1edc94da52b65478f1e00837add869a3 ]
 
-Upon reboot, the Acer TravelMate X514-51T laptop appears to complete the
-shutdown process, but then it hangs in BIOS POST with a black screen.
+With CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y, we compile the kernel with
+-fdata-sections, which also splits the .bss section.
 
-The problem is intermittent - at some points it has appeared related to
-Secure Boot settings or different kernel builds, but ultimately we have
-not been able to identify the exact conditions that trigger the issue to
-come and go.
+The new section, with a new .bss.* name, which pattern gets missed by the
+main x86 linker script which only expects the '.bss' name. This results
+in the discarding of the second part and a too small, truncated .bss
+section and an unhappy, non-working kernel.
 
-Besides, the EFI mode cannot be disabled in the BIOS of this model.
+Use the common BSS_MAIN macro in the linker script to properly capture
+and merge all the generated BSS sections.
 
-However, after extensive testing, we observe that using the EFI reboot
-method reliably avoids the issue in all cases.
-
-So add a boot time quirk to use EFI reboot on such systems.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=203119
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux@endlessm.com
-Link: http://lkml.kernel.org/r/20190412080152.3718-1-jian-hong@endlessm.com
-[ Fix !CONFIG_EFI build failure, clarify the code and the changelog a bit. ]
+Link: http://lkml.kernel.org/r/20190415164956.124067-1-samitolvanen@google.com
+[ Extended the changelog. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/reboot.c | 21 +++++++++++++++++++++
- include/linux/efi.h      |  7 ++++++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/kernel/vmlinux.lds.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 725624b6c0c05..8fd3cedd9accd 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -81,6 +81,19 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
- 	return 0;
- }
- 
-+/*
-+ * Some machines don't handle the default ACPI reboot method and
-+ * require the EFI reboot method:
-+ */
-+static int __init set_efi_reboot(const struct dmi_system_id *d)
-+{
-+	if (reboot_type != BOOT_EFI && !efi_runtime_disabled()) {
-+		reboot_type = BOOT_EFI;
-+		pr_info("%s series board detected. Selecting EFI-method for reboot.\n", d->ident);
-+	}
-+	return 0;
-+}
-+
- void __noreturn machine_real_restart(unsigned int type)
- {
- 	local_irq_disable();
-@@ -166,6 +179,14 @@ static const struct dmi_system_id reboot_dmi_table[] __initconst = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "AOA110"),
- 		},
- 	},
-+	{	/* Handle reboot issue on Acer TravelMate X514-51T */
-+		.callback = set_efi_reboot,
-+		.ident = "Acer TravelMate X514-51T",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate X514-51T"),
-+		},
-+	},
- 
- 	/* Apple */
- 	{	/* Handle problems with rebooting on Apple MacBook5 */
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 401e4b254e30b..cc3391796c0b8 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1564,7 +1564,12 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
- 			   struct screen_info *si, efi_guid_t *proto,
- 			   unsigned long size);
- 
--bool efi_runtime_disabled(void);
-+#ifdef CONFIG_EFI
-+extern bool efi_runtime_disabled(void);
-+#else
-+static inline bool efi_runtime_disabled(void) { return true; }
-+#endif
-+
- extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
- 
- enum efi_secureboot_mode {
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index ee3b5c7d662e1..c45214c44e612 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -362,7 +362,7 @@ SECTIONS
+ 	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+ 		__bss_start = .;
+ 		*(.bss..page_aligned)
+-		*(.bss)
++		*(BSS_MAIN)
+ 		BSS_DECRYPTED
+ 		. = ALIGN(PAGE_SIZE);
+ 		__bss_stop = .;
 -- 
 2.20.1
 
