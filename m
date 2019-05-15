@@ -2,82 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F33691F3FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 173151F3F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbfEOMRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:17:05 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19567 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728235AbfEOMQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 08:16:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 05:16:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,472,1549958400"; 
-   d="scan'208";a="171938220"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 15 May 2019 05:16:54 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hQsq6-000CjN-5j; Wed, 15 May 2019 20:16:54 +0800
-Date:   Wed, 15 May 2019 20:16:15 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Matt Sickler <Matt.Sickler@daktronics.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] staging: kpc2000: fix alloc_cast.cocci warnings
-Message-ID: <20190515121615.GA52823@lkp-kbuild04>
-References: <201905152009.JVEMePDb%lkp@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905152009.JVEMePDb%lkp@intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1728550AbfEOMQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 08:16:54 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:56714 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728299AbfEOMQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 08:16:50 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id CcGm2000P3XaVaC01cGm6o; Wed, 15 May 2019 14:16:47 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hQspy-0002Tk-5Z; Wed, 15 May 2019 14:16:46 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hQspy-0007PS-2L; Wed, 15 May 2019 14:16:46 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Alexander Shiyan <shc_work@mail.ru>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] video: backlight: Drop default m for {LCD,BACKLIGHT_CLASS_DEVICE}
+Date:   Wed, 15 May 2019 14:16:45 +0200
+Message-Id: <20190515121645.28413-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+When running "make oldconfig" on a .config where
+CONFIG_BACKLIGHT_LCD_SUPPORT is not set, two new config options
+("Lowlevel LCD controls" and "Lowlevel Backlight controls") appear, both
+defaulting to "m".
 
-drivers/staging/kpc2000/kpc_dma/fileops.c:60:8-26: WARNING: casting value returned by memory allocation function to (struct aio_cb_data *) is useless.
+Drop the "default m", as options should default to disabled, and because
+several driver config options already select LCD_CLASS_DEVICE or
+BACKLIGHT_CLASS_DEVICE when needed.
 
- Remove casting the values returned by memory allocation functions
- like kmalloc, kzalloc, kmem_cache_alloc, kmem_cache_zalloc etc.
-
-Semantic patch information:
- This makes an effort to find cases of casting of values returned by
- kmalloc, kzalloc, kcalloc, kmem_cache_alloc, kmem_cache_zalloc,
- kmem_cache_alloc_node, kmalloc_node and kzalloc_node and removes
- the casting as it is not required. The result in the patch case may
- need some reformatting.
-
-Generated by: scripts/coccinelle/api/alloc/alloc_cast.cocci
-
-Fixes: 7df95299b94a ("staging: kpc2000: Add DMA driver")
-CC: Matt Sickler <Matt.Sickler@daktronics.com>
-Signed-off-by: kbuild test robot <lkp@intel.com>
+Fixes: 8c5dc8d9f19c7992 ("video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel symbol")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
+ drivers/video/backlight/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5ac94332248ee017964ba368cdda4ce647e3aba7
-commit: 7df95299b94a63ec67a6389fc02dc25019a80ee8 staging: kpc2000: Add DMA driver
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 3ed1d9084f942688..8d138cc9eabb9cd2 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -9,7 +9,6 @@ menu "Backlight & LCD device support"
+ #
+ config LCD_CLASS_DEVICE
+         tristate "Lowlevel LCD controls"
+-	default m
+ 	help
+ 	  This framework adds support for low-level control of LCD.
+ 	  Some framebuffer devices connect to platform-specific LCD modules
+@@ -142,7 +141,6 @@ endif # LCD_CLASS_DEVICE
+ #
+ config BACKLIGHT_CLASS_DEVICE
+         tristate "Lowlevel Backlight controls"
+-	default m
+ 	help
+ 	  This framework adds support for low-level control of the LCD
+           backlight. This includes support for brightness and power.
+-- 
+2.17.1
 
- fileops.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -57,7 +57,7 @@ int  kpc_dma_transfer(struct dev_private
- 	
- 	dev_dbg(&priv->ldev->pldev->dev, "kpc_dma_transfer(priv = [%p], kcb = [%p], iov_base = [%p], iov_len = %ld) ldev = [%p]\n", priv, kcb, (void*)iov_base, iov_len, ldev);
- 	
--	acd = (struct aio_cb_data *) kzalloc(sizeof(struct aio_cb_data), GFP_KERNEL);
-+	acd = kzalloc(sizeof(struct aio_cb_data), GFP_KERNEL);
- 	if (!acd){
- 		dev_err(&priv->ldev->pldev->dev, "Couldn't kmalloc space for for the aio data\n");
- 		return -ENOMEM;
