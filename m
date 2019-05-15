@@ -2,36 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF6E1EE88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA451EE8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfEOLWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:22:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33052 "EHLO mail.kernel.org"
+        id S1731538AbfEOLWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:22:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731249AbfEOLWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:22:47 -0400
+        id S1731274AbfEOLWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:22:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7E6E20818;
-        Wed, 15 May 2019 11:22:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 446AA20881;
+        Wed, 15 May 2019 11:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919367;
-        bh=/ee50LFzLtCJJcQ/CBmCLb5opISI5VQiCJQ39RIQn5g=;
+        s=default; t=1557919369;
+        bh=Wk3h8qta0dSeyNdeZXz5+gFK1Qw7oSRFsGllNW+DLJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pi4RQlAQXctDLkTRmVijUXhMbH3cWx4wgXlPHrzaBSljmS6yMxZH56F9qWG3eySdb
-         Jk0R/pFEfelpVdavaoIAbrscfNARrsVMNbvziwNIwOHVE0KbvywZ94bgS4KTvXeZFK
-         e4Ci/hy8yw8NrR2fhCkFdBw+tAhI0Z2dLy9SwdRI=
+        b=yW2IJ7R0Oq2etNDpLKXMwYKkzocCZtzkHZH3id1ve77P31CIB5SCj+BCtr6Ol5MKD
+         LDs3Ka2B9ZGoJ3s7euMY+6nj5eBAQs+hEIfPZWUdjIHP6XrwH9Ndsg1PZpZuPPmz10
+         O7pHM4RF50Qs+ftEmfK8SI8HbrEEaqKSyIS1y/VI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Kevin ldir Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>,
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        John Crispin <john@phrozen.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 049/113] netfilter: nf_tables: prevent shift wrap in nft_chain_parse_hook()
-Date:   Wed, 15 May 2019 12:55:40 +0200
-Message-Id: <20190515090657.374463262@linuxfoundation.org>
+Subject: [PATCH 4.19 050/113] MIPS: perf: ath79: Fix perfcount IRQ assignment
+Date:   Wed, 15 May 2019 12:55:41 +0200
+Message-Id: <20190515090657.452540426@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
 References: <20190515090652.640988966@linuxfoundation.org>
@@ -44,35 +52,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33d1c018179d0a30c39cc5f1682b77867282694b ]
+[ Upstream commit a1e8783db8e0d58891681bc1e6d9ada66eae8e20 ]
 
-I believe that "hook->num" can be up to UINT_MAX.  Shifting more than
-31 bits would is undefined in C but in practice it would lead to shift
-wrapping.  That would lead to an array overflow in nf_tables_addchain():
+Currently it's not possible to use perf on ath79 due to genirq flags
+mismatch happening on static virtual IRQ 13 which is used for
+performance counters hardware IRQ 5.
 
-	ops->hook       = hook.type->hooks[ops->hooknum];
+On TP-Link Archer C7v5:
 
-Fixes: fe19c04ca137 ("netfilter: nf_tables: remove nhooks field from struct nft_af_info")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+           CPU0
+  2:          0      MIPS   2  ath9k
+  4:        318      MIPS   4  19000000.eth
+  7:      55034      MIPS   7  timer
+  8:       1236      MISC   3  ttyS0
+ 12:          0      INTC   1  ehci_hcd:usb1
+ 13:          0  gpio-ath79   2  keys
+ 14:          0  gpio-ath79   5  keys
+ 15:         31  AR724X PCI    1  ath10k_pci
+
+ $ perf top
+ genirq: Flags mismatch irq 13. 00014c83 (mips_perf_pmu) vs. 00002003 (keys)
+
+On TP-Link Archer C7v4:
+
+         CPU0
+  4:          0      MIPS   4  19000000.eth
+  5:       7135      MIPS   5  1a000000.eth
+  7:      98379      MIPS   7  timer
+  8:         30      MISC   3  ttyS0
+ 12:      90028      INTC   0  ath9k
+ 13:       5520      INTC   1  ehci_hcd:usb1
+ 14:       4623      INTC   2  ehci_hcd:usb2
+ 15:      32844  AR724X PCI    1  ath10k_pci
+ 16:          0  gpio-ath79  16  keys
+ 23:          0  gpio-ath79  23  keys
+
+ $ perf top
+ genirq: Flags mismatch irq 13. 00014c80 (mips_perf_pmu) vs. 00000080 (ehci_hcd:usb1)
+
+This problem is happening, because currently statically assigned virtual
+IRQ 13 for performance counters is not claimed during the initialization
+of MIPS PMU during the bootup, so the IRQ subsystem doesn't know, that
+this interrupt isn't available for further use.
+
+So this patch fixes the issue by simply booking hardware IRQ 5 for MIPS PMU.
+
+Tested-by: Kevin 'ldir' Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+Acked-by: John Crispin <john@phrozen.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/ath79/setup.c          |  6 ------
+ drivers/irqchip/irq-ath79-misc.c | 11 +++++++++++
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 1af54119bafc7..f272f9538c44a 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -1496,7 +1496,7 @@ static int nft_chain_parse_hook(struct net *net,
- 		if (IS_ERR(type))
- 			return PTR_ERR(type);
- 	}
--	if (!(type->hook_mask & (1 << hook->num)))
-+	if (hook->num > NF_MAX_HOOKS || !(type->hook_mask & (1 << hook->num)))
- 		return -EOPNOTSUPP;
+diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
+index 4c7a93f4039a0..7c0b2e6cdfbd7 100644
+--- a/arch/mips/ath79/setup.c
++++ b/arch/mips/ath79/setup.c
+@@ -211,12 +211,6 @@ const char *get_system_type(void)
+ 	return ath79_sys_type;
+ }
  
- 	if (type->type == NFT_CHAIN_T_NAT &&
+-int get_c0_perfcount_int(void)
+-{
+-	return ATH79_MISC_IRQ(5);
+-}
+-EXPORT_SYMBOL_GPL(get_c0_perfcount_int);
+-
+ unsigned int get_c0_compare_int(void)
+ {
+ 	return CP0_LEGACY_COMPARE_IRQ;
+diff --git a/drivers/irqchip/irq-ath79-misc.c b/drivers/irqchip/irq-ath79-misc.c
+index aa72907846360..0390603170b40 100644
+--- a/drivers/irqchip/irq-ath79-misc.c
++++ b/drivers/irqchip/irq-ath79-misc.c
+@@ -22,6 +22,15 @@
+ #define AR71XX_RESET_REG_MISC_INT_ENABLE	4
+ 
+ #define ATH79_MISC_IRQ_COUNT			32
++#define ATH79_MISC_PERF_IRQ			5
++
++static int ath79_perfcount_irq;
++
++int get_c0_perfcount_int(void)
++{
++	return ath79_perfcount_irq;
++}
++EXPORT_SYMBOL_GPL(get_c0_perfcount_int);
+ 
+ static void ath79_misc_irq_handler(struct irq_desc *desc)
+ {
+@@ -113,6 +122,8 @@ static void __init ath79_misc_intc_domain_init(
+ {
+ 	void __iomem *base = domain->host_data;
+ 
++	ath79_perfcount_irq = irq_create_mapping(domain, ATH79_MISC_PERF_IRQ);
++
+ 	/* Disable and clear all interrupts */
+ 	__raw_writel(0, base + AR71XX_RESET_REG_MISC_INT_ENABLE);
+ 	__raw_writel(0, base + AR71XX_RESET_REG_MISC_INT_STATUS);
 -- 
 2.20.1
 
