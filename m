@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDFF1EE0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:16:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B82A1EEDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbfEOLQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:16:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53346 "EHLO mail.kernel.org"
+        id S1730912AbfEOL0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:26:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730504AbfEOLQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:16:30 -0400
+        id S1729874AbfEOL0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:26:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D21C920843;
-        Wed, 15 May 2019 11:16:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF1A6206BF;
+        Wed, 15 May 2019 11:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918990;
-        bh=m5iosIFsI2ncGxd+NaJq4L+uefMkxQMOT3SpPDn2rwc=;
+        s=default; t=1557919604;
+        bh=XdBZfExrQaGrAdoM+O6YjnIhVvug8FBLlDpS7/BCRi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dw+haINKXJPkHgJ61XJcI2LsDTzieKdPcD9lU64g9XaMpqZdV356uHYJGQHyvbPO+
-         Sh8V/2x31HidoZ2+fLpaRQA6Qyk2cHL4eVK9HxerjUa+4oQckyA/HIdB3Uy713PZ9I
-         TJY2Xp4sZo/I7rnIHUgBYgWNLCoc4isAGRNhXkUg=
+        b=NGs+VdpLTI+hmnFeY7y1/1fmEjTxpqfxJQh6Xz8KbNHZrOAVsMDVU8nsdlM1c87ZR
+         oaw/qaI8PHVs2q9T8bgO4mQ641s5oJZX3o8MKkoSGkXfnV7Vnwrg87iM433zWJqGr+
+         8enPbtnQnpHgm6TErwFX8jPCBFQIyU03a9I8U490=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 025/115] tools lib traceevent: Fix missing equality check for strcmp
+Subject: [PATCH 5.0 024/137] mac80211: fix memory accounting with A-MSDU aggregation
 Date:   Wed, 15 May 2019 12:55:05 +0200
-Message-Id: <20190515090701.130504781@linuxfoundation.org>
+Message-Id: <20190515090655.028786660@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,57 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f32c2877bcb068a718bb70094cd59ccc29d4d082 ]
+[ Upstream commit eb9b64e3a9f8483e6e54f4e03b2ae14ae5db2690 ]
 
-There was a missing comparison with 0 when checking if type is "s64" or
-"u64". Therefore, the body of the if-statement was entered if "type" was
-"u64" or not "s64", which made the first strcmp() redundant since if
-type is "u64", it's not "s64".
+skb->truesize can change due to memory reallocation or when adding extra
+fragments. Adjust fq->memory_usage accordingly
 
-If type is "s64", the body of the if-statement is not entered but since
-the remainder of the function consists of if-statements which will not
-be entered if type is "s64", we will just return "val", which is
-correct, albeit at the cost of a few more calls to strcmp(), i.e., it
-will behave just as if the if-statement was entered.
-
-If type is neither "s64" or "u64", the body of the if-statement will be
-entered incorrectly and "val" returned. This means that any type that is
-checked after "s64" and "u64" is handled the same way as "s64" and
-"u64", i.e., the limiting of "val" to fit in for example "s8" is never
-reached.
-
-This was introduced in the kernel tree when the sources were copied from
-trace-cmd in commit f7d82350e597 ("tools/events: Add files to create
-libtraceevent.a"), and in the trace-cmd repo in 1cdbae6035cei
-("Implement typecasting in parser") when the function was introduced,
-i.e., it has always behaved the wrong way.
-
-Detected by cppcheck.
-
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
-Link: http://lkml.kernel.org/r/20190409091529.2686-1-rikard.falkeborn@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/tx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 3955ba9e6fcb5..7989dd6289e7a 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -2206,7 +2206,7 @@ eval_type_str(unsigned long long val, const char *type, int pointer)
- 		return val & 0xffffffff;
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index 928f13a208b05..714d80e48a102 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3214,6 +3214,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	u8 max_subframes = sta->sta.max_amsdu_subframes;
+ 	int max_frags = local->hw.max_tx_fragments;
+ 	int max_amsdu_len = sta->sta.max_amsdu_len;
++	int orig_truesize;
+ 	__be16 len;
+ 	void *data;
+ 	bool ret = false;
+@@ -3254,6 +3255,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	if (!head || skb_is_gso(head))
+ 		goto out;
  
- 	if (strcmp(type, "u64") == 0 ||
--	    strcmp(type, "s64"))
-+	    strcmp(type, "s64") == 0)
- 		return val;
++	orig_truesize = head->truesize;
+ 	orig_len = head->len;
  
- 	if (strcmp(type, "s8") == 0)
+ 	if (skb->len + head->len > max_amsdu_len)
+@@ -3311,6 +3313,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee80211_sub_if_data *sdata,
+ 	*frag_tail = skb;
+ 
+ out_recalc:
++	fq->memory_usage += head->truesize - orig_truesize;
+ 	if (head->len != orig_len) {
+ 		flow->backlog += head->len - orig_len;
+ 		tin->backlog_bytes += head->len - orig_len;
 -- 
 2.20.1
 
