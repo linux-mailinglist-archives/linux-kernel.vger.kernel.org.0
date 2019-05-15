@@ -2,92 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09FA11F049
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B643C1F059
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732568AbfEOLml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:42:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38536 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732060AbfEOLmk (ORCPT
+        id S1732596AbfEOLn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:43:27 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:55727 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732170AbfEOLnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:42:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MsMZWcEhieyD9y/MB1UTwo9lx4vEdenhn0ViWkYWga0=; b=YPUAoCHj9TAeCyAY9x620+maF
-        MTsK55mHerI2S3KHuTJN/zQumYR2a2uJqdILUENk4iqLHEOmIwGJypY2hAbthxdHYkg6tsOcweSEq
-        6VO7MTxNMmCVGpF3dp1/ga4D+WAiMxz2CW3RgmVnMnUyFz6XEZpRZbAjxyCKf618uMvL8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hQsIv-0003eS-5H; Wed, 15 May 2019 11:42:37 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 319621126D6A; Wed, 15 May 2019 12:42:33 +0100 (BST)
-Date:   Wed, 15 May 2019 12:42:33 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH V5 1/4] spi: tegra114: add support for gpio based CS
-Message-ID: <20190515114233.GF5613@sirena.org.uk>
-References: <1557810235-16401-1-git-send-email-skomatineni@nvidia.com>
- <1557810235-16401-2-git-send-email-skomatineni@nvidia.com>
- <cf4bd167-49b8-5649-a2e2-7bf5ddcc6e2d@nvidia.com>
- <BYAPR12MB33986B88CF3A30036E3F1F04C2080@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190515093522.GC5613@sirena.org.uk>
- <BYAPR12MB3398ED52051F5BFA08D7B3A6C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190515112900.GE5613@sirena.org.uk>
- <BYAPR12MB3398528B86D3DE9CC3AA6D85C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
+        Wed, 15 May 2019 07:43:24 -0400
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x4FBhEDa019916;
+        Wed, 15 May 2019 20:43:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x4FBhEDa019916
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1557920595;
+        bh=+/we/8cOii8b99PZhVYm0AcO3nqZi/sKx4erv7OLIUE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tx5hgVYtzu12J6V2/Rn+WH6NWqubXfxd43BXwabA/gnxqGOvkQ+bsagPcytr4hoZq
+         Tu1sMHuxX8abGfAwnPfxGso5be69sJb4Cy0MIgIETskeC5emqoDQ3+AGkVkq7bCW2W
+         YCO/x8bwl77Hmg/vGH1bilfZ0p24kjqhiFGTde21w/IZm0/nXOEcVVdsG+Bf9r/TVv
+         jw+tjE4dlYX7+C2qhmEjWvCbx0PVBnIHEErdidHacE6kgE4rmra1cEL3G/+anwKQaM
+         r1JaR4J/0WBNIBKHS82iPAblY7cVhQLP1/MI2GgsDy7eq/j30YvOcoE0s+VMQv8ff6
+         O0nINqS+RcyXQ==
+X-Nifty-SrcIP: [209.85.160.175]
+Received: by mail-qt1-f175.google.com with SMTP id i26so940210qtr.10;
+        Wed, 15 May 2019 04:43:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAWf1CHLyu/JbvYAC3tWazBU22ZZPN+nIQuYwBZf1FtckmP4MP6w
+        L6j12Bb+Bzd6mWrGOjmqdYpYzhOMDJRQUgXMxso=
+X-Google-Smtp-Source: APXvYqz8UMUEkHKjEaRHNMHyCfn133IiH2H+rDbuxuhm9tMwfpfNPVI6ERliCWZVO3MkCJsAQpIuSxV/RFmmLdZueU4=
+X-Received: by 2002:a0c:c686:: with SMTP id d6mr31378804qvj.179.1557920593889;
+ Wed, 15 May 2019 04:43:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398528B86D3DE9CC3AA6D85C2090@BYAPR12MB3398.namprd12.prod.outlook.com>
-X-Cookie: You will lose an important tape file.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
+ <CAK8P3a1y7hxME0me_Zu-F8a8jU6n=T+c32mv83utOtsL-+gc0A@mail.gmail.com>
+ <20190515081422.GA22750@kroah.com> <CAK7LNASpJFAgvuak=mz5kkM3oGh9-M8y_84KZv-xcUkQ0h=d_A@mail.gmail.com>
+ <20190515113113.GC11749@kroah.com>
+In-Reply-To: <20190515113113.GC11749@kroah.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 15 May 2019 20:42:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARLk7avr71vWEzHdRVMk5bCrFDrFUapD-ab_75-Li_8aw@mail.gmail.com>
+Message-ID: <CAK7LNARLk7avr71vWEzHdRVMk5bCrFDrFUapD-ab_75-Li_8aw@mail.gmail.com>
+Subject: Re: [RFC PATCH] kbuild: check uniqueness of basename of modules
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Jessica Yu <jeyu@kernel.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 15, 2019 at 8:34 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, May 15, 2019 at 05:57:50PM +0900, Masahiro Yamada wrote:
+> > On Wed, May 15, 2019 at 5:14 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Wed, May 15, 2019 at 10:08:12AM +0200, Arnd Bergmann wrote:
+> > > > On Wed, May 15, 2019 at 9:39 AM Masahiro Yamada
+> > > > <yamada.masahiro@socionext.com> wrote:
+> > > > >
+> > > > > In the recent build test of linux-next, Stephen saw a build error
+> > > > > caused by a broken .tmp_versions/*.mod file:
+> > > > >
+> > > > >   https://lkml.org/lkml/2019/5/13/991
+> > > > >
+> > > > > drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
+> > > > > basename, and there is a race in generating .tmp_versions/asix.mod
+> > > > >
+> > > > > Kbuild has not checked this before, and it occasionally shows up with
+> > > > > obscure error message when this kind of race occurs.
+> > > > >
+> > > > > It is not trivial to catch this potential issue by eyes.
+> > > > >
+> > > > > Hence, this script.
+> > > > >
+> > > > > I compile-tested allmodconfig for the latest kernel as of writing,
+> > > > > it detected the following:
+> > > > >
+> > > > > warning: same basename '88pm800.ko' if the following are built as modules:
+> > > > >   drivers/regulator/88pm800.ko
+> > > > >   drivers/mfd/88pm800.ko
+> > > > > warning: same basename 'adv7511.ko' if the following are built as modules:
+> > > > >   drivers/gpu/drm/bridge/adv7511/adv7511.ko
+> > > > >   drivers/media/i2c/adv7511.ko
+> > > > > warning: same basename 'asix.ko' if the following are built as modules:
+> > > > >   drivers/net/phy/asix.ko
+> > > > >   drivers/net/usb/asix.ko
+> > > > > warning: same basename 'coda.ko' if the following are built as modules:
+> > > > >   fs/coda/coda.ko
+> > > > >   drivers/media/platform/coda/coda.ko
+> > > > > warning: same basename 'realtek.ko' if the following are built as modules:
+> > > > >   drivers/net/phy/realtek.ko
+> > > > >   drivers/net/dsa/realtek.ko
+> > > > >
+> > > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > >
+> > > > That looks great!
+> > > >
+> > > > > ---
+> > > > >
+> > > > >  [Alternative fix ? ]
+> > > > >
+> > > > > I do not know about the user experience of modprobe etc.
+> > > > > when two different modules have the same name.
+> > > > > It does not matter if this is correctly handled by modules.order?
+> > > > >
+> > > > > If this is just a problem of the build system, it is pretty easy to fix.
+> > > > > For example, if we prepend the directory path, parallel build will
+> > > > > never write to the same file simultanously.
+> > > > >
+> > > > >   asix.mod -> drivers/net/phy/asix.mod
+> > > > >   asix.mod -> drivers/net/usb/asix.mod
+> > > >
+> > > > non-unique module names cause all kinds of problems, and
+> > > > modprobe can certainly not handle them correctly, and there
+> > > > are issues with symbols exported from a module when another
+> > > > one has the same name.
+> > >
+> > > /sys/modules/ will fall over when this happens as well.  I thought we
+> > > had the "rule" that module names had to be unique, I guess it was only a
+> > > matter of time before they started colliding :(
+> > >
+> > > So warning is good, but forbidding this is better, as things will break.
+> > >
+> > > Or we need to fix up the places where things will break.
+> >
+> >
+> > If we intentionally break the build,
+> > we need to send fix-up patches to subsystems first.
+>
+> True, but those builds are already broken if anyone tries to use them :)
+>
+> A warning for now would be nice, that way we can find these and know to
+> fix them up over time.
 
---dgjlcl3Tl+kb3YDk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2019 at 11:40:41AM +0000, Sowjanya Komatineni wrote:
-> I tried few settings before sending V5 too but didn't made diff.
-> Will try with different email client.
->=20
-> What email client are you using?
+Yes, I think it is a fair point.
 
-I personally use mutt.  I know people also use things like Thunderbird
-and Evolution successfully.  There should be other people at nVidia you
-can ask about how they get things set up I guess?
+Start this with warning, then people will soon notice the problem.
 
---dgjlcl3Tl+kb3YDk
-Content-Type: application/pgp-signature; name="signature.asc"
+Turning it into error is easy once we fix all instances.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzb+ygACgkQJNaLcl1U
-h9B1yQf/aoNSV/N3Iq8hWgg8l7YtShuKh8pJ5p5FRa8eM/RrsWiGS0Ih3uARw12Y
-jwhP0HRwm1WMSphc4F/gwbRIS6KiCLmtK21uVfQ8ZhwePMzM7riNNCNInkHsEyq/
-MWm7JRK3YEjPpbqRhzGjUylGbuMqeY2oifTnZPMhLpu98nqZBxdkLlbvVMvQ4Lzq
-bs8R5PeuqWFOZgb2d89fb6jGVheVWKGjP4cxlreDlGd00IlBZDdKFMUlkxqWytj8
-LRLPtjy6Ekaq5qQh7TDrxHkogptz9dQo5cB4gfDPj3AN+UVX7caCwUe2qc3x3e66
-xjey0jls24Elt0FLSZAgUIPOremvZw==
-=Fhe/
------END PGP SIGNATURE-----
-
---dgjlcl3Tl+kb3YDk--
+-- 
+Best Regards
+Masahiro Yamada
