@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D6C1EF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B101EDA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732410AbfEOL2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:28:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
+        id S1729684AbfEOLL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:11:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732395AbfEOL2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:28:30 -0400
+        id S1729673AbfEOLL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:11:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AFEE206BF;
-        Wed, 15 May 2019 11:28:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFDBB20843;
+        Wed, 15 May 2019 11:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919709;
-        bh=e2MtqTSZ3nrJhGKG3P7qiVm73W9Shig/UosHZO8yi+A=;
+        s=default; t=1557918716;
+        bh=lUJwJXLleX1GoZA5bjxOOiZuWZ48uRlI6KfbkI/IBX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1O/JUuVixrV2uaVCzBs8kmbV2PauzY7UvHFLZkZeP88C1UvJr2WEG3dpF/zB/W8gd
-         OMjSce3/JMk+v0ULJEgOueowRWcH2Zz+KmbGzGsek8qDEXw6nViylvLA8N64BwpMi/
-         fqdxYxFLEOG1iOtMg9vBKJN8P/oQPbyVv9YcAjew=
+        b=z2Qv3bkdVaOO2ve/u+hRlyXN2HnCnHsS16TqWg2kK5LyZYpZgr8kXl0qmBaUypCD4
+         /PnJGhVmB5mU3GBCB9plsORAK22Y4LqAs1JphAfp4aZsbgt4l5dWGpWelfmriUNB0w
+         P2ZW6dB2fKWWXgMhEMiBvn4Ri4TGpMStfqh5j2nw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
-        Heiko Stueber <heiko@sntech.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 063/137] drm: bridge: dw-hdmi: Fix overflow workaround for Rockchip SoCs
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 237/266] x86/speculation/l1tf: Document l1tf in sysfs
 Date:   Wed, 15 May 2019 12:55:44 +0200
-Message-Id: <20190515090658.041220026@linuxfoundation.org>
+Message-Id: <20190515090731.018358379@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d15d9fd02575ecfada92d42f655940c4f10af842 ]
+From: Ben Hutchings <ben@decadent.org.uk>
 
-The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
-also been identified as needing this workaround with a single iteration.
+The vulnerabilties/l1tf attribute was added by commit 17dbca119312
+"x86/speculation/l1tf: Add sysfs reporting for l1tf", which has
+already been backported to 3.16, but only documented in commit
+d90a7a0ec83f "x86/bugs, kvm: Introduce boot-time control of L1TF
+mitigations", which has not and probbaly won't be.
 
-Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Tested-by: Heiko Stueber <heiko@sntech.de>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/AM3PR03MB0966818FAAAE6192FF4ED11AAC7D0@AM3PR03MB0966.eurprd03.prod.outlook.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add just that line of documentation for now.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/ABI/testing/sysfs-devices-system-cpu |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 64c3cf0275182..14223c0ee7843 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1655,6 +1655,8 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 	 * iteration for others.
- 	 * The Amlogic Meson GX SoCs (v2.01a) have been identified as needing
- 	 * the workaround with a single iteration.
-+	 * The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
-+	 * been identified as needing the workaround with a single iteration.
- 	 */
- 
- 	switch (hdmi->version) {
-@@ -1663,7 +1665,9 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 		break;
- 	case 0x131a:
- 	case 0x132a:
-+	case 0x200a:
- 	case 0x201a:
-+	case 0x211a:
- 	case 0x212a:
- 		count = 1;
- 		break;
--- 
-2.20.1
-
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -277,6 +277,7 @@ What:		/sys/devices/system/cpu/vulnerabi
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
+ 		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
++		/sys/devices/system/cpu/vulnerabilities/l1tf
+ Date:		January 2018
+ Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+ Description:	Information about CPU vulnerabilities
 
 
