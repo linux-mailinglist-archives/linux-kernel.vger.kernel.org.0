@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB561F253
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 14:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5921EE40
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbfEOMC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 08:02:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48902 "EHLO mail.kernel.org"
+        id S1730883AbfEOLTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:19:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729677AbfEOLNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:13:14 -0400
+        id S1730866AbfEOLS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0304D2168B;
-        Wed, 15 May 2019 11:13:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7327E20818;
+        Wed, 15 May 2019 11:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557918793;
-        bh=UjY/Fn0JNmLHvW7FKm0Bc7m7bujPbFu0FK5CtX4pT90=;
+        s=default; t=1557919137;
+        bh=ah6AMl77D0EdyOvo7M9en5lXQ8/Gv5ZKaJWTJ8pWRlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VGrm8O2BiLo4XRwkO9u78930UAn11FD9UeJ7igsptzCE+57hm+avW6WFCCcr0wcHB
-         nM4ynfH0rAqHNlJeF355XuQgfCixuYO7ku09AVAgw+8qTRUr7+twngEOjsxfydW4F4
-         tCjiMSfmn5Lzbo6A+hgdLi0d27691qdHEOk99+9g=
+        b=QZjn/Wu1c+XBXEwVQWppE4V64Y1EaW3JzVybCvrHve4unR+9BFiVWFKXxOA5F7G7/
+         FHFq52J2LRqm3E5UuXCNcw+EMl7uRl0nSvzpTzrC5lL/h6NRcqn6lYjqMKreS5l/gY
+         hyKnvaWpvsvReqzmYaxyJ+I90Up429GUTptk35ds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.4 253/266] x86/bugs: Change L1TF mitigation string to match upstream
-Date:   Wed, 15 May 2019 12:56:00 +0200
-Message-Id: <20190515090731.572194091@linuxfoundation.org>
+        stable@vger.kernel.org, Damian Kos <dkos@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 081/115] drm/rockchip: fix for mailbox read validation.
+Date:   Wed, 15 May 2019 12:56:01 +0200
+Message-Id: <20190515090705.242537348@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
-References: <20190515090722.696531131@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,30 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+[ Upstream commit e4056bbb6719fe713bfc4030ac78e8e97ddf7574 ]
 
-Commit 72c6d2db64fa "x86/litf: Introduce vmx status variable" upstream
-changed "Page Table Inversion" to "PTE Inversion".  That was part of
-the implementation of additional mitigations for VMX which haven't
-been applied to this branch.  Just change this string to be consistent
-and match documentation.
+This is basically the same fix as in
+commit fa68d4f8476b ("drm/rockchip: fix for mailbox read size")
+but for cdn_dp_mailbox_validate_receive function.
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+See patchwork.kernel.org/patch/10671981/ for details.
+
+Signed-off-by: Damian Kos <dkos@cadence.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/1542640463-18332-1-git-send-email-dkos@cadence.com
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1160,7 +1160,7 @@ static ssize_t cpu_show_common(struct de
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+index 0ed7e91471f6e..4df201d21f271 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+@@ -113,7 +113,7 @@ static int cdp_dp_mailbox_write(struct cdn_dp_device *dp, u8 val)
  
- 	case X86_BUG_L1TF:
- 		if (boot_cpu_has(X86_FEATURE_L1TF_PTEINV))
--			return sprintf(buf, "Mitigation: Page Table Inversion\n");
-+			return sprintf(buf, "Mitigation: PTE Inversion\n");
- 		break;
- 
- 	case X86_BUG_MDS:
+ static int cdn_dp_mailbox_validate_receive(struct cdn_dp_device *dp,
+ 					   u8 module_id, u8 opcode,
+-					   u8 req_size)
++					   u16 req_size)
+ {
+ 	u32 mbox_size, i;
+ 	u8 header[4];
+-- 
+2.20.1
+
 
 
