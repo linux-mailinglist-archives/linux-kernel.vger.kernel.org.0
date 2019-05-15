@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171AD1EF61
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A889A1EE61
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:21:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733194AbfEOLd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:33:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45306 "EHLO mail.kernel.org"
+        id S1731189AbfEOLU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:20:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731338AbfEOLdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:33:23 -0400
+        id S1731173AbfEOLU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:20:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E408420843;
-        Wed, 15 May 2019 11:33:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ED8C2084F;
+        Wed, 15 May 2019 11:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557920002;
-        bh=JJBWEW4rFuZYofcRX2sw185XPT0gitrj1qgq87qq7Sk=;
+        s=default; t=1557919256;
+        bh=P9Zh7+HnD1W3x/1vNoZfd7eNpw8kPS7quFmk9SEtTrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zq38laBKVk/e3XNef9o9Rc2270q9tnuLboqPKlQgdVWUen82yNfBG45pJnsVCssX1
-         myCZ1V4ymfG6CSU4icT2JV4mDc/wPx8wWxmjaVBgOSMgxYF0cFOwrpGzXPNfQhhu50
-         vKQJg8JW05xkRXBCsrDFQ9bxsVCSDozgdyPWdNRQ=
+        b=WrjERdRnihSEJu498dcDs9GY2nM2i8SV2r70yr3WTb4xpLKEkcBJ2NMjcrDYWkkIi
+         w8zk+qd1teD9gqjfDyeX2l0THeMlozAqeKZ/HOQg7Mof5V/I6QpngeJ7LqFSpM3hz5
+         NmLAjVUNaIMApV4tT//MaDkiluu5OUjvu5EMf1Zg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lei YU <mine260309@gmail.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 5.1 05/46] hwmon: (occ) Fix extended status bits
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 109/115] vlan: disable SIOCSHWTSTAMP in container
 Date:   Wed, 15 May 2019 12:56:29 +0200
-Message-Id: <20190515090619.562701155@linuxfoundation.org>
+Message-Id: <20190515090707.009482489@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-References: <20190515090616.670410738@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lei YU <mine260309@gmail.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit b88c5049219a7f322bb1fd65fc30d17472a23563 upstream.
+[ Upstream commit 873017af778439f2f8e3d87f28ddb1fcaf244a76 ]
 
-The occ's extended status is checked and shown as sysfs attributes. But
-the code was incorrectly checking the "status" bits.
-Fix it by checking the "ext_status" bits.
+With NET_ADMIN enabled in container, a normal user could be mapped to
+root and is able to change the real device's rx filter via ioctl on
+vlan, which would affect the other ptp process on host. Fix it by
+disabling SIOCSHWTSTAMP in container.
 
-Cc: stable@vger.kernel.org
-Fixes: df04ced684d4 ("hwmon (occ): Add sysfs attributes for additional OCC data")
-Signed-off-by: Lei YU <mine260309@gmail.com>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: a6111d3c93d0 ("vlan: Pass SIOC[SG]HWTSTAMP ioctls to real device")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hwmon/occ/sysfs.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/8021q/vlan_dev.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/occ/sysfs.c
-+++ b/drivers/hwmon/occ/sysfs.c
-@@ -42,16 +42,16 @@ static ssize_t occ_sysfs_show(struct dev
- 		val = !!(header->status & OCC_STAT_ACTIVE);
- 		break;
- 	case 2:
--		val = !!(header->status & OCC_EXT_STAT_DVFS_OT);
-+		val = !!(header->ext_status & OCC_EXT_STAT_DVFS_OT);
- 		break;
- 	case 3:
--		val = !!(header->status & OCC_EXT_STAT_DVFS_POWER);
-+		val = !!(header->ext_status & OCC_EXT_STAT_DVFS_POWER);
- 		break;
- 	case 4:
--		val = !!(header->status & OCC_EXT_STAT_MEM_THROTTLE);
-+		val = !!(header->ext_status & OCC_EXT_STAT_MEM_THROTTLE);
- 		break;
- 	case 5:
--		val = !!(header->status & OCC_EXT_STAT_QUICK_DROP);
-+		val = !!(header->ext_status & OCC_EXT_STAT_QUICK_DROP);
- 		break;
- 	case 6:
- 		val = header->occ_state;
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -366,10 +366,12 @@ static int vlan_dev_ioctl(struct net_dev
+ 	ifrr.ifr_ifru = ifr->ifr_ifru;
+ 
+ 	switch (cmd) {
++	case SIOCSHWTSTAMP:
++		if (!net_eq(dev_net(dev), &init_net))
++			break;
+ 	case SIOCGMIIPHY:
+ 	case SIOCGMIIREG:
+ 	case SIOCSMIIREG:
+-	case SIOCSHWTSTAMP:
+ 	case SIOCGHWTSTAMP:
+ 		if (netif_device_present(real_dev) && ops->ndo_do_ioctl)
+ 			err = ops->ndo_do_ioctl(real_dev, &ifrr, cmd);
 
 
