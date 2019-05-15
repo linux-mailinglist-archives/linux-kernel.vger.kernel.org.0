@@ -2,159 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B643C1F059
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01B51F093
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732596AbfEOLn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:43:27 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:55727 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732170AbfEOLnY (ORCPT
+        id S1732252AbfEOLpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:45:19 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39751 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732119AbfEOLpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:43:24 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x4FBhEDa019916;
-        Wed, 15 May 2019 20:43:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x4FBhEDa019916
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1557920595;
-        bh=+/we/8cOii8b99PZhVYm0AcO3nqZi/sKx4erv7OLIUE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tx5hgVYtzu12J6V2/Rn+WH6NWqubXfxd43BXwabA/gnxqGOvkQ+bsagPcytr4hoZq
-         Tu1sMHuxX8abGfAwnPfxGso5be69sJb4Cy0MIgIETskeC5emqoDQ3+AGkVkq7bCW2W
-         YCO/x8bwl77Hmg/vGH1bilfZ0p24kjqhiFGTde21w/IZm0/nXOEcVVdsG+Bf9r/TVv
-         jw+tjE4dlYX7+C2qhmEjWvCbx0PVBnIHEErdidHacE6kgE4rmra1cEL3G/+anwKQaM
-         r1JaR4J/0WBNIBKHS82iPAblY7cVhQLP1/MI2GgsDy7eq/j30YvOcoE0s+VMQv8ff6
-         O0nINqS+RcyXQ==
-X-Nifty-SrcIP: [209.85.160.175]
-Received: by mail-qt1-f175.google.com with SMTP id i26so940210qtr.10;
-        Wed, 15 May 2019 04:43:15 -0700 (PDT)
-X-Gm-Message-State: APjAAAWf1CHLyu/JbvYAC3tWazBU22ZZPN+nIQuYwBZf1FtckmP4MP6w
-        L6j12Bb+Bzd6mWrGOjmqdYpYzhOMDJRQUgXMxso=
-X-Google-Smtp-Source: APXvYqz8UMUEkHKjEaRHNMHyCfn133IiH2H+rDbuxuhm9tMwfpfNPVI6ERliCWZVO3MkCJsAQpIuSxV/RFmmLdZueU4=
-X-Received: by 2002:a0c:c686:: with SMTP id d6mr31378804qvj.179.1557920593889;
- Wed, 15 May 2019 04:43:13 -0700 (PDT)
+        Wed, 15 May 2019 07:45:16 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f1so1747979lfl.6;
+        Wed, 15 May 2019 04:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mUy1je0IIPUFedYE7Ug9F2Gjdt7jwZe0h7nDZjYmm7Y=;
+        b=HhxMaYDABJSSM6XGK0JrZcAExbjVZpiZSBdB1aDNBn7mf9mePa71fOhDs1kTouAhes
+         GQCoQ5NBEYKlqzmFstALTi4I5T0OqLnfBiZy4ZigcQRCsL33aXE9SE8+KlQDDmHq/GHY
+         sMvzCIWUH3Zy56Xq/Qml98I0ugBvbgeRS6dxgPm/2DfkVdyeWwgK/7sVtT8VJxTKS5Cr
+         9jPQeGegROpenRV+zWqCd5wo2MC+fotHkp0/fULj/c/tGhJCxT84TrohnjVXfGeknUQg
+         XCeFF7bQ0BM4LJ5eKjOCA+WlDQ/EJMsG7IbSaYd+ReoSuKcDKpnXDWtDQ1VNQ8XyByIx
+         6EfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mUy1je0IIPUFedYE7Ug9F2Gjdt7jwZe0h7nDZjYmm7Y=;
+        b=X6PHCI+k4/I7vmYFIkbfUfZ2kNdx3H1HxWBxJ1LxpJ0TfvJO8T5JHI0TNUz3KBkZay
+         mGk1oVMzXi1gMgGVJAMKUkf+P0x0kw5BT9juyHHBP7PiaxOmqihV4Kwg2ZDqr55Vo9H7
+         Suynz4eOtRu3csaXPSiVP8vyaP3jmgQHo/yK23zCde6pUwWUn6r+ERv4XOMd6S7jntl/
+         K9a42Zh/e1XMw0JKQxhhqq2cYBrbNsvM1Y6jhleOFf8Y00cPX7p3qOQOCSfkHdR0lOiP
+         ibtQBwhhI2gEDtXpbgqkEg74fkrLy2GlpgTSvWwzrTPpOOU7uEXJZnCRMa77fUFvPITQ
+         L8Xw==
+X-Gm-Message-State: APjAAAUkjYPs8YRoD4dw4qmnvO/TV/EMtCFps78v9DAObC8+O0g7OWw9
+        qD+CWTDtSAHpwun+hJ7Dehg1OXxz
+X-Google-Smtp-Source: APXvYqycCnOMw8rry0esZ+lXyPteNia2a59tl/Vtxt0BkGqym6pa0NfbDPGAAr6Y/Tm30kAbIC7rcw==
+X-Received: by 2002:a19:4acf:: with SMTP id x198mr19797849lfa.7.1557920714019;
+        Wed, 15 May 2019 04:45:14 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-35-107.pppoe.spdop.ru. [94.29.35.107])
+        by smtp.googlemail.com with ESMTPSA id y186sm343648lfa.14.2019.05.15.04.45.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 May 2019 04:45:13 -0700 (PDT)
+Subject: Re: [RFC PATCH v1 6/6] soc/tegra: regulators: Add regulators coupler
+ for Tegra30
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190414175939.12368-1-digetx@gmail.com>
+ <20190414175939.12368-7-digetx@gmail.com>
+ <20190508075848.GX14916@sirena.org.uk>
+ <af6de446-ab45-1745-30e5-426c6b34421f@gmail.com>
+ <20190512090446.GN21483@sirena.org.uk>
+ <3988cfb6-55fe-48c4-5365-ac79871f7fd2@gmail.com>
+ <20190513174000.GH5168@sirena.org.uk>
+ <9e13bbd1-ff28-1570-b1a6-0cc6337b8f6c@gmail.com>
+ <20190515090557.GB5613@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3be50306-d3e0-f931-9d6b-0ae0ad5c78ce@gmail.com>
+Date:   Wed, 15 May 2019 14:44:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
- <CAK8P3a1y7hxME0me_Zu-F8a8jU6n=T+c32mv83utOtsL-+gc0A@mail.gmail.com>
- <20190515081422.GA22750@kroah.com> <CAK7LNASpJFAgvuak=mz5kkM3oGh9-M8y_84KZv-xcUkQ0h=d_A@mail.gmail.com>
- <20190515113113.GC11749@kroah.com>
-In-Reply-To: <20190515113113.GC11749@kroah.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 15 May 2019 20:42:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARLk7avr71vWEzHdRVMk5bCrFDrFUapD-ab_75-Li_8aw@mail.gmail.com>
-Message-ID: <CAK7LNARLk7avr71vWEzHdRVMk5bCrFDrFUapD-ab_75-Li_8aw@mail.gmail.com>
-Subject: Re: [RFC PATCH] kbuild: check uniqueness of basename of modules
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190515090557.GB5613@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 8:34 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Wed, May 15, 2019 at 05:57:50PM +0900, Masahiro Yamada wrote:
-> > On Wed, May 15, 2019 at 5:14 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Wed, May 15, 2019 at 10:08:12AM +0200, Arnd Bergmann wrote:
-> > > > On Wed, May 15, 2019 at 9:39 AM Masahiro Yamada
-> > > > <yamada.masahiro@socionext.com> wrote:
-> > > > >
-> > > > > In the recent build test of linux-next, Stephen saw a build error
-> > > > > caused by a broken .tmp_versions/*.mod file:
-> > > > >
-> > > > >   https://lkml.org/lkml/2019/5/13/991
-> > > > >
-> > > > > drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
-> > > > > basename, and there is a race in generating .tmp_versions/asix.mod
-> > > > >
-> > > > > Kbuild has not checked this before, and it occasionally shows up with
-> > > > > obscure error message when this kind of race occurs.
-> > > > >
-> > > > > It is not trivial to catch this potential issue by eyes.
-> > > > >
-> > > > > Hence, this script.
-> > > > >
-> > > > > I compile-tested allmodconfig for the latest kernel as of writing,
-> > > > > it detected the following:
-> > > > >
-> > > > > warning: same basename '88pm800.ko' if the following are built as modules:
-> > > > >   drivers/regulator/88pm800.ko
-> > > > >   drivers/mfd/88pm800.ko
-> > > > > warning: same basename 'adv7511.ko' if the following are built as modules:
-> > > > >   drivers/gpu/drm/bridge/adv7511/adv7511.ko
-> > > > >   drivers/media/i2c/adv7511.ko
-> > > > > warning: same basename 'asix.ko' if the following are built as modules:
-> > > > >   drivers/net/phy/asix.ko
-> > > > >   drivers/net/usb/asix.ko
-> > > > > warning: same basename 'coda.ko' if the following are built as modules:
-> > > > >   fs/coda/coda.ko
-> > > > >   drivers/media/platform/coda/coda.ko
-> > > > > warning: same basename 'realtek.ko' if the following are built as modules:
-> > > > >   drivers/net/phy/realtek.ko
-> > > > >   drivers/net/dsa/realtek.ko
-> > > > >
-> > > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > >
-> > > > That looks great!
-> > > >
-> > > > > ---
-> > > > >
-> > > > >  [Alternative fix ? ]
-> > > > >
-> > > > > I do not know about the user experience of modprobe etc.
-> > > > > when two different modules have the same name.
-> > > > > It does not matter if this is correctly handled by modules.order?
-> > > > >
-> > > > > If this is just a problem of the build system, it is pretty easy to fix.
-> > > > > For example, if we prepend the directory path, parallel build will
-> > > > > never write to the same file simultanously.
-> > > > >
-> > > > >   asix.mod -> drivers/net/phy/asix.mod
-> > > > >   asix.mod -> drivers/net/usb/asix.mod
-> > > >
-> > > > non-unique module names cause all kinds of problems, and
-> > > > modprobe can certainly not handle them correctly, and there
-> > > > are issues with symbols exported from a module when another
-> > > > one has the same name.
-> > >
-> > > /sys/modules/ will fall over when this happens as well.  I thought we
-> > > had the "rule" that module names had to be unique, I guess it was only a
-> > > matter of time before they started colliding :(
-> > >
-> > > So warning is good, but forbidding this is better, as things will break.
-> > >
-> > > Or we need to fix up the places where things will break.
-> >
-> >
-> > If we intentionally break the build,
-> > we need to send fix-up patches to subsystems first.
->
-> True, but those builds are already broken if anyone tries to use them :)
->
-> A warning for now would be nice, that way we can find these and know to
-> fix them up over time.
+15.05.2019 12:05, Mark Brown пишет:
+> On Tue, May 14, 2019 at 09:30:05PM +0300, Dmitry Osipenko wrote:
+>> 13.05.2019 20:40, Mark Brown пишет:
+> 
+>>> The thing with OPPs is that they specify a whole table of values that
+>>> work together including regulator settings, the result being that you
+>>> have many fewer options but don't need to think about constraints.
+> 
+>> I'm afraid this is just a way of abusing the OPP's. I actually already
+> 
+> There's nothing wrong with handling regulators in an OPP, that's a
+> totally normal thing.
+> 
 
-
-Yes, I think it is a fair point.
-
-Start this with warning, then people will soon notice the problem.
-
-Turning it into error is easy once we fix all instances.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Only if those regulators are directly related to the hardware unit,
+which is not the case here. Regulators coupling is the right abstraction
+that glues things together, there is absolutely no need in trying to
+make workarounds using OPP.
