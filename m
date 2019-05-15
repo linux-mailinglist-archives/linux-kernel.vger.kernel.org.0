@@ -2,117 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153A11F8A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05ED61F86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 18:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfEOQ2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 12:28:30 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:40380 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfEOQ2Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 12:28:25 -0400
-Received: by mail-ua1-f65.google.com with SMTP id d4so82500uaj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XibrizVK+x4gwJRznLKLxYNtzx6v60+igfS3HoIEayQ=;
-        b=czft9FTmE5tMVE8dOINVb8LBbsa35P48tLVdr892dOMLRa4VB1coebG0BKnTxX5Cka
-         6m1J4wFkHSi7VzolqLIgckMP6rlJbSJD+yfgb6Cih4Pe7Mqr04yeQhzIn8xXjqs0SOoI
-         ZmDyr6hSfcx3TYTP7yv3gAaimFJ6Y3azQMq+g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XibrizVK+x4gwJRznLKLxYNtzx6v60+igfS3HoIEayQ=;
-        b=Uv/Kp31v7SLhP4NQtmOGiCR9t84p5FOr8p1yLxfa+k6JdB80DHmdf6stobNaUcVve9
-         DeK80UhO4XOsKmpDCqSFLBT/hByj79GNugxOwPJ8uzh+87BrLQe3irHxzXDd6yVluWKc
-         rVVCXeDsA9LhcLcMwvOZP1OyJSrMIG+zVNpZ6FKs+jWV4r099EV3ZSjR0hrZRbE7gu0Y
-         ozYPVMFrT8qCLX/3FburqbR0tKD4H6qeqxtks9WqVAifxivmFkxEMvalvIhFhCtEC/Xd
-         +SJxcTkSda3jyv527+fzhKaa9q9MtyangK2TB8/RLLGH5o5t14Kmxh09qnA2e9uzxGN8
-         LcpQ==
-X-Gm-Message-State: APjAAAVhmK91lIl6eIiVpbiOP0Tc8uhteslOyXKPsg2dWlah7iklSFCx
-        UWsZEqM/KE6ZGjRXznfE9io/NxjsfBk=
-X-Google-Smtp-Source: APXvYqxY5xQ7WFC2q/iEXL9ynFOq2gUPaKeyqK648fu1UQKui393tdHjBGEYpqB7yB7GWyqNHQQWcg==
-X-Received: by 2002:ab0:7019:: with SMTP id k25mr4230500ual.49.1557937704301;
-        Wed, 15 May 2019 09:28:24 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id c39sm8864393uac.3.2019.05.15.09.28.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 09:28:24 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id o5so342983vsq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 09:28:24 -0700 (PDT)
-X-Received: by 2002:a67:f60b:: with SMTP id k11mr13708286vso.111.1557937389222;
- Wed, 15 May 2019 09:23:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190502223808.185180-1-dianders@chromium.org>
-In-Reply-To: <20190502223808.185180-1-dianders@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 15 May 2019 09:22:56 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=W2BvvEx+sYji5pGAEwagD6uA20nCMKwiU=kD6FqkSLiw@mail.gmail.com>
-Message-ID: <CAD=FV=W2BvvEx+sYji5pGAEwagD6uA20nCMKwiU=kD6FqkSLiw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm: bridge: dw-hdmi: Add hooks for suspend/resume
-To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Zheng Yang <zhengyang@rock-chips.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        id S1726945AbfEOQWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 12:22:22 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34513 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbfEOQWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 12:22:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 09:22:19 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by fmsmga007.fm.intel.com with ESMTP; 15 May 2019 09:22:19 -0700
+Date:   Wed, 15 May 2019 09:25:13 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Auger Eric <eric.auger@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 02/16] iommu: Introduce cache_invalidate API
+Message-ID: <20190515092513.3e4a2f77@jacob-builder>
+In-Reply-To: <d555d96d-a3ec-53e2-2c49-b783bb2d6806@arm.com>
+References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1556922737-76313-3-git-send-email-jacob.jun.pan@linux.intel.com>
+        <d32d3d19-11c9-4af9-880b-bb8ebefd4f7f@redhat.com>
+        <44d5ba37-a9e9-cc7a-2a3a-d32b840afa29@arm.com>
+        <7807afe9-efab-9f48-4ca0-2332a7a54950@redhat.com>
+        <1a5a5fad-ed21-5c79-9a9e-ff21fadfb95f@arm.com>
+        <1edd45e6-4da3-e393-36b2-9e63cd5f7607@redhat.com>
+        <4094baf1-6cf5-a33b-4717-08ced0673c50@arm.com>
+        <5d2c0279-7fa9-3d11-9999-583f9ed329ba@redhat.com>
+        <20190514105509.7865ebc0@jacob-builder>
+        <d555d96d-a3ec-53e2-2c49-b783bb2d6806@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Wed, 15 May 2019 16:52:46 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-From: Douglas Anderson <dianders@chromium.org>
-Date: Thu, May 2, 2019 at 3:38 PM
-To: Heiko Stuebner, Sandy Huang, Andrzej Hajda, Laurent Pinchart
-Cc: <linux-rockchip@lists.infradead.org>, Neil Armstrong,
-<mka@chromium.org>, Sean Paul, Douglas Anderson, Zheng Yang, Sam
-Ravnborg, <dri-devel@lists.freedesktop.org>,
-<linux-kernel@vger.kernel.org>, Ville Syrj=C3=A4l=C3=A4, David Airlie, Jern=
-ej
-Skrabec, Daniel Vetter
+> On 14/05/2019 18:55, Jacob Pan wrote:
+> > Yes, I agree to replace the standalone __64 pasid with this struct.
+> > Looks more inline with address selective info., Just to double
+> > confirm the new struct.
+> > 
+> > Jean, will you put this in your sva/api repo?  
+> 
+> Yes, I pushed it along with some documentation fixes (mainly getting
+> rid of scripts/kernel-doc warnings and outputting valid rst)
+> 
+Just pulled, I am rebasing on top of this branch. If you could also
+include our api for bind guest pasid, then we have a complete set of
+common APIs in one place.
+https://lkml.org/lkml/2019/5/3/775
 
-> On Rockchip rk3288-based Chromebooks when you do a suspend/resume
-> cycle:
->
-> 1. You lose the ability to detect an HDMI device being plugged in.
->
-> 2. If you're using the i2c bus built in to dw_hdmi then it stops
-> working.
->
-> Let's add a hook to the core dw-hdmi driver so that we can call it in
-> dw_hdmi-rockchip in the next commit.
->
-> NOTE: the exact set of steps I've done here in resume come from
-> looking at the normal dw_hdmi init sequence in upstream Linux plus the
-> sequence that we did in downstream Chrome OS 3.14.  Testing show that
-> it seems to work, but if an extra step is needed or something here is
-> not needed we could improve it.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 21 +++++++++++++++++++++
->  include/drm/bridge/dw_hdmi.h              |  3 +++
->  2 files changed, 24 insertions(+)
+I just need to add a small tweak for supporting non-identity guest-host
+PASID mapping for the next version.
 
-Did anyone have any thoughts on this patch series?  Thanks!  :-)
+> Thanks,
+> Jean
 
--Doug
+[Jacob Pan]
