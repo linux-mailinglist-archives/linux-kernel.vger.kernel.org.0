@@ -2,201 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B2C1EE29
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B6E1F1CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfEOLRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37577 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730705AbfEOLRt (ORCPT
+        id S1731400AbfEOLzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:55:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54520 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730815AbfEOLSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g3so1207409pfi.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 04:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wM7wYEqMSWbWbT0HH2TldP/PCrb03BY7RX3o4249V6E=;
-        b=srvB1Mtqkpo69amaKaotUhuA77Zht+tusENlx9c4LEQ39r9wo+XS+YJ5m8b1kGneQt
-         Rn1AM+dJiXJGhN3oFC6FeUAEjLMUaV4yC3MtL8c4gigRCdq21zIo9i8Jnqzd1adeBVxS
-         eQ6LyqsD2SIQ5oDE33h3FIcW/P6VDyCCpmp4ZFgaCIkk6nLaTvCVNo64GzO5euHbwlvj
-         4KQdeZx40Qq0aqDlfHfGcRviwY0n01OHQjXmd5EouoxhikMIUGhq5tm+fQn3kksFc/ST
-         oHIqoUZR8l+cG4Rp6Oyeogk1pg3ScuCf8duOpCR4/zoU7lkApwgvqt9dv1nBQGNjWmVH
-         YG1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wM7wYEqMSWbWbT0HH2TldP/PCrb03BY7RX3o4249V6E=;
-        b=IU1XJSVfWcpRGcyJimyMC2LBUZ7SFoGyF4NY4sDwhWbVBxfGAPB8XrmCjpBKRyWfH0
-         jAOZW+c5gdaQtsN+fnn/yI+JHnKBrQ07kzt+cgeoPac1McFIAWn6omSIHfGaauIhyCvz
-         ceEi0FwJ7usPY4/VUJWdrSCAMmWsJ0adH8Z/yRbFsTDn91QzBKJwLK2uyPT01iISjYv7
-         cVNHHoen61t3d4qXZJhMpYCyMBlH0cPA/JdoD2q6zvOI3Y1y6PgT+paMaceoFfulIjGD
-         1V2t1Z2s6x4WYndmtis13wcKDZFcqblanspLkVMIQ7wXhtpUzFZ+AuogXmus65dii6rq
-         GuDQ==
-X-Gm-Message-State: APjAAAWqFmasxWWZyi3AGwLAz4qxnNJg8dUu+4xefyJuFlRm1BLJB+pK
-        BUP6zyugXAAG2HvVZ5Vlng/LTQ==
-X-Google-Smtp-Source: APXvYqwRyC8jcmkvLe4WrAj4GFRdRTkcvHeFhusZ5mTCeDTCuZeX1k77Xj2fYUSzxA6m4smVDkxt4A==
-X-Received: by 2002:a63:5511:: with SMTP id j17mr43763811pgb.449.1557919068190;
-        Wed, 15 May 2019 04:17:48 -0700 (PDT)
-Received: from localhost ([122.172.118.99])
-        by smtp.gmail.com with ESMTPSA id 127sm3111996pfc.159.2019.05.15.04.17.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 04:17:47 -0700 (PDT)
-Date:   Wed, 15 May 2019 16:47:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@linaro.org, chris.redpath@arm.com,
-        Dietmar.Eggemann@arm.com, linux-kernel@vger.kernel.org,
-        liu.song.a23@gmail.com, steven.sistare@oracle.com,
-        subhra.mazumdar@oracle.com
-Subject: Re: [RFC V2 0/2] sched/fair: Fallback to sched-idle CPU for better
- performance
-Message-ID: <20190515111745.dj6jhf4lypppl3tf@vireshk-i7>
-References: <cover.1556182964.git.viresh.kumar@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="idirfw46cfjal5et"
-Content-Disposition: inline
-In-Reply-To: <cover.1556182964.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+        Wed, 15 May 2019 07:18:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=fD191BWt3Mk159coCvNwMJ2L4tNuIv/BNCkxSDNHmnI=; b=hKRliB2yjCdw
+        EXrpSoWYRKKGqKf77Gwj8lTMTvb63QZwgEzmT2LqaoBVridkTB4sSuA/Us3W6Fkpq6ceN9DHin8Oh
+        OnvR3oleoCfNAbFXnV6QgQVrr2BVEqXGhFGireqB3zWQbWIEffAZvTCdUxdiGKT4wNmVfmRgW2ogj
+        dPKos=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hQrvX-0003c7-H5; Wed, 15 May 2019 11:18:27 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id E25FB1126D6C; Wed, 15 May 2019 12:18:23 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     broonie@kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        thierry.reding@gmail.com
+Subject: Applied "spi: tegra114: add support for HW CS timing" to the spi tree
+In-Reply-To: <1557810235-16401-4-git-send-email-skomatineni@nvidia.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190515111823.E25FB1126D6C@debutante.sirena.org.uk>
+Date:   Wed, 15 May 2019 12:18:23 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---idirfw46cfjal5et
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   spi: tegra114: add support for HW CS timing
 
-On 25-04-19, 15:07, Viresh Kumar wrote:
-> Hi,
-> 
-> Here is another attempt to get some benefit out of the sched-idle
-> policy. The previous version [1] focused on getting better power numbers
-> and this version tries to get better performance or lower response time
-> for the tasks.
-> 
-> The first patch is unchanged from v1 and accumulates
-> information about sched-idle tasks per CPU.
-> 
-> The second patch changes the way the target CPU is selected in the fast
-> path. Currently, we target for an idle CPU in select_idle_sibling() to
-> run the next task, but in case we don't find idle CPUs it is better to
-> pick a CPU which will run the task the soonest, for performance reason.
-> A CPU which isn't idle but has only SCHED_IDLE activity queued on it
-> should be a good target based on this criteria as any normal fair task
-> will most likely preempt the currently running SCHED_IDLE task
-> immediately. In fact, choosing a SCHED_IDLE CPU shall give better
-> results as it should be able to run the task sooner than an idle CPU
-> (which requires to be woken up from an idle state).
-> 
-> Basic testing is done with the help of rt-app currently to make sure the
-> task is getting placed correctly.
+has been applied to the spi tree at
 
-More results here:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
 
-- Tested on Octacore Hikey platform (all CPUs change frequency
-  together).
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-- rt-app json attached here. It creates few tasks and we monitor the
-  scheduling latency for them by looking at "wu_lat" field (usec).
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-- The histograms are created using
-  https://github.com/adkein/textogram: textogram -a 0 -z 1000 -n 10
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-- the stats are accumulated using: https://github.com/nferraz/st
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-- NOTE: The % values shown don't add up, just look at total numbers
-  instead
+Thanks,
+Mark
 
+From 9b76ef39b7fbc2ddb0869725f9745a402d93cce5 Mon Sep 17 00:00:00 2001
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Date: Mon, 13 May 2019 22:03:54 -0700
+Subject: [PATCH] spi: tegra114: add support for HW CS timing
 
-Test 1: Create 8 CFS tasks (no SCHED_IDLE tasks) without this
-patchset:
+This patch implements set_cs_timing SPI controller method to allow
+SPI client driver to configure device specific SPI CS timings.
 
-           0 - 100  : ##################################################   72% (3688)
-         100 - 200  : ################                                     24% (1253)
-         200 - 300  : ##                                                    2% (149)
-         300 - 400  :                                                       0% (22)
-         400 - 500  :                                                       0% (1)
-         500 - 600  :                                                       0% (3)
-         600 - 700  :                                                       0% (1)
-         700 - 800  :                                                       0% (1)
-         800 - 900  :
-         900 - 1000 :                                                       0% (1)
-              >1000 : 0% (17)
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-tegra114.c | 48 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-        N       min     max     sum     mean    stddev
-        5136    0       2452    535985  104.358 104.585
-
-
-Test 2: Create 8 CFS tasks and 5 SCHED_IDLE tasks:
-
-        A. Without sched-idle patchset:
-
-           0 - 100  : ##################################################   88% (3102)
-         100 - 200  : ##                                                    4% (148)
-         200 - 300  :                                                       1% (41)
-         300 - 400  :                                                       0% (27)
-         400 - 500  :                                                       0% (33)
-         500 - 600  :                                                       0% (32)
-         600 - 700  :                                                       1% (36)
-         700 - 800  :                                                       0% (27)
-         800 - 900  :                                                       0% (19)
-         900 - 1000 :                                                       0% (26)
-              >1000 : 34% (1218)
-
-        N       min     max     sum             mean    stddev
-        4710    0       67664   5.25956e+06     1116.68 2315.09
-
-
-        B. With sched-idle patchset:
-
-           0 - 100  : ##################################################   99% (5042)
-         100 - 200  :                                                       0% (8)
-         200 - 300  :
-         300 - 400  :
-         400 - 500  :                                                       0% (2)
-         500 - 600  :                                                       0% (1)
-         600 - 700  :
-         700 - 800  :                                                       0% (1)
-         800 - 900  :                                                       0% (1)
-         900 - 1000 :
-              >1000 : 0% (40)
-
-        N       min     max     sum     mean    stddev
-        5095    0       7773    523170  102.683 475.482
-
-
-The mean latency dropped to 10% and the stddev to around 25% with this
-patchset.
-
-I have tried more combinations of CFS and SCHED_IDLE tasks and see
-expected improvement in scheduling latency for all of them.
-
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 0cb0932d32fd..e59ff7c1cee6 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -95,8 +95,10 @@
+ 		(reg = (((val) & 0x1) << ((cs) * 8 + 5)) |	\
+ 			((reg) & ~(1 << ((cs) * 8 + 5))))
+ #define SPI_SET_CYCLES_BETWEEN_PACKETS(reg, cs, val)		\
+-		(reg = (((val) & 0xF) << ((cs) * 8)) |		\
+-			((reg) & ~(0xF << ((cs) * 8))))
++		(reg = (((val) & 0x1F) << ((cs) * 8)) |		\
++			((reg) & ~(0x1F << ((cs) * 8))))
++#define MAX_SETUP_HOLD_CYCLES			16
++#define MAX_INACTIVE_CYCLES			32
+ 
+ #define SPI_TRANS_STATUS			0x010
+ #define SPI_BLK_CNT(val)			(((val) >> 0) & 0xFFFF)
+@@ -206,6 +208,8 @@ struct tegra_spi_data {
+ 	u32					command1_reg;
+ 	u32					dma_control_reg;
+ 	u32					def_command1_reg;
++	u32					spi_cs_timing1;
++	u32					spi_cs_timing2;
+ 
+ 	struct completion			xfer_completion;
+ 	struct spi_transfer			*curr_xfer;
+@@ -723,6 +727,43 @@ static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
+ 	dma_release_channel(dma_chan);
+ }
+ 
++static void tegra_spi_set_hw_cs_timing(struct spi_device *spi, u8 setup_dly,
++				       u8 hold_dly, u8 inactive_dly)
++{
++	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
++	u32 setup_hold;
++	u32 spi_cs_timing;
++	u32 inactive_cycles;
++	u8 cs_state;
++
++	setup_dly = min_t(u8, setup_dly, MAX_SETUP_HOLD_CYCLES);
++	hold_dly = min_t(u8, hold_dly, MAX_SETUP_HOLD_CYCLES);
++	if (setup_dly && hold_dly) {
++		setup_hold = SPI_SETUP_HOLD(setup_dly - 1, hold_dly - 1);
++		spi_cs_timing = SPI_CS_SETUP_HOLD(tspi->spi_cs_timing1,
++						  spi->chip_select,
++						  setup_hold);
++		if (tspi->spi_cs_timing1 != spi_cs_timing) {
++			tspi->spi_cs_timing1 = spi_cs_timing;
++			tegra_spi_writel(tspi, spi_cs_timing, SPI_CS_TIMING1);
++		}
++	}
++
++	inactive_cycles = min_t(u8, inactive_dly, MAX_INACTIVE_CYCLES);
++	if (inactive_cycles)
++		inactive_cycles--;
++	cs_state = inactive_cycles ? 0 : 1;
++	spi_cs_timing = tspi->spi_cs_timing2;
++	SPI_SET_CS_ACTIVE_BETWEEN_PACKETS(spi_cs_timing, spi->chip_select,
++					  cs_state);
++	SPI_SET_CYCLES_BETWEEN_PACKETS(spi_cs_timing, spi->chip_select,
++				       inactive_cycles);
++	if (tspi->spi_cs_timing2 != spi_cs_timing) {
++		tspi->spi_cs_timing2 = spi_cs_timing;
++		tegra_spi_writel(tspi, spi_cs_timing, SPI_CS_TIMING2);
++	}
++}
++
+ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+ 					struct spi_transfer *t,
+ 					bool is_first_of_msg,
+@@ -1232,6 +1273,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
+ 	master->setup = tegra_spi_setup;
+ 	master->transfer_one_message = tegra_spi_transfer_one_message;
++	master->set_cs_timing = tegra_spi_set_hw_cs_timing;
+ 	master->num_chipselect = MAX_CHIP_SELECT;
+ 	master->auto_runtime_pm = true;
+ 	bus_num = of_alias_get_id(pdev->dev.of_node, "spi");
+@@ -1307,6 +1349,8 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	reset_control_deassert(tspi->rst);
+ 	tspi->def_command1_reg  = SPI_M_S;
+ 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
++	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
++	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
+ 	pm_runtime_put(&pdev->dev);
+ 	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
+ 				   tegra_spi_isr_thread, IRQF_ONESHOT,
 -- 
-viresh
+2.20.1
 
---idirfw46cfjal5et
-Content-Type: application/json
-Content-Disposition: attachment; filename="sched-idle.json"
-Content-Transfer-Encoding: quoted-printable
-
-{=0A        "tasks" : {=0A                "cfs_thread" : {=0A              =
-          "instance" : 8,=0A                        "run" :   5333,=0A     =
-                   "timer" : { "ref" : "unique", "period" : 7777 },=0A     =
-                   "policy" : "SCHED_OTHER"=0A                },=0A        =
-        "idle_thread" : {=0A                        "instance" : 5,=0A     =
-                   "run" :   3000,=0A                        "policy" : "SC=
-HED_IDLE"=0A                }=0A        },=0A        "global" : {=0A       =
-         "duration" : 5,=0A                "calibration" : "CPU0",=0A      =
-          "default_policy" : "SCHED_OTHER",=0A                "pi_enabled" =
-: false,=0A                "lock_pages" : false,=0A                "logdir"=
- : "./",=0A                "logsize" : 4,=0A                "log_basename" =
-: "rt-app",=0A                "gnuplot" : false=0A        }=0A}=0A=0A
---idirfw46cfjal5et--
