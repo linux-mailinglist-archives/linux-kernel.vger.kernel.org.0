@@ -2,127 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 786931E7D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19B0A1E7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 07:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfEOFRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 01:17:08 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33988 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfEOFRI (ORCPT
+        id S1726146AbfEOFXm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 May 2019 01:23:42 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:57151 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfEOFXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 01:17:08 -0400
-Received: by mail-wm1-f66.google.com with SMTP id j187so3783688wma.1;
-        Tue, 14 May 2019 22:17:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tQy8LqZeiCTFZqYP9rZB9L8U43PniXX44buCC9T7XRQ=;
-        b=cXxy7EHD0VHyl+J6XVpGG3PC96z0a+gTj5JU481JIMYS+1Nb8ClavRkvrwWnHat3W0
-         YyyRtrlVLn9+XiwN4nNeKJCqU0+CgiMYuoLKSJh7vaOsrPRR8aanxkLcSrnpcS2Tv8TB
-         bvQZ3ABDnRzaHLlxQ8im5RprDZcP80YX4UQQCRGb/1YMCojzgJFW+4adDYabm6x8Fu/h
-         0ouFAQhTH+ZaGJqZiqgnhZNE7tWMKPgMiJ7JSBMnhmi7vdBIRklljdiXm+uCy6U59fhS
-         OSEjYlKiXMomHr+hefaYRUN97fmQc2kwD4lXxytC8hzeD81aiIc1HXfVge4bg40/NU1Z
-         tAcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=tQy8LqZeiCTFZqYP9rZB9L8U43PniXX44buCC9T7XRQ=;
-        b=BvmW5kJcnrI7urirYh9KjpCMT+/1zNPPgTu9O/ymGOe/vRX8cz+kPFdQMm/QtRqNwo
-         Ic++GliKvYvIowSCcd8ibNwa0ix7T1NgDviRksJOzsjU415f4D/5/bdy16ihgb75CSMC
-         sQoo3bToq+z13QFxaK/dFmaxc9bv87oop9sPYVObJ7uDNNZjYEkUmBq5q7ZVqhHeLX5l
-         k1eMqbZHzvfXFwEid08rXlDKc/AVDgWFpjHBwBBdxFB8h3ObGF0Lre6N5Y/gxRqhwM5C
-         mArnHryom2ovL88ffuec2sKmgfgkHUUo8Kcupy+YkuosGsXe7YDhjVRUeTM0KezlS6K3
-         dpkA==
-X-Gm-Message-State: APjAAAXE7W0ant4sFTa84ECl3DI/bdnANCjOgjdZTkugYwAFwVYhmCiL
-        hIVJtLHULW8LltNecmdHtogW4xryAc4=
-X-Google-Smtp-Source: APXvYqy8EvVaju/xMm4Jje13j0EJOW0Q7G26RrYHu0wQEjHS2QudeQ+a4MJSnsZdrWYfC2r1m1O1FQ==
-X-Received: by 2002:a1c:2104:: with SMTP id h4mr21410644wmh.146.1557897425573;
-        Tue, 14 May 2019 22:17:05 -0700 (PDT)
-Received: from [192.168.1.43] (193.red-88-21-103.staticip.rima-tde.net. [88.21.103.193])
-        by smtp.gmail.com with ESMTPSA id k67sm1078521wmb.34.2019.05.14.22.17.04
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 22:17:04 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] firmware: bcm47xx_nvram: Correct size_t printf
- format
-To:     Florian Fainelli <f.fainelli@gmail.com>, linux-mips@linux-mips.org
-Cc:     joe@perches.com,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190514173816.17030-1-f.fainelli@gmail.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
-Openpgp: url=http://pgp.mit.edu/pks/lookup?op=get&search=0xE3E32C2CDEADC0DE
-Message-ID: <2269a105-5338-14cf-025f-5764cedcd9b8@amsat.org>
-Date:   Wed, 15 May 2019 07:17:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 15 May 2019 01:23:41 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x4F5MFXo002708
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 15 May 2019 14:22:15 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x4F5MERe023708;
+        Wed, 15 May 2019 14:22:15 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x4F5KPwI027934;
+        Wed, 15 May 2019 14:22:14 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.136] [10.38.151.136]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-5066124; Wed, 15 May 2019 14:17:20 +0900
+Received: from BPXM12GP.gisp.nec.co.jp ([10.38.151.204]) by
+ BPXC08GP.gisp.nec.co.jp ([10.38.151.136]) with mapi id 14.03.0319.002; Wed,
+ 15 May 2019 14:17:19 +0900
+From:   Junichi Nomura <j-nomura@ce.jp.nec.com>
+To:     Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "kasong@redhat.com" <kasong@redhat.com>
+CC:     "dyoung@redhat.com" <dyoung@redhat.com>,
+        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
+ and ACPI tables
+Thread-Topic: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI
+ systab and ACPI tables
+Thread-Index: AQHVCt13YD4lckvUHUCIqj5Wl9aEBQ==
+Date:   Wed, 15 May 2019 05:17:19 +0000
+Message-ID: <20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp>
+References: <20190424092944.30481-1-bhe@redhat.com>
+ <20190424092944.30481-2-bhe@redhat.com>
+ <20190429002318.GA25400@MiWiFi-R3L-srv> <20190429135536.GC2324@zn.tnic>
+ <20190513014248.GA16774@MiWiFi-R3L-srv> <20190513070725.GA20105@zn.tnic>
+ <20190513073254.GB16774@MiWiFi-R3L-srv> <20190513075006.GB20105@zn.tnic>
+ <20190513080210.GC16774@MiWiFi-R3L-srv>
+In-Reply-To: <20190513080210.GC16774@MiWiFi-R3L-srv>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.85]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <CA26469105FD8045B8909AFA561E0308@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20190514173816.17030-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+Hi Kairui,
 
-On 5/14/19 7:38 PM, Florian Fainelli wrote:
-> When building on a 64-bit host, we will get warnings like those:
+On 5/13/19 5:02 PM, Baoquan He wrote:
+> On 05/13/19 at 09:50am, Borislav Petkov wrote:
+>> On Mon, May 13, 2019 at 03:32:54PM +0800, Baoquan He wrote:
+>> So we're going to try it again this cycle and if there's no fallout, it
+>> will go upstream. If not, it will have to be fixed. The usual thing.
+>>
+>> And I don't care if Kairui's patch fixes this one problem - judging by
+>> the fragility of this whole thing, it should be hammered on one more
+>> cycle on as many boxes as possible to make sure there's no other SNAFUs.
+>>
+>> So go test it on more machines instead. I've pushed it here:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=next-merge-window
 > 
-> drivers/firmware/broadcom/bcm47xx_nvram.c:103:3: note: in expansion of macro 'pr_err'
->    pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
->    ^~~~~~
-> drivers/firmware/broadcom/bcm47xx_nvram.c:103:28: note: format string is defined here
->    pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
->                            ~^
->                            %li
+> Pingfan has got a machine to reproduce the kexec breakage issue, and
+> applying these two patches fix it. He planned to paste the test result.
+> I will ask him to try this branch if he has time, or I can get his
+> machine to test.
 > 
-> Use %zu instead for that purpose.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
-> Changes in v2:
-> - Use %zu instead of %zi (Joe Perches)
-> 
->  drivers/firmware/broadcom/bcm47xx_nvram.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/firmware/broadcom/bcm47xx_nvram.c b/drivers/firmware/broadcom/bcm47xx_nvram.c
-> index d25f080fcb0d..8698c5dd29d9 100644
-> --- a/drivers/firmware/broadcom/bcm47xx_nvram.c
-> +++ b/drivers/firmware/broadcom/bcm47xx_nvram.c
-> @@ -100,7 +100,7 @@ static int nvram_find_and_copy(void __iomem *iobase, u32 lim)
->  		nvram_len = size;
->  	}
->  	if (nvram_len >= NVRAM_SPACE) {
-> -		pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
-> +		pr_err("nvram on flash (%zu bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
->  		       nvram_len, NVRAM_SPACE - 1);
+> Junichi, also have a try on Boris's branch in NEC's test environment?
 
-Why not change the other format too, to stay consistent?
+while the patch set works on most of the machines I'm testing around,
+I found kexec(1) fails to load kernel on a few machines if this patch
+is applied.  Those machines don't have IORES_DESC_ACPI_TABLES region
+and have ACPI tables in IORES_DESC_ACPI_NV_STORAGE region instead.
 
->  		nvram_len = NVRAM_SPACE - 1;
->  	}
-> @@ -152,7 +152,7 @@ static int nvram_init(void)
->  	    header.len > sizeof(header)) {
->  		nvram_len = header.len;
->  		if (nvram_len >= NVRAM_SPACE) {
-> -			pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
-> +			pr_err("nvram on flash (%zu bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
->  				header.len, NVRAM_SPACE);
+So I think map_acpi_tables() should try to map both regions.  I tried
+following change in addition and it worked.
 
-Ditto.
+-- 
+Jun'ichi Nomura, NEC Corporation / NEC Solution Innovators, Ltd.
 
-Regardless:
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
 
->  			nvram_len = NVRAM_SPACE - 1;
->  		}
-> 
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 3c77bdf..3837c4a 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -56,12 +56,22 @@ static int mem_region_callback(struct resource *res, void *arg)
+ {
+ 	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+ 	struct init_pgtable_data data;
++	int ret;
+ 
+ 	data.info = info;
+ 	data.level4p = level4p;
+ 	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+-	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
+-				   &data, mem_region_callback);
++	ret = walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
++				  &data, mem_region_callback);
++	if (ret && ret != -EINVAL)
++		return ret;
++
++	ret = walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1,
++				  &data, mem_region_callback);
++	if (ret && ret != -EINVAL)
++		return ret;
++
++	return 0;
+ }
+ #else
+ static int map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p) { return 0; }
