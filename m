@@ -2,42 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B02D91F086
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AB31ED66
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:09:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbfEOLpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:45:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36888 "EHLO mail.kernel.org"
+        id S1729224AbfEOLJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:09:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732101AbfEOL0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:26:03 -0400
+        id S1729205AbfEOLJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:09:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A39EF2089E;
-        Wed, 15 May 2019 11:26:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00F0820644;
+        Wed, 15 May 2019 11:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919562;
-        bh=0x8tNMF2GxGVdUOlx+DPgH3PHdSC/X+m1eoIStvq3HA=;
+        s=default; t=1557918550;
+        bh=fDb8Pd2ekjLHk9Ji1vb+hzOw5NNcIKC2Kac4G6EHDN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VO05Fb0xeKjnTdXHGJIcFMQyxd1UtwBFNwddr2VZV8rWVtEw73iSYARw/XrOzdSDm
-         r8/AveqANDunXTC+rlnlh4C+3UrzUOugHLPXZdM61wfMUD6CEKZ7kcE+huiWxivrHB
-         lWNpUF/6yVY/ngXtxbgsXgxkmOYqB+amWjNsn+ss=
+        b=PO/1Ldm0CrVFTvGUuKOqdwG/IX7F2NKEvKVVP/q5gtMnZLIHaowqcV14YMUfTB1Zi
+         6mr356aeyX/elWJKqy/dcSsBxMSYVLDRFBCzHLjcsjOYxNYx/FSggl+2VrtmsMZdIa
+         HWhS3fofJDi47YrZ3q+jselBziM/fbfOjv4VCrBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai Krakow <kai@kaishome.de>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 001/137] bfq: update internal depth state when queue depth changes
-Date:   Wed, 15 May 2019 12:54:42 +0200
-Message-Id: <20190515090651.807776995@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
+        Carlos ODonell <carlos@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Borislav Petkov <bp@suse.de>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        kernel-team@android.com, Thomas Gleixner <tglx@linutronix.de>,
+        X86 ML <x86@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.4 176/266] x86/vdso: Pass --eh-frame-hdr to the linker
+Date:   Wed, 15 May 2019 12:54:43 +0200
+Message-Id: <20190515090728.876646676@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
-References: <20190515090651.633556783@linuxfoundation.org>
+In-Reply-To: <20190515090722.696531131@linuxfoundation.org>
+References: <20190515090722.696531131@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,87 +53,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 77f1e0a52d26242b6c2dba019f6ebebfb9ff701e ]
+From: Alistair Strachan <astrachan@google.com>
 
-A previous commit moved the shallow depth and BFQ depth map calculations
-to be done at init time, moving it outside of the hotter IO path. This
-potentially causes hangs if the users changes the depth of the scheduler
-map, by writing to the 'nr_requests' sysfs file for that device.
+commit cd01544a268ad8ee5b1dfe42c4393f1095f86879 upstream.
 
-Add a blk-mq-sched hook that allows blk-mq to inform the scheduler if
-the depth changes, so that the scheduler can update its internal state.
+Commit
 
-Tested-by: Kai Krakow <kai@kaishome.de>
-Reported-by: Paolo Valente <paolo.valente@linaro.org>
-Fixes: f0635b8a416e ("bfq: calculate shallow depths at init time")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+
+accidentally broke unwinding from userspace, because ld would strip the
+.eh_frame sections when linking.
+
+Originally, the compiler would implicitly add --eh-frame-hdr when
+invoking the linker, but when this Makefile was converted from invoking
+ld via the compiler, to invoking it directly (like vmlinux does),
+the flag was missed. (The EH_FRAME section is important for the VDSO
+shared libraries, but not for vmlinux.)
+
+Fix the problem by explicitly specifying --eh-frame-hdr, which restores
+parity with the old method.
+
+See relevant bug reports for additional info:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=201741
+  https://bugzilla.redhat.com/show_bug.cgi?id=1659295
+
+Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Reported-by: Florian Weimer <fweimer@redhat.com>
+Reported-by: Carlos O'Donell <carlos@redhat.com>
+Reported-by: "H. J. Lu" <hjl.tools@gmail.com>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Carlos O'Donell <carlos@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: X86 ML <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181214223637.35954-1-astrachan@google.com
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/bfq-iosched.c      | 8 +++++++-
- block/blk-mq.c           | 2 ++
- include/linux/elevator.h | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/entry/vdso/Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 72510c4700014..356620414cf94 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5353,7 +5353,7 @@ static unsigned int bfq_update_depths(struct bfq_data *bfqd,
- 	return min_shallow;
- }
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -159,7 +159,8 @@ quiet_cmd_vdso = VDSO    $@
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
  
--static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
- {
- 	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
- 	struct blk_mq_tags *tags = hctx->sched_tags;
-@@ -5361,6 +5361,11 @@ static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+-	$(call ld-option, --build-id) -Bsymbolic
++	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
++	-Bsymbolic
+ GCOV_PROFILE := n
  
- 	min_shallow = bfq_update_depths(bfqd, &tags->bitmap_tags);
- 	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, min_shallow);
-+}
-+
-+static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+{
-+	bfq_depth_updated(hctx);
- 	return 0;
- }
- 
-@@ -5783,6 +5788,7 @@ static struct elevator_type iosched_bfq_mq = {
- 		.requests_merged	= bfq_requests_merged,
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
-+		.depth_updated		= bfq_depth_updated,
- 		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 6930c82ab75fc..5b920a82bfe60 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3131,6 +3131,8 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
- 		}
- 		if (ret)
- 			break;
-+		if (q->elevator && q->elevator->type->ops.depth_updated)
-+			q->elevator->type->ops.depth_updated(hctx);
- 	}
- 
- 	if (!ret)
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index 2e9e2763bf47d..6e8bc53740f05 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -31,6 +31,7 @@ struct elevator_mq_ops {
- 	void (*exit_sched)(struct elevator_queue *);
- 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
- 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
-+	void (*depth_updated)(struct blk_mq_hw_ctx *);
- 
- 	bool (*allow_merge)(struct request_queue *, struct request *, struct bio *);
- 	bool (*bio_merge)(struct blk_mq_hw_ctx *, struct bio *);
--- 
-2.20.1
-
+ #
 
 
