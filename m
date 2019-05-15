@@ -2,47 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47AD71EE9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183811EE3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbfEOLXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:23:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
+        id S1730660AbfEOLSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:18:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731383AbfEOLX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:23:29 -0400
+        id S1730194AbfEOLSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:18:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A616E216FD;
-        Wed, 15 May 2019 11:23:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A45620818;
+        Wed, 15 May 2019 11:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919409;
-        bh=tgkD4hdVNYfmGU8kBXy6K9TdVHq1FpxTKLU/f6FbWjM=;
+        s=default; t=1557919121;
+        bh=9is9nqZeD4WUizEnt4ssE7XJ5OiO1YvZpHT12Dv/2nw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YUCV5rLg1QJbFU4MeZRrDshEEnp/PCmWNkRIZTQ3qCCUECEw3L4RvtQDCvxtCJsEV
-         EZtdgskP1+hu35NnxjKpezsja9SxRO1bfGCmuSL7tMtYpyhWoJmcB2SwdWjsoVBZVu
-         DNhbMSl8xwCURW22PUmJxJmgRZOObDNJQVNUP8GA=
+        b=bFu79zzM8O0YiY865RawDF7XQyWnagdvfsa5ETvThP0najnuoxeKDyzgtv/Mt2/wq
+         R3iWDu8azPmLN+yFZB1Ndq3sGDPWa7H2xMXjO5t7RktICGJTzLDOmzREPevOwizae2
+         Wo2t6SL4wOntb8pNhEN0Hf63k85OW5iNnHOyVASo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Qian Cai <cai@lca.pw>, Arun KS <arunks@codeaurora.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 064/113] mm/memory_hotplug.c: drop memory device reference after find_memory_block()
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 075/115] xtensa: xtfpga.dtsi: fix dtc warnings about SPI
 Date:   Wed, 15 May 2019 12:55:55 +0200
-Message-Id: <20190515090658.411439340@linuxfoundation.org>
+Message-Id: <20190515090704.861398517@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090652.640988966@linuxfoundation.org>
-References: <20190515090652.640988966@linuxfoundation.org>
+In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
+References: <20190515090659.123121100@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,46 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 89c02e69fc5245f8a2f34b58b42d43a737af1a5e ]
+[ Upstream commit f37598be4e3896359e87c824be57ddddc280cc3f ]
 
-Right now we are using find_memory_block() to get the node id for the
-pfn range to online.  We are missing to drop a reference to the memory
-block device.  While the device still gets unregistered via
-device_unregister(), resulting in no user visible problem, the device is
-never released via device_release(), resulting in a memory leak.  Fix
-that by properly using a put_device().
+Rename SPI controller node in the XTFPGA DTS to spi@...
+This fixes the following build warnings:
 
-Link: http://lkml.kernel.org/r/20190411110955.1430-1-david@redhat.com
-Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Pankaj Gupta <pagupta@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Arun KS <arunks@codeaurora.org>
-Cc: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- mm/memory_hotplug.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/xtensa/boot/dts/xtfpga.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 156991edec2a8..af67355622159 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -901,6 +901,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	 */
- 	mem = find_memory_block(__pfn_to_section(pfn));
- 	nid = mem->nid;
-+	put_device(&mem->dev);
+diff --git a/arch/xtensa/boot/dts/xtfpga.dtsi b/arch/xtensa/boot/dts/xtfpga.dtsi
+index 1090528825ec6..e46ae07bab059 100644
+--- a/arch/xtensa/boot/dts/xtfpga.dtsi
++++ b/arch/xtensa/boot/dts/xtfpga.dtsi
+@@ -103,7 +103,7 @@
+ 			};
+ 		};
  
- 	/* associate pfn range with the zone */
- 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
+-		spi0: spi-master@0d0a0000 {
++		spi0: spi@0d0a0000 {
+ 			compatible = "cdns,xtfpga-spi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.20.1
 
