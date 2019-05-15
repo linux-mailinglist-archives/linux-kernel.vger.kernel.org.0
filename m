@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E031EE1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EC01EEE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2019 13:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfEOLRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 07:17:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54198 "EHLO mail.kernel.org"
+        id S1732205AbfEOL1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 07:27:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728261AbfEOLRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 07:17:07 -0400
+        id S1732190AbfEOL1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 07:27:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1D9420644;
-        Wed, 15 May 2019 11:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C4E620818;
+        Wed, 15 May 2019 11:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557919027;
-        bh=OGmgcPDYmpGZoe6b7p5Kka/NjwDpmejKew+gZBRRk08=;
+        s=default; t=1557919636;
+        bh=8/Z5dCoaC5wW9RYrpO0xkNItYoYYuTELsM5iftxkzV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NN5r6cwpiuVubtn3Zc5OTQKExrNtnafFO2z4IIF/uqrytlnjusR0+MS5rBs0gPhMI
-         fUZ6nNGASMeauvCIq8EoHLrUfDwd+yREwEXVgLAONUhj1KMPKSbinwJ3ElGbgnG9+c
-         p+GgyJhw/f++wEYiso2SQEtUrGr77jxMksJzPtDI=
+        b=Cg5Z4A1P6UsyIoE83fUnm/rvkk1BGILDnwQVjCl3LxKrwS+XFKGb+G+xXWKAYnhsA
+         KSlg9/OMataJncp/az82BjVrGVBmljjObxw6+ao89I5P+XPGblSV6ZpwZNpYEg5EH7
+         KQgfkAx2cWLc76hCsNrjfny+nDxBzyxi4FnsFxCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Daniel Gomez <dagmcr@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 038/115] spi: ST ST95HF NFC: declare missing of table
+Subject: [PATCH 5.0 037/137] vxge: fix return of a freed memblock on a failed dma mapping
 Date:   Wed, 15 May 2019 12:55:18 +0200
-Message-Id: <20190515090702.220165255@linuxfoundation.org>
+Message-Id: <20190515090656.063194505@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190515090659.123121100@linuxfoundation.org>
-References: <20190515090659.123121100@linuxfoundation.org>
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+References: <20190515090651.633556783@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d04830531d0c4a99c897a44038e5da3d23331d2f ]
+[ Upstream commit 0a2c34f18c94b596562bf3d019fceab998b8b584 ]
 
-Add missing <of_device_id> table for SPI driver relying on SPI
-device match since compatible is in a DT binding or in a DTS.
+Currently if a pci dma mapping failure is detected a free'd
+memblock address is returned rather than a NULL (that indicates
+an error). Fix this by ensuring NULL is returned on this error case.
 
-Before this patch:
-modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
-alias:          spi:st95hf
-
-After this patch:
-modinfo drivers/nfc/st95hf/st95hf.ko | grep alias
-alias:          spi:st95hf
-alias:          of:N*T*Cst,st95hfC*
-alias:          of:N*T*Cst,st95hf
-
-Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
+Addresses-Coverity: ("Use after free")
+Fixes: 528f727279ae ("vxge: code cleanup and reorganization")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/st95hf/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-index 2b26f762fbc3b..01acb6e533655 100644
---- a/drivers/nfc/st95hf/core.c
-+++ b/drivers/nfc/st95hf/core.c
-@@ -1074,6 +1074,12 @@ static const struct spi_device_id st95hf_id[] = {
- };
- MODULE_DEVICE_TABLE(spi, st95hf_id);
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 7cde387e5ec62..51cd57ab3d958 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -2366,6 +2366,7 @@ static void *__vxge_hw_blockpool_malloc(struct __vxge_hw_device *devh, u32 size,
+ 				dma_object->addr))) {
+ 			vxge_os_dma_free(devh->pdev, memblock,
+ 				&dma_object->acc_handle);
++			memblock = NULL;
+ 			goto exit;
+ 		}
  
-+static const struct of_device_id st95hf_spi_of_match[] = {
-+        { .compatible = "st,st95hf" },
-+        { },
-+};
-+MODULE_DEVICE_TABLE(of, st95hf_spi_of_match);
-+
- static int st95hf_probe(struct spi_device *nfc_spi_dev)
- {
- 	int ret;
-@@ -1260,6 +1266,7 @@ static struct spi_driver st95hf_driver = {
- 	.driver = {
- 		.name = "st95hf",
- 		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(st95hf_spi_of_match),
- 	},
- 	.id_table = st95hf_id,
- 	.probe = st95hf_probe,
 -- 
 2.20.1
 
