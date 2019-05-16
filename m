@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE8BD20C72
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D4C20C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfEPQEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:04:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42400 "EHLO
+        id S1727313AbfEPQDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:03:50 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42512 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726637AbfEPP6m (ORCPT
+        by vger.kernel.org with ESMTP id S1726733AbfEPP6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:42 -0400
+        Thu, 16 May 2019 11:58:43 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0006yq-5i; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImG-0006zW-Kk; Thu, 16 May 2019 16:58:40 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0001NC-Mx; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImE-0001QW-47; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,33 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
         "Thomas Gleixner" <tglx@linutronix.de>,
+        "Kees Cook" <keescook@chromium.org>,
         "Peter Zijlstra" <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Jiri Kosina" <jkosina@suse.cz>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Andi Kleen" <ak@linux.intel.com>,
         "Ingo Molnar" <mingo@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+        "Arjan van de Ven" <arjan@linux.intel.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Casey Schaufler" <casey.schaufler@intel.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Dave Stewart" <david.c.stewart@intel.com>,
+        "Jon Masters" <jcm@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Waiman Long" <longman9394@gmail.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.165179930@decadent.org.uk>
+Message-ID: <lsq.1558022133.299520756@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 11/86] jump_label: Rename JUMP_LABEL_{EN,DIS}ABLE to
- JUMP_LABEL_{JMP,NOP}
+Subject: [PATCH 3.16 52/86] x86/speculation: Prepare for conditional IBPB
+ in switch_mm()
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,192 +67,294 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 76b235c6bcb16062d663e2ee96db0b69f2e6bc14 upstream.
+commit 4c71a2b6fd7e42814aa68a6dec88abf3b42ea573 upstream.
 
-Since we've already stepped away from ENABLE is a JMP and DISABLE is a
-NOP with the branch_default bits, and are going to make it even worse,
-rename it to make it all clearer.
+The IBPB speculation barrier is issued from switch_mm() when the kernel
+switches to a user space task with a different mm than the user space task
+which ran last on the same CPU.
 
-This way we don't mix multiple levels of logic attributes, but have a
-plain 'physical' name for what the current instruction patching status
-of a jump label is.
+An additional optimization is to avoid IBPB when the incoming task can be
+ptraced by the outgoing task. This optimization only works when switching
+directly between two user space tasks. When switching from a kernel task to
+a user space task the optimization fails because the previous task cannot
+be accessed anymore. So for quite some scenarios the optimization is just
+adding overhead.
 
-This is a first step in removing the naming confusion that has led to
-a stream of avoidable bugs such as:
+The upcoming conditional IBPB support will issue IBPB only for user space
+tasks which have the TIF_SPEC_IB bit set. This requires to handle the
+following cases:
 
-  a833581e372a ("x86, perf: Fix static_key bug in load_mm_cr4()")
+  1) Switch from a user space task (potential attacker) which has
+     TIF_SPEC_IB set to a user space task (potential victim) which has
+     TIF_SPEC_IB not set.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+  2) Switch from a user space task (potential attacker) which has
+     TIF_SPEC_IB not set to a user space task (potential victim) which has
+     TIF_SPEC_IB set.
+
+This needs to be optimized for the case where the IBPB can be avoided when
+only kernel threads ran in between user space tasks which belong to the
+same process.
+
+The current check whether two tasks belong to the same context is using the
+tasks context id. While correct, it's simpler to use the mm pointer because
+it allows to mangle the TIF_SPEC_IB bit into it. The context id based
+mechanism requires extra storage, which creates worse code.
+
+When a task is scheduled out its TIF_SPEC_IB bit is mangled as bit 0 into
+the per CPU storage which is used to track the last user space mm which was
+running on a CPU. This bit can be used together with the TIF_SPEC_IB bit of
+the incoming task to make the decision whether IBPB needs to be issued or
+not to cover the two cases above.
+
+As conditional IBPB is going to be the default, remove the dubious ptrace
+check for the IBPB always case and simply issue IBPB always when the
+process changes.
+
+Move the storage to a different place in the struct as the original one
+created a hole.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-[ Beefed up the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185005.466447057@linutronix.de
+[bwh: Backported to 3.16:
+ - Drop changes in initialize_tlbstate_and_flush()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/kernel/jump_label.c     |  2 +-
- arch/arm64/kernel/jump_label.c   |  2 +-
- arch/mips/kernel/jump_label.c    |  2 +-
- arch/powerpc/kernel/jump_label.c |  2 +-
- arch/s390/kernel/jump_label.c    |  2 +-
- arch/sparc/kernel/jump_label.c   |  2 +-
- arch/x86/kernel/jump_label.c     |  2 +-
- include/linux/jump_label.h       |  4 ++--
- kernel/jump_label.c              | 18 +++++++++---------
- 9 files changed, 18 insertions(+), 18 deletions(-)
-
---- a/arch/arm/kernel/jump_label.c
-+++ b/arch/arm/kernel/jump_label.c
-@@ -13,7 +13,7 @@ static void __arch_jump_label_transform(
- 	void *addr = (void *)entry->code;
- 	unsigned int insn;
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -257,6 +257,8 @@ do {									\
+ } while (0)
  
--	if (type == JUMP_LABEL_ENABLE)
-+	if (type == JUMP_LABEL_JMP)
- 		insn = arm_gen_branch(entry->code, entry->target);
- 	else
- 		insn = arm_gen_nop();
---- a/arch/arm64/kernel/jump_label.c
-+++ b/arch/arm64/kernel/jump_label.c
-@@ -29,7 +29,7 @@ static void __arch_jump_label_transform(
- 	void *addr = (void *)entry->code;
- 	u32 insn;
+ DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
++DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
  
--	if (type == JUMP_LABEL_ENABLE) {
-+	if (type == JUMP_LABEL_JMP) {
- 		insn = aarch64_insn_gen_branch_imm(entry->code,
- 						   entry->target,
- 						   AARCH64_INSN_BRANCH_NOLINK);
---- a/arch/mips/kernel/jump_label.c
-+++ b/arch/mips/kernel/jump_label.c
-@@ -51,7 +51,7 @@ void arch_jump_label_transform(struct ju
- 	/* Target must have the right alignment and ISA must be preserved. */
- 	BUG_ON((e->target & J_ALIGN_MASK) != J_ISA_BIT);
- 
--	if (type == JUMP_LABEL_ENABLE) {
-+	if (type == JUMP_LABEL_JMP) {
- 		insn.j_format.opcode = J_ISA_BIT ? mm_j32_op : j_op;
- 		insn.j_format.target = e->target >> J_RANGE_SHIFT;
- 	} else {
---- a/arch/powerpc/kernel/jump_label.c
-+++ b/arch/powerpc/kernel/jump_label.c
-@@ -17,7 +17,7 @@ void arch_jump_label_transform(struct ju
- {
- 	u32 *addr = (u32 *)(unsigned long)entry->code;
- 
--	if (type == JUMP_LABEL_ENABLE)
-+	if (type == JUMP_LABEL_JMP)
- 		patch_branch(addr, entry->target, 0);
- 	else
- 		patch_instruction(addr, PPC_INST_NOP);
---- a/arch/s390/kernel/jump_label.c
-+++ b/arch/s390/kernel/jump_label.c
-@@ -60,7 +60,7 @@ static void __jump_label_transform(struc
- {
- 	struct insn old, new;
- 
--	if (type == JUMP_LABEL_ENABLE) {
-+	if (type == JUMP_LABEL_JMP) {
- 		jump_label_make_nop(entry, &old);
- 		jump_label_make_branch(entry, &new);
- 	} else {
---- a/arch/sparc/kernel/jump_label.c
-+++ b/arch/sparc/kernel/jump_label.c
-@@ -16,7 +16,7 @@ void arch_jump_label_transform(struct ju
- 	u32 val;
- 	u32 *insn = (u32 *) (unsigned long) entry->code;
- 
--	if (type == JUMP_LABEL_ENABLE) {
-+	if (type == JUMP_LABEL_JMP) {
- 		s32 off = (s32)entry->target - (s32)entry->code;
- 
- #ifdef CONFIG_SPARC64
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -45,7 +45,7 @@ static void __jump_label_transform(struc
- 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
- 
--	if (type == JUMP_LABEL_ENABLE) {
-+	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
- 			/*
- 			 * Jump label is enabled for the first time.
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -86,8 +86,8 @@ struct static_key {
- #ifndef __ASSEMBLY__
- 
- enum jump_label_type {
--	JUMP_LABEL_DISABLE = 0,
--	JUMP_LABEL_ENABLE,
-+	JUMP_LABEL_NOP = 0,
-+	JUMP_LABEL_JMP,
+ #endif /* __ASSEMBLY__ */
+ #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -268,6 +268,12 @@ void native_flush_tlb_others(const struc
+ struct tlb_state {
+ 	struct mm_struct *active_mm;
+ 	int state;
++
++	/* Last user mm for optimizing IBPB */
++	union {
++		struct mm_struct	*last_user_mm;
++		unsigned long		last_user_mm_ibpb;
++	};
  };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
  
- struct module;
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -65,9 +65,9 @@ void static_key_slow_inc(struct static_k
- 	jump_label_lock();
- 	if (atomic_read(&key->enabled) == 0) {
- 		if (!jump_label_get_branch_default(key))
--			jump_label_update(key, JUMP_LABEL_ENABLE);
-+			jump_label_update(key, JUMP_LABEL_JMP);
- 		else
--			jump_label_update(key, JUMP_LABEL_DISABLE);
-+			jump_label_update(key, JUMP_LABEL_NOP);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -53,6 +53,10 @@ u64 x86_amd_ls_cfg_ssbd_mask;
+ 
+ /* Control conditional STIPB in switch_to() */
+ DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++/* Control conditional IBPB in switch_mm() */
++DEFINE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
++/* Control unconditional IBPB in switch_mm() */
++DEFINE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+ 
+ #ifdef CONFIG_X86_32
+ 
+@@ -382,7 +386,17 @@ spectre_v2_user_select_mitigation(enum s
+ 	/* Initialize Indirect Branch Prediction Barrier */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+-		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
++
++		switch (mode) {
++		case SPECTRE_V2_USER_STRICT:
++			static_branch_enable(&switch_mm_always_ibpb);
++			break;
++		default:
++			break;
++		}
++
++		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
++			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
  	}
- 	atomic_inc(&key->enabled);
- 	jump_label_unlock();
-@@ -88,9 +88,9 @@ static void __static_key_slow_dec(struct
- 		schedule_delayed_work(work, rate_limit);
- 	} else {
- 		if (!jump_label_get_branch_default(key))
--			jump_label_update(key, JUMP_LABEL_DISABLE);
-+			jump_label_update(key, JUMP_LABEL_NOP);
- 		else
--			jump_label_update(key, JUMP_LABEL_ENABLE);
-+			jump_label_update(key, JUMP_LABEL_JMP);
- 	}
- 	jump_label_unlock();
+ 
+ 	/* If enhanced IBRS is enabled no STIPB required */
+@@ -929,10 +943,15 @@ static char *stibp_state(void)
+ 
+ static char *ibpb_state(void)
+ {
+-	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
+-		return ", IBPB";
+-	else
+-		return "";
++	if (boot_cpu_has(X86_FEATURE_IBPB)) {
++		switch (spectre_v2_user) {
++		case SPECTRE_V2_USER_NONE:
++			return ", IBPB: disabled";
++		case SPECTRE_V2_USER_STRICT:
++			return ", IBPB: always-on";
++		}
++	}
++	return "";
  }
-@@ -191,9 +191,9 @@ static enum jump_label_type jump_label_t
- 	bool state = static_key_enabled(key);
  
- 	if ((!true_branch && state) || (true_branch && !state))
--		return JUMP_LABEL_ENABLE;
-+		return JUMP_LABEL_JMP;
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,7 +7,6 @@
+ #include <linux/module.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
+-#include <linux/ptrace.h>
  
--	return JUMP_LABEL_DISABLE;
-+	return JUMP_LABEL_NOP;
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -34,6 +33,12 @@ DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb
+  *	Implement flush IPI by CALL_FUNCTION_VECTOR, Alex Shi
+  */
+ 
++/*
++ * Use bit 0 to mangle the TIF_SPEC_IB state into the mm pointer which is
++ * stored in cpu_tlb_state.last_user_mm_ibpb.
++ */
++#define LAST_USER_MM_IBPB	0x1UL
++
+ struct flush_tlb_info {
+ 	struct mm_struct *flush_mm;
+ 	unsigned long flush_start;
+@@ -96,17 +101,87 @@ void switch_mm(struct mm_struct *prev, s
+ 	local_irq_restore(flags);
  }
  
- void __init jump_label_init(void)
-@@ -283,7 +283,7 @@ void jump_label_apply_nops(struct module
- 		return;
- 
- 	for (iter = iter_start; iter < iter_stop; iter++) {
--		arch_jump_label_transform_static(iter, JUMP_LABEL_DISABLE);
-+		arch_jump_label_transform_static(iter, JUMP_LABEL_NOP);
- 	}
+-static bool ibpb_needed(struct task_struct *tsk)
++static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
++{
++	unsigned long next_tif = task_thread_info(next)->flags;
++	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
++
++	return (unsigned long)next->mm | ibpb;
++}
++
++static void cond_ibpb(struct task_struct *next)
+ {
++	if (!next || !next->mm)
++		return;
++
+ 	/*
+-	 * Check if the current (previous) task has access to the memory
+-	 * of the @tsk (next) task. If access is denied, make sure to
+-	 * issue a IBPB to stop user->user Spectre-v2 attacks.
+-	 *
+-	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
++	 * Both, the conditional and the always IBPB mode use the mm
++	 * pointer to avoid the IBPB when switching between tasks of the
++	 * same process. Using the mm pointer instead of mm->context.ctx_id
++	 * opens a hypothetical hole vs. mm_struct reuse, which is more or
++	 * less impossible to control by an attacker. Aside of that it
++	 * would only affect the first schedule so the theoretically
++	 * exposed data is not really interesting.
+ 	 */
+-	return (tsk && tsk->mm &&
+-		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
++	if (static_branch_likely(&switch_mm_cond_ibpb)) {
++		unsigned long prev_mm, next_mm;
++
++		/*
++		 * This is a bit more complex than the always mode because
++		 * it has to handle two cases:
++		 *
++		 * 1) Switch from a user space task (potential attacker)
++		 *    which has TIF_SPEC_IB set to a user space task
++		 *    (potential victim) which has TIF_SPEC_IB not set.
++		 *
++		 * 2) Switch from a user space task (potential attacker)
++		 *    which has TIF_SPEC_IB not set to a user space task
++		 *    (potential victim) which has TIF_SPEC_IB set.
++		 *
++		 * This could be done by unconditionally issuing IBPB when
++		 * a task which has TIF_SPEC_IB set is either scheduled in
++		 * or out. Though that results in two flushes when:
++		 *
++		 * - the same user space task is scheduled out and later
++		 *   scheduled in again and only a kernel thread ran in
++		 *   between.
++		 *
++		 * - a user space task belonging to the same process is
++		 *   scheduled in after a kernel thread ran in between
++		 *
++		 * - a user space task belonging to the same process is
++		 *   scheduled in immediately.
++		 *
++		 * Optimize this with reasonably small overhead for the
++		 * above cases. Mangle the TIF_SPEC_IB bit into the mm
++		 * pointer of the incoming task which is stored in
++		 * cpu_tlbstate.last_user_mm_ibpb for comparison.
++		 */
++		next_mm = mm_mangle_tif_spec_ib(next);
++		prev_mm = this_cpu_read(cpu_tlbstate.last_user_mm_ibpb);
++
++		/*
++		 * Issue IBPB only if the mm's are different and one or
++		 * both have the IBPB bit set.
++		 */
++		if (next_mm != prev_mm &&
++		    (next_mm | prev_mm) & LAST_USER_MM_IBPB)
++			indirect_branch_prediction_barrier();
++
++		this_cpu_write(cpu_tlbstate.last_user_mm_ibpb, next_mm);
++	}
++
++	if (static_branch_unlikely(&switch_mm_always_ibpb)) {
++		/*
++		 * Only flush when switching to a user space task with a
++		 * different context than the user space task which ran
++		 * last on this CPU.
++		 */
++		if (this_cpu_read(cpu_tlbstate.last_user_mm) != next->mm) {
++			indirect_branch_prediction_barrier();
++			this_cpu_write(cpu_tlbstate.last_user_mm, next->mm);
++		}
++	}
  }
  
-@@ -325,8 +325,8 @@ static int jump_label_add_module(struct
- 		jlm->next = key->next;
- 		key->next = jlm;
+ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+@@ -119,15 +194,8 @@ void switch_mm_irqs_off(struct mm_struct
+ 		 * Avoid user/user BTB poisoning by flushing the branch
+ 		 * predictor when switching between processes. This stops
+ 		 * one process from doing Spectre-v2 attacks on another.
+-		 *
+-		 * As an optimization, flush indirect branches only when
+-		 * switching into a processes that can't be ptrace by the
+-		 * current one (as in such case, attacker has much more
+-		 * convenient way how to tamper with the next process than
+-		 * branch buffer poisoning).
+ 		 */
+-		if (static_cpu_has(X86_FEATURE_USE_IBPB) && ibpb_needed(tsk))
+-			indirect_branch_prediction_barrier();
++		cond_ibpb(tsk);
  
--		if (jump_label_type(key) == JUMP_LABEL_ENABLE)
--			__jump_label_update(key, iter, iter_stop, JUMP_LABEL_ENABLE);
-+		if (jump_label_type(key) == JUMP_LABEL_JMP)
-+			__jump_label_update(key, iter, iter_stop, JUMP_LABEL_JMP);
- 	}
- 
- 	return 0;
+ 		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
+ 		this_cpu_write(cpu_tlbstate.active_mm, next);
 
