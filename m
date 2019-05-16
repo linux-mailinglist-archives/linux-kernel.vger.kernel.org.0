@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA3720ABE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B95420AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfEPPKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49966 "EHLO mail.kernel.org"
+        id S1727689AbfEPPKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:10:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbfEPPKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:10:15 -0400
-Subject: Re: [git pull] drm fixes for 5.2-rc1
+        id S1727642AbfEPPKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 11:10:16 -0400
+Subject: Re: [GIT PULL] Thermal-SoC management changes for v5.2-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558019414;
-        bh=i8ktoiYzXaR1F/3yFaQFSwDoBUQZ1c1nUvz0vgJnt1o=;
+        s=default; t=1558019415;
+        bh=mUyc2xuEAed3mqC/ucfURS9n6vSCDevchf0xwuprgJY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jWmi7VsvlY/T2BObAqwVUa39u2jauPhdGfeipzpDtmb4SL+vXJMz1iPAret2HINs4
-         82EKRtFPKkGBs37clFDRECdrVSSpIezH8Wh0iAoY4/WVJ5mrIaEPCRv2wKfftjrP5Y
-         q13Ylg5TouASdq0LCw6MO/REc8lU6+ef15fkNd1U=
+        b=NAEsEg81ofSviZZ7rqrBV0s5+zoHV2HvDsZQ335DSfniwDm0VXHZSC3S+l1DnVqmI
+         qZ1/WALenK1o/ZhwwRQ36x6w23yP2l5X5sO8vtTbwaTDI1JVDgmHNJL1kEPSr0iStB
+         4l3Ftm1DrVNtquDf1vqQRxzT2uNdEwa7teJIQ9rI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tyXaYhQ5dFQMkrkpTJZDrjVJjEcKB2bcYi=BKdq7qnQvg@mail.gmail.com>
-References: <CAPM=9tyXaYhQ5dFQMkrkpTJZDrjVJjEcKB2bcYi=BKdq7qnQvg@mail.gmail.com>
+In-Reply-To: <20190516044313.GA17751@localhost.localdomain>
+References: <20190516044313.GA17751@localhost.localdomain>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9tyXaYhQ5dFQMkrkpTJZDrjVJjEcKB2bcYi=BKdq7qnQvg@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- tags/drm-next-2019-05-16
-X-PR-Tracked-Commit-Id: 8da0e1525b7f0d69c6cb44094963906282b32673
+X-PR-Tracked-Message-Id: <20190516044313.GA17751@localhost.localdomain>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+ linus
+X-PR-Tracked-Commit-Id: 37bcec5d9f71bd13142a97d2196b293c9ac23823
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cc7ce90153e74f8266eefee9fba466faa1a2d5df
-Message-Id: <155801941459.14983.15933361374021728610.pr-tracker-bot@kernel.org>
-Date:   Thu, 16 May 2019 15:10:14 +0000
-To:     Dave Airlie <airlied@gmail.com>
+X-PR-Merge-Commit-Id: a455eda33faafcaac1effb31d682765b14ef868c
+Message-Id: <155801941590.14983.9829892889813749060.pr-tracker-bot@kernel.org>
+Date:   Thu, 16 May 2019 15:10:15 +0000
+To:     Eduardo Valentin <edubezval@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 16 May 2019 12:27:54 +1000:
+The pull request you sent on Wed, 15 May 2019 21:43:14 -0700:
 
-> git://anongit.freedesktop.org/drm/drm tags/drm-next-2019-05-16
+> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cc7ce90153e74f8266eefee9fba466faa1a2d5df
+https://git.kernel.org/torvalds/c/a455eda33faafcaac1effb31d682765b14ef868c
 
 Thank you!
 
