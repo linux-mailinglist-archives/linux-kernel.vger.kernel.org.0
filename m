@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A3B820C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77EA820BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfEPQBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:01:17 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42788 "EHLO
+        id S1727542AbfEPP7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:59:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43954 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726652AbfEPP6q (ORCPT
+        by vger.kernel.org with ESMTP id S1727341AbfEPP7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:46 -0400
+        Thu, 16 May 2019 11:59:04 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0006zE-W8; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImJ-0006zD-H0; Thu, 16 May 2019 16:58:43 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001OK-6o; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImF-0001Sn-3k; Thu, 16 May 2019 16:58:39 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,38 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Borislav Petkov" <bp@alien8.de>, "Jiri Kosina" <jkosina@suse.cz>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Paul Mackerras" <paulus@samba.org>,
+        "Randy Dunlap" <rdunlap@infradead.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Jiri Kosina" <jikos@kernel.org>,
+        "Waiman Long" <longman@redhat.com>,
+        "Steven Price" <steven.price@arm.com>, linux-s390@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        linux-arch@vger.kernel.org,
+        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
+        "Will Deacon" <will.deacon@arm.com>,
+        "Phil Auld" <pauld@redhat.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Jon Masters" <jcm@redhat.com>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.672728982@decadent.org.uk>
+Message-ID: <lsq.1558022133.121998781@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 25/86] locking/static_key: Fix concurrent
- static_key_slow_inc()
+Subject: [PATCH 3.16 80/86] x86/speculation: Support 'mitigations='
+ cmdline option
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,167 +72,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 4c5ea0a9cd02d6aa8adc86e100b2a4cff8d614ff upstream.
+commit d68be4c4d31295ff6ae34a8ddfaa4c1a8ff42812 upstream.
 
-The following scenario is possible:
+Configure x86 runtime CPU speculation bug mitigations in accordance with
+the 'mitigations=' cmdline option.  This affects Meltdown, Spectre v2,
+Speculative Store Bypass, and L1TF.
 
-    CPU 1                                   CPU 2
-    static_key_slow_inc()
-     atomic_inc_not_zero()
-      -> key.enabled == 0, no increment
-     jump_label_lock()
-     atomic_inc_return()
-      -> key.enabled == 1 now
-                                            static_key_slow_inc()
-                                             atomic_inc_not_zero()
-                                              -> key.enabled == 1, inc to 2
-                                             return
-                                            ** static key is wrong!
-     jump_label_update()
-     jump_label_unlock()
+The default behavior is unchanged.
 
-Testing the static key at the point marked by (**) will follow the
-wrong path for jumps that have not been patched yet.  This can
-actually happen when creating many KVM virtual machines with userspace
-LAPIC emulation; just run several copies of the following program:
-
-    #include <fcntl.h>
-    #include <unistd.h>
-    #include <sys/ioctl.h>
-    #include <linux/kvm.h>
-
-    int main(void)
-    {
-        for (;;) {
-            int kvmfd = open("/dev/kvm", O_RDONLY);
-            int vmfd = ioctl(kvmfd, KVM_CREATE_VM, 0);
-            close(ioctl(vmfd, KVM_CREATE_VCPU, 1));
-            close(vmfd);
-            close(kvmfd);
-        }
-        return 0;
-    }
-
-Every KVM_CREATE_VCPU ioctl will attempt a static_key_slow_inc() call.
-The static key's purpose is to skip NULL pointer checks and indeed one
-of the processes eventually dereferences NULL.
-
-As explained in the commit that introduced the bug:
-
-  706249c222f6 ("locking/static_keys: Rework update logic")
-
-jump_label_update() needs key.enabled to be true.  The solution adopted
-here is to temporarily make key.enabled == -1, and use go down the
-slow path when key.enabled <= 0.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jiri Kosina <jkosina@suse.cz> (on x86)
+Reviewed-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 706249c222f6 ("locking/static_keys: Rework update logic")
-Link: http://lkml.kernel.org/r/1466527937-69798-1-git-send-email-pbonzini@redhat.com
-[ Small stylistic edits to the changelog and the code. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-s390@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-arch@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tyler Hicks <tyhicks@canonical.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Phil Auld <pauld@redhat.com>
+Link: https://lkml.kernel.org/r/6616d0ae169308516cfdf5216bedd169f8a8291b.1555085500.git.jpoimboe@redhat.com
+[bwh: Backported to 3.16:
+ - Drop the auto,nosmt option and the l1tf mitigation selection, which we can't
+   support
+ - Adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/jump_label.h | 16 +++++++++++++---
- kernel/jump_label.c        | 36 +++++++++++++++++++++++++++++++++---
- 2 files changed, 46 insertions(+), 6 deletions(-)
-
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -117,13 +117,18 @@ struct module;
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -1907,15 +1907,19 @@ bytes respectively. Such letter suffixes
+ 			http://repo.or.cz/w/linux-2.6/mini2440.git
  
- #include <linux/atomic.h>
+ 	mitigations=
+-			Control optional mitigations for CPU vulnerabilities.
+-			This is a set of curated, arch-independent options, each
+-			of which is an aggregation of existing arch-specific
+-			options.
++			[X86] Control optional mitigations for CPU
++			vulnerabilities.  This is a set of curated,
++			arch-independent options, each of which is an
++			aggregation of existing arch-specific options.
  
-+#ifdef HAVE_JUMP_LABEL
-+
- static inline int static_key_count(struct static_key *key)
- {
--	return atomic_read(&key->enabled);
-+	/*
-+	 * -1 means the first static_key_slow_inc() is in progress.
-+	 *  static_key_enabled() must return true, so return 1 here.
-+	 */
-+	int n = atomic_read(&key->enabled);
-+	return n >= 0 ? n : 1;
- }
+ 			off
+ 				Disable all optional CPU mitigations.  This
+ 				improves system performance, but it may also
+ 				expose users to several CPU vulnerabilities.
++				Equivalent to: nopti [X86]
++					       nospectre_v2 [X86]
++					       spectre_v2_user=off [X86]
++					       spec_store_bypass_disable=off [X86]
  
--#ifdef HAVE_JUMP_LABEL
--
- #define JUMP_TYPE_FALSE	0UL
- #define JUMP_TYPE_TRUE	1UL
- #define JUMP_TYPE_MASK	1UL
-@@ -162,6 +167,11 @@ extern void jump_label_apply_nops(struct
+ 			auto (default)
+ 				Mitigate all CPU vulnerabilities, but leave SMT
+@@ -1923,7 +1927,7 @@ bytes respectively. Such letter suffixes
+ 				users who don't want to be surprised by SMT
+ 				getting disabled across kernel upgrades, or who
+ 				have other ways of avoiding SMT-based attacks.
+-				This is the default behavior.
++				Equivalent to: (default behavior)
  
- #else  /* !HAVE_JUMP_LABEL */
+ 	mminit_loglevel=
+ 			[KNL] When CONFIG_DEBUG_MEMORY_INIT is set, this
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -545,7 +545,8 @@ static enum spectre_v2_mitigation_cmd __
+ 	char arg[20];
+ 	int ret, i;
  
-+static inline int static_key_count(struct static_key *key)
-+{
-+	return atomic_read(&key->enabled);
-+}
-+
- static __always_inline void jump_label_init(void)
- {
- 	static_key_initialized = true;
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -58,13 +58,36 @@ static void jump_label_update(struct sta
+-	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
++	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2") ||
++	    cpu_mitigations_off())
+ 		return SPECTRE_V2_CMD_NONE;
  
- void static_key_slow_inc(struct static_key *key)
- {
-+	int v, v1;
-+
- 	STATIC_KEY_CHECK_USE();
--	if (atomic_inc_not_zero(&key->enabled))
--		return;
-+
-+	/*
-+	 * Careful if we get concurrent static_key_slow_inc() calls;
-+	 * later calls must wait for the first one to _finish_ the
-+	 * jump_label_update() process.  At the same time, however,
-+	 * the jump_label_update() call below wants to see
-+	 * static_key_enabled(&key) for jumps to be updated properly.
-+	 *
-+	 * So give a special meaning to negative key->enabled: it sends
-+	 * static_key_slow_inc() down the slow path, and it is non-zero
-+	 * so it counts as "enabled" in jump_label_update().  Note that
-+	 * atomic_inc_unless_negative() checks >= 0, so roll our own.
-+	 */
-+	for (v = atomic_read(&key->enabled); v > 0; v = v1) {
-+		v1 = atomic_cmpxchg(&key->enabled, v, v + 1);
-+		if (likely(v1 == v))
-+			return;
-+	}
+ 	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
+@@ -809,7 +810,8 @@ static enum ssb_mitigation_cmd __init ss
+ 	char arg[20];
+ 	int ret, i;
  
- 	jump_label_lock();
--	if (atomic_inc_return(&key->enabled) == 1)
-+	if (atomic_read(&key->enabled) == 0) {
-+		atomic_set(&key->enabled, -1);
- 		jump_label_update(key);
-+		atomic_set(&key->enabled, 1);
-+	} else {
-+		atomic_inc(&key->enabled);
-+	}
- 	jump_label_unlock();
- }
- EXPORT_SYMBOL_GPL(static_key_slow_inc);
-@@ -72,6 +95,13 @@ EXPORT_SYMBOL_GPL(static_key_slow_inc);
- static void __static_key_slow_dec(struct static_key *key,
- 		unsigned long rate_limit, struct delayed_work *work)
- {
-+	/*
-+	 * The negative count check is valid even when a negative
-+	 * key->enabled is in use by static_key_slow_inc(); a
-+	 * __static_key_slow_dec() before the first static_key_slow_inc()
-+	 * returns is unbalanced, because all other static_key_slow_inc()
-+	 * instances block while the update is in progress.
-+	 */
- 	if (!atomic_dec_and_mutex_lock(&key->enabled, &jump_label_mutex)) {
- 		WARN(atomic_read(&key->enabled) < 0,
- 		     "jump label: negative count!\n");
+-	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable")) {
++	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable") ||
++	    cpu_mitigations_off()) {
+ 		return SPEC_STORE_BYPASS_CMD_NONE;
+ 	} else {
+ 		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
+--- a/arch/x86/mm/kaiser.c
++++ b/arch/x86/mm/kaiser.c
+@@ -10,6 +10,7 @@
+ #include <linux/mm.h>
+ #include <linux/uaccess.h>
+ #include <linux/ftrace.h>
++#include <linux/cpu.h>
+ #include <xen/xen.h>
+ 
+ #undef pr_fmt
+@@ -294,7 +295,8 @@ void __init kaiser_check_boottime_disabl
+ 			goto skip;
+ 	}
+ 
+-	if (cmdline_find_option_bool(boot_command_line, "nopti"))
++	if (cmdline_find_option_bool(boot_command_line, "nopti") ||
++	    cpu_mitigations_off())
+ 		goto disable;
+ 
+ skip:
 
