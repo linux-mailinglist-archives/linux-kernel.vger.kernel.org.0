@@ -2,97 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA13020B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:34:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D0A820B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbfEPPeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:34:11 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33961 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbfEPPeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:34:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j24so3557171ljg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RgkwpdYQl9vPdtySryKdVHRySf6tMU0/Ia1tcv4ix30=;
-        b=DKcHZXmijDxQRqkKIEARtaTrF1akUPSYdG4y1zbgCZsstI2PKmflfIqn9R57e8r0bh
-         beB+bnHkDd1niy82QG5AzYmQWg6fbD+h8mWkc+3ifWzxXdAYcZjoEFdaTZdz1cx7ceUL
-         B5FI8/pi3t8ENGgO3YVnls3F5P42rYCR/JXvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RgkwpdYQl9vPdtySryKdVHRySf6tMU0/Ia1tcv4ix30=;
-        b=QBgPKunxzlE2pzAeAYn34diiwrYc5l2i3WqYTVjvcx8PymtX2JKJtdWC83Gliee6sf
-         EIrYInLiYXG93Mkf86fdAMVTjCyLnAsBMcT3pdJk4/5lJfTCbwiuUJALHIpBuIWcLjr3
-         sEw28a71czhHK44iKj7hBjzyUACvRXxLK3/ymYwOAlJHV+WSP2zJHrhYNjv1iu8Q+BN7
-         K2rixEGyMCrSUhSlVbhN/fclYdy+oXYsvx+3jnbm/hFSwfmo/BglS8AYKxeK+EmhXm+m
-         qn6tCtjSor1pjkRGSpOmYtxxC8D0sLrGfuFwxP2eP6G87Za4YCFAWrSGDELPEaFkuyEa
-         ZvAg==
-X-Gm-Message-State: APjAAAXuNGQvj5BVrQW/3rzmUaYp2BwReGGSaNEKFsT7fZK4pfv/64gC
-        jlfmrWWBJtWliRj8hzFISiXC2jXEDhY=
-X-Google-Smtp-Source: APXvYqyEalNyHAapoC3EXhVfTWyFQSisSDv7f9FgyD+C/BE0ZsY+bBJERpYP1sot59FZ0oYv/j+Umw==
-X-Received: by 2002:a2e:9747:: with SMTP id f7mr21731187ljj.34.1558020848491;
-        Thu, 16 May 2019 08:34:08 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id b15sm957177ljj.1.2019.05.16.08.34.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 08:34:07 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id j24so3557058ljg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:34:07 -0700 (PDT)
-X-Received: by 2002:a2e:9a94:: with SMTP id p20mr14460647lji.2.1558020847152;
- Thu, 16 May 2019 08:34:07 -0700 (PDT)
+        id S1727443AbfEPPpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:45:34 -0400
+Received: from rosenzweig.io ([107.170.207.86]:48198 "EHLO rosenzweig.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbfEPPpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 11:45:34 -0400
+X-Greylist: delayed 546 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 11:45:34 EDT
+Received: by rosenzweig.io (Postfix, from userid 1000)
+        id 091D860AC9; Thu, 16 May 2019 08:36:28 -0700 (PDT)
+Date:   Thu, 16 May 2019 08:36:27 -0700
+From:   Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To:     Steven Price <steven.price@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        David Airlie <airlied@linux.ie>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] drm/panfrost: drm_gem_map_offset() helper
+Message-ID: <20190516153627.GA22778@rosenzweig.io>
+References: <20190516141447.46839-1-steven.price@arm.com>
 MIME-Version: 1.0
-References: <20190516064304.24057-1-olof@lixom.net> <20190516064304.24057-2-olof@lixom.net>
-In-Reply-To: <20190516064304.24057-2-olof@lixom.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 May 2019 08:33:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
-Message-ID: <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
-Subject: Re: [GIT PULL 1/4] ARM: SoC platform updates
-To:     Olof Johansson <olof@lixom.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     ARM SoC <arm@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190516141447.46839-1-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 11:43 PM Olof Johansson <olof@lixom.net> wrote:
->
-> SoC updates, mostly refactorings and cleanups of old legacy platforms.
-> Major themes this release:
+Providing maintainers more aware of the substance review it and ok it,
+patches 1-2 are:
 
-Hmm. This brings in a new warning:
+	Acked-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-  drivers/clocksource/timer-ixp4xx.c:78:20: warning:
-=E2=80=98ixp4xx_read_sched_clock=E2=80=99 defined but not used [-Wunused-fu=
-nction]
+Patch 3 should be:
 
-because that drivers is enabled for build testing, but that function
-is only used under
-
-  #ifdef CONFIG_ARM
-        sched_clock_register(ixp4xx_read_sched_clock, 32, timer_freq);
-  #endif
-
-It's not clear why that #ifdef is there. This driver only builds
-non-ARM when COMPILE_TEST is enabled, and that #ifdef actually breaks
-that build test.
-
-I'm going to remove that #ifdef in my merge, because I do *not* want
-to see new warnings, and it doesn't seem to make any sense.
-
-Maybe that's the wrong resolution, please holler and let me know if
-you want something else.
-
-                Linus
+	Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
