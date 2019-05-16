@@ -2,143 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0800E20A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28BDB20A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfEPO4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:56:08 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:40114 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727464AbfEPO4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:56:04 -0400
-Received: (qmail 2248 invoked by uid 2102); 16 May 2019 10:56:02 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 16 May 2019 10:56:02 -0400
-Date:   Thu, 16 May 2019 10:56:02 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Jim Lin <jilin@nvidia.com>
-cc:     gregkh@linuxfoundation.org, <mathias.nyman@intel.com>,
-        <kai.heng.feng@canonical.com>, <drinkcat@chromium.org>,
-        <keescook@chromium.org>, <nsaenzjulienne@suse.de>,
-        <jflat@chromium.org>, <malat@debian.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 1/2] usb: xhci : Add devaddr in struct usb_device
-In-Reply-To: <1558017657-13835-2-git-send-email-jilin@nvidia.com>
-Message-ID: <Pine.LNX.4.44L0.1905161054250.1280-100000@iolanthe.rowland.org>
+        id S1727702AbfEPO4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:56:35 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:43414 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727658AbfEPO4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 10:56:34 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 5BDF94CB10;
+        Thu, 16 May 2019 16:56:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id 8d4PMuRmJICT; Thu, 16 May 2019 16:56:27 +0200 (CEST)
+Date:   Fri, 17 May 2019 00:56:07 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Christian Brauner <christian@brauner.io>, jannh@google.com,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de,
+        akpm@linux-foundation.org, dhowells@redhat.com,
+        ebiederm@xmission.com, elena.reshetova@intel.com,
+        keescook@chromium.org, luto@amacapital.net, luto@kernel.org,
+        tglx@linutronix.de, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, joel@joelfernandes.org,
+        dancol@google.com, serge@hallyn.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v1 1/2] pid: add pidfd_open()
+Message-ID: <20190516145607.j43xyj26k6l5vmbd@yavin>
+References: <20190516135944.7205-1-christian@brauner.io>
+ <20190516142659.GB22564@redhat.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="asldj7bns6ry6jfo"
+Content-Disposition: inline
+In-Reply-To: <20190516142659.GB22564@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 May 2019, Jim Lin wrote:
 
-> The Clear_TT_Buffer request sent to the hub includes the address of
-> the LS/FS child device in wValue field. usb_hub_clear_tt_buffer()
-> uses udev->devnum to set the address wValue. This won't work for
-> devices connected to xHC.
-> 
-> For other host controllers udev->devnum is the same as the address of
-> the usb device, chosen and set by usb core. With xHC the controller
-> hardware assigns the address, and won't be the same as devnum.
-> 
-> Here we add devaddr in "struct usb_device" for
-> usb_hub_clear_tt_buffer() to use.
-> 
-> Signed-off-by: Jim Lin <jilin@nvidia.com>
-> ---
+--asldj7bns6ry6jfo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Aside from the "xhci:" part of the Subject line (it's not really 
-appropriate because this is a modification of the USB core more than of 
-the xhci-hcd driver),
+On 2019-05-16, Oleg Nesterov <oleg@redhat.com> wrote:
+> On 05/16, Christian Brauner wrote:
+> >
+> > With the introduction of pidfds through CLONE_PIDFD it is possible to
+> > created pidfds at process creation time.
+>=20
+> Now I am wondering why do we need CLONE_PIDFD, you can just do
+>=20
+> 	pid =3D fork();
+> 	pidfd_open(pid);
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+While the race window would be exceptionally short, there is the
+possibility that the child will die and their pid will be recycled
+before you do pidfd_open(). CLONE_PIDFD removes the race completely.
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
->     , remove its claiming in xhci.h
-> v3: Add description for clearing_tt (xhci.h)
-> v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
->     to protect for Clear_TT_Buffer to be run serially.
->     Remove xhci_clear_tt_buffer_complete as it's not necessary.
->     Same reason as the above.
->     Extend usb_hub_clear_tt_buffer parameter
-> v5: Not extending usb_hub_clear_tt_buffer parameter
->     Add description.
-> v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
-> v7: Add devaddr field in "struct usb_device"
-> v8: split as two patches, change type from int to u8 for devaddr.
-> v9: Use pahole to find place to put devaddr in struct usb_device.
->     Remove space between type cast and variable.
->     hub.c changed from v8
->     clear->devinfo |= (u16) (udev->devaddr << 4);
->     to 
->     clear->devinfo |= ((u16)udev->devaddr) << 4;
->     to solve a problem if devaddr is larger than 16.
-> v10 Initialize devaddr in xhci_setup_device()
->     Move devaddr to be below "u8 level"
-> 
->  drivers/usb/core/hub.c  | 4 +++-
->  drivers/usb/host/xhci.c | 1 +
->  include/linux/usb.h     | 2 ++
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 15a2934dc29d..0d4b289be103 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -873,7 +873,7 @@ int usb_hub_clear_tt_buffer(struct urb *urb)
->  	/* info that CLEAR_TT_BUFFER needs */
->  	clear->tt = tt->multi ? udev->ttport : 1;
->  	clear->devinfo = usb_pipeendpoint (pipe);
-> -	clear->devinfo |= udev->devnum << 4;
-> +	clear->devinfo |= ((u16)udev->devaddr) << 4;
->  	clear->devinfo |= usb_pipecontrol(pipe)
->  			? (USB_ENDPOINT_XFER_CONTROL << 11)
->  			: (USB_ENDPOINT_XFER_BULK << 11);
-> @@ -2125,6 +2125,8 @@ static void update_devnum(struct usb_device *udev, int devnum)
->  	/* The address for a WUSB device is managed by wusbcore. */
->  	if (!udev->wusb)
->  		udev->devnum = devnum;
-> +	if (!udev->devaddr)
-> +		udev->devaddr = (u8)devnum;
->  }
->  
->  static void hub_free_dev(struct usb_device *udev)
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 7fa58c99f126..68b393e5a453 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -4096,6 +4096,7 @@ static int xhci_setup_device(struct usb_hcd *hcd, struct usb_device *udev,
->  	/* Zero the input context control for later use */
->  	ctrl_ctx->add_flags = 0;
->  	ctrl_ctx->drop_flags = 0;
-> +	udev->devaddr = (u8)(le32_to_cpu(slot_ctx->dev_state) & DEV_ADDR_MASK);
->  
->  	xhci_dbg_trace(xhci, trace_xhci_dbg_address,
->  		       "Internal device address = %d",
-> diff --git a/include/linux/usb.h b/include/linux/usb.h
-> index 4229eb74bd2c..af68e31118f8 100644
-> --- a/include/linux/usb.h
-> +++ b/include/linux/usb.h
-> @@ -580,6 +580,7 @@ struct usb3_lpm_parameters {
->   * @bus_mA: Current available from the bus
->   * @portnum: parent port number (origin 1)
->   * @level: number of USB hub ancestors
-> + * @devaddr: device address, XHCI: assigned by HW, others: same as devnum
->   * @can_submit: URBs may be submitted
->   * @persist_enabled:  USB_PERSIST enabled for this device
->   * @have_langid: whether string_langid is valid
-> @@ -663,6 +664,7 @@ struct usb_device {
->  	unsigned short bus_mA;
->  	u8 portnum;
->  	u8 level;
-> +	u8 devaddr;
->  
->  	unsigned can_submit:1;
->  	unsigned persist_enabled:1;
-> 
+--asldj7bns6ry6jfo
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlzdegcACgkQSnvnv3De
+m59otQ//cKLIBYu0NRjFiTL/Sy05MLpjdwxWtxgO+bUeTNYJNghTPgEJw+c+25c7
+tNoebC+JCGcAwO8ACNKnZDd3AuaNys1ZrFwNP7s9IcfOhPEHbcgD2OthKJUE5zZJ
+bXypZRJF+JWJYvn8yBVWpV0IKZwytCnY/yDelTQgcZnKQ2fnmPLEIDtYD3zAuab+
+IgkiYZ/oDsrgUIjkgiYs7gHSqU/cZEDI+dxAZawR2xuSOg7nLUlZ9mJmFWiUYwfL
+55w4joeTcTAlRUDEBzsJFemknqCEo+5qrX0C2qoTmZvdiaVqMQKmGiqYbxdTRC/o
+6lH2q4JQE2aYetbZ9Q9gl4fnFsbbAZBADAuAd8xV0rFWbCB+gkTdZS4G3MZ9baAm
+F0o5HofG0TvkzG5K81aRWlipjvnngapLm/xnSCrfe3rIi9Kw+u1+9jMr+1/BTN/5
+dsHnpAqWPt81mJdlzOSqhCfG7aLmJ/AQKvrC8h2JvtKema98vpK7hJhCbAUi+6lU
+1V9iCvnERBIOlmzkE67ZGtKRPXmPSKIxKgbvOhc1f9DAYQID20S+SNtRJcBpSwhH
++YDqmefCAfqC6+JU/ZySLZrkuNOmoGuHP+T3ku0JyGn4xUayM1ZtKece3ILcafoi
+hRTQy5y2ax/fJ2EPN7o5qc8Oe8DMInckJzKsOvbMe43FldNhKzA=
+=SNKZ
+-----END PGP SIGNATURE-----
+
+--asldj7bns6ry6jfo--
