@@ -2,156 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855F021040
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 23:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148F921027
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 23:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfEPVrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 17:47:24 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42604 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfEPVrY (ORCPT
+        id S1728756AbfEPVku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 17:40:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44245 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbfEPVkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 17:47:24 -0400
-Received: by mail-ua1-f68.google.com with SMTP id e9so1893255uar.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 14:47:23 -0700 (PDT)
+        Thu, 16 May 2019 17:40:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z16so2177935pgv.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 14:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=++a8Pfd1pmd0gtgzMiYzStSZkT1QAJ0q9LoMMmyznno=;
-        b=lxC0mVIjA0SLzDUNfcqRwxoiM0ULrrdBItgvpMV0PYh4yCZN/egZlHDYXZIOCb0MWy
-         MEptyIyNH17TyhG2+6tHcF8ypoGmsF8PJqLzkBm6+Qlwyk2Q/8Ro+UcRneAkuDiSuMtV
-         KnOVeynDlXHVxD7AA7uJiQXAlzHOQX14yDO8c=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ukge0ptaqtQfzBE3gk2H8jEArL17PgyGsxqUKXtZMbQ=;
+        b=JzKx+RF4TLBsEzBvWlJuApn0knquV7p4R881+CU/VNU+JGrSzZmo4yrONglkpOvAzb
+         gFKMQzVEIn3490zilMNi3bc38jveC54jAPM+0tQpFwfuIXjhPX0C35zllfCsiU4t6RZy
+         LQxCLZG/xoArLy1BwI631/GGRSoB4DjJLfhcU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=++a8Pfd1pmd0gtgzMiYzStSZkT1QAJ0q9LoMMmyznno=;
-        b=EfW2NjKMWOWx7vJ9Va8GfNeO1wZ2l+/13tG4NNAcJbxSLPec2cL6bWz0HjIu2X45kL
-         YeWfxzX7SknEObvR8kf9nP/S9sf1WZyXO3T7iAyR3rfNL7IFfY/6qjCPELHIhkDBkKI5
-         0Vw7/WlGqzO3BIJHrkd8zOcReB0kCW6YzFSXhvJJKqchGHG0QU7Y2hYFXZC+whIA7bAK
-         z0tgSf474WDnLlvwkoWi7bJOweMfUKCb0BQ2PERHJHLfqXA54kuOLl15QSsgVsabl5xt
-         9UOhx1NtmM+T6DTdCZFcaUS7vYdRslHkt6DDB/U2BuuxsSP4nbo5T6Zehf5bJzA+0Xya
-         760g==
-X-Gm-Message-State: APjAAAWagvB2+aqgT/6SO2OqWBlaKmwUVNpjrLjyR2Ym8dGYrbddfUsb
-        R6t4iy3vsa8COXCsnxFwqD9VS5+kSQU=
-X-Google-Smtp-Source: APXvYqw4ro8EHFHy90zKtK+pK9MaXKO5qXMgkBfHL8+CL5TIsuhX2wL0fYzCRmr7CxlsWuVZTlvpHQ==
-X-Received: by 2002:a9f:3731:: with SMTP id z46mr12738375uad.16.1558043242763;
-        Thu, 16 May 2019 14:47:22 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 143sm4199125vkj.44.2019.05.16.14.47.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 14:47:22 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id q64so3324974vsd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 14:47:22 -0700 (PDT)
-X-Received: by 2002:a67:dd8e:: with SMTP id i14mr18643024vsk.149.1558042747509;
- Thu, 16 May 2019 14:39:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ukge0ptaqtQfzBE3gk2H8jEArL17PgyGsxqUKXtZMbQ=;
+        b=h77ErgmtU/UC/A3IjZY6poKtvJFagSL9VkZsdL+7mbnomuCmR2SgyfenmX9jmThdZm
+         aOzPq47X8MuTCgNV2wjFShriR+HbmP2y2abnnTTuYz7B0FwVycDaBVqotY3SxUJA1Rj4
+         a9aYlbNg8sXzGWha/4bh312o52OU3V5TLNsExIEAJ1VtFiAqUetMDis8v0HD5b9jQkxZ
+         ur0gM8P3y9D8VS/EpBSCGtxQOWktnIdEAoK9rm8i3n67mFT14W8sj3He1z7aWdbOyVaG
+         kxBj+pwx/h4oiFrXatafr/rLTYKY3NsD8ZbXo+If6RWUoSNSQhbbQfqIto4V4N7j0zzW
+         dO3Q==
+X-Gm-Message-State: APjAAAVnWVwZfYhUiW5d9nQOqZylgkbaCqVOsCm9xmbg9+lSixMt6yHW
+        JsXpAQnnSyL8IN6a7QyKkmCtlA==
+X-Google-Smtp-Source: APXvYqwOR1Vaun2FkXTwvszdYiYWTQfSZ7dyxK8u7skFfDe5/KjtBFl9QmluFeY4GYG/t/JXRiUNlw==
+X-Received: by 2002:a63:5c1b:: with SMTP id q27mr53715942pgb.127.1558042848815;
+        Thu, 16 May 2019 14:40:48 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id v4sm13127252pff.45.2019.05.16.14.40.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 14:40:48 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc:     linux-rockchip@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>, mka@chromium.org,
+        Sean Paul <seanpaul@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 1/2] drm: bridge: dw-hdmi: Add hook for resume
+Date:   Thu, 16 May 2019 14:40:21 -0700
+Message-Id: <20190516214022.65220-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
-References: <5cdae78b.1c69fb81.a32a9.870f@mx.google.com>
-In-Reply-To: <5cdae78b.1c69fb81.a32a9.870f@mx.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 16 May 2019 14:38:52 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WDjUBvwoAaWNOmXPaLpZCccpAgRWDzRSnvsQ62TFwVmQ@mail.gmail.com>
-Message-ID: <CAD=FV=WDjUBvwoAaWNOmXPaLpZCccpAgRWDzRSnvsQ62TFwVmQ@mail.gmail.com>
-Subject: Re: next/master boot bisection: next-20190514 on rk3288-veyron-jaq
-To:     "kernelci.org bot" <bot@kernelci.org>
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>,
-        mgalka@collabora.com, Mark Brown <broonie@kernel.org>,
-        matthew.hart@linaro.org, Kevin Hilman <khilman@baylibre.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Rockchip rk3288-based Chromebooks when you do a suspend/resume
+cycle:
 
-From: kernelci.org bot <bot@kernelci.org>
-Date: Tue, May 14, 2019 at 9:06 AM
-To: <tomeu.vizoso@collabora.com>, <guillaume.tucker@collabora.com>,
-<mgalka@collabora.com>, <broonie@kernel.org>,
-<matthew.hart@linaro.org>, <khilman@baylibre.com>,
-<enric.balletbo@collabora.com>, Elaine Zhang, Eduardo Valentin, Daniel
-Lezcano
-Cc: Heiko Stuebner, <linux-pm@vger.kernel.org>,
-<linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-Zhang Rui, <linux-arm-kernel@lists.infradead.org>
+1. You lose the ability to detect an HDMI device being plugged in.
 
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->
-> next/master boot bisection: next-20190514 on rk3288-veyron-jaq
->
-> Summary:
->   Start:      0a13f187b16a Add linux-next specific files for 20190514
->   Details:    https://kernelci.org/boot/id/5cda7f2259b514876d7a3628
->   Plain log:  https://storage.kernelci.org//next/master/next-20190514/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-veyron-jaq.txt
->   HTML log:   https://storage.kernelci.org//next/master/next-20190514/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-veyron-jaq.html
->   Result:     691d4947face thermal: rockchip: fix up the tsadc pinctrl setting error
->
-> Checks:
->   revert:     PASS
->   verify:     PASS
->
-> Parameters:
->   Tree:       next
->   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   Branch:     master
->   Target:     rk3288-veyron-jaq
->   CPU arch:   arm
->   Lab:        lab-collabora
->   Compiler:   gcc-8
->   Config:     multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y
->   Test suite: boot
->
-> Breaking commit found:
->
-> -------------------------------------------------------------------------------
-> commit 691d4947faceb8bd841900049e07c81c95ca4b0d
-> Author: Elaine Zhang <zhangqing@rock-chips.com>
-> Date:   Tue Apr 30 18:09:44 2019 +0800
->
->     thermal: rockchip: fix up the tsadc pinctrl setting error
->
->     Explicitly use the pinctrl to set/unset the right mode
->     instead of relying on the pinctrl init mode.
->     And it requires setting the tshut polarity before select pinctrl.
->
->     When the temperature sensor mode is set to 0, it will automatically
->     reset the board via the Clock-Reset-Unit (CRU) if the over temperature
->     threshold is reached. However, when the pinctrl initializes, it does a
->     transition to "otp_out" which may lead the SoC restart all the time.
->
->     "otp_out" IO may be connected to the RESET circuit on the hardware.
->     If the IO is in the wrong state, it will trigger RESET.
->     (similar to the effect of pressing the RESET button)
->     which will cause the soc to restart all the time.
->
->     Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->     Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->     Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+2. If you're using the i2c bus built in to dw_hdmi then it stops
+working.
 
-I can confirm that the above commit breaks my jerry, though I haven't
-dug into the details.  :(  Is anyone fixing?  For now I'm just booting
-with the revert.
+Let's add a hook to the core dw-hdmi driver so that we can call it in
+dw_hdmi-rockchip in the next commit.
 
+NOTE: the exact set of steps I've done here in resume come from
+looking at the normal dw_hdmi init sequence in upstream Linux plus the
+sequence that we did in downstream Chrome OS 3.14.  Testing show that
+it seems to work, but if an extra step is needed or something here is
+not needed we could improve it.
 
--Doug
+As part of this change we'll refactor the hardware init bits of
+dw-hdmi to happen all in one function and all at the same time.  Since
+we need to init the interrupt mutes before we request the IRQ, this
+means moving the hardware init earlier in the function, but there
+should be no problems with that.  Also as part of this we now
+unconditionally init the "i2c" parts of dw-hdmi, but again that ought
+to be fine.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+Changes in v2:
+- No empty stub for suspend (Laurent)
+- Refactor to use the same code in probe and resume (Laurent)
+- Unconditionally init i2c (seems OK + needed before hdmi->i2c init)
+- Combine "init" of i2c and "setup" of i2c (no reason to split)
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 50 ++++++++++++++---------
+ include/drm/bridge/dw_hdmi.h              |  2 +
+ 2 files changed, 33 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index ab7968c8f6a2..636d55d1398c 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -227,6 +227,13 @@ static void hdmi_mask_writeb(struct dw_hdmi *hdmi, u8 data, unsigned int reg,
+ 
+ static void dw_hdmi_i2c_init(struct dw_hdmi *hdmi)
+ {
++	hdmi_writeb(hdmi, HDMI_PHY_I2CM_INT_ADDR_DONE_POL,
++		    HDMI_PHY_I2CM_INT_ADDR);
++
++	hdmi_writeb(hdmi, HDMI_PHY_I2CM_CTLINT_ADDR_NAC_POL |
++		    HDMI_PHY_I2CM_CTLINT_ADDR_ARBITRATION_POL,
++		    HDMI_PHY_I2CM_CTLINT_ADDR);
++
+ 	/* Software reset */
+ 	hdmi_writeb(hdmi, 0x00, HDMI_I2CM_SOFTRSTZ);
+ 
+@@ -1925,16 +1932,6 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	return 0;
+ }
+ 
+-static void dw_hdmi_setup_i2c(struct dw_hdmi *hdmi)
+-{
+-	hdmi_writeb(hdmi, HDMI_PHY_I2CM_INT_ADDR_DONE_POL,
+-		    HDMI_PHY_I2CM_INT_ADDR);
+-
+-	hdmi_writeb(hdmi, HDMI_PHY_I2CM_CTLINT_ADDR_NAC_POL |
+-		    HDMI_PHY_I2CM_CTLINT_ADDR_ARBITRATION_POL,
+-		    HDMI_PHY_I2CM_CTLINT_ADDR);
+-}
+-
+ static void initialize_hdmi_ih_mutes(struct dw_hdmi *hdmi)
+ {
+ 	u8 ih_mute;
+@@ -2435,6 +2432,21 @@ static const struct regmap_config hdmi_regmap_32bit_config = {
+ 	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR << 2,
+ };
+ 
++static void dw_hdmi_init_hw(struct dw_hdmi *hdmi)
++{
++	initialize_hdmi_ih_mutes(hdmi);
++
++	/*
++	 * Reset HDMI DDC I2C master controller and mute I2CM interrupts.
++	 * Even if we are using a separate i2c adapter doing this doesn't
++	 * hurt.
++	 */
++	dw_hdmi_i2c_init(hdmi);
++
++	if (hdmi->phy.ops->setup_hpd)
++		hdmi->phy.ops->setup_hpd(hdmi, hdmi->phy.data);
++}
++
+ static struct dw_hdmi *
+ __dw_hdmi_probe(struct platform_device *pdev,
+ 		const struct dw_hdmi_plat_data *plat_data)
+@@ -2586,7 +2598,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
+ 		 hdmi->phy.name);
+ 
+-	initialize_hdmi_ih_mutes(hdmi);
++	dw_hdmi_init_hw(hdmi);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -2625,10 +2637,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	hdmi->bridge.of_node = pdev->dev.of_node;
+ #endif
+ 
+-	dw_hdmi_setup_i2c(hdmi);
+-	if (hdmi->phy.ops->setup_hpd)
+-		hdmi->phy.ops->setup_hpd(hdmi, hdmi->phy.data);
+-
+ 	memset(&pdevinfo, 0, sizeof(pdevinfo));
+ 	pdevinfo.parent = dev;
+ 	pdevinfo.id = PLATFORM_DEVID_AUTO;
+@@ -2681,10 +2689,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 		hdmi->cec = platform_device_register_full(&pdevinfo);
+ 	}
+ 
+-	/* Reset HDMI DDC I2C master controller and mute I2CM interrupts */
+-	if (hdmi->i2c)
+-		dw_hdmi_i2c_init(hdmi);
+-
+ 	return hdmi;
+ 
+ err_iahb:
+@@ -2788,6 +2792,14 @@ void dw_hdmi_unbind(struct dw_hdmi *hdmi)
+ }
+ EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
+ 
++int dw_hdmi_resume(struct dw_hdmi *hdmi)
++{
++	dw_hdmi_init_hw(hdmi);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_resume);
++
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+ MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com>");
+ MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 66e70770cce5..1626731e1681 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -154,6 +154,8 @@ struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
+ 			     struct drm_encoder *encoder,
+ 			     const struct dw_hdmi_plat_data *plat_data);
+ 
++int dw_hdmi_resume(struct dw_hdmi *hdmi);
++
+ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
+ 
+ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
