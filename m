@@ -2,77 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D3320139
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C8620145
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfEPIZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 04:25:24 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:36199 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfEPIZX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:25:23 -0400
-Received: by mail-vs1-f66.google.com with SMTP id l20so1778738vsp.3;
-        Thu, 16 May 2019 01:25:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kom7CYU+qZNtW2jhA/vUJyPJXygJervJGsEuV/SOp60=;
-        b=iuMcoLFRmGqCnoME87YxWMHfyLCUC+TKrE+vv6libXqIBnyoGZ6IbsvKwvOKa9FVlc
-         P7AWl7nqQN8ZKQr2KOWY7UtdMe25ui1Hq6NU20z1rf6JvmMLvg899FZ5irb/SIXBhI1W
-         VCTXfF9HUEyKA33cG9rxCavhm8Oy3MAl+pyNZDCTY7HR/PtRjWx5U+mRQMYE0tc71bu6
-         2azFS5w2Pi24ELZVx0GTM9x89nXy3fIqZ1Z4tUnzNlQvZmDejYxPAyj2mLy9loYBXmUc
-         XJIQvOjpyJ4OtJn0gn0ndEf1AaTVo+p1m3kVp5nQtw+B7GTKlFFbkWZOACC086cqqeBt
-         x08g==
-X-Gm-Message-State: APjAAAUGcwLAjT3wqhM3Y6Emu2G5NKIc+6FbphsXRiR47Vye4P63MFzc
-        l4d/2ACUUaIrN6oU/9n66sYVsIJEb7zxskWXlIQ=
-X-Google-Smtp-Source: APXvYqz8A+UKfZ2oOCYzeXseCIyYZ4wWUIDb6b9Gxt8lpJxZNlnNHTRGzBSCc2MdFNDG5Jw0r3bbHv8IOqodaorNY/Q=
-X-Received: by 2002:a67:fdd4:: with SMTP id l20mr18322924vsq.63.1557995122611;
- Thu, 16 May 2019 01:25:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190516075656.25880-1-yuehaibing@huawei.com>
-In-Reply-To: <20190516075656.25880-1-yuehaibing@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 16 May 2019 10:25:11 +0200
-Message-ID: <CAMuHMdUMBg9HL8PQvkHvppP+qJ6fWjs0ZbFTX=8x0A1_AVUJqw@mail.gmail.com>
-Subject: Re: [PATCH] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Mark Brown <broonie@kernel.org>, Axel Lin <axel.lin@ingics.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>, albeu@free.fr,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726953AbfEPI0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:26:53 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24486 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbfEPI0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 04:26:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 01:26:51 -0700
+X-ExtLoop1: 1
+Received: from skl-s2.bj.intel.com ([10.240.192.102])
+  by orsmga005.jf.intel.com with ESMTP; 16 May 2019 01:26:48 -0700
+From:   Luwei Kang <luwei.kang@intel.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v1 4/6] KVM: VMX: Allocate XSAVE area for Intel PT configuration
+Date:   Thu, 16 May 2019 16:25:12 +0800
+Message-Id: <1557995114-21629-5-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1557995114-21629-1-git-send-email-luwei.kang@intel.com>
+References: <1557995114-21629-1-git-send-email-luwei.kang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 9:57 AM YueHaibing <yuehaibing@huawei.com> wrote:
-> If spi_register_master fails in spi_bitbang_start
-> because device_add failure, We should return the
-> error code other than 0, otherwise calling
-> spi_bitbang_stop may trigger NULL pointer dereference
-> like this:
->
-> BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0
-> Read of size 8 at addr 0000000000000000 by task syz-executor.0/3661
+Allocate XSAVE area for host and guest Intel PT
+configuration when Intel PT working in HOST_GUEST
+mode. Intel PT configuration state can be saved
+using XSAVES and restored by XRSTORS instruction.
 
-[...]
+Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 25 ++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.h |  3 +++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 702a4879ec33 ("spi: bitbang: Let spi_bitbang_start() take a reference to master")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 4595230..4691665 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1033,6 +1033,7 @@ static void pt_guest_exit(struct vcpu_vmx *vmx)
+ 
+ static int pt_init(struct vcpu_vmx *vmx)
+ {
++	unsigned int eax, ebx, ecx, edx;
+ 	u32 pt_state_sz = sizeof(struct pt_state) + sizeof(u64) *
+ 		intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2;
+ 
+@@ -1044,13 +1045,35 @@ static int pt_init(struct vcpu_vmx *vmx)
+ 	vmx->pt_desc->host_ctx = (struct pt_state *)(vmx->pt_desc + 1);
+ 	vmx->pt_desc->guest_ctx = (void *)vmx->pt_desc->host_ctx + pt_state_sz;
+ 
++	cpuid_count(XSTATE_CPUID, 1, &eax, &ebx, &ecx, &edx);
++	if (ecx & XFEATURE_MASK_PT) {
++		vmx->pt_desc->host_xs = kmem_cache_zalloc(x86_fpu_cache,
++							GFP_KERNEL_ACCOUNT);
++		vmx->pt_desc->guest_xs = kmem_cache_zalloc(x86_fpu_cache,
++							GFP_KERNEL_ACCOUNT);
++		if (!vmx->pt_desc->host_xs || !vmx->pt_desc->guest_xs) {
++			if (vmx->pt_desc->host_xs)
++				kmem_cache_free(x86_fpu_cache,
++						vmx->pt_desc->host_xs);
++			if (vmx->pt_desc->guest_xs)
++				kmem_cache_free(x86_fpu_cache,
++						vmx->pt_desc->guest_xs);
++		} else
++			vmx->pt_desc->pt_xsave = true;
++	}
++
+ 	return 0;
+ }
+ 
+ static void pt_uninit(struct vcpu_vmx *vmx)
+ {
+-	if (pt_mode == PT_MODE_HOST_GUEST)
++	if (pt_mode == PT_MODE_HOST_GUEST) {
+ 		kfree(vmx->pt_desc);
++		if (vmx->pt_desc->pt_xsave) {
++			kmem_cache_free(x86_fpu_cache, vmx->pt_desc->host_xs);
++			kmem_cache_free(x86_fpu_cache, vmx->pt_desc->guest_xs);
++		}
++	}
+ }
+ 
+ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 283f69d..e103991 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -69,8 +69,11 @@ struct pt_desc {
+ 	u64 ctl_bitmask;
+ 	u32 addr_range;
+ 	u32 caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
++	bool pt_xsave;
+ 	struct pt_state *host_ctx;
+ 	struct pt_state *guest_ctx;
++	struct fpu *host_xs;
++	struct fpu *guest_xs;
+ };
+ 
+ /*
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.8.3.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
