@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3DF20278
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 093422027C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfEPJ2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:28:04 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:53913 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726363AbfEPJ2D (ORCPT
+        id S1727022AbfEPJ2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:28:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:2583 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726363AbfEPJ2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:28:03 -0400
-X-UUID: d86e117a3c794947902cb259459271e0-20190516
-X-UUID: d86e117a3c794947902cb259459271e0-20190516
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Thu, 16 May 2019 05:28:17 -0400
+X-UUID: 6e1b069708c14586ac4e92411018cd6c-20190516
+X-UUID: 6e1b069708c14586ac4e92411018cd6c-20190516
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1025656641; Thu, 16 May 2019 17:27:57 +0800
+        with ESMTP id 356823539; Thu, 16 May 2019 17:28:06 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 16 May 2019 17:27:55 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 16 May 2019 17:27:56 +0800
 Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 16 May 2019 17:27:55 +0800
+ Transport; Thu, 16 May 2019 17:27:56 +0800
 From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -34,7 +34,7 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Nicolas Boichat <drinkcat@chromium.org>,
         YT Shen <yt.shen@mediatek.com>,
@@ -43,9 +43,9 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v6 10/12] soc: mediatek: cmdq: add cmdq_dev_get_subsys function
-Date:   Thu, 16 May 2019 17:27:53 +0800
-Message-ID: <20190516092754.33425-2-bibby.hsieh@mediatek.com>
+Subject: [PATCH v6 11/12] soc: mediatek: cmdq: add cmdq_dev_get_event function
+Date:   Thu, 16 May 2019 17:27:54 +0800
+Message-ID: <20190516092754.33425-3-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190516092754.33425-1-bibby.hsieh@mediatek.com>
 References: <20190516092754.33425-1-bibby.hsieh@mediatek.com>
@@ -57,84 +57,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCE cannot know the register base address, this function
-can help cmdq client to get the relationship of subsys
-and register base address.
+When client ask gce to clear or wait for event,
+client need to pass event number to the API.
+We suggest client store the event information in device node,
+so we provide an API for client parse the event property.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 25 +++++++++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h  | 18 ++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 18 ++++++++++++++++++
+ include/linux/soc/mediatek/mtk-cmdq.h  | 12 ++++++++++++
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index a53cdd71cfc2..a64060a34e01 100644
+index a64060a34e01..e9658063c3d4 100644
 --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
 +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -27,6 +27,31 @@ struct cmdq_instruction {
- 	u8 op;
- };
+@@ -52,6 +52,24 @@ struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx)
+ }
+ EXPORT_SYMBOL(cmdq_dev_get_subsys);
  
-+struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx)
++s32 cmdq_dev_get_event(struct device *dev, int index)
 +{
-+	struct cmdq_subsys *subsys;
-+	struct of_phandle_args spec;
++	s32 result;
 +
-+	subsys = devm_kzalloc(dev, sizeof(*subsys), GFP_KERNEL);
-+	if (!subsys)
-+		return NULL;
++	if (!dev)
++		return -EINVAL;
 +
-+	if (of_parse_phandle_with_args(dev->of_node, "mediatek,gce-client-reg",
-+				       "#subsys-cells", idx, &spec)) {
-+		dev_err(dev, "can't parse gce-client-reg property");
++	if (of_property_read_u32_index(dev->of_node, "mediatek,gce-events",
++				       index, &result)) {
++		dev_err(dev, "can't parse gce-events property");
 +
-+		return (struct cmdq_subsys *)-ENODEV;
++		return -ENODEV;
 +	}
 +
-+	subsys->id = spec.args[0];
-+	subsys->offset = spec.args[1];
-+	subsys->size = spec.args[2];
-+	of_node_put(spec.np);
-+
-+	return subsys;
++	return result;
 +}
-+EXPORT_SYMBOL(cmdq_dev_get_subsys);
++EXPORT_SYMBOL(cmdq_dev_get_event);
 +
  static void cmdq_client_timeout(struct timer_list *t)
  {
  	struct cmdq_client *client = from_timer(client, t, timer);
 diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 0651a0bffa54..574006c5cd76 100644
+index 574006c5cd76..525713bf79b5 100644
 --- a/include/linux/soc/mediatek/mtk-cmdq.h
 +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -15,6 +15,12 @@
- 
- struct cmdq_pkt;
- 
-+struct cmdq_subsys {
-+	u8 id;
-+	u16 offset;
-+	u16 size;
-+};
-+
- struct cmdq_client {
- 	spinlock_t lock;
- 	u32 pkt_cnt;
-@@ -142,4 +148,16 @@ int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
+@@ -160,4 +160,16 @@ int cmdq_pkt_flush(struct cmdq_pkt *pkt);
   */
- int cmdq_pkt_flush(struct cmdq_pkt *pkt);
+ struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx);
  
 +/**
-+ * cmdq_dev_get_subsys() - parse sub system from the device node of CMDQ client
++ * cmdq_dev_get_event() - parse event from the device node of CMDQ client
 + * @dev:	device of CMDQ mailbox client
-+ * @idx:	the index of desired subsys
++ * @index:	the index of desired event
 + *
-+ * Return: CMDQ subsys pointer
++ * Return: CMDQ event number
 + *
-+ * Help CMDQ client pasing the sub system number
++ * Help CMDQ client pasing the event number
 + * from the device node of CMDQ client.
 + */
-+struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx);
++s32 cmdq_dev_get_event(struct device *dev, int index);
 +
  #endif	/* __MTK_CMDQ_H__ */
 -- 
