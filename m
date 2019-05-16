@@ -2,83 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C192099D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCBE8209A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfEPO2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:28:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:47602 "EHLO foss.arm.com"
+        id S1727172AbfEPO3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:29:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51330 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbfEPO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:28:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08ED91715;
-        Thu, 16 May 2019 07:28:01 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5EAA3F71E;
-        Thu, 16 May 2019 07:27:59 -0700 (PDT)
-Date:   Thu, 16 May 2019 15:27:57 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Bad virt_to_phys since commit 54c7a8916a887f35
-Message-ID: <20190516142756.GE43059@lakrids.cambridge.arm.com>
-References: <20190516133820.GA43059@lakrids.cambridge.arm.com>
- <20190516134105.GB43059@lakrids.cambridge.arm.com>
- <e70ead93-2fe9-faf9-9e77-9df15809bad6@arm.com>
- <20190516141640.GC43059@lakrids.cambridge.arm.com>
- <d265e5fe-c061-17a0-427d-0e6f31be17f3@arm.com>
+        id S1726687AbfEPO3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 10:29:22 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C85C30C0DCD;
+        Thu, 16 May 2019 14:29:22 +0000 (UTC)
+Received: from treble (ovpn-120-91.rdu2.redhat.com [10.10.120.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C32860BE0;
+        Thu, 16 May 2019 14:29:20 +0000 (UTC)
+Date:   Thu, 16 May 2019 09:29:17 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Raphael Gault <raphael.gault@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        julien.thierry@arm.com
+Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
+Message-ID: <20190516142917.nuhh6dmfiufxqzls@treble>
+References: <20190516103655.5509-1-raphael.gault@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d265e5fe-c061-17a0-427d-0e6f31be17f3@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190516103655.5509-1-raphael.gault@arm.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 16 May 2019 14:29:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 03:20:59PM +0100, Steven Price wrote:
-> On 16/05/2019 15:16, Mark Rutland wrote:
-> > On Thu, May 16, 2019 at 03:05:31PM +0100, Steven Price wrote:
-> >> I suspect the following is sufficient to fix the problem:
-> >>
-> >> ----8<-----
-> >> diff --git a/init/initramfs.c b/init/initramfs.c
-> >> index 435a428c2af1..178130fd61c2 100644
-> >> --- a/init/initramfs.c
-> >> +++ b/init/initramfs.c
-> >> @@ -669,7 +669,7 @@ static int __init populate_rootfs(void)
-> >>  	 * If the initrd region is overlapped with crashkernel reserved region,
-> >>  	 * free only memory that is not part of crashkernel region.
-> >>  	 */
-> >> -	if (!do_retain_initrd && !kexec_free_initrd())
-> >> +	if (!do_retain_initrd && initrd_start && !kexec_free_initrd())
-> >>  		free_initrd_mem(initrd_start, initrd_end);
-> >>  	initrd_start = 0;
-> >>  	initrd_end = 0;
-> > 
-> > That works for me. If you spin this as a real patch:
-> > 
-> > Tested-by: Mark Rutland <mark.rutland@arm.com>
-> > 
-> > As I mentioned, initrd_start has not been initialized at all, so I
-> > suspect we should also update its declaration in init/do_mounts_initrd.c
-> > such that it is guaranteed to be initialized to zero. We get away with
-> > that today, but that won't necessarily hold with LTO and so on...
-> 
-> Well it's a global variable, so the C standard says it should be
-> initialised to 0...
+On Thu, May 16, 2019 at 11:36:39AM +0100, Raphael Gault wrote:
+> Noteworthy points:
+> * I still haven't figured out how to detect switch-tables on arm64. I
+> have a better understanding of them but still haven't implemented checks
+> as it doesn't look trivial at all.
 
-For some reason I was under the impression that wasn't guaranteed, but I
-see that it is. Sorry for the noise.
+Switch tables were tricky to get right on x86.  If you share an example
+(or even just a .o file) I can take a look.  Hopefully they're somewhat
+similar to x86 switch tables.  Otherwise we may want to consider a
+different approach (for example maybe a GCC plugin could help annotate
+them).
 
-> I'll spin a real patch and add your Tested-by
-
-Great; thanks!
-
-Mark.
+-- 
+Josh
