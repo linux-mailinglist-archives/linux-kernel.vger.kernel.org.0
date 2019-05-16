@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E838D20C2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8F920BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfEPQCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:02:31 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42796 "EHLO
+        id S1727441AbfEPP7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:59:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43022 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726908AbfEPP6q (ORCPT
+        by vger.kernel.org with ESMTP id S1727088AbfEPP6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:46 -0400
+        Thu, 16 May 2019 11:58:48 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0006yu-EA; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImK-0006zl-Fd; Thu, 16 May 2019 16:58:44 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0001NX-QY; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImE-0001Rq-Ms; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,19 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Borislav Petkov" <bp@suse.de>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Rabin Vincent" <rabin@rab.in>, "Ingo Molnar" <mingo@kernel.org>
+        "Jon Masters" <jcm@redhat.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Frederic Weisbecker" <frederic@kernel.org>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.208452825@decadent.org.uk>
+Message-ID: <lsq.1558022133.866567195@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 15/86] locking/static_keys: Add a new static_key
- interface
+Subject: [PATCH 3.16 68/86] x86/speculation/mds: Conditionally clear CPU
+ buffers on idle entry
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -53,605 +51,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 11276d5306b8e5b438a36bbff855fe792d7eaa61 upstream.
+commit 07f07f55a29cb705e221eda7894dd67ab81ef343 upstream.
 
-There are various problems and short-comings with the current
-static_key interface:
+Add a static key which controls the invocation of the CPU buffer clear
+mechanism on idle entry. This is independent of other MDS mitigations
+because the idle entry invocation to mitigate the potential leakage due to
+store buffer repartitioning is only necessary on SMT systems.
 
- - static_key_{true,false}() read like a branch depending on the key
-   value, instead of the actual likely/unlikely branch depending on
-   init value.
+Add the actual invocations to the different halt/mwait variants which
+covers all usage sites. mwaitx is not patched as it's not available on
+Intel CPUs.
 
- - static_key_{true,false}() are, as stated above, tied to the
-   static_key init values STATIC_KEY_INIT_{TRUE,FALSE}.
+The buffer clear is only invoked before entering the C-State to prevent
+that stale data from the idling CPU is spilled to the Hyper-Thread sibling
+after the Store buffer got repartitioned and all entries are available to
+the non idle sibling.
 
- - we're limited to the 2 (out of 4) possible options that compile to
-   a default NOP because that's what our arch_static_branch() assembly
-   emits.
+When coming out of idle the store buffer is partitioned again so each
+sibling has half of it available. Now CPU which returned from idle could be
+speculatively exposed to contents of the sibling, but the buffers are
+flushed either on exit to user space or on VMENTER.
 
-So provide a new static_key interface:
+When later on conditional buffer clearing is implemented on top of this,
+then there is no action required either because before returning to user
+space the context switch will set the condition flag which causes a flush
+on the return to user path.
 
-  DEFINE_STATIC_KEY_TRUE(name);
-  DEFINE_STATIC_KEY_FALSE(name);
+Note, that the buffer clearing on idle is only sensible on CPUs which are
+solely affected by MSBDS and not any other variant of MDS because the other
+MDS variants cannot be mitigated when SMT is enabled, so the buffer
+clearing on idle would be a window dressing exercise.
 
-Which define a key of different types with an initial true/false
-value.
+This intentionally does not handle the case in the acpi/processor_idle
+driver which uses the legacy IO port interface for C-State transitions for
+two reasons:
 
-Then allow:
+ - The acpi/processor_idle driver was replaced by the intel_idle driver
+   almost a decade ago. Anything Nehalem upwards supports it and defaults
+   to that new driver.
 
-   static_branch_likely()
-   static_branch_unlikely()
+ - The legacy IO port interface is likely to be used on older and therefore
+   unaffected CPUs or on systems which do not receive microcode updates
+   anymore, so there is no point in adding that.
 
-to take a key of either type and emit the right instruction for the
-case.
-
-This means adding a second arch_static_branch_jump() assembly helper
-which emits a JMP per default.
-
-In order to determine the right instruction for the right state,
-encode the branch type in the LSB of jump_entry::key.
-
-This is the final step in removing the naming confusion that has led to
-a stream of avoidable bugs such as:
-
-  a833581e372a ("x86, perf: Fix static_key bug in load_mm_cr4()")
-
-... but it also allows new static key combinations that will give us
-performance enhancements in the subsequent patches.
-
-Tested-by: Rabin Vincent <rabin@rab.in> # arm
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> # ppc
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com> # s390
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Jon Masters <jcm@redhat.com>
+Tested-by: Jon Masters <jcm@redhat.com>
 [bwh: Backported to 3.16:
- - For s390, use the 31-bit-compatible macros in arch_static_branch_jump()
- - 
+ - Drop change in _mwaitx()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/include/asm/jump_label.h     |  25 +++--
- arch/arm64/include/asm/jump_label.h   |  18 +++-
- arch/mips/include/asm/jump_label.h    |  19 +++-
- arch/powerpc/include/asm/jump_label.h |  19 +++-
- arch/s390/include/asm/jump_label.h    |  19 +++-
- arch/sparc/include/asm/jump_label.h   |  35 ++++--
- arch/x86/include/asm/jump_label.h     |  21 +++-
- include/linux/jump_label.h            | 149 ++++++++++++++++++++++++--
- kernel/jump_label.c                   |  37 +++++--
- 9 files changed, 298 insertions(+), 44 deletions(-)
-
---- a/arch/arm/include/asm/jump_label.h
-+++ b/arch/arm/include/asm/jump_label.h
-@@ -4,23 +4,32 @@
+--- a/Documentation/x86/mds.rst
++++ b/Documentation/x86/mds.rst
+@@ -149,3 +149,45 @@ Mitigation points
+      This takes the paranoid exit path only when the INT1 breakpoint is in
+      kernel space. #DB on a user space address takes the regular exit path,
+      so no extra mitigation required.
++
++
++2. C-State transition
++^^^^^^^^^^^^^^^^^^^^^
++
++   When a CPU goes idle and enters a C-State the CPU buffers need to be
++   cleared on affected CPUs when SMT is active. This addresses the
++   repartitioning of the store buffer when one of the Hyper-Threads enters
++   a C-State.
++
++   When SMT is inactive, i.e. either the CPU does not support it or all
++   sibling threads are offline CPU buffer clearing is not required.
++
++   The idle clearing is enabled on CPUs which are only affected by MSBDS
++   and not by any other MDS variant. The other MDS variants cannot be
++   protected against cross Hyper-Thread attacks because the Fill Buffer and
++   the Load Ports are shared. So on CPUs affected by other variants, the
++   idle clearing would be a window dressing exercise and is therefore not
++   activated.
++
++   The invocation is controlled by the static key mds_idle_clear which is
++   switched depending on the chosen mitigation mode and the SMT state of
++   the system.
++
++   The buffer clear is only invoked before entering the C-State to prevent
++   that stale data from the idling CPU from spilling to the Hyper-Thread
++   sibling after the store buffer got repartitioned and all entries are
++   available to the non idle sibling.
++
++   When coming out of idle the store buffer is partitioned again so each
++   sibling has half of it available. The back from idle CPU could be then
++   speculatively exposed to contents of the sibling. The buffers are
++   flushed either on exit to user space or on VMENTER so malicious code
++   in user space or the guest cannot speculatively access them.
++
++   The mitigation is hooked into all variants of halt()/mwait(), but does
++   not cover the legacy ACPI IO-Port mechanism because the ACPI idle driver
++   has been superseded by the intel_idle driver around 2010 and is
++   preferred on all affected CPUs which are expected to gain the MD_CLEAR
++   functionality in microcode. Aside of that the IO-Port mechanism is a
++   legacy interface which is only used on older systems which are either
++   not affected or do not receive microcode updates anymore.
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -4,6 +4,9 @@
+ #include <asm/processor-flags.h>
+ 
  #ifndef __ASSEMBLY__
- 
- #include <linux/types.h>
-+#include <asm/unified.h>
- 
- #define JUMP_LABEL_NOP_SIZE 4
- 
--#ifdef CONFIG_THUMB2_KERNEL
--#define JUMP_LABEL_NOP	"nop.w"
--#else
--#define JUMP_LABEL_NOP	"nop"
--#endif
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("1:\n\t"
-+		 WASM(nop) "\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 ".word 1b, %l[l_yes], %c0\n\t"
-+		 ".popsection\n\t"
-+		 : :  "i" (&((char *)key)[branch]) :  : l_yes);
 +
-+	return false;
-+l_yes:
-+	return true;
-+}
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:\n\t"
--		 JUMP_LABEL_NOP "\n\t"
-+		 WASM(b) " %l[l_yes]\n\t"
- 		 ".pushsection __jump_table,  \"aw\"\n\t"
- 		 ".word 1b, %l[l_yes], %c0\n\t"
- 		 ".popsection\n\t"
--		 : :  "i" (key) :  : l_yes);
-+		 : :  "i" (&((char *)key)[branch]) :  : l_yes);
- 
- 	return false;
- l_yes:
---- a/arch/arm64/include/asm/jump_label.h
-+++ b/arch/arm64/include/asm/jump_label.h
-@@ -26,14 +26,28 @@
- 
- #define JUMP_LABEL_NOP_SIZE		AARCH64_INSN_SIZE
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
- 	asm goto("1: nop\n\t"
- 		 ".pushsection __jump_table,  \"aw\"\n\t"
- 		 ".align 3\n\t"
- 		 ".quad 1b, %l[l_yes], %c0\n\t"
- 		 ".popsection\n\t"
--		 :  :  "i"(key) :  : l_yes);
-+		 :  :  "i"(&((char *)key)[branch]) :  : l_yes);
++#include <asm/nospec-branch.h>
 +
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm goto("1: b %l[l_yes]\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 ".align 3\n\t"
-+		 ".quad 1b, %l[l_yes], %c0\n\t"
-+		 ".popsection\n\t"
-+		 :  :  "i"(&((char *)key)[branch]) :  : l_yes);
- 
- 	return false;
- l_yes:
---- a/arch/mips/include/asm/jump_label.h
-+++ b/arch/mips/include/asm/jump_label.h
-@@ -26,14 +26,29 @@
- #define NOP_INSN "nop"
- #endif
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:\t" NOP_INSN "\n\t"
- 		"nop\n\t"
- 		".pushsection __jump_table,  \"aw\"\n\t"
- 		WORD_INSN " 1b, %l[l_yes], %0\n\t"
- 		".popsection\n\t"
--		: :  "i" (key) : : l_yes);
-+		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("1:\tj %l[l_yes]\n\t"
-+		"nop\n\t"
-+		".pushsection __jump_table,  \"aw\"\n\t"
-+		WORD_INSN " 1b, %l[l_yes], %0\n\t"
-+		".popsection\n\t"
-+		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+
- 	return false;
- l_yes:
- 	return true;
---- a/arch/powerpc/include/asm/jump_label.h
-+++ b/arch/powerpc/include/asm/jump_label.h
-@@ -17,14 +17,29 @@
- #define JUMP_ENTRY_TYPE		stringify_in_c(FTR_ENTRY_LONG)
- #define JUMP_LABEL_NOP_SIZE	4
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:\n\t"
- 		 "nop\n\t"
- 		 ".pushsection __jump_table,  \"aw\"\n\t"
- 		 JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
- 		 ".popsection \n\t"
--		 : :  "i" (key) : : l_yes);
-+		 : :  "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("1:\n\t"
-+		 "b %l[l_yes]\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
-+		 ".popsection \n\t"
-+		 : :  "i" (&((char *)key)[branch]) : : l_yes);
-+
- 	return false;
- l_yes:
- 	return true;
---- a/arch/s390/include/asm/jump_label.h
-+++ b/arch/s390/include/asm/jump_label.h
-@@ -20,14 +20,29 @@
-  * We use a brcl 0,2 instruction for jump labels at compile time so it
-  * can be easily distinguished from a hotpatch generated instruction.
+ /*
+  * Interrupt control:
   */
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+@@ -46,11 +49,13 @@ static inline void native_irq_enable(voi
+ 
+ static inline void native_safe_halt(void)
  {
- 	asm_volatile_goto("0:	brcl 0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
- 		".pushsection __jump_table, \"aw\"\n"
- 		ASM_ALIGN "\n"
- 		ASM_PTR " 0b, %l[label], %0\n"
- 		".popsection\n"
--		: : "X" (key) : : label);
-+		: : "X" (&((char *)key)[branch]) : : label);
++	mds_idle_clear_cpu_buffers();
+ 	asm volatile("sti; hlt": : :"memory");
+ }
+ 
+ static inline void native_halt(void)
+ {
++	mds_idle_clear_cpu_buffers();
+ 	asm volatile("hlt": : :"memory");
+ }
+ 
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -4,6 +4,7 @@
+ #include <linux/sched.h>
+ 
+ #include <asm/cpufeature.h>
++#include <asm/nospec-branch.h>
+ 
+ #define MWAIT_SUBSTATE_MASK		0xf
+ #define MWAIT_CSTATE_MASK		0xf
+@@ -27,6 +28,8 @@ static inline void __monitor(const void
+ 
+ static inline void __mwait(unsigned long eax, unsigned long ecx)
+ {
++	mds_idle_clear_cpu_buffers();
 +
-+	return false;
-+label:
-+	return true;
+ 	/* "mwait %eax, %ecx;" */
+ 	asm volatile(".byte 0x0f, 0x01, 0xc9;"
+ 		     :: "a" (eax), "c" (ecx));
+@@ -34,6 +37,8 @@ static inline void __mwait(unsigned long
+ 
+ static inline void __sti_mwait(unsigned long eax, unsigned long ecx)
+ {
++	mds_idle_clear_cpu_buffers();
++
+ 	trace_hardirqs_on();
+ 	/* "mwait %eax, %ecx;" */
+ 	asm volatile("sti; .byte 0x0f, 0x01, 0xc9;"
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -263,6 +263,7 @@ DECLARE_STATIC_KEY_FALSE(switch_mm_cond_
+ DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+ 
+ DECLARE_STATIC_KEY_FALSE(mds_user_clear);
++DECLARE_STATIC_KEY_FALSE(mds_idle_clear);
+ 
+ #include <asm/segment.h>
+ 
+@@ -300,6 +301,17 @@ static inline void mds_user_clear_cpu_bu
+ 		mds_clear_cpu_buffers();
+ }
+ 
++/**
++ * mds_idle_clear_cpu_buffers - Mitigation for MDS vulnerability
++ *
++ * Clear CPU buffers if the corresponding static key is enabled
++ */
++static inline void mds_idle_clear_cpu_buffers(void)
++{
++	if (static_branch_likely(&mds_idle_clear))
++		mds_clear_cpu_buffers();
 +}
 +
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("0:	brcl 15, %l[label]\n"
-+		".pushsection __jump_table, \"aw\"\n"
-+		ASM_ALIGN "\n"
-+		ASM_PTR " 0b, %l[label], %0\n"
-+		".popsection\n"
-+		: : "X" (&((char *)key)[branch]) : : label);
-+
- 	return false;
- label:
- 	return true;
---- a/arch/sparc/include/asm/jump_label.h
-+++ b/arch/sparc/include/asm/jump_label.h
-@@ -7,16 +7,33 @@
- 
- #define JUMP_LABEL_NOP_SIZE 4
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
--		asm_volatile_goto("1:\n\t"
--			 "nop\n\t"
--			 "nop\n\t"
--			 ".pushsection __jump_table,  \"aw\"\n\t"
--			 ".align 4\n\t"
--			 ".word 1b, %l[l_yes], %c0\n\t"
--			 ".popsection \n\t"
--			 : :  "i" (key) : : l_yes);
-+	asm_volatile_goto("1:\n\t"
-+		 "nop\n\t"
-+		 "nop\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 ".align 4\n\t"
-+		 ".word 1b, %l[l_yes], %c0\n\t"
-+		 ".popsection \n\t"
-+		 : :  "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("1:\n\t"
-+		 "b %l[l_yes]\n\t"
-+		 "nop\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 ".align 4\n\t"
-+		 ".word 1b, %l[l_yes], %c0\n\t"
-+		 ".popsection \n\t"
-+		 : :  "i" (&((char *)key)[branch]) : : l_yes);
-+
- 	return false;
- l_yes:
- 	return true;
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -16,7 +16,7 @@
- # define STATIC_KEY_INIT_NOP GENERIC_NOP5_ATOMIC
- #endif
- 
--static __always_inline bool arch_static_branch(struct static_key *key)
-+static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:"
- 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
-@@ -24,7 +24,24 @@ static __always_inline bool arch_static_
- 		_ASM_ALIGN "\n\t"
- 		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
- 		".popsection \n\t"
--		: :  "i" (key) : : l_yes);
-+		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+{
-+	asm_volatile_goto("1:"
-+		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
-+		"2:\n\t"
-+		".pushsection __jump_table,  \"aw\" \n\t"
-+		_ASM_ALIGN "\n\t"
-+		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
-+		".popsection \n\t"
-+		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+
- 	return false;
- l_yes:
- 	return true;
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -107,12 +107,12 @@ static inline int static_key_count(struc
- 
- static __always_inline bool static_key_false(struct static_key *key)
- {
--	return arch_static_branch(key);
-+	return arch_static_branch(key, false);
- }
- 
- static __always_inline bool static_key_true(struct static_key *key)
- {
--	return !static_key_false(key);
-+	return !arch_static_branch(key, true);
- }
- 
- extern struct jump_entry __start___jump_table[];
-@@ -130,12 +130,12 @@ extern void static_key_slow_inc(struct s
- extern void static_key_slow_dec(struct static_key *key);
- extern void jump_label_apply_nops(struct module *mod);
- 
--#define STATIC_KEY_INIT_TRUE ((struct static_key)		\
-+#define STATIC_KEY_INIT_TRUE					\
- 	{ .enabled = ATOMIC_INIT(1),				\
--	  .entries = (void *)JUMP_TYPE_TRUE })
--#define STATIC_KEY_INIT_FALSE ((struct static_key)		\
-+	  .entries = (void *)JUMP_TYPE_TRUE }
-+#define STATIC_KEY_INIT_FALSE					\
- 	{ .enabled = ATOMIC_INIT(0),				\
--	  .entries = (void *)JUMP_TYPE_FALSE })
-+	  .entries = (void *)JUMP_TYPE_FALSE }
- 
- #else  /* !HAVE_JUMP_LABEL */
- 
-@@ -183,10 +183,8 @@ static inline int jump_label_apply_nops(
- 	return 0;
- }
- 
--#define STATIC_KEY_INIT_TRUE ((struct static_key) \
--		{ .enabled = ATOMIC_INIT(1) })
--#define STATIC_KEY_INIT_FALSE ((struct static_key) \
--		{ .enabled = ATOMIC_INIT(0) })
-+#define STATIC_KEY_INIT_TRUE	{ .enabled = ATOMIC_INIT(1) }
-+#define STATIC_KEY_INIT_FALSE	{ .enabled = ATOMIC_INIT(0) }
- 
- #endif	/* HAVE_JUMP_LABEL */
- 
-@@ -218,6 +216,137 @@ static inline void static_key_disable(st
- 		static_key_slow_dec(key);
- }
- 
-+/* -------------------------------------------------------------------------- */
-+
-+/*
-+ * Two type wrappers around static_key, such that we can use compile time
-+ * type differentiation to emit the right code.
-+ *
-+ * All the below code is macros in order to play type games.
-+ */
-+
-+struct static_key_true {
-+	struct static_key key;
-+};
-+
-+struct static_key_false {
-+	struct static_key key;
-+};
-+
-+#define STATIC_KEY_TRUE_INIT  (struct static_key_true) { .key = STATIC_KEY_INIT_TRUE,  }
-+#define STATIC_KEY_FALSE_INIT (struct static_key_false){ .key = STATIC_KEY_INIT_FALSE, }
-+
-+#define DEFINE_STATIC_KEY_TRUE(name)	\
-+	struct static_key_true name = STATIC_KEY_TRUE_INIT
-+
-+#define DEFINE_STATIC_KEY_FALSE(name)	\
-+	struct static_key_false name = STATIC_KEY_FALSE_INIT
-+
-+#ifdef HAVE_JUMP_LABEL
-+
-+/*
-+ * Combine the right initial value (type) with the right branch order
-+ * to generate the desired result.
-+ *
-+ *
-+ * type\branch|	likely (1)	      |	unlikely (0)
-+ * -----------+-----------------------+------------------
-+ *            |                       |
-+ *  true (1)  |	   ...		      |	   ...
-+ *            |    NOP		      |	   JMP L
-+ *            |    <br-stmts>	      |	1: ...
-+ *            |	L: ...		      |
-+ *            |			      |
-+ *            |			      |	L: <br-stmts>
-+ *            |			      |	   jmp 1b
-+ *            |                       |
-+ * -----------+-----------------------+------------------
-+ *            |                       |
-+ *  false (0) |	   ...		      |	   ...
-+ *            |    JMP L	      |	   NOP
-+ *            |    <br-stmts>	      |	1: ...
-+ *            |	L: ...		      |
-+ *            |			      |
-+ *            |			      |	L: <br-stmts>
-+ *            |			      |	   jmp 1b
-+ *            |                       |
-+ * -----------+-----------------------+------------------
-+ *
-+ * The initial value is encoded in the LSB of static_key::entries,
-+ * type: 0 = false, 1 = true.
-+ *
-+ * The branch type is encoded in the LSB of jump_entry::key,
-+ * branch: 0 = unlikely, 1 = likely.
-+ *
-+ * This gives the following logic table:
-+ *
-+ *	enabled	type	branch	  instuction
-+ * -----------------------------+-----------
-+ *	0	0	0	| NOP
-+ *	0	0	1	| JMP
-+ *	0	1	0	| NOP
-+ *	0	1	1	| JMP
-+ *
-+ *	1	0	0	| JMP
-+ *	1	0	1	| NOP
-+ *	1	1	0	| JMP
-+ *	1	1	1	| NOP
-+ *
-+ * Which gives the following functions:
-+ *
-+ *   dynamic: instruction = enabled ^ branch
-+ *   static:  instruction = type ^ branch
-+ *
-+ * See jump_label_type() / jump_label_init_type().
-+ */
-+
-+extern bool ____wrong_branch_error(void);
-+
-+#define static_branch_likely(x)							\
-+({										\
-+	bool branch;								\
-+	if (__builtin_types_compatible_p(typeof(*x), struct static_key_true))	\
-+		branch = !arch_static_branch(&(x)->key, true);			\
-+	else if (__builtin_types_compatible_p(typeof(*x), struct static_key_false)) \
-+		branch = !arch_static_branch_jump(&(x)->key, true);		\
-+	else									\
-+		branch = ____wrong_branch_error();				\
-+	branch;									\
-+})
-+
-+#define static_branch_unlikely(x)						\
-+({										\
-+	bool branch;								\
-+	if (__builtin_types_compatible_p(typeof(*x), struct static_key_true))	\
-+		branch = arch_static_branch_jump(&(x)->key, false);		\
-+	else if (__builtin_types_compatible_p(typeof(*x), struct static_key_false)) \
-+		branch = arch_static_branch(&(x)->key, false);			\
-+	else									\
-+		branch = ____wrong_branch_error();				\
-+	branch;									\
-+})
-+
-+#else /* !HAVE_JUMP_LABEL */
-+
-+#define static_branch_likely(x)		likely(static_key_enabled(&(x)->key))
-+#define static_branch_unlikely(x)	unlikely(static_key_enabled(&(x)->key))
-+
-+#endif /* HAVE_JUMP_LABEL */
-+
-+/*
-+ * Advanced usage; refcount, branch is enabled when: count != 0
-+ */
-+
-+#define static_branch_inc(x)		static_key_slow_inc(&(x)->key)
-+#define static_branch_dec(x)		static_key_slow_dec(&(x)->key)
-+
-+/*
-+ * Normal usage; boolean enable/disable.
-+ */
-+
-+#define static_branch_enable(x)		static_key_enable(&(x)->key)
-+#define static_branch_disable(x)	static_key_disable(&(x)->key)
-+
- #endif	/* _LINUX_JUMP_LABEL_H */
- 
  #endif /* __ASSEMBLY__ */
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -172,16 +172,22 @@ static inline bool static_key_type(struc
  
- static inline struct static_key *jump_entry_key(struct jump_entry *entry)
- {
--	return (struct static_key *)((unsigned long)entry->key);
-+	return (struct static_key *)((unsigned long)entry->key & ~1UL);
-+}
-+
-+static bool jump_entry_branch(struct jump_entry *entry)
-+{
-+	return (unsigned long)entry->key & 1UL;
- }
+ #ifdef __ASSEMBLY__
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -60,6 +60,9 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_always
  
- static enum jump_label_type jump_label_type(struct jump_entry *entry)
- {
- 	struct static_key *key = jump_entry_key(entry);
- 	bool enabled = static_key_enabled(key);
--	bool type = static_key_type(key);
-+	bool branch = jump_entry_branch(entry);
+ /* Control MDS CPU buffer clear before returning to user space */
+ DEFINE_STATIC_KEY_FALSE(mds_user_clear);
++/* Control MDS CPU buffer clear before idling (halt, mwait) */
++DEFINE_STATIC_KEY_FALSE(mds_idle_clear);
++EXPORT_SYMBOL_GPL(mds_idle_clear);
  
--	return enabled ^ type;
-+	/* See the comment in linux/jump_label.h */
-+	return enabled ^ branch;
- }
- 
- static void __jump_label_update(struct static_key *key,
-@@ -212,7 +218,10 @@ void __init jump_label_init(void)
- 	for (iter = iter_start; iter < iter_stop; iter++) {
- 		struct static_key *iterk;
- 
--		arch_jump_label_transform_static(iter, jump_label_type(iter));
-+		/* rewrite NOPs */
-+		if (jump_label_type(iter) == JUMP_LABEL_NOP)
-+			arch_jump_label_transform_static(iter, JUMP_LABEL_NOP);
-+
- 		iterk = jump_entry_key(iter);
- 		if (iterk == key)
- 			continue;
-@@ -232,6 +241,16 @@ void __init jump_label_init(void)
- 
- #ifdef CONFIG_MODULES
- 
-+static enum jump_label_type jump_label_init_type(struct jump_entry *entry)
-+{
-+	struct static_key *key = jump_entry_key(entry);
-+	bool type = static_key_type(key);
-+	bool branch = jump_entry_branch(entry);
-+
-+	/* See the comment in linux/jump_label.h */
-+	return type ^ branch;
-+}
-+
- struct static_key_mod {
- 	struct static_key_mod *next;
- 	struct jump_entry *entries;
-@@ -283,8 +302,11 @@ void jump_label_apply_nops(struct module
- 	if (iter_start == iter_stop)
- 		return;
- 
--	for (iter = iter_start; iter < iter_stop; iter++)
--		arch_jump_label_transform_static(iter, JUMP_LABEL_NOP);
-+	for (iter = iter_start; iter < iter_stop; iter++) {
-+		/* Only write NOPs for arch_branch_static(). */
-+		if (jump_label_init_type(iter) == JUMP_LABEL_NOP)
-+			arch_jump_label_transform_static(iter, JUMP_LABEL_NOP);
-+	}
- }
- 
- static int jump_label_add_module(struct module *mod)
-@@ -325,7 +347,8 @@ static int jump_label_add_module(struct
- 		jlm->next = key->next;
- 		key->next = jlm;
- 
--		if (jump_label_type(iter) == JUMP_LABEL_JMP)
-+		/* Only update if we've changed from our initial state */
-+		if (jump_label_type(iter) != jump_label_init_type(iter))
- 			__jump_label_update(key, iter, iter_stop);
- 	}
- 
+ /* For use by asm MDS_CLEAR_CPU_BUFFERS */
+ const u16 mds_clear_cpu_buffers_ds = __KERNEL_DS;
 
