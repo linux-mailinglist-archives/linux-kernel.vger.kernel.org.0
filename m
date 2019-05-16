@@ -2,36 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B296A20C3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A304E20C16
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfEPQDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:03:02 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42702 "EHLO
+        id S1728045AbfEPQBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:01:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42870 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726894AbfEPP6o (ORCPT
+        by vger.kernel.org with ESMTP id S1727014AbfEPP6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:44 -0400
+        Thu, 16 May 2019 11:58:46 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImH-0006zr-EN; Thu, 16 May 2019 16:58:41 +0100
+        id 1hRImD-0006zC-Re; Thu, 16 May 2019 16:58:37 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0001Rz-OO; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImD-0001OC-4m; Thu, 16 May 2019 16:58:37 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Mike Galbraith" <efault@gmx.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Jiri Olsa" <jolsa@redhat.com>, "Ingo Molnar" <mingo@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Vince Weaver" <vincent.weaver@maine.edu>, rostedt@goodmis.org,
+        "Stephane Eranian" <eranian@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.353868316@decadent.org.uk>
+Message-ID: <lsq.1558022133.467416823@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 70/86] x86/speculation/l1tf: Document l1tf in sysfs
+Subject: [PATCH 3.16 23/86] x86/headers: Don't include asm/processor.h in
+ asm/atomic.h
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -45,26 +55,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Andi Kleen <ak@linux.intel.com>
 
-The vulnerabilties/l1tf attribute was added by commit 17dbca119312
-"x86/speculation/l1tf: Add sysfs reporting for l1tf", which has
-already been backported to 3.16, but only documented in commit
-d90a7a0ec83f "x86/bugs, kvm: Introduce boot-time control of L1TF
-mitigations", which has not and probbaly won't be.
+commit 153a4334c439cfb62e1d31cee0c790ba4157813d upstream.
 
-Add just that line of documentation for now.
+asm/atomic.h doesn't really need asm/processor.h anymore. Everything
+it uses has moved to other header files. So remove that include.
 
+processor.h is a nasty header that includes lots of
+other headers and makes it prone to include loops. Removing the
+include here makes asm/atomic.h a "leaf" header that can
+be safely included in most other headers.
+
+The only fallout is in the lib/atomic tester which relied on
+this implicit include. Give it an explicit include.
+(the include is in ifdef because the user is also in ifdef)
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: rostedt@goodmis.org
+Link: http://lkml.kernel.org/r/1449018060-1742-1-git-send-email-andi@firstfloor.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16 to avoid a dependency loop; adjusted context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -230,6 +230,7 @@ What:		/sys/devices/system/cpu/vulnerabi
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
- 		/sys/devices/system/cpu/vulnerabilities/spec_store_bypass
-+		/sys/devices/system/cpu/vulnerabilities/l1tf
- Date:		January 2018
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
- Description:	Information about CPU vulnerabilities
+ arch/x86/include/asm/atomic.h      | 1 -
+ arch/x86/include/asm/atomic64_32.h | 1 -
+ lib/atomic64_test.c                | 4 ++++
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -3,7 +3,6 @@
+ 
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+-#include <asm/processor.h>
+ #include <asm/alternative.h>
+ #include <asm/cmpxchg.h>
+ #include <asm/rmwcc.h>
+--- a/arch/x86/include/asm/atomic64_32.h
++++ b/arch/x86/include/asm/atomic64_32.h
+@@ -3,7 +3,6 @@
+ 
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+-#include <asm/processor.h>
+ //#include <asm/cmpxchg.h>
+ 
+ /* An 64bit atomic type */
+--- a/lib/atomic64_test.c
++++ b/lib/atomic64_test.c
+@@ -16,6 +16,10 @@
+ #include <linux/kernel.h>
+ #include <linux/atomic.h>
+ 
++#ifdef CONFIG_X86
++#include <asm/processor.h>	/* for boot_cpu_has below */
++#endif
++
+ #define INIT(c) do { atomic64_set(&v, c); r = c; } while (0)
+ static __init int test_atomic64(void)
+ {
 
