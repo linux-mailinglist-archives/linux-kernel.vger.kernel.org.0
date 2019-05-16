@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B23B920C74
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE25E20BC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:58:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbfEPQEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:04:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42438 "EHLO
+        id S1727248AbfEPP6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:58:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42362 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726665AbfEPP6l (ORCPT
+        by vger.kernel.org with ESMTP id S1726523AbfEPP6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 16 May 2019 11:58:41 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0006yv-Dt; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImE-0006zQ-7d; Thu, 16 May 2019 16:58:38 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0001Nh-Sx; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImD-0001Ob-BZ; Thu, 16 May 2019 16:58:37 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
+        bp@suse.de, "Thomas Gleixner" <tglx@linutronix.de>,
+        konrad.wilk@oracle.com,
+        "Dominik Brodowski" <linux@dominikbrodowski.net>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.153636021@decadent.org.uk>
+Message-ID: <lsq.1558022133.174232137@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 17/86] jump_label/x86: Work around asm build bug on
- older/backported GCCs
+Subject: [PATCH 3.16 28/86] x86/speculation: Simplify the CPU bug
+ detection logic
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,69 +49,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit d420acd816c07c7be31bd19d09cbcb16e5572fa6 upstream.
+commit 8ecc4979b1bd9c94168e6fc92960033b7a951336 upstream.
 
-Boris reported that gcc version 4.4.4 20100503 (Red Hat
-4.4.4-2) fails to build linux-next kernels that have
-this fresh commit via the locking tree:
+Only CPUs which speculate can speculate. Therefore, it seems prudent
+to test for cpu_no_speculation first and only then determine whether
+a specific speculating CPU is susceptible to store bypass speculation.
+This is underlined by all CPUs currently listed in cpu_no_speculation
+were present in cpu_no_spec_store_bypass as well.
 
-  11276d5306b8 ("locking/static_keys: Add a new static_key interface")
-
-The problem appears to be that even though @key and @branch are
-compile time constants, it doesn't see the following expression
-as an immediate value:
-
-   &((char *)key)[branch]
-
-More recent GCCs don't appear to have this problem.
-
-In particular, Red Hat backported the 'asm goto' feature into 4.4,
-'normal' 4.4 compilers will not have this feature and thus not
-run into this asm.
-
-The workaround is to supply both values to the asm as immediates
-and do the addition in asm.
-
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Reported-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@suse.de
+Cc: konrad.wilk@oracle.com
+Link: https://lkml.kernel.org/r/20180522090539.GA24668@light.dominikbrodowski.net
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/jump_label.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/common.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -22,9 +22,9 @@ static __always_inline bool arch_static_
- 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
- 		".popsection \n\t"
--		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+		: :  "i" (key), "i" (branch) : : l_yes);
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -825,12 +825,8 @@ static const __initconst struct x86_cpu_
+ 	{}
+ };
  
- 	return false;
- l_yes:
-@@ -38,9 +38,9 @@ static __always_inline bool arch_static_
- 		"2:\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
- 		".popsection \n\t"
--		: :  "i" (&((char *)key)[branch]) : : l_yes);
-+		: :  "i" (key), "i" (branch) : : l_yes);
++/* Only list CPUs which speculate but are non susceptible to SSB */
+ static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
+@@ -838,14 +834,10 @@ static const __initconst struct x86_cpu_
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
+-	{ X86_VENDOR_CENTAUR,	5,					},
+-	{ X86_VENDOR_INTEL,	5,					},
+-	{ X86_VENDOR_NSC,	5,					},
+ 	{ X86_VENDOR_AMD,	0x12,					},
+ 	{ X86_VENDOR_AMD,	0x11,					},
+ 	{ X86_VENDOR_AMD,	0x10,					},
+ 	{ X86_VENDOR_AMD,	0xf,					},
+-	{ X86_VENDOR_ANY,	4,					},
+ 	{}
+ };
  
- 	return false;
- l_yes:
+@@ -868,6 +860,12 @@ static void __init cpu_set_bug_bits(stru
+ {
+ 	u64 ia32_cap = 0;
+ 
++	if (x86_match_cpu(cpu_no_speculation))
++		return;
++
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++
+ 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 
+@@ -876,12 +874,6 @@ static void __init cpu_set_bug_bits(stru
+ 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
+-	if (x86_match_cpu(cpu_no_speculation))
+-		return;
+-
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
+-
+ 	if (ia32_cap & ARCH_CAP_IBRS_ALL)
+ 		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
+ 
 
