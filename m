@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 586F720ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD4020EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfEPSlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 14:41:50 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42174 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfEPSlu (ORCPT
+        id S1727873AbfEPSnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 14:43:21 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:33734 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbfEPSnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 14:41:50 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y13so3413952lfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 11:41:48 -0700 (PDT)
+        Thu, 16 May 2019 14:43:17 -0400
+Received: by mail-lj1-f180.google.com with SMTP id w1so4084689ljw.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 11:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SBJxqqJ41Gj2UgLcLdw3cvX6XyzdcNuSspjRp/Do27A=;
-        b=IYVxqddi8vfmX/QE4v+tde5humzCJklwvwqZXu9M3qJCiAmHqmMOnzrLlWroQ53WGR
-         K6YlA59NgT3y5mQSHrTZ+tUnNn/Wecg7LzyQnZKLTFSyQ1eT8f5jAcwcx8ZiPHpxkI+p
-         6TJFsF27a/dp8fmtWnWMiWJrVZnlyg16ZPTsc=
+        bh=7cZ1i1PlSN05rjwgmeSPBOyRXDYpMKnhLwTSuPaFE/U=;
+        b=EfMguayduqZ24ff/F2BHhhOzDjdyonEf/8VAfENfIiKBoB1yeFBf4g99m6HV/ITW75
+         ljiBLFVvQ2AmeClpItH1kbP5DUhFgHjF3hBfb0bAa+H9/32UpRA/gA93SgH3F+wg+0iD
+         Q4TO8Dsk7hrNYV0eWnI/r80xmPZC2tINDBImE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SBJxqqJ41Gj2UgLcLdw3cvX6XyzdcNuSspjRp/Do27A=;
-        b=g9BsfDX+GNU4VL1SuIkyWL+h8nQ4YmQhgvDyYDW/flhtgc+/cysgm9BbKOqb59uSIu
-         8CKtdGGF57I9mvkkBqEZ1yJ3WzQBzxrzJBbR6pvjfYEJHL022+OL42hfO5Gqs/vzFRfO
-         qJV0OfbZWyjbR3r2wwKFtxGNF/M9ff2nKqBIojkJgVMi9BpScWv5g8uvFY2X0mlqGUUj
-         72R3Me+lL0xrSdw1cQ7lhDCZHMw4IHuD8dVYT1EysMO0XDwOz7fxlQ1pUlWDZ3FHt/xA
-         DOt/JqKV1m+K/Lvn+RhnyYaJvBzlIj7irJ4ptWbwrM518lua6VUJel+Ml0z/r0dRkBie
-         GLYA==
-X-Gm-Message-State: APjAAAV44FaNd3QswzUlQePUxzHKbRjlfkm13qjqsqgf6ZTSmW9LIzwu
-        KunXwDIKEQL4qo45hGl5q9O53r6eLQ0=
-X-Google-Smtp-Source: APXvYqzvGQag76QZjcucOX5TAZ6oOhJxr50wz60BlL95xvePQ8m62X8T8aeBnXfM+TrwrU6hyqxPaQ==
-X-Received: by 2002:a19:2b4d:: with SMTP id r74mr12827898lfr.96.1558032107248;
-        Thu, 16 May 2019 11:41:47 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id b29sm1104505lfo.38.2019.05.16.11.41.46
+        bh=7cZ1i1PlSN05rjwgmeSPBOyRXDYpMKnhLwTSuPaFE/U=;
+        b=Ipl1GMcQejQG1fsD96xR5r/gyX7W+S/avTCluc9vsT5A0mo/Wyh0w0Uzt1c8Wby+HM
+         bRA9qOL5NyEsHG3YvMgyeXMkVw6jaCwhWIn0xjce8h221Ssl6cNjdHtkPgHRDyDFuL3a
+         F+cobg0mSg+zhyTTXKbT4AAEBu8XKpkGGaF5yBARwW/04wtaQTkyxOSVsN1LY/7D+KOE
+         HDpREcvGQxG9Qo9ac79bLx18u+7S8BTGycphKAyIJobGNQT4utqxHvqBpsXFbYayM5Pz
+         qzVy74oaeMYIYN2tKRUeLRw7SiarnrE0ikx2qlJbVkkD351NQ73wXY/Du+z/+c+NAG94
+         Q6AQ==
+X-Gm-Message-State: APjAAAUKorwP4lOV6Vn++EMCqaAb4T6EUlVOI5ioP2GVYfIIHTX7bBH3
+        kf+uhvcsEISWGoJRNWKsGlD7Naqx5mA=
+X-Google-Smtp-Source: APXvYqzNs9NfA66QniJh4DcChpaqTaHtBbOXXYh5pk9XKH5y/2jNv6xL8yOPXHd2BKKiJBV9CoISkg==
+X-Received: by 2002:a2e:824b:: with SMTP id j11mr24408315ljh.197.1558032195176;
+        Thu, 16 May 2019 11:43:15 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id n18sm1181679lji.63.2019.05.16.11.43.14
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 11:41:46 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id d8so3416096lfb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 11:41:46 -0700 (PDT)
-X-Received: by 2002:a19:ca02:: with SMTP id a2mr24597189lfg.88.1558032105763;
- Thu, 16 May 2019 11:41:45 -0700 (PDT)
+        Thu, 16 May 2019 11:43:14 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id l26so3391496lfh.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 11:43:14 -0700 (PDT)
+X-Received: by 2002:a19:5015:: with SMTP id e21mr25981649lfb.62.1558032194090;
+ Thu, 16 May 2019 11:43:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAK8P3a2+RHAReOZdo8nEvqDeC1EPj83L2Ug4JuVRiUh943AuNw@mail.gmail.com>
-In-Reply-To: <CAK8P3a2+RHAReOZdo8nEvqDeC1EPj83L2Ug4JuVRiUh943AuNw@mail.gmail.com>
+References: <20190516160135.GA45760@gmail.com> <CAHk-=wgtHi5mT7y=0ij-AksQQOBQJqV1apk2bRaH2tfRTxyFcg@mail.gmail.com>
+ <20190516183945.GA6659@kroah.com>
+In-Reply-To: <20190516183945.GA6659@kroah.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 May 2019 11:41:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgiv5ftb+dq7N8cN4n2YX3VkyzeQccywn07Xu9xhOLTSw@mail.gmail.com>
-Message-ID: <CAHk-=wgiv5ftb+dq7N8cN4n2YX3VkyzeQccywn07Xu9xhOLTSw@mail.gmail.com>
-Subject: Re: [GIT PULL] asm-generic: kill <asm/segment.h> and improve nommu
- generic uaccess helpers
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-riscv@lists.infradead.org
+Date:   Thu, 16 May 2019 11:42:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgNFabppzpSQQgt7ajrYqmFjtkn2D3n=RvSEDryCLO+=g@mail.gmail.com>
+Message-ID: <CAHk-=wgNFabppzpSQQgt7ajrYqmFjtkn2D3n=RvSEDryCLO+=g@mail.gmail.com>
+Subject: Re: [GIT PULL] locking fix
+To:     Greg KH <greg@kroah.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, stable <stable@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 5:09 AM Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, May 16, 2019 at 11:39 AM Greg KH <greg@kroah.com> wrote:
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
-> tags/asm-generic-nommu
+> Thanks, I'll work on that later tonight...
 
-Interesting. I haven't seen this error before:
+Note that it probably is almost entirely impossible to trigger the
+problem in practice, so it's not like this is a particularly important
+stable back-port.
 
-  # gpg: Signature made Tue 23 Apr 2019 12:54:49 PM PDT
-  # gpg:                using RSA key 60AB47FFC9095227
-  # gpg: bad data signature from key 60AB47FFC9095227: Wrong key usage
-(0x00, 0x4)
-  # gpg: Can't check signature: Wrong key usage
+I just happened to look at it and go "hmm, it's not _marked_ for stable".
 
-I think it means that you signed it with a key that was marked for
-encryption only or something like that.
-
-But gpg being the wonderful self-explanatory great UX that it is, I
-have no effin clue what it really means.
-
-Looking at the git history, it turns out this has happened a before
-from you, and in fact goes back to pull requests from 2012.
-
-Either I just didn't notice - which sounds unlikely for something that
-has been going on for 7+ years - or the actual check and error is new
-to gpg, and I only notice it this merge window because I've upgraded
-to F30.
-
-          Linus
+                  Linus
