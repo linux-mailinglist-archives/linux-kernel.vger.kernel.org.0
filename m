@@ -2,79 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13AC2208B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A13C208BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfEPN4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38702 "EHLO mail.kernel.org"
+        id S1727770AbfEPN4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbfEPN4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:56:14 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726911AbfEPN4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:56:35 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14BE520657;
-        Thu, 16 May 2019 13:56:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94BCA20657;
+        Thu, 16 May 2019 13:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558014973;
-        bh=CMrAya67APClJ/68LrKlSJfxPmlq08xvMoQncjUiriQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MKnhejlcoJIBtFe+BrgT0i+D7pC46ev8qFyn4Jx5fQUjqLHCHGjV39hcJqDZT7eoq
-         Le2XkGouGgX3HLOkgMGPo1jzXFjEXKffs3zcUT/krMPy1kiipvB1vZAgYJJmwy/lcK
-         tp/6Aw0P32V24zcDp8VTeNtKhT+jDEyj1TEdAUZU=
-Date:   Thu, 16 May 2019 16:56:10 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        s=default; t=1558014995;
+        bh=uoe7jw0e+uNuNcDQkLTv0BILM0FRBInrHzZkZz5BOhw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=StJ+rmuvH7Txh48TZ6pYlOL6PEnDykPXXZb+dnTw4U4LU0Z8HtUVs+okwT87rdujC
+         huIKxzutEGOsBarjB4/6NngTfqOWQwrR/KZT5MNGOKLwaOQKjAMG0cuDHPOgWqdRHD
+         5DhvYTZJYNUnYl45YX1nJi48iQDs+6tg5S6KCQrg=
+Subject: Re: [PATCH 5.0 000/137] 5.0.17-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: add check for null return from call to
- nlmsg_put
-Message-ID: <20190516135610.GB6026@mtr-leonro.mtl.com>
-References: <20190516131215.20411-1-colin.king@canonical.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190515090651.633556783@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <551c94ee-e879-286a-7bd7-4070417c4826@kernel.org>
+Date:   Thu, 16 May 2019 07:56:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516131215.20411-1-colin.king@canonical.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190515090651.633556783@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 02:12:15PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> It is possible that nlmsg_put can return a null pointer, currently
-> this will lead to a null pointer dereference when passing a null
-> nlh pointer to nlmsg_end.  Fix this by adding a null pointer check.
->
-> Addresses-Coverity: ("Dereference null return value")
-> Fixes: cb7e0e130503 ("RDMA/core: Add interface to read device namespace sharing mode")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/core/nldev.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-> index 69188cbbd99b..4dc43b6c5a28 100644
-> --- a/drivers/infiniband/core/nldev.c
-> +++ b/drivers/infiniband/core/nldev.c
-> @@ -1367,6 +1367,10 @@ static int nldev_sys_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
->  			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV,
->  					 RDMA_NLDEV_CMD_SYS_GET),
->  			0, 0);
+On 5/15/19 4:54 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.0.17 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 17 May 2019 09:04:31 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.17-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-It is impossible situation due to "0" in payload field above.
+Compiled and booted on my test system. No dmesg regressions.
 
-> +	if (!nlh) {
-> +		nlmsg_free(msg);
-> +		return -EMSGSIZE;
-> +	}
->
->  	err = nla_put_u8(msg, RDMA_NLDEV_SYS_ATTR_NETNS_MODE,
->  			 (u8)ib_devices_shared_netns);
-> --
-> 2.20.1
->
+thanks,
+-- Shuah
+
