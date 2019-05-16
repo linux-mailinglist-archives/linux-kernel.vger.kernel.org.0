@@ -2,321 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10C520382
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 12:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D83FC20387
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 12:35:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbfEPKcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 06:32:35 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57779 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfEPKce (ORCPT
+        id S1727114AbfEPKfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 06:35:08 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:38649 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfEPKfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 06:32:34 -0400
-X-Originating-IP: 80.215.244.179
-Received: from localhost (unknown [80.215.244.179])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 10B16E0009;
-        Thu, 16 May 2019 10:32:25 +0000 (UTC)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: [PATCH v3 7/7] drm: Remove users of drm_format_num_planes
-Date:   Thu, 16 May 2019 12:31:52 +0200
-Message-Id: <c0a78c87cd0410a1819edad2794ad06543c85bb5.1558002671.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
-References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
+        Thu, 16 May 2019 06:35:07 -0400
+Received: by mail-it1-f199.google.com with SMTP id m20so2861066itn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 03:35:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ogi4Zx9YKcEIb3tc3T3zeOW92HZiBY/I1YpoRF0AIfw=;
+        b=Yqj8nanfOOdMNiqT+MRJOQMX1agT6XhSd/T/Ung6qx7anUGCix92U9fujMnYFNNlsW
+         L5cDTD8BSPEEnJlpniwzsXg0Bi7IeXm1ezoaAm6gUeF1gi7uuXwTOGTCAsFZGsD1rEm8
+         D7B8v2kzrwKYnK+Hk5NreSmo8qHUBPm3Vc9KJ1mB089twrG6KHEJuFo3o+TFsRmvGBW5
+         OEMQnLjHU1nXF3Ue6waUQC0o62BhLknWfxli8jHEn41hVPCKu//2AfK+Mez6B1cUGYDq
+         f9YXMcDaSnK9QLnTwEqzcSaqSr9M8atnEkpumnQt/bbFjmq8QRnuJOST3q/0dlsf8nrL
+         8PUQ==
+X-Gm-Message-State: APjAAAXaaFWfbluER6qigtWm3/4/p4SDSMoRJeeX3W1BxKob8c1n3LH5
+        SQQmqDqkCgXDRX0UfY7NmykYjyVUZeTnYyGX+3HcpS01CKIi
+X-Google-Smtp-Source: APXvYqy/km2xk0VlmCUiEVpTpP+aBex2sJKgvPvIo3Wuiw0LVsmIi0xRW8hj3b80c46hq5VOiJe0e/2U+yMec4lafVq8gXpCDCSu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:e718:: with SMTP id b24mr25879886ioh.213.1558002906701;
+ Thu, 16 May 2019 03:35:06 -0700 (PDT)
+Date:   Thu, 16 May 2019 03:35:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d028b30588fed102@google.com>
+Subject: KASAN: use-after-free Write in xfrm_hash_rebuild
+From:   syzbot <syzbot+0165480d4ef07360eeda@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm_format_info_plane_cpp() basically just returns the cpp array content
-found in the drm_format_info structure.
+Hello,
 
-Since it's pretty trivial, let's remove the function and have the users use
-the array directly
+syzbot found the following crash on:
 
-Suggested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+HEAD commit:    601e6bcc Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1534f3d0a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4005028a9d5ddac8
+dashboard link: https://syzkaller.appspot.com/bug?extid=0165480d4ef07360eeda
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0165480d4ef07360eeda@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __write_once_size  
+include/linux/compiler.h:220 [inline]
+BUG: KASAN: use-after-free in __hlist_del include/linux/list.h:713 [inline]
+BUG: KASAN: use-after-free in hlist_del_rcu include/linux/rculist.h:455  
+[inline]
+BUG: KASAN: use-after-free in xfrm_hash_rebuild+0xfff/0x10f0  
+net/xfrm/xfrm_policy.c:1317
+Write of size 8 at addr ffff888098529100 by task kworker/0:0/5
+
+CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.1.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events xfrm_hash_rebuild
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  kasan_report+0x12/0x20 mm/kasan/common.c:614
+  __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:137
+  __write_once_size include/linux/compiler.h:220 [inline]
+  __hlist_del include/linux/list.h:713 [inline]
+  hlist_del_rcu include/linux/rculist.h:455 [inline]
+  xfrm_hash_rebuild+0xfff/0x10f0 net/xfrm/xfrm_policy.c:1317
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2268
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2414
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 8152:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:503
+  kmem_cache_alloc_node_trace+0x153/0x720 mm/slab.c:3630
+  kmalloc_node include/linux/slab.h:585 [inline]
+  kzalloc_node include/linux/slab.h:753 [inline]
+  __get_vm_area_node+0x12b/0x3a0 mm/vmalloc.c:1401
+  __vmalloc_node_range+0xd4/0x790 mm/vmalloc.c:1840
+  __vmalloc_node mm/vmalloc.c:1900 [inline]
+  __vmalloc_node_flags mm/vmalloc.c:1914 [inline]
+  vzalloc+0x6b/0x90 mm/vmalloc.c:1959
+  alloc_counters.isra.0+0x53/0x690 net/ipv6/netfilter/ip6_tables.c:819
+  copy_entries_to_user net/ipv4/netfilter/arp_tables.c:674 [inline]
+  get_entries net/ipv4/netfilter/arp_tables.c:861 [inline]
+  do_arpt_get_ctl+0x4a0/0x820 net/ipv4/netfilter/arp_tables.c:1482
+  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
+  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
+  ip_getsockopt net/ipv4/ip_sockglue.c:1574 [inline]
+  ip_getsockopt+0x176/0x1d0 net/ipv4/ip_sockglue.c:1554
+  tcp_getsockopt net/ipv4/tcp.c:3623 [inline]
+  tcp_getsockopt+0x95/0xf0 net/ipv4/tcp.c:3617
+  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:3089
+  __sys_getsockopt+0x168/0x250 net/socket.c:2115
+  __do_sys_getsockopt net/socket.c:2126 [inline]
+  __se_sys_getsockopt net/socket.c:2123 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:2123
+  do_syscall_64+0x103/0x670 arch/x86/entry/common.c:298
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 8152:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+  __cache_free mm/slab.c:3463 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3786
+  __vunmap+0x704/0x9c0 mm/vmalloc.c:1617
+  __vfree+0x41/0xd0 mm/vmalloc.c:1658
+  vfree+0x5f/0x90 mm/vmalloc.c:1688
+  copy_entries_to_user net/ipv4/netfilter/arp_tables.c:706 [inline]
+  get_entries net/ipv4/netfilter/arp_tables.c:861 [inline]
+  do_arpt_get_ctl+0x67b/0x820 net/ipv4/netfilter/arp_tables.c:1482
+  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
+  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
+  ip_getsockopt net/ipv4/ip_sockglue.c:1574 [inline]
+  ip_getsockopt+0x176/0x1d0 net/ipv4/ip_sockglue.c:1554
+  tcp_getsockopt net/ipv4/tcp.c:3623 [inline]
+  tcp_getsockopt+0x95/0xf0 net/ipv4/tcp.c:3617
+  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:3089
+  __sys_getsockopt+0x168/0x250 net/socket.c:2115
+  __do_sys_getsockopt net/socket.c:2126 [inline]
+  __se_sys_getsockopt net/socket.c:2123 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:2123
+  do_syscall_64+0x103/0x670 arch/x86/entry/common.c:298
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888098529100
+  which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 0 bytes inside of
+  64-byte region [ffff888098529100, ffff888098529140)
+The buggy address belongs to the page:
+page:ffffea0002614a40 count:1 mapcount:0 mapping:ffff8880aa400340  
+index:0xffff888098529600
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0002a22fc8 ffffea00026d2888 ffff8880aa400340
+raw: ffff888098529600 ffff888098529000 000000010000001b 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888098529000: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+  ffff888098529080: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+> ffff888098529100: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                    ^
+  ffff888098529180: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff888098529200: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+==================================================================
+
 
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes from v2:
-  - new patch
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c     |  2 +-
- drivers/gpu/drm/arm/malidp_hw.c            |  2 +-
- drivers/gpu/drm/arm/malidp_planes.c        |  2 +-
- drivers/gpu/drm/drm_client.c               |  2 +-
- drivers/gpu/drm/drm_fb_helper.c            |  2 +-
- drivers/gpu/drm/drm_format_helper.c        |  4 ++--
- drivers/gpu/drm/i915/intel_sprite.c        |  2 +-
- drivers/gpu/drm/mediatek/mtk_drm_fb.c      |  2 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c  |  2 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c   |  2 +-
- drivers/gpu/drm/msm/msm_fb.c               |  2 +-
- drivers/gpu/drm/radeon/radeon_fb.c         |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c |  2 +-
- drivers/gpu/drm/stm/ltdc.c                 |  2 +-
- drivers/gpu/drm/tegra/fb.c                 |  2 +-
- drivers/gpu/drm/zte/zx_plane.c             |  2 +-
- include/drm/drm_fourcc.h                   | 17 -----------------
- 17 files changed, 17 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-index 6edae6458be8..2e2869299a84 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-@@ -133,7 +133,7 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
- 	u32 cpp;
- 
- 	info = drm_get_format_info(adev->ddev, mode_cmd);
--	cpp = drm_format_info_plane_cpp(info, 0);
-+	cpp = info->cpp[0];
- 
- 	/* need to align pitch with crtc limits */
- 	mode_cmd->pitches[0] = amdgpu_align_pitch(adev, mode_cmd->width, cpp,
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 1c9e869f4c52..53391c0f87eb 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -383,7 +383,7 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
- int malidp_format_get_bpp(u32 fmt)
- {
- 	const struct drm_format_info *info = drm_format_info(fmt);
--	int bpp = drm_format_info_plane_cpp(info, 0) * 8;
-+	int bpp = info->cpp[0] * 8;
- 
- 	if (bpp == 0) {
- 		switch (fmt) {
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 361c02988375..07ceb4ee14e3 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -227,7 +227,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
- 
- 	if (modifier & AFBC_SPLIT) {
- 		if (!info->is_yuv) {
--			if (drm_format_info_plane_cpp(info, 0) <= 2) {
-+			if (info->cpp[0] <= 2) {
- 				DRM_DEBUG_KMS("RGB formats <= 16bpp are not supported with SPLIT\n");
- 				return false;
- 			}
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index 169d8eeaa662..5abcd83da6a6 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -259,7 +259,7 @@ drm_client_buffer_create(struct drm_client_dev *client, u32 width, u32 height, u
- 
- 	dumb_args.width = width;
- 	dumb_args.height = height;
--	dumb_args.bpp = drm_format_info_plane_cpp(info, 0) * 8;
-+	dumb_args.bpp = info->cpp[0] * 8;
- 	ret = drm_mode_create_dumb(dev, &dumb_args, client->file);
- 	if (ret)
- 		goto err_delete;
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 184f455c99ab..09605ed69f06 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -767,7 +767,7 @@ static void drm_fb_helper_dirty_blit_real(struct drm_fb_helper *fb_helper,
- 					  struct drm_clip_rect *clip)
- {
- 	struct drm_framebuffer *fb = fb_helper->fb;
--	unsigned int cpp = drm_format_info_plane_cpp(fb->format, 0);
-+	unsigned int cpp = fb->format->cpp[0];
- 	size_t offset = clip->y1 * fb->pitches[0] + clip->x1 * cpp;
- 	void *src = fb_helper->fbdev->screen_buffer + offset;
- 	void *dst = fb_helper->buffer->vaddr + offset;
-diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
-index 8ad66aa1362a..0897cb9aeaff 100644
---- a/drivers/gpu/drm/drm_format_helper.c
-+++ b/drivers/gpu/drm/drm_format_helper.c
-@@ -36,7 +36,7 @@ static unsigned int clip_offset(struct drm_rect *clip,
- void drm_fb_memcpy(void *dst, void *vaddr, struct drm_framebuffer *fb,
- 		   struct drm_rect *clip)
- {
--	unsigned int cpp = drm_format_info_plane_cpp(fb->format, 0);
-+	unsigned int cpp = fb->format->cpp[0];
- 	size_t len = (clip->x2 - clip->x1) * cpp;
- 	unsigned int y, lines = clip->y2 - clip->y1;
- 
-@@ -63,7 +63,7 @@ void drm_fb_memcpy_dstclip(void __iomem *dst, void *vaddr,
- 			   struct drm_framebuffer *fb,
- 			   struct drm_rect *clip)
- {
--	unsigned int cpp = drm_format_info_plane_cpp(fb->format, 0);
-+	unsigned int cpp = fb->format->cpp[0];
- 	unsigned int offset = clip_offset(clip, fb->pitches[0], cpp);
- 	size_t len = (clip->x2 - clip->x1) * cpp;
- 	unsigned int y, lines = clip->y2 - clip->y1;
-diff --git a/drivers/gpu/drm/i915/intel_sprite.c b/drivers/gpu/drm/i915/intel_sprite.c
-index e35601b1f878..c1647c0cc217 100644
---- a/drivers/gpu/drm/i915/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/intel_sprite.c
-@@ -326,7 +326,7 @@ skl_plane_max_stride(struct intel_plane *plane,
- 		     unsigned int rotation)
- {
- 	const struct drm_format_info *info = drm_format_info(pixel_format);
--	int cpp = drm_format_info_plane_cpp(info, 0);
-+	int cpp = info->cpp[0];
- 
- 	/*
- 	 * "The stride in bytes must not exceed the
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-index 0d5334a5a9a7..b5e2f230da00 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-@@ -104,7 +104,7 @@ struct drm_framebuffer *mtk_drm_mode_fb_create(struct drm_device *dev,
- 	if (!gem)
- 		return ERR_PTR(-ENOENT);
- 
--	bpp = drm_format_info_plane_cpp(info, 0);
-+	bpp = info->cpp[0];
- 	size = (height - 1) * cmd->pitches[0] + width * bpp;
- 	size += cmd->offsets[0];
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-index a565dccaba3a..74dd036a2246 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-@@ -801,7 +801,7 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
- 	width = mdp5_crtc->cursor.width;
- 	height = mdp5_crtc->cursor.height;
- 
--	stride = width * drm_format_info_plane_cpp(info, 0);
-+	stride = width * info->cpp[0];
- 
- 	get_roi(crtc, &roi_w, &roi_h);
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-index 1ca294694597..2834837f4d3e 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-@@ -158,7 +158,7 @@ uint32_t mdp5_smp_calculate(struct mdp5_smp *smp,
- 	for (i = 0; i < nplanes; i++) {
- 		int n, fetch_stride, cpp;
- 
--		cpp = drm_format_info_plane_cpp(info, i);
-+		cpp = info->cpp[i];
- 		fetch_stride = width * cpp / (i ? hsub : 1);
- 
- 		n = DIV_ROUND_UP(fetch_stride * nlines, smp->blk_size);
-diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-index 29e45f2144b5..68fa2c8f61e6 100644
---- a/drivers/gpu/drm/msm/msm_fb.c
-+++ b/drivers/gpu/drm/msm/msm_fb.c
-@@ -181,7 +181,7 @@ static struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
- 		unsigned int min_size;
- 
- 		min_size = (height - 1) * mode_cmd->pitches[i]
--			 + width * drm_format_info_plane_cpp(info, i)
-+			 + width * info->cpp[i]
- 			 + mode_cmd->offsets[i];
- 
- 		if (bos[i]->size < min_size) {
-diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-index dbf596fc4339..287e3f92102a 100644
---- a/drivers/gpu/drm/radeon/radeon_fb.c
-+++ b/drivers/gpu/drm/radeon/radeon_fb.c
-@@ -137,7 +137,7 @@ static int radeonfb_create_pinned_object(struct radeon_fbdev *rfbdev,
- 	u32 cpp;
- 
- 	info = drm_get_format_info(rdev->ddev, mode_cmd);
--	cpp = drm_format_info_plane_cpp(info, 0);
-+	cpp = info->cpp[0];
- 
- 	/* need to align pitch with crtc limits */
- 	mode_cmd->pitches[0] = radeon_align_pitch(rdev, mode_cmd->width, cpp,
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index 57873c99ae29..31030cf81bc9 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -98,7 +98,7 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 
- 		min_size = (height - 1) * mode_cmd->pitches[i] +
- 			mode_cmd->offsets[i] +
--			width * drm_format_info_plane_cpp(info, i);
-+			width * info->cpp[i];
- 
- 		if (obj->size < min_size) {
- 			drm_gem_object_put_unlocked(obj);
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 6bb3cd3a1a01..9ff39789ffb7 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -779,7 +779,7 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
- 
- 	/* Configures the color frame buffer pitch in bytes & line length */
- 	pitch_in_bytes = fb->pitches[0];
--	line_length = drm_format_info_plane_cpp(fb->format, 0) *
-+	line_length = fb->format->cpp[0] *
- 		      (x1 - x0 + 1) + (ldev->caps.bus_width >> 3) - 1;
- 	val = ((pitch_in_bytes << 16) | line_length);
- 	reg_update_bits(ldev->regs, LTDC_L1CFBLR + lofs,
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index d1042196a30f..57cc26e1da01 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -149,7 +149,7 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
- 			goto unreference;
- 		}
- 
--		bpp = drm_format_info_plane_cpp(info, i);
-+		bpp = info->cpp[i];
- 
- 		size = (height - 1) * cmd->pitches[i] +
- 		       width * bpp + cmd->offsets[i];
-diff --git a/drivers/gpu/drm/zte/zx_plane.c b/drivers/gpu/drm/zte/zx_plane.c
-index d97a4dff515d..706452f9b276 100644
---- a/drivers/gpu/drm/zte/zx_plane.c
-+++ b/drivers/gpu/drm/zte/zx_plane.c
-@@ -222,7 +222,7 @@ static void zx_vl_plane_atomic_update(struct drm_plane *plane,
- 		cma_obj = drm_fb_cma_get_gem_obj(fb, i);
- 		paddr = cma_obj->paddr + fb->offsets[i];
- 		paddr += src_y * fb->pitches[i];
--		paddr += src_x * drm_format_info_plane_cpp(fb->format, i);
-+		paddr += src_x * fb->format->cpp[i];
- 		zx_writel(paddr_reg, paddr);
- 		paddr_reg += 4;
- 	}
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index 4ef8ccb5d236..405466692bd2 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -261,23 +261,6 @@ drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
- }
- 
- /**
-- * drm_format_info_plane_cpp - determine the bytes per pixel value
-- * @format: pixel format info
-- * @plane: plane index
-- *
-- * Returns:
-- * The bytes per pixel value for the specified plane.
-- */
--static inline
--int drm_format_info_plane_cpp(const struct drm_format_info *info, int plane)
--{
--	if (!info || plane >= info->num_planes)
--		return 0;
--
--	return info->cpp[plane];
--}
--
--/**
-  * drm_format_info_plane_width - width of the plane given the first plane
-  * @format: pixel format info
-  * @width: width of the first plane
--- 
-git-series 0.9.1
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
