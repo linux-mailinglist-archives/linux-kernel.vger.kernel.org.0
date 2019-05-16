@@ -2,88 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD94420150
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF2220154
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfEPI14 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 May 2019 04:27:56 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:36516 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfEPI14 (ORCPT
+        id S1726589AbfEPIab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:30:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50726 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfEPIab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:27:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 58C71608A39B;
-        Thu, 16 May 2019 10:27:54 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id aJQJGYihpwvn; Thu, 16 May 2019 10:27:53 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id CACBF608A3BE;
-        Thu, 16 May 2019 10:27:53 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 62UdxJy2aWde; Thu, 16 May 2019 10:27:53 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id A8DBA608A39B;
-        Thu, 16 May 2019 10:27:53 +0200 (CEST)
-Date:   Thu, 16 May 2019 10:27:53 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     "Shreya Gangan (shgangan)" <shgangan@cisco.com>
-Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1060037520.60545.1557995273554.JavaMail.zimbra@nod.at>
-In-Reply-To: <5B190BFA-DF2A-4469-85E2-14A7347B7A8E@cisco.com>
-References: <E44E4181-1CFB-493C-8023-147472049D19@cisco.com> <CAFLxGvysPg3FO4kT0QrRsYTr219WVttQMeat_StqbifTPrGLmA@mail.gmail.com> <5B190BFA-DF2A-4469-85E2-14A7347B7A8E@cisco.com>
-Subject: Re: Removal of dump_stack()s from /fs/ubifs/io.c
+        Thu, 16 May 2019 04:30:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=l2s4pBaM0QsdmyeFmIft5iVXiAaDdNaD+gsfqUyo/Cs=; b=X/vJ44ahCUxI9RZErNkN+r3JXp
+        IYMqvC4G4X2L312Nr6zF4JeixB66vNAVjb+EcDCpB6GVA5iOFYGf2oP6vKz/n/zLg16rj8i5ka0ad
+        +HN7K41F/P3VdO3PMPw7yDI/IEBL49obnqLrccjhY/x0OByl5S87b0WkRio6c25z1IjFqSlKFXTCS
+        ob3KSTOOC9psXmIc1zyJD8DDcmxDAc+PXDR2gvkAJZrYrB6+ymghv5TK4xw7MCctpVTEmfBj8g1Nh
+        Megh1r541B1fhU9+5PGZEaMFFUOm05G3ItgNhHha8BsdI8q1DdWBEmm+Rk4HWy6W1Ev3lHYlKM1EQ
+        SsS+M2QQ==;
+Received: from 089144210233.atnat0019.highway.a1.net ([89.144.210.233] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hRBmX-0000jy-2D; Thu, 16 May 2019 08:30:29 +0000
+Date:   Thu, 16 May 2019 10:29:42 +0200
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Joel Becker <jlbec@evilplan.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] configfs update for 5.2
+Message-ID: <20190516082942.GA19549@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Removal of dump_stack()s from /fs/ubifs/io.c
-Thread-Index: AQHVC2FVil2C0hxsCESyeW0kls9eBqZsX3uAr4vQGkk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
->> They are not required, but they are just useful. While you are right that the
->> locations within UBIFS are unique,
->> they are not for the whole kernel context.
->> Filesystem functions can get called via many different paths from VFS...
-> 
-> Isn't that true for any kernel error though.
-> Want to understand why it would be essential for ubifs to have these over the
-> other kernel modules?
-> Can't the developer add the dump_stack later for debugging reasons?
+The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-In UBIFS the dump_stack() calls are more or less a WARN_ON().
-Such situations should not happen. If they do, we want the details.
+  Linux 5.1 (2019-05-05 17:42:58 -0700)
 
-So, in the long rung we could replace most of them by a WARN_ON().
-Maybe even WARN_ON_ONCE().
+are available in the Git repository at:
 
->> Why do you want to remove them, what is the benefit?
-> 
-> The way our system is using the ubifs, for a device which is 'no longer there'
-> could be frequent
-> 'no such device' errors when
-> 1. there might be multiple write accesses to the filesystem before the
-> responsible process is terminated
-> 2. the filesystem is unmounted after this
-> The result would be flooding of the console or message logs with both the error
-> messages and the dump_stack,
-> making it really ugly.
-> Is there a specific way a 'no such device' issue is handled to avoid the
-> messages from flooding with the dump_stacks?
+  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.2
 
-I don't follow, sorry.
+for you to fetch changes up to 35399f87e271f7cf3048eab00a421a6519ac8441:
 
-If your system too noisy, fix the log level. But usually when UBIFS prints
-an error followed by a stack trace, it is something serious you should address
-and not trying to make the error message look less scary.
+  configfs: fix possible use-after-free in configfs_register_group (2019-05-08 08:55:19 +0200)
 
-Thanks,
-//richard
+----------------------------------------------------------------
+configs updates for Linux 5.2:
+
+ - a fix for an error path use after free (YueHaibing)
+
+----------------------------------------------------------------
+YueHaibing (1):
+      configfs: fix possible use-after-free in configfs_register_group
+
+ fs/configfs/dir.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
