@@ -2,64 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F41BB206C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC3C206C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfEPMRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 08:17:53 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54496 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfEPMRw (ORCPT
+        id S1727196AbfEPMU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 08:20:28 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39316 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfEPMU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 08:17:52 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4GCHI2r077140;
-        Thu, 16 May 2019 21:17:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Thu, 16 May 2019 21:17:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4GCHBWG076893
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 16 May 2019 21:17:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in __get_super
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-block@vger.kernel.org
-References: <0000000000002cd22305879b22c4@google.com>
- <201905150102.x4F12b6o009249@www262.sakura.ne.jp>
- <20190515102133.GA16193@quack2.suse.cz>
- <024bba2a-4d2f-1861-bfd9-819511bdf6eb@i-love.sakura.ne.jp>
- <20190515130730.GA9526@quack2.suse.cz>
- <20190516114817.GD13274@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ca1e5916-73ee-6fc4-1d78-428691f7fc64@i-love.sakura.ne.jp>
-Date:   Thu, 16 May 2019 21:17:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 16 May 2019 08:20:28 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a10so2892865ljf.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 05:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wr0yrITWiDgpTtW7hOhkZTXIfJ4eLHxYShx+ors7rts=;
+        b=Bv91VW9mbA/lrzvFPX4j+c3OhgAcDSfRzunT5DviBFTgoDJy1VXoMb6bjYHNgUba0h
+         iuTJ56lTMab3DfGAa800XyxOtYrQoW8W+8EZbMNrgx70FPAS9gni/Y2QEkyJ6/9BnwYp
+         yNUsXm6uUi0yhdWmLNPugsYACmutqAYkFzD9RfSo5KUe5LUPCq/Vhx+TyrMa7W33rvMk
+         rZATdE02XuJ52GYiOqe4BTvCu5RjHyY11uH3t9I9vZF3tdLAosTkiHu/nT2AEvCZ3Ujf
+         /F3Aaq8LpWQIPPDQcsweXzRUnoz1dtZBnIB1u6Q76qpmC6twBOf7G42QJ9M/M58eEga2
+         q4mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wr0yrITWiDgpTtW7hOhkZTXIfJ4eLHxYShx+ors7rts=;
+        b=tfMh0/WVYvT/nFoLUypGqQ9WFW+4HexD6weal+4w79olDGKqdOW1VDCtWyr6Iwxkey
+         MktxbpMeiBtf0A2oIT6M2H55jX7SZY4Qth6igaMARcTPCf4X+BUUhfXbKKT3UWCRG6ZZ
+         o8DyC+d0XK9RbhD859nQmV1B8oLqy0Hify6/WFLFASJYVgufLHyqZTUxUzPwZWY5mBkN
+         NDj/pFwbvnwDtBYBIEwt/Tit0AlR/v7oe4ulj19ckvDYUrX9NuzQpHR/WQ+GJ7iqfjwW
+         h+NbTbzX4KZDO3hnUQvppGVsOn14K6IN0RtsaTsDm3io4YNaVohM7QEwaNG8kuQY52+Z
+         Nn+w==
+X-Gm-Message-State: APjAAAVjEYXE53mTnEN4Rj2/Z4Mr434f0VhxObTP1Be1m6raPlsvch6J
+        MtFZl8CFHmPZO/UkTPZAlV70Fwa49CSRRsUmqSt7Yg==
+X-Google-Smtp-Source: APXvYqz3tKAivV8Dh7JbLsHVm95JkncbNhNajSVq3rYNN6TMvN6O2ZDg675uuDTUoVEOcB135K7WzRtiYKDdXgotPBY=
+X-Received: by 2002:a2e:8741:: with SMTP id q1mr2126359ljj.97.1558009226473;
+ Thu, 16 May 2019 05:20:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190516114817.GD13274@quack2.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190424081802.GV2654@lahna.fi.intel.com> <5a28f22c-22f7-760a-d076-68ff19800d44@siemens.com>
+ <20190424084259.GW2654@lahna.fi.intel.com> <7e328b7e-f4f0-851a-4152-a9ffd058201c@siemens.com>
+ <20190424094506.GA2654@lahna.fi.intel.com> <292e6eff-82cc-6e4d-925b-77a60399e2e0@siemens.com>
+ <20190424100130.GB2654@lahna.fi.intel.com> <1200464b-f969-ebc2-ae82-1f8ca98aaca1@siemens.com>
+ <20190424103306.GC2654@lahna.fi.intel.com> <9377620b-d74a-04d9-a51e-8590400b1c0f@siemens.com>
+ <20190426130615.GT9224@smile.fi.intel.com> <bd5453e1-0279-02ab-3304-edc6ebf509dc@siemens.com>
+ <bc856e19-470d-7655-5680-a031831ab513@metux.net> <2f3da791-4a10-c2c4-dc5a-22ad16ed7be6@siemens.com>
+ <ea29ee73-705b-7d13-0084-11274db02394@metux.net>
+In-Reply-To: <ea29ee73-705b-7d13-0084-11274db02394@metux.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 16 May 2019 14:20:14 +0200
+Message-ID: <CACRpkdZJSYFYuJYtubUHyPhSkiHi0eUX_hmbmmXqO2XPg6rJcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/05/16 20:48, Jan Kara wrote:
-> OK, so non-racy fix was a bit more involved and I've ended up just
-> upgrading the file reference to an exclusive one in loop_set_fd() instead
-> of trying to hand-craft some locking solution. The result is attached and
-> it passes blktests.
+Hi folks,
 
-blkdev_get() has corresponding blkdev_put().
-bdgrab() does not have corresponding bdput() ?
+this became an interesting thread and Manivannan made some nice
+changes to MRAA as a result.
+
+It appears the Raspberry Pi has become a victim of its own success
+and went from hobbyist toy system to a foundation for random industrial
+control hacks. I'm a bit scared about that for electronic reasons but when
+it comes to the software that is a board that get things right after
+we added line-names to everything on its connectors.
+
+What I can add is that when designing the character device I tried to get some
+input from inductrial control (PLC) vendors and asked on the mailing list,
+and mailed directly to ABB at one point, I am sorry for not finding the right
+contact at Siemens (would have helped for sure).
+
+I have tried to talk to Liebherr in related matters but can't seem to find the
+right contact.
+
+We really want to do things right with industrial control boards because
+these seem to have very long life cycles and stay around forever in the
+kernel for that reason.
+
+Yours,
+Linus Walleij
