@@ -2,67 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF2220154
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C643220155
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfEPIab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 04:30:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50726 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfEPIab (ORCPT
+        id S1726709AbfEPIbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:31:13 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:53567 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfEPIbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:30:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=l2s4pBaM0QsdmyeFmIft5iVXiAaDdNaD+gsfqUyo/Cs=; b=X/vJ44ahCUxI9RZErNkN+r3JXp
-        IYMqvC4G4X2L312Nr6zF4JeixB66vNAVjb+EcDCpB6GVA5iOFYGf2oP6vKz/n/zLg16rj8i5ka0ad
-        +HN7K41F/P3VdO3PMPw7yDI/IEBL49obnqLrccjhY/x0OByl5S87b0WkRio6c25z1IjFqSlKFXTCS
-        ob3KSTOOC9psXmIc1zyJD8DDcmxDAc+PXDR2gvkAJZrYrB6+ymghv5TK4xw7MCctpVTEmfBj8g1Nh
-        Megh1r541B1fhU9+5PGZEaMFFUOm05G3ItgNhHha8BsdI8q1DdWBEmm+Rk4HWy6W1Ev3lHYlKM1EQ
-        SsS+M2QQ==;
-Received: from 089144210233.atnat0019.highway.a1.net ([89.144.210.233] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRBmX-0000jy-2D; Thu, 16 May 2019 08:30:29 +0000
-Date:   Thu, 16 May 2019 10:29:42 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joel Becker <jlbec@evilplan.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] configfs update for 5.2
-Message-ID: <20190516082942.GA19549@infradead.org>
+        Thu, 16 May 2019 04:31:12 -0400
+X-Originating-IP: 80.215.246.107
+Received: from localhost (unknown [80.215.246.107])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 6532D20003;
+        Thu, 16 May 2019 08:31:05 +0000 (UTC)
+Date:   Thu, 16 May 2019 10:31:04 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/2] drm/sun4i: Fix sun8i HDMI PHY initialization
+Message-ID: <20190516083104.rr2ewg3dd4aej67b@flea>
+References: <20190514204337.11068-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nxc66wpttvnorf5q"
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190514204337.11068-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-  Linux 5.1 (2019-05-05 17:42:58 -0700)
+--nxc66wpttvnorf5q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-are available in the Git repository at:
+On Tue, May 14, 2019 at 10:43:35PM +0200, Jernej Skrabec wrote:
+> I received a report that 4K resolution doesn't work if U-Boot video
+> driver is disabled. It turns out that HDMI PHY clock driver was
+> initialized prematurely, before reset line was deasserted and clocks
+> enabled. U-Boot video driver masked the issue because it set pixel
+> clock correctly.
+>
+> In the process of researching the bug, I also found out that few bits
+> in HDMI PHY registers were not set correctly. While there is no
+> noticeable change (4K resolution works with both settings), I've
+> added fix anyway, to be conformant with vendor documentation.
 
-  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.2
+Applied both, thanks
 
-for you to fetch changes up to 35399f87e271f7cf3048eab00a421a6519ac8441:
+Maxime
 
-  configfs: fix possible use-after-free in configfs_register_group (2019-05-08 08:55:19 +0200)
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-----------------------------------------------------------------
-configs updates for Linux 5.2:
+--nxc66wpttvnorf5q
+Content-Type: application/pgp-signature; name="signature.asc"
 
- - a fix for an error path use after free (YueHaibing)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-YueHaibing (1):
-      configfs: fix possible use-after-free in configfs_register_group
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN0fyAAKCRDj7w1vZxhR
+xUAXAP9xICklXvpieTeqdcZC4XE/+a2QALTSkxog1dIwU2z9hgEA9W1tdHngDaMj
+jYInZNsuhpQY0H7zxkIQTeX7MeX2Ogs=
+=TN7Y
+-----END PGP SIGNATURE-----
 
- fs/configfs/dir.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+--nxc66wpttvnorf5q--
