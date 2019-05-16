@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE2320C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6DA520CA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfEPQKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:10:51 -0400
-Received: from mailoutvs7.siol.net ([185.57.226.198]:37940 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726715AbfEPQKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:10:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 933F1521DFA;
-        Thu, 16 May 2019 18:10:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id R4UBf8dj79kQ; Thu, 16 May 2019 18:10:48 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 46AA8522084;
-        Thu, 16 May 2019 18:10:48 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id BEFCC521DFA;
-        Thu, 16 May 2019 18:10:46 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     maxime.ripard@bootlin.com, wens@csie.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: sun8i-h3: Fix wifi in Beelink X2 DT
-Date:   Thu, 16 May 2019 18:10:39 +0200
-Message-Id: <20190516161039.18534-1-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.21.0
+        id S1726767AbfEPQL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:11:59 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:51275 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbfEPQL6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 12:11:58 -0400
+Received: from [192.168.178.167] ([109.104.36.193]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MiJhW-1gn2TT1ffC-00fP2t; Thu, 16 May 2019 18:11:33 +0200
+Subject: Re: [GIT PULL] Thermal-SoC management changes for v5.2-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190516044313.GA17751@localhost.localdomain>
+ <CAHk-=wiaO_8SiEB9QM3vOTniiT67K6CBH0uHJ82-Dp_+6kxH3g@mail.gmail.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <4803994d-f519-a6b6-f5bb-a2f50d91ecd7@i2se.com>
+Date:   Thu, 16 May 2019 18:11:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAHk-=wiaO_8SiEB9QM3vOTniiT67K6CBH0uHJ82-Dp_+6kxH3g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:HfXg+VerHg3XpZ/wJRmyjEJyPoEOVangfVhRYd6re0+8tLoYnmn
+ oW1tto1qS1QQOe7GOCE7EoevUdRqBEDQ///1l974DU6oDx8+IabIbaeHwU/cfjP4DjKA6Br
+ iX868FUXz7c1nOxAIHoyQKpsGy9mRzS1My2eaC6up74sSVDaK/QmuAXrROr7bb8NTBl3wqX
+ WwVEm4CNLpPMKwjYQor6A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xkwv5xkBN+U=:bwfz0IV+WlLUs6KTbOUP5F
+ m86RxkHI2Kj0QzfcXKAjfZ5U5Tv7ptnKNtgLYdvqIaRk+mynEvOkxWqy/MzaMhk2DxJ8qmr1i
+ FBBq9iBvmcz6A0jmH8HHgyLkeFMI4b1ivawHRk9zA+MuopGSHO7SdkTaytpD95zlyhTHG7ZDQ
+ ucuLHN5pnxVV68A4Nmp9c0lUFiAVLgEK+i/F2C3PPpQ0XCvarGXzmUjPrxOHJqU2QX6PvWsGX
+ 7Q9b4MC3s9hQr7h6v0tAOK3o6Rmu+Uhgbp2eEQrGQ8hdzl6K99Bznt7mBbvxE1z2aXy5hPFUb
+ OV9sLFfI8Kx69V1noe0ltzTDcdPaH2a+ggeMHMgiSZZ9xquruK+FaGafE4VQTIudsJH48+EIl
+ rSt1kfKbUf/shkzxbsBa/sbVRmRUl1D+AK66qqyVbU/BiLoaN6Qynfy/xLAcuVSILSJOY4dbR
+ 7JdgG3YikQQCtVEL1l6/s9BDOO7LESCW0XUCY5LGG+iLrAm3N4R0kYfYfuwW78nhncv8jtp0m
+ sr0lIxldMQxoJvNbROex1vVUYSmoQEQq79zvls/eFyz56tPHv1DY/EovlT4wMNQR251Wjy0dG
+ T1UGNyfAZBE26//8UjJj16wsHH76ZeD17CE+X5ynrrYrtdL0Z6By2LMrwezH072eTf80EEZWU
+ rBOygeHEXUARE33jk7VUERqnLNl4Jm54LKIwbG4Djr1MUF7bzT0Q+/QXFtbrCrW1zLGjwZy74
+ f9Pte2LM5Iz96JyVVZepWzFQnZb4JJPFlHnxWCJVjG0cTnXW3KZNh+p2ZO8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmc1 node where wifi module is connected doesn't have properly defined
-power supplies so wifi module is never powered up. Fix that by
-specifying additional power supplies.
+Hi Linus,
 
-Additionally, this STB may have either Realtek or Broadcom based wifi
-module. One based on Broadcom module also needs external clock to work
-properly. Fix that by adding clock property to wifi_pwrseq node.
+On 16.05.19 17:07, Linus Torvalds wrote:
+> On Wed, May 15, 2019 at 9:43 PM Eduardo Valentin <edubezval@gmail.com> wrote:
+>> - thermal core has a new devm_* API for registering cooling devices, thanks to Guenter R.
+>>   I took the entire series, that is why you see changes on drivers/hwmon in this pull.
+> This clashed badly with commit 6b1ec4789fb1 ("hwmon: (pwm-fan) Add RPM
+> support via external interrupt"), which added a timer to the pwm-fan
+> handling.
+>
+> In particular, that timer now needed the same kind of cleanup changes,
+> and I'd like you guys (particularly Guenther, who was involved on both
+> sides) to double-check my merge.
+>
+> The way I solved it was to just make the pwm_fan_pwm_disable()
+> callback do both the pwm_diable() _and_ the del_timer_sync() on the
+> new timer. That seemed to be the simplest solution that meshed with
+> the new devm cleanup model, but while I build-tested the result, I
+> obviously did no actual use testing. And maybe there's some reason why
+> that approach is flawed.
 
-Fixes: e582b47a9252 ("ARM: dts: sun8i-h3: Add dts for the Beelink X2 STB"=
-)
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+i will try to test on our custom i.MX6 board. Unfortunately this take
+some time since it isn't mainline yet (at least until tomorrow).
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts b/arch/arm/boot/dt=
-s/sun8i-h3-beelink-x2.dts
-index 6277f13f3eb3..6a0ac85b4616 100644
---- a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-@@ -89,7 +89,10 @@
-=20
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible =3D "mmc-pwrseq-simple";
-+		pinctrl-names =3D "default";
- 		reset-gpios =3D <&r_pio 0 7 GPIO_ACTIVE_LOW>; /* PL7 */
-+		clocks =3D <&rtc 1>;
-+		clock-names =3D "ext_clock";
- 	};
-=20
- 	sound_spdif {
-@@ -155,6 +158,8 @@
-=20
- &mmc1 {
- 	vmmc-supply =3D <&reg_vcc3v3>;
-+	vqmmc-supply =3D <&reg_vcc3v3>;
-+	mmc-pwrseq =3D <&wifi_pwrseq>;
- 	bus-width =3D <4>;
- 	non-removable;
- 	status =3D "okay";
---=20
-2.21.0
+Stefan
 
+>
+> Guenther?
+>
+>                     Linus
