@@ -2,160 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D70A20B6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B962920BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfEPPkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:40:19 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:36265 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfEPPkT (ORCPT
+        id S1727309AbfEPQAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:00:31 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37545 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfEPQAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:40:19 -0400
-Received: by mail-wr1-f41.google.com with SMTP id s17so3966269wru.3;
-        Thu, 16 May 2019 08:40:17 -0700 (PDT)
+        Thu, 16 May 2019 12:00:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w37so5994463edw.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:00:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
-        b=d8eJIIagruGv9s64K44RXN03oOtaC1VRjIV+RWUlOr1Kx9ptga/FXxIkPCQJxqLsN1
-         vdX4qqXEz/dwFnmylryABoqw+opB/JhDZu+27N5F1dsg4WuE77dWtxSx3qJtKdkqYuFD
-         JH84BYrUIXCqxgrJsMxmeAzllEGsd8BlpS0FJLGmB4/BDJliSZ7xNBp+nXN2MkHR+UiL
-         6VNPSII+YeSt7H4AmHrKMD9bqCZSYMbURP05mFMLb4CsR7lRGcgVbyjwgMpXUfu7o5QE
-         0LNDsROWXWQjPE08iTUrlpeNEQLQZukIOt+XISWmqdsaPD9/3R1Nm34LSbw5pkdYTKKC
-         ZSgA==
+        h=from:to:cc:subject:date:message-id;
+        bh=40SvhtWBUctj9+S+m8DxOe/VChkRebT6Ohk0rHAg6js=;
+        b=QHLggaIX8qLntcteJprWDMNXEF4m5roi8ecviFniHZepI65lRi+cug/BSR1clU0ev9
+         fW5E6RTikEbksO5qsROQycZ8/HcreUTmV7+HXXJ4hyvDHEJ5sivZd6rHRDG9EuEq68kt
+         2ZmKV6qK6AJ6QR7QsLWebr/BZD2r+HcJcTevURhtkqdvSh6jmcpBUpcfjfJJ2+o2x8cl
+         VrM1SwE3MrKa+AmtUbbm15ygkP0ZIMuugFXTt2/xoCihciOUQZsJcfUZnvyjvGDF1v5S
+         Dyt19m7G/QY92CzMZg9ZfDEUyBWHRIiVBe9wlHDuEyLJuG5fy5aOjtT7cKfkOR4SERFL
+         dlZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
-        b=fyo0OMvBqKavHAJsuzpAGWSvu0mLo96oAebmoiBjTip8cXNeJHCmYnUUm1wO63jvoL
-         38FvN1fC5F/ibYoh5867AX+O0HP9/m8YBy8S1u0ebuHrJAvOaBSQrmBBMQrPI3Abuz70
-         nUc/EAQw6PynqEc+iwTOCxYyM4b8D72aZfl1almWff2CoOU4/yeHsSXH60F9aya/w8GW
-         oiWieYISHt8iRnm1AHL9KqWr7Eer5kkUmSseJVm5eb74s4LvJ5axMWQs1fESi10dV2hO
-         xrS7KzUd5FHufcyU6uLvHXQikgT8GEZ8HS+BSW+4fbnNwCR+ZjCf85BQR4X+teD2v1Nw
-         ZEJA==
-X-Gm-Message-State: APjAAAUlYV+/+L0upHkHcPHWMW/ggUVaRoyFOPkAiHEhdepxvRRpgrmg
-        Fho6jUJkzj53suNONt+OP+QG0P5L
-X-Google-Smtp-Source: APXvYqzHj0gHAVGWXDe4xZb3o/fP+SYr4nrHJmnNwgjUnI1lnNWjTeWwxAL19PVV2SHDhogCuMRNLA==
-X-Received: by 2002:adf:b612:: with SMTP id f18mr30404470wre.236.1558021217141;
-        Thu, 16 May 2019 08:40:17 -0700 (PDT)
-Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id q24sm5887339wmc.18.2019.05.16.08.40.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 08:40:16 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 5.2-rc1
-Date:   Thu, 16 May 2019 17:40:05 +0200
-Message-Id: <20190516154005.22583-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=40SvhtWBUctj9+S+m8DxOe/VChkRebT6Ohk0rHAg6js=;
+        b=s2wV+rhdrMUqsFRebKqb/hm9ZLQHe9u6Jfoi8patPFnKrQuMapgj886g8BBP9klTd8
+         4mi4Ep2jwuAlkQ0b6minnEw5U8qZyYXD6Uz3Vvj/bHaRo+a2YZdr5wgDsKc3jxY1UNe4
+         vRNWRsmtZ4dbbyTYNAJxOiPuql0ut6eqp1tCgogVtDwdSRm+4km3Puff/Tx5EmFMO0gk
+         5bjj1pTVgGIWNCDP/vr9jiLVWqCfuep/Fp5I2RZtW6uK4/nDpi5yd08xDg0P7JnAfbO5
+         DV6I7kAAlglO6d24PV3t0NEEwEX8q8uZxT05mGh1QMvZkKf4bVzzwIiGBzSLg3kfy+jT
+         Yx1Q==
+X-Gm-Message-State: APjAAAVBmfrRvPQDbQ9IZTRJbeWrCYHoFX/WJFwx1Njx3Qcvt3hxSALG
+        CKa/lWx/q6BmsBYAh5hHwjM=
+X-Google-Smtp-Source: APXvYqxFwA4MBXten7Nivfuff+a7/ozMhF32vXLiGMWKvNWcDBFPkoeJLEyW4+8wQP6T1Qwnx6OOmw==
+X-Received: by 2002:a50:ad42:: with SMTP id z2mr52428235edc.9.1558022421720;
+        Thu, 16 May 2019 09:00:21 -0700 (PDT)
+Received: from mail.broadcom.com ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id n8sm348307ejk.45.2019.05.16.09.00.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 09:00:21 -0700 (PDT)
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v2 1/2] mtd: Add flag to indicate panic_write
+Date:   Thu, 16 May 2019 11:45:39 -0400
+Message-Id: <1558022399-24863-1-git-send-email-kdasu.kdev@gmail.com>
+X-Mailer: git-send-email 1.9.0.138.g2de3478
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Added a flag to indicate a panic_write so that low level drivers can
+use it to take required action where applicable, to ensure oops data
+gets written to assigned mtd device.
 
-The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
+Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+---
+ drivers/mtd/mtdcore.c                    |  3 ++
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c | 49 ++++++++++++++++++++++++++++++--
+ include/linux/mtd/mtd.h                  |  6 ++++
+ 3 files changed, 55 insertions(+), 3 deletions(-)
 
-  Linux 5.1 (2019-05-05 17:42:58 -0700)
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 76b4264..a83decd 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -1138,6 +1138,9 @@ int mtd_panic_write(struct mtd_info *mtd, loff_t to, size_t len, size_t *retlen,
+ 		return -EROFS;
+ 	if (!len)
+ 		return 0;
++	if (!mtd->oops_panic_write)
++		mtd->oops_panic_write = true;
++
+ 	return mtd->_panic_write(mtd, to, len, retlen, buf);
+ }
+ EXPORT_SYMBOL_GPL(mtd_panic_write);
+diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+index ce0b8ff..a30a7f0 100644
+--- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+@@ -159,6 +159,7 @@ struct brcmnand_controller {
+ 	u32			nand_cs_nand_xor;
+ 	u32			corr_stat_threshold;
+ 	u32			flash_dma_mode;
++	bool			pio_poll_mode;
+ };
+ 
+ struct brcmnand_cfg {
+@@ -823,6 +824,21 @@ static inline bool has_flash_dma(struct brcmnand_controller *ctrl)
+ 	return ctrl->flash_dma_base;
+ }
+ 
++static inline void disable_ctrl_irqs(struct brcmnand_controller *ctrl)
++{
++	if (ctrl->pio_poll_mode)
++		return;
++
++	if (has_flash_dma(ctrl)) {
++		ctrl->flash_dma_base = 0;
++		disable_irq(ctrl->dma_irq);
++	}
++
++	disable_irq(ctrl->irq);
++
++	ctrl->pio_poll_mode = true;
++}
++
+ static inline bool flash_dma_buf_ok(const void *buf)
+ {
+ 	return buf && !is_vmalloc_addr(buf) &&
+@@ -1237,15 +1253,42 @@ static void brcmnand_cmd_ctrl(struct nand_chip *chip, int dat,
+ 	/* intentionally left blank */
+ }
+ 
++static bool brcmstb_nand_wait_for_completion(struct nand_chip *chip)
++{
++	struct brcmnand_host *host = nand_get_controller_data(chip);
++	struct brcmnand_controller *ctrl = host->ctrl;
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	bool err = false;
++	int sts;
++
++	if (mtd->oops_panic_write) {
++		/* switch to interrupt polling and PIO mode */
++		disable_ctrl_irqs(ctrl);
++		sts = bcmnand_ctrl_poll_status(ctrl, NAND_CTRL_RDY,
++					       NAND_CTRL_RDY, 0);
++		err = (sts < 0) ? true : false;
++	} else {
++		unsigned long timeo = msecs_to_jiffies(
++						NAND_POLL_STATUS_TIMEOUT_MS);
++		/* wait for completion interrupt */
++		sts = wait_for_completion_timeout(&ctrl->done, timeo);
++		err = (sts <= 0) ? true : false;
++	}
++
++	return err;
++}
++
+ static int brcmnand_waitfunc(struct nand_chip *chip)
+ {
+ 	struct brcmnand_host *host = nand_get_controller_data(chip);
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+-	unsigned long timeo = msecs_to_jiffies(100);
++	bool err = false;
+ 
+ 	dev_dbg(ctrl->dev, "wait on native cmd %d\n", ctrl->cmd_pending);
+-	if (ctrl->cmd_pending &&
+-			wait_for_completion_timeout(&ctrl->done, timeo) <= 0) {
++	if (ctrl->cmd_pending)
++		err = brcmstb_nand_wait_for_completion(chip);
++
++	if (err) {
+ 		u32 cmd = brcmnand_read_reg(ctrl, BRCMNAND_CMD_START)
+ 					>> brcmnand_cmd_shift(ctrl);
+ 
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index 677768b..791c34d 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -330,6 +330,12 @@ struct mtd_info {
+ 	int (*_get_device) (struct mtd_info *mtd);
+ 	void (*_put_device) (struct mtd_info *mtd);
+ 
++	/*
++	 * flag indicates a panic write, low level drivers can take appropriate
++	 * action if required to ensure writes go through
++	 */
++	bool oops_panic_write;
++
+ 	struct notifier_block reboot_notifier;  /* default mode before reboot */
+ 
+ 	/* ECC status information */
+-- 
+1.9.0.138.g2de3478
 
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc1
-
-for you to fetch changes up to 00abf69dd24f4444d185982379c5cc3bb7b6d1fc:
-
-  ceph: flush dirty inodes before proceeding with remount (2019-05-07 19:43:05 +0200)
-
-----------------------------------------------------------------
-On the filesystem side we have:
-
-- a fix to enforce quotas set above the mount point (Luis Henriques)
-
-- support for exporting snapshots through NFS (Zheng Yan)
-
-- proper statx implementation (Jeff Layton).  statx flags are mapped
-  to MDS caps, with AT_STATX_{DONT,FORCE}_SYNC taken into account.
-
-- some follow-up dentry name handling fixes, in particular elimination
-  of our hand-rolled helper and the switch to __getname() as suggested
-  by Al (Jeff Layton)
-
-- a set of MDS client cleanups in preparation for async MDS requests
-  in the future (Jeff Layton)
-
-- a fix to sync the filesystem before remounting (Jeff Layton)
-
-On the rbd side, work is on-going on object-map and fast-diff image
-features.
-
-----------------------------------------------------------------
-Arnd Bergmann (3):
-      rbd: avoid clang -Wuninitialized warning
-      rbd: convert all rbd_assert(0) to BUG()
-      libceph: fix clang warning for CEPH_DEFINE_OID_ONSTACK
-
-Ilya Dryomov (2):
-      rbd: client_mutex is never nested
-      rbd: don't assert on writes to snapshots
-
-Jeff Layton (20):
-      ceph: remove superfluous inode_lock in ceph_fsync
-      ceph: properly handle granular statx requests
-      ceph: fix NULL pointer deref when debugging is enabled
-      ceph: make iterate_session_caps a public symbol
-      ceph: dump granular cap info in "caps" debugfs file
-      ceph: fix potential use-after-free in ceph_mdsc_build_path
-      ceph: use ceph_mdsc_build_path instead of clone_dentry_name
-      ceph: use __getname/__putname in ceph_mdsc_build_path
-      ceph: use pathlen values returned by set_request_path_attr
-      ceph: after an MDS request, do callback and completions
-      ceph: have ceph_mdsc_do_request call ceph_mdsc_submit_request
-      ceph: move wait for mds request into helper function
-      ceph: fix comment over ceph_drop_caps_for_unlink
-      ceph: simplify arguments and return semantics of try_get_cap_refs
-      ceph: just call get_session in __ceph_lookup_mds_session
-      ceph: print inode number in __caps_issued_mask debugging messages
-      libceph: fix unaligned accesses in ceph_entity_addr handling
-      libceph: make ceph_pr_addr take an struct ceph_entity_addr pointer
-      ceph: fix unaligned access in ceph_send_cap_releases
-      ceph: flush dirty inodes before proceeding with remount
-
-Luis Henriques (2):
-      ceph: factor out ceph_lookup_inode()
-      ceph: quota: fix quota subdir mounts
-
-Yan, Zheng (1):
-      ceph: snapshot nfs re-export
-
-Zhi Zhang (1):
-      ceph: remove duplicated filelock ref increase
-
- drivers/block/rbd.c            |  24 +--
- fs/ceph/caps.c                 |  93 +++++------
- fs/ceph/debugfs.c              |  40 ++++-
- fs/ceph/export.c               | 356 ++++++++++++++++++++++++++++++++++++++---
- fs/ceph/file.c                 |   2 +-
- fs/ceph/inode.c                |  85 ++++++----
- fs/ceph/locks.c                |  13 --
- fs/ceph/mds_client.c           | 205 ++++++++++--------------
- fs/ceph/mds_client.h           |  33 +++-
- fs/ceph/mdsmap.c               |   2 +-
- fs/ceph/quota.c                | 177 ++++++++++++++++++--
- fs/ceph/super.c                |   7 +
- fs/ceph/super.h                |   2 +
- include/linux/ceph/ceph_fs.h   |   6 +
- include/linux/ceph/messenger.h |   3 +-
- include/linux/ceph/osdmap.h    |  13 +-
- net/ceph/cls_lock_client.c     |   2 +-
- net/ceph/debugfs.c             |   4 +-
- net/ceph/messenger.c           | 121 +++++++-------
- net/ceph/mon_client.c          |   6 +-
- net/ceph/osd_client.c          |   2 +-
- 21 files changed, 845 insertions(+), 351 deletions(-)
