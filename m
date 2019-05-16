@@ -2,104 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCC82096C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C716F20974
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfEPOWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:22:33 -0400
-Received: from relay.sw.ru ([185.231.240.75]:55154 "EHLO relay.sw.ru"
+        id S1727275AbfEPOXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:23:52 -0400
+Received: from verein.lst.de ([213.95.11.211]:59774 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbfEPOWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:22:33 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hRHH5-0007GL-T0; Thu, 16 May 2019 17:22:24 +0300
-Subject: Re: [PATCH RFC 0/5] mm: process_vm_mmap() -- syscall for duplication
- a process mapping
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
-        keith.busch@intel.com, kirill.shutemov@linux.intel.com,
-        pasha.tatashin@oracle.com, alexander.h.duyck@linux.intel.com,
-        ira.weiny@intel.com, andreyknvl@google.com, arunks@codeaurora.org,
-        vbabka@suse.cz, cl@linux.com, riel@surriel.com,
-        keescook@chromium.org, hannes@cmpxchg.org, npiggin@gmail.com,
-        mathieu.desnoyers@efficios.com, shakeelb@google.com, guro@fb.com,
-        aarcange@redhat.com, hughd@google.com, jglisse@redhat.com,
-        mgorman@techsingularity.net, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-References: <155793276388.13922.18064660723547377633.stgit@localhost.localdomain>
- <20190516133034.GT16651@dhcp22.suse.cz>
- <20190516135259.GU16651@dhcp22.suse.cz>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <85562807-2a13-9aa2-e67d-15513c766eae@virtuozzo.com>
-Date:   Thu, 16 May 2019 17:22:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726692AbfEPOXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 10:23:50 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id BB4EF68B02; Thu, 16 May 2019 16:23:27 +0200 (CEST)
+Date:   Thu, 16 May 2019 16:23:27 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>, Christoph Hellwig <hch@lst.de>,
+        linux-kernel@vger.kernel.org, Steven Price <steven.price@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: Bad virt_to_phys since commit 54c7a8916a887f35
+Message-ID: <20190516142327.GA23471@lst.de>
+References: <20190516133820.GA43059@lakrids.cambridge.arm.com> <20190516134105.GB43059@lakrids.cambridge.arm.com> <20190516141314.GF19122@rapoport-lnx> <20190516142119.GD43059@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190516135259.GU16651@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190516142119.GD43059@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.05.2019 16:52, Michal Hocko wrote:
-> On Thu 16-05-19 15:30:34, Michal Hocko wrote:
->> [You are defining a new user visible API, please always add linux-api
->>  mailing list - now done]
->>
->> On Wed 15-05-19 18:11:15, Kirill Tkhai wrote:
-> [...]
->>> The proposed syscall aims to introduce an interface, which
->>> supplements currently existing process_vm_writev() and
->>> process_vm_readv(), and allows to solve the problem with
->>> anonymous memory transfer. The above example may be rewritten as:
->>>
->>> 	void *buf;
->>>
->>> 	buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
->>> 		   MAP_PRIVATE|MAP_ANONYMOUS, ...);
->>> 	recv(sock, buf, n * PAGE_SIZE, 0);
->>>
->>> 	/* Sign of @pid is direction: "from @pid task to current" or vice versa. */
->>> 	process_vm_mmap(-pid, buf, n * PAGE_SIZE, remote_addr, PVMMAP_FIXED);
->>> 	munmap(buf, n * PAGE_SIZE);
+On Thu, May 16, 2019 at 03:21:19PM +0100, Mark Rutland wrote:
+> >  void __weak free_initrd_mem(unsigned long start, unsigned long end)
+> >  {
+> > +       if (!start)
+> > +               return;
+> > +
+> >         free_reserved_area((void *)start, (void *)end, POISON_FREE_INITMEM,
+> >                         "initrd");
+> >  }
 > 
-> AFAIU this means that you actually want to do an mmap of an anonymous
-> memory with a COW semantic to the remote process right?
+> I think this should work, given Steven's patch checks the same thing.
+> 
+> I don't have a preference as to which patch should be taken, so I'll
+> leave that to Christoph.
 
-Yes.
-
-> How does the remote process find out where and what has been mmaped?
-
-Any way. Isn't this a trivial task? :) You may use socket or any
-of appropriate linux features to communicate between them.
-
->What if the range collides? This sounds quite scary to me TBH.
-
-In case of range collides, the part of old VMA becomes unmapped.
-The same way we behave on ordinary mmap. You may intersect a range,
-which another thread mapped, so you need a synchronization between
-them. There is no a principle difference.
-
-Also I'm going to add a flag to prevent unmapping like Kees suggested.
-Please, see his message.
-
-> Why cannot you simply use shared memory for that?
-
-Because of remote task may want specific type of VMA. It may want not to
-share a VMA with its children.
-
-Speaking about online migration, a task wants its anonymous private VMAs
-remain the same after the migration. Otherwise, imagine the situation,
-when task's stack becomes a shared VMA after the migration.
-Also, task wants anonymous mapping remains anonymous.
-
-In general, in case of shared memory is enough for everything, we would
-have never had process_vm_writev() and process_vm_readv() syscalls.
-
-Kirill
+We still have plenty of architectures not using the generic
+free_initrd_mem, so checking it in the caller gives us better
+coverage.
