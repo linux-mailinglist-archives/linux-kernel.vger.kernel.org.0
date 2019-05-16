@@ -2,68 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C14020D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 029A320D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbfEPQtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:49:23 -0400
-Received: from verein.lst.de ([213.95.11.211]:60820 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbfEPQtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:49:22 -0400
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 17CF168B02; Thu, 16 May 2019 18:49:00 +0200 (CEST)
-Date:   Thu, 16 May 2019 18:48:59 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Harald Geyer <harald@ccbib.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] arm64: DTS: allwinner: a64: enable ANX6345 bridge
- on Teres-I
-Message-ID: <20190516164859.GB10431@lst.de>
-References: <20190514155911.6C0AC68B05@newverein.lst.de> <20190514160241.9EAC768C7B@newverein.lst.de> <CA+E=qVfuKBzWK7dpM_eabjU8mLdzOw3zCnYk6Tc1oXdavH7CNA@mail.gmail.com> <20190515093141.41016b11@blackhole.lan> <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com> <20190516154820.GA10431@lst.de> <CA+E=qVe5NkAvHXPvVc7iTbZn5sKeoRm0166zPW_s83c2gk7B+g@mail.gmail.com>
+        id S1728618AbfEPQtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:49:11 -0400
+Received: from casper.infradead.org ([85.118.1.10]:35514 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfEPQtK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 12:49:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=tKk911ROe0tCzfs+bPSmBKTBLaoEpyGgcQBfu96Z0/A=; b=o+KMLHQcUSCKeA1ZIZKrnKMdM/
+        2nBNKGsEqWbYOWDUBEJtN6ARs6K3xOzhRIbBu2ouzL9VarJ/1dPQ0hq48iBBvLE86aeYUccksRnwa
+        DZGA5XVXUwaLaCgj1B/uhN70TY+TH1m7aip/IQUcYt47KNOaVevs1pqlAZfD9b8NIslR6ush0LUlx
+        z+ILLXF0w0RH7YmF2uviGbTRmkMpMpIVDeWUBQq9unDNurrRbP41/m0GNMtsFWnv90dzfkvpntmAx
+        uQoOdmEczCNaohZ/EG3SplP0ZH4U6SeKzq6CS5evW6pLT6IcewLG75WKabgEzVoORfVjyfJaAqoiY
+        doYP8aOg==;
+Received: from 179.186.99.85.dynamic.adsl.gvt.net.br ([179.186.99.85] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hRJZ6-0001JX-EY; Thu, 16 May 2019 16:49:08 +0000
+Date:   Thu, 16 May 2019 13:49:02 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v5.2-rc1] media fixes
+Message-ID: <20190516134902.59a3a855@coco.lan>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+E=qVe5NkAvHXPvVc7iTbZn5sKeoRm0166zPW_s83c2gk7B+g@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 09:06:41AM -0700, Vasily Khoruzhick wrote:
-> 
-> Driver can talk to the panel over AUX channel only after t1+t3, t1 is
-> up to 10ms, t3 is up to 200ms.
+Hi Linus,
 
-This is after power-on. The boot loader needs to deal with this.
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
+dia/v5.2-1
 
-> It works with older version of driver
-> that keeps panel always on because it takes a while between driver
-> probe and pipeline start.
+For some fixes for some platform drivers (rockchip, atmel, omap, daVinci,
+tegra-cec, coda and rcar).=20
 
-No lid switch, no USB, no WiFi, no MMC. If you disable DCDC1 you'll
-run out of wakeup-sources ;-) IOW: I see no practical way any OS
-driver can switch this panel voltage off and survive...
+It also includes a fix on one of the V4L2 uAPI doc, explaining a border cas=
+e.
 
-> All in all - you don't need panel timings since there's EDID but you
-> still need panel delays. Anyway, it's up to you and maintainers.
+Thanks!
+Mauro
 
-Let's give it a try.
+The following changes since commit 0d672fffb447aa1699d76fdacd90dc31eeb66d97:
 
-	Torsten
+  media: dt-bindings: aspeed-video: Add missing memory-region property (201=
+9-04-30 13:53:12 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
+dia/v5.2-1
+
+for you to fetch changes up to fc8670d1f72b746ff3a5fe441f1fca4c4dba0e6f:
+
+  media: rockchip/vpu: Fix/re-order probe-error/remove path (2019-05-15 05:=
+38:22 -0400)
+
+----------------------------------------------------------------
+media updates for v5.2-rc1
+
+----------------------------------------------------------------
+Boris Brezillon (2):
+      media: rockchip/vpu: Get vdev from the file arg in vidioc_querycap()
+      media: rockchip/vpu: Initialize mdev->bus_info
+
+Dan Carpenter (2):
+      media: omap_vout: potential buffer overflow in vidioc_dqbuf()
+      media: davinci/vpbe: array underflow in vpbe_enum_outputs()
+
+Eugen Hristev (3):
+      media: atmel: atmel-isc: limit incoming pixels per frame
+      media: atmel: atmel-isc: fix INIT_WORK misplacement
+      media: atmel: atmel-isc: fix asd memory allocation
+
+Hans Verkuil (2):
+      media: field-order.rst: clarify FIELD_ANY and FIELD_NONE
+      media: tegra-cec: fix cec_notifier_parse_hdmi_phandle return check
+
+Jonas Karlman (3):
+      media: rockchip/vpu: Do not request id 0 for our video device
+      media: rockchip/vpu: Add missing dont_use_autosuspend() calls
+      media: rockchip/vpu: Fix/re-order probe-error/remove path
+
+Niklas S=C3=B6derlund (2):
+      media: rcar-csi2: restart CSI-2 link if error is detected
+      media: rcar-csi2: Propagate the FLD signal for NTSC and PAL
+
+Philipp Zabel (1):
+      media: coda: fix unset field and fail on invalid field in buf_prepare
+
+Rui Miguel Silva (1):
+      media: staging/imx: add media device to capture register
+
+ Documentation/media/uapi/v4l/field-order.rst       | 16 +++--
+ drivers/media/platform/atmel/atmel-isc-regs.h      | 19 ++++++
+ drivers/media/platform/atmel/atmel-isc.c           | 46 +++++++++++++--
+ drivers/media/platform/coda/coda-common.c          | 10 ++++
+ drivers/media/platform/davinci/vpbe.c              |  2 +-
+ drivers/media/platform/omap/omap_vout.c            | 15 ++---
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 68 ++++++++++++++++++=
+++--
+ drivers/media/platform/tegra-cec/tegra_cec.c       |  4 +-
+ drivers/staging/media/imx/imx-ic-prpencvf.c        |  2 +-
+ drivers/staging/media/imx/imx-media-capture.c      |  6 +-
+ drivers/staging/media/imx/imx-media-csi.c          |  2 +-
+ drivers/staging/media/imx/imx-media.h              |  3 +-
+ drivers/staging/media/imx/imx7-media-csi.c         |  2 +-
+ .../staging/media/rockchip/vpu/rockchip_vpu_drv.c  | 14 +++--
+ .../staging/media/rockchip/vpu/rockchip_vpu_enc.c  |  3 +-
+ include/media/davinci/vpbe.h                       |  2 +-
+ 16 files changed, 172 insertions(+), 42 deletions(-)
 
