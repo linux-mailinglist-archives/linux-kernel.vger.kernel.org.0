@@ -2,154 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E24920CE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA7D20CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfEPQ1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:27:07 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34256 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfEPQ1H (ORCPT
+        id S1727057AbfEPQ3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:29:48 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42952 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfEPQ3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:27:07 -0400
-Received: by mail-lj1-f196.google.com with SMTP id j24so3715351ljg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:27:05 -0700 (PDT)
+        Thu, 16 May 2019 12:29:48 -0400
+Received: by mail-pl1-f196.google.com with SMTP id x15so1876861pln.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CJn+s1/9iwnST3l6oaCFH3Pabu3jpALwTCNZgnOPKSk=;
-        b=RbIOcHhbe/wAJnhmE+X0+jqRT3pY8KcZzvhJF5Lg9TwQ8gVf3VLYKAsRoqwWTQp4qX
-         GNwZxaLxD1imdCwMmdAyJyfUGNksYji2fm0afsXvot60M+nvGFT0cP+SGpPpRIIjwh3a
-         zRlK4oU9gZLMtkC00ta8Onnj2sYvjd9PLdIOI=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FOE0cCJQ21ga6g1DChuQ/Qq1kToyjWkdfWiPelD2OC4=;
+        b=ayq0D5zU19MEk0xwhDehYCYeWHoQ08w7g7ZjKSj8+Z7ap0fNQU02iAUi4BNKUwMN5E
+         DaDZsXTk9ac1bORDTuN/XFIeLq4ziTrZmWcEcwPx47BLpRJ937gCOyNca6DcHHrXlOI7
+         n3NMuXxbDIDHBpYxtnrBUtgjXrYN73x/nRozw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CJn+s1/9iwnST3l6oaCFH3Pabu3jpALwTCNZgnOPKSk=;
-        b=HnoznO+phFu8nDjo75ahXglCRpg47d3VrwymV4UKg9bVZ0RKacBZgCM/3Bkx/a5BrZ
-         TpoXzXgAuCxXtbHwr4J6mdfg/IJ02GQ8BlqLBo3MVVC8zlk54D3ntOukhRrj+6PnZgK6
-         GjOycDofrRqciCJsa02z7LLDwwkjWTqlVwkZnMoCLFvpO15QmeVzlhqjPofhme9ZO9W3
-         jVpO0eSrdgg9DiTvgkd2GNYh1TA91cN7uv+NQcmBqIRQZLVwBmTFxxZwD/KuNlBjc3s3
-         BdGwFZ3CLijtGaMFndHKkQh74MTTynagckY++28kjciVxrsO9ffkIUSXBaNu15YflQJx
-         sVfw==
-X-Gm-Message-State: APjAAAUo1k5OcOCrBukt6aCYMgCephTlfhZ+j454KQIixKzslCZU7lCl
-        5DSdGx3MEhZ6G9ur/TYNNlp+1JwAWKI=
-X-Google-Smtp-Source: APXvYqyIeHmh6gDVSCAtlS6zsoC7qw/rkct5meaQ+qlMywnWI6tmaHhtvmx3/GG4Ot+W8E4iMXzy9w==
-X-Received: by 2002:a2e:96d9:: with SMTP id d25mr23702980ljj.78.1558024024228;
-        Thu, 16 May 2019 09:27:04 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id k26sm1184326lfb.63.2019.05.16.09.27.03
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FOE0cCJQ21ga6g1DChuQ/Qq1kToyjWkdfWiPelD2OC4=;
+        b=Tsboz/UsV82SYMJarO96a7reXybKOkU+6AQJt5Q/5Iv6d6XkqCofroTQq1ABn/zsOk
+         8EO1ZEYIRJCHIUhcfWO6p7/X5tL2V1ybUUlmAYYWjArisH+P6+Yimfes2Tp3xa6HDNDb
+         84or7zWYYNYF7XhtNKLC8ydM5QU+Gkls/dwzeEMiw9ezrXzbLqQdumAKYSa69wOSNxnC
+         Sm7E7Tux4aX7yB3JpPy4soVCFzPdoxUbxreGDZc8T8brTwWBgxqzOFjqquDVchQ8z38G
+         SrN1qO0AvgVAhNP+El9O6nmWJk6qLskQRWS5Rd6di9rQzGmQKdY7V71oG3uPrG8ljujg
+         DnLA==
+X-Gm-Message-State: APjAAAXwh8pTp3uAk8Hf/5IMgXDju0t+wlIr0fv5AlfK/MGLq9LihSgk
+        HMXDcKXzDcZaukANbCdUooeZnQ==
+X-Google-Smtp-Source: APXvYqxrvwtoWK8QdXNAIVHAwc7IGRNSlG4OKmttVtrCs4o4+DbqSeo4gMHXIbJEH9AVCcAMyz3k0w==
+X-Received: by 2002:a17:902:8a83:: with SMTP id p3mr51848281plo.88.1558024187640;
+        Thu, 16 May 2019 09:29:47 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id g128sm7168645pfb.131.2019.05.16.09.29.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 09:27:03 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id l26so3088941lfh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:27:03 -0700 (PDT)
-X-Received: by 2002:ac2:5212:: with SMTP id a18mr25173004lfl.166.1558024022880;
- Thu, 16 May 2019 09:27:02 -0700 (PDT)
+        Thu, 16 May 2019 09:29:47 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2 1/3] ARM: dts: rockchip: raise CPU trip point temperature for veyron to 100 degC
+Date:   Thu, 16 May 2019 09:29:40 -0700
+Message-Id: <20190516162942.154823-1-mka@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
-References: <20190516064304.24057-1-olof@lixom.net> <20190516064304.24057-4-olof@lixom.net>
-In-Reply-To: <20190516064304.24057-4-olof@lixom.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 May 2019 09:26:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whb-KituxcvM6ZPuXqyPX+rJENb8cnGCPbGE9pyqwOmXA@mail.gmail.com>
-Message-ID: <CAHk-=whb-KituxcvM6ZPuXqyPX+rJENb8cnGCPbGE9pyqwOmXA@mail.gmail.com>
-Subject: Re: [GIT PULL 3/4] ARM: SoC-related driver updates
-To:     Olof Johansson <olof@lixom.net>,
-        Patrick Venture <venture@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     ARM SoC <arm@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 11:43 PM Olof Johansson <olof@lixom.net> wrote:
->
-> Various driver updates for platforms and a couple of the small driver
-> subsystems we merge through our tree:
+This value matches what is used by the downstream Chrome OS 3.14
+kernel, the 'official' kernel for veyron devices. Keep the temperature
+for 'speedy' at 90°C, as in the downstream kernel.
 
-Hmm. This moved the aspeed drivers from drivers/misc to
-drivers/soc/aspeed (in commit 524feb799408 "soc: add aspeed folder and
-misc drivers"), but in the meantime we also had a new aspeed soc
-driver added (in commit 01c60dcea9f7 "drivers/misc: Add Aspeed P2A
-control driver").
+Increase the temperature for a hardware shutdown to 125°C, which
+matches the downstream configuration and gives the system a chance
+to shut down orderly at the criticial trip point.
 
-I ended up resolving that "conflict" by moving the new aspeed P2A
-control driver to be with the other aspeed drivers too. That seemed to
-be the cleanest model.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+Changes in v2:
+- patch added to the series
+---
+ arch/arm/boot/dts/rk3288-veyron-speedy.dts | 4 ++++
+ arch/arm/boot/dts/rk3288-veyron.dtsi       | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-I'm used to doing these kinds of fixups in a merge, but I have to
-admit that maybe I should have made it a separate commit, because now
-it's kind of non-obvious, and it's sometimes harder to see changes
-that are in a merge commit than in a separate commit.
+diff --git a/arch/arm/boot/dts/rk3288-veyron-speedy.dts b/arch/arm/boot/dts/rk3288-veyron-speedy.dts
+index e16421d80d22..ab2a66aa337e 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-speedy.dts
++++ b/arch/arm/boot/dts/rk3288-veyron-speedy.dts
+@@ -64,6 +64,10 @@
+ 	temperature = <70000>;
+ };
+ 
++&cpu_crit {
++	temperature = <90000>;
++};
++
+ &edp {
+ 	/delete-property/pinctrl-names;
+ 	/delete-property/pinctrl-0;
+diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
+index 192dbc089ade..58dc538b5df3 100644
+--- a/arch/arm/boot/dts/rk3288-veyron.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
+@@ -99,6 +99,10 @@
+ 	cpu0-supply = <&vdd_cpu>;
+ };
+ 
++&cpu_crit {
++	temperature = <100000>;
++};
++
+ /* rk3288-c used in Veyron Chrome-devices has slightly changed OPPs */
+ &cpu_opp_table {
+ 	/delete-node/ opp-312000000;
+@@ -371,6 +375,7 @@
+ 
+ 	rockchip,hw-tshut-mode = <1>; /* tshut mode 0:CRU 1:GPIO */
+ 	rockchip,hw-tshut-polarity = <1>; /* tshut polarity 0:LOW 1:HIGH */
++	rockchip,hw-tshut-temp = <125000>;
+ };
+ 
+ &uart0 {
+-- 
+2.21.0.1020.gf2820cf01a-goog
 
-In particular, it looks like "git log --follow" is not smart enough to
-follow a rename through a merge. But I think that is a git problem,
-and not a very serious one at that ("git blame" has no such problem).
-
-And it means that now the merge has
-
- drivers/{misc => soc/aspeed}/aspeed-lpc-ctrl.c                   |   0
- drivers/{misc => soc/aspeed}/aspeed-lpc-snoop.c                  |   0
- drivers/{misc => soc/aspeed}/aspeed-p2a-ctrl.c                   |   0
-
-when you do "git show --stat" on it, which looks correct, and it feels
-like conceptually the right merge resolution to me.
-
-Sending out this explanatory email to everybody involved, just so that
-this doesn't take you by surprise. But it looks like Patrick Venture
-is not just the author of that moved driver, he was also involved in
-the move of the two other drivers, so I'm guessing there's not going
-to be a lot of confusion here.
-
-HOWEVER. More subtly, as part of my *testing* for this, I also
-realized that commit 524feb799408 is buggy. In my tests, the config
-worked fine, but the aspeed drivers were never actually *built*. The
-reason is that commit 524feb799408 ends up doing
-
-   obj-$(CONFIG_ARCH_ASPEED)      += aspeed/
-
-which is completely wrong, because the Kconfig fules are
-
-        depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
-
-so those drivers can be configured even if ARCH_ASPEED *isn't* set.
-The Kconfig part works fine, because the soc/aspeed/Kconfig file is
-included unconditionally, but the actual build process then never
-builds anything in the drivers/soc/aspeed/ subdirectory.
-
-I solved _that_ problem by adding a new config option:
-
-  config SOC_ASPEED
-      def_bool y
-      depends on ARCH_ASPEED || COMPILE_TEST
-
-and using that instead of ARCH_ASPEED.
-
-End result: this was a somewhat messy merge, and the most subtle mess
-was because of that buggy 524feb799408 "soc: add aspeed folder and
-misc drivers").
-
-I *think* I sorted it all out correctly, and now I see the aspeed
-drivers being built (and cleanly at that) but I really *really* want
-people to double-check this all.
-
-Also, I think that the same "we don't actually build-test the end
-result" problem exists else-where for the same reasons.
-
-At the very least, drivers/soc/{atmel,rockchip,zte} seem to have the
-exact same pattern: the Kconfig files enable the drivers, but the
-Makefile in drivers/soc doesn't actually traverse into the
-subdirectories.
-
-End result: CONFIG_COMPILE_TEST doesn't actually do any compile
-testing for those drivers.
-
-I did not try to fix all of those things up, because I didn't do the
-driver movements there.
-
-                  Linus
