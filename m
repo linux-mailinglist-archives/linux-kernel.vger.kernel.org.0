@@ -2,73 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7990C1FD99
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 04:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE6F1FD6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:49:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfEPCAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 22:00:16 -0400
-Received: from mga02.intel.com ([134.134.136.20]:59727 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726039AbfEPCAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 22:00:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 19:00:15 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 15 May 2019 19:00:12 -0700
-Cc:     baolu.lu@linux.intel.com, Robin Murphy <robin.murphy@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] swiotlb: Factor out slot allocation and free
-To:     Christoph Hellwig <hch@lst.de>
-References: <0c6e5983-312b-0d6b-92f5-64861cd6804d@linux.intel.com>
- <20190423061232.GB12762@lst.de>
- <dff50b2c-5e31-8b4a-7fdf-99d17852746b@linux.intel.com>
- <20190424144532.GA21480@lst.de>
- <a189444b-15c9-8069-901d-8cdf9af7fc3c@linux.intel.com>
- <20190426150433.GA19930@lst.de>
- <93b3d627-782d-cae0-2175-77a5a8b3fe6e@linux.intel.com>
- <90182d27-5764-7676-8ca6-b2773a40cfe1@arm.com>
- <20190429114401.GA30333@lst.de>
- <7033f384-7823-42ec-6bda-ae74ef689f4f@linux.intel.com>
- <20190513070542.GA18739@lst.de>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <adfdea8f-1d63-196d-ade1-665e868f5a87@linux.intel.com>
-Date:   Thu, 16 May 2019 09:53:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726856AbfEPBsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 21:48:37 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46592 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726475AbfEPBqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 21:46:30 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9965829F393F587A2775;
+        Thu, 16 May 2019 09:46:28 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 16 May 2019 09:46:22 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH] vfio-mdev/samples: make some symbols static
+Date:   Thu, 16 May 2019 09:55:26 +0800
+Message-ID: <20190516015526.141404-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190513070542.GA18739@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Make some structs and functions static to fix build warning, parts of
+warning shown below,
 
-On 5/13/19 3:05 PM, Christoph Hellwig wrote:
-> On Mon, May 06, 2019 at 09:54:30AM +0800, Lu Baolu wrote:
->> Agreed. I will prepare the next version simply without the optimization, so
->> the offset is not required.
->>
->> For your changes in swiotlb, will you formalize them in patches or want
->> me to do this?
-> 
-> Please do it yourself given that you still need the offset and thus a
-> rework of the patches anyway.
-> 
+amples/vfio-mdev/mtty.c:730:5: warning: symbol 'mtty_create' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:780:5: warning: symbol 'mtty_remove' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:802:5: warning: symbol 'mtty_reset' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:818:9: warning: symbol 'mtty_read' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:877:9: warning: symbol 'mtty_write' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1070:5: warning: symbol 'mtty_get_region_info' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1119:5: warning: symbol 'mtty_get_irq_info' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1143:5: warning: symbol 'mtty_get_device_info' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1275:5: warning: symbol 'mtty_open' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1281:6: warning: symbol 'mtty_close' was not declared. Should it be static?
+samples/vfio-mdev/mtty.c:1305:30: warning: symbol 'mtty_dev_groups' was not declared. Should it be static?
 
-Okay.
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Kirti Wankhede <kwankhede@nvidia.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ samples/vfio-mdev/mtty.c | 44 ++++++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-Best regards,
-Lu Baolu
+diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+index 1c77c370c92f..880eeac0c7c9 100644
+--- a/samples/vfio-mdev/mtty.c
++++ b/samples/vfio-mdev/mtty.c
+@@ -72,7 +72,7 @@
+  * Global Structures
+  */
+ 
+-struct mtty_dev {
++static struct mtty_dev {
+ 	dev_t		vd_devt;
+ 	struct class	*vd_class;
+ 	struct cdev	vd_cdev;
+@@ -88,7 +88,7 @@ struct mdev_region_info {
+ };
+ 
+ #if defined(DEBUG_REGS)
+-const char *wr_reg[] = {
++static const char *wr_reg[] = {
+ 	"TX",
+ 	"IER",
+ 	"FCR",
+@@ -99,7 +99,7 @@ const char *wr_reg[] = {
+ 	"SCR"
+ };
+ 
+-const char *rd_reg[] = {
++static const char *rd_reg[] = {
+ 	"RX",
+ 	"IER",
+ 	"IIR",
+@@ -147,8 +147,8 @@ struct mdev_state {
+ 	int nr_ports;
+ };
+ 
+-struct mutex mdev_list_lock;
+-struct list_head mdev_devices_list;
++static struct mutex mdev_list_lock;
++static struct list_head mdev_devices_list;
+ 
+ static const struct file_operations vd_fops = {
+ 	.owner          = THIS_MODULE,
+@@ -171,7 +171,7 @@ static struct mdev_state *find_mdev_state_by_uuid(const guid_t *uuid)
+ 	return NULL;
+ }
+ 
+-void dump_buffer(u8 *buf, uint32_t count)
++static void dump_buffer(u8 *buf, uint32_t count)
+ {
+ #if defined(DEBUG)
+ 	int i;
+@@ -727,7 +727,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, u8 *buf, size_t count,
+ 	return ret;
+ }
+ 
+-int mtty_create(struct kobject *kobj, struct mdev_device *mdev)
++static int mtty_create(struct kobject *kobj, struct mdev_device *mdev)
+ {
+ 	struct mdev_state *mdev_state;
+ 	char name[MTTY_STRING_LEN];
+@@ -777,7 +777,7 @@ int mtty_create(struct kobject *kobj, struct mdev_device *mdev)
+ 	return 0;
+ }
+ 
+-int mtty_remove(struct mdev_device *mdev)
++static int mtty_remove(struct mdev_device *mdev)
+ {
+ 	struct mdev_state *mds, *tmp_mds;
+ 	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
+@@ -799,7 +799,7 @@ int mtty_remove(struct mdev_device *mdev)
+ 	return ret;
+ }
+ 
+-int mtty_reset(struct mdev_device *mdev)
++static int mtty_reset(struct mdev_device *mdev)
+ {
+ 	struct mdev_state *mdev_state;
+ 
+@@ -815,7 +815,7 @@ int mtty_reset(struct mdev_device *mdev)
+ 	return 0;
+ }
+ 
+-ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
++static ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		  loff_t *ppos)
+ {
+ 	unsigned int done = 0;
+@@ -874,7 +874,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 	return -EFAULT;
+ }
+ 
+-ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
++static ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 		   size_t count, loff_t *ppos)
+ {
+ 	unsigned int done = 0;
+@@ -1067,7 +1067,7 @@ static int mtty_trigger_interrupt(const guid_t *uuid)
+ 	return ret;
+ }
+ 
+-int mtty_get_region_info(struct mdev_device *mdev,
++static int mtty_get_region_info(struct mdev_device *mdev,
+ 			 struct vfio_region_info *region_info,
+ 			 u16 *cap_type_id, void **cap_type)
+ {
+@@ -1116,7 +1116,7 @@ int mtty_get_region_info(struct mdev_device *mdev,
+ 	return 0;
+ }
+ 
+-int mtty_get_irq_info(struct mdev_device *mdev, struct vfio_irq_info *irq_info)
++static int mtty_get_irq_info(struct mdev_device *mdev, struct vfio_irq_info *irq_info)
+ {
+ 	switch (irq_info->index) {
+ 	case VFIO_PCI_INTX_IRQ_INDEX:
+@@ -1140,7 +1140,7 @@ int mtty_get_irq_info(struct mdev_device *mdev, struct vfio_irq_info *irq_info)
+ 	return 0;
+ }
+ 
+-int mtty_get_device_info(struct mdev_device *mdev,
++static int mtty_get_device_info(struct mdev_device *mdev,
+ 			 struct vfio_device_info *dev_info)
+ {
+ 	dev_info->flags = VFIO_DEVICE_FLAGS_PCI;
+@@ -1272,13 +1272,13 @@ static long mtty_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 	return -ENOTTY;
+ }
+ 
+-int mtty_open(struct mdev_device *mdev)
++static int mtty_open(struct mdev_device *mdev)
+ {
+ 	pr_info("%s\n", __func__);
+ 	return 0;
+ }
+ 
+-void mtty_close(struct mdev_device *mdev)
++static void mtty_close(struct mdev_device *mdev)
+ {
+ 	pr_info("%s\n", __func__);
+ }
+@@ -1302,7 +1302,7 @@ static const struct attribute_group mtty_dev_group = {
+ 	.attrs = mtty_dev_attrs,
+ };
+ 
+-const struct attribute_group *mtty_dev_groups[] = {
++static const struct attribute_group *mtty_dev_groups[] = {
+ 	&mtty_dev_group,
+ 	NULL,
+ };
+@@ -1329,7 +1329,7 @@ static const struct attribute_group mdev_dev_group = {
+ 	.attrs = mdev_dev_attrs,
+ };
+ 
+-const struct attribute_group *mdev_dev_groups[] = {
++static const struct attribute_group *mdev_dev_groups[] = {
+ 	&mdev_dev_group,
+ 	NULL,
+ };
+@@ -1351,7 +1351,7 @@ name_show(struct kobject *kobj, struct device *dev, char *buf)
+ 	return -EINVAL;
+ }
+ 
+-MDEV_TYPE_ATTR_RO(name);
++static MDEV_TYPE_ATTR_RO(name);
+ 
+ static ssize_t
+ available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
+@@ -1379,7 +1379,7 @@ available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
+ 	return sprintf(buf, "%d\n", (MAX_MTTYS - used)/ports);
+ }
+ 
+-MDEV_TYPE_ATTR_RO(available_instances);
++static MDEV_TYPE_ATTR_RO(available_instances);
+ 
+ 
+ static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
+@@ -1388,7 +1388,7 @@ static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
+ 	return sprintf(buf, "%s\n", VFIO_DEVICE_API_PCI_STRING);
+ }
+ 
+-MDEV_TYPE_ATTR_RO(device_api);
++static MDEV_TYPE_ATTR_RO(device_api);
+ 
+ static struct attribute *mdev_types_attrs[] = {
+ 	&mdev_type_attr_name.attr,
+@@ -1407,7 +1407,7 @@ static struct attribute_group mdev_type_group2 = {
+ 	.attrs = mdev_types_attrs,
+ };
+ 
+-struct attribute_group *mdev_type_groups[] = {
++static struct attribute_group *mdev_type_groups[] = {
+ 	&mdev_type_group1,
+ 	&mdev_type_group2,
+ 	NULL,
+-- 
+2.20.1
+
