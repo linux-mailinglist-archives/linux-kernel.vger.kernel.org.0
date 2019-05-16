@@ -2,153 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F2620772
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9143720778
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfEPM6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 08:58:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfEPM6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 08:58:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1632030C2119;
-        Thu, 16 May 2019 12:58:19 +0000 (UTC)
-Received: from [10.36.116.17] (ovpn-116-17.ams2.redhat.com [10.36.116.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 81B2B5D6A9;
-        Thu, 16 May 2019 12:58:09 +0000 (UTC)
-Subject: Re: [PATCH v3 6/7] iommu: Introduce IOMMU_RESV_DIRECT_RELAXABLE
- reserved memory regions
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        eric.auger.pro@gmail.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        dwmw2@infradead.org, lorenzo.pieralisi@arm.com,
-        robin.murphy@arm.com, will.deacon@arm.com, hanjun.guo@linaro.org,
-        sudeep.holla@arm.com
-Cc:     alex.williamson@redhat.com
-References: <20190516100817.12076-1-eric.auger@redhat.com>
- <20190516100817.12076-7-eric.auger@redhat.com>
- <3e21e370-135e-2eab-dd99-50e19cd53b86@arm.com>
- <403897e7-2af9-3fa9-2264-f66dfeda6fd7@redhat.com>
- <214a20d2-9cb5-c23d-ad38-8a0dea729e00@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <342a4aad-3abd-f9a8-05fd-e8e260bbb69d@redhat.com>
-Date:   Thu, 16 May 2019 14:58:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <214a20d2-9cb5-c23d-ad38-8a0dea729e00@arm.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727182AbfEPNAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:00:53 -0400
+Received: from mail-eopbgr150053.outbound.protection.outlook.com ([40.107.15.53]:56892
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726618AbfEPNAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:00:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M25hDT1I3ZxwMms/pM7xnaXpBXmkT2/AVLvSBif+c5A=;
+ b=ObQQ/jfoC/9LnnYHQLyP2XQ78PR+e8bOhgyztHQ8tSQgoCwutojzfDtvgPyPdA/ApX4g9YbixeDwAZlfe1N+Ji/DlSStNiXdRzP5l68tS4s+shAHpr5C0pu5BZre1IkM+iie12ZCx4QXhIEPMW1UCcbls57hwajx2EWBlfIawOo=
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com (20.177.48.157) by
+ VI1PR04MB5407.eurprd04.prod.outlook.com (20.178.121.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Thu, 16 May 2019 13:00:49 +0000
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::2ce8:d8f5:9745:99df]) by VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::2ce8:d8f5:9745:99df%6]) with mapi id 15.20.1900.010; Thu, 16 May 2019
+ 13:00:49 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Colin Ian King <colin.king@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: [PATCH] ASoC: AK4458: add regulator for ak4458
+Thread-Topic: [PATCH] ASoC: AK4458: add regulator for ak4458
+Thread-Index: AQHVC+dix6gnGF9HoUCg65Wy4dJcvg==
+Date:   Thu, 16 May 2019 13:00:48 +0000
+Message-ID: <1558011640-7864-1-git-send-email-viorel.suman@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 16 May 2019 12:58:19 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR07CA0217.eurprd07.prod.outlook.com
+ (2603:10a6:802:58::20) To VI1PR04MB4704.eurprd04.prod.outlook.com
+ (2603:10a6:803:52::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 390a5f3c-2e5c-4eca-9803-08d6d9fe8470
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5407;
+x-ms-traffictypediagnostic: VI1PR04MB5407:
+x-microsoft-antispam-prvs: <VI1PR04MB5407CA423B61784E5C3AE593920A0@VI1PR04MB5407.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:854;
+x-forefront-prvs: 0039C6E5C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(366004)(376002)(39860400002)(189003)(199004)(99286004)(52116002)(8936002)(81166006)(36756003)(81156014)(6436002)(25786009)(2501003)(71200400001)(71190400001)(386003)(6506007)(8676002)(50226002)(102836004)(14444005)(256004)(53936002)(68736007)(54906003)(110136005)(316002)(6512007)(66446008)(5660300002)(66946007)(73956011)(64756008)(4326008)(6116002)(86362001)(2616005)(476003)(66556008)(186003)(2201001)(478600001)(26005)(486006)(2906002)(44832011)(14454004)(7736002)(6486002)(66066001)(305945005)(3846002)(66476007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5407;H:VI1PR04MB4704.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oHGXLeZc9w8EbyL5L/K1W6GDS4KqFlu5SlFfli9rQXaTPi+E4XLxLC07KeDaSJb2rKdZflOaC/ZjHkf3cWZEu2XahcSkKw5o1045bG5ifj5bmygOE3LFbjWLv00LD7/pFxP2gCSqm2gfglAvoq9RUbpxJpqT3Ou7dGiI4PDjkMPKzCF1JrFSjrKhU6G98lj5JQTORjVvTiIG+GmRWayj0drKGqv8iEziZeCyXoEvBzkWD4EKWfbNgf3Y/gvfAwut9uOJQA7Iy0z6E8hMyTUIXdg+r4uXjGrD8QKgOI+qqqlmsfoRRGRJs+/Yq8rWxvfFeRZtCtzG7HcdCn2ImgvHXyiktRAXz5sD+JaxerOOjOgw2j5QUmZrt+n5KbIYB63zqZui2EFLBq+mTLnEHwAi2Q+V3mIeO27kGn63eapRnBg=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <84B5814EB7C3584DB9AFC20C3093B2FF@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 390a5f3c-2e5c-4eca-9803-08d6d9fe8470
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2019 13:00:49.0123
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5407
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean-Philippe,
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-On 5/16/19 2:43 PM, Jean-Philippe Brucker wrote:
-> On 16/05/2019 12:45, Auger Eric wrote:
->> Hi Jean-Philippe,
->>
->> On 5/16/19 1:16 PM, Jean-Philippe Brucker wrote:
->>> On 16/05/2019 11:08, Eric Auger wrote:
->>>> Note: At the moment the sysfs ABI is not changed. However I wonder
->>>> whether it wouldn't be preferable to report the direct region as
->>>> "direct_relaxed" there. At the moment, in case the same direct
->>>> region is used by 2 devices, one USB/GFX and another not belonging
->>>> to the previous categories, the direct region will be output twice
->>>> with "direct" type.
->>>>
->>>> This would unblock Shameer's series:
->>>> [PATCH v6 0/7] vfio/type1: Add support for valid iova list management
->>>> https://patchwork.kernel.org/patch/10425309/
->>>
->>> Thanks for doing this!
->>>
->>>> which failed to get pulled for 4.18 merge window due to IGD
->>>> device assignment regression.
->>>>
->>>> v2 -> v3:
->>>> - fix direct type check
->>>> ---
->>>>  drivers/iommu/iommu.c | 12 +++++++-----
->>>>  include/linux/iommu.h |  6 ++++++
->>>>  2 files changed, 13 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->>>> index ae4ea5c0e6f9..28c3d6351832 100644
->>>> --- a/drivers/iommu/iommu.c
->>>> +++ b/drivers/iommu/iommu.c
->>>> @@ -73,10 +73,11 @@ struct iommu_group_attribute {
->>>>  };
->>>>  
->>>>  static const char * const iommu_group_resv_type_string[] = {
->>>> -	[IOMMU_RESV_DIRECT]	= "direct",
->>>> -	[IOMMU_RESV_RESERVED]	= "reserved",
->>>> -	[IOMMU_RESV_MSI]	= "msi",
->>>> -	[IOMMU_RESV_SW_MSI]	= "msi",
->>>> +	[IOMMU_RESV_DIRECT]			= "direct",
->>>> +	[IOMMU_RESV_DIRECT_RELAXABLE]		= "direct",
->>>> +	[IOMMU_RESV_RESERVED]			= "reserved",
->>>> +	[IOMMU_RESV_MSI]			= "msi",
->>>> +	[IOMMU_RESV_SW_MSI]			= "msi",
->>>>  };
->>>>  
->>>>  #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
->>>> @@ -573,7 +574,8 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group,
->>>>  		start = ALIGN(entry->start, pg_size);
->>>>  		end   = ALIGN(entry->start + entry->length, pg_size);
->>>>  
->>>> -		if (entry->type != IOMMU_RESV_DIRECT)
->>>> +		if (entry->type != IOMMU_RESV_DIRECT &&
->>>> +		    entry->type != IOMMU_RESV_DIRECT_RELAXABLE)
->>>
->>> I'm trying to understand why you need to create direct mappings at all
->>> for these relaxable regions. In the host the region is needed for legacy
->>> device features, which are disabled (and cannot be re-enabled) when
->>> assigning the device to a guest?
->> This follows Kevin's comment in the thread below:
->> https://patchwork.kernel.org/patch/10449103/#21957279
->>
->> In normal DMA API host path, those regions need to be 1-1 mapped. They
->> are likely to be accessed by the driver or FW at early boot phase or
->> even during execution, depending on features being used.
->>
->> That's the reason, according to Kevin we couldn't hide them.
->>
->> We just know that, in general, they are not used anymore when assigning
->> the device or if accesses are attempted this generally does not block
->> the assignment use case. For example, it is said in
->> https://github.com/qemu/qemu/blob/master/docs/igd-assign.txt that in
->> legacy IGD assignment use case, there may be "a small numbers of DMAR
->> faults when initially assigned".
-> 
-> Hmm, fair enough. That doesn't sound too good, if the device might
-> perform arbitrary writes into guest memory once new IOMMU mappings are
-> in place. I was wondering if we could report some IOVA ranges as
-> "available but avoid if possible".
-In Shameer's series we currently reject any vfio dma_map that would fall
-into an RMRR (hence the regression on existing USB/GFX use case). With
-the relaxable RMRR info we could imagine to let the userspace choose
-whether we want to proceed with the dma_map despite the risk or
-introduce a vfio_iommu_type1 module option (turned off by default for
-not regressing existing USB/GFX passthrough) that would forbid dma_map
-on relaxable RMRR regions.
+Add regulator for ak4458.
 
-Thanks
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+---
+ sound/soc/codecs/ak4458.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-Eric
+diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
+index 7156215..06dcf13 100644
+--- a/sound/soc/codecs/ak4458.c
++++ b/sound/soc/codecs/ak4458.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <sound/initval.h>
+ #include <sound/pcm_params.h>
+@@ -21,6 +22,12 @@
+=20
+ #include "ak4458.h"
+=20
++#define AK4458_NUM_SUPPLIES 2
++static const char *ak4458_supply_names[AK4458_NUM_SUPPLIES] =3D {
++	"DVDD",
++	"AVDD",
++};
++
+ struct ak4458_drvdata {
+ 	struct snd_soc_dai_driver *dai_drv;
+ 	const struct snd_soc_component_driver *comp_drv;
+@@ -37,6 +44,7 @@ struct ak4458_priv {
+ 	int fmt;
+ 	int slots;
+ 	int slot_width;
++	struct regulator_bulk_data supplies[AK4458_NUM_SUPPLIES];
+ };
+=20
+ static const struct reg_default ak4458_reg_defaults[] =3D {
+@@ -666,7 +674,7 @@ static int ak4458_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct ak4458_priv *ak4458;
+ 	const struct ak4458_drvdata *drvdata;
+-	int ret;
++	int ret, i;
+=20
+ 	ak4458 =3D devm_kzalloc(&i2c->dev, sizeof(*ak4458), GFP_KERNEL);
+ 	if (!ak4458)
+@@ -691,6 +699,23 @@ static int ak4458_i2c_probe(struct i2c_client *i2c)
+ 	if (IS_ERR(ak4458->mute_gpiod))
+ 		return PTR_ERR(ak4458->mute_gpiod);
+=20
++	for (i =3D 0; i < ARRAY_SIZE(ak4458->supplies); i++)
++		ak4458->supplies[i].supply =3D ak4458_supply_names[i];
++
++	ret =3D devm_regulator_bulk_get(ak4458->dev, ARRAY_SIZE(ak4458->supplies)=
+,
++				      ak4458->supplies);
++	if (ret !=3D 0) {
++		dev_err(ak4458->dev, "Failed to request supplies: %d\n", ret);
++		return ret;
++	}
++
++	ret =3D regulator_bulk_enable(ARRAY_SIZE(ak4458->supplies),
++				    ak4458->supplies);
++	if (ret !=3D 0) {
++		dev_err(ak4458->dev, "Failed to enable supplies: %d\n", ret);
++		return ret;
++	}
++
+ 	ret =3D devm_snd_soc_register_component(ak4458->dev, drvdata->comp_drv,
+ 					      drvdata->dai_drv, 1);
+ 	if (ret < 0) {
+--=20
+2.7.4
 
- If the guest has a vIOMMU, they are
-> easy to avoid. But I doubt they would ever get used, since probably no
-> one is going to instantiate a vIOMMU for a graphics device in legacy mode.
-> 
-> Thanks,
-> Jean
-> 
