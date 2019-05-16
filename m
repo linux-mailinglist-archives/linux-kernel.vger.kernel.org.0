@@ -2,88 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEF920CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB82F20D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfEPQ3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:29:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35799 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfEPQ3t (ORCPT
+        id S1727149AbfEPQbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:31:36 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59076 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfEPQbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:29:49 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q15so4138276wmj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:29:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bmJ3oGbhkIfE+oGMXz0i/1fqw7BH4scbuPzlcTLdX0o=;
-        b=LqiV9D6Ghpb4aXnQor+QWgNaddHzAVkuW/6LpF+d4LvRNoQL6uujnn6+eV4DoVWMs4
-         Rh+QQZDwGK9eFp1H4RUOobWq14ylZcgktFfiLU8YNDzJwgDA1tmQBZQTTo055yZUlZZh
-         PrpsvOstihWpMH/SGhjYTLh3Pmrre5SbjcqFjX3AageSqO64CJNauz1DgzA/2dNS/avz
-         hKWDgyFtm1RvgfofWNgasScifHoer2bEs+Q0CFHKKvHDlgPj3ZkdzQY81ufj/o4xGTtR
-         fBvT5a7+Qsm8zZTIIbjAiTt4YaKFETs2RnJv/hbmK1X59d4W4f1XVongAAd+Kvx/lA4B
-         BNhw==
-X-Gm-Message-State: APjAAAUjlKbm7YaG1DdB/AM22tebYLRaP3CFVlVm3NJ0Ket46/8699C5
-        y0GrimIptKWXn9767I0dT465
-X-Google-Smtp-Source: APXvYqw4xzsO/ZHDRK8RT2D9NZpnGvFVdO15DLWHiBOzYw0vUAqtOT7NkS6GGg4mfAYLcWMR8bMLaA==
-X-Received: by 2002:a1c:e714:: with SMTP id e20mr18848944wmh.143.1558024187943;
-        Thu, 16 May 2019 09:29:47 -0700 (PDT)
-Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
-        by smtp.gmail.com with ESMTPSA id l8sm7695747wrw.56.2019.05.16.09.29.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 09:29:47 -0700 (PDT)
-Date:   Thu, 16 May 2019 17:29:46 +0100
-From:   Aaron Tomlin <atomlin@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Hugh Dickins <hughd@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Greg KH <greg@kroah.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Timofey Titovets <nefelim4ag@gmail.com>,
-        Grzegorz Halat <ghalat@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH RFC 4/5] mm/ksm, proc: introduce remote merge
-Message-ID: <20190516162946.zwzhxkft342b25pd@atomlin.usersys.com>
-References: <20190516094234.9116-1-oleksandr@redhat.com>
- <20190516094234.9116-5-oleksandr@redhat.com>
- <CAG48ez2yXw_PJXO-mS=Qw5rkLpG6zDPd0saMhhGk09-du2bpaA@mail.gmail.com>
+        Thu, 16 May 2019 12:31:36 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hRJI2-0003d6-Oy; Thu, 16 May 2019 16:31:30 +0000
+Date:   Thu, 16 May 2019 17:31:30 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Christian Brauner <christian@brauner.io>,
+        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+Message-ID: <20190516163130.GC17978@ZenIV.linux.org.uk>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk>
+ <20190516162259.GB17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez2yXw_PJXO-mS=Qw5rkLpG6zDPd0saMhhGk09-du2bpaA@mail.gmail.com>
-X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
-X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
-User-Agent: NeoMutt/20180716-1637-ee8449
+In-Reply-To: <20190516162259.GB17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-05-16 12:00 +0200, Jann Horn wrote:
-> On Thu, May 16, 2019 at 11:43 AM Oleksandr Natalenko
-> <oleksandr@redhat.com> wrote:
-[ ... ]
-> > +       }
-> > +
-> > +       down_write(&mm->mmap_sem);
+On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+> On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
+> > 
+> > Hi Linus, Al,
+> > 
+> > Here are some patches that make changes to the mount API UAPI and two of
+> > them really need applying, before -rc1 - if they're going to be applied at
+> > all.
 > 
-> Should a check for mmget_still_valid(mm) be inserted here? See commit
-> 04f5866e41fb70690e28397487d8bd8eea7d712a.
+> I'm fine with 2--4, but I'm not convinced that cloexec-by-default crusade
+> makes any sense.  Could somebody give coherent arguments in favour of
+> abandoning the existing conventions?
 
-Yes - I'd say this is required here.
+To elaborate: existing syscalls (open, socket, pipe, accept, epoll_create,
+etc., etc.) are not cloexec-by-default and that's not going to change,
+simply because it would be break the living hell out of existing userland
+code.
 
-Thanks,
+IOW, the userland has to worry about leaking stuff over sensitive execve(),
+no matter what.  All this change does is complicate things for userland
+programmer - which syscall belongs to which class.
 
--- 
-Aaron Tomlin
+Where's the benefit?  I could buy an argument about gradually changing
+over to APIs that are cloexec-by-default across the board, except for
+the obvious fact that it's not going to happen; not with the things
+like open() involved.
