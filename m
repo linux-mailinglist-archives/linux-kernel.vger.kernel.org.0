@@ -2,118 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE42420CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6120620CE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfEPQ3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:29:02 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:15847 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfEPQ3C (ORCPT
+        id S1726814AbfEPQ0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:26:02 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38575 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfEPQ0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:29:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1558024140;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Apx7ZxqDR7YHZ7kD/2IJRkM4VaciDIYJ3ycVJe9uIxc=;
-        b=aCMm45J8B2y/lyCbLNQ0dAXDmoX16yAxuCp/f+Rvqwvu0lfmvu70BPqSGPJyd1IvNv
-        Xj9eoFFcQFRMO++b7o4Yt3z4WJsa1vbDCEVkgsL6yKs0kxnNrxrbTmPg6XWxv+oCUOji
-        GIFFBuf85PUTE9K3PN2agzbvUFU3YgR77iWq2UcVXUW27dYt7TseJgUZZwJQQ8KcPxC4
-        NpD6eNQqUVsTMFl+dEOMOAOapKZI/lwqp9g4YWnhao5UFQGklW2VZ2fRxL6SC9LlX2Z4
-        Nm+Weotw44fQOr3K0nJQfDIjMt0vvkYKzgf9aeUu4gFlIZZ1LWvHrHSBcPp1QzwAv15t
-        oKtg==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJUMh6kkRA"
-X-RZG-CLASS-ID: mo00
-Received: from [192.168.1.200]
-        by smtp.strato.de (RZmta 44.18 DYNA|AUTH)
-        with ESMTPSA id q0b361v4GGPnEj4
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 16 May 2019 18:25:49 +0200 (CEST)
-Subject: Re: [PATCH] can: Fix error path of can_init
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        mkl@pengutronix.de
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-can@vger.kernel.org
-References: <20190516143626.27636-1-yuehaibing@huawei.com>
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <70bc346c-9328-d0a2-bd7e-af8dff748061@hartkopp.net>
-Date:   Thu, 16 May 2019 18:25:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 16 May 2019 12:26:02 -0400
+Received: by mail-vs1-f65.google.com with SMTP id x184so1688344vsb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aF7z4HMLUnakhny7k0GasKk7IF4REIlPL6fyWISpTgk=;
+        b=tNqI2/n1/KRWaJC+/CpSW6dpIqwdsMYCdLezQXGYWXVbirGLs2g6o5eFI8o7yn3+fy
+         zoP1qOF3qa/Ft/+eb6VML5ISPaIJxdHsZahgMeuB3cDrPgk5NlWNVi7VcgXobHzL37vA
+         VYT4v1aRcr5tm9LBwLpSLP/+yE6YIGXDhlwaQiUexHLdFnVcVGcGZ6nZTw/5Mo+yHzcc
+         HPFl2Juc+RnIB0MPzP0JfxkaEtrwWJK/Bnsv08I8r221StpqU1iDcSBXMUP/xw7YAinb
+         T5+IC4xAPzZyHwQmvh11vFQWFg1Tz8fszmCRdto1rJaDjf1gPy1nHNTLHjuSoImf4/si
+         jdng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aF7z4HMLUnakhny7k0GasKk7IF4REIlPL6fyWISpTgk=;
+        b=G4itPURbCFfoZR1SKfivRh3kfpMztw/q6z2GVaSyIhjbQ7AoXgE2fwHCdJOvJYmUdD
+         8wKA5UWdbqYpBXCs6vD/OnowBWW/o+LOFmhL0iJfZHMnGUaMBV+UAh1KeN9wq7x2EyAe
+         7MC8cyE9NNznJAgyKoSNz/AKM7VjMhXb4UkZsECsIdY4DoBq6i7WloSZFpX0zKclgFGx
+         3vRiXIBUn0WPea945gfZlzISLRYCjfFuaKab4ip7WDE/pwMRCCrf2ybuQ/o1XUs4x3J+
+         OjgaXgt+3h2cWgBGkRpAAXSYxp0H7RjiX0xF39EMqrkPZFfkLk1z6SrLyNpNedyhi7+5
+         HQCA==
+X-Gm-Message-State: APjAAAXoFi8qpIWj5+rL/ug4n1RG3h/U5wpv3KbBBzN+JT/sjbq7+513
+        +uxS+tPlKTNYqig3/w2fyiFXw0QnY9FkAZiB74o=
+X-Google-Smtp-Source: APXvYqx/cc7lJi9PCpEFthV94uIkRRjAs7sIeQj5KsGC3UjX5CEfXwDS+OwvGnUgD0g4EfbKAsvbZknBvShClFQYgak=
+X-Received: by 2002:a67:f6c4:: with SMTP id v4mr144463vso.182.1558023960664;
+ Thu, 16 May 2019 09:26:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190516143626.27636-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+In-Reply-To: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Thu, 16 May 2019 09:25:49 -0700
+Message-ID: <CANaxB-zxz5oSeNS2cK-3m6_d9x_kw2pkwWibgOEgr+uOP6YhOA@mail.gmail.com>
+Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for pre-faults
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 14, 2019 at 7:32 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> When get_user_pages*() is called with pages = NULL, the processing of
+> VM_FAULT_RETRY terminates early without actually retrying to fault-in all
+> the pages.
+>
+> If the pages in the requested range belong to a VMA that has userfaultfd
+> registered, handle_userfault() returns VM_FAULT_RETRY *after* user space
+> has populated the page, but for the gup pre-fault case there's no actual
+> retry and the caller will get no pages although they are present.
+>
+> This issue was uncovered when running post-copy memory restore in CRIU
+> after commit d9c9ce34ed5c ("x86/fpu: Fault-in user stack if
+> copy_fpstate_to_sigframe() fails").
+>
+> After this change, the copying of FPU state to the sigframe switched from
+> copy_to_user() variants which caused a real page fault to get_user_pages()
+> with pages parameter set to NULL.
+>
+> In post-copy mode of CRIU, the destination memory is managed with
+> userfaultfd and lack of the retry for pre-fault case in get_user_pages()
+> causes a crash of the restored process.
+>
+> Making the pre-fault behavior of get_user_pages() the same as the "normal"
+> one fixes the issue.
+>
 
+Tested-by: Andrei Vagin <avagin@gmail.com>
 
-On 16.05.19 16:36, YueHaibing wrote:
-> This patch add error path for can_init to
-> avoid possible crash if some error occurs.
-> 
-> Fixes: 0d66548a10cb ("[CAN]: Add PF_CAN core module")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+https://travis-ci.org/avagin/linux/builds/533184940
 
-Thanks!
-
+> Fixes: d9c9ce34ed5c ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails")
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 > ---
->   net/can/af_can.c | 24 +++++++++++++++++++++---
->   1 file changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/can/af_can.c b/net/can/af_can.c
-> index 1684ba5..a1781ea 100644
-> --- a/net/can/af_can.c
-> +++ b/net/can/af_can.c
-> @@ -958,6 +958,8 @@ static void can_pernet_exit(struct net *net)
->   
->   static __init int can_init(void)
->   {
-> +	int rc;
-> +
->   	/* check for correct padding to be able to use the structs similarly */
->   	BUILD_BUG_ON(offsetof(struct can_frame, can_dlc) !=
->   		     offsetof(struct canfd_frame, len) ||
-> @@ -971,15 +973,31 @@ static __init int can_init(void)
->   	if (!rcv_cache)
->   		return -ENOMEM;
->   
-> -	register_pernet_subsys(&can_pernet_ops);
-> +	rc = register_pernet_subsys(&can_pernet_ops);
-> +	if (rc)
-> +		goto out_pernet;
->   
->   	/* protocol register */
-> -	sock_register(&can_family_ops);
-> -	register_netdevice_notifier(&can_netdev_notifier);
-> +	rc = sock_register(&can_family_ops);
-> +	if (rc)
-> +		goto out_sock;
-> +	rc = register_netdevice_notifier(&can_netdev_notifier);
-> +	if (rc)
-> +		goto out_notifier;
-> +
->   	dev_add_pack(&can_packet);
->   	dev_add_pack(&canfd_packet);
->   
->   	return 0;
-> +
-> +out_notifier:
-> +	sock_unregister(PF_CAN);
-> +out_sock:
-> +	unregister_pernet_subsys(&can_pernet_ops);
-> +out_pernet:
-> +	kmem_cache_destroy(rcv_cache);
-> +
-> +	return rc;
->   }
->   
->   static __exit void can_exit(void)
-> 
+>  mm/gup.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 91819b8..c32ae5a 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -936,10 +936,6 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>                         BUG_ON(ret >= nr_pages);
+>                 }
+>
+> -               if (!pages)
+> -                       /* If it's a prefault don't insist harder */
+> -                       return ret;
+> -
+>                 if (ret > 0) {
+>                         nr_pages -= ret;
+>                         pages_done += ret;
+> @@ -955,8 +951,12 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>                                 pages_done = ret;
+>                         break;
+>                 }
+> -               /* VM_FAULT_RETRY triggered, so seek to the faulting offset */
+> -               pages += ret;
+> +               /*
+> +                * VM_FAULT_RETRY triggered, so seek to the faulting offset.
+> +                * For the prefault case (!pages) we only update counts.
+> +                */
+> +               if (likely(pages))
+> +                       pages += ret;
+>                 start += ret << PAGE_SHIFT;
+>
+>                 /*
+> @@ -979,7 +979,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>                 pages_done++;
+>                 if (!nr_pages)
+>                         break;
+> -               pages++;
+> +               if (likely(pages))
+> +                       pages++;
+>                 start += PAGE_SIZE;
+>         }
+>         if (lock_dropped && *locked) {
+> --
+> 2.7.4
+>
