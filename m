@@ -2,112 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9EE20085
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 09:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A527F20093
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 09:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbfEPHsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 03:48:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51626 "EHLO mx1.redhat.com"
+        id S1726908AbfEPHsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 03:48:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfEPHsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 03:48:03 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726429AbfEPHsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 03:48:53 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E4D33082135;
-        Thu, 16 May 2019 07:48:03 +0000 (UTC)
-Received: from hp-dl380pg8-02.lab.eng.pek2.redhat.com (hp-dl380pg8-02.lab.eng.pek2.redhat.com [10.73.8.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CA365D6A9;
-        Thu, 16 May 2019 07:48:00 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     pbonzini@redhat.com, stefanha@redhat.com
-Subject: [PATCH net 4/4] vhost: scsi: add weight support
-Date:   Thu, 16 May 2019 03:47:42 -0400
-Message-Id: <1557992862-27320-5-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1557992862-27320-1-git-send-email-jasowang@redhat.com>
-References: <1557992862-27320-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 16 May 2019 07:48:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0D9820862;
+        Thu, 16 May 2019 07:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557992932;
+        bh=u3nBaEAiGEFBZvcIuNfN6cg4cedso58GmRC8f4wo5lM=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=oa6ko67NC+Hi5cLWrfdKjKEBsbeS46lj+7gUkl4eAS0JxXxHG5Aw/3hHZ35rqCGDR
+         czYKCPaXPBdSPza4jP2PxeEsFd/PjAot5OcGjuqzY9GIKPHjUxIoPRoEfBeC6ivNgq
+         2jnX9gm1G8hJJYXSIh9zptGFSpyUFw9/nb5L8Hpo=
+Date:   Thu, 16 May 2019 09:48:37 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] cpu/speculation: Warn on unsupported mitigations=
+ parameter
+In-Reply-To: <20190516070935.22546-1-geert@linux-m68k.org>
+Message-ID: <nycvar.YFH.7.76.1905160947210.22183@cbobk.fhfr.pm>
+References: <20190516070935.22546-1-geert@linux-m68k.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch will check the weight and exit the loop if we exceeds the
-weight. This is useful for preventing scsi kthread from hogging cpu
-which is guest triggerable.
+On Thu, 16 May 2019, Geert Uytterhoeven wrote:
 
-This addresses CVE-2019-3900.
+> Currently, if the user specifies an unsupported mitigation strategy on
+> the kernel command line, it will be ignored silently.  The code will
+> fall back to the default strategy, possibly leaving the system more
+> vulnerable than expected.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Fixes: 057cbf49a1f0 ("tcm_vhost: Initial merge for vhost level target fabric driver")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/scsi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Honestly, I am not convinced. We are not doing this for vast majority of 
+other cmdline options either, if for any at all.
 
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index d830579..3a59f47 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -918,7 +918,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 	struct iov_iter in_iter, prot_iter, data_iter;
- 	u64 tag;
- 	u32 exp_data_len, data_direction;
--	int ret, prot_bytes;
-+	int ret, prot_bytes, c = 0;
- 	u16 lun;
- 	u8 task_attr;
- 	bool t10_pi = vhost_has_feature(vq, VIRTIO_SCSI_F_T10_PI);
-@@ -938,7 +938,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 
- 	vhost_disable_notify(&vs->dev, vq);
- 
--	for (;;) {
-+	do {
- 		ret = vhost_scsi_get_desc(vs, vq, &vc);
- 		if (ret)
- 			goto err;
-@@ -1118,7 +1118,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 			break;
- 		else if (ret == -EIO)
- 			vhost_scsi_send_bad_target(vs, vq, vc.head, vc.out);
--	}
-+	} while (likely(!vhost_exceeds_weight(vq, ++c, 0)));
- out:
- 	mutex_unlock(&vq->mutex);
- }
-@@ -1177,7 +1177,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 	} v_req;
- 	struct vhost_scsi_ctx vc;
- 	size_t typ_size;
--	int ret;
-+	int ret, c = 0;
- 
- 	mutex_lock(&vq->mutex);
- 	/*
-@@ -1191,7 +1191,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 
- 	vhost_disable_notify(&vs->dev, vq);
- 
--	for (;;) {
-+	do {
- 		ret = vhost_scsi_get_desc(vs, vq, &vc);
- 		if (ret)
- 			goto err;
-@@ -1270,7 +1270,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
- 			break;
- 		else if (ret == -EIO)
- 			vhost_scsi_send_bad_target(vs, vq, vc.head, vc.out);
--	}
-+	} while (likely(!vhost_exceeds_weight(vq, ++c, 0)));
- out:
- 	mutex_unlock(&vq->mutex);
- }
+Thanks,
+
 -- 
-1.8.3.1
+Jiri Kosina
+SUSE Labs
 
