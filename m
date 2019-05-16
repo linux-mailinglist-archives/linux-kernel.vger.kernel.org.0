@@ -2,80 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 888CF201EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0C420217
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:04:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfEPJAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:00:55 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:26776 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726466AbfEPJAz (ORCPT
+        id S1727309AbfEPJDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:03:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16135 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727127AbfEPJCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:00:55 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-29-QTC7KcOOO2udt3W1q3ypsw-1; Thu, 16 May 2019 10:00:51 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
- 16 May 2019 10:00:50 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 16 May 2019 10:00:50 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Masahiro Yamada' <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>
-CC:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH] kbuild: check uniqueness of basename of modules
-Thread-Topic: [RFC PATCH] kbuild: check uniqueness of basename of modules
-Thread-Index: AQHVC0duCQWaXGJR5Uu8WNOo32As+qZtcj3A
-Date:   Thu, 16 May 2019 09:00:50 +0000
-Message-ID: <5e6999f3d0b349bd86a32a612cff7b4b@AcuMS.aculab.com>
-References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
- <CAK7LNAQgBKq9JDGtQUD1kgKrfLZ4jOjuLJi7_tpSPLJZsWtmag@mail.gmail.com>
- <201905150913.C23BD99AD@keescook>
- <CAK7LNARezpQgcK9O9K3ZFeebMVNroWStno_brvSLadsKXVfm-Q@mail.gmail.com>
-In-Reply-To: <CAK7LNARezpQgcK9O9K3ZFeebMVNroWStno_brvSLadsKXVfm-Q@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 16 May 2019 05:02:44 -0400
+X-UUID: 7538b31cf1944fd98a27aa3b589da681-20190516
+X-UUID: 7538b31cf1944fd98a27aa3b589da681-20190516
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1723984176; Thu, 16 May 2019 17:02:28 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 16 May 2019 17:02:26 +0800
+Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 16 May 2019 17:02:26 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh 
+        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH v6 00/12] support gce on mt8183 platform
+Date:   Thu, 16 May 2019 17:02:12 +0800
+Message-ID: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-X-MC-Unique: QTC7KcOOO2udt3W1q3ypsw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTWFzYWhpcm8gWWFtYWRhDQo+IFNlbnQ6IDE1IE1heSAyMDE5IDE4OjU1DQouLi4NCj4g
-PiAgICAgeGFyZ3MgYmFzZW5hbWUgLWEgLS0gfCBzb3J0IHwgLi4uDQo+IA0KPiBTb3JyeSBmb3Ig
-bXkgaWdub3JhbmNlLCBidXQgY291bGQgeW91DQo+IHRlYWNoIG1lIHRoZSBlZmZlY3Qgb2YgIi0t
-IiA/DQo+IA0KPiBJIHNvbWV0aW1lcyB1c2UgIi0tIiBhcyBhIHNlcGFyYXRvcg0KPiB3aGVuIHRo
-ZXJlIGlzIGFtYmlndWl0eSBpbiBhcmd1bWVudHMNCj4gZm9yIGV4YW1wbGUsICJnaXQgbG9nIDxy
-ZXZpc2lvbj4gLS0gPHBhdGg+Ig0KPiANCj4gSW4gdGhpcyBjYXNlLCB3aGF0IGlzIGludGVuZGVk
-IGJ5ICItLSI/DQoNClRoZSAnLS0nIHN0b3BzIGdldG9wdCgpIGZyb20gcGFyc2luZyBhbnkgbW9y
-ZSBwYXJhbWV0ZXJzLg0KVXNlZnVsIHRoaW5ncyBsaWtlICdncmVwIC0tIC1xJyB3aGljaCB3aWxs
-IHNlYXJjaCBmb3IgdGhlDQpzdHJpbmcgJy1xJyByYXRoZXIgdGhhbiB0cmVhdGluZyBpdCBhcyBh
-IGNvbW1hbmQgbGluZSBvcHRpb24uDQoNClRoaXMgaXMgYWxsIG1hZGUgbW9yZSBob3JyaWQgYnkg
-YSBkZWNpc2lvbiBieSB0aGUgd3JpdGVycw0Kb2YgZ2xpYmMgZ2V0b3B0KCkgdG8gJ3Blcm11dGUn
-IGFyZ3ZbXSBzbyB0aGF0ICdvcHRpb25zJw0KY2FuIGZvbGxvdyAnbm9ub3B0aW9ucycgaWUgaXQg
-Y29udmVydHM6DQoJcHJvZyBmaWxlIC1hcmcNCnRvDQoJcHJvZyAtYXJnIGZpbGUNClRoZSBvbmx5
-IHByb2dyYW0gdGhlIGhpc3RvcmljYWxseSBhbGxvd2VkICdsYXRlJyBvcHRpb25zDQp3YXMgJ3Js
-b2dpbiBob3N0bmFtZSAtbCB1c2VybmFtZScuDQpUaGlzIGlzIGp1c3QgYnJva2VuLi4uLi4NCg0K
-CURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBN
-b3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAx
-Mzk3Mzg2IChXYWxlcykNCg==
+Changes since v5:
+ - fix typo
+ - remove gce-event-name form the dt-binding
+ - add reasons in commit message
+
+Changes since v4:
+ - refine the architecture of the packet encoder function
+ - refine the gce enevt property
+ - change the patch's title
+
+Changes since v3:
+ - fix a typo in dt-binding and dtsi
+ - cast the return value to right format
+
+Changes since v2:
+ - according to CK's review comment, change the property name and
+   refine the parameter
+ - change the patch's title
+ - remove unused property from dt-binding and dts
+
+Changes since v1:
+ - add prefix "cmdq" in the commit subject
+ - add dt-binding document for get event and subsys function
+ - add fix up tag in fixup patch
+ - fix up some coding style (alignment)
+
+MTK will support gce function on mt8183 platform.
+  dt-binding: gce: add gce header file for mt8183
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  arm64: dts: add gce node for mt8183
+
+Besides above patches, we refine gce driver on those patches.
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
+
+In order to enhance the convenience of gce usage, we add new helper
+functions and refine the method of instruction combining.
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add binding for gce subsys property
+  dt-binding: gce: add binding for gce event property
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_subsys function
+  soc: mediatek: cmdq: add cmdq_dev_get_event function
+
+Bibby Hsieh (12):
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add gce header file for mt8183
+  dt-binding: gce: add binding for gce subsys property
+  dt-binding: gce: add binding for gce event property
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_subsys function
+  soc: mediatek: cmdq: add cmdq_dev_get_event function
+  arm64: dts: add gce node for mt8183
+
+ .../devicetree/bindings/mailbox/mtk-gce.txt   |  28 ++-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  11 ++
+ drivers/mailbox/mtk-cmdq-mailbox.c            |  18 +-
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 184 ++++++++++++++----
+ include/dt-bindings/gce/mt8183-gce.h          | 177 +++++++++++++++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |   5 +
+ include/linux/soc/mediatek/mtk-cmdq.h         |  62 +++++-
+ 7 files changed, 423 insertions(+), 62 deletions(-)
+ create mode 100644 include/dt-bindings/gce/mt8183-gce.h
+
+-- 
+2.18.0
 
