@@ -2,255 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D0020128
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8573D20132
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfEPIT0 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 May 2019 04:19:26 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:52004 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfEPITZ (ORCPT
+        id S1726674AbfEPIWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:22:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726336AbfEPIWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:19:25 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 2BBC53C013A;
-        Thu, 16 May 2019 10:19:23 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Uu1cCZtkaWvY; Thu, 16 May 2019 10:19:16 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 08F2D3C00D1;
-        Thu, 16 May 2019 10:19:16 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com ([fe80::69bf:8148:2f13:f289]) by
- HI2EXCH01.adit-jv.com ([fe80::69bf:8148:2f13:f289%12]) with mapi id
- 14.03.0439.000; Thu, 16 May 2019 10:19:15 +0200
-From:   "Rodin, Michael (Ferchau; ADITG/ESM1)" <mrodin@de.adit-jv.com>
-To:     "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-CC:     "Friedrich, Eugen (ADITG/ESM1)" <efriedrich@de.adit-jv.com>,
-        "Rosca, Eugeniu (ADITG/ESM1)" <erosca@de.adit-jv.com>,
-        "slongerbeam@gmail.com" <slongerbeam@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Questions regarding Documentation/media/uapi/v4l/field-order.rst
-Thread-Topic: Questions regarding
- Documentation/media/uapi/v4l/field-order.rst
-Thread-Index: AdT0SL9o51JIskG9TEewiVl3rOlV0gFhA90ABHsrheA=
-Date:   Thu, 16 May 2019 08:19:15 +0000
-Message-ID: <AC35D0CFBC66A84AAA9DF4334B52828D13617E17@HI2EXCH01.adit-jv.com>
-References: <AC35D0CFBC66A84AAA9DF4334B52828D13614162@HI2EXCH01.adit-jv.com>
- <187c237b-6b75-f408-ae41-6065baf5cd7f@xs4all.nl>
-In-Reply-To: <187c237b-6b75-f408-ae41-6065baf5cd7f@xs4all.nl>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.72.92.112]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 16 May 2019 04:22:47 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4G8MPJk095827
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 04:22:46 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sh42qrjma-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 04:22:45 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Thu, 16 May 2019 09:22:45 +0100
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 May 2019 09:22:42 +0100
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4G8MffA15860102
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 May 2019 08:22:41 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7016FBE053;
+        Thu, 16 May 2019 08:22:41 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2731EBE054;
+        Thu, 16 May 2019 08:22:41 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.248])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 16 May 2019 08:22:41 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 2046C2E3894; Thu, 16 May 2019 13:52:38 +0530 (IST)
+Date:   Thu, 16 May 2019 13:52:38 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     ego@linux.vnet.ibm.com, daniel.lezcano@linaro.org, dja@axtens.net,
+        Abhishek <huntbag@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, rjw@rjwysocki.net
+Subject: Re: [PATCH 0/1] Forced-wakeup for stop lite states on Powernv
+Reply-To: ego@linux.vnet.ibm.com
+References: <20190422063231.51043-1-huntbag@linux.vnet.ibm.com>
+ <1557291178.ow4spjzq5t.astroid@bobo.none>
+ <b2fcf69a-aecd-ea81-b497-737642354736@linux.vnet.ibm.com>
+ <1557981860.eltms77ctp.astroid@bobo.none>
+ <20190516053659.GA20396@in.ibm.com>
+ <1557986956.6pmjz10b9z.astroid@bobo.none>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557986956.6pmjz10b9z.astroid@bobo.none>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 19051608-0036-0000-0000-00000ABC3AF4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011104; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01204051; UDB=6.00632055; IPR=6.00984981;
+ MB=3.00026913; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-16 08:22:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051608-0037-0000-0000-00004BD0A5B6
+Message-Id: <20190516082238.GB20396@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905160057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 4/16/19 3:54 PM, Rodin, Michael (Ferchau; ADITG/ESM1) wrote:
-> > Hi,
-> >
-> > I would like to ask several questions regarding the documentation of the
-> enum "v4l2_field" [1].
-> > These questions came up during my investigations of issues with
-> > interaction between the gstreamer plugin v4l2src and the rcar video input
-> driver [2].
-> >
-> > The documentation [1] specifies that:
-> > "All video capture and output devices must report the current field order.
-> > Some drivers may permit the selection of a different order, to this
-> > end applications initialize the field field of struct v4l2_pix_format
-> > before calling the VIDIOC_S_FMT ioctl. If this is not desired it
-> > should have the value V4L2_FIELD_ANY (0)."
-> >
-> > If I have understood these lines correctly, this means that if
-> > userspace sets "field" member of the struct "v4l2_pix_format" to
-> > V4L2_FIELD_ANY and uses this as parameter for the VIDIOC_S_FMT ioctl,
-> > then a driver should select/report the field order, which was
-> > previously set by media-ctl utility in the next subdevice, which is
-> > connected
-> to the /dev/videoX node (From my understanding this would be equivalent to
-> the "current field order").
-> >
-> > If the described behavior is correct, then the description in the table
-> > row for
-> V4L2_FIELD_ANY in [1] is incomplete:
-> > "Applications request this field order when any one of the
-> V4L2_FIELD_NONE, V4L2_FIELD_TOP, V4L2_FIELD_BOTTOM, or
-> V4L2_FIELD_INTERLACED formats is acceptable."
-> > What if V4L2_FIELD_ALTERNATE or V4L2_FIELD_SEQ_TB or
-> V4L2_FIELD_SEQ_BT are also acceptable for the application?
-> > I think that the specification is either unprecise or my understanding of
-> > the
-> specification is wrong.
->
-> The spec is a bit out of date: those missing field values were probably
-> added
-> after this text was written. I'll make a patch fixing this.
+Hi Nicholas,
 
-Thank you for the patch! I think, the sentence "Drivers choose depending on
-hardware capabilities..." in the description of V4L2_FIELD_ANY is also
-unprecise,
-because when media-ctl is used, the format is chosen by the userspace and
-not by the driver. So if I choose "interlaced" for the connected subdevice
-by using media-ctl (which calls VIDIOC_SUBDEV_S_FMT) and it is successfully
-set, then V4L2_FIELD_ANY will definitely return V4L2_FIELD_INTERLACED
-and nothing else is possible.
+On Thu, May 16, 2019 at 04:13:17PM +1000, Nicholas Piggin wrote:
 
-> >
-> > Another potential issue, which I found in this documentation is that
-> > it does not distinguish between multiple contexts in which enum v4l2_field
-> can be used. I can think of at least two different contexts:
-> > - When used to select the field order with VIDIOC_S_FMT ioctl.
-> > - When used to report the field order in a buffer: for example application
-> sets V4L2_FIELD_ALTERNATE in VIDIOC_S_FMT ioctl and then gets buffers,
-> which have V4L2_FIELD_TOP/BOTTOM set.
+> 
+> > The motivation behind this patch was a HPC customer issue where they
+> > were observing some CPUs in the core getting stuck at stop0_lite
+> > state, thereby lowering the performance on the other CPUs of the core
+> > which were running the application.
+> > 
+> > Disabling stop0_lite via sysfs didn't help since we would fallback to
+> > snooze and it would make matters worse.
+> 
+> snooze has the timeout though, so it should kick into stop0 properly
+> (and if it doesn't that's another issue that should be fixed in this
+> series).
 >
-> IMHO the text is reasonably clear on that. But if you have suggestions to
-> improve it, then make a proposal.
+> I'm not questioning the patch for stop0_lite, to be clear. I think
+> the logic is sound. I just raise one urelated issue that happens to
+> be for stop0_lite as well (should we even enable it on P9?), and one
+> peripheral issue (should we make a similar fix for deeper stop states?)
 >
-> > Now with this in mind, when I read the description of V4L2_FIELD_NONE:
-> > "The driver may also indicate this order when it cannot distinguish
-> > between
-> V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM."
->
-> Whoops, that makes no sense. There are no drivers that do this. I'll remove
-> this line. If a driver can't tell the difference, then it should just pick
-> FIELD_TOP
-> or BOTTOM.
 
-Thank you! So this means that drivers should return FIELD_ALTERNATE in S_FMT,
-even if they can not distinguish between FIELD_TOP and FIELD_BOTTOM.
-Would it make sense to add your last sentence "If a driver can't tell the
-difference,
-then it should just pick FIELD_TOP or BOTTOM." to the description of
-V4L2_FIELD_ALTERNATE (or better just FIELD_TOP so it is easier for userspace
-to check whether there is no field detection), so this case is documented
-after
-removing of "The driver may also indicate this order when it cannot
-distinguish
-between V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM."?
+I think it makes sense to generalize this from the point of view of
+CPUs remaining in shallower idle states for long durations on tickless
+kernels.
 
-> > I see two possible meanings/interpretations:
-> > - If application sets V4L2_FIELD_ALTERNATE in VIDIOC_S_FMT ioctl, report
-> V4L2_FIELD_NONE back
-> >    so the application knows that the driver can not provide any TOP/BOTTOM
-> metadata in the buffers
-> >    (which may be necessary for the application for example for
-> > deinterlacing)
-> before it has got any buffer.
-> > - If application sets V4L2_FIELD_ALTERNATE in VIDIOC_S_FMT ioctl, driver
-> reports V4L2_FIELD_ALTERNATE back,
-> >    even if it can not distinguish between TOP/BOTTOM. But when the
-> application starts to read buffers,
-> >    they have V4L2_FIELD_NONE set if it's not possible to distinguish
-> > between
-> TOP/BOTTOM.
->
-> Actually, drivers cannot ever return NONE for a top or bottom field.
-> FIELD_NONE indicates that a full frame has arrived, and doing something else
-> would break userspace.
->
-> >
-> > Also there is another ambiguity in the description of V4L2_FIELD_NONE:
-> > "Images are in progressive format, not interlaced."
-> > What does "interlaced" mean in this case? Does it mean the other possible
-> enum values or just the V4L2_FIELD_INTERLACED?
->
-> It means that the source video transmitted full frames, not top and bottom
-> fields. I clarified the text a bit.
+> > 
+> >> 
+> >> We should always have fewer states unless proven otherwise.
+> > 
+> > I agree.
+> > 
+> >> 
+> >> That said, we enable it today so I don't want to argue this point
+> >> here, because it is a different issue from your patch.
+> >> 
+> >> > When it is in stop0 or deeper, 
+> >> > it free up both
+> >> > space and time slice of core.
+> >> > In stop0_lite, cpu doesn't free up the core resources and thus inhibits 
+> >> > thread
+> >> > folding. When a cpu goes to stop0, it will free up the core resources 
+> >> > thus increasing
+> >> > the single thread performance of other sibling thread.
+> >> > Hence, we do not want to get stuck in stop0_lite for long duration, and 
+> >> > want to quickly
+> >> > move onto the next state.
+> >> > If we get stuck in any other state we would possibly be losing on to 
+> >> > power saving,
+> >> > but will still be able to gain the performance benefits for other 
+> >> > sibling threads.
+> >> 
+> >> That's true, but stop0 -> deeper stop is also a benefit (for
+> >> performance if we have some power/thermal constraints, and/or for power
+> >> usage).
+> >> 
+> >> Sure it may not be so noticable as the SMT switch, but I just wonder
+> >> if the infrastructure should be there for the same reason.
+> >> 
+> >> I was testing interrupt frequency on some tickless workloads configs,
+> >> and without too much trouble you can get CPUs to sleep with no
+> >> interrupts for many minutes. Hours even. We wouldn't want the CPU to
+> >> stay in stop0 for that long.
+> > 
+> > If it stays in stop0 or even stop2 for that long, we would want to
+> > "promote" it to a deeper state, such as say STOP5 which allows the
+> > other cores to run at higher frequencies.
+> 
+> So we would want this same logic for all but the deepest runtime
+> stop state?
 
-Thanks for the clarification! So just to avoid misunderstanding, 
-V4L2_FIELD_INTERLACED and V4L2_FIELD_SEQ_BT/TB
-are "interlaced" in this context, because they contain fields (and are "field-based")?
+Yes. We can, in steps, promote individual threads of the core to
+eventually request a deeper state such as stop4/5. On a completely
+idle tickless system, eventually we should see the core go to the
+deeper idle state.
 
-> > If this just means V4L2_FIELD_INTERLACED, then it would imply that for
-> > example V4L2_FIELD_SEQ_TB and V4L2_FIELD_ALTERNATE are progressive
-> formats, which is obviously not true.
-> > And also generally, in which of described contexts should be
-> V4L2_FIELD_NONE set or reported (buffer or VIDIOC_S_FMT ioctl)?
+> 
+> >> Just thinking about the patch itself, I wonder do you need a full
+> >> kernel timer, or could we just set the decrementer? Is there much 
+> >> performance cost here?
+> >>
+> > 
+> > Good point. A decrementer would do actually.
+> 
+> That would be good if it does, might save a few cycles.
+> 
+> Thanks,
+> Nick
 >
-> For video capture (that's what we are talking about here) it is returned by
-> the
-> driver in v4l2_buffer, never by userspace. Userspace can try to request a
-> specific field value when calling S_FMT, but the driver can overwrite it.
 
-Sorry, what do you mean by "returned by userspace" here?
-
-> The possible field values that a driver can support are dependent on the
-> video
-> source (i.e. sensors are always FIELD_NONE) and the hardware capabilities.
->
-> > Another point is that V4L2_FIELD_INTERLACED is also used by v4l2src to
-> > tell rcar-vin driver to combine the fields before giving them to
-> > application, so
-> basically it requests progressive signal. So the meanings of
-> V4L2_FIELD_INTERLACED and V4L2_FIELD_NONE are basically the same in this
-> case.
->
-> Certainly not. FIELD_INTERLACED combines two fields into a single buffer,
-> but
-> the odd and even lines in the frame were captured at different times.
-> Whereas for FIELD_NONE all lines were captured at the same time.
->
-> So a FIELD_INTERLACED buffer may need to undergo additional deinterlacing.
->
-> If the hardware already does high-quality deinterlacing then that might be a
-> reason for the driver to return FIELD_NONE to avoid additional deinterlacing
-> in userspace.
->
-> In practice there are three main categories in the way the field is handled:
->
-> 1) The video source is a webcam: field is always FIELD_NONE, set by the
-> driver.
->
-> 2) The video source is HDMI: if the video is progressive, then the field is
-> always
->    FIELD_NONE. If the video is interlaced, then the field is always
-> FIELD_ALTERNATE
->    in v4l2_format and alternating FIELD_TOP and BOTTOM in v4l2_buffer.
->
-> 3) The video source is SDTV (i.e. S-Video or composite): the video is always
->    interlaced, and it depends on the hardware which field values are
-> supported,
->    except for FIELD_NONE, which is never returned as far as I am aware.
->
-> Regards,
->
-> 	Hans
->
-> >
-> > Thank you in advance and sorry for the long mail!
-> >
-> > [1] Documentation/media/uapi/v4l/field-order.rst
-> > [2] drivers/media/platform/rcar-vin
-> >
-> > Best regards
-> >
-> > Michael Rodin
-> >
-> > Advanced Driver Information Technology GmbH Engineering Software
-> > Multimedia 1 (ADITG/ESM1) Robert-Bosch-Str. 200
-> > 31139 Hildesheim
-> > Germany
-> >
-> > Tel. +49 5121 49 6936
-> > Fax +49 5121 49 6999
-> > mrodin@de.adit-jv.com
-> > Web: www.adit-jv.com
-> >
-> > ADIT is a joint venture company of Robert Bosch GmbH/Robert Bosch Car
-> > Multimedia GmbH and DENSO Corporation
-> > Sitz: Hildesheim, Registergericht: Amtsgericht Hildesheim HRB 3438
-> > Geschaeftsfuehrung: Wilhelm Grabow, Ken Yaguchi
-> >
+--
+Thanks and Regards
+gautham.
 
