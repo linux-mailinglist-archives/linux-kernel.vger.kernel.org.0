@@ -2,107 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871851FF7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 08:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 095691FFC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 08:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfEPG0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 02:26:30 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32946 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfEPG0a (ORCPT
+        id S1726775AbfEPGoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 02:44:06 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43590 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfEPGoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 02:26:30 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w1so2005410ljw.0;
-        Wed, 15 May 2019 23:26:28 -0700 (PDT)
+        Thu, 16 May 2019 02:44:05 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z5so1978532lji.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 23:44:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=wopevyOfrVcNgrs2OlRoJkSg1GME6xrc5gzsawzKoi4=;
-        b=u4Bs2ZR9I5NiC3tUkHwro0NaNYQTer2meRxQ1f7i3QntTO6Uxe3PIsdl0hPJq7/tvI
-         M4B9EalKq9eNCu7yK11e4OMIUCijrug2sTK9bWnm8qOF/eCn5OhtdHlsAMFOwW1ALlSO
-         vy3GmdKhcLgEUeOCutt1snzGpRtLBTlvCCh+ERJkgFyanEBzuWG0auDZiJH+YlcvDlwq
-         GOE7+0VY4aJI1hBAApc60LM33uCYXFd5Qj3zvkaT86rgZqXLyoUxqdioV6hO+vZGn4mq
-         WrlCcXJa1Z7O/yDs4zOvrqJlQfMpfNhTHv6Wk1Qnm2xJmTNOtUrlBa9PX6u4x74aA0KF
-         dlfA==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BhdVXLoJWMfzNzrRx3QHIA0XVbPekInrRo+E7wUe0oU=;
+        b=QGg8it0LFXrhiHOL2cIDoPFSVJFb/6RU+b9EnGgVvbrDZwB2ufxFfQQJZyhqOyyhQL
+         dh9bnFzcOp18FWKdG/vTjKN4GwXIuQMLroOD/OYw/cRqbw7+a4hIREdK43snVI5wECNA
+         9X13z8jHT/y8jQ4Sveq5Zojk/JxViqrWErz10mdZ5SWuMCRPvX3WT9QUjpXMMdVah5k3
+         HQ9x47BThbznmTjzLUUbPo2L2Obn5TEAqL2oFxOP1TfeBv5ytx9RyUyXCRebvO6EmREL
+         6DzjXf3UZ5B5AoWTLRdbbeaOrEo0NTM874D3TtL8ZepDzl4B016HRInNFkNdFI5ioOI6
+         r2ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=wopevyOfrVcNgrs2OlRoJkSg1GME6xrc5gzsawzKoi4=;
-        b=KZ8YWAzkXAWPLOh0djEKeedZql/C2T+hs1NOYVmr5c7j6zYDruiEHdlfjAwh1Z3am8
-         rH68O7Gscn+4Jn2ZDDaP+PR4Pv+r974Fji0vRgRUrNToRLgBS+VFbU5Wkiy7Njr9cd0u
-         AQ8nDp7DRLg25MCxxgcbYHqBQJ1sLQaQZcidJ9JJZ2ZA+JMsi2+fEk4W1N8afnednyvx
-         NByx1GxJ57HZZ4wZl0DKyf1qOLkayDmazZGPi7otAQ8wCqWSrNwB2ncs402VO8pLK2F6
-         UMxXpJN2VWdT3byFHZynfM3f92agjBBXNbRMbPM93maYppa8APt/uPoIjgGozIqDcmr3
-         OmVw==
-X-Gm-Message-State: APjAAAUKqPARZAFQQEoqUjKnvB7UTNmNvlt2hDSbz3YyItgFEtkHa5bv
-        jUFTLeSiO2+TSFxTliPH3ug=
-X-Google-Smtp-Source: APXvYqxmhwMESExMgBx/ncLaEXSu/aignZEYzcIQ7Rj5rRdJ0TG1Bikq8bj5GIrD/1hxKwfDs98pQQ==
-X-Received: by 2002:a05:651c:150:: with SMTP id c16mr22906662ljd.65.1557987987979;
-        Wed, 15 May 2019 23:26:27 -0700 (PDT)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id j10sm882748lfc.45.2019.05.15.23.26.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 23:26:27 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH] xen/netfront: Remove unneeded .resume
- callback
-To:     Anchal Agarwal <anchalag@amzn.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-Cc:     Anchal Agarwal <anchalag@amazon.com>,
-        Munehisa Kamata <kamatam@amazon.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>
-References: <6205819a-af39-8cd8-db87-f3fe047ff064@gmail.com>
- <ecc825e6-89d3-bbd5-5243-5cc66fa93045@oracle.com>
- <b55d4f90-100c-7a2a-9651-c99c06953465@gmail.com>
- <09afcdca-258f-e5ca-5c31-b7fd079eb213@oracle.com>
- <3e868e7a-4872-e8ab-fd2c-90917ad6d593@arm.com>
- <d709d185-5345-c463-3fd1-e711f954e58a@gmail.com>
- <435369ba-ad3b-1d3a-c2f4-babe8bb6189c@amazon.com>
- <fde362d0-dd48-9c9a-e71a-8fb158909551@epam.com>
- <20190325173011.GA20277@kaos-source-ops-60001.pdx1.amazon.com>
- <f5e824de-da57-9574-3813-2668f2932a6e@gmail.com>
- <20190328231928.GA5172@kaos-source-ops-60001.pdx1.amazon.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <48fedb13-5af2-e7cf-d182-0f2bb385dda2@gmail.com>
-Date:   Thu, 16 May 2019 09:26:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BhdVXLoJWMfzNzrRx3QHIA0XVbPekInrRo+E7wUe0oU=;
+        b=ckfrGfF3qwAuz91dx64CD3an4n33YjV8q8eyuBfwaaeCKeyArgpI2A7UPckvyX3080
+         0AQGrD1EGjlLxHWTF+1Es1BLSJzX/YDKOh44+k0gb4LDWoDSjfgaJGoKt5hH0TqwOJtV
+         cnVPuFqm9YpKLqljgVfS0ZqvkXEjfz6egEMVkJxw5e8EpW0L6ub9FvG1n+jS7hjNEwSs
+         LVjrX9QTtUA6QYXS8CP13rff3WVOFfeNR0fF2kqyAbv7uwR+ftdX/b4TS5ETTJRd9lM1
+         wp8tNU2R7gv67vLUBFLlCP2d+oH1HfCvD9dMohqJX7rc+hpF0sUQA8hS5JChfGL9dEyK
+         5xkw==
+X-Gm-Message-State: APjAAAWdPkWCM1Rc6KIuj9NChyx6dcl1O8t/ac7goOglZRvMPnnlN3nq
+        GCOKc+fi1NhgcYsz5Ov61LSNDQ==
+X-Google-Smtp-Source: APXvYqzYMXapYUQF89ctTMRbtZyqwyxvLzNnVa0MvQ1kSHJS3ghKK3A7SCPv/b2sh7mVxo50gpjH6A==
+X-Received: by 2002:a2e:63d1:: with SMTP id s78mr23873278lje.166.1557989043709;
+        Wed, 15 May 2019 23:44:03 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id b23sm782451lfg.41.2019.05.15.23.44.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 23:44:02 -0700 (PDT)
+Date:   Wed, 15 May 2019 23:27:27 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     arm-soc <arm@kernel.org>, Joe Perches <joe@perches.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] Opt out of scripts/get_maintainer.pl
+Message-ID: <20190516062727.ur5bgzt2bukcste2@localhost>
+References: <d1427cd2-9111-025c-1a97-d0fa498f1a03@free.fr>
 MIME-Version: 1.0
-In-Reply-To: <20190328231928.GA5172@kaos-source-ops-60001.pdx1.amazon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d1427cd2-9111-025c-1a97-d0fa498f1a03@free.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Anchal!
+On Wed, May 15, 2019 at 02:47:57PM +0200, Marc Gonzalez wrote:
+> A few months ago, I submitted a trivial arm64 defconfig update.
+> get_maintainer.pl now outputs my address for every defconfig tweak.
+> Add me to .get_maintainer.ignore to opt out of these notifications.
+> 
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> ---
+>  .get_maintainer.ignore | 1 +
+>  1 file changed, 1 insertion(+)
 
-On 3/29/19 1:19 AM, Anchal Agarwal wrote:
-[snip]
->>>> Great, could you please let us know what is the progress and further plans
->>>> on that, so we do not work on the same code and can coordinate our
->>>> efforts somehow? Anchal, could you please shed some light on this?
->>> Looks like my previous email did not make it to mailing list. May be some issues with my
->>> email server settings. Giving it another shot.
->>> Yes, I am working on those patches and plan to re-post them in an effort to upstream.
->> This is really great, looking forward to it: any date in your mind
->> when this can happen?
-> Not a specific date but may be in few weeks. I am currently swamped at work.
->
-Any progress on this?
+Applied to arm/late.
 
-Thank you,
-Oleksandr
+
+Thanks,
+
+-Olof
