@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 353A920C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F33920BFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfEPQES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:04:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42452 "EHLO
+        id S1727908AbfEPQAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:00:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43074 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726697AbfEPP6m (ORCPT
+        by vger.kernel.org with ESMTP id S1727096AbfEPP6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:42 -0400
+        Thu, 16 May 2019 11:58:48 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImG-0006zN-E1; Thu, 16 May 2019 16:58:40 +0100
+        id 1hRImJ-0006zS-Lj; Thu, 16 May 2019 16:58:43 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001Py-Su; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImF-0001Se-0y; Thu, 16 May 2019 16:58:39 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -28,32 +28,15 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
         "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Peter Zijlstra" <peterz@infradead.org>
+        "Tyler Hicks" <tyhicks@canonical.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.58793405@decadent.org.uk>
+Message-ID: <lsq.1558022133.66611526@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 46/86] x86/speculataion: Mark command line parser
- data __initdata
+Subject: [PATCH 3.16 78/86] x86/speculation/mds: Print SMT vulnerable on
+ MSBDS with mitigations off
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -67,57 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 30ba72a990f5096ae08f284de17986461efcc408 upstream.
+commit e2c3c94788b08891dcf3dbe608f9880523ecd71b upstream.
 
-No point to keep that around.
+This code is only for CPUs which are affected by MSBDS, but are *not*
+affected by the other two MDS issues.
 
+For such CPUs, enabling the mds_idle_clear mitigation is enough to
+mitigate SMT.
+
+However if user boots with 'mds=off' and still has SMT enabled, we should
+not report that SMT is mitigated:
+
+$cat /sys//devices/system/cpu/vulnerabilities/mds
+Vulnerable; SMT mitigated
+
+But rather:
+Vulnerable; SMT vulnerable
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185004.893886356@linutronix.de
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20190412215118.294906495@localhost.localdomain
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -303,7 +303,7 @@ static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
--} mitigation_options[] = {
-+} mitigation_options[] __initdata = {
- 	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
- 	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
- 	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-@@ -546,7 +546,7 @@ static const char * const ssb_strings[]
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[] = {
-+} ssb_mitigation_options[]  __initdata = {
- 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
- 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
- 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
+@@ -1156,7 +1156,8 @@ static ssize_t mds_show_state(char *buf)
+ 
+ 	if (boot_cpu_has(X86_BUG_MSBDS_ONLY)) {
+ 		return sprintf(buf, "%s; SMT %s\n", mds_strings[mds_mitigation],
+-			       sched_smt_active() ? "mitigated" : "disabled");
++			       (mds_mitigation == MDS_MITIGATION_OFF ? "vulnerable" :
++			        sched_smt_active() ? "mitigated" : "disabled"));
+ 	}
+ 
+ 	return sprintf(buf, "%s; SMT %s\n", mds_strings[mds_mitigation],
 
