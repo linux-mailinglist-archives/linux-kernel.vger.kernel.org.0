@@ -2,776 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E2A1FD17
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D611FD8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfEPBr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 21:47:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45138 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726157AbfEPBgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 21:36:54 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9E8C33DE57BB92C7E863;
-        Thu, 16 May 2019 09:36:50 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 16 May
- 2019 09:36:43 +0800
-Subject: Re: [PATCH 1/1] LZ4: Port LZ4 1.9.x FAST_DEC_LOOP and enable it on
- x86 and ARM64
-To:     "Mao, Chenxi" <Chenxi.Mao@sony.com>
-CC:     Cyan <yann.collet.73@gmail.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Feng, Roy" <Roy.Feng@sony.com>,
-        "Xu, Yuanli 2" <Yuanli.Xu@sony.com>,
-        "Alm, Robert 2" <Robert.Alm@sony.com>,
-        "Takahashi, Masaya A (Sony Mobile)" <Masaya.A.Takahashi@sony.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20190515004336.66555-1-chenxi.mao@sony.com>
- <649ba9ed-223e-1e82-1513-f3c16e4c8f9a@huawei.com>
- <0c1d0d7d24ae48f68ae6acc95c0c4869@CNBJMBX12.corpusers.net>
- <CADv+DGkGa3q4FJ0TeLcj626PrUEYCDMfyKdd0yx82VmAX2i98Q@mail.gmail.com>
- <CADv+DG=Rc5gqhJXsYOAWbFQNm_5RMhCjDEm4d2V+an-6+-QTCg@mail.gmail.com>
- <d5001400-f46f-9da3-a8b2-611429acaa68@huawei.com>
- <5c735ce9-04fc-a2a4-4f0c-ba5718fe7933@sony.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <1ca01dfb-c478-0752-cda0-b98f3da9f1b0@huawei.com>
-Date:   Thu, 16 May 2019 09:35:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <5c735ce9-04fc-a2a4-4f0c-ba5718fe7933@sony.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1726594AbfEPBun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 21:50:43 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35262 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfEPBnA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 21:43:00 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h1so713627pgs.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 18:43:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=7SwtIFTytRUIEDGWEwu6hti01P2GNQFISvzzuEXab0g=;
+        b=kQ2DZgvONIgdolYC3b5sB1tVVSV7OwixWx0vCTFzfOKJ/9gYGVb5Xgbq7Goe1or94s
+         ffEuR1+XNidlTudE87ImcF+lEOW7H6vHYkDmmwXBxbkgkipilEPtvw0uy2UolzuXn5uW
+         OM1F522lTBd6D7xk3SK8DIlf5TBHBTXlF/y6sH44r8zIQ7t2OQAHQwjKNmYTWgh9gYyl
+         u/NgeXZ8+fiTrMiGUrSU4Up/kT2BqJNaX5HldNP3TGks4ngUqcG0OcXQNqhIGjDL26j+
+         N1lUJjfgaobgaYAxm6oAO6JYafDi1/EYFvNeEURlKPbIcQz9H1ngE0mYwycmnx8tCtET
+         eRBA==
+X-Gm-Message-State: APjAAAU5B7l6zEs7IdvaIegq5ZX0Utpj0N7BUJSs37UST9MMDvRHkAt9
+        4XexBuYUAXsmfGiUIf+aUK9wig==
+X-Google-Smtp-Source: APXvYqwuTsPktTTpaeES4T1KVD834+oVs1m82p0wEi8Msv0ip/VofHEk1XIvtOloFudhqitu6gsEeQ==
+X-Received: by 2002:a63:465b:: with SMTP id v27mr47809999pgk.38.1557970979636;
+        Wed, 15 May 2019 18:42:59 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id n27sm8066642pfb.129.2019.05.15.18.42.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 18:42:59 -0700 (PDT)
+Date:   Wed, 15 May 2019 18:42:59 -0700 (PDT)
+X-Google-Original-Date: Wed, 15 May 2019 18:42:40 PDT (-0700)
+Subject:     Re: [GIT PULL] RISC-V Patches for the 5.2 Merge Window, Part 1
+In-Reply-To: <21598eb7-8ff0-2b6b-4cab-c0d1295fd46e@wdc.com>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     atish.patra@wdc.com
+Message-ID: <mhng-54fad465-30c1-426c-84c1-99fd4ac827b0@palmer-si-x1e>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 15 May 2019 12:08:36 PDT (-0700), atish.patra@wdc.com wrote:
+> On 5/15/19 10:40 AM, Palmer Dabbelt wrote:
+>> The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
+>>
+>>    Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-5.2-mw0
+>>
+>> for you to fetch changes up to e23fc917f04ffac8c156fdb4ee8b56f3867fa50b:
+>>
+>>    RISC-V: Avoid using invalid intermediate translations (2019-05-08 15:06:18 -0700)
+>>
+>> ----------------------------------------------------------------
+>> RISC-V Patches for the 5.2 Merge Window, Part 1
+>>
+>> This patch set contains an assortment of RISC-V related patches that I'd
+>> like to target for the 5.2 merge window.  Most of the patches are
+>> cleanups, but there are a handful of user-visible changes:
+>>
+>> * The nosmp and nr_cpus command-line arguments are now supported, which
+>>    work like normal.
+>> * The SBI console no longer installs itself as a preferred console, we
+>>    rely on standard mechanisms (/chosen, command-line, hueristics)
+>>    instead.
+>> * sfence_remove_sfence_vma{,_asid} now pass their arguments along to the
+>>    SBI call.
+>> * Modules now support BUG().
+>> * A missing sfence.vma during boot has been added.  This bug only
+>>    manifests during boot.
+>>
+>> I've only tested this on QEMU again, as I didn't have time to get things
+>> running on the Unleashed.  The latest master from this morning merges in
+>> cleanly and passes the tests as well.
+>>
+>> ----------------------------------------------------------------
+>> Anup Patel (4):
+>>        RISC-V: Use tabs to align macro values in asm/csr.h
+>>        RISC-V: Add interrupt related SCAUSE defines in asm/csr.h
+>>        RISC-V: Access CSRs using CSR numbers
+>>        tty: Don't force RISCV SBI console as preferred console
+>>
+>> Atish Patra (4):
+>>        RISC-V: Add RISC-V specific arch_match_cpu_phys_id
+>>        RISC-V: Implement nosmp commandline option.
+>>        RISC-V: Support nr_cpus command line option.
+>>        RISC-V: Fix minor checkpatch issues.
+>>
+>> Christoph Hellwig (11):
+>>        riscv: use asm-generic/extable.h
+>>        riscv: turn mm_segment_t into a struct
+>>        riscv: remove unreachable big endian code
+>>        riscv: remove CONFIG_RISCV_ISA_A
+>>        riscv: clear all pending interrupts when booting
+>>        riscv: simplify the stack pointer setup in head.S
+>>        riscv: cleanup the parse_dtb calling conventions
+>>        riscv: remove unreachable !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR code
+>>        riscv: remove duplicate macros from ptrace.h
+>>        riscv: print the unexpected interrupt cause
+>>        riscv: call pm_power_off from machine_halt / machine_power_off
+>>
+>> Gary Guo (3):
+>>        riscv: move flush_icache_{all,mm} to cacheflush.c
+>>        riscv: move switch_mm to its own file
+>>        riscv: fix sbi_remote_sfence_vma{,_asid}.
+>>
+>> Guo Ren (1):
+>>        riscv/signal: Fixup additional syscall restarting
+>>
+>> Nick Desaulniers (1):
+>>        riscv: vdso: drop unnecessary cc-ldoption
+>>
+>> Palmer Dabbelt (1):
+>>        RISC-V: Avoid using invalid intermediate translations
+>>
+>> Vincent Chen (3):
+>>        riscv: support trap-based WARN()
+>>        riscv: Add the support for c.ebreak check in is_valid_bugaddr()
+>>        riscv: Support BUG() in kernel module
+>>
+>>   arch/riscv/Kconfig                   |   6 +-
+>>   arch/riscv/Makefile                  |   5 +-
+>>   arch/riscv/include/asm/Kbuild        |   1 +
+>>   arch/riscv/include/asm/bug.h         |  35 ++++++----
+>>   arch/riscv/include/asm/cacheflush.h  |   2 +-
+>>   arch/riscv/include/asm/csr.h         | 123 ++++++++++++++++++++++-------------
+>>   arch/riscv/include/asm/elf.h         |   6 --
+>>   arch/riscv/include/asm/futex.h       |  13 ----
+>>   arch/riscv/include/asm/irqflags.h    |  10 +--
+>>   arch/riscv/include/asm/mmu_context.h |  59 +----------------
+>>   arch/riscv/include/asm/ptrace.h      |  21 ++----
+>>   arch/riscv/include/asm/sbi.h         |  19 ++++--
+>>   arch/riscv/include/asm/thread_info.h |   4 +-
+>>   arch/riscv/include/asm/uaccess.h     |  28 +++-----
+>>   arch/riscv/kernel/asm-offsets.c      |   3 -
+>>   arch/riscv/kernel/cpu.c              |   3 +-
+>>   arch/riscv/kernel/entry.S            |  22 +++----
+>>   arch/riscv/kernel/head.S             |  33 ++++++----
+>>   arch/riscv/kernel/irq.c              |  19 ++----
+>>   arch/riscv/kernel/perf_event.c       |   4 +-
+>>   arch/riscv/kernel/reset.c            |  15 +++--
+>>   arch/riscv/kernel/setup.c            |   6 +-
+>>   arch/riscv/kernel/signal.c           |   6 ++
+>>   arch/riscv/kernel/smp.c              |  61 +++--------------
+>>   arch/riscv/kernel/smpboot.           |   0
+>>   arch/riscv/kernel/smpboot.c          |  22 ++++++-
+>>   arch/riscv/kernel/stacktrace.c       |  14 ++--
+>>   arch/riscv/kernel/traps.c            |  30 ++++++---
+>>   arch/riscv/kernel/vdso/Makefile      |   2 +-
+>>   arch/riscv/mm/Makefile               |   1 +
+>>   arch/riscv/mm/cacheflush.c           |  61 +++++++++++++++++
+>>   arch/riscv/mm/context.c              |  69 ++++++++++++++++++++
+>>   arch/riscv/mm/fault.c                |   6 +-
+>>   drivers/tty/hvc/hvc_riscv_sbi.c      |   1 -
+>>   34 files changed, 390 insertions(+), 320 deletions(-)
+>>   create mode 100644 arch/riscv/kernel/smpboot.
+>
+> I think "smpboot." got added as a typo because of commit (RISC-V:
+> Support nr_cpus command line option.).
+>
+> Can you please update the PR directly or should I send a fixup patch?
 
+OK.  It looks like I dropped the L2 patches, which I was going to submit as
+another PR.  Since I have to do that anyway, I think it's best to just drop
+this one.
 
-On 2019/5/16 7:48, Mao, Chenxi wrote:
-> Hi Yann and Xiang:
-> For this FAST_DEC_LOOP change, I only pick up decompress related patches to current kernel LZ4 implementation(based on 1.8.3).
-> Here is my cherry-pick list:
-> 2589c44 created LZ4_FAST_DEC_LOOP build macro
-> 605d811 enable LZ4_FAST_DEC_LOOP build macro on aarch64/GCC by default
-> 5d7d116 decompress_generic: Limit fastpath to x86
-> 75fb878 decompress_generic: Add fastpath for small offsets
-> faac110 decompress_generic: Unroll loops a bit more
-> 1fbaf84 decompress_generic: remove msan write
-> 28b8249 decompress_generic: re-add fastpath
-> 232f1e2 decompress_generic: drop partial copy check in fast loop
-> 59332a3 decompress_generic: Optimize literal copies
-> 5dfa7d4 decompress_generic: optimize match copy
-> 28356e0 decompress_generic: Add a loop fastpath
-> 4da3360 decompress_generic: Refactor variable length fields
-> 
-> Only cherry-pick these changes to LZ4 1.8.3 would not be introduce risks.
+Linus: I'm not sure how to tag this PR as a mistake, so I'm going to just send
+another one.  If this gets merged then I'll handle the follow-on.
 
-The fact is that ... LZ4_FAST_DEC_LOOP almost influences all decompression apis.
-You should keep LZ4_decompress_generic from all known issues.
-
-> 
-> @Xiang:
-> Do you prefer to upgrade kernel lz4 to 1.9.1 directly or only pick some optimization patches?
-
-I think you should pick all patches which are related to LZ4_decompress_generic()
-and LZ4_FAST_DEC_LOOP since known issues of LZ4_FAST_DEC_LOOP should be fixed of course.
-
-Thanks,
-Gao Xiang
-
-> 
-> Chenxi
-> 
-> 
-> On 5/16/19 1:47 AM, Gao Xiang wrote:
->> Hi Yann,
+>
+> Regards,
+> Atish
+>>   create mode 100644 arch/riscv/mm/context.c
 >>
->> On 2019/5/16 1:03, Cyan wrote:
->>> Re-posted,
->>> it seems the previous message was rejected by the linux-kernel server
->>> due to some kind of format limitation (no html).
->>>
->>>
->>> Le mer. 15 mai 2019 à 09:56, Cyan <yann.collet.73@gmail.com> a écrit :
->>>>
->>>> The v1.9.0 version has a bug which makes it read a few bytes out of bound in certain cases.
->>>> This was fixed in v1.9.1.
->>>> Therefore, if you plan upgrading version, skip directly to v1.9.1.
->>>>
->>>> Note that, in v1.9.1, LZ4_decompress_fast() is now deprecated.
->>>> LZ4_decompress_fast() is a security liability, since it's unable to cope with malicious inputs.
->>>> While this is not a problem when the producer is under direct control (local production and consumption, no intermediate storage),
->>>> this entry point seems misused in multiple scenarios where input cannot be decently trusted.
->>>> The deprecation warning is meant to "scare away" such usages.
->>>> It's still possible to intentionally remove the warning, for users who know what they are doing.
->>>>
->>>> Note that, on top of that, the _fast() variant is now slower that LZ4_decompress_safe(), removing its most important positive differentiator.
->>>> That's because LZ4_decompress_fast() is "blind", it doesn't know the input size.
->>>> It just guesses it, from the requested output size, and by relying on end-of-block conditions.
->>>> This effectively limits its capability to copy up to 8 bytes at a time,
->>>> which proves slower than the 32-bytes at a time used in LZ4_decompress_safe().
->>>>
->>>> LZ4_decompress_fast() still has some possible usage :
->>>> it doesn't need the compressed size.
->>>> Therefore, in a scenario where decompressed size is known, but compressed size isn't,
->>>> it cannot be replaced by `LZ4_decompress_safe()`.
->>>> This is pretty rare, but can happen in some cases, erofs for example.
->>>> `LZ4_decompress_safe_partial()` *might* be able to replace it for such scenario,
->>>> but I haven't thoroughly tested it, so can't yet vouch for it.
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 >>
->> Yes, that is my real concern...
->>
->> In fact, we have shipped erofs with LZ4_decompress_safe_partial() of lz4-1.8.3
->> for our HUAWEI P30/P30 Pro and other HUAWEI EMUI 9.1 phones on the market...
->>
->> It seemd lz4-1.8.3 is rather stable since no stability report from our internal
->> beta test and real consumers...
->>
->> I haven't tested lz4-1.9.0 yet since I am working on the erofs paper [1]...
->>
->> But anyway, the patch looks good to me since it has obvious performance gain...
->>
->>>>
->>>> If it doesn't, then it will be necessary to create a new entry point.
->>>> The main difference is that this new entry point will need a bound for the input size, in order to guarantee it never reads beyond input buffer.
->>>> But as said, for the time being, such dedicated entry point doesn't exist.
->>
->> I agree, but current erofs still have to choose LZ4_decompress_fast...
->> I will test these 2 apis later and will report if something is wrong as well.
->>
->> [1] https://www.usenix.org/conference/atc19/presentation/gao
->>     https://www.usenix.org/conference/atc19/technical-sessions
->>
->> Thanks,
->> Gao Xiang
->>
->>
->>>>
->>>> The new FAST_DEC_LOOP setting works well on x86 and x64.
->>>> Recently, it has been extended to gcc+arm64 (`dev` branch).
->>>> The combination of clang+arm64 is less successful though (impacts vary, depending on version and exact hardware), so it's still disabled by default.
->>>> But anyone can test it by setting FAST_DEC_LOOP definition to 1, thus enabling the new decoder loop.
->>>>
->>>>
->>>> Y.
->>>>
->>>> Le mar. 14 mai 2019 à 20:28, Mao, Chenxi <Chenxi.Mao@sony.com> a écrit :
->>>>>
->>>>> Hi Xiang:
->>>>>
->>>>> Thanks for your reply, I will have a stress test on my device later.
->>>>> I didn't have chance to test LZ4 with clang build because of device limitation. I think I could do it later.
->>>>> I guess the clang performance downgrade is caused by some compiler optimization options.
->>>>> I will double check it later if I got the device which can build kernel with clang.
->>>>>
->>>>> BTW, the FAST_DEC_LOOP leverage LZ4_wildCopy8 instead of LZ4_wildCopy,
->>>>> however based on my test, original LZ4_wildCopy has the better performance.
->>>>> Original LZ4_wildCopy API still invoked by FAST_DEC_LOOP apis.
->>>>> That might be a problem for X86 devices for current patch.
->>>>>
->>>>> Chenxi
->>>>>
->>>>> -----Original Message-----
->>>>> From: Gao Xiang [mailto:gaoxiang25@huawei.com]
->>>>> Sent: Wednesday, May 15, 2019 10:21 AM
->>>>> To: Mao, Chenxi <Chenxi.Mao@sony.com>
->>>>> Cc: akpm@linux-foundation.org; linux-kernel@vger.kernel.org; Feng, Roy <Roy.Feng@sony.com>; Xu, Yuanli 2 <Yuanli.Xu@sony.com>; Alm, Robert 2 <Robert.Alm@sony.com>; Takahashi, Masaya A (Sony Mobile) <Masaya.A.Takahashi@sony.com>; Miao Xie <miaoxie@huawei.com>
->>>>> Subject: Re: [PATCH 1/1] LZ4: Port LZ4 1.9.x FAST_DEC_LOOP and enable it on x86 and ARM64
->>>>>
->>>>> Hi Chenxi,
->>>>>
->>>>> On 2019/5/15 8:43, Chenxi Mao wrote:
->>>>>> FAST_DEC_LOOP was introduced from LZ4 1.9.
->>>>>> This change would be introduce 10% on decompress operation according
->>>>>> to LZ4 benchmark result on X86 devices.
->>>>>> Meanwhile, LZ4 with FAST_DEC_LOOP could get improvements, however
->>>>>> clang compiler has downgrade if FAST_DEC_LOOP enabled.
->>>>>
->>>>> I noticed this optimization and lz4-1.9.0 [1] was just released month ago with this big change therefore I'm a little afraid of its current stability (especially some rare used decompression apis...)
->>>>>
->>>>> Could you Cc more people (e.g. lz4 original author Yann Collet) in order to get some more ideas about this if possible?
->>>>>
->>>>> Anyway, I like this optimization as well since FAST_DEC_LOOP improves decompression speed a lot :)
->>>>>
->>>>> [1] https://github.com/lz4/lz4/releases/tag/v1.9.0
->>>>>
->>>>> Thanks,
->>>>> Gao Xiang
->>>>>
->>>>>>
->>>>>> So FAST_DEC_LOOP only enabled on X86/X86-64 or ARM64 with GCC build.
->>>>>>
->>>>>> Here is the test result on ARM64(cortex-A53)
->>>>>>
->>>>>> Benchmark via ZRAM:
->>>>>>
->>>>>> Test case:
->>>>>> fio --bs=32k --randrepeat=1 --randseed=100 --refill_buffers \
->>>>>> --buffer_compress_percentage=75 \
->>>>>> --scramble_buffers=1 --direct=1 --loops=100 --numjobs=8 \
->>>>>> --filename=/dev/block/zram0 --name=seq-write --rw=write --stonewall \
->>>>>> --name=seq-read --rw=read --stonewall --name=seq-readwrite \ --rw=rw
->>>>>> --stonewall --name=rand-readwrite --rw=randrw --stonewall
->>>>>>
->>>>>> Patched:
->>>>>>    READ: bw=7077MiB/s (7421MB/s)
->>>>>> Vanilla:
->>>>>>    READ: bw=5134MiB/s (5384MB/s)
->>>>>>
->>>>>> Reference:
->>>>>> 1. https://github.com/lz4/lz4/pull/645
->>>>>> 2. https://github.com/lz4/lz4/pull/707
->>>>>>
->>>>>> Signed-off-by: chenxi.mao <chenxi.mao@sony.com>
->>>>>> ---
->>>>>>  lib/lz4/lz4_decompress.c | 425
->>>>>> +++++++++++++++++++++++++++++++++------
->>>>>>  1 file changed, 361 insertions(+), 64 deletions(-)
->>>>>>
->>>>>> diff --git a/lib/lz4/lz4_decompress.c b/lib/lz4/lz4_decompress.c index
->>>>>> 0c9d3ad17e0f..a4c87e32b3c0 100644
->>>>>> --- a/lib/lz4/lz4_decompress.c
->>>>>> +++ b/lib/lz4/lz4_decompress.c
->>>>>> @@ -50,6 +50,131 @@
->>>>>>  #define assert(condition) ((void)0)
->>>>>>  #endif
->>>>>>
->>>>>> +#ifndef LZ4_FAST_DEC_LOOP
->>>>>> +#if defined(__i386__) || defined(__x86_64__) #define
->>>>>> +LZ4_FAST_DEC_LOOP 1 #elif defined(__aarch64__) && !defined(__clang__)
->>>>>> +     /* On aarch64, we disable this optimization for clang because on certain
->>>>>> +      * mobile chipsets and clang, it reduces performance. For more information
->>>>>> +      * refer to https://github.com/lz4/lz4/pull/707. */ #define
->>>>>> +LZ4_FAST_DEC_LOOP 1 #else #define LZ4_FAST_DEC_LOOP 0 #endif #endif
->>>>>> +
->>>>>> +static const unsigned inc32table[8] = { 0, 1, 2, 1, 0, 4, 4, 4 };
->>>>>> +static const int dec64table[8] = { 0, 0, 0, -1, -4, 1, 2, 3 };
->>>>>> +
->>>>>> +#if LZ4_FAST_DEC_LOOP
->>>>>> +#define FASTLOOP_SAFE_DISTANCE 64
->>>>>> +FORCE_INLINE void
->>>>>> +LZ4_memcpy_using_offset_base(BYTE * dstPtr, const BYTE * srcPtr, BYTE * dstEnd,
->>>>>> +                          const size_t offset)
->>>>>> +{
->>>>>> +     if (offset < 8) {
->>>>>> +             dstPtr[0] = srcPtr[0];
->>>>>> +
->>>>>> +             dstPtr[1] = srcPtr[1];
->>>>>> +             dstPtr[2] = srcPtr[2];
->>>>>> +             dstPtr[3] = srcPtr[3];
->>>>>> +             srcPtr += inc32table[offset];
->>>>>> +             memcpy(dstPtr + 4, srcPtr, 4);
->>>>>> +             srcPtr -= dec64table[offset];
->>>>>> +             dstPtr += 8;
->>>>>> +     } else {
->>>>>> +             memcpy(dstPtr, srcPtr, 8);
->>>>>> +             dstPtr += 8;
->>>>>> +             srcPtr += 8;
->>>>>> +     }
->>>>>> +
->>>>>> +     LZ4_wildCopy(dstPtr, srcPtr, dstEnd); }
->>>>>> +
->>>>>> +/* customized variant of memcpy, which can overwrite up to 32 bytes
->>>>>> +beyond dstEnd
->>>>>> + * this version copies two times 16 bytes (instead of one time 32
->>>>>> +bytes)
->>>>>> + * because it must be compatible with offsets >= 16. */ FORCE_INLINE
->>>>>> +void LZ4_wildCopy32(void *dstPtr, const void *srcPtr, void *dstEnd) {
->>>>>> +     BYTE *d = (BYTE *) dstPtr;
->>>>>> +     const BYTE *s = (const BYTE *)srcPtr;
->>>>>> +     BYTE *const e = (BYTE *) dstEnd;
->>>>>> +
->>>>>> +     do {
->>>>>> +             memcpy(d, s, 16);
->>>>>> +             memcpy(d + 16, s + 16, 16);
->>>>>> +             d += 32;
->>>>>> +             s += 32;
->>>>>> +     } while (d < e);
->>>>>> +}
->>>>>> +
->>>>>> +FORCE_INLINE void
->>>>>> +LZ4_memcpy_using_offset(BYTE *dstPtr, const BYTE *srcPtr, BYTE *dstEnd,
->>>>>> +                     const size_t offset)
->>>>>> +{
->>>>>> +     BYTE v[8];
->>>>>> +     switch (offset) {
->>>>>> +
->>>>>> +     case 1:
->>>>>> +             memset(v, *srcPtr, 8);
->>>>>> +             goto copy_loop;
->>>>>> +     case 2:
->>>>>> +             memcpy(v, srcPtr, 2);
->>>>>> +             memcpy(&v[2], srcPtr, 2);
->>>>>> +             memcpy(&v[4], &v[0], 4);
->>>>>> +             goto copy_loop;
->>>>>> +     case 4:
->>>>>> +             memcpy(v, srcPtr, 4);
->>>>>> +             memcpy(&v[4], srcPtr, 4);
->>>>>> +             goto copy_loop;
->>>>>> +     default:
->>>>>> +             LZ4_memcpy_using_offset_base(dstPtr, srcPtr, dstEnd, offset);
->>>>>> +             return;
->>>>>> +     }
->>>>>> +
->>>>>> +      copy_loop:
->>>>>> +     memcpy(dstPtr, v, 8);
->>>>>> +     dstPtr += 8;
->>>>>> +     while (dstPtr < dstEnd) {
->>>>>> +             memcpy(dstPtr, v, 8);
->>>>>> +             dstPtr += 8;
->>>>>> +     }
->>>>>> +}
->>>>>> +
->>>>>> +/* Read the variable-length literal or match length.
->>>>>> + *
->>>>>> + * ip - pointer to use as input.
->>>>>> + * lencheck - end ip.  Return an error if ip advances >= lencheck.
->>>>>> + * loop_check - check ip >= lencheck in body of loop.  Returns loop_error if so.
->>>>>> + * initial_check - check ip >= lencheck before start of loop.  Returns initial_error if so.
->>>>>> + * error (output) - error code.  Should be set to 0 before call.
->>>>>> + */
->>>>>> +typedef enum { loop_error = -2, initial_error = -1, ok = 0}
->>>>>> +variable_length_error; FORCE_INLINE unsigned read_variable_length(const BYTE **ip,
->>>>>> +                                        const BYTE *lencheck,
->>>>>> +                                        int loop_check, int initial_check,
->>>>>> +                                        variable_length_error *error) {
->>>>>> +     unsigned length = 0;
->>>>>> +     unsigned s;
->>>>>> +     if (initial_check && unlikely((*ip) >= lencheck)) {     /* overflow detection */
->>>>>> +             *error = initial_error;
->>>>>> +             return length;
->>>>>> +     }
->>>>>> +     do {
->>>>>> +             s = **ip;
->>>>>> +             (*ip)++;
->>>>>> +             length += s;
->>>>>> +             if (loop_check && unlikely((*ip) >= lencheck)) {        /* overflow detection */
->>>>>> +                     *error = loop_error;
->>>>>> +                     return length;
->>>>>> +             }
->>>>>> +     } while (s == 255);
->>>>>> +
->>>>>> +     return length;
->>>>>> +}
->>>>>> +#endif
->>>>>> +
->>>>>>  /*
->>>>>>   * LZ4_decompress_generic() :
->>>>>>   * This generic decompression function covers all use cases.
->>>>>> @@ -80,25 +205,28 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>        const size_t dictSize
->>>>>>        )
->>>>>>  {
->>>>>> -     const BYTE *ip = (const BYTE *) src;
->>>>>> -     const BYTE * const iend = ip + srcSize;
->>>>>> +     const BYTE *ip = (const BYTE *)src;
->>>>>> +     const BYTE *const iend = ip + srcSize;
->>>>>>
->>>>>>       BYTE *op = (BYTE *) dst;
->>>>>> -     BYTE * const oend = op + outputSize;
->>>>>> +     BYTE *const oend = op + outputSize;
->>>>>>       BYTE *cpy;
->>>>>>
->>>>>> -     const BYTE * const dictEnd = (const BYTE *)dictStart + dictSize;
->>>>>> -     static const unsigned int inc32table[8] = {0, 1, 2, 1, 0, 4, 4, 4};
->>>>>> -     static const int dec64table[8] = {0, 0, 0, -1, -4, 1, 2, 3};
->>>>>> +     const BYTE *const dictEnd = (const BYTE *)dictStart + dictSize;
->>>>>>
->>>>>>       const int safeDecode = (endOnInput == endOnInputSize);
->>>>>>       const int checkOffset = ((safeDecode) && (dictSize < (int)(64 *
->>>>>> KB)));
->>>>>>
->>>>>>       /* Set up the "end" pointers for the shortcut. */
->>>>>>       const BYTE *const shortiend = iend -
->>>>>> -             (endOnInput ? 14 : 8) /*maxLL*/ - 2 /*offset*/;
->>>>>> +         (endOnInput ? 14 : 8) /*maxLL*/ - 2 /*offset*/;
->>>>>>       const BYTE *const shortoend = oend -
->>>>>> -             (endOnInput ? 14 : 8) /*maxLL*/ - 18 /*maxML*/;
->>>>>> +         (endOnInput ? 14 : 8) /*maxLL*/ - 18 /*maxML*/;
->>>>>> +
->>>>>> +     const BYTE *match;
->>>>>> +     size_t offset;
->>>>>> +     unsigned int token;
->>>>>> +     size_t length;
->>>>>>
->>>>>>       DEBUGLOG(5, "%s (srcSize:%i, dstSize:%i)", __func__,
->>>>>>                srcSize, outputSize);
->>>>>> @@ -117,15 +245,194 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>       if ((endOnInput) && unlikely(srcSize == 0))
->>>>>>               return -1;
->>>>>>
->>>>>> -     /* Main Loop : decode sequences */
->>>>>> +#if LZ4_FAST_DEC_LOOP
->>>>>> +     if ((oend - op) < FASTLOOP_SAFE_DISTANCE) {
->>>>>> +             DEBUGLOG(6, "skip fast decode loop");
->>>>>> +             goto safe_decode;
->>>>>> +     }
->>>>>> +
->>>>>> +     /* Fast loop : decode sequences as long as output <
->>>>>> +iend-FASTLOOP_SAFE_DISTANCE */
->>>>>>       while (1) {
->>>>>> -             size_t length;
->>>>>> -             const BYTE *match;
->>>>>> -             size_t offset;
->>>>>> +             /* Main fastloop assertion: We can always wildcopy FASTLOOP_SAFE_DISTANCE */
->>>>>> +             assert(oend - op >= FASTLOOP_SAFE_DISTANCE);
->>>>>> +             if (endOnInput) {
->>>>>> +                     assert(ip < iend);
->>>>>> +             }
->>>>>> +             token = *ip++;
->>>>>> +             length = token >> ML_BITS;      /* literal length */
->>>>>> +
->>>>>> +             assert(!endOnInput || ip <= iend);      /* ip < iend before the increment */
->>>>>> +
->>>>>> +             /* decode literal length */
->>>>>> +             if (length == RUN_MASK) {
->>>>>> +                     variable_length_error error = ok;
->>>>>> +                     length +=
->>>>>> +                         read_variable_length(&ip, iend - RUN_MASK,
->>>>>> +                                              endOnInput, endOnInput,
->>>>>> +                                              &error);
->>>>>> +                     if (error == initial_error) {
->>>>>> +                             goto _output_error;
->>>>>> +                     }
->>>>>> +                     if ((safeDecode)
->>>>>> +                         && unlikely((uptrval) (op) + length <
->>>>>> +                                     (uptrval) (op))) {
->>>>>> +                             goto _output_error;
->>>>>> +                     }       /* overflow detection */
->>>>>> +                     if ((safeDecode)
->>>>>> +                         && unlikely((uptrval) (ip) + length <
->>>>>> +                                     (uptrval) (ip))) {
->>>>>> +                             goto _output_error;
->>>>>> +                     }
->>>>>> +
->>>>>> +                     /* overflow detection */
->>>>>> +                     /* copy literals */
->>>>>> +                     cpy = op + length;
->>>>>> +                     LZ4_STATIC_ASSERT(MFLIMIT >= WILDCOPYLENGTH);
->>>>>> +                     if (endOnInput) {       /* LZ4_decompress_safe() */
->>>>>> +                             if ((cpy > oend - 32)
->>>>>> +                                 || (ip + length > iend - 32)) {
->>>>>> +                                     goto safe_literal_copy;
->>>>>> +                             }
->>>>>> +                             LZ4_wildCopy32(op, ip, cpy);
->>>>>> +                     } else {        /* LZ4_decompress_fast() */
->>>>>> +                             if (cpy > oend - 8) {
->>>>>> +                                     goto safe_literal_copy;
->>>>>> +                             }
->>>>>> +                             LZ4_wildCopy(op, ip, cpy);
->>>>>> +                             /* LZ4_decompress_fast() cannot copy more than 8 bytes at a time */
->>>>>> +                             /* it doesn't know input length, and only relies on end-of-block */
->>>>>> +                             /* properties */
->>>>>> +                     }
->>>>>> +                     ip += length;
->>>>>> +                     op = cpy;
->>>>>> +             } else {
->>>>>> +                     cpy = op + length;
->>>>>> +                     if (endOnInput) {       /* LZ4_decompress_safe() */
->>>>>> +                             DEBUGLOG(7,
->>>>>> +                                      "copy %u bytes in a 16-bytes stripe",
->>>>>> +                                      (unsigned)length);
->>>>>> +                             /* We don't need to check oend */
->>>>>> +                             /* since we check it once for each loop below */
->>>>>> +                             if (ip > iend - (16 + 1)) {     /*max lit + offset + nextToken */
->>>>>> +                                     goto safe_literal_copy;
->>>>>> +                             }
->>>>>> +                             /* Literals can only be 14, but hope compilers optimize */
->>>>>> +                             /*if we copy by a register size */
->>>>>> +                             memcpy(op, ip, 16);
->>>>>> +                     } else {
->>>>>> +                             /* LZ4_decompress_fast() cannot copy more than 8 bytes at a time */
->>>>>> +                             /* it doesn't know input length, and relies on end-of-block */
->>>>>> +                             /* properties */
->>>>>> +                             memcpy(op, ip, 8);
->>>>>> +                             if (length > 8) {
->>>>>> +                                     memcpy(op + 8, ip + 8, 8);
->>>>>> +                             }
->>>>>> +                     }
->>>>>> +                     ip += length;
->>>>>> +                     op = cpy;
->>>>>> +             }
->>>>>> +
->>>>>> +             /* get offset */
->>>>>> +             offset = LZ4_readLE16(ip);
->>>>>> +             ip += 2;        /* end-of-block condition violated */
->>>>>> +             match = op - offset;
->>>>>> +
->>>>>> +             /* get matchlength */
->>>>>> +             length = token & ML_MASK;
->>>>>>
->>>>>> -             /* get literal length */
->>>>>> -             unsigned int const token = *ip++;
->>>>>> -             length = token>>ML_BITS;
->>>>>> +             if ((checkOffset) && (unlikely(match + dictSize < lowPrefix))) {
->>>>>> +                     goto _output_error;
->>>>>> +             }
->>>>>> +             /* Error : offset outside buffers */
->>>>>> +             if (length == ML_MASK) {
->>>>>> +                     variable_length_error error = ok;
->>>>>> +                     length +=
->>>>>> +                         read_variable_length(&ip, iend - LASTLITERALS + 1,
->>>>>> +                                              endOnInput, 0, &error);
->>>>>> +                     if (error != ok) {
->>>>>> +                             goto _output_error;
->>>>>> +                     }
->>>>>> +                     if ((safeDecode)
->>>>>> +                         && unlikely((uptrval) (op) + length < (uptrval) op)) {
->>>>>> +                             goto _output_error;
->>>>>> +                     }       /* overflow detection */
->>>>>> +                     length += MINMATCH;
->>>>>> +                     if (op + length >= oend - FASTLOOP_SAFE_DISTANCE) {
->>>>>> +                             goto safe_match_copy;
->>>>>> +                     }
->>>>>> +             } else {
->>>>>> +                     length += MINMATCH;
->>>>>> +                     if (op + length >= oend - FASTLOOP_SAFE_DISTANCE) {
->>>>>> +                             goto safe_match_copy;
->>>>>> +                     }
->>>>>> +
->>>>>> +                     /* Fastpath check: Avoids a branch in LZ4_wildCopy32 if true */
->>>>>> +                     if (!(dict == usingExtDict) || (match >= lowPrefix)) {
->>>>>> +                             if (offset >= 8) {
->>>>>> +                                     memcpy(op, match, 8);
->>>>>> +                                     memcpy(op + 8, match + 8, 8);
->>>>>> +                                     memcpy(op + 16, match + 16, 2);
->>>>>> +                                     op += length;
->>>>>> +                                     continue;
->>>>>> +                             }
->>>>>> +                     }
->>>>>> +             }
->>>>>> +
->>>>>> +             /* match starting within external dictionary */
->>>>>> +             if ((dict == usingExtDict) && (match < lowPrefix)) {
->>>>>> +                     if (unlikely(op + length > oend - LASTLITERALS)) {
->>>>>> +                             if (partialDecoding) {
->>>>>> +                                     /* reach end of buffer */
->>>>>> +                                     length =
->>>>>> +                                         min(length, (size_t) (oend - op));
->>>>>> +                             } else {
->>>>>> +                                     /* end-of-block condition violated */
->>>>>> +                                     goto _output_error;
->>>>>> +                             }
->>>>>> +                     }
->>>>>> +
->>>>>> +                     if (length <= (size_t) (lowPrefix - match)) {
->>>>>> +                             /* match fits entirely within external dictionary : just copy */
->>>>>> +                             memmove(op, dictEnd - (lowPrefix - match), length);
->>>>>> +                             op += length;
->>>>>> +                     } else {
->>>>>> +                             /* match stretches into both external dict and current block */
->>>>>> +                             size_t const copySize =
->>>>>> +                                 (size_t) (lowPrefix - match);
->>>>>> +                             size_t const restSize = length - copySize;
->>>>>> +                             memcpy(op, dictEnd - copySize, copySize);
->>>>>> +                             op += copySize;
->>>>>> +                             if (restSize > (size_t) (op - lowPrefix)) {     /* overlap copy */
->>>>>> +                                     BYTE *const endOfMatch = op + restSize;
->>>>>> +                                     const BYTE *copyFrom = lowPrefix;
->>>>>> +                                     while (op < endOfMatch) {
->>>>>> +                                             *op++ = *copyFrom++;
->>>>>> +                                     }
->>>>>> +                             } else {
->>>>>> +                                     memcpy(op, lowPrefix, restSize);
->>>>>> +                                     op += restSize;
->>>>>> +                             }
->>>>>> +                     }
->>>>>> +                     continue;
->>>>>> +             }
->>>>>> +
->>>>>> +             /* copy match within block */
->>>>>> +             cpy = op + length;
->>>>>> +
->>>>>> +             assert((op <= oend) && (oend - op >= 32));
->>>>>> +             if (unlikely(offset < 16)) {
->>>>>> +                     LZ4_memcpy_using_offset(op, match, cpy, offset);
->>>>>> +             } else {
->>>>>> +                     LZ4_wildCopy32(op, match, cpy);
->>>>>> +             }
->>>>>> +
->>>>>> +             op = cpy;       /* wildcopy correction */
->>>>>> +     }
->>>>>> +      safe_decode:
->>>>>> +#endif
->>>>>> +     /* Main Loop : decode sequences */
->>>>>> +     while (1) {
->>>>>> +             length = token >> ML_BITS;
->>>>>>
->>>>>>               /* ip < iend before the increment */
->>>>>>               assert(!endOnInput || ip <= iend);
->>>>>> @@ -143,26 +450,27 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>                * combined check for both stages).
->>>>>>                */
->>>>>>               if ((endOnInput ? length != RUN_MASK : length <= 8)
->>>>>> -                /*
->>>>>> -                 * strictly "less than" on input, to re-enter
->>>>>> -                 * the loop with at least one byte
->>>>>> -                 */
->>>>>> -                && likely((endOnInput ? ip < shortiend : 1) &
->>>>>> -                          (op <= shortoend))) {
->>>>>> +                 /*
->>>>>> +                  * strictly "less than" on input, to re-enter
->>>>>> +                  * the loop with at least one byte
->>>>>> +                  */
->>>>>> +                 && likely((endOnInput ? ip < shortiend : 1) &
->>>>>> +                           (op <= shortoend))) {
->>>>>>                       /* Copy the literals */
->>>>>>                       memcpy(op, ip, endOnInput ? 16 : 8);
->>>>>> -                     op += length; ip += length;
->>>>>> +                     op += length;
->>>>>> +                     ip += length;
->>>>>>
->>>>>>                       /*
->>>>>>                        * The second stage:
->>>>>>                        * prepare for match copying, decode full info.
->>>>>>                        * If it doesn't work out, the info won't be wasted.
->>>>>>                        */
->>>>>> -                     length = token & ML_MASK; /* match length */
->>>>>> +                     length = token & ML_MASK;       /* match length */
->>>>>>                       offset = LZ4_readLE16(ip);
->>>>>>                       ip += 2;
->>>>>>                       match = op - offset;
->>>>>> -                     assert(match <= op); /* check overflow */
->>>>>> +                     assert(match <= op);    /* check overflow */
->>>>>>
->>>>>>                       /* Do not deal with overlapping matches. */
->>>>>>                       if ((length != ML_MASK) &&
->>>>>> @@ -187,28 +495,24 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>
->>>>>>               /* decode literal length */
->>>>>>               if (length == RUN_MASK) {
->>>>>> -                     unsigned int s;
->>>>>>
->>>>>> -                     if (unlikely(endOnInput ? ip >= iend - RUN_MASK : 0)) {
->>>>>> -                             /* overflow detection */
->>>>>> +                     variable_length_error error = ok;
->>>>>> +                     length +=
->>>>>> +                         read_variable_length(&ip, iend - RUN_MASK,
->>>>>> +                                              endOnInput, endOnInput,
->>>>>> +                                              &error);
->>>>>> +                     if (error == initial_error)
->>>>>>                               goto _output_error;
->>>>>> -                     }
->>>>>> -                     do {
->>>>>> -                             s = *ip++;
->>>>>> -                             length += s;
->>>>>> -                     } while (likely(endOnInput
->>>>>> -                             ? ip < iend - RUN_MASK
->>>>>> -                             : 1) & (s == 255));
->>>>>>
->>>>>>                       if ((safeDecode)
->>>>>> -                         && unlikely((uptrval)(op) +
->>>>>> -                                     length < (uptrval)(op))) {
->>>>>> +                         && unlikely((uptrval) (op) +
->>>>>> +                                     length < (uptrval) (op))) {
->>>>>>                               /* overflow detection */
->>>>>>                               goto _output_error;
->>>>>>                       }
->>>>>>                       if ((safeDecode)
->>>>>> -                         && unlikely((uptrval)(ip) +
->>>>>> -                                     length < (uptrval)(ip))) {
->>>>>> +                         && unlikely((uptrval) (ip) +
->>>>>> +                                     length < (uptrval) (ip))) {
->>>>>>                               /* overflow detection */
->>>>>>                               goto _output_error;
->>>>>>                       }
->>>>>> @@ -216,11 +520,15 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>
->>>>>>               /* copy literals */
->>>>>>               cpy = op + length;
->>>>>> +#if LZ4_FAST_DEC_LOOP
->>>>>> +           safe_literal_copy:
->>>>>> +#endif
->>>>>>               LZ4_STATIC_ASSERT(MFLIMIT >= WILDCOPYLENGTH);
->>>>>>
->>>>>>               if (((endOnInput) && ((cpy > oend - MFLIMIT)
->>>>>> -                     || (ip + length > iend - (2 + 1 + LASTLITERALS))))
->>>>>> -                     || ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH))) {
->>>>>> +                                   || (ip + length >
->>>>>> +                                       iend - (2 + 1 + LASTLITERALS))))
->>>>>> +                 || ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH))) {
->>>>>>                       if (partialDecoding) {
->>>>>>                               if (cpy > oend) {
->>>>>>                                       /*
->>>>>> @@ -231,7 +539,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>                                       length = oend - op;
->>>>>>                               }
->>>>>>                               if ((endOnInput)
->>>>>> -                                     && (ip + length > iend)) {
->>>>>> +                                 && (ip + length > iend)) {
->>>>>>                                       /*
->>>>>>                                        * Error :
->>>>>>                                        * read attempt beyond
->>>>>> @@ -241,7 +549,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>                               }
->>>>>>                       } else {
->>>>>>                               if ((!endOnInput)
->>>>>> -                                     && (cpy != oend)) {
->>>>>> +                                 && (cpy != oend)) {
->>>>>>                                       /*
->>>>>>                                        * Error :
->>>>>>                                        * block decoding must
->>>>>> @@ -250,7 +558,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>                                       goto _output_error;
->>>>>>                               }
->>>>>>                               if ((endOnInput)
->>>>>> -                                     && ((ip + length != iend)
->>>>>> +                                 && ((ip + length != iend)
->>>>>>                                       || (cpy > oend))) {
->>>>>>                                       /*
->>>>>>                                        * Error :
->>>>>> @@ -288,29 +596,14 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>                       goto _output_error;
->>>>>>               }
->>>>>>
->>>>>> -             /* costs ~1%; silence an msan warning when offset == 0 */
->>>>>> -             /*
->>>>>> -              * note : when partialDecoding, there is no guarantee that
->>>>>> -              * at least 4 bytes remain available in output buffer
->>>>>> -              */
->>>>>> -             if (!partialDecoding) {
->>>>>> -                     assert(oend > op);
->>>>>> -                     assert(oend - op >= 4);
->>>>>> -
->>>>>> -                     LZ4_write32(op, (U32)offset);
->>>>>> -             }
->>>>>> -
->>>>>>               if (length == ML_MASK) {
->>>>>> -                     unsigned int s;
->>>>>> -
->>>>>> -                     do {
->>>>>> -                             s = *ip++;
->>>>>> -
->>>>>> -                             if ((endOnInput) && (ip > iend - LASTLITERALS))
->>>>>> -                                     goto _output_error;
->>>>>>
->>>>>> -                             length += s;
->>>>>> -                     } while (s == 255);
->>>>>> +                     variable_length_error error = ok;
->>>>>> +                     length +=
->>>>>> +                         read_variable_length(&ip, iend - LASTLITERALS + 1,
->>>>>> +                                              endOnInput, 0, &error);
->>>>>> +                     if (error != ok)
->>>>>> +                             goto _output_error;
->>>>>>
->>>>>>                       if ((safeDecode)
->>>>>>                               && unlikely(
->>>>>> @@ -322,6 +615,10 @@ static FORCE_INLINE int LZ4_decompress_generic(
->>>>>>
->>>>>>               length += MINMATCH;
->>>>>>
->>>>>> +#if LZ4_FAST_DEC_LOOP
->>>>>> +safe_match_copy:
->>>>>> +#endif
->>>>>> +
->>>>>>               /* match starting within external dictionary */
->>>>>>               if ((dict == usingExtDict) && (match < lowPrefix)) {
->>>>>>                       if (unlikely(op + length > oend - LASTLITERALS)) {
->>>>>>
