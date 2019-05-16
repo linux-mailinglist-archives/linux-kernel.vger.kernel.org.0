@@ -2,200 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BA86208F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD9F20922
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbfEPOAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:00:45 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:56452 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbfEPOAp (ORCPT
+        id S1727593AbfEPOJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:09:13 -0400
+Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:45133 "EHLO
+        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfEPOJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:00:45 -0400
-Received: by mail-yb1-f201.google.com with SMTP id d10so2825288ybn.23
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 07:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=0W2BzNydBRd7QhaGcoJcvGTU7rmnrCYSV56xvl6bzSI=;
-        b=Ze8Tkxqk0wx23S6A7duvigoJPnTj7PRU02KReczZHeQEeF4mhN+1JFLjXiyvLc2uOo
-         K0L+nHK5dIoAKUezZbvHDmZnHd+p6BSfo3sxFUUDRPLhx7bGncD/pjOwb6QUbv3cOkrz
-         6XAnncWcjHlIqBY2nP9hXLzj6HRzvCXZ1rqLPMOOiILRHvPR31uRLrrzVKF1z2TIyd11
-         hZxLUK3tJaLFX5RY0W09ISXDy3pMLKE/YAfHuFt+uSHeEadW1GSRIWNTjmuAUFgtg1Cr
-         XqKADFQcLIDucjHgE9sQapJlUwjh8H94yZ47pbLaCYqCr7ovB9TM7TxNCAKRcY46qx47
-         hBfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=0W2BzNydBRd7QhaGcoJcvGTU7rmnrCYSV56xvl6bzSI=;
-        b=P2YUj0F2RnV+br7kM0Z/fx9YAl/cQpzE3//Uvh7+Rqf4cYmbZOtwlEBxpD6VRIDR8C
-         MaGUjzBCPtOiiEOj3nvWIMZY/OvD2FZg9+xT/f78GYGojQ+R8rmvl2Ii92bEb9mh/pJD
-         pYlls88pxdmcIvngOt7VxTM7SppX9qnEUygYlo0QAz7CtwGwltRk3LjDXtq/sqvZ87kV
-         Vv7zNjL6eQrZzHUn5H3ZucMOyhzeG6Xay8OMl8QSLaaF+M2HQxpqmkzUANN6BNDmrXsq
-         DHRQB15HzrV366mACJDaIBaSb1Tqc45d/yWoZzXObARrPm2pol4WbnJr7Sbi7fycZUBy
-         O/BA==
-X-Gm-Message-State: APjAAAXKCxZHUg5N7FyT/7Npmyfb35CYafVvX/QR0SSCKn2oNRUaKxki
-        HgBGMj+kqkJlC/3RPTfHlP5R7iQbyDQ=
-X-Google-Smtp-Source: APXvYqylyCuEAoh/IO80hPvL85QhJypPrPpWyzFZNNCr4o4QOYuBtPRskXjvQaK6dQzj824TNXBcM630WdM=
-X-Received: by 2002:a81:2717:: with SMTP id n23mr25197449ywn.511.1558015244107;
- Thu, 16 May 2019 07:00:44 -0700 (PDT)
-Date:   Thu, 16 May 2019 16:00:20 +0200
-In-Reply-To: <20190516140020.200105-1-darekm@google.com>
-Message-Id: <20190516140020.200105-3-darekm@google.com>
-Mime-Version: 1.0
-References: <20190516140020.200105-1-darekm@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH v5 3/3] drm/i2c: tda9950: pass HDMI connector info to CEC adapter
-From:   Dariusz Marcinkiewicz <darekm@google.com>
-To:     linux-media@vger.kernel.org, hans.verkuil@cisco.com,
-        hverkuil@xs4all.nl
-Cc:     linux-kernel@vger.kernel.org,
-        Dariusz Marcinkiewicz <darekm@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 May 2019 10:09:12 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 10:09:11 EDT
+Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=SoftFail smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL01.citrite.net
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=23.29.105.83; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: SoftFail (esa2.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com is inclined to not designate
+  23.29.105.83 as permitted sender) identity=mailfrom;
+  client-ip=23.29.105.83; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 include:spf.citrix.com
+  include:spf2.citrix.com include:ironport.citrix.com
+  exists:%{i}._spf.mta.salesforce.com ~all"
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@MIAPEX02MSOL01.citrite.net) identity=helo;
+  client-ip=23.29.105.83; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@MIAPEX02MSOL01.citrite.net";
+  x-conformance=sidf_compatible
+IronPort-SDR: HcVBmlO1x+Q8pCdVa7mQ8N381jQDVlZZ4vv7SgTKHxQ3lY49oi3LiRPA6S1KVvFzX418mGrrCJ
+ Py1PPO0evuhASkpu3w1o6F3Po27Hb5fcnPc/f3j8WvaZ6sZehWdvV3q/viDAHgo1vRcy2MdpkK
+ qIfqpS1b1TBDsMyEdToFslPpR4Q0IKWrD0XqLucNeE/9lE5Uqe/f3lj52Xgrjs+xpLAlQGpHqw
+ Drl+Q38k3TgDdGlLaNp5onnFx4D3z3aQZotsIdUv/D9qi8UKQ4Y3LUZUHmr6/gx7KeZJYhiNHw
+ 8hc=
+X-SBRS: 2.7
+X-MesageID: 516975
+X-Ironport-Server: esa2.hc3370-68.iphmx.com
+X-Remote-IP: 23.29.105.83
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.60,476,1549947600"; 
+   d="scan'208";a="516975"
+Subject: Re: [Xen-devel] [PATCH v2 1/2] KVM: Start populating /sys/hypervisor
+ with KVM entries
+To:     Alexander Graf <graf@amazon.com>,
+        Filippo Sironi <sironi@amazon.de>,
+        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <borntraeger@de.ibm.com>, <boris.ostrovsky@oracle.com>,
+        <cohuck@redhat.com>, <konrad.wilk@oracle.com>,
+        <xen-devel@lists.xenproject.org>, <vasu.srinivasan@oracle.com>
+References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
+ <1557847002-23519-1-git-send-email-sironi@amazon.de>
+ <1557847002-23519-2-git-send-email-sironi@amazon.de>
+ <e976f31b-2ccd-29ba-6a32-2edde49f867f@amazon.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <7aae3e49-5b1c-96d1-466e-5b061305dc9d@citrix.com>
+Date:   Thu, 16 May 2019 15:02:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <e976f31b-2ccd-29ba-6a32-2edde49f867f@amazon.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With that change tda998x provides a connector info to the CEC
-adapter. In order to be able to that it delays creation of
-respective CEC device until the DRM connector is initialized.
+On 16/05/2019 14:50, Alexander Graf wrote:
+> On 14.05.19 08:16, Filippo Sironi wrote:
+>> Start populating /sys/hypervisor with KVM entries when we're running on
+>> KVM. This is to replicate functionality that's available when we're
+>> running on Xen.
+>>
+>> Start with /sys/hypervisor/uuid, which users prefer over
+>> /sys/devices/virtual/dmi/id/product_uuid as a way to recognize a virtual
+>> machine, since it's also available when running on Xen HVM and on Xen PV
+>> and, on top of that doesn't require root privileges by default.
+>> Let's create arch-specific hooks so that different architectures can
+>> provide different implementations.
+>>
+>> Signed-off-by: Filippo Sironi <sironi@amazon.de>
+> I think this needs something akin to
+>
+>   https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-hypervisor-xen
+>
+> to document which files are available.
+>
+>> ---
+>> v2:
+>> * move the retrieval of the VM UUID out of uuid_show and into
+>>   kvm_para_get_uuid, which is a weak function that can be overwritten
+>>
+>>  drivers/Kconfig              |  2 ++
+>>  drivers/Makefile             |  2 ++
+>>  drivers/kvm/Kconfig          | 14 ++++++++++++++
+>>  drivers/kvm/Makefile         |  1 +
+>>  drivers/kvm/sys-hypervisor.c | 30 ++++++++++++++++++++++++++++++
+>>  5 files changed, 49 insertions(+)
+>>  create mode 100644 drivers/kvm/Kconfig
+>>  create mode 100644 drivers/kvm/Makefile
+>>  create mode 100644 drivers/kvm/sys-hypervisor.c
+>>
+> [...]
+>
+>> +
+>> +__weak const char *kvm_para_get_uuid(void)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>> +static ssize_t uuid_show(struct kobject *obj,
+>> +			 struct kobj_attribute *attr,
+>> +			 char *buf)
+>> +{
+>> +	const char *uuid = kvm_para_get_uuid();
+>> +	return sprintf(buf, "%s\n", uuid);
+> The usual return value for the Xen /sys/hypervisor interface is
+> "<denied>".
 
-Requires testing.
+This string comes straight from Xen.
 
-Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
----
- drivers/gpu/drm/i2c/tda9950.c         |  7 ++++-
- drivers/gpu/drm/i2c/tda998x_drv.c     | 41 +++++++++++++--------------
- include/linux/platform_data/tda9950.h |  2 ++
- 3 files changed, 28 insertions(+), 22 deletions(-)
+It was an effort to reduce the quantity of interesting fingerprintable
+data accessable by default to unprivileged guests.
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index b944dd9df85e1..2778a0015cc31 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -382,6 +382,7 @@ static int tda9950_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *id)
- {
- 	struct tda9950_glue *glue = client->dev.platform_data;
-+	struct cec_connector_info conn_info;
- 	struct device *dev = &client->dev;
- 	struct tda9950_priv *priv;
- 	unsigned long irqflags;
-@@ -422,10 +423,14 @@ static int tda9950_probe(struct i2c_client *client,
- 	if (glue && glue->parent)
- 		priv->hdmi = glue->parent;
- 
-+	memset(&conn_info, 0, sizeof(conn_info));
-+	if (glue)
-+		cec_fill_connector_info(&conn_info, glue->connector);
-+
- 	priv->adap = cec_allocate_adapter(&tda9950_cec_ops, priv, "tda9950",
- 					  CEC_CAP_DEFAULTS,
- 					  CEC_MAX_LOG_ADDRS,
--					  NULL);
-+					  &conn_info);
- 	if (IS_ERR(priv->adap))
- 		return PTR_ERR(priv->adap);
- 
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
-index 7f34601bb5155..ef2aa3134b387 100644
---- a/drivers/gpu/drm/i2c/tda998x_drv.c
-+++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-@@ -1253,6 +1253,7 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
- 				  struct drm_device *drm)
- {
- 	struct drm_connector *connector = &priv->connector;
-+	struct i2c_board_info cec_info;
- 	int ret;
- 
- 	connector->interlace_allowed = 1;
-@@ -1269,6 +1270,24 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Some TDA998x are actually two I2C devices merged onto one piece
-+	 * of silicon: TDA9989 and TDA19989 combine the HDMI transmitter
-+	 * with a slightly modified TDA9950 CEC device.  The CEC device
-+	 * is at the TDA9950 address, with the address pins strapped across
-+	 * to the TDA998x address pins.  Hence, it always has the same
-+	 * offset.
-+	 */
-+	memset(&cec_info, 0, sizeof(cec_info));
-+	strlcpy(cec_info.type, "tda9950", sizeof(cec_info.type));
-+	cec_info.addr = priv->cec_addr;
-+	cec_info.platform_data = &priv->cec_glue;
-+	cec_info.irq = priv->hdmi->irq;
-+
-+	priv->cec = i2c_new_device(priv->hdmi->adapter, &cec_info);
-+	if (!priv->cec)
-+		return -ENODEV;
-+
- 	drm_connector_attach_encoder(&priv->connector,
- 				     priv->bridge.encoder);
- 
-@@ -1658,7 +1677,6 @@ static int tda998x_create(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct device_node *np = client->dev.of_node;
--	struct i2c_board_info cec_info;
- 	struct tda998x_priv *priv;
- 	u32 video;
- 	int rev_lo, rev_hi, ret;
-@@ -1783,32 +1801,13 @@ static int tda998x_create(struct device *dev)
- 	}
- 
- 	priv->cec_glue.parent = dev;
-+	priv->cec_glue.connector = &priv->connector;
- 	priv->cec_glue.data = priv;
- 	priv->cec_glue.init = tda998x_cec_hook_init;
- 	priv->cec_glue.exit = tda998x_cec_hook_exit;
- 	priv->cec_glue.open = tda998x_cec_hook_open;
- 	priv->cec_glue.release = tda998x_cec_hook_release;
- 
--	/*
--	 * Some TDA998x are actually two I2C devices merged onto one piece
--	 * of silicon: TDA9989 and TDA19989 combine the HDMI transmitter
--	 * with a slightly modified TDA9950 CEC device.  The CEC device
--	 * is at the TDA9950 address, with the address pins strapped across
--	 * to the TDA998x address pins.  Hence, it always has the same
--	 * offset.
--	 */
--	memset(&cec_info, 0, sizeof(cec_info));
--	strlcpy(cec_info.type, "tda9950", sizeof(cec_info.type));
--	cec_info.addr = priv->cec_addr;
--	cec_info.platform_data = &priv->cec_glue;
--	cec_info.irq = client->irq;
--
--	priv->cec = i2c_new_device(client->adapter, &cec_info);
--	if (!priv->cec) {
--		ret = -ENODEV;
--		goto fail;
--	}
--
- 	/* enable EDID read irq: */
- 	reg_set(priv, REG_INT_FLAGS_2, INT_FLAGS_2_EDID_BLK_RD);
- 
-diff --git a/include/linux/platform_data/tda9950.h b/include/linux/platform_data/tda9950.h
-index c65efd461102e..7e6893bad03a2 100644
---- a/include/linux/platform_data/tda9950.h
-+++ b/include/linux/platform_data/tda9950.h
-@@ -2,10 +2,12 @@
- #define LINUX_PLATFORM_DATA_TDA9950_H
- 
- struct device;
-+struct drm_connector;
- 
- struct tda9950_glue {
- 	struct device *parent;
- 	unsigned long irq_flags;
-+	const struct drm_connector *connector;
- 	void *data;
- 	int (*init)(void *);
- 	void (*exit)(void *);
--- 
-2.18.1
+See
+https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=a2fc8d514df2b38c310d4f4432fe06520b0769ed
 
+~Andrew
