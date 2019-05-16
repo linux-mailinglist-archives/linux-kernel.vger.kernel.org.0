@@ -2,177 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7EC2087C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5982208A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:55:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfEPNne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:43:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:46308 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfEPNnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:43:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 939901715;
-        Thu, 16 May 2019 06:43:33 -0700 (PDT)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE5F23F575;
-        Thu, 16 May 2019 06:43:27 -0700 (PDT)
-Subject: Re: [PATCH v2 4/5] arm64: irqflags: Introduce explicit debugging for
- IRQ priorities
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        yuzenghui@huawei.com, wanghaibin.wang@huawei.com,
-        james.morse@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        mark.rutland@arm.com, liwei391@huawei.com
-References: <1556553607-46531-1-git-send-email-julien.thierry@arm.com>
- <1556553607-46531-5-git-send-email-julien.thierry@arm.com>
- <9b27cb2c-5159-3001-672e-9391d7490944@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <890a91fd-da1e-50b4-6567-d732a850e32c@arm.com>
-Date:   Thu, 16 May 2019 14:43:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727631AbfEPNyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:54:50 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:55164 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfEPNyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:54:49 -0400
+X-Greylist: delayed 441 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 09:54:49 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 5EC873F38D;
+        Thu, 16 May 2019 15:47:27 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9] autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JVcPQQ_ePVLB; Thu, 16 May 2019 15:47:27 +0200 (CEST)
+Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
+        (Authenticated sender: mb547485)
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 60D9F3F4C2;
+        Thu, 16 May 2019 15:47:26 +0200 (CEST)
+Date:   Thu, 16 May 2019 15:47:25 +0200
+From:   Fredrik Noring <noring@nocrew.org>
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "marex@denx.de" <marex@denx.de>,
+        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>,
+        Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 0/3] prerequisites for device reserved local mem
+ rework
+Message-ID: <20190516134725.GA53952@sx9>
+References: <20190514143807.7745-1-laurentiu.tudor@nxp.com>
+ <9d34015d-c219-179b-3141-4b0de3530ac3@arm.com>
+ <20190514182931.GA2559@sx9>
+ <0e5f3b86-7a80-eec7-691b-34a123194208@nxp.com>
+ <20190515162858.GB17162@sx9>
+ <0fea5fa7-e2b0-b34d-3bf8-976007df2dc2@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <9b27cb2c-5159-3001-672e-9391d7490944@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <0fea5fa7-e2b0-b34d-3bf8-976007df2dc2@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Laurentiu,
 
-
-On 07/05/2019 09:44, Marc Zyngier wrote:
-> On 29/04/2019 17:00, Julien Thierry wrote:
->> Using IRQ priority masking to enable/disable interrupts is a bit
->> sensitive as it requires to deal with both ICC_PMR_EL1 and PSR.I.
->>
->> Introduce some validity checks to both highlight the states in which
->> functions dealing with IRQ enabling/disabling can (not) be called, and
->> bark a warning when called in an unexpected state.
->>
->> Since these checks are done on hotpaths, introduce a build option to
->> choose whether to do the checking.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>  arch/arm64/Kconfig                 | 11 +++++++++++
->>  arch/arm64/include/asm/daifflags.h |  9 +++++++++
->>  arch/arm64/include/asm/irqflags.h  | 14 ++++++++++++++
->>  3 files changed, 34 insertions(+)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 7e34b9e..3fb38f3 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -1359,6 +1359,17 @@ config ARM64_PSEUDO_NMI
->>
->>  	  If unsure, say N
->>
->> +if ARM64_PSEUDO_NMI
->> +config ARM64_DEBUG_PRIORITY_MASKING
->> +	bool "Debug interrupt priority masking"
->> +	help
->> +	  This adds runtime checks to functions enabling/disabling
->> +	  interrupts when using priority masking. The additional checks verify
->> +	  the validity of ICC_PMR_EL1 when calling concerned functions.
->> +
->> +	  If unsure, say N
->> +endif
->> +
->>  config RELOCATABLE
->>  	bool
->>  	help
->> diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
->> index a32ece9..9512968 100644
->> --- a/arch/arm64/include/asm/daifflags.h
->> +++ b/arch/arm64/include/asm/daifflags.h
->> @@ -28,6 +28,11 @@
->>  /* mask/save/unmask/restore all exceptions, including interrupts. */
->>  static inline void local_daif_mask(void)
->>  {
->> +	WARN_ON(IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
->> +		system_uses_irq_prio_masking() &&
+> > The kernel oopses with "unable to handle kernel paging request at virtual
+> > address 000aba0b" in hcd_alloc_coherent via usb_hcd_map_urb_for_dma. 
 > 
-> Given that you repeat these conditions all over the place, how about a
-> helper:
-> 
-> #define DEBUG_PRIORITY_MASKING_CHECK(x)			\
-> 	(IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) && \
-> 	 system_uses_irq_prio_masking() && (x))
-> 
-> or some variant thereof.
-> 
+> By any chance, does this address looks like the dma_addr that the device 
+> should target?
 
-Yes, good point, I'll do that.
+Yes, that looks like a typical device address suitable for its DMA.
 
->> +		(read_sysreg_s(SYS_ICC_PMR_EL1) == (GIC_PRIO_IRQOFF |
->> +						    GIC_PRIO_IGNORE_PMR)));
->> +
->>  	asm volatile(
->>  		"msr	daifset, #0xf		// local_daif_mask\n"
->>  		:
->> @@ -62,6 +67,10 @@ static inline void local_daif_restore(unsigned long flags)
->>  {
->>  	bool irq_disabled = flags & PSR_I_BIT;
->>
->> +	WARN_ON(IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
->> +		system_uses_irq_prio_masking() &&
->> +		!(read_sysreg(daif) & PSR_I_BIT));
->> +
->>  	if (!irq_disabled) {
->>  		trace_hardirqs_on();
->>
->> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
->> index 516cdfc..a40abc2 100644
->> --- a/arch/arm64/include/asm/irqflags.h
->> +++ b/arch/arm64/include/asm/irqflags.h
->> @@ -40,6 +40,13 @@
->>   */
->>  static inline void arch_local_irq_enable(void)
->>  {
->> +	if (IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
->> +	    system_uses_irq_prio_masking()) {
->> +		u32 pmr = read_sysreg_s(SYS_ICC_PMR_EL1);
->> +
->> +		WARN_ON(pmr != GIC_PRIO_IRQON && pmr != GIC_PRIO_IRQOFF);
->> +	}
->> +
->>  	asm volatile(ALTERNATIVE(
->>  		"msr	daifclr, #2		// arch_local_irq_enable\n"
->>  		"nop",
->> @@ -53,6 +60,13 @@ static inline void arch_local_irq_enable(void)
->>
->>  static inline void arch_local_irq_disable(void)
->>  {
->> +	if (IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
->> +	    system_uses_irq_prio_masking()) {
->> +		u32 pmr = read_sysreg_s(SYS_ICC_PMR_EL1);
->> +
->> +		WARN_ON(pmr != GIC_PRIO_IRQON && pmr != GIC_PRIO_IRQOFF);
->> +	}
->> +
->>  	asm volatile(ALTERNATIVE(
->>  		"msr	daifset, #2		// arch_local_irq_disable",
->>  		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
->> --
->> 1.9.1
->>
-> 
-> nit: There is also the question of using WARN_ON in a context that will
-> be extremely noisy if we're in a condition where this fires.
-> WARN_ON_ONCE, maybe? This is a debugging thing, so maybe we just don't care.
-> 
+> Actually, I think I'm misusing genalloc and also it appears that i need 
+> to add a mapping on the phys address. So my plan is to change the 
+> "unsigned long virt" to be the void * returned by the mapping operation 
+> and the phys_addr_t be the dma_addr_t. I'll return with a patch.
 
-Yes, thinking about it, it did get pretty noisy when I checked this was
-working. WARN_ON_ONCE might be a good option.
+Great, I'm happy to test your next patch revision.
 
-Thanks,
-
--- 
-Julien Thierry
+Fredrik
