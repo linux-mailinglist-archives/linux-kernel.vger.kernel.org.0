@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8192220BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3B820C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfEPP7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:59:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43342 "EHLO
+        id S1727998AbfEPQBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:01:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42788 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727162AbfEPP6u (ORCPT
+        by vger.kernel.org with ESMTP id S1726652AbfEPP6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:50 -0400
+        Thu, 16 May 2019 11:58:46 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImM-0006zQ-OX; Thu, 16 May 2019 16:58:46 +0100
+        id 1hRImD-0006zE-W8; Thu, 16 May 2019 16:58:38 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0001QK-0M; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImD-0001OK-6o; Thu, 16 May 2019 16:58:37 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,33 +27,18 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Jiri Kosina" <jkosina@suse.cz>
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.580742350@decadent.org.uk>
+Message-ID: <lsq.1558022133.672728982@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 50/86] x86/process: Consolidate and simplify
- switch_to_xtra() code
+Subject: [PATCH 3.16 25/86] locking/static_key: Fix concurrent
+ static_key_slow_inc()
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -67,180 +52,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit ff16701a29cba3aafa0bd1656d766813b2d0a811 upstream.
+commit 4c5ea0a9cd02d6aa8adc86e100b2a4cff8d614ff upstream.
 
-Move the conditional invocation of __switch_to_xtra() into an inline
-function so the logic can be shared between 32 and 64 bit.
+The following scenario is possible:
 
-Remove the handthrough of the TSS pointer and retrieve the pointer directly
-in the bitmap handling function. Use this_cpu_ptr() instead of the
-per_cpu() indirection.
+    CPU 1                                   CPU 2
+    static_key_slow_inc()
+     atomic_inc_not_zero()
+      -> key.enabled == 0, no increment
+     jump_label_lock()
+     atomic_inc_return()
+      -> key.enabled == 1 now
+                                            static_key_slow_inc()
+                                             atomic_inc_not_zero()
+                                              -> key.enabled == 1, inc to 2
+                                             return
+                                            ** static key is wrong!
+     jump_label_update()
+     jump_label_unlock()
 
-This is a preparatory change so integration of conditional indirect branch
-speculation optimization happens only in one place.
+Testing the static key at the point marked by (**) will follow the
+wrong path for jumps that have not been patched yet.  This can
+actually happen when creating many KVM virtual machines with userspace
+LAPIC emulation; just run several copies of the following program:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
+    #include <fcntl.h>
+    #include <unistd.h>
+    #include <sys/ioctl.h>
+    #include <linux/kvm.h>
+
+    int main(void)
+    {
+        for (;;) {
+            int kvmfd = open("/dev/kvm", O_RDONLY);
+            int vmfd = ioctl(kvmfd, KVM_CREATE_VM, 0);
+            close(ioctl(vmfd, KVM_CREATE_VCPU, 1));
+            close(vmfd);
+            close(kvmfd);
+        }
+        return 0;
+    }
+
+Every KVM_CREATE_VCPU ioctl will attempt a static_key_slow_inc() call.
+The static key's purpose is to skip NULL pointer checks and indeed one
+of the processes eventually dereferences NULL.
+
+As explained in the commit that introduced the bug:
+
+  706249c222f6 ("locking/static_keys: Rework update logic")
+
+jump_label_update() needs key.enabled to be true.  The solution adopted
+here is to temporarily make key.enabled == -1, and use go down the
+slow path when key.enabled <= 0.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.280855518@linutronix.de
-[bwh: Backported to 3.16:
- - Use init_tss instead of cpu_tss_rw
- - __switch_to() still uses the tss variable, so don't delete it
- - Adjust context]
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 706249c222f6 ("locking/static_keys: Rework update logic")
+Link: http://lkml.kernel.org/r/1466527937-69798-1-git-send-email-pbonzini@redhat.com
+[ Small stylistic edits to the changelog and the code. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -6,9 +6,6 @@
- struct task_struct; /* one of the stranger aspects of C forward declarations */
- __visible struct task_struct *__switch_to(struct task_struct *prev,
- 					   struct task_struct *next);
--struct tss_struct;
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss);
+ include/linux/jump_label.h | 16 +++++++++++++---
+ kernel/jump_label.c        | 36 +++++++++++++++++++++++++++++++++---
+ 2 files changed, 46 insertions(+), 6 deletions(-)
+
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -117,13 +117,18 @@ struct module;
  
- #ifdef CONFIG_X86_32
+ #include <linux/atomic.h>
  
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -32,6 +32,8 @@
- #include <asm/tlbflush.h>
- #include <asm/spec-ctrl.h>
- 
-+#include "process.h"
++#ifdef HAVE_JUMP_LABEL
 +
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-  * no more per-task TSS's. The TSS size is kept cacheline-aligned
-@@ -197,11 +199,12 @@ int set_tsc_mode(unsigned int val)
- 	return 0;
+ static inline int static_key_count(struct static_key *key)
+ {
+-	return atomic_read(&key->enabled);
++	/*
++	 * -1 means the first static_key_slow_inc() is in progress.
++	 *  static_key_enabled() must return true, so return 1 here.
++	 */
++	int n = atomic_read(&key->enabled);
++	return n >= 0 ? n : 1;
  }
  
--static inline void switch_to_bitmap(struct tss_struct *tss,
--				    struct thread_struct *prev,
-+static inline void switch_to_bitmap(struct thread_struct *prev,
- 				    struct thread_struct *next,
- 				    unsigned long tifp, unsigned long tifn)
- {
-+	struct tss_struct *tss = this_cpu_ptr(&init_tss);
-+
- 	if (tifn & _TIF_IO_BITMAP) {
- 		/*
- 		 * Copy the relevant range of the IO bitmap.
-@@ -388,8 +391,7 @@ void speculation_ctrl_update(unsigned lo
- 	preempt_enable();
- }
+-#ifdef HAVE_JUMP_LABEL
+-
+ #define JUMP_TYPE_FALSE	0UL
+ #define JUMP_TYPE_TRUE	1UL
+ #define JUMP_TYPE_MASK	1UL
+@@ -162,6 +167,11 @@ extern void jump_label_apply_nops(struct
  
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss)
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
- 	struct thread_struct *prev, *next;
- 	unsigned long tifp, tifn;
-@@ -399,7 +401,7 @@ void __switch_to_xtra(struct task_struct
+ #else  /* !HAVE_JUMP_LABEL */
  
- 	tifn = ACCESS_ONCE(task_thread_info(next_p)->flags);
- 	tifp = ACCESS_ONCE(task_thread_info(prev_p)->flags);
--	switch_to_bitmap(tss, prev, next, tifp, tifn);
-+	switch_to_bitmap(prev, next, tifp, tifn);
- 
- 	propagate_user_return_notify(prev_p, next_p);
- 
---- /dev/null
-+++ b/arch/x86/kernel/process.h
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Code shared between 32 and 64 bit
-+
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
-+
-+/*
-+ * This needs to be inline to optimize for the common case where no extra
-+ * work needs to be done.
-+ */
-+static inline void switch_to_extra(struct task_struct *prev,
-+				   struct task_struct *next)
++static inline int static_key_count(struct static_key *key)
 +{
-+	unsigned long next_tif = task_thread_info(next)->flags;
-+	unsigned long prev_tif = task_thread_info(prev)->flags;
++	return atomic_read(&key->enabled);
++}
++
+ static __always_inline void jump_label_init(void)
+ {
+ 	static_key_initialized = true;
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -58,13 +58,36 @@ static void jump_label_update(struct sta
+ 
+ void static_key_slow_inc(struct static_key *key)
+ {
++	int v, v1;
++
+ 	STATIC_KEY_CHECK_USE();
+-	if (atomic_inc_not_zero(&key->enabled))
+-		return;
 +
 +	/*
-+	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
-+	 * speculation mitigations etc.
++	 * Careful if we get concurrent static_key_slow_inc() calls;
++	 * later calls must wait for the first one to _finish_ the
++	 * jump_label_update() process.  At the same time, however,
++	 * the jump_label_update() call below wants to see
++	 * static_key_enabled(&key) for jumps to be updated properly.
++	 *
++	 * So give a special meaning to negative key->enabled: it sends
++	 * static_key_slow_inc() down the slow path, and it is non-zero
++	 * so it counts as "enabled" in jump_label_update().  Note that
++	 * atomic_inc_unless_negative() checks >= 0, so roll our own.
 +	 */
-+	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
-+		     prev_tif & _TIF_WORK_CTXSW_PREV))
-+		__switch_to_xtra(prev, next);
-+}
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -55,6 +55,8 @@
- #include <asm/debugreg.h>
- #include <asm/switch_to.h>
++	for (v = atomic_read(&key->enabled); v > 0; v = v1) {
++		v1 = atomic_cmpxchg(&key->enabled, v, v + 1);
++		if (likely(v1 == v))
++			return;
++	}
  
-+#include "process.h"
-+
- asmlinkage void ret_from_fork(void) __asm__("ret_from_fork");
- asmlinkage void ret_from_kernel_thread(void) __asm__("ret_from_kernel_thread");
- 
-@@ -298,12 +300,7 @@ __switch_to(struct task_struct *prev_p,
- 	task_thread_info(prev_p)->saved_preempt_count = this_cpu_read(__preempt_count);
- 	this_cpu_write(__preempt_count, task_thread_info(next_p)->saved_preempt_count);
- 
--	/*
--	 * Now maybe handle debug registers and/or IO bitmaps
--	 */
--	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
--		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- 	/*
- 	 * Leave lazy mode, flushing any hypercalls made here.
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -51,6 +51,8 @@
- #include <asm/switch_to.h>
- #include <asm/xen/hypervisor.h>
- 
-+#include "process.h"
-+
- asmlinkage extern void ret_from_fork(void);
- 
- __visible DEFINE_PER_CPU_USER_MAPPED(unsigned long, old_rsp);
-@@ -428,12 +430,7 @@ __switch_to(struct task_struct *prev_p,
- 		  (unsigned long)task_stack_page(next_p) +
- 		  THREAD_SIZE - KERNEL_STACK_OFFSET);
- 
--	/*
--	 * Now maybe reload the debug registers and handle I/O bitmaps
--	 */
--	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT ||
--		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- #ifdef CONFIG_XEN
- 	/*
+ 	jump_label_lock();
+-	if (atomic_inc_return(&key->enabled) == 1)
++	if (atomic_read(&key->enabled) == 0) {
++		atomic_set(&key->enabled, -1);
+ 		jump_label_update(key);
++		atomic_set(&key->enabled, 1);
++	} else {
++		atomic_inc(&key->enabled);
++	}
+ 	jump_label_unlock();
+ }
+ EXPORT_SYMBOL_GPL(static_key_slow_inc);
+@@ -72,6 +95,13 @@ EXPORT_SYMBOL_GPL(static_key_slow_inc);
+ static void __static_key_slow_dec(struct static_key *key,
+ 		unsigned long rate_limit, struct delayed_work *work)
+ {
++	/*
++	 * The negative count check is valid even when a negative
++	 * key->enabled is in use by static_key_slow_inc(); a
++	 * __static_key_slow_dec() before the first static_key_slow_inc()
++	 * returns is unbalanced, because all other static_key_slow_inc()
++	 * instances block while the update is in progress.
++	 */
+ 	if (!atomic_dec_and_mutex_lock(&key->enabled, &jump_label_mutex)) {
+ 		WARN(atomic_read(&key->enabled) < 0,
+ 		     "jump label: negative count!\n");
 
