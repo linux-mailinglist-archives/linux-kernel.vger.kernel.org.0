@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C1320C05
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B23B920C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfEPQA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:00:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43014 "EHLO
+        id S1728118AbfEPQEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:04:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42438 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727077AbfEPP6r (ORCPT
+        by vger.kernel.org with ESMTP id S1726665AbfEPP6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:47 -0400
+        Thu, 16 May 2019 11:58:41 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImK-0006zu-DJ; Thu, 16 May 2019 16:58:44 +0100
+        id 1hRImD-0006yv-Dt; Thu, 16 May 2019 16:58:37 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0001R8-Cb; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImC-0001Nh-Sx; Thu, 16 May 2019 16:58:36 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,18 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Eduardo Habkost" <ehabkost@redhat.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.325761355@decadent.org.uk>
+Message-ID: <lsq.1558022133.153636021@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 60/86] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
+Subject: [PATCH 3.16 17/86] jump_label/x86: Work around asm build bug on
+ older/backported GCCs
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,47 +52,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eduardo Habkost <ehabkost@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit d7b09c827a6cf291f66637a36f46928dd1423184 upstream.
+commit d420acd816c07c7be31bd19d09cbcb16e5572fa6 upstream.
 
-Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
-to the guest, which makes STIBP available to guests.  This was implemented
-by commits d28b387fb74d ("KVM/VMX: Allow direct access to
-MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
-MSR_IA32_SPEC_CTRL").
+Boris reported that gcc version 4.4.4 20100503 (Red Hat
+4.4.4-2) fails to build linux-next kernels that have
+this fresh commit via the locking tree:
 
-However, we never updated GET_SUPPORTED_CPUID to let userspace know that
-STIBP can be enabled in CPUID.  Fix that by updating
-kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
+  11276d5306b8 ("locking/static_keys: Add a new static_key interface")
 
-Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16: adjust context]
+The problem appears to be that even though @key and @branch are
+compile time constants, it doesn't see the following expression
+as an immediate value:
+
+   &((char *)key)[branch]
+
+More recent GCCs don't appear to have this problem.
+
+In particular, Red Hat backported the 'asm goto' feature into 4.4,
+'normal' 4.4 compilers will not have this feature and thus not
+run into this asm.
+
+The workaround is to supply both values to the asm as immediates
+and do the addition in asm.
+
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Reported-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -303,7 +303,7 @@ static inline int __do_cpuid_ent(struct
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
- 		F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
--		F(AMD_SSB_NO);
-+		F(AMD_SSB_NO) | F(AMD_STIBP);
+ arch/x86/include/asm/jump_label.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -22,9 +22,9 @@ static __always_inline bool arch_static_
+ 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (&((char *)key)[branch]) : : l_yes);
++		: :  "i" (key), "i" (branch) : : l_yes);
  
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_supported_word5_x86_features =
-@@ -319,7 +319,8 @@ static inline int __do_cpuid_ent(struct
+ 	return false;
+ l_yes:
+@@ -38,9 +38,9 @@ static __always_inline bool arch_static_
+ 		"2:\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (&((char *)key)[branch]) : : l_yes);
++		: :  "i" (key), "i" (branch) : : l_yes);
  
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(SPEC_CTRL) | F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
-+		F(SPEC_CTRL) | F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) |
-+		F(INTEL_STIBP);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
+ 	return false;
+ l_yes:
 
