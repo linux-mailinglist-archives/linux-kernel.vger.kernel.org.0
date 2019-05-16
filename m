@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71B220C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EB420C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfEPQD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:03:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42518 "EHLO
+        id S1728126AbfEPQE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:04:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42406 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726357AbfEPP6n (ORCPT
+        by vger.kernel.org with ESMTP id S1726638AbfEPP6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:43 -0400
+        Thu, 16 May 2019 11:58:41 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImG-0006zQ-MV; Thu, 16 May 2019 16:58:40 +0100
+        id 1hRImD-0006ys-63; Thu, 16 May 2019 16:58:37 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0001Qa-5P; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImC-0001NL-PG; Thu, 16 May 2019 16:58:36 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,32 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Jon Masters" <jcm@redhat.com>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "Kees Cook" <keescook@chromium.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Ingo Molnar" <mingo@kernel.org>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.731637659@decadent.org.uk>
+Message-ID: <lsq.1558022133.334738675@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 53/86] x86/speculation: Split out TIF update
+Subject: [PATCH 3.16 13/86] jump_label: Add jump_entry_key() helper
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -66,108 +50,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit e6da8bb6f9abb2628381904b24163c770e630bac upstream.
+commit 7dcfd915bae51571bcc339d8e3dda027287880e5 upstream.
 
-The update of the TIF_SSBD flag and the conditional speculation control MSR
-update is done in the ssb_prctl_set() function directly. The upcoming prctl
-support for controlling indirect branch speculation via STIBP needs the
-same mechanism.
+Avoid some casting with a helper, also prepares the way for
+overloading the LSB of jump_entry::key.
 
-Split the code out and make it reusable. Reword the comment about updates
-for other tasks.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185005.652305076@linutronix.de
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ kernel/jump_label.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -760,10 +760,29 @@ static void ssb_select_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "Speculation prctl: " fmt
- 
--static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
- {
- 	bool update;
- 
-+	if (on)
-+		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
-+	else
-+		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
-+
-+	/*
-+	 * Immediately update the speculation control MSRs for the current
-+	 * task, but for a non-current task delay setting the CPU
-+	 * mitigation until it is scheduled next.
-+	 *
-+	 * This can only happen for SECCOMP mitigation. For PRCTL it's
-+	 * always the current task.
-+	 */
-+	if (tsk == current && update)
-+		speculation_ctrl_update_current();
-+}
-+
-+static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
- 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
- 	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
- 		return -ENXIO;
-@@ -774,28 +793,20 @@ static int ssb_prctl_set(struct task_str
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, false);
- 		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, true);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, true);
- 		break;
- 	default:
- 		return -ERANGE;
- 	}
--
--	/*
--	 * If being set on non-current task, delay setting the CPU
--	 * mitigation until it is next scheduled.
--	 */
--	if (task == current && update)
--		speculation_ctrl_update_current();
--
- 	return 0;
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -195,6 +195,11 @@ static inline struct jump_entry *static_
+ 	return (struct jump_entry *)((unsigned long)key->entries & ~JUMP_TYPE_MASK);
  }
  
++static inline struct static_key *jump_entry_key(struct jump_entry *entry)
++{
++	return (struct static_key *)((unsigned long)entry->key);
++}
++
+ static enum jump_label_type jump_label_type(struct static_key *key)
+ {
+ 	bool enabled = static_key_enabled(key);
+@@ -216,7 +221,7 @@ void __init jump_label_init(void)
+ 	for (iter = iter_start; iter < iter_stop; iter++) {
+ 		struct static_key *iterk;
+ 
+-		iterk = (struct static_key *)(unsigned long)iter->key;
++		iterk = jump_entry_key(iter);
+ 		arch_jump_label_transform_static(iter, jump_label_type(iterk));
+ 		if (iterk == key)
+ 			continue;
+@@ -311,7 +316,7 @@ static int jump_label_add_module(struct
+ 	for (iter = iter_start; iter < iter_stop; iter++) {
+ 		struct static_key *iterk;
+ 
+-		iterk = (struct static_key *)(unsigned long)iter->key;
++		iterk = jump_entry_key(iter);
+ 		if (iterk == key)
+ 			continue;
+ 
+@@ -348,10 +353,10 @@ static void jump_label_del_module(struct
+ 	struct static_key_mod *jlm, **prev;
+ 
+ 	for (iter = iter_start; iter < iter_stop; iter++) {
+-		if (iter->key == (jump_label_t)(unsigned long)key)
++		if (jump_entry_key(iter) == key)
+ 			continue;
+ 
+-		key = (struct static_key *)(unsigned long)iter->key;
++		key = jump_entry_key(iter);
+ 
+ 		if (within_module(iter->key, mod))
+ 			continue;
 
