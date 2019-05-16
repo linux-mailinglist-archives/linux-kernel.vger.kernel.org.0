@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E48B20C73
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE6F20BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:59:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbfEPQEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:04:45 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42436 "EHLO
+        id S1727632AbfEPP7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:59:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43402 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726681AbfEPP6m (ORCPT
+        by vger.kernel.org with ESMTP id S1727172AbfEPP6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:42 -0400
+        Thu, 16 May 2019 11:58:51 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0006yx-J0; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImM-0006zE-R1; Thu, 16 May 2019 16:58:47 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0001Nk-UQ; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImD-0001Pq-Qz; Thu, 16 May 2019 16:58:37 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,32 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
         "Peter Zijlstra" <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Jason Baron" <jbaron@akamai.com>,
+        "Jiri Kosina" <jkosina@suse.cz>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Arjan van de Ven" <arjan@linux.intel.com>,
+        "Dave Stewart" <david.c.stewart@intel.com>,
+        "Jon Masters" <jcm@redhat.com>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jonathan Corbet" <corbet@lwn.net>
+        "Waiman Long" <longman9394@gmail.com>,
+        "Casey Schaufler" <casey.schaufler@intel.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.223557237@decadent.org.uk>
+Message-ID: <lsq.1558022133.149714206@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 18/86] locking/static_keys: Fix a silly typo
+Subject: [PATCH 3.16 44/86] x86/speculation: Reorder the spec_v2 code
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,51 +66,259 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonathan Corbet <corbet@lwn.net>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit edcd591c77a48da753456f92daf8bb50fe9bac93 upstream.
+commit 15d6b7aab0793b2de8a05d8a828777dd24db424e upstream.
 
-Commit:
+Reorder the code so it is better grouped. No functional change.
 
-  412758cb2670 ("jump label, locking/static_keys: Update docs")
-
-introduced a typo that might as well get fixed.
-
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20150907131803.54c027e1@lwn.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185004.707122879@linutronix.de
+[bwh: Backported to 3.16:
+ - We still have the minimal mitigation modes
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- Documentation/static-keys.txt | 2 +-
- include/linux/jump_label.h    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
---- a/Documentation/static-keys.txt
-+++ b/Documentation/static-keys.txt
-@@ -16,7 +16,7 @@ The updated API replacements are:
- DEFINE_STATIC_KEY_TRUE(key);
- DEFINE_STATIC_KEY_FALSE(key);
- static_key_likely()
--statick_key_unlikely()
-+static_key_unlikely()
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -178,30 +178,6 @@ void __init check_bugs(void)
+ #endif
+ }
  
- 0) Abstract
+-/* The kernel command line selection */
+-enum spectre_v2_mitigation_cmd {
+-	SPECTRE_V2_CMD_NONE,
+-	SPECTRE_V2_CMD_AUTO,
+-	SPECTRE_V2_CMD_FORCE,
+-	SPECTRE_V2_CMD_RETPOLINE,
+-	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
+-	SPECTRE_V2_CMD_RETPOLINE_AMD,
+-};
+-
+-static const char *spectre_v2_strings[] = {
+-	[SPECTRE_V2_NONE]			= "Vulnerable",
+-	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
+-	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+-	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+-	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
+-	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+-};
+-
+-#undef pr_fmt
+-#define pr_fmt(fmt)     "Spectre V2 : " fmt
+-
+-static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+-
+ void
+ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
+ {
+@@ -271,6 +247,11 @@ static void x86_amd_ssb_disable(void)
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+ }
  
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -22,7 +22,7 @@
-  * DEFINE_STATIC_KEY_TRUE(key);
-  * DEFINE_STATIC_KEY_FALSE(key);
-  * static_key_likely()
-- * statick_key_unlikely()
-+ * static_key_unlikely()
-  *
-  * Jump labels provide an interface to generate dynamic branches using
-  * self-modifying code. Assuming toolchain and architecture support, if we
++#undef pr_fmt
++#define pr_fmt(fmt)     "Spectre V2 : " fmt
++
++static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -292,6 +273,45 @@ static inline const char *spectre_v2_mod
+ static inline const char *spectre_v2_module_string(void) { return ""; }
+ #endif
+ 
++static inline bool match_option(const char *arg, int arglen, const char *opt)
++{
++	int len = strlen(opt);
++
++	return len == arglen && !strncmp(arg, opt, len);
++}
++
++/* The kernel command line selection for spectre v2 */
++enum spectre_v2_mitigation_cmd {
++	SPECTRE_V2_CMD_NONE,
++	SPECTRE_V2_CMD_AUTO,
++	SPECTRE_V2_CMD_FORCE,
++	SPECTRE_V2_CMD_RETPOLINE,
++	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
++	SPECTRE_V2_CMD_RETPOLINE_AMD,
++};
++
++static const char *spectre_v2_strings[] = {
++	[SPECTRE_V2_NONE]			= "Vulnerable",
++	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
++	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
++	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
++	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
++};
++
++static const struct {
++	const char *option;
++	enum spectre_v2_mitigation_cmd cmd;
++	bool secure;
++} mitigation_options[] = {
++	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
++	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
++	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
++	{ "retpoline,amd",	SPECTRE_V2_CMD_RETPOLINE_AMD,	  false },
++	{ "retpoline,generic",	SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
++	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
++};
++
+ static void __init spec2_print_if_insecure(const char *reason)
+ {
+ 	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+@@ -309,31 +329,11 @@ static inline bool retp_compiler(void)
+ 	return __is_defined(RETPOLINE);
+ }
+ 
+-static inline bool match_option(const char *arg, int arglen, const char *opt)
+-{
+-	int len = strlen(opt);
+-
+-	return len == arglen && !strncmp(arg, opt, len);
+-}
+-
+-static const struct {
+-	const char *option;
+-	enum spectre_v2_mitigation_cmd cmd;
+-	bool secure;
+-} mitigation_options[] = {
+-	{ "off",               SPECTRE_V2_CMD_NONE,              false },
+-	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
+-	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
+-	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
+-	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
+-	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
+-};
+-
+ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ {
++	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
+ 	char arg[20];
+ 	int ret, i;
+-	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
+ 
+ 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
+ 		return SPECTRE_V2_CMD_NONE;
+@@ -376,48 +376,6 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
+ }
+ 
+-static bool stibp_needed(void)
+-{
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
+-
+-	/* Enhanced IBRS makes using STIBP unnecessary. */
+-	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+-		return false;
+-
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
+-}
+-
+-static void update_stibp_msr(void *info)
+-{
+-	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+-}
+-
+-void arch_smt_update(void)
+-{
+-	u64 mask;
+-
+-	if (!stibp_needed())
+-		return;
+-
+-	mutex_lock(&spec_ctrl_mutex);
+-
+-	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
+-	if (sched_smt_active())
+-		mask |= SPEC_CTRL_STIBP;
+-
+-	if (mask != x86_spec_ctrl_base) {
+-		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
+-		x86_spec_ctrl_base = mask;
+-		on_each_cpu(update_stibp_msr, NULL, 1);
+-	}
+-	mutex_unlock(&spec_ctrl_mutex);
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -522,6 +480,48 @@ specv2_set_mode:
+ 	arch_smt_update();
+ }
+ 
++static bool stibp_needed(void)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
++		return false;
++
++	/* Enhanced IBRS makes using STIBP unnecessary. */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
++}
++
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++
++	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
++	if (sched_smt_active())
++		mask |= SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
+ 
 
