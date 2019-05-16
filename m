@@ -2,82 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABEF120729
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B40207DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfEPMoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 08:44:44 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43002 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfEPMon (ORCPT
+        id S1727386AbfEPNUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:20:16 -0400
+Received: from outgoing14.flk.host-h.net ([197.242.87.48]:48227 "EHLO
+        outgoing14.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfEPNUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 08:44:43 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 188so2949569ljf.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 05:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WAcJqFUogOC+q5kPPB4TqPaHzS2NFJ0eM8JptnvXwCY=;
-        b=lSbRP38AQ6SFgZe7kefhpxx8/TDZSnH2lvUSx43pHjMx7U+pNW/gkPtChmN1XxMZQF
-         aG2GYCNFQE+Js4XFSeeF7MJ/tiTkjkFTJRM70xPIljpD2HgNUhuqx8SA46t1GmT6Rdl8
-         3RLaQ2GRTITuwusHV0tg0yumSCSrJF5QL1iHC65CT/k8XNcW8NDZ/jRf4dZGVELvQS4s
-         s0DL/WgyqYOS3VbeBY3JXWXLvY2aEWcwuTp77vIRTQs9uxgH3+45Fo/vPNGdEM15QrZ0
-         b5P0PZA8CP9nS+kTyJv9NupA/e7XY8Px9gHOg0Ite/fQTuPpCEO2N4o1Y+5S5IEtTBBw
-         9EfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WAcJqFUogOC+q5kPPB4TqPaHzS2NFJ0eM8JptnvXwCY=;
-        b=Iid8n4Ap6wjd4gzg0Eeawcmv1t3/leW1nkETNByD2NQvxAEIKRzNS5xiPqUXRVkb3j
-         I0DBZ9kJNnCYPCMdGgjZliaHM+/Kzz+cDyp9WGFx7gmgHqFi4iMB8TNlFkRK27+/nusU
-         6S8+F3gglkzPtqi6cpBncIEEZU71A4qTKxePZr1iVwEZW+yxi92c++YSu0ERk4umzsLX
-         H7Fzq+xTjK8AZUxpKnmghx/Zt0XNK6WGK5OC9eT7Eobe0jOBwS8mWe0PI8W0uXrfCHjh
-         fZqn8JZKY7RV3e+m8+IFnQ/FOguXBQRjdLL18HYDEvYwaPmn+Gy0mkUam3UFYLHrap7n
-         5BBA==
-X-Gm-Message-State: APjAAAUF1ATKVUtnzVs00JUpKv68bQNB9rySEh9h/Ie9xHizN9tDYhAl
-        9K/qVItiTvdOI7ApREJOCaZDeBpDJwxP1zf6cJs+eQ==
-X-Google-Smtp-Source: APXvYqz1nKgkBL8f+HFCe7nXbFNOicCiF9Au3HD3bQcJw9TF68xCQ8lq2AMz/ruba3dbZXK+AF6xyEkmAFuQTpMWTEI=
-X-Received: by 2002:a2e:301a:: with SMTP id w26mr8899681ljw.153.1558010681900;
- Thu, 16 May 2019 05:44:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190428150822.13935-1-j.neuschaefer@gmx.net>
-In-Reply-To: <20190428150822.13935-1-j.neuschaefer@gmx.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 May 2019 14:44:30 +0200
-Message-ID: <CACRpkdZcP3gEsudT0rpzNuBe=4Mz0s=KLPd_y-38E4oxVeQD0A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Fix spelling of bias-pull-up
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 16 May 2019 09:20:16 -0400
+X-Greylist: delayed 1877 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 09:20:14 EDT
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam4-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hRFoc-0008Ba-7W; Thu, 16 May 2019 14:48:55 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hRFoX-000550-Js; Thu, 16 May 2019 14:48:49 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/clk/rockchip/clk-rk3228.c: add 1.464GHz clock rate
+Date:   Thu, 16 May 2019 12:44:36 +0000
+Message-Id: <20190516124437.4906-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25451/Thu May 16 09:59:51 2019)
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00896517575494)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fbJ1LThpDP3PaEa+mzHFASpSDasLI4SayDByyq9LIhVyO1UfNdFVadD
+ 4Wekg4mMmETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
+ qhBpvAyWwieZyauFYqHkIbFa+ipFJdVl2Qo16OdG/SgJyrKdw0Znvotuy3L4aSJjqFExmwGwvf6h
+ PQx0fYKjNC9VXDo4KyWWo0k/XI0fGv8bNm7IfazUKrTRmPfW13HBdTouyUQiTqTLnMPwSR2klzqa
+ C1hRfn6HuUe9L0a5vwf8PHac6dlnibl3vcBqVmvQB4A18afqaqkE9y2tELrbSfbpenEpmH6eQvWp
+ DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdF5bKhCA9a8IVosfxGBTbadg2lBMt3xu9nbye2CdJLN
+ jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
+ 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/fp
+ WUXurEbGCiZ0ePvZjCuJdbYb9IXfYGRpVS/0hA4Mwkg/wxsjmSXwdCAtc5U5IMGqr3wBwEeX6Ai5
+ 5FPRpzhbYqsuNEW45+y/2kiUpWy9c957+6R4kroQiAThpzOdFqFvbdRuq0FZjQOwDKXnhaC6dkwF
+ 9ybSMhHO+IPM0C985aNe1vwE2plJLdOGZ2rsAWflnmUXwJv1R9bnj+xoJG4VbeMz329ug19D+AX+
+ zbkDEwtZIltLJVY6CFz3MnUtwYrRjdK3JtbOY4V5u4SqNrbdxyGLEIoLEuuC4P/fyEEgA3CnflZn
+ bjDB2+RGRgaXth2/9YEbMsGSn6owqJN0kS7MUpAEhFoAxikOdx3ALFboD0vMokt+4lO8Qp33tUy6
+ u+ztjUSMb/XuWI+kpQSOtXwGn8ttztpqwHsOJJ90zNCwBTwJWw42swm4bO6gacpMpzJ5RNWFoIkg
+ vLC7uMZSLKkLPlzqsPnNmrTFfBI+gCHkFgyh9jAE9PwtDurXCCybWAnihjA708Lg3Y2gXyaf+rIt
+ vvthbyiMZOAfvJjwL84MO4Vozqbzv/NmqBexmg1oMlu3UCyNNO7qENlLqkRemjF1A1q3g0ZrubFa
+ n/xi+AGXOIO97ttnHrPmGyC6rR21+9c=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 28, 2019 at 5:08 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+Add missing 1.464GHz clock rate to rk3228_cpuclk_rates[]
 
-> The property is spelled 'bias-pull-up', as documented in
-> pinctrl-bindings.txt.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+---
+ drivers/clk/rockchip/clk-rk3228.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 7af48184b..b85730565 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -109,6 +109,7 @@ static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
+ 	RK3228_CPUCLK_RATE(1608000000, 1, 7),
+ 	RK3228_CPUCLK_RATE(1512000000, 1, 7),
+ 	RK3228_CPUCLK_RATE(1488000000, 1, 5),
++	RK3228_CPUCLK_RATE(1464000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1416000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1392000000, 1, 5),
+ 	RK3228_CPUCLK_RATE(1296000000, 1, 5),
+-- 
+2.11.0
 
-It appears from Rob's comment that he's applying it,
-tell me if I need to apply it to the pinctrl tree.
-
-Yours,
-Linus Walleij
