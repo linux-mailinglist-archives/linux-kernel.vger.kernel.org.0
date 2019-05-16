@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E68E20C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 131F520C45
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfEPQCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:02:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42848 "EHLO
+        id S1727448AbfEPQDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:03:31 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42606 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726987AbfEPP6q (ORCPT
+        by vger.kernel.org with ESMTP id S1726812AbfEPP6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:46 -0400
+        Thu, 16 May 2019 11:58:43 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0006zp-ID; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImH-0006zd-9z; Thu, 16 May 2019 16:58:41 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001PN-MJ; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImE-0001RD-DZ; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,32 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Ingo Molnar" <mingo@kernel.org>, "Andi Kleen" <ak@linux.intel.com>
+        "Borislav Petkov" <bp@suse.de>,
+        "Frederic Weisbecker" <frederic@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jon Masters" <jcm@redhat.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.835402784@decadent.org.uk>
+Message-ID: <lsq.1558022133.115038243@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 38/86] x86/speculation: Disable STIBP when enhanced
- IBRS is in use
+Subject: [PATCH 3.16 61/86] x86/msr-index: Cleanup bit defines
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -66,63 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Chen <tim.c.chen@linux.intel.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 34bce7c9690b1d897686aac89604ba7adc365556 upstream.
+commit d8eabc37310a92df40d07c5a8afc53cebf996716 upstream.
 
-If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
-user space exploits from hyperthread sibling.
+Greg pointed out that speculation related bit defines are using (1 << N)
+format instead of BIT(N). Aside of that (1 << N) is wrong as it should use
+1UL at least.
 
-Disable STIBP when enhanced IBRS is used.
+Clean it up.
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+[ Josh Poimboeuf: Fix tools build ]
+
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185003.966801480@linutronix.de
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Jon Masters <jcm@redhat.com>
+Tested-by: Jon Masters <jcm@redhat.com>
+[bwh: Backported to 3.16:
+ - Since <asm/msr-index.h> is a UAPI header here, open-code BIT() and drop
+   changes under tools/
+ - Drop changes to flush MSRs which we haven't defined]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -380,6 +380,10 @@ static bool stibp_needed(void)
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE)
- 		return false;
+--- a/arch/x86/include/uapi/asm/msr-index.h
++++ b/arch/x86/include/uapi/asm/msr-index.h
+@@ -33,14 +33,14 @@
  
-+	/* Enhanced IBRS makes using STIBP unnecessary. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return false;
-+
- 	if (!boot_cpu_has(X86_FEATURE_STIBP))
- 		return false;
+ /* Intel MSRs. Some also available on other CPUs */
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+-#define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
++#define SPEC_CTRL_IBRS			(1UL << 0) /* Indirect Branch Restricted Speculation */
+ #define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
+-#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
++#define SPEC_CTRL_STIBP			(1UL << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
+ #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
+-#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
++#define SPEC_CTRL_SSBD			(1UL << SPEC_CTRL_SSBD_SHIFT) /* Speculative Store Bypass Disable */
  
-@@ -823,6 +827,9 @@ static void __init l1tf_select_mitigatio
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+-#define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
++#define PRED_CMD_IBPB			(1UL << 0) /* Indirect Branch Prediction Barrier */
  
- static char *stibp_state(void)
- {
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return "";
-+
- 	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
- 		return ", STIBP";
- 	else
+ #define MSR_IA32_PERFCTR0		0x000000c1
+ #define MSR_IA32_PERFCTR1		0x000000c2
+@@ -58,9 +58,9 @@
+ #define MSR_MTRRcap			0x000000fe
+ 
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+-#define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+-#define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
+-#define ARCH_CAP_SSB_NO			(1 << 4)   /*
++#define ARCH_CAP_RDCL_NO		(1UL << 0) /* Not susceptible to Meltdown */
++#define ARCH_CAP_IBRS_ALL		(1UL << 1) /* Enhanced IBRS support */
++#define ARCH_CAP_SSB_NO			(1UL << 4) /*
+ 						    * Not susceptible to Speculative Store Bypass
+ 						    * attack, so no Speculative Store Bypass
+ 						    * control required.
 
