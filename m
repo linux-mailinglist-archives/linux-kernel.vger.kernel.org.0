@@ -2,82 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3ADB20428
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A102042F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfEPLMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:12:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33086 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfEPLMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:12:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z2Z7+MFUvBPBnKh5hkeD2cTajetudgmw37iyLkzYbLw=; b=jv3sGed48h6DuIvtRuzJJnlJB
-        KnLKxpPh5Uc/p7dSXShIZizO4MmSQ5Btmpo39FOmGYiyf4A0nTs16I6vzNr3m05bc04XTZQSOWkqc
-        qp7N5cOb1rUrwd6deezf6NdJ5TCEpJkRWfKCT6B9uE4gQ2k8Dh44BNu7mdvE09ffEpRyU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hREJM-00066K-Lr; Thu, 16 May 2019 11:12:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 21D5A1126D45; Thu, 16 May 2019 12:12:32 +0100 (BST)
-Date:   Thu, 16 May 2019 12:12:32 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "brian.austin@cirrus.com" <brian.austin@cirrus.com>,
-        "Paul.Handrigan@cirrus.com" <Paul.Handrigan@cirrus.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] ASoC: cs42xx8: Add reset gpio handling
-Message-ID: <20190516111232.GE5598@sirena.org.uk>
-References: <VE1PR04MB64790C7A0C1C068503038FDEE30A0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+        id S1727133AbfEPLNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:13:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727038AbfEPLNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:13:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E2C583003C77;
+        Thu, 16 May 2019 11:13:00 +0000 (UTC)
+Received: from thuth.com (ovpn-116-68.ams2.redhat.com [10.36.116.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31B3918394;
+        Thu, 16 May 2019 11:12:56 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [RFC PATCH 0/4] KVM selftests for s390x
+Date:   Thu, 16 May 2019 13:12:49 +0200
+Message-Id: <20190516111253.4494-1-thuth@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n+lFg1Zro7sl44OB"
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB64790C7A0C1C068503038FDEE30A0@VE1PR04MB6479.eurprd04.prod.outlook.com>
-X-Cookie: <ahzz_> i figured 17G oughta be enough.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 16 May 2019 11:13:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series enables the KVM selftests for s390x. As a first
+test, the sync_regs from x86 has been adapted to s390x.
 
---n+lFg1Zro7sl44OB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please note that the ucall() interface is not used yet - since
+s390x neither has PIO nor MMIO, this needs some more work first
+before it becomes usable (we likely should use a DIAG hypercall
+here, which is what the sync_reg test is currently using, too...).
 
-On Thu, May 16, 2019 at 11:09:27AM +0000, S.j. Wang wrote:
+Thomas Huth (4):
+  KVM: selftests: Guard struct kvm_vcpu_events with
+    __KVM_HAVE_VCPU_EVENTS
+  KVM: selftests: Align memory region addresses to 1M on s390x
+  KVM: selftests: Add processor code for s390x
+  KVM: selftests: Add the sync_regs test for s390x
 
-> > You also need a binding document update for this.
-> ok, will send v3
+ MAINTAINERS                                   |   2 +
+ tools/testing/selftests/kvm/Makefile          |   3 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   2 +
+ .../selftests/kvm/include/s390x/processor.h   |  22 ++
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  24 +-
+ .../selftests/kvm/lib/s390x/processor.c       | 277 ++++++++++++++++++
+ .../selftests/kvm/s390x/sync_regs_test.c      | 151 ++++++++++
+ 7 files changed, 476 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/s390x/processor.h
+ create mode 100644 tools/testing/selftests/kvm/lib/s390x/processor.c
+ create mode 100644 tools/testing/selftests/kvm/s390x/sync_regs_test.c
 
-Separate patch please, I already applied this and binding docs should be
-separate patches anyway.
+-- 
+2.21.0
 
---n+lFg1Zro7sl44OB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzdRZ8ACgkQJNaLcl1U
-h9DryQf/QN1WnlIxisEBv3q8UfSPHhd4YuCYO0Gzp7QK64Ei6KJL1BYr3LpneK9G
-yjzhG4Ix4Diugig2rg/i9boPzcT8DskSS0GV28zhE0cvaSbxVRmQd2oQBMgK44AP
-MuU7ZFZh6VQtmOYDUf8d9WQj7vcLs2kGwfiU32xA2865EwVarnwY3SRpmW4YYCc4
-twMse4gvRuL4k5RoRvuT05whKNVKwigBzOmDXpIHpkHkg+dQA/pA1fUf7T7HM68f
-UkBiRis8BbivxIiE6l+c14GaYamniawMmP17C+66uJCxtNfiiJa4nH7SscKOpmwI
-6ZnItmz8SMwfphe48YkFJcvciCYghw==
-=CqUE
------END PGP SIGNATURE-----
-
---n+lFg1Zro7sl44OB--
