@@ -2,136 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697B420C82
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5024120C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfEPQFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:05:25 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32819 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfEPQFW (ORCPT
+        id S1728001AbfEPQFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:05:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53342 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726961AbfEPQFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:05:22 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d9so4080724wrx.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=q7pWT8kXPJxxR3x79I4/QO1kRi8GWpc3amVbJRsudng=;
-        b=busAmoMTBtuvy6voqADUSj2mY/HAEvbOK42BVdDK5fnPrw9eYgS1O6RmIggdX7G51I
-         CMQISWg0adYPGuNRM7J0lNX50hNIUZ2Nx+JTS4T5Pl3IiyPdKrjWxFOaMTBsaImr+8Q7
-         AXUzineg14N4RcAgFI3kdBOjbmXiZyLPNL9sbjqOn+V/e5FvXi9hnOow+URcAYcEY9RD
-         pn7Fmuz2mDPqtmgaI7NWbFts85oC475LMFhez03shoYUx0TjtJ+27eGNY29KRaMPp6dp
-         /AYJG5AB+aamT+AciRc4RfGqO4EJawat/CuPjJn+vBruYigej5QU3BDatyNFEUiPQNHm
-         MXtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=q7pWT8kXPJxxR3x79I4/QO1kRi8GWpc3amVbJRsudng=;
-        b=cVFMUQLEBBEVScsXAjqv1rqAj6e/JLRLENtzSg1/oFQoHWU3YYMYhJXccZYLYUl+Fn
-         QSSulUY2kgErtbz9t/0uDNcGKkRSx3HxwL98J2yEf7L69G8LSkVHZQwor5QQSHOkqnY+
-         YTU0pmpZ1PerBwXkVP2JnfEGnznL7DCCvyBHkSmjMwdfiXQa4HtfkiIRzuxzIND2UJ46
-         IuIYBTpbMEt6fNeR/duHXQZHzgGQU0RbBSLLb6CYaLRBpzHBrgJcIUB3ixi4iAC6kV7E
-         TJhqvDv4fZL9/4NvV9351OgJePOAH0SWZaaVQrYfylCSs3sBoyvAgv8FRXgFn8Q34Fc7
-         7NSA==
-X-Gm-Message-State: APjAAAWFabiAycY6FJfPw/KBqeIBOGRAobztu5wZzf444S5+H8sZxIn2
-        Guh4RNJsxB/lm7dGpeGvLuKUPQZf
-X-Google-Smtp-Source: APXvYqyz44gy7xXFf1s5NsimX2MXHADA8biKwP7LwCUZtB0bnz3lS/XK9wRx9dc6bvvaJPkREN1NbA==
-X-Received: by 2002:adf:e404:: with SMTP id g4mr30309133wrm.161.1558022721273;
-        Thu, 16 May 2019 09:05:21 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g2sm6917655wru.37.2019.05.16.09.05.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 09:05:20 -0700 (PDT)
-Date:   Thu, 16 May 2019 18:05:18 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] perf fixes
-Message-ID: <20190516160518.GA46645@gmail.com>
+        Thu, 16 May 2019 12:05:44 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4GG51P7129531
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 12:05:43 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sha8bam3h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 12:05:42 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Thu, 16 May 2019 17:05:38 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 May 2019 17:05:35 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4GG5Yv948365702
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 May 2019 16:05:34 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E85DB5204E;
+        Thu, 16 May 2019 16:05:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.91.88])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0BEC65205A;
+        Thu, 16 May 2019 16:05:31 +0000 (GMT)
+Subject: Re: [RFCv2 0/6] TurboSched: A scheduler for sustaining Turbo
+ Frequencies for longer durations
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com, dsmythies@telus.net
+References: <20190515135322.19393-1-parth@linux.ibm.com>
+ <20190515164854.GZ2589@hirez.programming.kicks-ass.net>
+From:   Parth Shah <parth@linux.ibm.com>
+Date:   Thu, 16 May 2019 21:35:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190515164854.GZ2589@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051616-0012-0000-0000-0000031C671D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051616-0013-0000-0000-000021550957
+Message-Id: <82883320-fb98-ec7b-ad1a-0c4248a0225b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-16_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905160102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-Please pull the latest perf-urgent-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
-
-   # HEAD: c7a286577d7592720c2f179aadfb325a1ff48c95 perf/x86/intel: Allow PEBS multi-entry in watermark mode
-
-An x86 PMU constraint fix, an interface fix, and a Sparse fix.
-
- Thanks,
-
-	Ingo
-
------------------->
-Stephane Eranian (2):
-      perf/x86/intel: Fix INTEL_FLAGS_EVENT_CONSTRAINT* masking
-      perf/x86/intel: Allow PEBS multi-entry in watermark mode
-
-Wang Hai (1):
-      perf/x86/amd/iommu: Make the 'amd_iommu_attr_groups' symbol static
 
 
- arch/x86/events/amd/iommu.c  | 2 +-
- arch/x86/events/intel/core.c | 2 +-
- arch/x86/events/perf_event.h | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+On 5/15/19 10:18 PM, Peter Zijlstra wrote:
+> On Wed, May 15, 2019 at 07:23:16PM +0530, Parth Shah wrote:
+>> Abstract
+>> ========
+>>
+>> The modern servers allows multiple cores to run at range of
+>> frequencies higher than rated range of frequencies. But the power budget
+>> of the system inhibits sustaining these higher frequencies for
+>> longer durations.
+>>
+>> However when certain cores are put to idle states, the power can be
+>> effectively channelled to other busy cores, allowing them to sustain
+>> the higher frequency.
+>>
+>> One way to achieve this is to pack tasks onto fewer cores keeping others idle,
+>> but it may lead to performance penalty for such tasks and sustaining higher
+>> frequencies proves to be of no benefit. But if one can identify unimportant low
+>> utilization tasks which can be packed on the already active cores then waking up
+>> of new cores can be avoided. Such tasks are short and/or bursty "jitter tasks"
+>> and waking up new core is expensive for such case.
+>>
+>> Current CFS algorithm in kernel scheduler is performance oriented and hence
+>> tries to assign any idle CPU first for the waking up of new tasks. This policy
+>> is perfect for major categories of the workload, but for jitter tasks, one
+>> can save energy by packing it onto active cores and allow other cores to run at
+>> higher frequencies.
+>>
+>> These patch-set tunes the task wake up logic in scheduler to pack exclusively
+>> classified jitter tasks onto busy cores. The work involves the use of additional
+>> attributes inside "cpu" cgroup controller to manually classify tasks as jitter. 
+> 
+> Why does this make sense? Don't these higher freq bins burn power like
+> stupid? That is, it makes sense to use turbo-bins for single threaded
+> workloads that are CPU-bound and need performance.
+> 
+> But why pack a bunch of 'crap' tasks onto a core and give it turbo;
+> that's just burning power without getting anything back for it.
+> 
 
-diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
-index 7635c23f7d82..58a6993d7eb3 100644
---- a/arch/x86/events/amd/iommu.c
-+++ b/arch/x86/events/amd/iommu.c
-@@ -393,7 +393,7 @@ static __init int _init_events_attrs(void)
- 	return 0;
- }
- 
--const struct attribute_group *amd_iommu_attr_groups[] = {
-+static const struct attribute_group *amd_iommu_attr_groups[] = {
- 	&amd_iommu_format_group,
- 	&amd_iommu_cpumask_group,
- 	&amd_iommu_events_group,
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index ef763f535e3a..12ec402f4114 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3265,7 +3265,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 		return ret;
- 
- 	if (event->attr.precise_ip) {
--		if (!(event->attr.freq || event->attr.wakeup_events)) {
-+		if (!(event->attr.freq || (event->attr.wakeup_events && !event->attr.watermark))) {
- 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
- 			if (!(event->attr.sample_type &
- 			      ~intel_pmu_large_pebs_flags(event)))
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 07fc84bb85c1..a6ac2f4f76fc 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -394,10 +394,10 @@ struct cpu_hw_events {
- 
- /* Event constraint, but match on all event flags too. */
- #define INTEL_FLAGS_EVENT_CONSTRAINT(c, n) \
--	EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS)
-+	EVENT_CONSTRAINT(c, n, ARCH_PERFMON_EVENTSEL_EVENT|X86_ALL_EVENT_FLAGS)
- 
- #define INTEL_FLAGS_EVENT_CONSTRAINT_RANGE(c, e, n)			\
--	EVENT_CONSTRAINT_RANGE(c, e, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS)
-+	EVENT_CONSTRAINT_RANGE(c, e, n, ARCH_PERFMON_EVENTSEL_EVENT|X86_ALL_EVENT_FLAGS)
- 
- /* Check only flags, but allow all event/umask */
- #define INTEL_ALL_EVENT_CONSTRAINT(code, n)	\
+Thanks for taking interest in my patch series.
+I will try my best to answer your question.
+
+This patch series tries to pack jitter tasks on the busier cores to avoid waking
+up any idle core as long as possible. This approach is supposed to give more
+performance to the CPU bound tasks by sustaining Turbo for a longer duration.
+
+Current implementation for task wake up is biased towards waking an idle CPU first,
+which in turn consumes power as the CPU leaves idle domain.
+For the system supporting Turbo frequencies, power budget is fixed and hence to
+maintain this budget the system may throttle the frequency.
+
+So the idea is, if we can pack the jitter tasks on already running cores, then we
+can avoid waking up new cores and save power thereby sustaining Turbo for longer
+duration.
+
