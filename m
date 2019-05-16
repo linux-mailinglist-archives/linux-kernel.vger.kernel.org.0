@@ -2,74 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4C220554
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9481620560
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfEPLms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:42:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbfEPLl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:41:57 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3966F21726;
-        Thu, 16 May 2019 11:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558006916;
-        bh=2VwLVPXRY8r7CQMu8ilIfQKvLvFOcNZjwr1s8fY6Gmo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z5DkSD/ocIcuAFuV0aqB1hHFMdpdzhYtkOMTH3dworz5k/bccRJnJv6FmQzE8mnql
-         M5nzyevRFjK+oe5sm9ytdxFZ06LMyKFswrQI7EqNFDrpaGaz75CpfbH526UyKU3V1G
-         KqBJEaOOFm0zWBvwAFLJaLiKxp8nPykFiLX3Mxfw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 7/8] ufs: fix braino in ufs_get_inode_gid() for solaris UFS flavour
-Date:   Thu, 16 May 2019 07:41:45 -0400
-Message-Id: <20190516114146.9267-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190516114146.9267-1-sashal@kernel.org>
-References: <20190516114146.9267-1-sashal@kernel.org>
+        id S1728126AbfEPLnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:43:18 -0400
+Received: from mail-eopbgr80083.outbound.protection.outlook.com ([40.107.8.83]:12085
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728305AbfEPLlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:41:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VnwYhVnYj8re0iH13rP+gtQeT+7/YKppgyWrUxadBFI=;
+ b=NS2pIUb2ja+4QotS8uRzY6nCHBLodxt6nHMBVQ2qMNRcnlDpBFZ8yBrU8gJFwdTVNWYVC9hWnMlFPU9XMNeGyEo3JYGcZ9UHJ1kHmdh5swIvMJFfkzi+F5jOwoeg/8ST3wKgvErnIXgzw/gyrcO+3eB8FW6OAklZnzftFYL1Qw4=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
+ VE1PR04MB6623.eurprd04.prod.outlook.com (20.179.235.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Thu, 16 May 2019 11:41:46 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::a5b5:13f5:f89c:9a30]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::a5b5:13f5:f89c:9a30%7]) with mapi id 15.20.1900.010; Thu, 16 May 2019
+ 11:41:46 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     "brian.austin@cirrus.com" <brian.austin@cirrus.com>,
+        "Paul.Handrigan@cirrus.com" <Paul.Handrigan@cirrus.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH V4] ASoC: cs42xx8: add reset-gpios in binding
+ document
+Thread-Topic: [alsa-devel] [PATCH V4] ASoC: cs42xx8: add reset-gpios in
+ binding document
+Thread-Index: AdUL3ELukXtmb23cTHK77vJAfmhcNw==
+Date:   Thu, 16 May 2019 11:41:46 +0000
+Message-ID: <VE1PR04MB647937130B57B9C3F818F3DEE30A0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b45d59d6-3bcf-4e3f-133b-08d6d9f379e6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6623;
+x-ms-traffictypediagnostic: VE1PR04MB6623:
+x-microsoft-antispam-prvs: <VE1PR04MB6623D37932CD57E02FA794BBE30A0@VE1PR04MB6623.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1169;
+x-forefront-prvs: 0039C6E5C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(376002)(346002)(396003)(199004)(189003)(68736007)(66556008)(316002)(64756008)(74316002)(6916009)(486006)(186003)(3846002)(6116002)(53936002)(66446008)(71200400001)(71190400001)(76116006)(66946007)(26005)(73956011)(54906003)(86362001)(66476007)(478600001)(2906002)(33656002)(5660300002)(25786009)(9686003)(256004)(55016002)(6246003)(99286004)(1411001)(14454004)(229853002)(6436002)(4326008)(7696005)(81166006)(53546011)(6506007)(66066001)(476003)(8936002)(52536014)(102836004)(81156014)(305945005)(8676002)(7736002)(4744005);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6623;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vQznmZMwgJN60XSsqJ1k0I2e/QwSa4eJzCR7IEE3ZOlFj+Ot5EUg4IFUzdeM1GMeou/nlHpDUoBE0L2LJcRi3KlGjdpy7ilHD94HT626G4wbfex+81uTlEo7O1iWp8O/OnyRNBHm9rfG+8UR6uFrlthbC8NBa8uK8636Wg5ZRKvUlLehGXZnHd7PIViVXwJXSZjTf0P9R491iTwll5u5sRKYcWX/WeTN9liEYMRMh2xCKWit6nU+yz8C0iGe77hiD6y03+SZenTcac92PMdeFamCqVDnzkdZwkPdMTtxkzT8G0QilUMtdTQYa4cFxOxXQc6rdmw12hYKvXEabRLZ/4Nw/i/uvntfWjD3euri+EqnKUye3sTshDpe2kAhSbX9q5Z3X5dloD7phWgj+OaIiAIMU1MprSFgLPOoVZ/PgaE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b45d59d6-3bcf-4e3f-133b-08d6d9f379e6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2019 11:41:46.3546
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6623
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
-
-[ Upstream commit 4e9036042fedaffcd868d7f7aa948756c48c637d ]
-
-To choose whether to pick the GID from the old (16bit) or new (32bit)
-field, we should check if the old gid field is set to 0xffff.  Mainline
-checks the old *UID* field instead - cut'n'paste from the corresponding
-code in ufs_get_inode_uid().
-
-Fixes: 252e211e90ce
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ufs/util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 3f9463f8cf2fa..f877d5cadd981 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -228,7 +228,7 @@ ufs_get_inode_gid(struct super_block *sb, struct ufs_inode *inode)
- 	case UFS_UID_44BSD:
- 		return fs32_to_cpu(sb, inode->ui_u3.ui_44.ui_gid);
- 	case UFS_UID_EFT:
--		if (inode->ui_u1.oldids.ui_suid == 0xFFFF)
-+		if (inode->ui_u1.oldids.ui_sgid == 0xFFFF)
- 			return fs32_to_cpu(sb, inode->ui_u3.ui_sun.ui_gid);
- 		/* Fall through */
- 	default:
--- 
-2.20.1
-
+SGkNCg0KPiBPbiBUaHUsIE1heSAxNiwgMjAxOSBhdCA4OjM2IEFNIFMuai4gV2FuZyA8c2hlbmdq
+aXUud2FuZ0BueHAuY29tPg0KPiB3cm90ZToNCj4gDQo+ID4gIGNzNDI4ODg6IGNvZGVjQDQ4IHsN
+Cj4gPiBAQCAtMjUsNCArMzAsNSBAQCBjczQyODg4OiBjb2RlY0A0OCB7DQo+ID4gICAgICAgICBW
+RC1zdXBwbHkgPSA8JnJlZ19hdWRpbz47DQo+ID4gICAgICAgICBWTFMtc3VwcGx5ID0gPCZyZWdf
+YXVkaW8+Ow0KPiA+ICAgICAgICAgVkxDLXN1cHBseSA9IDwmcmVnX2F1ZGlvPjsNCj4gPiArICAg
+ICAgIHJlc2V0LWdwaW9zID0gPCZwY2E5NTU3X2IgMSAxPjsNCj4gDQo+ICByZXNldC1ncGlvcyA9
+IDwmcGNhOTU1N19iIDEgR1BJT19BQ1RJVkVfTE9XPjsgIHBsZWFzZQ0KT2ssIHNlbnQgdjUuDQoN
+CkJlc3QgcmVnYXJkcw0KV2FuZyBzaGVuZ2ppdQ0K
