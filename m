@@ -2,99 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A52A2020D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE3020254
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:14:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfEPJCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:02:51 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:63375 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726821AbfEPJCt (ORCPT
+        id S1726738AbfEPJOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:14:11 -0400
+Received: from [192.198.146.188] ([192.198.146.188]:12009 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726336AbfEPJOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:02:49 -0400
-X-UUID: c790c055718a4f6bb42bb8e914aa6e8c-20190516
-X-UUID: c790c055718a4f6bb42bb8e914aa6e8c-20190516
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1802110437; Thu, 16 May 2019 17:02:30 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 16 May 2019 17:02:28 +0800
-Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 16 May 2019 17:02:28 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh 
-        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v6 12/12] arm64: dts: add gce node for mt8183
-Date:   Thu, 16 May 2019 17:02:24 +0800
-Message-ID: <20190516090224.59070-13-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
-References: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
+        Thu, 16 May 2019 05:14:10 -0400
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 05:14:09 EDT
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 94352C0C87;
+        Thu, 16 May 2019 17:06:53 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] clocksource: Untrust the clocksource watchdog when its interval is too small
+Date:   Thu, 16 May 2019 17:06:51 +0800
+Message-Id: <20190516090651.1396-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: EFCA4C3EA52493633BD7C4914AA6C222083A4B814AFF0456FAF2E36FB01D2C6D2000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+This patch performs a sanity check on the deviation of the clocksource watchdog,
+target to reduce false alarm that incorrectly marks current clocksource unstable
+when there comes discrepancy.
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Say if there is a discrepancy between the current clocksource and watchdog,
+validate the watchdog deviation first, if its interval is too small against
+the expected timer interval, we shall trust the current clocksource.
+
+It is identified on some Coffee Lake platform w/ PC10 allowed, when the CPU
+entered and exited from PC10 (the residency counter is increased), the HPET
+generates timestamp delay, this causes discrepancy making kernel incorrectly
+untrust the current clocksource (TSC in this case) and re-select the next
+clocksource which is the problematic HPET, this eventually causes a user
+sensible wall clock delay.
+
+The HPET timestamp delay shall be tackled in firmware domain in order to
+properly handle the timer offload between XTAL and RTC when it enters PC10,
+while this patch is a mitigation to reduce the false alarm of clocksource
+unstable regardless what clocksources are paired.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203183
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+
 ---
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index b36e37fcdfe3..d6d26fa32dd7 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/mt8183-power.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- #include "mt8183-pinfunc.h"
- / {
- 	compatible = "mediatek,mt8183";
-@@ -293,6 +294,16 @@
- 			clock-names = "spi", "wrap";
- 		};
+ kernel/time/clocksource.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3bcc19ceb073..fb0a67827346 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -96,6 +96,7 @@ static u64 suspend_start;
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+ static void clocksource_watchdog_work(struct work_struct *work);
+ static void clocksource_select(void);
++static void clocksource_dequeue_watchdog(struct clocksource *cs);
  
-+		gce: gce@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			#subsys-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
+ static LIST_HEAD(watchdog_list);
+ static struct clocksource *watchdog;
+@@ -236,6 +237,12 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 
+ 		/* Check the deviation from the watchdog clocksource. */
+ 		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
++			if (wd_nsec < jiffies_to_nsecs(WATCHDOG_INTERVAL) - WATCHDOG_THRESHOLD) {
++				pr_err("Stop timekeeping watchdog '%s' because expected interval is too small in %lld ns only\n",
++					watchdog->name, wd_nsec);
++				clocksource_dequeue_watchdog(cs);
++				return;
++			}
+ 			pr_warn("timekeeping watchdog on CPU%d: Marking clocksource '%s' as unstable because the skew is too large:\n",
+ 				smp_processor_id(), cs->name);
+ 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
 -- 
-2.18.0
+2.20.1
 
