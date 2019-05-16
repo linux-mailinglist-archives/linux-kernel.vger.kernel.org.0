@@ -2,164 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 194CD20C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D047320C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfEPQBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:01:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34154 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfEPQBk (ORCPT
+        id S1727528AbfEPQFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:05:44 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36813 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfEPQFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:01:40 -0400
-Received: by mail-wr1-f66.google.com with SMTP id f8so2612622wrt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:01:39 -0700 (PDT)
+        Thu, 16 May 2019 12:05:42 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c14so2608753qke.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=NjEnWJ5FrU96h4klas5/ssz+xotQMsKitrAgqXcy4/U=;
-        b=QFfMWuW0Ed/iCD2yKTt50eJ/lNADKLFy0QRV0+8UplTj/NttIh/eWnZ+wC58KApY6N
-         2rsTaXqUWZfoh3yTfLtM3YZds7mCxv4aGaW3gRi11pIuSJ96viJyaZkMVZmD7S59/mRI
-         KTHQX51Iz+VE3IsLgtQ1MHjtev7PYGoKh9Gh/L/LROUUbB8pw/Vt1qDw8qRkRPQzQhVV
-         qnuFSyC04ukTZkZHGuEgsoGkqgQE9SZxbQs8WlMHnkL0PNOOdgmdiAcey54ghRRztB4Q
-         EeyO/aIhCJoZ6/sCXT5y8CY+oOUqufNI8HEVznj6i+oiAFhbNaaGxYERZK5Fv3rkfdXS
-         c7zg==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=zAUITjpKKLROuX37hMbdqPFlWmaHToD076fNZLb8xfM=;
+        b=paTihldvOejMhzU/pjmy6cxi8/gHfncg9BvJEgw2jZdu7GTTbC6dOi2N34C/kPD+Xe
+         llzWo0lUVN5/gH0xigfPAuVxfctO5acb6uM491mjwy+kalcRZrNptGYgtffAGrQm9xKD
+         z7cMdKXJJ63VeJ7S62XKUCWg+IJtnA/MuoC0yG1jQRxUMfjTvjsouU6GeU1UhoLOpUy4
+         O6jaxq5Vx3jRm2UgvJs0jhTxt1tfjYW5uy/RR5+JF5zvEl0wMsgK+PEzcCVYX5Ml6OgS
+         CWMiUYVZvGJpz30FdN/Uvc6ui0RhJyX+CoWvDh4wvgFBWaqBSYRetGUz7xlHg0r4k5NR
+         ODlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=NjEnWJ5FrU96h4klas5/ssz+xotQMsKitrAgqXcy4/U=;
-        b=JBo+28bfL9ZD29TnSml9Sj8M9H+s9GGBAZz5yI7LbvtIUg+KdU56G1lZ1WfwDvQJE6
-         NCO6TnDoLrWxUWVuhElc/vPP7lMD2zIx270npM20PKCD40xPOcnKLlxDVReXCvwna0Mp
-         R06YbRPqaaCsw26ODhsDsW8/tWoFBjN9b10rfTMii/K20aFHlRlc+PjrXfTmpvQDZKIl
-         b3wC7h3z13zMZezPL8j76aWVMnifRGPIxjzUutr6ozbJqwOIFZKPDbvw7cUsvGulrHMJ
-         6gBkYoBL2qeYt/FsolmN1OrpYt4AJdI+xW4I+Psn1cwEP/lAMF9Hj4bUsOYv5v3qr11e
-         D0KA==
-X-Gm-Message-State: APjAAAX4w9BeKc0WZ2FwscX2bYZ5of3yhbClpy8Iq73OGieUi7qXn7d1
-        e1aAcXZbDJ7uArkj/et4fFU=
-X-Google-Smtp-Source: APXvYqxbkVBm4UM2Y1+qWlTcXUny74bXGZVFCoqUqEV8bJCMYW9dnGAqiKhtXH8WA1WzSDyVrx/OPA==
-X-Received: by 2002:a5d:52cc:: with SMTP id r12mr5408880wrv.163.1558022498426;
-        Thu, 16 May 2019 09:01:38 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id h8sm9138310wmf.5.2019.05.16.09.01.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 09:01:37 -0700 (PDT)
-Date:   Thu, 16 May 2019 18:01:35 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] locking fix
-Message-ID: <20190516160135.GA45760@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zAUITjpKKLROuX37hMbdqPFlWmaHToD076fNZLb8xfM=;
+        b=iU1AxRTNLS5awPPldKB2w7/MpVzmkInwG42XQnmagAj9EP7so4seNYRkm8wsAntqsK
+         qdgNDfYDNpaCZtxSpqpVaeDCJaKMcMfANAvqOFjv6ciYt4ZD2DTopQpCXl/lwTRP9QGQ
+         0ecUdAgnijz29dwSxXqKH/jMCH/7JIgz6sMx+Jbv2R9LzRwAdy3ujVIVgDUvY4WdnXeZ
+         iUTSRK90RyZ1zMh1BlksrtvJKlJYWd/8NAga3dSGNFH3aKEPGeoZ0gh9/Z6jfBZHjlJ6
+         a99Lt6+ZTztKnvsPdnitW5Yc3UT/w54eE1BRyGEk8sl+WRFEWsKFIDdxAQNuzkqtUgR4
+         8X6w==
+X-Gm-Message-State: APjAAAVdodZcvHNcFtsAgG22wvDzkzBkctciL2BCe8IhAXjRpApvLWAQ
+        7FKLOiKHjmyB1GOQ2RaezheiCA==
+X-Google-Smtp-Source: APXvYqw/JHD28fUlPb8lI2g8to9VAAo+dI6jsWFcrAF1ACiFIBSxV5uVdFEIpYrHZwfcWMG0OgWwTw==
+X-Received: by 2002:a37:684a:: with SMTP id d71mr13791295qkc.25.1558022741627;
+        Thu, 16 May 2019 09:05:41 -0700 (PDT)
+Received: from qcai.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z29sm2569186qkg.19.2019.05.16.09.05.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 09:05:40 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     dan.j.williams@intel.com
+Cc:     akpm@linux-foundation.org, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, keith.busch@intel.com, ira.weiny@intel.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] nvdimm: fix compilation warnings with W=1
+Date:   Thu, 16 May 2019 12:04:53 -0400
+Message-Id: <1558022693-9631-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Several places (dimm_devs.c, core.c etc) include label.h but only
+label.c uses NSINDEX_SIGNATURE, so move its definition to label.c
+instead.
 
-Please pull the latest locking-urgent-for-linus git tree from:
+In file included from drivers/nvdimm/dimm_devs.c:23:
+drivers/nvdimm/label.h:41:19: warning: 'NSINDEX_SIGNATURE' defined but
+not used [-Wunused-const-variable=]
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+Also, some places abuse "/**" which is only reserved for the kernel-doc.
 
-   # HEAD: a9e9bcb45b1525ba7aea26ed9441e8632aeeda58 locking/rwsem: Prevent decrement of reader count before increment
+drivers/nvdimm/bus.c:648: warning: cannot understand function prototype:
+'struct attribute_group nd_device_attribute_group = '
+drivers/nvdimm/bus.c:677: warning: cannot understand function prototype:
+'struct attribute_group nd_numa_attribute_group = '
 
-A single rwsem fix.
+Those are just some member assignments for the "struct attribute_group"
+instances and it can't be expressed in the kernel-doc.
 
- Thanks,
+Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/nvdimm/bus.c   | 4 ++--
+ drivers/nvdimm/label.c | 2 ++
+ drivers/nvdimm/label.h | 2 --
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-	Ingo
-
------------------->
-Waiman Long (1):
-      locking/rwsem: Prevent decrement of reader count before increment
-
-
- kernel/locking/rwsem-xadd.c | 46 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 6b3ee9948bf1..0b1f77957240 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -130,6 +130,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- {
- 	struct rwsem_waiter *waiter, *tmp;
- 	long oldcount, woken = 0, adjustment = 0;
-+	struct list_head wlist;
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 7ff684159f29..2eb6a6cfe9e4 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -642,7 +642,7 @@ static ssize_t devtype_show(struct device *dev, struct device_attribute *attr,
+ 	NULL,
+ };
  
- 	/*
- 	 * Take a peek at the queue head waiter such that we can determine
-@@ -188,18 +189,43 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 	 * of the queue. We know that woken will be at least 1 as we accounted
- 	 * for above. Note we increment the 'active part' of the count by the
- 	 * number of readers before waking any processes up.
-+	 *
-+	 * We have to do wakeup in 2 passes to prevent the possibility that
-+	 * the reader count may be decremented before it is incremented. It
-+	 * is because the to-be-woken waiter may not have slept yet. So it
-+	 * may see waiter->task got cleared, finish its critical section and
-+	 * do an unlock before the reader count increment.
-+	 *
-+	 * 1) Collect the read-waiters in a separate list, count them and
-+	 *    fully increment the reader count in rwsem.
-+	 * 2) For each waiters in the new list, clear waiter->task and
-+	 *    put them into wake_q to be woken up later.
- 	 */
--	list_for_each_entry_safe(waiter, tmp, &sem->wait_list, list) {
--		struct task_struct *tsk;
--
-+	list_for_each_entry(waiter, &sem->wait_list, list) {
- 		if (waiter->type == RWSEM_WAITING_FOR_WRITE)
- 			break;
- 
- 		woken++;
--		tsk = waiter->task;
-+	}
-+	list_cut_before(&wlist, &sem->wait_list, &waiter->list);
-+
-+	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
-+	lockevent_cond_inc(rwsem_wake_reader, woken);
-+	if (list_empty(&sem->wait_list)) {
-+		/* hit end of list above */
-+		adjustment -= RWSEM_WAITING_BIAS;
-+	}
-+
-+	if (adjustment)
-+		atomic_long_add(adjustment, &sem->count);
-+
-+	/* 2nd pass */
-+	list_for_each_entry_safe(waiter, tmp, &wlist, list) {
-+		struct task_struct *tsk;
- 
-+		tsk = waiter->task;
- 		get_task_struct(tsk);
--		list_del(&waiter->list);
-+
- 		/*
- 		 * Ensure calling get_task_struct() before setting the reader
- 		 * waiter to nil such that rwsem_down_read_failed() cannot
-@@ -213,16 +239,6 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		 */
- 		wake_q_add_safe(wake_q, tsk);
- 	}
--
--	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
--	lockevent_cond_inc(rwsem_wake_reader, woken);
--	if (list_empty(&sem->wait_list)) {
--		/* hit end of list above */
--		adjustment -= RWSEM_WAITING_BIAS;
--	}
--
--	if (adjustment)
--		atomic_long_add(adjustment, &sem->count);
+-/**
++/*
+  * nd_device_attribute_group - generic attributes for all devices on an nd bus
+  */
+ struct attribute_group nd_device_attribute_group = {
+@@ -671,7 +671,7 @@ static umode_t nd_numa_attr_visible(struct kobject *kobj, struct attribute *a,
+ 	return a->mode;
  }
  
- /*
+-/**
++/*
+  * nd_numa_attribute_group - NUMA attributes for all devices on an nd bus
+  */
+ struct attribute_group nd_numa_attribute_group = {
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 2030805aa216..edf278067e72 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -25,6 +25,8 @@
+ static guid_t nvdimm_pfn_guid;
+ static guid_t nvdimm_dax_guid;
+ 
++static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
++
+ static u32 best_seq(u32 a, u32 b)
+ {
+ 	a &= NSINDEX_SEQ_MASK;
+diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+index e9a2ad3c2150..4bb7add39580 100644
+--- a/drivers/nvdimm/label.h
++++ b/drivers/nvdimm/label.h
+@@ -38,8 +38,6 @@ enum {
+ 	ND_NSINDEX_INIT = 0x1,
+ };
+ 
+-static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
+-
+ /**
+  * struct nd_namespace_index - label set superblock
+  * @sig: NAMESPACE_INDEX\0
+-- 
+1.8.3.1
+
