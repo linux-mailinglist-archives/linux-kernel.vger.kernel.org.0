@@ -2,77 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C643220155
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE4E920165
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbfEPIbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 04:31:13 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:53567 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfEPIbM (ORCPT
+        id S1726598AbfEPIhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:37:13 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:52450 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfEPIhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:31:12 -0400
-X-Originating-IP: 80.215.246.107
-Received: from localhost (unknown [80.215.246.107])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 6532D20003;
-        Thu, 16 May 2019 08:31:05 +0000 (UTC)
-Date:   Thu, 16 May 2019 10:31:04 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/2] drm/sun4i: Fix sun8i HDMI PHY initialization
-Message-ID: <20190516083104.rr2ewg3dd4aej67b@flea>
-References: <20190514204337.11068-1-jernej.skrabec@siol.net>
+        Thu, 16 May 2019 04:37:13 -0400
+Received: by mail-wm1-f41.google.com with SMTP id y3so2658243wmm.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 01:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=X0zkQaio+t3Isoa+1OzyKr46ojREpowq03WuCew/y+o=;
+        b=FEZMG5jokgF9IM3MW63+oH/owSHc9Mt7X0CRnpU2pQrFi2C9epmpieOJRTfULKW8s0
+         1yEWzGF8PxCNCDcZIJv8ZcJDpWAYVe7gxLxMyku6POisarXUUXGoKtFteQLW3OFA5xjj
+         vAk14fhTC6TniuPsQ1mJxrOZj89VvR0Ecnrn3LHm/SL6QwMZECtF9JMuq1rPzhJ/l1Rj
+         YIYCSwuFdOWpqbDWX9tW23cCzlXh5HvaYL+s8iDAwcnvid8INbGQIRNfkNRUCnGkbGql
+         E9+bG2syI737jg0HTlcqqduUo/+gtPZecsKZRufDJiK016wgQXfmDKlEP2eRoawi2F6U
+         ihvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=X0zkQaio+t3Isoa+1OzyKr46ojREpowq03WuCew/y+o=;
+        b=ufckwhNILuwxNyQmz+IerB0A7QC4TkQGabzDHac4GMqQEj274tQ22yp7/6hCgtQ9Er
+         +kOPlHBtDy2qxMl60cZrBdiAO2YIBdTlSmlD9+dG+DukYzIyCSaw92kH+jQ388/pZixL
+         9REvvSLIwjA5UHwmSvj6rPlv4H2XrPGnTfLmlJTYloNsKYsugrQqIqt3NZwrTtKtTktE
+         CPBo77Q3k51cEeInn0IGtge4YqFzaxmW8RxVVcF8W5+s2cL4Sy1UI3ZpDyFbtEkk6lbM
+         bpxJ8D8uBY9XB3OEyhX4TTrQ4uQ78WrwPjECk9rcqe+VcALBvoeAJe07i846ObWkpFqm
+         Ybcw==
+X-Gm-Message-State: APjAAAV4V0tpOhfpnBsqwhfskNzDKXTYArUGrolgPzwv+dwJ3rKkaK/l
+        HOMo+BKBgXYS57PmlCohfSr+NOOvE3Wd7HnCIM+HKg==
+X-Google-Smtp-Source: APXvYqwF/2nWsGeagMYdw12EOcPA7geybvIqDdQIDsyNg9/UrIHWZzvOollMCLoIZ/RPJoJ3i9bQyYfjRnoOCEeVK/4=
+X-Received: by 2002:a1c:a64e:: with SMTP id p75mr16072945wme.62.1557995831226;
+ Thu, 16 May 2019 01:37:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nxc66wpttvnorf5q"
-Content-Disposition: inline
-In-Reply-To: <20190514204337.11068-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+References: <20190516075656.25880-1-yuehaibing@huawei.com>
+In-Reply-To: <20190516075656.25880-1-yuehaibing@huawei.com>
+From:   Axel Lin <axel.lin@ingics.com>
+Date:   Thu, 16 May 2019 16:36:59 +0800
+Message-ID: <CAFRkauCSzkuNUugsfGY8jvcy-2hd-LfkuerJi56V3OM6oHu3yw@mail.gmail.com>
+Subject: Re: [PATCH] spi: bitbang: Fix NULL pointer dereference in spi_unregister_master
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Alban Bedel <albeu@free.fr>, lorenzo.bianconi@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---nxc66wpttvnorf5q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, May 14, 2019 at 10:43:35PM +0200, Jernej Skrabec wrote:
-> I received a report that 4K resolution doesn't work if U-Boot video
-> driver is disabled. It turns out that HDMI PHY clock driver was
-> initialized prematurely, before reset line was deasserted and clocks
-> enabled. U-Boot video driver masked the issue because it set pixel
-> clock correctly.
+YueHaibing <yuehaibing@huawei.com> =E6=96=BC 2019=E5=B9=B45=E6=9C=8816=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:57=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> In the process of researching the bug, I also found out that few bits
-> in HDMI PHY registers were not set correctly. While there is no
-> noticeable change (4K resolution works with both settings), I've
-> added fix anyway, to be conformant with vendor documentation.
+> If spi_register_master fails in spi_bitbang_start
+> because device_add failure, We should return the
+> error code other than 0, otherwise calling
+> spi_bitbang_stop may trigger NULL pointer dereference
+> like this:
 
-Applied both, thanks
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nxc66wpttvnorf5q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN0fyAAKCRDj7w1vZxhR
-xUAXAP9xICklXvpieTeqdcZC4XE/+a2QALTSkxog1dIwU2z9hgEA9W1tdHngDaMj
-jYInZNsuhpQY0H7zxkIQTeX7MeX2Ogs=
-=TN7Y
------END PGP SIGNATURE-----
-
---nxc66wpttvnorf5q--
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
