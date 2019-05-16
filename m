@@ -2,70 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8812420E34
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 19:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D84B120E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 19:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfEPRte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 13:49:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56682 "EHLO mail.kernel.org"
+        id S1728702AbfEPRur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 13:50:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36262 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726956AbfEPRte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 13:49:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726441AbfEPRur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 13:50:47 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 799A320818;
-        Thu, 16 May 2019 17:49:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558028973;
-        bh=decCPVJq4sFXSSaGYODONKx6td/Up+NRhyNGO6otSDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OupcOnC/D5jcim3o1Js5A/ylBeqyLSB5YCMZMLvQPgOfgEF36+DetZPXqKgAuOfl9
-         5dXFEY8qgG8T+VHu6lK3IQanBgcoFA2mNzmeoC5sIi5yky8SwzihYXYW0JoCYvVcRa
-         9SMwfaaM7uUjxJKz1DnNH5zMNFSkrdTi/N0p6dbI=
-Date:   Thu, 16 May 2019 19:49:30 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Naveen Kumar Parna <parna.naveenkumar@gmail.com>
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] bsr: "foo * bar" should be "foo *bar"
-Message-ID: <20190516174930.GA28323@kroah.com>
-References: <20190515134310.27269-1-parna.naveenkumar@gmail.com>
- <20190515151358.GD23599@kroah.com>
- <CAKXhv7ew=956XWh0O=KFiKOM8XNKiZtNfjQEFunKaL_C9EPTFg@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 28AB6308425C;
+        Thu, 16 May 2019 17:50:47 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-120-91.rdu2.redhat.com [10.10.120.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54CB5341E8;
+        Thu, 16 May 2019 17:50:46 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mukesh Ojha <mojha@codeaurora.org>
+Subject: [PATCH] objtool: Allow AR to be overridden with HOSTAR
+Date:   Thu, 16 May 2019 12:49:42 -0500
+Message-Id: <80822a9353926c38fd7a152991c6292491a9d0e8.1558028966.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKXhv7ew=956XWh0O=KFiKOM8XNKiZtNfjQEFunKaL_C9EPTFg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 16 May 2019 17:50:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 11:11:21PM +0530, Naveen Kumar Parna wrote:
-> On Wed, 15 May, 2019, 8:44 PM Greg KH, <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Wed, May 15, 2019 at 07:13:10PM +0530, parna.naveenkumar@gmail.com
-> > wrote:
-> > > From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
-> > >
-> > > Fixed the checkpatch error. Used "foo *bar" instead of "foo * bar"
-> > >
-> > > Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
-> > > ---
-> > >  drivers/char/bsr.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Where is patch 1/2 of this series?
-> >
-> It does not has corresponding 1/2 patch. By mistake I used
-> wrong argument to 'git format-patch' command.
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-Ok, thanks, now dropped.  Please fix up and resend properly.
+Currently, this Makefile hardcodes GNU ar, meaning that if it is not
+available, there is no way to supply a different one and the build will
+fail.
 
-As I said before, the bar for cleanup patches outside of
-drivers/staging/ is much higher :)
+  $ make AR=llvm-ar CC=clang LD=ld.lld HOSTAR=llvm-ar HOSTCC=clang \
+         HOSTLD=ld.lld HOSTLDFLAGS=-fuse-ld=lld defconfig modules_prepare
+  ...
+    AR       /out/tools/objtool/libsubcmd.a
+  /bin/sh: 1: ar: not found
+  ...
 
-thanks,
+Follow the logic of HOST{CC,LD} and allow the user to specify a
+different ar tool via HOSTAR (which is used elsewhere in other
+tools/ Makefiles).
 
-greg k-h
+Link: https://github.com/ClangBuiltLinux/linux/issues/481
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ tools/objtool/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index 53f8be0f4a1f..88158239622b 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -7,11 +7,12 @@ ARCH := x86
+ endif
+ 
+ # always use the host compiler
++HOSTAR	?= ar
+ HOSTCC	?= gcc
+ HOSTLD	?= ld
++AR	 = $(HOSTAR)
+ CC	 = $(HOSTCC)
+ LD	 = $(HOSTLD)
+-AR	 = ar
+ 
+ ifeq ($(srctree),)
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+-- 
+2.20.1
+
