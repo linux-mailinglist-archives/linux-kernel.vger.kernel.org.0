@@ -2,116 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A80FD20A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 247C420A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbfEPOn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:43:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35255 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfEPOn1 (ORCPT
+        id S1726948AbfEPOrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:47:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35200 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfEPOrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:43:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m3so3551903wrv.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 07:43:26 -0700 (PDT)
+        Thu, 16 May 2019 10:47:46 -0400
+Received: by mail-lj1-f195.google.com with SMTP id h11so2011645ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 07:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f+AY9FGToF7XfqxomfQs9FiHIqAX8dYewdybhmeUoTA=;
+        b=RbjLMkPZ/l16ccEaNtAkER7DjD5jYPDaLczLmzyh01O3rbUJDI7XLPByf3snj4wnW0
+         /76OSaLm1g6x/DBvxSOlNwwxYL1ULO2QwoRV3hEsQvtaG4B19CEMo20TWT9wgsS8rgum
+         BScXFRwbSRFVEFH1JXOuePQxZsiabMWvw784Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cj+rXNfNlUN3r4Yp7FC3w8W2jv87lre7M4pXy1RJygg=;
-        b=S6+iqijnJucwreWKxlpYkRrSVGQK1pNor13wssFA/H0y8dBClJmFrCrVxTeUYizJrD
-         OoejWbW5q/7zNxWTwDVghddMUrDAq7vrw6DwEPXUF5vtSVE7dF9iZrAtE+oiVO76c4I8
-         UUB+BHAVuPtK/YQWdcYEc/RrJ1byYPUrt3mIE2yNiaK2nSvMSoZMWy6/S/OoPm3QYNMF
-         +6ZkJlZE3JDU2zmNSDKoWRW+w/rTDxBU05354TVJmAnR6dax5apuM/E7/aP4tJA7uvjV
-         2swpOL3vmwzk0e2EyPA4/uFaIV4Hx5Q54Q9XKKJ3/DETbN1biKHDw/WC3VNGuIAzedIO
-         LRQw==
-X-Gm-Message-State: APjAAAX13thBNkfsBkJFhZGCVy/zynQGwmb+gXQ5UC0ZwTqnN9ZrK0Tr
-        j9beSdA1vPFVO9g6TpORZ/cX0w==
-X-Google-Smtp-Source: APXvYqzKDhdhn0sTfAQMEnf2Z3MPEpDPMQ1RAoC5i7RhAcgllW8ck8oD5TGkmgzragiiRcn+PESIqQ==
-X-Received: by 2002:a5d:4206:: with SMTP id n6mr17691401wrq.58.1558017806003;
-        Thu, 16 May 2019 07:43:26 -0700 (PDT)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id q13sm6113444wrn.27.2019.05.16.07.43.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 07:43:25 -0700 (PDT)
-Date:   Thu, 16 May 2019 16:43:24 +0200
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Hugh Dickins <hughd@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Greg KH <greg@kroah.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Timofey Titovets <nefelim4ag@gmail.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Grzegorz Halat <ghalat@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH RFC 4/5] mm/ksm, proc: introduce remote merge
-Message-ID: <20190516144323.pzkvs6hapf3czorz@butterfly.localdomain>
-References: <20190516094234.9116-1-oleksandr@redhat.com>
- <20190516094234.9116-5-oleksandr@redhat.com>
- <CAG48ez2yXw_PJXO-mS=Qw5rkLpG6zDPd0saMhhGk09-du2bpaA@mail.gmail.com>
- <20190516142013.sf2vitmksvbkb33f@butterfly.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f+AY9FGToF7XfqxomfQs9FiHIqAX8dYewdybhmeUoTA=;
+        b=mm+oLZ/tlx99ZrcVCueNaTCEEEH2sQfeAZpz6wvdsIKtni8OZBGWRrXg5C7TW/F5vs
+         7KakG916ZyXSabn1UchPlTmEZf4eyqrDsgkHHLLF3+qI38kk/fqjZAtKcvBS1qbkoQox
+         2TXJpbJYNntcqY97EwzJArC4fDT+J5BbDs0p86NgsPQKAFXX71mlZYzbeL/t9h5NxDSD
+         6tqtt2sXZYeUN/SVOcgtrvvlEW3cgNOrMyaIzJXvP1MhTGIop4zTlXcT9gqONXq2HEJj
+         1kAQdOtySKs1xnwCxAA9j00L9YCO0NmOkM6XEf62tCGqOZd3oFlkLeo/etOl9NdsJFl8
+         /ejQ==
+X-Gm-Message-State: APjAAAVFa9F3a3hdRZeqMUmE0Rw4mEBWBNC0G/sgHpS1tIOnd/X9hABj
+        Hwyp1HYi+aLvoTtHec18DbJmLaFKieyk45ym8KopYw==
+X-Google-Smtp-Source: APXvYqw0hDatqMLJ9zbTJnhnTT5oC+AytbihhJlbtmmhC0PCFw0n+jOkJep+hdoIObkawWGwDm8yCxILLdub7+DGlhc=
+X-Received: by 2002:a2e:9bd2:: with SMTP id w18mr554571ljj.120.1558018064453;
+ Thu, 16 May 2019 07:47:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516142013.sf2vitmksvbkb33f@butterfly.localdomain>
-User-Agent: NeoMutt/20180716
+References: <1556733121-20133-1-git-send-email-kdasu.kdev@gmail.com> <CAFLxGvy7B2K2AX0nSe549QF-gDMZcc5F4X0Y+yzRrnYfL9svEw@mail.gmail.com>
+In-Reply-To: <CAFLxGvy7B2K2AX0nSe549QF-gDMZcc5F4X0Y+yzRrnYfL9svEw@mail.gmail.com>
+From:   Kamal Dasu <kamal.dasu@broadcom.com>
+Date:   Thu, 16 May 2019 10:47:07 -0400
+Message-ID: <CAKekbeskaF90QecqArSd8xgsU3zpBMndeo3fbevRjUZRu=ZkMA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: raw: brcmnand: When oops in progress use pio
+ and interrupt polling
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Kamal Dasu <kdasu.kdev@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 04:20:13PM +0200, Oleksandr Natalenko wrote:
-> > [...]
-> > > @@ -2960,15 +2962,63 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
-> > >  static ssize_t madvise_write(struct file *file, const char __user *buf,
-> > >                 size_t count, loff_t *ppos)
-> > >  {
-> > > +       /* For now, only KSM hints are implemented */
-> > > +#ifdef CONFIG_KSM
-> > > +       char buffer[PROC_NUMBUF];
-> > > +       int behaviour;
-> > >         struct task_struct *task;
-> > > +       struct mm_struct *mm;
-> > > +       int err = 0;
-> > > +       struct vm_area_struct *vma;
-> > > +
-> > > +       memset(buffer, 0, sizeof(buffer));
-> > > +       if (count > sizeof(buffer) - 1)
-> > > +               count = sizeof(buffer) - 1;
-> > > +       if (copy_from_user(buffer, buf, count))
-> > > +               return -EFAULT;
-> > > +
-> > > +       if (!memcmp("merge", buffer, min(sizeof("merge")-1, count)))
-> > 
-> > This means that you also match on something like "mergeblah". Just use strcmp().
-> 
-> I agree. Just to make it more interesting I must say that
-> 
->    /sys/kernel/mm/transparent_hugepage/enabled
-> 
-> uses memcmp in the very same way, and thus echoing "alwaysssss" or
-> "madviseeee" works perfectly there, and it was like that from the very
-> beginning, it seems. Should we fix it, or it became (zomg) a public API?
+On Mon, May 6, 2019 at 12:01 PM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> On Wed, May 1, 2019 at 7:52 PM Kamal Dasu <kdasu.kdev@gmail.com> wrote:
+> >
+> > If mtd_oops is in progress switch to polling for nand command completion
+> > interrupts and use PIO mode wihtout DMA so that the mtd_oops buffer can
+> > be completely written in the assinged nand partition. This is needed in
+> > cases where the panic does not happen on cpu0 and there is only one online
+> > CPU and the panic is not on cpu0.
+>
+> This optimization is highly specific to your hardware and AFAIK cannot
+> be applied
+> in general to brcmnand.
+>
+> So the problem you see is that depending on the oops you can no longer use dma
+> or interrupts in the driver?
+>
+> How about adding a new flag to panic_nand_write() which tells the nand
+> driver that
+> this is a panic write?
+> That way you can fall back to pio and polling mode without checking cpu numbers
+> and oops_in_progress.
+>
 
-Actually, maybe, the reason for using memcmp is to handle "echo"
-properly: by default it puts a newline character at the end, so if we use
-just strcmp, echo should be called with -n, otherwise strcmp won't match
-the string.
+Thanks for your review  Richard. Will add flag to let low level
+controller drivers know that that its a panic_write and make brcmnand
+code more generic and simply fallback to pio and polling in such a
+case. Will send a V2 patch with these recommended changes.
 
-Huh?
+Thanks
+Kamal
 
-> [...]
-
--- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Senior Software Maintenance Engineer
+> --
+> Thanks,
+> //richard
