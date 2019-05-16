@@ -2,132 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4846E207DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0117207E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfEPNUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:20:01 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:45168 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbfEPNUB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:20:01 -0400
-Received: by mail-vk1-f193.google.com with SMTP id r23so999286vkd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 06:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8Mom9MODQ5/QqS+RDXttev2mPfjd0+NlE9IuL/dY7r0=;
-        b=NyYpd+dkEe2YZFx36BzlohQJ+8JNYLj3zvAZeOi8NXLBd9Cfc1WAr4LKDFtfqnGpad
-         StU7H7B3CNs4PTRtMPNyu48VG0OZOTZup0nt++JNMt27PlrD0ZmxJV1bfN72QLCfNuf6
-         w7gdkwYzuTZZNUyNWLDDFcEpc+Yt/Koj5aaJMPvc1MnekJnzFPwg/6VOt0JMkZ3JCPck
-         x3J0yX/c5zszJjTgdOGbi0c8d6dY2RpB2WP5V1wutc4hZGvz37FMXRudGdXPGb3adGS4
-         HMQw1aG9pYnoANuDja2STHdq5iiD076Y53phnswgHQxYlemD+OLxg7fnU/di1ZVQ146z
-         ojdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8Mom9MODQ5/QqS+RDXttev2mPfjd0+NlE9IuL/dY7r0=;
-        b=O4YC1sQv5B5iidEW/wMgseNT3DBCG+c86QLmgGQNPZrsoTLxrOBif+z9HocI9NMuQJ
-         n6OSgVqz25xdy8OsFfHUqcdHA9fVMjLDZjUs8WuDpWrPAUQgfT8IO82VJFYdI+OAMGJy
-         jaE0FxQtx44zUBBcR3fJ9k8Oc8B4BFIBnkCs9wk4/nYtLEFcb7Zo8Sp7/tQmCClbSaMx
-         XNakb8DTtjGKTgauYF5XBC7ND3g72g5S0Ua8wOkqiaUr9i19U93rXjUGUfl7pMZ0UgGs
-         w/UiD+56ujcKOTrdJ2Ug8zqOiWAmgUnxDBIqaigUwZroSqrPty4GIFOiG7QIQoyzunNR
-         2XjQ==
-X-Gm-Message-State: APjAAAUKPdSFf5cUgiLiLZBYYNZmJAAYdwSeBJOBG5IbJvSjjrjhY35U
-        FCEqSnM2sJlIoATqHpzAWcdKKf215MBZbD/Zk9UlPsQE9fc=
-X-Google-Smtp-Source: APXvYqwHkWIjT82JQxz+Mhj+wFekyLzeKbvlA3oD6vV2Dm+OkWUy416z1duYLdzrQPrdKwcvwPtwQgxdzG09+lz8BzY=
-X-Received: by 2002:a1f:3492:: with SMTP id b140mr22269628vka.8.1558012799699;
- Thu, 16 May 2019 06:19:59 -0700 (PDT)
+        id S1727384AbfEPNVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:21:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:45460 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbfEPNVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:21:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2C4F1715;
+        Thu, 16 May 2019 06:21:39 -0700 (PDT)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 625313F703;
+        Thu, 16 May 2019 06:21:37 -0700 (PDT)
+Subject: Re: [PATCH v4 0/8] Allwinner H6 Mali GPU support
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <rob.e.herring@gmail.com>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190512174608.10083-1-peron.clem@gmail.com>
+ <20190513151405.GW17751@phenom.ffwll.local>
+ <de50a9da-669f-ab25-2ef2-5ffb90f8ee03@baylibre.com>
+ <CAJiuCccuEw0BK6MwROR+XUDvu8AJTmZ5tu=pYwZbGAuvO31pgg@mail.gmail.com>
+ <CAJiuCccWa5UTML68JDQq6q8SyNZzVWwQWTOL=+84Bh4EMHGC3A@mail.gmail.com>
+ <3c2c9094-69d4-bace-d5ee-c02b7f56ac82@arm.com>
+ <CAJiuCcd=gCQJ4mxn3wNhHXveOhFLnYSEs+cnOMHcALPvd7bQZw@mail.gmail.com>
+ <CAC=3edbn1yXih5vP0SwsDkqRB0j5q0c4FL0jhCq9DQ9Wt2-hAA@mail.gmail.com>
+ <e8618889-9b22-7f9f-7451-3c08a80a0f9b@arm.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <fa434575-5576-aff5-8705-1f93eefa209c@arm.com>
+Date:   Thu, 16 May 2019 14:21:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <00000000000032685a058900d170@google.com> <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
-In-Reply-To: <2b0b9d18-6773-f2dc-ecb2-9f8782d0962a@i-love.sakura.ne.jp>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 16 May 2019 15:19:48 +0200
-Message-ID: <CAG_fn=UHjDv=Jc_nEKKknVGrr9CC4rZ+a+hw_yAL-j4y4=89cg@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in tomoyo_check_inet_address
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e8618889-9b22-7f9f-7451-3c08a80a0f9b@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Date: Thu, May 16, 2019 at 3:13 PM
-To: syzbot
-Cc: <glider@google.com>, <jmorris@namei.org>,
-<linux-kernel@vger.kernel.org>,
-<linux-security-module@vger.kernel.org>, <serge@hallyn.com>,
-<syzkaller-bugs@googlegroups.com>, <takedakn@nttdata.co.jp>
+On 16/05/2019 12:19, Robin Murphy wrote:
+[...]
+> I was expecting to see a similar behaviour to my T620 (which I now
+> assume was down to 64-bit job descriptors sort-of-but-not-quite working)
+> but this does look a bit more fundamental - the fact that it's a level 1
+> fault with VA == head == tail suggests to me that the MMU can't see the
+> page tables at all to translate anything. I really hope that the H6 GPU
+> integration doesn't suffer from the same DMA offset as the Allwinner
+> display pipeline stuff, because that would be a real pain to support in
+> io-pgtable.
 
-> On 2019/05/16 21:58, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    3b955a40 usb-fuzzer: main usb gadget fuzzer driver
-> > git tree:       kmsan
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1027e608a00=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D602468164cc=
-dc30a
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D1018d578c410f=
-9f37261
-> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang 06d00afa61=
-eef8f7f501ebdb4e8612ea43ec2d78)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
->
-> This should be already fixed in linux.git.
->
-> #syz fix: tomoyo: Check address length before reading address family
->
-> commit e6193f78bb689f3f424559bb45f4a091c8b314df
-> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date:   Fri Apr 12 19:59:36 2019 +0900
->
->     tomoyo: Check address length before reading address family
->
->     KMSAN will complain if valid address length passed to bind()/connect(=
-)/
->     sendmsg() is shorter than sizeof("struct sockaddr"->sa_family) bytes.
->
->     Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->     Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-Apparently the fix didn't make it to 5.1, I'll cherry-pick it to KMSAN tree=
-.
-OOC, how did you know about this bug?
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/2b0b9d18-6773-f2dc-ecb2-9f8782d0962a%40i-love.sakura.ne.jp=
-.
-> For more options, visit https://groups.google.com/d/optout.
+Assuming you mean the case where the physical address (as seen by the
+CPU) is different from the dma address (as seen by the GPU), then I
+highly doubt it because mali_kbase doesn't support it:
+
+[from kbase_mem_pool_alloc_page() in mali_kbase_mem_pool.c]:
+
+	dma_addr = dma_map_page(dev, p, 0, PAGE_SIZE, DMA_BIDIRECTIONAL);
+	if (dma_mapping_error(dev, dma_addr)) {
+		__free_page(p);
+		return NULL;
+	}
+
+	WARN_ON(dma_addr != page_to_phys(p));
 
 
+That being said it's quite possible there could be something in the bus
+which needs configuring to make this work - in which case your best bet
+is to look at the vendor kernel and see if anything extra is poked when
+the Mali driver is loaded.
 
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+Steve
