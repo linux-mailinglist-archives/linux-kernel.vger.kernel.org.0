@@ -2,190 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D4D32028E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8BA20294
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbfEPJah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:30:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39876 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbfEPJag (ORCPT
+        id S1727115AbfEPJbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:31:18 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38327 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbfEPJbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:30:36 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B412760AA3; Thu, 16 May 2019 09:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557999032;
-        bh=BQeF1SghZ/cw9v6x9DZFOORthYlBbnNOG2SlS537v3U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BFRH/DYu1wXg3QQWrs7g+LzRHUCwO4azI6zhO/c/QseXFWoSu536x+50Ct9Hi8Sc+
-         jURtj1I6iMOxWLBMZ22PsImxlxRKXFYA+itDWEjj6+jEK7urJh3GVWp7BgzBY0B5u+
-         ZaWAZJ8C9vxpI3mmws94cCoGjouLK/PNXDDkmaRA=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38E0260A43;
-        Thu, 16 May 2019 09:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1557999030;
-        bh=BQeF1SghZ/cw9v6x9DZFOORthYlBbnNOG2SlS537v3U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oba4MSJvFuLeFSdasc4U5oYTvBGipxJu6XZ/MUkV+RP0S1DkD/+EEg0sBfTYTgr3q
-         c4s51rYoxO5UjSMjWU7Amj2vInP4frGltunoa3Mfoh9v/HKqYqv3JFnfpZ8S4H+LwO
-         u5oY7GHPLQJNLTEUvwfkbwukao23Jg0UCSDhwrME=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38E0260A43
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, pdaly@codeaurora.org,
-        pratikp@codeaurora.org, jcrouse@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v5 1/1] iommu/io-pgtable-arm: Add support to use system cache
-Date:   Thu, 16 May 2019 15:00:20 +0530
-Message-Id: <20190516093020.18028-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        Thu, 16 May 2019 05:31:17 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 14so2453889ljj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=scP5pJngsU9KJ/PvOc7PkGn3ctf+6jypjet7NqrKqmA=;
+        b=BQLpv+w5ngjqKJjwCym2ZWvuhIyTXrQXe/cH0kkyhS3AsX/8P4b2Uup0CJ63BRhZw6
+         0f6scy9IOKguNgia+DARy/Pgsf9ihVfdo+x2VptKljZpgjcpQh2K6bqp5DpPLMTCR1Ms
+         G/Ir19EM1+91HaPREMy7MEtETZbC78Ge1OCtU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=scP5pJngsU9KJ/PvOc7PkGn3ctf+6jypjet7NqrKqmA=;
+        b=bPa+AqhTIfWtNidjxjz2G6x5crJnlKicPA66PdMXTc7FiCErXrUNI+4PhODdG9nccN
+         7fXMZydNiphM8nyTQqwRJFqcFiB0Mf9KXOuQ60X0B5Cc9PNeUWiottoupNfbO5bowIFz
+         ZDpNRk2kVycaI77+hbnm9TaIZAJD70Yutc7JwRNYPYkLFBGnFkMHbqhzI2NLqT/1R5jG
+         CzgdwsDeLuFD7U0nZw/0gHRdoRplJgOcaTmUb0n3f2OLZNm9EUEu09euzCjMyLCi7QAR
+         VyRX6gntEQdrZkMPlsHXdNYa1Q8K2LMBlqL7Vr38mmJrZiTIzshjR90Jx/olJjLLBXJn
+         a0oQ==
+X-Gm-Message-State: APjAAAUDewxE+nGdgiVnF9mLqHjdx9STD2YJe9y8SnXjOHdMTUQJjyOb
+        Js5IbVGZzFZg2Aqvv2YujP7jhsdqEthZodNWhidkoQ==
+X-Google-Smtp-Source: APXvYqwNaOEDdnyE4kovKiBd0lYy36SnZeTUeTmEcc48z/VV0dfPM42qlRB+DSHJU6bby/xttsO3fxo4hMv92OjcJ48=
+X-Received: by 2002:a2e:74f:: with SMTP id i15mr22844265ljd.156.1557999075116;
+ Thu, 16 May 2019 02:31:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190515134731.12611-1-krzesimir@kinvolk.io> <20190515134731.12611-4-krzesimir@kinvolk.io>
+ <20190515145037.6918f626@cakuba.netronome.com>
+In-Reply-To: <20190515145037.6918f626@cakuba.netronome.com>
+From:   Krzesimir Nowak <krzesimir@kinvolk.io>
+Date:   Thu, 16 May 2019 11:31:04 +0200
+Message-ID: <CAGGp+cHqJZFfYt9VUAuQ7SpCZZ9ijoreKVBumc+wnGfw7pAXTA@mail.gmail.com>
+Subject: Re: [PATCH bpf v1 3/3] selftests/bpf: Avoid a clobbering of errno
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     bpf@vger.kernel.org,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>,
+        "Alban Crequy (Kinvolk)" <alban@kinvolk.io>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jiong Wang <jiong.wang@netronome.com>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few Qualcomm platforms such as, sdm845 have an additional outer
-cache called as System cache, aka. Last level cache (LLC) that
-allows non-coherent devices to upgrade to using caching.
-This cache sits right before the DDR, and is tightly coupled
-with the memory controller. The clients using this cache request
-their slices from this system cache, make it active, and can then
-start using it.
+On Wed, May 15, 2019 at 11:51 PM Jakub Kicinski
+<jakub.kicinski@netronome.com> wrote:
+>
+> On Wed, 15 May 2019 15:47:28 +0200, Krzesimir Nowak wrote:
+> > Save errno right after bpf_prog_test_run returns, so we later check
+> > the error code actually set by bpf_prog_test_run, not by some libcap
+> > function.
+> >
+> > Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> > Fixes: 5a8d5209ac022 ("selftests: bpf: add trivial JSET tests")
+>
+> This commit (of mine) just moved this code into a helper, the bug is
+> older:
+>
+> Fixes: 832c6f2c29ec ("bpf: test make sure to run unpriv test cases in tes=
+t_verifier")
 
-There is a fundamental assumption that non-coherent devices can't
-access caches. This change adds an exception where they *can* use
-some level of cache despite still being non-coherent overall.
-The coherent devices that use cacheable memory, and CPU make use of
-this system cache by default.
+Oops, ok. Will fix it. Thanks.
 
-Looking at memory types, we have following -
-a) Normal uncached :- MAIR 0x44, inner non-cacheable,
-                      outer non-cacheable;
-b) Normal cached :-   MAIR 0xff, inner read write-back non-transient,
-                      outer read write-back non-transient;
-                      attribute setting for coherenet I/O devices.
-and, for non-coherent i/o devices that can allocate in system cache
-another type gets added -
-c) Normal sys-cached :- MAIR 0xf4, inner non-cacheable,
-                        outer read write-back non-transient
+>
+> > Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+> > ---
+> >  tools/testing/selftests/bpf/test_verifier.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testin=
+g/selftests/bpf/test_verifier.c
+> > index bf0da03f593b..514e17246396 100644
+> > --- a/tools/testing/selftests/bpf/test_verifier.c
+> > +++ b/tools/testing/selftests/bpf/test_verifier.c
+> > @@ -818,15 +818,17 @@ static int do_prog_test_run(int fd_prog, bool unp=
+riv, uint32_t expected_val,
+> >       __u32 size_tmp =3D sizeof(tmp);
+> >       uint32_t retval;
+> >       int err;
+> > +     int saved_errno;
+> >
+> >       if (unpriv)
+> >               set_admin(true);
+> >       err =3D bpf_prog_test_run(fd_prog, 1, data, size_data,
+> >                               tmp, &size_tmp, &retval, NULL);
+> > +     saved_errno =3D errno;
+> >       if (unpriv)
+> >               set_admin(false);
+> >       if (err) {
+> > -             switch (errno) {
+> > +             switch (saved_errno) {
+> >               case 524/*ENOTSUPP*/:
+> >                       printf("Did not run the program (not supported) "=
+);
+> >                       return 0;
+>
 
-Coherent I/O devices use system cache by marking the memory as
-normal cached.
-Non-coherent I/O devices should mark the memory as normal
-sys-cached in page tables to use system cache.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
-
-V3 version of this patch and related series can be found at [1].
-V4 of this patch is available at [2].
-
-The example usage of how a smmu master can make use of this protection
-flag and set the correct memory attributes to start using system cache,
-can be found at [3]; and here at [3] IOMMU_UPSTREAM_HINT is same as
-IOMMU_QCOM_SYS_CACHE.
-
-Changes since v4:
- - Changed ARM_LPAE_MAIR_ATTR_QCOM_SYS_CACHE to
-   ARM_LPAE_MAIR_ATTR_INC_OWBRWA.
- - Changed ARM_LPAE_MAIR_ATTR_IDX_QCOM_SYS_CACHE to
-   ARM_LPAE_MAIR_ATTR_IDX_INC_OCACHE.
- - Added comments to iommu protection flag - IOMMU_QCOM_SYS_CACHE.
-
-Changes since v3:
- - Dropping support to cache i/o page tables to system cache. Getting support
-   for data buffers is the first step.
-   Removed io-pgtable quirk and related change to add domain attribute.
-
-Glmark2 numbers on SDM845 based cheza board:
-
-S.No.|	with LLC support   |	without LLC support
-     |	for data buffers   |
----------------------------------------------------		
-1    |	4480; 72.3fps      |	4042; 65.2fps
-2    |	4500; 72.6fps      |	4039; 65.1fps
-3    |	4523; 72.9fps	   |	4106; 66.2fps
-4    |	4489; 72.4fps	   |	4104; 66.2fps
-5    |	4518; 72.9fps	   |	4072; 65.7fps
-
-[1] https://patchwork.kernel.org/cover/10772629/
-[2] https://lore.kernel.org/patchwork/patch/1072936/
-[3] https://patchwork.kernel.org/patch/10302791/
-
- drivers/iommu/io-pgtable-arm.c | 9 ++++++++-
- include/linux/iommu.h          | 6 ++++++
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 4e21efbc4459..2454ac11aa97 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -167,10 +167,12 @@
- #define ARM_LPAE_MAIR_ATTR_MASK		0xff
- #define ARM_LPAE_MAIR_ATTR_DEVICE	0x04
- #define ARM_LPAE_MAIR_ATTR_NC		0x44
-+#define ARM_LPAE_MAIR_ATTR_INC_OWBRWA	0xf4
- #define ARM_LPAE_MAIR_ATTR_WBRWA	0xff
- #define ARM_LPAE_MAIR_ATTR_IDX_NC	0
- #define ARM_LPAE_MAIR_ATTR_IDX_CACHE	1
- #define ARM_LPAE_MAIR_ATTR_IDX_DEV	2
-+#define ARM_LPAE_MAIR_ATTR_IDX_INC_OCACHE	3
- 
- #define ARM_MALI_LPAE_TTBR_ADRMODE_TABLE (3u << 0)
- #define ARM_MALI_LPAE_TTBR_READ_INNER	BIT(2)
-@@ -470,6 +472,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 		else if (prot & IOMMU_CACHE)
- 			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
- 				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
-+		else if (prot & IOMMU_QCOM_SYS_CACHE)
-+			pte |= (ARM_LPAE_MAIR_ATTR_IDX_INC_OCACHE
-+				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
- 	}
- 
- 	if (prot & IOMMU_NOEXEC)
-@@ -857,7 +862,9 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 	      (ARM_LPAE_MAIR_ATTR_WBRWA
- 	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_CACHE)) |
- 	      (ARM_LPAE_MAIR_ATTR_DEVICE
--	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV));
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV)) |
-+	      (ARM_LPAE_MAIR_ATTR_INC_OWBRWA
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_INC_OCACHE));
- 
- 	cfg->arm_lpae_s1_cfg.mair[0] = reg;
- 	cfg->arm_lpae_s1_cfg.mair[1] = 0;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a815cf6f6f47..8ee3fbaf5855 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -41,6 +41,12 @@
-  * if the IOMMU page table format is equivalent.
-  */
- #define IOMMU_PRIV	(1 << 5)
-+/*
-+ * Non-coherent masters on few Qualcomm SoCs can use this page protection flag
-+ * to set correct cacheability attributes to use an outer level of cache -
-+ * last level cache, aka system cache.
-+ */
-+#define IOMMU_QCOM_SYS_CACHE	(1 << 6)
- 
- struct iommu_ops;
- struct iommu_group;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+--=20
+Kinvolk GmbH | Adalbertstr.6a, 10999 Berlin | tel: +491755589364
+Gesch=C3=A4ftsf=C3=BChrer/Directors: Alban Crequy, Chris K=C3=BChl, Iago L=
+=C3=B3pez Galeiras
+Registergericht/Court of registration: Amtsgericht Charlottenburg
+Registernummer/Registration number: HRB 171414 B
+Ust-ID-Nummer/VAT ID number: DE302207000
