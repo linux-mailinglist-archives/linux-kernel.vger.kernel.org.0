@@ -2,138 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B2120824
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D6F20830
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:30:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbfEPN2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:28:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726955AbfEPN2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:28:09 -0400
-Received: from localhost (50-82-73-190.client.mchsi.com [50.82.73.190])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7720C20815;
-        Thu, 16 May 2019 13:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558013288;
-        bh=Zv6ZRln99gohm9loMinCpGMe8ABSvr0R7QAANxBD+kc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jBfwdHcf4Po3DSORzgMh2uiY9Ul04pxKYbhMY/zaWlfmyGmYMrWktAkYMR3/g+Zl5
-         QD+ntDpAEK1xbh69SJsqqUrJOze0M+lq5CE9k5BEH4i1YZ48kZLzEOp3Uq2M+X0e1Q
-         by/MDglHyhTFkXEIUWDjKZbIxkpBNpeq0mzZ2ocE=
-Date:   Thu, 16 May 2019 08:28:07 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-Message-ID: <20190516132807.GB101793@google.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
+        id S1727238AbfEPNao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:30:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59180 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726528AbfEPNao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:30:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B1F27AD7B;
+        Thu, 16 May 2019 13:30:41 +0000 (UTC)
+Date:   Thu, 16 May 2019 15:30:34 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        keith.busch@intel.com, kirill.shutemov@linux.intel.com,
+        pasha.tatashin@oracle.com, alexander.h.duyck@linux.intel.com,
+        ira.weiny@intel.com, andreyknvl@google.com, arunks@codeaurora.org,
+        vbabka@suse.cz, cl@linux.com, riel@surriel.com,
+        keescook@chromium.org, hannes@cmpxchg.org, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, shakeelb@google.com, guro@fb.com,
+        aarcange@redhat.com, hughd@google.com, jglisse@redhat.com,
+        mgorman@techsingularity.net, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC 0/5] mm: process_vm_mmap() -- syscall for duplication
+ a process mapping
+Message-ID: <20190516133034.GT16651@dhcp22.suse.cz>
+References: <155793276388.13922.18064660723547377633.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190513050626.14991-3-vidyas@nvidia.com>
+In-Reply-To: <155793276388.13922.18064660723547377633.stgit@localhost.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 10:36:13AM +0530, Vidya Sagar wrote:
-> Export pcie_pme_disable_msi() & pcie_pme_no_msi() APIs to enable drivers
-> using these APIs be able to build as loadable modules.
+[You are defining a new user visible API, please always add linux-api
+ mailing list - now done]
+
+On Wed 15-05-19 18:11:15, Kirill Tkhai wrote:
+> This patchset adds a new syscall, which makes possible
+> to clone a mapping from a process to another process.
+> The syscall supplements the functionality provided
+> by process_vm_writev() and process_vm_readv() syscalls,
+> and it may be useful in many situation.
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-
-Nak, as-is.
-
-1) The argument for why this is needed is unconvincing.  If device
-advertises MSI support, we should be able to use it.
-
-2) If it turns out we really need this, it should be some sort of
-per-device setting rather than a global thing like this.
-
+> For example, it allows to make a zero copy of data,
+> when process_vm_writev() was previously used:
+> 
+> 	struct iovec local_iov, remote_iov;
+> 	void *buf;
+> 
+> 	buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+> 		   MAP_PRIVATE|MAP_ANONYMOUS, ...);
+> 	recv(sock, buf, n * PAGE_SIZE, 0);
+> 
+> 	local_iov->iov_base = buf;
+> 	local_iov->iov_len = n * PAGE_SIZE;
+> 	remove_iov = ...;
+> 
+> 	process_vm_writev(pid, &local_iov, 1, &remote_iov, 1 0);
+> 	munmap(buf, n * PAGE_SIZE);
+> 
+> 	(Note, that above completely ignores error handling)
+> 
+> There are several problems with process_vm_writev() in this example:
+> 
+> 1)it causes pagefault on remote process memory, and it forces
+>   allocation of a new page (if was not preallocated);
+> 
+> 2)amount of memory for this example is doubled in a moment --
+>   n pages in current and n pages in remote tasks are occupied
+>   at the same time;
+> 
+> 3)received data has no a chance to be properly swapped for
+>   a long time.
+> 
+> The third is the most critical in case of remote process touches
+> the data pages some time after process_vm_writev() was made.
+> Imagine, node is under memory pressure:
+> 
+> a)kernel moves @buf pages into swap right after recv();
+> b)process_vm_writev() reads the data back from swap to pages;
+> c)process_vm_writev() allocates duplicate pages in remote
+>   process and populates them;
+> d)munmap() unmaps @buf;
+> e)5 minutes later remote task touches data.
+> 
+> In stages "a" and "b" kernel submits unneeded IO and makes
+> system IO throughput worse. To make "b" and "c", kernel
+> reclaims memory, and moves pages of some other processes
+> to swap, so they have to read pages from swap back. Also,
+> unneeded copying of pages is occured, while zero-copy is
+> more preferred.
+> 
+> We observe similar problem during online migration of big enough
+> containers, when after doubling of container's size, the time
+> increases 100 times. The system resides under high IO and
+> throwing out of useful cashes.
+> 
+> The proposed syscall aims to introduce an interface, which
+> supplements currently existing process_vm_writev() and
+> process_vm_readv(), and allows to solve the problem with
+> anonymous memory transfer. The above example may be rewritten as:
+> 
+> 	void *buf;
+> 
+> 	buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+> 		   MAP_PRIVATE|MAP_ANONYMOUS, ...);
+> 	recv(sock, buf, n * PAGE_SIZE, 0);
+> 
+> 	/* Sign of @pid is direction: "from @pid task to current" or vice versa. */
+> 	process_vm_mmap(-pid, buf, n * PAGE_SIZE, remote_addr, PVMMAP_FIXED);
+> 	munmap(buf, n * PAGE_SIZE);
+> 
+> It is swap-friendly: in case of memory is swapped right after recv(),
+> the syscall just copies pagetable entries like we do on fork(),
+> so real access to pages does not occurs, and no IO is needed.
+> No excess pages are reclaimed, and number of pages is not doubled.
+> Also, zero-copy takes a place, and this also reduces overhead.
+> 
+> The patchset does not introduce much new code, since we simply
+> reuse existing copy_page_range() and copy_vma() functions.
+> We extend copy_vma() to be able merge VMAs in remote task [2/5],
+> and teach copy_page_range() to work with different local and
+> remote addresses [3/5]. Patch [5/5] introduces the syscall logic,
+> which mostly consists of sanity checks. The rest of patches
+> are preparations.
+> 
+> This syscall may be used for page servers like in example
+> above, for migration (I assume, even virtual machines may
+> want something like this), for zero-copy desiring users
+> of process_vm_writev() and process_vm_readv(), for debug
+> purposes, etc. It requires the same permittions like
+> existing proc_vm_xxx() syscalls have.
+> 
+> The tests I used may be obtained here:
+> 
+> [1]https://gist.github.com/tkhai/198d32fdc001ec7812a5e1ccf091f275
+> [2]https://gist.github.com/tkhai/f52dbaeedad5a699f3fb386fda676562
+> 
 > ---
-> Changes since [v5]:
-> * Corrected inline implementation of pcie_pme_no_msi() API
 > 
-> Changes since [v4]:
-> * None
+> Kirill Tkhai (5):
+>       mm: Add process_vm_mmap() syscall declaration
+>       mm: Extend copy_vma()
+>       mm: Extend copy_page_range()
+>       mm: Export round_hint_to_min()
+>       mm: Add process_vm_mmap()
 > 
-> Changes since [v3]:
-> * None
 > 
-> Changes since [v2]:
-> * Exported pcie_pme_no_msi() API after making pcie_pme_msi_disabled a static
+>  arch/x86/entry/syscalls/syscall_32.tbl |    1 
+>  arch/x86/entry/syscalls/syscall_64.tbl |    2 
+>  include/linux/huge_mm.h                |    6 +
+>  include/linux/mm.h                     |   11 ++
+>  include/linux/mm_types.h               |    2 
+>  include/linux/mman.h                   |   14 +++
+>  include/linux/syscalls.h               |    5 +
+>  include/uapi/asm-generic/mman-common.h |    5 +
+>  include/uapi/asm-generic/unistd.h      |    5 +
+>  init/Kconfig                           |    9 +-
+>  kernel/fork.c                          |    5 +
+>  kernel/sys_ni.c                        |    2 
+>  mm/huge_memory.c                       |   30 ++++--
+>  mm/memory.c                            |  165 +++++++++++++++++++++-----------
+>  mm/mmap.c                              |  154 ++++++++++++++++++++++++++----
+>  mm/mremap.c                            |    4 -
+>  mm/process_vm_access.c                 |   71 ++++++++++++++
+>  17 files changed, 392 insertions(+), 99 deletions(-)
 > 
-> Changes since [v1]:
-> * This is a new patch in v2 series
-> 
->  drivers/pci/pcie/pme.c     | 14 +++++++++++++-
->  drivers/pci/pcie/portdrv.h | 14 ++------------
->  2 files changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-> index 54d593d10396..d5e0ea4a62fc 100644
-> --- a/drivers/pci/pcie/pme.c
-> +++ b/drivers/pci/pcie/pme.c
-> @@ -25,7 +25,19 @@
->   * that using MSI for PCIe PME signaling doesn't play well with PCIe PME-based
->   * wake-up from system sleep states.
->   */
-> -bool pcie_pme_msi_disabled;
-> +static bool pcie_pme_msi_disabled;
-> +
-> +void pcie_pme_disable_msi(void)
-> +{
-> +	pcie_pme_msi_disabled = true;
-> +}
-> +EXPORT_SYMBOL_GPL(pcie_pme_disable_msi);
-> +
-> +bool pcie_pme_no_msi(void)
-> +{
-> +	return pcie_pme_msi_disabled;
-> +}
-> +EXPORT_SYMBOL_GPL(pcie_pme_no_msi);
->  
->  static int __init pcie_pme_setup(char *str)
->  {
-> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-> index 944827a8c7d3..1d441fe26c51 100644
-> --- a/drivers/pci/pcie/portdrv.h
-> +++ b/drivers/pci/pcie/portdrv.h
-> @@ -129,18 +129,8 @@ void pcie_port_bus_unregister(void);
->  struct pci_dev;
->  
->  #ifdef CONFIG_PCIE_PME
-> -extern bool pcie_pme_msi_disabled;
-> -
-> -static inline void pcie_pme_disable_msi(void)
-> -{
-> -	pcie_pme_msi_disabled = true;
-> -}
-> -
-> -static inline bool pcie_pme_no_msi(void)
-> -{
-> -	return pcie_pme_msi_disabled;
-> -}
-> -
-> +void pcie_pme_disable_msi(void);
-> +bool pcie_pme_no_msi(void);
->  void pcie_pme_interrupt_enable(struct pci_dev *dev, bool enable);
->  #else /* !CONFIG_PCIE_PME */
->  static inline void pcie_pme_disable_msi(void) {}
-> -- 
-> 2.17.1
-> 
+> --
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+-- 
+Michal Hocko
+SUSE Labs
