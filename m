@@ -2,100 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4DC20ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8310020AB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfEPPJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:09:55 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46716 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfEPPJz (ORCPT
+        id S1727592AbfEPPJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:09:46 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34014 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfEPPJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:09:55 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r7so3766031wrr.13;
-        Thu, 16 May 2019 08:09:53 -0700 (PDT)
+        Thu, 16 May 2019 11:09:46 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v18so2949297lfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GldHbOnZfCgrNxHCEakDvlEgb285OgaglO7DDWQycHU=;
-        b=Op8opcDSLOpQgGoRUbw/CP/yYvjtufKY8C3gwNH9bacemHQ50w624XxNsiMJE+4/Op
-         cbr24jzCXRY5KsAXJsv64Wg/oKZI+3DbaIj4cwmWNAZ4PPWO0mQHAnVXEI3vA7mJeWH8
-         n9ZxEYnd+mleHU0Fy59rMJqMjnOw+ihgWCaHP/qxrKAy9mIrXmMTB76SMD0w2VBfZW9A
-         uQrSqMbsWZjAAnGDHF/8qEokPZifppPJhcXV79xUE5Dow35uBkWnXLw3qu7Mf3oFIgDw
-         LJNyIK3sGgxXuaX58+3NVIrL24UmgecM7Ki1j2X4fW7Y58ixSvsP9gA//PpOAx+yECoH
-         LZSg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7fB9DlcVFOAT6LcVvHuzjF9RuGghiAlLNT1Szy+bvHA=;
+        b=QQtT3MUoecbgLPAJBmgi/HgcDX42oA2UghCthloNZ1C2laHkrmgiQ6Tq2ndgNPo9ic
+         GdRJaWixE63tfWlJdp52gMDb6upAh9yovQfON37akDcrQmbGp/kkZeQOgXWwN2Y3uN3N
+         O8CMY99TXMt+Oxj94Gu4swr6le0eyqrXa4wLt8KwitVjTfJIkXNR5Cgi2PNvr+2BE4bQ
+         gThCSeHVJKwKWN5V8Nw63PG5AxV8CwuOkoBx7FezQb0hYPie76L+g1TlYiZUOiH3va+X
+         YrZW1uMFeb4k4Fa0OUqoIDvwI2wbhNoiZ2/jnmUY2GVPHa6WyVixXuzLmK18vO/LMd6Y
+         YEAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GldHbOnZfCgrNxHCEakDvlEgb285OgaglO7DDWQycHU=;
-        b=oScNxkxxtqU3rGfjcvko3GIXGF9aCJK8WuUTxqxw1luONhGpk3GBTwPShf5BxvptP3
-         aOuP8u8LNK0T8bUJmGC381QW1vEDQjBPjGX21VT3AeH/OKN0zR2QpL2oeQvZQEax27S4
-         +QrT3CBm7TE8Q+lnMZ0gpHk2c7G8oD7PPqhxzu0spsYQOSoBclL7DFG+6tIItTC9N8BK
-         SG9laLCvMcTjiViuqS6ReML7DfDwuC3vKalVoxbMZd6xYmnU9gatPnwK5itAVD3rglkD
-         OgTB5GBIThf6n9JJQW1/IWjV65R/Ck0X63zKN99GiN4Io9gO6nswdZ/jutLK5eoolCBk
-         BP2g==
-X-Gm-Message-State: APjAAAW/dmxmzRKv0ADXTWcsk1nFuh4qdGpH9d004j/0avDXl5ICg7oM
-        5ePt8VV614+E/cAZIPJzICA=
-X-Google-Smtp-Source: APXvYqwNv4y1/E2lS+3B9LHQr1a7DDHE3rix4cnwzwdgALxZNwUQM/lrC0UHLBo5uvZw9LGUuRN8+A==
-X-Received: by 2002:adf:fc8f:: with SMTP id g15mr32536353wrr.122.1558019393216;
-        Thu, 16 May 2019 08:09:53 -0700 (PDT)
-Received: from xws.fritz.box (pD9EA30D0.dip0.t-ipconnect.de. [217.234.48.208])
-        by smtp.gmail.com with ESMTPSA id t6sm4963423wrn.3.2019.05.16.08.09.51
+        bh=7fB9DlcVFOAT6LcVvHuzjF9RuGghiAlLNT1Szy+bvHA=;
+        b=X+q45yDWW9AhFBCsR1Xw+QiDWyox4DrqL4xc14WInrr2MalO80i7pa4AUr7j5+G3Vy
+         DjeDihx6QMWxtJ/gM2X/5C1zda0CcJbSUZzEfrirctQWJkkVGbVlwSoFHYcQxkxs9kwU
+         HlRVgnFT8HAlkA2hkCu2bPqgtGr9vor6M3pXnaXzOxJS6WmPkBY7L03O6oJi2VHSMQfY
+         rtxU1Hoe/WXpI4/LhHb+iTjfUQ5K9igypbC0lzVhn5K451DtE6efcRbvgYbtpWlRpzwO
+         ug+5cxLmJwdsAMQk50cr+RWi5exSzZvXnKFfEhnQavbQrq0zp0SAIM6FT83CcolchtqT
+         6ciQ==
+X-Gm-Message-State: APjAAAWytINZKSEl3vCkLauO+5EssSwNdlwccPFkSGyf5PYW4Y7HQzeG
+        8Xo16AxfS6Bjb96I+FlXvFvkZSJzCEQ=
+X-Google-Smtp-Source: APXvYqxwiNJLKxtxCmE2ST2AE9Lmu5H++j8eE4QkIdwsCoxfpJYEwyGO1xHpDzV9MtN/IwdAOuFNIQ==
+X-Received: by 2002:a19:3f4b:: with SMTP id m72mr24201853lfa.32.1558019380002;
+        Thu, 16 May 2019 08:09:40 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id t23sm1148857lfk.9.2019.05.16.08.09.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 08:09:52 -0700 (PDT)
-From:   Maximilian Luz <luzmaximilian@gmail.com>
-Cc:     Maximilian Luz <luzmaximilian@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Harry Pan <harry.pan@intel.com>,
-        =?UTF-8?q?Maxence=20Dupr=C3=A8s?= <xpros64@hotmail.fr>,
-        =?UTF-8?q?Michael=20Niew=C3=B6hner?= <linux@mniewoehner.de>,
-        Nico Sneck <snecknico@gmail.com>,
-        Emmanuel Pescosta <emmanuelpescosta099@gmail.com>,
-        Jack Stocker <jackstocker.93@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: Add LPM quirk for Surface Dock GigE adapter
-Date:   Thu, 16 May 2019 17:08:31 +0200
-Message-Id: <20190516150833.119745-1-luzmaximilian@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 16 May 2019 08:09:38 -0700 (PDT)
+Subject: Re: [PATCH v2] media/doc: Allow sizeimage to be set by v4l clients
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190412155915.16849-1-stanimir.varbanov@linaro.org>
+ <a1807c37-99cf-d1fa-bcb9-67af2935abaf@xs4all.nl>
+ <ca0e2c94-cca9-567f-5376-f302f79f4ba7@linaro.org>
+ <CAAFQd5DBUUAPV0_=thmRBTFqJE+Nd4LZRzZE20rR0D8d7Cjz5g@mail.gmail.com>
+ <cd7baea0-3893-7471-2e86-9cc6730843e3@xs4all.nl>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <49fd2002-8723-2f00-c972-8d605561b29a@linaro.org>
+Date:   Thu, 16 May 2019 18:09:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <cd7baea0-3893-7471-2e86-9cc6730843e3@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without USB_QUIRK_NO_LPM ethernet will not work and rtl8152 will
-complain with
+Hi Hans,
 
-    r8152 <device...>: Stop submitting intr, status -71
+On 5/16/19 1:40 PM, Hans Verkuil wrote:
+> On 5/16/19 11:56 AM, Tomasz Figa wrote:
+>> On Thu, May 16, 2019 at 5:09 PM Stanimir Varbanov
+>> <stanimir.varbanov@linaro.org> wrote:
+>>>
+>>> Hi Hans,
+>>>
+>>> On 5/14/19 11:54 AM, Hans Verkuil wrote:
+>>>> Hi Stanimir,
+>>>>
+>>>> On 4/12/19 5:59 PM, Stanimir Varbanov wrote:
+>>>>> This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
+>>>>> field description to allow v4l clients to set bigger image size
+>>>>> in case of variable length compressed data.
+>>>>
+>>>> I've been reconsidering this change. The sizeimage value in the format
+>>>> is the minimum size a buffer should have in order to store the data of
+>>>> an image of the width and height as described in the format.
+>>>>
+>>>> But there is nothing that prevents userspace from calling VIDIOC_CREATEBUFS
+>>>> instead of VIDIOC_REQBUFS to allocate larger buffers.
+>>>
+>>> Sometimes CREATEBUFS cannot be implemented for a particular fw/hw.
+>>>
+>>> CC: Tomasz for his opinion.
+>>>
+>>
+>> Thanks Stanimir.
+>>
+>> Actually, if called at the same point in time as REQBUFS, CREATE_BUFS
+>> doesn't really differ to much, except that it gives more flexibility
+>> for allocating the buffers and that shouldn't depend on any specific
+>> features of hardware or firmware.
+>>
+>> Actually, one could even allocate any buffers any time regardless of
+>> hardware/firmware support, but the ability to use such buffers would
+>> actually depend on such.
+>>
+>> Perhaps we should just let the drivers return -EBUSY from CREATE_BUFS
+>> if called at the wrong time?
+>>
+>>>>
+>>>> So do we really need this change?
+>>>>
+>>
+>> Yes, because this has worked like this all the time, but it was just
+>> not documented. Disallowing this would break quite a bit of existing
+>> userspace.
+> 
+> Which drivers allow this today? I think that would be useful information
+> for the commit log of a v4 of this patch.
+> 
 
-Adding the quirk resolves this. As the dock is externally powered, this
-should not have any drawbacks.
+I'd say s5p-mfc and mtk-vcodec at least.
 
-Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
----
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 8bc35d53408b..6082b008969b 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -209,6 +209,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* Microsoft Surface Dock Ethernet (RTL8153 GigE) */
-+	{ USB_DEVICE(0x045e, 0x07c6), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
- 	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
- 
 -- 
-2.21.0
-
+regards,
+Stan
