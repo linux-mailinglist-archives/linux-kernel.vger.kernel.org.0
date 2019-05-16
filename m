@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 234E11FFBD
+	by mail.lfdr.de (Postfix) with ESMTP id 8E47D1FFBE
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 08:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfEPGng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 02:43:36 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39773 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfEPGnd (ORCPT
+        id S1726753AbfEPGnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 02:43:42 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:36330 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbfEPGnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 02:43:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w22so1052292pgi.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 23:43:33 -0700 (PDT)
+        Thu, 16 May 2019 02:43:35 -0400
+Received: by mail-pf1-f169.google.com with SMTP id v80so1310427pfa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 23:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eudT3vsEM795Lbvjs0cdxoXjtBI0kzUE/FC72SqRuXQ=;
-        b=KSFrgJ/vykPmhSCJx9obevBCsHBFm4ILVS7YNKaLbyXwimysIw0BI0I7Rt3ZKMkQUg
-         M5E9NsoZ+8Xq2fbIM1EVkcH7gIkpuTJKdDHW081EH8cgvRLsJ6pOx0vCHcZ+skoeGG0G
-         eMOJ1B8wVQiZOhS4HBhbovasEVOE/IOB7iKvwFF07cunVKnzeC5Gp1BOjq73rzIwfiKi
-         RtpjgarEEmUnUmWU7DwwYBst08eUDK8A9JMWvKJZE0npza57yJILZZFFm7GM+aumz3D3
-         elaFwbTL6gat9I+oMXI6sfhgl5558dAfyhz+2KzUDihpSwX0zV9zuZiBGo3TXzeu+Plc
-         b6ag==
+        bh=PQnz2nT/KjUKXeHjaBR81zMUbHzh45bNsq/83y1hyFY=;
+        b=NYIYk4Yjkv66dEcU3KgIVlzPX+MS4Dh1JbpbaHYMRZrHb8UswXQgoqFLVAwvBF6fY2
+         HiGXQi5PNGKstKPY9zh9H/RWxkCtTtDYbwRNbVKzECD3aJiseJ0R5/O7ukdAdtEYt12Y
+         ZrzwhZE1qJqX0/zDOpzIXwzjigFlKvNmMMJ3rSm7zHrvgufbPbTsE8FwMLZ3Z2FKUWX5
+         M5ygQdQDLMU9JJvH5x8XmeYTF1z7SvnfAl8481ZCizQdqsJxXZGpW82+7/iHLdTHWRk+
+         gQv+XtCw/8SPyyTe7XDm0Ti+IAGKj9vW0hFbSHg8FKPmAcm9LHS4X8f7lKNVQlNywO0i
+         Z79A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eudT3vsEM795Lbvjs0cdxoXjtBI0kzUE/FC72SqRuXQ=;
-        b=BYPqxYekOOtsAqr7EoORkfCLCTqcbyPL+6iyCxUJvoEhptr+df0wQmHn2090Y+ZeHM
-         GzQfyIE/HD4g6ENVCyIEVj928WFPhkD6LW8cv0C5JEDdu7KdlmXQknOd6pNMRzKNio9e
-         Xa6UAnnpxjtGKfpVp1SluYggkBwEg8jnHa723oC+THHxtBYb1pLiU+hx/CHzzfycGGTs
-         q0eBz+GaRrIdcn7xoYS7Vs1RwF8mMkvQONlnTlLpVpW52FP+LJcRoK+CzeMTdOu5VYHc
-         xZEnh2bhZg1amJDuIBDeZNW1iUXdNkU5H3+tDBbtxP+1yoQ8jBaO4WRWxdMLkPWsejum
-         HzRw==
-X-Gm-Message-State: APjAAAV3yumOjyGU0Fvgzmoe9hel2/KjsKHDR2AGTKlOsZW/ud5oqIf2
-        Zoi70tlBgaj3ykmu6wqsevzUa+jdOuQ=
-X-Google-Smtp-Source: APXvYqzhKUeXoLNL8f6Wi4ZWAEG3AE1zzWc/iu9E6e2wzBK/qhh6vUyp7Rx0zC1/23R2f0ypFSqiNQ==
-X-Received: by 2002:a65:56cb:: with SMTP id w11mr28607830pgs.236.1557989012737;
-        Wed, 15 May 2019 23:43:32 -0700 (PDT)
+        bh=PQnz2nT/KjUKXeHjaBR81zMUbHzh45bNsq/83y1hyFY=;
+        b=cpUIHGKgsNGq6x8SJYkm9TipuGVsfvHXVCyVAbX4GOk95PJ6mOWLxsADNuy3mpjRhs
+         /68JXagSIERbJ7DxlbRgbsaE1LKjY45BpHvy7Y+hQgeUJeYjrOywTa8agpV+REtZjq//
+         UoIjNZ9/bBFtmg8O8xUWl77FaVBwXt3LQhnvNXsxTDHpNM/hv0F9nQbvmGw5E5IKFfDt
+         stj7NL6HOfkcT6LtL0mYcuHkkfBjVuegf+4BKI/X/EpERF55GBl+6WXveFfIgJnSFNaM
+         mD1vvTdmYkY5Ph1JbCRn3kOHwxw8pRbxsHX3s7hAI+1NfCjImu0gB+px6ATRLcQ3FlUY
+         ltVg==
+X-Gm-Message-State: APjAAAX9tm6Hr555j2dCLVZ0XKGAO4zXDEIKn0bAJy5t3Fns/46Y9rsH
+        /Aduof63WcQS5KnRObnLSsW+/Q==
+X-Google-Smtp-Source: APXvYqyaVixdyLVdneqZdfKmvJqCzMfXuFHlfYgDiH4+VC14F/TyNFkNjTkGtNIplKl6Gu9jfwXAdg==
+X-Received: by 2002:a63:2cc9:: with SMTP id s192mr6303754pgs.24.1557989014876;
+        Wed, 15 May 2019 23:43:34 -0700 (PDT)
 Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id w194sm11196050pfd.56.2019.05.15.23.43.30
+        by smtp.gmail.com with ESMTPSA id w194sm11196050pfd.56.2019.05.15.23.43.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 23:43:31 -0700 (PDT)
+        Wed, 15 May 2019 23:43:33 -0700 (PDT)
 From:   Olof Johansson <olof@lixom.net>
 To:     torvalds@linux-foundation.org
 Cc:     arm@kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Olof Johansson <olof@lixom.net>
-Subject: [GIT PULL 3/4] ARM: SoC-related driver updates
-Date:   Wed, 15 May 2019 23:43:03 -0700
-Message-Id: <20190516064304.24057-4-olof@lixom.net>
+Subject: [GIT PULL 4/4] ARM: SoC defconfig updates
+Date:   Wed, 15 May 2019 23:43:04 -0700
+Message-Id: <20190516064304.24057-5-olof@lixom.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190516064304.24057-1-olof@lixom.net>
 References: <20190516064304.24057-1-olof@lixom.net>
@@ -60,262 +60,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various driver updates for platforms and a couple of the small driver
-subsystems we merge through our tree:
+- Mostly the usual churn due to options being reordered or not added
+in the right locations.
+- Some various enabling of new drivers, etc.
 
-Among the larger pieces:
-
-- Power management improvements for TI am335x and am437x (RTC suspend/wake)
-- Misc new additions for Amlogic (socinfo updates)
-- ZynqMP FPGA manager
-- Nvidia improvements for reset/powergate handling
-- PMIC wrapper for Mediatek MT8516
-- Misc fixes/improvements for ARM SCMI, TEE, NXP i.MX SCU drivers
-
-Conflicts:
-
-drivers/misc/{Makefile,Kconfig} (Move/Add):
- - Remove ASPEED_LPC* entries, keep the P2A_CTRL ones.
-
-drivers/rtc: (Change/Change):
- - Keep the HEAD person of conflict, code was refactored to not need
-   return checking on tm2bcd() call.
+... i.e. the usual updates, nothing particularly sticks out.
 
 ----------------------------------------------------------------
 
-The following changes since commit 6254d0b7c3d30694a230c6885a7f11534fb2da3f:
+The following changes since commit 75ea84dcdb9cc6fa227385e796ea4ae90bb333c8:
 
-  Merge tag 'armsoc-dt' into HEAD
+  Merge tag 'armsoc-drivers' into HEAD
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-drivers
+  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-defconfig
 
-for you to fetch changes up to 80d0c649244253d8cb3ba32d708c1431e7ac8fbf:
+for you to fetch changes up to 85200317b324924be3bc72b7bfcce219020ced9c:
 
-  soc: aspeed: fix Kconfig
+  Merge tag 'v5.2-rockchip-defconfig32-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into arm/defconfig
 
 ----------------------------------------------------------------
 
-Abel Vesa (1):
-      soc: imx: Add generic i.MX8 SoC driver
+Biju Das (3):
+      arm64: defconfig: enable RX-8581 config option
+      ARM: shmobile: Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig
+      ARM: shmobile: Enable USB [EO]HCI HCD PLATFORM support in shmobile_defconfig
 
-Aditya Pakki (1):
-      firmware: arm_scmi: replace of_match_device->data with of_device_get_match_data()
+Brian Masney (1):
+      ARM: qcom_defconfig: add options for LG Nexus 5 phone
 
-Aisheng Dong (3):
-      firmware: imx: scu-pd: use bool to set postfix
-      firmware: imx: scu-pd: add specifying the base of domain name index support
-      firmware: imx: scu-pd: decouple the SS information from domain names
+Dinh Nguyen (3):
+      arm64: defconfig: enable PCIE_ALTERA
+      arm64: defconfig: enable fpga and service layer
+      arm64: defconfig: include the Agilex platform to the arm64 defconfig
 
-Andrey Smirnov (1):
-      soc: imx: gpcv2: Make use of regmap_read_poll_timeout()
+Enric Balletbo i Serra (1):
+      ARM: multi_v7_defconfig: Enable missing drivers for supported Chromebooks
 
-Andy Gross (1):
-      MAINTAINERS: Update email for Qualcomm SoC maintainer
+Geert Uytterhoeven (3):
+      ARM: shmobile: defconfig: Refresh for v5.1-rc1
+      ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
+      ARM: multi_v7_defconfig: Enable support for CFI NOR FLASH
 
-Ankit Jain (1):
-      soc: qcom: rmtfs: Add support for mmap functionality
+Jagan Teki (1):
+      arm64: defconfig: Enable SPI_SUN6I
 
-Anson Huang (3):
-      soc: imx: gpc: use devm_platform_ioremap_resource() to simplify code
-      soc: imx: gpcv2: use devm_platform_ioremap_resource() to simplify code
-      firmware: imx: enable imx scu general irq function
+Jon Hunter (2):
+      arm64: defconfig: Enable Tegra HDA support
+      arm64: defconfig: Add PWM Fan support
 
-Chris Lew (1):
-      soc: qcom: qmi: Change txn wait to non-interruptible
+Martin Blumenstingl (1):
+      ARM: multi_v7_defconfig: enable the Amlogic Meson ADC and eFuse drivers
 
-Dan Carpenter (1):
-      soc: qcom: cmd-db: Fix an error code in cmd_db_dev_probe()
+Olof Johansson (11):
+      Merge tag 'amlogic-defconfig' of https://git.kernel.org/.../khilman/linux-amlogic into arm/defconfig
+      Merge tag 'arm64_defconfig_for_v5.2' of git://git.kernel.org/.../dinguyen/linux into arm/defconfig
+      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/defconfig
+      Merge tag 'tegra-for-5.2-arm-defconfig' of git://git.kernel.org/.../tegra/linux into arm/defconfig
+      Merge tag 'tegra-for-5.2-arm64-defconfig' of git://git.kernel.org/.../tegra/linux into arm/defconfig
+      Merge tag 'sunxi-config64-for-5.2' of https://git.kernel.org/.../sunxi/linux into arm/defconfig
+      Merge tag 'renesas-arm64-defconfig-for-v5.2' of https://git.kernel.org/.../horms/renesas into arm/defconfig
+      Merge tag 'renesas-arm-defconfig-for-v5.2' of https://git.kernel.org/.../horms/renesas into arm/defconfig
+      Merge tag 'qcom-defconfig-for-5.2' of git://git.kernel.org/.../agross/linux into arm/defconfig
+      Merge tag 'mvebu-arm64-5.2-1' of git://git.infradead.org/linux-mvebu into arm/defconfig
+      Merge tag 'v5.2-rockchip-defconfig32-1' of git://git.kernel.org/.../mmind/linux-rockchip into arm/defconfig
 
-Dave Gerlach (2):
-      memory: ti-emif-sram: Add ti_emif_run_hw_leveling for DDR3 hardware leveling
-      ARM: OMAP2+: sleep43xx: Run EMIF HW leveling on resume path
+Pascal Paillet (1):
+      ARM: multi_v7_defconfig: Enable support for STPMIC1
 
-Dmitry Osipenko (5):
-      ARM: tegra: cpuidle: Handle tick broadcasting within cpuidle core on Tegra20/30
-      memory: tegra: Fix missed registers values latching
-      memory: tegra: Fix integer overflow on tick value calculation
-      memory: tegra: Replace readl-writel with mc_readl-mc_writel
-      Revert "ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+"
+Thierry Reding (4):
+      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into for-5.2/arm/defconfig
+      ARM: tegra: Update default configuration for v5.1-rc1
+      ARM: tegra: Enable Trusted Foundations by default
+      ARM: Enable Trusted Foundations for multiplatform ARM v7
 
-Douglas Anderson (1):
-      soc: rockchip: Set the proper PWM for rk3288
+Thomas Petazzoni (1):
+      arm64: defconfig: enable mv-xor driver
 
-Edward Cragg (1):
-      memory: tegra: Fix a typos for "fdcdwr2" mc client
+Tony Lindgren (2):
+      ARM: multi_v7_defconfig: Update for dropped options
+      ARM: multi_v7_defconfig: Update for moved options
 
-Fabien Parent (3):
-      dt-bindings: pwrap: mediatek: add pwrap support for MT8516
-      soc: mediatek: pwrap: add missing check on rstc
-      soc: mediatek: pwrap: add support for MT8516 pwrap
-
-Jann Horn (1):
-      firmware: xilinx: fix debugfs write handler
-
-Jon Hunter (3):
-      soc/tegra: pmc: Fix reset sources and levels
-      soc/tegra: pmc: Remove reset sysfs entries on error
-      soc/tegra: pmc: Move powergate initialisation to probe
-
-Julia Lawall (1):
-      meson-gx-socinfo: add missing of_node_put after of_device_is_available
-
-Keerthy (4):
-      rtc: OMAP: Add support for rtc-only mode
-      ARM: OMAP2+: pm33xx: Add support for rtc+ddr in self refresh mode
-      soc: ti: pm33xx: Move the am33xx_push_sram_idle to the top
-      soc: ti: pm33xx: AM437X: Add rtc_only with ddr in self-refresh support
-
-Maulik Shah (1):
-      drivers: soc: qcom: rpmh-rsc: Correct check for slot number
-
-Nathan Chancellor (1):
-      soc: mediatek: pwrap: Zero initialize rdata in pwrap_init_cipher
-
-Nava kishore Manne (3):
-      firmware: xilinx: Add fpga API's
-      dt-bindings: fpga: Add bindings for ZynqMP fpga driver
-      fpga manager: Adding FPGA Manager support for Xilinx zynqmp
-
-Neil Armstrong (4):
-      soc: amlogic: gx-socinfo: Add mask for each SoC packages
-      soc: amlogic: gx-socinfo: Add new SoC IDs and Packages IDs
-      soc: amlogic: meson-gx-pwrc-vpu: Fix power on/off register bitmask
-      soc: amlogic: meson-gx-pwrc-vpu: Add support for G12A
-
-Olof Johansson (18):
-      Merge tag 'amlogic-drivers' of https://git.kernel.org/.../khilman/linux-amlogic into arm/drivers
-      Merge tag 'omap-for-v5.2/am4-pm-v2-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/drivers
-      Merge tag 'zynqmp-soc-for-v5.2' of https://github.com/Xilinx/linux-xlnx into arm/drivers
-      Merge tag 'scmi-fixes-5.2' of git://git.kernel.org/.../sudeep.holla/linux into arm/drivers
-      Merge tag 'tee-optee-for-5.2' of http://git.linaro.org:/people/jens.wiklander/linux-tee into arm/drivers
-      Merge tag 'tegra-for-5.2-bus' of git://git.kernel.org/.../tegra/linux into arm/drivers
-      Merge tag 'tegra-for-5.2-soc' of git://git.kernel.org/.../tegra/linux into arm/drivers
-      Merge tag 'tegra-for-5.2-memory' of git://git.kernel.org/.../tegra/linux into arm/drivers
-      Merge tag 'tegra-for-5.2-arm-soc' of git://git.kernel.org/.../tegra/linux into arm/drivers
-      Merge tag 'renesas-drivers-for-v5.2' of https://git.kernel.org/.../horms/renesas into arm/drivers
-      Merge tag 'amlogic-drivers-2' of https://git.kernel.org/.../khilman/linux-amlogic into arm/drivers
-      spi: zynqmp: Fix build break
-      Merge tag 'imx-drivers-5.2' of git://git.kernel.org/.../shawnguo/linux into arm/drivers
-      Merge tag 'qcom-drivers-for-5.2' of git://git.kernel.org/.../agross/linux into arm/drivers
-      Merge tag 'v5.1-next-soc' of https://git.kernel.org/.../matthias.bgg/linux into arm/drivers
-      Merge tag 'reset-for-5.2' of git://git.pengutronix.de/pza/linux into arm/drivers
-      Merge tag 'v5.2-rockchip-drivers-1' of git://git.kernel.org/.../mmind/linux-rockchip into arm/drivers
-      soc: aspeed: fix Kconfig
-
-Patrick Venture (1):
-      soc: add aspeed folder and misc drivers
-
-Rajan Vaja (1):
-      drivers: Defer probe if firmware is not ready
-
-Randy Dunlap (1):
-      reset: fix linux/reset.h errors
-
-Sameer Pujar (3):
-      ARM: tegra: enforce PM requirement
-      bus: tegra-aconnect: use devm_clk_*() helpers
-      bus: tegra-aconnect: add system sleep callbacks
-
-Steven Price (1):
-      firmware: arm_scmi: fix of_node leak in scmi_mailbox_check
-
-Takeshi Kihara (1):
-      soc: renesas: Identify R-Car M3-W ES1.3
-
-Thierry Reding (3):
-      Merge branch 'reset/acquire' of git://git.pengutronix.de/git/pza/linux into for-5.2/soc
-      soc/tegra: pmc: Implement acquire/release for resets
-      memory: tegra: Properly spell "tegra"
-
-Tony Lindgren (1):
-      Merge branch 'omap-for-v5.2/am4-ddr3' into omap-for-v5.2/am4-pm-v2
-
-Volodymyr Babchuk (1):
-      optee: allow to work without static shared memory
-
-Yue Haibing (1):
-      memory: tegra: Make terga20_mc_reset_ops static
+Valentin Schneider (1):
+      arm64: defconfig: Update UFSHCD for Hi3660 soc
 
 
- .../bindings/fpga/xlnx,zynqmp-pcap-fpga.txt     |  25 ++
- .../devicetree/bindings/soc/mediatek/pwrap.txt  |   1 +
- Documentation/xilinx/eemi.txt                   |   4 +-
- MAINTAINERS                                     |   2 +-
- arch/arm/mach-omap2/pm33xx-core.c               |  76 +++++-
- arch/arm/mach-omap2/sleep43xx.S                 |   3 +
- arch/arm/mach-tegra/Kconfig                     |   1 +
- arch/arm/mach-tegra/cpuidle-tegra20.c           |  11 +-
- arch/arm/mach-tegra/cpuidle-tegra30.c           |   9 +-
- arch/arm/mach-tegra/iomap.h                     |   9 -
- arch/arm/mach-tegra/sleep-tegra30.S             |  21 --
- drivers/bus/tegra-aconnect.c                    |  66 +++--
- drivers/clk/zynqmp/clkc.c                       |   4 +-
- drivers/firmware/arm_scmi/driver.c              |   8 +-
- drivers/firmware/imx/Makefile                   |   2 +-
- drivers/firmware/imx/imx-scu-irq.c              | 168 ++++++++++++
- drivers/firmware/imx/imx-scu.c                  |   6 +
- drivers/firmware/imx/scu-pd.c                   | 121 ++++----
- drivers/firmware/xilinx/zynqmp-debug.c          |  18 +-
- drivers/firmware/xilinx/zynqmp.c                |  56 +++-
- drivers/fpga/Kconfig                            |   9 +
- drivers/fpga/Makefile                           |   1 +
- drivers/fpga/zynqmp-fpga.c                      | 159 +++++++++++
- drivers/memory/emif.h                           |   4 +
- drivers/memory/tegra/mc.c                       |  34 ++-
- drivers/memory/tegra/mc.h                       |   2 +-
- drivers/memory/tegra/tegra114.c                 |   4 +-
- drivers/memory/tegra/tegra124.c                 |   4 +-
- drivers/memory/tegra/tegra20.c                  |  28 +-
- drivers/memory/tegra/tegra210.c                 |   2 +-
- drivers/memory/tegra/tegra30.c                  |   4 +-
- drivers/memory/ti-emif-pm.c                     |   3 +
- drivers/memory/ti-emif-sram-pm.S                |  41 +++
- drivers/misc/Kconfig                            |  16 --
- drivers/misc/Makefile                           |   2 -
- drivers/nvmem/zynqmp_nvmem.c                    |  10 +-
- drivers/reset/reset-zynqmp.c                    |   8 +-
- drivers/rtc/rtc-omap.c                          |  49 +++-
- drivers/soc/Kconfig                             |   1 +
- drivers/soc/Makefile                            |   1 +
- drivers/soc/amlogic/meson-gx-pwrc-vpu.c         | 160 +++++++++--
- drivers/soc/amlogic/meson-gx-socinfo.c          |  43 +--
- drivers/soc/aspeed/Kconfig                      |  20 ++
- drivers/soc/aspeed/Makefile                     |   2 +
- drivers/{misc => soc/aspeed}/aspeed-lpc-ctrl.c  |   0
- drivers/{misc => soc/aspeed}/aspeed-lpc-snoop.c |   0
- drivers/soc/imx/Makefile                        |   1 +
- drivers/soc/imx/gpc.c                           |   4 +-
- drivers/soc/imx/gpcv2.c                         |  43 +--
- drivers/soc/imx/soc-imx8.c                      | 115 ++++++++
- drivers/soc/mediatek/mtk-pmic-wrap.c            | 111 +++++++-
- drivers/soc/qcom/cmd-db.c                       |   4 +-
- drivers/soc/qcom/qmi_interface.c                |   7 +-
- drivers/soc/qcom/rmtfs_mem.c                    |  21 ++
- drivers/soc/qcom/rpmh-rsc.c                     |   2 +-
- drivers/soc/renesas/renesas-soc.c               |   3 +
- drivers/soc/rockchip/grf.c                      |   2 +
- drivers/soc/tegra/pmc.c                         | 171 +++++++++---
- drivers/soc/ti/Kconfig                          |   5 +-
- drivers/soc/ti/pm33xx.c                         | 273 +++++++++++++++----
- drivers/soc/xilinx/zynqmp_pm_domains.c          |  18 +-
- drivers/soc/xilinx/zynqmp_power.c               |  10 +-
- drivers/spi/spi-zynqmp-gqspi.c                  |   6 +
- drivers/tee/optee/core.c                        |  80 +++---
- include/linux/firmware/imx/sci.h                |   5 +
- include/linux/firmware/xlnx-zynqmp.h            |  14 +-
- include/linux/platform_data/pm33xx.h            |   5 +
- include/linux/reset.h                           |   2 +
- include/linux/rtc/rtc-omap.h                    |   7 +
- include/linux/ti-emif-sram.h                    |   3 +
- 70 files changed, 1705 insertions(+), 425 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
- create mode 100644 drivers/firmware/imx/imx-scu-irq.c
- create mode 100644 drivers/fpga/zynqmp-fpga.c
- create mode 100644 drivers/soc/aspeed/Kconfig
- create mode 100644 drivers/soc/aspeed/Makefile
- rename drivers/{misc => soc/aspeed}/aspeed-lpc-ctrl.c (100%)
- rename drivers/{misc => soc/aspeed}/aspeed-lpc-snoop.c (100%)
- create mode 100644 drivers/soc/imx/soc-imx8.c
- create mode 100644 include/linux/rtc/rtc-omap.h
+ arch/arm/configs/multi_v7_defconfig | 150 +++++++++++++++++--------------
+ arch/arm/configs/qcom_defconfig     |  13 ++-
+ arch/arm/configs/shmobile_defconfig |  13 ++-
+ arch/arm/configs/tegra_defconfig    |  36 ++++----
+ arch/arm64/configs/defconfig        | 100 ++++++++++++---------
+ 5 files changed, 177 insertions(+), 135 deletions(-)
