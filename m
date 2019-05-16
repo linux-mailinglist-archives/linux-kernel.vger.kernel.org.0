@@ -2,110 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E24210AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 00:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E8F210AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 00:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbfEPWpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 18:45:06 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:32907 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbfEPWpG (ORCPT
+        id S1728717AbfEPWpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 18:45:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726920AbfEPWpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 18:45:06 -0400
-Received: by mail-vs1-f65.google.com with SMTP id y6so3420481vsb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 15:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+W9jD9o7YYLYB/v0Ro7pXl+sH8ADQyIbB7T7NXFVEcc=;
-        b=iFdbvY1Qgl23eLRHTcbK2KUoW8rVpz0RfgpjJVzvA3c+FlUStxkuV64Wmn8f0D9q+0
-         WFM2GPW77EVVaGnoDv7ntLl+FCqJJHHbK/5HI2zpwdwTg2qw1RbSA+tCBCNIKN5g9LuL
-         cXJ8bXROlUY7THLAZMkcbiVOe572QpbIYKKjs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+W9jD9o7YYLYB/v0Ro7pXl+sH8ADQyIbB7T7NXFVEcc=;
-        b=K5X0+DkPM0yoh2GS9y6cQR3prrR3ul3WBF6XguGvp6H4yg0P7wGYMjgwq5oB79D2gu
-         JFATl6rP4QG3fqevLw4XaPqhQ+YhvZvaZa+U5dviC/iyqTWBE9BA9+UYcrfd/FYpBgxo
-         31bQt9OfvJsPKEnbFj4CXJu1qBFA9wPJOv1UKrmgGsq/4kBMCvdzuJaQzbb6w+J3V2CY
-         XxMacafDRX92BVhOBc4FgLRevH+MBaFvgcLMIGmyZoYlqXtRsnD+bJ/M3DTjSXHy7YGI
-         D+LRSJ4yjCviYTuLIo6Z2+m5kmacKRl25/0wgPWK3Bvsq5x4hR5iDGeFFMloqz0Yjtz2
-         XFDw==
-X-Gm-Message-State: APjAAAXdBr+LvrHxD52u7xXlrwkw6IYe+2e5TjlMKjgoQ0zTLw62c/Ph
-        oGoRl954SflYw83WzGb1GlRzF5eISMI=
-X-Google-Smtp-Source: APXvYqz2vpPvVDhoWSJVuB1Nk1kcRmZ2SQeIyDUp61/yle4vDCqp1BPkm/+SEpgJy14iyhiYvnecOQ==
-X-Received: by 2002:a67:7587:: with SMTP id q129mr24197516vsc.40.1558046705122;
-        Thu, 16 May 2019 15:45:05 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id d69sm2033698vkd.25.2019.05.16.15.45.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 15:45:03 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id l20so3407160vsp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 15:45:03 -0700 (PDT)
-X-Received: by 2002:a67:b348:: with SMTP id b8mr17879343vsm.144.1558046702869;
- Thu, 16 May 2019 15:45:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190516214022.65220-1-dianders@chromium.org> <20190516214022.65220-2-dianders@chromium.org>
-In-Reply-To: <20190516214022.65220-2-dianders@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 16 May 2019 15:44:51 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V3U=5KttaqjUvvF=vpKwFNMd6q0=J1ZKUrJ1b-Stz5bQ@mail.gmail.com>
-Message-ID: <CAD=FV=V3U=5KttaqjUvvF=vpKwFNMd6q0=J1ZKUrJ1b-Stz5bQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drm/rockchip: dw_hdmi: Handle suspend/resume
-To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>
+        Thu, 16 May 2019 18:45:53 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4GMdFJe054368
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 18:45:52 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2shecwwbg5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 18:45:52 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 16 May 2019 23:45:49 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 May 2019 23:45:46 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4GMjj6D54460446
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 May 2019 22:45:45 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B87FF4CBD6;
+        Thu, 16 May 2019 22:45:45 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C43BC4CBD3;
+        Thu, 16 May 2019 22:45:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.80.98])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 16 May 2019 22:45:44 +0000 (GMT)
+Subject: Re: [PATCH 0/2] public key: IMA signer logging: Log public key of
+ IMA Signature signer in IMA log
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi <nramas@linux.microsoft.com>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Balaji Balasubramanyan <balajib@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>
+Date:   Thu, 16 May 2019 18:45:34 -0400
+In-Reply-To: <715a9b39-0cde-1ce0-2d01-68d4fc0f5333@linux.microsoft.com>
+References: <6b69f115-96cf-890a-c92b-0b2b05798357@linux.microsoft.com>
+         <1557854992.4139.69.camel@linux.ibm.com>
+         <715a9b39-0cde-1ce0-2d01-68d4fc0f5333@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051622-0016-0000-0000-0000027C8816
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051622-0017-0000-0000-000032D9616B
+Message-Id: <1558046734.4507.28.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-16_18:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905160137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 2019-05-15 at 11:17 -0700, Lakshmi wrote:
+> Hi Mimi,
+> 
+> I would like to make sure I understood your feedback.
+> 
+> > 
+> > Why duplicate the certificate info on each record in the measurement
+> > list?  Why not add the certificate info once, as the key is loaded
+> > onto the .ima and .platform keyrings?
+> > 
+> 
+> key_create_or_update function in security/keys/key.c is called to 
+> add\update a key to a keyring. Are you suggesting that an IMA function 
+> be called from here to add the certificate info to the IMA log?
 
-On Thu, May 16, 2019 at 2:40 PM Douglas Anderson <dianders@chromium.org> wrote:
->
-> On Rockchip rk3288-based Chromebooks when you do a suspend/resume
-> cycle:
->
-> 1. You lose the ability to detect an HDMI device being plugged in.
->
-> 2. If you're using the i2c bus built in to dw_hdmi then it stops
-> working.
->
-> Let's call the core dw-hdmi's suspend/resume functions to restore
-> things.
->
-> NOTE: in downstream Chrome OS (based on kernel 3.14) we used the
-> "late/early" versions of suspend/resume because we found that the VOP
-> was sometimes resuming before dw_hdmi and then calling into us before
-> we were fully resumed.  For now I have gone back to the normal
-> suspend/resume because I can't reproduce the problems.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
-> Changes in v2:
-> - Add forgotten static (Laurent)
-> - No empty stub for suspend (Laurent)
->
->  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+There's an existing LSM hook in alloc_key(), but the keyring isn't
+being passed.  Again a decision would need to be made as to whether
+this needs to be an LSM or IMA hook.
 
-Whoops, forgot that I should have carried forward:
+> 
+> Our requirement is that the key information is available in the IMA log 
+> which is TPM backed.
+> 
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+There's some confusion as to why adding the keys to the measurement
+list is needed.  Could you respond to Ken's questions please?
 
--Doug
+Mimi
+
