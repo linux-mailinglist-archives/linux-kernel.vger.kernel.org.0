@@ -2,55 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCBE8209A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D073209BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:32:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfEPO3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:29:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726687AbfEPO3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:29:22 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2C85C30C0DCD;
-        Thu, 16 May 2019 14:29:22 +0000 (UTC)
-Received: from treble (ovpn-120-91.rdu2.redhat.com [10.10.120.91])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C32860BE0;
-        Thu, 16 May 2019 14:29:20 +0000 (UTC)
-Date:   Thu, 16 May 2019 09:29:17 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        julien.thierry@arm.com
-Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
-Message-ID: <20190516142917.nuhh6dmfiufxqzls@treble>
-References: <20190516103655.5509-1-raphael.gault@arm.com>
+        id S1727222AbfEPObv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:31:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47754 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726742AbfEPObv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 10:31:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF7421715;
+        Thu, 16 May 2019 07:31:50 -0700 (PDT)
+Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B9A53F71E;
+        Thu, 16 May 2019 07:31:49 -0700 (PDT)
+From:   Steven Price <steven.price@arm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        Steven Price <steven.price@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] initramfs: Don't free a non-existent initrd
+Date:   Thu, 16 May 2019 15:31:25 +0100
+Message-Id: <20190516143125.48948-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190516103655.5509-1-raphael.gault@arm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 16 May 2019 14:29:22 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 11:36:39AM +0100, Raphael Gault wrote:
-> Noteworthy points:
-> * I still haven't figured out how to detect switch-tables on arm64. I
-> have a better understanding of them but still haven't implemented checks
-> as it doesn't look trivial at all.
+Since 54c7a8916a88 ("initramfs: free initrd memory if opening
+/initrd.image fails"), the kernel has unconditionally attempted to free
+the initrd even if it doesn't exist. In the non-existent case this
+causes a boot-time splat if CONFIG_DEBUG_VIRTUAL is enabled due to a
+call to virt_to_phys() with a NULL address.
 
-Switch tables were tricky to get right on x86.  If you share an example
-(or even just a .o file) I can take a look.  Hopefully they're somewhat
-similar to x86 switch tables.  Otherwise we may want to consider a
-different approach (for example maybe a GCC plugin could help annotate
-them).
+Instead we should check that the initrd actually exists and only attempt
+to free it if it does.
 
+Fixes: 54c7a8916a88 ("initramfs: free initrd memory if opening /initrd.image fails")
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+ init/initramfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 435a428c2af1..178130fd61c2 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -669,7 +669,7 @@ static int __init populate_rootfs(void)
+ 	 * If the initrd region is overlapped with crashkernel reserved region,
+ 	 * free only memory that is not part of crashkernel region.
+ 	 */
+-	if (!do_retain_initrd && !kexec_free_initrd())
++	if (!do_retain_initrd && initrd_start && !kexec_free_initrd())
+ 		free_initrd_mem(initrd_start, initrd_end);
+ 	initrd_start = 0;
+ 	initrd_end = 0;
 -- 
-Josh
+2.20.1
+
