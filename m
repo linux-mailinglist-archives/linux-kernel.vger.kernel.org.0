@@ -2,94 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3072E2047E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 549CF20491
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfEPLVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:21:15 -0400
-Received: from mail-eopbgr80042.outbound.protection.outlook.com ([40.107.8.42]:14323
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726569AbfEPLVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:21:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=COEE6DCPcCYQJRjDL8XRhvHJvO2p5aylWaLGMYWJ1DA=;
- b=a7eXyNhNHCzMf9lhpNAh2I+VqOWg8+6t7d/1u3BV9TZwn0ysM8ExHW2F31jbaV8KLeusXQqXEX1xQ8CUQtsJgbxeUBWLSQzuNiqRLHtja/GdBqDbzWB0spqM7ny4dQgW+VmZ9+DRxccOUoFry8d28F5pqHDewg0lQEm/cyaLZsQ=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB5364.eurprd04.prod.outlook.com (20.178.116.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.24; Thu, 16 May 2019 11:21:10 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c415:3cab:a042:2e13]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c415:3cab:a042:2e13%6]) with mapi id 15.20.1900.010; Thu, 16 May 2019
- 11:21:10 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: RE: [PATCH V3 2/4] nvmem: imx: add i.MX8 nvmem driver
-Thread-Topic: [PATCH V3 2/4] nvmem: imx: add i.MX8 nvmem driver
-Thread-Index: AQHVCvNIwnz8O4Mu9kSxqaYPdjuNSKZtnDNQ
-Date:   Thu, 16 May 2019 11:21:10 +0000
-Message-ID: <AM0PR04MB42117D189498804D5E3A485F800A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190515080703.19147-1-peng.fan@nxp.com>
- <20190515080703.19147-2-peng.fan@nxp.com>
-In-Reply-To: <20190515080703.19147-2-peng.fan@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d05d3a5f-26af-4475-6396-08d6d9f09970
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5364;
-x-ms-traffictypediagnostic: AM0PR04MB5364:
-x-microsoft-antispam-prvs: <AM0PR04MB53640D889D20E1E9F7D43DBA800A0@AM0PR04MB5364.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:369;
-x-forefront-prvs: 0039C6E5C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(66066001)(6506007)(229853002)(68736007)(316002)(476003)(6116002)(86362001)(110136005)(54906003)(2906002)(76116006)(2201001)(14454004)(66946007)(3846002)(66476007)(73956011)(66556008)(102836004)(25786009)(52536014)(9686003)(4326008)(55016002)(2501003)(64756008)(76176011)(6436002)(66446008)(6246003)(305945005)(7736002)(53936002)(71190400001)(71200400001)(11346002)(486006)(44832011)(446003)(33656002)(81156014)(81166006)(186003)(7696005)(99286004)(8676002)(7416002)(26005)(5660300002)(256004)(14444005)(8936002)(4744005)(478600001)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5364;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: oyep6M8wnlH6+1xeRADM2qFdBJy80uh1ZC5rpweCnso1a4kUlmI/49mokOY7CN8zovhK192rEYcKoA1AsGVO0CHV7gtRt0vo5YIhFLTgSUDe6fKFbvYwmbG9XCzKOAy/vqTmN+LFUqhWyA0jD20CvZZtZsoDkCUpdJiraSExAvLH4qCwR+IEBqxsCBUFgWUt/6LBdBUTee0QWjBzqvQxtnMXQTK4RgE1HU3jxkB95E5wMxjQQ4AmALXFRaq1OjlgUrDzenjik8JP+TxxWNqn3E85An1hKzND7a0/jFB+PVcdUIikMFBVPjJb53ATycWX5Q/nj+HxJqxAXVUov+0QbcrHq6GCJA+I4FRdyI9NZBpC8U9T157AapzHJwv3QLA1xR3X07sIu1u34LrCQ2Z97KBcpwbv2nNUbekT4jiKH0Q=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727312AbfEPLWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:22:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52772 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbfEPLWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:22:24 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9074DF74C3;
+        Thu, 16 May 2019 11:22:23 +0000 (UTC)
+Received: from [10.36.117.217] (ovpn-117-217.ams2.redhat.com [10.36.117.217])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D6D75D72E;
+        Thu, 16 May 2019 11:22:21 +0000 (UTC)
+Subject: Re: [RFC PATCH 1/4] KVM: selftests: Guard struct kvm_vcpu_events with
+ __KVM_HAVE_VCPU_EVENTS
+To:     Thomas Huth <thuth@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-s390@vger.kernel.org
+References: <20190516111253.4494-1-thuth@redhat.com>
+ <20190516111253.4494-2-thuth@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <0a526ee1-9880-e6d5-ac55-02dc2f2c8872@redhat.com>
+Date:   Thu, 16 May 2019 13:22:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d05d3a5f-26af-4475-6396-08d6d9f09970
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2019 11:21:10.7452
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5364
+In-Reply-To: <20190516111253.4494-2-thuth@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 16 May 2019 11:22:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBQZW5nIEZhbg0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAxNSwgMjAxOSAzOjUzIFBN
-DQo+IA0KPiBUaGlzIHBhdGNoIGFkZHMgaS5NWDggbnZtZW0gb2NvdHAgZHJpdmVyIHRvIGFjY2Vz
-cyBmdXNlIHZpYSBSUEMgdG8gaS5NWDgNCj4gc3lzdGVtIGNvbnRyb2xsZXIuDQo+IA0KPiBDYzog
-U3Jpbml2YXMgS2FuZGFnYXRsYSA8c3Jpbml2YXMua2FuZGFnYXRsYUBsaW5hcm8ub3JnPg0KPiBD
-YzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPg0KPiBDYzogU2FzY2hhIEhhdWVyIDxz
-LmhhdWVyQHBlbmd1dHJvbml4LmRlPg0KPiBDYzogUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0gPGtl
-cm5lbEBwZW5ndXRyb25peC5kZT4NCj4gQ2M6IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWls
-LmNvbT4NCj4gQ2M6IE5YUCBMaW51eCBUZWFtIDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gQ2M6IGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTaWduZWQtb2ZmLWJ5OiBQZW5n
-IEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IERvbmcgQWlzaGVuZyA8YWlz
-aGVuZy5kb25nQG54cC5jb20+DQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0K
+On 16.05.19 13:12, Thomas Huth wrote:
+> The struct kvm_vcpu_events code is only available on certain architectures
+> (arm, arm64 and x86). To be able to compile kvm_util.c also for other
+> architectures, we've got to fence the code with __KVM_HAVE_VCPU_EVENTS.
+> 
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> ---
+>  tools/testing/selftests/kvm/include/kvm_util.h | 2 ++
+>  tools/testing/selftests/kvm/lib/kvm_util.c     | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> index 07b71ad9734a..1e46ab205038 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> @@ -114,10 +114,12 @@ void vcpu_sregs_set(struct kvm_vm *vm, uint32_t vcpuid,
+>  		    struct kvm_sregs *sregs);
+>  int _vcpu_sregs_set(struct kvm_vm *vm, uint32_t vcpuid,
+>  		    struct kvm_sregs *sregs);
+> +#ifdef __KVM_HAVE_VCPU_EVENTS
+>  void vcpu_events_get(struct kvm_vm *vm, uint32_t vcpuid,
+>  		     struct kvm_vcpu_events *events);
+>  void vcpu_events_set(struct kvm_vm *vm, uint32_t vcpuid,
+>  		     struct kvm_vcpu_events *events);
+> +#endif
+>  
+>  const char *exit_reason_str(unsigned int exit_reason);
+>  
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index 4ca96b228e46..8d63ccb93e10 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -1224,6 +1224,7 @@ void vcpu_regs_set(struct kvm_vm *vm, uint32_t vcpuid, struct kvm_regs *regs)
+>  		ret, errno);
+>  }
+>  
+> +#ifdef __KVM_HAVE_VCPU_EVENTS
+>  void vcpu_events_get(struct kvm_vm *vm, uint32_t vcpuid,
+>  		     struct kvm_vcpu_events *events)
+>  {
+> @@ -1249,6 +1250,7 @@ void vcpu_events_set(struct kvm_vm *vm, uint32_t vcpuid,
+>  	TEST_ASSERT(ret == 0, "KVM_SET_VCPU_EVENTS, failed, rc: %i errno: %i",
+>  		ret, errno);
+>  }
+> +#endif
+>  
+>  /*
+>   * VM VCPU System Regs Get
+> 
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+
+Thanks,
+
+David / dhildenb
