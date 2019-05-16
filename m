@@ -2,70 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D041202A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9FC320288
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfEPJh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:37:56 -0400
-Received: from plaes.org ([188.166.43.21]:58908 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfEPJhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:37:55 -0400
-X-Greylist: delayed 542 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 05:37:55 EDT
-Received: from localhost (unknown [IPv6:2001:bb8:4008:20:21a:64ff:fe97:f60])
-        by plaes.org (Postfix) with ESMTPSA id 69D87403C4;
-        Thu, 16 May 2019 09:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1557998932; bh=kd8HHQHYAXLACCGTSACw8a42kGWpfQ/F8JYYcsX/XT8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jH2ib0aB8kM/3QqLSov54Qsvzt1Gz6UDaSf3xKUE1ERRcNWA6GTDMwbatPoPCYAl8
-         0sUvQhWVe4kOF96+8yUpsrTcIOJj9lnO4kHOzRh5y2pPmBMDseHcBu+M4k8ZAfhxPt
-         78eWowcQbsKwn8f4OkVKsaO3a32bZHhXIaZo9qJKJEcn8D1+VuT/stjcPvsAzuxH9i
-         RoVCd9nLHBTKd3cInIc2R+elbR1EBV5BD+iOZZ0sjka1YNDLqTqbJRkRAaDXvx7bTC
-         GF+iMeunzSF4JAQXJlhjVhC2SLGnvLyYd7VYdHJX72afshMvMxm26NI3BXSkjXMo8x
-         hRMXmq4JAoSOQ==
-From:   Priit Laes <plaes@plaes.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux-sunxi@googlegroups.com, Priit Laes <plaes@plaes.org>
-Subject: [PATCH] ARM: dts: sun7i: olimex-lime2: Enable ac and power supplies
-Date:   Thu, 16 May 2019 12:28:50 +0300
-Message-Id: <20190516092850.3200-1-plaes@plaes.org>
-X-Mailer: git-send-email 2.11.0
+        id S1726935AbfEPJ3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:29:53 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39878 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfEPJ3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 05:29:52 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f1so2074706lfl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HM9SvHS2yQg5lQDqjeY//dYhXZJ7+P9Sm7ZfbrJXCXU=;
+        b=V1k3/XZxzovk7JJHkqCg3cH/W8kUyNgUXSi9/WPf1de6k7MSutSrHrHYIUTtkb8ngW
+         5t2E2dQf3TQMSjodY05gI/CccMyZ379RU0hPVE/6M8CMJdW8Oyq8nKSvhuU5Kd2WQLcd
+         LBf/nrR0cKxOB5jBDoYvUDwEadTJwcnV6WymY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HM9SvHS2yQg5lQDqjeY//dYhXZJ7+P9Sm7ZfbrJXCXU=;
+        b=Ug8RlmGsLdjxLRHzZv/jy7cXWnUHaGILcjMeN49WXtfyWNmdDI+sKf3FuYZWUbbAdX
+         ltYLT3MwMolInU0aS0UYO+sHHWgwIGFIy6jZoPZ5U181s1UVqivJp/Dhps4YbxdHI0w8
+         J0rD4aZFBO0MPCEEfKzzgW/l7W0idNyk8cMxwadobIBxzqiOI7cTiPZsPi5rDsIUAO5q
+         FgqmDYOEtYldPARsCxMHOWoXG1pzyltSnVfzo1ADkmbmwpARydd9ywaA2UaDvyVNHRpj
+         gyVpblNT/R2lUbTf3Uiy9jr/oo2Y/s7Bi9uDhUB870MeqWvJBfc7tLAq1BbWS6api4uO
+         cJig==
+X-Gm-Message-State: APjAAAVX1DwJOZ4PjbnbCulhMmuZWgBfBsrOtX2LsRiBBLBdJZNEA4Ze
+        o+V+wLtE3XW3TthvHREwDpdVKUjopc/gt8pCwh6InQ==
+X-Google-Smtp-Source: APXvYqyvsOQM7w9EXRxEbtugoxgrFvrhiv21XJSHhpquhJVqYnCi1hEcUbucEs9/tSacw8t+EJ9lQo5qhf1d1S/q+2k=
+X-Received: by 2002:a19:ae14:: with SMTP id f20mr22736742lfc.49.1557998989943;
+ Thu, 16 May 2019 02:29:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190515134731.12611-1-krzesimir@kinvolk.io> <20190515134731.12611-3-krzesimir@kinvolk.io>
+ <20190515144537.57f559e7@cakuba.netronome.com>
+In-Reply-To: <20190515144537.57f559e7@cakuba.netronome.com>
+From:   Krzesimir Nowak <krzesimir@kinvolk.io>
+Date:   Thu, 16 May 2019 11:29:39 +0200
+Message-ID: <CAGGp+cGN+YYVjJee5ba84HstSrHGurBvwmKmzNsFRvb344Df3A@mail.gmail.com>
+Subject: Re: [PATCH bpf v1 2/3] selftests/bpf: Print a message when tester
+ could not run a program
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     bpf@vger.kernel.org,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>,
+        "Alban Crequy (Kinvolk)" <alban@kinvolk.io>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrey Ignatov <rdna@fb.com>, linux-kselftest@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lime2 has battery connector so enable these supplies.
+On Wed, May 15, 2019 at 11:46 PM Jakub Kicinski
+<jakub.kicinski@netronome.com> wrote:
+>
+> On Wed, 15 May 2019 15:47:27 +0200, Krzesimir Nowak wrote:
+> > This prints a message when the error is about program type being not
+> > supported by the test runner or because of permissions problem. This
+> > is to see if the program we expected to run was actually executed.
+> >
+> > The messages are open-coded because strerror(ENOTSUPP) returns
+> > "Unknown error 524".
+> >
+> > Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+> > ---
+> >  tools/testing/selftests/bpf/test_verifier.c | 17 +++++++++++++----
+> >  1 file changed, 13 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testin=
+g/selftests/bpf/test_verifier.c
+> > index ccd896b98cac..bf0da03f593b 100644
+> > --- a/tools/testing/selftests/bpf/test_verifier.c
+> > +++ b/tools/testing/selftests/bpf/test_verifier.c
+> > @@ -825,11 +825,20 @@ static int do_prog_test_run(int fd_prog, bool unp=
+riv, uint32_t expected_val,
+> >                               tmp, &size_tmp, &retval, NULL);
+> >       if (unpriv)
+> >               set_admin(false);
+> > -     if (err && errno !=3D 524/*ENOTSUPP*/ && errno !=3D EPERM) {
+> > -             printf("Unexpected bpf_prog_test_run error ");
+> > -             return err;
+> > +     if (err) {
+> > +             switch (errno) {
+> > +             case 524/*ENOTSUPP*/:
+> > +                     printf("Did not run the program (not supported) "=
+);
+> > +                     return 0;
+> > +             case EPERM:
+> > +                     printf("Did not run the program (no permission) "=
+);
+> > +                     return 0;
+>
+> Perhaps use strerror(errno)?
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+As I said in the commit message, I open-coded those messages because
+strerror for ENOTSUPP returns "Unknown error 524".
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-index 9c8eecf4337a..9001b5527615 100644
---- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-@@ -206,6 +206,14 @@
- 
- #include "axp209.dtsi"
- 
-+&ac_power_supply {
-+	status = "okay";
-+};
-+
-+&battery_power_supply {
-+	status = "okay";
-+};
-+
- &reg_dcdc2 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <1000000>;
--- 
-2.11.0
+>
+> > +             default:
+> > +                     printf("Unexpected bpf_prog_test_run error ");
+> > +                     return err;
+> > +             }
+> >       }
+> > -     if (!err && retval !=3D expected_val &&
+> > +     if (retval !=3D expected_val &&
+> >           expected_val !=3D POINTER_VALUE) {
+> >               printf("FAIL retval %d !=3D %d ", retval, expected_val);
+> >               return 1;
+>
 
+
+--=20
+Kinvolk GmbH | Adalbertstr.6a, 10999 Berlin | tel: +491755589364
+Gesch=C3=A4ftsf=C3=BChrer/Directors: Alban Crequy, Chris K=C3=BChl, Iago L=
+=C3=B3pez Galeiras
+Registergericht/Court of registration: Amtsgericht Charlottenburg
+Registernummer/Registration number: HRB 171414 B
+Ust-ID-Nummer/VAT ID number: DE302207000
