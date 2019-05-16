@@ -2,128 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5024120C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 927DB20C8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbfEPQFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:05:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53342 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726961AbfEPQFo (ORCPT
+        id S1727184AbfEPQGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:06:51 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39881 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfEPQGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:05:44 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4GG51P7129531
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 12:05:43 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sha8bam3h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 12:05:42 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Thu, 16 May 2019 17:05:38 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 16 May 2019 17:05:35 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4GG5Yv948365702
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 May 2019 16:05:34 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E85DB5204E;
-        Thu, 16 May 2019 16:05:33 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.91.88])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0BEC65205A;
-        Thu, 16 May 2019 16:05:31 +0000 (GMT)
-Subject: Re: [RFCv2 0/6] TurboSched: A scheduler for sustaining Turbo
- Frequencies for longer durations
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com, dsmythies@telus.net
-References: <20190515135322.19393-1-parth@linux.ibm.com>
- <20190515164854.GZ2589@hirez.programming.kicks-ass.net>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Thu, 16 May 2019 21:35:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 16 May 2019 12:06:51 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r7so3941084otn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I4VKFuY3dBhk8M0E31KTPJJ8MMHDVcscAUiCzod5h4g=;
+        b=H6xNrQHksO0mY+GD8TjSIB/dl7gXte6ptfd1KwGU7WS9fv6i/tgp5PRwV1QwuOcLn8
+         EQgegFWR1awHjfSGP4+gjgXMyl3Gl62XXSb7Mm7Nf1RXzKuaEetJoPJs6GSuS0KBL9vl
+         Wub95qd5nDDIuDpLobcQrJAeLZp5nVs+LMne3mcxV43wLSgIfXzXurgIQYOiBUs8VKq4
+         KUB/9oEuCvZV97lXvc2ABvfckVlCEpI9+rGFlz3y2hfmc98QPPAyHhjTuVHOdOUM3Bkm
+         UOJay+FnLHdEk6rocRtjzEXrvs47hR0q26+/2U1SS5+d0iEBJ8VXwWGOZJ51SarUWMvq
+         4fdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I4VKFuY3dBhk8M0E31KTPJJ8MMHDVcscAUiCzod5h4g=;
+        b=JzoVi0XfxsNFw3eYEtngySwsr7a4VN1ndM36p4JN3Db+NB30Ca41Z1YwOhUEGybG7K
+         0HMMlTzlsVQxiCG50bKjSxvgrKrAXC2glHjV949rv5N0TWPXbn4fR1PB3Fxu0kdXnmfV
+         5suBo6+4rDvHuUYTveN0WhrQtmAEtwU6FSf2NWa2rwhIaX1xoDnBzPNfFBF+AXFYY1zz
+         Hjd/Q47hLvqf8YgO18u4eFtpZWkIBEepwT5d32x//UE7NyjmGxZpstYTeFhQ/oc4ZISK
+         2ZBDTVLlGbUk9j09jUMlSeFotpexEcDRxLIEtECysnPCDpaDfEDi4SANLYuavpNEKhU2
+         qntw==
+X-Gm-Message-State: APjAAAUGi+i9my2BO793rnrVeCIFblTqzhsTumMwrmIK6PYFkEZszIOx
+        lZljSJ79cP00h3yYqLlpGnr95A0sSLX+c9jxz4QTbw==
+X-Google-Smtp-Source: APXvYqzler3soQWaPkgJTqHADqwjhXm5FObYmA+iecGHRrkmAWqb4Fk8pHSH7Qj3lDCx4Ml5SA54wKgEPHxudDIXDq4=
+X-Received: by 2002:a9d:7347:: with SMTP id l7mr6353382otk.183.1558022810319;
+ Thu, 16 May 2019 09:06:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190515164854.GZ2589@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19051616-0012-0000-0000-0000031C671D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051616-0013-0000-0000-000021550957
-Message-Id: <82883320-fb98-ec7b-ad1a-0c4248a0225b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905160102
+References: <20190516094234.9116-1-oleksandr@redhat.com> <20190516094234.9116-5-oleksandr@redhat.com>
+ <CAG48ez2yXw_PJXO-mS=Qw5rkLpG6zDPd0saMhhGk09-du2bpaA@mail.gmail.com> <20190516142013.sf2vitmksvbkb33f@butterfly.localdomain>
+In-Reply-To: <20190516142013.sf2vitmksvbkb33f@butterfly.localdomain>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 16 May 2019 18:06:24 +0200
+Message-ID: <CAG48ez0teQk+rVnRmr=xcM8PJ_8UZC3hSi7PABx-qunz+5=DGg@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/5] mm/ksm, proc: introduce remote merge
+To:     Oleksandr Natalenko <oleksandr@redhat.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Hugh Dickins <hughd@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Greg KH <greg@kroah.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Grzegorz Halat <ghalat@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 16, 2019 at 4:20 PM Oleksandr Natalenko
+<oleksandr@redhat.com> wrote:
+> On Thu, May 16, 2019 at 12:00:24PM +0200, Jann Horn wrote:
+> > On Thu, May 16, 2019 at 11:43 AM Oleksandr Natalenko
+> > <oleksandr@redhat.com> wrote:
+> > > Use previously introduced remote madvise knob to mark task's
+> > > anonymous memory as mergeable.
+> > >
+> > > To force merging task's VMAs, "merge" hint is used:
+> > >
+> > >    # echo merge > /proc/<pid>/madvise
+> > >
+> > > Force unmerging is done similarly:
+> > >
+> > >    # echo unmerge > /proc/<pid>/madvise
+> > >
+> > > To achieve this, previously introduced ksm_madvise_*() helpers
+> > > are used.
+> >
+> > Why does this not require PTRACE_MODE_ATTACH_FSCREDS to the target
+> > process? Enabling KSM on another process is hazardous because it
+> > significantly increases the attack surface for side channels.
+> >
+> > (Note that if you change this to require PTRACE_MODE_ATTACH_FSCREDS,
+> > you'll want to use mm_access() in the ->open handler and drop the mm
+> > in ->release. mm_access() from a ->write handler is not permitted.)
+>
+> Sounds reasonable. So, something similar to what mem_open() & friends do
+> now:
+>
+> static int madvise_open(...)
+> ...
+>         struct task_struct *task = get_proc_task(inode);
+> ...
+>         if (task) {
+>                 mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
+>                 put_task_struct(task);
+>                 if (!IS_ERR_OR_NULL(mm)) {
+>                         mmgrab(mm);
+>                         mmput(mm);
+> ...
+>
+> Then:
+>
+> static ssize_t madvise_write(...)
+> ...
+>         if (!mmget_not_zero(mm))
+>                 goto out;
+>
+>         down_write(&mm->mmap_sem);
+>         if (!mmget_still_valid(mm))
+>                 goto skip_mm;
+> ...
+> skip_mm:
+>         up_write(&mm->mmap_sem);
+>
+>         mmput(mm);
+> out:
+>         return ...;
+>
+> And, finally:
+>
+> static int madvise_release(...)
+> ...
+>                 mmdrop(mm);
+> ...
+>
+> Right?
 
-
-On 5/15/19 10:18 PM, Peter Zijlstra wrote:
-> On Wed, May 15, 2019 at 07:23:16PM +0530, Parth Shah wrote:
->> Abstract
->> ========
->>
->> The modern servers allows multiple cores to run at range of
->> frequencies higher than rated range of frequencies. But the power budget
->> of the system inhibits sustaining these higher frequencies for
->> longer durations.
->>
->> However when certain cores are put to idle states, the power can be
->> effectively channelled to other busy cores, allowing them to sustain
->> the higher frequency.
->>
->> One way to achieve this is to pack tasks onto fewer cores keeping others idle,
->> but it may lead to performance penalty for such tasks and sustaining higher
->> frequencies proves to be of no benefit. But if one can identify unimportant low
->> utilization tasks which can be packed on the already active cores then waking up
->> of new cores can be avoided. Such tasks are short and/or bursty "jitter tasks"
->> and waking up new core is expensive for such case.
->>
->> Current CFS algorithm in kernel scheduler is performance oriented and hence
->> tries to assign any idle CPU first for the waking up of new tasks. This policy
->> is perfect for major categories of the workload, but for jitter tasks, one
->> can save energy by packing it onto active cores and allow other cores to run at
->> higher frequencies.
->>
->> These patch-set tunes the task wake up logic in scheduler to pack exclusively
->> classified jitter tasks onto busy cores. The work involves the use of additional
->> attributes inside "cpu" cgroup controller to manually classify tasks as jitter. 
-> 
-> Why does this make sense? Don't these higher freq bins burn power like
-> stupid? That is, it makes sense to use turbo-bins for single threaded
-> workloads that are CPU-bound and need performance.
-> 
-> But why pack a bunch of 'crap' tasks onto a core and give it turbo;
-> that's just burning power without getting anything back for it.
-> 
-
-Thanks for taking interest in my patch series.
-I will try my best to answer your question.
-
-This patch series tries to pack jitter tasks on the busier cores to avoid waking
-up any idle core as long as possible. This approach is supposed to give more
-performance to the CPU bound tasks by sustaining Turbo for a longer duration.
-
-Current implementation for task wake up is biased towards waking an idle CPU first,
-which in turn consumes power as the CPU leaves idle domain.
-For the system supporting Turbo frequencies, power budget is fixed and hence to
-maintain this budget the system may throttle the frequency.
-
-So the idea is, if we can pack the jitter tasks on already running cores, then we
-can avoid waking up new cores and save power thereby sustaining Turbo for longer
-duration.
-
+Yeah, that looks reasonable.
