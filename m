@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC2020796
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1000E207A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:08:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfEPNH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:07:26 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:37244 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfEPNH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:07:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=7nw1SCsI0DVhke4eyWVzQZtBh1eZLI/gGCG931c3pxc=; b=YQdezVNFHlhxbv9xNpI/EQAsV+
-        2xP9ZCJsAn1IkuJZq6ih9C+um5dlHI7z5wXEvJoWnZ2LGZHVnR8yrGuT3imfbgcgpYSCkMoOwUBbq
-        mREW/vDo263l6IaCe+MurR0dBxsNUlNn9s7UeVXX3qIliji8IbdccZu9/bjCUpz2qDQo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hRG6S-0003NC-Uq; Thu, 16 May 2019 15:07:20 +0200
-Date:   Thu, 16 May 2019 15:07:20 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
-        palmer@sifive.com, paul.walmsley@sifive.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] i2c-ocores: sifive: add polling mode workaround
- for FU540-C000 SoC
-Message-ID: <20190516130720.GE14298@lunn.ch>
-References: <1557983320-14461-1-git-send-email-sagar.kadam@sifive.com>
- <1557983320-14461-4-git-send-email-sagar.kadam@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557983320-14461-4-git-send-email-sagar.kadam@sifive.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1727469AbfEPNIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:08:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44290 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbfEPNIm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:08:42 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g9so1821635pfo.11;
+        Thu, 16 May 2019 06:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TpUJh8xmWCZIn3ut3vYXKe3CVBgzC6r7GRy49zcEzg4=;
+        b=g2v0e0U1HpV1wTsbSjaH9o502+3Bqtnzyy5tHc3jPNtzKGVEIEdwq/GWyak3paNVV9
+         2Ntx767VlInd3vqKrKOUvM7V1HGhZAUcAPspHSsCYamEPWtu2fuW8T7nJndnybYaoCBJ
+         QGQorTOVf6PNgZ2CA43U+7RO6hd7gbgwdDvFuTbTj0w2ZN9Ho5zMK+1hdyVAhZY6YFSq
+         gS3odjLplXN5NCTxuJQhSd+scbwY4sF4s3xP22HL8WE9c+SBYirpBBWrXCSRfcbFDgjL
+         7JMla4f+WLoLP+RFUp4UovyiqXBbiDKlXugyyL3ICgxoMvh7Xn6XUhO6tlWOgOOzFvj6
+         A3Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TpUJh8xmWCZIn3ut3vYXKe3CVBgzC6r7GRy49zcEzg4=;
+        b=I+HNFmDujtFLaKeYxLkskOIniVG4hUnFvax9mfdBv9ZO5nCYb9A7C1IcpD8E+UuG0f
+         f779Ad3qV4ZxFWCE0+KiYMDVv3WVDEcJszx9EnN/jnoPi/THOMbMOJ5/TWDsKoqEahfv
+         AdwBHC5xUYOb2RIQxqq1HQ+4T1byPG0P7E8Dk82hq37t+6ndRzd/mtFQXXxRWnwr+IRJ
+         kqoDL5Q32Zw8WKsdUDjRyqd6aA9sfLkQKBny86XgaDqEN5VJ3tUTibla+Cpw/QE8JOkH
+         xSDWd/70VTJT4uWObz1dnGKpnCgs334E2oadqp/+2w4VspqIdM067bdgSfVqznAvFYg1
+         ZvJw==
+X-Gm-Message-State: APjAAAVw6cM9CUEmJIshRlIlGI/iLHgPywrt7qol3Ru2CNoWeHC+gHjy
+        PtbtgmMaTf5xtbTeTFeF0HY=
+X-Google-Smtp-Source: APXvYqyyLxju7G7/XX696dUrXPvqym+Z43/tS74KS05kbMPbTAzOS0igaTQ1mEPLz8KIpI5ElyKY7g==
+X-Received: by 2002:a63:17:: with SMTP id 23mr49640161pga.206.1558012121388;
+        Thu, 16 May 2019 06:08:41 -0700 (PDT)
+Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id b4sm6453216pfd.120.2019.05.16.06.08.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 06:08:40 -0700 (PDT)
+From:   parna.naveenkumar@gmail.com
+To:     johan@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Subject: [PATCH] USB: serial: mos7840: Prefer 'unsigned int' to bare use of 'unsigned'
+Date:   Thu, 16 May 2019 18:37:59 +0530
+Message-Id: <20190516130759.12996-1-parna.naveenkumar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:38:40AM +0530, Sagar Shrikant Kadam wrote:
-> The i2c-ocore driver already has a polling mode interface.But it needs
-> a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
-> There is an erratum in FU540 chip that prevents interrupt driven i2c
-> transfers from working, and also the I2C controller's interrupt bit
-> cannot be cleared if set, due to this the existing i2c polling mode
-> interface added in mainline earlier doesn't work, and CPU stall's
-> infinitely, when-ever i2c transfer is initiated.
-> 
-> Ref:previous polling mode support in mainline
-> 
-> 	commit 69c8c0c0efa8 ("i2c: ocores: add polling interface")
-> 
-> The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
-> FU540-COOO SoC.
-> 
-> Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-> ---
->  drivers/i2c/busses/i2c-ocores.c | 34 ++++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-> index aee1d86..00ee45c 100644
-> --- a/drivers/i2c/busses/i2c-ocores.c
-> +++ b/drivers/i2c/busses/i2c-ocores.c
-> @@ -27,6 +27,7 @@
->  #include <linux/jiffies.h>
->  
->  #define OCORES_FLAG_POLL BIT(0)
-> +#define OCORES_FLAG_BROKEN_IRQ BIT(2) /* Broken IRQ in HiFive Unleashed */
+From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
 
-Hi Sigar
+This fixes checkpatch.pl warning "WARNING: Prefer 'unsigned int' to
+bare use of 'unsigned'".
 
-BIT(1). Don't leave a gap.
+Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+---
+ drivers/usb/serial/mos7840.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Andrew
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index a698d46ba773..a610af4dea3f 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -1682,7 +1682,7 @@ static void mos7840_change_port_settings(struct tty_struct *tty,
+ 	struct moschip_port *mos7840_port, struct ktermios *old_termios)
+ {
+ 	int baud;
+-	unsigned cflag;
++	unsigned int cflag;
+ 	__u8 lData;
+ 	__u8 lParity;
+ 	__u8 lStop;
+-- 
+2.17.1
+
