@@ -2,71 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39387208AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BE6208B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfEPNzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:55:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbfEPNzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:55:55 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E22F620657;
-        Thu, 16 May 2019 13:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558014954;
-        bh=BvXt+eR4jR0LUyZlbGdZ51x2LIrl45NN9y7NG5dGC9s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UpoTFQ/JWVo7a9UoCtESEVaHEbqguTunbA6Bw/K9JWTyBGrhJp8JWY7J7m80hF63B
-         R436BoQqvmQRhB77Fx2eUOSUg5e+agLBWYry7rXyriP4BjDKBtDr9DSjvRHn9eWQ9Y
-         Nfe0zHdLcRpbZCfLx4Phi4x47DT8+zM+vAL2lf4Q=
-Subject: Re: [PATCH 5.1 00/46] 5.1.3-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190515090616.670410738@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <38cc4651-4e70-48c8-5793-5857d0f33cc5@kernel.org>
-Date:   Thu, 16 May 2019 07:55:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727693AbfEPN4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 09:56:12 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:64141 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbfEPN4M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 09:56:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1558014971; x=1589550971;
+  h=subject:to:references:from:message-id:date:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=d3tF05X6+IMz0z3pdmsgwMoJMbbYKYQyJW/W5t9SFtI=;
+  b=k2B77y/v8CaQC0rGb6Xqbv96CORAbw7wm1ve0QiujIWZVQYmLpybVI5I
+   Mq/5fFi63ZZIFN139tHLU3bXfgQvYLHu4CABqsoGFY4oxPEG73vNm9ZHV
+   GqOTaFdTro8T1PZoiQjEcrpVjl+Qxfxo8CBZNZ5J516YOM9QYd/EeJ5nT
+   o=;
+X-IronPort-AV: E=Sophos;i="5.60,476,1549929600"; 
+   d="scan'208";a="402404736"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 May 2019 13:56:04 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id x4GDu3Lg022882
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 16 May 2019 13:56:04 GMT
+Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 16 May 2019 13:56:03 +0000
+Received: from macbook-2.local (10.43.161.34) by EX13D20UWC001.ant.amazon.com
+ (10.43.162.244) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Thu, 16 May
+ 2019 13:56:02 +0000
+Subject: Re: [PATCH v2 2/2] KVM: x86: Implement the arch-specific hook to
+ report the VM UUID
+To:     Filippo Sironi <sironi@amazon.de>, <linux-kernel@vger.kernel.org>,
+        <kvm@vger.kernel.org>, <borntraeger@de.ibm.com>,
+        <boris.ostrovsky@oracle.com>, <cohuck@redhat.com>,
+        <konrad.wilk@oracle.com>, <xen-devel@lists.xenproject.org>,
+        <vasu.srinivasan@oracle.com>
+References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
+ <1557847002-23519-1-git-send-email-sironi@amazon.de>
+ <1557847002-23519-3-git-send-email-sironi@amazon.de>
+From:   Alexander Graf <graf@amazon.com>
+Message-ID: <f51a6a84-b21c-ab75-7e30-bfbe2ac6b98b@amazon.com>
+Date:   Thu, 16 May 2019 06:56:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190515090616.670410738@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1557847002-23519-3-git-send-email-sironi@amazon.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.43.161.34]
+X-ClientProxiedBy: EX13D12UWC002.ant.amazon.com (10.43.162.253) To
+ EX13D20UWC001.ant.amazon.com (10.43.162.244)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/15/19 4:56 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.3 release.
-> There are 46 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 14.05.19 08:16, Filippo Sironi wrote:
+> On x86, we report the UUID in DMI System Information (i.e., DMI Type 1)
+> as VM UUID.
 > 
-> Responses should be made by Fri 17 May 2019 09:04:22 AM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Filippo Sironi <sironi@amazon.de>
+> ---
+>  arch/x86/kernel/kvm.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 5c93a65ee1e5..441cab08a09d 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/kvm_para.h>
+>  #include <linux/cpu.h>
+> +#include <linux/dmi.h>
+>  #include <linux/mm.h>
+>  #include <linux/highmem.h>
+>  #include <linux/hardirq.h>
+> @@ -694,6 +695,12 @@ bool kvm_para_available(void)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_para_available);
+>  
+> +const char *kvm_para_get_uuid(void)
+> +{
+> +	return dmi_get_system_info(DMI_PRODUCT_UUID);
+
+This adds a new dependency on CONFIG_DMI. Probably best to guard it with
+an #if IS_ENABLED(CONFIG_DMI).
+
+The concept seems sound though.
+
+
+Alex
+
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_para_get_uuid);
+> +
+>  unsigned int kvm_arch_para_features(void)
+>  {
+>  	return cpuid_eax(kvm_cpuid_base() | KVM_CPUID_FEATURES);
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
-
-thanks,
--- Shuah
