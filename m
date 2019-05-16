@@ -2,204 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 840DA20126
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:19:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D332012A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfEPITT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 04:19:19 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37624 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfEPITT (ORCPT
+        id S1726803AbfEPIUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 04:20:03 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52178 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfEPIUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:19:19 -0400
-Received: by mail-it1-f193.google.com with SMTP id m140so4786968itg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 01:19:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s68yQo+QQvCZajbWc1oevyw/oT7lrvS4cXS+T8Bmo2M=;
-        b=EwphtlJ63VR9Yn8Ov0HSG/7H1y1l97MkP6vXNWnzJiuPCaIE2FkVZVjDYnoozd0IaM
-         Fg6/PHMKy2T4d4D4F0lTywdb2S4BHDk9aaifwJoW8TwZ7oL6N2i8Juf+bOrmw4eHGXYf
-         PmQQlJG854i1FWeCaHZ7QQFahHzvxp4bDqDgm5MipZ3onnJoeib6jfJg+E4oMcw6a74K
-         UXHNRUFYC/6nhayqnDk4tK3ej3kBdbiWNkrJeyCJPyVTH5aqbIOSCCgpKCkXauLxLAmu
-         yq0G8LqZtpyyM2DZFmIGKuIdSMXUkbPBvkCzI9kCzP2ukvN1iCDQdnH3OBRRfJB+9sz8
-         6pew==
-X-Gm-Message-State: APjAAAXGDvTcpYZLyKFrdOS2HMyZ48eUaQZ5oGNu8UZ69q2e6c7q4nhK
-        6zFVO7doD2LBrqoZyjzrbBvplisRu5vKc1zX3pKlSw==
-X-Google-Smtp-Source: APXvYqxE7uRnSXhpRjc6utJg1hkfIvguX4bu4Q62XoHeKtFLtbDbP5ywW+siT+0KWV1MRstAncfRoFq49aUQmT8mCfY=
-X-Received: by 2002:a02:37d7:: with SMTP id r206mr32206828jar.127.1557994757853;
- Thu, 16 May 2019 01:19:17 -0700 (PDT)
+        Thu, 16 May 2019 04:20:03 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4G8JFRQ017674;
+        Thu, 16 May 2019 17:19:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Thu, 16 May 2019 17:19:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4G8J9Bw017640
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 16 May 2019 17:19:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] kernel/hung_task.c: Monitor killed tasks.
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Liu Chuansheng <chuansheng.liu@intel.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+References: <1557745331-10367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190515105540.vyzh6n62rqi5imqv@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <ee7501c6-d996-1684-1652-f0f838ba69c3@i-love.sakura.ne.jp>
+Date:   Thu, 16 May 2019 17:19:12 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190510102051.25647-1-kasong@redhat.com> <4f453ec6-67a6-2c8f-2aab-acb54ae55645@redhat.com>
-In-Reply-To: <4f453ec6-67a6-2c8f-2aab-acb54ae55645@redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Thu, 16 May 2019 16:19:06 +0800
-Message-ID: <CACPcB9d-h75MEMrjREe7sMvjRqvxBhGxaeR3_k7An2-BDsDy4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] vmcore: Add a kernel cmdline device_dump_limit
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190515105540.vyzh6n62rqi5imqv@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 7:17 PM Bhupesh Sharma <bhsharma@redhat.com> wrote:
->
-> Hi Kairui,
->
-> Thanks for the patch. Please see my comments in-line:
->
-> On 05/10/2019 03:50 PM, Kairui Song wrote:
-> > Device dump allow drivers to add device related dump data to vmcore as
-> > they want. This have a potential issue, the data is stored in memory,
-> > drivers may append too much data and use too much memory. The vmcore is
-> > typically used in a kdump kernel which runs in a pre-reserved small
-> > chunk of memory. So as a result it will make kdump unusable at all due
-> > to OOM issues.
-> >
-> > So introduce new device_dump_limit= kernel parameter, and set the
-> > default limit to 0, so device dump is not enabled unless user specify
-> > the accetable maxiam
->
->        ^^^^ acceptable maximum
+On 2019/05/15 19:55, Petr Mladek wrote:
+>> +	if (!stamp) {
+>> +		stamp = jiffies;
+>> +		if (!stamp)
+>> +			stamp++;
+>> +		t->killed_time = stamp;
+>> +		return;
+>> +	}
+> 
+> I might be too dumb but the above code looks pretty tricky to me.
+> It would deserve a comment. Or better, I would remove
+> trick to handle overflow. If it happens, we would just
+> lose one check period.
 
-Will fix this typo.
+We can use
 
->
-> > memory usage for device dump data. In this way user
-> > will also have the chance to adjust the kdump reserved memory
-> > accordingly.
->
-> Hmmm., this doesn't give much confidence with the
-> PROC_VMCORE_DEVICE_DUMP feature in its current shape. Rather shouldn't
-> we be enabling config PROC_VMCORE_DEVICE_DUMP only under EXPERT mode for
-> now, considering that this feature needs further thrashing and testing
-> with real setups including platforms where drivers append large amounts
-> of data to vmcore:
+  static inline unsigned long jiffies_nonzero(void)
+  {
+      const unsigned long stamp = jiffies;
 
-I think no need to move it to expert mode, just leave it disabled by
-default should be better, that should be enough to make sure driver
-won't append that much memory and cause OOM, while it could still be
-enabled without changing the kernel, so this feature won't bring extra
-risk, and could be enabled anytime easily.
+      return stamp ? stamp : -1;
+  }
 
->
-> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-> index 817c02b13b1d..c47a12cf7fc0 100644
-> --- a/fs/proc/Kconfig
-> +++ b/fs/proc/Kconfig
-> @@ -45,7 +45,7 @@ config PROC_VMCORE
->           Exports the dump image of crashed kernel in ELF format.
->
->   config PROC_VMCORE_DEVICE_DUMP
-> -       bool "Device Hardware/Firmware Log Collection"
-> +       bool "Device Hardware/Firmware Log Collection" if EXPERT
->          depends on PROC_VMCORE
->          default n
->          help
-> @@ -59,6 +59,12 @@ config PROC_VMCORE_DEVICE_DUMP
->            If you say Y here, the collected device dumps will be added
->            as ELF notes to /proc/vmcore.
->
-> +         Considering that there can be device drivers which append
-> +         large amounts of data to vmcore, you should say N here unless
-> +         you are reserving a large chunk of memory for crashdump
-> +         kernel, because otherwise the crashdump kernel might become
-> +         unusable due to OOM issues.
-> +
->
-> May be you can add a 'Fixes:' tag here.
+or even shortcut "jiffies | 1" because difference by one jiffie
+is an measurement error for multiple HZ of timeout.
 
-Problem is previous commit seems not broken, just bring extra memory
-stress. Is "Fixes:" tag suitable for this commit?
+> 
+> Alternative solution would be to set the timestamp in
+> complete_signal(). Then we would know that the timestamp
+> is always valid when a fatal signal is pending.
 
->
-> > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > ---
-> >   fs/proc/vmcore.c | 20 ++++++++++++++++++++
-> >   1 file changed, 20 insertions(+)
-> >
-> > diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> > index 3fe90443c1bb..e28695ef2439 100644
-> > --- a/fs/proc/vmcore.c
-> > +++ b/fs/proc/vmcore.c
-> > @@ -53,6 +53,9 @@ static struct proc_dir_entry *proc_vmcore;
-> >   /* Device Dump list and mutex to synchronize access to list */
-> >   static LIST_HEAD(vmcoredd_list);
-> >   static DEFINE_MUTEX(vmcoredd_mutex);
-> > +
-> > +/* Device Dump Limit */
-> > +static size_t vmcoredd_limit;
-> >   #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-> >
-> >   /* Device Dump Size */
-> > @@ -1465,6 +1468,11 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
-> >       data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
-> >                           PAGE_SIZE);
-> >
-> > +     if (vmcoredd_orig_sz + data_size >= vmcoredd_limit) {
-> > +             ret = -ENOMEM;
->
-> Should we be adding a WARN() here to let the user know that the device
-> dump data will not be available in vmcore?
-
-Yes, that could be very helpful. How about pr_err_once? WARN is too
-noise, just give a hint to the user that device dump is disabled
-should be enough, so user will know why device dump data is not
-present and will just enable it.
-
->
-> > +             goto out_err;
-> > +     }
-> > +
-> >       /* Allocate buffer for driver's to write their dumps */
-> >       buf = vmcore_alloc_buf(data_size);
-> >       if (!buf) {
-> > @@ -1502,6 +1510,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
-> >       return ret;
-> >   }
-> >   EXPORT_SYMBOL(vmcore_add_device_dump);
-> > +
-> > +static int __init parse_vmcoredd_limit(char *arg)
-> > +{
-> > +     char *end;
-> > +
-> > +     if (!arg)
-> > +             return -EINVAL;
-> > +     vmcoredd_limit = memparse(arg, &end);
-> > +     return end > arg ? 0 : -EINVAL;
-> > +
-> > +}
-> > +__setup("device_dump_limit=", parse_vmcoredd_limit);
->
-> We should be adding this boot argument and its description to
-> 'Documentation/admin-guide/kernel-parameters.txt'
-
-Good suggestion, will update the document.
-
->
-> >   #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-> >
-> >   /* Free all dumps in vmcore device dump list */
-> >
->
-> Thanks,
-> Bhupesh
-
-Thanks for the review!
+Yes. But I guess that since signal might be delivered just before
+setting PF_FROZEN and the thread might be kept frozen for longer
+than timeout, we will need to reset the timestamp just before
+clearing PF_FROZEN.
 
 
 
---
-Best Regards,
-Kairui Song
+>> +	if (time_is_after_jiffies(stamp + timeout * HZ))
+>> +		return;
+>> +	trace_sched_process_hang(t);
+>> +	if (sysctl_hung_task_panic) {
+>> +		console_verbose();
+>> +		hung_task_call_panic = true;
+> 
+> IMHO, the delayed task exit is much less fatal than sleeping
+> in an uninterruptible state.
+> 
+> Anyway, the check is much less reliable. In case of hung_task,
+> it is enough when the task gets scheduled. In the new check,
+> the task has to do some amount of work until the signal
+> gets handled and do_exit() is called.
+> 
+> The panic should either get enabled separately or we should
+> never panic in this case.
+
+OK, we should not share existing sysctl settings.
+
+But in the context of syzbot's testing where there are only 2 CPUs
+in the target VM (which means that only small number of threads and
+not so much memory) and threads get SIGKILL after 5 seconds from fork(),
+being unable to reach do_exit() within 10 seconds is likely a sign of
+something went wrong. For example, 6 out of 7 trials of a reproducer for
+https://syzkaller.appspot.com/bug?id=835a0b9e75b14b55112661cbc61ca8b8f0edf767
+resulted in "no output from test machine" rather than "task hung".
+This patch is revealing that such killed threads are failing to reach
+do_exit() because they are trapped at unkillable retry loop due to a
+race bug.
+
+Therefore, I would like to try this patch in linux-next.git for feasibility
+testing whether this patch helps finding more bugs and reproducers for such
+bugs, by bringing "unable to terminate threads" reports out of "no output from
+test machine" reports. We can add sysctl settings before sending to linux.git.
+
+Any questions?
+
