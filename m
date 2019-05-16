@@ -2,130 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F292201D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 10:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94642201EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfEPI6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 04:58:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35034 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726942AbfEPI6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 04:58:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01077AF96;
-        Thu, 16 May 2019 08:58:28 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Azat Khuzhin <azat@libevent.org>, Roman Penyaev <rpenyaev@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 13/13] epoll: implement epoll_create2() syscall
-Date:   Thu, 16 May 2019 10:58:10 +0200
-Message-Id: <20190516085810.31077-14-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190516085810.31077-1-rpenyaev@suse.de>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
+        id S1727043AbfEPJAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:00:08 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35026 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfEPJAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 05:00:08 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g5so1302283plt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tsRvQ0ICVvL80K/llewLglNoh6LkE76YZlYz4k786T4=;
+        b=bJ02SC2+DLGQFnjhjfGLXa0GpC6fzBI58qPoOXXDddWPbG2SYKa3VWR2sGKswVGv/C
+         OMYvH8o89GaE/aEBZsZE8HnAGTfFQBK9Uff1LpPXT5gHEwDVZMc6ngYN7kDUQlHet9oY
+         KvAvLbR576fs+ZA48EcuSvfLsft3KPi1iqdrhSVMz6bqFKjOlhphsizoNZrCkfHR0F6A
+         TXYLhWw2D065WMf5QTI0Z4uGLCYwuUvPccDajFuDmTRIpLsie6cQAfsS412YqyQ0NHxg
+         Nxe/jJ7cuJWEfeTIlNQc5iQuC5tUJzt2ETtnGLufdPdg9DKah2Fe7tp+ZZlQ8OzE/T/j
+         99jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tsRvQ0ICVvL80K/llewLglNoh6LkE76YZlYz4k786T4=;
+        b=Nhg84c8KYeaXpfflBXEJop2uWN9p2YkvMBR8MoommqpfJFZtzAm8dathrriWfWrOZ0
+         Chi0hOpfw+3NgJlD2H0GeUmrEAJ6iyU6wWOzLRmRfyjT9Auc4w9zVj2QQOWyLPmgxjGT
+         pE4L1ZUkajGeNdDfz03SSS7ZkZZqwNR/h+S4k9AUetSpL9xuGe88N2CTsCZWoMaBeX9G
+         3i7btjRVBkOxjuuW70mmNxM45yFDVLQQEotKB3reveVzuTNU2o9HJAZ7rZX3slABJUpp
+         DPbfZz9DoTdi3yEhhrAcPRhcqZiEYx+IMjOVeYbDT/PTz32SLkgnw/kbISSFOb7ve7ql
+         s4rA==
+X-Gm-Message-State: APjAAAX+Ev+hVs4u7Q1x/rUtyWi1yaT5z1e9XMRo7reUALZLutehqmkT
+        KrfFYeLVPoA53OoWOPyI8UUqVXpHDwM=
+X-Google-Smtp-Source: APXvYqy7mWZPcvgEGfnai2/0Oe+KXnlLgoRS/IZIOMQhPkTBeu6DMSVcU51P9P+JPqTv+diaT86JZQ==
+X-Received: by 2002:a17:902:a988:: with SMTP id bh8mr48808665plb.243.1557997207431;
+        Thu, 16 May 2019 02:00:07 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id u76sm5917793pgc.84.2019.05.16.02.00.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 02:00:07 -0700 (PDT)
+Date:   Thu, 16 May 2019 16:59:57 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [Patch] hdac_sysfs: Fix a memory leaking bug in
+ sound/hda/hdac_sysfs.c file of Linux 5.1
+Message-ID: <20190516085957.GA3107@zhanggen-UX430UQ>
+References: <20190516084003.GA20821@zhanggen-UX430UQ>
+ <s5hzhnmn5qw.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hzhnmn5qw.wl-tiwai@suse.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-epoll_create2() is needed to accept EPOLL_USERPOLL flags
-and size, i.e. this patch wires up polling from userspace.
-
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 4cd5f982b1e5..f0d271875f4e 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -438,3 +438,4 @@
- 425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
- 426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
- 427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
-+428	i386	epoll_create2		sys_epoll_create2		__ia32_sys_epoll_create2
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 64ca0d06259a..5ee9bb31a552 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -355,6 +355,7 @@
- 425	common	io_uring_setup		__x64_sys_io_uring_setup
- 426	common	io_uring_enter		__x64_sys_io_uring_enter
- 427	common	io_uring_register	__x64_sys_io_uring_register
-+428	common	epoll_create2		__x64_sys_epoll_create2
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 9ff666ce7cb5..b44c3a0c4ad0 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2614,6 +2614,14 @@ static int do_epoll_create(int flags, size_t size)
- 	return error;
- }
- 
-+SYSCALL_DEFINE2(epoll_create2, int, flags, size_t, size)
-+{
-+	if (size == 0)
-+		return -EINVAL;
-+
-+	return do_epoll_create(flags, size);
-+}
-+
- SYSCALL_DEFINE1(epoll_create1, int, flags)
- {
- 	return do_epoll_create(flags, 0);
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index e2870fe1be5b..5049b0d16949 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -358,6 +358,7 @@ asmlinkage long sys_eventfd2(unsigned int count, int flags);
- 
- /* fs/eventpoll.c */
- asmlinkage long sys_epoll_create1(int flags);
-+asmlinkage long sys_epoll_create2(int flags, size_t size);
- asmlinkage long sys_epoll_ctl(int epfd, int op, int fd,
- 				struct epoll_event __user *event);
- asmlinkage long sys_epoll_pwait(int epfd, struct epoll_event __user *events,
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index dee7292e1df6..fccfaab366ee 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -832,9 +832,11 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
- __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
- #define __NR_io_uring_register 427
- __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
-+#define __NR_epoll_create2 428
-+__SYSCALL(__NR_epoll_create2, sys_epoll_create2)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 428
-+#define __NR_syscalls 429
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 4d9ae5ea6caf..665908b8a326 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -65,6 +65,7 @@ COND_SYSCALL(eventfd2);
- 
- /* fs/eventfd.c */
- COND_SYSCALL(epoll_create1);
-+COND_SYSCALL(epoll_create2);
- COND_SYSCALL(epoll_ctl);
- COND_SYSCALL(epoll_pwait);
- COND_SYSCALL_COMPAT(epoll_pwait);
--- 
-2.21.0
-
+On Thu, May 16, 2019 at 10:49:43AM +0200, Takashi Iwai wrote:
+> On Thu, 16 May 2019 10:40:03 +0200,
+> Gen Zhang wrote:
+> > 
+> > tree->root and tree->nodes are allocated by memory allocation 
+> > functions. And tree is also an allocated memory. When allocation of 
+> > tree->root and tree->nodes fails, not freeing tree will leak memory. 
+> > Thus we should free tree in this situation.
+> 
+> No, the leftover is freed in the caller side by calling
+> widget_tree_free().
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> > 
+> > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > 
+> > ---
+> > diff --git a/sound/hda/hdac_sysfs.c b/sound/hda/hdac_sysfs.c
+> > index fb2aa34..5d8a939 100644
+> > --- a/sound/hda/hdac_sysfs.c
+> > +++ b/sound/hda/hdac_sysfs.c
+> > @@ -370,12 +370,12 @@ static int widget_tree_create(struct hdac_device *codec)
+> >  
+> >  	tree->root = kobject_create_and_add("widgets", &codec->dev.kobj);
+> >  	if (!tree->root)
+> > -		return -ENOMEM;
+> > +		goto free_tree;
+> >  
+> >  	tree->nodes = kcalloc(codec->num_nodes + 1, sizeof(*tree->nodes),
+> >  			      GFP_KERNEL);
+> >  	if (!tree->nodes)
+> > -		return -ENOMEM;
+> > +		goto free_tree;
+> >  
+> >  	for (i = 0, nid = codec->start_nid; i < codec->num_nodes; i++, nid++) {
+> >  		err = add_widget_node(tree->root, nid, &widget_node_group,
+> > @@ -393,6 +393,9 @@ static int widget_tree_create(struct hdac_device *codec)
+> >  
+> >  	kobject_uevent(tree->root, KOBJ_CHANGE);
+> >  	return 0;
+> > +free_tree:
+> > +	kfree(tree);
+> > +	return -ENOMEM;
+> >  }
+> >  
+> >  int hda_widget_sysfs_init(struct hdac_device *codec)
+> > ---
+> > 
+It is freed in the caller site :)
+But it is really a rare free usage.
+Thanks
+Gen
