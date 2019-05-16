@@ -2,90 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B40207DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 15:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B5F20731
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:46:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfEPNUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 09:20:16 -0400
-Received: from outgoing14.flk.host-h.net ([197.242.87.48]:48227 "EHLO
-        outgoing14.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbfEPNUQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 09:20:16 -0400
-X-Greylist: delayed 1877 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 09:20:14 EDT
-Received: from www31.flk1.host-h.net ([188.40.1.173])
-        by antispam4-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hRFoc-0008Ba-7W; Thu, 16 May 2019 14:48:55 +0200
-Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
-        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hRFoX-000550-Js; Thu, 16 May 2019 14:48:49 +0200
-From:   Justin Swartz <justin.swartz@risingedge.co.za>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/clk/rockchip/clk-rk3228.c: add 1.464GHz clock rate
-Date:   Thu, 16 May 2019 12:44:36 +0000
-Message-Id: <20190516124437.4906-1-justin.swartz@risingedge.co.za>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: justin.swartz@risingedge.co.za
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25451/Thu May 16 09:59:51 2019)
-X-Originating-IP: 188.40.1.173
-X-SpamExperts-Domain: risingedge.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00896517575494)
-X-Recommended-Action: accept
-X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fbJ1LThpDP3PaEa+mzHFASpSDasLI4SayDByyq9LIhVyO1UfNdFVadD
- 4Wekg4mMmETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
- mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
- qhBpvAyWwieZyauFYqHkIbFa+ipFJdVl2Qo16OdG/SgJyrKdw0Znvotuy3L4aSJjqFExmwGwvf6h
- PQx0fYKjNC9VXDo4KyWWo0k/XI0fGv8bNm7IfazUKrTRmPfW13HBdTouyUQiTqTLnMPwSR2klzqa
- C1hRfn6HuUe9L0a5vwf8PHac6dlnibl3vcBqVmvQB4A18afqaqkE9y2tELrbSfbpenEpmH6eQvWp
- DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdF5bKhCA9a8IVosfxGBTbadg2lBMt3xu9nbye2CdJLN
- jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
- 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/fp
- WUXurEbGCiZ0ePvZjCuJdbYb9IXfYGRpVS/0hA4Mwkg/wxsjmSXwdCAtc5U5IMGqr3wBwEeX6Ai5
- 5FPRpzhbYqsuNEW45+y/2kiUpWy9c957+6R4kroQiAThpzOdFqFvbdRuq0FZjQOwDKXnhaC6dkwF
- 9ybSMhHO+IPM0C985aNe1vwE2plJLdOGZ2rsAWflnmUXwJv1R9bnj+xoJG4VbeMz329ug19D+AX+
- zbkDEwtZIltLJVY6CFz3MnUtwYrRjdK3JtbOY4V5u4SqNrbdxyGLEIoLEuuC4P/fyEEgA3CnflZn
- bjDB2+RGRgaXth2/9YEbMsGSn6owqJN0kS7MUpAEhFoAxikOdx3ALFboD0vMokt+4lO8Qp33tUy6
- u+ztjUSMb/XuWI+kpQSOtXwGn8ttztpqwHsOJJ90zNCwBTwJWw42swm4bO6gacpMpzJ5RNWFoIkg
- vLC7uMZSLKkLPlzqsPnNmrTFfBI+gCHkFgyh9jAE9PwtDurXCCybWAnihjA708Lg3Y2gXyaf+rIt
- vvthbyiMZOAfvJjwL84MO4Vozqbzv/NmqBexmg1oMlu3UCyNNO7qENlLqkRemjF1A1q3g0ZrubFa
- n/xi+AGXOIO97ttnHrPmGyC6rR21+9c=
-X-Report-Abuse-To: spam@antispammaster.host-h.net
+        id S1727273AbfEPMq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 08:46:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:44600 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbfEPMq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 08:46:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC0BD1715;
+        Thu, 16 May 2019 05:46:26 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B63423F703;
+        Thu, 16 May 2019 05:46:24 -0700 (PDT)
+Subject: Re: [PATCH v3 6/7] iommu: Introduce IOMMU_RESV_DIRECT_RELAXABLE
+ reserved memory regions
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        lorenzo.pieralisi@arm.com, will.deacon@arm.com,
+        hanjun.guo@linaro.org, sudeep.holla@arm.com
+Cc:     alex.williamson@redhat.com, shameerali.kolothum.thodi@huawei.com
+References: <20190516100817.12076-1-eric.auger@redhat.com>
+ <20190516100817.12076-7-eric.auger@redhat.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ad8a99fa-b98a-14d3-12be-74df0e6eb8f8@arm.com>
+Date:   Thu, 16 May 2019 13:46:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190516100817.12076-7-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing 1.464GHz clock rate to rk3228_cpuclk_rates[]
+On 16/05/2019 11:08, Eric Auger wrote:
+> Introduce a new type for reserved region. This corresponds
+> to directly mapped regions which are known to be relaxable
+> in some specific conditions, such as device assignment use
+> case. Well known examples are those used by USB controllers
+> providing PS/2 keyboard emulation for pre-boot BIOS and
+> early BOOT or RMRRs associated to IGD working in legacy mode.
+> 
+> Since commit c875d2c1b808 ("iommu/vt-d: Exclude devices using RMRRs
+> from IOMMU API domains") and commit 18436afdc11a ("iommu/vt-d: Allow
+> RMRR on graphics devices too"), those regions are currently
+> considered "safe" with respect to device assignment use case
+> which requires a non direct mapping at IOMMU physical level
+> (RAM GPA -> HPA mapping).
+> 
+> Those RMRRs currently exist and sometimes the device is
+> attempting to access it but this has not been considered
+> an issue until now.
+> 
+> However at the moment, iommu_get_group_resv_regions() is
+> not able to make any difference between directly mapped
+> regions: those which must be absolutely enforced and those
+> like above ones which are known as relaxable.
+> 
+> This is a blocker for reporting severe conflicts between
+> non relaxable RMRRs (like MSI doorbells) and guest GPA space.
+> 
+> With this new reserved region type we will be able to use
+> iommu_get_group_resv_regions() to enumerate the IOVA space
+> that is usable through the IOMMU API without introducing
+> regressions with respect to existing device assignment
+> use cases (USB and IGD).
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> Note: At the moment the sysfs ABI is not changed. However I wonder
+> whether it wouldn't be preferable to report the direct region as
+> "direct_relaxed" there. At the moment, in case the same direct
+> region is used by 2 devices, one USB/GFX and another not belonging
+> to the previous categories, the direct region will be output twice
+> with "direct" type.
 
-Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
----
- drivers/clk/rockchip/clk-rk3228.c | 1 +
- 1 file changed, 1 insertion(+)
+Hmm, that sounds a bit off - if we have overlapping regions within the 
+same domain, then we need to do some additional pre-processing to adjust 
+them anyway, since any part of a relaxable region which overlaps a 
+non-relaxable region cannot actually be relaxed, and so really should 
+never be described as such.
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 7af48184b..b85730565 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -109,6 +109,7 @@ static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
- 	RK3228_CPUCLK_RATE(1608000000, 1, 7),
- 	RK3228_CPUCLK_RATE(1512000000, 1, 7),
- 	RK3228_CPUCLK_RATE(1488000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1464000000, 1, 5),
- 	RK3228_CPUCLK_RATE(1416000000, 1, 5),
- 	RK3228_CPUCLK_RATE(1392000000, 1, 5),
- 	RK3228_CPUCLK_RATE(1296000000, 1, 5),
--- 
-2.11.0
+> This would unblock Shameer's series:
+> [PATCH v6 0/7] vfio/type1: Add support for valid iova list management
+> https://patchwork.kernel.org/patch/10425309/
+> 
+> which failed to get pulled for 4.18 merge window due to IGD
+> device assignment regression.
+> 
+> v2 -> v3:
+> - fix direct type check
+> ---
+>   drivers/iommu/iommu.c | 12 +++++++-----
+>   include/linux/iommu.h |  6 ++++++
+>   2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index ae4ea5c0e6f9..28c3d6351832 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -73,10 +73,11 @@ struct iommu_group_attribute {
+>   };
+>   
+>   static const char * const iommu_group_resv_type_string[] = {
+> -	[IOMMU_RESV_DIRECT]	= "direct",
+> -	[IOMMU_RESV_RESERVED]	= "reserved",
+> -	[IOMMU_RESV_MSI]	= "msi",
+> -	[IOMMU_RESV_SW_MSI]	= "msi",
+> +	[IOMMU_RESV_DIRECT]			= "direct",
+> +	[IOMMU_RESV_DIRECT_RELAXABLE]		= "direct",
 
+Wasn't part of the idea that we might not need to expose these to 
+userspace at all if they're only relevant to default domains, and not to 
+VFIO domains or anything else userspace can get involved with?
+
+> +	[IOMMU_RESV_RESERVED]			= "reserved",
+> +	[IOMMU_RESV_MSI]			= "msi",
+> +	[IOMMU_RESV_SW_MSI]			= "msi",
+>   };
+>   
+>   #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
+> @@ -573,7 +574,8 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group,
+>   		start = ALIGN(entry->start, pg_size);
+>   		end   = ALIGN(entry->start + entry->length, pg_size);
+>   
+> -		if (entry->type != IOMMU_RESV_DIRECT)
+> +		if (entry->type != IOMMU_RESV_DIRECT &&
+> +		    entry->type != IOMMU_RESV_DIRECT_RELAXABLE)
+>   			continue;
+>   
+>   		for (addr = start; addr < end; addr += pg_size) {
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index ba91666998fb..14a521f85f14 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -135,6 +135,12 @@ enum iommu_attr {
+>   enum iommu_resv_type {
+>   	/* Memory regions which must be mapped 1:1 at all times */
+>   	IOMMU_RESV_DIRECT,
+> +	/*
+> +	 * Memory regions which are advertised to be 1:1 but are
+> +	 * commonly considered relaxable in some conditions,
+> +	 * for instance in device assignment use case (USB, Graphics)
+> +	 */
+> +	IOMMU_RESV_DIRECT_RELAXABLE,
+
+What do you think of s/RELAXABLE/BOOT/ ? My understanding is that these 
+regions are only considered relevant until Linux has taken full control 
+of the endpoint, and having a slightly more well-defined scope than 
+"some conditions" might be nice.
+
+There's an open question of how to handle things like simple-fb and EFI 
+framebuffer handover on Arm and other platforms, so I'd really like to 
+be able to slot that right into this case as well (how we describe the 
+relevant connections in DT/ACPI is another matter, but hey, one step at 
+a time...)
+
+Otherwise though, I too am pleased to see this, thanks! I did start 
+having a go myself after talking to Alex at KVM Forum, but I got bogged 
+down in the intel-iommu parts and inevitably distracted - patch #7 looks 
+beautifully simpler than I'd convinced myself was possible :D
+
+Robin.
+
+>   	/* Arbitrary "never map this or give it to a device" address ranges */
+>   	IOMMU_RESV_RESERVED,
+>   	/* Hardware MSI region (untranslated) */
+> 
