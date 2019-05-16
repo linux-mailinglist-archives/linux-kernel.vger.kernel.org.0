@@ -2,104 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 753D120B85
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E594F20B8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:51:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfEPPvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:51:03 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34664 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfEPPvD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:51:03 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h1so4516865qtp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:51:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=dkiLoToXYjdDDxJCV8XdKehPpgz9CEPsRl1SOjbojJI=;
-        b=nNcR6+33KiG2CSz53UUFPwzydzMq9lFMi3DQvh1Ah78K1UsCv/U0j2IFFm9tuAnHNM
-         wdO/aWjCozSj52RWpuiB2A6dg+mSJP3GRbQV/dNdjLyC/D3Dh6ehmzjG9kMnLmNkHIBr
-         5d9TskqxtGKnPX+0PVHM9fxL8EgMslP1wgLll99xquj1O7zLl761ecvwZG0Nfzv0OAOi
-         NgM4HGip71XhZ4P4YZyAMgOW2O8z4XI79J3S4cMxgskpOloLek8JzKYWjL6Ta7pyjw7W
-         872KdZbODHIhrBnCd/TxzQ9q8Uvz56jaJqqjEUfN9y1Pbncqg5FPfAxuxRt6LR0HUihd
-         7vFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=dkiLoToXYjdDDxJCV8XdKehPpgz9CEPsRl1SOjbojJI=;
-        b=CCuH4dsoTrIh1xdTYD/p7lEtj20SQY9Ww0XzslZsry+JYTYGVULM+VhjGhx+Y3P0eQ
-         hMe+rBs+ndDJUMwPmU+dWNAiGf42yhfGPPlRhw0HV0j3/gVLj7jGmmoXSqduoZqHVHxa
-         mgMaxCd8lKRA2a9Oij4jAp7jG8d1YirdqhJiwVcFBGkoIatgKWURSwU94/a0w9nkLA9v
-         rqbLzO/a5+DCvy3sqGn5C86R862n4DL4icmVJwXqu7NILEFYjyHqnb4wsaPm036LOV0P
-         vIdpCNEcoEWOtSqVTPtq5XZ1I8l3fXcxWo8RVrQy3BCqh2U75L/z2Oc40E3lTsxbVt+m
-         sQ1w==
-X-Gm-Message-State: APjAAAXJH5e1AjHCXEPJ9QxEisuW6R1t56aXlqJ1VYUYyt3s2A8f4p+R
-        gYboq627Pg+i1NyA8H2gW4gD6Q==
-X-Google-Smtp-Source: APXvYqwERoEB65jkHiiLTn548l3as8wXrL1hm/DBTJe+h941PBFzegsCrPT0Qs2/9mFSUXPurVzU0Q==
-X-Received: by 2002:aed:3787:: with SMTP id j7mr43302641qtb.6.1558021861883;
-        Thu, 16 May 2019 08:51:01 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id h17sm2751528qkk.13.2019.05.16.08.51.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 16 May 2019 08:51:01 -0700 (PDT)
-Date:   Thu, 16 May 2019 08:50:35 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Krzesimir Nowak <krzesimir@kinvolk.io>
-Cc:     bpf@vger.kernel.org,
-        Iago =?UTF-8?B?TMOzcGV6?= Galeiras <iago@kinvolk.io>,
-        "Alban Crequy (Kinvolk)" <alban@kinvolk.io>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrey Ignatov <rdna@fb.com>, linux-kselftest@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf v1 2/3] selftests/bpf: Print a message when tester
- could not run a program
-Message-ID: <20190516085035.3cdb0ae6@cakuba.netronome.com>
-In-Reply-To: <CAGGp+cGN+YYVjJee5ba84HstSrHGurBvwmKmzNsFRvb344Df3A@mail.gmail.com>
-References: <20190515134731.12611-1-krzesimir@kinvolk.io>
-        <20190515134731.12611-3-krzesimir@kinvolk.io>
-        <20190515144537.57f559e7@cakuba.netronome.com>
-        <CAGGp+cGN+YYVjJee5ba84HstSrHGurBvwmKmzNsFRvb344Df3A@mail.gmail.com>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726541AbfEPPvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:51:54 -0400
+Received: from verein.lst.de ([213.95.11.211]:60385 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726314AbfEPPvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 11:51:52 -0400
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id 8A52768B20; Thu, 16 May 2019 17:51:30 +0200 (CEST)
+From:   Torsten Duwe <duwe@lst.de>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] arm64: DTS: allwinner: a64: Add pinmux for RGB666 LCD
+References: <20190516154943.239E668B05@newverein.lst.de>
+Message-Id: <20190516155130.8A52768B20@newverein.lst.de>
+Date:   Thu, 16 May 2019 17:51:30 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 May 2019 11:29:39 +0200, Krzesimir Nowak wrote:
-> > > diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-> > > index ccd896b98cac..bf0da03f593b 100644
-> > > --- a/tools/testing/selftests/bpf/test_verifier.c
-> > > +++ b/tools/testing/selftests/bpf/test_verifier.c
-> > > @@ -825,11 +825,20 @@ static int do_prog_test_run(int fd_prog, bool unpriv, uint32_t expected_val,
-> > >                               tmp, &size_tmp, &retval, NULL);
-> > >       if (unpriv)
-> > >               set_admin(false);
-> > > -     if (err && errno != 524/*ENOTSUPP*/ && errno != EPERM) {
-> > > -             printf("Unexpected bpf_prog_test_run error ");
-> > > -             return err;
-> > > +     if (err) {
-> > > +             switch (errno) {
-> > > +             case 524/*ENOTSUPP*/:
-> > > +                     printf("Did not run the program (not supported) ");
-> > > +                     return 0;
-> > > +             case EPERM:
-> > > +                     printf("Did not run the program (no permission) ");
-> > > +                     return 0;  
-> >
-> > Perhaps use strerror(errno)?  
-> 
-> As I said in the commit message, I open-coded those messages because
-> strerror for ENOTSUPP returns "Unknown error 524".
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Ah, sorry, missed that.  I wonder if that's something worth addressing
-in libc, since the BPF subsystem uses ENOTSUPP a lot.
+Allwinner A64's TCON0 can output RGB666 LCD signal.
+
+Add its pinmux.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Torsten Duwe <duwe@suse.de>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 2abb335145a6..a8bbee84e7da 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -559,6 +559,16 @@
+ 				function = "i2c1";
+ 			};
+
++			/omit-if-no-ref/
++			lcd_rgb666_pins: lcd-rgb666-pins {
++				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
++				       "PD5", "PD6", "PD7", "PD8", "PD9",
++				       "PD10", "PD11", "PD12", "PD13",
++				       "PD14", "PD15", "PD16", "PD17",
++				       "PD18", "PD19", "PD20", "PD21";
++				function = "lcd0";
++			};
++
+ 			mmc0_pins: mmc0-pins {
+ 				pins = "PF0", "PF1", "PF2", "PF3",
+ 				       "PF4", "PF5";
