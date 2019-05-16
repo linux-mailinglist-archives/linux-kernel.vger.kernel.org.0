@@ -2,90 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBE3020254
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 983EE2022F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfEPJOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:14:11 -0400
-Received: from [192.198.146.188] ([192.198.146.188]:12009 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726336AbfEPJOK (ORCPT
+        id S1726978AbfEPJHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:07:38 -0400
+Received: from mail-pl1-f174.google.com ([209.85.214.174]:44110 "EHLO
+        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfEPJHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:14:10 -0400
-X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 05:14:09 EDT
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 94352C0C87;
-        Thu, 16 May 2019 17:06:53 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH] clocksource: Untrust the clocksource watchdog when its interval is too small
-Date:   Thu, 16 May 2019 17:06:51 +0800
-Message-Id: <20190516090651.1396-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 16 May 2019 05:07:37 -0400
+Received: by mail-pl1-f174.google.com with SMTP id c5so1289418pll.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Rk6cbGmXGHINFsklqOv+u5I1Z/NYxwRIua/RNgDjwj8=;
+        b=bUMog77PzyVOMEq1iqZb9z/ph7bE5eMjxAIeFGsnhcgIa0X7FAEpb7FklFo3o3BqEU
+         BlsaXgmOhYib+56AySD74oqLmgV6fBvnje2ewWuZFX1YV8okcOaGzL14tdK7PPvJk5rX
+         MbD+0eiPSficoyGcuv/kN118EeFDJvYJv28+UucN/lY39+A/MO40MMGdTQg6bzh8rL1N
+         vX0A/Tw13cPXakTjJ91Sfhe3nBxCFBDzViNLexx7JpQuoRu8fsqQ4FrH5llW/W+y/KJj
+         Dmj+vRHAeGntnswynfhyrAiGzU2byS4AEmaKEWEBTsYUS/die+7JxNxxhtvi2np98MrK
+         2xyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Rk6cbGmXGHINFsklqOv+u5I1Z/NYxwRIua/RNgDjwj8=;
+        b=CXdZEEON5DqmcqneclEjcf5//jQy19k0bZbkBeSqOGAtuyNKg02Z8Uex38d33jsLVV
+         96Q/fLvJ11djJp3rOt9AwvHXM+P4zIF5tZNYjJfY+3/VFg3GqUVq9rAQtl8KjkTJfG3f
+         04HFNadl41+aKDUeAniQXpF8hpkw/+cvkEBTR4bN4G0ccOz0W7sZpLvauagfwCklpDrj
+         LrD3+zMXKt1a8ujXsh3z7l90YzQ4KYxOOMf/09EVYDpw8KsdPopnLhfoqtKTfCyoyK7C
+         wsU2Lej8F0sX3D1u9cA5WoMpWi+XpJJx4PdjAjsfLy00k6CIjbH3ndWJ2iYEHOY1NGcQ
+         X6uA==
+X-Gm-Message-State: APjAAAXG/TbtUwIid57U/yhINiMmqye1B+33ajeG8n0B6+TFOQfoy6+T
+        7WRe1uTuLo+F1hE9ZqvbpiKh2f6R/Bk=
+X-Google-Smtp-Source: APXvYqxP1d84j80Uj3hDqtTgasnJPEoeA+RZpgdQL9//twbA7wHzOGA+/AKIEcbySQOne6QrjXu5TA==
+X-Received: by 2002:a17:902:163:: with SMTP id 90mr49879566plb.212.1557997657302;
+        Thu, 16 May 2019 02:07:37 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id e5sm6660050pgh.35.2019.05.16.02.07.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 02:07:36 -0700 (PDT)
+Date:   Thu, 16 May 2019 17:07:26 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vt: Fix a missing-check bug in drivers/tty/vt/vt.c file
+ of Linux 5.0.14
+Message-ID: <20190516090726.GA3283@zhanggen-UX430UQ>
+References: <CAAie0ao_O0hcUOuUf67oog+dSswdQRpAtX8NyQvDAr_XQr=xQg@mail.gmail.com>
+ <20190510151206.GA31186@kroah.com>
+ <CAAie0arnSxFvkNE1KSxD1a19_PQy03Q4RSiLZo9t7C9LeKkA9w@mail.gmail.com>
+ <20190511060741.GC18755@kroah.com>
+ <20190512032719.GA16296@zhanggen-UX430UQ>
+ <20190512062009.GA25153@kroah.com>
+ <20190512084916.GA4615@zhanggen-UX430UQ>
+ <20190513073619.GA5580@kroah.com>
+ <20190513093730.GA4487@zhanggen-UX430UQ>
+ <20190513095809.GA4588@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513095809.GA4588@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch performs a sanity check on the deviation of the clocksource watchdog,
-target to reduce false alarm that incorrectly marks current clocksource unstable
-when there comes discrepancy.
-
-Say if there is a discrepancy between the current clocksource and watchdog,
-validate the watchdog deviation first, if its interval is too small against
-the expected timer interval, we shall trust the current clocksource.
-
-It is identified on some Coffee Lake platform w/ PC10 allowed, when the CPU
-entered and exited from PC10 (the residency counter is increased), the HPET
-generates timestamp delay, this causes discrepancy making kernel incorrectly
-untrust the current clocksource (TSC in this case) and re-select the next
-clocksource which is the problematic HPET, this eventually causes a user
-sensible wall clock delay.
-
-The HPET timestamp delay shall be tackled in firmware domain in order to
-properly handle the timer offload between XTAL and RTC when it enters PC10,
-while this patch is a mitigation to reduce the false alarm of clocksource
-unstable regardless what clocksources are paired.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203183
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-
----
-
- kernel/time/clocksource.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 3bcc19ceb073..fb0a67827346 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -96,6 +96,7 @@ static u64 suspend_start;
- #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
- static void clocksource_watchdog_work(struct work_struct *work);
- static void clocksource_select(void);
-+static void clocksource_dequeue_watchdog(struct clocksource *cs);
- 
- static LIST_HEAD(watchdog_list);
- static struct clocksource *watchdog;
-@@ -236,6 +237,12 @@ static void clocksource_watchdog(struct timer_list *unused)
- 
- 		/* Check the deviation from the watchdog clocksource. */
- 		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
-+			if (wd_nsec < jiffies_to_nsecs(WATCHDOG_INTERVAL) - WATCHDOG_THRESHOLD) {
-+				pr_err("Stop timekeeping watchdog '%s' because expected interval is too small in %lld ns only\n",
-+					watchdog->name, wd_nsec);
-+				clocksource_dequeue_watchdog(cs);
-+				return;
-+			}
- 			pr_warn("timekeeping watchdog on CPU%d: Marking clocksource '%s' as unstable because the skew is too large:\n",
- 				smp_processor_id(), cs->name);
- 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
--- 
-2.20.1
-
+On Mon, May 13, 2019 at 11:58:09AM +0200, Greg KH wrote:
+> qemu should work just fine, I don't know what else to suggest.  Run it
+> on "real hardware" with a kmalloc function modified to fail this
+> allocation?
+> 
+> good luck!
+> 
+> greg k-h
+I don't think we need to unwind the loop. The loop condition 
+MIN_NR_CONSOLES is defined as 1 in include/uapi/linux/vt.h. In this
+situation, should we free other memory except vc_cons[currcons].d, vc
+and vc->vc_screenbuf?
+Thanks
+Gen
