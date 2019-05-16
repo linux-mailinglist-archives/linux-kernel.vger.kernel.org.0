@@ -2,122 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 123B420EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B67C820F01
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:58:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfEPS5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 14:57:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbfEPS5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 14:57:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99A843083392;
-        Thu, 16 May 2019 18:57:38 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 036B719C4F;
-        Thu, 16 May 2019 18:57:33 +0000 (UTC)
-Date:   Thu, 16 May 2019 14:57:32 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: dax: Arrange for dax_supported check to span multiple devices
-Message-ID: <20190516185732.GA27796@redhat.com>
-References: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1728023AbfEPS6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 14:58:01 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42309 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727998AbfEPS57 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 14:57:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l2so4526513wrb.9;
+        Thu, 16 May 2019 11:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=4Mod0w+FblAyMcQEjnQi2LEp2GvI/rgCxO2rN911/JQ=;
+        b=p0u9IeHaeL0IXuaE2OqW0lMXODaKkgs4K4WIJeoZq5PwlAkEW8iYzmS+IGQJJdCLrB
+         Ogtl4LZYRKZifbaedBOZG+NoPgPuyndNkxOgNVWrCkQQQ3NdttqAW3CQlS4z1krFyKPU
+         HQRSShHBtvYrmd7aGBDq1Phw3vEk4jBEWwTsBUfpH4KrZX0LGTOH4GiMT37p3smtiCZC
+         EBSLYXOL35i0Nqv1veRvkze3B9z9HM5OWXFQnlaEvFS2fBpqYeES26jiW85PfIIVLftj
+         /fumhtoC016Ox4D5ynOnogCLC3BWdCRR+Bj5XKrmcFmVKKacUjgEuo5BjUuRrLsXhYFV
+         5XMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=4Mod0w+FblAyMcQEjnQi2LEp2GvI/rgCxO2rN911/JQ=;
+        b=JoiPjXkb9KiODCsrez15uio3T4MPtIw9+ewDIV1RUSi1KIj8938LMyC+Nd9KjLLX1N
+         1D//sh+HvQHext2WXQgnicgGp450XW4RCMeF7N1KgJNZzQxWaAc3r9QcfajYR+dmEvq2
+         G2Pda2gy5czBdlv/Jc98ibyKAnOqX2HrunKWBpEsC/9KFRYoDPw8EWbxxGPqywlO18f/
+         2SYySnOrlUKfBgbTmqkXBCmwL64Ioq5ASUHoA+bUZdhSpA+gqEezNwC1Dt45uqIbDrn/
+         1CaoKk/jPu08fpeTmk057ZwVRiFNfHzPSZMBieENxmV+DEYhnjaQcjLP5efdHOTZxkqU
+         isMA==
+X-Gm-Message-State: APjAAAUrlOJuDYp4g9nOtPaYl08EPf00ZxwSKbTb4AesSbOe1a4scEFv
+        +Endmwj+ULm4ruSHpHKH8g==
+X-Google-Smtp-Source: APXvYqxuNzzHHmXNKHk5zRo9ksI0vdF5MVWpEvA/CeD1EWGNHKQxPIroglRzqbwei99YOQVgE7edPQ==
+X-Received: by 2002:adf:b6a5:: with SMTP id j37mr27592391wre.4.1558033078012;
+        Thu, 16 May 2019 11:57:58 -0700 (PDT)
+Received: from avx2 ([46.53.251.158])
+        by smtp.gmail.com with ESMTPSA id a5sm5334361wrt.10.2019.05.16.11.57.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 11:57:57 -0700 (PDT)
+Date:   Thu, 16 May 2019 21:57:54 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-abi@vger.kernel.org,
+        christian@brauner.io, dhowells@redhat.com
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+Message-ID: <20190516185754.GA23402@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 16 May 2019 18:57:52 +0000 (UTC)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14 2019 at 11:48pm -0400,
-Dan Williams <dan.j.williams@intel.com> wrote:
+>	unshare(CLONE_FILES);
+> 	/* we don't want anything past stderr here */
+> 	close_range(3, ~0U);
+> 	execve(....);
 
-> Pankaj reports that starting with commit ad428cdb525a "dax: Check the
-> end of the block-device capacity with dax_direct_access()" device-mapper
-> no longer allows dax operation. This results from the stricter checks in
-> __bdev_dax_supported() that validate that the start and end of a
-> block-device map to the same 'pagemap' instance.
-> 
-> Teach the dax-core and device-mapper to validate the 'pagemap' on a
-> per-target basis. This is accomplished by refactoring the
-> bdev_dax_supported() internals into generic_fsdax_supported() which
-> takes a sector range to validate. Consequently generic_fsdax_supported()
-> is suitable to be used in a device-mapper ->iterate_devices() callback.
-> A new ->dax_supported() operation is added to allow composite devices to
-> split and route upper-level bdev_dax_supported() requests.
-> 
-> Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
-> Cc: <stable@vger.kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Reported-by: Pankaj Gupta <pagupta@redhat.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
-> Hi Mike,
-> 
-> Another day another new dax operation to allow device-mapper to better
-> scope dax operations.
-> 
-> Let me know if the device-mapper changes look sane. This passes a new
-> unit test that indeed fails on current mainline.
-> 
-> https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
-> 
->  drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
->  drivers/md/dm-table.c        |   17 +++++---
->  drivers/md/dm.c              |   20 ++++++++++
->  drivers/md/dm.h              |    1 
->  drivers/nvdimm/pmem.c        |    1 
->  drivers/s390/block/dcssblk.c |    1 
->  include/linux/dax.h          |   19 +++++++++
->  7 files changed, 110 insertions(+), 37 deletions(-)
-> 
+Yes please.
 
-...
+nextfd(2)
+https://lkml.org/lkml/2012/4/1/71
 
-> diff --git a/drivers/md/dm.h b/drivers/md/dm.h
-> index 2d539b82ec08..e5e240bfa2d0 100644
-> --- a/drivers/md/dm.h
-> +++ b/drivers/md/dm.h
-> @@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
->  void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
->  enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
->  struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
-> +bool dm_table_supports_dax(struct dm_table *t, int blocksize);
->  
->  int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
->  
+fdmap(2)
+https://marc.info/?t=150628366900006&r=1&w=4
 
-I'd prefer to have dm_table_supports_dax come just after
-dm_table_get_md_mempools in the preceding dm_table section of dm.h (just
-above this mapped_device section you extended).
-
-But other than that nit, patch looks great on a DM level:
-
-Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+I like fdmap more.
