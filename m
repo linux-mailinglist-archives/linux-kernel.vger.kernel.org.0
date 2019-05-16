@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0781920618
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 310A120627
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbfEPLqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:46:52 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45315 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfEPLqs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:46:48 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r76so2765223lja.12;
-        Thu, 16 May 2019 04:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5YTu9UrMZBuGZUICk0h5ufsKKVuAqbM3thnFJkrTeAE=;
-        b=YoYgQMNP2NxEvzHh4e8cmSlEpysOdip71UP8yT1Ghwrc6fEpJX0/7w1FBKsg6wSaX2
-         7JGbu747/mkJzruY9GpL0OWnqSxaAbadcWJprNqD5seyLQggL+iIEl6Fh7goIdzaKZmK
-         CfgaZiWLyQiyO8+UGEuAdcjA+2WcGSuIITZd+u+NIjq2feclXtjHNgGfO+XtnkTiFHRW
-         jQgx2BrXa4fMLehI3OmYOiGFPlqzl2SxS+/jaJtbOuDBzIbMC5MbTr39gtSbrpTx7JBL
-         YHgRpICumkdMvneunyfvGZY2lkti89Qm+CrHdtkNXfR2ZLsEf8HejhZSxdKqPI5PM76W
-         OEkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5YTu9UrMZBuGZUICk0h5ufsKKVuAqbM3thnFJkrTeAE=;
-        b=RcSrR0KOq6mhmCf+PaV1xyqqVDZVISwdFK7Vm03e2K3V6QmZn7fpktNVNtLjHbZOd9
-         Ur5wCfGbnW+7W4rX1X/kFGSmdQMv4sq/h9kP/kT4cxUP726Ct6XZRDDkIzWGVquYuKoX
-         aSG1/8eqCQBLuwIS9rSW7MO0ozNUZl4T4jTBXDx4O8hqvRawiNvj7hCLQ95PDf/Db+Zn
-         uCh1gO2e/xWQiAATVi5Rq/gV/X89cI03AfnBLv4QiDhBPGDCojMwf7nDYUdGemxpXrKi
-         eEWStGVyjGcbw1XUMwgMJD00mgkVTHQxittMGXS6LIEZAbRZm+t6bcOl/n8/LB4tIZRD
-         WEig==
-X-Gm-Message-State: APjAAAUvihM3Za9NJ1aESG3X0fplck897DXS3mtUHu3DSuXVNxVnOaoA
-        AerbKX9nD+lm6Tkgv+DxyP8tBtsksppFFBfdQ1dK+O5g
-X-Google-Smtp-Source: APXvYqyOTc7WTRsHVZRRQRytwwDnDnOSVzcOLQVDwUcky2CN7MLQfiAG/p4Ojo7rUwnebX/5KBfJwYRza/rrOsR8DGE=
-X-Received: by 2002:a2e:994:: with SMTP id 142mr15627606ljj.192.1558007206878;
- Thu, 16 May 2019 04:46:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <3e15abaee348468a69005e4240346822320c7f69.1558006714.git.shengjiu.wang@nxp.com>
-In-Reply-To: <3e15abaee348468a69005e4240346822320c7f69.1558006714.git.shengjiu.wang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 16 May 2019 08:46:36 -0300
-Message-ID: <CAOMZO5A7Xtg_pV2VAfmw5NacpRLS=0aGMAazu8p8tOTfa9PrCA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH V5] ASoC: cs42xx8: add reset-gpios in binding document
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Cc:     "brian.austin@cirrus.com" <brian.austin@cirrus.com>,
-        "Paul.Handrigan@cirrus.com" <Paul.Handrigan@cirrus.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728616AbfEPLra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:47:30 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:43692 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728389AbfEPLr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:47:26 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E1321A0087;
+        Thu, 16 May 2019 13:47:25 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6155C1A001D;
+        Thu, 16 May 2019 13:47:25 +0200 (CEST)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D4376205CD;
+        Thu, 16 May 2019 13:47:24 +0200 (CEST)
+From:   laurentiu.tudor@nxp.com
+To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, marex@denx.de
+Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH v4 0/3] prerequisites for device reserved local mem rework
+Date:   Thu, 16 May 2019 14:47:18 +0300
+Message-Id: <20190516114721.27694-1-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[You should always submit dt-bindings patches to Rob and to the
-devicetree list as indicated by checkpatch]
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-On Thu, May 16, 2019 at 8:42 AM S.j. Wang <shengjiu.wang@nxp.com> wrote:
->
-> Add reset-gpios property, which is optional.
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+For HCs that have local memory, replace the current DMA API usage
+with a genalloc generic allocator to manage the mappings for these
+devices.
+This is in preparation for dropping the existing "coherent" dma
+mem declaration APIs. Current implementation was relying on a short
+circuit in the DMA API that in the end, was acting as an allocator
+for these type of devices.
 
-> +Optional properties:
-> +
-> +  - reset-gpios : a GPIO spec to define which pin is connected to the chip's
-> +    !RESET pin
-> +
->  Example:
->
->  cs42888: codec@48 {
-> @@ -25,4 +30,5 @@ cs42888: codec@48 {
->         VD-supply = <&reg_audio>;
->         VLS-supply = <&reg_audio>;
->         VLC-supply = <&reg_audio>;
-> +       reset-gpios = <&pca9557_b 1 GPIO_ACTIVE_LOW>;
+Only compiled tested, so any volunteers willing to test are most welcome.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Thank you!
+
+For context, see thread here: https://lkml.org/lkml/2019/4/22/357
+
+Changes in v4:
+ - created mapping for local mem
+ - fix genalloc misuse
+
+Changes in v3:
+ - rearranged calls into genalloc simplifying the code a bit (Christoph)
+ - dropped RFC prefix
+
+Changes in v2:
+ - use genalloc also in core usb (based on comment from Robin)
+ - moved genpool decl to usb_hcd to be accesible from core usb
+
+Laurentiu Tudor (3):
+  USB: use genalloc for USB HCs with local memory
+  usb: host: ohci-sm501: init genalloc for local memory
+  usb: host: ohci-tmio: init genalloc for local memory
+
+ drivers/usb/core/buffer.c     | 15 +++++---
+ drivers/usb/host/ohci-hcd.c   | 23 +++++++++---
+ drivers/usb/host/ohci-sm501.c | 66 +++++++++++++++++++++--------------
+ drivers/usb/host/ohci-tmio.c  | 32 ++++++++++++-----
+ include/linux/usb/hcd.h       |  3 ++
+ 5 files changed, 95 insertions(+), 44 deletions(-)
+
+-- 
+2.17.1
+
