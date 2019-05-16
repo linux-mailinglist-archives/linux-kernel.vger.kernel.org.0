@@ -2,122 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 093422027C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D041202A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfEPJ2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:28:18 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:2583 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726363AbfEPJ2R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:28:17 -0400
-X-UUID: 6e1b069708c14586ac4e92411018cd6c-20190516
-X-UUID: 6e1b069708c14586ac4e92411018cd6c-20190516
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 356823539; Thu, 16 May 2019 17:28:06 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 16 May 2019 17:27:56 +0800
-Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 16 May 2019 17:27:56 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v6 11/12] soc: mediatek: cmdq: add cmdq_dev_get_event function
-Date:   Thu, 16 May 2019 17:27:54 +0800
-Message-ID: <20190516092754.33425-3-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190516092754.33425-1-bibby.hsieh@mediatek.com>
-References: <20190516092754.33425-1-bibby.hsieh@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1726872AbfEPJh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:37:56 -0400
+Received: from plaes.org ([188.166.43.21]:58908 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726336AbfEPJhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 05:37:55 -0400
+X-Greylist: delayed 542 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 05:37:55 EDT
+Received: from localhost (unknown [IPv6:2001:bb8:4008:20:21a:64ff:fe97:f60])
+        by plaes.org (Postfix) with ESMTPSA id 69D87403C4;
+        Thu, 16 May 2019 09:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1557998932; bh=kd8HHQHYAXLACCGTSACw8a42kGWpfQ/F8JYYcsX/XT8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jH2ib0aB8kM/3QqLSov54Qsvzt1Gz6UDaSf3xKUE1ERRcNWA6GTDMwbatPoPCYAl8
+         0sUvQhWVe4kOF96+8yUpsrTcIOJj9lnO4kHOzRh5y2pPmBMDseHcBu+M4k8ZAfhxPt
+         78eWowcQbsKwn8f4OkVKsaO3a32bZHhXIaZo9qJKJEcn8D1+VuT/stjcPvsAzuxH9i
+         RoVCd9nLHBTKd3cInIc2R+elbR1EBV5BD+iOZZ0sjka1YNDLqTqbJRkRAaDXvx7bTC
+         GF+iMeunzSF4JAQXJlhjVhC2SLGnvLyYd7VYdHJX72afshMvMxm26NI3BXSkjXMo8x
+         hRMXmq4JAoSOQ==
+From:   Priit Laes <plaes@plaes.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-sunxi@googlegroups.com, Priit Laes <plaes@plaes.org>
+Subject: [PATCH] ARM: dts: sun7i: olimex-lime2: Enable ac and power supplies
+Date:   Thu, 16 May 2019 12:28:50 +0300
+Message-Id: <20190516092850.3200-1-plaes@plaes.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When client ask gce to clear or wait for event,
-client need to pass event number to the API.
-We suggest client store the event information in device node,
-so we provide an API for client parse the event property.
+Lime2 has battery connector so enable these supplies.
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 18 ++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h  | 12 ++++++++++++
- 2 files changed, 30 insertions(+)
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index a64060a34e01..e9658063c3d4 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -52,6 +52,24 @@ struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx)
- }
- EXPORT_SYMBOL(cmdq_dev_get_subsys);
+diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+index 9c8eecf4337a..9001b5527615 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+@@ -206,6 +206,14 @@
  
-+s32 cmdq_dev_get_event(struct device *dev, int index)
-+{
-+	s32 result;
-+
-+	if (!dev)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32_index(dev->of_node, "mediatek,gce-events",
-+				       index, &result)) {
-+		dev_err(dev, "can't parse gce-events property");
-+
-+		return -ENODEV;
-+	}
-+
-+	return result;
-+}
-+EXPORT_SYMBOL(cmdq_dev_get_event);
-+
- static void cmdq_client_timeout(struct timer_list *t)
- {
- 	struct cmdq_client *client = from_timer(client, t, timer);
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 574006c5cd76..525713bf79b5 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -160,4 +160,16 @@ int cmdq_pkt_flush(struct cmdq_pkt *pkt);
-  */
- struct cmdq_subsys *cmdq_dev_get_subsys(struct device *dev, int idx);
+ #include "axp209.dtsi"
  
-+/**
-+ * cmdq_dev_get_event() - parse event from the device node of CMDQ client
-+ * @dev:	device of CMDQ mailbox client
-+ * @index:	the index of desired event
-+ *
-+ * Return: CMDQ event number
-+ *
-+ * Help CMDQ client pasing the event number
-+ * from the device node of CMDQ client.
-+ */
-+s32 cmdq_dev_get_event(struct device *dev, int index);
++&ac_power_supply {
++	status = "okay";
++};
 +
- #endif	/* __MTK_CMDQ_H__ */
++&battery_power_supply {
++	status = "okay";
++};
++
+ &reg_dcdc2 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <1000000>;
 -- 
-2.18.0
+2.11.0
 
