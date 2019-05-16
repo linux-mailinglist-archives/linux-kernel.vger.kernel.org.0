@@ -2,176 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D2E20448
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C31920495
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:26:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfEPLOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:14:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35298 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfEPLOD (ORCPT
+        id S1727327AbfEPLWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:22:46 -0400
+Received: from securetransport.cubewerk.de ([178.254.23.77]:38850 "EHLO
+        securetransport.cubewerk.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726363AbfEPLWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:14:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=37loz0j4/OZ5il819QfI9xzcVbzdXjCr6lBxULO4KQU=; b=buIQ0JjHLY0E
-        8DfILar/uGpDIyQoIxTmvvTZRzXylL6XAk+JVEopDmE4CFMJXrIK7vSia+un0vZC/s1nK7rSmgRWU
-        CGYpnl9/Sfowa/qK8/372m/BqzoTc/F+7NHQKtkIgPaJ/64oXlJuhdvWRD2L65I5TDFjb1Czobb+J
-        BWWTw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hREKj-00066j-FX; Thu, 16 May 2019 11:13:57 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3D1DD1126D47; Thu, 16 May 2019 12:13:54 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Applied "ASoC: meson: add tohdmitx DT bindings" to the asoc tree
-In-Reply-To: <20190515131858.32130-4-jbrunet@baylibre.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190516111354.3D1DD1126D47@debutante.sirena.org.uk>
-Date:   Thu, 16 May 2019 12:13:54 +0100 (BST)
+        Thu, 16 May 2019 07:22:46 -0400
+X-Greylist: delayed 461 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 07:22:45 EDT
+Received: from DHPLMX01.DH-ELECTRONICS.ORG (ipbcc19eae.dynamic.kabel-deutschland.de [188.193.158.174])
+        (using TLSv1.2 with cipher DHE-RSA-CAMELLIA128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by securetransport.cubewerk.de (Postfix) with ESMTPSA id 465C78045B;
+        Thu, 16 May 2019 13:14:51 +0200 (CEST)
+Received: from Stretch.dh-electronics.org (unknown [10.64.6.184])
+        by DHPLMX01.DH-ELECTRONICS.ORG (Postfix) with ESMTPS id 062B52145A82;
+        Thu, 16 May 2019 13:14:51 +0200 (CEST)
+From:   Christoph Niedermaier <cniedermaier@dh-electronics.com>
+To:     broonie@kernel.org, linux-spi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, cniedermaier@dh-electronics.com
+Subject: [PATCH] spi: spidev: Add dhcom-board to compatibility list [Klartext]
+Date:   Thu, 16 May 2019 13:14:50 +0200
+Message-Id: <20190516111450.6730-1-cniedermaier@dh-electronics.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Prepare to use devices on the external SPI interface
+on a DH electronics Development Board.
 
-   ASoC: meson: add tohdmitx DT bindings
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e35f5ad6a965de5d301ca5957a1c48c53fe366fb Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 15 May 2019 15:18:56 +0200
-Subject: [PATCH] ASoC: meson: add tohdmitx DT bindings
-
-Add the bindings and the related documentation for the audio hdmitx
-control glue of the Amlogic g12a SoC family
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
 ---
- .../bindings/sound/amlogic,g12a-tohdmitx.txt  | 55 +++++++++++++++++++
- .../dt-bindings/sound/meson-g12a-tohdmitx.h   | 13 +++++
- 2 files changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
- create mode 100644 include/dt-bindings/sound/meson-g12a-tohdmitx.h
+ drivers/spi/spidev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
-new file mode 100644
-index 000000000000..aa6c35570d31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
-@@ -0,0 +1,55 @@
-+* Amlogic HDMI Tx control glue
-+
-+Required properties:
-+- compatible: "amlogic,g12a-tohdmitx"
-+- reg: physical base address of the controller and length of memory
-+       mapped region.
-+- #sound-dai-cells: should be 1.
-+
-+Example on the S905X2 SoC:
-+
-+tohdmitx: audio-controller@744 {
-+	compatible = "amlogic,g12a-tohdmitx";
-+	reg = <0x0 0x744 0x0 0x4>;
-+	#sound-dai-cells = <1>;
-+};
-+
-+Example of an 'amlogic,axg-sound-card':
-+
-+sound {
-+	compatible = "amlogic,axg-sound-card";
-+
-+[...]
-+
-+	dai-link-x {
-+		sound-dai = <&tdmif_a>;
-+		dai-format = "i2s";
-+		dai-tdm-slot-tx-mask-0 = <1 1>;
-+
-+		codec-0 {
-+			sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
-+		};
-+
-+		codec-1 {
-+			sound-dai = <&external_dac>;
-+		};
-+	};
-+
-+	dai-link-y {
-+		sound-dai = <&tdmif_c>;
-+		dai-format = "i2s";
-+		dai-tdm-slot-tx-mask-0 = <1 1>;
-+
-+		codec {
-+			sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
-+		};
-+	};
-+
-+	dai-link-z {
-+		sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
-+
-+		codec {
-+			sound-dai = <&hdmi_tx>;
-+		};
-+	};
-+};
-diff --git a/include/dt-bindings/sound/meson-g12a-tohdmitx.h b/include/dt-bindings/sound/meson-g12a-tohdmitx.h
-new file mode 100644
-index 000000000000..c5e1f48d30d0
---- /dev/null
-+++ b/include/dt-bindings/sound/meson-g12a-tohdmitx.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_MESON_G12A_TOHDMITX_H
-+#define __DT_MESON_G12A_TOHDMITX_H
-+
-+#define TOHDMITX_I2S_IN_A	0
-+#define TOHDMITX_I2S_IN_B	1
-+#define TOHDMITX_I2S_IN_C	2
-+#define TOHDMITX_I2S_OUT	3
-+#define TOHDMITX_SPDIF_IN_A	4
-+#define TOHDMITX_SPDIF_IN_B	5
-+#define TOHDMITX_SPDIF_OUT	6
-+
-+#endif /* __DT_MESON_G12A_TOHDMITX_H */
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index b0c76e2626ce..61ec1dce557f 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -670,6 +670,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "ge,achc" },
+ 	{ .compatible = "semtech,sx1301" },
+ 	{ .compatible = "lwn,bk4" },
++	{ .compatible = "dh,dhcom-board" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, spidev_dt_ids);
 -- 
-2.20.1
+2.11.0
 
