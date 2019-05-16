@@ -2,74 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DF81FD93
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7990C1FD99
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 04:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfEPBxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 21:53:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36632 "EHLO mail.kernel.org"
+        id S1726314AbfEPCAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 22:00:16 -0400
+Received: from mga02.intel.com ([134.134.136.20]:59727 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbfEPBxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 21:53:06 -0400
-Received: from oasis.local.home (50-204-120-225-static.hfc.comcastbusiness.net [50.204.120.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C04E20862;
-        Thu, 16 May 2019 01:53:05 +0000 (UTC)
-Date:   Wed, 15 May 2019 21:53:05 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with Linus' tree
-Message-ID: <20190515215305.78e8ef4c@oasis.local.home>
-In-Reply-To: <20190516110548.0d22d048@canb.auug.org.au>
-References: <20190516110548.0d22d048@canb.auug.org.au>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726039AbfEPCAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 22:00:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 19:00:15 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 15 May 2019 19:00:12 -0700
+Cc:     baolu.lu@linux.intel.com, Robin Murphy <robin.murphy@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, pengfei.xu@intel.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] swiotlb: Factor out slot allocation and free
+To:     Christoph Hellwig <hch@lst.de>
+References: <0c6e5983-312b-0d6b-92f5-64861cd6804d@linux.intel.com>
+ <20190423061232.GB12762@lst.de>
+ <dff50b2c-5e31-8b4a-7fdf-99d17852746b@linux.intel.com>
+ <20190424144532.GA21480@lst.de>
+ <a189444b-15c9-8069-901d-8cdf9af7fc3c@linux.intel.com>
+ <20190426150433.GA19930@lst.de>
+ <93b3d627-782d-cae0-2175-77a5a8b3fe6e@linux.intel.com>
+ <90182d27-5764-7676-8ca6-b2773a40cfe1@arm.com>
+ <20190429114401.GA30333@lst.de>
+ <7033f384-7823-42ec-6bda-ae74ef689f4f@linux.intel.com>
+ <20190513070542.GA18739@lst.de>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <adfdea8f-1d63-196d-ade1-665e868f5a87@linux.intel.com>
+Date:   Thu, 16 May 2019 09:53:37 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190513070542.GA18739@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 May 2019 11:05:48 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi,
 
-> Hi all,
+On 5/13/19 3:05 PM, Christoph Hellwig wrote:
+> On Mon, May 06, 2019 at 09:54:30AM +0800, Lu Baolu wrote:
+>> Agreed. I will prepare the next version simply without the optimization, so
+>> the offset is not required.
+>>
+>> For your changes in swiotlb, will you formalize them in patches or want
+>> me to do this?
 > 
-> Today's linux-next merge of the ftrace tree got a conflict in:
-> 
->   include/linux/compiler.h
-> 
-> between commit:
-> 
->   37686b1353cf ("tracing: Improve "if" macro code generation")
-> 
-> from Linus' tree and commit:
-> 
->   a15fd609ad53 ("tracing: Simplify "if" macro code")
-> 
-> from the ftrace tree.
-> 
-> I fixed it up (I just used the latter version) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> Please do it yourself given that you still need the offset and thus a
+> rework of the patches anyway.
 > 
 
-Hi Stephen,
+Okay.
 
-I mentioned this conflict and the entry_64.S one to Linus when
-submitting my pull request. I fixed it up too in my ftrace/conflicts
-branch.
-
-Thanks!
-
--- Steve
+Best regards,
+Lu Baolu
