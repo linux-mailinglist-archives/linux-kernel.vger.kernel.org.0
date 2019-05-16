@@ -2,136 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D047320C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 697B420C82
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbfEPQFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:05:44 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36813 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfEPQFm (ORCPT
+        id S1726834AbfEPQFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:05:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32819 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbfEPQFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:05:42 -0400
-Received: by mail-qk1-f194.google.com with SMTP id c14so2608753qke.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:05:42 -0700 (PDT)
+        Thu, 16 May 2019 12:05:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d9so4080724wrx.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=zAUITjpKKLROuX37hMbdqPFlWmaHToD076fNZLb8xfM=;
-        b=paTihldvOejMhzU/pjmy6cxi8/gHfncg9BvJEgw2jZdu7GTTbC6dOi2N34C/kPD+Xe
-         llzWo0lUVN5/gH0xigfPAuVxfctO5acb6uM491mjwy+kalcRZrNptGYgtffAGrQm9xKD
-         z7cMdKXJJ63VeJ7S62XKUCWg+IJtnA/MuoC0yG1jQRxUMfjTvjsouU6GeU1UhoLOpUy4
-         O6jaxq5Vx3jRm2UgvJs0jhTxt1tfjYW5uy/RR5+JF5zvEl0wMsgK+PEzcCVYX5Ml6OgS
-         CWMiUYVZvGJpz30FdN/Uvc6ui0RhJyX+CoWvDh4wvgFBWaqBSYRetGUz7xlHg0r4k5NR
-         ODlQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=q7pWT8kXPJxxR3x79I4/QO1kRi8GWpc3amVbJRsudng=;
+        b=busAmoMTBtuvy6voqADUSj2mY/HAEvbOK42BVdDK5fnPrw9eYgS1O6RmIggdX7G51I
+         CMQISWg0adYPGuNRM7J0lNX50hNIUZ2Nx+JTS4T5Pl3IiyPdKrjWxFOaMTBsaImr+8Q7
+         AXUzineg14N4RcAgFI3kdBOjbmXiZyLPNL9sbjqOn+V/e5FvXi9hnOow+URcAYcEY9RD
+         pn7Fmuz2mDPqtmgaI7NWbFts85oC475LMFhez03shoYUx0TjtJ+27eGNY29KRaMPp6dp
+         /AYJG5AB+aamT+AciRc4RfGqO4EJawat/CuPjJn+vBruYigej5QU3BDatyNFEUiPQNHm
+         MXtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zAUITjpKKLROuX37hMbdqPFlWmaHToD076fNZLb8xfM=;
-        b=iU1AxRTNLS5awPPldKB2w7/MpVzmkInwG42XQnmagAj9EP7so4seNYRkm8wsAntqsK
-         qdgNDfYDNpaCZtxSpqpVaeDCJaKMcMfANAvqOFjv6ciYt4ZD2DTopQpCXl/lwTRP9QGQ
-         0ecUdAgnijz29dwSxXqKH/jMCH/7JIgz6sMx+Jbv2R9LzRwAdy3ujVIVgDUvY4WdnXeZ
-         iUTSRK90RyZ1zMh1BlksrtvJKlJYWd/8NAga3dSGNFH3aKEPGeoZ0gh9/Z6jfBZHjlJ6
-         a99Lt6+ZTztKnvsPdnitW5Yc3UT/w54eE1BRyGEk8sl+WRFEWsKFIDdxAQNuzkqtUgR4
-         8X6w==
-X-Gm-Message-State: APjAAAVdodZcvHNcFtsAgG22wvDzkzBkctciL2BCe8IhAXjRpApvLWAQ
-        7FKLOiKHjmyB1GOQ2RaezheiCA==
-X-Google-Smtp-Source: APXvYqw/JHD28fUlPb8lI2g8to9VAAo+dI6jsWFcrAF1ACiFIBSxV5uVdFEIpYrHZwfcWMG0OgWwTw==
-X-Received: by 2002:a37:684a:: with SMTP id d71mr13791295qkc.25.1558022741627;
-        Thu, 16 May 2019 09:05:41 -0700 (PDT)
-Received: from qcai.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z29sm2569186qkg.19.2019.05.16.09.05.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 09:05:40 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     dan.j.williams@intel.com
-Cc:     akpm@linux-foundation.org, vishal.l.verma@intel.com,
-        dave.jiang@intel.com, keith.busch@intel.com, ira.weiny@intel.com,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] nvdimm: fix compilation warnings with W=1
-Date:   Thu, 16 May 2019 12:04:53 -0400
-Message-Id: <1558022693-9631-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=q7pWT8kXPJxxR3x79I4/QO1kRi8GWpc3amVbJRsudng=;
+        b=cVFMUQLEBBEVScsXAjqv1rqAj6e/JLRLENtzSg1/oFQoHWU3YYMYhJXccZYLYUl+Fn
+         QSSulUY2kgErtbz9t/0uDNcGKkRSx3HxwL98J2yEf7L69G8LSkVHZQwor5QQSHOkqnY+
+         YTU0pmpZ1PerBwXkVP2JnfEGnznL7DCCvyBHkSmjMwdfiXQa4HtfkiIRzuxzIND2UJ46
+         IuIYBTpbMEt6fNeR/duHXQZHzgGQU0RbBSLLb6CYaLRBpzHBrgJcIUB3ixi4iAC6kV7E
+         TJhqvDv4fZL9/4NvV9351OgJePOAH0SWZaaVQrYfylCSs3sBoyvAgv8FRXgFn8Q34Fc7
+         7NSA==
+X-Gm-Message-State: APjAAAWFabiAycY6FJfPw/KBqeIBOGRAobztu5wZzf444S5+H8sZxIn2
+        Guh4RNJsxB/lm7dGpeGvLuKUPQZf
+X-Google-Smtp-Source: APXvYqyz44gy7xXFf1s5NsimX2MXHADA8biKwP7LwCUZtB0bnz3lS/XK9wRx9dc6bvvaJPkREN1NbA==
+X-Received: by 2002:adf:e404:: with SMTP id g4mr30309133wrm.161.1558022721273;
+        Thu, 16 May 2019 09:05:21 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id g2sm6917655wru.37.2019.05.16.09.05.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 May 2019 09:05:20 -0700 (PDT)
+Date:   Thu, 16 May 2019 18:05:18 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] perf fixes
+Message-ID: <20190516160518.GA46645@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several places (dimm_devs.c, core.c etc) include label.h but only
-label.c uses NSINDEX_SIGNATURE, so move its definition to label.c
-instead.
+Linus,
 
-In file included from drivers/nvdimm/dimm_devs.c:23:
-drivers/nvdimm/label.h:41:19: warning: 'NSINDEX_SIGNATURE' defined but
-not used [-Wunused-const-variable=]
+Please pull the latest perf-urgent-for-linus git tree from:
 
-Also, some places abuse "/**" which is only reserved for the kernel-doc.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-drivers/nvdimm/bus.c:648: warning: cannot understand function prototype:
-'struct attribute_group nd_device_attribute_group = '
-drivers/nvdimm/bus.c:677: warning: cannot understand function prototype:
-'struct attribute_group nd_numa_attribute_group = '
+   # HEAD: c7a286577d7592720c2f179aadfb325a1ff48c95 perf/x86/intel: Allow PEBS multi-entry in watermark mode
 
-Those are just some member assignments for the "struct attribute_group"
-instances and it can't be expressed in the kernel-doc.
+An x86 PMU constraint fix, an interface fix, and a Sparse fix.
 
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- drivers/nvdimm/bus.c   | 4 ++--
- drivers/nvdimm/label.c | 2 ++
- drivers/nvdimm/label.h | 2 --
+ Thanks,
+
+	Ingo
+
+------------------>
+Stephane Eranian (2):
+      perf/x86/intel: Fix INTEL_FLAGS_EVENT_CONSTRAINT* masking
+      perf/x86/intel: Allow PEBS multi-entry in watermark mode
+
+Wang Hai (1):
+      perf/x86/amd/iommu: Make the 'amd_iommu_attr_groups' symbol static
+
+
+ arch/x86/events/amd/iommu.c  | 2 +-
+ arch/x86/events/intel/core.c | 2 +-
+ arch/x86/events/perf_event.h | 4 ++--
  3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 7ff684159f29..2eb6a6cfe9e4 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -642,7 +642,7 @@ static ssize_t devtype_show(struct device *dev, struct device_attribute *attr,
- 	NULL,
- };
- 
--/**
-+/*
-  * nd_device_attribute_group - generic attributes for all devices on an nd bus
-  */
- struct attribute_group nd_device_attribute_group = {
-@@ -671,7 +671,7 @@ static umode_t nd_numa_attr_visible(struct kobject *kobj, struct attribute *a,
- 	return a->mode;
+diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
+index 7635c23f7d82..58a6993d7eb3 100644
+--- a/arch/x86/events/amd/iommu.c
++++ b/arch/x86/events/amd/iommu.c
+@@ -393,7 +393,7 @@ static __init int _init_events_attrs(void)
+ 	return 0;
  }
  
--/**
-+/*
-  * nd_numa_attribute_group - NUMA attributes for all devices on an nd bus
-  */
- struct attribute_group nd_numa_attribute_group = {
-diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 2030805aa216..edf278067e72 100644
---- a/drivers/nvdimm/label.c
-+++ b/drivers/nvdimm/label.c
-@@ -25,6 +25,8 @@
- static guid_t nvdimm_pfn_guid;
- static guid_t nvdimm_dax_guid;
+-const struct attribute_group *amd_iommu_attr_groups[] = {
++static const struct attribute_group *amd_iommu_attr_groups[] = {
+ 	&amd_iommu_format_group,
+ 	&amd_iommu_cpumask_group,
+ 	&amd_iommu_events_group,
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index ef763f535e3a..12ec402f4114 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3265,7 +3265,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		return ret;
  
-+static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
-+
- static u32 best_seq(u32 a, u32 b)
- {
- 	a &= NSINDEX_SEQ_MASK;
-diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
-index e9a2ad3c2150..4bb7add39580 100644
---- a/drivers/nvdimm/label.h
-+++ b/drivers/nvdimm/label.h
-@@ -38,8 +38,6 @@ enum {
- 	ND_NSINDEX_INIT = 0x1,
- };
+ 	if (event->attr.precise_ip) {
+-		if (!(event->attr.freq || event->attr.wakeup_events)) {
++		if (!(event->attr.freq || (event->attr.wakeup_events && !event->attr.watermark))) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+ 			if (!(event->attr.sample_type &
+ 			      ~intel_pmu_large_pebs_flags(event)))
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 07fc84bb85c1..a6ac2f4f76fc 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -394,10 +394,10 @@ struct cpu_hw_events {
  
--static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
--
- /**
-  * struct nd_namespace_index - label set superblock
-  * @sig: NAMESPACE_INDEX\0
--- 
-1.8.3.1
-
+ /* Event constraint, but match on all event flags too. */
+ #define INTEL_FLAGS_EVENT_CONSTRAINT(c, n) \
+-	EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS)
++	EVENT_CONSTRAINT(c, n, ARCH_PERFMON_EVENTSEL_EVENT|X86_ALL_EVENT_FLAGS)
+ 
+ #define INTEL_FLAGS_EVENT_CONSTRAINT_RANGE(c, e, n)			\
+-	EVENT_CONSTRAINT_RANGE(c, e, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS)
++	EVENT_CONSTRAINT_RANGE(c, e, n, ARCH_PERFMON_EVENTSEL_EVENT|X86_ALL_EVENT_FLAGS)
+ 
+ /* Check only flags, but allow all event/umask */
+ #define INTEL_ALL_EVENT_CONSTRAINT(code, n)	\
