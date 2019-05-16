@@ -2,62 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CF320475
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3209020482
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfEPLUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:20:55 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:56146 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfEPLUx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:20:53 -0400
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 98C7225AD69;
-        Thu, 16 May 2019 21:20:51 +1000 (AEST)
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 8A943E21EEB; Thu, 16 May 2019 13:20:49 +0200 (CEST)
-Date:   Thu, 16 May 2019 13:20:49 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: Add vendor prefix for HopeRun
-Message-ID: <20190516112049.6osek6wx5vba5s5a@verge.net.au>
-References: <1557938083-25423-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1557938083-25423-2-git-send-email-fabrizio.castro@bp.renesas.com>
+        id S1727215AbfEPLVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:21:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33932 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726383AbfEPLV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:21:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CDC6CAEC6;
+        Thu, 16 May 2019 11:21:27 +0000 (UTC)
+From:   Michal Rostecki <mrostecki@opensuse.org>
+Cc:     Michal Rostecki <mrostecki@opensuse.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jiong Wang <jiong.wang@netronome.com>,
+        Mathieu Xhonneux <m.xhonneux@gmail.com>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xdp-newbies@vger.kernel.org
+Subject: [PATCH bpf-next 0/2] Move bpf_printk to bpf_helpers.h
+Date:   Thu, 16 May 2019 13:20:56 +0200
+Message-Id: <20190516112105.12887-1-mrostecki@opensuse.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557938083-25423-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 05:34:42PM +0100, Fabrizio Castro wrote:
-> Add "Jiangsu HopeRun Software Co., Ltd." to the list of devicetree
-> vendor prefixes as "hoperun".
-> 
-> Website: http://www.hoperun.com/en
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+This series of patches move the commonly used bpf_printk macro to
+bpf_helpers.h which is already included in all BPF programs which
+defined that macro on their own.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Michal Rostecki (2):
+  selftests: bpf: Move bpf_printk to bpf_helpers.h
+  samples: bpf: Do not define bpf_printk macro
+
+ samples/bpf/hbm_kern.h                               | 12 +++---------
+ samples/bpf/hbm_out_kern.c                           |  2 ++
+ samples/bpf/tcp_basertt_kern.c                       |  7 -------
+ samples/bpf/tcp_bufs_kern.c                          |  7 -------
+ samples/bpf/tcp_clamp_kern.c                         |  7 -------
+ samples/bpf/tcp_cong_kern.c                          |  7 -------
+ samples/bpf/tcp_iw_kern.c                            |  7 -------
+ samples/bpf/tcp_rwnd_kern.c                          |  7 -------
+ samples/bpf/tcp_synrto_kern.c                        |  7 -------
+ samples/bpf/tcp_tos_reflect_kern.c                   |  7 -------
+ samples/bpf/xdp_sample_pkts_kern.c                   |  7 -------
+ tools/testing/selftests/bpf/bpf_helpers.h            |  8 ++++++++
+ .../testing/selftests/bpf/progs/sockmap_parse_prog.c |  7 -------
+ .../selftests/bpf/progs/sockmap_tcp_msg_prog.c       |  7 -------
+ .../selftests/bpf/progs/sockmap_verdict_prog.c       |  7 -------
+ .../testing/selftests/bpf/progs/test_lwt_seg6local.c |  7 -------
+ .../testing/selftests/bpf/progs/test_xdp_noinline.c  |  7 -------
+ tools/testing/selftests/bpf/test_sockmap_kern.h      |  7 -------
+ 18 files changed, 13 insertions(+), 114 deletions(-)
+
+-- 
+2.21.0
 
