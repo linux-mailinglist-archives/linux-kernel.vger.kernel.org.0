@@ -2,177 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B43920BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5081320BB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfEPQAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:00:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43400 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727167AbfEPP6v (ORCPT
+        id S1726566AbfEPP4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:56:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56958 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfEPP4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:51 -0400
-Received: from [167.98.27.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hRImM-0006zL-RO; Thu, 16 May 2019 16:58:47 +0100
-Received: from ben by deadeye with local (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001PX-Nz; Thu, 16 May 2019 16:58:37 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 16 May 2019 11:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8xQGYMWEUvgEKQ9dnqz6HVEgkN3PnC4OsTTFftuaUkw=; b=rcILKcdTLzB+Hw4ficgrdCjKU
+        lDGe84tvh2rEsJHUFDlfK3hwv4VdKCBoth2YVcKMtYQ2O0eA6X9jx53ZV28pgA/ESXTwFgnbMggfv
+        fAOlqK/U2RdI2bLg/mbWR4+GaQVNFDncfyCcE1+9+6SgJbSc0pz4MgDsJudrIdOvpjheU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hRIjo-0006xQ-Kr; Thu, 16 May 2019 15:56:08 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 07392112929C; Thu, 16 May 2019 16:56:03 +0100 (BST)
+Date:   Thu, 16 May 2019 16:56:02 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: spidev: Add dhcom-board to compatibility list
+ [Klartext]
+Message-ID: <20190516155602.GH5598@sirena.org.uk>
+References: <kcis.7DC7E250415B4C2E9DA25490D6832213@DHPLMX01>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>
-Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.405536839@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 40/86] x86/speculation: Reorganize speculation
- control MSRs update
-In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
-X-SA-Exim-Connect-IP: 167.98.27.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="N8ia4yKhAKKETby7"
+Content-Disposition: inline
+In-Reply-To: <kcis.7DC7E250415B4C2E9DA25490D6832213@DHPLMX01>
+X-Cookie: <ahzz_> i figured 17G oughta be enough.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.68-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
+--N8ia4yKhAKKETby7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Tim Chen <tim.c.chen@linux.intel.com>
+On Thu, May 16, 2019 at 12:48:10PM +0000, Christoph Niedermaier wrote:
 
-commit 01daf56875ee0cd50ed496a09b20eb369b45dfa5 upstream.
+> You are right, it has something do to with encryption on our mailing server.
+> I am in contact with our IT department to fix this issue.
+> Should I resend the patch when this issue is fixed?
 
-The logic to detect whether there's a change in the previous and next
-task's flag relevant to update speculation control MSRs is spread out
-across multiple functions.
+This is already the second time you sent it today, the other time didn't
+have this problem.
 
-Consolidate all checks needed for updating speculation control MSRs into
-the new __speculation_ctrl_update() helper function.
+--N8ia4yKhAKKETby7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This makes it easy to pick the right speculation control MSR and the bits
-in MSR_IA32_SPEC_CTRL that need updating based on TIF flags changes.
+-----BEGIN PGP SIGNATURE-----
 
-Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185004.151077005@linutronix.de
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/kernel/process.c | 46 ++++++++++++++++++++++++---------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzdiBIACgkQJNaLcl1U
+h9AWxAf9HlPgqvZTVahRW3CfddQctwPCo7feSgJDs9NW7GSx/CRLWlNpAXj+Bi0Q
+TO03hjqaSgez+yU/ptkYZDIy7Xh+G6R2O8BZ0avQGT/fv9YNa98pjGj6MJaClb0q
+6xgsDauTMzvAScwgc1h8YRXfNvkjb258SjxmYFwA0JcZZAeXORd15ZuvLB7RXau+
+Yv00Ru97EXjxK0qHKr/NWs5QJ4jPaSBqPKqWtzNC2sUndNz7/eUr3C4rdsGTXBXH
+/sBYUU/t8XT33fEA+Bl7Rlxc09DqJWek+V8t/O4sOtezxgKPFrOdEFt4ManISbX5
+tRXLJayyjQHV61ZRG+CbObjgh/UrPw==
+=BvsO
+-----END PGP SIGNATURE-----
 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -335,27 +335,40 @@ static __always_inline void amd_set_ssb_
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
- 
--static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
-+/*
-+ * Update the MSRs managing speculation control, during context switch.
-+ *
-+ * tifp: Previous task's thread flags
-+ * tifn: Next task's thread flags
-+ */
-+static __always_inline void __speculation_ctrl_update(unsigned long tifp,
-+						      unsigned long tifn)
- {
--	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+	u64 msr = x86_spec_ctrl_base;
-+	bool updmsr = false;
- 
--	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
--}
-+	/* If TIF_SSBD is different, select the proper mitigation method */
-+	if ((tifp ^ tifn) & _TIF_SSBD) {
-+		if (static_cpu_has(X86_FEATURE_VIRT_SSBD)) {
-+			amd_set_ssb_virt_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
-+			amd_set_core_ssb_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+			   static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+			msr |= ssbd_tif_to_spec_ctrl(tifn);
-+			updmsr  = true;
-+		}
-+	}
- 
--static __always_inline void __speculation_ctrl_update(unsigned long tifn)
--{
--	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
--		amd_set_ssb_virt_state(tifn);
--	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
--		amd_set_core_ssb_state(tifn);
--	else
--		spec_ctrl_update_msr(tifn);
-+	if (updmsr)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
- void speculation_ctrl_update(unsigned long tif)
- {
-+	/* Forced update. Make sure all relevant TIF flags are different */
- 	preempt_disable();
--	__speculation_ctrl_update(tif);
-+	__speculation_ctrl_update(~tif, tif);
- 	preempt_enable();
- }
- 
-@@ -392,8 +405,7 @@ void __switch_to_xtra(struct task_struct
- 			hard_enable_TSC();
- 	}
- 
--	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculation_ctrl_update(tifn);
-+	__speculation_ctrl_update(tifp, tifn);
- }
- 
- /*
-
+--N8ia4yKhAKKETby7--
