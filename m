@@ -2,21 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720FA20383
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 12:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3811E20380
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 12:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfEPKci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 06:32:38 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:55107 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfEPKci (ORCPT
+        id S1727132AbfEPKc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 06:32:28 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:55857 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfEPKc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 06:32:38 -0400
-X-Originating-IP: 80.215.244.179
+        Thu, 16 May 2019 06:32:28 -0400
 Received: from localhost (unknown [80.215.244.179])
         (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 9AFA91BF20B;
-        Thu, 16 May 2019 10:32:32 +0000 (UTC)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 78FE3240007;
+        Thu, 16 May 2019 10:32:20 +0000 (UTC)
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Daniel Vetter <daniel.vetter@intel.com>,
         David Airlie <airlied@linux.ie>,
@@ -24,10 +23,11 @@ To:     Daniel Vetter <daniel.vetter@intel.com>,
         Sean Paul <seanpaul@chromium.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: [PATCH v3 5/7] drm/fourcc: Pass the format_info pointer to drm_format_plane_width/height
-Date:   Thu, 16 May 2019 12:31:50 +0200
-Message-Id: <514af1d489d80b8b1767e3716b663ce5103da6eb.1558002671.git-series.maxime.ripard@bootlin.com>
+        Emil Velikov <emil.velikov@collabora.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 6/7] drm: Replace instances of drm_format_info by drm_get_format_info
+Date:   Thu, 16 May 2019 12:31:51 +0200
+Message-Id: <5859d68664b8f0804a56e7386937f6db986b9e0f.1558002671.git-series.maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
 References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
@@ -38,191 +38,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far, the drm_format_plane_height/width functions were operating on the
-format's fourcc and was doing a lookup to retrieve the drm_format_info
-structure and return the cpp.
-
-However, this is inefficient since in most cases, we will have the
-drm_format_info pointer already available so we shouldn't have to perform a
-new lookup. Some drm_fourcc functions also already operate on the
-drm_format_info pointer for that reason, so the API is quite inconsistent
-there.
-
-Let's follow the latter pattern and remove the extra lookup while being a
-bit more consistent.
-
-In order to be extra consistent, also rename that function to
-drm_format_info_plane_cpp and to a static function in the header to match
-the current policy. The parameters order have also be changed to match the
-other functions prototype.
+drm_get_format_info directly calls into drm_format_info, but takes directly
+a struct drm_mode_fb_cmd2 pointer, instead of the fourcc directly. It's
+shorter to not dereference it, and we can customise the behaviour at the
+driver level if we want to, so let's switch to it where it makes sense.
 
 Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/drm_fourcc.c          | 48 +----------------------------
- drivers/gpu/drm/meson/meson_overlay.c | 12 +++----
- include/drm/drm_fourcc.h              | 46 +++++++++++++++++++++++++--
- 3 files changed, 50 insertions(+), 56 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c | 4 ++--
+ drivers/gpu/drm/gma500/framebuffer.c   | 2 +-
+ drivers/gpu/drm/omapdrm/omap_fb.c      | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-index 5f63fc74e265..35b459d186c5 100644
---- a/drivers/gpu/drm/drm_fourcc.c
-+++ b/drivers/gpu/drm/drm_fourcc.c
-@@ -333,54 +333,6 @@ drm_get_format_info(struct drm_device *dev,
- EXPORT_SYMBOL(drm_get_format_info);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+index 06e73a343724..6edae6458be8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+@@ -121,8 +121,7 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 					 struct drm_mode_fb_cmd2 *mode_cmd,
+ 					 struct drm_gem_object **gobj_p)
+ {
+-	const struct drm_format_info *info = drm_get_format_info(dev,
+-								 mode_cmd);
++	const struct drm_format_info *info;
+ 	struct amdgpu_device *adev = rfbdev->adev;
+ 	struct drm_gem_object *gobj = NULL;
+ 	struct amdgpu_bo *abo = NULL;
+@@ -133,6 +132,7 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 	int height = mode_cmd->height;
+ 	u32 cpp;
  
- /**
-- * drm_format_plane_width - width of the plane given the first plane
-- * @width: width of the first plane
-- * @format: pixel format
-- * @plane: plane index
-- *
-- * Returns:
-- * The width of @plane, given that the width of the first plane is @width.
-- */
--int drm_format_plane_width(int width, uint32_t format, int plane)
--{
--	const struct drm_format_info *info;
--
--	info = drm_format_info(format);
--	if (!info || plane >= info->num_planes)
--		return 0;
--
--	if (plane == 0)
--		return width;
--
--	return width / info->hsub;
--}
--EXPORT_SYMBOL(drm_format_plane_width);
--
--/**
-- * drm_format_plane_height - height of the plane given the first plane
-- * @height: height of the first plane
-- * @format: pixel format
-- * @plane: plane index
-- *
-- * Returns:
-- * The height of @plane, given that the height of the first plane is @height.
-- */
--int drm_format_plane_height(int height, uint32_t format, int plane)
--{
--	const struct drm_format_info *info;
--
--	info = drm_format_info(format);
--	if (!info || plane >= info->num_planes)
--		return 0;
--
--	if (plane == 0)
--		return height;
--
--	return height / info->vsub;
--}
--EXPORT_SYMBOL(drm_format_plane_height);
--
--/**
-  * drm_format_info_block_width - width in pixels of block.
-  * @info: pixel format info
-  * @plane: plane index
-diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
-index fb8515b2860c..55b3f2f2e608 100644
---- a/drivers/gpu/drm/meson/meson_overlay.c
-+++ b/drivers/gpu/drm/meson/meson_overlay.c
-@@ -466,8 +466,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 		priv->viu.vd1_addr2 = gem->paddr + fb->offsets[2];
- 		priv->viu.vd1_stride2 = fb->pitches[2];
- 		priv->viu.vd1_height2 =
--			drm_format_plane_height(fb->height,
--						fb->format->format, 2);
-+			drm_format_info_plane_height(fb->format,
-+						fb->height, 2);
- 		DRM_DEBUG("plane 2 addr 0x%x stride %d height %d\n",
- 			 priv->viu.vd1_addr2,
- 			 priv->viu.vd1_stride2,
-@@ -478,8 +478,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 		priv->viu.vd1_addr1 = gem->paddr + fb->offsets[1];
- 		priv->viu.vd1_stride1 = fb->pitches[1];
- 		priv->viu.vd1_height1 =
--			drm_format_plane_height(fb->height,
--						fb->format->format, 1);
-+			drm_format_info_plane_height(fb->format,
-+						fb->height, 1);
- 		DRM_DEBUG("plane 1 addr 0x%x stride %d height %d\n",
- 			 priv->viu.vd1_addr1,
- 			 priv->viu.vd1_stride1,
-@@ -490,8 +490,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 		priv->viu.vd1_addr0 = gem->paddr + fb->offsets[0];
- 		priv->viu.vd1_stride0 = fb->pitches[0];
- 		priv->viu.vd1_height0 =
--			drm_format_plane_height(fb->height,
--						fb->format->format, 0);
-+			drm_format_info_plane_height(fb->format,
-+						fb->height, 0);
- 		DRM_DEBUG("plane 0 addr 0x%x stride %d height %d\n",
- 			 priv->viu.vd1_addr0,
- 			 priv->viu.vd1_stride0,
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index 6b5a82b31bc4..4ef8ccb5d236 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -277,6 +277,50 @@ int drm_format_info_plane_cpp(const struct drm_format_info *info, int plane)
- 	return info->cpp[plane];
- }
++	info = drm_get_format_info(adev->ddev, mode_cmd);
+ 	cpp = drm_format_info_plane_cpp(info, 0);
  
-+/**
-+ * drm_format_info_plane_width - width of the plane given the first plane
-+ * @format: pixel format info
-+ * @width: width of the first plane
-+ * @plane: plane index
-+ *
-+ * Returns:
-+ * The width of @plane, given that the width of the first plane is @width.
-+ */
-+static inline
-+int drm_format_info_plane_width(const struct drm_format_info *info, int width,
-+				int plane)
-+{
-+	if (!info || plane >= info->num_planes)
-+		return 0;
-+
-+	if (plane == 0)
-+		return width;
-+
-+	return width / info->hsub;
-+}
-+
-+/**
-+ * drm_format_info_plane_height - height of the plane given the first plane
-+ * @format: pixel format info
-+ * @height: height of the first plane
-+ * @plane: plane index
-+ *
-+ * Returns:
-+ * The height of @plane, given that the height of the first plane is @height.
-+ */
-+static inline
-+int drm_format_info_plane_height(const struct drm_format_info *info, int height,
-+				 int plane)
-+{
-+	if (!info || plane >= info->num_planes)
-+		return 0;
-+
-+	if (plane == 0)
-+		return height;
-+
-+	return height / info->vsub;
-+}
-+
- const struct drm_format_info *__drm_format_info(u32 format);
- const struct drm_format_info *drm_format_info(u32 format);
- const struct drm_format_info *
-@@ -285,8 +329,6 @@ drm_get_format_info(struct drm_device *dev,
- uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
- uint32_t drm_driver_legacy_fb_format(struct drm_device *dev,
- 				     uint32_t bpp, uint32_t depth);
--int drm_format_plane_width(int width, uint32_t format, int plane);
--int drm_format_plane_height(int height, uint32_t format, int plane);
- unsigned int drm_format_info_block_width(const struct drm_format_info *info,
- 					 int plane);
- unsigned int drm_format_info_block_height(const struct drm_format_info *info,
+ 	/* need to align pitch with crtc limits */
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index a9d3a4a30ab8..1794ab90b2cc 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -232,7 +232,7 @@ static int psb_framebuffer_init(struct drm_device *dev,
+ 	 * Reject unknown formats, YUV formats, and formats with more than
+ 	 * 4 bytes per pixel.
+ 	 */
+-	info = drm_format_info(mode_cmd->pixel_format);
++	info = drm_get_format_info(dev, mode_cmd);
+ 	if (!info || !info->depth || info->cpp[0] > 4)
+ 		return -EINVAL;
+ 
+diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
+index cfb641363a32..6557b2d6e16e 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fb.c
++++ b/drivers/gpu/drm/omapdrm/omap_fb.c
+@@ -339,7 +339,7 @@ struct drm_framebuffer *omap_framebuffer_init(struct drm_device *dev,
+ 			dev, mode_cmd, mode_cmd->width, mode_cmd->height,
+ 			(char *)&mode_cmd->pixel_format);
+ 
+-	format = drm_format_info(mode_cmd->pixel_format);
++	format = drm_get_format_info(dev, mode_cmd);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(formats); i++) {
+ 		if (formats[i] == mode_cmd->pixel_format)
 -- 
 git-series 0.9.1
