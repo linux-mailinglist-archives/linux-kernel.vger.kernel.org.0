@@ -2,92 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A84E20AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B4DC20ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfEPPIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:08:15 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:47003 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfEPPIO (ORCPT
+        id S1727624AbfEPPJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:09:55 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46716 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfEPPJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:08:14 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l26so2882798lfh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:08:13 -0700 (PDT)
+        Thu, 16 May 2019 11:09:55 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r7so3766031wrr.13;
+        Thu, 16 May 2019 08:09:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FGHxW899Amf7ZgHaxb24JsnGeNM4NZvWTEPA1jMV4y8=;
-        b=AtS0tP7u7iyJ1QEm//4O5HaN3+5kkE2tr9Yqtj73YWBv2pnZkSMIsKWKaScHGyv6fO
-         H8ljLoZWHA0lu28jqNo2CZO4sASGLxZBPHEQMwNQVDmIJ70k63fFucdxmDo8LHK54i46
-         +sia9Wr5owuEX/MqfRs/YVPWurP/Jf7wXvQDA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GldHbOnZfCgrNxHCEakDvlEgb285OgaglO7DDWQycHU=;
+        b=Op8opcDSLOpQgGoRUbw/CP/yYvjtufKY8C3gwNH9bacemHQ50w624XxNsiMJE+4/Op
+         cbr24jzCXRY5KsAXJsv64Wg/oKZI+3DbaIj4cwmWNAZ4PPWO0mQHAnVXEI3vA7mJeWH8
+         n9ZxEYnd+mleHU0Fy59rMJqMjnOw+ihgWCaHP/qxrKAy9mIrXmMTB76SMD0w2VBfZW9A
+         uQrSqMbsWZjAAnGDHF/8qEokPZifppPJhcXV79xUE5Dow35uBkWnXLw3qu7Mf3oFIgDw
+         LJNyIK3sGgxXuaX58+3NVIrL24UmgecM7Ki1j2X4fW7Y58ixSvsP9gA//PpOAx+yECoH
+         LZSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FGHxW899Amf7ZgHaxb24JsnGeNM4NZvWTEPA1jMV4y8=;
-        b=mkPc/bBU8QNDpmBEKUmqVgq4XAIH1rOtp3ivyg4K+VbyYecF6VAeummaz14AiZpd27
-         L5wHODQtBRMxIAlmgUe4ns0iWKW4S2PdOGgIkESkv6ihOMSMz/oxnwzIB1qW3BqgBago
-         tiGWbEueOPCrDR7RSoDJra933VA0C4H7aCA2Y6yXWJigczmVsten05RXev7Ylesjplf2
-         2QZ/GqM+4GIKQw7wFqkk9sOfzozo43fIEdiw1bKsKfqzleXWqbWaoGDMzozqCxjtxzYi
-         Ca71BfiBhbfxrbHDSoHLUYZ2rXK0NCEv5GMT7DkjCLn1/fLtyVOpwQfBgy5Mupt4cNcm
-         sR2A==
-X-Gm-Message-State: APjAAAUc92xVbYy1hbgxjizhEbUgzfAjn+nwXN0yaLXY3VmZMPE+CZcS
-        9qACjFk1qw6XgBzqixrHFhqzF2PRYwE=
-X-Google-Smtp-Source: APXvYqzD6Trb13AqmS3WUI1w4TFD8ov+MqtdjMGMgwAswrlNeeFUGfZe1GVMhqeZGs5lXezNx5VYJQ==
-X-Received: by 2002:ac2:4893:: with SMTP id x19mr23814849lfc.109.1558019292252;
-        Thu, 16 May 2019 08:08:12 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id y24sm1008221lfg.33.2019.05.16.08.08.11
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GldHbOnZfCgrNxHCEakDvlEgb285OgaglO7DDWQycHU=;
+        b=oScNxkxxtqU3rGfjcvko3GIXGF9aCJK8WuUTxqxw1luONhGpk3GBTwPShf5BxvptP3
+         aOuP8u8LNK0T8bUJmGC381QW1vEDQjBPjGX21VT3AeH/OKN0zR2QpL2oeQvZQEax27S4
+         +QrT3CBm7TE8Q+lnMZ0gpHk2c7G8oD7PPqhxzu0spsYQOSoBclL7DFG+6tIItTC9N8BK
+         SG9laLCvMcTjiViuqS6ReML7DfDwuC3vKalVoxbMZd6xYmnU9gatPnwK5itAVD3rglkD
+         OgTB5GBIThf6n9JJQW1/IWjV65R/Ck0X63zKN99GiN4Io9gO6nswdZ/jutLK5eoolCBk
+         BP2g==
+X-Gm-Message-State: APjAAAW/dmxmzRKv0ADXTWcsk1nFuh4qdGpH9d004j/0avDXl5ICg7oM
+        5ePt8VV614+E/cAZIPJzICA=
+X-Google-Smtp-Source: APXvYqwNv4y1/E2lS+3B9LHQr1a7DDHE3rix4cnwzwdgALxZNwUQM/lrC0UHLBo5uvZw9LGUuRN8+A==
+X-Received: by 2002:adf:fc8f:: with SMTP id g15mr32536353wrr.122.1558019393216;
+        Thu, 16 May 2019 08:09:53 -0700 (PDT)
+Received: from xws.fritz.box (pD9EA30D0.dip0.t-ipconnect.de. [217.234.48.208])
+        by smtp.gmail.com with ESMTPSA id t6sm4963423wrn.3.2019.05.16.08.09.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 08:08:11 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id x132so2948673lfd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:08:11 -0700 (PDT)
-X-Received: by 2002:ac2:510b:: with SMTP id q11mr22478766lfb.11.1558019290857;
- Thu, 16 May 2019 08:08:10 -0700 (PDT)
+        Thu, 16 May 2019 08:09:52 -0700 (PDT)
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Cc:     Maximilian Luz <luzmaximilian@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Harry Pan <harry.pan@intel.com>,
+        =?UTF-8?q?Maxence=20Dupr=C3=A8s?= <xpros64@hotmail.fr>,
+        =?UTF-8?q?Michael=20Niew=C3=B6hner?= <linux@mniewoehner.de>,
+        Nico Sneck <snecknico@gmail.com>,
+        Emmanuel Pescosta <emmanuelpescosta099@gmail.com>,
+        Jack Stocker <jackstocker.93@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: Add LPM quirk for Surface Dock GigE adapter
+Date:   Thu, 16 May 2019 17:08:31 +0200
+Message-Id: <20190516150833.119745-1-luzmaximilian@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190516044313.GA17751@localhost.localdomain>
-In-Reply-To: <20190516044313.GA17751@localhost.localdomain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 May 2019 08:07:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiaO_8SiEB9QM3vOTniiT67K6CBH0uHJ82-Dp_+6kxH3g@mail.gmail.com>
-Message-ID: <CAHk-=wiaO_8SiEB9QM3vOTniiT67K6CBH0uHJ82-Dp_+6kxH3g@mail.gmail.com>
-Subject: Re: [GIT PULL] Thermal-SoC management changes for v5.2-rc1
-To:     Eduardo Valentin <edubezval@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Rui Zhang <rui.zhang@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 9:43 PM Eduardo Valentin <edubezval@gmail.com> wrote:
->
-> - thermal core has a new devm_* API for registering cooling devices, thanks to Guenter R.
->   I took the entire series, that is why you see changes on drivers/hwmon in this pull.
+Without USB_QUIRK_NO_LPM ethernet will not work and rtl8152 will
+complain with
 
-This clashed badly with commit 6b1ec4789fb1 ("hwmon: (pwm-fan) Add RPM
-support via external interrupt"), which added a timer to the pwm-fan
-handling.
+    r8152 <device...>: Stop submitting intr, status -71
 
-In particular, that timer now needed the same kind of cleanup changes,
-and I'd like you guys (particularly Guenther, who was involved on both
-sides) to double-check my merge.
+Adding the quirk resolves this. As the dock is externally powered, this
+should not have any drawbacks.
 
-The way I solved it was to just make the pwm_fan_pwm_disable()
-callback do both the pwm_diable() _and_ the del_timer_sync() on the
-new timer. That seemed to be the simplest solution that meshed with
-the new devm cleanup model, but while I build-tested the result, I
-obviously did no actual use testing. And maybe there's some reason why
-that approach is flawed.
+Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
+---
+ drivers/usb/core/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Guenther?
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 8bc35d53408b..6082b008969b 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -209,6 +209,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	/* Microsoft LifeCam-VX700 v2.0 */
+ 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
++	/* Microsoft Surface Dock Ethernet (RTL8153 GigE) */
++	{ USB_DEVICE(0x045e, 0x07c6), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
+ 	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
+-- 
+2.21.0
 
-                    Linus
