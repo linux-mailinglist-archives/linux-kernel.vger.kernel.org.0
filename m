@@ -2,153 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E47D1FFBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 08:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC71F1FFD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 08:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfEPGnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 02:43:42 -0400
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:36330 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbfEPGnf (ORCPT
+        id S1726515AbfEPGsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 02:48:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47326 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfEPGsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 02:43:35 -0400
-Received: by mail-pf1-f169.google.com with SMTP id v80so1310427pfa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 23:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PQnz2nT/KjUKXeHjaBR81zMUbHzh45bNsq/83y1hyFY=;
-        b=NYIYk4Yjkv66dEcU3KgIVlzPX+MS4Dh1JbpbaHYMRZrHb8UswXQgoqFLVAwvBF6fY2
-         HiGXQi5PNGKstKPY9zh9H/RWxkCtTtDYbwRNbVKzECD3aJiseJ0R5/O7ukdAdtEYt12Y
-         ZrzwhZE1qJqX0/zDOpzIXwzjigFlKvNmMMJ3rSm7zHrvgufbPbTsE8FwMLZ3Z2FKUWX5
-         M5ygQdQDLMU9JJvH5x8XmeYTF1z7SvnfAl8481ZCizQdqsJxXZGpW82+7/iHLdTHWRk+
-         gQv+XtCw/8SPyyTe7XDm0Ti+IAGKj9vW0hFbSHg8FKPmAcm9LHS4X8f7lKNVQlNywO0i
-         Z79A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PQnz2nT/KjUKXeHjaBR81zMUbHzh45bNsq/83y1hyFY=;
-        b=cpUIHGKgsNGq6x8SJYkm9TipuGVsfvHXVCyVAbX4GOk95PJ6mOWLxsADNuy3mpjRhs
-         /68JXagSIERbJ7DxlbRgbsaE1LKjY45BpHvy7Y+hQgeUJeYjrOywTa8agpV+REtZjq//
-         UoIjNZ9/bBFtmg8O8xUWl77FaVBwXt3LQhnvNXsxTDHpNM/hv0F9nQbvmGw5E5IKFfDt
-         stj7NL6HOfkcT6LtL0mYcuHkkfBjVuegf+4BKI/X/EpERF55GBl+6WXveFfIgJnSFNaM
-         mD1vvTdmYkY5Ph1JbCRn3kOHwxw8pRbxsHX3s7hAI+1NfCjImu0gB+px6ATRLcQ3FlUY
-         ltVg==
-X-Gm-Message-State: APjAAAX9tm6Hr555j2dCLVZ0XKGAO4zXDEIKn0bAJy5t3Fns/46Y9rsH
-        /Aduof63WcQS5KnRObnLSsW+/Q==
-X-Google-Smtp-Source: APXvYqyaVixdyLVdneqZdfKmvJqCzMfXuFHlfYgDiH4+VC14F/TyNFkNjTkGtNIplKl6Gu9jfwXAdg==
-X-Received: by 2002:a63:2cc9:: with SMTP id s192mr6303754pgs.24.1557989014876;
-        Wed, 15 May 2019 23:43:34 -0700 (PDT)
-Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id w194sm11196050pfd.56.2019.05.15.23.43.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 23:43:33 -0700 (PDT)
-From:   Olof Johansson <olof@lixom.net>
-To:     torvalds@linux-foundation.org
-Cc:     arm@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [GIT PULL 4/4] ARM: SoC defconfig updates
-Date:   Wed, 15 May 2019 23:43:04 -0700
-Message-Id: <20190516064304.24057-5-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190516064304.24057-1-olof@lixom.net>
-References: <20190516064304.24057-1-olof@lixom.net>
+        Thu, 16 May 2019 02:48:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6DF9960A24; Thu, 16 May 2019 06:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557989290;
+        bh=ZG75f0lAOy1l5nnTA2W31hBIGHC2MtPKNbbEUIh5Wf0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ip+KhnSDwqQ6o84dfRIgliZ9j6YSTEa9vIzYvXc943S2AD3mA8aQ+Z0lkcoi/m49p
+         7aMiny8cvc23arEec0ailuT7eJKEu+iZqrEv3Uvhpfs7pXfdnVzTNs6zAzJA1zNZs0
+         NfoQDxOP6wNxrgjB0i1sbFBmV0CzKI9A98mS5vQo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77F6A60A4E;
+        Thu, 16 May 2019 06:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1557989287;
+        bh=ZG75f0lAOy1l5nnTA2W31hBIGHC2MtPKNbbEUIh5Wf0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=i8Skn8GMp5Ca9Xq4RekrA/tI7vqbQdhgnWOmKSuIrmQ1hdYfYfUDwAIyRZea+9d+G
+         WUE6mX2GhMtI+iPujURAFxvOvZfEuvFPjDKiHlJCif+q4kZ70YgN4D9tX1B83SWBW5
+         /EQyE2vOidCqzDcB15dYsgku1yKEywtYvDOrkzVU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77F6A60A4E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-ed1-f51.google.com with SMTP id e24so3583229edq.6;
+        Wed, 15 May 2019 23:48:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAWF5vvn2UJoMMUsPvWw7tehIchlyCxkEnVTie2JEx/RLX3BNBbC
+        5wi4w+pZ0NiSUJ3j+OGBCvNoEnqkWHKXDzkNUxc=
+X-Google-Smtp-Source: APXvYqwE4sv9OWAdotkgId+uAs3Ngm4nCDGeM/ygr0LbOzm5ahsK2cp4+ig58+Nr8zmvRko1JQyh3Xh0k05F1GQXZQg=
+X-Received: by 2002:a50:94db:: with SMTP id t27mr1721377eda.173.1557989284710;
+ Wed, 15 May 2019 23:48:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190515233234.22990-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190515233234.22990-1-bjorn.andersson@linaro.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 16 May 2019 12:17:53 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iEMQd1uAWdkLysYWt0et8eRojoivG6+e78y0DU+4=H+_g@mail.gmail.com>
+Message-ID: <CAFp+6iEMQd1uAWdkLysYWt0et8eRojoivG6+e78y0DU+4=H+_g@mail.gmail.com>
+Subject: Re: [PATCH] iommu: io-pgtable: Support non-coherent page tables
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Vivek Gautam <vgautam@qti.qualcomm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Mostly the usual churn due to options being reordered or not added
-in the right locations.
-- Some various enabling of new drivers, etc.
+On Thu, May 16, 2019 at 5:03 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Describe the memory related to page table walks as non-cachable for iommu
+> instances that are not DMA coherent.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/iommu/io-pgtable-arm.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index 4e21efbc4459..68ff22ffd2cb 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -803,9 +803,15 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
+>                 return NULL;
+>
+>         /* TCR */
+> -       reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
+> -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
+> -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
+> +       if (cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA) {
+> +               reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
+> +                     (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
+> +                     (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
+> +       } else {
+> +               reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
+> +                     (ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT) |
+> +                     (ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_ORGN0_SHIFT);
+> +       }
 
-... i.e. the usual updates, nothing particularly sticks out.
+This looks okay to me based on the discussion that we had on a similar
+patch that I
+posted. So,
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-----------------------------------------------------------------
+[1] https://lore.kernel.org/patchwork/patch/1032939/
 
-The following changes since commit 75ea84dcdb9cc6fa227385e796ea4ae90bb333c8:
+Thanks & regards
+Vivek
 
-  Merge tag 'armsoc-drivers' into HEAD
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-defconfig
-
-for you to fetch changes up to 85200317b324924be3bc72b7bfcce219020ced9c:
-
-  Merge tag 'v5.2-rockchip-defconfig32-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into arm/defconfig
-
-----------------------------------------------------------------
-
-Biju Das (3):
-      arm64: defconfig: enable RX-8581 config option
-      ARM: shmobile: Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig
-      ARM: shmobile: Enable USB [EO]HCI HCD PLATFORM support in shmobile_defconfig
-
-Brian Masney (1):
-      ARM: qcom_defconfig: add options for LG Nexus 5 phone
-
-Dinh Nguyen (3):
-      arm64: defconfig: enable PCIE_ALTERA
-      arm64: defconfig: enable fpga and service layer
-      arm64: defconfig: include the Agilex platform to the arm64 defconfig
-
-Enric Balletbo i Serra (1):
-      ARM: multi_v7_defconfig: Enable missing drivers for supported Chromebooks
-
-Geert Uytterhoeven (3):
-      ARM: shmobile: defconfig: Refresh for v5.1-rc1
-      ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
-      ARM: multi_v7_defconfig: Enable support for CFI NOR FLASH
-
-Jagan Teki (1):
-      arm64: defconfig: Enable SPI_SUN6I
-
-Jon Hunter (2):
-      arm64: defconfig: Enable Tegra HDA support
-      arm64: defconfig: Add PWM Fan support
-
-Martin Blumenstingl (1):
-      ARM: multi_v7_defconfig: enable the Amlogic Meson ADC and eFuse drivers
-
-Olof Johansson (11):
-      Merge tag 'amlogic-defconfig' of https://git.kernel.org/.../khilman/linux-amlogic into arm/defconfig
-      Merge tag 'arm64_defconfig_for_v5.2' of git://git.kernel.org/.../dinguyen/linux into arm/defconfig
-      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/defconfig
-      Merge tag 'tegra-for-5.2-arm-defconfig' of git://git.kernel.org/.../tegra/linux into arm/defconfig
-      Merge tag 'tegra-for-5.2-arm64-defconfig' of git://git.kernel.org/.../tegra/linux into arm/defconfig
-      Merge tag 'sunxi-config64-for-5.2' of https://git.kernel.org/.../sunxi/linux into arm/defconfig
-      Merge tag 'renesas-arm64-defconfig-for-v5.2' of https://git.kernel.org/.../horms/renesas into arm/defconfig
-      Merge tag 'renesas-arm-defconfig-for-v5.2' of https://git.kernel.org/.../horms/renesas into arm/defconfig
-      Merge tag 'qcom-defconfig-for-5.2' of git://git.kernel.org/.../agross/linux into arm/defconfig
-      Merge tag 'mvebu-arm64-5.2-1' of git://git.infradead.org/linux-mvebu into arm/defconfig
-      Merge tag 'v5.2-rockchip-defconfig32-1' of git://git.kernel.org/.../mmind/linux-rockchip into arm/defconfig
-
-Pascal Paillet (1):
-      ARM: multi_v7_defconfig: Enable support for STPMIC1
-
-Thierry Reding (4):
-      Merge tag 'multi-v7-defconfig-for-v5.2-signed' of git://git.kernel.org/.../tmlind/linux-omap into for-5.2/arm/defconfig
-      ARM: tegra: Update default configuration for v5.1-rc1
-      ARM: tegra: Enable Trusted Foundations by default
-      ARM: Enable Trusted Foundations for multiplatform ARM v7
-
-Thomas Petazzoni (1):
-      arm64: defconfig: enable mv-xor driver
-
-Tony Lindgren (2):
-      ARM: multi_v7_defconfig: Update for dropped options
-      ARM: multi_v7_defconfig: Update for moved options
-
-Valentin Schneider (1):
-      arm64: defconfig: Update UFSHCD for Hi3660 soc
+>
+>         switch (ARM_LPAE_GRANULE(data)) {
+>         case SZ_4K:
+> --
+> 2.18.0
+>
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 
 
- arch/arm/configs/multi_v7_defconfig | 150 +++++++++++++++++--------------
- arch/arm/configs/qcom_defconfig     |  13 ++-
- arch/arm/configs/shmobile_defconfig |  13 ++-
- arch/arm/configs/tegra_defconfig    |  36 ++++----
- arch/arm64/configs/defconfig        | 100 ++++++++++++---------
- 5 files changed, 177 insertions(+), 135 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
