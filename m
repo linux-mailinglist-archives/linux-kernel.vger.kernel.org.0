@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 923AD202C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF0A202C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 11:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfEPJmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 05:42:46 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38316 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727105AbfEPJmo (ORCPT
+        id S1727223AbfEPJmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 05:42:50 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34161 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfEPJmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 05:42:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d18so2605153wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:42:42 -0700 (PDT)
+        Thu, 16 May 2019 05:42:45 -0400
+Received: by mail-wm1-f66.google.com with SMTP id j187so6615739wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 02:42:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QVnbcHKCSN58gborHO3ol7EK02u5KFHxun0EUOWl0vk=;
-        b=Fnxz87KoHSn24RCU1fjJfNgmYejiofnawWjLrb6ChDclnBS7vKx5s7V6LWhtX30VzL
-         vfTotDUKm7kTD022RebfwymzA9OYmAOoB27McudDqFFAarrQdC9iUVIqCQvhmNbrtSon
-         tCp2STDUEvwTEifFKOlLvTKK5Zfhb0JYPjHECFd3jiOGLI3/8JI5q7DaPSy+72fSby6R
-         0MhzdpSnsgFOLKqathNy8mfSpt4M+lHUssCs2owsttjBqRVBu9StSOf+WCu+pDlAAWTg
-         sATIREaEuqX+FCnDFo3AIV1ayWjSv/YGV9L1wQFKN4mrNQv2OVYB3UyDd7MgQf6HUQjl
-         fTOg==
-X-Gm-Message-State: APjAAAUvje7cfQLALsUeBSLyag8+TS2L8KYfTiCSw78z0s34Ae8z243q
-        6xvSDWDC39k9IgRsDs48TEH5dlVh42r57w==
-X-Google-Smtp-Source: APXvYqwl58jVVB/evRftpSSgIkEdQu3pDWBXBnUiYvoeLvTMFHBb+KM6NeJY7cXdaHqSSVbMh3vTNg==
-X-Received: by 2002:a5d:6982:: with SMTP id g2mr13708219wru.223.1557999761707;
-        Thu, 16 May 2019 02:42:41 -0700 (PDT)
+        bh=ZZGnY1AeO4vEIRNllzlClW+UmlSDLeAarYqLIOTY4ZI=;
+        b=T4SumkTlMDJ3SSjFW8XB2Bt9lpn7ZUkT3MyJq8RNL9OneIMNtjcfT1B+/ufEP7eD4E
+         oRb3aae/cqfetFFl0BB47kWmPg+FRFckyjsU47aU1ELf9Mz2ao+0DcSoz4e3Elr2Kdqv
+         8N+HTOrk4Gs0GFT67wVvXpiNWTcUm8AoLUAtF/0e8IZYmPKE0yBBoNgcXYMCxBvZ7cHd
+         zYDhp27jrSGe0eJfSFDkJQicaMA9BwZPQCEmGajcwSa808EvUdZcUE62Dw+DXiSG4qi0
+         c+I2IW5DsZiviThGnlKHbieXsuvMRwwBOxrqQXDGsvwqYs0Z8aX2P4di/TMV3SPEpDFk
+         2D+Q==
+X-Gm-Message-State: APjAAAWTXB1/5syQ29wDZ0V0FttnEnqvaTkiDe//tJYjwTuShdwuzvMw
+        EVPFX7Mb/+r54lqB7ebMXdOiqAdUULNyag==
+X-Google-Smtp-Source: APXvYqzGCZsfZTLnp32ZXX+p/N913HP7wOvaTxVvqZVz8kRuhkb2Lox0z5g/+tp8DehjQ+5iLc3ZLg==
+X-Received: by 2002:a7b:c8d1:: with SMTP id f17mr14149157wml.45.1557999763188;
+        Thu, 16 May 2019 02:42:43 -0700 (PDT)
 Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id n63sm4614805wmn.38.2019.05.16.02.42.40
+        by smtp.gmail.com with ESMTPSA id s18sm4074000wmc.41.2019.05.16.02.42.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 02:42:40 -0700 (PDT)
+        Thu, 16 May 2019 02:42:42 -0700 (PDT)
 From:   Oleksandr Natalenko <oleksandr@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -50,9 +50,9 @@ Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Aaron Tomlin <atomlin@redhat.com>,
         Grzegorz Halat <ghalat@redhat.com>, linux-mm@kvack.org,
         linux-api@vger.kernel.org
-Subject: [PATCH RFC 3/5] mm/ksm: introduce ksm_madvise_unmerge() helper
-Date:   Thu, 16 May 2019 11:42:32 +0200
-Message-Id: <20190516094234.9116-4-oleksandr@redhat.com>
+Subject: [PATCH RFC 4/5] mm/ksm, proc: introduce remote merge
+Date:   Thu, 16 May 2019 11:42:33 +0200
+Message-Id: <20190516094234.9116-5-oleksandr@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190516094234.9116-1-oleksandr@redhat.com>
 References: <20190516094234.9116-1-oleksandr@redhat.com>
@@ -63,80 +63,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move MADV_UNMERGEABLE part of ksm_madvise() into a dedicated helper
-since it will be further used for unmerging VMAs forcibly.
+Use previously introduced remote madvise knob to mark task's
+anonymous memory as mergeable.
 
-This does not bring any functional changes.
+To force merging task's VMAs, "merge" hint is used:
+
+   # echo merge > /proc/<pid>/madvise
+
+Force unmerging is done similarly:
+
+   # echo unmerge > /proc/<pid>/madvise
+
+To achieve this, previously introduced ksm_madvise_*() helpers
+are used.
 
 Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
 ---
- include/linux/ksm.h |  2 ++
- mm/ksm.c            | 32 ++++++++++++++++++++++----------
- 2 files changed, 24 insertions(+), 10 deletions(-)
+ fs/proc/base.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index e824b3141677..a91a7cfc87a1 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -21,6 +21,8 @@ struct mem_cgroup;
- #ifdef CONFIG_KSM
- int ksm_madvise_merge(struct mm_struct *mm, struct vm_area_struct *vma,
- 		unsigned long *vm_flags);
-+int ksm_madvise_unmerge(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, unsigned long *vm_flags);
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags);
- int __ksm_enter(struct mm_struct *mm);
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 1fdcf2fbd58d..e0357e25e09f 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -2478,6 +2478,25 @@ int ksm_madvise_merge(struct mm_struct *mm, struct vm_area_struct *vma,
- 	return 0;
- }
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index f69532d6b74f..6677580080ed 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,8 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/stat.h>
+ #include <linux/posix-timers.h>
++#include <linux/mman.h>
++#include <linux/ksm.h>
+ #include <trace/events/oom.h>
+ #include "internal.h"
+ #include "fd.h"
+@@ -2960,15 +2962,63 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
+ static ssize_t madvise_write(struct file *file, const char __user *buf,
+ 		size_t count, loff_t *ppos)
+ {
++	/* For now, only KSM hints are implemented */
++#ifdef CONFIG_KSM
++	char buffer[PROC_NUMBUF];
++	int behaviour;
+ 	struct task_struct *task;
++	struct mm_struct *mm;
++	int err = 0;
++	struct vm_area_struct *vma;
++
++	memset(buffer, 0, sizeof(buffer));
++	if (count > sizeof(buffer) - 1)
++		count = sizeof(buffer) - 1;
++	if (copy_from_user(buffer, buf, count))
++		return -EFAULT;
++
++	if (!memcmp("merge", buffer, min(sizeof("merge")-1, count)))
++		behaviour = MADV_MERGEABLE;
++	else if (!memcmp("unmerge", buffer, min(sizeof("unmerge")-1, count)))
++		behaviour = MADV_UNMERGEABLE;
++	else
++		return -EINVAL;
  
-+int ksm_madvise_unmerge(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, unsigned long *vm_flags)
-+{
-+	int err;
-+
-+	if (!(*vm_flags & VM_MERGEABLE))
-+		return 0;		/* just ignore the advice */
-+
-+	if (vma->anon_vma) {
-+		err = unmerge_ksm_pages(vma, start, end);
-+		if (err)
-+			return err;
+ 	task = get_proc_task(file_inode(file));
+ 	if (!task)
+ 		return -ESRCH;
+ 
++	mm = get_task_mm(task);
++	if (!mm) {
++		err = -EINVAL;
++		goto out_put_task_struct;
 +	}
 +
-+	*vm_flags &= ~VM_MERGEABLE;
++	down_write(&mm->mmap_sem);
++	switch (behaviour) {
++	case MADV_MERGEABLE:
++	case MADV_UNMERGEABLE:
++		vma = mm->mmap;
++		while (vma) {
++			if (behaviour == MADV_MERGEABLE)
++				ksm_madvise_merge(vma->vm_mm, vma, &vma->vm_flags);
++			else
++				ksm_madvise_unmerge(vma, vma->vm_start, vma->vm_end, &vma->vm_flags);
++			vma = vma->vm_next;
++		}
++		break;
++	}
++	up_write(&mm->mmap_sem);
 +
-+	return 0;
-+}
++	mmput(mm);
 +
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags)
- {
-@@ -2492,16 +2511,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		break;
++out_put_task_struct:
+ 	put_task_struct(task);
  
- 	case MADV_UNMERGEABLE:
--		if (!(*vm_flags & VM_MERGEABLE))
--			return 0;		/* just ignore the advice */
--
--		if (vma->anon_vma) {
--			err = unmerge_ksm_pages(vma, start, end);
--			if (err)
--				return err;
--		}
--
--		*vm_flags &= ~VM_MERGEABLE;
-+		err = ksm_madvise_unmerge(vma, start, end, vm_flags);
-+		if (err)
-+			return err;
- 		break;
- 	}
+-	return count;
++	return err ? err : count;
++#else
++	return -EINVAL;
++#endif /* CONFIG_KSM */
+ }
  
+ static const struct file_operations proc_madvise_operations = {
 -- 
 2.21.0
 
