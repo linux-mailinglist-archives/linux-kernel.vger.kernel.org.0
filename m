@@ -2,63 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583D21FD18
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B49D1FD90
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbfEPBr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 21:47:29 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7651 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbfEPBm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 21:42:26 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B15E134E22D2AB63071C;
-        Thu, 16 May 2019 09:42:24 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 16 May 2019 09:42:15 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] kernel: fork: make max_threads symbol static
-Date:   Thu, 16 May 2019 09:51:18 +0800
-Message-ID: <20190516015118.140561-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726380AbfEPBv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 21:51:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39724 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfEPBv6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 21:51:58 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4G1ivkU105807;
+        Thu, 16 May 2019 01:51:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=HYO9ezbu2Dl+8sVygsMDRAKrRIRpqkGBLrL69Eo8bes=;
+ b=2wWriTKaTn3ytF35CvZTgtwBxK9VcMSbmLgHTFya+BZl9Pi1peferkYHzD+qEklrZOr7
+ SFHpzlivDV0eDdJU6xRoe9jx8D0oQpHLrjrWgNF1LfVWLwVKfAyeSlpk4lCxy9BybfGx
+ zsDBra4IEEQpat6QxGNS5B0erj4LwFAoilOeOWEkYHkQGjrnDk2MQYpB/pHuYVPLUixz
+ 9Ln8XJB9ryBfoxq9hj0Wl0cNrbRroAoaqk6GFtljuLvVxD3NCP9Ny7gZ29gEyWUmoUYG
+ gUIEUsl/bkKLitLGoSr2AmZMvQqe0Ra4rzp38o6EuOs7Q1VNuUQEgpWJVcN0NsTvNgNK bQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2sdntu0b96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 May 2019 01:51:26 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4G1pNd9062910;
+        Thu, 16 May 2019 01:51:26 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2sgp32q8x3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 May 2019 01:51:26 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4G1pPYb015103;
+        Thu, 16 May 2019 01:51:25 GMT
+Received: from dhcp-10-159-244-171.vpn.oracle.com (/10.159.244.171)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 May 2019 01:51:24 +0000
+Subject: Re: [PATCH] tracing: Kernel access to Ftrace instances
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Joe Jin <joe.jin@oracle.com>
+References: <1553106531-3281-1-git-send-email-divya.indi@oracle.com>
+ <1553106531-3281-2-git-send-email-divya.indi@oracle.com>
+ <20190516090942.75f3a957ceed20201edc91a6@kernel.org>
+From:   Divya Indi <divya.indi@oracle.com>
+Message-ID: <a96e884d-534f-65ef-8f82-85cd52953695@oracle.com>
+Date:   Wed, 15 May 2019 18:51:23 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190516090942.75f3a957ceed20201edc91a6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9258 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905160011
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9258 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905160011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix build warning,
-kernel/fork.c:125:5: warning: symbol 'max_threads' was not declared. Should it be static?
+Hi Masami,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- kernel/fork.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for pointing it out.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index b4cba953040a..6efd32030518 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -122,7 +122,7 @@
- unsigned long total_forks;	/* Handle normal Linux uptimes. */
- int nr_threads;			/* The idle threads do not count.. */
- 
--int max_threads;		/* tunable limit on nr_threads */
-+static int max_threads;		/* tunable limit on nr_threads */
- 
- DEFINE_PER_CPU(unsigned long, process_counts) = 0;
- 
--- 
-2.20.1
+Yes, it should not be static.
 
+On 5/15/19 5:09 PM, Masami Hiramatsu wrote:
+> HI Divya,
+>
+> On Wed, 20 Mar 2019 11:28:51 -0700
+> Divya Indi <divya.indi@oracle.com> wrote:
+>
+>> Ftrace provides the feature “instances” that provides the capability to
+>> create multiple Ftrace ring buffers. However, currently these buffers
+>> are created/accessed via userspace only. The kernel APIs providing these
+>> features are not exported, hence cannot be used by other kernel
+>> components.
+>>
+>> This patch aims to extend this infrastructure to provide the
+>> flexibility to create/log/remove/ enable-disable existing trace events
+>> to these buffers from within the kernel.
+>>
+>> Signed-off-by: Divya Indi <divya.indi@oracle.com>
+>> Reviewed-by: Joe Jin <joe.jin@oracle.com>
+> Would you tested these APIs with your module? Since,
+> [...]
+>> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+>> index 5b3b0c3..81c038e 100644
+>> --- a/kernel/trace/trace_events.c
+>> +++ b/kernel/trace/trace_events.c
+>> @@ -832,6 +832,7 @@ static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+>>   
+>>   	return ret;
+>>   }
+>> +EXPORT_SYMBOL_GPL(ftrace_set_clr_event);
+> I found this exports a static function to module. Did it work?
+
+I had tested the changes with my module. This change to static was added 
+in the test patch, but somehow missed it in the final patch that was 
+sent out.
+
+Will send a new patch along with a few additional ones to add some NULL 
+checks to ensure safe usage by modules and add the APIs to a header file 
+that can be used by the modules.
+
+Thanks,
+
+Divya
+
+>
+> Thank you,
+>
