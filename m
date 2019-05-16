@@ -2,91 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A86620EB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07A220EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 20:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfEPSdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 14:33:24 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37358 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfEPSdY (ORCPT
+        id S1728908AbfEPSeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 14:34:11 -0400
+Received: from caffeine.csclub.uwaterloo.ca ([129.97.134.17]:39203 "EHLO
+        caffeine.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726357AbfEPSeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 14:33:24 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g3so2287706pfi.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 11:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CMlWNXfPwLOEGidca8EwjtL/G7K01/lWskyq0JQp7Po=;
-        b=OJlfMUFm+sYikoezqBPoEqI7bWkVQTIqogHDa6Dj1pUQipCT4q3qJIicLQxIOCRBj+
-         FI/AGzliYjQFp0YP0RXMuqkZRBGv93YmodMCpxr9bpEKGpczRXG2HmMB6EyExChLipHs
-         xMk6hI498cUJXjBOyL5arF5E4J+FMUd7SrD8g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CMlWNXfPwLOEGidca8EwjtL/G7K01/lWskyq0JQp7Po=;
-        b=TJr8ffZEWm1sZpW5tuwXM3qtPyxJPh0Qce+1y3y6ACjmPTVEjouM64iXUAaf2nhfpM
-         wjFO6dELdf2rolHhc1BSlx8zlw8irAsgH+SDznAfAuvdRqUabZnrOOCfRwFW4KeF2l8L
-         yGo2pZgwGhqGh7Rswl2frmMAWVfRRLKLR0rjPITQIYg4J7jq2gHvcKUb5XicidH6Je5g
-         fGMII26r1G/+yuLb9MrXVtH2Rpjeil1ZqwT2a0N0PsAqHnY+pdELuZHK31S8oUQ+CHft
-         wwt4vbhpF5Ep+impZxc+NXv4yefsa6Ws+5mIJp+U4Oaq1i1MSw+FFnd4bd7u5qnTG3Qw
-         +yMg==
-X-Gm-Message-State: APjAAAXhUoxs3HSgQ7K37GtBS6GSKlUT4mqg22N1tcfPX+M20Ya1Wkxy
-        Co+CY0pa/nZqL++NKg9OpFqABA==
-X-Google-Smtp-Source: APXvYqxP772DhWABXNrxRmQR2JXgNUzAJCCUljaciwHF+kqiljZJgJB8K8UTqV6vF4M4xE9gCcLLkw==
-X-Received: by 2002:a62:65c1:: with SMTP id z184mr36323550pfb.130.1558031603699;
-        Thu, 16 May 2019 11:33:23 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 135sm11511052pfb.97.2019.05.16.11.33.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 11:33:22 -0700 (PDT)
-Date:   Thu, 16 May 2019 11:33:21 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 16 May 2019 14:34:11 -0400
+Received: by caffeine.csclub.uwaterloo.ca (Postfix, from userid 20367)
+        id 1C77846380B; Thu, 16 May 2019 14:34:08 -0400 (EDT)
+Date:   Thu, 16 May 2019 14:34:08 -0400
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v5] proc/sysctl: add shared variables for range check
-Message-ID: <201905161132.CC4C2F3@keescook>
-References: <20190430180111.10688-1-mcroce@redhat.com>
- <CAGXu5jJG1D6YvTaSY3hpB8_APmwe=rGn8FkyAfCGuQZ3O2j1Yg@mail.gmail.com>
- <CAGnkfhyjmpPAjQFpm-w3v0kMWTKRHTq5v6w0m9KScN2a7bMgeg@mail.gmail.com>
+        Netdev <netdev@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>
+Subject: Re: [Intel-wired-lan] i40e X722 RSS problem with NAT-Traversal IPsec
+ packets
+Message-ID: <20190516183407.qswotwyjwtjqfdqm@csclub.uwaterloo.ca>
+References: <20190502175513.ei7kjug3az6fe753@csclub.uwaterloo.ca>
+ <20190502185250.vlsainugtn6zjd6p@csclub.uwaterloo.ca>
+ <CAKgT0Uc_YVzns+26-TL+hhmErqG4_w4evRqLCaa=7nME7Zq+Vg@mail.gmail.com>
+ <20190503151421.akvmu77lghxcouni@csclub.uwaterloo.ca>
+ <CAKgT0UcV2wCr6iUYktZ+Bju_GNpXKzR=M+NLfKhUsw4bsJSiyA@mail.gmail.com>
+ <20190503205935.bg45rsso5jjj3gnx@csclub.uwaterloo.ca>
+ <20190513165547.alkkgcsdelaznw6v@csclub.uwaterloo.ca>
+ <CAKgT0Uf_nqZtCnHmC=-oDFz-3PuSM6=30BvJSDiAgzK062OY6w@mail.gmail.com>
+ <20190514163443.glfjva3ofqcy7lbg@csclub.uwaterloo.ca>
+ <CAKgT0UdPDyCBsShQVwwE5C8fBKkMcfS6_S5m3T7JP-So9fzVgA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGnkfhyjmpPAjQFpm-w3v0kMWTKRHTq5v6w0m9KScN2a7bMgeg@mail.gmail.com>
+In-Reply-To: <CAKgT0UdPDyCBsShQVwwE5C8fBKkMcfS6_S5m3T7JP-So9fzVgA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+From:   lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 06:09:53PM +0200, Matteo Croce wrote:
-> On Tue, Apr 30, 2019 at 8:14 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Tue, Apr 30, 2019 at 11:01 AM Matteo Croce <mcroce@redhat.com> wrote:
-> > >
-> > > In the sysctl code the proc_dointvec_minmax() function is often used to
-> > > validate the user supplied value between an allowed range. This function
-> > > uses the extra1 and extra2 members from struct ctl_table as minimum and
-> > > maximum allowed value.
-> > >
-> [...]
-> > >
-> > > Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> >
-> > Acked-by: Kees Cook <keescook@chromium.org>
-> >
-> > --
-> > Kees Cook
+On Thu, May 16, 2019 at 10:10:55AM -0700, Alexander Duyck wrote:
+> So I was sent a link to the datasheet for the part and I have a
+> working theory that what we may be seeing is a problem in the firmware
+> for the part.
 > 
-> Hi all,
+> Can you try applying the attached patch and send the output from the
+> dmesg? Specifically I would want anything with the name "i40e" in it.
+> What I am looking for is something like the following:
+> [  294.383416] i40e 0000:81:00.1: fw 5.0.40043 api 1.5 nvm 5.04 0x800024cd 0.0.0
+> [  294.675039] i40e 0000:81:00.1: MAC address: 68:05:ca:37:c7:99
+> [  294.685941] i40e 0000:81:00.1: flow_type: 63 input_mask:0x0000000000004000
+> [  294.686056] i40e 0000:81:00.1: flow_type: 46 input_mask:0x0007fff800000000
+> [  294.686170] i40e 0000:81:00.1: flow_type: 45 input_mask:0x0007fff800000000
+> [  294.686284] i40e 0000:81:00.1: flow_type: 44 input_mask:0x0007ffff80000000
+> [  294.686399] i40e 0000:81:00.1: flow_type: 43 input_mask:0x0007fffe00000000
+> [  294.686513] i40e 0000:81:00.1: flow_type: 41 input_mask:0x0007fffe00000000
+> [  294.686628] i40e 0000:81:00.1: flow_type: 36 input_mask:0x0001801800000000
+> [  294.686743] i40e 0000:81:00.1: flow_type: 35 input_mask:0x0001801800000000
+> [  294.686858] i40e 0000:81:00.1: flow_type: 34 input_mask:0x0001801f80000000
+> [  294.686973] i40e 0000:81:00.1: flow_type: 33 input_mask:0x0001801e00000000
+> [  294.687087] i40e 0000:81:00.1: flow_type: 31 input_mask:0x0001801e00000000
+> [  294.691906] i40e 0000:81:00.1 ens5f1: renamed from eth0
+> [  294.711173] i40e 0000:81:00.1 ens5f1: NIC Link is Up, 10 Gbps Full
+> Duplex, Flow Control: None
+> [  294.759061] i40e 0000:81:00.1: PCI-Express: Speed 8.0GT/s Width x8
+> [  294.863363] i40e 0000:81:00.1: Features: PF-id[1] VFs: 32 VSIs: 34
+> QP: 32 RSS FD_ATR FD_SB NTUPLE VxLAN Geneve PTP VEPA
 > 
-> just a ping about this patch. Any tought, suggestion, concern or criticism?
+> With that we can tell what flow types are enabled, and what input
+> fields are enabled for each flow type. My suspicion is that we may see
+> the two new types added to X722 for UDP, 29 and 30, may not match type
+> 31 which is the current flow type supported on the X710.
+> 
+> I have included a copy inline below in case the patch is stripped,
+> however I suspect it will not apply cleanly as the mail client I am
+> using usually ends up causing white space mangling by replacing tabs
+> with spaces.
+> 
+> diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c
+> b/drivers/net/ethernet/intel/i40e/i40e_main.c
+> index 65c2b9d2652b..0c93859f8184 100644
+> --- a/drivers/net/ethernet/intel/i40e/i40e_main.c
+> +++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+> @@ -10998,6 +10998,15 @@ static int i40e_pf_config_rss(struct i40e_pf *pf)
+>                 ((u64)i40e_read_rx_ctl(hw, I40E_PFQF_HENA(1)) << 32);
+>         hena |= i40e_pf_get_default_rss_hena(pf);
+> 
+> +       for (ret = 64; ret--;) {
+> +               if (!(hena & (1ull << ret)))
+> +                       continue;
+> +               dev_info(&pf->pdev->dev, "flow_type: %d
+> input_mask:0x%08x%08x\n",
+> +                        ret,
+> +                        i40e_read_rx_ctl(hw, I40E_GLQF_HASH_INSET(1, ret)),
+> +                        i40e_read_rx_ctl(hw, I40E_GLQF_HASH_INSET(0, ret)));
+> +       }
+> +
+>         i40e_write_rx_ctl(hw, I40E_PFQF_HENA(0), (u32)hena);
+>         i40e_write_rx_ctl(hw, I40E_PFQF_HENA(1), (u32)(hena >> 32));
 
-Andrew, does this look okay to pick up after -rc2 for -next?
+> i40e: Debug hash inputs
+
+Here is what I see:
+
+i40e: Intel(R) Ethernet Connection XL710 Network Driver - version 2.1.7-k
+i40e: Copyright (c) 2013 - 2014 Intel Corporation.
+i40e 0000:3d:00.0: fw 3.10.52896 api 1.6 nvm 4.00 0x80001577 1.1767.0
+i40e 0000:3d:00.0: The driver for the device detected a newer version of the NVM image than expected. Please install the most recent version of the network driver.
+i40e 0000:3d:00.0: MAC address: a4:bf:01:4e:0c:87
+i40e 0000:3d:00.0: flow_type: 63 input_mask:0x0000000000004000
+i40e 0000:3d:00.0: flow_type: 46 input_mask:0x0007fff800000000
+i40e 0000:3d:00.0: flow_type: 45 input_mask:0x0007fff800000000
+i40e 0000:3d:00.0: flow_type: 44 input_mask:0x0007ffff80000000
+i40e 0000:3d:00.0: flow_type: 43 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.0: flow_type: 42 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.0: flow_type: 41 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.0: flow_type: 40 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.0: flow_type: 39 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.0: flow_type: 36 input_mask:0x0006060000000000
+i40e 0000:3d:00.0: flow_type: 35 input_mask:0x0006060000000000
+i40e 0000:3d:00.0: flow_type: 34 input_mask:0x0006060780000000
+i40e 0000:3d:00.0: flow_type: 33 input_mask:0x0006060600000000
+i40e 0000:3d:00.0: flow_type: 32 input_mask:0x0006060600000000
+i40e 0000:3d:00.0: flow_type: 31 input_mask:0x0006060600000000
+i40e 0000:3d:00.0: flow_type: 30 input_mask:0x0006060600000000
+i40e 0000:3d:00.0: flow_type: 29 input_mask:0x0006060600000000
+i40e 0000:3d:00.0: Features: PF-id[0] VSIs: 34 QP: 12 TXQ: 13 RSS VxLAN Geneve VEPA
+i40e 0000:3d:00.1: fw 3.10.52896 api 1.6 nvm 4.00 0x80001577 1.1767.0
+i40e 0000:3d:00.1: The driver for the device detected a newer version of the NVM image than expected. Please install the most recent version of the network driver.
+i40e 0000:3d:00.1: MAC address: a4:bf:01:4e:0c:88
+i40e 0000:3d:00.1: flow_type: 63 input_mask:0x0000000000004000
+i40e 0000:3d:00.1: flow_type: 46 input_mask:0x0007fff800000000
+i40e 0000:3d:00.1: flow_type: 45 input_mask:0x0007fff800000000
+i40e 0000:3d:00.1: flow_type: 44 input_mask:0x0007ffff80000000
+i40e 0000:3d:00.1: flow_type: 43 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.1: flow_type: 42 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.1: flow_type: 41 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.1: flow_type: 40 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.1: flow_type: 39 input_mask:0x0007fffe00000000
+i40e 0000:3d:00.1: flow_type: 36 input_mask:0x0006060000000000
+i40e 0000:3d:00.1: flow_type: 35 input_mask:0x0006060000000000
+i40e 0000:3d:00.1: flow_type: 34 input_mask:0x0006060780000000
+i40e 0000:3d:00.1: flow_type: 33 input_mask:0x0006060600000000
+i40e 0000:3d:00.1: flow_type: 32 input_mask:0x0006060600000000
+i40e 0000:3d:00.1: flow_type: 31 input_mask:0x0006060600000000
+i40e 0000:3d:00.1: flow_type: 30 input_mask:0x0006060600000000
+i40e 0000:3d:00.1: flow_type: 29 input_mask:0x0006060600000000
+i40e 0000:3d:00.1: Features: PF-id[1] VSIs: 34 QP: 12 TXQ: 13 RSS VxLAN Geneve VEPA
+i40e 0000:3d:00.1 eth2: NIC Link is Up, 1000 Mbps Full Duplex, Flow Control: None
+i40e_ioctl: power down: eth1
+i40e_ioctl: power down: eth2
 
 -- 
-Kees Cook
+Len Sorensen
