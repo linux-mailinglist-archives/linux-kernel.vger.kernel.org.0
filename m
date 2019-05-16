@@ -2,131 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 029A320D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AEC20D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbfEPQtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:49:11 -0400
-Received: from casper.infradead.org ([85.118.1.10]:35514 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbfEPQtK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:49:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tKk911ROe0tCzfs+bPSmBKTBLaoEpyGgcQBfu96Z0/A=; b=o+KMLHQcUSCKeA1ZIZKrnKMdM/
-        2nBNKGsEqWbYOWDUBEJtN6ARs6K3xOzhRIbBu2ouzL9VarJ/1dPQ0hq48iBBvLE86aeYUccksRnwa
-        DZGA5XVXUwaLaCgj1B/uhN70TY+TH1m7aip/IQUcYt47KNOaVevs1pqlAZfD9b8NIslR6ush0LUlx
-        z+ILLXF0w0RH7YmF2uviGbTRmkMpMpIVDeWUBQq9unDNurrRbP41/m0GNMtsFWnv90dzfkvpntmAx
-        uQoOdmEczCNaohZ/EG3SplP0ZH4U6SeKzq6CS5evW6pLT6IcewLG75WKabgEzVoORfVjyfJaAqoiY
-        doYP8aOg==;
-Received: from 179.186.99.85.dynamic.adsl.gvt.net.br ([179.186.99.85] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRJZ6-0001JX-EY; Thu, 16 May 2019 16:49:08 +0000
-Date:   Thu, 16 May 2019 13:49:02 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v5.2-rc1] media fixes
-Message-ID: <20190516134902.59a3a855@coco.lan>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728692AbfEPQtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:49:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726808AbfEPQtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 12:49:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C602205ED;
+        Thu, 16 May 2019 16:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558025360;
+        bh=NveVv6Q4uybGZ7z8KgxQg+EoijBp4AG6PhqLjNTFtuk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ha4b8+uzYVMXkGCsYm/z2nlq8/2n8i8AQNuu2FEBBbgPs8bIL1x7u25zqNhF3u7yQ
+         gODK8UO6AXtykgE7h07OVkpJJeitO49bQsAs8ZSjRpvLZKiBjP5K86c/xSy+Xs2jTB
+         mXhkT9LIoS5V2RgNjdxi3fI0z3R6KrOMyPVFsc7I=
+Date:   Thu, 16 May 2019 18:49:18 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Wagner <wagi@monom.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 4.4 000/266] 4.4.180-stable review
+Message-ID: <20190516164918.GA12641@kroah.com>
+References: <20190515090722.696531131@linuxfoundation.org>
+ <f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com>
+ <75c1f549-9098-933e-ab8b-4d0eeab87ddd@monom.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75c1f549-9098-933e-ab8b-4d0eeab87ddd@monom.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, May 16, 2019 at 01:59:43PM +0200, Daniel Wagner wrote:
+> Hi Jon,
+> 
+> > Boot regression detected for Tegra ...
+> > 
+> > Test results for stable-v4.4:
+> >     6 builds:	6 pass, 0 fail
+> >     15 boots:	6 pass, 9 fail
+> >     8 tests:	8 pass, 0 fail
+> > 
+> > Linux version:	4.4.180-rc1-gbe756da
+> > Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+> >                 tegra30-cardhu-a04
+> > 
+> > Bisect is point to the following commit ...
+> > 
+> > # first bad commit: [7849d64a1700ddae1963ff22a77292e9fb5c2983] mm, vmstat: make quiet_vmstat lighter
+> > 
+> > Reverting this on top v4.4.180-rc1 fixes the problem.  
+> 
+> I guess the patch depends on another change. I'll try to figure out what
+> is missing.
 
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v5.2-1
+Jon, thanks for the testing, I'll go drop this patch now from the final
+version.
 
-For some fixes for some platform drivers (rockchip, atmel, omap, daVinci,
-tegra-cec, coda and rcar).=20
+Daniel, if you can come up with a working series, I'll be glad to take
+it.  Or, I'd recommend you just move to a newer kernel :)
 
-It also includes a fix on one of the V4L2 uAPI doc, explaining a border cas=
-e.
+thanks,
 
-Thanks!
-Mauro
-
-The following changes since commit 0d672fffb447aa1699d76fdacd90dc31eeb66d97:
-
-  media: dt-bindings: aspeed-video: Add missing memory-region property (201=
-9-04-30 13:53:12 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v5.2-1
-
-for you to fetch changes up to fc8670d1f72b746ff3a5fe441f1fca4c4dba0e6f:
-
-  media: rockchip/vpu: Fix/re-order probe-error/remove path (2019-05-15 05:=
-38:22 -0400)
-
-----------------------------------------------------------------
-media updates for v5.2-rc1
-
-----------------------------------------------------------------
-Boris Brezillon (2):
-      media: rockchip/vpu: Get vdev from the file arg in vidioc_querycap()
-      media: rockchip/vpu: Initialize mdev->bus_info
-
-Dan Carpenter (2):
-      media: omap_vout: potential buffer overflow in vidioc_dqbuf()
-      media: davinci/vpbe: array underflow in vpbe_enum_outputs()
-
-Eugen Hristev (3):
-      media: atmel: atmel-isc: limit incoming pixels per frame
-      media: atmel: atmel-isc: fix INIT_WORK misplacement
-      media: atmel: atmel-isc: fix asd memory allocation
-
-Hans Verkuil (2):
-      media: field-order.rst: clarify FIELD_ANY and FIELD_NONE
-      media: tegra-cec: fix cec_notifier_parse_hdmi_phandle return check
-
-Jonas Karlman (3):
-      media: rockchip/vpu: Do not request id 0 for our video device
-      media: rockchip/vpu: Add missing dont_use_autosuspend() calls
-      media: rockchip/vpu: Fix/re-order probe-error/remove path
-
-Niklas S=C3=B6derlund (2):
-      media: rcar-csi2: restart CSI-2 link if error is detected
-      media: rcar-csi2: Propagate the FLD signal for NTSC and PAL
-
-Philipp Zabel (1):
-      media: coda: fix unset field and fail on invalid field in buf_prepare
-
-Rui Miguel Silva (1):
-      media: staging/imx: add media device to capture register
-
- Documentation/media/uapi/v4l/field-order.rst       | 16 +++--
- drivers/media/platform/atmel/atmel-isc-regs.h      | 19 ++++++
- drivers/media/platform/atmel/atmel-isc.c           | 46 +++++++++++++--
- drivers/media/platform/coda/coda-common.c          | 10 ++++
- drivers/media/platform/davinci/vpbe.c              |  2 +-
- drivers/media/platform/omap/omap_vout.c            | 15 ++---
- drivers/media/platform/rcar-vin/rcar-csi2.c        | 68 ++++++++++++++++++=
-++--
- drivers/media/platform/tegra-cec/tegra_cec.c       |  4 +-
- drivers/staging/media/imx/imx-ic-prpencvf.c        |  2 +-
- drivers/staging/media/imx/imx-media-capture.c      |  6 +-
- drivers/staging/media/imx/imx-media-csi.c          |  2 +-
- drivers/staging/media/imx/imx-media.h              |  3 +-
- drivers/staging/media/imx/imx7-media-csi.c         |  2 +-
- .../staging/media/rockchip/vpu/rockchip_vpu_drv.c  | 14 +++--
- .../staging/media/rockchip/vpu/rockchip_vpu_enc.c  |  3 +-
- include/media/davinci/vpbe.h                       |  2 +-
- 16 files changed, 172 insertions(+), 42 deletions(-)
-
+greg k-h
