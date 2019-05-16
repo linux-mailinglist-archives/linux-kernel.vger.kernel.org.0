@@ -2,81 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BCC2099C
+	by mail.lfdr.de (Postfix) with ESMTP id 561292099B
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 16:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfEPO2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 10:28:02 -0400
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:42460 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbfEPO2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 10:28:02 -0400
-Received: by mail-oi1-f170.google.com with SMTP id w9so842918oic.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 07:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lucidpixels.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4x/0z94RkEH7qnNh1ar1v+FYD4KQFu3kNcvlVqxawww=;
-        b=hEs9/pzgTmayDkZAx/COHFiBNPrX5KxeCcyULrZ0Rir3lATGKmSiVs6OAgptMMMgkD
-         MMmeMTwkFTovgBIuiPtJq41bOAZZa2Js8KxpCW/xCZ4ZDDRcOTUMsi2fXo5m96D6CV0L
-         HdC0Gz7JwTBVd2I2viBw9enqNkNiYxlbXs61w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4x/0z94RkEH7qnNh1ar1v+FYD4KQFu3kNcvlVqxawww=;
-        b=Z1J6HwE+x17L4GKN5Uye7uc39Uvu9qTsbb77oX28wmJCwrPf2umBAjXC7f1hXrotoO
-         tKbnuYtlvIUad0EQan2dSDkVoicDhdTBEkc/xPWX/uNk1sZq49mwNYeo5SYFWI6D+C1Z
-         hOi49kkirgURwxeqhrshrUii82jiKoUOOhoz0GfVp8mnhfmF/5FdqONZ7ruY9r54psum
-         UYaSj7+17znmGjtWIGvOv7rkl1GOGFhFvxA9E9Rjaaj0lhyz3/OVkhwt/FivTOb4dTbf
-         W9KSmjh6AqjZl3HHYHRemzVcrWcOgoYCkWqWnl76yPAnLmbpM6HHFEMGisEwGP0DxHEJ
-         7F7Q==
-X-Gm-Message-State: APjAAAUqtU/VtUoTG9dQu9Xh3MjkTJdgjg72ASuqNVa0l05PK0Rlp4Te
-        02AQ8lQuYBCwgOeIWeCN7ObUM5BlSjvVJV+GxK/Sz3/to/SayQ==
-X-Google-Smtp-Source: APXvYqx6Mhh1cAVHSBlbeqHeB6XhpldkqP160VLPmAiojbgzjTImwJfvUrmMIuPBsatW8cpykT/ZgaCwa2nDY4V9ScA=
-X-Received: by 2002:aca:af4a:: with SMTP id y71mr10475319oie.55.1558016881294;
- Thu, 16 May 2019 07:28:01 -0700 (PDT)
+        id S1727451AbfEPO15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 10:27:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726696AbfEPO15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 10:27:57 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D1F20833;
+        Thu, 16 May 2019 14:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558016876;
+        bh=BJtnyMXUmLAigNFJ6gGr4B9MNzUQokm2xobo1aVjRXU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=og9TgQYerl4BUC+ng49ZG32MFyNdpMhomkxl203YJFteVEilwu4ByiuZFllCnrVsH
+         n7OQrrbCoz1fwgitz5HJs++KnnvupJwreSyrfsLALg2my85CvZw5/ob4nol6PHJNH2
+         MZM1/x1Bj5ZCwHUw0K1fPQPH2aJRewFJE8H2Naag=
+Subject: Re: [PATCH 3.18 00/86] 3.18.140-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190515090642.339346723@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <f2a05600-e302-9a06-80a1-421cae299287@kernel.org>
+Date:   Thu, 16 May 2019 08:27:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
- <20190509111343.rvmy5noqlf4os3zk@box> <CAO9zADww2v2ckHsNDwRgiyMr9b3JH1xOOSiRJ0Uh2XZT5c=MEQ@mail.gmail.com>
- <CAO9zADyq44Sn0kYZBC55C0ykpHaASzp+27K3BofbkEniK6af-w@mail.gmail.com>
-In-Reply-To: <CAO9zADyq44Sn0kYZBC55C0ykpHaASzp+27K3BofbkEniK6af-w@mail.gmail.com>
-From:   Justin Piszcz <jpiszcz@lucidpixels.com>
-Date:   Thu, 16 May 2019 10:27:50 -0400
-Message-ID: <CAO9zADw_PnZMyVJKek-GT96esPXdh007hnzenveawOAM3CvK9g@mail.gmail.com>
-Subject: Re: 5.1 kernel: khugepaged stuck at 100%
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190515090642.339346723@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:17 AM Justin Piszcz <jpiszcz@lucidpixels.com> wrote:
->
-> On Thu, May 16, 2019 at 10:14 AM Justin Piszcz <jpiszcz@lucidpixels.com> wrote:
-> >
-> > On Tue, May 14, 2019 at 9:16 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > > Could you check what khugepaged doing?
-> > >
-> > > cat /proc/$(pidof khugepaged)/stack
-> >
-> > It is doing it again, 10:12am - 2019-05-16
-> >
-> >   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-> >    77 root      39  19       0      0      0 R 100.0   0.0  92:06.94 khugepaged
-> >
-> > Kernel: 5.1.2
-> >
-> > $ sudo cat /proc/$(pidof khugepaged)/stack
-> > [<0>] 0xffffffffffffffff
-> >
+On 5/15/19 4:54 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.140 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 17 May 2019 09:04:45 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.140-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-As a workaround/in the meantime--I will add the following to lilo/grub:
-transparent_hugepage=never
+Compiled and booted on my test system. No dmesg regressions.
 
-Justin
+thanks,
+-- Shuah
+
