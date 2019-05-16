@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153CB20C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0743720C04
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfEPQEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:04:23 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42468 "EHLO
+        id S1727947AbfEPQA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:00:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43000 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726706AbfEPP6m (ORCPT
+        by vger.kernel.org with ESMTP id S1727070AbfEPP6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:42 -0400
+        Thu, 16 May 2019 11:58:47 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0006zm-Ex; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImK-0006zh-4o; Thu, 16 May 2019 16:58:44 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001PI-KH; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImE-0001SN-TE; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,33 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
         "Jiri Kosina" <jkosina@suse.cz>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "Kees Cook" <keescook@chromium.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Waiman Long" <longman9394@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>
+        "Josh Poimboeuf" <jpoimboe@redhat.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.952042263@decadent.org.uk>
+Message-ID: <lsq.1558022133.413450664@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 37/86] x86/speculation: Move STIPB/IBPB string
- conditionals out of cpu_show_common()
+Subject: [PATCH 3.16 75/86] x86/speculation: Move arch_smt_update() call
+ to after mitigation decisions
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -67,80 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Chen <tim.c.chen@linux.intel.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream.
+commit 7c3658b20194a5b3209a143f63bc9c643c6a3ae2 upstream.
 
-The Spectre V2 printout in cpu_show_common() handles conditionals for the
-various mitigation methods directly in the sprintf() argument list. That's
-hard to read and will become unreadable if more complex decisions need to
-be made for a particular method.
+arch_smt_update() now has a dependency on both Spectre v2 and MDS
+mitigations.  Move its initial call to after all the mitigation decisions
+have been made.
 
-Move the conditionals for STIBP and IBPB string selection into helper
-functions, so they can be extended later on.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -821,6 +821,22 @@ static void __init l1tf_select_mitigatio
+@@ -161,6 +161,8 @@ void __init check_bugs(void)
  
- #ifdef CONFIG_SYSFS
+ 	mds_select_mitigation();
  
-+static char *stibp_state(void)
-+{
-+	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
-+		return ", STIBP";
-+	else
-+		return "";
-+}
++	arch_smt_update();
 +
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
-+		return ", IBPB";
-+	else
-+		return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-@@ -839,9 +855,9 @@ static ssize_t cpu_show_common(struct de
+ #ifdef CONFIG_X86_32
+ 	/*
+ 	 * Check whether we are able to run this kernel safely on SMP.
+@@ -677,9 +679,6 @@ specv2_set_mode:
  
- 	case X86_BUG_SPECTRE_V2:
- 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
+ 	/* Set up IBPB and STIBP depending on the general spectre V2 command */
+ 	spectre_v2_user_select_mitigation(cmd);
+-
+-	/* Enable STIBP if appropriate */
+-	arch_smt_update();
+ }
  
+ static void update_stibp_msr(void * __unused)
 
