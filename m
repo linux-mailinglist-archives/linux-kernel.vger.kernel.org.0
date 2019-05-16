@@ -2,112 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9C620771
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4E520774
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 14:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfEPM6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 08:58:13 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:57191 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfEPM6H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 08:58:07 -0400
-Received: by mail-io1-f72.google.com with SMTP id n24so2566117ioo.23
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 05:58:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=MdrEULgmHdt5/2TFOXFQeQY/puqA7jR5xNjMz6LOyvk=;
-        b=LyqTDwywi7DcKEMIXvP9NKWcur22palQWjBvCHuiTJtdG930kswGaGvPC6xAQm1BKm
-         fIFxLGD74iKIgZ1fRxHRWHr7drFerUrHg0UOlXFlfdV2Dc6lDGrdYYtZEjLmoP86f4QA
-         GSQGx01nRUQHWUtorv+Ma5AGX/Q6GYk0OWRGyVPIpd2tPVIfi5vTNa8aruVc3DOdxa2n
-         /HWLR7iC7Tll9d2+kzesoW4c/e8TGltS9u3ZHBbQmrO+DPmBhKQnZAChmNo92WbYSPbb
-         fEIYBKrK5aN5O9UxYwvqK2Zsy4Mb/AKsY86l9v0KcXe2T1FvKxO+12ItkJ90t2hfSOOW
-         mLTg==
-X-Gm-Message-State: APjAAAUrhSxEDODWNW59LCnhd6+a5in/KoWoo4Ni/83wqLbwRHvBNxmu
-        H8ZPfyalD8MGvpQDbJfufm51ANS1OleJbszq5Hhuq1fAOHJ5
-X-Google-Smtp-Source: APXvYqyuRmTOlyRqyVEWDCNz961U9p5PW5aySiOaHjUpeWLFq4qIn/0BleEX42b7buxqyo2Ia438+NNTzHmv7voWHXJL4v9YrfTq
+        id S1727550AbfEPM6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 08:58:25 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:53494 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbfEPM6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 08:58:25 -0400
+Received: from we0524.dip.tu-dresden.de ([141.76.178.12] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hRFxZ-0004u2-Lf; Thu, 16 May 2019 14:58:09 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     allen <allen.chen@ite.com.tw>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@google.com>
+Subject: Re: [PATCH 1/3] dt-bindings: Add binding for IT6505.
+Date:   Thu, 16 May 2019 14:58:08 +0200
+Message-ID: <3548960.TAD2hRMT5j@phil>
+In-Reply-To: <1557301722-20827-2-git-send-email-allen.chen@ite.com.tw>
+References: <1557301722-20827-1-git-send-email-allen.chen@ite.com.tw> <1557301722-20827-2-git-send-email-allen.chen@ite.com.tw>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:221:: with SMTP id f1mr30700825jaq.1.1558011486298;
- Thu, 16 May 2019 05:58:06 -0700 (PDT)
-Date:   Thu, 16 May 2019 05:58:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000032685a058900d170@google.com>
-Subject: KMSAN: uninit-value in tomoyo_check_inet_address
-From:   syzbot <syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com>
-To:     glider@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Allen,
 
-syzbot found the following crash on:
+Am Mittwoch, 8. Mai 2019, 09:48:40 CEST schrieb allen:
+> From: Allen Chen <allen.chen@ite.com.tw>
+> 
+> Add a DT binding documentation for IT6505.
+> 
+> Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+> 
+> ---
+>  .../bindings/display/bridge/ite,it6505.txt         | 30 ++++++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+>  2 files changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+> new file mode 100644
+> index 0000000..c3506ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6505.txt
+> @@ -0,0 +1,30 @@
+> +iTE it6505 DP bridge bindings
+> +
+> +Required properties:
+> +        - compatible: "ite,it6505"
+> +        - reg: i2c address of the bridge
+> +        - ovdd-supply: I/O voltage
+> +        - pwr18-supply: Core voltage
+> +        - interrupts: interrupt specifier of INT pin
+> +        - reset-gpios: gpio specifier of RESET pin
+> +
+> +Example:
+> +	it6505dptx: it6505dptx@5c {
+> +                compatible = "ite,it6505";
+> +                status = "okay";
 
-HEAD commit:    3b955a40 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=1027e608a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=602468164ccdc30a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1018d578c410f9f37261
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-06d00afa61eef8f7f501ebdb4e8612ea43ec2d78)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1018d578c410f9f37261@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KMSAN: uninit-value in tomoyo_check_inet_address+0x143/0xd10  
-security/tomoyo/network.c:508
-CPU: 0 PID: 22966 Comm: syz-executor.2 Not tainted 5.1.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:619
-  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
-  tomoyo_check_inet_address+0x143/0xd10 security/tomoyo/network.c:508
-  tomoyo_socket_bind_permission+0x343/0x3b0 security/tomoyo/network.c:741
-  tomoyo_socket_bind+0x8b/0xa0 security/tomoyo/tomoyo.c:471
-  security_socket_bind+0x127/0x200 security/security.c:1943
-  __sys_bind+0x536/0x7c0 net/socket.c:1623
-  __do_sys_bind net/socket.c:1638 [inline]
-  __se_sys_bind+0x8d/0xb0 net/socket.c:1636
-  __x64_sys_bind+0x4a/0x70 net/socket.c:1636
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x458da9
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4aeb5bbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458da9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4aeb5bc6d4
-R13: 00000000004bee1f R14: 00000000004cfe68 R15: 00000000ffffffff
-
-Local variable description: ----address@__sys_bind
-Variable was created at:
-  sockfd_lookup_light net/socket.c:488 [inline]
-  __sys_bind+0x8c/0x7c0 net/socket.c:1619
-  __do_sys_bind net/socket.c:1638 [inline]
-  __se_sys_bind+0x8d/0xb0 net/socket.c:1636
-==================================================================
+binding examples should not contain a "status" property.
+Also as this is a board-specific i2c device, you shouldn't need
+a status property in the board dts as well, as the default is
+"okay" anyway.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +                interrupt-parent = <&pio>;
+> +                interrupts = <152 IRQ_TYPE_EDGE_RISING 152 0>;
+> +                reg = <0x5c>;
+> +                pinctrl-names = "default";
+> +                pinctrl-0 = <&it6505_pins>;
+> +                ovdd-supply = <&mt6358_vsim1_reg>;
+> +                pwr18-supply = <&it6505_pp18_reg>;
+> +                reset-gpios = <&pio 179 1>;
+> +                hpd-gpios = <&pio 9 0>;
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This is missing from the property-list above.
+
+> +                extcon = <&usbc_extcon>;
+
+Not documented as well. Also this looks like it is the same functionality
+as on rk3399-gru devices and circumvents the Type-C subsystem entirely
+when handling the display-port alt-mode of the typec port.
+
+At least on rk3399-gru the extcon from the chromeos-ec delivered the
+status and allowed chaning settings of the hidden type-c controller
+(fusb302 in that case). And while that works for ChromeOS devices this
+makes it impossible for other devices to sanely use the chip as well.
+
+
+The kernels type-c framework did develop a lot more in the meantime,
+so this "hack" should probably not spread to more parts and instead should
+use the type-c framework.
+
+I pestered Guenter last year at ELCE about making cros-ec-pd a part of
+the kernel's type-c subsystem, but I guess nobody had the time so far.
+
+ 
+
+> +                port {
+> +                        it6505_in: endpoint {
+> +                                remote-endpoint = <&dpi_out>;
+
+Ports usage also it not documented above. 
+
+
+Heiko
+
+> +                        };
+> +                };
+> +        };
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 2c3fc51..c088646 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -184,6 +184,7 @@ iom	Iomega Corporation
+>  isee	ISEE 2007 S.L.
+>  isil	Intersil
+>  issi	Integrated Silicon Solutions Inc.
+> +ite	iTE Tech. Inc.
+>  itead	ITEAD Intelligent Systems Co.Ltd
+>  iwave  iWave Systems Technologies Pvt. Ltd.
+>  jdi	Japan Display Inc.
+> 
+
+
+
+
