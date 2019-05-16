@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 771B220BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B71B220C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfEPQAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:00:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:43326 "EHLO
+        id S1727423AbfEPQD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:03:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42518 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727158AbfEPP6u (ORCPT
+        by vger.kernel.org with ESMTP id S1726357AbfEPP6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:50 -0400
+        Thu, 16 May 2019 11:58:43 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImM-0006zU-QJ; Thu, 16 May 2019 16:58:47 +0100
+        id 1hRImG-0006zQ-MV; Thu, 16 May 2019 16:58:40 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001Pl-QI; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImE-0001Qa-5P; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,32 +27,32 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Asit Mallick" <asit.k.mallick@intel.com>,
-        "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Greg KH" <gregkh@linuxfoundation.org>,
-        "Casey Schaufler" <casey.schaufler@intel.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Dave Stewart" <david.c.stewart@intel.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jon Masters" <jcm@redhat.com>,
-        "Waiman Long" <longman9394@gmail.com>,
         "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Casey Schaufler" <casey.schaufler@intel.com>,
+        "Waiman Long" <longman9394@gmail.com>,
+        "Jon Masters" <jcm@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Dave Stewart" <david.c.stewart@intel.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Jiri Kosina" <jkosina@suse.cz>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.249528149@decadent.org.uk>
+Message-ID: <lsq.1558022133.731637659@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 43/86] x86/speculation: Rework SMT state change
+Subject: [PATCH 3.16 53/86] x86/speculation: Split out TIF update
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -68,17 +68,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit a74cfffb03b73d41e08f84c2e5c87dec0ce3db9f upstream.
+commit e6da8bb6f9abb2628381904b24163c770e630bac upstream.
 
-arch_smt_update() is only called when the sysfs SMT control knob is
-changed. This means that when SMT is enabled in the sysfs control knob the
-system is considered to have SMT active even if all siblings are offline.
+The update of the TIF_SSBD flag and the conditional speculation control MSR
+update is done in the ssb_prctl_set() function directly. The upcoming prctl
+support for controlling indirect branch speculation via STIBP needs the
+same mechanism.
 
-To allow finegrained control of the speculation mitigations, the actual SMT
-state is more interesting than the fact that siblings could be enabled.
-
-Rework the code, so arch_smt_update() is invoked from each individual CPU
-hotplug function, and simplify the update function while at it.
+Split the code out and make it reusable. Reword the comment about updates
+for other tasks.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -101,93 +99,75 @@ Cc: Waiman Long <longman9394@gmail.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
-Link: https://lkml.kernel.org/r/20181125185004.521974984@linutronix.de
-[bwh: Backported to 3.16: adjust context]
+Link: https://lkml.kernel.org/r/20181125185005.652305076@linutronix.de
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 11 +++++------
- include/linux/sched/smt.h  |  2 ++
- kernel/cpu.c               | 15 +++++++++------
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/nospec.h>
- #include <linux/prctl.h>
-+#include <linux/sched/smt.h>
+@@ -760,10 +760,29 @@ static void ssb_select_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Speculation prctl: " fmt
  
- #include <asm/spec-ctrl.h>
- #include <asm/cmdline.h>
-@@ -403,16 +404,14 @@ void arch_smt_update(void)
- 		return;
- 
- 	mutex_lock(&spec_ctrl_mutex);
--	mask = x86_spec_ctrl_base;
--	if (IS_ENABLED(CONFIG_X86_HT))
-+
-+	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
-+	if (sched_smt_active())
- 		mask |= SPEC_CTRL_STIBP;
--	else
--		mask &= ~SPEC_CTRL_STIBP;
- 
- 	if (mask != x86_spec_ctrl_base) {
- 		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				IS_ENABLED(CONFIG_X86_HT) ?
--				"Enabling" : "Disabling");
-+			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
- 		x86_spec_ctrl_base = mask;
- 		on_each_cpu(update_stibp_msr, NULL, 1);
- 	}
---- a/include/linux/sched/smt.h
-+++ b/include/linux/sched/smt.h
-@@ -15,4 +15,6 @@ static __always_inline bool sched_smt_ac
- static inline bool sched_smt_active(void) { return false; }
- #endif
- 
-+void arch_smt_update(void);
-+
- #endif
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -8,6 +8,7 @@
- #include <linux/init.h>
- #include <linux/notifier.h>
- #include <linux/sched.h>
-+#include <linux/sched/smt.h>
- #include <linux/unistd.h>
- #include <linux/cpu.h>
- #include <linux/oom.h>
-@@ -179,6 +180,12 @@ void cpu_hotplug_enable(void)
- 
- #endif	/* CONFIG_HOTPLUG_CPU */
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override this.
-+ */
-+void __weak arch_smt_update(void) { }
-+
- /* Need to know about CPUs going up/down? */
- int __ref register_cpu_notifier(struct notifier_block *nb)
+-static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
++static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
  {
-@@ -394,6 +401,7 @@ out_release:
- 	cpu_hotplug_done();
- 	if (!err)
- 		cpu_notify_nofail(CPU_POST_DEAD | mod, hcpu);
-+	arch_smt_update();
- 	return err;
- }
+ 	bool update;
  
-@@ -495,7 +503,7 @@ out_notify:
- 		__cpu_notify(CPU_UP_CANCELED | mod, hcpu, nr_calls, NULL);
- out:
- 	cpu_hotplug_done();
++	if (on)
++		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
++	else
++		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
++
++	/*
++	 * Immediately update the speculation control MSRs for the current
++	 * task, but for a non-current task delay setting the CPU
++	 * mitigation until it is scheduled next.
++	 *
++	 * This can only happen for SECCOMP mitigation. For PRCTL it's
++	 * always the current task.
++	 */
++	if (tsk == current && update)
++		speculation_ctrl_update_current();
++}
++
++static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
+ 	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
+ 		return -ENXIO;
+@@ -774,28 +793,20 @@ static int ssb_prctl_set(struct task_str
+ 		if (task_spec_ssb_force_disable(task))
+ 			return -EPERM;
+ 		task_clear_spec_ssb_disable(task);
+-		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, false);
+ 		break;
+ 	case PR_SPEC_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, true);
+ 		break;
+ 	case PR_SPEC_FORCE_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+ 		task_set_spec_ssb_force_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, true);
+ 		break;
+ 	default:
+ 		return -ERANGE;
+ 	}
 -
-+	arch_smt_update();
- 	return ret;
+-	/*
+-	 * If being set on non-current task, delay setting the CPU
+-	 * mitigation until it is next scheduled.
+-	 */
+-	if (task == current && update)
+-		speculation_ctrl_update_current();
+-
+ 	return 0;
  }
  
 
