@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577C020C07
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD94720B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfEPQBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:01:02 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38597 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbfEPQA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 12:00:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w11so5980239edl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 09:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8WgMWkot3W6frdZDEhuKoWGYZZnnA8ggjmWUdQkxVUg=;
-        b=VQ1lreXFzVPz7qMf6CbZsyHyEK8BaUPzViIbtM9m26OmLDc9tKQb+Ww5BzyPFxvKVr
-         MJrT5hYOZFr1qqbinjNi0tc9Y7K9TrxawuH+WidxXbg7JTXsX7z3gzTQWohuiByopt7m
-         4ryVrr07Qa7xoWkcqKuFRHHW6UpEbZSNoCQ5aRG612xPXgDlckr7b6De7pLUdaxjaiQV
-         hcsybkXuOdvGi1Mxsfms0QU4V/9nnmPkZ/AeYezrL2lSFkfpmZ8cwUfcwzQnmC99Or34
-         ynutTND6GIF1CpSUzaGCAKL/ehYJFRu0Vyi2/xwYYLD0u/S4b3IEcTBNrrSgbmRaMxxB
-         JCPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8WgMWkot3W6frdZDEhuKoWGYZZnnA8ggjmWUdQkxVUg=;
-        b=IX6GABiKxuROH9E20h/Q1q7ItcwcHOB/1Zsz1xQYwjUnAa7atmCtJPEWxoInudqsaR
-         phcyh4po8fAEL0U3oHEh4isAqq7WOHGn9xVtUtm6aBHMp9NGyDGEH0cUjsnjw7NT6lLm
-         MRoJ+dx7pfP42XtA9tDkdw155YWC/ppXlyoN6h/Sx3zku+l3iPumwZG54YGpPxTJyNwE
-         WLx66lm1r+GSwBLXw9uWz0rFkGBikYQUWkr9ghY0+ggkfKYOxIJLZ8Mf9R+UL6KhnE/R
-         Oyv+qfookCom1Q/QixLhVj4rWlgFLR3rVIRvDXUbULpeqgc2NluKet5KjHdJ7LXPfejS
-         COfQ==
-X-Gm-Message-State: APjAAAUXD7eIKbT+kzL3pb/lchVpcXBPLBxKtSgxe2nniHLPyAcQT2DX
-        Cqe6aDAYTHQfbITXBMOnoyA=
-X-Google-Smtp-Source: APXvYqyMxBN1sByOco4/CKLlBrCsf2Soi/E7L6cLHGLDX2cIXMgHdQjhgFGhYUdXaJFeCs5VE9Ln+Q==
-X-Received: by 2002:a17:906:8398:: with SMTP id p24mr25198362ejx.8.1558022458538;
-        Thu, 16 May 2019 09:00:58 -0700 (PDT)
-Received: from mail.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id n8sm348307ejk.45.2019.05.16.09.00.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 09:00:57 -0700 (PDT)
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH v2 2/2] mtd: nand: raw: brcmnand: When oops in progress use pio and interrupt polling
-Date:   Thu, 16 May 2019 11:45:40 -0400
-Message-Id: <1558022399-24863-2-git-send-email-kdasu.kdev@gmail.com>
-X-Mailer: git-send-email 1.9.0.138.g2de3478
-In-Reply-To: <1558022399-24863-1-git-send-email-kdasu.kdev@gmail.com>
-References: <1558022399-24863-1-git-send-email-kdasu.kdev@gmail.com>
+        id S1727509AbfEPPsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 11:48:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:60317 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727037AbfEPPsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 11:48:42 -0400
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id BC11268B02; Thu, 16 May 2019 17:48:20 +0200 (CEST)
+Date:   Thu, 16 May 2019 17:48:20 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Harald Geyer <harald@ccbib.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] arm64: DTS: allwinner: a64: enable ANX6345 bridge
+ on Teres-I
+Message-ID: <20190516154820.GA10431@lst.de>
+References: <20190514155911.6C0AC68B05@newverein.lst.de> <20190514160241.9EAC768C7B@newverein.lst.de> <CA+E=qVfuKBzWK7dpM_eabjU8mLdzOw3zCnYk6Tc1oXdavH7CNA@mail.gmail.com> <20190515093141.41016b11@blackhole.lan> <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If mtd_oops is in progress switch to polling for nand command completion
-interrupts and use PIO mode wihtout DMA so that the mtd_oops buffer can
-be completely written in the assinged nand partition.
+On Wed, May 15, 2019 at 08:08:57AM -0700, Vasily Khoruzhick wrote:
+> On Wed, May 15, 2019 at 12:32 AM Torsten Duwe <duwe@lst.de> wrote:
+> >
+> > It does comply with the bindings. The ports are all optional.
+> > As far as DT is concerned, the signal path ends here. This is also the
+> > final component _required_ to get the Linux kernel DRI up and running.
+> 
+> Ugh, then bindings should be fixed. It's not optional. It may work if
+> bootloader enables power for you, but it won't if you disable display
+> driver in u-boot.
 
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- drivers/mtd/nand/raw/brcmnand/brcmnand.c | 1 -
- 1 file changed, 1 deletion(-)
+I double-checked. On the Teres-I, mentioning the panel _is_ optional.
+PD23 powers down panel and backlight as much as possible, see
+24bd5d2cb93bc arm64: dts: allwinner: a64: teres-i: enable backlight
+(currently only in Maxime's repo) and the Teres-I schematics...
 
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index a30a7f0..dca8eb8 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -835,7 +835,6 @@ static inline void disable_ctrl_irqs(struct brcmnand_controller *ctrl)
- 	}
- 
- 	disable_irq(ctrl->irq);
--
- 	ctrl->pio_poll_mode = true;
- }
- 
--- 
-1.9.0.138.g2de3478
+And the driver in your repo neatly guards all accesses with
+"if (anx6345->panel)" -- good!
+But I found the Vdds are required, so I added them as such.
+
+> I guess you're testing it with older version of anx6345. Newer version
+> that supports power management [1] needs startup delay for panel.
+> Another issue that you're seeing is that backlight is not disabled on
+> DPMS events. All in all, you need to describe panel in dts.
+> 
+> [1] https://github.com/anarsoul/linux-2.6/commit/2fbf9c242419c8bda698e8331a02d4312143ae2c
+
+> > Should I also have added a Tested-by: ? ;-)
+> 
+> I don't have Teres, so I haven't tested these.
+
+*I* have one, and this works. I'll retest with your newer driver,
+just in case. Nonetheless, the changes in this series should be fine.
+Sending out v2 in a moment...
+
+	Torsten
 
