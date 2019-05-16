@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308132044C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D2E20448
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfEPLOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:14:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35296 "EHLO
+        id S1727315AbfEPLOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:14:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35298 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726597AbfEPLOD (ORCPT
+        with ESMTP id S1727278AbfEPLOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 16 May 2019 07:14:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,16 +18,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=PRtfzYSKqOYpZelyhxsJ4vKt9MCdhGadv8d+copgjEk=; b=bvFFOecigq3s
-        /KB4RFJF70ICxBJDGD4TVcX0fs3ytykbZlqxhyhvpZy9js0sDEVFLJagc44uAicJCGHCMN1/5c1kQ
-        oTAnaaJ+846WJzBehU40hldMrSwKygyL113bbois+boJeekbsX4Z3T9FbTRXwe/RHe98tsPQuhKPu
-        cCUz0=;
+        List-Archive; bh=37loz0j4/OZ5il819QfI9xzcVbzdXjCr6lBxULO4KQU=; b=buIQ0JjHLY0E
+        8DfILar/uGpDIyQoIxTmvvTZRzXylL6XAk+JVEopDmE4CFMJXrIK7vSia+un0vZC/s1nK7rSmgRWU
+        CGYpnl9/Sfowa/qK8/372m/BqzoTc/F+7NHQKtkIgPaJ/64oXlJuhdvWRD2L65I5TDFjb1Czobb+J
+        BWWTw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hREKj-00066h-Fe; Thu, 16 May 2019 11:13:57 +0000
+        id 1hREKj-00066j-FX; Thu, 16 May 2019 11:13:57 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6E96D1126D48; Thu, 16 May 2019 12:13:54 +0100 (BST)
+        id 3D1DD1126D47; Thu, 16 May 2019 12:13:54 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
@@ -36,10 +36,10 @@ Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: Applied "ASoC: dapm: allow muxes to force a disconnect" to the asoc tree
-In-Reply-To: <20190515131858.32130-3-jbrunet@baylibre.com>
+Subject: Applied "ASoC: meson: add tohdmitx DT bindings" to the asoc tree
+In-Reply-To: <20190515131858.32130-4-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190516111354.6E96D1126D48@debutante.sirena.org.uk>
+Message-Id: <20190516111354.3D1DD1126D47@debutante.sirena.org.uk>
 Date:   Thu, 16 May 2019 12:13:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: dapm: allow muxes to force a disconnect
+   ASoC: meson: add tohdmitx DT bindings
 
 has been applied to the asoc tree at
 
@@ -73,40 +73,105 @@ to this mail.
 Thanks,
 Mark
 
-From c3456a4b2142550944f73a87a8f338074508b249 Mon Sep 17 00:00:00 2001
+From e35f5ad6a965de5d301ca5957a1c48c53fe366fb Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 15 May 2019 15:18:55 +0200
-Subject: [PATCH] ASoC: dapm: allow muxes to force a disconnect
+Date: Wed, 15 May 2019 15:18:56 +0200
+Subject: [PATCH] ASoC: meson: add tohdmitx DT bindings
 
-Let soc_dapm_mux_update_power() accept NULL as 'e' enum.
-
-It makes the code a bit more robust and, more importantly, let the calling
-mux force a disconnect of the output path if necessary.
-
-This is useful if the dapm elements following the mux must be off
-while updating the mux, to avoid glitches or force a (re)configuration.
+Add the bindings and the related documentation for the audio hdmitx
+control glue of the Amlogic g12a SoC family
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 Tested-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-dapm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/sound/amlogic,g12a-tohdmitx.txt  | 55 +++++++++++++++++++
+ .../dt-bindings/sound/meson-g12a-tohdmitx.h   | 13 +++++
+ 2 files changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+ create mode 100644 include/dt-bindings/sound/meson-g12a-tohdmitx.h
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 81a7a12196ff..a4d6c068b545 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2245,7 +2245,7 @@ static int soc_dapm_mux_update_power(struct snd_soc_card *card,
- 	dapm_kcontrol_for_each_path(path, kcontrol) {
- 		found = 1;
- 		/* we now need to match the string in the enum to the path */
--		if (!(strcmp(path->name, e->texts[mux])))
-+		if (e && !(strcmp(path->name, e->texts[mux])))
- 			connect = true;
- 		else
- 			connect = false;
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+new file mode 100644
+index 000000000000..aa6c35570d31
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-tohdmitx.txt
+@@ -0,0 +1,55 @@
++* Amlogic HDMI Tx control glue
++
++Required properties:
++- compatible: "amlogic,g12a-tohdmitx"
++- reg: physical base address of the controller and length of memory
++       mapped region.
++- #sound-dai-cells: should be 1.
++
++Example on the S905X2 SoC:
++
++tohdmitx: audio-controller@744 {
++	compatible = "amlogic,g12a-tohdmitx";
++	reg = <0x0 0x744 0x0 0x4>;
++	#sound-dai-cells = <1>;
++};
++
++Example of an 'amlogic,axg-sound-card':
++
++sound {
++	compatible = "amlogic,axg-sound-card";
++
++[...]
++
++	dai-link-x {
++		sound-dai = <&tdmif_a>;
++		dai-format = "i2s";
++		dai-tdm-slot-tx-mask-0 = <1 1>;
++
++		codec-0 {
++			sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
++		};
++
++		codec-1 {
++			sound-dai = <&external_dac>;
++		};
++	};
++
++	dai-link-y {
++		sound-dai = <&tdmif_c>;
++		dai-format = "i2s";
++		dai-tdm-slot-tx-mask-0 = <1 1>;
++
++		codec {
++			sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
++		};
++	};
++
++	dai-link-z {
++		sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
++
++		codec {
++			sound-dai = <&hdmi_tx>;
++		};
++	};
++};
+diff --git a/include/dt-bindings/sound/meson-g12a-tohdmitx.h b/include/dt-bindings/sound/meson-g12a-tohdmitx.h
+new file mode 100644
+index 000000000000..c5e1f48d30d0
+--- /dev/null
++++ b/include/dt-bindings/sound/meson-g12a-tohdmitx.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __DT_MESON_G12A_TOHDMITX_H
++#define __DT_MESON_G12A_TOHDMITX_H
++
++#define TOHDMITX_I2S_IN_A	0
++#define TOHDMITX_I2S_IN_B	1
++#define TOHDMITX_I2S_IN_C	2
++#define TOHDMITX_I2S_OUT	3
++#define TOHDMITX_SPDIF_IN_A	4
++#define TOHDMITX_SPDIF_IN_B	5
++#define TOHDMITX_SPDIF_OUT	6
++
++#endif /* __DT_MESON_G12A_TOHDMITX_H */
 -- 
 2.20.1
 
