@@ -2,55 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A301FCF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61551FD53
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 03:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfEPBqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 May 2019 21:46:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfEOXyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 May 2019 19:54:21 -0400
-Subject: Re: [GIT PULL] ktest: Updates for 5.2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557964216;
-        bh=Oi6pljO7qro9G22/ILfgQPC40WJKRUY6nGH93SqfQqQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Mz3KQNTuc9Qg+df9b3fMIOfTByoLMorAKrK5/Hh7S2sipKM8ZRgjhhuBDZbbgYmf3
-         mz9PMb1LdBY5FoiLrnRVdebvl9IHEAKVpvfxdBEEwBUYy0qNy8rTj90DQX7fhx/5Ib
-         e5qS3O1QF23ry7FGfUNJjkkS9E6kgd3sFDM6Y9o4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190515135602.2a6e6012@oasis.local.home>
-References: <20190515135602.2a6e6012@oasis.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190515135602.2a6e6012@oasis.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
- ktest-v5.2
-X-PR-Tracked-Commit-Id: d20f6b41b7c2715b3d900f2da02029dbc14cd60a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b06ed1e7a2fa9b636f368a9e97c3c8877623f8b2
-Message-Id: <155796421651.28278.7215838280159174377.pr-tracker-bot@kernel.org>
-Date:   Wed, 15 May 2019 23:50:16 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "John Warthog9 Hawley" <warthog9@kernel.org>
+        id S1727327AbfEPBq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 May 2019 21:46:26 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:33050 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfEPAGK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 May 2019 20:06:10 -0400
+Received: by mail-oi1-f172.google.com with SMTP id m204so1211539oib.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 May 2019 17:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=0sh2UsByjRLANJVfg34Xwvsd0MFYNc105tKEUP8O1rU=;
+        b=t/6ieGbP2moQ4DomPsZ+RRywuPL3Wbq45QXsaH688QBKmc7oDJ1FAgfntRPDerTkr0
+         B5dATTpwfcAfKK+4gpamM6gs23Umg/83i1eKrIqhMN6crLTENvGX5ONFCugZnz1xxXXG
+         OL8JFmNGX38Gnqhz4UTcyocFMVtXSBmHeFQdZGScAU2OprhO/MFVfOZhkgbE1E3QBwE8
+         e0v1Isogrz2G0Kmk3jwVr4Cc9WgeiRjLpmeacB3devbCAd+PIv2BJ45IR4wXZU02kXUu
+         15PMm7esKMEfA2CznYssIhKN+L4CM1Nv7Td40K2BAhMgIImki3dICH3Lmc7hxvl/yBbY
+         Jhhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=0sh2UsByjRLANJVfg34Xwvsd0MFYNc105tKEUP8O1rU=;
+        b=koXQcnMYQX/sS/zYh2LTSZzEK6Y3JMoQ6TNsbBUCXCdy3q2a0aAGwGH83SKTwlGQw6
+         wm5YWo8V9Ikd5gTyanaZPmaPG4i3Y75pQeNYznyi6fPjihjqSFzkh2DBaXuqIFo2/R/A
+         ioKMviozoucfY9aBxVCgRgAuihRtf/wH0MaiPt73Xm+syipS6ZVZ/+C4wBgtuCHXSdg4
+         ZbPFQeJc8LG7lUE9caQnIUAi79LXIRDcu3n4Bju7AxKlmbOFqHuCA9UhuyEfFumruKpU
+         mzj+CqqnGzOKmQj4u9dcMvQjJcAWxQUqQEvi0AM5K7kv4aK4BJtt+WTnMSNTWPP/wweN
+         c2PQ==
+X-Gm-Message-State: APjAAAVxYpOAogthJHutyPYQmLzm3KSzAMmY8OCeBreF5PfxJ27iaYoV
+        u7kPXKCCGfimVaoKCoTD9kATmiO77xSil30NmGCYVYudaZ4=
+X-Google-Smtp-Source: APXvYqy5GxTivc+0J2t+V+9MNN3bDq6Dh1ZdsH4nxzQwx1BRJ/lX37anMupt/b2FQBOfFsn/1FIvqGLdDxBy5z8M25k=
+X-Received: by 2002:aca:ab07:: with SMTP id u7mr4282661oie.73.1557965169384;
+ Wed, 15 May 2019 17:06:09 -0700 (PDT)
+MIME-Version: 1.0
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 15 May 2019 17:05:58 -0700
+Message-ID: <CAPcyv4iXv7Jh4rjO9XQAFpeCJEZ4-4nvb46nZyQP554uLNbOyg@mail.gmail.com>
+Subject: [GIT PULL] libnvdimm fixes for v5.2-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 15 May 2019 13:56:02 -0400:
+Hi Linus, please pull from:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v5.2
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/libnvdimm-fixes-5.2-rc1
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b06ed1e7a2fa9b636f368a9e97c3c8877623f8b2
+...to receive just a small collection of fixes this time around. The
+new virtio-pmem driver is nearly ready, but some last minute
+device-mapper acks and virtio questions made it prudent to await v5.3.
+Other major topics that were brewing on the linux-nvdimm mailing list
+like sub-section hotplug, and other devm_memremap_pages() reworks will
+go upstream through Andrew's tree.
 
-Thank you!
+These have seen multiple -next releases with no reported issues.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+---
+
+The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
+
+  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/libnvdimm-fixes-5.2-rc1
+
+for you to fetch changes up to 67476656febd7ec5f1fe1aeec3c441fcf53b1e45:
+
+  drivers/dax: Allow to include DEV_DAX_PMEM as builtin (2019-05-07
+07:48:06 -0700)
+
+----------------------------------------------------------------
+libnvdimm fixes 5.2-rc1
+
+* Fix a long standing namespace label corruption scenario when
+  re-provisioning capacity for a namespace.
+
+* Restore the ability of the dax_pmem module to be built-in.
+
+* Harden the build for the 'nfit_test' unit test modules so that the
+  userspace test harness can ensure all required test modules are
+  available.
+
+----------------------------------------------------------------
+Aneesh Kumar K.V (1):
+      drivers/dax: Allow to include DEV_DAX_PMEM as builtin
+
+Dan Williams (1):
+      libnvdimm/namespace: Fix label tracking error
+
+Vishal Verma (2):
+      dax/pmem: Fix whitespace in dax_pmem
+      tools/testing/nvdimm: add watermarks for dax_pmem* modules
+
+ drivers/dax/Kconfig                         |  3 +--
+ drivers/dax/pmem/core.c                     |  6 +++---
+ drivers/nvdimm/label.c                      | 29 ++++++++++++++++-------------
+ drivers/nvdimm/namespace_devs.c             | 15 +++++++++++++++
+ drivers/nvdimm/nd.h                         |  4 ++++
+ tools/testing/nvdimm/Kbuild                 |  3 +++
+ tools/testing/nvdimm/dax_pmem_compat_test.c |  8 ++++++++
+ tools/testing/nvdimm/dax_pmem_core_test.c   |  8 ++++++++
+ tools/testing/nvdimm/dax_pmem_test.c        |  8 ++++++++
+ tools/testing/nvdimm/test/nfit.c            |  3 +++
+ tools/testing/nvdimm/watermark.h            |  3 +++
+ 11 files changed, 72 insertions(+), 18 deletions(-)
+ create mode 100644 tools/testing/nvdimm/dax_pmem_compat_test.c
+ create mode 100644 tools/testing/nvdimm/dax_pmem_core_test.c
+ create mode 100644 tools/testing/nvdimm/dax_pmem_test.c
