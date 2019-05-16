@@ -2,74 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB28020B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C9620B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfEPPwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:52:05 -0400
-Received: from mga14.intel.com ([192.55.52.115]:55405 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbfEPPwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:52:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 08:52:03 -0700
-X-ExtLoop1: 1
-Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
-  by orsmga005.jf.intel.com with ESMTP; 16 May 2019 08:52:02 -0700
-Date:   Thu, 16 May 2019 08:52:02 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@suse.de" <bp@suse.de>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 5/6] x86/MCE: Save MCA control bits that get set in
- hardware
-Message-ID: <20190516155202.GA11517@agluck-desk>
-References: <20190430203206.104163-1-Yazen.Ghannam@amd.com>
- <20190430203206.104163-6-Yazen.Ghannam@amd.com>
+        id S1726491AbfEPPxz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 May 2019 11:53:55 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40346 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfEPPxz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 11:53:55 -0400
+Received: by mail-qk1-f196.google.com with SMTP id q197so2564427qke.7
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 08:53:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JQI/WU1c4eX4Bc95K/7Uz+e1kJGO+JQuZlvUeSbbPGc=;
+        b=P1036jmKbqm/AJyk+/tVpMqLuyrp4uLjX7FVpjOsOuKkAwDkxuiRNznB0shzilRP7r
+         D4us/1t2NSsJugSSGfpAVazsx0tO1gPQlLvUNq9UtY2lo7jUGgHBhVMWsQBwidBpEp3S
+         WAFkNo/A3BybRjnOcfXcxHS1FV7cjrWeq+i6yP2hpAA51sfimpkHPtqHpWeGu/Fa7KDr
+         EM+4CznuB6xOHXSYtfuPYlRXR+5Ms/Gemn0rgEFJEALizzcacYGuPW58t94XVkFo5SOM
+         u1uI3A6/xrAyciOH+qgnyQuYEXvH6NIt6eprzAFyevTYRAljgbSfPQfp16Q4bFx8/xVQ
+         E6xQ==
+X-Gm-Message-State: APjAAAW/2+RoOAu7pluCrb0pCLw6lKE0DvFsdP91Gt6IfuE2n6J24Nbe
+        fUFNkiOOzui25IeXPilv+SIR4vwo0fYSz3hOiNkUH7mNd6Q=
+X-Google-Smtp-Source: APXvYqxGacujl3xkC+1CQj9ZgVTewrIKspT5Krb7d0/OwrCP8EKuEx+9fNaCY33lbb5MOJouXqule4hfYCGQTcBKDzk=
+X-Received: by 2002:a05:620a:1085:: with SMTP id g5mr23133232qkk.182.1558022034360;
+ Thu, 16 May 2019 08:53:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430203206.104163-6-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190516064304.24057-1-olof@lixom.net> <20190516064304.24057-2-olof@lixom.net>
+ <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 16 May 2019 17:53:37 +0200
+Message-ID: <CAK8P3a27zgq3c_iWHVfypAc-hLag06Bs=Q2D7bn4i4nVfPQSyw@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] ARM: SoC platform updates
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        ARM SoC <arm@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 08:32:20PM +0000, Ghannam, Yazen wrote:
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 986de830f26e..551366c155ef 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -1567,10 +1567,13 @@ static void __mcheck_cpu_init_clear_banks(void)
->  	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
->  		struct mce_bank *b = &mce_banks[i];
->  
-> -		if (!b->init)
-> -			continue;
-> -		wrmsrl(msr_ops.ctl(i), b->ctl);
-> -		wrmsrl(msr_ops.status(i), 0);
-> +		if (b->init) {
-> +			wrmsrl(msr_ops.ctl(i), b->ctl);
-> +			wrmsrl(msr_ops.status(i), 0);
-> +		}
-> +
-> +		/* Save bits set in hardware. */
-> +		rdmsrl(msr_ops.ctl(i), b->ctl);
->  	}
->  }
+On Thu, May 16, 2019 at 5:34 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, May 15, 2019 at 11:43 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > SoC updates, mostly refactorings and cleanups of old legacy platforms.
+> > Major themes this release:
+>
+> Hmm. This brings in a new warning:
+>
+>   drivers/clocksource/timer-ixp4xx.c:78:20: warning:
+> ‘ixp4xx_read_sched_clock’ defined but not used [-Wunused-function]
+>
+> because that drivers is enabled for build testing, but that function
+> is only used under
+>
+>   #ifdef CONFIG_ARM
+>         sched_clock_register(ixp4xx_read_sched_clock, 32, timer_freq);
+>   #endif
+>
+> It's not clear why that #ifdef is there. This driver only builds
+> non-ARM when COMPILE_TEST is enabled, and that #ifdef actually breaks
+> that build test.
+>
+> I'm going to remove that #ifdef in my merge, because I do *not* want
+> to see new warnings, and it doesn't seem to make any sense.
+>
+> Maybe that's the wrong resolution, please holler and let me know if
+> you want something else.
 
-This looks like it will be a problem for Intel CPUs. If
-we take a CPU offline, and then bring it back again, we
-ues "b->ctl" to reinitialize the register in mce_reenable_cpu().
+As far as I can tell, that is the best fix, thanks for the cleanup!
 
-But Intel SDM says at the end of section "15.3.2.1 IA32_MCi_CTL_MSRs"
-
-	"P6 family processors only allow the writing of all 1s or all
-	0s to the IA32_MCi_CTL MSR."
-
--Tony
+      Arnd
