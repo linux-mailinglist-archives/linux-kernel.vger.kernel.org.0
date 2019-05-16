@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC9020BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD37320C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfEPP6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:58:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42342 "EHLO
+        id S1728062AbfEPQDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:03:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42570 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726461AbfEPP6k (ORCPT
+        by vger.kernel.org with ESMTP id S1726757AbfEPP6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:40 -0400
+        Thu, 16 May 2019 11:58:44 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0006yi-Rv; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImD-0006yn-6T; Thu, 16 May 2019 16:58:37 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImC-0001MQ-AC; Thu, 16 May 2019 16:58:36 +0100
+        id 1hRImC-0001My-Ht; Thu, 16 May 2019 16:58:36 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,24 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Borislav Petkov" <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>
+        mgorman@suse.de, mpe@ellerman.id.au,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>, catalin.marinas@arm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, paulus@samba.org,
+        benh@kernel.crashing.org, "Anton Blanchard" <anton@samba.org>,
+        will.deacon@arm.com, davem@davemloft.net, mmarek@suse.cz,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        jbaron@akamai.com, linux@arm.linux.org.uk, ralf@linux-mips.org,
+        schwidefsky@de.ibm.com, rostedt@goodmis.org,
+        linuxppc-dev@lists.ozlabs.org, heiko.carstens@de.ibm.com,
+        liuj97@gmail.com
 Date:   Thu, 16 May 2019 16:55:32 +0100
-Message-ID: <lsq.1558022132.707518560@decadent.org.uk>
+Message-ID: <lsq.1558022132.722723753@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 01/86] x86/cpufeature: Add bug flags to /proc/cpuinfo
+Subject: [PATCH 3.16 08/86] jump_label: Allow asm/jump_label.h to be
+ included in assembly
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,144 +58,208 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Anton Blanchard <anton@samba.org>
 
-commit 80a208bd3948aceddf0429bd9f9b4cd858d526df upstream.
+commit 55dd0df781e58ec23d218376ea4a676e7362a98c upstream.
 
-Dump the flags which denote we have detected and/or have applied bug
-workarounds to the CPU we're executing on, in a similar manner to the
-feature flags.
+Wrap asm/jump_label.h for all archs with #ifndef __ASSEMBLY__.
+Since these are kernel only headers, we don't need #ifdef
+__KERNEL__ so can simplify things a bit.
 
-The advantage is that those are not accumulating over time like the CPU
-features.
+If an architecture wants to use jump labels in assembly, it
+will still need to define a macro to create the __jump_table
+entries (see ARCH_STATIC_BRANCH in the powerpc asm/jump_label.h
+for an example).
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: http://lkml.kernel.org/r/1403609105-8332-2-git-send-email-bp@alien8.de
-Signed-off-by: H. Peter Anvin <hpa@zytor.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Anton Blanchard <anton@samba.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: benh@kernel.crashing.org
+Cc: catalin.marinas@arm.com
+Cc: davem@davemloft.net
+Cc: heiko.carstens@de.ibm.com
+Cc: jbaron@akamai.com
+Cc: linux@arm.linux.org.uk
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: liuj97@gmail.com
+Cc: mgorman@suse.de
+Cc: mmarek@suse.cz
+Cc: mpe@ellerman.id.au
+Cc: paulus@samba.org
+Cc: ralf@linux-mips.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
+Cc: will.deacon@arm.com
+Link: http://lkml.kernel.org/r/1428551492-21977-1-git-send-email-anton@samba.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/cpufeature.h | 10 ++++--
- arch/x86/kernel/cpu/mkcapflags.sh | 51 ++++++++++++++++++++++---------
- arch/x86/kernel/cpu/proc.c        |  8 +++++
- 3 files changed, 53 insertions(+), 16 deletions(-)
+ arch/arm/include/asm/jump_label.h   | 5 ++---
+ arch/arm64/include/asm/jump_label.h | 8 ++++----
+ arch/mips/include/asm/jump_label.h  | 7 +++----
+ arch/s390/include/asm/jump_label.h  | 3 +++
+ arch/sparc/include/asm/jump_label.h | 5 ++---
+ arch/x86/include/asm/jump_label.h   | 5 ++---
+ 6 files changed, 16 insertions(+), 17 deletions(-)
 
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -268,8 +268,8 @@
- #define X86_BUG_F00F		X86_BUG(0) /* Intel F00F */
- #define X86_BUG_FDIV		X86_BUG(1) /* FPU FDIV */
- #define X86_BUG_COMA		X86_BUG(2) /* Cyrix 6x86 coma */
--#define X86_BUG_AMD_TLB_MMATCH	X86_BUG(3) /* AMD Erratum 383 */
--#define X86_BUG_AMD_APIC_C1E	X86_BUG(4) /* AMD Erratum 400 */
-+#define X86_BUG_AMD_TLB_MMATCH	X86_BUG(3) /* "tlb_mmatch" AMD Erratum 383 */
-+#define X86_BUG_AMD_APIC_C1E	X86_BUG(4) /* "apic_c1e" AMD Erratum 400 */
- #define X86_BUG_CPU_MELTDOWN	X86_BUG(5) /* CPU is affected by meltdown attack and needs kernel page table isolation */
- #define X86_BUG_SPECTRE_V1	X86_BUG(6) /* CPU is affected by Spectre variant 1 attack with conditional branches */
- #define X86_BUG_SPECTRE_V2	X86_BUG(7) /* CPU is affected by Spectre variant 2 attack with indirect branches */
-@@ -284,6 +284,12 @@
- extern const char * const x86_cap_flags[NCAPINTS*32];
- extern const char * const x86_power_flags[32];
+--- a/arch/arm/include/asm/jump_label.h
++++ b/arch/arm/include/asm/jump_label.h
+@@ -1,7 +1,7 @@
+ #ifndef _ASM_ARM_JUMP_LABEL_H
+ #define _ASM_ARM_JUMP_LABEL_H
  
-+/*
-+ * In order to save room, we index into this array by doing
-+ * X86_BUG_<name> - NCAPINTS*32.
-+ */
-+extern const char * const x86_bug_flags[NBUGINTS*32];
-+
- #define test_cpu_cap(c, bit)						\
- 	 test_bit(bit, (unsigned long *)((c)->x86_capability))
+-#ifdef __KERNEL__
++#ifndef __ASSEMBLY__
  
---- a/arch/x86/kernel/cpu/mkcapflags.sh
-+++ b/arch/x86/kernel/cpu/mkcapflags.sh
-@@ -1,23 +1,25 @@
- #!/bin/sh
- #
--# Generate the x86_cap_flags[] array from include/asm/cpufeature.h
-+# Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeature.h
- #
+ #include <linux/types.h>
  
- IN=$1
- OUT=$2
+@@ -27,8 +27,6 @@ l_yes:
+ 	return true;
+ }
  
--TABS="$(printf '\t\t\t\t\t')"
--trap 'rm "$OUT"' EXIT
-+function dump_array()
-+{
-+	ARRAY=$1
-+	SIZE=$2
-+	PFX=$3
-+	POSTFIX=$4
+-#endif /* __KERNEL__ */
+-
+ typedef u32 jump_label_t;
  
--(
--	echo "#ifndef _ASM_X86_CPUFEATURE_H"
--	echo "#include <asm/cpufeature.h>"
--	echo "#endif"
--	echo ""
--	echo "const char * const x86_cap_flags[NCAPINTS*32] = {"
-+	PFX_SZ=$(echo $PFX | wc -c)
-+	TABS="$(printf '\t\t\t\t\t')"
-+
-+	echo "const char * const $ARRAY[$SIZE] = {"
+ struct jump_entry {
+@@ -37,4 +35,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
  
--	# Iterate through any input lines starting with #define X86_FEATURE_
--	sed -n -e 's/\t/ /g' -e 's/^ *# *define *X86_FEATURE_//p' $IN |
-+	# Iterate through any input lines starting with #define $PFX
-+	sed -n -e 's/\t/ /g' -e "s/^ *# *define *$PFX//p" $IN |
- 	while read i
- 	do
- 		# Name is everything up to the first whitespace
-@@ -31,11 +33,32 @@ trap 'rm "$OUT"' EXIT
- 		# Name is uppercase, VALUE is all lowercase
- 		VALUE="$(echo "$VALUE" | tr A-Z a-z)"
++#endif  /* __ASSEMBLY__ */
+ #endif
+--- a/arch/arm64/include/asm/jump_label.h
++++ b/arch/arm64/include/asm/jump_label.h
+@@ -18,11 +18,12 @@
+  */
+ #ifndef __ASM_JUMP_LABEL_H
+ #define __ASM_JUMP_LABEL_H
++
++#ifndef __ASSEMBLY__
++
+ #include <linux/types.h>
+ #include <asm/insn.h>
  
--		TABCOUNT=$(( ( 5*8 - 14 - $(echo "$NAME" | wc -c) ) / 8 ))
--		printf "\t[%s]%.*s = %s,\n" \
--			"X86_FEATURE_$NAME" "$TABCOUNT" "$TABS" "$VALUE"
-+        if [ -n "$POSTFIX" ]; then
-+            T=$(( $PFX_SZ + $(echo $POSTFIX | wc -c) + 2 ))
-+	        TABS="$(printf '\t\t\t\t\t\t')"
-+		    TABCOUNT=$(( ( 6*8 - ($T + 1) - $(echo "$NAME" | wc -c) ) / 8 ))
-+		    printf "\t[%s - %s]%.*s = %s,\n" "$PFX$NAME" "$POSTFIX" "$TABCOUNT" "$TABS" "$VALUE"
-+        else
-+		    TABCOUNT=$(( ( 5*8 - ($PFX_SZ + 1) - $(echo "$NAME" | wc -c) ) / 8 ))
-+            printf "\t[%s]%.*s = %s,\n" "$PFX$NAME" "$TABCOUNT" "$TABS" "$VALUE"
-+        fi
- 	done
- 	echo "};"
-+}
-+
-+trap 'rm "$OUT"' EXIT
-+
-+(
-+	echo "#ifndef _ASM_X86_CPUFEATURE_H"
-+	echo "#include <asm/cpufeature.h>"
-+	echo "#endif"
-+	echo ""
-+
-+	dump_array "x86_cap_flags" "NCAPINTS*32" "X86_FEATURE_" ""
-+	echo ""
-+
-+	dump_array "x86_bug_flags" "NBUGINTS*32" "X86_BUG_" "NCAPINTS*32"
-+
- ) > $OUT
+-#ifdef __KERNEL__
+-
+ #define JUMP_LABEL_NOP_SIZE		AARCH64_INSN_SIZE
  
- trap - EXIT
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -97,6 +97,14 @@ static int show_cpuinfo(struct seq_file
- 		if (cpu_has(c, i) && x86_cap_flags[i] != NULL)
- 			seq_printf(m, " %s", x86_cap_flags[i]);
+ static __always_inline bool arch_static_branch(struct static_key *key)
+@@ -39,8 +40,6 @@ l_yes:
+ 	return true;
+ }
  
-+	seq_printf(m, "\nbugs\t\t:");
-+	for (i = 0; i < 32*NBUGINTS; i++) {
-+		unsigned int bug_bit = 32*NCAPINTS + i;
+-#endif /* __KERNEL__ */
+-
+ typedef u64 jump_label_t;
+ 
+ struct jump_entry {
+@@ -49,4 +48,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
+ 
++#endif  /* __ASSEMBLY__ */
+ #endif	/* __ASM_JUMP_LABEL_H */
+--- a/arch/mips/include/asm/jump_label.h
++++ b/arch/mips/include/asm/jump_label.h
+@@ -8,9 +8,9 @@
+ #ifndef _ASM_MIPS_JUMP_LABEL_H
+ #define _ASM_MIPS_JUMP_LABEL_H
+ 
+-#include <linux/types.h>
++#ifndef __ASSEMBLY__
+ 
+-#ifdef __KERNEL__
++#include <linux/types.h>
+ 
+ #define JUMP_LABEL_NOP_SIZE 4
+ 
+@@ -39,8 +39,6 @@ l_yes:
+ 	return true;
+ }
+ 
+-#endif /* __KERNEL__ */
+-
+ #ifdef CONFIG_64BIT
+ typedef u64 jump_label_t;
+ #else
+@@ -53,4 +51,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
+ 
++#endif  /* __ASSEMBLY__ */
+ #endif /* _ASM_MIPS_JUMP_LABEL_H */
+--- a/arch/s390/include/asm/jump_label.h
++++ b/arch/s390/include/asm/jump_label.h
+@@ -1,6 +1,8 @@
+ #ifndef _ASM_S390_JUMP_LABEL_H
+ #define _ASM_S390_JUMP_LABEL_H
+ 
++#ifndef __ASSEMBLY__
 +
-+		if (cpu_has_bug(c, bug_bit) && x86_bug_flags[i])
-+			seq_printf(m, " %s", x86_bug_flags[i]);
-+	}
-+
- 	seq_printf(m, "\nbogomips\t: %lu.%02lu\n",
- 		   c->loops_per_jiffy/(500000/HZ),
- 		   (c->loops_per_jiffy/(5000/HZ)) % 100);
+ #include <linux/types.h>
+ 
+ #define JUMP_LABEL_NOP_SIZE 6
+@@ -39,4 +41,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
+ 
++#endif  /* __ASSEMBLY__ */
+ #endif
+--- a/arch/sparc/include/asm/jump_label.h
++++ b/arch/sparc/include/asm/jump_label.h
+@@ -1,7 +1,7 @@
+ #ifndef _ASM_SPARC_JUMP_LABEL_H
+ #define _ASM_SPARC_JUMP_LABEL_H
+ 
+-#ifdef __KERNEL__
++#ifndef __ASSEMBLY__
+ 
+ #include <linux/types.h>
+ 
+@@ -22,8 +22,6 @@ l_yes:
+ 	return true;
+ }
+ 
+-#endif /* __KERNEL__ */
+-
+ typedef u32 jump_label_t;
+ 
+ struct jump_entry {
+@@ -32,4 +30,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
+ 
++#endif  /* __ASSEMBLY__ */
+ #endif
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -1,7 +1,7 @@
+ #ifndef _ASM_X86_JUMP_LABEL_H
+ #define _ASM_X86_JUMP_LABEL_H
+ 
+-#ifdef __KERNEL__
++#ifndef __ASSEMBLY__
+ 
+ #include <linux/stringify.h>
+ #include <linux/types.h>
+@@ -30,8 +30,6 @@ l_yes:
+ 	return true;
+ }
+ 
+-#endif /* __KERNEL__ */
+-
+ #ifdef CONFIG_X86_64
+ typedef u64 jump_label_t;
+ #else
+@@ -44,4 +42,5 @@ struct jump_entry {
+ 	jump_label_t key;
+ };
+ 
++#endif  /* __ASSEMBLY__ */
+ #endif
 
