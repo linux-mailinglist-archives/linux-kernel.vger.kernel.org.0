@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE25E20BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F6A20C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbfEPP6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:58:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42362 "EHLO
+        id S1728054AbfEPQDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:03:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42638 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726523AbfEPP6l (ORCPT
+        by vger.kernel.org with ESMTP id S1726853AbfEPP6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:58:41 -0400
+        Thu, 16 May 2019 11:58:44 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0006zQ-7d; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImH-0006zl-EE; Thu, 16 May 2019 16:58:41 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001Ob-BZ; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImE-0001R4-Bb; Thu, 16 May 2019 16:58:38 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,33 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        bp@suse.de, "Thomas Gleixner" <tglx@linutronix.de>,
-        konrad.wilk@oracle.com,
-        "Dominik Brodowski" <linux@dominikbrodowski.net>
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Jiri Kosina" <jkosina@suse.cz>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Casey Schaufler" <casey.schaufler@intel.com>,
+        "Waiman Long" <longman9394@gmail.com>,
+        "Dave Stewart" <david.c.stewart@intel.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Jon Masters" <jcm@redhat.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Arjan van de Ven" <arjan@linux.intel.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.174232137@decadent.org.uk>
+Message-ID: <lsq.1558022133.915450840@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 28/86] x86/speculation: Simplify the CPU bug
- detection logic
+Subject: [PATCH 3.16 59/86] x86/speculation: Provide IBPB always command
+ line options
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,82 +67,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 8ecc4979b1bd9c94168e6fc92960033b7a951336 upstream.
+commit 55a974021ec952ee460dc31ca08722158639de72 upstream.
 
-Only CPUs which speculate can speculate. Therefore, it seems prudent
-to test for cpu_no_speculation first and only then determine whether
-a specific speculating CPU is susceptible to store bypass speculation.
-This is underlined by all CPUs currently listed in cpu_no_speculation
-were present in cpu_no_spec_store_bypass as well.
+Provide the possibility to enable IBPB always in combination with 'prctl'
+and 'seccomp'.
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Add the extra command line options and rework the IBPB selection to
+evaluate the command instead of the mode selected by the STIPB switch case.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@suse.de
-Cc: konrad.wilk@oracle.com
-Link: https://lkml.kernel.org/r/20180522090539.GA24668@light.dominikbrodowski.net
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185006.144047038@linutronix.de
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/common.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ Documentation/kernel-parameters.txt | 12 +++++++
+ arch/x86/kernel/cpu/bugs.c          | 34 +++++++++++++------
+ 2 files changed, 35 insertions(+), 11 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -825,12 +825,8 @@ static const __initconst struct x86_cpu_
- 	{}
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -3223,11 +3223,23 @@ bytes respectively. Such letter suffixes
+ 				  per thread.  The mitigation control state
+ 				  is inherited on fork.
+ 
++			prctl,ibpb
++				- Like "prctl" above, but only STIBP is
++				  controlled per thread. IBPB is issued
++				  always when switching between different user
++				  space processes.
++
+ 			seccomp
+ 				- Same as "prctl" above, but all seccomp
+ 				  threads will enable the mitigation unless
+ 				  they explicitly opt out.
+ 
++			seccomp,ibpb
++				- Like "seccomp" above, but only STIBP is
++				  controlled per thread. IBPB is issued
++				  always when switching between different
++				  user space processes.
++
+ 			auto    - Kernel selects the mitigation depending on
+ 				  the available CPU features and vulnerability.
+ 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -308,7 +308,9 @@ enum spectre_v2_user_cmd {
+ 	SPECTRE_V2_USER_CMD_AUTO,
+ 	SPECTRE_V2_USER_CMD_FORCE,
+ 	SPECTRE_V2_USER_CMD_PRCTL,
++	SPECTRE_V2_USER_CMD_PRCTL_IBPB,
+ 	SPECTRE_V2_USER_CMD_SECCOMP,
++	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
  };
  
-+/* Only list CPUs which speculate but are non susceptible to SSB */
- static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
-@@ -838,14 +834,10 @@ static const __initconst struct x86_cpu_
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
--	{ X86_VENDOR_CENTAUR,	5,					},
--	{ X86_VENDOR_INTEL,	5,					},
--	{ X86_VENDOR_NSC,	5,					},
- 	{ X86_VENDOR_AMD,	0x12,					},
- 	{ X86_VENDOR_AMD,	0x11,					},
- 	{ X86_VENDOR_AMD,	0x10,					},
- 	{ X86_VENDOR_AMD,	0xf,					},
--	{ X86_VENDOR_ANY,	4,					},
- 	{}
+ static const char * const spectre_v2_user_strings[] = {
+@@ -323,11 +325,13 @@ static const struct {
+ 	enum spectre_v2_user_cmd	cmd;
+ 	bool				secure;
+ } v2_user_options[] __initdata = {
+-	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
+-	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
+-	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
+-	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
+-	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
++	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
++	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
++	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
++	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
++	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
++	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
++	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
  };
  
-@@ -868,6 +860,12 @@ static void __init cpu_set_bug_bits(stru
+ static void __init spec_v2_user_print_cond(const char *reason, bool secure)
+@@ -373,6 +377,7 @@ spectre_v2_user_select_mitigation(enum s
  {
- 	u64 ia32_cap = 0;
+ 	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
+ 	bool smt_possible = IS_ENABLED(CONFIG_SMP);
++	enum spectre_v2_user_cmd cmd;
  
-+	if (x86_match_cpu(cpu_no_speculation))
-+		return;
-+
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+
- 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
+ 		return;
+@@ -380,17 +385,20 @@ spectre_v2_user_select_mitigation(enum s
+ 	if (!IS_ENABLED(CONFIG_X86_HT))
+ 		smt_possible = false;
  
-@@ -876,12 +874,6 @@ static void __init cpu_set_bug_bits(stru
- 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+-	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
++	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
++	switch (cmd) {
+ 	case SPECTRE_V2_USER_CMD_NONE:
+ 		goto set_mode;
+ 	case SPECTRE_V2_USER_CMD_FORCE:
+ 		mode = SPECTRE_V2_USER_STRICT;
+ 		break;
+ 	case SPECTRE_V2_USER_CMD_PRCTL:
++	case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
+ 		mode = SPECTRE_V2_USER_PRCTL;
+ 		break;
+ 	case SPECTRE_V2_USER_CMD_AUTO:
+ 	case SPECTRE_V2_USER_CMD_SECCOMP:
++	case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
+ 		if (IS_ENABLED(CONFIG_SECCOMP))
+ 			mode = SPECTRE_V2_USER_SECCOMP;
+ 		else
+@@ -402,12 +410,15 @@ spectre_v2_user_select_mitigation(enum s
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
  
--	if (x86_match_cpu(cpu_no_speculation))
--		return;
--
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
--
- 	if (ia32_cap & ARCH_CAP_IBRS_ALL)
- 		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
+-		switch (mode) {
+-		case SPECTRE_V2_USER_STRICT:
++		switch (cmd) {
++		case SPECTRE_V2_USER_CMD_FORCE:
++		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
++		case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
+ 			static_branch_enable(&switch_mm_always_ibpb);
+ 			break;
+-		case SPECTRE_V2_USER_PRCTL:
+-		case SPECTRE_V2_USER_SECCOMP:
++		case SPECTRE_V2_USER_CMD_PRCTL:
++		case SPECTRE_V2_USER_CMD_AUTO:
++		case SPECTRE_V2_USER_CMD_SECCOMP:
+ 			static_branch_enable(&switch_mm_cond_ibpb);
+ 			break;
+ 		default:
+@@ -415,7 +426,8 @@ spectre_v2_user_select_mitigation(enum s
+ 		}
  
+ 		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
+-			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
++			static_key_enabled(&switch_mm_always_ibpb) ?
++			"always-on" : "conditional");
+ 	}
+ 
+ 	/* If enhanced IBRS is enabled no STIPB required */
 
