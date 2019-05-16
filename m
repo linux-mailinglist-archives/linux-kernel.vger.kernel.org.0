@@ -2,153 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 549CF20491
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4431520499
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 13:26:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfEPLWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 07:22:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52772 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbfEPLWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 07:22:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9074DF74C3;
-        Thu, 16 May 2019 11:22:23 +0000 (UTC)
-Received: from [10.36.117.217] (ovpn-117-217.ams2.redhat.com [10.36.117.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D6D75D72E;
-        Thu, 16 May 2019 11:22:21 +0000 (UTC)
-Subject: Re: [RFC PATCH 1/4] KVM: selftests: Guard struct kvm_vcpu_events with
- __KVM_HAVE_VCPU_EVENTS
-To:     Thomas Huth <thuth@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Andrew Jones <drjones@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <20190516111253.4494-1-thuth@redhat.com>
- <20190516111253.4494-2-thuth@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <0a526ee1-9880-e6d5-ac55-02dc2f2c8872@redhat.com>
-Date:   Thu, 16 May 2019 13:22:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190516111253.4494-2-thuth@redhat.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727337AbfEPLXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 07:23:01 -0400
+Received: from mail-eopbgr80070.outbound.protection.outlook.com ([40.107.8.70]:17873
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726923AbfEPLXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 07:23:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=itdevltd.onmicrosoft.com; s=selector1-itdev-co-uk;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d3csnKADdSUAt8TSJkqhYZZl184/FTfPNTd73qCyDRI=;
+ b=bkMTDLtYhMxqsHpiHNRY03ltmW5u6LL18YYzmdnaZRu47Ki2IhkruanLmuwfa9d29WNkFgVCt8AHtJ1PEIKMIKEVrND4BeOAU9mtkklQvakP/AoSTT4pBtLxg0jVQ1jKL1Ao2iApZkLqPBxlGGnVWgC7YHlYScbv+xHwN9ZyzoI=
+Received: from VI1PR08MB3168.eurprd08.prod.outlook.com (52.133.15.143) by
+ VI1PR08MB0413.eurprd08.prod.outlook.com (10.162.12.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Thu, 16 May 2019 11:22:56 +0000
+Received: from VI1PR08MB3168.eurprd08.prod.outlook.com
+ ([fe80::8e9:9487:4f0a:fdaf]) by VI1PR08MB3168.eurprd08.prod.outlook.com
+ ([fe80::8e9:9487:4f0a:fdaf%3]) with mapi id 15.20.1878.024; Thu, 16 May 2019
+ 11:22:56 +0000
+From:   Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+To:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+CC:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
+        Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Ojaswin Mujoo <ojaswin25111998@gmail.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] staging: vt6656: returns error code on
+ vnt_int_start_interrupt fail
+Thread-Topic: [PATCH] staging: vt6656: returns error code on
+ vnt_int_start_interrupt fail
+Thread-Index: AQHVC9m12V1LZttiK0yGWFHzOe/4XQ==
+Date:   Thu, 16 May 2019 11:22:56 +0000
+Message-ID: <20190516112243.14353-1-quentin.deslandes@itdev.co.uk>
+References: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20190516093046.1400-1-quentin.deslandes@itdev.co.uk>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 16 May 2019 11:22:23 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P193CA0125.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:85::30) To VI1PR08MB3168.eurprd08.prod.outlook.com
+ (2603:10a6:803:47::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=quentin.deslandes@itdev.co.uk; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [89.21.227.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 66243a98-9af8-4616-a81d-08d6d9f0d80e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:VI1PR08MB0413;
+x-ms-traffictypediagnostic: VI1PR08MB0413:
+x-microsoft-antispam-prvs: <VI1PR08MB0413B5FAF549F57948D1FD9CB30A0@VI1PR08MB0413.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:901;
+x-forefront-prvs: 0039C6E5C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39830400003)(366004)(346002)(136003)(396003)(376002)(189003)(199004)(316002)(7736002)(25786009)(36756003)(68736007)(76176011)(6486002)(6436002)(54906003)(52116002)(71190400001)(71200400001)(305945005)(99286004)(53936002)(2351001)(14454004)(256004)(14444005)(2501003)(8676002)(5640700003)(4326008)(74482002)(6512007)(44832011)(8936002)(73956011)(66476007)(66556008)(64756008)(66946007)(66446008)(102836004)(6916009)(26005)(186003)(386003)(6506007)(50226002)(1076003)(66066001)(3846002)(6116002)(2616005)(476003)(486006)(508600001)(86362001)(446003)(2906002)(5660300002)(81166006)(11346002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB0413;H:VI1PR08MB3168.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: itdev.co.uk does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YeDv3Tab2e8vKhAvU1KZALvj777N+HfMYiqCv105+Tgum6ekfoBAztP07V+pzt8grZExBx5FJsNi/Iknn0YmiyU3YtjUgi1hecCH0GVmbacC1jK6KMfP7w0baCJ2bWK92awpUqdoPJz29QBHgNYYxlFVaHBRzBLqPcYWrKTCDwrIkyWWUHI9ParvstjeHeNYKiePzOOEImYVOC6anGWZAH4wd/V26gvGxCayyXEqbMzsyQW8rZq7SFs/fS28/m/ii1UolLZsenEluJLGAq5wdhpsPH1wqBiDMesHVeGk9SVDp2hSmJ3uEAMP977xIrAIZdWp4oZmOHYPW1cm68extgZzoeAuq+Uof0B/T3eyQ64OVGokn0XlC/u9zM8Z1aMquNQ6awOoGOn47b/wkld2DIvgh6w75TScqyNJVT8zjn4=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: itdev.co.uk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66243a98-9af8-4616-a81d-08d6d9f0d80e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2019 11:22:56.5145
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2d2930c4-2251-45b4-ad79-3582c5f41740
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB0413
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.05.19 13:12, Thomas Huth wrote:
-> The struct kvm_vcpu_events code is only available on certain architectures
-> (arm, arm64 and x86). To be able to compile kvm_util.c also for other
-> architectures, we've got to fence the code with __KVM_HAVE_VCPU_EVENTS.
-> 
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  tools/testing/selftests/kvm/include/kvm_util.h | 2 ++
->  tools/testing/selftests/kvm/lib/kvm_util.c     | 2 ++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-> index 07b71ad9734a..1e46ab205038 100644
-> --- a/tools/testing/selftests/kvm/include/kvm_util.h
-> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
-> @@ -114,10 +114,12 @@ void vcpu_sregs_set(struct kvm_vm *vm, uint32_t vcpuid,
->  		    struct kvm_sregs *sregs);
->  int _vcpu_sregs_set(struct kvm_vm *vm, uint32_t vcpuid,
->  		    struct kvm_sregs *sregs);
-> +#ifdef __KVM_HAVE_VCPU_EVENTS
->  void vcpu_events_get(struct kvm_vm *vm, uint32_t vcpuid,
->  		     struct kvm_vcpu_events *events);
->  void vcpu_events_set(struct kvm_vm *vm, uint32_t vcpuid,
->  		     struct kvm_vcpu_events *events);
-> +#endif
->  
->  const char *exit_reason_str(unsigned int exit_reason);
->  
-> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-> index 4ca96b228e46..8d63ccb93e10 100644
-> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> @@ -1224,6 +1224,7 @@ void vcpu_regs_set(struct kvm_vm *vm, uint32_t vcpuid, struct kvm_regs *regs)
->  		ret, errno);
->  }
->  
-> +#ifdef __KVM_HAVE_VCPU_EVENTS
->  void vcpu_events_get(struct kvm_vm *vm, uint32_t vcpuid,
->  		     struct kvm_vcpu_events *events)
->  {
-> @@ -1249,6 +1250,7 @@ void vcpu_events_set(struct kvm_vm *vm, uint32_t vcpuid,
->  	TEST_ASSERT(ret == 0, "KVM_SET_VCPU_EVENTS, failed, rc: %i errno: %i",
->  		ret, errno);
->  }
-> +#endif
->  
->  /*
->   * VM VCPU System Regs Get
-> 
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-
-Thanks,
-
-David / dhildenb
+UmV0dXJucyBlcnJvciBjb2RlIGZyb20gJ3ZudF9pbnRfc3RhcnRfaW50ZXJydXB0KCknIHNvIHRo
+ZSBkZXZpY2UncyBwcml2YXRlDQpidWZmZXJzIHdpbGwgYmUgY29ycmVjdGx5IGZyZWVkIGFuZCAn
+c3RydWN0IGllZWU4MDIxMV9odycgc3RhcnQgZnVuY3Rpb24NCndpbGwgcmV0dXJuIGFuIGVycm9y
+IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6IFF1ZW50aW4gRGVzbGFuZGVzIDxxdWVudGluLmRlc2xh
+bmRlc0BpdGRldi5jby51az4NCi0tLQ0KdjI6IGluc3RlYWQgb2YgcmVtb3Zpbmcgc3RhdHVzIHZh
+cmlhYmxlLCByZXR1cm5zIGl0cyB2YWx1ZSB0byBjYWxsZXIgYW5kDQogICAgaGFuZGxlIGVycm9y
+IGluIGNhbGxlci4NCg0KIGRyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgICAgICB8ICA0ICsr
+Ky0NCiBkcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5oICAgICAgfCAgMiArLQ0KIGRyaXZlcnMv
+c3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyB8IDEyICsrKysrKysrKy0tLQ0KIDMgZmlsZXMgY2hh
+bmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMgYi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5j
+DQppbmRleCA1MDQ0MjRiMTlmY2YuLmYzZWUyMTk4ZTFiMyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
+c3RhZ2luZy92dDY2NTYvaW50LmMNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmMN
+CkBAIC0zOSw3ICszOSw3IEBAIHN0YXRpYyBjb25zdCB1OCBmYWxsYmFja19yYXRlMVs1XVs1XSA9
+IHsNCiAJe1JBVEVfNTRNLCBSQVRFXzU0TSwgUkFURV8zNk0sIFJBVEVfMThNLCBSQVRFXzE4TX0N
+CiB9Ow0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZudF9wcml2YXRl
+ICpwcml2KQ0KK2ludCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZhdGUg
+KnByaXYpDQogew0KIAl1bnNpZ25lZCBsb25nIGZsYWdzOw0KIAlpbnQgc3RhdHVzOw0KQEAgLTUx
+LDYgKzUxLDggQEAgdm9pZCB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChzdHJ1Y3Qgdm50X3ByaXZh
+dGUgKnByaXYpDQogCXN0YXR1cyA9IHZudF9zdGFydF9pbnRlcnJ1cHRfdXJiKHByaXYpOw0KIA0K
+IAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT5sb2NrLCBmbGFncyk7DQorDQorCXJldHVy
+biBzdGF0dXM7DQogfQ0KIA0KIHN0YXRpYyBpbnQgdm50X2ludF9yZXBvcnRfcmF0ZShzdHJ1Y3Qg
+dm50X3ByaXZhdGUgKnByaXYsIHU4IHBrdF9ubywgdTggdHNyKQ0KZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvc3RhZ2luZy92dDY2NTYvaW50LmggYi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L2ludC5oDQpp
+bmRleCA5ODdjNDU0ZTk5ZTkuLjhhNmQ2MDU2OWNlYiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3Rh
+Z2luZy92dDY2NTYvaW50LmgNCisrKyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaW50LmgNCkBA
+IC00MSw3ICs0MSw3IEBAIHN0cnVjdCB2bnRfaW50ZXJydXB0X2RhdGEgew0KIAl1OCBzd1syXTsN
+CiB9IF9fcGFja2VkOw0KIA0KLXZvaWQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZu
+dF9wcml2YXRlICpwcml2KTsNCitpbnQgdm50X2ludF9zdGFydF9pbnRlcnJ1cHQoc3RydWN0IHZu
+dF9wcml2YXRlICpwcml2KTsNCiB2b2lkIHZudF9pbnRfcHJvY2Vzc19kYXRhKHN0cnVjdCB2bnRf
+cHJpdmF0ZSAqcHJpdik7DQogDQogI2VuZGlmIC8qIF9fSU5UX0hfXyAqLw0KZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvbWFpbl91c2IuYyBiL2RyaXZlcnMvc3RhZ2luZy92dDY2
+NTYvbWFpbl91c2IuYw0KaW5kZXggY2NhZmNjMmM4N2FjLi43MWUxMGI5YWUyNTMgMTAwNjQ0DQot
+LS0gYS9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU2L21haW5fdXNiLmMNCisrKyBiL2RyaXZlcnMvc3Rh
+Z2luZy92dDY2NTYvbWFpbl91c2IuYw0KQEAgLTQ4Myw2ICs0ODMsNyBAQCBzdGF0aWMgdm9pZCB2
+bnRfdHhfODAyMTEoc3RydWN0IGllZWU4MDIxMV9odyAqaHcsDQogDQogc3RhdGljIGludCB2bnRf
+c3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQogew0KKwlpbnQgZXJyID0gMDsNCiAJc3Ry
+dWN0IHZudF9wcml2YXRlICpwcml2ID0gaHctPnByaXY7DQogDQogCXByaXYtPnJ4X2J1Zl9zeiA9
+IE1BWF9UT1RBTF9TSVpFX1dJVEhfQUxMX0hFQURFUlM7DQpAQCAtNDk2LDE1ICs0OTcsMjAgQEAg
+c3RhdGljIGludCB2bnRfc3RhcnQoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpDQogDQogCWlmICh2
+bnRfaW5pdF9yZWdpc3RlcnMocHJpdikgPT0gZmFsc2UpIHsNCiAJCWRldl9kYmcoJnByaXYtPnVz
+Yi0+ZGV2LCAiIGluaXQgcmVnaXN0ZXIgZmFpbFxuIik7DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJ
+Z290byBmcmVlX2FsbDsNCiAJfQ0KIA0KLQlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKQ0K
+KwlpZiAodm50X2tleV9pbml0X3RhYmxlKHByaXYpKSB7DQorCQllcnIgPSAtRU5PTUVNOw0KIAkJ
+Z290byBmcmVlX2FsbDsNCisJfQ0KIA0KIAlwcml2LT5pbnRfaW50ZXJ2YWwgPSAxOyAgLyogYklu
+dGVydmFsIGlzIHNldCB0byAxICovDQogDQotCXZudF9pbnRfc3RhcnRfaW50ZXJydXB0KHByaXYp
+Ow0KKwllcnIgPSB2bnRfaW50X3N0YXJ0X2ludGVycnVwdChwcml2KTsNCisJaWYgKGVycikNCisJ
+CWdvdG8gZnJlZV9hbGw7DQogDQogCWllZWU4MDIxMV93YWtlX3F1ZXVlcyhodyk7DQogDQpAQCAt
+NTE4LDcgKzUyNCw3IEBAIHN0YXRpYyBpbnQgdm50X3N0YXJ0KHN0cnVjdCBpZWVlODAyMTFfaHcg
+Kmh3KQ0KIAl1c2Jfa2lsbF91cmIocHJpdi0+aW50ZXJydXB0X3VyYik7DQogCXVzYl9mcmVlX3Vy
+Yihwcml2LT5pbnRlcnJ1cHRfdXJiKTsNCiANCi0JcmV0dXJuIC1FTk9NRU07DQorCXJldHVybiBl
+cnI7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIHZudF9zdG9wKHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3
+KQ0KLS0gDQoyLjE3LjENCg0K
