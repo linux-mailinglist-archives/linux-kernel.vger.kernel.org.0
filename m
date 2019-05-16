@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D8820C2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E9820C33
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfEPQCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 12:02:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42808 "EHLO
+        id S1727714AbfEPQCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:02:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42834 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726918AbfEPP6q (ORCPT
+        by vger.kernel.org with ESMTP id S1726968AbfEPP6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 16 May 2019 11:58:46 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImE-0006zd-Eh; Thu, 16 May 2019 16:58:38 +0100
+        id 1hRImE-0006zx-P0; Thu, 16 May 2019 16:58:38 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hRImD-0001Oz-Fs; Thu, 16 May 2019 16:58:37 +0100
+        id 1hRImD-0001Pc-Oj; Thu, 16 May 2019 16:58:37 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,21 +27,32 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "SchauflerCasey" <casey.schaufler@intel.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Arjan van de Ven" <arjan@linux.intel.com>,
         "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Casey Schaufler" <casey.schaufler@intel.com>,
+        "Waiman Long" <longman9394@gmail.com>,
+        "Dave Stewart" <david.c.stewart@intel.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Jon Masters" <jcm@redhat.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
         "Peter Zijlstra" <peterz@infradead.org>,
         "Jiri Kosina" <jkosina@suse.cz>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>
 Date:   Thu, 16 May 2019 16:55:33 +0100
-Message-ID: <lsq.1558022133.633578387@decadent.org.uk>
+Message-ID: <lsq.1558022133.87742119@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 33/86] x86/speculation: Propagate information about
- RSB filling mitigation to sysfs
+Subject: [PATCH 3.16 41/86] x86/Kconfig: Select SCHED_SMT if SMP enabled
 In-Reply-To: <lsq.1558022132.52852998@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,43 +66,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit bb4b3b7762735cdaba5a40fd94c9303d9ffa147a upstream.
+commit dbe733642e01dd108f71436aaea7b328cb28fd87 upstream.
 
-If spectrev2 mitigation has been enabled, RSB is filled on context switch
-in order to protect from various classes of spectrev2 attacks.
+CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
+have it configurable. The runtime overhead in the core scheduler code is
+minimal because the actual SMT scheduling parts are conditional on a static
+key.
 
-If this mitigation is enabled, say so in sysfs for spectrev2.
+This allows to expose the scheduler's SMT state static key to the
+speculation control code. Alternatively the scheduler's static key could be
+made always available when CONFIG_SMP is enabled, but that's just adding an
+unused static key to every other architecture for nothing.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438580.15880@cbobk.fhfr.pm
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20181125185004.337452245@linutronix.de
+[bwh: Backported to 3.16: CONFIG_SCHED_SMT depended on CONFG_X86_HT, but that
+ also follows CONFIG_SMP]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/Kconfig | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -841,10 +841,11 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -798,13 +798,7 @@ config NR_CPUS
+ 	  approximately eight kilobytes to the kernel image.
  
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 		return ret;
+ config SCHED_SMT
+-	bool "SMT (Hyperthreading) scheduler support"
+-	depends on X86_HT
+-	---help---
+-	  SMT scheduler support improves the CPU scheduler's decision making
+-	  when dealing with Intel Pentium 4 chips with HyperThreading at a
+-	  cost of slightly increased overhead in some places. If unsure say
+-	  N here.
++	def_bool y if SMP
  
+ config SCHED_MC
+ 	def_bool y
 
