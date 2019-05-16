@@ -2,80 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5081320BB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 17:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E32AC20BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 May 2019 18:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfEPP4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 11:56:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56958 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfEPP4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 11:56:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8xQGYMWEUvgEKQ9dnqz6HVEgkN3PnC4OsTTFftuaUkw=; b=rcILKcdTLzB+Hw4ficgrdCjKU
-        lDGe84tvh2rEsJHUFDlfK3hwv4VdKCBoth2YVcKMtYQ2O0eA6X9jx53ZV28pgA/ESXTwFgnbMggfv
-        fAOlqK/U2RdI2bLg/mbWR4+GaQVNFDncfyCcE1+9+6SgJbSc0pz4MgDsJudrIdOvpjheU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hRIjo-0006xQ-Kr; Thu, 16 May 2019 15:56:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 07392112929C; Thu, 16 May 2019 16:56:03 +0100 (BST)
-Date:   Thu, 16 May 2019 16:56:02 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] spi: spidev: Add dhcom-board to compatibility list
- [Klartext]
-Message-ID: <20190516155602.GH5598@sirena.org.uk>
-References: <kcis.7DC7E250415B4C2E9DA25490D6832213@DHPLMX01>
+        id S1727752AbfEPQAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 12:00:09 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:45226 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbfEPQAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 12:00:00 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 07E472064E;
+        Thu, 16 May 2019 17:59:59 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id ECB6920581;
+        Thu, 16 May 2019 17:59:58 +0200 (CEST)
+Subject: Re: [GIT PULL 1/4] ARM: SoC platform updates
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        arm-soc <arm@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190516064304.24057-1-olof@lixom.net>
+ <20190516064304.24057-2-olof@lixom.net>
+ <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <aad06de6-b85c-b549-5653-45f9c4ebb384@free.fr>
+Date:   Thu, 16 May 2019 17:59:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="N8ia4yKhAKKETby7"
-Content-Disposition: inline
-In-Reply-To: <kcis.7DC7E250415B4C2E9DA25490D6832213@DHPLMX01>
-X-Cookie: <ahzz_> i figured 17G oughta be enough.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu May 16 17:59:59 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16/05/2019 17:33, Linus Torvalds wrote:
 
---N8ia4yKhAKKETby7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Wed, May 15, 2019 at 11:43 PM Olof Johansson wrote:
+>>
+>> SoC updates, mostly refactorings and cleanups of old legacy platforms.
+>> Major themes this release:
+> 
+> Hmm. This brings in a new warning:
+> 
+>   drivers/clocksource/timer-ixp4xx.c:78:20: warning:
+> ‘ixp4xx_read_sched_clock’ defined but not used [-Wunused-function]
+> 
+> because that drivers is enabled for build testing, but that function
+> is only used under
+> 
+>   #ifdef CONFIG_ARM
+>         sched_clock_register(ixp4xx_read_sched_clock, 32, timer_freq);
+>   #endif
+> 
+> It's not clear why that #ifdef is there. This driver only builds
+> non-ARM when COMPILE_TEST is enabled, and that #ifdef actually breaks
+> that build test.
+> 
+> I'm going to remove that #ifdef in my merge, because I do *not* want
+> to see new warnings, and it doesn't seem to make any sense.
+> 
+> Maybe that's the wrong resolution, please holler and let me know if
+> you want something else.
 
-On Thu, May 16, 2019 at 12:48:10PM +0000, Christoph Niedermaier wrote:
+Hello BDFL,
 
-> You are right, it has something do to with encryption on our mailing server.
-> I am in contact with our IT department to fix this issue.
-> Should I resend the patch when this issue is fixed?
+Your email client did something strange by changing
 
-This is already the second time you sent it today, the other time didn't
-have this problem.
+	linux-arm-kernel@lists.infradead.org
+to
+	"linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>
 
---N8ia4yKhAKKETby7
-Content-Type: application/pgp-signature; name="signature.asc"
+which is odd  ;-)
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzdiBIACgkQJNaLcl1U
-h9AWxAf9HlPgqvZTVahRW3CfddQctwPCo7feSgJDs9NW7GSx/CRLWlNpAXj+Bi0Q
-TO03hjqaSgez+yU/ptkYZDIy7Xh+G6R2O8BZ0avQGT/fv9YNa98pjGj6MJaClb0q
-6xgsDauTMzvAScwgc1h8YRXfNvkjb258SjxmYFwA0JcZZAeXORd15ZuvLB7RXau+
-Yv00Ru97EXjxK0qHKr/NWs5QJ4jPaSBqPKqWtzNC2sUndNz7/eUr3C4rdsGTXBXH
-/sBYUU/t8XT33fEA+Bl7Rlxc09DqJWek+V8t/O4sOtezxgKPFrOdEFt4ManISbX5
-tRXLJayyjQHV61ZRG+CbObjgh/UrPw==
-=BvsO
------END PGP SIGNATURE-----
+As for your actual remark, I note that Olof has an arm/late branch
+(which I assume he plans to submit in a few days?) which contains
+the change you mention:
 
---N8ia4yKhAKKETby7--
+https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/log/?h=arm/late
+https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/?h=arm/late&id=5cb9de627e25421e2e2edaff6360c84d32cd3c02
+
+Regards.
