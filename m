@@ -2,70 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AAF21234
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 04:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DDFF2123C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 04:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfEQCpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 22:45:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60736 "EHLO mx1.redhat.com"
+        id S1727582AbfEQCqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 22:46:32 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45766 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfEQCpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 22:45:15 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 962F936883;
-        Fri, 17 May 2019 02:45:15 +0000 (UTC)
-Received: from xz-x1 (dhcp-15-205.nay.redhat.com [10.66.15.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ACD8960A9D;
-        Fri, 17 May 2019 02:45:12 +0000 (UTC)
-Date:   Fri, 17 May 2019 10:45:10 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Thomas Huth <thuth@redhat.com>
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kselftest@vger.kernel.org, kvm@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: Compile code with warnings enabled
-Message-ID: <20190517024510.GN16681@xz-x1>
-References: <20190516130257.29445-1-thuth@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190516130257.29445-1-thuth@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 17 May 2019 02:45:15 +0000 (UTC)
+        id S1725933AbfEQCqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 22:46:32 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EBB69200065;
+        Fri, 17 May 2019 04:46:28 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4585720025F;
+        Fri, 17 May 2019 04:46:23 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A047402AE;
+        Fri, 17 May 2019 10:46:15 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH 1/3] PM: wakeup: Add routine to help fetch wakeup source object.
+Date:   Fri, 17 May 2019 10:47:46 +0800
+Message-Id: <20190517024748.15534-1-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Thomas,
+Some user might want to go through all registered wakeup sources
+and doing things accordingly. For example, SoC PM driver might need to
+do HW programming to prevent powering down specific IP which wakeup
+source depending on. And is user's responsibility to identify if this
+wakeup source he is interested in.
 
-On Thu, May 16, 2019 at 03:02:57PM +0200, Thomas Huth wrote:
-> So far the KVM selftests are compiled without any compiler warnings
-> enabled. That's quite bad, since we miss a lot of possible bugs this
-> way. Let's enable at least "-Wall" and some other useful warning flags
-> now.
-> 
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  This patch fixes most of the warnings in the x86 code already - but
->  for some warnings, I was not quite sure (e.g. about the need for the
->  kvm_get_supported_cpuid_entry(1) in some tests), so I did not touch
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+---
+ drivers/base/power/wakeup.c |   18 ++++++++++++++++++
+ include/linux/pm_wakeup.h   |    3 +++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
 
-If you mean the two calls in state_test and evmcs_test I would agree
-they should be dropped directly.
-
-Just to mention that the patch may not apply cleanly to kvm/queue now
-probably because the dirty-log-test.c touchup recently, so may need a
-rebase.  Otherwise it looks nice at least to me to have these checks.
-
-Thanks,
-
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 5fa1898..8d75795 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -14,6 +14,7 @@
+ #include <linux/suspend.h>
+ #include <linux/seq_file.h>
+ #include <linux/debugfs.h>
++#include <linux/of_device.h>
+ #include <linux/pm_wakeirq.h>
+ #include <trace/events/power.h>
+ 
+@@ -236,6 +237,22 @@ void wakeup_source_unregister(struct wakeup_source *ws)
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(wakeup_source_unregister);
++/**
++ * wakeup_source_get_next - Get next wakeup source from the list
++ * @ws: Previous wakeup source object, null means caller want first one.
++ */
++struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws)
++{
++	struct list_head *ws_head = &wakeup_sources;
++
++	if (ws)
++		return list_next_or_null_rcu(ws_head, &ws->entry,
++				struct wakeup_source, entry);
++	else
++		return list_entry_rcu(ws_head->next,
++				struct wakeup_source, entry);
++}
++EXPORT_SYMBOL_GPL(wakeup_source_get_next);
+ 
+ /**
+  * device_wakeup_attach - Attach a wakeup source object to a device object.
+@@ -252,6 +269,7 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
+ 		return -EEXIST;
+ 	}
+ 	dev->power.wakeup = ws;
++	ws->attached_dev = dev;
+ 	if (dev->power.wakeirq)
+ 		device_wakeup_attach_irq(dev, dev->power.wakeirq);
+ 	spin_unlock_irq(&dev->power.lock);
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 4238dde..1335487 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -50,6 +50,7 @@
+  * @wakeup_count: Number of times the wakeup source might abort suspend.
+  * @active: Status of the wakeup source.
+  * @has_timeout: The wakeup source has been activated with a timeout.
++ * @attached_dev: The device it attached to
+  */
+ struct wakeup_source {
+ 	const char 		*name;
+@@ -70,6 +71,7 @@ struct wakeup_source {
+ 	unsigned long		wakeup_count;
+ 	bool			active:1;
+ 	bool			autosleep_enabled:1;
++	struct device	*attached_dev;
+ };
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -102,6 +104,7 @@ static inline void device_set_wakeup_path(struct device *dev)
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+ extern struct wakeup_source *wakeup_source_register(const char *name);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
++extern struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws);
+ extern int device_wakeup_enable(struct device *dev);
+ extern int device_wakeup_disable(struct device *dev);
+ extern void device_set_wakeup_capable(struct device *dev, bool capable);
 -- 
-Peter Xu
+1.7.1
+
