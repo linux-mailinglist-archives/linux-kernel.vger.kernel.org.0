@@ -2,446 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA06D2160B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C67CB21601
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfEQJLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:11:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56207 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbfEQJLY (ORCPT
+        id S1728746AbfEQJKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 05:10:20 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50202 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfEQJKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:11:24 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4H9A6ea1276014
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 17 May 2019 02:10:06 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4H9A6ea1276014
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1558084208;
-        bh=esWes/HyiBs+HPZ1X4+FGUBTdfEIN0lDbsQRY5OvzCM=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=bDsXbHxNT6OBpvmk898pPKFP70Utw4t0tLo8NFz/hiHG+c55nfrcQherjV8WcSEJI
-         b2T/pQ51idj3OBL3irHm1yYl0oN/aWU71ZZZ5Ysn4XxuQYQ697he7AgYTO6IVyatv2
-         j4/xtMA5kViRyLg23DfY/wYX6aAxXtTnGFGQ7rh5DVsp3AOOnDbqfBoNCP764WwkON
-         gx8YO9huTTnCqSm/6lHGZ3ENnBnWIf0wIJ39qiiTMrETStNZ0yN1spo9dW1E+GApFz
-         CiMy4S8iT9oDQmmlDeFM0FQPls+nZ+yznLzHblJHfGWhg+P+G70EUTAsXpF7JIGbzu
-         FXp6YrkyH+G6Q==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4H9A3qn1275997;
-        Fri, 17 May 2019 02:10:03 -0700
-Date:   Fri, 17 May 2019 02:10:03 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-5a28fc94c9143db766d1ba5480cae82d856ad080@git.kernel.org>
-Cc:     paulus@samba.org, dave.hansen@linux.intel.com, luto@kernel.org,
-        akpm@linux-foundation.org, bp@alien8.de,
-        anton.ivanov@cambridgegreys.com, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, yang.shi@linux.alibaba.com,
-        hjl.tools@gmail.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, rguenther@suse.de,
-        torvalds@linux-foundation.org, richard@nod.at, mhocko@suse.com,
-        peterz@infradead.org, vbabka@suse.cz, jdike@addtoit.com,
-        hpa@zytor.com, mingo@kernel.org, gxt@pku.edu.cn, riel@surriel.com
-Reply-To: dave.hansen@linux.intel.com, mhocko@suse.com, luto@kernel.org,
-          torvalds@linux-foundation.org, richard@nod.at, paulus@samba.org,
-          jdike@addtoit.com, anton.ivanov@cambridgegreys.com,
-          hpa@zytor.com, peterz@infradead.org, akpm@linux-foundation.org,
-          bp@alien8.de, vbabka@suse.cz, yang.shi@linux.alibaba.com,
-          benh@kernel.crashing.org, mpe@ellerman.id.au, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, rguenther@suse.de,
-          riel@surriel.com, hjl.tools@gmail.com, tglx@linutronix.de,
-          gxt@pku.edu.cn
-In-Reply-To: <20190419194747.5E1AD6DC@viggo.jf.intel.com>
-References: <20190419194747.5E1AD6DC@viggo.jf.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] x86/mpx, mm/core: Fix recursive munmap()
- corruption
-Git-Commit-ID: 5a28fc94c9143db766d1ba5480cae82d856ad080
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 17 May 2019 05:10:20 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f204so6204209wme.0;
+        Fri, 17 May 2019 02:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eaf5Ipr1bpOETTVk1SAmOHqLToU3CpMdXPYSRYeKKjA=;
+        b=YXJD/1hglFl0pnDDfF74Ywf3c4zt7D4175urGlyS+k6FQDd7O/6naje+Jvy7cQTDO4
+         TE+QviMTY/eT2TA4zW9ZS7qUNb7P9MABmzGVpkrX/NeOU33etIB6BfPFeRPXeLZqOezS
+         qwjXXDxzxAmtQoqq/Jk79saxsFCetCSVHOai1HP5KC3nljbXUrE/4hr0d2OCh/qwwRzR
+         f3K/SQtjfW6IdXngOm+OWy0NI0Zp3wa+8xJiDmY5eeEfqniFJMD3a2j5jyLdFBSIxuV6
+         qXPz9ZgJ1gHP5FotgxUxPJfSRG8Am9co0vfeNOircsvxdalfKZhLBwYWyIGYWVM0srK0
+         rMnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eaf5Ipr1bpOETTVk1SAmOHqLToU3CpMdXPYSRYeKKjA=;
+        b=spXYHRxZgPdbmvM924jWDm6COlnHEisN7d5BqyGubf9lC2XFcDy2a2dktFPIDpRS8w
+         n2Gb5xsnTX1igvak55UAMm+6atjRp0gLPXP0AbF/4dfQwwGNcYgFloS7SyTFaR0wVJIM
+         LVpuEw/nrVWF/PGZkXOZDxBU5IUxkdqWWw6Z18iOJMzrF3VijMTdgb4Lpyi6H5zBBdgm
+         y1hhBmI8wWvXED7ryJBFmn15MAnrT12qEV8se96IkFK/Zy9e9InUz9niB3ZNXBoSA0HX
+         M0CckgfCYnAbL1XDIjtAVxDNrkVVGNdFokXs5i7kxtzUDDnrrR28zNrRsB/kD9atBeOT
+         EqiA==
+X-Gm-Message-State: APjAAAV5/1Zte/M0ZAG2UCcEtCF2gUESpoHPoCoyp52VSSKRnlZjok60
+        xeWABAJne7WneDOOk3nILTw=
+X-Google-Smtp-Source: APXvYqxFOY58ZqwXg8fVVvJAlslz0/tyCf/ge8I35up63wRN3uGnpEHDzlGY3ZG5esoWo/ddWvZhLw==
+X-Received: by 2002:a1c:a804:: with SMTP id r4mr1398577wme.21.1558084216318;
+        Fri, 17 May 2019 02:10:16 -0700 (PDT)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id e8sm17526930wrc.34.2019.05.17.02.10.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 02:10:15 -0700 (PDT)
+Date:   Fri, 17 May 2019 10:10:14 +0100
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     "Jorge E. Moreira" <jemoreira@google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kernel-team@android.com, stable@vger.kernel.org
+Subject: Re: [PATCH RESEND] vsock/virtio: Initialize core virtio vsock before
+ registering the driver
+Message-ID: <20190517091014.GD3679@stefanha-x1.localdomain>
+References: <20190516205107.222003-1-jemoreira@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jCrbxBqMcLqd4mOl"
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190516205107.222003-1-jemoreira@google.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5a28fc94c9143db766d1ba5480cae82d856ad080
-Gitweb:     https://git.kernel.org/tip/5a28fc94c9143db766d1ba5480cae82d856ad080
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 19 Apr 2019 12:47:47 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 9 May 2019 10:37:17 +0200
 
-x86/mpx, mm/core: Fix recursive munmap() corruption
+--jCrbxBqMcLqd4mOl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is a bit of a mess, to put it mildly.  But, it's a bug
-that only seems to have showed up in 4.20 but wasn't noticed
-until now, because nobody uses MPX.
+On Thu, May 16, 2019 at 01:51:07PM -0700, Jorge E. Moreira wrote:
+> Avoid a race in which static variables in net/vmw_vsock/af_vsock.c are
+> accessed (while handling interrupts) before they are initialized.
+>=20
+> [    4.201410] BUG: unable to handle kernel paging request at fffffffffff=
+fffe8
+> [    4.207829] IP: vsock_addr_equals_addr+0x3/0x20
+> [    4.211379] PGD 28210067 P4D 28210067 PUD 28212067 PMD 0
+> [    4.211379] Oops: 0000 [#1] PREEMPT SMP PTI
+> [    4.211379] Modules linked in:
+> [    4.211379] CPU: 1 PID: 30 Comm: kworker/1:1 Not tainted 4.14.106-4192=
+97-gd7e28cc1f241 #1
+> [    4.211379] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.10.2-1 04/01/2014
+> [    4.211379] Workqueue: virtio_vsock virtio_transport_rx_work
+> [    4.211379] task: ffffa3273d175280 task.stack: ffffaea1800e8000
+> [    4.211379] RIP: 0010:vsock_addr_equals_addr+0x3/0x20
+> [    4.211379] RSP: 0000:ffffaea1800ebd28 EFLAGS: 00010286
+> [    4.211379] RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffffb=
+94e42f0
+> [    4.211379] RDX: 0000000000000400 RSI: ffffffffffffffe0 RDI: ffffaea18=
+00ebdd0
+> [    4.211379] RBP: ffffaea1800ebd58 R08: 0000000000000001 R09: 000000000=
+0000001
+> [    4.211379] R10: 0000000000000000 R11: ffffffffb89d5d60 R12: ffffaea18=
+00ebdd0
+> [    4.211379] R13: 00000000828cbfbf R14: 0000000000000000 R15: ffffaea18=
+00ebdc0
+> [    4.211379] FS:  0000000000000000(0000) GS:ffffa3273fd00000(0000) knlG=
+S:0000000000000000
+> [    4.211379] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    4.211379] CR2: ffffffffffffffe8 CR3: 000000002820e001 CR4: 000000000=
+01606e0
+> [    4.211379] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
+0000000
+> [    4.211379] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
+0000400
+> [    4.211379] Call Trace:
+> [    4.211379]  ? vsock_find_connected_socket+0x6c/0xe0
+> [    4.211379]  virtio_transport_recv_pkt+0x15f/0x740
+> [    4.211379]  ? detach_buf+0x1b5/0x210
+> [    4.211379]  virtio_transport_rx_work+0xb7/0x140
+> [    4.211379]  process_one_work+0x1ef/0x480
+> [    4.211379]  worker_thread+0x312/0x460
+> [    4.211379]  kthread+0x132/0x140
+> [    4.211379]  ? process_one_work+0x480/0x480
+> [    4.211379]  ? kthread_destroy_worker+0xd0/0xd0
+> [    4.211379]  ret_from_fork+0x35/0x40
+> [    4.211379] Code: c7 47 08 00 00 00 00 66 c7 07 28 00 c7 47 08 ff ff f=
+f ff c7 47 04 ff ff ff ff c3 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 8b 47 0=
+8 <3b> 46 08 75 0a 8b 47 04 3b 46 04 0f 94 c0 c3 31 c0 c3 90 66 2e
+> [    4.211379] RIP: vsock_addr_equals_addr+0x3/0x20 RSP: ffffaea1800ebd28
+> [    4.211379] CR2: ffffffffffffffe8
+> [    4.211379] ---[ end trace f31cc4a2e6df3689 ]---
+> [    4.211379] Kernel panic - not syncing: Fatal exception in interrupt
+> [    4.211379] Kernel Offset: 0x37000000 from 0xffffffff81000000 (relocat=
+ion range: 0xffffffff80000000-0xffffffffbfffffff)
+> [    4.211379] Rebooting in 5 seconds..
+>=20
+> Fixes: 22b5c0b63f32 ("vsock/virtio: fix kernel panic after device hot-unp=
+lug")
+> Cc: Stefan Hajnoczi <stefanha@redhat.com>
+> Cc: Stefano Garzarella <sgarzare@redhat.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: kvm@vger.kernel.org
+> Cc: virtualization@lists.linux-foundation.org
+> Cc: netdev@vger.kernel.org
+> Cc: kernel-team@android.com
+> Cc: stable@vger.kernel.org [4.9+]
+> Signed-off-by: Jorge E. Moreira <jemoreira@google.com>
+> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+> ---
+>  net/vmw_vsock/virtio_transport.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 
-MPX has the arch_unmap() hook inside of munmap() because MPX
-uses bounds tables that protect other areas of memory.  When
-memory is unmapped, there is also a need to unmap the MPX
-bounds tables.  Barring this, unused bounds tables can eat 80%
-of the address space.
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-But, the recursive do_munmap() that gets called vi arch_unmap()
-wreaks havoc with __do_munmap()'s state.  It can result in
-freeing populated page tables, accessing bogus VMA state,
-double-freed VMAs and more.
+--jCrbxBqMcLqd4mOl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See the "long story" further below for the gory details.
+-----BEGIN PGP SIGNATURE-----
 
-To fix this, call arch_unmap() before __do_unmap() has a chance
-to do anything meaningful.  Also, remove the 'vma' argument
-and force the MPX code to do its own, independent VMA lookup.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAlzeenYACgkQnKSrs4Gr
+c8h69wf+Op5LZ8i7xc0r4f7Y1ZYE/4xTQ2AveN9jwvItfuQz2ZRmEBXX+I8baURN
+nw4FOLWxgr9aitsovjcAQt/JJUgxwSMcaavVXBuwI4oJam2hUCEf+NIixvQdzYIV
+yy7h06EXm6+gNP1ZgQA2gRNIZFwGbhgOEXRSqvsGxM4E/I5MC9gz718OttQK20bn
+gAgp4p7d/nQ3oHI09lRM3JRcKIJOgtuAyWAjhkHSHcNmWyoa7CIFxB+kQCHdItNH
+DRJw732tcBl/jo/HpXpZhJkEQ5ykCOg/yVhXEzhc+2Hi3CFEeRm8wDV6oAfXOhJL
+OSGLmVV8t5QFHjOnT8RcgoJ+tdaHrA==
+=ysW+
+-----END PGP SIGNATURE-----
 
-== UML / unicore32 impact ==
-
-Remove unused 'vma' argument to arch_unmap().  No functional
-change.
-
-I compile tested this on UML but not unicore32.
-
-== powerpc impact ==
-
-powerpc uses arch_unmap() well to watch for munmap() on the
-VDSO and zeroes out 'current->mm->context.vdso_base'.  Moving
-arch_unmap() makes this happen earlier in __do_munmap().  But,
-'vdso_base' seems to only be used in perf and in the signal
-delivery that happens near the return to userspace.  I can not
-find any likely impact to powerpc, other than the zeroing
-happening a little earlier.
-
-powerpc does not use the 'vma' argument and is unaffected by
-its removal.
-
-I compile-tested a 64-bit powerpc defconfig.
-
-== x86 impact ==
-
-For the common success case this is functionally identical to
-what was there before.  For the munmap() failure case, it's
-possible that some MPX tables will be zapped for memory that
-continues to be in use.  But, this is an extraordinarily
-unlikely scenario and the harm would be that MPX provides no
-protection since the bounds table got reset (zeroed).
-
-I can't imagine anyone doing this:
-
-	ptr = mmap();
-	// use ptr
-	ret = munmap(ptr);
-	if (ret)
-		// oh, there was an error, I'll
-		// keep using ptr.
-
-Because if you're doing munmap(), you are *done* with the
-memory.  There's probably no good data in there _anyway_.
-
-This passes the original reproducer from Richard Biener as
-well as the existing mpx selftests/.
-
-The long story:
-
-munmap() has a couple of pieces:
-
- 1. Find the affected VMA(s)
- 2. Split the start/end one(s) if neceesary
- 3. Pull the VMAs out of the rbtree
- 4. Actually zap the memory via unmap_region(), including
-    freeing page tables (or queueing them to be freed).
- 5. Fix up some of the accounting (like fput()) and actually
-    free the VMA itself.
-
-This specific ordering was actually introduced by:
-
-  dd2283f2605e ("mm: mmap: zap pages with read mmap_sem in munmap")
-
-during the 4.20 merge window.  The previous __do_munmap() code
-was actually safe because the only thing after arch_unmap() was
-remove_vma_list().  arch_unmap() could not see 'vma' in the
-rbtree because it was detached, so it is not even capable of
-doing operations unsafe for remove_vma_list()'s use of 'vma'.
-
-Richard Biener reported a test that shows this in dmesg:
-
-  [1216548.787498] BUG: Bad rss-counter state mm:0000000017ce560b idx:1 val:551
-  [1216548.787500] BUG: non-zero pgtables_bytes on freeing mm: 24576
-
-What triggered this was the recursive do_munmap() called via
-arch_unmap().  It was freeing page tables that has not been
-properly zapped.
-
-But, the problem was bigger than this.  For one, arch_unmap()
-can free VMAs.  But, the calling __do_munmap() has variables
-that *point* to VMAs and obviously can't handle them just
-getting freed while the pointer is still in use.
-
-I tried a couple of things here.  First, I tried to fix the page
-table freeing problem in isolation, but I then found the VMA
-issue.  I also tried having the MPX code return a flag if it
-modified the rbtree which would force __do_munmap() to re-walk
-to restart.  That spiralled out of control in complexity pretty
-fast.
-
-Just moving arch_unmap() and accepting that the bonkers failure
-case might eat some bounds tables seems like the simplest viable
-fix.
-
-This was also reported in the following kernel bugzilla entry:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=203123
-
-There are some reports that this commit triggered this bug:
-
-  dd2283f2605 ("mm: mmap: zap pages with read mmap_sem in munmap")
-
-While that commit certainly made the issues easier to hit, I believe
-the fundamental issue has been with us as long as MPX itself, thus
-the Fixes: tag below is for one of the original MPX commits.
-
-[ mingo: Minor edits to the changelog and the patch. ]
-
-Reported-by: Richard Biener <rguenther@suse.de>
-Reported-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Yang Shi <yang.shi@linux.alibaba.com>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Guan Xuetao <gxt@pku.edu.cn>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jeff Dike <jdike@addtoit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-um@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: stable@vger.kernel.org
-Fixes: dd2283f2605e ("mm: mmap: zap pages with read mmap_sem in munmap")
-Link: http://lkml.kernel.org/r/20190419194747.5E1AD6DC@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/powerpc/include/asm/mmu_context.h   |  1 -
- arch/um/include/asm/mmu_context.h        |  1 -
- arch/unicore32/include/asm/mmu_context.h |  1 -
- arch/x86/include/asm/mmu_context.h       |  6 +++---
- arch/x86/include/asm/mpx.h               | 15 ++++++++-------
- arch/x86/mm/mpx.c                        | 10 ++++++----
- include/asm-generic/mm_hooks.h           |  1 -
- mm/mmap.c                                | 15 ++++++++-------
- 8 files changed, 25 insertions(+), 25 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
-index 6ee8195a2ffb..4a6dd3ba0b0b 100644
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -237,7 +237,6 @@ extern void arch_exit_mmap(struct mm_struct *mm);
- #endif
- 
- static inline void arch_unmap(struct mm_struct *mm,
--			      struct vm_area_struct *vma,
- 			      unsigned long start, unsigned long end)
- {
- 	if (start <= mm->context.vdso_base && mm->context.vdso_base < end)
-diff --git a/arch/um/include/asm/mmu_context.h b/arch/um/include/asm/mmu_context.h
-index fca34b2177e2..9f4b4bb78120 100644
---- a/arch/um/include/asm/mmu_context.h
-+++ b/arch/um/include/asm/mmu_context.h
-@@ -22,7 +22,6 @@ static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
- }
- extern void arch_exit_mmap(struct mm_struct *mm);
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/unicore32/include/asm/mmu_context.h b/arch/unicore32/include/asm/mmu_context.h
-index 5c205a9cb5a6..9f06ea5466dd 100644
---- a/arch/unicore32/include/asm/mmu_context.h
-+++ b/arch/unicore32/include/asm/mmu_context.h
-@@ -88,7 +88,6 @@ static inline int arch_dup_mmap(struct mm_struct *oldmm,
- }
- 
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 93dff1963337..9024236693d2 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -278,8 +278,8 @@ static inline void arch_bprm_mm_init(struct mm_struct *mm,
- 	mpx_mm_init(mm);
- }
- 
--static inline void arch_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--			      unsigned long start, unsigned long end)
-+static inline void arch_unmap(struct mm_struct *mm, unsigned long start,
-+			      unsigned long end)
- {
- 	/*
- 	 * mpx_notify_unmap() goes and reads a rarely-hot
-@@ -299,7 +299,7 @@ static inline void arch_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * consistently wrong.
- 	 */
- 	if (unlikely(cpu_feature_enabled(X86_FEATURE_MPX)))
--		mpx_notify_unmap(mm, vma, start, end);
-+		mpx_notify_unmap(mm, start, end);
- }
- 
- /*
-diff --git a/arch/x86/include/asm/mpx.h b/arch/x86/include/asm/mpx.h
-index d0b1434fb0b6..143a5c193ed3 100644
---- a/arch/x86/include/asm/mpx.h
-+++ b/arch/x86/include/asm/mpx.h
-@@ -64,12 +64,15 @@ struct mpx_fault_info {
- };
- 
- #ifdef CONFIG_X86_INTEL_MPX
--int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs);
--int mpx_handle_bd_fault(void);
-+
-+extern int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs);
-+extern int mpx_handle_bd_fault(void);
-+
- static inline int kernel_managing_mpx_tables(struct mm_struct *mm)
- {
- 	return (mm->context.bd_addr != MPX_INVALID_BOUNDS_DIR);
- }
-+
- static inline void mpx_mm_init(struct mm_struct *mm)
- {
- 	/*
-@@ -78,11 +81,10 @@ static inline void mpx_mm_init(struct mm_struct *mm)
- 	 */
- 	mm->context.bd_addr = MPX_INVALID_BOUNDS_DIR;
- }
--void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--		      unsigned long start, unsigned long end);
- 
--unsigned long mpx_unmapped_area_check(unsigned long addr, unsigned long len,
--		unsigned long flags);
-+extern void mpx_notify_unmap(struct mm_struct *mm, unsigned long start, unsigned long end);
-+extern unsigned long mpx_unmapped_area_check(unsigned long addr, unsigned long len, unsigned long flags);
-+
- #else
- static inline int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs)
- {
-@@ -100,7 +102,6 @@ static inline void mpx_mm_init(struct mm_struct *mm)
- {
- }
- static inline void mpx_notify_unmap(struct mm_struct *mm,
--				    struct vm_area_struct *vma,
- 				    unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
-index c805db6236b4..7aeb9fe2955f 100644
---- a/arch/x86/mm/mpx.c
-+++ b/arch/x86/mm/mpx.c
-@@ -881,9 +881,10 @@ static int mpx_unmap_tables(struct mm_struct *mm,
-  * the virtual address region start...end have already been split if
-  * necessary, and the 'vma' is the first vma in this range (start -> end).
-  */
--void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--		unsigned long start, unsigned long end)
-+void mpx_notify_unmap(struct mm_struct *mm, unsigned long start,
-+		      unsigned long end)
- {
-+	struct vm_area_struct *vma;
- 	int ret;
- 
- 	/*
-@@ -902,11 +903,12 @@ void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * which should not occur normally. Being strict about it here
- 	 * helps ensure that we do not have an exploitable stack overflow.
- 	 */
--	do {
-+	vma = find_vma(mm, start);
-+	while (vma && vma->vm_start < end) {
- 		if (vma->vm_flags & VM_MPX)
- 			return;
- 		vma = vma->vm_next;
--	} while (vma && vma->vm_start < end);
-+	}
- 
- 	ret = mpx_unmap_tables(mm, start, end);
- 	if (ret)
-diff --git a/include/asm-generic/mm_hooks.h b/include/asm-generic/mm_hooks.h
-index 8ac4e68a12f0..6736ed2f632b 100644
---- a/include/asm-generic/mm_hooks.h
-+++ b/include/asm-generic/mm_hooks.h
-@@ -18,7 +18,6 @@ static inline void arch_exit_mmap(struct mm_struct *mm)
- }
- 
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/mm/mmap.c b/mm/mmap.c
-index bd7b9f293b39..2d6a6662edb9 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2735,9 +2735,17 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		return -EINVAL;
- 
- 	len = PAGE_ALIGN(len);
-+	end = start + len;
- 	if (len == 0)
- 		return -EINVAL;
- 
-+	/*
-+	 * arch_unmap() might do unmaps itself.  It must be called
-+	 * and finish any rbtree manipulation before this code
-+	 * runs and also starts to manipulate the rbtree.
-+	 */
-+	arch_unmap(mm, start, end);
-+
- 	/* Find the first overlapping VMA */
- 	vma = find_vma(mm, start);
- 	if (!vma)
-@@ -2746,7 +2754,6 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* we have  start < vma->vm_end  */
- 
- 	/* if it doesn't overlap, we have nothing.. */
--	end = start + len;
- 	if (vma->vm_start >= end)
- 		return 0;
- 
-@@ -2816,12 +2823,6 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* Detach vmas from rbtree */
- 	detach_vmas_to_be_unmapped(mm, vma, prev, end);
- 
--	/*
--	 * mpx unmap needs to be called with mmap_sem held for write.
--	 * It is safe to call it before unmap_region().
--	 */
--	arch_unmap(mm, vma, start, end);
--
- 	if (downgrade)
- 		downgrade_write(&mm->mmap_sem);
- 
+--jCrbxBqMcLqd4mOl--
