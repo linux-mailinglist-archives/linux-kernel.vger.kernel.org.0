@@ -2,106 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6BE212C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9064D2130A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfEQEIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 00:08:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52590 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfEQEIa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 00:08:30 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4H44FtQ155156;
-        Fri, 17 May 2019 04:08:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=fbs2klJYRwSjh6U92tbSHWsFn2CAbHAkPfwjVASkuvs=;
- b=GtFN8KxHn6BoVU9RO4RbeGh9sRr4R5Oqr7OqunHBPO0lQAOucqb2LpUXXiro7vHZBTpl
- zn18pgC9Ba/pf8L/cAM2wqXlfUTy/kH0wctwMu+ijNvbOCB09Xx4LTYN9GoTMsBVKNTa
- RpqfKvYj/5mGspglKTyxP8OSob8A7li66BNNR/n2bRooyGDYJTzIgQ1k1sHzcDb1j4r6
- F59pNJl70JWFYpgmMrHQvLi5OkjzSRywaXlkYQG1B2mrvXCyvItJbSXjelKlaninmeQA
- igjxy5kXNurF9PKFc7MYWrKOFbbkoAwPrz8gzAU102QwDIbmOiZpZd5p4Cljgyga+WV3 ng== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2sdntu76t2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 May 2019 04:08:24 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4H47PEL073951;
-        Fri, 17 May 2019 04:08:23 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2sgp33ca87-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 May 2019 04:08:23 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4H48Lbi020359;
-        Fri, 17 May 2019 04:08:22 GMT
-Received: from brm-x32-03.us.oracle.com (/10.80.150.35)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 17 May 2019 04:08:21 +0000
-From:   Jane Chu <jane.chu@oracle.com>
-To:     n-horiguchi@ah.jp.nec.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-nvdimm@lists.01.org
-Subject: [PATCH] mm, memory-failure: clarify error message
-Date:   Thu, 16 May 2019 22:08:15 -0600
-Message-Id: <1558066095-9495-1-git-send-email-jane.chu@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9259 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=954
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905170025
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9259 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=984 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905170025
+        id S1727572AbfEQE10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 00:27:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:42690 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726755AbfEQE10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 00:27:26 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 21:27:25 -0700
+X-ExtLoop1: 1
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga003.jf.intel.com with ESMTP; 16 May 2019 21:27:23 -0700
+Date:   Fri, 17 May 2019 12:11:16 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Alan Tull <atull@kernel.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v2 05/18] Documentation: fpga: dfl: add descriptions for
+ virtualization and new interfaces.
+Message-ID: <20190517041116.GC20569@hao-dev>
+References: <1556528151-17221-1-git-send-email-hao.wu@intel.com>
+ <1556528151-17221-6-git-send-email-hao.wu@intel.com>
+ <CANk1AXQSL8k=FOLv4_rLfRHBqOi=CW=yP3O8ch4VEa25cj9+Cw@mail.gmail.com>
+ <CANk1AXQCp2ozUQDWz__MuiUeDLvGvrfqj3KUYmBa5Z34oxG8NQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXQCp2ozUQDWz__MuiUeDLvGvrfqj3KUYmBa5Z34oxG8NQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some user who install SIGBUS handler that does longjmp out
-therefore keeping the process alive is confused by the error
-message
-  "[188988.765862] Memory failure: 0x1840200: Killing
-   cellsrv:33395 due to hardware memory corruption"
-Slightly modify the error message to improve clarity.
+On Thu, May 16, 2019 at 12:53:00PM -0500, Alan Tull wrote:
+> On Thu, May 16, 2019 at 12:36 PM Alan Tull <atull@kernel.org> wrote:
+> >
+> > On Mon, Apr 29, 2019 at 4:12 AM Wu Hao <hao.wu@intel.com> wrote:
+> 
+> Hi Hao,
+> 
+> Most of this patchset looks ready to go upstream or nearly so with
+> pretty straightforward changes .  Patches 17 and 18 need minor changes
+> and please change the scnprintf in the other patches.  The patches
+> that had nontrivial changes are the power and thermal ones involving
+> hwmon.  I'm hoping to send up the patchset minus the hwmon patches in
+> the next version if there's no unforseen issues.  If the hwmon patches
+> are ready then also, that's great, but otherwise those patches don't
+> need to hold up all the rest of the patchset.  How's that sound?
 
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
----
- mm/memory-failure.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Hi Alan
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index fc8b517..14de5e2 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -216,10 +216,9 @@ static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
- 	short addr_lsb = tk->size_shift;
- 	int ret;
- 
--	pr_err("Memory failure: %#lx: Killing %s:%d due to hardware memory corruption\n",
--		pfn, t->comm, t->pid);
--
- 	if ((flags & MF_ACTION_REQUIRED) && t->mm == current->mm) {
-+		pr_err("Memory failure: %#lx: Killing %s:%d due to hardware memory "
-+			"corruption\n", pfn, t->comm, t->pid);
- 		ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)tk->addr,
- 				       addr_lsb, current);
- 	} else {
-@@ -229,6 +228,8 @@ static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
- 		 * This could cause a loop when the user sets SIGBUS
- 		 * to SIG_IGN, but hopefully no one will do that?
- 		 */
-+		pr_err("Memory failure: %#lx: Sending SIGBUS to %s:%d due to hardware "
-+			"memory corruption\n", pfn, t->comm, t->pid);
- 		ret = send_sig_mceerr(BUS_MCEERR_AO, (void __user *)tk->addr,
- 				      addr_lsb, t);  /* synchronous? */
- 	}
--- 
-1.8.3.1
+Thanks for your time for reviewing this patchset.
 
+This sounds good to me. Only thing here is, I need to split the patch which
+updates documentation into 2 patches (to remove hwmon description in doc),
+but for sure, it should be very easy. :)
+
+Thanks
+Hao
+
+> 
+> Alan
+> 
+> > >
+> > > This patch adds virtualization support description for DFL based
+> > > FPGA devices (based on PCIe SRIOV), and introductions to new
+> > > interfaces added by new dfl private feature drivers.
+> > >
+> > > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> >
+> > Acked-by: Alan Tull <atull@kernel.org>
+> >
+> > Thanks,
+> > Alan
