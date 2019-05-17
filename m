@@ -2,155 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0B52196C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 15:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7169621976
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 16:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbfEQN45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 09:56:57 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:41724 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728464AbfEQN45 (ORCPT
+        id S1729003AbfEQOCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 10:02:40 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45370 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728664AbfEQOCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 09:56:57 -0400
-Received: (qmail 1594 invoked by uid 2102); 17 May 2019 09:56:56 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 17 May 2019 09:56:56 -0400
-Date:   Fri, 17 May 2019 09:56:56 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-cc:     linux-usb@vger.kernel.org, <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        =?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH v4] usb: exynos: add workaround for the USB device bindings
- conflict
-In-Reply-To: <20190517105702.4522-1-m.szyprowski@samsung.com>
-Message-ID: <Pine.LNX.4.44L0.1905170955040.1430-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Fri, 17 May 2019 10:02:40 -0400
+Received: by mail-qk1-f196.google.com with SMTP id j1so4458070qkk.12
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 07:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Tq9pjDbxEOyZ7Iwpy2uNH6b9E86aYZuY86joxZD4zbM=;
+        b=pPOl99vB+ZM4fPyrXfhg2Epo7F2Qdzj2WsKmspj5wBIL81kTnikotr3tnzMGATy/WS
+         aZvVmA0V5Jb3fwkcjgblpEkjdXSQpSNOpb/X/Y00+u/5ibSNshQ6m6jsXhHp4Sd0WeYM
+         gPmVuYOGsg0EYvxIlNIiCT7IGTD7fHuO6708hd0mEgiPoizyGX9jKUr1ymFV3tqE1e9g
+         W0hEO5CpY96yJ/ctHkRiLLHpVYlHh00qSv1+ufGaOL2j/5TasAe0uLJfZMUAD1F9vAhs
+         B2F0Z25J5UITuwsRFB0oJOMXPpFUozSFdpgJVsplmpooix/zgSfCUYYrtdMS+w7uDEC9
+         Yw+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Tq9pjDbxEOyZ7Iwpy2uNH6b9E86aYZuY86joxZD4zbM=;
+        b=OCxdxnhr9Dq7pfsP87ttEGI68JMbczJ2ZKDOTamKh/zlJfJfaIvrENb/ln6whbzT9j
+         tofvUJOiHPG8KxD8yqlNqtZYkLoTDVpS3J0oHqjydaF4oVq6L8zE29mxn7EKEXg4tzZ9
+         i6YsoSF4e230vNXUKDrOGwGptT/2r152y18HBePynlif52lKsZm2cdhQu7GmEWAqDHV+
+         qoj6TYtZsRXS/fF24U5pkt9d7YpfaTI47K3kpoGgPfqOHgKhZ7eMpXsaHkxxZSo71GHG
+         Om0S+3LIX5sjAXYvn4pCc9BoVaHoLCiA7/9+nPrfEthaoYqsPJwlsWMsXIeyGvHQ5Mte
+         vgbg==
+X-Gm-Message-State: APjAAAXM835E1+pEegg6KV16A032UwmOWkammgy88lBQ3Ob3TXa9RF5C
+        Lm0DK2roltXgIUyOhWtNbTEAsg==
+X-Google-Smtp-Source: APXvYqxpdthmw/ru6DIU4vE9FD7BD+dWymUq02I/FHUxJkYGFGacoBcLSXgUo7AW1EJXLdTZUxtwJA==
+X-Received: by 2002:a05:620a:12da:: with SMTP id e26mr3168424qkl.132.1558101758996;
+        Fri, 17 May 2019 07:02:38 -0700 (PDT)
+Received: from qcai.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id g20sm3933764qki.52.2019.05.17.07.02.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 07:02:38 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com
+Cc:     karahmed@amazon.de, konrad.wilk@oracle.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] kvm: fix compilation errors with mem[re|un]map()
+Date:   Fri, 17 May 2019 10:01:53 -0400
+Message-Id: <1558101713-15325-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 May 2019, Marek Szyprowski wrote:
+The linux-next commit e45adf665a53 ("KVM: Introduce a new guest mapping
+API") introduced compilation errors on arm64.
 
-> Commit 69bec7259853 ("USB: core: let USB device know device node") added
-> support for attaching devicetree node for USB devices. Those nodes are
-> children of their USB host controller. However Exynos EHCI and OHCI
-> driver bindings already define child-nodes for each physical root hub
-> port and assigns respective PHY controller and parameters to them. Those
-> bindings predates support for USB device tree nodes.
-> 
-> To mitigate the side-effects of the conflict between those bindings,
-> lets reset Exynos host controller of_node pointer before registering it
-> to USB subsystem. This fixes the issue raised by the commit 01fdf179f4b0
-> ("usb: core: skip interfaces disabled in devicetree"), which incorrectly
-> disabled some devices on Exynos based boards.
-> 
-> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-> Suggested-by: Måns Rullgård <mans@mansr.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v4:
-> - moved workaround to Exynos OHCI/EHCI drivers as suggested by Måns
-> 
-> v3: https://lkml.org/lkml/2019/5/9/119
-> - replaced ad hoc checks by proper test for proper value of the
->   compatible string in drivers/usb/core/of.c
-> 
-> v2: https://lkml.org/lkml/2019/5/8/321
-> 
-> v1: https://lkml.org/lkml/2019/5/7/715
-> ---
->  drivers/usb/host/ehci-exynos.c | 10 ++++++++++
->  drivers/usb/host/ohci-exynos.c | 10 ++++++++++
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index 8e3bab1e0c1f..b127642332ee 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -39,6 +39,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
->  
->  struct exynos_ehci_hcd {
->  	struct clk *clk;
-> +	struct device_node *of_node;
->  	struct phy *phy[PHY_NUMBER];
->  };
->  
-> @@ -203,6 +204,13 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->  	ehci = hcd_to_ehci(hcd);
->  	ehci->caps = hcd->regs;
->  
-> +	/*
-> +	 * Workaround: reset of_node pointer to avoid conflict between Exynos
-> +	 * EHCI port subnodes and generic USB device bindings
-> +	 */
-> +	exynos_ehci->of_node = pdev->dev.of_node;
-> +	pdev->dev.of_node = NULL;
-> +
->  	/* DMA burst Enable */
->  	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
->  
+arch/arm64/kvm/../../../virt/kvm/kvm_main.c:1764:9: error: implicit
+declaration of function 'memremap'
+[-Werror,-Wimplicit-function-declaration]
+                hva = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
+                      ^
+arch/arm64/kvm/../../../virt/kvm/kvm_main.c:1764:9: error: this function
+declaration is not a prototype [-Werror,-Wstrict-prototypes]
+arch/arm64/kvm/../../../virt/kvm/kvm_main.c:1764:46: error: use of
+undeclared identifier 'MEMREMAP_WB'
+                hva = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
+                                                           ^
+arch/arm64/kvm/../../../virt/kvm/kvm_main.c:1796:3: error: implicit
+declaration of function 'memunmap'
+[-Werror,-Wimplicit-function-declaration]
+                memunmap(map->hva);
 
-You forgot to adjust the fail_add_hcd: error pathway in 
-exynos_ehci_probe().
+Fixed it by including io.h in kvm_main.c.
 
-> @@ -231,6 +239,8 @@ static int exynos_ehci_remove(struct platform_device *pdev)
->  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
->  	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
->  
-> +	pdev->dev.of_node = exynos_ehci->of_node;
-> +
->  	usb_remove_hcd(hcd);
->  
->  	exynos_ehci_phy_disable(&pdev->dev);
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index c0c4dcca6f3c..29f65963af3b 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -30,6 +30,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
->  
->  struct exynos_ohci_hcd {
->  	struct clk *clk;
-> +	struct device_node *of_node;
->  	struct phy *phy[PHY_NUMBER];
->  };
->  
-> @@ -170,6 +171,13 @@ static int exynos_ohci_probe(struct platform_device *pdev)
->  		goto fail_io;
->  	}
->  
-> +	/*
-> +	 * Workaround: reset of_node pointer to avoid conflict between Exynos
-> +	 * OHCI port subnodes and generic USB device bindings
-> +	 */
-> +	exynos_ohci->of_node = pdev->dev.of_node;
-> +	pdev->dev.of_node = NULL;
-> +
->  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
->  	if (err) {
->  		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ virt/kvm/kvm_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-And same here.
-
-Alan Stern
-
-> @@ -192,6 +200,8 @@ static int exynos_ohci_remove(struct platform_device *pdev)
->  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
->  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
->  
-> +	pdev->dev.of_node = exynos_ohci->of_node;
-> +
->  	usb_remove_hcd(hcd);
->  
->  	exynos_ohci_phy_disable(&pdev->dev);
-> 
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 8d83a787fd6b..5c5102799c2c 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -51,6 +51,7 @@
+ #include <linux/slab.h>
+ #include <linux/sort.h>
+ #include <linux/bsearch.h>
++#include <linux/io.h>
+ 
+ #include <asm/processor.h>
+ #include <asm/io.h>
+-- 
+1.8.3.1
 
