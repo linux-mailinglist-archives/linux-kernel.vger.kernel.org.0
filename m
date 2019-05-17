@@ -2,139 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF9721A14
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 16:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4AC219AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 16:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbfEQOxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 10:53:09 -0400
-Received: from web1.siteocity.com ([67.227.147.204]:37842 "EHLO
-        web1.siteocity.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728968AbfEQOxJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 10:53:09 -0400
-X-Greylist: delayed 2485 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 10:53:07 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=felipegasper.com; s=default; h=To:References:Message-Id:
-        Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:
-        Content-Type:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N6m8ItcPeAXtI74gTibpdhO9VtglXynz6qvN46c+wdE=; b=PbLc3yPgpUwo/2Tew4KztUm6S
-        rZJmFRHIoU+mXUVUC8Ov5FFBXfUWtDM54nHWwDtTIUJJn+HMajz888QdKsY4VrA1A5L39+Jrqxu0z
-        +FpipWyEUSj93ct8veIK7NeHbcP4Ww63H5533KcvSfbWJrR6r8KOO30yFmEiWm5M39Xo2zAgVt+39
-        8nZvmhDNgnrjPSQZ0aAR7nR8gx//oaRW2VxsnxYpZfWugiWZUXArBmBruHKZPToS1mq2ImRG567RX
-        kYLoeZIBOeGnKZDrFlxd/qeuugysXejb5juPhbBGavctKePoxlRzLrGpFikzohTtPpvU2tsEnsGM9
-        0pL2zc1pA==;
-Received: from [149.248.87.38] (port=51684 helo=[192.168.86.41])
-        by web1.siteocity.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <felipe@felipegasper.com>)
-        id 1hRdaG-0000dd-AM; Fri, 17 May 2019 09:11:41 -0500
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
-From:   Felipe Gasper <felipe@felipegasper.com>
-In-Reply-To: <CALCETrUaTamZ1ZGbWpu+4kDAEFRqyESoa_4tgwpAmMh3NVQ4pQ@mail.gmail.com>
-Date:   Fri, 17 May 2019 10:11:38 -0400
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AF68C2F5-1E59-44D4-BC63-9C988C278174@felipegasper.com>
-References: <20190517032505.19921-1-felipe@felipegasper.com>
- <CALCETrUaTamZ1ZGbWpu+4kDAEFRqyESoa_4tgwpAmMh3NVQ4pQ@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - web1.siteocity.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - felipegasper.com
-X-Get-Message-Sender-Via: web1.siteocity.com: authenticated_id: fgasper/from_h
-X-Authenticated-Sender: web1.siteocity.com: felipe@felipegasper.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-From-Rewrite: unmodified, already matched
+        id S1729060AbfEQORn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 10:17:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56332 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729019AbfEQORm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 10:17:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A0BC4AD3A;
+        Fri, 17 May 2019 14:17:41 +0000 (UTC)
+Date:   Fri, 17 May 2019 16:17:40 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+cc:     jikos@kernel.org, joe.lawrence@redhat.com, jpoimboe@redhat.com,
+        pmladek@suse.com, tglx@linutronix.de
+Subject: livepatching selftests failure on current master branch
+Message-ID: <alpine.LSU.2.21.1905171608550.24009@pobox.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-> On May 17, 2019, at 12:59 AM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
->> On May 16, 2019, at 8:25 PM, Felipe <felipe@felipegasper.com> wrote:
->>=20
->> Author: Felipe Gasper <felipe@felipegasper.com>
->> Date:   Thu May 16 12:16:53 2019 -0500
->>=20
->>   Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
->>=20
->>   This adds the ability for Netlink to report a socket=E2=80=99s UID =
-along with the
->>   other UNIX socket diagnostic information that is already available. =
-This will
->>   allow diagnostic tools greater insight into which users control =
-which socket.
->>=20
->>   Signed-off-by: Felipe Gasper <felipe@felipegasper.com>
->>=20
->> diff --git a/include/uapi/linux/unix_diag.h =
-b/include/uapi/linux/unix_diag.h
->> index 5c502fd..a198857 100644
->> --- a/include/uapi/linux/unix_diag.h
->> +++ b/include/uapi/linux/unix_diag.h
->> @@ -20,6 +20,7 @@ struct unix_diag_req {
->> #define UDIAG_SHOW_ICONS    0x00000008    /* show pending connections =
-*/
->> #define UDIAG_SHOW_RQLEN    0x00000010    /* show skb receive queue =
-len */
->> #define UDIAG_SHOW_MEMINFO    0x00000020    /* show memory info of a =
-socket */
->> +#define UDIAG_SHOW_UID        0x00000040    /* show socket's UID */
->>=20
->> struct unix_diag_msg {
->>   __u8    udiag_family;
->> @@ -40,6 +41,7 @@ enum {
->>   UNIX_DIAG_RQLEN,
->>   UNIX_DIAG_MEMINFO,
->>   UNIX_DIAG_SHUTDOWN,
->> +    UNIX_DIAG_UID,
->>=20
->>   __UNIX_DIAG_MAX,
->> };
->> diff --git a/net/unix/diag.c b/net/unix/diag.c
->> index 3183d9b..011f56c 100644
->> --- a/net/unix/diag.c
->> +++ b/net/unix/diag.c
->> @@ -110,6 +110,11 @@ static int sk_diag_show_rqlen(struct sock *sk, =
-struct sk_buff *nlskb)
->>   return nla_put(nlskb, UNIX_DIAG_RQLEN, sizeof(rql), &rql);
->> }
->>=20
->> +static int sk_diag_dump_uid(struct sock *sk, struct sk_buff *nlskb)
->> +{
->> +    return nla_put(nlskb, UNIX_DIAG_UID, sizeof(kuid_t), =
-&(sk->sk_uid));
->=20
-> That type is called *k* uid_t because it=E2=80=99s internal to the =
-kernel. You
-> probably want from_kuid_munged(), which will fix it up for an
-> appropriate userns.  Presumably you want sk=E2=80=99s netns=E2=80=99s =
-userns.
+I noticed that livepatching selftests fail on our master branch 
+(https://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git/).
 
-Thank you for pointing this out.
+...
+TEST: busy target module ... not ok
 
-Would it suffice to get the userns as: =E2=80=9Csk_user_ns(sk)=E2=80=9D?
+--- expected
++++ result
+@@ -7,16 +7,24 @@ livepatch: 'test_klp_callbacks_demo': in
+ test_klp_callbacks_demo: pre_patch_callback: vmlinux
+ test_klp_callbacks_demo: pre_patch_callback: test_klp_callbacks_busy -> [MODULE_STATE_LIVE] Normal state
+ livepatch: 'test_klp_callbacks_demo': starting patching transition
++livepatch: 'test_klp_callbacks_demo': completing patching transition
++test_klp_callbacks_demo: post_patch_callback: vmlinux
++test_klp_callbacks_demo: post_patch_callback: test_klp_callbacks_busy -> [MODULE_STATE_LIVE] Normal state
++livepatch: 'test_klp_callbacks_demo': patching complete
+ % modprobe test_klp_callbacks_mod
+ livepatch: applying patch 'test_klp_callbacks_demo' to loading module 
+'test_klp_callbacks_mod'
+ test_klp_callbacks_demo: pre_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
++test_klp_callbacks_demo: post_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+ test_klp_callbacks_mod: test_klp_callbacks_mod_init
+ % rmmod test_klp_callbacks_mod
+ test_klp_callbacks_mod: test_klp_callbacks_mod_exit
++test_klp_callbacks_demo: pre_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_GOING] Going away
+ livepatch: reverting patch 'test_klp_callbacks_demo' on unloading module 
+'test_klp_callbacks_mod'
+ test_klp_callbacks_demo: post_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_GOING] Going away
+ % echo 0 > /sys/kernel/livepatch/test_klp_callbacks_demo/enabled
+-livepatch: 'test_klp_callbacks_demo': reversing transition from patching to unpatching
++livepatch: 'test_klp_callbacks_demo': initializing unpatching transition
++test_klp_callbacks_demo: pre_unpatch_callback: vmlinux
++test_klp_callbacks_demo: pre_unpatch_callback: test_klp_callbacks_busy -> [MODULE_STATE_LIVE] Normal state
+ livepatch: 'test_klp_callbacks_demo': starting unpatching transition
+ livepatch: 'test_klp_callbacks_demo': completing unpatching transition
+ test_klp_callbacks_demo: post_unpatch_callback: vmlinux
 
-Or would it be better to pass struct netlink_callback *cb from =
-unix_diag_dump() to sk_diag_dump() to sk_diag_fill(), then to the new =
-function to add the UID?
+ERROR: livepatch kselftest(s) failed
+not ok 1..2 selftests: livepatch: test-callbacks.sh [FAIL]
 
-cheers,
--Felipe Gasper=
+which probably means that the consistency model is not in the best shape. 
+There were not many livepatch changes in the latest pull request. Stack 
+unwinder changes may be connected, so adding Thomas to be aware if it 
+leads in this direction.
+
+Unfortunately, I'm leaving in a minute and will be gone till Wednesday, so 
+if someone confirms and wants to investigate, definitely feel free to do 
+it.
+
+Miroslav
