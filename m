@@ -2,103 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA8221657
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA2B21660
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbfEQJdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:33:44 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33524 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbfEQJdo (ORCPT
+        id S1728861AbfEQJlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 05:41:15 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40744 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728218AbfEQJlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:33:44 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 2A2F380398; Fri, 17 May 2019 11:33:32 +0200 (CEST)
-Date:   Fri, 17 May 2019 11:33:41 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Claudiu Manoil <claudiu.manoil@nxp.com>
-Cc:     Pavel Machek <pavel@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 4.19 042/113] ocelot: Dont sleep in atomic context
- (irqs_disabled())
-Message-ID: <20190517093341.GA18565@amd>
-References: <20190515090652.640988966@linuxfoundation.org>
- <20190515090656.813206864@linuxfoundation.org>
- <20190517081642.GC17012@amd>
- <VI1PR04MB488053E08D56380DBB6EFB05960B0@VI1PR04MB4880.eurprd04.prod.outlook.com>
+        Fri, 17 May 2019 05:41:14 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 15so2039566wmg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 02:41:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=KxRunkTcWCXBXkqMmtp06kfjOty1pFHCahqZCzEUiJM=;
+        b=ZO/qtQJ3+5DeGZhPJCkg4ds2cBrxzbmRzaYBbjHKE9Ra+Ky6PNzxmw+UNT5JghoEzH
+         pq2SN8wtGy3W5tFkfkmC8uWqTh86vc3itn/JgKS5WTEiLqsfQovWCQYdbkF94b15UGk3
+         JWnfJ2WtCa4D6UdG0nFuHwMRtvQyBE5UcVS/k9RWNtn/VmXaVAa7mnMewM5hKKeSw5LI
+         6XdTWX6tkM0PCV4LiuQNPUcT5G2ZufClO0NzVYS+xxR/xRy9Qyu+SXT7P2BVMeywXIh2
+         RPuaWXbjQQoQmenlIRk+CBJXZ0Qx5lBWSZ5Jf37VvQzrL97fpEcCup+31VjMtBGFlQ0f
+         S/+g==
+X-Gm-Message-State: APjAAAV4j+Use8SBviWLDy3nlDCxs55BvhWlM5dH+isE9EHq4VqO17LR
+        FoivbFFmOJ43/t4CN2DbC6az1sAN3yA=
+X-Google-Smtp-Source: APXvYqynKo0ZK83iexNrTTI233jg0pcjdFXYNk3oowX/WJJeDSY4aa0A3Lf2hs9mlXOehdBNipV1xQ==
+X-Received: by 2002:a1c:f616:: with SMTP id w22mr29244537wmc.28.1558086072451;
+        Fri, 17 May 2019 02:41:12 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 17sm10116301wrk.91.2019.05.17.02.41.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 02:41:11 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Peter Xu <peterx@redhat.com>, Thomas Huth <thuth@redhat.com>
+Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kselftest@vger.kernel.org, kvm@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Jones <drjones@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: selftests: Compile code with warnings enabled
+In-Reply-To: <20190517093000.GO16681@xz-x1>
+References: <20190517090445.4502-1-thuth@redhat.com> <20190517093000.GO16681@xz-x1>
+Date:   Fri, 17 May 2019 11:41:11 +0200
+Message-ID: <8736ldquyw.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB488053E08D56380DBB6EFB05960B0@VI1PR04MB4880.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Peter Xu <peterx@redhat.com> writes:
 
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Fri, May 17, 2019 at 11:04:45AM +0200, Thomas Huth wrote:
+>> So far the KVM selftests are compiled without any compiler warnings
+>> enabled. That's quite bad, since we miss a lot of possible bugs this
+>> way. Let's enable at least "-Wall" and some other useful warning flags
+>> now, and fix at least the trivial problems in the code (like unused
+>> variables).
+>> 
+>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+>> ---
+>>  v2:
+>>  - Rebased to kvm/queue
+>>  - Fix warnings in state_test.c and evmcs_test.c, too
+>
+> I still see these warnings (probably because the hyperv_cpuid.c is a
+> new test):
+>
+> In file included from x86_64/hyperv_cpuid.c:18:
+> x86_64/hyperv_cpuid.c: In function ‘test_hv_cpuid’:
+> x86_64/hyperv_cpuid.c:61:33: warning: suggest parentheses around comparison in operand of ‘==’ [-Wparentheses]
+>    TEST_ASSERT(entry->padding[0] == entry->padding[1]
+>                ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+> include/test_util.h:32:15: note: in definition of macro ‘TEST_ASSERT’
+>   test_assert((e), #e, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+>                ^
+> x86_64/hyperv_cpuid.c:62:8: warning: suggest parentheses around comparison in operand of ‘==’ [-Wparentheses]
+>    TEST_ASSERT(entry->padding[0] == entry->padding[1]
+>                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>         == entry->padding[2] == 0,
+>         ^~~~~~~~~~~~~~~~~~~~
+> include/test_util.h:32:15: note: in definition of macro ‘TEST_ASSERT’
+>   test_assert((e), #e, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
 
-Hi!
+There's a fix from Dan Carpenter on the list:
+https://marc.info/?l=kernel-janitors&m=155783012012532&w=2
 
-> >On Wed 2019-05-15 12:55:33, Greg Kroah-Hartman wrote:
-> >> [ Upstream commit a8fd48b50deaa20808bbf0f6685f6f1acba6a64c ]
-> >>
-> >> Preemption disabled at:
-> >>  [<ffff000008cabd54>] dev_set_rx_mode+0x1c/0x38
-> >>  Call trace:
-> >>  [<ffff00000808a5c0>] dump_backtrace+0x0/0x3d0
-> >>  [<ffff00000808a9a4>] show_stack+0x14/0x20
-> >>  [<ffff000008e6c0c0>] dump_stack+0xac/0xe4
-> >>  [<ffff0000080fe76c>] ___might_sleep+0x164/0x238
-> >>  [<ffff0000080fe890>] __might_sleep+0x50/0x88
-> >>  [<ffff0000082261e4>] kmem_cache_alloc+0x17c/0x1d0
-> >>  [<ffff000000ea0ae8>] ocelot_set_rx_mode+0x108/0x188
-> >[mscc_ocelot_common]
-> >>  [<ffff000008cabcf0>] __dev_set_rx_mode+0x58/0xa0
-> >>  [<ffff000008cabd5c>] dev_set_rx_mode+0x24/0x38
-> >>
-> >> Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-> >
-> >Is it right fix? Warning is gone, but now allocation is more likely to
-> >fail, causing mc_add() to fail under memory pressure.
-> >
->=20
-> So far this contributes to fixing a kernel hang issue, seen occasionally
-> when the switch interfaces were brought up.
-> Other than that I would look into improving this code.
-> It looks suboptimal at least.  Do we really need to allocate whole
-> struct netdev_hw_addr elements? Can the allocation size be reduced?
-> What about pre-allocating enough room for ha elements outside the
-> atomic context (set_rx_mode() in this case)?
+>                ^
+> x86_64/hyperv_cpuid.c: In function ‘kvm_get_supported_hv_cpuid’:
+> x86_64/hyperv_cpuid.c:93:6: warning: unused variable ‘ret’ [-Wunused-variable]
+>   int ret;
+>       ^~~
+>
+> The first two seem to be real bugs in the test code, and the 3rd one
+> might need a cleanup too.
 
-Pre-allocating the elements sounds like a obvious solution, yes.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---J/dobhs11T7y2rNN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzef/UACgkQMOfwapXb+vJjGgCgstxXfIUGi5SKgeRmDcJmlcjT
-VUUAn3UEZsjB0dizYH96Q9/AOiF/k8I2
-=PdRN
------END PGP SIGNATURE-----
-
---J/dobhs11T7y2rNN--
+-- 
+Vitaly
