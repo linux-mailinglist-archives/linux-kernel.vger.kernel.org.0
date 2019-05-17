@@ -2,225 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7802521C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDFE21C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:56:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfEQQ76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32953 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726575AbfEQQ76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A5B5E1A365CDA136CABA;
-        Fri, 17 May 2019 17:59:56 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 17 May 2019 17:59:46 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
-        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Date:   Fri, 17 May 2019 18:55:19 +0200
-Message-ID: <20190517165519.11507-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190517165519.11507-1-roberto.sassu@huawei.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+        id S1727544AbfEQQ4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:56:22 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41354 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfEQQ4W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:56:22 -0400
+Received: by mail-lf1-f68.google.com with SMTP id d8so5812927lfb.8;
+        Fri, 17 May 2019 09:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9KNE3fFrhBMbpw6CB84d/cuOTgsPDrXbc4lzxvxznkQ=;
+        b=hquZa7JtJMvlCdHRojaV+TZVDrxlzn4Gc8M13v9S64cRsCeonc0VNddiPYeGptvhTf
+         QXdYsjuc5cONkunjjC/PvQT800vdS52RIn32F89g/pzucWHQhnNmVKIF6h+SQp/ROXI/
+         Dp66tBncI/qoRP1G3f4swX2glflObf+PCQlQ7v/QiX5rH9tjfibZmYC4mMUCjDlDpfCO
+         QmChoJ1/4Tqg7AqGrbaOL3KUy689OgPvcK8/hI31SzrZhxwNingnd8OXp0no2aoa4KLC
+         kj7n95mqIHA28/DcM4cBlAE/n2WQ2RxciBP5Fe+yifG4oWz8CdKQkx7kQzxzpe4YQOhv
+         qd0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9KNE3fFrhBMbpw6CB84d/cuOTgsPDrXbc4lzxvxznkQ=;
+        b=TbtXssbegEC4fjbCmyI1+C1YaSE/3ou6UtKSXN0N6K3cJWDR95VOKtDL2OUUF6CSjj
+         bgh73q8gDrCbSll1BVFNrPdPX/RhT+SQ7OTt8mBKaz4SJTXv2xr0NA5YDcFNwLLG2Uts
+         hJFkhgGFDFSRgIl4N55Mza2hyrVX7xZ2Lgx9ZggEdzxDWs33f2Dl3SRYxScVVOehLQJy
+         /R85UQhigbgmEfhH7YsxXLMXCAimfcFCVzN2O5AhqsDB7tCNSvj3jnHQlno+SmUibEa0
+         ZOJNEcAKMJ/fJVk3xvh7WpMwBNFveDalqLjre9KJU9LxXtkgf4WFVkv/cAnKbrXdedeV
+         54Gw==
+X-Gm-Message-State: APjAAAVmFxln+XlYeHClC4lxQwFF25U+1E0UH7LSmzhfJA40JKRf8Ofv
+        zdozq59NjPcNt9svWREeEnitRcBv
+X-Google-Smtp-Source: APXvYqw86J0vbCPBjCkeEeQmSKdfzU+5b6cIvEchr7LpbgK6813mL6a0JVbDAMDfDVrqpa0+VU3bCw==
+X-Received: by 2002:ac2:494b:: with SMTP id o11mr28503290lfi.9.1558112180247;
+        Fri, 17 May 2019 09:56:20 -0700 (PDT)
+Received: from [192.168.1.16] (blb109.neoplus.adsl.tpnet.pl. [83.28.195.109])
+        by smtp.gmail.com with ESMTPSA id d18sm1685107lfl.95.2019.05.17.09.56.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 09:56:19 -0700 (PDT)
+Subject: Re: [PATCH 0/2] Fix LED GPIO trigger behavior
+To:     Kun Yi <kunyi@google.com>, linux-leds@vger.kernel.org
+Cc:     pavel@ucw.cz, dmurphy@ti.com, u.kleine-koenig@pengutronix.de,
+        linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <20190516214209.139726-1-kunyi@google.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <87d5d4a6-857b-b362-baaf-3a004ee51d49@gmail.com>
+Date:   Fri, 17 May 2019 18:56:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190516214209.139726-1-kunyi@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for an alternative method to add xattrs to files in
-the rootfs filesystem. Instead of extracting them directly from the ram
-disk image, they are extracted from a regular file called .xattr-list, that
-can be added by any ram disk generator available today. The file format is:
+Cc Linus Walleij and leds-gpio@vger.kernel.org.
 
-<file #N data len (ASCII, 10 chars)><file #N path>\0
-<xattr #N data len (ASCII, 8 chars)><xattr #N name>\0<xattr #N value>
+On 5/16/19 11:42 PM, Kun Yi wrote:
+> *** BLURB HERE ***
+> Hello there,
+> 
+> I recently tested ledtrig-gpio on an embedded controller and one of the
+> issues I had involve not requesting the user input pin as GPIO.
+> 
+> In many embedded systems, a pin could be muxed as several functions, and
+> requesting the pin as GPIO is necessary to let pinmux select the pin as
+> a GPIO instead of, say an I2C pin. I'd like to learn whether it is appropriate
+> to assume user of ledtrig-gpio really intends to use GPIOs and not some
+> weird pins that are used as other functions.
+> 
+> Kun Yi (2):
+>    ledtrig-gpio: Request user input pin as GPIO
+>    ledtrig-gpio: 0 is a valid GPIO number
+> 
+>   drivers/leds/trigger/ledtrig-gpio.c | 35 ++++++++++++++++++++---------
+>   1 file changed, 24 insertions(+), 11 deletions(-)
+> 
 
-.xattr-list can be generated by executing:
-
-$ getfattr --absolute-names -d -h -R -e hex -m - \
-      <file list> | xattr.awk -b > ${initdir}/.xattr-list
-
-where the content of the xattr.awk script is:
-
-#! /usr/bin/awk -f
-{
-  if (!length($0)) {
-    printf("%.10x%s\0", len, file);
-    for (x in xattr) {
-      printf("%.8x%s\0", xattr_len[x], x);
-      for (i = 0; i < length(xattr[x]) / 2; i++) {
-        printf("%c", strtonum("0x"substr(xattr[x], i * 2 + 1, 2)));
-      }
-    }
-    i = 0;
-    delete xattr;
-    delete xattr_len;
-    next;
-  };
-  if (i == 0) {
-    file=$3;
-    len=length(file) + 8 + 1;
-  }
-  if (i > 0) {
-    split($0, a, "=");
-    xattr[a[1]]=substr(a[2], 3);
-    xattr_len[a[1]]=length(a[1]) + 1 + 8 + length(xattr[a[1]]) / 2;
-    len+=xattr_len[a[1]];
-  };
-  i++;
-}
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- init/initramfs.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
-
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 0c6dd1d5d3f6..6ec018c6279a 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -13,6 +13,8 @@
- #include <linux/namei.h>
- #include <linux/xattr.h>
- 
-+#define XATTR_LIST_FILENAME ".xattr-list"
-+
- static ssize_t __init xwrite(int fd, const char *p, size_t count)
- {
- 	ssize_t out = 0;
-@@ -382,6 +384,97 @@ static int __init __maybe_unused do_setxattrs(char *pathname)
- 	return 0;
- }
- 
-+struct path_hdr {
-+	char p_size[10]; /* total size including p_size field */
-+	char p_data[];   /* <path>\0<xattrs> */
-+};
-+
-+static int __init do_readxattrs(void)
-+{
-+	struct path_hdr hdr;
-+	char *path = NULL;
-+	char str[sizeof(hdr.p_size) + 1];
-+	unsigned long file_entry_size;
-+	size_t size, path_size, total_size;
-+	struct kstat st;
-+	struct file *file;
-+	loff_t pos;
-+	int ret;
-+
-+	ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-+	if (ret < 0)
-+		return ret;
-+
-+	total_size = st.size;
-+
-+	file = filp_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-+	if (IS_ERR(file))
-+		return PTR_ERR(file);
-+
-+	pos = file->f_pos;
-+
-+	while (total_size) {
-+		size = kernel_read(file, (char *)&hdr, sizeof(hdr), &pos);
-+		if (size != sizeof(hdr)) {
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		total_size -= size;
-+
-+		str[sizeof(hdr.p_size)] = 0;
-+		memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-+		ret = kstrtoul(str, 16, &file_entry_size);
-+		if (ret < 0)
-+			goto out;
-+
-+		file_entry_size -= sizeof(sizeof(hdr.p_size));
-+		if (file_entry_size > total_size) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		path = vmalloc(file_entry_size);
-+		if (!path) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		size = kernel_read(file, path, file_entry_size, &pos);
-+		if (size != file_entry_size) {
-+			ret = -EIO;
-+			goto out_free;
-+		}
-+
-+		total_size -= size;
-+
-+		path_size = strnlen(path, file_entry_size);
-+		if (path_size == file_entry_size) {
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		xattr_buf = path + path_size + 1;
-+		xattr_len = file_entry_size - path_size - 1;
-+
-+		ret = do_setxattrs(path);
-+		vfree(path);
-+		path = NULL;
-+
-+		if (ret < 0)
-+			break;
-+	}
-+out_free:
-+	vfree(path);
-+out:
-+	fput(file);
-+
-+	if (ret < 0)
-+		error("Unable to parse xattrs");
-+
-+	return ret;
-+}
-+
- static __initdata int wfd;
- 
- static int __init do_name(void)
-@@ -391,6 +484,11 @@ static int __init do_name(void)
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
- 		free_hash();
- 		return 0;
-+	} else if (strcmp(collected, XATTR_LIST_FILENAME) == 0) {
-+		struct kstat st;
-+
-+		if (!vfs_lstat(collected, &st))
-+			do_readxattrs();
- 	}
- 	clean_path(collected, mode);
- 	if (S_ISREG(mode)) {
-@@ -562,6 +660,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 		buf += my_inptr;
- 		len -= my_inptr;
- 	}
-+	do_readxattrs();
- 	dir_utime();
- 	kfree(name_buf);
- 	kfree(symlink_buf);
 -- 
-2.17.1
-
+Best regards,
+Jacek Anaszewski
