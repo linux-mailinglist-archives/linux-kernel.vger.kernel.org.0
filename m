@@ -2,106 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F792116D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9D62115A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbfEQAr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 20:47:26 -0400
-Received: from mga09.intel.com ([134.134.136.24]:56689 "EHLO mga09.intel.com"
+        id S1727263AbfEQAfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 20:35:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbfEQArZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 20:47:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 17:47:25 -0700
-X-ExtLoop1: 1
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008.jf.intel.com with ESMTP; 16 May 2019 17:47:25 -0700
-Subject: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 16 May 2019 17:33:38 -0700
-Message-ID: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1727213AbfEQAfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 20:35:30 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7492D2177B
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 00:35:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558053329;
+        bh=niIKH4botxbpWeWqvmcPwLDMSSafV2ChSNsYdIe+iGo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OPNb+7w9EXpQrLSrg2I5dPykVkZZJHXC3F41CUHkpgBwZ50z9slGV2cYrRzxgMQ7h
+         FzYo91c6FoeuFlTvFDJicBqjNF5m/d1nSgEQ/l3vrWwt1WdWQPVLlSN+SMCMJESf9g
+         TDJOMq4p357K3UE7XLF9nNWw9YI3KlNL7Q6JZuXE=
+Received: by mail-wm1-f47.google.com with SMTP id 198so5249543wme.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:35:29 -0700 (PDT)
+X-Gm-Message-State: APjAAAUjGmeeEbN+NwdnKZiIZnLPN1QuXI/rwMUTjYeh7XcAKVZClT6L
+        OoJ7xEfruKF6SUXxQp2e09P5YVSBJycBy5mD/wcGdQ==
+X-Google-Smtp-Source: APXvYqwDcoGXimRaQPDsB3UlkhfxsRLkjKo5DiID5CYxx1g0XnlkVwMsC8ObS5vjAqIABzp4jbNhNRoniOEDgPQIhNk=
+X-Received: by 2002:a7b:c084:: with SMTP id r4mr93634wmh.14.1558053327909;
+ Thu, 16 May 2019 17:35:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <8fe520bb-30bd-f246-a3d8-c5443e47a014@intel.com>
+ <358e9b36-230f-eb18-efdb-b472be8438b4@fortanix.com> <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
+ <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com> <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com> <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
+ <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 May 2019 17:35:16 -0700
+X-Gmail-Original-Message-ID: <CALCETrXmyau8Gq-wKHZ5FdNGF+mqd7a+q+HAVR2sqvXA6av9BA@mail.gmail.com>
+Message-ID: <CALCETrXmyau8Gq-wKHZ5FdNGF+mqd7a+q+HAVR2sqvXA6av9BA@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jeff discovered that performance improves from ~375K iops to ~519K iops
-on a simple psync-write fio workload when moving the location of 'struct
-page' from the default PMEM location to DRAM. This result is surprising
-because the expectation is that 'struct page' for dax is only needed for
-third party references to dax mappings. For example, a dax-mapped buffer
-passed to another system call for direct-I/O requires 'struct page' for
-sending the request down the driver stack and pinning the page. There is
-no usage of 'struct page' for first party access to a file via
-read(2)/write(2) and friends.
+On Thu, May 16, 2019 at 3:23 PM Xing, Cedric <cedric.xing@intel.com> wrote:
+>
+> Hi Andy,
+>
+> > > SIGSTRUCT isn't necessarily stored on disk so may not always have a f=
+d.
+> > How about the following?
+> > > void *ss_pointer =3D mmap(sigstruct_fd, PROT_READ,...);
+> > > ioctl(enclave_fd, SGX_INIT_THE_ENCLAVE, ss_pointer);
+> > >
+> > > The idea here is SIGSTRUCT will still be passed in memory so it works
+> > the same way when no LSM modules are loaded or basing its decision on
+> > the .sigstruct file. Otherwise, an LSM module can figure out the backin=
+g
+> > file (and offset within that file) by looking into the VMA covering
+> > ss_pointer.
+> >
+> > I don=E2=80=99t love this approach.  Application authors seem likely to=
+ use
+> > read() instead of mmap(), and it=E2=80=99ll still work in many cares. I=
+t would
+> > also complicate the kernel implementation, and looking at the inode
+> > backing the vma that backs a pointer is at least rather unusual.
+> > Instead, if the sigstruct isn=E2=80=99t on disk because it=E2=80=99s dy=
+namic or came
+> > from a network, the application can put it in a memfd.
+>
+> I understand your concern here. But I guess we are making too much assump=
+tion on how enclaves are structured/packaged. My concern is, what if a SIGS=
+TRUCT really has to be from memory? For example, an enclave (along with its=
+ SIGSTRUCT) could be embedded inside a shared object (or even the "main" ex=
+ecutable) so it shows up in memory to begin with.
 
-However, this "no page needed" expectation is violated by
-CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
-copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
-check_heap_object() helper routine assumes the buffer is backed by a
-page-allocator DRAM page and applies some checks.  Those checks are
-invalid, dax pages are not from the heap, and redundant,
-dax_iomap_actor() has already validated that the I/O is within bounds.
+Hmm.  That's a fair point, although opening /proc/self/exe could be
+somewhat of a workaround.  It does suffer from a bit of an in-band
+signaling problem, though, in that it's possible that some other
+random bytes in the library resemble a SIGSTRUCT.
 
-Bypass this overhead and call the 'no check' versions of the
-copy_{to,from}_iter operations directly.
+> I was not saying enclaves were exempt to good security practices. What I =
+was trying to say was, EPC pages are *not* subject to the same attacks as r=
+egular pages so I suspect there will be a desire to enforce different polic=
+ies on them, especially after new SGX2 features/applications become availab=
+le. So I think it beneficial to distinguish between regular vs. enclave vir=
+tual ranges. And to do that, a new VM_SGX flag in VMA is probably a very si=
+mple/easy way. And with that VM_SGX flag, we could add a new security_sgx_m=
+prot() hook so that LSM modules/policies could act differently.
 
-Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache...")
-Cc: Jan Kara <jack@suse.cz>
-Cc: <stable@vger.kernel.org>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reported-and-tested-by: Jeff Smits <jeff.smits@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/pmem.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+I'm not opposed to this, but I also don't think this needs to be in
+the initial upstream driver.  VM_SGX also isn't strictly necessary --
+an LSM could inspect the VMA to decide whether it's an SGX VMA if it
+really wanted to.
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 845c5b430cdd..c894f45e5077 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -281,16 +281,21 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
- 	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
- }
- 
-+/*
-+ * Use the 'no check' versions of copy_from_iter_flushcache() and
-+ * copy_to_iter_mcsafe() to bypass HARDENED_USERCOPY overhead. Bounds
-+ * checking is handled by dax_iomap_actor()
-+ */
- static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	return copy_from_iter_flushcache(addr, bytes, i);
-+	return _copy_from_iter_flushcache(addr, bytes, i);
- }
- 
- static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	return copy_to_iter_mcsafe(addr, bytes, i);
-+	return _copy_to_iter_mcsafe(addr, bytes, i);
- }
- 
- static const struct dax_operations pmem_dax_ops = {
+That being said, do you have any specific behavior differences in mind
+aside from the oddities involved in loading the enclave.
 
+>
+> And if you are with me on that bigger picture, the next question is: what=
+ should be the default behavior of security_sgx_mprot() for existing/non-SG=
+X-aware LSM modules/policies? I'd say a reasonable default is to allow R, R=
+W and RX, but not anything else. It'd suffice to get rid of EXECMEM/EXECMOD=
+ requirements on enclave applications. For SGX1, EPCM permissions are immut=
+able so it really doesn't matter what security_sgx_mprot() does. For SGX2 a=
+nd beyond, there's still time and new SGX-aware LSM modules/policies will p=
+robably have emerged by then.
+
+I hadn't thought about the SGX1 vs SGX2 difference.  If the driver
+initially only wants to support SGX1, then I guess we really could get
+away with constraining the EPC flags based on the source page
+permission and not restricting mprotect() and mmap() permissions on
+/dev/sgx/enclave at all.
