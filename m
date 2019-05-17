@@ -2,65 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B040221FB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA7921FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:39:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfEQVhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 17:37:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbfEQVhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 17:37:47 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E79DB20815;
-        Fri, 17 May 2019 21:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558129067;
-        bh=aV+DZYgCxz6TeUuopFM95pRHxHKcPxgDyN99N5XYJko=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zyaA/h6aSWnQbfVIYgqsy2UrDKSlqT0fUgWvQgq/rIbENLvBDNuAhY84I4Cm0CmLD
-         cPGqFAtx/nnBYevpcWHQItaMk+wpufHLo0tSppdBJA4ooerLdUqPl1v/gMovZc1ya9
-         Y/ZZQIjHjuO4Er8F1QTdG0soYL1cGA93941vJyYY=
-Date:   Fri, 17 May 2019 14:37:46 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Dmitry Vyukov <dvyukov@gmail.com>
-Cc:     catalin.marinas@arm.com, Dmitry Vyukov <dvyukov@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kmemleak: fix check for softirq context
-Message-Id: <20190517143746.2157a759f65b4cbc73321124@linux-foundation.org>
-In-Reply-To: <20190517171507.96046-1-dvyukov@gmail.com>
-References: <20190517171507.96046-1-dvyukov@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1729545AbfEQVjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 17:39:23 -0400
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:36032 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728959AbfEQVjX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 17:39:23 -0400
+Received: by mail-vs1-f73.google.com with SMTP id i13so1670697vsr.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:39:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=CxlinLSdgStAZj8ZYyY8C5jglK14sBrM48vYUM57nQk=;
+        b=Lr1hshRLI8bkkP5XQ+UnqbvtSIn4+GxIHNrUKo5knOvGtLVWvllhbmL/P7SFVq0q3G
+         oySlkP3VC/FArrDJIA9lERGu11efUk2HE1iv+rtqxt5h25S7olLYbSifqxp2Pm5Sa14n
+         eJG55mOsEM7FGWG36vVTPIvS49vJRvB2AnCjRfPc+2yd0Vqq9usi7KTHCKhCd0IyT4PR
+         qBfAxm/5OnPt9nlgrr+zu3mJDsmaWzAe27XN5d6ZwKQ4qa8VeYXAmd15kiS/0jyawOr0
+         9nYCnuQt/oEVdCzXELQw2AWQANdTpFx0IkvBjyPIam8tKwuieV42gWQlnehz57Ep/F18
+         7Wag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=CxlinLSdgStAZj8ZYyY8C5jglK14sBrM48vYUM57nQk=;
+        b=Y7JkoISbJKrtupcdZi1VFIcYZp1RufzawbwBeT+sQkJyHCmYvnBKTx9a7KmheBpTjn
+         k3Awl6k0mAyx9TXPwPDa/iEEKFc88xmoWgwalxUSVHeICGEGyjQjlNsqAd3BeVkSPt+S
+         l8PEn/762+u4hB8tsECSXlTSr6kcrL2d4u/rZ1KimWX+lEYZvzSLFM1QmXr00Mm7VMm8
+         uZfT5eAu+JMT/m2iUSERLcHscr/XJ8UEnGiQfAVyjDTGNEltqBiIzQzY3/cHjBmETdT6
+         H3PO2DtS1f3iOZLv42gKRpw5vquZhQMsrseatiexefRrv01C8kEBQ/+89u+u3h9+/CZ2
+         vuJg==
+X-Gm-Message-State: APjAAAXZyowiaN+gpBUiHA/oQ4NzpgmjgLL4hCMH5u3Eal6Jj0qQuQyu
+        FylYOe7R0vu5E5hgo9ZpzXNaafrhafFytImENxwgSw==
+X-Google-Smtp-Source: APXvYqwIDbPWP1gGpGqX0HDPWX3Ohrqk6UfCTZUEHeW8kUGSBX2WSMELoI3iXY6X+cwOujb0YKqTVixq1iTSqpDOz3RSCw==
+X-Received: by 2002:ab0:5a07:: with SMTP id l7mr22035272uad.78.1558129161944;
+ Fri, 17 May 2019 14:39:21 -0700 (PDT)
+Date:   Fri, 17 May 2019 14:39:14 -0700
+Message-Id: <20190517213918.26045-1-matthewgarrett@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH V6 0/4] Add support for crypto agile TPM event logs
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 May 2019 19:15:07 +0200 Dmitry Vyukov <dvyukov@gmail.com> wrote:
+Updated with the fixes from Bartosz and the header fixes folded in.
+Bartosz, my machine still doesn't generate any final event log entries -
+are you able to give this a test and make sure it's good?
 
-> From: Dmitry Vyukov <dvyukov@google.com>
-> 
-> in_softirq() is a wrong predicate to check if we are in a softirq context.
-> It also returns true if we have BH disabled, so objects are falsely
-> stamped with "softirq" comm. The correct predicate is in_serving_softirq().
->
-> ...
-> 
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -588,7 +588,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
->  	if (in_irq()) {
->  		object->pid = 0;
->  		strncpy(object->comm, "hardirq", sizeof(object->comm));
-> -	} else if (in_softirq()) {
-> +	} else if (in_serving_softirq()) {
->  		object->pid = 0;
->  		strncpy(object->comm, "softirq", sizeof(object->comm));
->  	} else {
 
-What are the user-visible runtime effects of this change?
