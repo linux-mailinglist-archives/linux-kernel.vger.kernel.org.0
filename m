@@ -2,95 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F12721348
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8AE92134F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:59:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfEQE4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 00:56:16 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:45868 "EHLO inva021.nxp.com"
+        id S1727778AbfEQE7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 00:59:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbfEQE4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 00:56:16 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FE9C200015;
-        Fri, 17 May 2019 06:56:14 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 61AA9200005;
-        Fri, 17 May 2019 06:56:10 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7596E40250;
-        Fri, 17 May 2019 12:56:05 +0800 (SGT)
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH v2] arm64: dts: ls1028a: Fix CPU idle fail.
-Date:   Fri, 17 May 2019 12:57:53 +0800
-Message-Id: <20190517045753.3709-1-ran.wang_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725929AbfEQE7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 00:59:17 -0400
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E8C120879
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 04:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558069156;
+        bh=wn472IRdgwSTmAQxOlJ/TuR65yPV4PLu1QbTI1KzXZU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eaIpNd90DK2//QGPdxnHMx1w5XMd4XWQJk+S1SkUSgByFc2xJxya9zH2K8syt32kw
+         ymb32N0jsurDwfDLWZDy9zKPpg/BPMGVQHilwhl9u/YZ4d0JAOeHVucEhsWufCrOrX
+         1vVYJNl6eVnliev49liAwN5dHKRQIvQgFJldG67s=
+Received: by mail-wr1-f51.google.com with SMTP id b18so5554996wrq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 21:59:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAWCLg2yuVCZ1MOGLXh/O60MhwuWiIoT272IwMqm2bwk3NKxZ7pE
+        Tx2syZ3y/5qe8Q7jmruF/Fuz7lw+YM2JYR/rhJQpZg==
+X-Google-Smtp-Source: APXvYqzrXACnyPa8ejF2asmlRChu4kEILQCxLR0vnSQ2bz6Vk4VDCYAyPYlAg09EEOnjcM+Q5YUwTyVYJi+mDfcutbI=
+X-Received: by 2002:adf:dc4b:: with SMTP id m11mr2344176wrj.66.1558069155028;
+ Thu, 16 May 2019 21:59:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190517032505.19921-1-felipe@felipegasper.com>
+In-Reply-To: <20190517032505.19921-1-felipe@felipegasper.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 May 2019 21:59:03 -0700
+X-Gmail-Original-Message-ID: <CALCETrUaTamZ1ZGbWpu+4kDAEFRqyESoa_4tgwpAmMh3NVQ4pQ@mail.gmail.com>
+Message-ID: <CALCETrUaTamZ1ZGbWpu+4kDAEFRqyESoa_4tgwpAmMh3NVQ4pQ@mail.gmail.com>
+Subject: Re: [PATCH] Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
+To:     Felipe <felipe@felipegasper.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PSCI spec define 1st parameter's bit 16 of function CPU_SUSPEND to
-indicate CPU State Type: 0 for standby, 1 for power down. In this
-case, we want to select standby for CPU idle feature. But current
-setting wrongly select power down and cause CPU SUSPEND fail every
-time. Need this fix.
+> On May 16, 2019, at 8:25 PM, Felipe <felipe@felipegasper.com> wrote:
+>
+> Author: Felipe Gasper <felipe@felipegasper.com>
+> Date:   Thu May 16 12:16:53 2019 -0500
+>
+>    Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
+>
+>    This adds the ability for Netlink to report a socket=E2=80=99s UID alo=
+ng with the
+>    other UNIX socket diagnostic information that is already available. Th=
+is will
+>    allow diagnostic tools greater insight into which users control which =
+socket.
+>
+>    Signed-off-by: Felipe Gasper <felipe@felipegasper.com>
+>
+> diff --git a/include/uapi/linux/unix_diag.h b/include/uapi/linux/unix_dia=
+g.h
+> index 5c502fd..a198857 100644
+> --- a/include/uapi/linux/unix_diag.h
+> +++ b/include/uapi/linux/unix_diag.h
+> @@ -20,6 +20,7 @@ struct unix_diag_req {
+> #define UDIAG_SHOW_ICONS    0x00000008    /* show pending connections */
+> #define UDIAG_SHOW_RQLEN    0x00000010    /* show skb receive queue len *=
+/
+> #define UDIAG_SHOW_MEMINFO    0x00000020    /* show memory info of a sock=
+et */
+> +#define UDIAG_SHOW_UID        0x00000040    /* show socket's UID */
+>
+> struct unix_diag_msg {
+>    __u8    udiag_family;
+> @@ -40,6 +41,7 @@ enum {
+>    UNIX_DIAG_RQLEN,
+>    UNIX_DIAG_MEMINFO,
+>    UNIX_DIAG_SHUTDOWN,
+> +    UNIX_DIAG_UID,
+>
+>    __UNIX_DIAG_MAX,
+> };
+> diff --git a/net/unix/diag.c b/net/unix/diag.c
+> index 3183d9b..011f56c 100644
+> --- a/net/unix/diag.c
+> +++ b/net/unix/diag.c
+> @@ -110,6 +110,11 @@ static int sk_diag_show_rqlen(struct sock *sk, struc=
+t sk_buff *nlskb)
+>    return nla_put(nlskb, UNIX_DIAG_RQLEN, sizeof(rql), &rql);
+> }
+>
+> +static int sk_diag_dump_uid(struct sock *sk, struct sk_buff *nlskb)
+> +{
+> +    return nla_put(nlskb, UNIX_DIAG_UID, sizeof(kuid_t), &(sk->sk_uid));
 
-Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   18 +++++++++---------
- 1 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index b045812..bf7f845 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -28,7 +28,7 @@
- 			enable-method = "psci";
- 			clocks = <&clockgen 1 0>;
- 			next-level-cache = <&l2>;
--			cpu-idle-states = <&CPU_PH20>;
-+			cpu-idle-states = <&CPU_PW20>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -38,7 +38,7 @@
- 			enable-method = "psci";
- 			clocks = <&clockgen 1 0>;
- 			next-level-cache = <&l2>;
--			cpu-idle-states = <&CPU_PH20>;
-+			cpu-idle-states = <&CPU_PW20>;
- 		};
- 
- 		l2: l2-cache {
-@@ -53,13 +53,13 @@
- 		 */
- 		entry-method = "arm,psci";
- 
--		CPU_PH20: cpu-ph20 {
--			compatible = "arm,idle-state";
--			idle-state-name = "PH20";
--			arm,psci-suspend-param = <0x00010000>;
--			entry-latency-us = <1000>;
--			exit-latency-us = <1000>;
--			min-residency-us = <3000>;
-+		CPU_PW20: cpu-pw20 {
-+			  compatible = "arm,idle-state";
-+			  idle-state-name = "PW20";
-+			  arm,psci-suspend-param = <0x0>;
-+			  entry-latency-us = <2000>;
-+			  exit-latency-us = <2000>;
-+			  min-residency-us = <6000>;
- 		};
- 	};
- 
--- 
-1.7.1
-
+That type is called *k* uid_t because it=E2=80=99s internal to the kernel. =
+You
+probably want from_kuid_munged(), which will fix it up for an
+appropriate userns.  Presumably you want sk=E2=80=99s netns=E2=80=99s usern=
+s.
