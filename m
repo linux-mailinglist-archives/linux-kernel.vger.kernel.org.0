@@ -2,82 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62F342151C
+	by mail.lfdr.de (Postfix) with ESMTP id CDF032151D
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfEQIMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 04:12:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33231 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbfEQIMd (ORCPT
+        id S1728740AbfEQIMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 04:12:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38196 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbfEQIMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 04:12:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d9so6141208wrx.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 01:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8O+9BQEfJYc0g0qK+OD9OThVTAdpC5JdjbcFfzDR2ZA=;
-        b=oUDORxpc5eA58F9PCGt7zt9qul2JIcPUhYvzn7WXi+pb3gin/izl1PNFoKbAnr3UYE
-         nrQoODTAY1iC52tLWWXGejfZX1dJhvOat1Os8EsQxvcxL6y4J8dvKncqU7jHgvb5erG3
-         ++WwlKTymT86TxTsfnUyFaWd6l57W78vHcZrpkNQceYPR56Eyoaaa5+espX5QGjITDUi
-         kxhwRQ3MdqxQyV2Pqn24hzxppSILQqP78JYxf5DV8WfQ3gjVgcbSPBB8SPEzG+oW1I98
-         KGQuEHX3qN9YIkQXmYKylMrs+0L3EAQ6VWCTn/JMgCn6DDHUCyRmilaZva/MiDmBONSw
-         T9mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8O+9BQEfJYc0g0qK+OD9OThVTAdpC5JdjbcFfzDR2ZA=;
-        b=fVNYjf5gQ+ibQxWUhrBWLI4Q2GDucwRs8IjCe8FDe0feY87TrE2ROfjpXDqlakX4Kr
-         SzETP8w6yJn2gZoeyz25fcE/pGpc/lK9zlC5s+8EG3WfoXItWb4HZvONivN1Sp8QBdzP
-         0RGxujpBLk0ou2oCMj7zwpuNkUMm0LId41I6rH6wyuM8VhNc8pOfAzRyYQNC9lvuXG6F
-         ZbHkPeu+uRTc1AjaMVRtWFbB6KCLlyxc8BaOwwQhhVEXTdE6DTjO8U+oqGyd9B2hYWHx
-         KJP4F1t2fJHBefdmhIZSHKf5J3gW2Nk2uumdTHMIgKSnYcxm10BeK9kSHOkTKW4pIEGi
-         lvSw==
-X-Gm-Message-State: APjAAAUsemszhp5iL2a7yIstvboa0Ow1CuU9vNCR58kV6dgjCnTKGEkL
-        lqtnuxPWp7/pGs28Dy4unTFr8VEHKKB2s//VznM=
-X-Google-Smtp-Source: APXvYqxlNXvGX9Z5g/e9+tcRIXbot97JHSo4sVwFlLpLdTHuG73ENSQzTxHi7DK+95dl36jYqkWr1B/Q5HoSVlPk6Rc=
-X-Received: by 2002:adf:db81:: with SMTP id u1mr6031003wri.296.1558080752113;
- Fri, 17 May 2019 01:12:32 -0700 (PDT)
+        Fri, 17 May 2019 04:12:35 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hRXyj-0004tg-LP; Fri, 17 May 2019 08:12:33 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: fix memory leak of pneg_inbuf on -EOPNOTSUPP ioctl case
+Date:   Fri, 17 May 2019 09:12:33 +0100
+Message-Id: <20190517081233.11764-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1558024913-26502-1-git-send-email-kdasu.kdev@gmail.com> <1558024913-26502-2-git-send-email-kdasu.kdev@gmail.com>
-In-Reply-To: <1558024913-26502-2-git-send-email-kdasu.kdev@gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Fri, 17 May 2019 10:12:21 +0200
-Message-ID: <CAFLxGvyZCpKthJevFHjjBQXo=j5f-FUip0MAsLy0HaoJzLZ2rA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mtd: nand: raw: brcmnand: When oops in progress
- use pio and interrupt polling
-To:     Kamal Dasu <kdasu.kdev@gmail.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 6:42 PM Kamal Dasu <kdasu.kdev@gmail.com> wrote:
->
-> If mtd_oops is in progress, switch to polling during NAND command
-> completion instead of relying on DMA/interrupts so that the mtd_oops
-> buffer can be completely written in the assigned NAND partition.
+From: Colin Ian King <colin.king@canonical.com>
 
-With the new flag the semantics change, as soon a panic write happened,
-the flag will stay and *all* future operates will take the polling/pio path.
+Currently in the case where SMB2_ioctl returns the -EOPNOTSUPP error
+there is a memory leak of pneg_inbuf. Fix this by returning via
+the out_free_inbuf exit path that will perform the relevant kfree.
 
-IMHO this is fine since the kernel cannot recover from an oops.
-But just to make sure we all get this. :-)
-An alternative would be to block all further non-panic writes.
+Addresses-Coverity: ("Resource leak")
+Fixes: 969ae8e8d4ee ("cifs: Accept validate negotiate if server return NT_STATUS_NOT_SUPPORTED")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2pdu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 710ceb875161..5b8d1482ffbd 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1054,7 +1054,8 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+ 		 * not supported error. Client should accept it.
+ 		 */
+ 		cifs_dbg(VFS, "Server does not support validate negotiate\n");
+-		return 0;
++		rc = 0;
++		goto out_free_inbuf;
+ 	} else if (rc != 0) {
+ 		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+ 		rc = -EIO;
 -- 
-Thanks,
-//richard
+2.20.1
+
