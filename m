@@ -2,132 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9D1211E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 03:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D64211E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 04:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfEQB4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 21:56:01 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:52075 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725933AbfEQB4B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 21:56:01 -0400
-X-UUID: 25c5d4987f984b4bb644386028111afe-20190517
-X-UUID: 25c5d4987f984b4bb644386028111afe-20190517
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1567336938; Fri, 17 May 2019 09:55:54 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 17 May 2019 09:55:52 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 17 May 2019 09:55:52 +0800
-Message-ID: <1558058152.14401.9.camel@mtksdaap41>
-Subject: Re: [PATCH v6 03/12] dt-binding: gce: add binding for gce subsys
- property
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh 
-        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>
-Date:   Fri, 17 May 2019 09:55:52 +0800
-In-Reply-To: <20190516090224.59070-4-bibby.hsieh@mediatek.com>
-References: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
-         <20190516090224.59070-4-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1727471AbfEQCEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 22:04:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbfEQCEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 22:04:25 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CBD83C049E24;
+        Fri, 17 May 2019 02:04:23 +0000 (UTC)
+Received: from treble (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99CB12706D;
+        Fri, 17 May 2019 02:03:57 +0000 (UTC)
+Date:   Thu, 16 May 2019 21:03:39 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Ivan Babrou <ivan@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        kernel-team <kernel-team@cloudflare.com>
+Subject: Re: Linux 4.19 and GCC 9
+Message-ID: <20190516225013.nvhwqi5tfwtby6qb@treble>
+References: <CABWYdi06NUOWRLingNuybgZZsTZPjhmsOx-9oCGK94qZGYbzcw@mail.gmail.com>
+ <CANiq72kvpiC-i53AXM-YsCUvWroHQemmqxsXjnB330ZEeHahUg@mail.gmail.com>
+ <CABWYdi1zhTTaN-GSgH0DnPfz7p=SRw0wts5QVYYVtfvoiS0qnQ@mail.gmail.com>
+ <CANiq72=fsL5m2_e+bNovFCHy3=YVf53EKGtGE_sWvsAD=ONHuQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 2233925153F968BAF379E936D0CC7EEFD651D7AB7668FE71064DB89A525084492000:8
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiq72=fsL5m2_e+bNovFCHy3=YVf53EKGtGE_sWvsAD=ONHuQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 17 May 2019 02:04:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
-
-On Thu, 2019-05-16 at 17:02 +0800, Bibby Hsieh wrote:
-> tcmdq driver provide a function that get the relationship
-
-What is 'tcmdq'?
-
-> of sub system number from device node for client.
-> add specification for #subsys-cells, mediatek,gce-subsys.
-
-The property name is mediatek,gce-client-reg.
-
-Regards,
-CK
-
+On Thu, May 16, 2019 at 11:20:54PM +0200, Miguel Ojeda wrote:
+> > mm/slub.o: warning: objtool: init_cache_random_seq()+0x36: sibling
+> > call from callable instruction with modified stack frame
+> > mm/slub.o: warning: objtool: slab_out_of_memory()+0x3b: sibling call
+> > from callable instruction with modified stack frame
+> > mm/slub.o: warning: objtool: slab_pad_check.part.0()+0x7c: sibling
+> > call from callable instruction with modified stack frame
+> > mm/slub.o: warning: objtool: check_slab()+0x1c: sibling call from
+> > callable instruction with modified stack frame
 > 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> ---
->  .../devicetree/bindings/mailbox/mtk-gce.txt       | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> index 1f7f8f2a3f49..dceab63ccd06 100644
-> --- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> @@ -21,11 +21,19 @@ Required properties:
->  	priority: Priority of GCE thread.
->  	atomic_exec: GCE processing continuous packets of commands in atomic
->  		way.
-> +- #subsys-cells: Should be 3.
-> +	<&phandle subsys_number start_offset size>
-> +	phandle: Label name of a gce node.
-> +	subsys_number: specify the sub-system id which is corresponding
-> +		       to the register address.
-> +	start_offset: the start offset of register address that GCE can access.
-> +	size: the total size of register address that GCE can access.
->  
->  Required properties for a client device:
->  - mboxes: Client use mailbox to communicate with GCE, it should have this
->    property and list of phandle, mailbox specifiers.
-> -- mediatek,gce-subsys: u32, specify the sub-system id which is corresponding
-> +Optional properties for a client device:
-> +- mediatek,gce-client-reg: u32, specify the sub-system id which is corresponding
->    to the register address.
->  
->  Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
-> @@ -40,6 +48,7 @@ Example:
->  		clocks = <&infracfg CLK_INFRA_GCE>;
->  		clock-names = "gce";
->  		#mbox-cells = <3>;
-> +		#subsys-cells = <3>;
->  	};
->  
->  Example for a client device:
-> @@ -48,9 +57,9 @@ Example for a client device:
->  		compatible = "mediatek,mt8173-mmsys";
->  		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
->  			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
-> -		mediatek,gce-subsys = <SUBSYS_1400XXXX>;
->  		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
->  				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
-> -
-> +		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
-> +					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
->  		...
->  	};
+> AFAIK those are non-critical, i.e. stack traces may be wrong (or not),
+> but it does not mean the generated kernel itself is wrong. CC'ing the
+> objtool maintainers too.
 
+I don't think I recognize those warnings.  Do you also see them in the
+upstream kernel?
 
+-- 
+Josh
