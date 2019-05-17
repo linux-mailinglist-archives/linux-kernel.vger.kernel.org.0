@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C16421E7B
+	by mail.lfdr.de (Postfix) with ESMTP id 902E421E7C
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbfEQTiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 15:38:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54012 "EHLO mail.kernel.org"
+        id S1729661AbfEQTiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 15:38:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbfEQTiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 15:38:09 -0400
+        id S1727771AbfEQTiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 15:38:13 -0400
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9019C21726;
-        Fri, 17 May 2019 19:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EA8D2173C;
+        Fri, 17 May 2019 19:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558121887;
-        bh=UX50jR1VytJVQQxer7LjamI6OiE4kGXkWTXxYQGWl2Q=;
+        s=default; t=1558121892;
+        bh=7EU1QC26H5QDnA4OIcciCq2xOcCl97RvrvQ/K2KJyZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJF+t5BaR9x8HOQ2vT8BA3y9KEJSGJKuzc1WrXsj+f06kKaA5Ci9sXLJajKn7vHkQ
-         DxzgGv9qnW70syLJaiOxwIauwaDgkc08BnsD+EG8HbNmprqHb+KMtUSRKx83p5O+ke
-         WYnUighbJN3ehk1rS1/O3hixJDW7F+KAp5PDFN4U=
+        b=HgMVZipsxE8Vf5j3sq18Sp0b20gFEEVHEWqexrb2aI5iZjonD1Am9EkUDC/0a2YWp
+         QHsR70ArbCt/5n8fTh72I47i54/ngDTVxkKMr000fIxRw/QyADG1r+OIkuzUUCfTg0
+         KGmo76cgOzDKupRTdYGDR+mxLzAApPKlRCTGzd6w=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-trace-devel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 24/73] tools lib traceevent: Man page for header_page APIs
-Date:   Fri, 17 May 2019 16:35:22 -0300
-Message-Id: <20190517193611.4974-25-acme@kernel.org>
+Subject: [PATCH 25/73] tools lib traceevent: Man page for get/set cpus APIs
+Date:   Fri, 17 May 2019 16:35:23 -0300
+Message-Id: <20190517193611.4974-26-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190517193611.4974-1-acme@kernel.org>
 References: <20190517193611.4974-1-acme@kernel.org>
@@ -50,39 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Create a man page for libtraceevent APIs:
+Create man pages for libtraceevent APIs:
 
-  tep_get_header_page_size(),
-  tep_get_header_timestamp_size(),
-  tep_is_old_format()
+ tep_get_cpus(),
+ tep_set_cpus()
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: linux-trace-devel@vger.kernel.org
-Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-5-tstoyanov@vmware.com
-Link: http://lkml.kernel.org/r/20190510200106.583928896@goodmis.org
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-6-tstoyanov@vmware.com
+Link: http://lkml.kernel.org/r/20190510200106.742948683@goodmis.org
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../libtraceevent-header_page.txt             | 102 ++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-header_page.txt
+ .../Documentation/libtraceevent-cpus.txt      | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-cpus.txt
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-header_page.txt b/tools/lib/traceevent/Documentation/libtraceevent-header_page.txt
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-cpus.txt b/tools/lib/traceevent/Documentation/libtraceevent-cpus.txt
 new file mode 100644
-index 000000000000..615d117dc39f
+index 000000000000..5ad70e43b752
 --- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-header_page.txt
-@@ -0,0 +1,102 @@
++++ b/tools/lib/traceevent/Documentation/libtraceevent-cpus.txt
+@@ -0,0 +1,77 @@
 +libtraceevent(3)
 +================
 +
 +NAME
 +----
-+tep_get_header_page_size, tep_get_header_timestamp_size, tep_is_old_format -
-+Get the data stored in the header page, in kernel context.
++tep_get_cpus, tep_set_cpus - Get / set the number of CPUs, which have a tracing
++buffer representing it. Note, the buffer may be empty.
 +
 +SYNOPSIS
 +--------
@@ -90,38 +89,23 @@ index 000000000000..615d117dc39f
 +--
 +*#include <event-parse.h>*
 +
-+int *tep_get_header_page_size*(struct tep_handle pass:[*]_tep_);
-+int *tep_get_header_timestamp_size*(struct tep_handle pass:[*]_tep_);
-+bool *tep_is_old_format*(struct tep_handle pass:[*]_tep_);
++int *tep_get_cpus*(struct tep_handle pass:[*]_tep_);
++void *tep_set_cpus*(struct tep_handle pass:[*]_tep_, int _cpus_);
 +--
++
 +DESCRIPTION
 +-----------
-+These functions retrieve information from kernel context, stored in tracefs
-+events/header_page. Old kernels do not have header page info, so default values
-+from user space context are used.
++The _tep_get_cpus()_ function gets the number of CPUs, which have a tracing
++buffer representing it. The _tep_ argument is trace event parser context.
 +
-+The _tep_get_header_page_size()_ function returns the size of a long integer,
-+in kernel context. The _tep_ argument is trace event parser context.
-+This information is retrieved from tracefs events/header_page, "commit" field.
-+
-+The _tep_get_header_timestamp_size()_ function returns the size of timestamps,
-+in kernel context. The _tep_ argument is trace event parser context. This
-+information is retrieved from tracefs events/header_page, "timestamp" field.
-+
-+The _tep_is_old_format()_ function returns true if the kernel predates
-+the addition of events/header_page, otherwise it returns false.
++The _tep_set_cpus()_ function sets the number of CPUs, which have a tracing
++buffer representing it. The _tep_ argument is trace event parser context.
++The _cpu_ argument is the number of CPUs with tracing data.
 +
 +RETURN VALUE
 +------------
-+The _tep_get_header_page_size()_ function returns the size of a long integer,
-+in bytes.
-+
-+The _tep_get_header_timestamp_size()_ function returns the size of timestamps,
-+in bytes.
-+
-+The _tep_is_old_format()_ function returns true, if an old kernel is used to
-+generate the tracing data, which has no event/header_page. If the kernel is new,
-+or _tep_ is NULL, false is returned.
++The _tep_get_cpus()_ functions returns the number of CPUs, which have tracing
++data recorded.
 +
 +EXAMPLE
 +-------
@@ -131,19 +115,9 @@ index 000000000000..615d117dc39f
 +...
 +struct tep_handle *tep = tep_alloc();
 +...
-+	int longsize;
-+	int timesize;
-+	bool old;
-+
-+	longsize = tep_get_header_page_size(tep);
-+	timesize = tep_get_header_timestamp_size(tep);
-+	old = tep_is_old_format(tep);
-+
-+	printf ("%s kernel is used to generate the tracing data.\n",
-+		old?"Old":"New");
-+	printf("The size of a long integer is %d bytes.\n", longsize);
-+	printf("The timestamps size is %d bytes.\n", timesize);
++	tep_set_cpus(tep, 5);
 +...
++	printf("We have tracing data for %d CPUs", tep_get_cpus(tep));
 +--
 +
 +FILES
