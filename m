@@ -2,138 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 950AC2206D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 115BA2207C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728519AbfEQWs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 18:48:59 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35395 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbfEQWs7 (ORCPT
+        id S1729494AbfEQWyp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 18:54:45 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39195 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729301AbfEQWyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 18:48:59 -0400
-Received: by mail-it1-f193.google.com with SMTP id u186so14548574ith.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 15:48:59 -0700 (PDT)
+        Fri, 17 May 2019 18:54:44 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g9so3980518plm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 15:54:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fWLIDy2co5Vn50CtpXbdQSItadAnwXRU6oL36I+LMbU=;
-        b=j1fMEwmFBzpq5dKJ/MaU3D+drIuI0ARLCKClUL2DUep1n6kX4Fj3FE+3y2BpqzVZcg
-         cEeqDwknBjsY/k8bhbZb9ooIqb2AicXfoG+WcGFLfDGOXOwGm39gXALlBPzi1fE7dZkl
-         Gy0hqJ4vSeb3tcYqh9HvuEQUYmtA/7AZnr2/4=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ul1gLClLY2RLZ2itEzzFB2yOFIqulLy55JPQTAySFDo=;
+        b=IF+6pl0A6m1fIH81uzmdTDMrurVWOxHBgZdzg9ueW18kyGxlj6N5aPcTRqNNCU+vTS
+         LKiCjnkbIC7ajqH/YtTymknHPW/NY4yPjYIJzDwwYqMMyIAHIYA46a6IB8NY149qfCHK
+         CVTekqT/FiWMIwMhhNjynCJ139h41IPM+Swp8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fWLIDy2co5Vn50CtpXbdQSItadAnwXRU6oL36I+LMbU=;
-        b=q0B6mFUXnDRKQkGem9UMMUj5aUFfj4k5R9h/3uRunxTRncIW1ePnhjQKRfbUyygmQ/
-         RIvo9m8TvpeEVzW2t9aVbBpgWmHqnAiCZ4B90eyxjhVjJyGPtIkAo3qZbaHClsv+3WwR
-         xICyhzS0oDMitK2E6At1YUFtZ9PCa4tG79h5jVbLNlMTJVFJapThWSYT9JfUFuns62yr
-         hDsaB7P+WubZcRhjiM2P5Eo5rf81ZrucPszLGnb2rkGX2m1SF0caP4ytkL1lqCBp/1pF
-         UsVbdBDJUSo7nJ8ebOya0t4RteInTa5Ec9LAtA+tISgjZODz3Xk004jLcWv9XnojZLvo
-         Kbzw==
-X-Gm-Message-State: APjAAAWYAaC9Bs45Z8F9M0Vm6z8vI+AmKe1dv7+552KRgSrivR3RqCfx
-        XlVQVV4WDa8l6/IPZrH8Z7vzUHHqMm+CkGq1YFgTjA==
-X-Google-Smtp-Source: APXvYqyYg5NJJ7Eb1Cf1sch9W6PqiIZNmQkePH7xL+iwmKaY8JvrKHQXzNzcY6+FGrg1OB6xJE1HilF2iy1ns9vW/Ag=
-X-Received: by 2002:a02:1142:: with SMTP id 63mr37714962jaf.19.1558133338638;
- Fri, 17 May 2019 15:48:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ul1gLClLY2RLZ2itEzzFB2yOFIqulLy55JPQTAySFDo=;
+        b=Gvn4yvgfsdFPmRhu4fLFClP6H0qRQxwVM63+qH5rAJrXxpDhB98u8LJo5pyUFSncao
+         PaLdm9/22IX7STbrY/zjTxcGKDyp3XcbT2aUviv6/4DR94grrH/lmO6gJ959Fis6+yFA
+         Ya7gg7xat9a7lH4JV9jSXXPezLZEeM+LibajVMdeWIgn37JpLry9RfeaWgrp8AVASzDr
+         Nk/dH1lpL/3vk9/WZuQYHqZo2l/he27GNeVRxR7cupROzvOuFlHTRwEsOgK1DHUlGGNM
+         ZCraSke8gV/NTOeuNSZPQz8NjgcHbkKuKzbq21kItZbd8AD3o1m3fcaqWpJHbpVlsS1E
+         N6mA==
+X-Gm-Message-State: APjAAAW52eU0+sJMZAA+FfP8ovPn33ysz9Nv2Cu8uT9e1WvhPJyXNwWk
+        z8WRrWS/D/E2kdBZobXQI35J6A==
+X-Google-Smtp-Source: APXvYqz/J4eNQzJXQjOFtQWVtg1bZz7U+KE/9+kUa8iLb3eFelZBp/fzq1UlgJul23Nw2JUqc2sKmA==
+X-Received: by 2002:a17:902:7797:: with SMTP id o23mr58590219pll.147.1558133683494;
+        Fri, 17 May 2019 15:54:43 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id u11sm11174450pfh.130.2019.05.17.15.54.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 15:54:42 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc:     linux-rockchip@lists.infradead.org,
+        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
+        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-mmc@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        brcm80211-dev-list@cypress.com, YueHaibing <yuehaibing@huawei.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Martin Hicks <mort@bork.org>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Jiong Wu <lohengrin1024@gmail.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        Madhan Mohan R <MadhanMohan.R@cypress.com>,
+        Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH 0/3] brcmfmac: sdio: Deal better w/ transmission errors waking from sleep
+Date:   Fri, 17 May 2019 15:54:17 -0700
+Message-Id: <20190517225420.176893-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
-References: <20190509211353.213194-1-gwendal@chromium.org>
-In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Fri, 17 May 2019 15:48:47 -0700
-Message-ID: <CAPUE2ut4OUhrmbx6n8KCj7+ghXmC9iMnxGN8DMvyvZstznwwng@mail.gmail.com>
-Subject: Re: [PATCH v3 00/30] Update cros_ec_commands.h
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lee,
+This series attempts to deal better with the expected transmission
+errors that we get when waking up the SDIO-based WiFi on
+rk3288-veyron-minnie, rk3288-veyron-speedy, and rk3288-veyron-mickey.
 
-I verified and merged the changes on the kernels (3.18, 4.4 and 4.14)
-used on chromebook using a squashed version of these patches.
-(crrev.com/c/1583322, crrev.com/c/1583385, crrev.com/c/1583321
-respectively)
-Please let me know if you have any questions.
+Some details about those errors can be found in
+<https://crbug.com/960222>, but to summarize it here: if we try to
+send the wakeup command to the WiFi card at the same time it has
+decided to wake up itself then it will behave badly on the SDIO bus.
+This can cause timeouts or CRC errors.
 
-Thanks,
+When I tested on 4.19 and 4.20 these CRC errors can be seen to cause
+re-tuning.  Since I am currently developing on 4.19 this was the
+original problem I attempted to solve.
 
-Gwendal.
+On mainline it turns out that you don't see the retuning errors but
+you see tons of spam about timeouts trying to wakeup from sleep.  I
+tracked down the commit that was causing that and have partially
+reverted it here.  I have no real knowledge about Broadcom WiFi, but
+the commit that was causing problems sounds (from the descriptioin) to
+be a hack commit penalizing all Broadcom WiFi users because of a bug
+in a Cypress SD controller.  I will let others comment if this is
+truly the case and, if so, what the right solution should be.
 
-On Thu, May 9, 2019 at 2:14 PM Gwendal Grignou <gwendal@chromium.org> wrote:
->
-> The interface between CrosEC embedded controller and the host,
-> described by cros_ec_commands.h, as diverged from what the embedded
-> controller really support.
->
-> The source of thruth is at
-> https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h
->
-> That include file is converted to remove ACPI and Embedded only code.
->
-> From now on, cros_ec_commands.h will be automatically generated from
-> the file above, do not modify directly.
->
-> Fell free to squash the commits below.
->
-> Changes in v3:
-> - Rebase after commit 81888d8ab1532 ("mfd: cros_ec: Update the EC feature codes")
-> - Add Acked-by: Benson Leung <bleung@chromium.org>
->
-> Changes in v2:
-> - Move I2S changes at the end of the patchset, squashed with change in
->   sound/soc/codecs/cros_ec_codec.c to match new interface.
-> - Add Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->
-> Gwendal Grignou (30):
->   mfd: cros_ec: Update license term
->   mfd: cros_ec: Zero BUILD_ macro
->   mfd: cros_ec: set comments properly
->   mfd: cros_ec: add ec_align macros
->   mfd: cros_ec: Define commands as 4-digit UPPER CASE hex values
->   mfd: cros_ec: use BIT macro
->   mfd: cros_ec: Update ACPI interface definition
->   mfd: cros_ec: move HDMI CEC API definition
->   mfd: cros_ec: Remove zero-size structs
->   mfd: cros_ec: Add Flash V2 commands API
->   mfd: cros_ec: Add PWM_SET_DUTY API
->   mfd: cros_ec: Add lightbar v2 API
->   mfd: cros_ec: Expand hash API
->   mfd: cros_ec: Add EC transport protocol v4
->   mfd: cros_ec: Complete MEMS sensor API
->   mfd: cros_ec: Fix event processing API
->   mfd: cros_ec: Add fingerprint API
->   mfd: cros_ec: Fix temperature API
->   mfd: cros_ec: Complete Power and USB PD API
->   mfd: cros_ec: Add API for keyboard testing
->   mfd: cros_ec: Add Hibernate API
->   mfd: cros_ec: Add Smart Battery Firmware update API
->   mfd: cros_ec: Add I2C passthru protection API
->   mfd: cros_ec: Add API for EC-EC communication
->   mfd: cros_ec: Add API for Touchpad support
->   mfd: cros_ec: Add API for Fingerprint support
->   mfd: cros_ec: Add API for rwsig
->   mfd: cros_ec: Add SKU ID and Secure storage API
->   mfd: cros_ec: Add Management API entry points
->   mfd: cros_ec: Update I2S API
->
->  include/linux/mfd/cros_ec_commands.h | 3658 ++++++++++++++++++++------
->  sound/soc/codecs/cros_ec_codec.c     |    8 +-
->  2 files changed, 2915 insertions(+), 751 deletions(-)
->
-> --
-> 2.21.0.1020.gf2820cf01a-goog
->
+
+Douglas Anderson (3):
+  brcmfmac: re-enable command decode in sdio_aos for BRCM 4354
+  mmc: core: API for temporarily disabling auto-retuning due to errors
+  brcmfmac: sdio: Disable auto-tuning around commands expected to fail
+
+ drivers/mmc/core/core.c                       | 27 +++++++++++++++++--
+ .../broadcom/brcm80211/brcmfmac/sdio.c        |  6 +++--
+ include/linux/mmc/core.h                      |  2 ++
+ include/linux/mmc/host.h                      |  1 +
+ 4 files changed, 32 insertions(+), 4 deletions(-)
+
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
