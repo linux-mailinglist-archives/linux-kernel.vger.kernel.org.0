@@ -2,120 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9322621479
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DF42147F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfEQHfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 03:35:20 -0400
-Received: from mail-eopbgr140053.outbound.protection.outlook.com ([40.107.14.53]:35904
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727500AbfEQHfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 03:35:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eHmjBfuC4vxiTyP58WsAVLZdiIqCRwqeWpLa4rts0ak=;
- b=Mm2/zeI9GFsZ93upGhur22SIKyy9QJUh2AT3sTpnFstEeJjRgjHXt5F3y9dwyhL+Pu6koKSr1SMIHLRh4DXz7sGDyQSf2+sVrhUWiXxpwdqR9b/4YWt9lfh9PV0uHgu4qw3iVU1na/EkRqsUnzMGHPwY/J8OmKtoo+n+x6uus1s=
-Received: from DB7PR08MB3865.eurprd08.prod.outlook.com (20.178.84.149) by
- DB7PR08MB3884.eurprd08.prod.outlook.com (20.178.46.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.18; Fri, 17 May 2019 07:35:16 +0000
-Received: from DB7PR08MB3865.eurprd08.prod.outlook.com
- ([fe80::1c44:4e1b:c1e1:543e]) by DB7PR08MB3865.eurprd08.prod.outlook.com
- ([fe80::1c44:4e1b:c1e1:543e%7]) with mapi id 15.20.1900.010; Fri, 17 May 2019
- 07:35:16 +0000
-From:   Raphael Gault <Raphael.Gault@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>
-Subject: Re: [PATCH 4/6] arm64: pmu: Add hook to handle pmu-related undefined
- instructions
-Thread-Topic: [PATCH 4/6] arm64: pmu: Add hook to handle pmu-related undefined
- instructions
-Thread-Index: AQHVC+ps829CXrnAbkOTNSFu6HVCF6Zu51UAgAAG+YA=
-Date:   Fri, 17 May 2019 07:35:16 +0000
-Message-ID: <c7c4c851-51d9-a596-cba2-23252785251c@arm.com>
-References: <20190516132148.10085-1-raphael.gault@arm.com>
- <20190516132148.10085-5-raphael.gault@arm.com>
- <20190517071018.GH2623@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190517071018.GH2623@hirez.programming.kicks-ass.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0019.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:62::31) To DB7PR08MB3865.eurprd08.prod.outlook.com
- (2603:10a6:10:32::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Raphael.Gault@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [217.140.106.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0e5ae6aa-326a-4a6a-c479-08d6da9a345a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB7PR08MB3884;
-x-ms-traffictypediagnostic: DB7PR08MB3884:
-x-microsoft-antispam-prvs: <DB7PR08MB388454E50431431463762AA9ED0B0@DB7PR08MB3884.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0040126723
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(396003)(346002)(39860400002)(199004)(189003)(40434004)(53936002)(6916009)(5660300002)(6246003)(2906002)(66556008)(64756008)(66446008)(66476007)(66946007)(305945005)(73956011)(7736002)(31686004)(68736007)(6116002)(3846002)(8936002)(8676002)(81156014)(81166006)(53546011)(76176011)(386003)(99286004)(102836004)(31696002)(256004)(14444005)(5024004)(36756003)(54906003)(11346002)(14454004)(6506007)(52116002)(66066001)(44832011)(446003)(229853002)(6436002)(6512007)(71190400001)(86362001)(186003)(2616005)(476003)(486006)(316002)(72206003)(478600001)(71200400001)(4326008)(6486002)(26005)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR08MB3884;H:DB7PR08MB3865.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NDHao45jqJbS5xIFIvl45y5AW0ojN8fuzImtTfZF+b+20FDtrGRSKKK7NyciTm6awXXWhIXVson+AkqggrQjgjiJrM6xeqjAfBSss2mlMoJoXYV07rl0rs1T8swLhvE4POSHQuDDg8eUUCJKwazje5qjlCecXxmim+4PBjE397e1/IAOM+6UlL4N531P3peAZrtGc0IuW+n48FiZpTC/u2RWpGu/RLbS4PmeOwY4R8Exg4rcUkoDYJl/ehZvx0dKKfXK4WEwOyqyr1FrjukK2lMkzshwmWLYnLsbB7LFcdjxSY8C2O2xj+yMxi0gQ1DUaWNLMOOSndKYjipK12kjcfJ2Oq7054i6iW4p0WoVG7KtH9HLi3YbF+98hbzZ+0MRC/6Fd5kDeAm4+E+2ptH5GuLYAl8ycPoOWvz3GBAI9WE=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BCC04CA52D4D464AB543E1CADCDF7E90@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728456AbfEQHfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:35:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727500AbfEQHfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 03:35:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DBC3206A3;
+        Fri, 17 May 2019 07:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558078539;
+        bh=aAwOPRCnvMSzbqy/w8R/9rBM7odsnLsD/14Hh7N96KY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=wNNoGb0cy5pi9J8us0g37AD9QEgmi8+1hkN9/qi0ab18zE+0c92EIIfvoSZeB1Xg6
+         Ai0MCp2x1nhtmMpfq+2205VJuWC4NkzOcY4xMr1LnU6DWZNN3OS10bxJ7IP0fieTpW
+         JMtqE0LjsY+7iuumDhZAPTHOmYXmLhyAVqu9tbUo=
+Date:   Fri, 17 May 2019 09:35:37 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.177
+Message-ID: <20190517073537.GA27149@kroah.com>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e5ae6aa-326a-4a6a-c479-08d6da9a345a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 07:35:16.0774
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3884
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCk9uIDUvMTcvMTkgODoxMCBBTSwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6DQo+IE9uIFRo
-dSwgTWF5IDE2LCAyMDE5IGF0IDAyOjIxOjQ2UE0gKzAxMDAsIFJhcGhhZWwgR2F1bHQgd3JvdGU6
-DQo+PiBJbiBvcmRlciB0byBwcmV2ZW50IHRoZSB1c2Vyc3BhY2UgcHJvY2Vzc2VzIHdoaWNoIGFy
-ZSB0cnlpbmcgdG8gYWNjZXNzDQo+PiB0aGUgcmVnaXN0ZXJzIGZyb20gdGhlIHBtdSByZWdpc3Rl
-cnMgb24gYSBiaWcuTElUVExFIGVudmlyb25tZW50IHdlDQo+PiBpbnRyb2R1Y2UgYSBob29rIHRv
-IGhhbmRsZSB1bmRlZmluZWQgaW5zdHJ1Y3Rpb25zLg0KPj4NCj4+IFRoZSBnb2FsIGhlcmUgaXMg
-dG8gcHJldmVudCB0aGUgcHJvY2VzcyB0byBiZSBpbnRlcnJ1cHRlZCBieSBhIHNpZ25hbA0KPj4g
-d2hlbiB0aGUgZXJyb3IgaXMgY2F1c2VkIGJ5IHRoZSB0YXNrIGJlaW5nIHNjaGVkdWxlZCB3aGls
-ZSBhY2Nlc3NpbmcNCj4+IGEgY291bnRlciwgY2F1c2luZyB0aGUgY291bnRlciBhY2Nlc3MgdG8g
-YmUgaW52YWxpZC4gQXMgd2UgYXJlIG5vdCBhYmxlDQo+PiB0byBrbm93IGVmZmljaWVudGx5IHRo
-ZSBudW1iZXIgb2YgY291bnRlcnMgYXZhaWxhYmxlIHBoeXNpY2FsbHkgb24gYm90aA0KPj4gcG11
-IGluIHRoYXQgY29udGV4dCB3ZSBjb25zaWRlciB0aGF0IGFueSBmYXVsdGluZyBhY2Nlc3MgdG8g
-YSBjb3VudGVyDQo+PiB3aGljaCBpcyBhcmNoaXRlY3R1cmFsbHkgY29ycmVjdCBzaG91bGQgbm90
-IGNhdXNlIGEgU0lHSUxMIHNpZ25hbCBpZg0KPj4gdGhlIHBlcm1pc3Npb25zIGFyZSBzZXQgYWNj
-b3JkaW5nbHkuDQo+DQo+IFRoZSBvdGhlciBhcHByb2FjaCBpcyB1c2luZyByc2VxIGZvciB0aGlz
-OyB3aXRoIHRoYXQgeW91IGNhbiBndWFyYW50ZWUNCj4gaXQgd2lsbCBuZXZlciBpc3N1ZSB0aGUg
-aW5zdHJ1Y3Rpb24gb24gYSB3cm9uZyBDUFUuDQo+DQo+IFRoYXQgc2FpZDsgZW11bGF0aW5nIHRo
-ZSB0aGluZyBpc24ndCBob3JyaWJsZSBlaXRoZXIuDQo+DQo+PiArLyoNCj4+ICsgKiBXZSBwdXQg
-MCBpbiB0aGUgdGFyZ2V0IHJlZ2lzdGVyIGlmIHdlDQo+PiArICogYXJlIHJlYWRpbmcgZnJvbSBw
-bXUgcmVnaXN0ZXIuIElmIHdlIGFyZQ0KPj4gKyAqIHdyaXRpbmcsIHdlIGRvIG5vdGhpbmcuDQo+
-PiArICovDQo+DQo+IFdhaXQgX3doYXRfID8hPyB1c2Vyc3BhY2UgY2FuIF9XUklURV8gdG8gdGhl
-c2UgcmVnaXN0ZXJzPw0KPg0KDQpUaGUgdXNlciBjYW4gd3JpdGUgdG8gc29tZSBwbXUgcmVnaXN0
-ZXJzIGJ1dCB0aG9zZSBhcmUgbm90IHRoZSBvbmVzIHRoYXQNCmludGVyZXN0IHVzIGhlcmUuIE15
-IGNvbW1lbnQgd2FzIGlsbCBmb3JtZWQsIGluZGVlZCB0aGlzIGhvb2sgY2FuIG9ubHkNCmJlIHRy
-aWdnZXJlZCBieSByZWFkcyBpbiB0aGlzIGNhc2UuDQpTb3JyeSBhYm91dCB0aGF0Lg0KDQpUaGFu
-a3MsDQoNCi0tDQpSYXBoYWVsIEdhdWx0DQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMg
-b2YgdGhpcyBlbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1h
-eSBhbHNvIGJlIHByaXZpbGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGll
-bnQsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Ns
-b3NlIHRoZSBjb250ZW50cyB0byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJw
-b3NlLCBvciBzdG9yZSBvciBjb3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFu
-ayB5b3UuDQo=
+
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.9.177 kernel.
+
+All users of the 4.9 kernel series must upgrade.
+
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Ds=
+ummary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                                    |    2=20
+ arch/mips/ath79/setup.c                                     |    6=20
+ arch/powerpc/include/asm/reg_booke.h                        |    2=20
+ arch/powerpc/kernel/security.c                              |    1=20
+ arch/powerpc/lib/code-patching.c                            |    2=20
+ arch/x86/entry/vdso/Makefile                                |    3=20
+ arch/x86/kernel/reboot.c                                    |   21=20
+ arch/x86/kvm/trace.h                                        |    4=20
+ drivers/gpu/drm/sun4i/sun4i_drv.c                           |    2=20
+ drivers/gpu/ipu-v3/ipu-dp.c                                 |   12=20
+ drivers/hid/hid-input.c                                     |   14=20
+ drivers/iio/adc/xilinx-xadc-core.c                          |    2=20
+ drivers/input/rmi4/rmi_driver.c                             |    6=20
+ drivers/irqchip/irq-ath79-misc.c                            |   11=20
+ drivers/isdn/mISDN/socket.c                                 |    4=20
+ drivers/md/raid5.c                                          |   19=20
+ drivers/net/bonding/bond_options.c                          |    7=20
+ drivers/net/ethernet/freescale/ucc_geth_ethtool.c           |    8=20
+ drivers/net/phy/spi_ks8995.c                                |    9=20
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c         |    1=20
+ drivers/net/wireless/st/cw1200/scan.c                       |    5=20
+ drivers/nfc/st95hf/core.c                                   |    7=20
+ drivers/nvdimm/btt_devs.c                                   |   18=20
+ drivers/nvdimm/namespace_devs.c                             |    5=20
+ drivers/platform/x86/sony-laptop.c                          |    8=20
+ drivers/s390/block/dasd_eckd.c                              |    6=20
+ drivers/s390/char/con3270.c                                 |    2=20
+ drivers/s390/char/fs3270.c                                  |    3=20
+ drivers/s390/char/raw3270.c                                 |    3=20
+ drivers/s390/char/raw3270.h                                 |    4=20
+ drivers/s390/char/tty3270.c                                 |    3=20
+ drivers/s390/net/ctcm_main.c                                |    1=20
+ drivers/usb/serial/generic.c                                |   39 +
+ drivers/virt/fsl_hypervisor.c                               |   29 -
+ include/linux/efi.h                                         |    7=20
+ include/linux/list_nulls.h                                  |    5=20
+ include/linux/rculist_nulls.h                               |   14=20
+ include/sound/pcm.h                                         |    2=20
+ init/main.c                                                 |    4=20
+ kernel/bpf/hashtab.c                                        |   99 ++--
+ net/8021q/vlan_dev.c                                        |    4=20
+ net/bridge/br_if.c                                          |   13=20
+ net/core/fib_rules.c                                        |    6=20
+ net/ipv4/raw.c                                              |    4=20
+ net/ipv6/sit.c                                              |    2=20
+ net/mac80211/mesh_pathtbl.c                                 |    2=20
+ net/netfilter/ipvs/ip_vs_core.c                             |    2=20
+ net/netfilter/x_tables.c                                    |    2=20
+ net/packet/af_packet.c                                      |   25 -
+ sound/core/pcm_lib.c                                        |    2=20
+ sound/core/pcm_native.c                                     |    6=20
+ tools/lib/traceevent/event-parse.c                          |    2=20
+ tools/testing/selftests/net/run_netsocktests                |    2=20
+ tools/testing/selftests/netfilter/Makefile                  |    2=20
+ tools/testing/selftests/netfilter/conntrack_icmp_related.sh |  283 +++++++=
++++++
+ 55 files changed, 604 insertions(+), 153 deletions(-)
+
+Aditya Pakki (1):
+      libnvdimm/btt: Fix a kmemdup failure check
+
+Alexei Starovoitov (2):
+      bpf: fix struct htab_elem layout
+      bpf: convert htab map to hlist_nulls
+
+Alistair Strachan (2):
+      x86: vdso: Use $LD instead of $CC to link
+      x86/vdso: Pass --eh-frame-hdr to the linker
+
+Arnd Bergmann (1):
+      s390: ctcm: fix ctcm_new_device error return code
+
+Breno Leitao (1):
+      powerpc/64s: Include cpu header
+
+Christophe Leroy (2):
+      net: ucc_geth - fix Oops when changing number of buffers in the ring
+      powerpc/lib: fix book3s/32 boot failure due to code patching
+
+Dan Carpenter (2):
+      drivers/virt/fsl_hypervisor.c: dereferencing error pointers in ioctl
+      drivers/virt/fsl_hypervisor.c: prevent integer overflow in ioctl
+
+Dan Williams (1):
+      init: initialize jump labels before command line option parsing
+
+Daniel Gomez (2):
+      spi: Micrel eth switch: declare missing of table
+      spi: ST ST95HF NFC: declare missing of table
+
+David Ahern (1):
+      ipv4: Fix raw socket lookup for local traffic
+
+Dmitry Torokhov (3):
+      HID: input: add mapping for Expose/Overview key
+      HID: input: add mapping for keyboard Brightness Up/Down/Toggle keys
+      HID: input: add mapping for "Toggle Display" key
+
+Felix Fietkau (1):
+      mac80211: fix unaligned access in mesh table hash function
+
+Florian Westphal (1):
+      selftests: netfilter: check icmp pkttoobig errors are set as related
+
+Francesco Ruggeri (1):
+      netfilter: compat: initialize all fields in xt_init
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.177
+
+Gustavo A. R. Silva (2):
+      platform/x86: sony-laptop: Fix unintentional fall-through
+      rtlwifi: rtl8723ae: Fix missing break in switch statement
+
+Hangbin Liu (2):
+      fib_rules: return 0 directly if an exactly same rule exists when NLM_=
+F_EXCL not supplied
+      vlan: disable SIOCSHWTSTAMP in container
+
+Jarod Wilson (1):
+      bonding: fix arp_validate toggling in active-backup mode
+
+Jian-Hong Pan (1):
+      x86/reboot, efi: Use EFI reboot for Acer TravelMate X514-51T
+
+Johan Hovold (1):
+      USB: serial: fix unthrottle races
+
+Julian Anastasov (1):
+      ipvs: do not schedule icmp errors from tunnels
+
+Kangjie Lu (1):
+      libnvdimm/namespace: Fix a potential NULL pointer dereference
+
+Laurentiu Tudor (1):
+      powerpc/booke64: set RI in default MSR
+
+Lucas Stach (1):
+      gpu: ipu-v3: dp: fix CSC handling
+
+Martin Schwidefsky (1):
+      s390/3270: fix lockdep false positive on view->lock
+
+Nick Desaulniers (1):
+      x86/vdso: Drop implicit common-page-size linker flag
+
+Nigel Croxon (1):
+      Don't jump to compute_result state from check_result state
+
+Pan Bian (1):
+      Input: synaptics-rmi4 - fix possible double free
+
+Paul Kocialkowski (1):
+      drm/sun4i: Set device driver data at bind time for use in unbind
+
+Peter Oberparleiter (1):
+      s390/dasd: Fix capacity calculation for large volumes
+
+Petr =C5=A0tetiar (1):
+      MIPS: perf: ath79: Fix perfcount IRQ assignment
+
+Po-Hsu Lin (1):
+      selftests/net: correct the return value for run_netsocktests
+
+Rikard Falkeborn (1):
+      tools lib traceevent: Fix missing equality check for strcmp
+
+Sasha Levin (2):
+      Revert "x86/vdso: Drop implicit common-page-size linker flag"
+      Revert "x86: vdso: Use $LD instead of $CC to link"
+
+Stephen Suryaputra (1):
+      vrf: sit mtu should not be updated when vrf netdev is the link
+
+Sven Van Asbroeck (1):
+      iio: adc: xilinx: fix potential use-after-free on remove
+
+Takashi Sakamoto (1):
+      ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command
+
+Tetsuo Handa (1):
+      mISDN: Check address length before reading address family
+
+Tobin C. Harding (1):
+      bridge: Fix error path for kobject_init_and_add()
+
+Vitaly Kuznetsov (1):
+      KVM: x86: avoid misreporting level-triggered irqs as edge-triggered i=
+n tracing
+
+Wei Yongjun (1):
+      cw1200: fix missing unlock on error in cw1200_hw_scan()
+
+YueHaibing (1):
+      packet: Fix error path in packet_init
+
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlzeZEMACgkQONu9yGCS
+aT5Mvw/8ClkLNqG8C+DAFlyHT7U6FBMeMDnfQc1sFQY3Wl8Jfjr7YGH5MzUqYSLP
+s311beyE/mi2y9qO9kD2kb8UbgRenp870+QbwPhvhAOLaAuUeWMCRB7w6gWih5aH
+ZfNbq7wSnR7qadakthtOhbWa9j6wKYS/ch9Ar0KC23qOttwxEby9xXiGz0qhsDBo
+jll/qMF7Pw18N/TbFad6uuyWyeIjbCDwZOmRXnbiUYFH3i3dhXXDKUSNXr0r0kbn
+sWwE1RCMKg6MuQqXD4JMX5MQ+9IJGPFPS3Bf300lW+SfDTeB82fXEuJ/pkisXdsP
+QovHwBxxcd4SlZ3ZZ1VsqNeG0p9ThNfQvklEEFbWV7Xrobqs48KbYR2OKi95aSt5
+ULsUoTvyazKkF5TW3JEhoDLqiyBBoo6ES60y0kQqh7IxU3VLh+oSNa4cSp+vsfjB
+tG2aVgpg1SmFOxKGxD+Wm0AXn5U2qUsmLrBP3URsp+ySt+EaMzIfKv6+LakIjLIp
+bCwgdCV1VyKPSMA2lgjZDfA3JpHN3+82OXgXWkSEc9YhprHNNph5VPhqtp9cXi9x
+Z9R3PWZMsxo7rwH5VAZvmycxuqSsIFub6DbJP0xdQmUGy5MG9UEjsHhlqIed8+OX
+fpZHyvmT+dTVhEh7JuE4YTe/88UYvxhWoY5w4V7FYjzBQgB51u0=
+=4UD7
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
