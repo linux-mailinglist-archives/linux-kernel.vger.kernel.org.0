@@ -2,134 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3855221299
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613882128F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfEQDkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 23:40:15 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:24977 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfEQDkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 23:40:15 -0400
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x4H3dq7C000772;
-        Fri, 17 May 2019 12:39:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4H3dq7C000772
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558064393;
-        bh=aPOO/0Ic2Zo5pJTXO2MkJ+6Frm2tT+vQWrhjA4zb4BI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZeFhm8iNQvKxOgOzJWr7/o6OtX7F4Lxa0wUCTBGV69TYMLML6wQ7K9UOnXlJU0wLf
-         8ffdI+68f+YBkErO8l1H/SR1Uz0DKZeJZ+WNwmmn6/89QxwHKWep8ma0tK5h99p0BJ
-         WY0frH74nw9YksjDx4MJ6IO8iuALC4Q83DGcbGRp2gVMMRohQWCdEtEhXurKTEcx5Q
-         LScG0KR3IAwo8OcjQRVESTckMsH+UBtQWReKYZ/T/TBlqpQT7wRPBIg462YjRRn8xZ
-         SVz9v5ZXq5swtT+4781LPSq96Ky868bAgG8sgt4BHpApBuqp2VkGTH5cczGAEDBPVg
-         lx7sV7Nxv8ebQ==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id o10so3700327vsp.12;
-        Thu, 16 May 2019 20:39:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAWNkBV3U/FkyHeebOVCMzSTfXU2iz5TPcz0s3wvytP3NB0gs+DG
-        zk3066Dy57ZgilKc6L+zyQdfc6w55dR80zdY2IU=
-X-Google-Smtp-Source: APXvYqyJYt//bi0OLphS4zjzMdOO8iQShOOU3Cv+ZZqhidFdjKZjqjhjLt6s4xx0+3+cHb8C5qRppv8T9a2h1KGBGHY=
-X-Received: by 2002:a67:ad0f:: with SMTP id t15mr7818917vsl.179.1558064391987;
- Thu, 16 May 2019 20:39:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
- <CAK7LNAQgBKq9JDGtQUD1kgKrfLZ4jOjuLJi7_tpSPLJZsWtmag@mail.gmail.com>
- <201905150913.C23BD99AD@keescook> <CAK7LNARezpQgcK9O9K3ZFeebMVNroWStno_brvSLadsKXVfm-Q@mail.gmail.com>
- <201905151131.EBB45E5@keescook>
-In-Reply-To: <201905151131.EBB45E5@keescook>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 17 May 2019 12:39:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATKwkc66ebKG8YY2GVBuFzazODp_vM=KAkjY45WP2Rd+w@mail.gmail.com>
-Message-ID: <CAK7LNATKwkc66ebKG8YY2GVBuFzazODp_vM=KAkjY45WP2Rd+w@mail.gmail.com>
-Subject: Re: [RFC PATCH] kbuild: check uniqueness of basename of modules
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727689AbfEQDiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 23:38:11 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33224 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbfEQDiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 23:38:10 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F2B0D1A01B9;
+        Fri, 17 May 2019 05:38:07 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 129541A0110;
+        Fri, 17 May 2019 05:38:02 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CC19E402AE;
+        Fri, 17 May 2019 11:37:54 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH V2 1/3] PM: wakeup: Add routine to help fetch wakeup source object.
+Date:   Fri, 17 May 2019 11:39:44 +0800
+Message-Id: <20190517033946.30763-1-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
+Some user might want to go through all registered wakeup sources
+and doing things accordingly. For example, SoC PM driver might need to
+do HW programming to prevent powering down specific IP which wakeup
+source depending on. And is user's responsibility to identify if this
+wakeup source he is interested in.
 
-On Thu, May 16, 2019 at 3:38 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, May 16, 2019 at 02:55:02AM +0900, Masahiro Yamada wrote:
-> >
-> > On Thu, May 16, 2019 at 1:20 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Wed, May 15, 2019 at 04:53:15PM +0900, Masahiro Yamada wrote:
-> > > > On Wed, May 15, 2019 at 4:40 PM Masahiro Yamada
-> > > > <yamada.masahiro@socionext.com> wrote:
-> > > > >
-> > > > > [...]
-> > > > > diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
-> > > > > new file mode 100755
-> > > > > index 000000000000..944e68bd22b0
-> > > > > --- /dev/null
-> > > > > +++ b/scripts/modules-check.sh
-> > > > > @@ -0,0 +1,18 @@
-> > > > > +#!/bin/sh
-> > > > > +# SPDX-License-Identifier: GPL-2.0
-> > > > > +
-> > > > > +# Warn if two or more modules have the same basename
-> > > > > +check_same_name_modules()
-> > > > > +{
-> > > > > +       same_name_modules=$(cat modules.order modules.builtin | \
-> > > > > +                               xargs basename -a | sort | uniq -d)
-> > >
-> > > While probably it'll never be a problem, just for robustness, I'd add "--"
-> > > to the end basename to terminate argument interpretation:
-> > >
-> > >     xargs basename -a -- | sort | ...
-> >
-> >
-> > Sorry for my ignorance, but could you
-> > teach me the effect of "--" ?
-> >
-> >
-> > I sometimes use "--" as a separator
-> > when there is ambiguity in arguments
-> > for example, "git log <revision> -- <path>"
-> >
-> >
-> > In this case, what is intended by "--"?
->
-> It means "end of arguments" so that whatever xargs passes into the
-> program aren't interpretted as an argument. In this case, if there was
-> a module path somehow ever named --weird/build/path/foo.o, xargs would
-> launch basename as:
->
->         basename -a --weird/build/path/foo.o
->
-> and basename would fail since it didn't recognize the argument. Having
-> "--" will stop argument parsing:
->
->         basename -a -- --weird/build/path/foo.o
->
-> This is just a robustness suggestion that I always recommend for xargs
-> piping, since this can turn into a security flaw (though not here) when
-> an argument may have behavioral side-effects. So, it's just a thing that
-> always jumps out at me, though in this particular case I don't think
-> we could ever see it cause a problem, but better to always write these
-> xargs patterns as safely as possible.
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+---
+Change in v2:
+	- None.
 
-I did not think about the security issue.
-Thanks for your expert comments!
+ drivers/base/power/wakeup.c |   18 ++++++++++++++++++
+ include/linux/pm_wakeup.h   |    3 +++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
 
-
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 5b2b6a0..6904485 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -14,6 +14,7 @@
+ #include <linux/suspend.h>
+ #include <linux/seq_file.h>
+ #include <linux/debugfs.h>
++#include <linux/of_device.h>
+ #include <linux/pm_wakeirq.h>
+ #include <trace/events/power.h>
+ 
+@@ -226,6 +227,22 @@ void wakeup_source_unregister(struct wakeup_source *ws)
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(wakeup_source_unregister);
++/**
++ * wakeup_source_get_next - Get next wakeup source from the list
++ * @ws: Previous wakeup source object, null means caller want first one.
++ */
++struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws)
++{
++	struct list_head *ws_head = &wakeup_sources;
++
++	if (ws)
++		return list_next_or_null_rcu(ws_head, &ws->entry,
++				struct wakeup_source, entry);
++	else
++		return list_entry_rcu(ws_head->next,
++				struct wakeup_source, entry);
++}
++EXPORT_SYMBOL_GPL(wakeup_source_get_next);
+ 
+ /**
+  * device_wakeup_attach - Attach a wakeup source object to a device object.
+@@ -242,6 +259,7 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
+ 		return -EEXIST;
+ 	}
+ 	dev->power.wakeup = ws;
++	ws->attached_dev = dev;
+ 	if (dev->power.wakeirq)
+ 		device_wakeup_attach_irq(dev, dev->power.wakeirq);
+ 	spin_unlock_irq(&dev->power.lock);
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 0ff134d..3d300f5 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -50,6 +50,7 @@
+  * @wakeup_count: Number of times the wakeup source might abort suspend.
+  * @active: Status of the wakeup source.
+  * @has_timeout: The wakeup source has been activated with a timeout.
++ * @attached_dev: The device it attached to
+  */
+ struct wakeup_source {
+ 	const char 		*name;
+@@ -70,6 +71,7 @@ struct wakeup_source {
+ 	unsigned long		wakeup_count;
+ 	bool			active:1;
+ 	bool			autosleep_enabled:1;
++	struct device	*attached_dev;
+ };
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -101,6 +103,7 @@ static inline void device_set_wakeup_path(struct device *dev)
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+ extern struct wakeup_source *wakeup_source_register(const char *name);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
++extern struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws);
+ extern int device_wakeup_enable(struct device *dev);
+ extern int device_wakeup_disable(struct device *dev);
+ extern void device_set_wakeup_capable(struct device *dev, bool capable);
 -- 
-Best Regards
-Masahiro Yamada
+1.7.1
+
