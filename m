@@ -2,143 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 684A121D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1202221D53
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfEQSkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:40:36 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37255 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbfEQSkf (ORCPT
+        id S1728202AbfEQSd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:33:57 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42124 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfEQSdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:40:35 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q17so6036729lfo.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oO/GMUgT+1j7VBkn8MyV9uRSDi94nW1hm071Hw5jVSo=;
-        b=Fg3ijOgmH36WIunWDge4wgVr1HpSUVX9oAp+UCHPw0NDKT8DXkwZR5Mut0XUVphKdk
-         7WE868HzNhOuKCXNTdn21kpMbzVCMJsRd2eClEQCb4geolrkgNdveLxZ1t0pqQciLaT5
-         bwxxuYpv6Ki2BW9/dHBX6rwlLrcuW+6kpcRCs=
+        Fri, 17 May 2019 14:33:54 -0400
+Received: by mail-qt1-f195.google.com with SMTP id j53so9109342qta.9
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:33:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oO/GMUgT+1j7VBkn8MyV9uRSDi94nW1hm071Hw5jVSo=;
-        b=VyruRE4rIfonJZcxxx074EkdVY0EwoMpEvMZIbOo5qRuXvv1neRakEoGjksV2MEonU
-         ZFfP/g3AaJjQaTPl3a/84TAUYV8d3z2s+Xfn+lANta2RGO20l8cqArvjVXsWDbIrNYrM
-         q4TBw68tizehSn1a4ohChuFxY0dez33b9k2d0pFHnq7f5g6w5wlxYWTQKQrlN1S31HtB
-         Qij3DKrsLShzd3yT9sF7vkAVQh/XslSBHkS8KVuI6H/lhOw7qyrWu90X5ZEDQwjtQsGn
-         li3tDQ1esuBQAtN61bSZf/KquxIX71UuZYzSMRtLwVoT5oIMA8RlPWB4Hn+IiSJ5Af0Z
-         renQ==
-X-Gm-Message-State: APjAAAVaZtGkznYYzqmm6uk6JQEjEUCuKhtePOtwa6+/1czLUU0Nnslh
-        Nu3GViUg01uVOXrMQAQCGfqemNcps5Y=
-X-Google-Smtp-Source: APXvYqy44kI+YM4IZ9ny3zoMymPsWu4+vVQJ4Vmb2CaZXkaaM6mrlA3B5QZT4FcaJJG/3CevXIOjAQ==
-X-Received: by 2002:a19:7d04:: with SMTP id y4mr28264034lfc.153.1558118432314;
-        Fri, 17 May 2019 11:40:32 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id i187sm1813646lfe.64.2019.05.17.11.40.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 11:40:32 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id j24so7205590ljg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:40:31 -0700 (PDT)
-X-Received: by 2002:a2e:9546:: with SMTP id t6mr8446776ljh.51.1558118026162;
- Fri, 17 May 2019 11:33:46 -0700 (PDT)
+        bh=VpbDUS34YEE3/go9H9nTqXvmrFu74UgQef2p9ork8w8=;
+        b=BjgchH44jChZgUAzEnTi25aWaRrc1Nj2s0ULP0ktrzle/uq4W7KiDvwwYFPhR2IoWf
+         D3HA+iJRjkn1RD2kIC7Xn7EbDRNtdoq7/jsfNpcU08M7f3wE/gCzBiPOxWDaWlMrVaz7
+         9p9n0RXuSKeV4uctGGbfGIXCRCGlDEcrK+9yZF+4GMxGwQZ+nK+nMa0uqybOQ2DOupo/
+         2agzpCXyLyqlOJF/WTb/KQQckALiEcUS4nZ0zYyu0O4bYHrfFrOHzg9uiv8mP41fFjeh
+         sHON86dTrYEiydRvB3hMkPDC1fQ5HEByrgNA/FR0FMWbyBkZJm5GrjJtClqkse43OL1x
+         K/9g==
+X-Gm-Message-State: APjAAAW/pBm0jjwmFw+SFlm14JJbzFpSobjIVDyQS+dZpZLgZQNR7DwD
+        oFintRVu07/7KN7tZrVHY6DDVTAHLQzVIr7Ie5l3eh/c
+X-Google-Smtp-Source: APXvYqy6PpspnDkZDXkEJVr14bKmNUUcRj9TIej7s2amqxIB6mesiPZXz8ozFWeV37S3wVKxNpPJXrHq7NdGqaowcqM=
+X-Received: by 2002:ac8:2433:: with SMTP id c48mr36064873qtc.18.1558118033332;
+ Fri, 17 May 2019 11:33:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
- <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com>
- <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov> <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
- <20190517172953.GC15006@linux.intel.com> <DFE03E0C-694A-4289-B416-29CDC2644F94@amacapital.net>
- <20190517175500.GE15006@linux.intel.com> <CAHk-=wgH2FBzBG3_RZSuatpYCj8DCQZipJYp9vh3Wy_S3Qt4-g@mail.gmail.com>
- <20190517182124.GF15006@linux.intel.com>
-In-Reply-To: <20190517182124.GF15006@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 17 May 2019 11:33:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi6N1ckASALGDSydzj+YXwAUq26uVPZD0r2q4Mjwss7hw@mail.gmail.com>
-Message-ID: <CAHk-=wi6N1ckASALGDSydzj+YXwAUq26uVPZD0r2q4Mjwss7hw@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
+References: <20190512012508.10608-1-elder@linaro.org> <20190512012508.10608-10-elder@linaro.org>
+ <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com> <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
+In-Reply-To: <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 17 May 2019 20:33:37 +0200
+Message-ID: <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
+Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
+To:     Alex Elder <elder@linaro.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 11:21 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org> wrote:
 >
-> I agree that conceptually EPC is private memory, but because EPC is
-> managed as a separate memory pool, SGX tags it VM_PFNMAP and manually
-> inserts PFNs, i.e. EPC effectively it gets classified as IO memory.
+> On 5/15/19 2:34 AM, Arnd Bergmann wrote:
+> >> +static void gsi_trans_tre_fill(struct gsi_tre *dest_tre, dma_addr_t addr,
+> >> +                              u32 len, bool last_tre, bool bei,
+> >> +                              enum ipa_cmd_opcode opcode)
+> >> +{
+> >> +       struct gsi_tre tre;
+> >> +
+> >> +       tre.addr = cpu_to_le64(addr);
+> >> +       tre.len_opcode = gsi_tre_len_opcode(opcode, len);
+> >> +       tre.reserved = 0;
+> >> +       tre.flags = gsi_tre_flags(last_tre, bei, opcode);
+> >> +
+> >> +       *dest_tre = tre;        /* Write TRE as a single (16-byte) unit */
+> >> +}
+> > Have you checked that the atomic write is actually what happens here,
+> > but looking at the compiler output? You might need to add a 'volatile'
+> > qualifier to the dest_tre argument so the temporary structure doesn't
+> > get optimized away here.
 >
-> And vmf_insert_pfn_prot() doesn't like writable private IO mappings:
+> Currently, the assignment *does* become a "stp" instruction.
+> But I don't know that we can *force* the compiler to write it
+> as a pair of registers, so I'll soften the comment with
+> "Attempt to write" or something similar.
 >
->    BUG_ON((vma->vm_flags & VM_PFNMAP) && is_cow_mapping(vma->vm_flags));
+> To my knowledge, adding a volatile qualifier only prevents the
+> compiler from performing funny optimizations, but that has no
+> effect on whether the 128-bit assignment is made as a single
+> unit.  Do you know otherwise?
 
-Hmm. I haven't looked into why you want to do your own page insertion
-and not just "use existing pages", but I'm sure there's some reason.
+I don't think it you can force the 128-bit assignment to be
+atomic, but marking 'dest_tre' should serve to prevent a
+specific optimization that replaces the function with
 
-It looks like the "shared vs private" inode part is a red herring,
-though. You might as well give each opener of the sgx node its own
-inode - and you probably should. Then you can keep track of the pages
-that have been added in the inode->i_mapping, and you could avoid the
-whole PFN thing entirely. I still am not a huge fan of the device node
-in the first place, but I guess it's just one more place where a
-system admin can then give (or deny) access to a kernel feature from
-users. I guess the kvm people do the same thing, for not necessarily
-any better reasons.
+    dest_tre->addr = ...
+    dest_tre->len_opcode = ...
+    dest_tre->reserved = ...
+    dest_tre->flags = ...
 
-With the PFNMAP model I guess the SGX memory ends up being unswappable
-- at least done the obvious way.
+which it might find more efficient than the stp and is equivalent
+when the pointer is not marked volatile. We also have the WRITE_ONCE()
+macro that can help prevent this, but it does not work reliably beyond
+64 bit assignments.
 
-Again, the way I'd expect it to be done is as a shmem inode - that
-would I think be a better model. But I think that's a largely internal
-design decision, and the device node could just do that eventually
-(and the mmap could just map the populated shmem information into
-memory, no PFNMAP needed - the inode and the mapping could be
-"read-only" as far as the _user_ is concerned, but the i_mapping then
-gets populated by the ioctl's).
-
-I have not actually looked at any of the SGX patches, so maybe you're
-already doing something like that (although the PFNMAP comment makes
-me think not), and quite possibly there's some fundamental reason why
-you can't just use the shmem approach.
-
-So my high-level reaction here may be just the rantings of somebody
-who just isn't familiar with what you do. My "why not shmem and
-regular mmap" questions come from a 30000ft view without knowing any
-of the details.
-
-                   Linus
+      Arnd
