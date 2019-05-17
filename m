@@ -2,140 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0750B2155F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4861521562
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfEQI3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 04:29:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727825AbfEQI3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 04:29:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 55426AE3E;
-        Fri, 17 May 2019 08:29:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E7E501E3ED6; Fri, 17 May 2019 10:29:18 +0200 (CEST)
-Date:   Fri, 17 May 2019 10:29:18 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gaowei Pu <pugaowei@gmail.com>
-Cc:     tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jbd2: fix some print format mistakes
-Message-ID: <20190517082918.GA20550@quack2.suse.cz>
-References: <20190517061951.13730-1-pugaowei@gmail.com>
+        id S1728434AbfEQIct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 04:32:49 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39631 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727825AbfEQIcs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 04:32:48 -0400
+Received: by mail-qk1-f194.google.com with SMTP id z128so3967597qkb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 01:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=bn2Tk1WWfY/HeaHGYV+nCUNplGKW7e4rVvwZD7ionFU=;
+        b=pqnony4E1q1z3gsIT1aCzdAGaNB/o6GnNRx7ps/Qhknh1gBFERbcIZOMIK6MW/lxWK
+         8NCeAdTkYJ6AA096vmn0gJAr6Tmsa6q8fMQwvMRWDL8PKdliNnjuupeY7akBeDT8B05Q
+         xet4BOG66NZqm5heZqzEeiKJveYWQZnCZ9UAmxduw+ClqxVzs0TRRGAjiuDj26Y8HxRx
+         7iqpNCliJ4laXloVQCDZeI6DJwM0rFt5Mh8pkXIvNylNP/LPXPoQTVEl/dAIS8JpONYJ
+         RKoRC7nPpb68CoqwBsp5XPPGiHTxqD22gL/J3M5dMPHdfrVBNgfeQC+liJAfN2KIF+Gf
+         MA4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=bn2Tk1WWfY/HeaHGYV+nCUNplGKW7e4rVvwZD7ionFU=;
+        b=eY5nEOs5Yb+ipzvM5j4x5wIhDmJoiBevjxCVZ2tTQxDkc4i8LeFiSaOSYUsEUvlC+o
+         fSBNYNPk85+7s4IYD1MYC38JLW5RRb8esGHEGiFHvnuytripVpgLxl46rBn5pgdj4T0L
+         lMns1mwfLkwmINFPSwuYzKTNn5ZKoX9K/AoLmjKP6MEqFwquIYEUv/63xyseYa5fd4wO
+         OXPqKVFCrgL8L3+jYieBm6R2Fb8LPOHjrBOh3s2x3U9YcgDqYzayGCkHuhgaj7YtYO2N
+         rmjcU16DXsVHxZTePheFCtP0S4L8hHqxrlqvN0byVZPceyV/2JdEJ610hk8vkxTitLtM
+         jTlw==
+X-Gm-Message-State: APjAAAWOn2ybkzydmJbfV2LcJZALj2u6pFdBVujWBvSWRRBGFnLgBhZV
+        SoOtf64W6spe6Mu450NjARbWzP/eQ+bnq4yS2ME=
+X-Google-Smtp-Source: APXvYqz2S2pYMD4g5p8tZvc0fsiT1Wt3XADTVGU5ycmOHepAR11pzlw/jZGwF4VrbhB+0YLGOirUSkyfsXlLTNJ3pDY=
+X-Received: by 2002:ae9:e403:: with SMTP id q3mr42871748qkc.149.1558081967232;
+ Fri, 17 May 2019 01:32:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517061951.13730-1-pugaowei@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Fri, 17 May 2019 16:32:10 +0800
+Message-ID: <CAEbi=3fvgapD4JRq80JbtAgR+KpHDZv60etwVs8sjqoNM5H6og@mail.gmail.com>
+Subject: [GIT PULL] nds32 patches for 5.2-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime <greentime@andestech.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 17-05-19 14:19:51, Gaowei Pu wrote:
-> There are some print format mistakes in debug messages. Fix them.
-> 
-> Signed-off-by: Gaowei Pu <pugaowei@gmail.com>
+Hi Linus,
 
-Looks good. You can add:
+The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+  Linux 5.1 (2019-05-05 17:42:58 -0700)
 
-								Honza
+are available in the Git repository at:
 
-> ---
->  fs/jbd2/journal.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 37e16d969925..565e99b67b30 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -203,7 +203,7 @@ static int kjournald2(void *arg)
->  	if (journal->j_flags & JBD2_UNMOUNT)
->  		goto end_loop;
->  
-> -	jbd_debug(1, "commit_sequence=%d, commit_request=%d\n",
-> +	jbd_debug(1, "commit_sequence=%u, commit_request=%u\n",
->  		journal->j_commit_sequence, journal->j_commit_request);
->  
->  	if (journal->j_commit_sequence != journal->j_commit_request) {
-> @@ -324,7 +324,7 @@ static void journal_kill_thread(journal_t *journal)
->   * IO is in progress. do_get_write_access() handles this.
->   *
->   * The function returns a pointer to the buffer_head to be used for IO.
-> - * 
-> + *
->   *
->   * Return value:
->   *  <0: Error
-> @@ -500,7 +500,7 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
->  		 */
->  
->  		journal->j_commit_request = target;
-> -		jbd_debug(1, "JBD2: requesting commit %d/%d\n",
-> +		jbd_debug(1, "JBD2: requesting commit %u/%u\n",
->  			  journal->j_commit_request,
->  			  journal->j_commit_sequence);
->  		journal->j_running_transaction->t_requested = jiffies;
-> @@ -513,7 +513,7 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
->  		WARN_ONCE(1, "JBD2: bad log_start_commit: %u %u %u %u\n",
->  			  journal->j_commit_request,
->  			  journal->j_commit_sequence,
-> -			  target, journal->j_running_transaction ? 
-> +			  target, journal->j_running_transaction ?
->  			  journal->j_running_transaction->t_tid : 0);
->  	return 0;
->  }
-> @@ -698,12 +698,12 @@ int jbd2_log_wait_commit(journal_t *journal, tid_t tid)
->  #ifdef CONFIG_JBD2_DEBUG
->  	if (!tid_geq(journal->j_commit_request, tid)) {
->  		printk(KERN_ERR
-> -		       "%s: error: j_commit_request=%d, tid=%d\n",
-> +		       "%s: error: j_commit_request=%u, tid=%u\n",
->  		       __func__, journal->j_commit_request, tid);
->  	}
->  #endif
->  	while (tid_gt(tid, journal->j_commit_sequence)) {
-> -		jbd_debug(1, "JBD2: want %d, j_commit_sequence=%d\n",
-> +		jbd_debug(1, "JBD2: want %u, j_commit_sequence=%u\n",
->  				  tid, journal->j_commit_sequence);
->  		read_unlock(&journal->j_state_lock);
->  		wake_up(&journal->j_wait_commit);
-> @@ -944,7 +944,7 @@ int __jbd2_update_log_tail(journal_t *journal, tid_t tid, unsigned long block)
->  
->  	trace_jbd2_update_log_tail(journal, tid, block, freed);
->  	jbd_debug(1,
-> -		  "Cleaning journal tail from %d to %d (offset %lu), "
-> +		  "Cleaning journal tail from %u to %u (offset %lu), "
->  		  "freeing %lu\n",
->  		  journal->j_tail_sequence, tid, block, freed);
->  
-> @@ -1318,7 +1318,7 @@ static int journal_reset(journal_t *journal)
->  	 */
->  	if (sb->s_start == 0) {
->  		jbd_debug(1, "JBD2: Skipping superblock update on recovered sb "
-> -			"(start %ld, seq %d, errno %d)\n",
-> +			"(start %ld, seq %u, errno %d)\n",
->  			journal->j_tail, journal->j_tail_sequence,
->  			journal->j_errno);
->  		journal->j_flags |= JBD2_FLUSHED;
-> @@ -1453,7 +1453,7 @@ static void jbd2_mark_journal_empty(journal_t *journal, int write_op)
->  		return;
->  	}
->  
-> -	jbd_debug(1, "JBD2: Marking journal as empty (seq %d)\n",
-> +	jbd_debug(1, "JBD2: Marking journal as empty (seq %u)\n",
->  		  journal->j_tail_sequence);
->  
->  	sb->s_sequence = cpu_to_be32(journal->j_tail_sequence);
-> -- 
-> 2.21.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
+tags/nds32-for-linus-5.2-rc1
+
+for you to fetch changes up to af9abd65983cf3602c03ef3d16fe549ba1f3eeed:
+
+  nds32: Fix vDSO clock_getres() (2019-05-16 15:07:08 +0800)
+
+----------------------------------------------------------------
+nds32 patches for 5.2-rc1
+
+Here is the nds32 patchset based on 5.1
+Contained in here are
+1. Clean up codes and Makefile
+2. Fix a vDSO bug
+3. Remove useless functions/header files
+4. Update git repo path in MAINTAINERS
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      nds32: remove __virt_to_bus and __bus_to_virt
+      nds32: don't export low-level cache flushing routines
+
+Enrico Weigelt, metux IT consult (1):
+      arch: nds32: Kconfig: pedantic formatting
+
+Greentime Hu (1):
+      MAINTAINERS: update nds32 git repo path
+
+Julien Grall (1):
+      nds32: Removed unused thread flag TIF_USEDFPU
+
+Masahiro Yamada (3):
+      nds32: add vmlinux.lds and vdso.so to .gitignore
+      nds32: vdso: fix and clean-up Makefile
+      nds32: remove unused generic-y += cmpxchg-local.h
+
+Nick Desaulniers (1):
+      nds32: vdso: drop unnecessary cc-ldoption
+
+Nishad Kamdar (1):
+      nds32: Use the correct style for SPDX License Identifier
+
+Valentin Schneider (1):
+      nds32: ex-exit: Remove unneeded need_resched() loop
+
+Vincenzo Frascino (1):
+      nds32: Fix vDSO clock_getres()
+
+Will Deacon (1):
+      nds32/io: Remove useless definition of mmiowb()
+
+Yang Wei (1):
+      nds32: fix semicolon code style issue
+
+ MAINTAINERS                              |  2 +-
+ arch/nds32/Kconfig                       | 16 ++++++++--------
+ arch/nds32/include/asm/Kbuild            |  1 -
+ arch/nds32/include/asm/assembler.h       |  2 +-
+ arch/nds32/include/asm/barrier.h         |  2 +-
+ arch/nds32/include/asm/bitfield.h        |  2 +-
+ arch/nds32/include/asm/cache.h           |  2 +-
+ arch/nds32/include/asm/cache_info.h      |  2 +-
+ arch/nds32/include/asm/cacheflush.h      |  2 +-
+ arch/nds32/include/asm/current.h         |  2 +-
+ arch/nds32/include/asm/delay.h           |  2 +-
+ arch/nds32/include/asm/elf.h             |  2 +-
+ arch/nds32/include/asm/fixmap.h          |  2 +-
+ arch/nds32/include/asm/futex.h           |  2 +-
+ arch/nds32/include/asm/highmem.h         |  2 +-
+ arch/nds32/include/asm/io.h              |  4 +---
+ arch/nds32/include/asm/irqflags.h        |  2 +-
+ arch/nds32/include/asm/l2_cache.h        |  2 +-
+ arch/nds32/include/asm/linkage.h         |  2 +-
+ arch/nds32/include/asm/memory.h          | 10 +---------
+ arch/nds32/include/asm/mmu.h             |  2 +-
+ arch/nds32/include/asm/mmu_context.h     |  2 +-
+ arch/nds32/include/asm/module.h          |  2 +-
+ arch/nds32/include/asm/nds32.h           |  2 +-
+ arch/nds32/include/asm/page.h            |  2 +-
+ arch/nds32/include/asm/pgalloc.h         |  2 +-
+ arch/nds32/include/asm/pgtable.h         |  2 +-
+ arch/nds32/include/asm/proc-fns.h        |  2 +-
+ arch/nds32/include/asm/processor.h       |  2 +-
+ arch/nds32/include/asm/ptrace.h          |  2 +-
+ arch/nds32/include/asm/shmparam.h        |  2 +-
+ arch/nds32/include/asm/string.h          |  2 +-
+ arch/nds32/include/asm/swab.h            |  2 +-
+ arch/nds32/include/asm/syscall.h         |  2 +-
+ arch/nds32/include/asm/syscalls.h        |  2 +-
+ arch/nds32/include/asm/thread_info.h     |  4 +---
+ arch/nds32/include/asm/tlb.h             |  2 +-
+ arch/nds32/include/asm/tlbflush.h        |  2 +-
+ arch/nds32/include/asm/uaccess.h         |  2 +-
+ arch/nds32/include/asm/unistd.h          |  2 +-
+ arch/nds32/include/asm/vdso.h            |  2 +-
+ arch/nds32/include/asm/vdso_datapage.h   |  3 ++-
+ arch/nds32/include/asm/vdso_timer_info.h |  2 +-
+ arch/nds32/include/uapi/asm/auxvec.h     |  2 +-
+ arch/nds32/include/uapi/asm/byteorder.h  |  2 +-
+ arch/nds32/include/uapi/asm/cachectl.h   |  2 +-
+ arch/nds32/include/uapi/asm/param.h      |  2 +-
+ arch/nds32/include/uapi/asm/ptrace.h     |  2 +-
+ arch/nds32/include/uapi/asm/sigcontext.h |  2 +-
+ arch/nds32/include/uapi/asm/unistd.h     |  2 +-
+ arch/nds32/kernel/.gitignore             |  1 +
+ arch/nds32/kernel/cacheinfo.c            |  2 +-
+ arch/nds32/kernel/ex-exit.S              |  4 ++--
+ arch/nds32/kernel/nds32_ksyms.c          |  6 ------
+ arch/nds32/kernel/vdso.c                 |  1 +
+ arch/nds32/kernel/vdso/.gitignore        |  1 +
+ arch/nds32/kernel/vdso/Makefile          | 14 +++++---------
+ arch/nds32/kernel/vdso/gettimeofday.c    |  4 +++-
+ arch/nds32/mm/init.c                     |  2 +-
+ 59 files changed, 72 insertions(+), 89 deletions(-)
+ create mode 100644 arch/nds32/kernel/.gitignore
+ create mode 100644 arch/nds32/kernel/vdso/.gitignore
