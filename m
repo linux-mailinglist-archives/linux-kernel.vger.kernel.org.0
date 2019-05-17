@@ -2,114 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB72621639
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D00302163D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfEQJZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:25:49 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39827 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbfEQJZs (ORCPT
+        id S1728920AbfEQJ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 05:27:01 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:59553 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728299AbfEQJ1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:25:48 -0400
-Received: by mail-io1-f65.google.com with SMTP id m7so4937768ioa.6;
-        Fri, 17 May 2019 02:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bKzWWnOH9ydjE40E51J019WWbkt1Rysxj2Dtj7CPBxw=;
-        b=hwL0cUFxucCOmv0o3XAkQAKca82DGUJVm1ca/Dbp2gWH7WmayUc1iz4KQeAX1cg5am
-         mWz53Cr0ZUz5Fd7CnD3Xzj99EMSA5ej7m+1b1xv5iCqwvqvzgO8oqwAiuuTG/ISlPZae
-         WduTyb5EDzypBr//Vi3LxBBwbDIBu+4MV5TJgGXnLUh2U6hTyTF9Iic8CofvMlRK1mLu
-         MSYKK486pvy8OUIW8CY02gGCGmlWfQBgaYpb//oWtCdhviFlLKVWBlfr6d09A7XuhohB
-         wB+jfzWuVHh4w9NUythOejL07BsUwYWQyHDeCZf8MB7aCbv23QAcTP4szJKRyd/1blWm
-         ZBMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bKzWWnOH9ydjE40E51J019WWbkt1Rysxj2Dtj7CPBxw=;
-        b=pSYyBDU9HBzXqowk1UxznFZcdbCOT2CNOc6dHLizwFQy5RpQyDACvlwJOANI8aPxbw
-         u0lkU5Eul5cbw25ae7IzUIdPqE6Riu/4PODdY2gtS8IwiK6jxYOfIVL5a/eZVWVajOuf
-         C9I2DQONGO/d7qs8b8tENhOYdC1UE4JNlnU3TrGL9/BBUrVBr9TNHEDALlhkdxJz6Tix
-         vLyGFfJRJPTMCyagkPG1EP3mZxenxuGMDDD3JV15Ia7wT+duUt5nH2HmuT73/hEYrVcJ
-         /Ycl5Tr5LBfFmVK1MPrhBs4FHFb4qSF0CXHpp7yvXfyATXNLouVKpRjNCJ8UQwnJY/I9
-         2hPg==
-X-Gm-Message-State: APjAAAUSjiHj5dh7bEhwed/jb/0cy5KpnMgr8JITpXRscleW0BdJrakm
-        U8p+Nk0mfaJSnR8oJTG/FiWUiBHA/K+3O9ltvo8=
-X-Google-Smtp-Source: APXvYqw2PPNT7HlBk7nzmtIlDhS2mkjhDCAmXJhgUZaR1EUfi+er+VoWuqo3lY7upavsMf0+Lqqg1yUF/OS9vQFU+Ro=
-X-Received: by 2002:a6b:8e84:: with SMTP id q126mr12832502iod.118.1558085147348;
- Fri, 17 May 2019 02:25:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190517042753.25857-1-yamada.masahiro@socionext.com>
- <CAJ1xhMUxsFR6yLeV1rG1FRZzqwyMGF5PURk6F5_6kN3v2dGN1A@mail.gmail.com> <68270a84-966b-05e3-c82e-893c320febfd@petrovitsch.priv.at>
-In-Reply-To: <68270a84-966b-05e3-c82e-893c320febfd@petrovitsch.priv.at>
-From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Date:   Fri, 17 May 2019 12:25:10 +0300
-Message-ID: <CAJ1xhMVaeQPoW1v91bcNOkw1FJOr7ddhDc-ir=3AiKRCSzCj=g@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: check uniqueness of module names
-To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 May 2019 05:27:01 -0400
+X-IronPort-AV: E=Sophos;i="5.60,479,1549897200"; 
+   d="scan'208";a="16234967"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 17 May 2019 18:26:58 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A9B6D40065B7;
+        Fri, 17 May 2019 18:26:54 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
+Subject: [PATCH v3 0/2] Document HopeRun RZ/G2M boards
+Date:   Fri, 17 May 2019 10:26:27 +0100
+Message-Id: <1558085189-22061-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 11:58 AM Bernd Petrovitsch
-<bernd@petrovitsch.priv.at> wrote:
->
-> On 17/05/2019 10:16, Alexander Kapshuk wrote:
-> [...]
-> > The 'xargs' '-r' flag is a GNU extension.
-> > If POSIX compliance is important here, the use of 'cat', 'xargs' and
-> > 'basename' may be substituted with that of 'sed' to initialise
-> > same_name_modules:
-> > sed 's!.*/!!' modules.order modules.builtin | sort | uniq -d
->
-> 's!' is TTBOMK also a GNU-extension:
-> sed 's/.*\///' modules.order modules.builtin | sort | uniq -d
+Dear All,
 
-It isn't.
-Here's an excerpt from the POSIX manpage for 'sed',
-http://pubs.opengroup.org/onlinepubs/009695399/utilities/sed.html:
-[2addr]s/BRE/replacement/flags
-...  Any character other than backslash or <newline> can be used
-instead of a slash to delimit the BRE and the replacement....
+this series aims at documenting the HiHope RZ/G2M platform from
+HopeRun, and its corresponding expansion board.
 
->
-> > 'Sed' may also be used on its own in the 'for' loop instead of as part
-> > of a pipeline along with 'grep' to generate the desired output:
-> > sed '/\/'$m'/!d;s:^kernel/:  :' modules.order modules.builtin
->
-> sed "/\/${m}/!d;s/^kernel\//  /" modules.order modules.builtin
+V2->V3:
+* Moved to vendor-prefixes.yaml
+v1->v2:
+* Applied Rob's comments
 
-The parameter expansion syntax is redundant here.
-See https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_06_02:
-The parameter name or symbol can be enclosed in braces, which are
-optional except for positional parameters with more than one digit or
-when parameter is a name and is followed by a character that could be
-interpreted as part of the name.
+Thanks,
+Fab
 
-Here's an alternative version using double quotes.
-sed "/\/$m/!d;s:^kernel/:  :" modules.order modules.builtin
+Fabrizio Castro (2):
+  dt-bindings: Add vendor prefix for HopeRun
+  dt-bindings: arm: renesas: Add HopeRun RZ/G2[M] boards
 
->
-> MfG,
->         Bernd
-> --
-> Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
->                      LUGA : http://www.luga.at
+ Documentation/devicetree/bindings/arm/renesas.yaml     | 8 ++++++++
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 2 files changed, 10 insertions(+)
+
+-- 
+2.7.4
+
