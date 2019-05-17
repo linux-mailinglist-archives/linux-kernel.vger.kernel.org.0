@@ -2,102 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64BBD214A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B35214B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbfEQHia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 03:38:30 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48389 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbfEQHi3 (ORCPT
+        id S1728634AbfEQHmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:42:55 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42043 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbfEQHmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 03:38:29 -0400
-X-Originating-IP: 80.215.154.25
-Received: from localhost (unknown [80.215.154.25])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 874A2E001C;
-        Fri, 17 May 2019 07:38:16 +0000 (UTC)
-Date:   Fri, 17 May 2019 09:38:15 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     rui.zhang@intel.com, Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan.Cameron@huawei.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        paulmck@linux.ibm.com, Andy Gross <andy.gross@linaro.org>,
-        olof@lixom.net, bjorn.andersson@linaro.org,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
-        enric.balletbo@collabora.com, Linux PM <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: thermal: add binding document for h6
- thermal controller
-Message-ID: <20190517073815.e5h7obnzyaljj4xn@flea>
-References: <20190512082614.9045-1-tiny.windzz@gmail.com>
- <20190512082614.9045-4-tiny.windzz@gmail.com>
- <20190512134152.yrletgtiglxncyo4@flea>
- <CAEExFWvkM86ajB4io8yopkKEOfRE3UObRpqoi=Sq0RtDnuaRWA@mail.gmail.com>
+        Fri, 17 May 2019 03:42:54 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 188so5378670ljf.9;
+        Fri, 17 May 2019 00:42:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oHNi3Q7jru9V7QHeQJrbcvrvhDMwQwJaNTkhpVbOPeY=;
+        b=nlZN5KR0N7jvQqLFbSGPTwgMqSKoaX1LPjdM6GeU9/GZuJbZP7lltcJdgPioCZUBg/
+         IM+F3bzOBkKSue/JToywsm4egduquenAUaHpVJpOt/xIuvEAyayMDk6Dbag9WRppVIRZ
+         leYQM+v4rN89e7x+HTUTWSjKnvp6iP4G+07Wphaw5BI5o4aay0mZqdGjzBJho34c+0fb
+         z1pES0fjwLPl9t5LgYLVVpHpavqzn1iF85ROkTGv9EGt9Kb+3mCK/OQ1FvJ/FhdoFWAn
+         7fF7t5bHcDv/+Psav4h//ww0Z+dSENcTYk/I7wdvsglM8FIrFxpH0lTIIKEb/JUzfENP
+         nl5A==
+X-Gm-Message-State: APjAAAV/PChIFX84d5kI1iqEHOozsWnn4I+hAptMkKRdGarAwdTydSPf
+        Ofdat4jGlhqHaKhDKUF5V/Mq+Czg
+X-Google-Smtp-Source: APXvYqxr66sn/KNjZu/bBP4IB6022Cmga4g3l932SwBwSoNm8SDJXM0CuwDynX5Xkv2GevcPszIh7Q==
+X-Received: by 2002:a2e:84a:: with SMTP id g10mr16425895ljd.98.1558078972663;
+        Fri, 17 May 2019 00:42:52 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id k81sm1290928ljb.77.2019.05.17.00.42.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 00:42:51 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1hRXVw-0002Pt-Lr; Fri, 17 May 2019 09:42:48 +0200
+Date:   Fri, 17 May 2019 09:42:48 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     parna.naveenkumar@gmail.com
+Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: mos7840: Prefer 'unsigned int' to bare use
+ of 'unsigned'
+Message-ID: <20190517074248.GD28564@localhost>
+References: <20190516130759.12996-1-parna.naveenkumar@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fxtyg6m4voydyy57"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEExFWvkM86ajB4io8yopkKEOfRE3UObRpqoi=Sq0RtDnuaRWA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190516130759.12996-1-parna.naveenkumar@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 16, 2019 at 06:37:59PM +0530, parna.naveenkumar@gmail.com wrote:
+> From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+> 
+> This fixes checkpatch.pl warning "WARNING: Prefer 'unsigned int' to
+> bare use of 'unsigned'".
 
---fxtyg6m4voydyy57
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please don't run checkpatch.pl on code that already in the kernel
+(possibly with the exception of staging). Use it on your own patches
+before you submit them if you want, and even then don't blindly follow
+what checkpatch says.
 
-On Fri, May 17, 2019 at 02:13:58AM +0800, Frank Lee wrote:
-> On Sun, May 12, 2019 at 9:41 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > Hi,
-> >
-> > On Sun, May 12, 2019 at 04:26:14AM -0400, Yangtao Li wrote:
-> > > This patch adds binding document for allwinner h6 thermal controller.
-> > >
-> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > > ---
-> > >  .../bindings/thermal/sun50i-thermal.txt       | 32 +++++++++++++++++++
-> > >  1 file changed, 32 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/thermal/sun50i-thermal.txt
-> >
-> > We're starting to convert to YAML for binding descriptions that will
-> > allow to validate that all DT are properly using the binding. It would
-> > be great if you could use it as well.
->
-> What have been changed to this now?
+Minor coding style issues are better left alone to avoid adding noise
+and making code forensic and backports harder.
 
-This needs a YAML file instead of the text file you introduced.
+And in this case, there's not even anything wrong with the current code.
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fxtyg6m4voydyy57
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN5k5wAKCRDj7w1vZxhR
-xVi+AQDjoz3LrnnFNDvlVcYVt1sSrswPkuViJuQuLmCuUtaAxAD/elWxrmZ+1PF9
-BqQU0LtypLWGmBgeF++P6OPWQT10YQQ=
-=3mNs
------END PGP SIGNATURE-----
-
---fxtyg6m4voydyy57--
+Johan
