@@ -2,123 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5CF21A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3637A21A82
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbfEQPWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:22:06 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37402 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728749AbfEQPWG (ORCPT
+        id S1729262AbfEQP0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 11:26:23 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37760 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729244AbfEQP0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:22:06 -0400
-Received: by mail-qt1-f193.google.com with SMTP id o7so8433928qtp.4;
-        Fri, 17 May 2019 08:22:05 -0700 (PDT)
+        Fri, 17 May 2019 11:26:20 -0400
+Received: by mail-oi1-f193.google.com with SMTP id f4so5455498oib.4;
+        Fri, 17 May 2019 08:26:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tVu9EkldM3onnvk8BPzbzIwspJMsVrSFyKHg7EYG2tA=;
-        b=qy0bVwePhtQ9I7p12Ufs0t1LtV47n7M6OOXey7QmvOHmkhU1FOd7DK9DU1gy5VhAIt
-         8zv3Am1MJNtddZexuwUyDbvTpPINHvWrA1S0pO8PTPNt3EjC4k5Ecm85q2bgnoPWCSH5
-         qZFgCMAFiVB/Dn65U7qDV6NyouMSAY7ntW+aFOrjKZB63eCzp27OSOgJN5X7y1S5MiqM
-         CwAQyONH0sSmt2doRrE+UYSGPQu6+6EBoLD/S4XCHHbaMTuaYV5TsK9V95Zfoy9fYv79
-         plPeNJAAtPkQm+JtcYS8F2p5ScPhVxwkegXp2O8ihmWZ7fajdDy7+Uw090ZPhlm6MNyf
-         41xw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xu5A8L7ffk/VuZGGKLFuV6FJUYoNh1BlyhIBaFYJKc8=;
+        b=fnGDVA/CPKgszzyvVNGPqdLlo3j4aBFjTJaRyaTzUsUqqtk3Ma/fdvvR6u0jV1QpnS
+         ODbWVtFHuGlSkV64ydsIhDYXqWgNvxd9hUKbNVi5azAzpVFWM1JIDuYaGNdd8Pf7kLvX
+         gOWTKjEWmmd5+7p/9sWiB9SWvYBGUPrXCEKwk5+wh97ypDgkeA/yPNjXzolAz6em//4Y
+         QpgLVf7kpkbMl5b/Ilzqoh78hJdNKJDZRf2yAEaDS8wriC7brnX2Mbko/37I/M5hGoS6
+         H4iTDp7tO94GqQ+BaRhwoGNj18Nk/9lxuceTbcsD1wfLtP0skneXJODVFpDmJzqZhHFJ
+         vlyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tVu9EkldM3onnvk8BPzbzIwspJMsVrSFyKHg7EYG2tA=;
-        b=UWIrOoI0/i0CbGMjaHtyVAu1a+gSkkg4SewSK5aPdILE2e61tyZF0lwSqKV+/WLhs8
-         TmV3niJI+QV4SWv5/EYxlxRra3kW36dBzarhOfEQiQRwNTFAZkAGTBwOHex4B1wWkhOi
-         rD6adwu5UGU/Y/qRD3YCeSNBXxvw8lrls+hes4lBtSJrK7oc+iPIC0TncbtEAK2NBOWw
-         5hXU/9eLAFn4J3iS+m7MKv4jHAFv5hXo7d8ZUVffl4wcniNdEVecDhwbbEUcoZaSfRMS
-         Qh4WhIfSvLbn02vOaZLLtVTbxtcme3ZtCceuJycakZrk/8/IlXvSWNGMmuWipaHnU1rr
-         fpBQ==
-X-Gm-Message-State: APjAAAXn3LC6zJsX8bhp2iaB478GoBoJ721XhL90b3Mkk9nO0FtzAijV
-        jkv4/R7I/7Bifj5vkGx1p88=
-X-Google-Smtp-Source: APXvYqz0Hl1IYJlqcHlwcyahYtK5SEW/55qvDt4wBQckSvdhrSXx6zCeJEp/bUrgKrHh5ssple74PA==
-X-Received: by 2002:a0c:e64f:: with SMTP id c15mr40321600qvn.239.1558106525270;
-        Fri, 17 May 2019 08:22:05 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.211.69])
-        by smtp.gmail.com with ESMTPSA id v22sm6089750qtj.29.2019.05.17.08.22.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 17 May 2019 08:22:04 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6ECEB404A1; Fri, 17 May 2019 12:22:00 -0300 (-03)
-Date:   Fri, 17 May 2019 12:22:00 -0300
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>
-Subject: Re: Linux 4.19 and GCC 9
-Message-ID: <20190517152200.GI8945@kernel.org>
-References: <CANiq72kvpiC-i53AXM-YsCUvWroHQemmqxsXjnB330ZEeHahUg@mail.gmail.com>
- <CABWYdi1zhTTaN-GSgH0DnPfz7p=SRw0wts5QVYYVtfvoiS0qnQ@mail.gmail.com>
- <CANiq72=fsL5m2_e+bNovFCHy3=YVf53EKGtGE_sWvsAD=ONHuQ@mail.gmail.com>
- <20190516225013.nvhwqi5tfwtby6qb@treble>
- <CABWYdi29E++jBw8boFZAiDZA7iT5NiJhnNmiHb-Rvd9+97hSVA@mail.gmail.com>
- <20190517050931.GB32367@kroah.com>
- <20190517073813.GB2589@hirez.programming.kicks-ass.net>
- <CANiq72nUPoNHWM-dJuFc3=4D2=8XMuvO0PgGPjviOv+EhrAWUw@mail.gmail.com>
- <20190517085126.GA3249@kroah.com>
- <CANiq72muyjE3XPjmtQgJpGaqWR=YBi6KVNT3qe-EMXP7x+q_rQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xu5A8L7ffk/VuZGGKLFuV6FJUYoNh1BlyhIBaFYJKc8=;
+        b=L2vOs/Mci6avbkPZqtCdNGOWtw0dp/SMpg8KYbnR/mnbrczCUe8LZKDZ3mzFFGSiIv
+         Z/uyz1d7PrAzurzBGsHVUsEqlre/evS6bEZSqmuvFZSZwPcc47LPWMdzadK75P3RrTa6
+         R4je9/fjk7jeQCu/qJwnE+am6BH2vm6amJ3ETTEwfsNMOXK6q4QhSlfe5F9VbKExClMU
+         FlO7rlcbCWbTZaFQCCxNrGGBqQ2S3zLUpnpBfOwPW+4kILJm0C7mwouzkMUCPdUU65Be
+         Y3nawfFA0AK9VN8+HYpd4FJBEpNT6jeVEd3P1ZCDTiGwhjPVmoX35DQLySqQtkSElWow
+         3Srw==
+X-Gm-Message-State: APjAAAUdBjeRpAaahpzeO0aRzinFFalmv5LXEMx7Rqb3pD2gVWnaeXWE
+        13thMmbkpfJ1aWlbzd49oKg1GgZV64aGYXCvF9Y=
+X-Google-Smtp-Source: APXvYqwYlZSL66GeSU4TZbz+0EZuctc8xlZi5TZE8nl8m8iVOM29zqacKrtT9w5oMHvLig9tG04NA6RK4P6OxABQH90=
+X-Received: by 2002:aca:38d4:: with SMTP id f203mr5209080oia.88.1558106779678;
+ Fri, 17 May 2019 08:26:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANiq72muyjE3XPjmtQgJpGaqWR=YBi6KVNT3qe-EMXP7x+q_rQ@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190514160241.9EAC768C7B@newverein.lst.de> <CA+E=qVfuKBzWK7dpM_eabjU8mLdzOw3zCnYk6Tc1oXdavH7CNA@mail.gmail.com>
+ <20190515093141.41016b11@blackhole.lan> <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com>
+ <20190516154820.GA10431@lst.de> <CA+E=qVe5NkAvHXPvVc7iTbZn5sKeoRm0166zPW_s83c2gk7B+g@mail.gmail.com>
+ <20190516164859.GB10431@lst.de> <20190517072738.deohh5fly4jxms7k@flea>
+ <20190517101353.3e86d696@blackhole.lan> <20190517090845.oujs33nplbaxcyun@flea>
+ <20190517094708.GA16858@lst.de>
+In-Reply-To: <20190517094708.GA16858@lst.de>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Fri, 17 May 2019 08:25:53 -0700
+Message-ID: <CA+E=qVcpMeFfC0EEZRpp3Hc_yBGFMv6cGKGSQENpUTw_ZH7UwQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: DTS: allwinner: a64: enable ANX6345 bridge on Teres-I
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Harald Geyer <harald@ccbib.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, May 17, 2019 at 11:01:45AM +0200, Miguel Ojeda escreveu:
-> On Fri, May 17, 2019 at 10:51 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, May 17, 2019 at 10:35:29AM +0200, Miguel Ojeda wrote:
-> > > On Fri, May 17, 2019 at 9:38 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > Right; if there is anything you can reproduce on linus.git I'll happily
-> > > > have a look. If it doesn't reproduce all you have to do is find the
-> > > > patches that make it work and ask Greg.
+On Fri, May 17, 2019 at 2:47 AM Torsten Duwe <duwe@lst.de> wrote:
+>
+> On Fri, May 17, 2019 at 11:08:45AM +0200, Maxime Ripard wrote:
 > > >
-> > > Just to clarify: Linus' master is clean of these issues with GCC 9.1.1.
+> > > So for all current practical purposes, we can assume the Teres-I panel
+> > > to be powered properly and providing valid EDID; nothing to worry about
+> > > in software.
 > >
-> > Great!  Care to find the patches that did that work and send me the git
-> > commit ids so that I can queue them up?  I don't have gcc9 here yet on
-> > my systems, so I can not test for this.
-> 
-> I am unsure about the perf and the objtools parts (Peter/Josh?), but
+> > You're creating a generic binding for all the users of that bridge,
+> > while considering only the specific case of the Teres-I.
+>
+> All I'm saying is that _this_ usage is also valid. Nothing keeps other
+> users from defining the output panel; on the contrary: the driver at hand
+> already considers an _optional_ panel and handles it, conditionally. So
+> driver and binding spec are 100% in sync here.
 
-I'm not noticing these while building upstream perf with gcc 9.1.1 on at
-least fedora:30.
+Well, endpoint is not necessarily a panel. It can be another bridge or
+connector - that's why panel can be optional in driver. But it don't
+think that you can just omit an endpoint.
 
-    33	fedora:30                     : Ok   gcc (GCC) 9.1.1 20190503 (Red Hat 9.1.1-1)
+> This is much more straightforward than requiring an output and making up
+> some dummy code and params because it cannot reasonably be handled.
+> (Remember, if there is an output, the driver will make calls to the
+> "attached device" driver.)
 
-> about the -Wmissing-attributes I cleaned, they were these:
- 
-> a6e60d84989f ("include/linux/module.h: copy __init/__exit attrs to
-> init/cleanup_module")
-> c0d9782f5b6d ("Compiler Attributes: add support for __copy (gcc >= 9)")
-> ff98e20ef208 ("lib/crc32.c: mark crc32_le_base/__crc32c_le_base
-> aliases as __pure")
-> 
-> Cheers,
-> Miguel
+They aren't dummy. Moreover you have to attach backlight somewhere (to
+panel) so it can be disabled when output is disabled.
 
--- 
+Try 'xrandr --output eDP-1 --off' on teres with your current code and
+see that backlight stays on.
 
-- Arnaldo
+>
+>         Torsten
+>
