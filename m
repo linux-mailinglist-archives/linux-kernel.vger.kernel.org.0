@@ -2,110 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EB0621E2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5507721E33
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfEQTZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 15:25:58 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44898 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbfEQTZ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 15:25:57 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c5so3756474pll.11
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 12:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6m950k0wpGbiOzwRM0Zmf6vFeYvepUmTaDILG4jsOaE=;
-        b=MRIUWXTdcwy3u1sW6nKHueYTSpb0gJ7fF8cYZVlfUuPds94ETgvDpGDxvTp+t1DlXI
-         4AS+i7KmUjpAsXiZRYObHC7OVDJTf5O0aN4echqrlAa/dV2kkHUWDEIBh4xDmFPN2mZI
-         OV8PFvr7njJVJaL9n7a1Kz3M75K/90YxuX/n0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6m950k0wpGbiOzwRM0Zmf6vFeYvepUmTaDILG4jsOaE=;
-        b=HWk38V4geqJV4rHfdqtlBclzlXJozNyGJhms0E9UvEOwuKvZt7pnZQWF4gHDE0Taon
-         IFT7cu0p+l1lX3+pKfqPCP7VPev3fWKIrpFEaWXeTqhw9vEFBstvROBqeAQFP/4KQ5me
-         lZGSxQZ6fYzN+hgKqDdpSRnKw1jhSVqr2EDcHeTjoy35yrGDqfgjq+ncwDkx6A1kXwcB
-         3/ymOX+TrGMQfSqByjtQKiCzCmizaBQkgl/9GVfKTaMUUzoNo6QvS3enbEqVbnucekRO
-         vcUjIcbdUBBpZwjDuw/+NdAReZ18qgOkLi8jAYoMIHUh9UF8o6nZqePws97OxXePn3XM
-         8Wvg==
-X-Gm-Message-State: APjAAAX6KK6OGAnqkmH9bjS5j8iIqEJVDMZJ4D+aZe3OfBksIFx6Kx5o
-        KuEIucUIH2W3GvHpFkGZOF+WWw==
-X-Google-Smtp-Source: APXvYqx1H180sw6ugMRwdB57GS4R9rz+Su7MJuu5k1RoAAIBbeI3A+RJSaekWJWtXdGn9n8Fk40Phg==
-X-Received: by 2002:a17:902:2d03:: with SMTP id o3mr23240811plb.309.1558121156947;
-        Fri, 17 May 2019 12:25:56 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g22sm11186901pfo.28.2019.05.17.12.25.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 May 2019 12:25:55 -0700 (PDT)
-Date:   Fri, 17 May 2019 12:25:54 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
-        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S1728859AbfEQT2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 15:28:24 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28707 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727398AbfEQT2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 15:28:24 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 12:28:22 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga006.jf.intel.com with ESMTP; 17 May 2019 12:28:23 -0700
+Date:   Fri, 17 May 2019 12:28:23 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Message-ID: <201905171225.29F9564BA2@keescook>
-References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190517084739.GB20550@quack2.suse.cz>
- <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
- <201905170855.8E2E1AC616@keescook>
- <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190517192823.GG15006@linux.intel.com>
+References: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+ <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov>
+ <20190517150948.GA15632@linux.intel.com>
+ <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov>
+ <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
+ <837CE33B-A636-4BF8-B46E-0A8A40C5A563@amacapital.net>
+ <6d083885-1880-f33d-a54f-23518d56b714@tycho.nsa.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+In-Reply-To: <6d083885-1880-f33d-a54f-23518d56b714@tycho.nsa.gov>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:28:48AM -0700, Dan Williams wrote:
-> On Fri, May 17, 2019 at 8:57 AM Kees Cook <keescook@chromium.org> wrote:
+On Fri, May 17, 2019 at 02:05:39PM -0400, Stephen Smalley wrote:
+> On 5/17/19 1:12 PM, Andy Lutomirski wrote:
 > >
-> > On Fri, May 17, 2019 at 08:08:27AM -0700, Dan Williams wrote:
-> > > As far as I can see it's mostly check_heap_object() that is the
-> > > problem, so I'm open to finding a way to just bypass that sub-routine.
-> > > However, as far as I can see none of the other block / filesystem user
-> > > copy implementations submit to the hardened checks, like
-> > > bio_copy_from_iter(), and iov_iter_copy_from_user_atomic() . So,
-> > > either those need to grow additional checks, or the hardened copy
-> > > implementation is targeting single object copy use cases, not
-> > > necessarily block-I/O. Yes, Kees, please advise.
-> >
-> > The intention is mainly for copies that haven't had explicit bounds
-> > checking already performed on them, yes. Is there something getting
-> > checked out of the slab, or is it literally just the overhead of doing
-> > the "is this slab?" check that you're seeing?
+> >How can that work?  Unless the API changes fairly radically, users
+> >fundamentally need to both write and execute the enclave.  Some of it will
+> >be written only from already executable pages, and some privilege should be
+> >needed to execute any enclave page that was not loaded like this.
 > 
-> It's literally the overhead of "is this slab?" since it needs to go
-> retrieve the struct page and read that potentially cold cacheline. In
-> the case where that page is on memory media that is higher latency
-> than DRAM we get the ~37% performance loss that Jeff measured.
-
-Ah-ha! Okay, I understand now; thanks!
-
-> The path is via the filesystem ->write_iter() file operation. In the
-> DAX case the filesystem traps that path early, before submitting block
-> I/O, and routes it to the dax_iomap_actor() routine. That routine
-> validates that the logical file offset is within bounds of the file,
-> then it does a sector-to-pfn translation which validates that the
-> physical mapping is within bounds of the block device.
+> I'm not sure what the API is. Let's say they do something like this:
 > 
-> It seems dax_iomap_actor() is not a path where we'd be worried about
-> needing hardened user copy checks.
+> fd = open("/dev/sgx/enclave", O_RDONLY);
+> addr = mmap(NULL, size, PROT_READ | PROT_EXEC, MAP_SHARED, fd, 0);
+> stuff addr into ioctl args
+> ioctl(fd, ENCLAVE_CREATE, &ioctlargs);
+> ioctl(fd, ENCLAVE_ADD_PAGE, &ioctlargs);
+> ioctl(fd, ENCLAVE_INIT, &ioctlargs);
 
-I would agree: I think the proposed patch makes sense. :)
+That's rougly the flow, except that that all enclaves need to have RW and
+X EPC pages.
 
--- 
-Kees Cook
+> The important points are that they do not open /dev/sgx/enclave with write
+> access (otherwise they will trigger FILE__WRITE at open time, and later
+> encounter FILE__EXECUTE as well during mmap, thereby requiring both to be
+> allowed to /dev/sgx/enclave), and that they do not request PROT_WRITE to the
+> resulting mapping (otherwise they will trigger FILE__WRITE at mmap time).
+> Then only FILE__READ and FILE__EXECUTE are required to /dev/sgx/enclave in
+> policy.
+> 
+> If they switch to an anon inode, then any mmap PROT_EXEC of the opened file
+> will trigger an EXECMEM check, at least as currently implemented, as we have
+> no useful backing inode information.
+
+Yep, and that's by design in the overall proposal.  The trick is that
+ENCLAVE_ADD takes a source VMA and copies the contents *and* the
+permissions from the source VMA.  The source VMA points at regular memory
+that was mapped and populated using existing mechanisms for loading DSOs.
+
+E.g. at a high level:
+
+source_fd = open("/home/sean/path/to/my/enclave", O_RDONLY);
+for_each_chunk {
+        <hand waving - mmap()/mprotect() the enclave file into regular memory>
+}
+
+enclave_fd = open("/dev/sgx/enclave", O_RDWR); /* allocs anon inode */
+enclave_addr = mmap(NULL, size, PROT_READ, MAP_SHARED, enclave_fd, 0);
+
+ioctl(enclave_fd, ENCLAVE_CREATE, {enclave_addr});
+for_each_chunk {
+        struct sgx_enclave_add ioctlargs = {
+                .offset = chunk.offset,
+                .source = chunk.addr,
+                .size   = chunk.size,
+                .type   = chunk.type, /* SGX specific metadata */
+        }
+        ioctl(fd, ENCLAVE_ADD, &ioctlargs); /* modifies enclave's VMAs */
+}
+ioctl(fd, ENCLAVE_INIT, ...);
+
+
+Userspace never explicitly requests PROT_EXEC on enclave_fd, but SGX also
+ensures userspace isn't bypassing LSM policies by virtue of copying the
+permissions for EPC VMAs from regular VMAs that have already gone through
+LSM checks.
