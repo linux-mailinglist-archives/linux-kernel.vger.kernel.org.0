@@ -2,162 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECEC421B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40AD21B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfEQQYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:24:43 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46019 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfEQQYn (ORCPT
+        id S1726785AbfEQQZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:25:21 -0400
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:55038 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfEQQZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:24:43 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a5so3552299pls.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 09:24:42 -0700 (PDT)
+        Fri, 17 May 2019 12:25:20 -0400
+Received: by mail-wm1-f42.google.com with SMTP id i3so7503033wml.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 09:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=aV3rffMxuXG8e12nRoLl587y9MXM8TOV+Ti1qX5jxqI=;
-        b=NXpueBp2RQMTp7/ult69Cy5m/zTxwcPQ4jUpkeJZIDfT5NUWtRfdwnURyUvF+j6BFp
-         AtAoNq/qumpwpOFcKFiEZaF/sZdU1y/HLKnK9X7UPX0N/K43J1jkVrMf5Xs5CqVetGcL
-         ZBfYzEeuzoVND9qwgMHdjgycO60Wj5qtT1MAM5cT1Ytwi56EKX3k7ReMiyMZ8xdGHNre
-         mM4fVZcEHDooxUjnhbVinIyKSNOV8KWA1dtbI6Y7eb62sxO2ITHJnViW49OB1VjvhKtv
-         DGINjLmb++niWPUIc88gcCTcevakt4/DwbPMhlaoWreegbl0aeJ3i93b5EK1cmpI033W
-         Wulg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8x2Jy6/gxZmiezgdFVn1BQR/C6WvCQ7LwkCWGJtj+hI=;
+        b=QaZHohHYfmwHjH4GvWttm3+9MJWC/0IJ5/Aro3Wu+pdYp7FyBA1SYgTXoWSUFJPpZF
+         yyHQmF+d2nOxFU8JzNBbveifLDji7skAw5dWHCnc+z2dSJGpNvs3685UrWXp7u0fXnd5
+         +mIt8qddf2y4wwI0ffXo+rr3bittdci8FYuzZbEonksAISNEquDZNrkAo5XghTlRP6AX
+         3fgq5Hoc7sWuMARPZuo19SMlYM30mYhupvF9gCXQHLGB0IZkJNwtZzNakL0qdAXdz749
+         nhDmsikrJAlgjjTZb5RDfxAY6A8BNFfIW+kWbROm6RTdRjoxVoQuBEPj3JjnQxchB9xj
+         Wl+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=aV3rffMxuXG8e12nRoLl587y9MXM8TOV+Ti1qX5jxqI=;
-        b=EJFKlFa7R/jf3zRWgfTmhZmwtHYEAY+q4Yzxp62Mr30jqFBJKSYDFAxlHQe7bGxKY6
-         R1/PpX9FiPcKZ2Wji8WuBdYkVhWLOo+EukYixAFk/AvNJ8tWnGfIIbejeOH25615/S+U
-         YXA1nQ1TyrElsbTFQuOwCdQFViJW3x2OHQrjCSDV4sriSiA6ib1ylf/VzCG47t7ZA14A
-         U461D1y6xGEcOWylcrYUuoeZB29OjGso0IWBVGoSXvTro/q374+AvuE1s6Xllnl3qMJV
-         9QDIhuLl2QJ2EPCYCPBCF+zwaGNgu4tEzpE+bIWPk6iA1cDa7fKejFKzWydHaCdW0lc0
-         rhrw==
-X-Gm-Message-State: APjAAAXis+jPu0ujI45rwJNzqHIp2Ap7bH5STbyUWZMHegxGgNf4tfFE
-        dImcikQ8GEc1LaI+NPKYAqfc8Q==
-X-Google-Smtp-Source: APXvYqzLLqL8f8ufEhA84JZ4KDsuDGxuqP9EQI1cVkvo3Az2BKCevLwr9qASi18i0IIJwQ0nWw2g6w==
-X-Received: by 2002:a17:902:be0e:: with SMTP id r14mr40513480pls.152.1558110282349;
-        Fri, 17 May 2019 09:24:42 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b066:f2e9:80d1:f40f:2e81:3df1? ([2600:1010:b066:f2e9:80d1:f40f:2e81:3df1])
-        by smtp.gmail.com with ESMTPSA id k9sm10974460pfa.180.2019.05.17.09.24.41
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8x2Jy6/gxZmiezgdFVn1BQR/C6WvCQ7LwkCWGJtj+hI=;
+        b=lIhT+byerOjD7GHWQALCW5kA2Cnsq4nza/yDKFXl22petG8a9+AIEO3EwsSArIK3cu
+         31XVZAfsqRCoHw8se7LeRtE/fvbaFk0opPLwAI3l++gV+KigSp+6Zn0F+lYWP7/FF6Me
+         wjdlhz5tzIpEUNjjZ2zOiyooaQj1oc0fBSlT3T9Qv8w5YmJ71k5BA60oJYdqTpneIWEi
+         Bcc5mirNM8TXCn86at8Tb38VcwQv6BExufyc4Yyh+ax1T51svv4Ru/WS4HVr5S+f4uPT
+         vVOLuZ1okQjRvrlTebQdL/Sf3MQeVqkwivbVGthrCNg9jFvS5pGyl6t0BuAHawoBqgy5
+         4S7Q==
+X-Gm-Message-State: APjAAAVTBdyAfzY3HnvQgN9y3wPcfV3DIrqkNm/JJdU/zMHmScio/oky
+        RV2IxurtXsuapbWMj4gjFZoKKg==
+X-Google-Smtp-Source: APXvYqwPm5Uo6MeWvcRhGVDqKtnGQIbzB18KIfogvsXWSaBa2KfTjIHRF150v5mcpy4LLvwCUH28FQ==
+X-Received: by 2002:a7b:c344:: with SMTP id l4mr17740012wmj.25.1558110318183;
+        Fri, 17 May 2019 09:25:18 -0700 (PDT)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id k30sm13228108wrd.0.2019.05.17.09.25.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 09:24:41 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov>
-Date:   Fri, 17 May 2019 09:24:39 -0700
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <ECF62380-A58A-4829-AFF0-F7D439D6F886@amacapital.net>
-References: <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com> <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com> <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com> <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
+        Fri, 17 May 2019 09:25:17 -0700 (PDT)
+Subject: Re: [PATCHv1 8/8] arm64: dts: qcom: sdm845: Add PSCI cpuidle low
+ power states
+To:     Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        David Brown <david.brown@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        devicetree@vger.kernel.org, mkshah@codeaurora.org
+References: <cover.1557486950.git.amit.kucheria@linaro.org>
+ <044cd74e461a1dd7934f44531802f4b557264365.1557486950.git.amit.kucheria@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <2132b7dd-8832-7db3-d05a-69eec3d5f139@linaro.org>
+Date:   Fri, 17 May 2019 18:25:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <044cd74e461a1dd7934f44531802f4b557264365.1557486950.git.amit.kucheria@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/05/2019 13:29, Amit Kucheria wrote:
+> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+> 
+> Add device bindings for cpuidle states for cpu devices.
+> 
+> [amit: rename the idle-states to more generic names and fixups]
+> 
+> Cc: <devicetree@vger.kernel.org>
+> Cc: <mkshah@codeaurora.org>
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> Reviewed-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
 
-> On May 17, 2019, at 9:20 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->=20
->> On 5/17/19 11:09 AM, Sean Christopherson wrote:
->>> On Fri, May 17, 2019 at 09:53:06AM -0400, Stephen Smalley wrote:
->>>> On 5/16/19 6:23 PM, Xing, Cedric wrote:
->>>> I thought EXECMOD applied to files (and memory mappings backed by them)=
- but
->>>> I was probably wrong. It sounds like EXECMOD applies to the whole proce=
-ss so
->>>> would allow all pages within a process's address space to be modified t=
-hen
->>>> executed, regardless the backing files. Am I correct this time?
->>>=20
->>> No, you were correct the first time I think; EXECMOD is used to control
->>> whether a process can make executable a private file mapping that has
->>> previously been modified (e.g. text relocation); it is a special case to=
 
->>> support text relocations without having to allow full EXECMEM (i.e. exec=
-ute
->>> arbitrary memory).
->>>=20
->>> SELinux checks relevant to W^X include:
->>>=20
->>> - EXECMEM: mmap/mprotect PROT_EXEC an anonymous mapping (regardless of
->>> PROT_WRITE, since we know the content has to have been written at some
->>> point) or a private file mapping that is also PROT_WRITE.
->>> - EXECMOD: mprotect PROT_EXEC a private file mapping that has been
->>> previously modified, typically for text relocations,
->>> - FILE__WRITE: mmap/mprotect PROT_WRITE a shared file mapping,
->>> - FILE__EXECUTE: mmap/mprotect PROT_EXEC a file mapping.
->>>=20
->>> (ignoring EXECSTACK and EXECHEAP here since they aren't really relevant t=
-o
->>> this discussion)
->>>=20
->>> So if you want to ensure W^X, then you wouldn't allow EXECMEM for the
->>> process, EXECMOD by the process to any file, and the combination of both=
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
->>> FILE__WRITE and FILE__EXECUTE by the process to any file.
->>>=20
->>> If the /dev/sgx/enclave mappings are MAP_SHARED and you aren't using an
->>> anonymous inode, then I would expect that only the FILE__WRITE and
->>> FILE__EXECUTE checks are relevant.
->> Yep, I was just typing this up in a different thread:
->> I think we may want to change the SGX API to alloc an anon inode for each=
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
->> enclave instead of hanging every enclave off of the /dev/sgx/enclave inod=
-e.
->> Because /dev/sgx/enclave is NOT private, SELinux's file_map_prot_check()
->> will only require FILE__WRITE and FILE__EXECUTE to mprotect() enclave VMA=
-s
->> to RWX.  Backing each enclave with an anon inode will make SELinux treat
->> EPC memory like anonymous mappings, which is what we want (I think), e.g.=
-
->> making *any* EPC page executable will require PROCESS__EXECMEM (SGX is
->> 64-bit only at this point, so SELinux will always have default_noexec).
->=20
-> I don't think we want to require EXECMEM (or equivalently both FILE__WRITE=
- and FILE__EXECUTE to /dev/sgx/enclave) for making any EPC page executable, o=
-nly if the page is also writable or previously modified.  The intent is to p=
-revent arbitrary code execution without EXECMEM (or FILE__WRITE|FILE__EXECUT=
-E), while still allowing enclaves to be created without EXECMEM as long as t=
-he EPC page mapping is only ever mapped RX and its initial contents came fro=
-m an unmodified file mapping that was PROT_EXEC (and hence already checked v=
-ia FILE__EXECUTE).
-
-That agrees with my thoughts. Actually plumbing everything together so this w=
-orks could be a bit interesting.  I assume it=E2=80=99ll need a special case=
- in SELinux or maybe a new vm_op.=
