@@ -2,101 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770202198D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 16:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB84321993
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 16:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbfEQOHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 10:07:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:16470 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbfEQOHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 10:07:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 07:06:45 -0700
-Received: from jkrzyszt-desk.igk.intel.com ([172.22.244.18])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 07:06:42 -0700
-From:   Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-To:     intel-gfx@lists.freedesktop.org
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Michal Wajdeczko <michal.wajdeczko@intel.com>,
-        Janusz Krzysztofik <janusz.krzysztofik@intel.com>
-Subject: [RFC PATCH] drm/i915: Tolerate file owned GEM contexts on hot unbind
-Date:   Fri, 17 May 2019 16:06:17 +0200
-Message-Id: <20190517140617.31187-1-janusz.krzysztofik@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1728720AbfEQOIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 10:08:50 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39151 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728260AbfEQOIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 10:08:49 -0400
+Received: by mail-it1-f195.google.com with SMTP id 9so12175170itf.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 07:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wnE5ugQSV+EX8NJq3bXAxc5+808EKDRQWDkjcFDm76g=;
+        b=bCbydxhIRSNOt3TwDd4BdgsvwmO+IYfUOtPAEAjE2b/cMzWleRTqkn3UbY13DGYF1K
+         x4yKjJrT6J8shR6+H2q3zQgZGYdC9a0WvJmPeCQ4S0ffoyFISZ2B0V76p9gorMUSQ6ER
+         bRKXGBesi4Znrw/l7X+0AcOZOXjCjR7CaV4xUbio+/j3wXC0fnhOlLLnTQyxz5/dsx5U
+         oSqt/pSv99S0Oftm7Z+LRef9zrwxu9hleDGUMXzjoDfyHveXTeVIn3F3wfTR3OL6TJGu
+         082bIphpUtJ9LlQ5xRROlabqAeWGtZVRZrntcO9m/4dBEXkJ5cyyPS6SNomLQs8wNpZ8
+         Xw9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wnE5ugQSV+EX8NJq3bXAxc5+808EKDRQWDkjcFDm76g=;
+        b=EDas/L8YMVgiXAA+Fni5SzK1rhns0bTSY3fp33bUBi/lskJUDsCe0XOX8jakwKvA7k
+         zMrECTz54eQDbjYh8n+A+4ztzZollNCa92q4J+/Fv70klbeyVbxFsJh/j7OY6JPiuX42
+         0/9unRklfhCx9f+3XjyE6lDLRp/qrxUCxLuNJyTUbZsqxzWiCRFDWa0vHS2wHOQkw/sh
+         IbkDh/jxOyp2CC/d5tOCAw0N/t8bvi0lidPeAyUpBCP2ID4unKNxb98HXwpuOOB0FUiY
+         DXREfqIDnzERNupdxtWNO/bG4XNtIBJBaW4XjeZN4ZDfy4A+aJOLYgg+d5uXJ0xwmVwQ
+         4ssQ==
+X-Gm-Message-State: APjAAAUwXDa9mWBs+j3Nhg4lj+MScMXsluRS3msuWFF+YqkGXDFCfOg+
+        y6wk5dbR7rdvvVi3levI7k3T9+vBMPswUend2SXe0w==
+X-Google-Smtp-Source: APXvYqzuUfMi8lV0T0lwvRZljXNCxDfrTqM5N220cNATHJKTOwPJxnkJlmO1e5pjoYWFu4RheZnomcXVJ0T1qE6Tsfg=
+X-Received: by 2002:a02:412:: with SMTP id 18mr1390107jab.82.1558102128480;
+ Fri, 17 May 2019 07:08:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <00000000000014285d05765bf72a@google.com> <0000000000000eaf23058912af14@google.com>
+ <20190517134850.GG17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190517134850.GG17978@ZenIV.linux.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 17 May 2019 16:08:35 +0200
+Message-ID: <CACT4Y+Z8760uYQP0jKgJmVC5sstqTv9pE6K6YjK_feeK6-Obfg@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, sabin.rapan@gmail.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <janusz.krzysztofik@intel.com>
+On Fri, May 17, 2019 at 3:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, May 17, 2019 at 03:17:02AM -0700, syzbot wrote:
+> > This bug is marked as fixed by commit:
+> > vfs: namespace: error pointer dereference in do_remount()
+> > But I can't find it in any tested tree for more than 90 days.
+> > Is it a correct commit? Please update it by replying:
+> > #syz fix: exact-commit-title
+> > Until then the bug is still considered open and
+> > new crashes with the same signature are ignored.
+>
+> Could somebody explain how the following situation is supposed to
+> be handled:
+>
+> 1) branch B1 with commits  C1, C2, C3, C4 is pushed out
+> 2) C2 turns out to have a bug, which gets caught and fixed
+> 3) fix is folded in and branch B2 with C1, C2', C3', C4' is
+> pushed out.  The bug is not in it anymore.
+> 4) B1 is left mouldering (or is entirely removed); B2 is
+> eventually merged into other trees.
+>
+> This is normal and it appears to be problematic for syzbot.
+> How to deal with that?  One thing I will *NOT* do in such
+> situations is giving up on folding the fixes in.  Bisection
+> hazards alone make that a bad idea.
 
-During i915_driver_unload(), GEM contexts are verified restrictively
-inside i915_gem_fini() if they don't consume shared resources which
-should be cleaned up before the driver is released.  If those checks
-don't result in kernel panic, one more check is performed at the end of
-i915_gem_fini() which issues a WARN_ON() if GEM contexts still exist.
+linux-next creates a bit of a havoc.
 
-Some GEM contexts are allocated unconditionally on device file open,
-one per each file descriptor, and are kept open until those file
-descriptors are closed.  Since open file descriptors prevent the driver
-module from being unloaded, that protects the driver from being
-released while contexts are still open.  However, that's not the case
-on driver unbind or device unplug sysfs operations which are executed
-regardless of open file descriptors.
+The ideal way of handling this is including Tested-by: tag into C2'.
+Reported-by: would work too, but people suggested that Reported-by: is
+confusing in this situation because it suggests that the commit fixes
+a bug in some previous commit. Technically, syzbot now accepts any
+tag, so With-inputs-from:
+syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com would work too.
 
-To protect kernel resources from being accessed by those open file
-decriptors while driver unbind or device unplug operation is in
-progress, the driver now calls drm_device_unplug() at the beginning of
-that process and relies on the DRM layer to provide such protection.
-
-Taking all above information into account, as soon as shared resources
-not associated with specific file descriptors are cleaned up, it should
-be safe to postpone completion of driver release until users of those
-open file decriptors give up on errors and close them.
-
-When device has been marked unplugged, use WARN_ON() conditionally so
-the warning is displayed only if a GEM context not associated with a
-file descriptor is still allocated.
-
-Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@intel.com>
----
- drivers/gpu/drm/i915/i915_gem.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index 54f27cabae2a..c00b6dbaf4f5 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -4670,7 +4670,17 @@ void i915_gem_fini(struct drm_i915_private *dev_priv)
- 
- 	i915_gem_drain_freed_objects(dev_priv);
- 
--	WARN_ON(!list_empty(&dev_priv->contexts.list));
-+	if (drm_dev_is_unplugged(&dev_priv->drm)) {
-+		struct i915_gem_context *ctx, *cn;
-+
-+		list_for_each_entry_safe(ctx, cn, &dev_priv->contexts.list,
-+					 link) {
-+			WARN_ON(IS_ERR_OR_NULL(ctx->file_priv));
-+			break;
-+		}
-+	} else {
-+		WARN_ON(!list_empty(&dev_priv->contexts.list));
-+	}
- }
- 
- void i915_gem_init_mmio(struct drm_i915_private *i915)
--- 
-2.21.0
-
+At this point we obvious can't fix up C2'. For such cases syzbot
+accepts #syz fix command to associate bugs with fixes. So replying
+with "#syz fix: C2'-commit-title" should do.
