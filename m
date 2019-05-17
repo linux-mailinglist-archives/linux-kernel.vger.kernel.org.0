@@ -2,97 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40AD21B94
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08D5421BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfEQQZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:25:21 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:55038 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfEQQZU (ORCPT
+        id S1726462AbfEQQcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:32:13 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:39364 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfEQQcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:25:20 -0400
-Received: by mail-wm1-f42.google.com with SMTP id i3so7503033wml.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 09:25:19 -0700 (PDT)
+        Fri, 17 May 2019 12:32:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1558110732; x=1589646732;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=qvM06v5LK2earYmAgDdwZOgIJmtAceqfZkuhQxMz6Cw=;
+  b=d3D+QFu6DMSB8o4ry+fktLiSR9eresgq0BtXMnO5n1sPkEhbc0kp59VK
+   dZFtn2MlLRPhgAXucAl9LEZCreoAfJynBu5BTawu5cRLwcqtBIAq7Uat6
+   BFum6FePgMwqTzuQtLhpz75vfLuzL9Tqvc5qDEcAzTYBbVeLDYlHr0gTx
+   mypzosur4VPZjiDiIYfbR2t+L4Dkuw5W6xU2k6lFh6zKM1gACoext9CmJ
+   ae0yU8qg7Fh5U2d9LpECDZcGxZ60FLF5LuaenG+nvs79x5fad7vqcT8fn
+   n4fWRU7kk82keXhvaagSrdMwsIG1YW/+rem8m+Z4/+8Rf3Hy05f5XRqAQ
+   A==;
+X-IronPort-AV: E=Sophos;i="5.60,480,1549900800"; 
+   d="scan'208";a="214659982"
+Received: from mail-bn3nam01lp2056.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.56])
+  by ob1.hgst.iphmx.com with ESMTP; 18 May 2019 00:32:06 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8x2Jy6/gxZmiezgdFVn1BQR/C6WvCQ7LwkCWGJtj+hI=;
-        b=QaZHohHYfmwHjH4GvWttm3+9MJWC/0IJ5/Aro3Wu+pdYp7FyBA1SYgTXoWSUFJPpZF
-         yyHQmF+d2nOxFU8JzNBbveifLDji7skAw5dWHCnc+z2dSJGpNvs3685UrWXp7u0fXnd5
-         +mIt8qddf2y4wwI0ffXo+rr3bittdci8FYuzZbEonksAISNEquDZNrkAo5XghTlRP6AX
-         3fgq5Hoc7sWuMARPZuo19SMlYM30mYhupvF9gCXQHLGB0IZkJNwtZzNakL0qdAXdz749
-         nhDmsikrJAlgjjTZb5RDfxAY6A8BNFfIW+kWbROm6RTdRjoxVoQuBEPj3JjnQxchB9xj
-         Wl+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8x2Jy6/gxZmiezgdFVn1BQR/C6WvCQ7LwkCWGJtj+hI=;
-        b=lIhT+byerOjD7GHWQALCW5kA2Cnsq4nza/yDKFXl22petG8a9+AIEO3EwsSArIK3cu
-         31XVZAfsqRCoHw8se7LeRtE/fvbaFk0opPLwAI3l++gV+KigSp+6Zn0F+lYWP7/FF6Me
-         wjdlhz5tzIpEUNjjZ2zOiyooaQj1oc0fBSlT3T9Qv8w5YmJ71k5BA60oJYdqTpneIWEi
-         Bcc5mirNM8TXCn86at8Tb38VcwQv6BExufyc4Yyh+ax1T51svv4Ru/WS4HVr5S+f4uPT
-         vVOLuZ1okQjRvrlTebQdL/Sf3MQeVqkwivbVGthrCNg9jFvS5pGyl6t0BuAHawoBqgy5
-         4S7Q==
-X-Gm-Message-State: APjAAAVTBdyAfzY3HnvQgN9y3wPcfV3DIrqkNm/JJdU/zMHmScio/oky
-        RV2IxurtXsuapbWMj4gjFZoKKg==
-X-Google-Smtp-Source: APXvYqwPm5Uo6MeWvcRhGVDqKtnGQIbzB18KIfogvsXWSaBa2KfTjIHRF150v5mcpy4LLvwCUH28FQ==
-X-Received: by 2002:a7b:c344:: with SMTP id l4mr17740012wmj.25.1558110318183;
-        Fri, 17 May 2019 09:25:18 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id k30sm13228108wrd.0.2019.05.17.09.25.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 09:25:17 -0700 (PDT)
-Subject: Re: [PATCHv1 8/8] arm64: dts: qcom: sdm845: Add PSCI cpuidle low
- power states
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        David Brown <david.brown@linaro.org>,
-        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        devicetree@vger.kernel.org, mkshah@codeaurora.org
-References: <cover.1557486950.git.amit.kucheria@linaro.org>
- <044cd74e461a1dd7934f44531802f4b557264365.1557486950.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <2132b7dd-8832-7db3-d05a-69eec3d5f139@linaro.org>
-Date:   Fri, 17 May 2019 18:25:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <044cd74e461a1dd7934f44531802f4b557264365.1557486950.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8LRwACc9N4amVXgP1c6tadnlQKYFBobfTc5Y5y4YkQE=;
+ b=YoSB3Czkud8aJNPxHvAQaHf4f99iV1w4AxEj2kIMsIN29G4BFaIlkOm9UZ0ny0IH0smzFlY+uP4xUUuXQI88pl2gP0wG/PQR88RYexvgU/y7D+ZBeO2yfRZpgqNGyiVt147QI3ShUiwXQ+U2y8uBkzrb92nA/26U4CHauGHXbXI=
+Received: from SN6PR04MB4527.namprd04.prod.outlook.com (52.135.120.25) by
+ SN6PR04MB5312.namprd04.prod.outlook.com (20.177.255.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Fri, 17 May 2019 16:32:02 +0000
+Received: from SN6PR04MB4527.namprd04.prod.outlook.com
+ ([fe80::b163:e740:af6e:2602]) by SN6PR04MB4527.namprd04.prod.outlook.com
+ ([fe80::b163:e740:af6e:2602%6]) with mapi id 15.20.1900.010; Fri, 17 May 2019
+ 16:32:02 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     xiaolinkui <xiaolinkui@kylinos.cn>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH] nvme: target: use struct_size() in kmalloc()
+Thread-Topic: [PATCH] nvme: target: use struct_size() in kmalloc()
+Thread-Index: AQHVDH8oTBY/BlMzjUaR4gerzBgDxQ==
+Date:   Fri, 17 May 2019 16:32:02 +0000
+Message-ID: <SN6PR04MB4527D340D48215FE19335A99860B0@SN6PR04MB4527.namprd04.prod.outlook.com>
+References: <1558076615-8576-1-git-send-email-xiaolinkui@kylinos.cn>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
+x-originating-ip: [2605:e000:3e45:f500:f9a6:10ea:e679:e2ee]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4796274b-408c-4ef6-5450-08d6dae5312e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB5312;
+x-ms-traffictypediagnostic: SN6PR04MB5312:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB5312C1606B7338188D04BE4C860B0@SN6PR04MB5312.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 0040126723
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(376002)(39860400002)(366004)(189003)(199004)(68736007)(476003)(4326008)(46003)(55016002)(14454004)(53936002)(9686003)(486006)(54906003)(446003)(229853002)(25786009)(6436002)(102836004)(6246003)(66946007)(66476007)(2501003)(66556008)(64756008)(66446008)(2906002)(76116006)(91956017)(73956011)(81156014)(71190400001)(7736002)(71200400001)(478600001)(72206003)(256004)(110136005)(7696005)(186003)(86362001)(76176011)(316002)(5660300002)(81166006)(33656002)(2201001)(52536014)(6506007)(8936002)(6116002)(53546011)(74316002)(8676002)(305945005)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5312;H:SN6PR04MB4527.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: i4zpuG7JX247DZ+MTcifqpzAXSGmhIGLB+CsJ4Qqr88okPesKhUaIElQlkuZTmSrFLHOJBlWCBzh+N5tSq3dhPKFkFQY6EuzMnsOVZtoIMNbJph8cn7TeQSwKHPLvxS1v9Jp5QEDuMF7T43oEenaL53BFIJl29tZ+I0qo3iLdNe1U69zLFES7AXmx5O2Iyf+dv90t38NXtv8RsWLfnjVn2W5z2EtQGJzcMhkH4k3C4fNMCoxdVVcMYvJp9QGzBye1DaIAQ8pt1AVsQF2XcPt0afHQlDJR83SOYTwjIh45sXBGRXzVyQkp86Zosa7fyiWkc77qunTDn6v/7pcgQzlS0Vnd+MCv1eYRWJbKPqS4mtDqGky2VWbYY5tetlkRoQtsh/0QeJeZjZqXxG74gzzyssNGUW6kcjH6oeZDu7BAa0=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4796274b-408c-4ef6-5450-08d6dae5312e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 16:32:02.5530
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5312
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/05/2019 13:29, Amit Kucheria wrote:
-> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-> 
-> Add device bindings for cpuidle states for cpu devices.
-> 
-> [amit: rename the idle-states to more generic names and fixups]
-> 
-> Cc: <devicetree@vger.kernel.org>
-> Cc: <mkshah@codeaurora.org>
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+If maintainers are okay with this then,=0A=
+=0A=
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
+=0A=
+On 5/17/19 12:07 AM, xiaolinkui wrote:=0A=
+> Use struct_size() to keep code sample.=0A=
+> One of the more common cases of allocation size calculations is finding=
+=0A=
+> the size of a structure that has a zero-sized array at the end, along=0A=
+> with memory for some number of elements for that array. For example:=0A=
+>=0A=
+> struct foo {=0A=
+>     int stuff;=0A=
+>     struct boo entry[];=0A=
+> };=0A=
+>=0A=
+> instance =3D kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP=
+_KERNEL);=0A=
+>=0A=
+> Instead of leaving these open-coded and prone to type mistakes, we can=0A=
+> now use the new struct_size() helper:=0A=
+>=0A=
+> instance =3D kmalloc(struct_size(instance, entry, count), GFP_KERNEL);=0A=
+>=0A=
+> Signed-off-by: xiaolinkui <xiaolinkui@kylinos.cn>=0A=
+> ---=0A=
+>  drivers/nvme/target/admin-cmd.c | 4 ++--=0A=
+>  1 file changed, 2 insertions(+), 2 deletions(-)=0A=
+>=0A=
+> diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-=
+cmd.c=0A=
+> index 9f72d51..6f9f830 100644=0A=
+> --- a/drivers/nvme/target/admin-cmd.c=0A=
+> +++ b/drivers/nvme/target/admin-cmd.c=0A=
+> @@ -248,8 +248,8 @@ static void nvmet_execute_get_log_page_ana(struct nvm=
+et_req *req)=0A=
+>  	u16 status;=0A=
+>  =0A=
+>  	status =3D NVME_SC_INTERNAL;=0A=
+> -	desc =3D kmalloc(sizeof(struct nvme_ana_group_desc) +=0A=
+> -			NVMET_MAX_NAMESPACES * sizeof(__le32), GFP_KERNEL);=0A=
+> +	desc =3D kmalloc(struct_size(desc, nsids, NVMET_MAX_NAMESPACES),=0A=
+> +			GFP_KERNEL);=0A=
+>  	if (!desc)=0A=
+>  		goto out;=0A=
+>  =0A=
+=0A=
+=0A=
