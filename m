@@ -2,115 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA83212A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 156CC21280
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfEQDx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 23:53:27 -0400
-Received: from web1.siteocity.com ([67.227.147.204]:43164 "EHLO
-        web1.siteocity.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbfEQDx1 (ORCPT
+        id S1727650AbfEQDc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 23:32:57 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31767 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725929AbfEQDc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 23:53:27 -0400
-X-Greylist: delayed 1699 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 23:53:26 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=felipegasper.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=j63K5kt/+ZVwWL7v54vZ6nKLjjvImcbcZCJ95gUcFYo=; b=mhIVdWYFz7zvgarpgJTIsHK+97
-        6+Nh7rY9O/brQjWXyQ+OooEg7lJD4E9RDd11r0v2mK+ItdCLV/4Kg9SzpGYdF/GVFH9KiCNQof/Mr
-        AqbyWO9GzUvVdmYtzMzkhqdUwmM/H5BodILF3bEwxsDqpMYZuyFXRc4uy+UORbXzlvbouzw3kA1JT
-        SI/Y82H5kiD1bB9+kpm9P9zYwOL0kRPVsRnN88K7we/dUoCst3KTemNsSHjwvHQPDmo9I5FaQNsO6
-        VRcQTS+SH++NNZgrMFsrnQd+dF2gRprnDRLLeglrsWrKxN0O7hw9RLh9eJRzneZW8JXghfc9ALN7w
-        b0J3B3sQ==;
-Received: from fgasper by web1.siteocity.com with local (Exim 4.92)
-        (envelope-from <fgasper@web1.siteocity.com>)
-        id 1hRTUX-0005Sf-Cv; Thu, 16 May 2019 22:25:06 -0500
-From:   Felipe <felipe@felipegasper.com>
-To:     davem@davemloft.net, felipe@felipegasper.com,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH] Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
-Date:   Thu, 16 May 2019 22:25:05 -0500
-Message-Id: <20190517032505.19921-1-felipe@felipegasper.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 16 May 2019 23:32:57 -0400
+X-UUID: 7c00949786d04952aa8af5a7eec0004e-20190517
+X-UUID: 7c00949786d04952aa8af5a7eec0004e-20190517
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1375638928; Fri, 17 May 2019 11:32:48 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 17 May 2019 11:32:39 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 17 May 2019 11:32:39 +0800
+Message-ID: <1558063959.14401.18.camel@mtksdaap41>
+Subject: Re: [PATCH v6 08/12] soc: mediatek: cmdq: define the instruction
+ struct
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "YT Shen" <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh 
+        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>
+Date:   Fri, 17 May 2019 11:32:39 +0800
+In-Reply-To: <20190516090224.59070-9-bibby.hsieh@mediatek.com>
+References: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
+         <20190516090224.59070-9-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OutGoing-Spam-Status: No, score=0.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - web1.siteocity.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [1438 994] / [47 12]
-X-AntiAbuse: Sender Address Domain - web1.siteocity.com
-X-Get-Message-Sender-Via: web1.siteocity.com: authenticated_id: fgasper/from_h
-X-Authenticated-Sender: web1.siteocity.com: felipe@felipegasper.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-From-Rewrite: unmodified, already matched
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 9C00DE444E660D85CDFD1DC30AAFFABEDB58AFC441998971D133D2E68A8E916E2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Author: Felipe Gasper <felipe@felipegasper.com>
-Date:   Thu May 16 12:16:53 2019 -0500
+Hi, Bibby:
 
-    Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
-    
-    This adds the ability for Netlink to report a socket’s UID along with the
-    other UNIX socket diagnostic information that is already available. This will
-    allow diagnostic tools greater insight into which users control which socket.
-    
-    Signed-off-by: Felipe Gasper <felipe@felipegasper.com>
+On Thu, 2019-05-16 at 17:02 +0800, Bibby Hsieh wrote:
+> Define a instruction structure for gce driver to append command.
+> This structure can make the client's code more readability.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-cmdq-helper.c   | 113 +++++++++++++++--------
+>  include/linux/mailbox/mtk-cmdq-mailbox.h |   2 +
+>  include/linux/soc/mediatek/mtk-cmdq.h    |  14 +--
+>  3 files changed, 84 insertions(+), 45 deletions(-)
+> 
 
-diff --git a/include/uapi/linux/unix_diag.h b/include/uapi/linux/unix_diag.h
-index 5c502fd..a198857 100644
---- a/include/uapi/linux/unix_diag.h
-+++ b/include/uapi/linux/unix_diag.h
-@@ -20,6 +20,7 @@ struct unix_diag_req {
- #define UDIAG_SHOW_ICONS	0x00000008	/* show pending connections */
- #define UDIAG_SHOW_RQLEN	0x00000010	/* show skb receive queue len */
- #define UDIAG_SHOW_MEMINFO	0x00000020	/* show memory info of a socket */
-+#define UDIAG_SHOW_UID		0x00000040	/* show socket's UID */
- 
- struct unix_diag_msg {
- 	__u8	udiag_family;
-@@ -40,6 +41,7 @@ enum {
- 	UNIX_DIAG_RQLEN,
- 	UNIX_DIAG_MEMINFO,
- 	UNIX_DIAG_SHUTDOWN,
-+	UNIX_DIAG_UID,
- 
- 	__UNIX_DIAG_MAX,
- };
-diff --git a/net/unix/diag.c b/net/unix/diag.c
-index 3183d9b..011f56c 100644
---- a/net/unix/diag.c
-+++ b/net/unix/diag.c
-@@ -110,6 +110,11 @@ static int sk_diag_show_rqlen(struct sock *sk, struct sk_buff *nlskb)
- 	return nla_put(nlskb, UNIX_DIAG_RQLEN, sizeof(rql), &rql);
- }
- 
-+static int sk_diag_dump_uid(struct sock *sk, struct sk_buff *nlskb)
-+{
-+	return nla_put(nlskb, UNIX_DIAG_UID, sizeof(kuid_t), &(sk->sk_uid));
-+}
-+
- static int sk_diag_fill(struct sock *sk, struct sk_buff *skb, struct unix_diag_req *req,
- 		u32 portid, u32 seq, u32 flags, int sk_ino)
- {
-@@ -156,6 +161,10 @@ static int sk_diag_fill(struct sock *sk, struct sk_buff *skb, struct unix_diag_r
- 	if (nla_put_u8(skb, UNIX_DIAG_SHUTDOWN, sk->sk_shutdown))
- 		goto out_nlmsg_trim;
- 
-+	if ((req->udiag_show & UDIAG_SHOW_UID) &&
-+	    sk_diag_dump_uid(sk, skb))
-+		goto out_nlmsg_trim;
-+
- 	nlmsg_end(skb, nlh);
- 	return 0;
- 
+[snip]
+
+>  
+>  /**
+>   * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
+>   * @pkt:	the CMDQ packet
+> - * @value:	the specified target register value
+>   * @subsys:	the CMDQ sub system code
+>   * @offset:	register offset from CMDQ sub system
+> + * @value:	the specified target register value
+>   * @mask:	the specified target register mask
+>   *
+>   * Return: 0 for success; else the error code is returned
+>   */
+> -int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
+> -			u32 subsys, u32 offset, u32 mask);
+> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
+> +			u32 value, u32 mask);
+
+You have do two things for this interface: one is reordering the
+parameter, another one is changing type of subsys from u32 to u8.
+
+Define the instruction struct is not necessary to change the order and
+type. I would like you to separate these two things to another patches.
+So the patch sequence may be:
+
+1. Reorder parameter of cmdq_pkt_write_mask()
+2. Change subsys type to u8
+3. define the instruction struct
+
+Regards,
+CK
+
+>  
+>  /**
+>   * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
+> @@ -88,7 +88,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
+>   *
+>   * Return: 0 for success; else the error code is returned
+>   */
+> -int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
+> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event);
+>  
+>  /**
+>   * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
+> @@ -97,7 +97,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
+>   *
+>   * Return: 0 for success; else the error code is returned
+>   */
+> -int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
+> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event);
+>  
+>  /**
+>   * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
+
+
