@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EE921E8E
+	by mail.lfdr.de (Postfix) with ESMTP id 76B9021E8F
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfEQTi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 15:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55084 "EHLO mail.kernel.org"
+        id S1729786AbfEQTjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 15:39:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbfEQTi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 15:38:56 -0400
+        id S1728410AbfEQTjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 15:39:00 -0400
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC52D2166E;
-        Fri, 17 May 2019 19:38:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43210216FD;
+        Fri, 17 May 2019 19:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558121935;
-        bh=q7WKE/PxVdUiZswmkA8zyS4iEKkoSFu3iphWqBiJvZw=;
+        s=default; t=1558121939;
+        bh=3pDmHX7Z34TVj7oDYyhqMU6ctsjLh5WNmo03zUjl9Ds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TxCB621t0HfmhB+KCbW1Leg1tP4ElPlcePBA/iaqzzmSq3gcQZ39MrtCeutnVCtda
-         1zSoNii4BYj7YFoWbGMk8RE5rnHGAU2hpK9pIyQcYjAngBfPA2bX13gZcVFIh3OaDz
-         c5DqBlQd2IMsxlo/1H8pofsAUkBE8OpPmkuC886Y=
+        b=RkhILx/TnEmkGMrzQ2YhFhacfTAqF8Kao8Zrfg9nxZuKK4A1D3weQ41siZuXnDaVZ
+         M5ImLJRNCKPzPX0caLvORxdQXLkUjGgbyvt5+ap1TOCVZptBGEq5mHkgzn2irr+Gb/
+         iGqJOPCuLVp45414rdGX/AKOi2/CXsZRl/UzZyM0=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-trace-devel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 35/73] tools lib traceevent: Man page for list events APIs
-Date:   Fri, 17 May 2019 16:35:33 -0300
-Message-Id: <20190517193611.4974-36-acme@kernel.org>
+Subject: [PATCH 36/73] tools lib traceevent: Man pages for libtraceevent event get APIs
+Date:   Fri, 17 May 2019 16:35:34 -0300
+Message-Id: <20190517193611.4974-37-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190517193611.4974-1-acme@kernel.org>
 References: <20190517193611.4974-1-acme@kernel.org>
@@ -50,38 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Create man page for libtraceevent APIs:
+Create man pages for libtraceevent APIs:
 
-  tep_list_events()
-  tep_list_events_copy()
+  tep_get_event(),
+  tep_get_first_event(),
+  tep_get_events_count()
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: linux-trace-devel@vger.kernel.org
-Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-16-tstoyanov@vmware.com
-Link: http://lkml.kernel.org/r/20190510200108.367633707@goodmis.org
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-17-tstoyanov@vmware.com
+Link: http://lkml.kernel.org/r/20190510200108.561088129@goodmis.org
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../libtraceevent-event_list.txt              | 122 ++++++++++++++++++
- 1 file changed, 122 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-event_list.txt
+ .../Documentation/libtraceevent-event_get.txt | 99 +++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-event_get.txt
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-event_list.txt b/tools/lib/traceevent/Documentation/libtraceevent-event_list.txt
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-event_get.txt b/tools/lib/traceevent/Documentation/libtraceevent-event_get.txt
 new file mode 100644
-index 000000000000..fba350e5a4cb
+index 000000000000..6525092fc417
 --- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-event_list.txt
-@@ -0,0 +1,122 @@
++++ b/tools/lib/traceevent/Documentation/libtraceevent-event_get.txt
+@@ -0,0 +1,99 @@
 +libtraceevent(3)
 +================
 +
 +NAME
 +----
-+tep_list_events, tep_list_events_copy -
-+Get list of events, sorted by given criteria.
++tep_get_event, tep_get_first_event, tep_get_events_count - Access events.
 +
 +SYNOPSIS
 +--------
@@ -89,44 +89,35 @@ index 000000000000..fba350e5a4cb
 +--
 +*#include <event-parse.h>*
 +
-+enum *tep_event_sort_type* {
-+	_TEP_EVENT_SORT_ID_,
-+	_TEP_EVENT_SORT_NAME_,
-+	_TEP_EVENT_SORT_SYSTEM_,
-+};
-+
-+struct tep_event pass:[*]pass:[*]*tep_list_events*(struct tep_handle pass:[*]_tep_, enum tep_event_sort_type _sort_type_);
-+struct tep_event pass:[*]pass:[*]*tep_list_events_copy*(struct tep_handle pass:[*]_tep_, enum tep_event_sort_type _sort_type_);
++struct tep_event pass:[*]*tep_get_event*(struct tep_handle pass:[*]_tep_, int _index_);
++struct tep_event pass:[*]*tep_get_first_event*(struct tep_handle pass:[*]_tep_);
++int *tep_get_events_count*(struct tep_handle pass:[*]_tep_);
 +--
 +
 +DESCRIPTION
 +-----------
-+The _tep_list_events()_ function returns an array of pointers to the events,
-+sorted by the _sort_type_ criteria. The last element of the array is NULL.
-+The returned memory must not be freed, it is managed by the library.
-+The function is not thread safe. The _tep_ argument is trace event parser
-+context. The _sort_type_ argument is the required sort criteria:
-+[verse]
-+--
-+	_TEP_EVENT_SORT_ID_	- sort by the event ID.
-+	_TEP_EVENT_SORT_NAME_	- sort by the event (name, system, id) triplet.
-+	_TEP_EVENT_SORT_SYSTEM_	- sort by the event (system, name, id) triplet.
-+--
++The _tep_get_event()_ function returns a pointer to event at the given _index_.
++The _tep_ argument is trace event parser context, the _index_ is the index of
++the requested event.
 +
-+The _tep_list_events_copy()_ is a thread safe version of _tep_list_events()_.
-+It has the same behavior, but the returned array is allocated internally and
-+must be freed by the caller. Note that the content of the array must not be
-+freed (see the EXAMPLE below).
++The _tep_get_first_event()_ function returns a pointer to the first event.
++As events are stored in an array, this function returns the pointer to the
++beginning of the array. The _tep_ argument is trace event parser context.
++
++The _tep_get_events_count()_ function returns the number of the events
++in the array. The _tep_ argument is trace event parser context.
 +
 +RETURN VALUE
 +------------
-+The _tep_list_events()_ function returns an array of pointers to events.
-+In case of an error, NULL is returned. The returned array must not be freed,
-+it is managed by the library.
++The _tep_get_event()_ returns a pointer to the event located at _index_.
++NULL is returned in case of error, in case there are no events or _index_ is
++out of range.
 +
-+The _tep_list_events_copy()_ function returns an array of pointers to events.
-+In case of an error, NULL is returned. The returned array must be freed by
-+the caller.
++The _tep_get_first_event()_ returns a pointer to the first event. NULL is
++returned in case of error, or in case there are no events.
++
++The _tep_get_events_count()_ returns the number of the events. 0 is
++returned in case of error, or in case there are no events.
 +
 +EXAMPLE
 +-------
@@ -136,33 +127,20 @@ index 000000000000..fba350e5a4cb
 +...
 +struct tep_handle *tep = tep_alloc();
 +...
-+int i;
-+struct tep_event_format **events;
++int i,count = tep_get_events_count(tep);
++struct tep_event *event, *events = tep_get_first_event(tep);
 +
-+i=0;
-+events = tep_list_events(tep, TEP_EVENT_SORT_ID);
 +if (events == NULL) {
-+	/* Failed to get the events, sorted by ID */
++	/* There are no events */
 +} else {
-+	while(events[i]) {
-+		/* walk through the list of the events, sorted by ID */
-+		i++;
++	for (i = 0; i < count; i++) {
++		event = (events+i);
++		/* process events[i] */
 +	}
-+}
 +
-+i=0;
-+events = tep_list_events_copy(tep, TEP_EVENT_SORT_NAME);
-+if (events == NULL) {
-+	/* Failed to get the events, sorted by name */
-+} else {
-+	while(events[i]) {
-+		/* walk through the list of the events, sorted by name */
-+		i++;
-+	}
-+	free(events);
++	/* Get the last event */
++	event = tep_get_event(tep, count-1);
 +}
-+
-+...
 +--
 +
 +FILES
