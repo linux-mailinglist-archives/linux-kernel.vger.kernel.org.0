@@ -2,177 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF02D21145
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F792116D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfEQA1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 20:27:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38759 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfEQA1g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 20:27:36 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b76so2717480pfb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:27:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:cc:from:to:message-id;
-        bh=jUqvnYGakfbu3X+S19cL7CMuDFcJHkA4STcR5kbvbv4=;
-        b=XUVM3nuth2dSoRdQsvLH/QH2/XPE3o+1s7zYCcVUxPw42UwqUirKGmm93npNKEbWxp
-         oIgljOoiu0BDCQyBtsvBmaP+kaAKScz8x2rPpTbC+W9sIlAOqmxkZJorfr9J3nb4W6Yq
-         tXz0x5MrDTyw4Z0VUHO1IBamv8+Q4+lD2e8FaoKG+xufSphdmjzETPVbydV915aD8oxO
-         2EhCtdqw1U84tYK86xTOBCXeDD1skjBZIIgI4++fnvXJ7n/sH5pvlP9Kn2k1BNchtCfE
-         aNpmR/tufJhKI8MNLh+PLvZPagwyXTobsmw+5q4NHFYIGoWAuT2sIJhmpt9I4md4CkdP
-         MGRw==
-X-Gm-Message-State: APjAAAXN2pzPwuceOwPKy/QMHTvofinyJDypYGmdoj5SU5eq6HSWStks
-        AdFFv0wdXuH7X5JpI/gTDOj60Q==
-X-Google-Smtp-Source: APXvYqyG6ulz31XFgTWJh+fLqRzGIQkJoz/n+WzyKDfgPA5o7NIjw00EuiNnwhVxsNUKAUABrSi0Cw==
-X-Received: by 2002:a63:1354:: with SMTP id 20mr52472775pgt.356.1558052855801;
-        Thu, 16 May 2019 17:27:35 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id z125sm10673250pfb.75.2019.05.16.17.27.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 17:27:35 -0700 (PDT)
-Date:   Thu, 16 May 2019 17:27:35 -0700 (PDT)
-X-Google-Original-Date: Thu, 16 May 2019 17:23:56 PDT (-0700)
-Subject: [GIT PULL] RISC-V Patches for the 5.2 Merge Window, Part 1 v2
-CC:      linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-5ac66c65-9c46-409c-a5fb-a6551bb206c5@palmer-si-x1e>
+        id S1727736AbfEQAr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 20:47:26 -0400
+Received: from mga09.intel.com ([134.134.136.24]:56689 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727709AbfEQArZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 20:47:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 17:47:25 -0700
+X-ExtLoop1: 1
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008.jf.intel.com with ESMTP; 16 May 2019 17:47:25 -0700
+Subject: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 16 May 2019 17:33:38 -0700
+Message-ID: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
+Jeff discovered that performance improves from ~375K iops to ~519K iops
+on a simple psync-write fio workload when moving the location of 'struct
+page' from the default PMEM location to DRAM. This result is surprising
+because the expectation is that 'struct page' for dax is only needed for
+third party references to dax mappings. For example, a dax-mapped buffer
+passed to another system call for direct-I/O requires 'struct page' for
+sending the request down the driver stack and pinning the page. There is
+no usage of 'struct page' for first party access to a file via
+read(2)/write(2) and friends.
 
-  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
+However, this "no page needed" expectation is violated by
+CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
+copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
+check_heap_object() helper routine assumes the buffer is backed by a
+page-allocator DRAM page and applies some checks.  Those checks are
+invalid, dax pages are not from the heap, and redundant,
+dax_iomap_actor() has already validated that the I/O is within bounds.
 
-are available in the Git repository at:
+Bypass this overhead and call the 'no check' versions of the
+copy_{to,from}_iter operations directly.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-5.2-mw1
+Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache...")
+Cc: Jan Kara <jack@suse.cz>
+Cc: <stable@vger.kernel.org>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Matthew Wilcox <willy@infradead.org>
+Reported-and-tested-by: Jeff Smits <jeff.smits@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/nvdimm/pmem.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-for you to fetch changes up to 81eba518d95f43d9f81ed5eb6dd9edb4179687aa:
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 845c5b430cdd..c894f45e5077 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -281,16 +281,21 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+ 	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
+ }
+ 
++/*
++ * Use the 'no check' versions of copy_from_iter_flushcache() and
++ * copy_to_iter_mcsafe() to bypass HARDENED_USERCOPY overhead. Bounds
++ * checking is handled by dax_iomap_actor()
++ */
+ static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	return copy_from_iter_flushcache(addr, bytes, i);
++	return _copy_from_iter_flushcache(addr, bytes, i);
+ }
+ 
+ static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	return copy_to_iter_mcsafe(addr, bytes, i);
++	return _copy_to_iter_mcsafe(addr, bytes, i);
+ }
+ 
+ static const struct dax_operations pmem_dax_ops = {
 
-  RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs (2019-05-15 18:40:14 -0700)
-
-----------------------------------------------------------------
-RISC-V Patches for the 5.2 Merge Window, Part 1 v2
-
-This patch set contains an assortment of RISC-V related patches that I'd
-like to target for the 5.2 merge window.  Most of the patches are
-cleanups, but there are a handful of user-visible changes:
-
-* The nosmp and nr_cpus command-line arguments are now supported, which
-  work like normal.
-* The SBI console no longer installs itself as a preferred console, we
-  rely on standard mechanisms (/chosen, command-line, hueristics)
-  instead.
-* sfence_remove_sfence_vma{,_asid} now pass their arguments along to the
-  SBI call.
-* Modules now support BUG().
-* A missing sfence.vma during boot has been added.  This bug only
-  manifests during boot.
-* The arch/riscv support for SiFive's L2 cache controller has been
-  merged, which should un-block the EDAC framework work.
-
-I've only tested this on QEMU again, as I didn't have time to get things
-running on the Unleashed.  The latest master from this morning merges in
-cleanly and passes the tests as well.
-
-This patch set rebased my "5.2 MW, Part 1" patch set which includes an
-erronous empty file.  That patch set has not been merged.
-
-----------------------------------------------------------------
-Anup Patel (4):
-      RISC-V: Use tabs to align macro values in asm/csr.h
-      RISC-V: Add interrupt related SCAUSE defines in asm/csr.h
-      RISC-V: Access CSRs using CSR numbers
-      tty: Don't force RISCV SBI console as preferred console
-
-Atish Patra (4):
-      RISC-V: Add RISC-V specific arch_match_cpu_phys_id
-      RISC-V: Implement nosmp commandline option.
-      RISC-V: Support nr_cpus command line option.
-      RISC-V: Fix minor checkpatch issues.
-
-Christoph Hellwig (11):
-      riscv: use asm-generic/extable.h
-      riscv: turn mm_segment_t into a struct
-      riscv: remove unreachable big endian code
-      riscv: remove CONFIG_RISCV_ISA_A
-      riscv: clear all pending interrupts when booting
-      riscv: simplify the stack pointer setup in head.S
-      riscv: cleanup the parse_dtb calling conventions
-      riscv: remove unreachable !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR code
-      riscv: remove duplicate macros from ptrace.h
-      riscv: print the unexpected interrupt cause
-      riscv: call pm_power_off from machine_halt / machine_power_off
-
-Gary Guo (3):
-      riscv: move flush_icache_{all,mm} to cacheflush.c
-      riscv: move switch_mm to its own file
-      riscv: fix sbi_remote_sfence_vma{,_asid}.
-
-Guo Ren (1):
-      riscv/signal: Fixup additional syscall restarting
-
-Nick Desaulniers (1):
-      riscv: vdso: drop unnecessary cc-ldoption
-
-Palmer Dabbelt (1):
-      RISC-V: Avoid using invalid intermediate translations
-
-Vincent Chen (3):
-      riscv: support trap-based WARN()
-      riscv: Add the support for c.ebreak check in is_valid_bugaddr()
-      riscv: Support BUG() in kernel module
-
-Yash Shah (2):
-      RISC-V: Add DT documentation for SiFive L2 Cache Controller
-      RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs
-
- .../devicetree/bindings/riscv/sifive-l2-cache.txt  |  51 ++++++
- arch/riscv/Kconfig                                 |   6 +-
- arch/riscv/Makefile                                |   5 +-
- arch/riscv/include/asm/Kbuild                      |   1 +
- arch/riscv/include/asm/bug.h                       |  35 +++--
- arch/riscv/include/asm/cacheflush.h                |   2 +-
- arch/riscv/include/asm/csr.h                       | 123 +++++++++------
- arch/riscv/include/asm/elf.h                       |   6 -
- arch/riscv/include/asm/futex.h                     |  13 --
- arch/riscv/include/asm/irqflags.h                  |  10 +-
- arch/riscv/include/asm/mmu_context.h               |  59 +------
- arch/riscv/include/asm/ptrace.h                    |  21 +--
- arch/riscv/include/asm/sbi.h                       |  19 ++-
- arch/riscv/include/asm/sifive_l2_cache.h           |  16 ++
- arch/riscv/include/asm/thread_info.h               |   4 +-
- arch/riscv/include/asm/uaccess.h                   |  28 ++--
- arch/riscv/kernel/asm-offsets.c                    |   3 -
- arch/riscv/kernel/cpu.c                            |   3 +-
- arch/riscv/kernel/entry.S                          |  22 +--
- arch/riscv/kernel/head.S                           |  33 ++--
- arch/riscv/kernel/irq.c                            |  19 +--
- arch/riscv/kernel/perf_event.c                     |   4 +-
- arch/riscv/kernel/reset.c                          |  15 +-
- arch/riscv/kernel/setup.c                          |   6 +-
- arch/riscv/kernel/signal.c                         |   6 +
- arch/riscv/kernel/smp.c                            |  61 ++-----
- arch/riscv/kernel/smpboot.c                        |  22 ++-
- arch/riscv/kernel/stacktrace.c                     |  14 +-
- arch/riscv/kernel/traps.c                          |  30 +++-
- arch/riscv/kernel/vdso/Makefile                    |   2 +-
- arch/riscv/mm/Makefile                             |   2 +
- arch/riscv/mm/cacheflush.c                         |  61 +++++++
- arch/riscv/mm/context.c                            |  69 ++++++++
- arch/riscv/mm/fault.c                              |   6 +-
- arch/riscv/mm/sifive_l2_cache.c                    | 175 +++++++++++++++++++++
- drivers/tty/hvc/hvc_riscv_sbi.c                    |   1 -
- modules.builtin.modinfo                            | Bin 0 -> 46064 bytes
- 37 files changed, 633 insertions(+), 320 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt
- create mode 100644 arch/riscv/include/asm/sifive_l2_cache.h
- create mode 100644 arch/riscv/mm/context.c
- create mode 100644 arch/riscv/mm/sifive_l2_cache.c
- create mode 100644 modules.builtin.modinfo
