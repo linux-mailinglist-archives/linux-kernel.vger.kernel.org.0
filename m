@@ -2,180 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDEC2148E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553EC214B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfEQHgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 03:36:49 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:55927 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727500AbfEQHgs (ORCPT
+        id S1728592AbfEQHmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:42:02 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36787 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727822AbfEQHmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 03:36:48 -0400
-X-Originating-IP: 80.215.154.25
-Received: from localhost (unknown [80.215.154.25])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 93CA424000E;
-        Fri, 17 May 2019 07:36:35 +0000 (UTC)
-Date:   Fri, 17 May 2019 09:36:34 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     rui.zhang@intel.com, Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, robh+dt@kernel.org,
+        Fri, 17 May 2019 03:42:02 -0400
+X-UUID: b26fe20a10dd4b4f9982c0151debd977-20190517
+X-UUID: b26fe20a10dd4b4f9982c0151debd977-20190517
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1147280947; Fri, 17 May 2019 15:36:44 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs03n1.mediatek.inc
+ (172.21.101.181) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 17 May
+ 2019 15:36:43 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 17 May 2019 15:36:42 +0800
+Message-ID: <1558078602.14150.27.camel@mhfsdcap03>
+Subject: Re: [PATCH 4/4] serial: 8250-mtk: modify uart DMA rx
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Vinod Koul <vkoul@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "Ryder Lee" <ryder.lee@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan.Cameron@huawei.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        paulmck@linux.ibm.com, Andy Gross <andy.gross@linaro.org>,
-        olof@lixom.net, bjorn.andersson@linaro.org,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
-        enric.balletbo@collabora.com, Linux PM <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
-Message-ID: <20190517073634.izdmba3yqvxviyg3@flea>
-References: <20190512082614.9045-1-tiny.windzz@gmail.com>
- <20190512082614.9045-3-tiny.windzz@gmail.com>
- <20190512133930.t5txssl7mou2gljt@flea>
- <CAEExFWvcMbiCJ4HD0UAtv1P6AuBJ=oUdmhu886BNZhrRz483Ug@mail.gmail.com>
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Zhenbao Liu <zhenbao.liu@mediatek.com>
+Date:   Fri, 17 May 2019 15:36:42 +0800
+In-Reply-To: <CANMq1KDTyu48joV6uMksGBMz9EmjFH9SEpGAm93YCZ40jxgBpQ@mail.gmail.com>
+References: <1556336193-15198-1-git-send-email-long.cheng@mediatek.com>
+         <1556336193-15198-5-git-send-email-long.cheng@mediatek.com>
+         <CANMq1KDTyu48joV6uMksGBMz9EmjFH9SEpGAm93YCZ40jxgBpQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k3cws7k6b2j4fvaj"
-Content-Disposition: inline
-In-Reply-To: <CAEExFWvcMbiCJ4HD0UAtv1P6AuBJ=oUdmhu886BNZhrRz483Ug@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---k3cws7k6b2j4fvaj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, May 17, 2019 at 01:51:56AM +0800, Frank Lee wrote:
-> > > +struct sun50i_thermal_chip {
-> > > +     int     sensor_num;
-> > > +     int     offset;
-> > > +     int     scale;
-> > > +     int     ft_deviation;
-> > > +     int     temp_calib_base;
-> > > +     int     temp_data_base;
-> > > +     int     (*enable)(struct tsens_device *tmdev);
-> > > +     int     (*disable)(struct tsens_device *tmdev);
-> > > +};
+On Wed, 2019-05-15 at 21:48 +0800, Nicolas Boichat wrote:
+> On Sat, Apr 27, 2019 at 11:36 AM Long Cheng <long.cheng@mediatek.com> wrote:
 > >
-> > I'm not super fond of having a lot of quirks that are not needed. If
-> > we ever need those quirks when adding support for a new SoC, then
-> > yeah, we should totally have some, but only when and if it's needed.
+> > Modify uart rx and complete for DMA.
+> 
+> I don't know much about the DMA framework, but can you please explain
+> why you are making the changes in this CL? I see that you are dropping
+> dma_sync_single_for_device calls, for example, why?
+> 
+
+the rx buffer is create by 'dma_alloc_coherent'. in the function, the
+buffer is uncache. We don't need to sync between CPU and DMA. So I
+remove it.
+
 > >
-> > Otherwise, the driver is more complicated for no particular reason.
->
-> This is unavoidable because of the difference in soc.
-
-I know, but this isn't my point.
-
-My point is that at this time of the driver development, we don't know
-what is going to be needed to support all of those SoCs.
-
-Some of the parameters you added might not be needed, some parameters
-might be missing, we don't know. So let's keep it simple for now.
-
-> > > +static int tsens_probe(struct platform_device *pdev)
-> > > +{
-> > > +     struct tsens_device *tmdev;
-> > > +     struct device *dev = &pdev->dev;
-> > > +     int ret;
-> > > +
-> > > +     tmdev = devm_kzalloc(dev, sizeof(*tmdev), GFP_KERNEL);
-> > > +     if (!tmdev)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     tmdev->dev = dev;
-> > > +     tmdev->chip = of_device_get_match_data(&pdev->dev);
-> > > +     if (!tmdev->chip)
-> > > +             return -EINVAL;
-> > > +
-> > > +     ret = tsens_init(tmdev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret = tsens_register(tmdev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret = tmdev->chip->enable(tmdev);
-> > > +     if (ret)
-> > > +             return ret;
-> > >
-> > > +     platform_set_drvdata(pdev, tmdev);
+> > Signed-off-by: Long Cheng <long.cheng@mediatek.com>
+> > ---
+> >  drivers/tty/serial/8250/8250_mtk.c |   53 ++++++++++++++++--------------------
+> >  1 file changed, 23 insertions(+), 30 deletions(-)
 > >
-> > Your registration should be the very last thing you do. Otherwise, you
-> > have a small window where the get_temp callback can be called, but the
-> > driver will not be functional yet.
->
-> No. Anyway, ths data qcquisition is ms level.
-
-That's kind of irrelevant. There's nothing preventing get_temp to be
-called right away.
-
-> > > +     ret = tsens_calibrate(tmdev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     /*
-> > > +      * clkin = 24MHz
-> > > +      * T acquire = clkin / (SUN50I_THS_CTRL0_T_ACQ + 1)
-> > > +      *           = 20us
-> > > +      */
-> > > +     regmap_write(tmdev->regmap, SUN50I_THS_CTRL0,
-> > > +                  SUN50I_THS_CTRL0_T_ACQ(479));
-> > > +     /* average over 4 samples */
-> > > +     regmap_write(tmdev->regmap, SUN50I_H6_THS_MFC,
-> > > +                  SUN50I_THS_FILTER_EN |
-> > > +                  SUN50I_THS_FILTER_TYPE(1));
-> > > +     /* period = (SUN50I_H6_THS_PC_TEMP_PERIOD + 1) * 4096 / clkin; ~10ms */
-> > > +     regmap_write(tmdev->regmap, SUN50I_H6_THS_PC,
-> > > +                  SUN50I_H6_THS_PC_TEMP_PERIOD(58));
-> > > +     /* enable sensor */
-> > > +     val = GENMASK(tmdev->chip->sensor_num - 1, 0);
-> > > +     regmap_write(tmdev->regmap, SUN50I_H6_THS_ENABLE, val);
-> > > +
-> > > +     return 0;
-> > > +
-> > > +assert_reset:
-> > > +     reset_control_assert(tmdev->reset);
-> > > +
-> > > +     return ret;
+> > diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+> > index c1fdbc0..04081a6 100644
+> > --- a/drivers/tty/serial/8250/8250_mtk.c
+> > +++ b/drivers/tty/serial/8250/8250_mtk.c
+> > @@ -30,7 +30,6 @@
+> >  #define MTK_UART_DMA_EN_TX     0x2
+> >  #define MTK_UART_DMA_EN_RX     0x5
 > >
-> > Can't we do that with runtime_pm?
->
-> Saving energy doesn't make much sense compared to system security.
+> > -#define MTK_UART_TX_SIZE       UART_XMIT_SIZE
+> >  #define MTK_UART_RX_SIZE       0x8000
+> >  #define MTK_UART_TX_TRIGGER    1
+> >  #define MTK_UART_RX_TRIGGER    MTK_UART_RX_SIZE
+> > @@ -64,28 +63,30 @@ static void mtk8250_dma_rx_complete(void *param)
+> >         struct mtk8250_data *data = up->port.private_data;
+> >         struct tty_port *tty_port = &up->port.state->port;
+> >         struct dma_tx_state state;
+> > +       int copied, cnt, tmp;
+> >         unsigned char *ptr;
+> > -       int copied;
+> >
+> > -       dma_sync_single_for_cpu(dma->rxchan->device->dev, dma->rx_addr,
+> > -                               dma->rx_size, DMA_FROM_DEVICE);
+> > +       if (data->rx_status == DMA_RX_SHUTDOWN)
+> > +               return;
+> >
+> >         dmaengine_tx_status(dma->rxchan, dma->rx_cookie, &state);
+> > +       cnt = dma->rx_size - state.residue;
+> > +       tmp = cnt;
+> 
+> I ponder, maybe we should rename cnt to left? (like, how many bytes
+> are left to transfer, in total) Or maybe "total"
+> Then maybe rename tmp to cnt.
+> 
+like better.
 
-I'm not sure what you mean by security.
+> >
+> > -       if (data->rx_status == DMA_RX_SHUTDOWN)
+> > -               return;
+> > +       if ((data->rx_pos + cnt) > dma->rx_size)
+> > +               tmp = dma->rx_size - data->rx_pos;
+> 
+> Maybe replace this and the line above:
+> tmp = max_t(int, cnt, dma->rx_size - data->rx_pos);
+> 
+Yes. It's better.
 
-Maxime
+> >
+> > -       if ((data->rx_pos + state.residue) <= dma->rx_size) {
+> > -               ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
+> > -               copied = tty_insert_flip_string(tty_port, ptr, state.residue);
+> > -       } else {
+> > -               ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
+> > -               copied = tty_insert_flip_string(tty_port, ptr,
+> > -                                               dma->rx_size - data->rx_pos);
+> > +       ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
+> > +       copied = tty_insert_flip_string(tty_port, ptr, tmp);
+> > +       data->rx_pos += tmp;
+> > +
+> > +       if (cnt > tmp) {
+> >                 ptr = (unsigned char *)(dma->rx_buf);
+> > -               copied += tty_insert_flip_string(tty_port, ptr,
+> > -                               data->rx_pos + state.residue - dma->rx_size);
+> > +               tmp = cnt - tmp;
+> > +               copied += tty_insert_flip_string(tty_port, ptr, tmp);
+> > +               data->rx_pos = tmp;
+> >         }
+> > +
+> >         up->port.icount.rx += copied;
+> >
+> >         tty_flip_buffer_push(tty_port);
+> > @@ -96,9 +97,7 @@ static void mtk8250_dma_rx_complete(void *param)
+> >  static void mtk8250_rx_dma(struct uart_8250_port *up)
+> >  {
+> >         struct uart_8250_dma *dma = up->dma;
+> > -       struct mtk8250_data *data = up->port.private_data;
+> >         struct dma_async_tx_descriptor  *desc;
+> > -       struct dma_tx_state      state;
+> >
+> >         desc = dmaengine_prep_slave_single(dma->rxchan, dma->rx_addr,
+> >                                            dma->rx_size, DMA_DEV_TO_MEM,
+> > @@ -113,12 +112,6 @@ static void mtk8250_rx_dma(struct uart_8250_port *up)
+> >
+> >         dma->rx_cookie = dmaengine_submit(desc);
+> >
+> > -       dmaengine_tx_status(dma->rxchan, dma->rx_cookie, &state);
+> > -       data->rx_pos = state.residue;
+> > -
+> > -       dma_sync_single_for_device(dma->rxchan->device->dev, dma->rx_addr,
+> > -                                  dma->rx_size, DMA_FROM_DEVICE);
+> > -
+> >         dma_async_issue_pending(dma->rxchan);
+> >  }
+> >
+> > @@ -131,13 +124,13 @@ static void mtk8250_dma_enable(struct uart_8250_port *up)
+> >         if (data->rx_status != DMA_RX_START)
+> >                 return;
+> >
+> > -       dma->rxconf.direction           = DMA_DEV_TO_MEM;
+> > -       dma->rxconf.src_addr_width      = dma->rx_size / 1024;
+> > -       dma->rxconf.src_addr            = dma->rx_addr;
+> > +       dma->rxconf.direction                           = DMA_DEV_TO_MEM;
+> > +       dma->rxconf.src_port_window_size        = dma->rx_size;
+> > +       dma->rxconf.src_addr                            = dma->rx_addr;
+> >
+> > -       dma->txconf.direction           = DMA_MEM_TO_DEV;
+> > -       dma->txconf.dst_addr_width      = MTK_UART_TX_SIZE / 1024;
+> > -       dma->txconf.dst_addr            = dma->tx_addr;
+> > +       dma->txconf.direction                           = DMA_MEM_TO_DEV;
+> > +       dma->txconf.dst_port_window_size        = UART_XMIT_SIZE;
+> > +       dma->txconf.dst_addr                            = dma->tx_addr;
+> >
+> >         serial_out(up, UART_FCR, UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR |
+> >                 UART_FCR_CLEAR_XMIT);
+> > @@ -217,7 +210,7 @@ static void mtk8250_shutdown(struct uart_port *port)
+> >          * Mediatek UARTs use an extra highspeed register (UART_MTK_HIGHS)
+> >          *
+> >          * We need to recalcualte the quot register, as the claculation depends
+> > -        * on the vaule in the highspeed register.
+> > +        * on the value in the highspeed register.
+> 
+> Since you're doing some cosmetic changes here, you might as well fix
+> recalcualte => recalculate and claculation => calculation on the line
+> above.
+> 
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I see.
 
---k3cws7k6b2j4fvaj
-Content-Type: application/pgp-signature; name="signature.asc"
+> But technically, this should belong in another patch...
+> 
+> >          *
+> >          * Some baudrates are not supported by the chip, so we use the next
+> >          * lower rate supported and update termios c_flag.
+> > --
+> > 1.7.9.5
+> >
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN5kggAKCRDj7w1vZxhR
-xSjEAP0ROb9O13AokItNEnWe0Lv3GDFB7l31wQEb3cxsP3Vh7QEAr1e8+X/0WwOo
-AWNOgr6T4osFIe+fzrg7yYJbVXsPogc=
-=AWAL
------END PGP SIGNATURE-----
-
---k3cws7k6b2j4fvaj--
