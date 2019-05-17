@@ -2,184 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2539D21C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A4A521C15
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfEQQzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:55:16 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:24288 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfEQQzP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:55:15 -0400
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x4HGsqSM021729;
-        Sat, 18 May 2019 01:54:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x4HGsqSM021729
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558112093;
-        bh=5EgqDA3uYtlz+L9+XdyrzLf9fP9Nb7aFHjFy8jmb9xk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=klfFRY+V0IcR/WURZ8TUavi5XlMp+z3AAFdWp4hexArEt+1hST4bqXlIR4a9qvopF
-         2cChKs91z2RU14NwGmJe3w/ulbAXctG0MmRjYWVYGPwmrqbSXfHChUNOAuXcDeBBCt
-         ZbPTTx2NRW7QCfIIl85MdiIlqPeogigmlSA1vNnK3uhr/ksbRxnXbIYOXO32bqF0iw
-         8L93IFPZPYsQw6C+xtArZlqhUvymbJpHo47CABsMpF3CF3i2VdaIo4JD16kXo5sbAk
-         0ZzJsFU2YUJ2EZTZ9Co61rcTQn7GCTiudH8miA9548lgCPGiuF7yDzDMn45XwRJ4j3
-         NWP3Fuu6z5CsA==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id l20so5072600vsp.3;
-        Fri, 17 May 2019 09:54:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAWPV34yWT++zpwniSuJ4ROafhiKNhCy5M5Wmb5gcEqpfw6zwkqH
-        L5nXKVMJw/kRLKGValOLz/+3wwXNUvNbYhCDxkA=
-X-Google-Smtp-Source: APXvYqzINtt+UP6QYttfJWgL84DbhH2Bi2LMAL/PldGGKhnRzaS4ndVK1dAtfX05W0f3e5v5KRkvEG5WAjb2idT60D4=
-X-Received: by 2002:a67:ad0f:: with SMTP id t15mr9584081vsl.179.1558112092216;
- Fri, 17 May 2019 09:54:52 -0700 (PDT)
+        id S1727872AbfEQQ7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:59:04 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32951 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727370AbfEQQ7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:59:02 -0400
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id DD288D5C50E3A877CF75;
+        Fri, 17 May 2019 17:59:00 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 17 May 2019 17:58:52 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
+        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
+        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/2] initramfs: add support for xattrs in the initial ram disk
+Date:   Fri, 17 May 2019 18:55:17 +0200
+Message-ID: <20190517165519.11507-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <1558109235-23042-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1558109235-23042-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 18 May 2019 01:54:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARDT7MaD1Kw8w0JgLYYXvLntb+tsNo+D9LJ2PmzNQNKdg@mail.gmail.com>
-Message-ID: <CAK7LNARDT7MaD1Kw8w0JgLYYXvLntb+tsNo+D9LJ2PmzNQNKdg@mail.gmail.com>
-Subject: Re: [PATCH v3] kbuild: check uniqueness of module names
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Kees Cook <keescook@chromium.org>,
-        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 18, 2019 at 1:10 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> In the recent build test of linux-next, Stephen saw a build error
-> caused by a broken .tmp_versions/*.mod file:
->
->   https://lkml.org/lkml/2019/5/13/991
->
-> drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
-> basename, and there is a race in generating .tmp_versions/asix.mod
->
-> Kbuild has not checked this before, and it suddenly shows up with
-> obscure error message when this kind of race occurs.
->
-> Non-unique module names cause various sort of problems, but it is
-> not trivial to catch them by eyes.
->
-> Hence, this script.
->
-> It checks not only real modules, but also built-in modules (i.e.
-> controlled by tristate CONFIG option, but currently compiled with =y).
-> Non-unique names for built-in modules also cause problems because
-> /sys/modules/ would fall over.
->
-> I tested allmodconfig on the latest kernel, and it detected the
-> following:
+This patch set aims at solving the following use case: appraise files from
+the initial ram disk. To do that, IMA checks the signature/hash from the
+security.ima xattr. Unfortunately, this use case cannot be implemented
+currently, as the CPIO format does not support xattrs.
+
+This proposal consists in marshaling pathnames and xattrs in a file called
+.xattr-list. They are unmarshaled by the CPIO parser after all files have
+been extracted, or before the next ram disk is processed.
+
+The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that all
+xattrs are stored in a single file and not per file (solves the file name
+limitation issue, as it is not necessary to add a suffix to files
+containing xattrs).
+
+The difference with another proposal
+(https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+included in an image without changing the image format, as opposed to
+defining a new one. As seen from the discussion, if a new format has to be
+defined, it should fix the issues of the existing format, which requires
+more time.
+
+To fulfill both requirements, adding support for xattrs in a short time and
+defining a new image format properly, this patch set takes an incremental
+approach: it introduces a parser of xattrs that can be used either if
+xattrs are in a regular file or directly added to the image (this patch set
+reuses patch 9/15 of the existing proposal); in addition, it introduces a
+wrapper of the xattr parser, to read xattrs from a file.
+
+The changes introduced by this patch set don't cause any compatibility
+issue: kernels without the xattr parser simply extracts .xattr-list and
+don't unmarshal xattrs; kernels with the xattr parser don't unmarshal
+xattrs if .xattr-list is not found in the image.
+
+From the kernel space perspective, backporting this functionality to older
+kernels should be very easy. It is sufficient to add two calls to the new
+function do_readxattrs(). From the user space perspective, no change is
+required for the use case. A new dracut module (module-setup.sh) will
+execute:
+
+getfattr --absolute-names -d -h -R -e hex -m security.ima \
+    <file list> | xattr.awk -b > ${initdir}/.xattr-list
+
+where xattr.awk is the script that marshals xattrs (see patch 3/3). The
+same can be done with the initramfs-tools ram disk generator.
+
+Changelog
+
+v2:
+- replace ksys_lsetxattr() with kern_path() and vfs_setxattr()
+  (suggested by Jann Horn)
+- replace ksys_open()/ksys_read()/ksys_close() with
+  filp_open()/kernel_read()/fput()
+  (suggested by Jann Horn)
+- use path variable instead of name_buf in do_readxattrs()
+- set last byte of str to 0 in do_readxattrs()
+- call do_readxattrs() in do_name() before replacing an existing
+  .xattr-list
+- pass pathname to do_setxattrs()
 
 
-FYI.
+Mimi Zohar (1):
+  initramfs: set extended attributes
 
-"make -j8 allmodconfig all"
-takes long time to compile
-(my machine is cheap...)
+Roberto Sassu (1):
+  initramfs: introduce do_readxattrs()
 
+ init/initramfs.c | 170 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 168 insertions(+), 2 deletions(-)
 
-If you want to detect modules with non-unique name quickly,
-"make -j8 allyesconfig modules" is much faster.
+-- 
+2.17.1
 
-
-
-
-
-
-> warning: same basename if the following are built as modules:
->   drivers/regulator/88pm800.ko
->   drivers/mfd/88pm800.ko
-> warning: same basename if the following are built as modules:
->   drivers/gpu/drm/bridge/adv7511/adv7511.ko
->   drivers/media/i2c/adv7511.ko
-> warning: same basename if the following are built as modules:
->   drivers/net/phy/asix.ko
->   drivers/net/usb/asix.ko
-> warning: same basename if the following are built as modules:
->   fs/coda/coda.ko
->   drivers/media/platform/coda/coda.ko
-> warning: same basename if the following are built as modules:
->   drivers/net/phy/realtek.ko
->   drivers/net/dsa/realtek.ko
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
-> ---
->
-> Changes in v3:
->  - Simplied sed code (Alexander Kapshuk)
->
-> Changes in v2:
->  - redirect messages to stderr
->  - use '--' after 'basename -a'
->  - use '-r' for xargs to cope with empty modules.order/modules.builtin
->
->  Makefile                 |  1 +
->  scripts/modules-check.sh | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
->  create mode 100755 scripts/modules-check.sh
->
-> diff --git a/Makefile b/Makefile
-> index a61a95b..30792fe 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1290,6 +1290,7 @@ modules: $(vmlinux-dirs) $(if $(KBUILD_BUILTIN),vmlinux) modules.builtin
->         $(Q)$(AWK) '!x[$$0]++' $(vmlinux-dirs:%=$(objtree)/%/modules.order) > $(objtree)/modules.order
->         @$(kecho) '  Building modules, stage 2.';
->         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
-> +       $(Q)$(CONFIG_SHELL) $(srctree)/scripts/modules-check.sh
->
->  modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
->         $(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin
-> diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
-> new file mode 100755
-> index 0000000..2f65953
-> --- /dev/null
-> +++ b/scripts/modules-check.sh
-> @@ -0,0 +1,16 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +set -e
-> +
-> +# Check uniqueness of module names
-> +check_same_name_modules()
-> +{
-> +       for m in $(sed 's:.*/::' modules.order modules.builtin | sort | uniq -d)
-> +       do
-> +               echo "warning: same basename if the following are built as modules:" >&2
-> +               sed "/\/$m/!d;s:^kernel/:  :" modules.order modules.builtin >&2
-> +       done
-> +}
-> +
-> +check_same_name_modules
-> --
-> 2.7.4
->
-
-
---
-Best Regards
-Masahiro Yamada
