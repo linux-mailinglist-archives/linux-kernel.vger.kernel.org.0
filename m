@@ -2,101 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F124A21BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79DD421C08
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfEQQsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:48:00 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35962 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbfEQQr4 (ORCPT
+        id S1727317AbfEQQxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:53:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41475 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfEQQxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:47:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d21so3610399plr.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 09:47:55 -0700 (PDT)
+        Fri, 17 May 2019 12:53:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g12so7572392wro.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 09:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=O42F5A4GX0eA84yy8Ef+AkKPQRwJmwFWVhtyExm+PVY=;
-        b=PYP/b3+x4BUW2tXl5EeWPVhQ2Ydr9f0XlD8JFJZdeKuWGUm9x2gBEwCIanOv3mBLby
-         T3lJRIqhz+aMnbrOABRtKWxma2+WZvjeN4x+PFt3loQXcwqG8h15GMZTzENSWae+cGEi
-         HfbFUHK/8IaOWGApHdEcikH6nKx9xsnyyafPQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=eOFVUmpMlxT1rgTfcNFqTqJD4K4q18GK946ds9N3qFU=;
+        b=dsmBerrW0KEWYy8Sd4HFLOergaCVUedn0iM/0tpAMDcku9/23tuGzzqYbJXeCQvMPA
+         jvaYH1a7anzSWWcy+3m7pYYf936uN+DbiE6uMFJIc4GJOOwJ2uCiALJYsRk3R4XEUC2A
+         TX8nC83r+ypCSkA0txqWgOLXwT1yoTIY3rvXmw2bocEOPYR2RKNV7L9b9LfIVEloV6Nb
+         Pl63NU9wi2nEej7cLLykKKZ8Ar1Ty1c0L4JnXRSRp5Jd9qpv+e0EXAKoPiGUwMx8ICWu
+         ofnh+RwSqw9Mi5cr7fqVUUYrMqviHPyvzg9+MxNN7x9NFCsYb/ijwltwIlTIlcofguV1
+         nl6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=O42F5A4GX0eA84yy8Ef+AkKPQRwJmwFWVhtyExm+PVY=;
-        b=QSk/vzvOiJ8XCOTsTMnZeXNKAoNLMRIsN1ObXNRjInYLhYbWyVnnQh/PI3rCXEA2QS
-         w2Rz+ZoQbCr4nruy51CDbpqFcRDbBYyrF16wxM8VyLsJfOKY9iXm5PoNi7UGpNU7jm64
-         BiwwjW0JAMGPQZ6HMDv64EpXjeBs5ioPNyQw53z6NqgpwXaHQXXyAMy8gdobq3oOUjdK
-         qwDhnqnKR8msxEsDD3+zblN3Z302PbEmpPmNVcKULjqXHmbf+i6mFxGOvTUOPqAHAXWH
-         4q4qP9KL4cHW2l6OpJFSPlrHe4NE8OXcooxWnhTF+pMdfO5HRrGeKjcdXQ1mnkUv895+
-         jc5g==
-X-Gm-Message-State: APjAAAUxBOiEusbGEw1kelVhwZb/CSxe2arw8uSFWniUlLlko9AffkCW
-        cULJ2a8k/hgACrGP5bc1T/1if2YDU4aQQw==
-X-Google-Smtp-Source: APXvYqz5grEEF0O5CgARwN/Kl3T5APmZtPmXKSBTqLDuepRs1NbjLFpphhsqHJa3rK39CAOOKrQTJA==
-X-Received: by 2002:a17:902:968b:: with SMTP id n11mr57741397plp.118.1558111675502;
-        Fri, 17 May 2019 09:47:55 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l141sm12229810pfd.24.2019.05.17.09.47.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 09:47:55 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [RFC/PATCH 5/5] soc: qcom: cmd-db: Map with read-only mappings
-Date:   Fri, 17 May 2019 09:47:46 -0700
-Message-Id: <20190517164746.110786-6-swboyd@chromium.org>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-In-Reply-To: <20190517164746.110786-1-swboyd@chromium.org>
-References: <20190517164746.110786-1-swboyd@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eOFVUmpMlxT1rgTfcNFqTqJD4K4q18GK946ds9N3qFU=;
+        b=LL3MeL8/+qALDh3OYzKhg3PQHf0YnMhhm25cHawpmRUealtVQ7rGgK0K1vSI9nDnEp
+         1priLpdLDeuK1wWsp6/zMhSnyGQ5CVq78bq5MlEwkjZMuiwB1cmD1YA13t4sS5BzMpIS
+         vghJ2UwgWZirvETZzvverx0ww4mOjqCL4bxy6/ttIedxfuArhxMIxEgBC0w21CW62IFG
+         yTEwlMPysUCxd6KcwRXJBT8tj7iF3PO1nRmrgXK5WXvlqiOCFXe4j2rjJLpyL9YWykYK
+         4U/MMowhRQw7OAoU2gzbl6a+Hyj3mEAsVGbckFJFtkZ/JQstYQXsywtL5Zm6ofxcjOAA
+         vvAA==
+X-Gm-Message-State: APjAAAVYrzzwzDKJNomwLjrGdamp/UiMYdcQKCQkvFYAJvG4ZkKZhXth
+        oPOLIb5h1EmB2PltI1ca2T4=
+X-Google-Smtp-Source: APXvYqxzwPBkio6lC+ydvkXLCUu+2O2QUexsyscQ50xgHeMpsARvymCIsU28JwUsJd9FhtdDJzY2jA==
+X-Received: by 2002:adf:e344:: with SMTP id n4mr12363332wrj.192.1558111997983;
+        Fri, 17 May 2019 09:53:17 -0700 (PDT)
+Received: from luna.home (2.154.17.217.dyn.user.ono.com. [2.154.17.217])
+        by smtp.gmail.com with ESMTPSA id w185sm12701690wma.39.2019.05.17.09.53.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 17 May 2019 09:53:16 -0700 (PDT)
+From:   Oscar Gomez Fuente <oscargomezf@gmail.com>
+To:     oscargomezf@gmail.com
+Cc:     gregkh@linuxfoundation.org, thesven73@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: fieldbus: solve warning incorrect type dev_core.c
+Date:   Fri, 17 May 2019 18:53:11 +0200
+Message-Id: <1558111991-30751-1-git-send-email-oscargomezf@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The command DB is read-only already to the kernel because everything is
-const marked once we map it. Let's go one step further and try to map
-the memory as read-only in the page tables. This should make it harder
-for random code to corrupt the database and change the contents.
-
-Cc: Evan Green <evgreen@chromium.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Oscar Gomez Fuente <oscargomezf@gmail.com>
 ---
- drivers/soc/qcom/cmd-db.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/fieldbus/dev_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index 10a34d26b753..6365e8260282 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -240,7 +240,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
+diff --git a/drivers/staging/fieldbus/dev_core.c b/drivers/staging/fieldbus/dev_core.c
+index 60b851406..f6f5b92 100644
+--- a/drivers/staging/fieldbus/dev_core.c
++++ b/drivers/staging/fieldbus/dev_core.c
+@@ -211,16 +211,16 @@ static ssize_t fieldbus_write(struct file *filp, const char __user *buf,
+ 	return fbdev->write_area(fbdev, buf, size, offset);
+ }
  
--	cmd_db_header = devm_memremap_reserved_mem(&pdev->dev, MEMREMAP_WB);
-+	cmd_db_header = devm_memremap_reserved_mem(&pdev->dev,
-+						   MEMREMAP_RO | MEMREMAP_WB);
- 	if (IS_ERR(cmd_db_header)) {
- 		ret = PTR_ERR(cmd_db_header);
- 		cmd_db_header = NULL;
+-static unsigned int fieldbus_poll(struct file *filp, poll_table *wait)
++static __poll_t fieldbus_poll(struct file *filp, poll_table *wait)
+ {
+ 	struct fb_open_file *of = filp->private_data;
+ 	struct fieldbus_dev *fbdev = of->fbdev;
+-	unsigned int mask = POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM;
++	__poll_t mask = EPOLLIN | EPOLLRDNORM | EPOLLOUT | EPOLLWRNORM;
+ 
+ 	poll_wait(filp, &fbdev->dc_wq, wait);
+ 	/* data changed ? */
+ 	if (fbdev->dc_event != of->dc_event)
+-		mask |= POLLPRI | POLLERR;
++		mask |= EPOLLPRI | EPOLLERR;
+ 	return mask;
+ }
+ 
 -- 
-Sent by a computer through tubes
+2.7.4
 
