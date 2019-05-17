@@ -2,111 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FEEF2115C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B062116E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfEQAis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 20:38:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfEQAir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 20:38:47 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0962F2082E;
-        Fri, 17 May 2019 00:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558053527;
-        bh=h7x4s8lT+SFQAKT2oROUOwG99nmbA/iuhNAdlGK/1zk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pwJefM32rVyc17BV4NKTMNz9bAtRXF3fs8QXDQmfCoQ8dGWwvrJtKIhWefJVALK8E
-         uExHbjAOgbiFZVFaM8n4hSxNXniqu1kMlprj5ffN87QHOgHX7iyfmP5RLT5V0AIfD4
-         Pob5g1PWM6wWtC9518tZ1d/0IihjJAgMh1BsvFf4=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1727778AbfEQArm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 20:47:42 -0400
+Received: from mail-eopbgr1310094.outbound.protection.outlook.com ([40.107.131.94]:57216
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727709AbfEQArl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 20:47:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=kJPl7b+IGGMt+DCN9+JAOG+iraKdyNBnLYedq+4eKRXNYKO/bKG1u1Lbeo6k/F6uJVn4iUySbNy+UYQ81T5sLdwE/KvKCZKS2hgaFBI5ogZ0aOhDmN/Fqd3j5604rSgCRxtymWYKmSuBk+6MK01BRuT9s8ELOlva73BM8a68g+4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dFGZkSISXDkX/8g6Qz6QbcxO/Igk3YEgRWTs8QYGavA=;
+ b=Mmyp5mgvjTrYELaMJV3ndWq5GgYKZpuKjgGN9DefiY2DugydqsW4pvdWWwq1V66kcM0DpSwcL1aAX18L+FMoeRhm+o6Pp9rXV82yxpWmGepKS9bCkggT3mJhMwgqKygkvmBPhCIZ9T6OKPUiDiokvBNe6SoWcuXNSEM9b0IGDLM=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dFGZkSISXDkX/8g6Qz6QbcxO/Igk3YEgRWTs8QYGavA=;
+ b=cL3lXi5N5QnNF2k0pnN264+AyfmvhtGLh6r+6mcn20mYnQZgQnUwgjIgKnhQygyCCiUZT79kJhwHPmecSI7KnRwt4+Cxb1gEaUSgEfGALmNxR6M68X6vHHHcrLv9Vs/Q3KUnSIoAqglSwlzhAEheVTZ7accYoKI5U3lpN+0al6U=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0204.APCP153.PROD.OUTLOOK.COM (52.133.194.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.4; Fri, 17 May 2019 00:47:31 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::dc7e:e62f:efc9:8564]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::dc7e:e62f:efc9:8564%4]) with mapi id 15.20.1922.002; Fri, 17 May 2019
+ 00:47:31 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Sunil Muthuswamy <sunilmut@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Kelley <mikelley@microsoft.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] hv_sock: perf: Allow the socket buffer size options to
+ influence the actual socket buffers
+Thread-Topic: [PATCH] hv_sock: perf: Allow the socket buffer size options to
+ influence the actual socket buffers
+Thread-Index: AdULT8Ri+kxJVj56RXiGnzXz8jUENAA+hb4g
+Date:   Fri, 17 May 2019 00:47:31 +0000
+Message-ID: <PU1P153MB01695A75877953399C4E94A6BF0B0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <BN6PR21MB046528E2099CDE2C6C2200A7C00B0@BN6PR21MB0465.namprd21.prod.outlook.com>
+In-Reply-To: <BN6PR21MB046528E2099CDE2C6C2200A7C00B0@BN6PR21MB0465.namprd21.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-05-17T00:47:28.7028353Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=9d1c7d48-1283-4379-a578-6f8b90e813bb;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2601:600:a280:1760:e49c:a88d:95f1:67ea]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b8367752-20a8-4c71-5725-08d6da613e87
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0204;
+x-ms-traffictypediagnostic: PU1P153MB0204:
+x-microsoft-antispam-prvs: <PU1P153MB0204715DB77BB38412A66D6FBF0B0@PU1P153MB0204.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0040126723
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(396003)(346002)(39860400002)(136003)(376002)(199004)(189003)(1511001)(446003)(22452003)(316002)(99286004)(486006)(46003)(476003)(11346002)(102836004)(14454004)(8936002)(81166006)(8676002)(81156014)(6116002)(9686003)(2906002)(10090500001)(68736007)(8990500004)(33656002)(110136005)(54906003)(7696005)(6506007)(5660300002)(186003)(76176011)(229853002)(7736002)(10290500003)(305945005)(6636002)(66556008)(6436002)(25786009)(55016002)(64756008)(4326008)(478600001)(66476007)(76116006)(66446008)(73956011)(66946007)(86612001)(52536014)(71190400001)(71200400001)(86362001)(74316002)(53936002)(6246003)(256004)(4744005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0204;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JZmv+FERqA8X8Cha2vgtxjRCTR4d/UTpT3l7HZhKPnQGe2gVDOptkK+JUjGXOfKIcZOLC/KB3Cg3LwEdMrfWpAkXndzj2J8S0fR13yfZdabrBv2muAS6MkccPGmlfxXhDDN8XcKwT5zzgxTKxPW+K5XcJ4GkAcNDi8/xnOVA75SF+NIKcykctKZut1Rk19qf94UQQsHaWdj4W0qxS8el4cnlHD+PkSUr3tMN3sup9HofITkuO4wabhfJgyh1oULLzkmgtaLjgWbouzKUZh9nOnpG9s0UxWMJybyz78FVEy4w5oI/TM9Yap8E4P/tpcFs/mAt7wFq0yVFuhYTC8cXSI0sTzm/BellAtE6JvPB0UY7BbynrgE9pja6/rOMzfPivn2Jas5gljmq6rehZgWSuVbiDYE4jQZUwC7SP40VJ+o=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190514221711.248228-3-brendanhiggins@google.com>
-References: <20190514221711.248228-1-brendanhiggins@google.com> <20190514221711.248228-3-brendanhiggins@google.com>
-Subject: Re: [PATCH v4 02/18] kunit: test: add test resource management API
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
-        tytso@mit.edu, yamada.masahiro@socionext.com
-User-Agent: alot/0.8.1
-Date:   Thu, 16 May 2019 17:38:46 -0700
-Message-Id: <20190517003847.0962F2082E@mail.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8367752-20a8-4c71-5725-08d6da613e87
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 00:47:31.1715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: decui@microsoft.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-05-14 15:16:55)
-> diff --git a/kunit/test.c b/kunit/test.c
-> index 86f65ba2bcf92..a15e6f8c41582 100644
-> --- a/kunit/test.c
-> +++ b/kunit/test.c
-[..]
-> +
-> +void *kunit_kmalloc(struct kunit *test, size_t size, gfp_t gfp)
-> +{
-> +       struct kunit_kmalloc_params params;
-> +       struct kunit_resource *res;
-> +
-> +       params.size =3D size;
-> +       params.gfp =3D gfp;
-> +
-> +       res =3D kunit_alloc_resource(test,
-> +                                  kunit_kmalloc_init,
-> +                                  kunit_kmalloc_free,
-> +                                  &params);
-> +
-> +       if (res)
-> +               return res->allocation;
-> +       else
-> +               return NULL;
+> From: Sunil Muthuswamy <sunilmut@microsoft.com>
+> Sent: Thursday, May 16, 2019 5:17 PM
+>=20
+> Currently, the hv_sock buffer size is static and can't scale to the
+> bandwidth requirements of the application. This change allows the
+> applications to influence the socket buffer sizes using the SO_SNDBUF and
+> the SO_RCVBUF socket options.
+>=20
+> Few interesting points to note:
+> 1. Since the VMBUS does not allow a resize operation of the ring size, th=
+e
+> socket buffer size option should be set prior to establishing the
+> connection for it to take effect.
+> 2. Setting the socket option comes with the cost of that much memory bein=
+g
+> reserved/allocated by the kernel, for the lifetime of the connection.
 
-Can be written as
+Reviewed-by: Dexuan Cui <decui@microsoft.com>
 
-	if (res)
-		return ....
-	return=20
+The patch looks good to me. Thanks, Sunil!
 
-and some static analysis tools prefer this.
-
-> +}
-> +
-> +void kunit_cleanup(struct kunit *test)
-> +{
-> +       struct kunit_resource *resource, *resource_safe;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&test->lock, flags);
-
-Ah ok, test->lock is protecting everything now? Does it need to be a
-spinlock, or can it be a mutex?
-
-> +       list_for_each_entry_safe(resource,
-> +                                resource_safe,
-> +                                &test->resources,
-> +                                node) {
-> +               kunit_free_resource(test, resource);
-> +       }
-> +       spin_unlock_irqrestore(&test->lock, flags);
-> +}
-> +
+Thanks,
+-- Dexuan
