@@ -2,150 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD10D2169B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A544216A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 12:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfEQJ6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:58:46 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33544 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfEQJ6p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:58:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w1so5796777ljw.0;
-        Fri, 17 May 2019 02:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7IQqw/zCk49M4CTj1Osv3TDkm05cc0pffIOGepZLXmo=;
-        b=XHc9m3rWVl8kKVuFONLFh9duic0MoOGqenQYMKs9C0mjlOiBRlHZCcVlYwexy/2H1S
-         gkWi4fD3pi/e1GhZ/uAUh+C5XKm5PnWF1U8rZ4lWHBcoFVb4ik5GNdlYve+v9SdIcB6a
-         Q2eY4Xk/ep4+42mSSdxi8376gvn2lKpVXZocHg8wr8ybFuNQ9tYwCsZ4yDGUGiBt1re+
-         M7fldX6Cc3EkykHxzhJP0ITiUMXfkUP92FKa+KJJzga3n37vvZ3YvDzzJrLhqTA/DVdI
-         WJiAnk5FbTEzI7xZIZNcUrIMKJSAytV3WCeuaZHavMyy/b+iJCqQOSCah7Htihq/lBs+
-         q9tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7IQqw/zCk49M4CTj1Osv3TDkm05cc0pffIOGepZLXmo=;
-        b=IwJqZYOfbZHmFSeRMNSPe6W7onCoI/sBgDTEZBQXVR7EOWmOvi8jrD+YqXS9eoSqjL
-         CZ3uLKwoZM/2Uewgm8z4CTYhLy4J/MlXT6FtC7Qj9JzkmGWx5WyiN47/xKu6IYHvIHkA
-         lgfAatjBfOn6+D8Y9kzJd6kwBe5L1OiGwsttAVCaoRW7QE3Ee7dhkyZEAy4t8zhQL+nc
-         ilZ2I7xGORWmtcaFpo84DCijgxyLZraUFVUxO9t19hiCAbHoklQPGWYVVPV5ssBy+hme
-         KFM3uypHZLvHGYVpVjKJOtUIKagVW3iEtS6Q7qMMh4YqsZv9tFiPc7XdBvO/7iLJOuda
-         fj2w==
-X-Gm-Message-State: APjAAAV1BF8UqKxSnk1IGCbnIqrsdGLxdzRYEQXgk8TYSvBrO1llLzCP
-        7Mdo+GgPY/+vXWwSQtix1YwOJO/thPk=
-X-Google-Smtp-Source: APXvYqz7lvkwBZ1PTqgT0BBKUlqadz1F0K35Dq7yLjC4EsZO7HzMHBHXt/eN8h09dUEfAOWRZ8RJEQ==
-X-Received: by 2002:a2e:730c:: with SMTP id o12mr24903943ljc.61.1558087123094;
-        Fri, 17 May 2019 02:58:43 -0700 (PDT)
-Received: from otyshchenko.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id y27sm1328720ljd.14.2019.05.17.02.58.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 17 May 2019 02:58:42 -0700 (PDT)
-From:   Oleksandr Tyshchenko <olekstysh@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     julien.grall@arm.com, horms@verge.net.au, magnus.damm@gmail.com,
-        linux@armlinux.org.uk, geert@linux-m68k.org,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-Subject: [PATCH V5] ARM: mach-shmobile: Don't init CNTVOFF/counter if PSCI is available
-Date:   Fri, 17 May 2019 12:58:13 +0300
-Message-Id: <1558087093-22113-1-git-send-email-olekstysh@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728449AbfEQKFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 06:05:04 -0400
+Received: from mail-eopbgr150048.outbound.protection.outlook.com ([40.107.15.48]:37020
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728100AbfEQKFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 06:05:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vGmfojIJ/wE5puU1MKAPL7fUkE3vXR1QA7kzLRgwyXA=;
+ b=MmY9SNq48QzflT3uHGLih7kXSQ4vUQur8fpXv3Ou45hq+6xEFopPe+6HegvDoYqvAb7VOfpS3evn8Qe4SkHPw1hHQMqBDkuVeJyVC0gNC8gujczMFIV6wMxsMKhvX/4i8/Waozi5N9ZRivibflKd82ybFncke1Zy3Pmm+X0ilz4=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB5055.eurprd08.prod.outlook.com (10.255.159.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Fri, 17 May 2019 10:05:00 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358%7]) with mapi id 15.20.1900.010; Fri, 17 May 2019
+ 10:05:00 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH 0/2] drm/komeda: Add format: Y0L2, P010, YUV420_8/10BIT
+Thread-Topic: [PATCH 0/2] drm/komeda: Add format: Y0L2, P010, YUV420_8/10BIT
+Thread-Index: AQHVDJf9OPsJbOFl80ybA5lrH/7nHQ==
+Date:   Fri, 17 May 2019 10:05:00 +0000
+Message-ID: <20190517100425.18716-1-james.qian.wang@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR02CA0222.apcprd02.prod.outlook.com
+ (2603:1096:201:20::34) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b5aab042-966c-4a80-db2b-08d6daaf1f35
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB5055;
+x-ms-traffictypediagnostic: VE1PR08MB5055:
+x-ms-exchange-purlcount: 4
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VE1PR08MB5055A3BBB5F8CF261A0E22B4B30B0@VE1PR08MB5055.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2089;
+x-forefront-prvs: 0040126723
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(189003)(4326008)(66556008)(81156014)(8676002)(66476007)(71190400001)(25786009)(81166006)(66446008)(316002)(486006)(2501003)(8936002)(966005)(50226002)(73956011)(66946007)(68736007)(66066001)(64756008)(2616005)(256004)(53936002)(2201001)(86362001)(386003)(6506007)(52116002)(6116002)(6306002)(1076003)(3846002)(99286004)(54906003)(2906002)(110136005)(36756003)(55236004)(6486002)(6512007)(476003)(5660300002)(478600001)(186003)(103116003)(4744005)(14454004)(71200400001)(26005)(305945005)(6436002)(7736002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5055;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Q2zd0TloQEE+/UFTPDYW+eTUNSFhHf+K/oqK+WOD7DeKt0+v9Te3roucTiHHcZHmQhkiEvDR+OQmzwchm6aDTdehx/d0JyE+0YuO9xkfoWg4d1+i9ntGLiC+OshBGPocJRY9KPlOhf0wnpug3BbTwhhcGjtr/ZD9WChAeee8EPTztZWHUe6XFBS3tQcvuQFg+Q6TZXK5nCSj9KHV8KrTkWwG9KYNbtffb1LqzPR30X6epn/rL2YSbirPzWzlK6N7lJnoeH/Tt5P2akkPa+YOxUQDxFdetdEgp/8C3/+ru+BRETIeNbh3Bd10QKYAQAY1kzIIO1TGNorwqn/p2+yN2tCURhRxhXSm9lGInlXSnj+qHpJ18t4aA/QL8XtwHNTkXaMpGsKgcr+RWBAo9RPdaZLbI95dW2OeE5kko2IMhwk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5aab042-966c-4a80-db2b-08d6daaf1f35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 10:05:00.4584
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5055
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-
-If PSCI is available then most likely we are running on PSCI-enabled
-U-Boot which, we assume, has already taken care of resetting CNTVOFF
-and updating counter module before switching to non-secure mode
-and we don't need to.
-
-As the psci_smp_available() helper always returns false if CONFIG_SMP
-is disabled, it can't be used safely as an indicator of PSCI usage.
-For that reason, we check for the mandatory PSCI operation to be
-available.
-
-Please note, an extra check to prevent secure_cntvoff_init() from
-being called for secondary CPUs in headsmp-apmu.S is not needed,
-as SMP code for APMU based system is not executed if PSCI is in use.
-
-Signed-off-by: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-CC: Julien Grall <julien.grall@arm.com>
-
----
-   You can find previous discussions here:
-   [v1]  https://lkml.org/lkml/2019/4/17/810
-   [v2]  https://lkml.org/lkml/2019/5/3/338
-   [v3]  https://lkml.org/lkml/2019/5/10/415
-   [RFC] https://lkml.org/lkml/2019/5/10/473
-   [v4]  https://lkml.org/lkml/2019/5/14/550
-
-   Changes in v2:
-      - Clarify patch subject/description
-      - Don't use CONFIG_ARM_PSCI option, check whether the PSCI is available,
-        by using psci_smp_available()
-      - Check whether we are running on top of Xen, by using xen_domain()
-
-   Changes in v3:
-      - Don't check for the presence of Xen
-
-   Changes in v4:
-      - Don't use psci_smp_available() helper, check for psci_ops.cpu_on
-        directly
-      - Skip updating counter module if PSCI is available
-
-   Changes in v5:
-      - Check for psci_ops.cpu_on if CONFIG_ARM_PSCI_FW is defined
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index eea60b2..0eeca49b 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -17,6 +17,7 @@
- #include <linux/of.h>
- #include <linux/of_fdt.h>
- #include <linux/of_platform.h>
-+#include <linux/psci.h>
- #include <asm/mach/arch.h>
- #include <asm/secure_cntvoff.h>
- #include "common.h"
-@@ -62,6 +63,21 @@ void __init rcar_gen2_timer_init(void)
- {
- 	void __iomem *base;
- 	u32 freq;
-+	bool need_update = true;
-+
-+	/*
-+	 * If PSCI is available then most likely we are running on PSCI-enabled
-+	 * U-Boot which, we assume, has already taken care of resetting CNTVOFF
-+	 * and updating counter module before switching to non-secure mode
-+	 * and we don't need to.
-+	 */
-+#if defined(CONFIG_ARM_PSCI_FW)
-+	if (psci_ops.cpu_on)
-+		need_update = false;
-+#endif
-+
-+	if (need_update == false)
-+		goto skip_update;
- 
- 	secure_cntvoff_init();
- 
-@@ -102,6 +118,7 @@ void __init rcar_gen2_timer_init(void)
- 
- 	iounmap(base);
- 
-+skip_update:
- 	of_clk_init(NULL);
- 	timer_probe();
- }
--- 
-2.7.4
-
+VGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBuZXcgZm9ybWF0czoNCi0gYmxvY2sgZm9ybWF0IHN1cHBv
+cnQgZm9yIFkwTDIsIFAwMTANCi0gQUZCQyBmb3JtYXQgWVVWNDIwXzhfQklULCBZVVY0MjBfMTBf
+QklUIA0KDQpUaGlzIHBhdGNoIHNlcmllcyBkZXBlbmRzIG9uOg0KLSBodHRwczovL3BhdGNod29y
+ay5mcmVlZGVza3RvcC5vcmcvc2VyaWVzLzU4NzEwLw0KLSBodHRwczovL3BhdGNod29yay5mcmVl
+ZGVza3RvcC5vcmcvc2VyaWVzLzU5MDAwLw0KLSBodHRwczovL3BhdGNod29yay5mcmVlZGVza3Rv
+cC5vcmcvc2VyaWVzLzU5MDAyLw0KLSBodHRwczovL3BhdGNod29yay5mcmVlZGVza3RvcC5vcmcv
+c2VyaWVzLzYwNjk4Lw0KDQpKYW1lcyBRaWFuIFdhbmcgKEFybSBUZWNobm9sb2d5IENoaW5hKSAo
+Mik6DQogIGRybS9rb21lZGE6IEFkZCBrb21lZGFfZmJfY2hlY2tfc3JjX2Nvb3Jkcw0KICBkcm0v
+a29tZWRhOiBBZGQgZm9ybWF0IHN1cHBvcnQgZm9yIFkwTDIsIFAwMTAsIFlVVjQyMF84LzEwQklU
+DQoNCiAuLi4vZ3B1L2RybS9hcm0vZGlzcGxheS9pbmNsdWRlL21hbGlkcF9pby5oICAgfCAgNyAr
+Kw0KIC4uLi9hcm0vZGlzcGxheS9rb21lZGEvZDcxL2Q3MV9jb21wb25lbnQuYyAgICB8IDU4ICsr
+KysrKystLS0tLS0tDQogLi4uL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2Q3MS9kNzFfZGV2
+LmMgIHwgNzIgKysrKysrKystLS0tLS0tLS0NCiAuLi4vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVk
+YV9mb3JtYXRfY2Fwcy5oICAgfCAgMiAtDQogLi4uL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFf
+ZnJhbWVidWZmZXIuYyAgIHwgNzggKysrKysrKysrKysrLS0tLS0tLQ0KIC4uLi9hcm0vZGlzcGxh
+eS9rb21lZGEva29tZWRhX2ZyYW1lYnVmZmVyLmggICB8ICAyICsNCiAuLi4vZGlzcGxheS9rb21l
+ZGEva29tZWRhX3BpcGVsaW5lX3N0YXRlLmMgICAgfCAzNCArKysrKy0tLQ0KIDcgZmlsZXMgY2hh
+bmdlZCwgMTQzIGluc2VydGlvbnMoKyksIDExMCBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE3LjEN
+Cg0K
