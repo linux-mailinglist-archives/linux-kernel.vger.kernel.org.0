@@ -2,95 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C4D215EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2E6215FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfEQJHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:07:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37070 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728422AbfEQJHQ (ORCPT
+        id S1728728AbfEQJJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 05:09:00 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33565 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728072AbfEQJI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:07:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V2wSgE9jHWp8zeZBJCg0bOCUi1aKXMJLx0J1R6ddWCM=; b=iv7w/Tb+fLpedfpGrRNGzQZ5X
-        GL8vRUa5YDhdjrqY+VtJ7VTXmLdJxq6wK6zbV12BJZhLSHW53PdbohFQopaG34eGf4s+PEZCnboHT
-        KRyUaIi/tVgHXONylyWEXr7VY1ntwPVRm/8haMXOlNUenMMeFPxleR+fG8rK093vKaFwpxV6+hWuw
-        vTS4fJNt5X1ktGymV9Q+yXJYQ45CNd2rc701woYh/du9wCcJwpyKy4BZj3EVF2wwvePgFh9qDX1PW
-        W8C+0nnJWODLibPPFRKPHFJs763u20JGqCKWIwX9ouxMzXdJ71A3irPsmfnBYP8tHxbL4qHbxvuIJ
-        SoNw+JqyA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRYpe-0000u9-Fj; Fri, 17 May 2019 09:07:14 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C0D422029B0A3; Fri, 17 May 2019 11:07:12 +0200 (CEST)
-Date:   Fri, 17 May 2019 11:07:12 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Raphael Gault <raphael.gault@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        acme@kernel.org
-Subject: Re: [PATCH 4/6] arm64: pmu: Add hook to handle pmu-related undefined
- instructions
-Message-ID: <20190517090712.GR2650@hirez.programming.kicks-ass.net>
-References: <20190516132148.10085-1-raphael.gault@arm.com>
- <20190516132148.10085-5-raphael.gault@arm.com>
- <20190517071018.GH2623@hirez.programming.kicks-ass.net>
- <20190517080419.dziz4iqc7t4mpoej@blommer>
- <20190517082655.GK2623@hirez.programming.kicks-ass.net>
+        Fri, 17 May 2019 05:08:59 -0400
+X-Originating-IP: 80.215.154.25
+Received: from localhost (unknown [80.215.154.25])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id E48BAE000E;
+        Fri, 17 May 2019 09:08:45 +0000 (UTC)
+Date:   Fri, 17 May 2019 11:08:45 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Harald Geyer <harald@ccbib.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] arm64: DTS: allwinner: a64: enable ANX6345 bridge on
+ Teres-I
+Message-ID: <20190517090845.oujs33nplbaxcyun@flea>
+References: <20190514155911.6C0AC68B05@newverein.lst.de>
+ <20190514160241.9EAC768C7B@newverein.lst.de>
+ <CA+E=qVfuKBzWK7dpM_eabjU8mLdzOw3zCnYk6Tc1oXdavH7CNA@mail.gmail.com>
+ <20190515093141.41016b11@blackhole.lan>
+ <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com>
+ <20190516154820.GA10431@lst.de>
+ <CA+E=qVe5NkAvHXPvVc7iTbZn5sKeoRm0166zPW_s83c2gk7B+g@mail.gmail.com>
+ <20190516164859.GB10431@lst.de>
+ <20190517072738.deohh5fly4jxms7k@flea>
+ <20190517101353.3e86d696@blackhole.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rsrvm5wgc3yqgwap"
 Content-Disposition: inline
-In-Reply-To: <20190517082655.GK2623@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190517101353.3e86d696@blackhole.lan>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:26:55AM +0200, Peter Zijlstra wrote:
-> On Fri, May 17, 2019 at 09:04:20AM +0100, Mark Rutland wrote:
-> 
-> > Remember that this is in an undefined (trap) handler.
-> > 
-> > If userspace _attempts_ to write to the registers, the CPU will trap to the
-> > kernel. The comment is perhaps misleading; when we "do nothing", the common
-> > trap handling code will send a SIGILL to userspace.
-> > 
-> > It would probably be better to say something like:
-> > 
-> > 	/*
-> > 	 * If userspace is tries to read a counter that doesn't exist on this
-> > 	 * CPU, we emulate it as reading as zero. This happens if userspace is
-> > 	 * preempted between reading the idx and actually reading the counter,
-> > 	 * and the seqlock and idx have already changed, so it's as-if the
-> > 	 * counter has been reprogrammed with a different event.
-> 
-> Might be good to mention that userspace will/should discard the value it
-> reads, and therefore any value is good (including 0).
-> 
-> > 	 * We don't permit userspace to write to these registers, and will
-> > 	 * inject a SIGILL.
-> > 	 */
-> > 
-> > There is one caveat: userspace can write to PMSELR without trapping, so we will
-> > have to context-switch with the task. That only affects indirect addressing of
-> > PMU registers, and doesn't have a functional effect on the behaviour of the
-> > PMU, so that's benign from the PoV of perf.
-> 
-> Sad though; ideally you'd state that indirect addressing is
-> out-of-bounds and they get to keep the pieces. But I suspect you're
-> right that people will do it anyway and complain once it comes apart.
 
-I'm still not entirely convinced you need that context switching. If we
-sched-out, the seqcount value will change, idem when we sched-in. So
-under no circumstance (even if we stay on the same CPU), will the
-seqcount match when we get back on.
+--rsrvm5wgc3yqgwap
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So why preserve that register?
+On Fri, May 17, 2019 at 10:14:18AM +0200, Torsten Duwe wrote:
+> On Fri, 17 May 2019 09:27:38 +0200
+> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> > On Thu, May 16, 2019 at 06:48:59PM +0200, Torsten Duwe wrote:
+> > > On Thu, May 16, 2019 at 09:06:41AM -0700, Vasily Khoruzhick wrote:
+> > > >
+> > > > Driver can talk to the panel over AUX channel only after t1+t3,
+> > > > t1 is up to 10ms, t3 is up to 200ms.
+> > >
+> > > This is after power-on. The boot loader needs to deal with this.
+> >
+> > The bootloader can deal with it, but the kernel will also need to. The
+> > bootloader might not be doing this because it's not been updated, the
+> > regulator might have been disabled between the time the kernel was
+> > started and the time the bridge driver probes, etc.
+>
+> No, you cannot practically switch off this voltage. It supports _all_
+> the devices I mentioned. In fact, the PMIC needs to enable it initially,
+> and then it takes some time before the SoC can access the MMC and read
+> the SPL from it, just because of exactly these 3.3V. Then the boot
+> loader starts, and later the eDP bridge gets initialised.
+
+All these devices can be unused, disabled, or compiled as modules.
+
+> In *theory*, albeit a very daring one, I could imagine a very deep
+> sleep mode that can only be ended by pressing the power button, which
+> should still work without DCDC1. Only then, a description of the panel
+> would be required. But I probably missed something and even this does
+> not work.
+>
+> So for all current practical purposes, we can assume the Teres-I panel
+> to be powered properly and providing valid EDID; nothing to worry about
+> in software.
+
+You're creating a generic binding for all the users of that bridge,
+while considering only the specific case of the Teres-I.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rsrvm5wgc3yqgwap
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN56HQAKCRDj7w1vZxhR
+xZh0AP4+w3VFZULGFliCxVroYWWP58DFQSolgLvZtZpZrGVBeAEA6zaZsM+cYTlD
+SY3UolrT94qs2Tr0bSG5TvhQwQ111wk=
+=giob
+-----END PGP SIGNATURE-----
+
+--rsrvm5wgc3yqgwap--
