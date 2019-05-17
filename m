@@ -2,126 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90AA8217CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B74552177A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbfEQLeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 07:34:13 -0400
-Received: from 5.mo178.mail-out.ovh.net ([46.105.51.53]:47117 "EHLO
-        5.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbfEQLeM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 07:34:12 -0400
-X-Greylist: delayed 2169 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 07:34:11 EDT
-Received: from player763.ha.ovh.net (unknown [10.109.143.183])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 1EF5A681A4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 12:58:01 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player763.ha.ovh.net (Postfix) with ESMTPSA id 00FA25E06E1D;
-        Fri, 17 May 2019 10:57:54 +0000 (UTC)
-Date:   Fri, 17 May 2019 12:57:54 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        stable@vger.kernel.org,
-        =?UTF-8?B?Q8OpZHJp?= =?UTF-8?B?Yw==?= Le Goater 
-        <clg@kaod.org>
-Subject: Re: [PATCH] powerpc/pseries: Fix xive=off command line
-Message-ID: <20190517125754.2f0a572e@bahia.lan>
-In-Reply-To: <20190515105443.835E72084E@mail.kernel.org>
-References: <155791470178.432724.8008395673479905061.stgit@bahia.lan>
- <20190515105443.835E72084E@mail.kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728594AbfEQLJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 07:09:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:50553 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727689AbfEQLJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 07:09:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4555CS3gmQz9s55;
+        Fri, 17 May 2019 21:09:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558091365;
+        bh=wv3hnsOuPhwdRJsjknemqN8vMnKHjA1P8fi3B4VtVhg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SbeI+uH354EhsJ/HSTr2dVQaome3jUMzcgTCA6zhZ/L66BWx97EL37ARaX6boRf07
+         wzLFH+jIn0sf9Gx/ibsIBGg7MlOr/M/Aiz8O/YW2qgnNjqW5ab5+hAuZSvfg2cLrU3
+         U4+6VpXgYmChvwa6DfnNpqe6nyPWaRq+muqsIV4jVqBcD0TZ4jpcH19GPY44ihlOoA
+         aG29ClLB1b+XqoacA3q2Bm3Zke44uTIhM2OzOu9P9lsxUOoecnbEqMBTo89ZUnwpU1
+         JYKrPNYG33XHyGuK18B9X6pQw+msdWLl0m7PgUBJolUA6wgQ/QD5cf1X/VgeD3xtrQ
+         A/OFUxTBfrR0g==
+Date:   Fri, 17 May 2019 21:09:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+Subject: linux-next: Fixes tag needs some work in the crypto-current tree
+Message-ID: <20190517210922.70a51b83@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 10644257719299512787
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtvddgfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fhNqN8siC+gvfEhd1u78a5."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 May 2019 10:54:42 +0000
-Sasha Levin <sashal@kernel.org> wrote:
+--Sig_/fhNqN8siC+gvfEhd1u78a5.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi,
-> 
+Hi all,
 
-Hi,
+In commit
 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: eac1e731b59e powerpc/xive: guest exploitation of the XIVE interrupt controller.
-> 
-> The bot has tested the following trees: v5.1.1, v5.0.15, v4.19.42, v4.14.118.
-> 
-> v5.1.1: Build OK!
-> v5.0.15: Build OK!
-> v4.19.42: Failed to apply! Possible dependencies:
->     8ca2d5151e7f ("powerpc/prom_init: Move a few remaining statics to appropriate sections")
->     c886087caee7 ("powerpc/prom_init: Move prom_radix_disable to __prombss")
-> 
+  4fa0b1f971fc ("crypto: caam - fix typo in i.MX6 devices list for errata")
 
-Dependencies are:
+Fixes tag
 
-3bad719b4954 ("powerpc/prom_init: Make of_workarounds static")
-e63334e556d9 ("powerpc/prom_init: Replace __initdata with __prombss when applicable")
-11fdb309341c ("powerpc/prom_init: Remove support for OPAL v2")
-c886087caee7 ("powerpc/prom_init: Move prom_radix_disable to __prombss")
-8ca2d5151e7f ("powerpc/prom_init: Move a few remaining statics to appropriate sections")
-f1f208e54d08 ("powerpc/prom_init: Generate "phandle" instead of "linux, phandle"")
-cbe46bd4f510 ("powerpc: remove CONFIG_CMDLINE #ifdef mess")
-450e7dd4001f ("powerpc/prom_init: don't use string functions from lib/")
+  Fixes: 33d69455e402 ("crypto: caam - limit AXI pipeline to a depth of
 
-The patches apply flawlessly and allow the build to succeed.
+has these problem(s):
 
-> v4.14.118: Failed to apply! Possible dependencies:
->     028555a590d6 ("powerpc/xive: fix hcall H_INT_RESET to support long busy delays")
->     7a22d6321c3d ("powerpc/mm/radix: Update command line parsing for disable_radix")
->     8ca2d5151e7f ("powerpc/prom_init: Move a few remaining statics to appropriate sections")
->     c886087caee7 ("powerpc/prom_init: Move prom_radix_disable to __prombss")
-> 
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
 
-Dependencies are:
+Please don't split Fixes tags over more than one line.
 
-7a22d6321c3d ("powerpc/mm/radix: Update command line parsing for disable_radix")
-028555a590d6 ("powerpc/xive: fix hcall H_INT_RESET to support long busy delays")
-3bad719b4954 ("powerpc/prom_init: Make of_workarounds static")
-e63334e556d9 ("powerpc/prom_init: Replace __initdata with __prombss when applicable")
-11fdb309341c ("powerpc/prom_init: Remove support for OPAL v2")
-c886087caee7 ("powerpc/prom_init: Move prom_radix_disable to __prombss")
-8ca2d5151e7f ("powerpc/prom_init: Move a few remaining statics to appropriate sections")
-f1f208e54d08 ("powerpc/prom_init: Generate "phandle" instead of "linux, phandle"")
-cbe46bd4f510 ("powerpc: remove CONFIG_CMDLINE #ifdef mess")
-450e7dd4001f ("powerpc/prom_init: don't use string functions from lib/")
-
-The patches apply flawlessly and allow the build to succeed.
-
-> 
-> How should we proceed with this patch?
-> 
-
-xive=off allows the kernel to use the legacy XICS interrupt controller
-interface on POWER9, definitely not a recommended setting. A typical
-usage for this would be to workaround some issue that would only pop
-up when using XIVE. Note also that this only affects the pseries platform,
-ie. running under an hypervisor (KVM or pHyp).
-
-I cannot state right now whether it is worth the pain to cherry-pick all
-the dependencies to fix this or not in older kernels...
-
+--=20
 Cheers,
+Stephen Rothwell
 
---
-Greg
+--Sig_/fhNqN8siC+gvfEhd1u78a5.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> --
-> Thanks,
-> Sasha
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzelmIACgkQAVBC80lX
+0GxatAgAm+FtYL5tBLB+70elBaeisaAg66l8kbgzrk1MvfUTH0kregdykejfqlem
+ioXbvn2bSLYCKgP4+yC9PGET9Od91qnzbFkTKW3fw/eRhVjQbDAsbPlqS+9w5m48
+dUdtTwOt+55kxZZjsStnYFe/BADQZbio/tZTP+lZ9xP7TrF6QX0Hx6S+3ApvyQ8h
+AQ0XUtgjEz2//EfE3y/Nw5xJloZFNJB9I4BLzzYvvth7Tn1QSveUf4mwoK/bZd7g
+YN4lE5zcIBqjMLwBqzFqoNEPUMmpsXyBfC7e6ywhjNV9CHXZxQtwFcXjgx+u8tI0
+DRnruLjuwiEcRgmjG/Uo0aD3zzkJXw==
+=14pw
+-----END PGP SIGNATURE-----
+
+--Sig_/fhNqN8siC+gvfEhd1u78a5.--
