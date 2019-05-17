@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC6B2157D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7504621586
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfEQIma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 04:42:30 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49831 "EHLO
+        id S1728590AbfEQImm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 04:42:42 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:65356 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727626AbfEQIm3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728142AbfEQIma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 04:42:29 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4H8cHCH032135;
-        Fri, 17 May 2019 10:42:14 +0200
+        Fri, 17 May 2019 04:42:30 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4H8bogK025564;
+        Fri, 17 May 2019 10:42:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=khjS2R2nmPFjF18UlwbWNS8oKt8MGfK2JdwVwOgpfX8=;
- b=0s0WR2SAGdG4K5K+rDpmw5YLIelfBP6mStAD149fHzIw9W6XLR02QF4ztuwdUowvPJdK
- +TtFVylVSMndMuJqtp+NhbdjX3qwPF9qYNHKvaDmz1jL6JRJ6D7pbRcntHsSgY6zTKOW
- W5/s7Ri9t6CDTpTMUFRXntcHV7WeSborvad6UiibbY0dWnArvywVrZrprrzFbv4JHP/1
- GupuyL36KFdspFvdoTmLlBi1md16bslJvoCSkIbyTq+W+sPg3It8kZfCDl6NNHtVC9pT
- EjWpDxjHQNe2jA0/O26erQm/QGyoRl2QwGCDyA5dpI/q2gpW+7deTbkOsQyXIutj5vAt ZA== 
+ bh=CTjBmZ/8Y8sJIntk4HY3GIldUOqlwVPxpqC9dk1e2Xg=;
+ b=G/PiZd7z5KUU5PMAnzNhU3Dft+T4aENocyHsKOxqSEtQFCeM/f2YVFrHxNlhFv10Zzkl
+ LxF2twnLWbhHNTkNBixinxyfq3NMu+Btu6RYo7h+OPlf6SYQcDNNIUijARzN3tCR2rge
+ 4epWlQF8H74Bgbg5FuPhAVDxjnKi/YGmwjMsi1wqlZqhx7XJVfHhjrncYjt8FyM40tlK
+ 6CNWOMRZ+NJ7st2o4W/iIT1ybhNniqi/+9dsBu3OuO/DzkXys8nxLIAy5fY+NIS/i9HR
+ j56P30iE9LkAJ0AAkmS0E2BBu37EtLyfwEhtCh33dGUyNLTJOkvG+My8zT70UHvBnvIO SA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2sg0anjddk-1
+        by mx07-00178001.pphosted.com with ESMTP id 2sdkv0cf0s-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 17 May 2019 10:42:14 +0200
+        Fri, 17 May 2019 10:42:17 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A639538;
-        Fri, 17 May 2019 08:42:13 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BC7303F;
+        Fri, 17 May 2019 08:42:14 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 81DE2246E;
-        Fri, 17 May 2019 08:42:13 +0000 (GMT)
-Received: from localhost (10.75.127.51) by SFHDAG5NODE2.st.com (10.75.127.14)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5EFD9246D;
+        Fri, 17 May 2019 08:42:14 +0000 (GMT)
+Received: from localhost (10.75.127.49) by SFHDAG5NODE2.st.com (10.75.127.14)
  with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 17 May 2019 10:42:13
  +0200
 From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
@@ -47,16 +47,16 @@ To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [RESEND v2 2/3] ARM: dts: stm32: enable Vivante GPU support on stm32mp157c-ed1 board
-Date:   Fri, 17 May 2019 10:42:07 +0200
-Message-ID: <1558082528-12889-3-git-send-email-pierre-yves.mordret@st.com>
+Subject: [RESEND v2 3/3] ARM: dts: stm32: enable Vivante GPU support on stm32mp157a-dk1 board
+Date:   Fri, 17 May 2019 10:42:08 +0200
+Message-ID: <1558082528-12889-4-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558082528-12889-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1558082528-12889-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG5NODE2.st.com
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_04:,,
  signatures=0
@@ -65,7 +65,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable Vivante GPU driver for stm32mp157c-ed1 board.
+Enable Vivante GPU driver for stm32mp157a-dk1 and dk2 boards.
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
@@ -77,15 +77,15 @@ Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
        * Initial
 ---
 ---
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 16 ++++++++++++++++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts | 16 ++++++++++++++++
  1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index 9fd7943..7bcc122 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -22,6 +22,17 @@
- 		reg = <0xC0000000 0x40000000>;
+diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+index 1b1886d..bd06f7b 100644
+--- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
++++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+@@ -27,6 +27,17 @@
+ 		reg = <0xc0000000 0x20000000>;
  	};
  
 +	reserved-memory {
@@ -93,16 +93,16 @@ index 9fd7943..7bcc122 100644
 +		#size-cells = <1>;
 +		ranges;
 +
-+		gpu_reserved: gpu@e8000000 {
-+			reg = <0xe8000000 0x8000000>;
++		gpu_reserved: gpu@d4000000 {
++			reg = <0xd4000000 0x4000000>;
 +			no-map;
 +		};
 +	};
 +
- 	aliases {
- 		serial0 = &uart4;
- 	};
-@@ -76,6 +87,11 @@
+ 	led {
+ 		compatible = "gpio-leds";
+ 		blue {
+@@ -69,6 +80,11 @@
  	status = "okay";
  };
  
@@ -111,9 +111,9 @@ index 9fd7943..7bcc122 100644
 +	status = "okay";
 +};
 +
- &i2c4 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c4_pins_a>;
+ &iwdg2 {
+ 	timeout-sec = <32>;
+ 	status = "okay";
 -- 
 2.7.4
 
