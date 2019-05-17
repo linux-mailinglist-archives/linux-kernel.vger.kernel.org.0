@@ -2,100 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371BE216C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 12:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B68E21439
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfEQKMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 06:12:49 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:37968 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbfEQKMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 06:12:48 -0400
-X-Greylist: delayed 7493 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 06:12:47 EDT
-Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id A559B3A3615;
-        Fri, 17 May 2019 07:27:50 +0000 (UTC)
-X-Originating-IP: 80.215.154.25
-Received: from localhost (unknown [80.215.154.25])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 4AABB2000F;
-        Fri, 17 May 2019 07:27:39 +0000 (UTC)
-Date:   Fri, 17 May 2019 09:27:38 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Harald Geyer <harald@ccbib.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] arm64: DTS: allwinner: a64: enable ANX6345 bridge on
- Teres-I
-Message-ID: <20190517072738.deohh5fly4jxms7k@flea>
-References: <20190514155911.6C0AC68B05@newverein.lst.de>
- <20190514160241.9EAC768C7B@newverein.lst.de>
- <CA+E=qVfuKBzWK7dpM_eabjU8mLdzOw3zCnYk6Tc1oXdavH7CNA@mail.gmail.com>
- <20190515093141.41016b11@blackhole.lan>
- <CA+E=qVf6K_0T0x2Hsfp6EDqM-ok6xiAzeZPvp6SRg0yt010pKA@mail.gmail.com>
- <20190516154820.GA10431@lst.de>
- <CA+E=qVe5NkAvHXPvVc7iTbZn5sKeoRm0166zPW_s83c2gk7B+g@mail.gmail.com>
- <20190516164859.GB10431@lst.de>
+        id S1728300AbfEQH2L convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 17 May 2019 03:28:11 -0400
+Received: from smtp1.ono.com ([62.42.230.162]:38753 "EHLO smtp1.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727274AbfEQH2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 03:28:11 -0400
+X-Junkmail-Premium-Raw: score=19/50,refid=2.7.2:2019.5.17.65116:17:19.000,ip=62.42.230.131,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ __FROM_NAME_ADDRESS, __HAS_REPLYTO, __PHISH_SPEAR_SUBJ_ALERT, __MIME_VERSION,
+ __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __REPLYTO_SAMEAS_FROM_ADDY,
+ __REPLYTO_SAMEAS_FROM_ACC, __REPLYTO_SAMEAS_FROM_DOMAIN, __FRAUD_INTRO,
+ __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __FRAUD_REPLY, __NO_HTML_TAG_RAW,
+ BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_500_599, __MIME_TEXT_P1,
+ __MIME_TEXT_ONLY, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
+ __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
+ __FRAUD_MONEY, FRAUD_X4, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_COMMON,
+ __MIME_TEXT_P, NO_URI_FOUND, NO_CTA_URI_FOUND, __PHISH_SPEAR_STRUCTURE_1,
+ BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2,
+ REPLYTO_SAMEAS_FROM, NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs01 (62.42.230.131) by smtp1.ono.com (9.0.019.09-1)
+        id 5C12554F07E46FFB; Fri, 17 May 2019 09:27:46 +0200
+Received: from (149.126.75.14) by webmailcpr01n.ono.com;  Fri, 17 May 2019 09:27:45 +0200
+Message-ID: <7299586.847251558078065590.JavaMail.defaultUser@defaultHost>
+Date:   Fri, 17 May 2019 09:27:45 +0200 (CEST)
+From:   "manuelnufer@ono.com" <manuelnufer@ono.com>
+Reply-To: manuelnufer@ono.com
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="f4mha6snzgf75knu"
-Content-Disposition: inline
-In-Reply-To: <20190516164859.GB10431@lst.de>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Friend,
 
---f4mha6snzgf75knu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+With due respect to your person and much sincerity of purpose’ I have a 
+business proposal which I will like to handle with you. $35 Million USD 
+is involved. But be rest assured that everything is legal and risk free 
+as I have concluded all the arrangements and the legal papers that will 
+back the transaction up. Kindly indicate your interest as to enable me 
+tell you more detail of the proposal.
 
-On Thu, May 16, 2019 at 06:48:59PM +0200, Torsten Duwe wrote:
-> On Thu, May 16, 2019 at 09:06:41AM -0700, Vasily Khoruzhick wrote:
-> >
-> > Driver can talk to the panel over AUX channel only after t1+t3, t1 is
-> > up to 10ms, t3 is up to 200ms.
->
-> This is after power-on. The boot loader needs to deal with this.
+Waiting for your urgent response
 
-The bootloader can deal with it, but the kernel will also need to. The
-bootloader might not be doing this because it's not been updated, the
-regulator might have been disabled between the time the kernel was
-started and the time the bridge driver probes, etc.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---f4mha6snzgf75knu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXN5iagAKCRDj7w1vZxhR
-xSOTAQCltYqEUg7d+BcEgl5RN6diNU5EHsL/qXA4yAy1FZI9NwD/epfnmdGcVWie
-o0KQWW6HOXO96Su1afZmNzHrEtQffwQ=
-=zj1P
------END PGP SIGNATURE-----
-
---f4mha6snzgf75knu--
+Yours Faithfully,
+Mr. Bredoxn Philip
