@@ -2,46 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1E121E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9D921A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbfEQT2O convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 17 May 2019 15:28:14 -0400
-Received: from s101.eforce.hu ([5.9.118.147]:26222 "EHLO s101.eforce.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727398AbfEQT2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 15:28:14 -0400
-X-Greylist: delayed 7090 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 15:28:13 EDT
-Received: (qmail 12414 invoked by uid 1335); 17 May 2019 17:06:02 +0200
-To:     linux-kernel@vger.kernel.org
-Subject: =?UTF-8?Q?ENTREATY?=
-X-PHP-Originating-Script: 1335:wp-gallery.php(4193) : eval()'d code(2) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code(1) : eval()'d code
-Date:   Fri, 17 May 2019 17:06:02 +0200
-From:   =?UTF-8?Q?Aichi_Electric_Co=2e_Ltd?= <nozomu-amano@aichiglobal.com>
-Message-ID: <6e1c178a7bf097517b5228e49711e208@realspektrum.hu>
-X-Priority: 3
+        id S1729195AbfEQPIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 11:08:39 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33769 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729162AbfEQPIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 11:08:39 -0400
+Received: by mail-oi1-f195.google.com with SMTP id m204so5435947oib.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 08:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OGIfXnKXpW5eMKxUMdzRkt44XId1MoiNVnAxGfKvpiQ=;
+        b=NxNZPHkQ9m7afnPn+MzAQqWjc4b6NDowhfobUzGnErro91DDQhcbPCtV4yyPmQs5K/
+         qHoNY3q3kg21Z1aKKfhVtA51efXEJSWMC+nqJfOqd/6Cxza+N0PESVDd5pxT7+8WWxJ8
+         dZbrryqg4W1sKStoCFp33Wpzb60H7wUxxexYHFYmftwZiHvQx7ag+Qv71q7GSKVtf3Yv
+         0YURKil61RhPfxk/xokqMuqcpKadv25cmmeCfUPGZVYy8ZS45CyPZ/lVBP6QJrWv4/nC
+         v1/j1QVq4xm8msZpqCNnpxMl6+GJA9oIEyJXlJST7m7WnJ1/eAUMStAIB5yhR6N2QBgq
+         J6JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OGIfXnKXpW5eMKxUMdzRkt44XId1MoiNVnAxGfKvpiQ=;
+        b=WgcK1nOC2RwHGxpVzCh/3lTMR62ZQeWMbBEvyicwGzpldMc19iIT0Tav5QyTI0CzBG
+         E4N/hFGvEoGFjuyCeUkrz924slqRZbmCFdlUpHWUKez1byvwkRRBfq9SeQyE6jao6PH4
+         +1gyANY05sKp2U80dCt4eqnYCNNUA2buryhzuZ0TN2RCAEgziwo1q7cqjhTmCucy0aaJ
+         aR8joEHXwp52uKTC529kKzk0zx2rgxq2k2Z5w1xSC9QN2GP6yNLyn38rd+51r70XyYMP
+         2VFF8Zh+0JdJ3qmqOmJJ/3ncmBPMWlco8Ym5+8Ag6MubRBftKwVF/i5JUL/nShWJ+fTb
+         phzA==
+X-Gm-Message-State: APjAAAVmw1PQo34d2TqjFruKaynBBlwACzGBI6E4/y/XmbWjiMV/OOaW
+        7j3R1UexEmyzhmdZDKzvU2tw4ZTppW6l3M6nL+83gQ==
+X-Google-Smtp-Source: APXvYqyTjO/s0rMdx1VgVCXo7bqh4zMktZXJwLahomPBvDpO+I4RjmmwQ75n8Xpfpye+mAWhmlTX6Dis4MloPOV9WcA=
+X-Received: by 2002:aca:b641:: with SMTP id g62mr12196057oif.149.1558105718742;
+ Fri, 17 May 2019 08:08:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="us-ascii"
+References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190517084739.GB20550@quack2.suse.cz>
+In-Reply-To: <20190517084739.GB20550@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 17 May 2019 08:08:27 -0700
+Message-ID: <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good Day, 
+On Fri, May 17, 2019 at 1:47 AM Jan Kara <jack@suse.cz> wrote:
+>
+> Let's add Kees to CC for usercopy expertise...
+>
+> On Thu 16-05-19 17:33:38, Dan Williams wrote:
+> > Jeff discovered that performance improves from ~375K iops to ~519K iops
+> > on a simple psync-write fio workload when moving the location of 'struct
+> > page' from the default PMEM location to DRAM. This result is surprising
+> > because the expectation is that 'struct page' for dax is only needed for
+> > third party references to dax mappings. For example, a dax-mapped buffer
+> > passed to another system call for direct-I/O requires 'struct page' for
+> > sending the request down the driver stack and pinning the page. There is
+> > no usage of 'struct page' for first party access to a file via
+> > read(2)/write(2) and friends.
+> >
+> > However, this "no page needed" expectation is violated by
+> > CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
+> > copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
+> > check_heap_object() helper routine assumes the buffer is backed by a
+> > page-allocator DRAM page and applies some checks.  Those checks are
+> > invalid, dax pages are not from the heap, and redundant,
+> > dax_iomap_actor() has already validated that the I/O is within bounds.
+>
+> So this last paragraph is not obvious to me as check_copy_size() does a lot
+> of various checks in CONFIG_HARDENED_USERCOPY case. I agree that some of
+> those checks don't make sense for PMEM pages but I'd rather handle that by
+> refining check_copy_size() and check_object_size() functions to detect and
+> appropriately handle pmem pages rather that generally skip all the checks
+> in pmem_copy_from/to_iter(). And yes, every check in such hot path is going
+> to cost performance but that's what user asked for with
+> CONFIG_HARDENED_USERCOPY... Kees?
 
-I am establishing contact in respect to administration of financial resources as your qualities match our preferred personality based on your profile from linkedin, you would be responsible for our financial representation by receiving and disbursing financial resources within the United States. Though this may not be your area of specialization, we are confident that you would be able to handle this as we would supply you with all necessary tools/instructions you need to succeed.
-
-For more information, please write back.
-
-We look forward to working with you.
-
-Nozomu Amano,
-Director
-
-Aichi Electric Co. Ltd
-
-+81345103023
-
-Skype- live: nozomuamano-aichi [AEC]
-http://www.aichidenki.jp/english
+As far as I can see it's mostly check_heap_object() that is the
+problem, so I'm open to finding a way to just bypass that sub-routine.
+However, as far as I can see none of the other block / filesystem user
+copy implementations submit to the hardened checks, like
+bio_copy_from_iter(), and iov_iter_copy_from_user_atomic() . So,
+either those need to grow additional checks, or the hardened copy
+implementation is targeting single object copy use cases, not
+necessarily block-I/O. Yes, Kees, please advise.
