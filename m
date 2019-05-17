@@ -2,116 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AFA21A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E5A121A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfEQPJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:09:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20328 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbfEQPJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:09:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 08:09:49 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga006.fm.intel.com with ESMTP; 17 May 2019 08:09:48 -0700
-Date:   Fri, 17 May 2019 08:09:48 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190517150948.GA15632@linux.intel.com>
-References: <20190515013031.GF1977@linux.intel.com>
- <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <alpine.LRH.2.21.1905160543070.19802@namei.org>
- <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
- <alpine.LRH.2.21.1905160844130.29250@namei.org>
- <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
- <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
- <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov>
+        id S1729226AbfEQPMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 11:12:13 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41085 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728407AbfEQPMN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 11:12:13 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g190so4638470qkf.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 08:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=zzlTexiIUlYV9x4j8GuStO3t1EhYF8BKz1t0JiR0szc=;
+        b=ssljWWWyb2zp28y/Fdm9+XXf730MtEVOV+33yCHJLcl8PoGLY41qH5HSF9z/a7crXG
+         Q0bBhlzDpDXuT0kdHxyWeBI+CaZh/Eq5BEOsIuT/gB7PIyk4Inohcwdv8WgZw6eruKSL
+         KLkJTMACUIzAVQvyEi86JVgHscY41JzAukREZFMMtzGafXkmiC/6UvsyoKf6DPl32HX+
+         tRnLA+fN+4e2DlpOWW/LiPtyh5Rcpy255UD5M1maCc0shPa4EzRF9ATBKzoT/YbJYghE
+         +9LHhOQ/7pqN7/YZavg/Q/pDN7g1qHSG/Vx9tcBrlY48rHGeIoqKaU1T5+6z6q9IuSrC
+         fRAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=zzlTexiIUlYV9x4j8GuStO3t1EhYF8BKz1t0JiR0szc=;
+        b=OLzgJZtXUb+y0kb4VHVay9Z8FNdMw2QTa8HpLCKxe0RRORPRVO4VNGsl1x1iuS3m/3
+         bDYq2FNd/iqqEYBfaZhpV1S63TqYI7/7LVqhfiVkxKJcKgidWJhet61cbvBE9vPOzBSI
+         BpG1X3oIaUdO1Qbd4ffHIS0UeEBhNHMSeFZ4wmrKlKmXVCXhR3grBDvGnvomH29goZ1c
+         yT1HiP2byXnibAy/pGbAa6gT7CEWQvZ5ZPK7i+DLVDzz7JO1g1zd4DpwbARNuN2BSr2s
+         I3cmNOvmky/f8fWWwODIa4GMUYNb4iarBbg6uVRjEDOLchVRL7gAx7AxGH7GZJqFXOdX
+         x4wg==
+X-Gm-Message-State: APjAAAXcvz2kL0BIymH/QmuAfWlZmz2VxX1gm8cWuQojIGlfPEeSFRsb
+        pI5U45vcBaKwi1nc5jtoAcJe7UnXpIzHwhMJJ0Y=
+X-Google-Smtp-Source: APXvYqyibyEgV6zHJGNnNIRsbIe8Rsyxhg7G48FdnnCzMUMtxbObtgcnNEixF3twdEI6HgrXVKFHYBiBHvXS07cWY4I=
+X-Received: by 2002:ae9:f30c:: with SMTP id p12mr691105qkg.171.1558105932235;
+ Fri, 17 May 2019 08:12:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Reply-To: glorysimporer@hotmail.com
+Received: by 2002:a0c:e98b:0:0:0:0:0 with HTTP; Fri, 17 May 2019 08:12:08
+ -0700 (PDT)
+From:   glory simpore <glorysimpore@gmail.com>
+Date:   Fri, 17 May 2019 08:12:08 -0700
+X-Google-Sender-Auth: ywsb6R7-WFOBk8nc5oTmswm22os
+Message-ID: <CAGwbFvEYxUA8u=qjk-OUg9uK7jRbB8o-u=S_yihg6buL-K1qfg@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 09:53:06AM -0400, Stephen Smalley wrote:
-> On 5/16/19 6:23 PM, Xing, Cedric wrote:
-> >I thought EXECMOD applied to files (and memory mappings backed by them) but
-> >I was probably wrong. It sounds like EXECMOD applies to the whole process so
-> >would allow all pages within a process's address space to be modified then
-> >executed, regardless the backing files. Am I correct this time?
-> 
-> No, you were correct the first time I think; EXECMOD is used to control
-> whether a process can make executable a private file mapping that has
-> previously been modified (e.g. text relocation); it is a special case to
-> support text relocations without having to allow full EXECMEM (i.e. execute
-> arbitrary memory).
-> 
-> SELinux checks relevant to W^X include:
-> 
-> - EXECMEM: mmap/mprotect PROT_EXEC an anonymous mapping (regardless of
-> PROT_WRITE, since we know the content has to have been written at some
-> point) or a private file mapping that is also PROT_WRITE.
-> - EXECMOD: mprotect PROT_EXEC a private file mapping that has been
-> previously modified, typically for text relocations,
-> - FILE__WRITE: mmap/mprotect PROT_WRITE a shared file mapping,
-> - FILE__EXECUTE: mmap/mprotect PROT_EXEC a file mapping.
-> 
-> (ignoring EXECSTACK and EXECHEAP here since they aren't really relevant to
-> this discussion)
-> 
-> So if you want to ensure W^X, then you wouldn't allow EXECMEM for the
-> process, EXECMOD by the process to any file, and the combination of both
-> FILE__WRITE and FILE__EXECUTE by the process to any file.
-> 
-> If the /dev/sgx/enclave mappings are MAP_SHARED and you aren't using an
-> anonymous inode, then I would expect that only the FILE__WRITE and
-> FILE__EXECUTE checks are relevant.
+-- 
 
-Yep, I was just typing this up in a different thread:
+DEAR FRIEND:
 
-I think we may want to change the SGX API to alloc an anon inode for each
-enclave instead of hanging every enclave off of the /dev/sgx/enclave inode.
-Because /dev/sgx/enclave is NOT private, SELinux's file_map_prot_check()
-will only require FILE__WRITE and FILE__EXECUTE to mprotect() enclave VMAs
-to RWX.  Backing each enclave with an anon inode will make SELinux treat
-EPC memory like anonymous mappings, which is what we want (I think), e.g.
-making *any* EPC page executable will require PROCESS__EXECMEM (SGX is
-64-bit only at this point, so SELinux will always have default_noexec).
+GREETINGS FROM MY OWN SIDE; I AM MRS. GLORY SIMPORE ASUQUO, A WIDOW TO
+LATE DIPLOMAT DR. SIMPORE RACHIDI ASUQUO.
+
+I AM 52 YEARS OLD, SUFFERING FROM PANCREATIC CANCER. MY CONDITION IS
+REALLY BAD AND IT IS QUITE OBVIOUS THAT I AM AFRAID OF MY LIFE.
+
+I AM WILLING TO DONATE THE SUM OF SIX MILLION FIVE HUNDRED THOUSAND
+EUROS. (6.500.000.00.EUROS) OUT THROUGH YOU IN OTHER TO HELP THE POOR
+WIDOWS AND THE LESS PRIVILEGED ONES IN THE RURAL AREAS AND TO CARRY
+OUT OTHER CHARITABLE WORKS
+
+I WAIT FOR YOUR URGENT REPLY TO PROCEED.
+
+You can also reach me with my private E-mail Address; glorysimporer@hotmail.com
+
+BEST REGARDS.
+MRS. GLORY SIMPORE ASUQUO.
+E-mail; glorysimporer@hotmail.com
