@@ -2,72 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33397217E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5C9C217BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbfEQLwN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 17 May 2019 07:52:13 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:45412
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727811AbfEQLwM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 07:52:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 5D00DEE3434;
-        Fri, 17 May 2019 11:26:25 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id b2nClE553JyD; Fri, 17 May 2019 11:26:24 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 69D0BEC851D;
-        Fri, 17 May 2019 11:26:12 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id WMDfn4qWFTgX; Fri, 17 May 2019 11:26:12 +0000 (UTC)
-Received: from [100.92.244.119] (unknown [106.197.195.115])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 35C70EC845D;
-        Fri, 17 May 2019 11:25:31 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728812AbfEQL14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 07:27:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55438 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728336AbfEQL14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 07:27:56 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9671E22BEA1D63F475B6;
+        Fri, 17 May 2019 19:27:53 +0800 (CST)
+Received: from [127.0.0.1] (10.184.191.73) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 17 May 2019
+ 19:27:47 +0800
+To:     <jon.maloy@ericsson.com>, <ying.xue@windriver.com>,
+        <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        <tipc-discussion@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <mingfangsen@huawei.com>,
+        <zhoukang7@huawei.com>, <mousuanming@huawei.com>
+From:   hujunwei <hujunwei4@huawei.com>
+Subject: [PATCH] tipc: fix modprobe tipc failed after switch order of device
+ registration
+Message-ID: <efa87f26-8766-ac92-ccaa-23a6992bd32a@huawei.com>
+Date:   Fri, 17 May 2019 19:27:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifique_su_correo_electr=C3=B3nico?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   =?utf-8?q?Sistema_de_administraci=C3=B3n_=3Cexportaciones=40minpal=2Egob?=@smspyt.cancun.gob.mx,
-        =?utf-8?q?=2Eve=3E?=@smspyt.cancun.gob.mx
-Date:   Fri, 17 May 2019 16:55:22 +0530
-Reply-To: package@fedexpressposts.us
-Message-Id: <20190517112532.35C70EC845D@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.191.73]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario de correo electrónico,
+From: Junwei Hu <hujunwei4@huawei.com>
 
-Aviso de seguridad:
+Error message printed:
+modprobe: ERROR: could not insert 'tipc': Address family not
+supported by protocol.
+when modprobe tipc after the following patch: switch order of
+device registration, commit 7e27e8d6130c
+("tipc: switch order of device registration to fix a crash")
 
-Este mensaje es de nuestro centro de mensajería Web Admin a todos nuestros propietarios de cuentas de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro Administrador tan pronto como este correo electrónico haya sido recibido.
+Because sock_create_kern(net, AF_TIPC, ...) is called by
+tipc_topsrv_create_listener() in the initialization process
+of tipc_net_ops, tipc_socket_init() must be execute before that.
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+I move tipc_socket_init() into function tipc_init_net().
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+Fixes: 7e27e8d6130c
+("tipc: switch order of device registration to fix a crash")
+Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
+Reported-by: Wang Wang <wangwang2@huawei.com>
+Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
+Reviewed-by: Suanming Mou <mousuanming@huawei.com>
+---
+ net/tipc/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/index si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+diff --git a/net/tipc/core.c b/net/tipc/core.c
+index ddd2e0f67c07..7d05d6823545 100644
+--- a/net/tipc/core.c
++++ b/net/tipc/core.c
+@@ -68,6 +68,10 @@ static int __net_init tipc_init_net(struct net *net)
+ 	INIT_LIST_HEAD(&tn->node_list);
+ 	spin_lock_init(&tn->node_list_lock);
 
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
++	err = tipc_socket_init();
++	if (err)
++		goto out_socket;
++
+ 	err = tipc_sk_rht_init(net);
+ 	if (err)
+ 		goto out_sk_rht;
+@@ -94,6 +98,8 @@ static int __net_init tipc_init_net(struct net *net)
+ out_nametbl:
+ 	tipc_sk_rht_destroy(net);
+ out_sk_rht:
++	tipc_socket_stop();
++out_socket:
+ 	return err;
+ }
 
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+@@ -104,6 +110,7 @@ static void __net_exit tipc_exit_net(struct net *net)
+ 	tipc_bcast_stop(net);
+ 	tipc_nametbl_stop(net);
+ 	tipc_sk_rht_destroy(net);
++	tipc_socket_stop();
+ }
 
-Gracias por usar nuestro webmail.
+ static struct pernet_operations tipc_net_ops = {
+@@ -139,10 +146,6 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_pernet;
 
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
+-	err = tipc_socket_init();
+-	if (err)
+-		goto out_socket;
+-
+ 	err = tipc_bearer_setup();
+ 	if (err)
+ 		goto out_bearer;
+@@ -150,8 +153,6 @@ static int __init tipc_init(void)
+ 	pr_info("Started in single node mode\n");
+ 	return 0;
+ out_bearer:
+-	tipc_socket_stop();
+-out_socket:
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ out_pernet:
+ 	tipc_unregister_sysctl();
+@@ -167,7 +168,6 @@ static int __init tipc_init(void)
+ static void __exit tipc_exit(void)
+ {
+ 	tipc_bearer_cleanup();
+-	tipc_socket_stop();
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ 	tipc_netlink_stop();
+ 	tipc_netlink_compat_stop();
+-- 
+2.21.GIT
 
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
+
