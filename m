@@ -2,41 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4D321341
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5FBA2133A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfEQExO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 00:53:14 -0400
-Received: from mga06.intel.com ([134.134.136.31]:56156 "EHLO mga06.intel.com"
+        id S1727560AbfEQEr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 00:47:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:36690 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbfEQExO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 00:53:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 21:53:13 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 16 May 2019 21:53:11 -0700
-Cc:     baolu.lu@linux.intel.com, alex.williamson@redhat.com,
-        shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH v3 7/7] iommu/vt-d: Differentiate relaxable and non
- relaxable RMRRs
-To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        joro@8bytes.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
-        lorenzo.pieralisi@arm.com, robin.murphy@arm.com,
-        will.deacon@arm.com, hanjun.guo@linaro.org, sudeep.holla@arm.com
-References: <20190516100817.12076-1-eric.auger@redhat.com>
- <20190516100817.12076-8-eric.auger@redhat.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <2ebc33ed-ded6-0eee-96ef-84e6f61f692e@linux.intel.com>
-Date:   Fri, 17 May 2019 12:46:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725929AbfEQEr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 00:47:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 900E680D;
+        Thu, 16 May 2019 21:47:55 -0700 (PDT)
+Received: from [10.163.1.137] (unknown [10.163.1.137])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18AB33F5AF;
+        Thu, 16 May 2019 21:47:52 -0700 (PDT)
+Subject: Re: [PATCH] mm, memory-failure: clarify error message
+To:     Jane Chu <jane.chu@oracle.com>, n-horiguchi@ah.jp.nec.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     linux-nvdimm@lists.01.org
+References: <1558066095-9495-1-git-send-email-jane.chu@oracle.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <512532de-4c09-626d-380f-58cef519166b@arm.com>
+Date:   Fri, 17 May 2019 10:18:02 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190516100817.12076-8-eric.auger@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1558066095-9495-1-git-send-email-jane.chu@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,37 +37,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
 
-On 5/16/19 6:08 PM, Eric Auger wrote:
-> Now we have a new IOMMU_RESV_DIRECT_RELAXABLE reserved memory
-> region type, let's report USB and GFX RMRRs as relaxable ones.
+
+On 05/17/2019 09:38 AM, Jane Chu wrote:
+> Some user who install SIGBUS handler that does longjmp out
+
+What the longjmp about ? Are you referring to the mechanism of catching the
+signal which was registered ?
+
+> therefore keeping the process alive is confused by the error
+> message
+>   "[188988.765862] Memory failure: 0x1840200: Killing
+>    cellsrv:33395 due to hardware memory corruption"
+
+Its a valid point because those are two distinct actions.
+
+> Slightly modify the error message to improve clarity.
 > 
-> This allows to have a finer reporting at IOMMU API level of
-> reserved memory regions. This will be exploitable by VFIO to
-> define the usable IOVA range and detect potential conflicts
-> between the guest physical address space and host reserved
-> regions.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
 > ---
->   drivers/iommu/intel-iommu.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
+>  mm/memory-failure.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index a36604f4900f..af1d65fdedfc 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5493,7 +5493,9 @@ static void intel_iommu_get_resv_regions(struct device *device,
->   	for_each_rmrr_units(rmrr) {
->   		for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
->   					  i, i_dev) {
-> +			struct pci_dev *pdev = to_pci_dev(device);
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index fc8b517..14de5e2 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -216,10 +216,9 @@ static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
+>  	short addr_lsb = tk->size_shift;
+>  	int ret;
+>  
+> -	pr_err("Memory failure: %#lx: Killing %s:%d due to hardware memory corruption\n",
+> -		pfn, t->comm, t->pid);
+> -
+>  	if ((flags & MF_ACTION_REQUIRED) && t->mm == current->mm) {
+> +		pr_err("Memory failure: %#lx: Killing %s:%d due to hardware memory "
+> +			"corruption\n", pfn, t->comm, t->pid);
+>  		ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)tk->addr,
+>  				       addr_lsb, current);
+>  	} else {
+> @@ -229,6 +228,8 @@ static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
+>  		 * This could cause a loop when the user sets SIGBUS
+>  		 * to SIG_IGN, but hopefully no one will do that?
+>  		 */
+> +		pr_err("Memory failure: %#lx: Sending SIGBUS to %s:%d due to hardware "
+> +			"memory corruption\n", pfn, t->comm, t->pid);
+>  		ret = send_sig_mceerr(BUS_MCEERR_AO, (void __user *)tk->addr,
+>  				      addr_lsb, t);  /* synchronous? */
 
-Probably should be:
-
-struct pci_dev *pdev = dev_is_pci(device) ? to_pci_dev(device) : NULL;
-
-Best regards,
-Lu Baolu
-
+As both the pr_err() messages are very similar, could not we just switch between "Killing"
+and "Sending SIGBUS to" based on a variable e.g action_[kill|sigbus] evaluated previously
+with ((flags & MF_ACTION_REQUIRED) && t->mm == current->mm).
