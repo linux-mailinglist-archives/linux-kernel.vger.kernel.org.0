@@ -2,161 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96BAE21F24
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A29AF21F2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728705AbfEQUg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 16:36:58 -0400
-Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:35726
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726293AbfEQUg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 16:36:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bBJPlMULgaPfSx0QG6cmj+LGIWa+kkKU6hEWAnHgwSQ=;
- b=rGQ9z+bdp2itYV2mVz9Dpzha1Oycbo+GmNCjxEds9M/4SlQd/7DxLvnccB3ffZoJTLgKYDla6Voxs4F5V9P4RAw3SacPuXSzpdvg8A6xxCATZAaOLsyeihDbI69QD++T81OqqmejC1jNcc295s30nkBNHvF/k/zuLxIKgiUYMuQ=
-Received: from DB6PR05MB3223.eurprd05.prod.outlook.com (10.175.232.149) by
- DB6PR05MB3208.eurprd05.prod.outlook.com (10.170.221.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Fri, 17 May 2019 20:36:53 +0000
-Received: from DB6PR05MB3223.eurprd05.prod.outlook.com
- ([fe80::244a:2b0:6510:9864]) by DB6PR05MB3223.eurprd05.prod.outlook.com
- ([fe80::244a:2b0:6510:9864%7]) with mapi id 15.20.1900.010; Fri, 17 May 2019
- 20:36:53 +0000
-From:   Liming Sun <lsun@mellanox.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        David Woods <dwoods@mellanox.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: RE: [PATCH v5 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI
- definitions
-Thread-Topic: [PATCH v5 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI
- definitions
-Thread-Index: AQHVDNjmA7J6ytTaRUCpqARej1sfCqZvmtYAgAAkXdA=
-Date:   Fri, 17 May 2019 20:36:53 +0000
-Message-ID: <DB6PR05MB32235A6F891E438131471CE2A10B0@DB6PR05MB3223.eurprd05.prod.outlook.com>
-References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
- <1558115345-32476-2-git-send-email-lsun@mellanox.com>
- <20190517175926.GA24535@kroah.com>
-In-Reply-To: <20190517175926.GA24535@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=lsun@mellanox.com; 
-x-originating-ip: [216.156.69.42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 35e12a8b-a2d5-4486-ad43-08d6db07659b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB6PR05MB3208;
-x-ms-traffictypediagnostic: DB6PR05MB3208:
-x-microsoft-antispam-prvs: <DB6PR05MB32088AEE219F1402090F1876A10B0@DB6PR05MB3208.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0040126723
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(346002)(136003)(39860400002)(199004)(189003)(13464003)(6506007)(76176011)(52536014)(476003)(53546011)(305945005)(316002)(71190400001)(71200400001)(486006)(446003)(6436002)(102836004)(11346002)(33656002)(7736002)(7696005)(186003)(8936002)(54906003)(7416002)(81156014)(4326008)(25786009)(26005)(81166006)(9686003)(8676002)(99286004)(55016002)(6916009)(3846002)(6116002)(76116006)(73956011)(68736007)(229853002)(66066001)(64756008)(66446008)(66476007)(66556008)(66946007)(256004)(5660300002)(6246003)(14454004)(5024004)(86362001)(74316002)(2906002)(53936002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR05MB3208;H:DB6PR05MB3223.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eehj/6mjHxkwe2csO141joYjTOVeEPe07ugttp0iwSsKMoTPYTf0+Gn11T65xBqv2BljX0KQUvMyEWdwU8Y2RYMRJWawyL6CmvwUJA0whFHGYpVrUkqa/bHXwAwx0E0u499Nm5kCHbL+8I/lpK+X+lNXJziGFZpQg0SW/rh8bK5JWkCy56P1EKcxShfwEQZV+kGTM77vFYHWSLJ/rnE6oVODEm8vz5u+jlGTSRdtGhfOkJGcPZCqaO6svGUMtKvki91NdrULNUwqksWKE7L3B6HXySFt00PgJXVy//aHFZt5uHU1mx3ZubqSeF2ll7qnH+VyQYCrLlYde1w2eXsiI0Rsw0CXiRncv/alEMHLYsb5+8AvGaXupSLrJ2aPx/nkR1FVLF90WfCYc6przuVHyK5i4mIj4Wef0GqRB9ZG+Vc=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728997AbfEQUqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 16:46:03 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:42378 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727063AbfEQUqC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 16:46:02 -0400
+Received: (qmail 7470 invoked by uid 2102); 17 May 2019 16:46:01 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 May 2019 16:46:01 -0400
+Date:   Fri, 17 May 2019 16:46:01 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Christian Lamparter <chunkeey@gmail.com>
+cc:     Oliver Neukum <oneukum@suse.com>,
+        syzbot <syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com>,
+        <kvalo@codeaurora.org>, <davem@davemloft.net>,
+        <andreyknvl@google.com>, <syzkaller-bugs@googlegroups.com>,
+        <chunkeey@googlemail.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, Michael Wu <flamingice@sourmilk.net>
+Subject: Re: KASAN: use-after-free Read in p54u_load_firmware_cb
+In-Reply-To: <5014675.0cgHOJIxtM@debian64>
+Message-ID: <Pine.LNX.4.44L0.1905171644110.1430-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35e12a8b-a2d5-4486-ad43-08d6db07659b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 20:36:53.3800
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR05MB3208
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Greg for the comments!  Please see my response inline.
+On Fri, 17 May 2019, Christian Lamparter wrote:
 
-Regards,
-- Liming
+> On Monday, May 13, 2019 3:28:30 PM CEST Oliver Neukum wrote:
+> > On Mo, 2019-05-13 at 03:23 -0700, syzbot wrote:
+> > > syzbot has found a reproducer for the following crash on:
+> > > 
+> > > HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+> > > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=16b64110a00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=200d4bb11b23d929335f
+> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1634c900a00000
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com
+> > > 
+> > > usb 1-1: config 0 descriptor??
+> > > usb 1-1: reset high-speed USB device number 2 using dummy_hcd
+> > > usb 1-1: device descriptor read/64, error -71
+> > > usb 1-1: Using ep0 maxpacket: 8
+> > > usb 1-1: Loading firmware file isl3887usb
+> > > usb 1-1: Direct firmware load for isl3887usb failed with error -2
+> > > usb 1-1: Firmware not found.
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in p54u_load_firmware_cb.cold+0x97/0x13a  
+> > > drivers/net/wireless/intersil/p54/p54usb.c:936
+> > > Read of size 8 at addr ffff88809803f588 by task kworker/1:0/17
+> > 
+> > Hi,
+> > 
+> > it looks to me as if refcounting is broken.
+> > You should have a usb_put_dev() in p54u_load_firmware_cb() or in
+> > p54u_disconnect(), but not both.
+> 
+> There's more to that refcounting that meets the eye. Do you see that
+> request_firmware_nowait() in the driver? That's the async firmware
+> request call that get's completed by the p54u_load_firmware_cb()
+> So what's happening here is that the driver has to be protected
+> against rmmod when the driver is waiting for request_firmware_nowait
+> to "finally" callback, which depending on the system can be up to 
+> 60 seconds.
+> 
+> Now, what seems to be odd is that it's at line 936
+> > > BUG: KASAN: use-after-free in p54u_load_firmware_cb.cold+0x97/0x13a  
+> > > drivers/net/wireless/intersil/p54/p54usb.c:936
+> 
+> because if you put it in context:
+> 
+> |
+> |static void p54u_load_firmware_cb(const struct firmware *firmware,
+> |				  void *context)
+> |{
+> |	struct p54u_priv *priv = context;
+> |	struct usb_device *udev = priv->udev;
+> |	int err;
+> |
+> |	complete(&priv->fw_wait_load);
+> |	if (firmware) {
+> |		priv->fw = firmware;
+> |		err = p54u_start_ops(priv);
+> |	} else {
+> |		err = -ENOENT;
+> |		dev_err(&udev->dev, "Firmware not found.\n");
+> |	}
+> |
+> |	if (err) {
+> |>>	>>	struct device *parent = priv->udev->dev.parent; <<<<-- 936 is here
+> |
+> |		dev_err(&udev->dev, "failed to initialize device (%d)\n", err);
+> |
+> |		if (parent)
+> |			device_lock(parent);
+> |
+> |		device_release_driver(&udev->dev);
+> |		/*
+> |		 * At this point p54u_disconnect has already freed
+> |		 * the "priv" context. Do not use it anymore!
+> |		 */
+> |		priv = NULL;
+> |
+> |		if (parent)
+> |			device_unlock(parent);
+> |	}
+> |
+> |	usb_put_dev(udev);
+> |}
+> 
+> it seems very out of place, because at that line the device is still bound to
+> the driver! Only with device_release_driver in line 942, I could see that
+> something woulb be aray... !BUT! that's why we do have the extra
+> usb_get_dev(udev) in p54u_load_firmware() so we can do the usb_put_dev(udev) in
+> line 953 to ensure that nothing (like the rmmod I talked above) will interfere
+> until everything is done.
+> 
+> I've no idea what's wrong here, is gcc 9.0 aggressivly reording the put? Or is
+> something else going on with the sanitizers? Because this report does look
+> dogdy there!
+> 
+> (Note: p54usb has !strategic! dev_err/infos in place right around the
+> usb_get_dev/usb_put_dev so we can sort of tell the refvalue of the udev
+> and it all seems to be correct from what I can gleam) 
 
-> -----Original Message-----
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Sent: Friday, May 17, 2019 1:59 PM
-> To: Liming Sun <lsun@mellanox.com>
-> Cc: Andy Shevchenko <andy@infradead.org>; Darren Hart <dvhart@infradead.o=
-rg>; Vadim Pasternak <vadimp@mellanox.com>; David
-> Woods <dwoods@mellanox.com>; platform-driver-x86@vger.kernel.org; linux-k=
-ernel@vger.kernel.org; David S. Miller
-> <davem@davemloft.net>; Mauro Carvalho Chehab <mchehab+samsung@kernel.org>=
-; Jonathan Cameron
-> <Jonathan.Cameron@huawei.com>; Nicolas Ferre <nicolas.ferre@microchip.com=
->; Paul E. McKenney <paulmck@linux.ibm.com>
-> Subject: Re: [PATCH v5 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI =
-definitions
->=20
-> On Fri, May 17, 2019 at 01:49:05PM -0400, Liming Sun wrote:
-> > This commit adds the ABI definitions exposed to userspace for
-> > the platform/mellanox/mlxbf-bootctl driver.
-> >
-> > Reviewed-by: Vadim Pasternak <vadimp@mellanox.com>
-> > Signed-off-by: Liming Sun <lsun@mellanox.com>
-> > ---
-> >  .../ABI/testing/sysfs-platform-mellanox-bootctl    | 58 ++++++++++++++=
-++++++++
-> >  MAINTAINERS                                        |  1 +
-> >  2 files changed, 59 insertions(+)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-b=
-ootctl
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl =
-b/Documentation/ABI/testing/sysfs-platform-mellanox-
-> bootctl
-> > new file mode 100644
-> > index 0000000..19a14db
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
-> > @@ -0,0 +1,58 @@
-> > +What:		/sys/bus/platform/drivers/mlxbf-bootctl/lifecycle_state
-> > +Date:		May 2019
-> > +KernelVersion:	5.3
-> > +Contact:	"Liming Sun <lsun@mellanox.com>"
-> > +Description:
-> > +		The Life-cycle state of the SoC, which could be one of the
-> > +		following values.
-> > +		  Production - Production state and can be updated to secure
-> > +		  GA Secured - Secure chip and not able to change state
-> > +		  GA Non-Secured - Non-Secure chip and not able to change state
-> > +		  RMA - Return Merchandise Authorization
->=20
-> A "driver" does not have a lifecycle state, a "device" does.
->=20
-> You are putting all of these attributes in the wrong place.  Put them on
-> your device please, not the driver.  driver-specific attributes are
-> _VERY_ rare, and only for things that can modify/show for all devices
-> attached to that driver.
+I agree; it doesn't seem to make sense.  The nice thing about syzbot, 
+though, is you can ask it to run a debugging test for you.  Let's start 
+by making sure that the faulty address really is &udev->dev.parent.
 
-This driver is running on the ARM processor of the SoC. The 'device' is
-the SoC itself. That's to say, there is only one device here attached to
-the driver and the driver state will also be the device state.
+Alan
 
-This interface has been used by user-space applications for a couple of
-releases. It'll be great if it could stay in such way for compatibility. Pl=
-ease
-advise if this is strongly preferred to move them under devices.
 
->=20
-> thanks,
->=20
-> greg k-h
+#syz test: https://github.com/google/kasan.git usb-fuzzer
+
+ drivers/net/wireless/intersil/p54/p54usb.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+Index: usb-devel/drivers/net/wireless/intersil/p54/p54usb.c
+===================================================================
+--- usb-devel.orig/drivers/net/wireless/intersil/p54/p54usb.c
++++ usb-devel/drivers/net/wireless/intersil/p54/p54usb.c
+@@ -923,6 +923,7 @@ static void p54u_load_firmware_cb(const
+ 	struct usb_device *udev = priv->udev;
+ 	int err;
+ 
++	pr_info("%s: priv->udev = %px\n", __func__, udev);
+ 	complete(&priv->fw_wait_load);
+ 	if (firmware) {
+ 		priv->fw = firmware;
+@@ -969,6 +970,8 @@ static int p54u_load_firmware(struct iee
+ 	if (i < 0)
+ 		return i;
+ 
++	dev_info(udev, "%s: udev @ %px, dev.parent @ %px\n",
++			__func__, udev, &udev->dev.parent);
+ 	dev_info(&priv->udev->dev, "Loading firmware file %s\n",
+ 	       p54u_fwlist[i].fw);
+ 
+
