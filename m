@@ -2,105 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C02522019
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4689922060
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:37:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbfEQWKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 18:10:52 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:42054 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbfEQWKw (ORCPT
+        id S1729131AbfEQWhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 18:37:08 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:38982 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728179AbfEQWhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 18:10:52 -0400
-Received: by mail-pg1-f170.google.com with SMTP id 145so3905070pgg.9
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 15:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ibv3vqoAL5W2pTRfdVDs8V03jMw/WmL1P5VFdR41BZI=;
-        b=SmqH7Bd8JB+9uk8UZhIPPj9bG3o2svySo3izE7dOT5ssqTVDyd8hrwauvxPA2cfJMn
-         pHs671bYSHVziplhLxrxDq6nfyMqcSC7mLVvWKomKONdARbLCzGgJ6JFDAFcEVnkS3hJ
-         X9q5EEbDYejEobDZLHlYtIGdlRlNhLLzL5GoKQ3JjZSy4sOG8+0QtWQjrWMDqPyZgrr1
-         J64uHCK2I9h9qxwuhuePwd++YXme59YHyQ2KJJOklwC18iiq1la8Ljg7mL0C2Sfl55Bl
-         nK1h0DmbwejZashPVCUFZdWmhJDE9u9WdtQ8hOIhKskJ3GBEdy+/21qVInxemuKHXBCR
-         hmtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ibv3vqoAL5W2pTRfdVDs8V03jMw/WmL1P5VFdR41BZI=;
-        b=XOcVvdYg8d5FHVMfHeMe9rueLMU8KSBsijrouxsIudqEYLbLUSbOelnh4DDhAqbqkV
-         5oAFyb8+lYsS/1hB+ti7qWg54+pb0+ZJ2cJUMyVGsBZ12XyOCFJJr7OmBx8oAsPbqsfX
-         8C3mM2M1IW1yQjAFXu6xViSc4n6he9LdGr9ENXZCIAGMxHXtSBDw6GdTsgO1O+ul9x4o
-         IZ4tHlI7f8/KEOpbGxPqcFb0uXaC8l6TAQj+MANIiCKh4cjXoRxxxjCm94Yt0D9xPBJH
-         UuOMuxz/ga3KRkDbOn7Hx1S3PCBISshC8zjKFFuGJOYGxVF+gE9NqIeAnxWhPspCfLsP
-         7Jtw==
-X-Gm-Message-State: APjAAAXpE4a+AI44jyKwh+PxaRTF6Nv+iyvXu+1wtRY33PprQnC537GK
-        nduwmSgsT89bfDej1/8n4d3L++1B
-X-Google-Smtp-Source: APXvYqxcpCQQ7qwuZzEzLwn11TXn7H3NL+xJnMg8vMSqyN5KKtb6T3TM/KUaWiL/Bt9gR9jQDvI7sQ==
-X-Received: by 2002:a62:6dc6:: with SMTP id i189mr62976146pfc.155.1558131051633;
-        Fri, 17 May 2019 15:10:51 -0700 (PDT)
-Received: from tw-172-25-31-76.office.twttr.net ([8.25.197.24])
-        by smtp.gmail.com with ESMTPSA id k30sm3991299pgl.89.2019.05.17.15.10.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 May 2019 15:10:50 -0700 (PDT)
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [Patch] perf stat: always separate stalled cycles per insn
-Date:   Fri, 17 May 2019 15:10:39 -0700
-Message-Id: <20190517221039.8975-1-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Fri, 17 May 2019 18:37:08 -0400
+X-Greylist: delayed 1255 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 18:37:06 EDT
+Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hRl91-000BD0-LI; Fri, 17 May 2019 18:16:03 -0400
+To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, paolo.valente@linaro.org, jack@suse.cz,
+        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
+        anishs@vmware.com, srivatsab@vmware.com,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Subject: CFQ idling kills I/O performance on ext4 with blkio cgroup controller
+Message-ID: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+Date:   Fri, 17 May 2019 15:16:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "stalled cycles per insn" is appended to "instructions" when
-the CPU has this hardware counter directly. We should always make it
-a separate line, which also aligns to the output when we hit the
-"if (total && avg)" branch.
 
-Before:
-$ sudo perf stat --all-cpus --field-separator , --log-fd 1 -einstructions,cycles -- sleep 1
-4565048704,,instructions,64114578096,100.00,1.34,insn per cycle,,
-3396325133,,cycles,64146628546,100.00,,
+Hi,
 
-After:
-$ sudo ./tools/perf/perf stat --all-cpus --field-separator , --log-fd 1 -einstructions,cycles -- sleep 1
-6721924,,instructions,24026790339,100.00,0.22,insn per cycle
-,,,,,0.00,stalled cycles per insn
-30939953,,cycles,24025512526,100.00,,
+One of my colleagues noticed upto 10x - 30x drop in I/O throughput
+running the following command, with the CFQ I/O scheduler:
 
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- tools/perf/util/stat-shadow.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflags=dsync
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 83d8094be4fe..5c5e012e99c4 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -800,7 +800,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 					"stalled cycles per insn",
- 					ratio);
- 		} else if (have_frontend_stalled) {
--			print_metric(config, ctxp, NULL, NULL,
-+			out->new_line(config, ctxp);
-+			print_metric(config, ctxp, NULL, "%7.2f ",
- 				     "stalled cycles per insn", 0);
- 		}
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_BRANCH_MISSES)) {
--- 
-2.21.0
+Throughput with CFQ: 60 KB/s
+Throughput with noop or deadline: 1.5 MB/s - 2 MB/s
 
+I spent some time looking into it and found that this is caused by the
+undesirable interaction between 4 different components:
+
+- blkio cgroup controller enabled
+- ext4 with the jbd2 kthread running in the root blkio cgroup
+- dd running on ext4, in any other blkio cgroup than that of jbd2
+- CFQ I/O scheduler with defaults for slice_idle and group_idle
+
+
+When docker is enabled, systemd creates a blkio cgroup called
+system.slice to run system services (and docker) under it, and a
+separate blkio cgroup called user.slice for user processes. So, when
+dd is invoked, it runs under user.slice.
+
+The dd command above includes the dsync flag, which performs an
+fdatasync after every write to the output file. Since dd is writing to
+a file on ext4, jbd2 will be active, committing transactions
+corresponding to those fdatasync requests from dd. (In other words, dd
+depends on jdb2, in order to make forward progress). But jdb2 being a
+kernel thread, runs in the root blkio cgroup, as opposed to dd, which
+runs under user.slice.
+
+Now, if the I/O scheduler in use for the underlying block device is
+CFQ, then its inter-queue/inter-group idling takes effect (via the
+slice_idle and group_idle parameters, both of which default to 8ms).
+Therefore, everytime CFQ switches between processing requests from dd
+vs jbd2, this 8ms idle time is injected, which slows down the overall
+throughput tremendously!
+
+To verify this theory, I tried various experiments, and in all cases,
+the 4 pre-conditions mentioned above were necessary to reproduce this
+performance drop. For example, if I used an XFS filesystem (which
+doesn't use a separate kthread like jbd2 for journaling), or if I dd'ed
+directly to a block device, I couldn't reproduce the performance
+issue. Similarly, running dd in the root blkio cgroup (where jbd2
+runs) also gets full performance; as does using the noop or deadline
+I/O schedulers; or even CFQ itself, with slice_idle and group_idle set
+to zero.
+
+These results were reproduced on a Linux VM (kernel v4.19) on ESXi,
+both with virtualized storage as well as with disk pass-through,
+backed by a rotational hard disk in both cases. The same problem was
+also seen with the BFQ I/O scheduler in kernel v5.1.
+
+Searching for any earlier discussions of this problem, I found an old
+thread on LKML that encountered this behavior [1], as well as a docker
+github issue [2] with similar symptoms (mentioned later in the
+thread).
+
+So, I'm curious to know if this is a well-understood problem and if
+anybody has any thoughts on how to fix it.
+
+Thank you very much!
+
+
+[1]. https://lkml.org/lkml/2015/11/19/359
+
+[2]. https://github.com/moby/moby/issues/21485
+     https://github.com/moby/moby/issues/21485#issuecomment-222941103
+
+Regards,
+Srivatsa
