@@ -2,118 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0967D21AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 997DF21ABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbfEQPfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:35:13 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43593 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728778AbfEQPfM (ORCPT
+        id S1729078AbfEQPge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 11:36:34 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:41325 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728520AbfEQPge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:35:12 -0400
-Received: by mail-oi1-f195.google.com with SMTP id t187so5443813oie.10;
-        Fri, 17 May 2019 08:35:12 -0700 (PDT)
+        Fri, 17 May 2019 11:36:34 -0400
+Received: by mail-lf1-f43.google.com with SMTP id d8so5644295lfb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 08:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oZcAaE96cSVFWi9Z2GMlWClyPZwgW4ysxzcgvnYID2w=;
+        b=ukQJJ6QWk/wEWo45qlJo55ycIMOzrNaD/adNVJiPR6LgZz+jATCHfkKEwDA5e6hWHq
+         1oPQQZKdJU+V4YSjNARNb4tzmjZ53aLzUXNsz/agIMwWcs8psk5gVQdTXaRGG0u5HgGb
+         oUqtYERB1ptM6flPp0Unimi/ZV3qiNFfql7uAdSPqYGwbielDc/SeCk0JzYCKJeNqIAJ
+         Rpf/lEX3lAetp1HdXFi6a7Y9rFbNLj+gQvdnRzhhR4BEKMDQ5jXDavCqgEI0+K34WD34
+         qKRdivF0KpiCsHavuTnnTp68NHCkJY5WRlfmpzwwvqGp3uSLg3NQb4Eu1ndB98xRGI0s
+         3s/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5PE46hE33zglQ6gPxNshGw7b/oA/SQzmRJJFuwowqkA=;
-        b=EL7yUyB4iZTuhOJtYesF77hQaW6f48FH1ufvNTSOMkYRsBA+6ojpTy3ZrN1frzWAWq
-         sgS8yQvwZm0OucwaIHQvdflvCUnnd3bOHDjCM72btJnQJANf0pRpCEQi1Y5fe83qgTBt
-         VIKlzp2B7PmoC0G3T2zGOVpMXPnWPY1KbgxL0nfXx7dp64MCWPp6KWoyS8Y3GHLKD7BV
-         dp7XYvzfsZhLhGKqObzC6G+c4RnS4kF3d3dD57CmbNAzrblqu6py1sm0WOeA7d2i1iJL
-         V3W5JPQ+IgXtfPAaV+9YAt4NY8qzmJZOGEFOdM12XdwZJ5ptCqLnNXCvu0G41Pf8R8+H
-         7CFA==
-X-Gm-Message-State: APjAAAVUuLVyIB7sUIfUfyVGrr/rDszqRzUre0tuj4SqCbOTQEpZI6AR
-        CgUICpHQqUL/bviQRMoDjQ==
-X-Google-Smtp-Source: APXvYqxzyNii8xeDPTeNjFjj0HEZVfsTow5C33TurWu79HZJioYQxPo0VtxfgUz8a1DtF0zfb47+CA==
-X-Received: by 2002:aca:3093:: with SMTP id w141mr85093oiw.173.1558107311782;
-        Fri, 17 May 2019 08:35:11 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f5sm3596859oih.39.2019.05.17.08.35.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 17 May 2019 08:35:11 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: arm: Convert Alpine board/soc bindings to json-schema
-Date:   Fri, 17 May 2019 10:35:10 -0500
-Message-Id: <20190517153510.13647-1-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oZcAaE96cSVFWi9Z2GMlWClyPZwgW4ysxzcgvnYID2w=;
+        b=LK04AbjQgls7e/krU+M2MEy64dZLAQad+lLDz74PBF6zV4SQEFdo1QlL3tGJZj1YFA
+         cxr164mIve6fdBzRU+7UOmOn4b08ra75K7bnlz63+Sc6J6nkBBvrsoOrGKrmPCQpeKbT
+         u/SV9T0163gw86gru0T0cYJsT5+0zd1PgMbnE85+t/no2SZ9MA1zLk2bnFxi4Htw42OG
+         D2+KzR/+lbAGkJs2BsGrlj8qyGCPTMZGZiHqIaYtJ7qSlCpcP254tIhWKJbyAVWnEFCR
+         cmsgbiJg7zc5dVEeq9qgIV1zx1iSMPRvf95Bp0yy5IcDi2w0yBrSNjI2MV7v6tDXy17i
+         wzAA==
+X-Gm-Message-State: APjAAAUYoe1aUjvZswzuKVpXDkIJqAoCdX83t9/J9786WOyc/3eLrK7A
+        jX8M5oR2OOOeXrqszb3LIMZFTm4h3lsCkG/b4aQgsg==
+X-Google-Smtp-Source: APXvYqz64d2LvnJfbN5s9Gb1Iyfpq0GgEc7anMX6fK9nGSMysnHpVM4aVTsGauTros3Zi5dYfKdhTRyzoN/v9tBQ1aQ=
+X-Received: by 2002:a19:7d42:: with SMTP id y63mr20552876lfc.54.1558107391166;
+ Fri, 17 May 2019 08:36:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CACT4Y+Z9GcY-d19ROSXgAq4-d_hOBVArfgGV1VdYcYD_X1coPQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+Z9GcY-d19ROSXgAq4-d_hOBVArfgGV1VdYcYD_X1coPQ@mail.gmail.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Fri, 17 May 2019 08:36:19 -0700
+Message-ID: <CAHRSSEw7QAfuKsQhHNZcwizn5zEVA6CjAdO7qh69g3fkXrk7DA@mail.gmail.com>
+Subject: Re: binder stress testing
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Alpine SoC bindings to DT schema format using json-schema.
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, May 17, 2019 at 3:26 AM
+To: Greg Kroah-Hartman, Arve Hj=C3=B8nnev=C3=A5g, Todd Kjos, Martijn Coenen=
+,
+Joel Fernandes, Christian Brauner, open list:ANDROID DRIVERS, LKML
+Cc: syzkaller
 
-Cc: Tsahee Zidenberg <tsahee@annapurnalabs.com>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/al,alpine.txt     | 16 --------------
- .../devicetree/bindings/arm/al,alpine.yaml    | 21 +++++++++++++++++++
- 2 files changed, 21 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/al,alpine.txt
- create mode 100644 Documentation/devicetree/bindings/arm/al,alpine.yaml
+> Hi,
+>
+> I have 2 questions re drivers/android/binder.c stress testing.
+>
+> 1. Are there any docs on the kernel interface? Or some examples on how
+> to use it and reference syscall sequences to make it do something
+> meaningful?
+> I hopefully figured out struct layouts and offsets of objects thing,
+> but I still can't figure out handles, pointers, nodes, pointer to
+> nodes... pointer to data (?), references, cookies and where does one
+> get valid values for these.
 
-diff --git a/Documentation/devicetree/bindings/arm/al,alpine.txt b/Documentation/devicetree/bindings/arm/al,alpine.txt
-deleted file mode 100644
-index d00debe2e86f..000000000000
---- a/Documentation/devicetree/bindings/arm/al,alpine.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Annapurna Labs Alpine Platform Device Tree Bindings
-----------------------------------------------------------------
--
--Boards in the Alpine family shall have the following properties:
--
--* Required root node properties:
--compatible: must contain "al,alpine"
--
--* Example:
--
--/ {
--	model = "Annapurna Labs Alpine Dev Board";
--	compatible = "al,alpine";
--
--	...
--}
-diff --git a/Documentation/devicetree/bindings/arm/al,alpine.yaml b/Documentation/devicetree/bindings/arm/al,alpine.yaml
-new file mode 100644
-index 000000000000..a70dff277e05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/al,alpine.yaml
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/al,alpine.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Annapurna Labs Alpine Platform Device Tree Bindings
-+
-+maintainers:
-+  - Tsahee Zidenberg <tsahee@annapurnalabs.com>
-+  - Antoine Tenart <antoine.tenart@bootlin.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: al,alpine
-+  model:
-+    items:
-+      - const: "Annapurna Labs Alpine Dev Board"
-+
-+...
--- 
-2.20.1
+The kernel interface is not well documented since it isn't intended to
+be used apart from libbinder. The best example for your purposes is
+probably the binderDriverInterfaceTest which you can find at
+https://android.googlesource.com/platform/frameworks/native/+/refs/heads/ma=
+ster/libs/binder/tests/binderDriverInterfaceTest.cpp.
 
+The libbinder source is at
+https://android.googlesource.com/platform/frameworks/native/+/refs/heads/ma=
+ster/libs/binder.
+
+>
+> 2. In my tests any transaction breaks binder device until the next reboot=
+.
+> If I open binder device twice, mmap, set context and then the process
+> dies, then everything it released fine, in particular the context
+> (context_mgr_node gone). So the device is ready for a next test:
+>
+> [   40.247970][ T6239] binder: binder_open: 6238:6239
+> [   40.250819][ T6239] binder: 6238:6239 node 1 u0000000000000000
+> c0000000000000000 created
+> [   40.253365][ T6239] binder: binder_mmap: 6238 200a0000-200a2000 (8
+> K) vma f9 pagep 8000000000000025
+> [   40.256454][ T6239] binder: binder_open: 6238:6239
+> [   40.259604][ T6239] binder: binder_mmap: 6238 200c0000-200c2000 (8
+> K) vma f9 pagep 8000000000000025
+> [   40.271526][ T6238] binder: 6238 close vm area 200a0000-200a2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [   40.273113][ T6238] binder: 6238 close vm area 200c0000-200c2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [   40.275058][   T17] binder: binder_flush: 6238 woke 0 threads
+> [   40.275997][   T17] binder: binder_flush: 6238 woke 0 threads
+> [   40.276968][   T17] binder: binder_deferred_release: 6238 threads
+> 0, nodes 0 (ref 0), refs 0, active transactions 0
+> [   40.278626][   T17] binder: binder_deferred_release: 6238
+> context_mgr_node gone
+> [   40.279756][   T17] binder: binder_deferred_release: 6238 threads
+> 1, nodes 1 (ref 0), refs 0, active transactions 0
+>
+>
+> However, if I also send a transaction between these fd's, then
+> context_mgr_node is not released:
+>
+> [  783.851403][ T6167] binder: binder_open: 6166:6167
+> [  783.858801][ T6167] binder: 6166:6167 node 1 u0000000000000000
+> c0000000000000000 created
+> [  783.862458][ T6167] binder: binder_mmap: 6166 200a0000-200a2000 (8
+> K) vma f9 pagep 8000000000000025
+> [  783.865777][ T6167] binder: binder_open: 6166:6167
+> [  783.867892][ T6167] binder: binder_mmap: 6166 200c0000-200c2000 (8
+> K) vma f9 pagep 8000000000000025
+> [  783.870810][ T6167] binder: 6166:6167 write 76 at 0000000020000180,
+> read 0 at 0000000020000300
+> [  783.872211][ T6167] binder: 6166:6167 BC_TRANSACTION 2 -> 6166 -
+> node 1, data 0000000020000200-00000000200002c0 size 88-24-16
+> [  783.873819][ T6167] binder: 6166:6167 node 3 u0000000000000000
+> c0000000000000000 created
+> [  783.875032][ T6167] binder: 6166 new ref 4 desc 1 for node 3
+> [  783.875860][ T6167] binder:         node 3 u0000000000000000 -> ref 4 =
+desc 1
+> [  783.876868][ T6167] binder: 6166:6167 wrote 76 of 76, read return 0 of=
+ 0
+> [  783.886714][ T6167] binder: 6166 close vm area 200a0000-200a2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [  783.888161][ T6167] binder: 6166 close vm area 200c0000-200c2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [  783.890134][   T27] binder: binder_flush: 6166 woke 0 threads
+> [  783.891036][   T27] binder: binder_flush: 6166 woke 0 threads
+> [  783.892027][ T2903] binder: release 6166:6167 transaction 2 out, still=
+ active
+> [  783.893097][ T2903] binder: unexpected work type, 4, not freed
+> [  783.893947][ T2903] binder: undelivered TRANSACTION_COMPLETE
+> [  783.894849][ T2903] binder: node 3 now dead, refs 1, death 0
+> [  783.895717][ T2903] binder: binder_deferred_release: 6166 threads
+> 1, nodes 1 (ref 1), refs 0, active transactions 1
+>
+>
+> And all subsequent tests will fail because "BINDER_SET_CONTEXT_MGR
+> already set" presumably to the now unrecoverably dead process:
+>
+> [  831.085174][ T6191] binder: binder_open: 6190:6191
+> [  831.087450][ T6191] binder: BINDER_SET_CONTEXT_MGR already set
+> [  831.088910][ T6191] binder: 6190:6191 ioctl 4018620d 200000c0 returned=
+ -16
+> [  831.090626][ T6191] binder: binder_mmap: 6190 200a0000-200a2000 (8
+> K) vma f9 pagep 8000000000000025
+> [  831.092783][ T6191] binder: binder_open: 6190:6191
+> [  831.094076][ T6191] binder: binder_mmap: 6190 200c0000-200c2000 (8
+> K) vma f9 pagep 8000000000000025
+> [  831.096218][ T6191] binder: 6190:6191 write 76 at 0000000020000180,
+> read 0 at 0000000020000300
+> [  831.097606][ T6191] binder: 6190:6191 BC_TRANSACTION 5 -> 6166 -
+> node 1, data 0000000020000200-00000000200002c0 size 88-24-16
+> [  831.099251][ T6191] binder_alloc: 6166: binder_alloc_buf, no vma
+> [  831.100433][ T6191] binder: 6190:6191 transaction failed 29189/-3,
+> size 88-24 line 3157
+> [  831.101559][ T6191] binder: 6190:6191 wrote 76 of 76, read return 0 of=
+ 0
+> [  831.110317][ T6191] binder: 6190 close vm area 200a0000-200a2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [  831.111752][ T6191] binder: 6190 close vm area 200c0000-200c2000 (8
+> K) vma 180200d9 pagep 8000000000000025
+> [  831.113266][ T3344] binder: binder_flush: 6190 woke 0 threads
+> [  831.114147][ T3344] binder: binder_flush: 6190 woke 0 threads
+> [  831.115087][ T3344] binder: undelivered TRANSACTION_ERROR: 29189
+> [  831.115991][ T3344] binder: binder_deferred_release: 6190 threads
+> 1, nodes 0 (ref 0), refs 0, active transactions 0
+> [  831.117525][ T3344] binder: binder_deferred_release: 6190 threads
+> 1, nodes 0 (ref 0), refs 0, active transactions 0
+>
+>
+> The question is: if processes that opened the device and ever mapped
+> it are now completely gone, should it reset the original state when
+> context can be bound again? Is it a bug in binder that it does not? If
+> so, is there some kind of temp work-around for this?
+
+If all the processes that opened the device are gone, everything
+should be cleaned up and leave binder in a useable state. When the
+device is in this state, can you dump out
+/sys/debug/kernel/binder/state and send it to me?
+
+>
+> Thanks
