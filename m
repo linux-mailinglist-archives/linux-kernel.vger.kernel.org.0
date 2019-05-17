@@ -2,136 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D6E72190A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 15:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B37D21910
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 15:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbfEQNVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 09:21:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43528 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbfEQNVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 09:21:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72B8A1715;
-        Fri, 17 May 2019 06:21:29 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECE1D3F5AF;
-        Fri, 17 May 2019 06:21:27 -0700 (PDT)
-Date:   Fri, 17 May 2019 14:21:25 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, acme@kernel.org
-Subject: Re: [PATCH 3/6] arm64: pmu: Add function implementation to update
- event index in userpage.
-Message-ID: <20190517132124.GB48991@lakrids.cambridge.arm.com>
-References: <20190516132148.10085-1-raphael.gault@arm.com>
- <20190516132148.10085-4-raphael.gault@arm.com>
+        id S1728849AbfEQNW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 09:22:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728100AbfEQNW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 09:22:28 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A893D20833;
+        Fri, 17 May 2019 13:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558099348;
+        bh=9V4P/CjYVKh59IiUM4G5zfY9ceZXaeiacs7WeVytWlQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A5S+u9PGyBqLrb9GRUGk7Inekez2CVDrhAB4QI+jAeiuFtKt5njEWRkvy1jQSgyeH
+         cFAhtgP13dJlaMkXUmPdxFPHSg2aroqOtYXC03JnTBVID6LFH6CvQH4PhZisIcZWzo
+         c2NnDOqz7sV+zhZ2jRqvigDj4014nhU1Ud3bMgt4=
+Date:   Fri, 17 May 2019 09:22:26 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com
+Subject: Re: [PATCH v3 1/2] ftpm: firmware TPM running in TEE
+Message-ID: <20190517132226.GB11972@sasha-vm>
+References: <20190415155636.32748-1-sashal@kernel.org>
+ <20190415155636.32748-2-sashal@kernel.org>
+ <20190515081250.GA7708@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190516132148.10085-4-raphael.gault@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190515081250.GA7708@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 02:21:45PM +0100, Raphael Gault wrote:
-> In order to be able to access the counter directly for userspace,
-> we need to provide the index of the counter using the userpage.
-> We thus need to override the event_idx function to retrieve and
-> convert the perf_event index to armv8 hardware index.
+On Wed, May 15, 2019 at 11:12:50AM +0300, Jarkko Sakkinen wrote:
+>On Mon, Apr 15, 2019 at 11:56:35AM -0400, Sasha Levin wrote:
+>> This patch adds support for a software-only implementation of a TPM
+>> running in TEE.
+>>
+>> There is extensive documentation of the design here:
+>> https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
+>>
+>> As well as reference code for the firmware available here:
+>> https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
+>
+>The commit message should include at least a brief description what TEE
+>is.
 
-It would be worth noting that since the arm_pmu framework can be used
-with other versions of the PMU architecture which could not permit safe
-userspace access, we allow the arch code to opt-in with the
-ARMPMU_EL0_RD_CNTR flag.
+The whole TEE subsystem is already well documented in our kernel tree
+(https://www.kernel.org/doc/Documentation/tee.txt) and beyond. I can add
+a reference to the doc here, but I'd rather not add a bunch of TEE
+related comments as you suggest later in your review.
 
-> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
-> ---
->  arch/arm64/kernel/perf_event.c |  4 ++++
->  drivers/perf/arm_pmu.c         | 10 ++++++++++
->  include/linux/perf/arm_pmu.h   |  2 ++
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-> index 6164d389eed6..e6316f99f66b 100644
-> --- a/arch/arm64/kernel/perf_event.c
-> +++ b/arch/arm64/kernel/perf_event.c
-> @@ -890,6 +890,8 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
->  	if (armv8pmu_event_is_64bit(event))
->  		event->hw.flags |= ARMPMU_EVT_64BIT;
->  
-> +	event->hw.flags |= ARMPMU_EL0_RD_CNTR;
-> +
->  	/* Only expose micro/arch events supported by this PMU */
->  	if ((hw_event_id > 0) && (hw_event_id < ARMV8_PMUV3_MAX_COMMON_EVENTS)
->  	    && test_bit(hw_event_id, armpmu->pmceid_bitmap)) {
-> @@ -1188,6 +1190,8 @@ void arch_perf_update_userpage(struct perf_event *event,
->  	 */
->  	freq = arch_timer_get_rate();
->  	userpg->cap_user_time = 1;
-> +	userpg->cap_user_rdpmc =
-> +		!!(event->hw.flags & ARMPMU_EL0_RD_CNTR);
+The same way a PCI device driver doesn't describe what PCI is in it's
+code, we shouldn't be doing the same for TEE here.
 
-This is under 80 columns when placed on a single line, so it doesn't
-need to be split here.
+>> +
+>> +#include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/acpi.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/tee_drv.h>
+>> +#include <linux/uuid.h>
+>> +#include <linux/tpm.h>
+>> +
+>> +#include "tpm.h"
+>> +#include "tpm_ftpm_tee.h"
+>> +
+>> +#define DRIVER_NAME "ftpm-tee"
+>> +
+>> +/* TA_FTPM_UUID: BC50D971-D4C9-42C4-82CB-343FB7F37896 */
+>> +static const uuid_t ftpm_ta_uuid =
+>> +	UUID_INIT(0xBC50D971, 0xD4C9, 0x42C4,
+>> +		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+>
+>Just wondering why prefixes are here in different order in the comment
+>and code.
 
->  
->  	clocks_calc_mult_shift(&userpg->time_mult, &shift, freq,
->  			NSEC_PER_SEC, 0);
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index eec75b97e7ea..3f4c2ec7ff89 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -777,6 +777,15 @@ static void cpu_pmu_destroy(struct arm_pmu *cpu_pmu)
->  					    &cpu_pmu->node);
->  }
->  
-> +
-> +static int armpmu_event_idx(struct perf_event *event)
-> +{
-> +	if (!(event->hw.flags & ARMPMU_EL0_RD_CNTR))
-> +		return 0;
-> +
-> +	return event->hw.idx;
+No prefixes, this is a completely randomly generated UUID.
 
-I think this needs to remap ARMV8_IDX_CYCLE_COUNTER to 32, to match the
-offset applie to the rest of counter indices.
+I'll address the rest of your comments in the next ver.
 
-Otherwise, this looks good to me.
-
+--
 Thanks,
-Mark.
-
-> +}
-> +
->  static struct arm_pmu *__armpmu_alloc(gfp_t flags)
->  {
->  	struct arm_pmu *pmu;
-> @@ -803,6 +812,7 @@ static struct arm_pmu *__armpmu_alloc(gfp_t flags)
->  		.start		= armpmu_start,
->  		.stop		= armpmu_stop,
->  		.read		= armpmu_read,
-> +		.event_idx	= armpmu_event_idx,
->  		.filter_match	= armpmu_filter_match,
->  		.attr_groups	= pmu->attr_groups,
->  		/*
-> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-> index 4641e850b204..3bef390c1069 100644
-> --- a/include/linux/perf/arm_pmu.h
-> +++ b/include/linux/perf/arm_pmu.h
-> @@ -30,6 +30,8 @@
->   */
->  /* Event uses a 64bit counter */
->  #define ARMPMU_EVT_64BIT		1
-> +/* Allow access to hardware counter from userspace */
-> +#define ARMPMU_EL0_RD_CNTR		2
->  
->  #define HW_OP_UNSUPPORTED		0xFFFF
->  #define C(_x)				PERF_COUNT_HW_CACHE_##_x
-> -- 
-> 2.17.1
-> 
+Sasha
