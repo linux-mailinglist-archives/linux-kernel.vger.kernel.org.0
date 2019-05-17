@@ -2,83 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B1B21D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6745421D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbfEQSD1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:03:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60836 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbfEQSD1 (ORCPT
+        id S1729207AbfEQSMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:12:21 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40543 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbfEQSMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:03:27 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6CC8660709; Fri, 17 May 2019 18:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558116206;
-        bh=IbnAGN0DIJaVE08Oe3a19rRp+gftn7Ija/z3WCGwkO0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NDgI8+6CYqnF8diJemuqlcWXw/rstDhr6EhAJpNjtQViz20zqZfb/HRBA409/ptji
-         BK9U78AP6MF65458eeJ2yCLPVSqmi/icnfLP3rfEaBTRLoB+toygC420X2ylZmKUIn
-         quFWas97jXQ2y5CfxNmqUzpL9byhGtv9hgbqwL2Y=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id CA38F60709;
-        Fri, 17 May 2019 18:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558116205;
-        bh=IbnAGN0DIJaVE08Oe3a19rRp+gftn7Ija/z3WCGwkO0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FQuv3ev3EX9qWa2YCFlsJLLzSG2NzmK3M4Bqbi5/hsQe6ONxTcLSituDiE5n7nNb0
-         n/d7lWdlwjS0dTCJla9dRqo+2otFs7mN92+PUVBuYjQgl5IwvVKNOZ40uE2tHJkPnH
-         PjGQOez5db7UBgcDNXJXLUC8eahmjBe6eHaz1h1Y=
+        Fri, 17 May 2019 14:12:21 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d15so7088173ljc.7
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GqLsKGWePcHeYkjL6WcpBkvnp3m99gvexZby0QRo7VY=;
+        b=FLSkmQlUFMZbLyvTJKsJsbzUTzwJ007awR+MJFBzBBIfeyUsLSpio9pw1egk8rl+1T
+         GED5nIz0MTZm4wj6hHTQGkolwiBKx+3k5poKvYAAORvXGNs8I19OUvhU2aPU09ae6kVb
+         04zIZrSmhGYDYVb200BkHqJrTSJZ0aDJZNgqY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GqLsKGWePcHeYkjL6WcpBkvnp3m99gvexZby0QRo7VY=;
+        b=HR8KCxPEJnImsNPcn9PB0QLX2vvoCSo4VbsRud/pNotCJgyjlb+gBD2NQHRImwO7qj
+         EpyG9JfmPHGl2R5LU98QEuZxd5fkcvTwmy8/tHdSLENOIBpmqTpch/ylAABQ7L+F3b4H
+         kO/B9Q0G5mLPURpOT2iBmD/3iV49zwxqggfh0IXmkK2YeedahZHUKAPv7estHHq2n/ny
+         3X3wTV5fHyIHaMt22Vl7bp5xs8vpMq6qXVaG2XscIWZob2d3N7st8T6Ps4AiMo2dcTd8
+         0CdVGpdJAMdSpi0z4OScpfmWO8dfMy6zUVx+b9gz0TSnmGTxIWQmGDrwS6VO0zZxdLe6
+         RAfQ==
+X-Gm-Message-State: APjAAAWA5MAsid0oQK10v7trP0bIDKjSzfgbsRhGJ3fBkC1HDvHjh3d+
+        XJnvBPKInhYnu5Fspx9E2GHWIpejqS8=
+X-Google-Smtp-Source: APXvYqw38OgFJsrHurtgIFlxng/W9UeHCL4apohnwgRIyJMlksp1A9qcvL+PkCtoyyU4FrLH94PmBA==
+X-Received: by 2002:a2e:1b8a:: with SMTP id c10mr29197902ljf.139.1558116739033;
+        Fri, 17 May 2019 11:12:19 -0700 (PDT)
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com. [2a00:1450:4864:20::12e])
+        by smtp.gmail.com with ESMTPSA id g20sm1648171lja.67.2019.05.17.11.12.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 11:12:18 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id q17so5984117lfo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:12:18 -0700 (PDT)
+X-Received: by 2002:ac2:59c7:: with SMTP id x7mr24467304lfn.75.1558116278802;
+ Fri, 17 May 2019 11:04:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 17 May 2019 11:03:25 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     sudeep.holla@arm.com, julien.thierry@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] kernel/panic: Use SYSTEM_RESET2 command for warm reset
-In-Reply-To: <20190516182949.GD10985@darkstar.musicnaut.iki.fi>
-References: <ce0b66f5d00e760f87ddeeacbc40b956@codeaurora.org>
- <1557366432-352469-1-git-send-email-psodagud@codeaurora.org>
- <20190516182949.GD10985@darkstar.musicnaut.iki.fi>
-Message-ID: <caa4ee48af33b320d8a1bcdbb974ada8@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+ <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com>
+ <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov> <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
+ <20190517172953.GC15006@linux.intel.com> <DFE03E0C-694A-4289-B416-29CDC2644F94@amacapital.net>
+ <20190517175500.GE15006@linux.intel.com>
+In-Reply-To: <20190517175500.GE15006@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 17 May 2019 11:04:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgH2FBzBG3_RZSuatpYCj8DCQZipJYp9vh3Wy_S3Qt4-g@mail.gmail.com>
+Message-ID: <CAHk-=wgH2FBzBG3_RZSuatpYCj8DCQZipJYp9vh3Wy_S3Qt4-g@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-16 11:29, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Wed, May 08, 2019 at 06:47:12PM -0700, Prasad Sodagudi wrote:
->> Some platforms may need warm reboot support when kernel crashed
->> for post mortem analysis instead of cold reboot. So use config
->> CONFIG_WARM_REBOOT_ON_PANIC and SYSTEM_RESET2 psci command
->> support for warm reset.
-> 
-> Please see commit b287a25a7148 - you can now use kernel command
-> line option reboot=panic_warm to get this.
+On Fri, May 17, 2019 at 10:55 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> In this snippet, IS_PRIVATE() is true for anon inodes, false for
+> /dev/sgx/enclave.  Because EPC memory is always shared, SELinux will never
+> check PROCESS__EXECMEM for mprotect() on/dev/sgx/enclave.
 
-Thanks Aaro. Yes. I can use this option.  Thanks Sudeep and all for 
-discussing.
+Why _does_ the memory have to be shared? Shared mmap() is
+fundamentally less secure than private mmap, since by definition it
+means "oh, somebody else has access to it too and might modify it
+under us".
 
-> 
-> A.
+Why does the SGX logic care about things like that? Normal executables
+are just private mappings of an underlying file, I'm not sure why the
+SGX interface has to have that shared thing, and why the interface has
+to have a device node in the first place when  you have system calls
+for setup anyway.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+So why don't the system calls just work on perfectly normal anonymous
+mmap's? Why a device node, and why must it be shared to begin with?
+
+                  Linus
