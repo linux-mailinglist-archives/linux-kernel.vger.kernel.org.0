@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2252133E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F12721348
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfEQEuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 00:50:22 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45998 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfEQEuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 00:50:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i21so2657436pgi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 21:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mEEht3Z5ULloHWTAWSA2Ir3JXWTUszy2jqLRnINQh2k=;
-        b=Tzwojkghh+nxfGap//8LbAS7bq00YSDhF3+osEmh0FKE/duc3zkAkh6+vGRyWUmGVk
-         vZa6S6B0OHJW6h01RbviHI5Y+QBBVkinFDrboXNjvxVeciTgJtfbW/op+NUHpG63IXnY
-         F6uMKVqFIfuivM3zZkznm6VXdCC8ihisngsSNogZoe3H4w9CxS9wkVcJe0PYcBchq5U+
-         WGbM2nkaXTgxpDpeQ+HxikLUKzCD1tQYvXLDpRKf7Rm5VpLUwbWzMTnwo9NFxpPC5Hz8
-         ulcB+KwKpD3WYzGnz0w2Sssbi+VL9h6uUbOCdYgfkqDNQgmpJd+3vstAbgSNRWLBjyaL
-         hNmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mEEht3Z5ULloHWTAWSA2Ir3JXWTUszy2jqLRnINQh2k=;
-        b=PwgXTkR7Q5ek4Th05IK1iPta/uIMx5utoXD9A/aA8KmkjCMoNVH8wqLadOzA8Y3dbq
-         mVIbQ1kT4d8FUNsm8BL+zZM1Ir+hCIt/mphYRB2N2EE2KKW35kje+wNm3cV+FL1SQWaI
-         gkALYDjFP0K998pkMNLh0mmJfY2eOHGzo/pbwALhFQrxVLsMkZDYMWm+PY6y8VC6/nxh
-         xdhiDdlPbj9OTEuPwowY6p4NUN8MpohEgV5m7S7qHs8ILK+ED6492PSa7KnITlVV2bIV
-         sccctsOh6huasnDKd1G57ngy3B2rguoGq10xOIIDR6rNw/BHG/Xoc8LnOHT/lp1Ikp95
-         7V2A==
-X-Gm-Message-State: APjAAAWpzqrhg4LeBNJL7EjSoEmgzRh6K3TiENsGK2RMsSzqAXVdSO1K
-        PpSp3I66BZU9lTTQPHQn7z1FLz2fkgU=
-X-Google-Smtp-Source: APXvYqxl2ZzkKlwDABV3tPHFgfVdvYjVJFKUTylVQ2cG1Ro726Gf4BK/zxgloSTTgfcOKYGYaMhhwA==
-X-Received: by 2002:aa7:8186:: with SMTP id g6mr59161367pfi.126.1558068621257;
-        Thu, 16 May 2019 21:50:21 -0700 (PDT)
-Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id g19sm13316262pgj.75.2019.05.16.21.50.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 21:50:20 -0700 (PDT)
-From:   parna.naveenkumar@gmail.com
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
-Subject: [PATCH] bsr: "foo * bar" should be "foo *bar"
-Date:   Fri, 17 May 2019 10:20:07 +0530
-Message-Id: <20190517045007.20250-1-parna.naveenkumar@gmail.com>
+        id S1727726AbfEQE4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 00:56:16 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45868 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbfEQE4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 00:56:16 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FE9C200015;
+        Fri, 17 May 2019 06:56:14 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 61AA9200005;
+        Fri, 17 May 2019 06:56:10 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7596E40250;
+        Fri, 17 May 2019 12:56:05 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH v2] arm64: dts: ls1028a: Fix CPU idle fail.
+Date:   Fri, 17 May 2019 12:57:53 +0800
+Message-Id: <20190517045753.3709-1-ran.wang_1@nxp.com>
 X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+PSCI spec define 1st parameter's bit 16 of function CPU_SUSPEND to
+indicate CPU State Type: 0 for standby, 1 for power down. In this
+case, we want to select standby for CPU idle feature. But current
+setting wrongly select power down and cause CPU SUSPEND fail every
+time. Need this fix.
 
-Fixed the checkpatch error. Used "foo *bar" instead of "foo * bar"
-
-Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
 ---
- drivers/char/bsr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
-index a6cef548e01e..d16ba62d03a0 100644
---- a/drivers/char/bsr.c
-+++ b/drivers/char/bsr.c
-@@ -147,7 +147,7 @@ static int bsr_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index b045812..bf7f845 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -28,7 +28,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&clockgen 1 0>;
+ 			next-level-cache = <&l2>;
+-			cpu-idle-states = <&CPU_PH20>;
++			cpu-idle-states = <&CPU_PW20>;
+ 		};
  
--static int bsr_open(struct inode * inode, struct file * filp)
-+static int bsr_open(struct inode *inode, struct file *filp)
- {
- 	struct cdev *cdev = inode->i_cdev;
- 	struct bsr_dev *dev = container_of(cdev, struct bsr_dev, bsr_cdev);
+ 		cpu1: cpu@1 {
+@@ -38,7 +38,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&clockgen 1 0>;
+ 			next-level-cache = <&l2>;
+-			cpu-idle-states = <&CPU_PH20>;
++			cpu-idle-states = <&CPU_PW20>;
+ 		};
+ 
+ 		l2: l2-cache {
+@@ -53,13 +53,13 @@
+ 		 */
+ 		entry-method = "arm,psci";
+ 
+-		CPU_PH20: cpu-ph20 {
+-			compatible = "arm,idle-state";
+-			idle-state-name = "PH20";
+-			arm,psci-suspend-param = <0x00010000>;
+-			entry-latency-us = <1000>;
+-			exit-latency-us = <1000>;
+-			min-residency-us = <3000>;
++		CPU_PW20: cpu-pw20 {
++			  compatible = "arm,idle-state";
++			  idle-state-name = "PW20";
++			  arm,psci-suspend-param = <0x0>;
++			  entry-latency-us = <2000>;
++			  exit-latency-us = <2000>;
++			  min-residency-us = <6000>;
+ 		};
+ 	};
+ 
 -- 
-2.17.1
+1.7.1
 
