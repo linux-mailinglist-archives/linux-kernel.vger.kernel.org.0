@@ -2,72 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241ED216A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 12:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6CE216CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 12:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfEQKEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 06:04:05 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37578 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728112AbfEQKEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 06:04:01 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A0876D550BCA3411A7D9;
-        Fri, 17 May 2019 18:03:59 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 May 2019 18:03:49 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        <openipmi-developer@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH] ipmi_si: use bool type for initialized variable
-Date:   Fri, 17 May 2019 18:12:45 +0800
-Message-ID: <20190517101245.4341-2-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190517101245.4341-1-wangkefeng.wang@huawei.com>
-References: <20190517101245.4341-1-wangkefeng.wang@huawei.com>
+        id S1728590AbfEQKOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 06:14:12 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43723 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbfEQKOM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 06:14:12 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i26so7271403qtr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 03:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zJAY/Pv8Q8rCNwC0Vbgeg982L/4wPTYgnNPmTbKhmDg=;
+        b=iomWStGl4iQbx8eysPjAozeB43WumfOwhPB77ZRRDGP/507Zl7PX1Gq7HJ1rJ9Eqlb
+         HVJX7hCf6FtmuB82mMUTRb8z4gsMdsm94Bbwk5jKY74u28in3UC3C09azGNKeHNLNEdx
+         Se7hyfP11juO1tqPdhboIE+k9wGUduPUC10mzjhJNBokCoUG/NZQhuCkGfOpdUziIQQQ
+         XKiTGp25+uJ4xLUhWMDsE+fLqb+x/gbwNLg5CIT7WmhGSPIyHAFycNQ7EzPClNwB7Qwl
+         BDtPhmPCodYbrRNYKxnLv7c06tdvUwlx5lKIbVBmg89br/GeOX+lAuwsbf8kxt8W01sd
+         gZww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zJAY/Pv8Q8rCNwC0Vbgeg982L/4wPTYgnNPmTbKhmDg=;
+        b=OOT8SlB1bRzbDK919Pz1rR64f60PBQjaCfF1Ih9lsAp0+8yIwyfsd9Q51m2UqssB6g
+         G9DvCYw1mFDdHTGmSOX7RvkW8jzEzKyfCYgqhqfMu0u3UeDPT2eVBr8sVXtre4Cp6nz3
+         rTmtVXGRCWGsRoiFeWLNFyYmuVtKqncVFqfZmWbmqlX0z8iAXe4LqukYwGoOOnXYRKzl
+         dNhwmq9mryEXPFbLTlaJ9yaq8dOjgEANeZI8qX7ZRWgy8ao+eDiYXy+oOSpKK0HCbuKm
+         udQmWT3I1zK7ceatHqJw4xoa505RYgAtspcxJ+MfaNOjt6/o1/2Fac6NvDG5yFuyPMCB
+         +zZg==
+X-Gm-Message-State: APjAAAUo7Utc9+6X9XRe6Xe0CANrkcQ+ZazjSwCrMZi3FhYPCqEzuTPH
+        cgh0Aju782HlIR9FMWFIn3PJ5J+Xou/C/+F/idpNuMd7
+X-Google-Smtp-Source: APXvYqz6mT2feKlh8y8KJBFeHaGvmta1tNVLx2J144g2NFmA84lEkdM2Ca/94epR0ewDk42GFLZtxmPXuKFrJ6HDE+g=
+X-Received: by 2002:ac8:104:: with SMTP id e4mr47527750qtg.234.1558088051122;
+ Fri, 17 May 2019 03:14:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <1557826556-10079-1-git-send-email-yannick.fertre@st.com> <1557826556-10079-2-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1557826556-10079-2-git-send-email-yannick.fertre@st.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Fri, 17 May 2019 12:14:00 +0200
+Message-ID: <CA+M3ks66kdeCEEzRj9B41YTQQkod5f5p9EgpjUZvnj=q36ak4Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: display: stm32: add supply property
+ to DSI controller
+To:     =?UTF-8?Q?Yannick_Fertr=C3=A9?= <yannick.fertre@st.com>
+Cc:     Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cover 'int' to 'bool' type for initialized variable.
+Le mar. 14 mai 2019 =C3=A0 11:36, Yannick Fertr=C3=A9 <yannick.fertre@st.co=
+m> a =C3=A9crit :
+>
+> This patch adds documentation of a new property phy-dsi-supply to the
+> STM32 DSI controller.
+>
+> Signed-off-by: Yannick Fertr=C3=A9 <yannick.fertre@st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Philippe Cornu <philippe.cornu@st.com>
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/char/ipmi/ipmi_si_intf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied on drm-misc-next,
 
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index f124a2d2bb9f..da5b6723329a 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -71,7 +71,7 @@ enum si_intf_state {
- 
- static const char * const si_to_str[] = { "invalid", "kcs", "smic", "bt" };
- 
--static int initialized;
-+static bool initialized;
- 
- /*
-  * Indexes into stats[] in smi_info below.
-@@ -2124,7 +2124,7 @@ static int __init init_ipmi_si(void)
- 	}
- 
- skip_fallback_noirq:
--	initialized = 1;
-+	initialized = true;
- 	mutex_unlock(&smi_infos_lock);
- 
- 	if (type)
--- 
-2.20.1
+Thanks,
+Benjamin
 
+> ---
+>  Documentation/devicetree/bindings/display/st,stm32-ltdc.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt =
+b/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
+> index 3eb1b48..60c54da 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
+> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.txt
+> @@ -40,6 +40,8 @@ Mandatory nodes specific to STM32 DSI:
+>  - panel or bridge node: A node containing the panel or bridge descriptio=
+n as
+>    documented in [6].
+>    - port: panel or bridge port node, connected to the DSI output port (p=
+ort@1).
+> +Optional properties:
+> +- phy-dsi-supply: phandle of the regulator that provides the supply volt=
+age.
+>
+>  Note: You can find more documentation in the following references
+>  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> @@ -101,6 +103,7 @@ Example 2: DSI panel
+>                         clock-names =3D "pclk", "ref";
+>                         resets =3D <&rcc STM32F4_APB2_RESET(DSI)>;
+>                         reset-names =3D "apb";
+> +                       phy-dsi-supply =3D <&reg18>;
+>
+>                         ports {
+>                                 #address-cells =3D <1>;
+> --
+> 2.7.4
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
