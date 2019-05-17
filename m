@@ -2,98 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D627F215A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80BCB2159B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfEQIrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 04:47:49 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:35174 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728068AbfEQIrp (ORCPT
+        id S1728370AbfEQIrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 04:47:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60470 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfEQIrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 04:47:45 -0400
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x4H8lfpY011895;
-        Fri, 17 May 2019 17:47:42 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x4H8lfpY011895
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558082862;
-        bh=WnpLsGsAmml7Dms1w83QAyOBiQmZaG3wlsmHMldsj2A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Mm8c/h7MoQAjKtaXJFbsIiwDOhCleo62G2yN0ENEumdsR3x9bkTim8ZUAsmvNKYGb
-         YjzTHjmOZ5eEoT6dxf96KaN4cwDoBx0EA7QLggY+Uc4rEkV/+egiiQChRb8v7K7mME
-         103BM4I9xO6+LhP0loRJJ7E5IYURnrnnwstvc9exSd9DuvfxeeZUFgfNa/hXC9jT9h
-         iWv5o81UBz3vJxNzCokSyHdEDhZEGmx6/CuEyUH1kiKR5e3N8X4kvsR9JG6ORi5XxH
-         MAJIfA9u79h3mxvKDN5Gc3QnyESVoO1lY8MDBQKEmGZvEcHCGaMDmj4lbJqEnkghsG
-         O4PFPPHrMLNGg==
-X-Nifty-SrcIP: [209.85.222.48]
-Received: by mail-ua1-f48.google.com with SMTP id u4so2383169uau.10;
-        Fri, 17 May 2019 01:47:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAWJ+ByAKllsN7h+g/gKhpy3B6yDoAGymOIkoizqVF7ggfBGCPSN
-        PCxal3wWG45u8hFqahH4soFuFubrfsx/WrGWd/k=
-X-Google-Smtp-Source: APXvYqyVijenelCKJTr3dR3tNdWYeFjirxBi3vBWfk+iMvtHCpXVw8zXnJei85wZq4UZx3PsZban60vlcYzKC/KrM/g=
-X-Received: by 2002:a9f:3381:: with SMTP id p1mr2948947uab.40.1558082860964;
- Fri, 17 May 2019 01:47:40 -0700 (PDT)
+        Fri, 17 May 2019 04:47:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qYyTW+u0uH6BS/vH/FDpbmo0AX8q63BcKgO+wcvhh6A=; b=ivsIs+VhHjfUO5TfOAnQ4la4z
+        AlGlBPznHk20Y7eScgnkjBDqe3XSqKdLSEm4p0pVYXIMeD/GtsK/A4a8fEcbcazkQOXLCcGYiDPgN
+        /arWk35Hk1qv3w5pDfx/pE/UxKNvfEeDEEqynaH6K+yJorG5T9O60F4FAuMUu5l0CiSbIqrqrNW6e
+        xggCfGSHI3GoXPXvGTCt1T5MUK2xszJES0cFFus2SOfUhH6be9lEnPZH0UZaOrJBpbNrApWTDyN/Y
+        Ktq4fobDnQQ2Z5pfJUPuA7nINplnZ09Pspso6djcvfHVH/OoaHrxbOxpSy97GYvaU99vFLks34EHE
+        pVHFeRcBg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hRYWI-000206-6p; Fri, 17 May 2019 08:47:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A5F112029B0A3; Fri, 17 May 2019 10:47:12 +0200 (CEST)
+Date:   Fri, 17 May 2019 10:47:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf/ring_buffer: Fix exposing a temporarily
+ decreased data_head.
+Message-ID: <20190517084712.GL2623@hirez.programming.kicks-ass.net>
+References: <20190515003059.23920-1-yabinc@google.com>
+ <20190516184010.167903-1-yabinc@google.com>
 MIME-Version: 1.0
-References: <20190517065424.24453-1-yamada.masahiro@socionext.com> <20190517090735.6906c2fa@mschwideX1>
-In-Reply-To: <20190517090735.6906c2fa@mschwideX1>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 17 May 2019 17:47:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQkcSdb=ky2Mb0A48tUpnkXfZmC1B+JwPjkhdGM+EZJdQ@mail.gmail.com>
-Message-ID: <CAK7LNAQkcSdb=ky2Mb0A48tUpnkXfZmC1B+JwPjkhdGM+EZJdQ@mail.gmail.com>
-Subject: Re: [PATCH] s390: mark __cpacf_check_opcode() and cpacf_query_func()
- as __always_inline
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190516184010.167903-1-yabinc@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 5:09 PM Martin Schwidefsky
-<schwidefsky@de.ibm.com> wrote:
->
-> On Fri, 17 May 2019 15:54:24 +0900
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->
-> > Commit e60fb8bf68d4 ("s390/cpacf: mark scpacf_query() as __always_inline")
-> > was not enough to make sure to meet the 'i' (immediate) constraint for the
-> > asm operands.
-> >
-> > With CONFIG_OPTIMIZE_INLINING enabled, Laura Abbott reported error
-> > with gcc 9.1.1:
-> >
-> >   In file included from arch/s390/crypto/prng.c:29:
-> >   ./arch/s390/include/asm/cpacf.h: In function 'cpacf_query_func':
-> >   ./arch/s390/include/asm/cpacf.h:170:2: warning: asm operand 3 probably doesn't match constraints
-> >     170 |  asm volatile(
-> >         |  ^~~
-> >   ./arch/s390/include/asm/cpacf.h:170:2: error: impossible constraint in 'asm'
-> >
-> > Add more __always_inline to force inlining.
-> >
-> > Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-> > Reported-by: Laura Abbott <labbott@redhat.com>
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Added to our internal tree and I will add it to s390/linux soon. Thanks.
->
-> Do you have a Kconfig patch in the works to enable OPTIMIZE_INLINING?
-> Otherwise we could just add it.
+On Thu, May 16, 2019 at 11:40:10AM -0700, Yabin Cui wrote:
+> In perf_output_put_handle(), an IRQ/NMI can happen in below location and
+> write records to the same ring buffer:
+> 	...
+> 	local_dec_and_test(&rb->nest)
+> 	...                          <-- an IRQ/NMI can happen here
+> 	rb->user_page->data_head = head;
+> 	...
+> 
+> In this case, a value A is written to data_head in the IRQ, then a value
+> B is written to data_head after the IRQ. And A > B. As a result,
+> data_head is temporarily decreased from A to B. And a reader may see
+> data_head < data_tail if it read the buffer frequently enough, which
+> creates unexpected behaviors.
+> 
+> This can be fixed by moving dec(&rb->nest) to after updating data_head,
+> which prevents the IRQ/NMI above from updating data_head.
+> 
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> ---
+> 
+> v1 -> v2: change rb->nest from local_t to unsigned int, and add barriers.
+> 
+> ---
+>  kernel/events/internal.h    |  2 +-
+>  kernel/events/ring_buffer.c | 24 ++++++++++++++++++------
+>  2 files changed, 19 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/events/internal.h b/kernel/events/internal.h
+> index 79c47076700a..0a8c003b9bcf 100644
+> --- a/kernel/events/internal.h
+> +++ b/kernel/events/internal.h
+> @@ -24,7 +24,7 @@ struct ring_buffer {
+>  	atomic_t			poll;		/* POLL_ for wakeups */
+>  
+>  	local_t				head;		/* write position    */
+> -	local_t				nest;		/* nested writers    */
+> +	unsigned int			nest;		/* nested writers    */
+>  	local_t				events;		/* event limit       */
+>  	local_t				wakeup;		/* wakeup stamp      */
+>  	local_t				lost;		/* nr records lost   */
+> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> index 674b35383491..c677beb01fb1 100644
+> --- a/kernel/events/ring_buffer.c
+> +++ b/kernel/events/ring_buffer.c
+> @@ -38,7 +38,8 @@ static void perf_output_get_handle(struct perf_output_handle *handle)
+>  	struct ring_buffer *rb = handle->rb;
+>  
+>  	preempt_disable();
+> -	local_inc(&rb->nest);
+> +	rb->nest++;
+> +	barrier();
 
-No.
-It is up to you.
+Urgh; almost but not quite. You just lost the 'volatile' qualifier and
+now the compiler can mess things up for you.
 
+>  	handle->wakeup = local_read(&rb->wakeup);
+>  }
 
-Thanks.
+What I'm going to do is split this into two patches, one fixes the
+problem and marked for backport, and one changing away from local_t.
 
-
--- 
-Best Regards
-Masahiro Yamada
