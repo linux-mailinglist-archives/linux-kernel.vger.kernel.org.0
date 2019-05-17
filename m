@@ -2,224 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41AD421398
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 08:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5352A2139E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 08:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfEQGCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 02:02:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8203 "EHLO huawei.com"
+        id S1727467AbfEQGLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 02:11:04 -0400
+Received: from mail-eopbgr140054.outbound.protection.outlook.com ([40.107.14.54]:40556
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727242AbfEQGCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 02:02:36 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5203840D642EC3827BCA;
-        Fri, 17 May 2019 14:02:31 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.188.162) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 May 2019 14:02:21 +0800
-From:   jianhong chen <chenjianhong2@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <akpm@linux-foundation.org>,
-        <mhocko@suse.com>, <vbabka@suse.cz>,
-        <kirill.shutemov@linux.intel.com>, <yang.shi@linux.alibaba.com>,
-        <jannh@google.com>, <steve.capper@arm.com>,
-        <tiny.windzz@gmail.com>, <walken@google.com>
-CC:     <chenjianhong2@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <stable@vger.kernel.org>
-Subject: [PATCH] mm/mmap: fix the adjusted length error
-Date:   Fri, 17 May 2019 14:06:49 +0800
-Message-ID: <1558073209-79549-1-git-send-email-chenjianhong2@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
+        id S1727106AbfEQGLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 02:11:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=coVbVksQiyYiJuqVMDPDaSwZCJK5+fQ6FtuB0bW/gHw=;
+ b=jZzZ4voZdmSOaIdAcNpXR8pVFA1Mjw8NuBwjFzltypz3nhbFbbHJ50mpScOQcOY26JWefNiTpEnLzGUEPUEo5pJeWbcTdE8Dsw2WanU/MefdKQZHPxNBQ/ap+Pm09C38tKfoIKW8MKFiY8sfOu4Fn048P11EMuzD11Lf6P71OFE=
+Received: from AM6PR04MB4357.eurprd04.prod.outlook.com (52.135.167.33) by
+ AM6PR04MB4792.eurprd04.prod.outlook.com (20.177.32.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.18; Fri, 17 May 2019 06:11:00 +0000
+Received: from AM6PR04MB4357.eurprd04.prod.outlook.com
+ ([fe80::d877:33b5:bfa6:30ce]) by AM6PR04MB4357.eurprd04.prod.outlook.com
+ ([fe80::d877:33b5:bfa6:30ce%6]) with mapi id 15.20.1900.010; Fri, 17 May 2019
+ 06:11:00 +0000
+From:   Chuanhua Han <chuanhua.han@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     Leo Li <leoyang.li@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ying Zhang <ying.zhang22455@nxp.com>
+Subject: RE: [EXT] Re: [PATCH] arm64: dts: ls1028a: fix watchdog device node
+Thread-Topic: [EXT] Re: [PATCH] arm64: dts: ls1028a: fix watchdog device node
+Thread-Index: AQHVBjWLU5tDmMzveEaz3RlKVqbc5aZupocAgAA6wsA=
+Date:   Fri, 17 May 2019 06:10:59 +0000
+Message-ID: <AM6PR04MB4357C78FCEBA1B00AA42ED2E970B0@AM6PR04MB4357.eurprd04.prod.outlook.com>
+References: <20190509070657.18281-1-chuanhua.han@nxp.com>
+ <20190517023728.GA15856@dragon>
+In-Reply-To: <20190517023728.GA15856@dragon>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=chuanhua.han@nxp.com; 
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e00a26a3-59b1-46f9-7221-08d6da8e6ee8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB4792;
+x-ms-traffictypediagnostic: AM6PR04MB4792:
+x-microsoft-antispam-prvs: <AM6PR04MB47925576B13167EBEC1CFF6C970B0@AM6PR04MB4792.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
+x-forefront-prvs: 0040126723
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(366004)(39860400002)(346002)(189003)(13464003)(199004)(446003)(76116006)(73956011)(74316002)(9686003)(316002)(3846002)(55016002)(44832011)(54906003)(8936002)(6246003)(4326008)(99286004)(81166006)(8676002)(81156014)(33656002)(66946007)(6116002)(11346002)(14454004)(102836004)(66476007)(66556008)(64756008)(66446008)(478600001)(6436002)(2906002)(53546011)(256004)(6506007)(86362001)(76176011)(7696005)(53936002)(476003)(7736002)(305945005)(26005)(229853002)(486006)(6916009)(66066001)(71190400001)(71200400001)(68736007)(5660300002)(186003)(52536014)(25786009)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4792;H:AM6PR04MB4357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 72cwQohMgOenOnmoEGpWX4DU6fpT340g8rhp6QKoInL0jJ+q7XhGy27HTftbr2J/WC6NWsq3LUD7lnKrHpsQYsPbk4awRWxm9CCeQVrUvJ5PRnDnWHynQUcv2U6Ce3yEzz3JyHrJccaAOmTD1d6ejjBe6ijkT9WP/vPMVSRBoPW9uAkrboFXp8HgLfHDNyjqU8vNnFe2B5m4Jn2O2ex9RToGCGFK+MHBO4sa6UtRnzMIwC4VPUhK9aILRT7wlCqwfJOkQhxPsUCj1kuwlJ2XYaSV0GHDBO0T8JoTwztirnb06irEFPDe5w140dIsGJlfjhhV3+JGP1iIZETTF5KUsJE09Wy9DUyLkjKZ1o/75OcRjsztrTC0shktEyGmoNR+ZcuXOKnY7oHeL2X85vjsgbnSDuRI2E6V87+V4Xs0T6Y=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.188.162]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e00a26a3-59b1-46f9-7221-08d6da8e6ee8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 06:10:59.9592
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4792
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In linux version 4.4, a 32-bit process may fail to allocate 64M hugepage
-memory by function shmat even though there is a 64M memory gap in
-the process.
-
-It is the adjusted length that causes the problem, introduced from
-commit db4fbfb9523c935 ("mm: vm_unmapped_area() lookup function").
-Accounting for the worst case alignment overhead, function unmapped_area
-and unmapped_area_topdown adjust the search length before searching
-for available vma gap. This is an estimated length, sum of the desired
-length and the longest alignment offset, which can cause misjudgement
-if the system has very few virtual memory left. For example, if the
-longest memory gap available is 64M, we can’t get it from the system
-by allocating 64M hugepage memory via shmat function. The reason is
-that it requires a longger length, the sum of the desired length(64M)
-and the longest alignment offset.
-
-To fix this error ,we can calculate the alignment offset of
-gap_start or gap_end to get a desired gap_start or gap_end value,
-before searching for the available gap. In this way, we don't
-need to adjust the search length.
-
-Problem reproduces procedure:
-1. allocate a lot of virtual memory segments via shmat and malloc
-2. release one of the biggest memory segment via shmdt
-3. attach the biggest memory segment via shmat
-
-e.g.
-process maps:
-00008000-00009000 r-xp 00000000 00:12 3385    /tmp/memory_mmap
-00011000-00012000 rw-p 00001000 00:12 3385    /tmp/memory_mmap
-27536000-f756a000 rw-p 00000000 00:00 0
-f756a000-f7691000 r-xp 00000000 01:00 560     /lib/libc-2.11.1.so
-f7691000-f7699000 ---p 00127000 01:00 560     /lib/libc-2.11.1.so
-f7699000-f769b000 r--p 00127000 01:00 560     /lib/libc-2.11.1.so
-f769b000-f769c000 rw-p 00129000 01:00 560     /lib/libc-2.11.1.so
-f769c000-f769f000 rw-p 00000000 00:00 0
-f769f000-f76c0000 r-xp 00000000 01:00 583     /lib/libgcc_s.so.1
-f76c0000-f76c7000 ---p 00021000 01:00 583     /lib/libgcc_s.so.1
-f76c7000-f76c8000 rw-p 00020000 01:00 583     /lib/libgcc_s.so.1
-f76c8000-f76e5000 r-xp 00000000 01:00 543     /lib/ld-2.11.1.so
-f76e9000-f76ea000 rw-p 00000000 00:00 0
-f76ea000-f76ec000 rw-p 00000000 00:00 0
-f76ec000-f76ed000 r--p 0001c000 01:00 543     /lib/ld-2.11.1.so
-f76ed000-f76ee000 rw-p 0001d000 01:00 543     /lib/ld-2.11.1.so
-f7800000-f7a00000 rw-s 00000000 00:0e 0       /SYSV000000ea (deleted)
-fba00000-fca00000 rw-s 00000000 00:0e 65538   /SYSV000000ec (deleted)
-fca00000-fce00000 rw-s 00000000 00:0e 98307   /SYSV000000ed (deleted)
-fce00000-fd800000 rw-s 00000000 00:0e 131076  /SYSV000000ee (deleted)
-ff913000-ff934000 rw-p 00000000 00:00 0       [stack]
-ffff0000-ffff1000 r-xp 00000000 00:00 0       [vectors]
-
-from 0xf7a00000 to fba00000, it has 64M memory gap, but we can't get
-it from kernel.
-
-Signed-off-by: jianhong chen <chenjianhong2@huawei.com>
-Cc: stable@vger.kernel.org
----
- mm/mmap.c | 43 +++++++++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 14 deletions(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index bd7b9f2..c5a5782 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1865,6 +1865,22 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	return error;
- }
- 
-+static inline unsigned long gap_start_offset(struct vm_unmapped_area_info *info,
-+					unsigned long addr)
-+{
-+	/* get gap_start offset to adjust gap address to the
-+	 * desired alignment
-+	 */
-+	return (info->align_offset - addr) & info->align_mask;
-+}
-+
-+static inline unsigned long gap_end_offset(struct vm_unmapped_area_info *info,
-+					unsigned long addr)
-+{
-+	/* get gap_end offset to adjust gap address to the desired alignment */
-+	return (addr - info->align_offset) & info->align_mask;
-+}
-+
- unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- {
- 	/*
-@@ -1879,10 +1895,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 	struct vm_area_struct *vma;
- 	unsigned long length, low_limit, high_limit, gap_start, gap_end;
- 
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask;
--	if (length < info->length)
--		return -ENOMEM;
-+	length = info->length;
- 
- 	/* Adjust search limits by the desired length */
- 	if (info->high_limit < length)
-@@ -1914,6 +1927,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 		}
- 
- 		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0;
-+		gap_start += gap_start_offset(info, gap_start);
- check_current:
- 		/* Check if current node has a suitable gap */
- 		if (gap_start > high_limit)
-@@ -1942,6 +1956,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 				       struct vm_area_struct, vm_rb);
- 			if (prev == vma->vm_rb.rb_left) {
- 				gap_start = vm_end_gap(vma->vm_prev);
-+				gap_start += gap_start_offset(info, gap_start);
- 				gap_end = vm_start_gap(vma);
- 				goto check_current;
- 			}
-@@ -1951,17 +1966,17 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- check_highest:
- 	/* Check highest gap, which does not precede any rbtree node */
- 	gap_start = mm->highest_vm_end;
-+	gap_start += gap_start_offset(info, gap_start);
- 	gap_end = ULONG_MAX;  /* Only for VM_BUG_ON below */
- 	if (gap_start > high_limit)
- 		return -ENOMEM;
- 
- found:
- 	/* We found a suitable gap. Clip it with the original low_limit. */
--	if (gap_start < info->low_limit)
-+	if (gap_start < info->low_limit) {
- 		gap_start = info->low_limit;
--
--	/* Adjust gap address to the desired alignment */
--	gap_start += (info->align_offset - gap_start) & info->align_mask;
-+		gap_start += gap_start_offset(info, gap_start);
-+	}
- 
- 	VM_BUG_ON(gap_start + info->length > info->high_limit);
- 	VM_BUG_ON(gap_start + info->length > gap_end);
-@@ -1974,16 +1989,14 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- 	struct vm_area_struct *vma;
- 	unsigned long length, low_limit, high_limit, gap_start, gap_end;
- 
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask;
--	if (length < info->length)
--		return -ENOMEM;
-+	length = info->length;
- 
- 	/*
- 	 * Adjust search limits by the desired length.
- 	 * See implementation comment at top of unmapped_area().
- 	 */
- 	gap_end = info->high_limit;
-+	gap_end -= gap_end_offset(info, gap_end);
- 	if (gap_end < length)
- 		return -ENOMEM;
- 	high_limit = gap_end - length;
-@@ -2020,6 +2033,7 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- check_current:
- 		/* Check if current node has a suitable gap */
- 		gap_end = vm_start_gap(vma);
-+		gap_end -= gap_end_offset(info, gap_end);
- 		if (gap_end < low_limit)
- 			return -ENOMEM;
- 		if (gap_start <= high_limit &&
-@@ -2054,13 +2068,14 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- 
- found:
- 	/* We found a suitable gap. Clip it with the original high_limit. */
--	if (gap_end > info->high_limit)
-+	if (gap_end > info->high_limit) {
- 		gap_end = info->high_limit;
-+		gap_end -= gap_end_offset(info, gap_end);
-+	}
- 
- found_highest:
- 	/* Compute highest gap address at the desired alignment */
- 	gap_end -= info->length;
--	gap_end -= (gap_end - info->align_offset) & info->align_mask;
- 
- 	VM_BUG_ON(gap_end < info->low_limit);
- 	VM_BUG_ON(gap_end < gap_start);
--- 
-1.8.5.6
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIDxzaGF3
+bmd1b0BrZXJuZWwub3JnPg0KPiBTZW50OiAyMDE5xOo11MIxN8jVIDEwOjM4DQo+IFRvOiBDaHVh
+bmh1YSBIYW4gPGNodWFuaHVhLmhhbkBueHAuY29tPg0KPiBDYzogTGVvIExpIDxsZW95YW5nLmxp
+QG54cC5jb20+OyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0
+cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZzsgWWluZyBaaGFuZyA8eWluZy56aGFuZzIyNDU1QG54cC5jb20+
+DQo+IFN1YmplY3Q6IFtFWFRdIFJlOiBbUEFUQ0hdIGFybTY0OiBkdHM6IGxzMTAyOGE6IGZpeCB3
+YXRjaGRvZyBkZXZpY2Ugbm9kZQ0KPiANCj4gQ2F1dGlvbjogRVhUIEVtYWlsDQo+IA0KPiBPbiBU
+aHUsIE1heSAwOSwgMjAxOSBhdCAwMzowNjo1N1BNICswODAwLCBDaHVhbmh1YSBIYW4gd3JvdGU6
+DQo+ID4gbHMxMDI4YSBwbGF0Zm9ybSB1c2VzIHNwODA1IHdhdGNoZG9nLCBhbmQgdXNlIDEvMTYg
+cGxhdGZvcm0gY2xvY2sgYXMNCj4gPiB0aW1lciBjbG9jaywgdGhpcyBwYXRjaCBmaXggZGV2aWNl
+IHRyZWUgbm9kZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFpoYW5nIFlpbmctMjI0NTUgPHlp
+bmcuemhhbmcyMjQ1NUBueHAuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENodWFuaHVhIEhhbiA8
+Y2h1YW5odWEuaGFuQG54cC5jb20+DQo+ID4gLS0tDQo+ID4gIC4uLi9hcm02NC9ib290L2R0cy9m
+cmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaSB8IDE5DQo+ID4gKysrKysrKysrKysrLS0tLS0tLQ0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkNCj4g
+Pg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMx
+MDI4YS5kdHNpDQo+ID4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDI4
+YS5kdHNpDQo+ID4gaW5kZXggYjA0NTgxMjQ5ZjBiLi4xNTEwYjE4NTgyNDYgMTAwNjQ0DQo+ID4g
+LS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaQ0KPiA+
+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLmR0c2kNCj4g
+PiBAQCAtMjg1LDEzICsyODUsMTggQEANCj4gPiAgICAgICAgICAgICAgICAgICAgICAgI2ludGVy
+cnVwdC1jZWxscyA9IDwyPjsNCj4gPiAgICAgICAgICAgICAgIH07DQo+ID4NCj4gPiAtICAgICAg
+ICAgICAgIHdkb2cwOiB3YXRjaGRvZ0AyM2MwMDAwIHsNCj4gPiAtICAgICAgICAgICAgICAgICAg
+ICAgY29tcGF0aWJsZSA9ICJmc2wsbHMxMDI4YS13ZHQiLCAiZnNsLGlteDIxLXdkdCI7DQo+ID4g
+LSAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDAgMHgyM2MwMDAwIDB4MCAweDEwMDAwPjsN
+Cj4gPiAtICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDU5IElSUV9U
+WVBFX0xFVkVMX0hJR0g+Ow0KPiA+IC0gICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNs
+b2NrZ2VuIDQgMT47DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgIGJpZy1lbmRpYW47DQo+ID4g
+LSAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gKyAgICAgICAg
+ICAgICBjbHVzdGVyMV9jb3JlMF93YXRjaGRvZzogd2R0QGMwMDAwMDAgew0KPiANCj4gS2VlcCAn
+d2F0Y2hkb2cnIGFzIHRoZSBub2RlIG5hbWUsDQpUaGFua3MgZm9yIHlvdXIgcmVwbGF5DQpEbyB5
+b3UgbWVhbiByZXBsYWNlIHRoZSChrndkdKGvIHdpdGggoa53YXRjaGRvZ6GvPw0KYW5kIGtlZXAg
+bm9kZXMgc29ydCBpbiB1bml0LWFkZHJlc3MuDQpXaGF0IGRvZXMgdGhpcyBtZWFuPw0KPiANCj4g
+U2hhd24NCj4gDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiYXJtLHNw
+ODA1IiwgImFybSxwcmltZWNlbGwiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICByZWcgPSA8
+MHgwIDB4YzAwMDAwMCAweDAgMHgxMDAwPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgY2xv
+Y2tzID0gPCZjbG9ja2dlbiA0IDE1PiwgPCZjbG9ja2dlbiA0IDE1PjsNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAiYXBiX3BjbGsiLCAid2RvZ19jbGsiOw0KPiA+ICsg
+ICAgICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICBjbHVzdGVyMV9jb3JlMV93
+YXRjaGRvZzogd2R0QGMwMTAwMDAgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBjb21wYXRp
+YmxlID0gImFybSxzcDgwNSIsICJhcm0scHJpbWVjZWxsIjsNCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgcmVnID0gPDB4MCAweGMwMTAwMDAgMHgwIDB4MTAwMD47DQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2tnZW4gNCAxNT4sIDwmY2xvY2tnZW4gNCAxNT47DQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImFwYl9wY2xrIiwgIndkb2df
+Y2xrIjsNCj4gPiAgICAgICAgICAgICAgIH07DQo+ID4NCj4gPiAgICAgICAgICAgICAgIHNhdGE6
+IHNhdGFAMzIwMDAwMCB7DQo+ID4gLS0NCj4gPiAyLjE3LjENCj4gPg0K
