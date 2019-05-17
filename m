@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0D821DA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4A121DA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbfEQSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:47:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44231 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfEQSrJ (ORCPT
+        id S1729124AbfEQSrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:47:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38470 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfEQSrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:47:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c5so8123940wrs.11;
-        Fri, 17 May 2019 11:47:08 -0700 (PDT)
+        Fri, 17 May 2019 14:47:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id t5so6312098wmh.3;
+        Fri, 17 May 2019 11:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4QRWDFkVz3xUnUzR3+DHbkRCIRl8pbjmxCa/vhR9hvo=;
-        b=IzX0fpNh7WWzngetTRMHcGGlBKa4/Y10ND0MNxVowv35ASa6AyO+qLIiBx3oorQdoE
-         gIMiRRTn12Vsg2PSpAtRil1uUy8xkxChgYigzhBilxkZX68upC2GKDNyLfBUb7Z2bHUQ
-         l3UW0QKhlFhotuDCigGjT0urbWePYMe8D/Pqzy4lHHDPtWu2SCcAKN5A52dsJNj3f/9u
-         wkbw9NIvOfWOihlEVc51Vd3gqhyPPlvGT64PX4ziAJrrUtqwzN1IUvq1Nm5N1J3wTFtQ
-         EAhiuVgi6wE0rGJSFc9r5guK7YM9/7d0ISQhpYx5+RHA1MbYhrZU48H4aCLkI/T/pxBx
-         RsxA==
+        bh=r8viNroRA5goE0iPj/ap53EgAXBGfEQtlqx5YkjMMp0=;
+        b=sYa1xSeqBijyACT713JrcPfeJ6i1pId1XJ8eV7bYFwQOvCKVI9hU6X6rsi5VoYuOYt
+         0D2cTJcpZWhDRkgW3lFeqzAiU5xxh8pXYkjduO+E3yB4kURp14tlb4FYguNJ6mVXxr/o
+         7sNEuSmlziet3wBZ3p1LC4/4XDskX8RjgeFVzrsZZncbZNeV30kdefMoGz1GhCiM5MVN
+         77LwiSFwRps5gRv+r0TY4n6TYH1qIYzplYaT0WGD17Sd2DddZ0Ra8tJkdfzHukxZ9Emq
+         OxPUS2T4geuoPK9oiBP1tfS0VhtC7+6ZAjb7E2YjmdJZy2Hapy3h2XjQMFiCW1W0RPGZ
+         OXDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4QRWDFkVz3xUnUzR3+DHbkRCIRl8pbjmxCa/vhR9hvo=;
-        b=Rvz6DzQVr2J8tsU5UkMkfv7oR+aJkpbxNzNafZxRZ18Gz5CkN0As3rnBGAqwoBl5Ld
-         sNpYbSOzmqmzBwMzLloncCzTB2U5ioC9hc5u9e710IA7syV9eSG2ra6Nys73t/UeEDyz
-         VyEvlyifZwkQER8PQvRZDuoJRPZ6eLNOKO5qHNRbyIl0gRANZn1XfwHnFKiUA2Rnut/y
-         3Fb5yQycWOJDbriFkcMVhpUTjGi7GsSmFMdIAx7nRaawczOpxJLthtf5/NkHJxH3KU/L
-         aFPEeI6LEF18HIhrzdaaeuGDep1LlSCaoY3ablX5fTAkcIe6sUE5t6m8y9K+FVu8bn7O
-         VWNA==
-X-Gm-Message-State: APjAAAWcJw+A/x9egjJsURByrvyj972fXKzFER0cX5qlkS3HYn8mzxsd
-        HppiPBXm5SPFn7ZMT2R1IpBDqQXtBMhepQ==
-X-Google-Smtp-Source: APXvYqzQ3Rol+3txTzhDDbnTRdYC6TTbSHhpgNCNWdrgxxOScCII+60hVNsOpiwPvn2YYuVJGvfLtA==
-X-Received: by 2002:a5d:658d:: with SMTP id q13mr19937938wru.61.1558118827335;
-        Fri, 17 May 2019 11:47:07 -0700 (PDT)
+        bh=r8viNroRA5goE0iPj/ap53EgAXBGfEQtlqx5YkjMMp0=;
+        b=b3VQMkVILVH478Y3jEMPd9uVARFRTodwseLJIWxE3pLPPlU3tiIBeuP66yGImnDhhw
+         yAXky4QotkG5Wnl02gNogqcpQUfMlgBBr2tstitzjb+slplIh7NDsONXhi5EaM2KfPBG
+         J/lx+rq1Hh7iQYScqi+AtmV55ucUsYCmPV7SvL2msB+Kt1It/4i3U0jVL6TGIcDQXFmZ
+         KgafqDVEJKdEGHSdT3FUYBNa7jmJHNla4p3Q6mZNEoewtNP7GEBFszG91ANuqjPY7/e4
+         B1FYzGWV/JCEcnwWf3fnEmvK41hr3PLGwcb9CDroYPRK8peJWIjJXWQxvJnCm4RW+qM2
+         yn4A==
+X-Gm-Message-State: APjAAAX0BMgXejHQzpKoi2zSd8lIW/DNEYoi2w5EUdvaIbaGcVHM5KJy
+        q9zizFJS9d1tonOJypG6mBw=
+X-Google-Smtp-Source: APXvYqx5WYQ+/UFX3j4mg5Ayc/w6LeLH6Wy8mGmkZ59Hw5REOLqHmfti245ovfZ/JrzJoGg3/ubYNA==
+X-Received: by 2002:a1c:7c0d:: with SMTP id x13mr3111380wmc.89.1558118828555;
+        Fri, 17 May 2019 11:47:08 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id v20sm5801112wmj.10.2019.05.17.11.47.06
+        by smtp.gmail.com with ESMTPSA id v20sm5801112wmj.10.2019.05.17.11.47.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 11:47:06 -0700 (PDT)
+        Fri, 17 May 2019 11:47:07 -0700 (PDT)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -61,9 +61,9 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org,
         =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v5 1/6] drm: panfrost: add optional bus_clock
-Date:   Fri, 17 May 2019 20:46:54 +0200
-Message-Id: <20190517184659.18828-2-peron.clem@gmail.com>
+Subject: [PATCH v5 2/6] iommu: io-pgtable: fix sanity check for non 48-bit mali iommu
+Date:   Fri, 17 May 2019 20:46:55 +0200
+Message-Id: <20190517184659.18828-3-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190517184659.18828-1-peron.clem@gmail.com>
 References: <20190517184659.18828-1-peron.clem@gmail.com>
@@ -75,76 +75,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 has an ARM Mali-T720 MP2 which required a bus_clock.
+Allwinner H6 SoC has a Mali T720MP2 with a 33-bit iommu which
+trig the sanity check during the alloc of the pgtable.
 
-Add an optional bus_clock at the init of the panfrost driver.
+Change the sanity check to allow non 48-bit configuration.
 
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Clément Péron <peron.clem@gmail.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_device.c | 25 +++++++++++++++++++++-
- drivers/gpu/drm/panfrost/panfrost_device.h |  1 +
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/iommu/io-pgtable-arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
-index 3b2bced1b015..8da6e612d384 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-@@ -44,7 +44,8 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
- 
- 	pfdev->clock = devm_clk_get(pfdev->dev, NULL);
- 	if (IS_ERR(pfdev->clock)) {
--		dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
-+		dev_err(pfdev->dev, "get clock failed %ld\n",
-+			PTR_ERR(pfdev->clock));
- 		return PTR_ERR(pfdev->clock);
- 	}
- 
-@@ -55,11 +56,33 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
- 	if (err)
- 		return err;
- 
-+	pfdev->bus_clock = devm_clk_get_optional(pfdev->dev, "bus");
-+	if (IS_ERR(pfdev->bus_clock)) {
-+		dev_err(pfdev->dev, "get bus_clock failed %ld\n",
-+			PTR_ERR(pfdev->bus_clock));
-+		return PTR_ERR(pfdev->bus_clock);
-+	}
-+
-+	if (pfdev->bus_clock) {
-+		rate = clk_get_rate(pfdev->bus_clock);
-+		dev_info(pfdev->dev, "bus_clock rate = %lu\n", rate);
-+
-+		err = clk_prepare_enable(pfdev->bus_clock);
-+		if (err)
-+			goto disable_clock;
-+	}
-+
- 	return 0;
-+
-+disable_clock:
-+	clk_disable_unprepare(pfdev->clock);
-+
-+	return err;
- }
- 
- static void panfrost_clk_fini(struct panfrost_device *pfdev)
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 4e21efbc4459..74f2ce802e6f 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -1016,7 +1016,7 @@ arm_mali_lpae_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
  {
-+	clk_disable_unprepare(pfdev->bus_clock);
- 	clk_disable_unprepare(pfdev->clock);
- }
+ 	struct io_pgtable *iop;
  
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-index 56f452dfb490..8074f221034b 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-@@ -66,6 +66,7 @@ struct panfrost_device {
+-	if (cfg->ias != 48 || cfg->oas > 40)
++	if (cfg->ias > 48 || cfg->oas > 40)
+ 		return NULL;
  
- 	void __iomem *iomem;
- 	struct clk *clock;
-+	struct clk *bus_clock;
- 	struct regulator *regulator;
- 	struct reset_control *rstc;
- 
+ 	cfg->pgsize_bitmap &= (SZ_4K | SZ_2M | SZ_1G);
 -- 
 2.17.1
 
