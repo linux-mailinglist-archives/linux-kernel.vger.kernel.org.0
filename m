@@ -2,164 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A974621CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E6C21CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbfEQRnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 13:43:06 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35379 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbfEQRnE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 13:43:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t87so4025856pfa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 10:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1MUUr8jHi4nWwWTQmbf4zT7ImlITOzRRt/eE8Yg+dlo=;
-        b=BVBxteTJfnnrWyI4aUT5rRv1PGo8Y6m41oQyOQLQ9wBx/DmrNo0J1mMUNowheLYiJT
-         gKvk0uAVsiCTt8tVYuQ/pPtHQRdoElbWppBomwzttM4Js8uMnrX6vMxuzBVdPGlkzr1Y
-         GWgaqh0R1jib28O3eRsR7C1RlVrLz24MYG6PHBQeMy/xQd+hNChzOEonkPhE32Vf59wb
-         7UvLuxW3yeufL91nnzFXK7bPLzbuJoICh6lMFWftYxpVMVdrREc5ELLOGPhhU6Rkfnmb
-         N6e0/7k/HQexEZEcncU6dBmw4ONKENMHpsbRqYdQPxnFGL1UkVVe23OrBSEk4arvt6iX
-         OJ7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1MUUr8jHi4nWwWTQmbf4zT7ImlITOzRRt/eE8Yg+dlo=;
-        b=opbhfvcxRhGQReBrBSZ3tA3iSur0boXJOoHoQcz/TOpugMqy6CnJNX23DC+avY9OKj
-         Zus7hXX2UfcAmV6xZDbfuwvomd/A7QsDr5DgV0zfVQP1kwaKHPDZ2njAL3RR9GT4lp6S
-         TffD/jIqFam8ViCSWzDPteMuUkWs+Vl4fYEO8hudJTOz0KQIajFprKPoXZxzso1RN4rL
-         CLq0TkXwi48gj/ijoR+RlwWrnu5FimstMzNIhhepePfSU49Gz+7nbDewXrTopmm/vf7s
-         UsjkyfTls3ZjSRsfsNO8eVX5KcK4QvT4TKEB+fjubizt2f/mRtAF6+dz4fu1FUbQ6goi
-         Zbaw==
-X-Gm-Message-State: APjAAAW8SXgvILeB8pcZJ7pHdBDOx064f1zU++BSThWHd7lWgxeC2cT2
-        bJtZ2fi3L2H/wdWvMutuxOLc0g==
-X-Google-Smtp-Source: APXvYqz1/VPPlQLATdNzJclNH72+/NYUbTxi66IC1Gfqe9SWbtuv4tuZ7KKRyXz7msEB9xK+aIxb4g==
-X-Received: by 2002:aa7:93c6:: with SMTP id y6mr8796393pff.0.1558114983336;
-        Fri, 17 May 2019 10:43:03 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b00c:b1d8:2521:afcd:cb07:a739? ([2600:1010:b00c:b1d8:2521:afcd:cb07:a739])
-        by smtp.gmail.com with ESMTPSA id 10sm12185936pft.100.2019.05.17.10.43.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 10:43:02 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <20190517172953.GC15006@linux.intel.com>
-Date:   Fri, 17 May 2019 10:43:01 -0700
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DFE03E0C-694A-4289-B416-29CDC2644F94@amacapital.net>
-References: <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com> <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com> <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com> <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov> <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov> <20190517172953.GC15006@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+        id S1728674AbfEQRsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 13:48:25 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:59880 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728057AbfEQRsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 13:48:25 -0400
+Received: from zn.tnic (p200300EC2F0C50007C4D1753FB652448.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:5000:7c4d:1753:fb65:2448])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5D29E1EC027A;
+        Fri, 17 May 2019 19:48:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1558115303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=2TvWTvagBsn2HvpkCcnxsPOiGMJZC0FXldUCG/8+Rn8=;
+        b=lNjDu2B6zOqQ/WMhARwWi/xXdLA10vRAhfEqIt6tp4kYnE6vkQRjiKfUdXrer7oK9vBieg
+        A8xlddY46uLKlRbnXKAo4MvRPav6gCzJK9b0dMshUmL+B5cbLye8tN+nmKMQ+vhYucR8n4
+        +rT4YTpOQoDXKclarDkMxVI0pxivFqU=
+Date:   Fri, 17 May 2019 19:48:17 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 5/6] x86/MCE: Save MCA control bits that get set in
+ hardware
+Message-ID: <20190517174817.GG13482@zn.tnic>
+References: <20190516165648.GB21857@zn.tnic>
+ <SN6PR12MB26392B440ED735C26AA2C678F80A0@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190516172117.GC21857@zn.tnic>
+ <SN6PR12MB26394CD4E1BAC068B0B1AEF6F80A0@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190516203456.GD21857@zn.tnic>
+ <20190516205943.GA3299@agluck-desk>
+ <20190517101006.GA32065@zn.tnic>
+ <SN6PR12MB26391A0C3979030082EE38F8F80B0@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190517163729.GE13482@zn.tnic>
+ <20190517172648.GA18164@agluck-desk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190517172648.GA18164@agluck-desk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 17, 2019 at 10:26:49AM -0700, Luck, Tony wrote:
+> Which is a quirk for some models where we don't want to do
+> the "write all 1s and see what sticks"
 
+Ok, then we have to do what you suggested yesterday. I've added a short
+comment so that I don't get lost again next time.
 
-> On May 17, 2019, at 10:29 AM, Sean Christopherson <sean.j.christopherson@i=
-ntel.com> wrote:
->=20
->> On Fri, May 17, 2019 at 12:37:40PM -0400, Stephen Smalley wrote:
->>> On 5/17/19 12:20 PM, Stephen Smalley wrote:
->>>> On 5/17/19 11:09 AM, Sean Christopherson wrote:
->>>> I think we may want to change the SGX API to alloc an anon inode for ea=
-ch
->>>> enclave instead of hanging every enclave off of the /dev/sgx/enclave
->>>> inode.
->>>> Because /dev/sgx/enclave is NOT private, SELinux's file_map_prot_check(=
-)
->>>> will only require FILE__WRITE and FILE__EXECUTE to mprotect() enclave
->>>> VMAs
->>>> to RWX.  Backing each enclave with an anon inode will make SELinux trea=
-t
->>>> EPC memory like anonymous mappings, which is what we want (I think), e.=
-g.
->>>> making *any* EPC page executable will require PROCESS__EXECMEM (SGX is
->>>> 64-bit only at this point, so SELinux will always have default_noexec).=
+---
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 5bcecadcf4d9..9056f0a2a90d 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1493,6 +1493,11 @@ static int __mcheck_cpu_mce_banks_init(void)
+ 	for (i = 0; i < n_banks; i++) {
+ 		struct mce_bank *b = &mce_banks[i];
+ 
++		/*
++		 * Init them all, __mcheck_cpu_apply_quirks() is going to apply
++		 * the required vendor quirks before
++		 * __mcheck_cpu_init_clear_banks() does the final bank setup.
++		 */
+ 		b->ctl = -1ULL;
+ 		b->init = 1;
+ 	}
+@@ -1562,15 +1567,21 @@ static void __mcheck_cpu_init_generic(void)
+ static void __mcheck_cpu_init_clear_banks(void)
+ {
+ 	struct mce_bank *mce_banks = this_cpu_read(mce_banks_array);
++	u64 msrval;
+ 	int i;
+ 
+ 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
+ 		struct mce_bank *b = &mce_banks[i];
+ 
+-		if (!b->init)
+-			continue;
+-		wrmsrl(msr_ops.ctl(i), b->ctl);
+-		wrmsrl(msr_ops.status(i), 0);
++		if (b->init) {
++			/* Check if any bits are implemented in h/w */
++			wrmsrl(msr_ops.ctl(i), b->ctl);
++			rdmsrl(msr_ops.ctl(i), msrval);
++
++			b->init = !!msrval;
++
++			wrmsrl(msr_ops.status(i), 0);
++		}
+ 	}
+ }
+ 
+@@ -2095,6 +2106,9 @@ static ssize_t show_bank(struct device *s, struct device_attribute *attr,
+ 
+ 	b = &per_cpu(mce_banks_array, s->id)[bank];
+ 
++	if (!b->init)
++		return -ENODEV;
++
+ 	return sprintf(buf, "%llx\n", b->ctl);
+ }
+ 
+@@ -2113,6 +2127,9 @@ static ssize_t set_bank(struct device *s, struct device_attribute *attr,
+ 
+ 	b = &per_cpu(mce_banks_array, s->id)[bank];
+ 
++	if (!b->init)
++		return -ENODEV;
++
+ 	b->ctl = new;
+ 	mce_restart();
+ 
+-- 
+2.21.0
 
->>>=20
->>> I don't think we want to require EXECMEM (or equivalently both FILE__WRI=
-TE
->>> and FILE__EXECUTE to /dev/sgx/enclave) for making any EPC page executabl=
-e,
->>> only if the page is also writable or previously modified.  The intent is=
+-- 
+Regards/Gruss,
+    Boris.
 
->>> to prevent arbitrary code execution without EXECMEM (or
->>> FILE__WRITE|FILE__EXECUTE), while still allowing enclaves to be created
->>> without EXECMEM as long as the EPC page mapping is only ever mapped RX a=
-nd
->>> its initial contents came from an unmodified file mapping that was
->>> PROT_EXEC (and hence already checked via FILE__EXECUTE).
->=20
-> The idea is that by providing an SGX ioctl() to propagate VMA permissions
-> from a source VMA, EXECMEM wouldn't be required to make an EPC page
-> executable.  E.g. userspace establishes an enclave in non-EPC memory from
-> an unmodified file (with FILE__EXECUTE perms), and the uses the SGX ioctl(=
-)
-> to copy the contents and permissions into EPC memory.
->=20
->> Also, just to be clear, there is nothing inherently better about checking=
-
->> EXECMEM instead of checking both FILE__WRITE and FILE__EXECUTE to the
->> /dev/sgx/enclave inode, so I wouldn't switch to using anon inodes for tha=
-t
->> reason.  Using anon inodes also unfortunately disables SELinux inode-base=
-d
->> checking since we no longer have any useful inode information, so you'd l=
-ose
->> out on SELinux ioctl whitelisting on those enclave inodes if that matters=
-.
->=20
-> The problem is that all enclaves are associated with a single inode, i.e.
-> /dev/sgx/enclave.  /dev/sgx/enclave is a char device whose purpose is to
-> provide ioctls() and to allow mmap()'ing EPC memory.  In no way is it
-> associated with the content that actually gets loaded into EPC memory.
->=20
-> The actual file that contains the enclave's contents (assuming the enclave=
-
-> came from a file) is a separate regular file that the SGX subsystem never
-> sees.
->=20
-> AIUI, having FILE__WRITE and FILE__EXECUTE on /dev/sgx/enclave would allow=
-
-> *any* enclave/process to map EPC as RWX.  Moving to anon inodes and thus
-> PROCESS__EXECMEM achieves per-process granularity.
-
-How does anon_inode make any difference?  Anon_inode is not the same thing a=
-s anon_vma.=
+Good mailing practices for 400: avoid top-posting and trim the reply.
