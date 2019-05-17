@@ -2,285 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FEDF213E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 08:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F88E213EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbfEQG53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 02:57:29 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41506 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfEQG53 (ORCPT
+        id S1728136AbfEQHAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:00:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727218AbfEQHAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 02:57:29 -0400
-Received: by mail-vs1-f67.google.com with SMTP id g187so3947733vsc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 23:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hc0HmzH6OT39dn85lsyoXsO/ryHfm7mgqA3KpAw+uOM=;
-        b=W+bv7VhQuiNbe6C4ETIQQxuBkl+ezqdwrhRzaMh5nNmSX8oL00TG4Z+bgQNTnCDynp
-         6tB66HhmBBeGUnNo904nRgfZZD9GR/YlUpcpAWjfTOy8/4pCooAaxt72jfuhn8Y/L+73
-         9Gn7b0ExQj7uXgkky5cbt+jV4OJ2MwLxnYxPQZgXIrljixmgbVqD7wNW6Q2IJC0HhPT/
-         RbS5RN0dWuj3zr3UIlgQBcIgGnlhoaHpSv/YYPItHryTkUz1nbFhTUIyO+zLgnqFDbYa
-         ShN3ebb38/7oHDtrV0jjPNxl2/k4ySAD4cQ2V9qgxB0J0MGddAIs6ibuIMDwoRDF+H8m
-         PVcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hc0HmzH6OT39dn85lsyoXsO/ryHfm7mgqA3KpAw+uOM=;
-        b=k3XF2Sx4gp6tRIMBIEjGYxqJf+J8/NVcMmajQxX4ghZxw+K+SBQ4M/xZCeG3IdA2nb
-         raOjoKCzn7Og08b2fAI7393CEKWyFuNZUTLH1+Mo9N0YB45rL3Lrt7/IAanyKI2OozTv
-         ZY+za3tVI6Vs8zb1Q8h2DR/s3Jv9knsbOusF8YLWriYHl8YrEsH8uv7HKeXGV7kMDZBi
-         HKhj+Aq1lHdlCymzWfidmPt7+gw4sFyk7IXJZ7zFNKQ774qBBruDWgcz6v/rai7Dvcm6
-         4YNp8OSohRtYIDWFJvmGegY4mu/QCXUgRoFytO+CbyAunAOGZzBxOnPGiku8vo7pvGSs
-         rutA==
-X-Gm-Message-State: APjAAAVQ5dmJx6ysGP8AQSxABGkkYuRDc1kWmL057/WTFtjelaWj2CyW
-        ccWPHSm1mds+8Q75RTdzTi+DQPVIzBZvCpfCwaAwDg==
-X-Google-Smtp-Source: APXvYqz2DwB9AIFN/f/Don/xWEYRgZOj8oBbn3PBY345zvNQQSfRPWSLNWMqQomwB7XRLAhx836ifXxnCKD0Xogi3t4=
-X-Received: by 2002:a67:f693:: with SMTP id n19mr26380878vso.89.1558076247825;
- Thu, 16 May 2019 23:57:27 -0700 (PDT)
+        Fri, 17 May 2019 03:00:04 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4H6xrbK031762
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 03:00:03 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2shp8vmhdt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 03:00:01 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 17 May 2019 07:58:58 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 May 2019 07:58:56 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4H6wtfC55246872
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 May 2019 06:58:55 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 991E4A404D;
+        Fri, 17 May 2019 06:58:55 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67B52A4055;
+        Fri, 17 May 2019 06:58:55 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.145.144.159])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 17 May 2019 06:58:55 +0000 (GMT)
+Date:   Fri, 17 May 2019 08:58:54 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for the 5.2 merge window #2
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190415155636.32748-1-sashal@kernel.org> <20190507174020.GH1747@sasha-vm>
- <20190508124436.GE7642@linux.intel.com> <20190514193056.GN11972@sasha-vm>
- <CAFA6WYM06E0y9o6+CLNPe48spiL=UDEqoGsidMbk1dBa5Rbmkg@mail.gmail.com>
- <CY4PR21MB0279339E8B0A15414C8F9E14BC0A0@CY4PR21MB0279.namprd21.prod.outlook.com>
- <CAFA6WYMvuF+tAA_GmkVg=FTvuuAhMuM=um7kakq=YARaP8un5Q@mail.gmail.com> <CY4PR21MB02790D399645EFCA02FBE124BC0A0@CY4PR21MB0279.namprd21.prod.outlook.com>
-In-Reply-To: <CY4PR21MB02790D399645EFCA02FBE124BC0A0@CY4PR21MB0279.namprd21.prod.outlook.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 17 May 2019 12:27:15 +0530
-Message-ID: <CAFA6WYMsQ53L=Ge5_yX+mvQNgKQRxPq=GxAn6zCksaDU18aTtw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] ftpm: a firmware based TPM driver
-To:     Thirupathaiah Annapureddy <thiruan@microsoft.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>, "corbet@lwn.net" <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Microsoft Linux Kernel List <linux-kernel@microsoft.com>,
-        "Bryan Kelly (CSI)" <bryankel@microsoft.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051706-0012-0000-0000-0000031CA0E7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051706-0013-0000-0000-000021554513
+Message-Id: <20190517085854.7be56501@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905170047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Rob
+The following changes since commit 71ae5fc87c34ecbdca293c2a5c563d6be2576558:
 
-On Fri, 17 May 2019 at 00:54, Thirupathaiah Annapureddy
-<thiruan@microsoft.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Sumit Garg <sumit.garg@linaro.org>
-> > Sent: Thursday, May 16, 2019 12:06 AM
-> > To: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-> > Cc: Sasha Levin <sashal@kernel.org>; Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com>; peterhuewe@gmx.de; jgg@ziepe.ca;
-> > corbet@lwn.net; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>;
-> > linux-doc@vger.kernel.org; linux-integrity@vger.kernel.org; Microsoft Linux
-> > Kernel List <linux-kernel@microsoft.com>; Bryan Kelly (CSI)
-> > <bryankel@microsoft.com>
-> > Subject: Re: [PATCH v3 0/2] ftpm: a firmware based TPM driver
-> >
-> > On Thu, 16 May 2019 at 06:30, Thirupathaiah Annapureddy
-> > <thiruan@microsoft.com> wrote:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Sumit Garg <sumit.garg@linaro.org>
-> > > > Sent: Tuesday, May 14, 2019 7:02 PM
-> > > > To: Sasha Levin <sashal@kernel.org>
-> > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>;
-> > peterhuewe@gmx.de;
-> > > > jgg@ziepe.ca; corbet@lwn.net; Linux Kernel Mailing List <linux-
-> > > > kernel@vger.kernel.org>; linux-doc@vger.kernel.org; linux-
-> > > > integrity@vger.kernel.org; Microsoft Linux Kernel List <linux-
-> > > > kernel@microsoft.com>; Thirupathaiah Annapureddy
-> > <thiruan@microsoft.com>;
-> > > > Bryan Kelly (CSI) <bryankel@microsoft.com>
-> > > > Subject: Re: [PATCH v3 0/2] ftpm: a firmware based TPM driver
-> > > >
-> > > > On Wed, 15 May 2019 at 01:00, Sasha Levin <sashal@kernel.org> wrote:
-> > > > >
-> > > > > On Wed, May 08, 2019 at 03:44:36PM +0300, Jarkko Sakkinen wrote:
-> > > > > >On Tue, May 07, 2019 at 01:40:20PM -0400, Sasha Levin wrote:
-> > > > > >> On Mon, Apr 15, 2019 at 11:56:34AM -0400, Sasha Levin wrote:
-> > > > > >> > From: "Sasha Levin (Microsoft)" <sashal@kernel.org>
-> > > > > >> >
-> > > > > >> > Changes since v2:
-> > > > > >> >
-> > > > > >> > - Drop the devicetree bindings patch (we don't add any new
-> > ones).
-> > > > > >> > - More code cleanups based on Jason Gunthorpe's review.
-> > > > > >> >
-> > > > > >> > Sasha Levin (2):
-> > > > > >> >  ftpm: firmware TPM running in TEE
-> > > > > >> >  ftpm: add documentation for ftpm driver
-> > > > > >>
-> > > > > >> Ping? Does anyone have any objections to this?
-> > > > > >
-> > > > > >Sorry I've been on vacation week before last week and last week
-> > > > > >I was extremely busy because I had been on vacation. This in
-> > > > > >my TODO list. Will look into it tomorrow in detail.
-> > > > > >
-> > > > > >Apologies for the delay with this!
-> > > > >
-> > > > > Hi Jarkko,
-> > > > >
-> > > > > If there aren't any big objections to this, can we get it merged in?
-> > > > > We'll be happy to address any comments that come up.
-> > > >
-> > > > I guess you have missed or ignored this comment [1]. Please address it.
-> > > >
-> > > > [1]
-> > > >
-> > https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.org%
-> > > >
-> > 2Flkml%2F2019%2F5%2F8%2F11&amp;data=01%7C01%7Cthiruan%40microsoft.com%7Cf2a
-> > > >
-> > 80c7b94434329eaee08d6d8d962b1%7C72f988bf86f141af91ab2d7cd011db47%7C1&amp;sd
-> > > > ata=hyJRc23NwEFLDuaIMkbSCGetd%2BObQWiAg%2BJtMMR6z9U%3D&amp;reserved=0
-> > > >
-> > > > -Sumit
-> > >
-> > > Thanks for reviewing and adding comments.
-> > >
-> > > We tried to use TEE bus framework you suggested for fTPM enumeration.
-> > > We were not able to pass the TCG Logs collected by the boot loaders.
-> > >
-> > > Currently there are 3 ways to pass TCG Logs based on the code
-> > > in drivers/char/tpm/eventlog:
-> > >
-> > > 1. ACPI Table
-> > > 2. EFI Table
-> > > 3. OF Device node properties
-> > >
-> > > Our ARM system is booting using U-boot and Device Tree.
-> > > So ACPI/EFI table mechanism to pass TCG2 logs won't be applicable.
-> > > We needed to use OF device node properties to pass TCG2 Logs.
-> > > TEE bus enumeration framework does not work for our use case due to the
-> > above.
-> >
-> > Firstly let me clarify that this framework is intended to communicate
-> > with TEE based services/devices rather than boot loader. And in this
-> > case fTPM being a TEE based service, so this framework should be used.
-> >
-> It does not work for our use case. We gave enough justification so far.
-> TEE bus enumeration needs to be flexible to support our use case and
-> more future use cases.
->
+  Merge tag 'linux-kselftest-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2019-05-06 20:29:45 -0700)
 
-TEE based services are virtual devices which could be very well be
-aware about the platform and device driver could easily query these
-devices for platform specific properties. In case of firmware TPM as a
-TEE based service, it could easily store the event logs generated
-during PCR extend operations which could be fetched at runtime. But a
-real TPM device doesn't possess that storage capability leading to
-software managing these event logs.
+are available in the git repository at:
 
-> > >
-> > > Is it possible to add flexibility in TEE bus enumeration framework to
-> > support
-> > > platform specific properties through OF nodes or ACPI?
-> > >
-> >
-> > As you mentioned above, TCG logs are collected by boot loader. So it
-> > should find a way to pass them to Linux.
-> >
-> > How about if boot loader register these TCG logs with fTPM TA which
-> > could be fetched during fTPM driver probe or new api like
-> > tpm_read_log_tee()?
->
-> And then how does fTPM driver pass TCG Logs to the TPM framework?
-> It requires changes to the upstream TPM framework to ask the driver
-> explicitly for the TCG Logs.
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux tags/s390-5.2-2
 
-My suggestion was to add 4th way to pass TCG logs as follows:
+for you to fetch changes up to f3e20ad67b4c8365df9818fd3c8026e105d6b53a:
 
---- a/drivers/char/tpm/eventlog/common.c
-+++ b/drivers/char/tpm/eventlog/common.c
-@@ -95,6 +95,10 @@ static int tpm_read_log(struct tpm_chip *chip)
-        if (rc != -ENODEV)
-                return rc;
+  s390: move arch/s390/defconfig to arch/s390/configs/defconfig (2019-05-14 17:54:48 +0200)
 
-+       rc = tpm_read_log_tee(chip);
-+       if (rc != -ENODEV)
-+               return rc;
+----------------------------------------------------------------
+s390 updates for the 5.2 merge window #2
+
+ - Enhancements for the QDIO layer
+
+ - Remove the RCP trace event
+
+ - Avoid three build issues
+
+ - Move the defconfig to the configs directory
+
+----------------------------------------------------------------
+Farhan Ali (1):
+      s390/cio: Remove tracing for rchp instruction
+
+Julian Wiedmann (3):
+      s390/qdio: allow to scan all Output SBALs in one go
+      s390/qdio: use get_buf_state() in debug_get_buf_state()
+      s390/qdio: optimize state inspection of HW-owned SBALs
+
+Martin Schwidefsky (1):
+      s390/boot: fix compiler error due to missing awk strtonum
+
+Masahiro Yamada (1):
+      s390: move arch/s390/defconfig to arch/s390/configs/defconfig
+
+Vasily Gorbik (2):
+      latent_entropy: avoid build error when plugin cflags are not set
+      s390/kasan: adapt disabled_wait usage to avoid build error
+
+ arch/s390/Makefile                      |  2 ++
+ arch/s390/boot/Makefile                 |  1 -
+ arch/s390/boot/compressed/vmlinux.lds.S |  2 ++
+ arch/s390/{ => configs}/defconfig       |  0
+ arch/s390/mm/kasan_init.c               |  2 +-
+ drivers/s390/cio/qdio_main.c            | 19 +++++++++++--------
+ drivers/s390/cio/trace.c                |  1 -
+ drivers/s390/cio/trace.h                | 23 -----------------------
+ include/linux/random.h                  |  2 +-
+ 9 files changed, 17 insertions(+), 35 deletions(-)
+ rename arch/s390/{ => configs}/defconfig (100%)
+
+diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+index df1d6a1..de8521f 100644
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -10,6 +10,8 @@
+ # Copyright (C) 1994 by Linus Torvalds
+ #
+ 
++KBUILD_DEFCONFIG := defconfig
 +
-        return tpm_read_log_of(chip);
+ LD_BFD		:= elf64-s390
+ KBUILD_LDFLAGS	:= -m elf64_s390
+ KBUILD_AFLAGS_MODULE += -fPIC
+diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+index c51496b..7cba96e 100644
+--- a/arch/s390/boot/Makefile
++++ b/arch/s390/boot/Makefile
+@@ -58,7 +58,6 @@ define cmd_section_cmp
+ 	touch $@
+ endef
+ 
+-OBJCOPYFLAGS_bzImage := --pad-to $$(readelf -s $(obj)/compressed/vmlinux | awk '/\<_end\>/ {print or(strtonum("0x"$$2),4095)+1}')
+ $(obj)/bzImage: $(obj)/compressed/vmlinux $(obj)/section_cmp.boot.data $(obj)/section_cmp.boot.preserved.data FORCE
+ 	$(call if_changed,objcopy)
+ 
+diff --git a/arch/s390/boot/compressed/vmlinux.lds.S b/arch/s390/boot/compressed/vmlinux.lds.S
+index 112b8d9..635217e 100644
+--- a/arch/s390/boot/compressed/vmlinux.lds.S
++++ b/arch/s390/boot/compressed/vmlinux.lds.S
+@@ -77,6 +77,8 @@ SECTIONS
+ 		_compressed_start = .;
+ 		*(.vmlinux.bin.compressed)
+ 		_compressed_end = .;
++		FILL(0xff);
++		. = ALIGN(4096);
+ 	}
+ 	. = ALIGN(256);
+ 	.bss : {
+diff --git a/arch/s390/defconfig b/arch/s390/configs/defconfig
+similarity index 100%
+rename from arch/s390/defconfig
+rename to arch/s390/configs/defconfig
+diff --git a/arch/s390/mm/kasan_init.c b/arch/s390/mm/kasan_init.c
+index 01892dc..0c1f257 100644
+--- a/arch/s390/mm/kasan_init.c
++++ b/arch/s390/mm/kasan_init.c
+@@ -28,7 +28,7 @@ static void __init kasan_early_panic(const char *reason)
+ {
+ 	sclp_early_printk("The Linux kernel failed to boot with the KernelAddressSanitizer:\n");
+ 	sclp_early_printk(reason);
+-	disabled_wait(0);
++	disabled_wait();
  }
---- /dev/null
-+++ b/drivers/char/tpm/eventlog/tee.c
-@@ -0,0 +1,43 @@
-<snip>
-+int tpm_read_log_tee(struct tpm_chip *chip)
-+{
-+       struct tpm_bios_log *log;
-+       struct ftpm_tee_private *pvt_data;
+ 
+ static void * __init kasan_early_alloc_segment(void)
+diff --git a/drivers/s390/cio/qdio_main.c b/drivers/s390/cio/qdio_main.c
+index cfce255..7b7620d 100644
+--- a/drivers/s390/cio/qdio_main.c
++++ b/drivers/s390/cio/qdio_main.c
+@@ -205,17 +205,22 @@ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
+ 				 int auto_ack, int merge_pending)
+ {
+ 	unsigned char __state = 0;
+-	int i;
++	int i = 1;
+ 
+ 	if (is_qebsm(q))
+ 		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
+ 
+ 	/* get initial state: */
+ 	__state = q->slsb.val[bufnr];
 +
-+       log = &chip->log;
-+       if (!strcmp(chip->dev.bus->name, tee_bus_type.name))
-+               pvt_data = dev_get_drvdata(chip->dev.parent);
-+       else
-+               return -ENODEV;
++	/* Bail out early if there is no work on the queue: */
++	if (__state & SLSB_OWNER_CU)
++		goto out;
 +
-+       // Here you could simply do an invoke command to fetch the TCG logs.
+ 	if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
+ 		__state = SLSB_P_OUTPUT_EMPTY;
+ 
+-	for (i = 1; i < count; i++) {
++	for (; i < count; i++) {
+ 		bufnr = next_buf(bufnr);
+ 
+ 		/* merge PENDING into EMPTY: */
+@@ -228,6 +233,8 @@ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
+ 		if (q->slsb.val[bufnr] != __state)
+ 			break;
+ 	}
 +
-+       if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+               return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
-+       return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+}
++out:
+ 	*state = __state;
+ 	return i;
+ }
+@@ -382,7 +389,7 @@ int debug_get_buf_state(struct qdio_q *q, unsigned int bufnr,
+ {
+ 	if (need_siga_sync(q))
+ 		qdio_siga_sync_q(q);
+-	return get_buf_states(q, bufnr, state, 1, 0, 0);
++	return get_buf_state(q, bufnr, state, 0);
+ }
+ 
+ static inline void qdio_stop_polling(struct qdio_q *q)
+@@ -719,11 +726,7 @@ static int get_outbound_buffer_frontier(struct qdio_q *q, unsigned int start)
+ 		    multicast_outbound(q)))
+ 			qdio_siga_sync_q(q);
+ 
+-	/*
+-	 * Don't check 128 buffers, as otherwise qdio_inbound_q_moved
+-	 * would return 0.
+-	 */
+-	count = min(atomic_read(&q->nr_buf_used), QDIO_MAX_BUFFERS_MASK);
++	count = atomic_read(&q->nr_buf_used);
+ 	if (!count)
+ 		return 0;
+ 
+diff --git a/drivers/s390/cio/trace.c b/drivers/s390/cio/trace.c
+index e331cd9..882ee53 100644
+--- a/drivers/s390/cio/trace.c
++++ b/drivers/s390/cio/trace.c
+@@ -21,5 +21,4 @@ EXPORT_TRACEPOINT_SYMBOL(s390_cio_csch);
+ EXPORT_TRACEPOINT_SYMBOL(s390_cio_hsch);
+ EXPORT_TRACEPOINT_SYMBOL(s390_cio_xsch);
+ EXPORT_TRACEPOINT_SYMBOL(s390_cio_rsch);
+-EXPORT_TRACEPOINT_SYMBOL(s390_cio_rchp);
+ EXPORT_TRACEPOINT_SYMBOL(s390_cio_chsc);
+diff --git a/drivers/s390/cio/trace.h b/drivers/s390/cio/trace.h
+index 0ebb29b..4803139 100644
+--- a/drivers/s390/cio/trace.h
++++ b/drivers/s390/cio/trace.h
+@@ -274,29 +274,6 @@ DEFINE_EVENT(s390_class_schid, s390_cio_rsch,
+ 	TP_ARGS(schid, cc)
+ );
+ 
+-/**
+- * s390_cio_rchp - Reset Channel Path (RCHP) instruction was performed
+- * @chpid: Channel-Path Identifier
+- * @cc: Condition code
+- */
+-TRACE_EVENT(s390_cio_rchp,
+-	TP_PROTO(struct chp_id chpid, int cc),
+-	TP_ARGS(chpid, cc),
+-	TP_STRUCT__entry(
+-		__field(u8, cssid)
+-		__field(u8, id)
+-		__field(int, cc)
+-	),
+-	TP_fast_assign(
+-		__entry->cssid = chpid.cssid;
+-		__entry->id = chpid.id;
+-		__entry->cc = cc;
+-	),
+-	TP_printk("chpid=%x.%02x cc=%d", __entry->cssid, __entry->id,
+-		  __entry->cc
+-	)
+-);
+-
+ #define CHSC_MAX_REQUEST_LEN		64
+ #define CHSC_MAX_RESPONSE_LEN		64
+ 
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 445a0ea..d4eb9b3 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -20,7 +20,7 @@ struct random_ready_callback {
+ 
+ extern void add_device_randomness(const void *, unsigned int);
+ 
+-#if defined(CONFIG_GCC_PLUGIN_LATENT_ENTROPY) && !defined(__CHECKER__)
++#if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
+ static inline void add_latent_entropy(void)
+ {
+ 	add_device_randomness((const void *)&latent_entropy,
 
->
-> Note that this also requires changes to the fTPM TA that has been existing for few years.
->
-
-That's not a sane reason to avoid implementing generic stuff. As there
-could be other fTPM implementations and specific DT nodes for each
-which might not be maintainable. BTW, in current implementation also I
-don't find DT bindings corresponding to DT node used in this
-patch-set.
-
-> Is it not possible to add flexibility in TEE bus enumeration framework to
-> support platform specific properties through OF nodes or ACPI?
->
-
-TEE bus framework was designed specifically to avoid OF nodes or ACPI
-properties. As devices could be intelligent enough to be queried for
-required properties.
-
-> Devices enumerated by buses such as i2c can read platform specific properties.
-
-i2c devices are real hardware which could be platform agnostic, so you
-need to have platform specific properties.
-
--Sumit
-
-> With this flexibility added, more future use cases through TEE bus.
->
->
-> > This is something similar to what I used in
-> > optee-rng [1] driver to fetch RNG properties.
-> >
-> > [1]
-> > https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.co
-> > m%2Ftorvalds%2Flinux%2Fblob%2Fmaster%2Fdrivers%2Fchar%2Fhw_random%2Foptee-
-> > rng.c%23L176&amp;data=02%7C01%7Cthiruan%40microsoft.com%7Cd37438eaf4f9483e4
-> > 0c708d6d9ccfe0c%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C63693587179549
-> > 3006&amp;sdata=As9sC45Bl7sZdJKOq0sHz6GmXttMxS80Nn5yvN4vqng%3D&amp;reserved=
-> > 0
-> >
-> > -Sumit
-> >
-> > > >
-> > > > >
-> > > > > --
-> > > > > Thanks,
-> > > > > Sasha
