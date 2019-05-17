@@ -2,125 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6423213BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 08:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD819213E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 08:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfEQGbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 02:31:49 -0400
-Received: from twhmllg3.macronix.com ([122.147.135.201]:46504 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfEQGbt (ORCPT
+        id S1728125AbfEQGzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 02:55:11 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:40958 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbfEQGzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 02:31:49 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x4H6Vf60076140;
-        Fri, 17 May 2019 14:31:41 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     bbrezillon@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com,
-        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        linux-mtd@lists.infradead.org, vigneshr@ti.com,
-        frieder.schrempf@kontron.de
-Cc:     juliensu@mxic.com.tw, masonccyang@mxic.com.tw,
-        zhengxunli@mxic.com.tw
-Subject: [PATCH v2] mtd: rawnand: Add Macronix NAND read retry support
-Date:   Fri, 17 May 2019 14:53:21 +0800
-Message-Id: <1558076001-29579-1-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-X-MAIL: TWHMLLG3.macronix.com x4H6Vf60076140
+        Fri, 17 May 2019 02:55:10 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x4H6sQI1006236;
+        Fri, 17 May 2019 15:54:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x4H6sQI1006236
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1558076066;
+        bh=/BYTJ4zxnc9ql4xZQk+WJLrlDFM4qCpFxkd8pJzLb9c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q2VtVae6Ee0HybhaWXSMg69y6q1arF8Sf/3u/XHMZTCPOpMB44H54BKHkbXrOYYN4
+         sTyqKSVgGlNw7oPey6yYOSC6lOjkiel9mhOBKa/MRcGpXQ1EeRKhiJD9ciFZUJU5lo
+         qG5n3KT7Slc5xaDZohnfycTLEiaOSVGvd85a6BlWsNry0dKe4AR1DBIFR3kjMMSag7
+         ZEesarqfo0ZgWtXj9pt5ZSerrlX1EaZCLvJ3hArzEcceGum0qQRT0+XWSGTEGlPjId
+         aZrU4OYTFZusbiPR43kGBDWduFx1qFAPX8BlT63J0EzHwxFepnxOG46QCvqob91ugR
+         QTZCX5d2BYNbA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Laura Abbott <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] s390: mark __cpacf_check_opcode() and cpacf_query_func() as __always_inline
+Date:   Fri, 17 May 2019 15:54:24 +0900
+Message-Id: <20190517065424.24453-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Macronix NAND read retry.
+Commit e60fb8bf68d4 ("s390/cpacf: mark scpacf_query() as __always_inline")
+was not enough to make sure to meet the 'i' (immediate) constraint for the
+asm operands.
 
-Macronix NANDs support specific read operation for data recovery,
-which can be enabled/disabled with a SET/GET_FEATURE.
-Driver checks byte 167 of Vendor Blocks in ONFI parameter page table
-to see if this high-reliability function is supported.
+With CONFIG_OPTIMIZE_INLINING enabled, Laura Abbott reported error
+with gcc 9.1.1:
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+  In file included from arch/s390/crypto/prng.c:29:
+  ./arch/s390/include/asm/cpacf.h: In function 'cpacf_query_func':
+  ./arch/s390/include/asm/cpacf.h:170:2: warning: asm operand 3 probably doesn't match constraints
+    170 |  asm volatile(
+        |  ^~~
+  ./arch/s390/include/asm/cpacf.h:170:2: error: impossible constraint in 'asm'
+
+Add more __always_inline to force inlining.
+
+Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/mtd/nand/raw/nand_macronix.c | 57 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-index e287e71..1a4dc92 100644
---- a/drivers/mtd/nand/raw/nand_macronix.c
-+++ b/drivers/mtd/nand/raw/nand_macronix.c
-@@ -17,6 +17,62 @@
- 
- #include "internals.h"
- 
-+#define MACRONIX_READ_RETRY_BIT BIT(0)
-+#define MACRONIX_READ_RETRY_MODE 6
-+
-+struct nand_onfi_vendor_macronix {
-+	u8 reserved[1];
-+	u8 reliability_func;
-+} __packed;
-+
-+/*
-+ * Macronix NANDs support using SET/GET_FEATURES to enter/exit read retry mode
-+ */
-+static int macronix_nand_setup_read_retry(struct nand_chip *chip, int mode)
-+{
-+	u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
-+	int ret, feature_addr = ONFI_FEATURE_ADDR_READ_RETRY;
-+
-+	if (chip->parameters.supports_set_get_features &&
-+	    test_bit(feature_addr, chip->parameters.set_feature_list) &&
-+	    test_bit(feature_addr, chip->parameters.get_feature_list)) {
-+		feature[0] = mode;
-+		ret =  nand_set_features(chip, feature_addr, feature);
-+		if (ret)
-+			pr_err("Failed to set read retry moded:%d\n", mode);
-+
-+		ret =  nand_get_features(chip, feature_addr, feature);
-+		if (ret || feature[0] != mode)
-+			pr_err("Failed to verify read retry moded:%d(%d)\n",
-+			       mode, feature[0]);
-+	}
-+
-+	return ret;
-+}
-+
-+static void macronix_nand_onfi_init(struct nand_chip *chip)
-+{
-+	struct nand_parameters *p = &chip->parameters;
-+	struct nand_onfi_vendor_macronix *mxic;
-+
-+	if (!p->onfi)
-+		return;
-+
-+	mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
-+	if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
-+		return;
-+
-+	chip->read_retries = MACRONIX_READ_RETRY_MODE;
-+	chip->setup_read_retry = macronix_nand_setup_read_retry;
-+
-+	if (p->supports_set_get_features) {
-+		bitmap_set(p->set_feature_list,
-+			   ONFI_FEATURE_ADDR_READ_RETRY, 1);
-+		bitmap_set(p->get_feature_list,
-+			   ONFI_FEATURE_ADDR_READ_RETRY, 1);
-+	}
-+}
-+
- /*
-  * Macronix AC series does not support using SET/GET_FEATURES to change
-  * the timings unlike what is declared in the parameter page. Unflag
-@@ -65,6 +121,7 @@ static int macronix_nand_init(struct nand_chip *chip)
- 		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
- 
- 	macronix_nand_fix_broken_get_timings(chip);
-+	macronix_nand_onfi_init(chip);
- 
- 	return 0;
+ arch/s390/include/asm/cpacf.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/s390/include/asm/cpacf.h b/arch/s390/include/asm/cpacf.h
+index f316de40e51b..19459dfb4295 100644
+--- a/arch/s390/include/asm/cpacf.h
++++ b/arch/s390/include/asm/cpacf.h
+@@ -177,7 +177,7 @@ static inline void __cpacf_query(unsigned int opcode, cpacf_mask_t *mask)
+ 		: "cc");
  }
+ 
+-static inline int __cpacf_check_opcode(unsigned int opcode)
++static __always_inline int __cpacf_check_opcode(unsigned int opcode)
+ {
+ 	switch (opcode) {
+ 	case CPACF_KMAC:
+@@ -217,7 +217,7 @@ static inline int cpacf_test_func(cpacf_mask_t *mask, unsigned int func)
+ 	return (mask->bytes[func >> 3] & (0x80 >> (func & 7))) != 0;
+ }
+ 
+-static inline int cpacf_query_func(unsigned int opcode, unsigned int func)
++static __always_inline int cpacf_query_func(unsigned int opcode, unsigned int func)
+ {
+ 	cpacf_mask_t mask;
+ 
 -- 
-1.9.1
+2.17.1
 
