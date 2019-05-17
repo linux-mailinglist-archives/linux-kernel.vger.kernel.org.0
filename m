@@ -2,97 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165C521221
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 04:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7372122D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 04:44:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfEQClN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 22:41:13 -0400
-Received: from mail-eopbgr60069.outbound.protection.outlook.com ([40.107.6.69]:9782
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbfEQClN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 22:41:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4PTwfMgy7lO3Fjrv6jCWVtWw3kNzvBbT0MIAdKWY6GQ=;
- b=kGRIbIfbuO9XjcGSAvjSjo1rF34dDLRQafnack72fm005ThyCt1MEtxEUP1v1FX9AiStaJ4g8b4yNt7U36QHiCvvVfPKUDFglecA/9UgJO/uwmxmvdyqbrekUt/MumUCYkoS3n6BD7o9T3T8Cy3llKIVhuMlcFLzL+tEYzOHMzk=
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
- VE1PR04MB6349.eurprd04.prod.outlook.com (10.255.118.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Fri, 17 May 2019 02:41:10 +0000
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::a5b5:13f5:f89c:9a30]) by VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::a5b5:13f5:f89c:9a30%7]) with mapi id 15.20.1900.010; Fri, 17 May 2019
- 02:41:10 +0000
-From:   "S.j. Wang" <shengjiu.wang@nxp.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: linux-next: Fixes tag needs some work in the sound-asoc tree
-Thread-Topic: linux-next: Fixes tag needs some work in the sound-asoc tree
-Thread-Index: AdUMWOUgW4w1G7LAQNer7u1oxDjcrA==
-Date:   Fri, 17 May 2019 02:41:10 +0000
-Message-ID: <VE1PR04MB64798F450C1128243C83FC4BE30B0@VE1PR04MB6479.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shengjiu.wang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a81c9728-c6ce-4829-aa71-08d6da711ecf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6349;
-x-ms-traffictypediagnostic: VE1PR04MB6349:
-x-microsoft-antispam-prvs: <VE1PR04MB6349B6CC5C21A80FA7C125A2E30B0@VE1PR04MB6349.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1247;
-x-forefront-prvs: 0040126723
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(366004)(376002)(396003)(189003)(199004)(66066001)(316002)(74316002)(5660300002)(9686003)(53936002)(110136005)(54906003)(81156014)(8676002)(7736002)(305945005)(2906002)(6436002)(81166006)(8936002)(52536014)(4744005)(55016002)(229853002)(68736007)(71190400001)(71200400001)(256004)(86362001)(73956011)(66476007)(4326008)(76116006)(66946007)(66446008)(33656002)(476003)(3846002)(486006)(6116002)(64756008)(26005)(7696005)(6506007)(186003)(66556008)(99286004)(25786009)(6246003)(478600001)(102836004)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6349;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KVTVxQCLOCG+x9vAktdlDJMxNtZwOHdZFmwha5i8UsSDK8Xk3TAYFAClMjyXPf/d7R/jXmpq6cfqyawgLnhWRTkb5LOHiu8UX7gG7bSlxnC0zy0+o0MevClm/XlThXV2FRsWWQSlll+9ccVyo5d0AnX7fz3NkJft/4j+UHEqZZrh8fe2tLULCVW0wtTiSexOQ/ASeqnZ3TaOHF+6yHXerLRcnz10loot7yahwoJ2lT1DVMD+jv/vmtRhgjFFe0uC4WyU9H9H+nq3NaACCQvo0nk3/AFN/BHTtW0pQCPmJPsqF9iJ0OqKQc3u7xili1eLhmF6lqCgJLKtV+0ffCb7TSmjNtk26cqoQCdHDpEb92IlzXyL47mVsbk1SvXXKGKS7DngvLYMRGbZoDUzkgQYwAcHQRtd7IBNpKhvzMJAP1g=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727534AbfEQCo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 22:44:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbfEQCo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 22:44:29 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B1C920848;
+        Fri, 17 May 2019 02:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558061068;
+        bh=wa9myGyRMaYahr2088guoMQ/oF7+8i++qNk0d4F0tOo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wG4lQWEDTA9JTF64I55cyQIiVuwwwcPmjKEcd9mAw+uX/IMhb2sOaF72YFr/xBAZ1
+         804NBQW3XXJw8NoMkFhQKGugNy3b2L1c2rnF5aGPP7DIRbYJVb+uPcqrhiaomlPxDr
+         oyi3W6QfxHX+0ThT+2cj+5yyoq7CkIJaivdo53Lw=
+Date:   Fri, 17 May 2019 10:43:49 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH RESEND] firmware: imx: SCU irq should ONLY be enabled
+ after SCU IPC is ready
+Message-ID: <20190517024347.GC15856@dragon>
+References: <1557650002-10565-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a81c9728-c6ce-4829-aa71-08d6da711ecf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 02:41:10.2019
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6349
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557650002-10565-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi=20
+On Sun, May 12, 2019 at 08:38:22AM +0000, Anson Huang wrote:
+> The imx_scu_irq_group_enable() is normally called during module driver
+> probe phase to enable SCU group irq, if SCU IPC is NOT ready, below
+> dump will show out:
+> 
+> [    0.933001] Hardware name: Freescale i.MX8QXP MEK (DT)
+> [    0.938129] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [    0.942907] pc : imx_scu_call_rpc+0x114/0x158
+> [    0.947251] lr : imx_scu_irq_group_enable+0x74/0xc4
+> [    0.952113] sp : ffff00001005bae0
+> [    0.955415] x29: ffff00001005bae0 x28: ffff0000111bb0a0
+> [    0.960712] x27: ffff00001140b000 x26: ffff00001111068c
+> [    0.966011] x25: ffff0000111bb100 x24: 0000000000000000
+> [    0.971311] x23: ffff0000113d9cd8 x22: 0000000000000001
+> [    0.976610] x21: 0000000000000001 x20: ffff80083b51a410
+> [    0.981909] x19: ffff000011259000 x18: 0000000000000480
+> [    0.987209] x17: 000000000023ffb8 x16: 0000000000000010
+> [    0.992508] x15: 000000000000023f x14: ffffffffffffffff
+> [    0.997807] x13: 0000000000000018 x12: 0000000000000030
+> [    1.003107] x11: 0000000000000003 x10: 0101010101010101
+> [    1.008406] x9 : ffffffffffffffff x8 : 7f7f7f7f7f7f7f7f
+> [    1.013706] x7 : fefefeff646c606d x6 : 0000000000000000
+> [    1.019005] x5 : ffff0000112596c8 x4 : 0000000000000008
+> [    1.024304] x3 : 0000000000000003 x2 : 0000000000000001
+> [    1.029604] x1 : ffff00001005bb58 x0 : 0000000000000000
+> [    1.034905] Call trace:
+> [    1.037341]  imx_scu_call_rpc+0x114/0x158
+> [    1.041334]  imx_scu_irq_group_enable+0x74/0xc4
+> [    1.045856]  imx_sc_wdt_probe+0x24/0x150
+> [    1.049766]  platform_drv_probe+0x4c/0xb0
+> [    1.053762]  really_probe+0x1f8/0x2c8
+> [    1.057407]  driver_probe_device+0x58/0xfc
+> [    1.061490]  device_driver_attach+0x68/0x70
+> [    1.065660]  __driver_attach+0x94/0xdc
+> [    1.069397]  bus_for_each_dev+0x64/0xc0
+> [    1.073220]  driver_attach+0x20/0x28
+> [    1.076782]  bus_add_driver+0x148/0x1fc
+> [    1.080601]  driver_register+0x68/0x120
+> [    1.084424]  __platform_driver_register+0x4c/0x54
+> [    1.089120]  imx_sc_wdt_driver_init+0x18/0x20
+> [    1.093463]  do_one_initcall+0x58/0x1b8
+> [    1.097287]  kernel_init_freeable+0x1cc/0x288
+> [    1.101630]  kernel_init+0x10/0x100
+> [    1.105101]  ret_from_fork+0x10/0x18
+> [    1.108669] ---[ end trace 9e03302114457de9 ]---
+> [    1.113296] enable irq failed, group 1, mask 1, ret -22
+> 
+> To avoid such scenario, return -EPROBE_DEFER in imx_scu_irq_group_enable()
+> API if SCU IPC is NOT ready, then module driver which calls this API
+> in probe phase will defer probe after SCU IPC ready.
+> 
+> Fixes: 851826c7566e ("firmware: imx: enable imx scu general irq function")
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-   Do I need to resend the patch?
-
-Best regards
-Wang shengjiu
->=20
-> In commit
->=20
->   b06c58c2a1ee ("ASoC: fsl_asrc: Fix the issue about unsupported rate")
->=20
-> Fixes tag
->=20
->   Fixes: fff6e03c7b65 ("ASoC: fsl_asrc: add support for 8-30kHz
->=20
-> has these problem(s):
->=20
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
->=20
-> Please do not split fixes tags over more that one line.
->=20
-> --
-> Cheers,
-> Stephen Rothwell
+Applied, thanks.
