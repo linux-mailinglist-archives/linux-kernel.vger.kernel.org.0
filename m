@@ -2,106 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EFDC21B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E641321B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfEQQDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:03:04 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35078 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbfEQQDD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:03:03 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n14so7217045otk.2;
-        Fri, 17 May 2019 09:03:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=gRcrtb5zkBV22N7ejZ8gd80yYzuG0eMMK0Likb2l39A=;
-        b=qLjX5pYMmcTMjN5iFgyQsKZE0y6c8l2+gMnFTxjnwzcVJC9+73IQv1ERNRGBwqcVB1
-         jRNQe7asKnOot4X72/nbnRE7ZLXpGGHhCVQHVNfntOjMG1qo7pS5msGMHFXbT8alz6NV
-         8MZ4GlFAmF9tHddkLWQiIfiLZoD3R230cflReazsdSKB8hmkKBI5BpKwxrIt27vfGiRV
-         iaoxpaCP0JJhEj2JXMFaw8wwGrfzzn0XPmAsNMq0oa8ktvb2lMmfwa7TtfouoWL0DbPa
-         0DGFpoS0qsgQPx2kd48oCzrUSwvRpDEoz39no2EGJVCoA96kzHrljKfOemLP4MpMrC+3
-         9VWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gRcrtb5zkBV22N7ejZ8gd80yYzuG0eMMK0Likb2l39A=;
-        b=QX2t0l632nKJLGVdsiMJfTazSfpVn0YXgbqBGE0Q6xNwKDvMNKzBU4ewPFQM4vVWWO
-         I/zbvvhL4za3Su7GEo9Xv1N8S9M7Rxw/AYCkT8n7RN1boarq+nabJNl7O6PesKTnmalv
-         0Mo9Cmm9komJ7DmjQ1CIyTjy17SNre0EDgvPQhB2StZtH0BsQEqcw1TGllKHe+/cxnIp
-         cbb8z2zBPweFyiJToaQAJlbBSlD5RCRMZnpz442oLkuSBqPICb+xe/Blx4gjHxpY8qxV
-         Je3ZjaoMA/2Y5zS/KoT68GtCtlN5QE+bFkVDYPkfhcc53KUeacZYNjFW33OI/GeoaBxB
-         nkdA==
-X-Gm-Message-State: APjAAAV0NPSvS2v1UHoK+H6HycCkmm78B7eKYDaVYyM3IsvYoD4qbsBD
-        HRU2Vi9VGYgUX9EeuYBPlLL6qBCg0iEXSPHYqzk=
-X-Google-Smtp-Source: APXvYqxmJfR52ctG4tHDsK2W7JZpTz8cICNLg1PMwwOW2FZTYEBQrxwnQVaenqKDcW/K5NYKOXtN9pY4O8t6RCdDLOk=
-X-Received: by 2002:a9d:64c1:: with SMTP id n1mr8954538otl.259.1558108983107;
- Fri, 17 May 2019 09:03:03 -0700 (PDT)
+        id S1729299AbfEQQFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:05:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:10643 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728482AbfEQQFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:05:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 09:05:05 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga006.jf.intel.com with ESMTP; 17 May 2019 09:05:05 -0700
+Date:   Fri, 17 May 2019 09:05:05 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190517160505.GB15006@linux.intel.com>
+References: <20190515013031.GF1977@linux.intel.com>
+ <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <alpine.LRH.2.21.1905160543070.19802@namei.org>
+ <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com>
+ <alpine.LRH.2.21.1905160844130.29250@namei.org>
+ <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXmyau8Gq-wKHZ5FdNGF+mqd7a+q+HAVR2sqvXA6av9BA@mail.gmail.com>
 MIME-Version: 1.0
-From:   Jaewon Kim <jaewon31.kim@gmail.com>
-Date:   Sat, 18 May 2019 01:02:28 +0900
-Message-ID: <CAJrd-UuMRdWHky4gkmiR0QYozfXW0O35Ohv6mJPFx2TLa8hRKg@mail.gmail.com>
-Subject: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
-To:     gregkh@linuxfoundation.org, m.szyprowski@samsung.com,
-        linux-mm@kvack.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jaewon Kim <jaewon31.kim@samsung.com>, ytk.lee@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrXmyau8Gq-wKHZ5FdNGF+mqd7a+q+HAVR2sqvXA6av9BA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello I don't have enough knowledge on USB core but I've wondered
-why GFP_NOIO has been used in xhci_alloc_dev for
-xhci_alloc_virt_device. I found commit ("a6d940dd759b xhci: Use
-GFP_NOIO during device reset"). But can we just change GFP_NOIO
-to __GFP_RECLAIM | __GFP_FS ?
+On Thu, May 16, 2019 at 05:35:16PM -0700, Andy Lutomirski wrote:
+> On Thu, May 16, 2019 at 3:23 PM Xing, Cedric <cedric.xing@intel.com> wrote:
+> > And if you are with me on that bigger picture, the next question is: what
+> > should be the default behavior of security_sgx_mprot() for
+> > existing/non-SGX-aware LSM modules/policies? I'd say a reasonable default
+> > is to allow R, RW and RX, but not anything else. It'd suffice to get rid of
+> > EXECMEM/EXECMOD requirements on enclave applications. For SGX1, EPCM
+> > permissions are immutable so it really doesn't matter what
+> > security_sgx_mprot() does. For SGX2 and beyond, there's still time and new
+> > SGX-aware LSM modules/policies will probably have emerged by then.
+> 
+> I hadn't thought about the SGX1 vs SGX2 difference.  If the driver
+> initially only wants to support SGX1, then I guess we really could get
+> away with constraining the EPC flags based on the source page
+> permission and not restricting mprotect() and mmap() permissions on
+> /dev/sgx/enclave at all.
 
-Please refer to below case.
+No, SGX1 vs SGX2 support in the kernel is irrelevant.  Well, unless the
+driver simply refuses to load on SGX2 hardware, but I don't think anyone
+wants to go that route.  There is no enabling or attribute bit required
+to execute ENCLU[EMODPE], e.g. an enclave can effect RW->RWX in the EPCM
+on SGX2 hardware regardless of what the kernel is doing.
 
-I got a report from Lee YongTaek <ytk.lee@samsung.com> that the
-xhci_alloc_virt_device was too slow over 2 seconds only for one page
-allocation.
-
-1) It was because kernel version was v4.14 and DMA allocation was
-done from CMA(Contiguous Memory Allocator) where CMA region was
-almost filled with file page and  CMA passes GFP down to page
-isolation. And the page isolation only allows file page isolation only to
-requests having __GFP_FS.
-
-2) Historically CMA was changed at v4.19 to use GFP_KERNEL
-regardless of GFP passed to  DMA allocation through the
-commit 6518202970c1 "(mm/cma: remove unsupported gfp_mask
-parameter from cma_alloc()".
-
-I think pre v4.19 the xhci_alloc_virt_device could be very slow
-depending on CMA situation but free to USB deadlock issue. But as of
-v4.19, I think, it will be fast but can face the deadlock issue.
-Consequently I think to meet the both cases, I think USB can pass
-__GFP_FS without __GFP_IO.
-
-If __GFP_FS is passed from USB core, of course, the CMA patch also
-need to be changed to pass GFP.
-
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 005e65922608..38abcd03a1a2 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3893,7 +3893,7 @@ int xhci_alloc_dev(struct usb_hcd *hcd, struct
-usb_device *udev)
-         * xhci_discover_or_reset_device(), which may be called as part of
-         * mass storage driver error handling.
-         */
--       if (!xhci_alloc_virt_device(xhci, slot_id, udev, GFP_NOIO)) {
-+       if (!xhci_alloc_virt_device(xhci, slot_id, udev, __GFP_RECLAIM
-| __GFP_FS)) {
-                xhci_warn(xhci, "Could not allocate xHCI USB device
-data structures\n");
-                goto disable_slot;
-        }
-
-
-Thank you
+IMO the kernel should ignore the EPCM from an LSM perspective.
