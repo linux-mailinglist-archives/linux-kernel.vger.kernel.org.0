@@ -2,134 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 156CC21280
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A320121294
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 05:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfEQDc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 23:32:57 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:31767 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725929AbfEQDc5 (ORCPT
+        id S1727787AbfEQDiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 23:38:46 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:22897 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfEQDip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 23:32:57 -0400
-X-UUID: 7c00949786d04952aa8af5a7eec0004e-20190517
-X-UUID: 7c00949786d04952aa8af5a7eec0004e-20190517
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1375638928; Fri, 17 May 2019 11:32:48 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 17 May 2019 11:32:39 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 17 May 2019 11:32:39 +0800
-Message-ID: <1558063959.14401.18.camel@mtksdaap41>
-Subject: Re: [PATCH v6 08/12] soc: mediatek: cmdq: define the instruction
- struct
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh 
-        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>
-Date:   Fri, 17 May 2019 11:32:39 +0800
-In-Reply-To: <20190516090224.59070-9-bibby.hsieh@mediatek.com>
-References: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
-         <20190516090224.59070-9-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 16 May 2019 23:38:45 -0400
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x4H3cN1D032721;
+        Fri, 17 May 2019 12:38:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4H3cN1D032721
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1558064304;
+        bh=srN3/L+Kx9Et/22233UjKG5aslu8L3GpgixAoCxQ5yM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2J8eWrbpwFM7LwNHSWsazJJFrN5fl01HfReLlbmiilaQfPechGIKeZlsWTeya4CFM
+         MZEanIsQXaJaHoOfn5k7faFhGNhcoR/l+dEB3Qw8+Bm1ZJO4QbL9ceOX+tLCqy90I9
+         Qmu+a8rVPNplx2tOmLANdrfvcWqigsbyZwkrWAFij3uGe4Vjpr8ZrFX+XxancqmhR2
+         +39LaUHIK3my8MBHGe+1J9aftycL/czcjV5Qa+aPIOJZZvm1s5DLzi2feDq3lx/Fmd
+         u4W9VtunapeEo7/SD1blIryCl5O/O6shSzBgayIf4i9moqu20qBBUlptVvUMhYwC3z
+         uf5iZ+0pVWFDw==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id n7so2140654uap.12;
+        Thu, 16 May 2019 20:38:23 -0700 (PDT)
+X-Gm-Message-State: APjAAAUkqtag2YS5RKdEfhMfOWWbZ6Z5o2cn+3hy1cFRWYn8J8EhHSec
+        Rygm+h7KCxG5EdcjicbB8JBfvvIl4K2iU9BmxWQ=
+X-Google-Smtp-Source: APXvYqy+E3KgmeybTo+0K8ZSAolNzMC/m2XGEox38LXflIwOHcq9J7NMqQNWklD80zDReYHBoxwzEJczldJfvWFYxXw=
+X-Received: by 2002:ab0:3058:: with SMTP id x24mr23025836ual.95.1558064302467;
+ Thu, 16 May 2019 20:38:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 9C00DE444E660D85CDFD1DC30AAFFABEDB58AFC441998971D133D2E68A8E916E2000:8
-X-MTK:  N
+References: <20190515073818.22486-1-yamada.masahiro@socionext.com>
+ <CAK7LNATUvPMqt93iwzNud0mxk99Si=CEBDyjA8BLEXM_tcTBfQ@mail.gmail.com> <201905151130.87CDB73C0@keescook>
+In-Reply-To: <201905151130.87CDB73C0@keescook>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 17 May 2019 12:37:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASKnWkJhw3Hn1vKK=dB_vHOo0MtMd9duTpHoQSdgYoZLA@mail.gmail.com>
+Message-ID: <CAK7LNASKnWkJhw3Hn1vKK=dB_vHOo0MtMd9duTpHoQSdgYoZLA@mail.gmail.com>
+Subject: Re: [RFC PATCH] kbuild: check uniqueness of basename of modules
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+Hi Kees,
 
-On Thu, 2019-05-16 at 17:02 +0800, Bibby Hsieh wrote:
-> Define a instruction structure for gce driver to append command.
-> This structure can make the client's code more readability.
-> 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-cmdq-helper.c   | 113 +++++++++++++++--------
->  include/linux/mailbox/mtk-cmdq-mailbox.h |   2 +
->  include/linux/soc/mediatek/mtk-cmdq.h    |  14 +--
->  3 files changed, 84 insertions(+), 45 deletions(-)
-> 
+On Thu, May 16, 2019 at 3:31 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Thu, May 16, 2019 at 03:07:54AM +0900, Masahiro Yamada wrote:
+> > On Wed, May 15, 2019 at 4:40 PM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> >
+> > >         $(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin
+> > > diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
+> > > new file mode 100755
+> > > index 000000000000..944e68bd22b0
+> > > --- /dev/null
+> > > +++ b/scripts/modules-check.sh
+> > > @@ -0,0 +1,18 @@
+> > > +#!/bin/sh
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +# Warn if two or more modules have the same basename
+> > > +check_same_name_modules()
+> > > +{
+> > > +       same_name_modules=$(cat modules.order modules.builtin | \
+> > > +                               xargs basename -a | sort | uniq -d)
+> >
+> >
+> > I noticed a bug here.
+> >
+> >
+> > allnoconfig + CONFIG_MODULES=y
+> > will create empty modules.order and modules.builtin.
+> >
+> > Then, 'basename -a' will emit the error messages
+> > since it receives zero arguments.
+>
+> You can skip running it by adding "-r" to xargs:
+>
+>        -r, --no-run-if-empty
+>               If the standard input does not contain any nonblanks, do not run
+>               the command.  Normally, the command is run once even if there is
+>               no input.  This option is a GNU extension.
 
-[snip]
+Good idea!
 
->  
->  /**
->   * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
->   * @pkt:	the CMDQ packet
-> - * @value:	the specified target register value
->   * @subsys:	the CMDQ sub system code
->   * @offset:	register offset from CMDQ sub system
-> + * @value:	the specified target register value
->   * @mask:	the specified target register mask
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> -			u32 subsys, u32 offset, u32 mask);
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
-> +			u32 value, u32 mask);
+I will use this in v2.
 
-You have do two things for this interface: one is reordering the
-parameter, another one is changing type of subsys from u32 to u8.
-
-Define the instruction struct is not necessary to change the order and
-type. I would like you to separate these two things to another patches.
-So the patch sequence may be:
-
-1. Reorder parameter of cmdq_pkt_write_mask()
-2. Change subsys type to u8
-3. define the instruction struct
-
-Regards,
-CK
-
->  
->  /**
->   * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
-> @@ -88,7 +88,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event);
->  
->  /**
->   * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
-> @@ -97,7 +97,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event);
->  
->  /**
->   * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
+Thanks.
 
 
+-- 
+Best Regards
+Masahiro Yamada
