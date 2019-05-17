@@ -2,198 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F87217ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C59217F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbfEQLzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 07:55:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43846 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbfEQLzE (ORCPT
+        id S1728857AbfEQL4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 07:56:15 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37241 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbfEQL4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 07:55:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=BB+a1yAjmGBaCcsmFlZZE8gT8m2E1PyHUTm3q9L2zV8=; b=OTigpAmAdL7mg9vDisVbcjE4G0
-        pPbA5jd9aZKd4FP0X7whbf/A2shmtw7IA0uCf+L2FWO0/nmbgSs2feGC9D+ipz+w9aO/tW5tpKgHC
-        z6rHkCo6wJd7SlT2W1unKAYDuGH9f9k5Ww6uYCh+18/RBOAvo5yiB6iWsBivOQAbPxPgo40mhTWyd
-        h2iUWYwhHBFnBWcaQCTag4f9nq711zbvzXSxiscmxL2r9XbMwKZRkNvgpvAmp74f4wxWsMmteQPlw
-        3HAAZ/aMVpi2REoHtNgRgoRRxRzWVM+j+xGYzz9DUFmtbUfHLM4wV171SrcAyOvBAqdYXfmzi6vyo
-        vODmVk1A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRbRy-00022T-W1; Fri, 17 May 2019 11:54:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C1EF62027B748; Fri, 17 May 2019 13:54:56 +0200 (CEST)
-Message-Id: <20190517115418.481392777@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 17 May 2019 13:52:34 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     peterz@infradead.org, mingo@kernel.org
-Cc:     yabinc@google.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] perf/ring-buffer: Use regular variables for nesting
-References: <20190517115230.437269790@infradead.org>
+        Fri, 17 May 2019 07:56:14 -0400
+Received: by mail-io1-f68.google.com with SMTP id u2so5250311ioc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 04:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CA1QgtL8vOu+blk28g43ESoyKQjrdUgm0/mMdKslbwI=;
+        b=m+abuiCUQOIh/qk/pVf/2UgQvs4lGmH9qCd1ZGSbqAU43C5rMnpZZysuLCIvNqjLQA
+         87UWsCglPydE4JDOUkakqnPU5kEvIdYTqG3iL0GsDlcuRtiOuy7Ar8NMVoQHztL3W+Bt
+         0n1WIlfK0eKU7TwxOBwd3gLz/LCwrn/7yiRj8gr1+dqsZnmhMrOqmPkeNBJpo94ijifG
+         emoszrtzIKzFdAmFP488Z0uClSgQf6Eu1EoyUUVVLG0Mst5A8+FNLjx8GwHW0+KT8viB
+         T77kKAR08xTPlRd8I9Q7fUdmexzP29xTCorVjCuFTDy2mDU/EvQmsV2WbW0IuDPWklYC
+         C43g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CA1QgtL8vOu+blk28g43ESoyKQjrdUgm0/mMdKslbwI=;
+        b=C24DIIJbvRjhZ3Mwq4jwj+IHUgPv/fpqwYmrsIxBafr6MoIHTsowetUrH3sJoDipry
+         IjZIJdQozCDjl3wyUa5Eedf7XZubyg3VKgAI0V1S4cFOlIGsotG8rS21k9Rf/Cz+w+FE
+         zX6zIvnvdZ2lXVrQCc9MRqm4ANH+UPDozt8NA17K4bDUSz3sqgkbfdrd/jZ0wDacGINs
+         tPHSj3J3kTfikJT4z73Gnv5tL3M4KjxD5MGz9puATwurQflcRO8Vlp8wdDVmrEaE7clY
+         aeF5fHpTm9d0yqjPIdkEbnnDQZIwDX2TdeLD8/V84tC6wNxOp9VYd0coGhdtrSSQFC4c
+         +ukg==
+X-Gm-Message-State: APjAAAVnitDpb7L0U64FIR3uirAEApwUZV6pvSmw8tFYmFT9NFLqEn2l
+        OISIDUo9M1STTabt2VEPqN3+2AYemX1bIbMn2xdpAQ==
+X-Google-Smtp-Source: APXvYqzbxd/LhE2W1VznV5HXbB0SgsNd3x8iv/pmdPHmijU0/muzRSAM0zIjA7vRy7qKVFuYiijaQdNgZJpAJyC1r6s=
+X-Received: by 2002:a6b:3b88:: with SMTP id i130mr16477327ioa.21.1558094174033;
+ Fri, 17 May 2019 04:56:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <1558024913-26502-1-git-send-email-kdasu.kdev@gmail.com>
+ <1558024913-26502-2-git-send-email-kdasu.kdev@gmail.com> <CAFLxGvyZCpKthJevFHjjBQXo=j5f-FUip0MAsLy0HaoJzLZ2rA@mail.gmail.com>
+In-Reply-To: <CAFLxGvyZCpKthJevFHjjBQXo=j5f-FUip0MAsLy0HaoJzLZ2rA@mail.gmail.com>
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+Date:   Fri, 17 May 2019 07:56:01 -0400
+Message-ID: <CAC=U0a2UxMG2SuVCjv=TLzMs7Dg3yqJdxW6ft2tSQgEKj0C6ZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mtd: nand: raw: brcmnand: When oops in progress
+ use pio and interrupt polling
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     MTD Maling List <linux-mtd@lists.infradead.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the IRQ/NMI will nest, the nest-count will be invariant over the
-actual exception, since it will decrement equal to increment.
+On Fri, May 17, 2019 at 4:12 AM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> On Thu, May 16, 2019 at 6:42 PM Kamal Dasu <kdasu.kdev@gmail.com> wrote:
+> >
+> > If mtd_oops is in progress, switch to polling during NAND command
+> > completion instead of relying on DMA/interrupts so that the mtd_oops
+> > buffer can be completely written in the assigned NAND partition.
+>
+> With the new flag the semantics change, as soon a panic write happened,
+> the flag will stay and *all* future operates will take the polling/pio path.
+>
 
-This means we can -- carefully -- use a regular variable since the
-typical LOAD-STORE race doesn't exist (similar to preempt_count).
+Yes that is true.
 
-This optimizes the ring-buffer for all LOAD-STORE architectures, since
-they need to use atomic ops to implement local_t.
+> IMHO this is fine since the kernel cannot recover from an oops.
+> But just to make sure we all get this. :-)
+> An alternative would be to block all further non-panic writes.
 
-Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/events/internal.h    |    4 ++--
- kernel/events/ring_buffer.c |   41 ++++++++++++++++++++++++++---------------
- 2 files changed, 28 insertions(+), 17 deletions(-)
+Capturing the panic writes into an mtd device reliably is what the low
+level driver is trying to do.If there are non panic writes they will
+use pio and interrupt  polling  as well in this case.
 
---- a/kernel/events/internal.h
-+++ b/kernel/events/internal.h
-@@ -24,7 +24,7 @@ struct ring_buffer {
- 	atomic_t			poll;		/* POLL_ for wakeups */
- 
- 	local_t				head;		/* write position    */
--	local_t				nest;		/* nested writers    */
-+	unsigned int			nest;		/* nested writers    */
- 	local_t				events;		/* event limit       */
- 	local_t				wakeup;		/* wakeup stamp      */
- 	local_t				lost;		/* nr records lost   */
-@@ -41,7 +41,7 @@ struct ring_buffer {
- 
- 	/* AUX area */
- 	long				aux_head;
--	local_t				aux_nest;
-+	unsigned int			aux_nest;
- 	long				aux_wakeup;	/* last aux_watermark boundary crossed by aux_head */
- 	unsigned long			aux_pgoff;
- 	int				aux_nr_pages;
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -38,7 +38,12 @@ static void perf_output_get_handle(struc
- 	struct ring_buffer *rb = handle->rb;
- 
- 	preempt_disable();
--	local_inc(&rb->nest);
-+
-+	/*
-+	 * Avoid an explicit LOAD/STORE such that architectures with memops
-+	 * can use them.
-+	 */
-+	(*(volatile unsigned int *)&rb->nest)++;
- 	handle->wakeup = local_read(&rb->wakeup);
- }
- 
-@@ -46,6 +51,17 @@ static void perf_output_put_handle(struc
- {
- 	struct ring_buffer *rb = handle->rb;
- 	unsigned long head;
-+	unsigned int nest;
-+
-+	/*
-+	 * If this isn't the outermost nesting, we don't have to update
-+	 * @rb->user_page->data_head.
-+	 */
-+	nest = READ_ONCE(rb->nest);
-+	if (nest > 1) {
-+		WRITE_ONCE(rb->nest, nest - 1);
-+		goto out;
-+	}
- 
- again:
- 	/*
-@@ -65,15 +81,6 @@ static void perf_output_put_handle(struc
- 	 */
- 
- 	/*
--	 * If this isn't the outermost nesting, we don't have to update
--	 * @rb->user_page->data_head.
--	 */
--	if (local_read(&rb->nest) > 1) {
--		local_dec(&rb->nest);
--		goto out;
--	}
--
--	/*
- 	 * Since the mmap() consumer (userspace) can run on a different CPU:
- 	 *
- 	 *   kernel				user
-@@ -108,7 +115,7 @@ static void perf_output_put_handle(struc
- 	 * write will (temporarily) publish a stale value.
- 	 */
- 	barrier();
--	local_set(&rb->nest, 0);
-+	WRITE_ONCE(rb->nest, 0);
- 
- 	/*
- 	 * Ensure we decrement @rb->nest before we validate the @rb->head.
-@@ -116,7 +123,7 @@ static void perf_output_put_handle(struc
- 	 */
- 	barrier();
- 	if (unlikely(head != local_read(&rb->head))) {
--		local_inc(&rb->nest);
-+		WRITE_ONCE(rb->nest, 1);
- 		goto again;
- 	}
- 
-@@ -355,6 +362,7 @@ void *perf_aux_output_begin(struct perf_
- 	struct perf_event *output_event = event;
- 	unsigned long aux_head, aux_tail;
- 	struct ring_buffer *rb;
-+	unsigned int nest;
- 
- 	if (output_event->parent)
- 		output_event = output_event->parent;
-@@ -385,13 +393,16 @@ void *perf_aux_output_begin(struct perf_
- 	if (!refcount_inc_not_zero(&rb->aux_refcount))
- 		goto err;
- 
-+	nest = READ_ONCE(rb->aux_nest);
- 	/*
- 	 * Nesting is not supported for AUX area, make sure nested
- 	 * writers are caught early
- 	 */
--	if (WARN_ON_ONCE(local_xchg(&rb->aux_nest, 1)))
-+	if (WARN_ON_ONCE(nest))
- 		goto err_put;
- 
-+	WRITE_ONCE(rb->aux_nest, nest + 1);
-+
- 	aux_head = rb->aux_head;
- 
- 	handle->rb = rb;
-@@ -419,7 +430,7 @@ void *perf_aux_output_begin(struct perf_
- 		if (!handle->size) { /* A, matches D */
- 			event->pending_disable = smp_processor_id();
- 			perf_output_wakeup(handle);
--			local_set(&rb->aux_nest, 0);
-+			WRITE_ONCE(rb->aux_nest, 0);
- 			goto err_put;
- 		}
- 	}
-@@ -508,7 +519,7 @@ void perf_aux_output_end(struct perf_out
- 
- 	handle->event = NULL;
- 
--	local_set(&rb->aux_nest, 0);
-+	WRITE_ONCE(rb->aux_nest, 0);
- 	/* can't be last */
- 	rb_free_aux(rb);
- 	ring_buffer_put(rb);
+> --
+> Thanks,
+> //richard
 
-
+Thanks
+Kamal
