@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A0621C4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B799121C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfEQRTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 13:19:12 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39705 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfEQRTL (ORCPT
+        id S1728285AbfEQRUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 13:20:40 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33718 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfEQRUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 13:19:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id z26so3986740pfg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 10:19:11 -0700 (PDT)
+        Fri, 17 May 2019 13:20:38 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y3so3658796plp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 10:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=content-transfer-encoding:from:mime-version:subject:date:message-id
@@ -30,21 +30,21 @@ X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=x-gm-message-state:content-transfer-encoding:from:mime-version
          :subject:date:message-id:references:cc:in-reply-to:to;
         bh=JAswoR5Qv/2WYAqzx6JaoqD58LtbqKgAkfQL5B0Gl2k=;
-        b=SStGdIutxXXBuT5t2LrA6Zajhfw/Lcd8nLJb2Z4/yGQHZu/4RuNMhiUYR4+GlmOmQx
-         VwX/pp3aXbX/jfFyT5ETa2gFx9Ur02skh6EZovw0jaO+QAExEQ2tJgbAGBEGKhxNxfkw
-         itcbils4IcGxznSj4fmpnuA68BZ0fD5wEzqGEMo3HsgNV3CTzKLtSpweAxWkIVMKKIjb
-         wgELWql4E/ywEvKaUXu2UvvBWIcogW9/Jvd0Xauc2Qr7fv6OGZ7kAUPJiSePZ/R7EjQ1
-         rH1cCgb9pOtlKdxe3R7NzIXDEGgS0viySKfJBxvsZoxCj/72rQIgxb3pktp+GmCGxbRk
-         tLFw==
-X-Gm-Message-State: APjAAAWuE04kcNtuMFS0FgllOgHpzBBK4bYJ30wldq+UxC7Y9vy9qbjI
-        CGZdP1W12b4OsZ3LiQqf3ZsbQg==
-X-Google-Smtp-Source: APXvYqzB8HQYLiqoUkmvgy2Qbfkq0oKD7/O5SMJJluI3vpUX7KQUH6p/CAsDENs2ofp3S28Iz4r7gA==
-X-Received: by 2002:aa7:8c10:: with SMTP id c16mr16875764pfd.89.1558113551080;
-        Fri, 17 May 2019 10:19:11 -0700 (PDT)
+        b=MpNO1bXUdwJaMfojXma99F6Kk3RIDTZ3nvRhfNo5CMzPWi1jMjNWZ6NCeByqaH4j+s
+         kcksOy808TmXzfJRC5uvU/vBQdRw1SySlI9D0//46tsWRGbYWkB271THkC1VTOhg/yrI
+         iGh2N/Xtv33bdlEP4t0Qq2YR+IuYrQzntUv4m7yT6bODWvxOoEyqDA/FNCPZOGfchoqN
+         zk5pvZioWqLCqUdscTT5j2R8BtPvdgMzR6+dFK2et+wlNRMnhJs1w9G3UBhAqReCudC1
+         nQuCzr9hCwQHirhVJSNdA/vhC5sHYyShDw2sU/pqBe5m3L2SA62LFMjote/GvhmIwwj4
+         Uzog==
+X-Gm-Message-State: APjAAAXhvPbNaS5pC8gHmGz992d8HM4X3e7sPy4L1qa9yZ7Y4YbOYPac
+        aE6YoCjwfIEUuUeRQIlVm1FZ5A==
+X-Google-Smtp-Source: APXvYqx+qyuENZ/nUYFbGVAoO8hVLoci4YkNPBz4AUML7LDx6gfKrTjzh035v8BrqjYhwueHCgWmdA==
+X-Received: by 2002:a17:902:201:: with SMTP id 1mr13358334plc.263.1558113637940;
+        Fri, 17 May 2019 10:20:37 -0700 (PDT)
 Received: from [10.232.242.123] (96.sub-97-41-134.myvzw.com. [97.41.134.96])
-        by smtp.gmail.com with ESMTPSA id t2sm3841651pfh.166.2019.05.17.10.18.22
+        by smtp.gmail.com with ESMTPSA id o7sm13935991pfp.168.2019.05.17.10.20.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 10:19:10 -0700 (PDT)
+        Fri, 17 May 2019 10:20:37 -0700 (PDT)
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
 From:   Andy Lutomirski <luto@amacapital.net>
