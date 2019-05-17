@@ -2,242 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE94E21B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 214AB21B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:18:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbfEQQRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 12:17:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40286 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729488AbfEQQRE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 12:17:04 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4HG6Z7C054882
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 12:17:02 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2shw8nr80n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 12:17:02 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Fri, 17 May 2019 17:16:58 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 May 2019 17:16:55 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4HGGsMT44302506
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 May 2019 16:16:54 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 012E452059;
-        Fri, 17 May 2019 16:16:54 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.145.153.112])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 644E85206B;
-        Fri, 17 May 2019 16:16:53 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     sebott@linux.vnet.ibm.com
-Cc:     gerald.schaefer@de.ibm.com, pasic@linux.vnet.ibm.com,
-        borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        robin.murphy@arm.com
-Subject: [PATCH v2 4/4] vfio: vfio_iommu_type1: implement VFIO_IOMMU_INFO_CAPABILITIES
-Date:   Fri, 17 May 2019 18:16:50 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1558109810-18683-1-git-send-email-pmorel@linux.ibm.com>
-References: <1558109810-18683-1-git-send-email-pmorel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19051716-4275-0000-0000-00000335E465
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051716-4276-0000-0000-0000384570A6
-Message-Id: <1558109810-18683-5-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=636 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905170098
+        id S1729546AbfEQQRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:17:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:45370 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729525AbfEQQRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:17:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65B801715;
+        Fri, 17 May 2019 09:17:19 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 130DC3F575;
+        Fri, 17 May 2019 09:17:19 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 6769968240D; Fri, 17 May 2019 17:17:17 +0100 (BST)
+Date:   Fri, 17 May 2019 17:17:17 +0100
+From:   "liviu.dudau@arm.com" <liviu.dudau@arm.com>
+To:     Wen He <wen.he_1@nxp.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leo Li <leoyang.li@nxp.com>
+Subject: Re: [EXT] Re: [v1] drm/arm/mali-dp: Disable checking for required
+ pixel clock rate
+Message-ID: <20190517161717.GF15144@e110455-lin.cambridge.arm.com>
+References: <20190515024348.43642-1-wen.he_1@nxp.com>
+ <20190515154530.GX15144@e110455-lin.cambridge.arm.com>
+ <AM0PR04MB48658C4B7AADE1E3FFCA7ED7E20A0@AM0PR04MB4865.eurprd04.prod.outlook.com>
+ <20190516082350.GB15144@e110455-lin.cambridge.arm.com>
+ <AM0PR04MB48656406486866CA4DD0822DE20B0@AM0PR04MB4865.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM0PR04MB48656406486866CA4DD0822DE20B0@AM0PR04MB4865.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We implement the capability interface for VFIO_IOMMU_GET_INFO.
+On Fri, May 17, 2019 at 10:38:00AM +0000, Wen He wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: liviu.dudau@arm.com [mailto:liviu.dudau@arm.com]
+> > Sent: 2019年5月16日 16:24
+> > To: Wen He <wen.he_1@nxp.com>
+> > Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; Leo Li
+> > <leoyang.li@nxp.com>
+> > Subject: Re: [EXT] Re: [v1] drm/arm/mali-dp: Disable checking for required
+> > pixel clock rate
+> > 
+> > Caution: EXT Email
+> > 
+> > On Thu, May 16, 2019 at 08:10:21AM +0000, Wen He wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: liviu.dudau@arm.com [mailto:liviu.dudau@arm.com]
+> > > > Sent: 2019年5月15日 23:46
+> > > > To: Wen He <wen.he_1@nxp.com>
+> > > > Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org;
+> > > > Leo Li <leoyang.li@nxp.com>
+> > > > Subject: [EXT] Re: [v1] drm/arm/mali-dp: Disable checking for
+> > > > required pixel clock rate
+> > > >
+> > > >
+> > > > Hi Wen,
+> > >
+> > > Hi Liviu,
+> > >
+> 
+> Hi Liviu,
+> 
+> > > >
+> > > > On Wed, May 15, 2019 at 02:42:08AM +0000, Wen He wrote:
+> > > > > Disable checking for required pixel clock rate if ARCH_LAYERSCPAE
+> > > > > is enable.
+> > > > >
+> > > > > Signed-off-by: Alison Wang <alison.wang@nxp.com>
+> > > > > Signed-off-by: Wen He <wen.he_1@nxp.com>
+> > > > > ---
+> > > > > change in description:
+> > > > >       - This check that only supported one pixel clock required clock
+> > rate
+> > > > >       compare with dts node value. but we have supports 4 pixel clock
+> > > > >       for ls1028a board.
+> > > >
+> > > > So, your DT says your pixel clock provider is a fixed clock? If you
+> > > > support more than one rate, you should instead use a real provider
+> > > > for it. How do you support the 4 pixel clocks?
+> > > >
+> > >
+> > > Yes , the DT node only can provided one pixel clock by using a fixed clock.
+> > > But we Display Port controller support 4 or more resolutions, each of
+> > > which requires a set of pixel clocks to drive, and we hope they can
+> > > switch any resolution we want by some program every times.
+> > 
+> > That program can't be some userspace application, because it will have to
+> > make changes to the hardware and the kernel will not know that things have
+> > changed under its feet. That leaves the option of the bootloader or some other
+> > kernel module doing the changes.
+> > 
+> > If you have another kernel module that knows how to change clocks, that
+> > should be implemented using the common clocks infrastructure, at which time
+> > you can put it in the DT as the clock provider for the pixelclock.
+> > 
+> 
+> Hi Liviu,
 
-When calling the ioctl, the user must specify
-VFIO_IOMMU_INFO_CAPABILITIES to retrieve the capabilities and
-must check in the answer if capabilities are supported.
+Hi Wen,
 
-The iommu get_attr callback will be used to retrieve the specific
-attributes and fill the capabilities.
+> 
+> Yes, I think you are right, and even though we didn't implement clocks prepare
+> /enable/disable interface, but we can notification hardware to change pixel clock
+> by determining the required pixel clock in each mode once had modeset event
+> in DP driver.
+> 
+> But the point is how do we meet the conditions for the clock rate check in here? 
 
-Currently two Z-PCI specific capabilities will be queried and
-filled by the underlying Z specific s390_iommu:
-VFIO_IOMMU_INFO_CAP_QFN for the PCI query function attributes
-and
-VFIO_IOMMU_INFO_CAP_QGRP for the PCI query function group.
+You don't need to change anything in this driver, your clock provider will only
+set the values it supports. So in malidp_crtc_atomic_enable() we set the
+desired pxlclk, but your provider will drop/refuse the change, so in
+malidp_crtc_mode_valid() only the 4 supported resolutions will pass, all other
+modes will fail.
 
-Other architectures may add new capabilities in the same way
-after enhancing the architecture specific IOMMU driver.
+> 
+> As you know,
 
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
----
- drivers/vfio/vfio_iommu_type1.c | 122 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 1 deletion(-)
+I don't, I still don't have a LS1028A platform ;)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index d0f731c..9435647 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1658,6 +1658,97 @@ static int vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
- 	return ret;
- }
- 
-+static int vfio_iommu_type1_zpci_fn(struct iommu_domain *domain,
-+				    struct vfio_info_cap *caps, size_t size)
-+{
-+	struct vfio_iommu_type1_info_pcifn *info_fn;
-+	int ret;
-+
-+	info_fn = kzalloc(size, GFP_KERNEL);
-+	if (!info_fn)
-+		return -ENOMEM;
-+
-+	ret = iommu_domain_get_attr(domain, DOMAIN_ATTR_ZPCI_FN,
-+				    &info_fn->response);
-+	if (ret < 0)
-+		goto free_fn;
-+
-+	info_fn->header.id = VFIO_IOMMU_INFO_CAP_QFN;
-+	ret = vfio_info_add_capability(caps, &info_fn->header, size);
-+
-+free_fn:
-+	kfree(info_fn);
-+	return ret;
-+}
-+
-+static int vfio_iommu_type1_zpci_grp(struct iommu_domain *domain,
-+				     struct vfio_info_cap *caps,
-+				     size_t grp_size)
-+{
-+	struct vfio_iommu_type1_info_pcifg *info_grp;
-+	int ret;
-+
-+	info_grp = kzalloc(grp_size, GFP_KERNEL);
-+	if (!info_grp)
-+		return -ENOMEM;
-+
-+	ret = iommu_domain_get_attr(domain, DOMAIN_ATTR_ZPCI_GRP,
-+				    (void *) &info_grp->response);
-+	if (ret < 0)
-+		goto free_grp;
-+	info_grp->header.id = VFIO_IOMMU_INFO_CAP_QGRP;
-+	ret = vfio_info_add_capability(caps, &info_grp->header, grp_size);
-+
-+free_grp:
-+	kfree(info_grp);
-+	return ret;
-+}
-+
-+int vfio_iommu_type1_caps(struct vfio_iommu *iommu, struct vfio_info_cap *caps,
-+			  size_t size)
-+{
-+	struct vfio_domain *d;
-+	unsigned long total_size, fn_size, grp_size;
-+	int ret;
-+
-+	d = list_first_entry(&iommu->domain_list, struct vfio_domain, next);
-+	if (!d)
-+		return -ENODEV;
-+
-+	/* First compute the size the user must provide */
-+	total_size = 0;
-+	fn_size = iommu_domain_get_attr(d->domain,
-+					DOMAIN_ATTR_ZPCI_FN_SIZE, NULL);
-+	if (fn_size > 0) {
-+		fn_size +=  sizeof(struct vfio_info_cap_header);
-+		total_size += fn_size;
-+	}
-+
-+	grp_size = iommu_domain_get_attr(d->domain,
-+					 DOMAIN_ATTR_ZPCI_GRP_SIZE, NULL);
-+	if (grp_size > 0) {
-+		grp_size +=  sizeof(struct vfio_info_cap_header);
-+		total_size += grp_size;
-+	}
-+
-+	if (total_size > size) {
-+		/* Tell caller to call us with a greater buffer */
-+		caps->size = total_size;
-+		return 0;
-+	}
-+
-+	if (fn_size) {
-+		ret = vfio_iommu_type1_zpci_fn(d->domain, caps, fn_size);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (grp_size)
-+		ret = vfio_iommu_type1_zpci_grp(d->domain, caps, grp_size);
-+
-+	return ret;
-+}
-+
- static long vfio_iommu_type1_ioctl(void *iommu_data,
- 				   unsigned int cmd, unsigned long arg)
- {
-@@ -1679,6 +1770,8 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
- 		}
- 	} else if (cmd == VFIO_IOMMU_GET_INFO) {
- 		struct vfio_iommu_type1_info info;
-+		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
-+		int ret;
- 
- 		minsz = offsetofend(struct vfio_iommu_type1_info, iova_pgsizes);
- 
-@@ -1688,7 +1781,34 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
- 		if (info.argsz < minsz)
- 			return -EINVAL;
- 
--		info.flags = VFIO_IOMMU_INFO_PGSIZES;
-+		if (info.flags & VFIO_IOMMU_INFO_CAPABILITIES) {
-+			minsz = offsetofend(struct vfio_iommu_type1_info,
-+					    cap_offset);
-+			if (info.argsz < minsz)
-+				return -EINVAL;
-+			ret = vfio_iommu_type1_caps(iommu, &caps,
-+						    info.argsz - sizeof(info));
-+			if (ret)
-+				return ret;
-+		}
-+		if (caps.size) {
-+			if (info.argsz < sizeof(info) + caps.size) {
-+				info.argsz = sizeof(info) + caps.size;
-+				info.cap_offset = 0;
-+			} else {
-+				if (copy_to_user((void __user *)arg +
-+						 sizeof(info), caps.buf,
-+						 caps.size)) {
-+					kfree(caps.buf);
-+					return -EFAULT;
-+				}
-+
-+				info.cap_offset = sizeof(info);
-+			}
-+			kfree(caps.buf);
-+		}
-+
-+		info.flags |= VFIO_IOMMU_INFO_PGSIZES;
- 
- 		info.iova_pgsizes = vfio_pgsize_bitmap(iommu);
- 
+Best regards,
+Liviu
+
+
+>  we LS1028A supports 4 modes, every resolution change will to
+> determine whether the hardware supports the pixel clock required for the resolution
+> by calling this function malidp_crtc_mode_valid() . assume if we put fixed-clock in DT
+> node that will can't meet this checking.
+> 
+> Best Regards,
+> Wen
+> 
+> > If the bootloader does the changes, then the bootloader should edit the DT
+> > and set the correct value for the pixel clock. Regardless, with your change and
+> > on your platform the user can request any resolution and the driver will
+> > silently fail to set that resolution.
+> > 
+> > One other problem is the one Robin raised, where the kernel is compiled for
+> > multiple platforms, like what various Linux distributions do. That kernel will
+> > either work on other SoC or not, depending on what
+> > CONFIG_ARCH_LAYERSCAPE is set to.
+> > 
+> > In summary, for this patch, it's a NAK. There are proper ways of achieving what
+> > you need, but this patch is not.
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > >
+> > > For example, if we set that fixed pixel clock is 27000000 (27Mhz), but
+> > > user hope can see a group 1080p resolution penguins during startup ,
+> > > and hope playing a 4k video once system boot up done.
+> > > Btw, In our board, the 1080p resolution is driven by a 148.5Mhz pixel
+> > > clock, 4k is driven by a 594Mhz. 27Mhz only can drive 480p resolution.
+> > >
+> > > To meet the above user requirements, I was to setup following steps,
+> > > 1. Add the "video=1920x1080-32@60" to bootargs command line [specify
+> > > penguins size] 2. Play a 4K video with 4k resolution when system boot up
+> > done.
+> > >
+> > > > Also, not sure what the paragraph above is meant to be. Should it be
+> > > > part of the commit message?
+> > > >
+> > >
+> > > These comments just want to let you know.
+> > >
+> > > > Best regards,
+> > > > Liviu
+> > > >
+> > > >
+> > > > >  drivers/gpu/drm/arm/malidp_crtc.c | 2 ++
+> > > > >  1 file changed, 2 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/arm/malidp_crtc.c
+> > > > > b/drivers/gpu/drm/arm/malidp_crtc.c
+> > > > > index 56aad288666e..bb79223d9981 100644
+> > > > > --- a/drivers/gpu/drm/arm/malidp_crtc.c
+> > > > > +++ b/drivers/gpu/drm/arm/malidp_crtc.c
+> > > > > @@ -36,11 +36,13 @@ static enum drm_mode_status
+> > > > > malidp_crtc_mode_valid(struct drm_crtc *crtc,
+> > > > >
+> > >
+> > > According to our pixel configuration above, Now the variable req_rate
+> > > value is 148500000 or 59400000, another variable rate value is
+> > > 27000000, so we will get a warning and display will cannot works well.
+> > >
+> > > We're not sure which resolution are user want, and we also can't just
+> > > offered one resolution to user. so I remove this check on our board, maybe
+> > it's not good change.
+> > >
+> > > I want to know do you have other good suggestion? Thanks.
+> > >
+> > > Best Regards,
+> > > Wen
+> > >
+> > > > >       if (req_rate) {
+> > > > >               rate = clk_round_rate(hwdev->pxlclk, req_rate);
+> > > > > +#ifndef CONFIG_ARCH_LAYERSCAPE
+> > > > >               if (rate != req_rate) {
+> > > > >                       DRM_DEBUG_DRIVER("pxlclk doesn't
+> > support %ld
+> > > > Hz\n",
+> > > > >                                        req_rate);
+> > > > >                       return MODE_NOCLOCK;
+> > > > >               }
+> > > > > +#endif
+> > > > >       }
+> > > > >
+> > > > >       return MODE_OK;
+> > > > > --
+> > > > > 2.17.1
+> > > > >
+> > > >
+> > > > --
+> > > > ====================
+> > > > | I would like to |
+> > > > | fix the world,  |
+> > > > | but they're not |
+> > > > | giving me the   |
+> > > >  \ source code!  /
+> > > >   ---------------
+> > > >     ¯\_(ツ)_/¯
+> > 
+> > --
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ¯\_(ツ)_/¯
+
 -- 
-2.7.4
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
