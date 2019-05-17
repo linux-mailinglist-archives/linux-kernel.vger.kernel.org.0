@@ -2,96 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C36E521EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3819421EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbfEQUHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 16:07:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726460AbfEQUHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 16:07:47 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A3E72087E;
-        Fri, 17 May 2019 20:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558123666;
-        bh=IkVGNrM3mkdkCp1ruLguz7iPAsoAAPm6bhm62l6C0l4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D7KoCjgNCYuzAKFnaeZMIowcKdNjhe/bHfunIg0phnFQGUNm7Si+IswAnpAuc8H6I
-         6Juv7ClQ+lDWVypoiyNPgrHPlYddKlyshbbCP2el4CrhQiWah4/LMWx6fgC/bWtuFU
-         E4aSZreYUPIbR5Wj7iA7bqvpJU7ENIrsynXOu2+M=
-Received: by mail-qt1-f181.google.com with SMTP id i26so9408044qtr.10;
-        Fri, 17 May 2019 13:07:46 -0700 (PDT)
-X-Gm-Message-State: APjAAAWgwJmxHtzHkMgeNiIpOwUgS1LUZPDFxfrc1G+stk7+j8mhXA6W
-        ueSa6S6nP5ky34kJEuckVTOnEsbR6+yZtsJhBQ==
-X-Google-Smtp-Source: APXvYqyorKmxc+J4KVhOQBHBImhJm18kRJeWl2YZpK+ASt7DMCb593EYeTOi8eZBw90uGhvevJaQVOjh6CpzEWMWRDg=
-X-Received: by 2002:ac8:2d48:: with SMTP id o8mr50643532qta.136.1558123665768;
- Fri, 17 May 2019 13:07:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190517184659.18828-1-peron.clem@gmail.com> <20190517184659.18828-2-peron.clem@gmail.com>
-In-Reply-To: <20190517184659.18828-2-peron.clem@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 17 May 2019 15:07:32 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKPazGn+g1zS4NMwvQZ_6GcAm0tgcOTqyQA0dz0+2dp3g@mail.gmail.com>
-Message-ID: <CAL_JsqKPazGn+g1zS4NMwvQZ_6GcAm0tgcOTqyQA0dz0+2dp3g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] drm: panfrost: add optional bus_clock
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        id S1729360AbfEQUIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 16:08:10 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:59811 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfEQUIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 16:08:09 -0400
+X-Originating-IP: 87.231.134.186
+Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id B510940008;
+        Fri, 17 May 2019 20:08:00 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Steven Price <steven.price@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/1] arm64: dts: marvell: mcbin: enlarge PCI memory window
+In-Reply-To: <20190517161123.9293-1-xypron.glpk@gmx.de>
+References: <20190517161123.9293-1-xypron.glpk@gmx.de>
+Date:   Fri, 17 May 2019 22:08:00 +0200
+Message-ID: <87k1eozvxb.fsf@FE-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 1:47 PM Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.c=
-om> wrote:
+Hi Heinrich Schuchardt,
+
+> Running a graphics adapter on the MACCHIATObin fails due to an
+> insufficently sized memory window.
+I think "insufficient" is enough or I miss something.
+
 >
-> Allwinner H6 has an ARM Mali-T720 MP2 which required a bus_clock.
+> Enlarge the memory window for the PCIe slot to 512 MiB.
 >
-> Add an optional bus_clock at the init of the panfrost driver.
+> With the patch I am able to use a GT710 graphics adapter with 1 GB onboard
+> memory.
 >
-> Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> These are the mapped memory areas that the graphics adapter is actually
+> using:
+>
+> Region 0: Memory at cc000000 (32-bit, non-prefetchable) [size=16M]
+> Region 1: Memory at c0000000 (64-bit, prefetchable) [size=128M]
+> Region 3: Memory at c8000000 (64-bit, prefetchable) [size=32M]
+> Region 5: I/O ports at 1000 [size=128]
+> Expansion ROM at ca000000 [disabled] [size=512K]
+
+From my point of view this patch is correct, I don't think it is a
+problem to map more memory. So I applied on it mvebu/dt64.
+
+But I add also Thomas in CC who know better the PCIe support on mvebu/
+
+Thanks,
+
+Gregory
+
+
+>
+> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 > ---
->  drivers/gpu/drm/panfrost/panfrost_device.c | 25 +++++++++++++++++++++-
->  drivers/gpu/drm/panfrost/panfrost_device.h |  1 +
->  2 files changed, 25 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm=
-/panfrost/panfrost_device.c
-> index 3b2bced1b015..8da6e612d384 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-> @@ -44,7 +44,8 @@ static int panfrost_clk_init(struct panfrost_device *pf=
-dev)
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> index 329f8ceeebea..205071b45a32 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> @@ -184,6 +184,8 @@
+>  	num-lanes = <4>;
+>  	num-viewport = <8>;
+>  	reset-gpios = <&cp0_gpio2 20 GPIO_ACTIVE_LOW>;
+> +	ranges = <0x81000000 0x0 0xf9010000 0x0 0xf9010000 0x0 0x10000
+> +		  0x82000000 0x0 0xc0000000 0x0 0xc0000000 0x0 0x20000000>;
+>  	status = "okay";
+>  };
 >
->         pfdev->clock =3D devm_clk_get(pfdev->dev, NULL);
->         if (IS_ERR(pfdev->clock)) {
-> -               dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfd=
-ev->clock));
-> +               dev_err(pfdev->dev, "get clock failed %ld\n",
-> +                       PTR_ERR(pfdev->clock));
+> --
+> 2.20.1
+>
 
-Please drop this whitespace change.
-
->                 return PTR_ERR(pfdev->clock);
->         }
->
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
