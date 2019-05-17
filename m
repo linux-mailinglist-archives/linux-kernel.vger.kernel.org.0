@@ -2,182 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 890182207A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73B322099
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbfEQWyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 18:54:35 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38467 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbfEQWyf (ORCPT
+        id S1727530AbfEQW7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 18:59:51 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37768 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfEQW7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 18:54:35 -0400
-Received: by mail-pg1-f193.google.com with SMTP id j26so3955851pgl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 15:54:34 -0700 (PDT)
+        Fri, 17 May 2019 18:59:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n27so1358621pgm.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 15:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tug9Q9th898cY2omkiw7RTZyUw2WfPSXBZQ/FeXbAkQ=;
+        b=P/9e6bjo8XAXrsrhceXhy1vMAWDMoJZvh0+VVomH8QiSlrxWj5aKukK/r4GQwxPScU
+         91rCXDtK+XUh6a1f0WCMFc4mqy6TqQES0dPwWcwYRX1R0OuswZT8vkrN1Ls8XsyZWk+a
+         0c/uo4hCwxGBfT8C+LUr90jq9DYRVKxiR9+JrdR5k6gNuQe+nBR+pI6w/pssqY66AF2m
+         kNFbV+Nc6qKDgd+Xb/WhOeWQECNeMleNE7G3x2DftJ9e9hw4ZAjpxEJ5FFUW9I91v/vU
+         yqw6Q85JLu96eLX0ZkwtL70As140+R8GlCNEFDf9v54t4LmjGcFHKH+0aHz3gcgQIRCr
+         VNMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:cc:from:to:message-id;
-        bh=Ahm5be5NUrtm3hWZIve+b7Dd18MEVe3dLCxTom5Yo+E=;
-        b=TNn2u/JOBt5dDQL04Nhf0CFKVv6CcmvbRhPMd0g7ONHndYR/rUWnG2d4nlSfqTTnby
-         E+2IQmH+0bSAJ+Zi/ECZqulstqHNkzTiTtgmY3DuXcE5otvZAprK1koX8UrZ7yOrIfsN
-         E9UbgjkuHj8SyknGn+CT2S3cTwrVMqL2Q8XyopfKKAUMpd8aDadLFwMRGck2HkDQ5sfx
-         bJ1HmUqz5bI3jQd4Rm2aq3xWSMLv5aBZtF+ao+jZWBLK27hTdXJ6uqGfrIKIk+e+nRP3
-         EZ1CNp5czk1nbBhN23bsR4QJOYOCqb3r7E07imFC0I54gWCbVstz7zkkIMsHVf8maT7D
-         T6HQ==
-X-Gm-Message-State: APjAAAWlVK+nyqsPGHn8wvAAV6EPgf1Xo3ST9wm3yhxr9mckeqEcNO9U
-        6r10LmJQYzMyWtffzxZaGwgttiCAaCs=
-X-Google-Smtp-Source: APXvYqyGA5aGu7mD7Gr+WhJw0g/JgPlJbonC43rGpNdAHAc/eMs5YcBYA2c6YaxOMxMuVTYwMlbWfA==
-X-Received: by 2002:a63:7989:: with SMTP id u131mr51047071pgc.180.1558133674240;
-        Fri, 17 May 2019 15:54:34 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id b16sm17757544pfd.12.2019.05.17.15.54.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 May 2019 15:54:33 -0700 (PDT)
-Date:   Fri, 17 May 2019 15:54:33 -0700 (PDT)
-X-Google-Original-Date: Fri, 17 May 2019 15:53:24 PDT (-0700)
-Subject: [GIT PULL] RISC-V Patches for the 5.2 Merge Window, Part 1 v3
-CC:      linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-2cfcab49-74d1-4656-9913-36853a5be29d@palmer-si-x1e>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tug9Q9th898cY2omkiw7RTZyUw2WfPSXBZQ/FeXbAkQ=;
+        b=NyHw8ci1GSrht8gKFw9cnYW59rvcKCDT6j9SDpOS4jiMT8QHnl6Cbm3JukJVulu/UB
+         QZCUa8nSQtLyBYbyQ2yHC9YhudCaTJtyGGMyuodTPQJ4cABXDfk5u/VPPl4T/F2ZwWV+
+         0s3dzSZKbSlq8G1NIBuan01KWLzWsMvDo80QSBQu2SSz8PRycBeGQB3N5N56QVl3zkTC
+         FHpFEYykvf9dR5vixvAw8U50odV31TqdGoveCOaWEbdITmSdyCujquYM2SI99XeVI0Wn
+         BClri8zPXuUFrwWO//apYqSSA6ut7Z7HN824c4unpmd+VY7kvm9ge2Krltnod8XCvUak
+         ow1w==
+X-Gm-Message-State: APjAAAVWmzCvdEKLfHNhuo/Ky1o+0hj+k3OjOciKxgRfpjwyuTsHQ9zJ
+        1wsZyCwl9XYjOqHzdkpd8DvHreTK1Wew4Q==
+X-Google-Smtp-Source: APXvYqy8iHrZkCavlke8rQpzQn5yluUHlir/Gv0jbaU44MC2q70NK8Q9AZVp0wcuECl1ZxT6WDHf5A==
+X-Received: by 2002:a63:754b:: with SMTP id f11mr59810851pgn.32.1558133989966;
+        Fri, 17 May 2019 15:59:49 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id v66sm22027626pfa.38.2019.05.17.15.59.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 15:59:48 -0700 (PDT)
+Subject: Re: [PATCH] block: bio: use struct_size() in kmalloc()
+From:   Jens Axboe <axboe@kernel.dk>
+To:     xiaolinkui <xiaolinkui@kylinos.cn>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1558084350-25632-1-git-send-email-xiaolinkui@kylinos.cn>
+ <e46a73e2-b04d-371b-f199-e789dbdbd9fc@kernel.dk>
+Message-ID: <d83390a9-33be-3d76-3e23-b97f0a05b72f@kernel.dk>
+Date:   Fri, 17 May 2019 16:59:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <e46a73e2-b04d-371b-f199-e789dbdbd9fc@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 085b7755808aa11f78ab9377257e1dad2e6fa4bb:
+On 5/17/19 3:17 PM, Jens Axboe wrote:
+> On 5/17/19 3:12 AM, xiaolinkui wrote:
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     struct boo entry[];
+>> };
+>>
+>> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> Applied, thanks.
 
-  Linux 5.1-rc6 (2019-04-21 10:45:57 -0700)
+I take that back, you obviously didn't even compile this patch. Never
+send untested crap, without explicitly saying so.
 
-are available in the Git repository at:
+-- 
+Jens Axboe
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-5.2-mw2
-
-for you to fetch changes up to 8fef9900d43feb9d5017c72840966733085e3e82:
-
-  riscv: fix locking violation in page fault handler (2019-05-16 20:42:13 -0700)
-
-----------------------------------------------------------------
-RISC-V Patches for the 5.2 Merge Window, Part 1 v3
-
-This patch set contains an assortment of RISC-V related patches that I'd
-like to target for the 5.2 merge window.  Most of the patches are
-cleanups, but there are a handful of user-visible changes:
-
-* The nosmp and nr_cpus command-line arguments are now supported, which
-  work like normal.
-* The SBI console no longer installs itself as a preferred console, we
-  rely on standard mechanisms (/chosen, command-line, hueristics)
-  instead.
-* sfence_remove_sfence_vma{,_asid} now pass their arguments along to the
-  SBI call.
-* Modules now support BUG().
-* A missing sfence.vma during boot has been added.  This bug only
-  manifests during boot.
-* The arch/riscv support for SiFive's L2 cache controller has been
-  merged, which should un-block the EDAC framework work.
-
-I've only tested this on QEMU again, as I didn't have time to get things
-running on the Unleashed.  The latest master from this morning merges in
-cleanly and passes the tests as well.
-
-This patch set rebased my "5.2 MW, Part 1" patch set which includes an
-erronous empty file.  It's also a rebase of my "5.2 MW, Part 2" patch
-set, in which I managed to create another file while attempting to
-remove the empty file.
-
-Sorry for all the noise!
-
-----------------------------------------------------------------
-Andreas Schwab (1):
-      riscv: fix locking violation in page fault handler
-
-Anup Patel (4):
-      RISC-V: Use tabs to align macro values in asm/csr.h
-      RISC-V: Add interrupt related SCAUSE defines in asm/csr.h
-      RISC-V: Access CSRs using CSR numbers
-      tty: Don't force RISCV SBI console as preferred console
-
-Atish Patra (4):
-      RISC-V: Add RISC-V specific arch_match_cpu_phys_id
-      RISC-V: Implement nosmp commandline option.
-      RISC-V: Support nr_cpus command line option.
-      RISC-V: Fix minor checkpatch issues.
-
-Christoph Hellwig (11):
-      riscv: use asm-generic/extable.h
-      riscv: turn mm_segment_t into a struct
-      riscv: remove unreachable big endian code
-      riscv: remove CONFIG_RISCV_ISA_A
-      riscv: clear all pending interrupts when booting
-      riscv: simplify the stack pointer setup in head.S
-      riscv: cleanup the parse_dtb calling conventions
-      riscv: remove unreachable !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR code
-      riscv: remove duplicate macros from ptrace.h
-      riscv: print the unexpected interrupt cause
-      riscv: call pm_power_off from machine_halt / machine_power_off
-
-Gary Guo (3):
-      riscv: move flush_icache_{all,mm} to cacheflush.c
-      riscv: move switch_mm to its own file
-      riscv: fix sbi_remote_sfence_vma{,_asid}.
-
-Guo Ren (1):
-      riscv/signal: Fixup additional syscall restarting
-
-Nick Desaulniers (1):
-      riscv: vdso: drop unnecessary cc-ldoption
-
-Palmer Dabbelt (1):
-      RISC-V: Avoid using invalid intermediate translations
-
-Vincent Chen (3):
-      riscv: support trap-based WARN()
-      riscv: Add the support for c.ebreak check in is_valid_bugaddr()
-      riscv: Support BUG() in kernel module
-
-Yash Shah (2):
-      RISC-V: Add DT documentation for SiFive L2 Cache Controller
-      RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs
-
- .../devicetree/bindings/riscv/sifive-l2-cache.txt  |  51 ++++++
- arch/riscv/Kconfig                                 |   6 +-
- arch/riscv/Makefile                                |   5 +-
- arch/riscv/include/asm/Kbuild                      |   1 +
- arch/riscv/include/asm/bug.h                       |  35 +++--
- arch/riscv/include/asm/cacheflush.h                |   2 +-
- arch/riscv/include/asm/csr.h                       | 123 +++++++++------
- arch/riscv/include/asm/elf.h                       |   6 -
- arch/riscv/include/asm/futex.h                     |  13 --
- arch/riscv/include/asm/irqflags.h                  |  10 +-
- arch/riscv/include/asm/mmu_context.h               |  59 +------
- arch/riscv/include/asm/ptrace.h                    |  21 +--
- arch/riscv/include/asm/sbi.h                       |  19 ++-
- arch/riscv/include/asm/sifive_l2_cache.h           |  16 ++
- arch/riscv/include/asm/thread_info.h               |   4 +-
- arch/riscv/include/asm/uaccess.h                   |  28 ++--
- arch/riscv/kernel/asm-offsets.c                    |   3 -
- arch/riscv/kernel/cpu.c                            |   3 +-
- arch/riscv/kernel/entry.S                          |  22 +--
- arch/riscv/kernel/head.S                           |  33 ++--
- arch/riscv/kernel/irq.c                            |  19 +--
- arch/riscv/kernel/perf_event.c                     |   4 +-
- arch/riscv/kernel/reset.c                          |  15 +-
- arch/riscv/kernel/setup.c                          |   6 +-
- arch/riscv/kernel/signal.c                         |   6 +
- arch/riscv/kernel/smp.c                            |  61 ++-----
- arch/riscv/kernel/smpboot.c                        |  22 ++-
- arch/riscv/kernel/stacktrace.c                     |  14 +-
- arch/riscv/kernel/traps.c                          |  30 +++-
- arch/riscv/kernel/vdso/Makefile                    |   2 +-
- arch/riscv/mm/Makefile                             |   2 +
- arch/riscv/mm/cacheflush.c                         |  61 +++++++
- arch/riscv/mm/context.c                            |  69 ++++++++
- arch/riscv/mm/fault.c                              |   9 +-
- arch/riscv/mm/sifive_l2_cache.c                    | 175 +++++++++++++++++++++
- drivers/tty/hvc/hvc_riscv_sbi.c                    |   1 -
- 36 files changed, 635 insertions(+), 321 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/riscv/sifive-l2-cache.txt
- create mode 100644 arch/riscv/include/asm/sifive_l2_cache.h
- create mode 100644 arch/riscv/mm/context.c
- create mode 100644 arch/riscv/mm/sifive_l2_cache.c
