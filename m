@@ -2,126 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC0E2159E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F2A215AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 10:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbfEQIrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 04:47:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52786 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727843AbfEQIro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 04:47:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4AA79AE33;
-        Fri, 17 May 2019 08:47:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 767281E3ED6; Fri, 17 May 2019 10:47:39 +0200 (CEST)
-Date:   Fri, 17 May 2019 10:47:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Message-ID: <20190517084739.GB20550@quack2.suse.cz>
-References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1728103AbfEQIt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 04:49:57 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43617 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbfEQIt4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 04:49:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t22so2977662pgi.10;
+        Fri, 17 May 2019 01:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9I+lX7qkOYzggWtQec+1m6I5euArD7SEmoWKuSnERRI=;
+        b=PaW707s8aG5UEv/PL/RpVgZMRPo/yXTGiv/I0BSmqeqLzCCzlveC2OIIVi79sHPSaH
+         tM6P+W5oVQbCKsTjX7CL1gOk0fCIzCjO0CacoL6mzR9QT7ueQj4pg5Ump9BZkwbbl+1t
+         a2D8p/tXSYhyJZOtIlID2Tcwng1SolxVJgCEdwq0nBCbJw7DNcuS/UMGL8C0TUb6BFPl
+         LjRI3LcYt84a5Uq48zn4KXpI2K6mVMi+4OmRwzEs4nslVmHKWJF8rshg+U3YcMDXs7ZF
+         FQW2zgzMck7acr9+tPQnwsuDEUkYYT/lQdJ8NxiFG6Scpx006rXv3N9CtaHICpVIf7EV
+         /arg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9I+lX7qkOYzggWtQec+1m6I5euArD7SEmoWKuSnERRI=;
+        b=oyFooB4UPaqNbv2DyjQlIDAmTwxkD6D2ALjSuK06s4QBSCPASCaKz0/yDBFQj8IWC0
+         hrJ23izyFH5QB6kGpRXrH+5x8VXxkuCbjJX0whKUv6Ltm7ZH00iaXnnYlgCWvyIWQE22
+         wfpWoG3Q4VWMjHgCPESvXJP7DqYmmU05pSMg+v6TC0/YOVwbvAfaeRysClHfXvtTxtJb
+         Nv7h2N0mcK/oPLAgaDTnbFvkdWRK5LRUfJQBZRm8uuIVHcwc16y/Xfvx3TvxIqt/UmjZ
+         RyaFj36j0EMQycM8qa0SeqoF1VPQGj8DQxVxDP0PMse0V2OVc/Xy8YyvV4WA/O+r1BhH
+         pSNg==
+X-Gm-Message-State: APjAAAVz7phDLUMsVckfa8g/QCoo3Oyx45dOykr9hH8EhvT0dP3Rvqxg
+        R3QmqXOmf4Y30rDj1sCfw+5ZeIgI
+X-Google-Smtp-Source: APXvYqwFYB1b7T68JzkdwK3+oTP4wh54dJfjJWuzNZcQtn+5UzG7e3oluVqdg4LO8ooo1ku5XcM3Ug==
+X-Received: by 2002:a63:e408:: with SMTP id a8mr55686792pgi.146.1558082995724;
+        Fri, 17 May 2019 01:49:55 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id 63sm10417127pfu.95.2019.05.17.01.49.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 17 May 2019 01:49:54 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH 1/4] KVM: x86: Disable intercept for CORE cstate read
+Date:   Fri, 17 May 2019 16:49:47 +0800
+Message-Id: <1558082990-7822-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's add Kees to CC for usercopy expertise...
+From: Wanpeng Li <wanpengli@tencent.com>
 
-On Thu 16-05-19 17:33:38, Dan Williams wrote:
-> Jeff discovered that performance improves from ~375K iops to ~519K iops
-> on a simple psync-write fio workload when moving the location of 'struct
-> page' from the default PMEM location to DRAM. This result is surprising
-> because the expectation is that 'struct page' for dax is only needed for
-> third party references to dax mappings. For example, a dax-mapped buffer
-> passed to another system call for direct-I/O requires 'struct page' for
-> sending the request down the driver stack and pinning the page. There is
-> no usage of 'struct page' for first party access to a file via
-> read(2)/write(2) and friends.
-> 
-> However, this "no page needed" expectation is violated by
-> CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
-> copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
-> check_heap_object() helper routine assumes the buffer is backed by a
-> page-allocator DRAM page and applies some checks.  Those checks are
-> invalid, dax pages are not from the heap, and redundant,
-> dax_iomap_actor() has already validated that the I/O is within bounds.
+Allow guest reads CORE cstate when exposing host CPU power management capabilities 
+to the guest. PKG cstate is restricted to avoid a guest to get the whole package 
+information in multi-tenant scenario.
 
-So this last paragraph is not obvious to me as check_copy_size() does a lot
-of various checks in CONFIG_HARDENED_USERCOPY case. I agree that some of
-those checks don't make sense for PMEM pages but I'd rather handle that by
-refining check_copy_size() and check_object_size() functions to detect and
-appropriately handle pmem pages rather that generally skip all the checks
-in pmem_copy_from/to_iter(). And yes, every check in such hot path is going
-to cost performance but that's what user asked for with
-CONFIG_HARDENED_USERCOPY... Kees?
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-								Honza
-
-> 
-> Bypass this overhead and call the 'no check' versions of the
-> copy_{to,from}_iter operations directly.
-> 
-> Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache...")
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: <stable@vger.kernel.org>
-> Cc: Jeff Moyer <jmoyer@redhat.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Reported-and-tested-by: Jeff Smits <jeff.smits@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/nvdimm/pmem.c |    9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 845c5b430cdd..c894f45e5077 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -281,16 +281,21 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
->  	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
->  }
->  
-> +/*
-> + * Use the 'no check' versions of copy_from_iter_flushcache() and
-> + * copy_to_iter_mcsafe() to bypass HARDENED_USERCOPY overhead. Bounds
-> + * checking is handled by dax_iomap_actor()
-> + */
->  static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
->  		void *addr, size_t bytes, struct iov_iter *i)
->  {
-> -	return copy_from_iter_flushcache(addr, bytes, i);
-> +	return _copy_from_iter_flushcache(addr, bytes, i);
->  }
->  
->  static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
->  		void *addr, size_t bytes, struct iov_iter *i)
->  {
-> -	return copy_to_iter_mcsafe(addr, bytes, i);
-> +	return _copy_to_iter_mcsafe(addr, bytes, i);
->  }
->  
->  static const struct dax_operations pmem_dax_ops = {
-> 
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 771d3bf..b0d6be5 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6615,6 +6615,12 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+ 	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
+ 	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
+ 	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
++	if (kvm_mwait_in_guest(kvm)) {
++		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
++		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
++		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
++		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
++	}
+ 	vmx->msr_bitmap_mode = 0;
+ 
+ 	vmx->loaded_vmcs = &vmx->vmcs01;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
+
