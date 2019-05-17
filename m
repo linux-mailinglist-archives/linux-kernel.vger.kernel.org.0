@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E38D321DA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0D821DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbfEQSrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:47:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39512 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfEQSrI (ORCPT
+        id S1728925AbfEQSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:47:11 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44231 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbfEQSrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:47:08 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w8so8166667wrl.6;
-        Fri, 17 May 2019 11:47:07 -0700 (PDT)
+        Fri, 17 May 2019 14:47:09 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c5so8123940wrs.11;
+        Fri, 17 May 2019 11:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vDNkiLJjFXCawT5EirH0tC0q56cBKU4m+h7W3OArVyU=;
-        b=ShU59QoSeaAR7MM+7sLznlllmGxphdG2LuoN/mvYJ3l7U35bfVO6bm+wBNKyK4OK6G
-         93tikl9UxFB8ch6DwSy+eEwqbtuSTlHHqZCd8ZGqc5GTQAS/tc5WYIm01LGqQvgVv1U9
-         Lil/TzFLIcxEtTDgAseMVGvAvVP7oFojlYTEr4hxASIS4sgS9UXbPfpL8hPC/kmUEYHF
-         V4B9dQ60bm2eHS4EzoS24pHXg9ruZd5qWimFlVpKtk7B8MK6Nu/buXaGX3VhCT2HTllm
-         ELDB1+fDfOkSX2Du3QxSDgcADYM00WisukoewX9/rIxEnyKMLbSi2oO43DoEWTeyu/Su
-         vQ/A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4QRWDFkVz3xUnUzR3+DHbkRCIRl8pbjmxCa/vhR9hvo=;
+        b=IzX0fpNh7WWzngetTRMHcGGlBKa4/Y10ND0MNxVowv35ASa6AyO+qLIiBx3oorQdoE
+         gIMiRRTn12Vsg2PSpAtRil1uUy8xkxChgYigzhBilxkZX68upC2GKDNyLfBUb7Z2bHUQ
+         l3UW0QKhlFhotuDCigGjT0urbWePYMe8D/Pqzy4lHHDPtWu2SCcAKN5A52dsJNj3f/9u
+         wkbw9NIvOfWOihlEVc51Vd3gqhyPPlvGT64PX4ziAJrrUtqwzN1IUvq1Nm5N1J3wTFtQ
+         EAhiuVgi6wE0rGJSFc9r5guK7YM9/7d0ISQhpYx5+RHA1MbYhrZU48H4aCLkI/T/pxBx
+         RsxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vDNkiLJjFXCawT5EirH0tC0q56cBKU4m+h7W3OArVyU=;
-        b=hxVr2wUlmaqwiR3qrYV4Yp/g170XCdlzZiWlaPGGn25z8fCXasm+XX6SA0wh1pY7wL
-         IkNdzBaWrMyb4OBMszW/B+ICz/djfYvxE3dyVfWt1yD8cYGkFKZaRnP/xZr8i6aEF6/t
-         0qie3gWML8WBKAtywHwl+6/O1PxgCpBzDrk6pSIFSfNyDk6k/OY+6G64qnPDfleE8MrU
-         zscRBl1YxixvHVyCrAjJEvJmPnxRgPp8W6hc0WnFKTkDrATiiewfXDXB1BbEW4K3Yx9C
-         TPMX5dEHWYaqY3dCB0gjxjECZw7HCucM3jKRWzZ8B/sKS0goxZdm4133CArdlOFlHv6b
-         eLEA==
-X-Gm-Message-State: APjAAAW7/JoB9uYpC6Su2cYOyQXk3QUuGeqM3BjIT/Cn0gSdaJ06MKgV
-        PvU/naQje3Fc87VtyOWH/rM=
-X-Google-Smtp-Source: APXvYqwLBIK/ntjqXde729LnM1cq3YTMK/Br76X9joaZ7paAbpaKGQLbTHmzFx5IuUlAJiCxrcBC4A==
-X-Received: by 2002:adf:f208:: with SMTP id p8mr16535297wro.160.1558118826182;
-        Fri, 17 May 2019 11:47:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4QRWDFkVz3xUnUzR3+DHbkRCIRl8pbjmxCa/vhR9hvo=;
+        b=Rvz6DzQVr2J8tsU5UkMkfv7oR+aJkpbxNzNafZxRZ18Gz5CkN0As3rnBGAqwoBl5Ld
+         sNpYbSOzmqmzBwMzLloncCzTB2U5ioC9hc5u9e710IA7syV9eSG2ra6Nys73t/UeEDyz
+         VyEvlyifZwkQER8PQvRZDuoJRPZ6eLNOKO5qHNRbyIl0gRANZn1XfwHnFKiUA2Rnut/y
+         3Fb5yQycWOJDbriFkcMVhpUTjGi7GsSmFMdIAx7nRaawczOpxJLthtf5/NkHJxH3KU/L
+         aFPEeI6LEF18HIhrzdaaeuGDep1LlSCaoY3ablX5fTAkcIe6sUE5t6m8y9K+FVu8bn7O
+         VWNA==
+X-Gm-Message-State: APjAAAWcJw+A/x9egjJsURByrvyj972fXKzFER0cX5qlkS3HYn8mzxsd
+        HppiPBXm5SPFn7ZMT2R1IpBDqQXtBMhepQ==
+X-Google-Smtp-Source: APXvYqzQ3Rol+3txTzhDDbnTRdYC6TTbSHhpgNCNWdrgxxOScCII+60hVNsOpiwPvn2YYuVJGvfLtA==
+X-Received: by 2002:a5d:658d:: with SMTP id q13mr19937938wru.61.1558118827335;
+        Fri, 17 May 2019 11:47:07 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id v20sm5801112wmj.10.2019.05.17.11.47.04
+        by smtp.gmail.com with ESMTPSA id v20sm5801112wmj.10.2019.05.17.11.47.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 11:47:05 -0700 (PDT)
+        Fri, 17 May 2019 11:47:06 -0700 (PDT)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -61,10 +61,12 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org,
         =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v5 0/6] Allwinner H6 Mali GPU support
-Date:   Fri, 17 May 2019 20:46:53 +0200
-Message-Id: <20190517184659.18828-1-peron.clem@gmail.com>
+Subject: [PATCH v5 1/6] drm: panfrost: add optional bus_clock
+Date:   Fri, 17 May 2019 20:46:54 +0200
+Message-Id: <20190517184659.18828-2-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190517184659.18828-1-peron.clem@gmail.com>
+References: <20190517184659.18828-1-peron.clem@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -73,86 +75,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Allwinner H6 has an ARM Mali-T720 MP2 which required a bus_clock.
 
-The Allwinner H6 has a Mali-T720 MP2 which should be supported by
-the new panfrost driver. This series fix two issues and introduce the
-dt-bindings but a simple benchmark show that it's still NOT WORKING.
+Add an optional bus_clock at the init of the panfrost driver.
 
-I'm pushing it in case someone want to continue the work.
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_device.c | 25 +++++++++++++++++++++-
+ drivers/gpu/drm/panfrost/panfrost_device.h |  1 +
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-This has been tested with Mesa3D 19.1.0-RC2 and a GPU bitness patch[1].
-
-One patch is from Icenowy Zheng where I changed the order has required
-by Rob Herring[2].
-
-Thanks,
-Clement
-
-[1] https://gitlab.freedesktop.org/kszaq/mesa/tree/panfrost_64_32
-[2] https://patchwork.kernel.org/patch/10699829/
-
-[  345.204813] panfrost 1800000.gpu: mmu irq status=1
-[  345.209617] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-0x0000000002400400
-[  345.209617] Reason: TODO
-[  345.209617] raw fault status: 0x800002C1
-[  345.209617] decoded fault status: SLAVE FAULT
-[  345.209617] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
-[  345.209617] access type 0x2: READ
-[  345.209617] source id 0x8000
-[  345.729957] panfrost 1800000.gpu: gpu sched timeout, js=0,
-status=0x8, head=0x2400400, tail=0x2400400, sched_job=000000009e204de9
-[  346.055876] panfrost 1800000.gpu: mmu irq status=1
-[  346.060680] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-0x0000000002C00A00
-[  346.060680] Reason: TODO
-[  346.060680] raw fault status: 0x810002C1
-[  346.060680] decoded fault status: SLAVE FAULT
-[  346.060680] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
-[  346.060680] access type 0x2: READ
-[  346.060680] source id 0x8100
-[  346.561955] panfrost 1800000.gpu: gpu sched timeout, js=1,
-status=0x8, head=0x2c00a00, tail=0x2c00a00, sched_job=00000000b55a9a85
-[  346.573913] panfrost 1800000.gpu: mmu irq status=1
-[  346.578707] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-0x0000000002C00B80
-
-Changes in v4:
- - Add bus_clock probe
- - Fix sanity check in io-pgtable
- - Add vramp-delay
- - Merge all boards into one patch
- - Remove upstreamed Neil A. patch
-
-Changes in v3 (Thanks to Maxime Ripard):
- - Reauthor Icenowy for her path
-
-Changes in v2 (Thanks to Maxime Ripard):
- - Drop GPU OPP Table
- - Add clocks and clock-names in required
-
-Clément Péron (5):
-  drm: panfrost: add optional bus_clock
-  iommu: io-pgtable: fix sanity check for non 48-bit mali iommu
-  dt-bindings: gpu: mali-midgard: Add H6 mali gpu compatible
-  arm64: dts: allwinner: Add ARM Mali GPU node for H6
-  arm64: dts: allwinner: Add mali GPU supply for H6 boards
-
-Icenowy Zheng (1):
-  dt-bindings: gpu: add bus clock for Mali Midgard GPUs
-
- .../bindings/gpu/arm,mali-midgard.txt         | 15 ++++++++++-
- .../dts/allwinner/sun50i-h6-beelink-gs1.dts   |  6 +++++
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    |  6 +++++
- .../dts/allwinner/sun50i-h6-orangepi.dtsi     |  6 +++++
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  6 +++++
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 14 +++++++++++
- drivers/gpu/drm/panfrost/panfrost_device.c    | 25 ++++++++++++++++++-
- drivers/gpu/drm/panfrost/panfrost_device.h    |  1 +
- drivers/iommu/io-pgtable-arm.c                |  2 +-
- 9 files changed, 78 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index 3b2bced1b015..8da6e612d384 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -44,7 +44,8 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+ 
+ 	pfdev->clock = devm_clk_get(pfdev->dev, NULL);
+ 	if (IS_ERR(pfdev->clock)) {
+-		dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
++		dev_err(pfdev->dev, "get clock failed %ld\n",
++			PTR_ERR(pfdev->clock));
+ 		return PTR_ERR(pfdev->clock);
+ 	}
+ 
+@@ -55,11 +56,33 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+ 	if (err)
+ 		return err;
+ 
++	pfdev->bus_clock = devm_clk_get_optional(pfdev->dev, "bus");
++	if (IS_ERR(pfdev->bus_clock)) {
++		dev_err(pfdev->dev, "get bus_clock failed %ld\n",
++			PTR_ERR(pfdev->bus_clock));
++		return PTR_ERR(pfdev->bus_clock);
++	}
++
++	if (pfdev->bus_clock) {
++		rate = clk_get_rate(pfdev->bus_clock);
++		dev_info(pfdev->dev, "bus_clock rate = %lu\n", rate);
++
++		err = clk_prepare_enable(pfdev->bus_clock);
++		if (err)
++			goto disable_clock;
++	}
++
+ 	return 0;
++
++disable_clock:
++	clk_disable_unprepare(pfdev->clock);
++
++	return err;
+ }
+ 
+ static void panfrost_clk_fini(struct panfrost_device *pfdev)
+ {
++	clk_disable_unprepare(pfdev->bus_clock);
+ 	clk_disable_unprepare(pfdev->clock);
+ }
+ 
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+index 56f452dfb490..8074f221034b 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.h
++++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+@@ -66,6 +66,7 @@ struct panfrost_device {
+ 
+ 	void __iomem *iomem;
+ 	struct clk *clock;
++	struct clk *bus_clock;
+ 	struct regulator *regulator;
+ 	struct reset_control *rstc;
+ 
 -- 
 2.17.1
 
