@@ -2,114 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A4E721C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA8C21C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfEQRSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 13:18:37 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44949 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfEQRSh (ORCPT
+        id S1728225AbfEQRUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 13:20:06 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51323 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfEQRUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 13:18:37 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e13so6928550ljl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 10:18:36 -0700 (PDT)
+        Fri, 17 May 2019 13:20:06 -0400
+Received: by mail-it1-f196.google.com with SMTP id m3so9390802itl.1;
+        Fri, 17 May 2019 10:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NbjfTetAqL1pRhjTEDGbQ+uNYoNVxKUkaX8lZYlWznw=;
-        b=CC5B2Ges+xvej3Nhb6RmKVrq8K8CcavP5JDncg3r+toYlm0bojmH/OgLQlbeOgMGo8
-         hBZGtecc9vw84t81r9B7TRr3H88irnUReCcOi4gueT82FV4YcGc/8QmdRgSwnfc05z3e
-         DdvTNyx6eFN7IAYd8hKOvFZiUQI0T/cb1KNMZrA49Z4uw6QTOpa6z+XwnOE2uo+fzdJ8
-         1oopsf8rW02bpStuMl44QVmuRE3gojJf3zzIj4VtKKIBo8Fv5vT/udNsSiDFgg5mN+xd
-         uU6/HH0bOj1cvjGgt7gO8SblVycAuKggmfZXJ4kk72OEzmHtn4AzQ5PHX2/yZc4NvgLh
-         K5aQ==
+         :cc:content-transfer-encoding;
+        bh=qrLPWyXtnI2gfzaw9iUqYTDRhEhLKXZoqwNA1fL2LAQ=;
+        b=PVLNgjcKPNwuCYgyauLWAWQrbFXd/kKCQoF0bXX5cMltLR7fks84XgVP9aZZbfishf
+         qA1LlwrEEXBuZPwQvyocwKzNmRInN+wqQOWAWuG+YIki49m7RHhvCA+F8PBQgKPenhI2
+         qPJ4eUvcWlE6HJ4q0j9W001nsUtte7prJuBZTU1nlQRKwKBlE4odUnnKHBmhRkJLf0ZB
+         l8CYE6vPxhKetIqu7wPGSDrsBoDVinT/sCwDVzrVrhKIND4nJvNzgjJTMAmkFZdcfHYh
+         DIDYAwoZNktDZOAkxRSjcQXkVdiXsZuMSJpjBC882SGpOYDSiZRVl5I32G0xTmBpsrE0
+         fzAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NbjfTetAqL1pRhjTEDGbQ+uNYoNVxKUkaX8lZYlWznw=;
-        b=MrzbfzZwhaqQkPDpGlslLkez/SQnQf1TXQnhwlVrVEsXteCo+w9r5FR2qsowno3eZQ
-         3gySGiP5QE7xMraiFwNwx9aBN46+56xzYI2qRVzZYXTf9appGueG107Z8AnfaNT9GfMm
-         yxiymfUrwmgU/YijAnnrUVBV5nU18V3SmBt85lpht6IhbUR6xfikOOsiHE7HKDNk6JuF
-         vPZntK7A7je0RVuepV7Ew2hUEiaXoD7Lws+KPBVirfTahNDQpMIS8OxW9g5qR4CrF1yj
-         TgzQjvhUHIRTiQhQqevygvclOH1i8rbkbGApujDxyXC1uNHNZWkgsrxAnLi2I3i3KUFI
-         lsNg==
-X-Gm-Message-State: APjAAAV8bLlZ7cFvOXWkpOKY9joaMu2lkknfCdHm99f0yuGGNAkT3Rld
-        70loJVXjyVJZcs4nArtLBbbPU13xN/G50tRgh1QXxQ==
-X-Google-Smtp-Source: APXvYqwzqi8wwPq6VMgDOQE/TVk0fb0Ok2ea8oI2w/F5LplYYrb3WBTTlzDix9IZ3i1H8W8lvHxLBzOnK5c38xlb1Co=
-X-Received: by 2002:a2e:8347:: with SMTP id l7mr7290906ljh.17.1558113515365;
- Fri, 17 May 2019 10:18:35 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qrLPWyXtnI2gfzaw9iUqYTDRhEhLKXZoqwNA1fL2LAQ=;
+        b=smMInCgU/7JAPXW9Dx+F2nUCuFzdbBITaSOJ2JRQ/WP0SAR4XhdyHQwg1lV1ep20kU
+         PpFKwddB80De89DkOiid+mPCafw69s/du0m6FvJ++QrqlZSpnmVB+dnWThEQUVr/UQbk
+         d97pu+OboFAhdpsvGyOLJ4FMxCUvTGqlyVyfEMUB+2Ew1M8dqiuV2EQuUZnAXFSTvAfe
+         KPzPa/aqZIed+BZzNhULBvlbgFjxbv1QLR02irpPEz5Kg/e88RRNopaugjhnbc7tgU2O
+         qkkBu3LbA1vxOlEsuOxSIFV8wAf3NW4ET/Sf558u4fa6qJ4IQ7UNn1KLl8YILvP9u5d2
+         Jeng==
+X-Gm-Message-State: APjAAAVNbLAWt8QfZo543aaY0AzL5ibSj8fYq34waoYLNBcHoHvUn9hM
+        JV83mbSyOHSnaxnjgvQSmA+TiV3BbdZN6uyfCik=
+X-Google-Smtp-Source: APXvYqy9MqNMwuRaX+ELq5rB4d1R7KQAB9+kT1JeKI6HQFvZCY3iw6/M+suGjbSFqWtAaTTx+zCY9kBtBlyqxKMmsos=
+X-Received: by 2002:a05:660c:7cd:: with SMTP id e13mr12523632itl.40.1558113605643;
+ Fri, 17 May 2019 10:20:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1556025155.git.vpillai@digitalocean.com> <57169361f2adf39569e061d3dd1e5588d22c65a3.1556025155.git.vpillai@digitalocean.com>
-In-Reply-To: <57169361f2adf39569e061d3dd1e5588d22c65a3.1556025155.git.vpillai@digitalocean.com>
-From:   Aubrey Li <aubrey.intel@gmail.com>
-Date:   Sat, 18 May 2019 01:18:24 +0800
-Message-ID: <CAERHkruv6807HyPg=UvjLiO-2uzDJgw1=44HyWQ73mnYVB37TQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 17/17] sched: Debug bits...
-To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
+References: <20190512082614.9045-1-tiny.windzz@gmail.com> <20190512082614.9045-3-tiny.windzz@gmail.com>
+ <20190512133930.t5txssl7mou2gljt@flea> <20190512214128.qjyys3vfpwdiacib@core.my.home>
+ <20190516150252.hf4u3bloo37chy6q@flea> <CAEExFWu-T2mGQ9Teo7TQOcJsEzXi_dB=S8CFv7MiwHyu5z4-ow@mail.gmail.com>
+ <20190517073151.mz6hcmzubk7iqfre@flea>
+In-Reply-To: <20190517073151.mz6hcmzubk7iqfre@flea>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sat, 18 May 2019 01:19:54 +0800
+Message-ID: <CAEExFWtban8Fjw6aZ5gdeC2GNk1vdqFoaJB_o-JtYZ_z70AJcQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        bjorn.andersson@linaro.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        paulmck@linux.ibm.com, stefan.wahren@i2se.com,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Andy Gross <andy.gross@linaro.org>, rui.zhang@intel.com,
+        devicetree@vger.kernel.org, marc.w.gonzalez@free.fr,
+        Eduardo Valentin <edubezval@gmail.com>,
+        enric.balletbo@collabora.com, robh+dt@kernel.org,
+        Jonathan.Cameron@huawei.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        olof@lixom.net, David Miller <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 12:18 AM Vineeth Remanan Pillai
-<vpillai@digitalocean.com> wrote:
+On Fri, May 17, 2019 at 3:32 PM Maxime Ripard <maxime.ripard@bootlin.com> w=
+rote:
 >
-> From: Peter Zijlstra (Intel) <peterz@infradead.org>
+> On Fri, May 17, 2019 at 02:10:47AM +0800, Frank Lee wrote:
+> > > On Sun, May 12, 2019 at 11:41:28PM +0200, Ond=C5=99ej Jirman wrote:
+> > > > > > +static int tsens_get_temp(void *data, int *temp)
+> > > > > > +{
+> > > > > > + struct tsensor *s =3D data;
+> > > > > > + struct tsens_device *tmdev =3D s->tmdev;
+> > > > > > + int val;
+> > > > > > +
+> > > > > > + regmap_read(tmdev->regmap, tmdev->chip->temp_data_base +
+> > > > > > +             0x4 * s->id, &val);
+> > > > > > +
+> > > > > > + if (unlikely(val =3D=3D 0))
+> > > > > > +         return -EBUSY;
+> > > > >
+> > > > > I'm not sure why a val equals to 0 would be associated with EBUSY=
+?
+> > > >
+> > > > Thermal zone driver can (will) call get_temp before we got the
+> > > > first interrupt and the thermal data. In that case val will be 0.
+> > > >
+> > > > Resulting in:
+> > > >
+> > > >  (val + offset) * scale =3D (-2794) * -67 =3D 187198
+> > > >
+> > > > 187=C2=B0C and immediate shutdown during boot - based on cirtical
+> > > > temperature being reached.
+> > > >
+> > > > Busy here means, get_temp does not yet have data. Thermal zone
+> > > > driver just reports any error to dmesg output.
+> > >
+> > > Ah, that makes sense.
+> > >
+> > > I guess if we're switching to an interrupt-based driver, then we can
+> > > just use a waitqueue, or is get_temp supposed to be atomic?
+> >
+> > I think get_temp should not be bloacked.
 >
-> Not-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/core.c | 38 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 37 insertions(+), 1 deletion(-)
+> Why not?
+
+Maybe, I am wrong. I also want to know if we should do this.
+
+Yangtao
+
 >
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0e3c51a1b54a..e8e5f26db052 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -106,6 +106,10 @@ static inline bool __prio_less(struct task_struct *a, struct task_struct *b, boo
+> Maxime
 >
->         int pa = __task_prio(a), pb = __task_prio(b);
->
-> +       trace_printk("(%s/%d;%d,%Lu,%Lu) ?< (%s/%d;%d,%Lu,%Lu)\n",
-> +                    a->comm, a->pid, pa, a->se.vruntime, a->dl.deadline,
-> +                    b->comm, b->pid, pa, b->se.vruntime, b->dl.deadline);
-> +
-
-a minor nitpick
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 3e3162f..68c518c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -93,7 +93,7 @@ static inline bool __prio_less(struct task_struct
-*a, struct task_struct *b, u64
-
-        trace_printk("(%s/%d;%d,%Lu,%Lu) ?< (%s/%d;%d,%Lu,%Lu)\n",
-                        a->comm, a->pid, pa, a->se.vruntime, a->dl.deadline,
--                       b->comm, b->pid, pa, b->se.vruntime, b->dl.deadline);
-+                       b->comm, b->pid, pb, b->se.vruntime, b->dl.deadline);
-
-
-        if (-pa < -pb)
-                return true;
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
