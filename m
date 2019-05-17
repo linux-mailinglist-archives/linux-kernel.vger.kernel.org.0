@@ -2,79 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B12EF2205E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 00:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9B70220DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 02:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbfEQWgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 18:36:49 -0400
-Received: from mga03.intel.com ([134.134.136.65]:30450 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbfEQWgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 18:36:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 15:36:48 -0700
-X-ExtLoop1: 1
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga001.jf.intel.com with ESMTP; 17 May 2019 15:36:47 -0700
-Received: from orsmsx104.amr.corp.intel.com ([169.254.4.200]) by
- ORSMSX107.amr.corp.intel.com ([169.254.1.194]) with mapi id 14.03.0415.000;
- Fri, 17 May 2019 15:36:47 -0700
-From:   "Bowers, AndrewX" <andrewx.bowers@intel.com>
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH][next] i40e: mark expected switch
- fall-through
-Thread-Topic: [Intel-wired-lan] [PATCH][next] i40e: mark expected switch
- fall-through
-Thread-Index: AQHVAGBkv65pMyI0KkarzT0dRkZJ76ZwASjQ
-Date:   Fri, 17 May 2019 22:36:47 +0000
-Message-ID: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3DB7B9@ORSMSX104.amr.corp.intel.com>
-References: <20190501205541.GA17995@embeddedor>
-In-Reply-To: <20190501205541.GA17995@embeddedor>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzdlNDk2ZGQtODAyMS00MTYwLTlhMTktODBjYTI2MGM0ZmNmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoid3RIMGdTUzB1M1FMd3NSNDBsc1hsc2JzOVlTb1BSYVZvZEs3WVlCOTY4bEVQVjFNcU9cL2R2QlV4WmlZd2NVU3EifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729064AbfERAJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 20:09:58 -0400
+Received: from [197.254.217.239] ([197.254.217.239]:38568 "EHLO mail.cert.sd"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726774AbfERAJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 20:09:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cert.sd (Postfix) with ESMTP id 13B8B50EBF6;
+        Sat, 18 May 2019 00:49:13 +0200 (CAT)
+Received: from mail.cert.sd ([127.0.0.1])
+        by localhost (mail.cert.sd [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 8lISxaiLFkdq; Sat, 18 May 2019 00:49:12 +0200 (CAT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cert.sd (Postfix) with ESMTP id 668F44CEC54;
+        Sat, 18 May 2019 00:48:59 +0200 (CAT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.cert.sd 668F44CEC54
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cert.sd;
+        s=3B54D788-828F-11E8-945F-63B06BDA8568; t=1558133339;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=QnBbIfib0/S+rZZWbqXc2IpyLXbS+dnCrCN+rGfpVVQ+PTGUDYbrPNSUQ/+kDu/rJ
+         sXe6dfkJYlyqHCihG17bbqvneqGmKV7e4z7H0NVmSFfdmmT4d/VWJaVHGgdsBeleZb
+         PvESX4yn2yMKLoBg/52P2vuqCKeCZvW0JHolBdkFDlQCEJMD4bcG5Wiuo19Hpst3z/
+         tjNA5HBaaGoOdeiL9PtcFRak8Dmjy/vEcxzTHfKveG2pK+Fc/hDA3j5FUx82dvkrIl
+         IClK+Yj1uKEFR0fpP24SV1FppYHFbXQnMGSgpHQ4Dilp3EyArVV3e7rVGxDuNj5Y7m
+         SFX5cXptP6iJw==
+X-Virus-Scanned: amavisd-new at mail.cert.sd
+Received: from mail.cert.sd ([127.0.0.1])
+        by localhost (mail.cert.sd [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id dTwfLdLX3iex; Sat, 18 May 2019 00:48:59 +0200 (CAT)
+Received: from [216.250.119.122] (unknown [216.250.119.122])
+        by mail.cert.sd (Postfix) with ESMTPSA id 9060446EC52;
+        Sat, 18 May 2019 00:48:38 +0200 (CAT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Congratulations! Your e-mail address was selected to receive our donation
+To:     Recipients <moamar@cert.sd>
+From:   "Patrick and Frances Connolly" <moamar@cert.sd>
+Date:   Fri, 17 May 2019 22:39:36 +0000
+Reply-To: petersonshaw2@gmail.com
+Message-Id: <20190517224838.9060446EC52@mail.cert.sd>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBJbnRlbC13aXJlZC1sYW4gW21h
-aWx0bzppbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnXSBPbg0KPiBCZWhhbGYgT2Yg
-R3VzdGF2byBBLiBSLiBTaWx2YQ0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAxLCAyMDE5IDE6NTYg
-UE0NCj4gVG86IEtpcnNoZXIsIEplZmZyZXkgVCA8amVmZnJleS50LmtpcnNoZXJAaW50ZWwuY29t
-PjsgRGF2aWQgUy4gTWlsbGVyDQo+IDxkYXZlbUBkYXZlbWxvZnQubmV0Pg0KPiBDYzogbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZzsgaW50ZWwtd2lyZWQtbGFuQGxpc3RzLm9zdW9zbC5vcmc7IGxpbnV4
-LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBLZWVzIENvb2sgPGtlZXNjb29rQGNocm9taXVt
-Lm9yZz4NCj4gU3ViamVjdDogW0ludGVsLXdpcmVkLWxhbl0gW1BBVENIXVtuZXh0XSBpNDBlOiBt
-YXJrIGV4cGVjdGVkIHN3aXRjaCBmYWxsLQ0KPiB0aHJvdWdoDQo+IA0KPiBJbiBwcmVwYXJhdGlv
-biB0byBlbmFibGluZyAtV2ltcGxpY2l0LWZhbGx0aHJvdWdoLCBtYXJrIHN3aXRjaCBjYXNlcyB3
-aGVyZQ0KPiB3ZSBhcmUgZXhwZWN0aW5nIHRvIGZhbGwgdGhyb3VnaC4NCj4gDQo+IFRoaXMgcGF0
-Y2ggZml4ZXMgdGhlIGZvbGxvd2luZyB3YXJuaW5nOg0KPiANCj4gZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvaW50ZWwvaTQwZS9pNDBlX3hzay5jOiBJbiBmdW5jdGlvbiDigJhpNDBlX3J1bl94ZHBfemPi
-gJk6DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2k0MGUvaTQwZV94c2suYzoyMTc6Mzog
-d2FybmluZzogdGhpcyBzdGF0ZW1lbnQNCj4gbWF5IGZhbGwgdGhyb3VnaCBbLVdpbXBsaWNpdC1m
-YWxsdGhyb3VnaD1dDQo+ICAgIGJwZl93YXJuX2ludmFsaWRfeGRwX2FjdGlvbihhY3QpOw0KPiAg
-ICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KPiBkcml2ZXJzL25ldC9ldGhlcm5l
-dC9pbnRlbC9pNDBlL2k0MGVfeHNrLmM6MjE4OjI6IG5vdGU6IGhlcmUNCj4gICBjYXNlIFhEUF9B
-Qk9SVEVEOg0KPiAgIF5+fn4NCj4gDQo+IEluIHByZXBhcmF0aW9uIHRvIGVuYWJsaW5nIC1XaW1w
-bGljaXQtZmFsbHRocm91Z2gsIG1hcmsgc3dpdGNoIGNhc2VzIHdoZXJlDQo+IHdlIGFyZSBleHBl
-Y3RpbmcgdG8gZmFsbCB0aHJvdWdoLg0KPiANCj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgZm9sbG93
-aW5nIHdhcm5pbmc6DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIEEuIFIuIFNpbHZhIDxn
-dXN0YXZvQGVtYmVkZGVkb3IuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L2lu
-dGVsL2k0MGUvaTQwZV94c2suYyB8IDEgKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspDQoNClRlc3RlZC1ieTogQW5kcmV3IEJvd2VycyA8YW5kcmV3eC5ib3dlcnNAaW50ZWwuY29t
-Pg0KDQoNCg==
