@@ -2,108 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D1421B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFDC21B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfEQP6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:58:44 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23501 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728664AbfEQP6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:58:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 08:58:43 -0700
-X-ExtLoop1: 1
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga006.jf.intel.com with ESMTP; 17 May 2019 08:58:41 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 3E7DB21145; Fri, 17 May 2019 18:58:40 +0300 (EEST)
-Date:   Fri, 17 May 2019 18:58:40 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] media: v4l2-subdev: Verify arguments in
- v4l2_subdev_call()
-Message-ID: <20190517155839.khjyor4cy6vg5vwf@paasikivi.fi.intel.com>
-References: <20190514224823.11564-1-jmkrzyszt@gmail.com>
- <20190514224823.11564-2-jmkrzyszt@gmail.com>
- <20190515071601.knfdhwofz6ukjmxt@paasikivi.fi.intel.com>
- <1943741.XiKEDqKQ7m@z50>
+        id S1729401AbfEQQDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:03:04 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35078 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbfEQQDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:03:03 -0400
+Received: by mail-ot1-f66.google.com with SMTP id n14so7217045otk.2;
+        Fri, 17 May 2019 09:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=gRcrtb5zkBV22N7ejZ8gd80yYzuG0eMMK0Likb2l39A=;
+        b=qLjX5pYMmcTMjN5iFgyQsKZE0y6c8l2+gMnFTxjnwzcVJC9+73IQv1ERNRGBwqcVB1
+         jRNQe7asKnOot4X72/nbnRE7ZLXpGGHhCVQHVNfntOjMG1qo7pS5msGMHFXbT8alz6NV
+         8MZ4GlFAmF9tHddkLWQiIfiLZoD3R230cflReazsdSKB8hmkKBI5BpKwxrIt27vfGiRV
+         iaoxpaCP0JJhEj2JXMFaw8wwGrfzzn0XPmAsNMq0oa8ktvb2lMmfwa7TtfouoWL0DbPa
+         0DGFpoS0qsgQPx2kd48oCzrUSwvRpDEoz39no2EGJVCoA96kzHrljKfOemLP4MpMrC+3
+         9VWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=gRcrtb5zkBV22N7ejZ8gd80yYzuG0eMMK0Likb2l39A=;
+        b=QX2t0l632nKJLGVdsiMJfTazSfpVn0YXgbqBGE0Q6xNwKDvMNKzBU4ewPFQM4vVWWO
+         I/zbvvhL4za3Su7GEo9Xv1N8S9M7Rxw/AYCkT8n7RN1boarq+nabJNl7O6PesKTnmalv
+         0Mo9Cmm9komJ7DmjQ1CIyTjy17SNre0EDgvPQhB2StZtH0BsQEqcw1TGllKHe+/cxnIp
+         cbb8z2zBPweFyiJToaQAJlbBSlD5RCRMZnpz442oLkuSBqPICb+xe/Blx4gjHxpY8qxV
+         Je3ZjaoMA/2Y5zS/KoT68GtCtlN5QE+bFkVDYPkfhcc53KUeacZYNjFW33OI/GeoaBxB
+         nkdA==
+X-Gm-Message-State: APjAAAV0NPSvS2v1UHoK+H6HycCkmm78B7eKYDaVYyM3IsvYoD4qbsBD
+        HRU2Vi9VGYgUX9EeuYBPlLL6qBCg0iEXSPHYqzk=
+X-Google-Smtp-Source: APXvYqxmJfR52ctG4tHDsK2W7JZpTz8cICNLg1PMwwOW2FZTYEBQrxwnQVaenqKDcW/K5NYKOXtN9pY4O8t6RCdDLOk=
+X-Received: by 2002:a9d:64c1:: with SMTP id n1mr8954538otl.259.1558108983107;
+ Fri, 17 May 2019 09:03:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1943741.XiKEDqKQ7m@z50>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From:   Jaewon Kim <jaewon31.kim@gmail.com>
+Date:   Sat, 18 May 2019 01:02:28 +0900
+Message-ID: <CAJrd-UuMRdWHky4gkmiR0QYozfXW0O35Ohv6mJPFx2TLa8hRKg@mail.gmail.com>
+Subject: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
+To:     gregkh@linuxfoundation.org, m.szyprowski@samsung.com,
+        linux-mm@kvack.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Jaewon Kim <jaewon31.kim@samsung.com>, ytk.lee@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
+Hello I don't have enough knowledge on USB core but I've wondered
+why GFP_NOIO has been used in xhci_alloc_dev for
+xhci_alloc_virt_device. I found commit ("a6d940dd759b xhci: Use
+GFP_NOIO during device reset"). But can we just change GFP_NOIO
+to __GFP_RECLAIM | __GFP_FS ?
 
-On Wed, May 15, 2019 at 10:56:36PM +0200, Janusz Krzysztofik wrote:
-> Hi Sakari,
-> 
-> On Wednesday, May 15, 2019 9:16:02 AM CEST Sakari Ailus wrote:
-> > Hi Janusz,
-> > 
-> > On Wed, May 15, 2019 at 12:48:21AM +0200, Janusz Krzysztofik wrote:
-> > > -static int check_crop(struct v4l2_subdev *sd, struct v4l2_subdev_crop 
-> *crop)
-> > > +static inline int check_pad(struct v4l2_subdev *sd, __u32 pad)
-> > >  {
-> > > -	if (crop->which != V4L2_SUBDEV_FORMAT_TRY &&
-> > > -	    crop->which != V4L2_SUBDEV_FORMAT_ACTIVE)
-> > > +#if defined(CONFIG_MEDIA_CONTROLLER)
-> > > +	if (sd->entity.num_pads && pad >= sd->entity.num_pads)
-> > 
-> > One more comment.
-> > 
-> > The num_pads doesn't really tell whether a given op is valid for a device.
-> > Well, in this case it would have to be a bug in the driver, but those do
-> > happen. How about checking for sd->entity.graph_obj.mdev instead? It's
-> > non-NULL if the entity is registered with a media device, i.e. when these
-> > callback functions are supposed to be called.
-> 
-> Before I do that, let me undestand your point better.
-> 
-> My intentions were:
-> 1) to provide a check for validity of a pad ID passed to an operation, not ann 
-> eligibility of a driver to support the operation,
-> 2) to not break drivers which don't set pad_num, especially when building them 
-> with CONFIG_MEDIA_CONTROLLER turned on for whatever reason.
+Please refer to below case.
 
-Indeed.
+I got a report from Lee YongTaek <ytk.lee@samsung.com> that the
+xhci_alloc_virt_device was too slow over 2 seconds only for one page
+allocation.
 
-But these checks still allow calling the pad operations on sub-devices that
-have no pads. That should not be allowed. Pads are a Media controller
-concept, they do not exist outside it; therefore checking for pads only if
-the subdev is a part of the media device would be entirely correct.
+1) It was because kernel version was v4.14 and DMA allocation was
+done from CMA(Contiguous Memory Allocator) where CMA region was
+almost filled with file page and  CMA passes GFP down to page
+isolation. And the page isolation only allows file page isolation only to
+requests having __GFP_FS.
 
-It should probably accompany a check that requires the pad number is zero
-if the subdev doesn't have a graph object, even if the pad field isn't
-supposedly used for any purpose. Would that address your concern?
+2) Historically CMA was changed at v4.19 to use GFP_KERNEL
+regardless of GFP passed to  DMA allocation through the
+commit 6518202970c1 "(mm/cma: remove unsupported gfp_mask
+parameter from cma_alloc()".
 
-> 
-> Since pad IDs are verified against pad_num which may be not set, we should 
-> obviously check validity of pad_num before comparing against it.  Since media 
-> controller compatible subdevices need at least one pad, I think the check for 
-> non-zero pad_num is quite reasonable.
-> 
-> Moreover, old drivers are actually using those pad operations you describe as 
-> not supposed to be called.  They are using them because they were converted to 
-> use them in place of former video ops.  Already dealing with pad IDs, they may 
-> decide to turn on CONFIG_MEDIA_CONTROLLER and use selected functionality, for 
-> example register pads, without implementing fulll media controller support.  
-> Why should we refuse to perform pad ID verification for them?
+I think pre v4.19 the xhci_alloc_virt_device could be very slow
+depending on CMA situation but free to USB deadlock issue. But as of
+v4.19, I think, it will be fast but can face the deadlock issue.
+Consequently I think to meet the both cases, I think USB can pass
+__GFP_FS without __GFP_IO.
 
--- 
-Kind regards,
+If __GFP_FS is passed from USB core, of course, the CMA patch also
+need to be changed to pass GFP.
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 005e65922608..38abcd03a1a2 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3893,7 +3893,7 @@ int xhci_alloc_dev(struct usb_hcd *hcd, struct
+usb_device *udev)
+         * xhci_discover_or_reset_device(), which may be called as part of
+         * mass storage driver error handling.
+         */
+-       if (!xhci_alloc_virt_device(xhci, slot_id, udev, GFP_NOIO)) {
++       if (!xhci_alloc_virt_device(xhci, slot_id, udev, __GFP_RECLAIM
+| __GFP_FS)) {
+                xhci_warn(xhci, "Could not allocate xHCI USB device
+data structures\n");
+                goto disable_slot;
+        }
+
+
+Thank you
