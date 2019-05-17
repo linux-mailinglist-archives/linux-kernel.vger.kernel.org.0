@@ -2,33 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4D521AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0967D21AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbfEQPfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:35:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39188 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729344AbfEQPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:35:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2AC1ACF5;
-        Fri, 17 May 2019 15:35:18 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
-        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [RFC 5/5] cpufreq: add driver for Raspbery Pi
-Date:   Fri, 17 May 2019 17:35:07 +0200
-Message-Id: <20190517153508.18314-6-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190517153508.18314-1-nsaenzjulienne@suse.de>
-References: <20190517153508.18314-1-nsaenzjulienne@suse.de>
+        id S1729311AbfEQPfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 11:35:13 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43593 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728778AbfEQPfM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 11:35:12 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t187so5443813oie.10;
+        Fri, 17 May 2019 08:35:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5PE46hE33zglQ6gPxNshGw7b/oA/SQzmRJJFuwowqkA=;
+        b=EL7yUyB4iZTuhOJtYesF77hQaW6f48FH1ufvNTSOMkYRsBA+6ojpTy3ZrN1frzWAWq
+         sgS8yQvwZm0OucwaIHQvdflvCUnnd3bOHDjCM72btJnQJANf0pRpCEQi1Y5fe83qgTBt
+         VIKlzp2B7PmoC0G3T2zGOVpMXPnWPY1KbgxL0nfXx7dp64MCWPp6KWoyS8Y3GHLKD7BV
+         dp7XYvzfsZhLhGKqObzC6G+c4RnS4kF3d3dD57CmbNAzrblqu6py1sm0WOeA7d2i1iJL
+         V3W5JPQ+IgXtfPAaV+9YAt4NY8qzmJZOGEFOdM12XdwZJ5ptCqLnNXCvu0G41Pf8R8+H
+         7CFA==
+X-Gm-Message-State: APjAAAVUuLVyIB7sUIfUfyVGrr/rDszqRzUre0tuj4SqCbOTQEpZI6AR
+        CgUICpHQqUL/bviQRMoDjQ==
+X-Google-Smtp-Source: APXvYqxzyNii8xeDPTeNjFjj0HEZVfsTow5C33TurWu79HZJioYQxPo0VtxfgUz8a1DtF0zfb47+CA==
+X-Received: by 2002:aca:3093:: with SMTP id w141mr85093oiw.173.1558107311782;
+        Fri, 17 May 2019 08:35:11 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id f5sm3596859oih.39.2019.05.17.08.35.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 17 May 2019 08:35:11 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: arm: Convert Alpine board/soc bindings to json-schema
+Date:   Fri, 17 May 2019 10:35:10 -0500
+Message-Id: <20190517153510.13647-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,137 +51,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Raspberry Pi's firmware offers and interface though which update it's
-performance requirements. It allows us to request for specific runtime
-frequencies, which the firmware might or might not respect, depending on
-the firmware configuration and thermals.
+Convert Alpine SoC bindings to DT schema format using json-schema.
 
-As the maximum and minimum frequencies are configurable in the firmware
-there is no way to know in advance their values. So the Raspberry Pi
-cpufreq driver queries them, builds an opp frequency table to then
-launch cpufreq-dt.
-
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc: Tsahee Zidenberg <tsahee@annapurnalabs.com>
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/cpufreq/Kconfig.arm           |  8 +++
- drivers/cpufreq/Makefile              |  1 +
- drivers/cpufreq/raspberrypi-cpufreq.c | 79 +++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
- create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+ .../devicetree/bindings/arm/al,alpine.txt     | 16 --------------
+ .../devicetree/bindings/arm/al,alpine.yaml    | 21 +++++++++++++++++++
+ 2 files changed, 21 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/al,alpine.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/al,alpine.yaml
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 179a1d302f48..70e5f13f7632 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -308,3 +308,11 @@ config ARM_PXA2xx_CPUFREQ
- 	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
- 
- 	  If in doubt, say N.
-+
-+config ARM_RASPBERRYPI_CPUFREQ
-+	tristate "Raspberry Pi cpufreq support"
-+	depends on RASPBERRYPI_FIRMWARE || (RASPBERRYPI_FIRMWARE=n && COMPILE_TEST)
-+	help
-+	  This adds the CPUFreq driver for Raspberry Pi
-+
-+	  If in doubt, say N.
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 689b26c6f949..02678e9b2ff5 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -84,6 +84,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
- obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-+obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+= raspberrypi-cpufreq.o
- 
- 
- ##################################################################################
-diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c b/drivers/cpufreq/raspberrypi-cpufreq.c
+diff --git a/Documentation/devicetree/bindings/arm/al,alpine.txt b/Documentation/devicetree/bindings/arm/al,alpine.txt
+deleted file mode 100644
+index d00debe2e86f..000000000000
+--- a/Documentation/devicetree/bindings/arm/al,alpine.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Annapurna Labs Alpine Platform Device Tree Bindings
+----------------------------------------------------------------
+-
+-Boards in the Alpine family shall have the following properties:
+-
+-* Required root node properties:
+-compatible: must contain "al,alpine"
+-
+-* Example:
+-
+-/ {
+-	model = "Annapurna Labs Alpine Dev Board";
+-	compatible = "al,alpine";
+-
+-	...
+-}
+diff --git a/Documentation/devicetree/bindings/arm/al,alpine.yaml b/Documentation/devicetree/bindings/arm/al,alpine.yaml
 new file mode 100644
-index 000000000000..53cb3e5a8457
+index 000000000000..a70dff277e05
 --- /dev/null
-+++ b/drivers/cpufreq/raspberrypi-cpufreq.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Raspberry Pi cpufreq driver
-+ *
-+ * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+ */
++++ b/Documentation/devicetree/bindings/arm/al,alpine.yaml
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/al,alpine.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/cpu.h>
-+#include <linux/module.h>
-+#include <linux/pm_opp.h>
-+#include <linux/cpufreq.h>
-+#include <linux/platform_device.h>
++title: Annapurna Labs Alpine Platform Device Tree Bindings
 +
-+static const struct of_device_id machines[] __initconst = {
-+	{ .compatible = "raspberrypi,3-model-b-plus" },
-+	{ .compatible = "raspberrypi,3-model-b" },
-+	{ /* sentinel */ }
-+};
++maintainers:
++  - Tsahee Zidenberg <tsahee@annapurnalabs.com>
++  - Antoine Tenart <antoine.tenart@bootlin.com>
 +
-+static int __init raspberrypi_cpufreq_driver_init(void)
-+{
-+	struct platform_device *pdev;
-+	struct cpumask shared_cpus;
-+	struct device *cpu_dev;
-+	struct clk *clk;
-+	long min, max;
-+	long rate;
-+	int ret;
++properties:
++  compatible:
++    items:
++      - const: al,alpine
++  model:
++    items:
++      - const: "Annapurna Labs Alpine Dev Board"
 +
-+	if (!of_match_node(machines, of_root))
-+		return -ENODEV;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev) {
-+		pr_err("Cannot get CPU for cpufreq driver\n");
-+		return -ENODEV;
-+	}
-+
-+	clk = clk_get(cpu_dev, 0);
-+	if (IS_ERR(clk)) {
-+		dev_err(cpu_dev, "Cannot get clock for CPU0\n");
-+		return PTR_ERR(clk);
-+	}
-+
-+	/*
-+	 * The max and min frequencies are configurable in the Raspberry Pi
-+	 * firmware, so we query them at runtime
-+	 */
-+	min = clk_round_rate(clk, 0);
-+	max = clk_round_rate(clk, ULONG_MAX);
-+
-+	for (rate = min; rate < max; rate += 100000000) {
-+		ret = dev_pm_opp_add(cpu_dev, rate, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = dev_pm_opp_add(cpu_dev, max, 0);
-+	if (ret)
-+		return ret;
-+
-+	cpumask_setall(&shared_cpus);
-+	dev_pm_opp_set_sharing_cpus(cpu_dev, &shared_cpus);
-+
-+	pdev = platform_device_register_data(NULL, "cpufreq-dt", -1, NULL, 0);
-+	ret = PTR_ERR_OR_ZERO(pdev);
-+	if (ret)
-+		dev_err(cpu_dev, "Failed to create platform device, %d\n", ret);
-+
-+	return ret;
-+}
-+
-+late_initcall(raspberrypi_cpufreq_driver_init);
-+
-+MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
-+MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
-+MODULE_LICENSE("GPL v2");
++...
 -- 
-2.21.0
+2.20.1
 
