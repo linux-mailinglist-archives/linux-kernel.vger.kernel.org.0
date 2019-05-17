@@ -2,120 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6745421D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7AF321D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbfEQSMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:12:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40543 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbfEQSMV (ORCPT
+        id S1729071AbfEQSFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:05:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59756 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726422AbfEQSFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:12:21 -0400
-Received: by mail-lj1-f196.google.com with SMTP id d15so7088173ljc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GqLsKGWePcHeYkjL6WcpBkvnp3m99gvexZby0QRo7VY=;
-        b=FLSkmQlUFMZbLyvTJKsJsbzUTzwJ007awR+MJFBzBBIfeyUsLSpio9pw1egk8rl+1T
-         GED5nIz0MTZm4wj6hHTQGkolwiBKx+3k5poKvYAAORvXGNs8I19OUvhU2aPU09ae6kVb
-         04zIZrSmhGYDYVb200BkHqJrTSJZ0aDJZNgqY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GqLsKGWePcHeYkjL6WcpBkvnp3m99gvexZby0QRo7VY=;
-        b=HR8KCxPEJnImsNPcn9PB0QLX2vvoCSo4VbsRud/pNotCJgyjlb+gBD2NQHRImwO7qj
-         EpyG9JfmPHGl2R5LU98QEuZxd5fkcvTwmy8/tHdSLENOIBpmqTpch/ylAABQ7L+F3b4H
-         kO/B9Q0G5mLPURpOT2iBmD/3iV49zwxqggfh0IXmkK2YeedahZHUKAPv7estHHq2n/ny
-         3X3wTV5fHyIHaMt22Vl7bp5xs8vpMq6qXVaG2XscIWZob2d3N7st8T6Ps4AiMo2dcTd8
-         0CdVGpdJAMdSpi0z4OScpfmWO8dfMy6zUVx+b9gz0TSnmGTxIWQmGDrwS6VO0zZxdLe6
-         RAfQ==
-X-Gm-Message-State: APjAAAWA5MAsid0oQK10v7trP0bIDKjSzfgbsRhGJ3fBkC1HDvHjh3d+
-        XJnvBPKInhYnu5Fspx9E2GHWIpejqS8=
-X-Google-Smtp-Source: APXvYqw38OgFJsrHurtgIFlxng/W9UeHCL4apohnwgRIyJMlksp1A9qcvL+PkCtoyyU4FrLH94PmBA==
-X-Received: by 2002:a2e:1b8a:: with SMTP id c10mr29197902ljf.139.1558116739033;
-        Fri, 17 May 2019 11:12:19 -0700 (PDT)
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com. [2a00:1450:4864:20::12e])
-        by smtp.gmail.com with ESMTPSA id g20sm1648171lja.67.2019.05.17.11.12.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 11:12:18 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id q17so5984117lfo.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:12:18 -0700 (PDT)
-X-Received: by 2002:ac2:59c7:: with SMTP id x7mr24467304lfn.75.1558116278802;
- Fri, 17 May 2019 11:04:38 -0700 (PDT)
+        Fri, 17 May 2019 14:05:47 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4HHw2gU050171
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:05:46 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2shysbw3yp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:05:45 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Fri, 17 May 2019 19:04:39 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 May 2019 19:04:36 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4HI4Y8p47644864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 May 2019 18:04:34 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF81FAE051;
+        Fri, 17 May 2019 18:04:34 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0DBA4AE045;
+        Fri, 17 May 2019 18:04:34 +0000 (GMT)
+Received: from [9.145.153.112] (unknown [9.145.153.112])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 17 May 2019 18:04:33 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 4/4] vfio: vfio_iommu_type1: implement
+ VFIO_IOMMU_INFO_CAPABILITIES
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     sebott@linux.vnet.ibm.com, gerald.schaefer@de.ibm.com,
+        pasic@linux.vnet.ibm.com, borntraeger@de.ibm.com,
+        walling@linux.ibm.com, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        robin.murphy@arm.com
+References: <1558109810-18683-1-git-send-email-pmorel@linux.ibm.com>
+ <1558109810-18683-5-git-send-email-pmorel@linux.ibm.com>
+ <20190517104143.240082b5@x1.home>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Fri, 17 May 2019 20:04:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com>
- <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com>
- <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com>
- <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov> <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
- <20190517172953.GC15006@linux.intel.com> <DFE03E0C-694A-4289-B416-29CDC2644F94@amacapital.net>
- <20190517175500.GE15006@linux.intel.com>
-In-Reply-To: <20190517175500.GE15006@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 17 May 2019 11:04:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgH2FBzBG3_RZSuatpYCj8DCQZipJYp9vh3Wy_S3Qt4-g@mail.gmail.com>
-Message-ID: <CAHk-=wgH2FBzBG3_RZSuatpYCj8DCQZipJYp9vh3Wy_S3Qt4-g@mail.gmail.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190517104143.240082b5@x1.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19051718-0028-0000-0000-0000036ED32E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19051718-0029-0000-0000-0000242E734F
+Message-Id: <92b6ad4e-9a49-636b-9225-acca0bec4bb7@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=894 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905170106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:55 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> In this snippet, IS_PRIVATE() is true for anon inodes, false for
-> /dev/sgx/enclave.  Because EPC memory is always shared, SELinux will never
-> check PROCESS__EXECMEM for mprotect() on/dev/sgx/enclave.
+On 17/05/2019 18:41, Alex Williamson wrote:
+> On Fri, 17 May 2019 18:16:50 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> We implement the capability interface for VFIO_IOMMU_GET_INFO.
+>>
+>> When calling the ioctl, the user must specify
+>> VFIO_IOMMU_INFO_CAPABILITIES to retrieve the capabilities and
+>> must check in the answer if capabilities are supported.
+>>
+>> The iommu get_attr callback will be used to retrieve the specific
+>> attributes and fill the capabilities.
+>>
+>> Currently two Z-PCI specific capabilities will be queried and
+>> filled by the underlying Z specific s390_iommu:
+>> VFIO_IOMMU_INFO_CAP_QFN for the PCI query function attributes
+>> and
+>> VFIO_IOMMU_INFO_CAP_QGRP for the PCI query function group.
+>>
+>> Other architectures may add new capabilities in the same way
+>> after enhancing the architecture specific IOMMU driver.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>   drivers/vfio/vfio_iommu_type1.c | 122 +++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 121 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>> index d0f731c..9435647 100644
+>> --- a/drivers/vfio/vfio_iommu_type1.c
+>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>> @@ -1658,6 +1658,97 @@ static int vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
+>>   	return ret;
+>>   }
+>>   
+>> +static int vfio_iommu_type1_zpci_fn(struct iommu_domain *domain,
+>> +				    struct vfio_info_cap *caps, size_t size)
+>> +{
+>> +	struct vfio_iommu_type1_info_pcifn *info_fn;
+>> +	int ret;
+>> +
+>> +	info_fn = kzalloc(size, GFP_KERNEL);
+>> +	if (!info_fn)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = iommu_domain_get_attr(domain, DOMAIN_ATTR_ZPCI_FN,
+>> +				    &info_fn->response);
+> 
+> What ensures that the 'struct clp_rsp_query_pci' returned from this
+> get_attr remains consistent with a 'struct vfio_iommu_pci_function'?
+> Why does the latter contains so many reserved fields (beyond simply
+> alignment) for a user API?  What fields of these structures are
+> actually useful to userspace?  Should any fields not be exposed to the
+> user?  Aren't BAR sizes redundant to what's available through the vfio
+> PCI API?  I'm afraid that simply redefining an internal structure as
+> the API leaves a lot to be desired too.  Thanks,
+> 
+> Alex
+> 
+Hi Alex,
 
-Why _does_ the memory have to be shared? Shared mmap() is
-fundamentally less secure than private mmap, since by definition it
-means "oh, somebody else has access to it too and might modify it
-under us".
+I simply used the structure returned by the firmware to be sure to be 
+consistent with future evolutions and facilitate the copy from CLP and 
+to userland.
 
-Why does the SGX logic care about things like that? Normal executables
-are just private mappings of an underlying file, I'm not sure why the
-SGX interface has to have that shared thing, and why the interface has
-to have a device node in the first place when  you have system calls
-for setup anyway.
+If you prefer, and I understand that this is the case, I can define a 
+specific VFIO_IOMMU structure with only the fields relevant to the user, 
+leaving future enhancement of the user's interface being implemented in 
+another kernel patch when the time has come.
 
-So why don't the system calls just work on perfectly normal anonymous
-mmap's? Why a device node, and why must it be shared to begin with?
+In fact, the struct will have all defined fields I used but not the BAR 
+size and address (at least for now because there are special cases we do 
+not support yet with bars).
+All the reserved fields can go away.
 
-                  Linus
+Is it more conform to your idea?
+
+Also I have 2 interfaces:
+
+s390_iommu.get_attr <-I1-> VFIO_IOMMU <-I2-> userland
+
+Do you prefer:
+- 2 different structures, no CLP raw structure
+- the CLP raw structure for I1 and a VFIO specific structure for I2
+- the same VFIO structure for both I1 and I2
+
+Thank you if you could give me a direction for this.
+
+Thanks for the comments, and thanks a lot to have answered so quickly.
+
+Pierre
+
+
+
+
+
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
