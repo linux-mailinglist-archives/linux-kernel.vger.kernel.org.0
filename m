@@ -2,131 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F45213ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2FA213F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfEQG74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 02:59:56 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42502 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbfEQG74 (ORCPT
+        id S1728019AbfEQHCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:02:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35851 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfEQHCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 02:59:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 13so3200520pfw.9;
-        Thu, 16 May 2019 23:59:56 -0700 (PDT)
+        Fri, 17 May 2019 03:02:00 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s17so5894735wru.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 00:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=acOBVSJe/b9a1J3px6iLY0/PUzqcYk644yoY0pO+fWc=;
-        b=r4fYzjKyyva15V5BJgQyBUWunPQ6iE3RrmKaRS0nJqt4r0z5+xRT221roa7vGpJJJK
-         4yu10nSaIOGCBD4V9jAhebSoCUQOn9hI4PsqoBN3WlN7wj2gizty6A1ZuAl22108dMFt
-         IXLnRBZ6TyXjNF4IiaYMdg4EwuzBKX9lCfV4+8+YzimfO2ZCtBfBfJGnQERypAuhU6yL
-         BsLpBjoX3+entTCYxXFFd30pWOt0sQqlrldKxvGstP8vpmyambOIqORidM1JfXx29cpu
-         YsmX0YDhCP5jmTLeCOIM1ixTstQJPkXKqo9SRwU7c7EwCcb8wwxpBSbgoufbVt9JBoic
-         tlcQ==
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=Ss4NB5m+SG0EZIQDhH7NjLniRsiUjmxyrNTSlSe9Hss=;
+        b=PLgLyLnGuNGgT8VXGDwFxsshlERTrEv9OeoVFs0VRs0YgE+oPWe56SBGIyYtrVf2qT
+         h2pdyfEY/oOLqsJF5QN2mBsXJLsqmOkXJo/R6RZYSLOMW/LOsm5w2oJ8lYNTcc3uA17x
+         2EV4wPAYG/ukn1NpGIT68nOA5b3i25a7sq3W9IhHEuhpuFTpbQ1AU7cpe8D7hESI6PPv
+         lovLb4l0+uh5JFzw3HisD90486y8A6x05kXEZ6ctIlvmi6xE6u0nnGaMk7kNuYD2Eraw
+         stZ+ACK2Cb7HA29wckCg26It3pti49UGs62KuUwdrA1d8+FhhFMcUsA+GBaNXrnM83sl
+         Igfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=acOBVSJe/b9a1J3px6iLY0/PUzqcYk644yoY0pO+fWc=;
-        b=QBX/WspPLNEBpwHzKhq1zT4amfIERgcfr8kRS2hENH45cmJ1yWIVbfz+SFZw5NN2sT
-         OPipdpttGR8QguM+VtADIt6+7vQwZryMinbMk//Zpxa5zA+mySDE0nP22v8DdYPyVb/Y
-         56INEdfvtMU4iDiw7EyJ/zbcOz7A2T6cgFWw8J9AD2hVSPaTZPfvwY/j2Bepej3NsMTj
-         sDDYQ94znJjtLBiDprRwuNexy/q578DF/z5aSaJw1vMDDDuHcBS9zZ0yd72NOvutZQPY
-         YTGgXuZceLjDVtZubztSXQ3iNr4MsN/AExg2fchpcowaXWuW8SUAQNb1rocqj/PTz442
-         qhmg==
-X-Gm-Message-State: APjAAAWFC4KqDuQzXTkaF4K/QA4L9p6kRIHLpyw/a8oHGxoAU/AvHg05
-        yUP0YAwNBWdr1c7pw1wH2/E=
-X-Google-Smtp-Source: APXvYqwVsYMDzmbtlH7JvkVY3DQu3VRAiUxen2R5hvO3et1uXbQGqPujCoICePAFj3Sc5WcxJCveJA==
-X-Received: by 2002:aa7:8e0d:: with SMTP id c13mr60354955pfr.193.1558076395817;
-        Thu, 16 May 2019 23:59:55 -0700 (PDT)
-Received: from localhost ([175.223.38.122])
-        by smtp.gmail.com with ESMTPSA id u6sm9339104pfm.10.2019.05.16.23.59.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 23:59:55 -0700 (PDT)
-Date:   Fri, 17 May 2019 15:59:51 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Philipp Rudo <prudo@linux.ibm.com>
-Subject: Re: [PATCH] s390: add unreachable() to dump_fault_info() to fix
- -Wmaybe-uninitialized
-Message-ID: <20190517065951.GA11550@jagdpanzerIV>
-References: <20190517064922.22743-1-yamada.masahiro@socionext.com>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=Ss4NB5m+SG0EZIQDhH7NjLniRsiUjmxyrNTSlSe9Hss=;
+        b=lbIZSnBodFdEh2ikkTo74nWQ9T6o2GgdPMI+UdEb9fC0AvgLYHpZatyj5p6HHZ4JM6
+         Cxjdl2XWIphBXuFl+4SejGWccndT8c1PF0e6w6k5Ec8/Yhc1M7nIPbwBj33xywCrQon5
+         XpjvuCAXuZFPaomEs2K8wNa8P+5E8DpXKTiKx4U91t8MbqVkS9A11OsANuoyjAmGn6Sp
+         x0WjikaWU3mw2wwKue0HKtJrMWzk5qdvB2EdvmPcxMOJNqYKWOAEowrRQv4l3ChgnArL
+         vRHC+DyDMI8Ek/FXN61TQCblABrNcNziZZG3z5fLjzjGXecAigEJlehLi+PAoEpKSScF
+         Nbcw==
+X-Gm-Message-State: APjAAAWUL2Q38hwx4Fj24KIFEWBuk2UpZKN7UYPydaHS50wHllRZzqyO
+        OQO6LNSokjVQbPs892YVZWI48Q==
+X-Google-Smtp-Source: APXvYqwlgwQ3Ti3QErOn6prvvwGIqOr2oU52GGb1WUMpJUlWibmqRpjYkl8UEH1bwumcelp6Jd7x0g==
+X-Received: by 2002:adf:f6c4:: with SMTP id y4mr6314398wrp.37.1558076518190;
+        Fri, 17 May 2019 00:01:58 -0700 (PDT)
+Received: from [172.18.135.95] ([46.183.103.8])
+        by smtp.gmail.com with ESMTPSA id e8sm16976835wrc.34.2019.05.17.00.01.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 00:01:57 -0700 (PDT)
+Date:   Fri, 17 May 2019 09:01:42 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190516165021.GD17978@ZenIV.linux.org.uk>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk> <20190516162259.GB17978@ZenIV.linux.org.uk> <20190516163151.urrmrueugockxtdy@brauner.io> <20190516165021.GD17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517064922.22743-1-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api <linux-api@vger.kernel.org>
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <F67AF221-C576-4424-88D7-7C6074D0A6C6@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/17/19 15:49), Masahiro Yamada wrote:
-[..]
-> @@ -211,6 +211,8 @@ static void dump_fault_info(struct pt_regs *regs)
->  		asce = S390_lowcore.kernel_asce;
->  		pr_cont("kernel ");
->  		break;
-> +	default:
-> +		unreachable();
->  	}
->  	pr_cont("ASCE.\n");
->  	dump_pagetable(asce, regs->int_parm_long & __FAIL_ADDR_MASK);
+On May 16, 2019 6:50:22 PM GMT+02:00, Al Viro <viro@zeniv=2Elinux=2Eorg=2Eu=
+k> wrote:
+>[linux-abi cc'd]
+>
+>On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
+>> On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+>> > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
+>> > >=20
+>> > > Hi Linus, Al,
+>> > >=20
+>> > > Here are some patches that make changes to the mount API UAPI and
+>two of
+>> > > them really need applying, before -rc1 - if they're going to be
+>applied at
+>> > > all=2E
+>> >=20
+>> > I'm fine with 2--4, but I'm not convinced that cloexec-by-default
+>crusade
+>> > makes any sense=2E  Could somebody give coherent arguments in favour
+>of
+>> > abandoning the existing conventions?
+>>=20
+>> So as I said in the commit message=2E From a userspace perspective it's
+>> more of an issue if one accidently leaks an fd to a task during exec=2E
+>>=20
+>> Also, most of the time one does not want to inherit an fd during an
+>> exec=2E It is a hazzle to always have to specify an extra flag=2E
+>>=20
+>> As Al pointed out to me open() semantics are not going anywhere=2E
+>Sure,
+>> no argument there at all=2E
+>> But the idea of making fds cloexec by default is only targeted at fds
+>> that come from separate syscalls=2E fsopen(), open_tree_clone(), etc=2E
+>they
+>> all return fds independent of open() so it's really easy to have them
+>> cloexec by default without regressing anyone and we also remove the
+>need
+>> for a bunch of separate flags for each syscall to turn them into
+>> cloexec-fds=2E I mean, those for syscalls came with 4 separate flags to
+>be
+>> able to specify that the returned fd should be made cloexec=2E The
+>other
+>> way around, cloexec by default, fcntl() to remove the cloexec bit is
+>way
+>> saner imho=2E
+>
+>Re separate flags - it is, in principle, a valid argument=2E  OTOH, I'm
+>not
+>sure if they need to be separate - they all have the same value and
+>I don't see any reason for that to change=2E=2E=2E
 
-Or have default fault type and asce?
+One last thing I'd like to point out is that
+we already have syscalls and ioctls that
+return cloexec fds=2E So the consistency
+argument is kinda dead=2E
 
-Just an idea.
+If you still prefer to have cloexec flags
+for the 4 new syscalls then yes,
+if they could at least all have the same name
+(FSMOUNT_CLOEXEC?) that would be good=2E
 
----
+>
+>Only tangentially related, but I wonder if something like
+>close_range(from, to)
+>would be a more useful approach=2E=2E=2E  That kind of open-coded loops i=
+s
+>not
+>rare in userland and kernel-side code can do them much cheaper=2E=20
+>Something
+>like
+>	/* that exec is sensitive */
+>	unshare(CLONE_FILES);
+>	/* we don't want anything past stderr here */
+>	close_range(3, ~0U);
+>	execve(=2E=2E=2E=2E);
+>on the userland side of thing=2E  Comments?
 
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index c220399ae196..876d71c31894 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -174,7 +174,8 @@ static void dump_pagetable(unsigned long asce, unsigned long address)
- 
- static void dump_fault_info(struct pt_regs *regs)
- {
--	unsigned long asce;
-+	unsigned long asce = S390_lowcore.kernel_asce;
-+	char *type = "kernel ";
- 
- 	pr_alert("Failing address: %016lx TEID: %016lx\n",
- 		 regs->int_parm_long & __FAIL_ADDR_MASK, regs->int_parm_long);
-@@ -197,22 +198,18 @@ static void dump_fault_info(struct pt_regs *regs)
- 	switch (get_fault_type(regs)) {
- 	case USER_FAULT:
- 		asce = S390_lowcore.user_asce;
--		pr_cont("user ");
-+		type = "user ";
- 		break;
- 	case VDSO_FAULT:
- 		asce = S390_lowcore.vdso_asce;
--		pr_cont("vdso ");
-+		type = "vdso ";
- 		break;
- 	case GMAP_FAULT:
- 		asce = ((struct gmap *) S390_lowcore.gmap)->asce;
--		pr_cont("gmap ");
--		break;
--	case KERNEL_FAULT:
--		asce = S390_lowcore.kernel_asce;
--		pr_cont("kernel ");
-+		type = "gmap ";
- 		break;
- 	}
--	pr_cont("ASCE.\n");
-+	pr_cont("%s ASCE.\n", type);
- 	dump_pagetable(asce, regs->int_parm_long & __FAIL_ADDR_MASK);
- }
- 
+Said it before but, the list was mistyped so again:
+I think that's a great idea=2E
+I have a prototype for close_range(start, end, flags)=2E
+I'll wait after rc1 and then send it out=2E
+
+Christian
