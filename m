@@ -2,142 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6FFA2196F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 15:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0B52196C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 15:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbfEQN5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 09:57:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728920AbfEQN5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 09:57:05 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C4C120873;
-        Fri, 17 May 2019 13:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558101424;
-        bh=GykiXS/2dOvX6tWCzLuVJ+9+sTQOOXsEsCcwgosON8U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=t7X8C7Ez4y7p5NOEBpIBgX4C+ZHPnMEJuO6m1lyUGnp294RuzzXIM8/f859bCFEaZ
-         /u4+qS1l/7LLAKWdx2UMwZHtsyUSVs2BXaEo24NRzuEpkssL7p5YqUNVn14kXmqU0h
-         SPTlzoXmwIVi8qc2zcSrVv2ECwDmojDBIUlUR3oQ=
-Subject: Re: [PATCH v3] selftests/x86: Support Atom for syscall_arg_fault test
-To:     "Tong, Bo" <bo.tong@intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Cc:     "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        shuah <shuah@kernel.org>
-References: <1555657855-31855-1-git-send-email-bo.tong@intel.com>
- <263afb6f-48dc-fbe7-5b13-13ce3f322ecc@kernel.org>
- <D6542591582C6645851595B3517A02963F16F195@shsmsx102.ccr.corp.intel.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <9e3e4e85-d1d8-a72f-d820-96f4fad9f23b@kernel.org>
-Date:   Fri, 17 May 2019 07:56:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728896AbfEQN45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 09:56:57 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:41724 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728464AbfEQN45 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 09:56:57 -0400
+Received: (qmail 1594 invoked by uid 2102); 17 May 2019 09:56:56 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 May 2019 09:56:56 -0400
+Date:   Fri, 17 May 2019 09:56:56 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+cc:     linux-usb@vger.kernel.org, <linux-samsung-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        =?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH v4] usb: exynos: add workaround for the USB device bindings
+ conflict
+In-Reply-To: <20190517105702.4522-1-m.szyprowski@samsung.com>
+Message-ID: <Pine.LNX.4.44L0.1905170955040.1430-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <D6542591582C6645851595B3517A02963F16F195@shsmsx102.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bo,
+On Fri, 17 May 2019, Marek Szyprowski wrote:
 
-On 5/17/19 1:02 AM, Tong, Bo wrote:
-> Is this patch going to be merged? Or still any blocking issue there?
+> Commit 69bec7259853 ("USB: core: let USB device know device node") added
+> support for attaching devicetree node for USB devices. Those nodes are
+> children of their USB host controller. However Exynos EHCI and OHCI
+> driver bindings already define child-nodes for each physical root hub
+> port and assigns respective PHY controller and parameters to them. Those
+> bindings predates support for USB device tree nodes.
 > 
-> Thanks,
-> Bo
+> To mitigate the side-effects of the conflict between those bindings,
+> lets reset Exynos host controller of_node pointer before registering it
+> to USB subsystem. This fixes the issue raised by the commit 01fdf179f4b0
+> ("usb: core: skip interfaces disabled in devicetree"), which incorrectly
+> disabled some devices on Exynos based boards.
 > 
-> -----Original Message-----
-> From: shuah [mailto:shuah@kernel.org]
-> Sent: Friday, April 19, 2019 10:05 PM
-> To: Tong, Bo <bo.tong@intel.com>; luto@kernel.org; x86@kernel.org
-> Cc: linux-kselftest@vger.kernel.org; linux-kernel@vger.kernel.org; skhan@linuxfoundation.org; shuah@kernel.org
-> Subject: Re: [PATCH v3] selftests/x86: Support Atom for syscall_arg_fault test
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Suggested-by: Måns Rullgård <mans@mansr.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v4:
+> - moved workaround to Exynos OHCI/EHCI drivers as suggested by Måns
 > 
-> On 4/19/19 1:10 AM, Tong Bo wrote:
->> Atom-based CPUs trigger stack fault when invoke 32-bit SYSENTER
->> instruction with invalid register values. So we also need SIGBUS handling in this case.
->>
->> Following is assembly when the fault exception happens.
->>
->> (gdb) disassemble $eip
->> Dump of assembler code for function __kernel_vsyscall:
->>      0xf7fd8fe0 <+0>:     push   %ecx
->>      0xf7fd8fe1 <+1>:     push   %edx
->>      0xf7fd8fe2 <+2>:     push   %ebp
->>      0xf7fd8fe3 <+3>:     mov    %esp,%ebp
->>      0xf7fd8fe5 <+5>:     sysenter
->>      0xf7fd8fe7 <+7>:     int    $0x80
->> => 0xf7fd8fe9 <+9>:     pop    %ebp
->>      0xf7fd8fea <+10>:    pop    %edx
->>      0xf7fd8feb <+11>:    pop    %ecx
->>      0xf7fd8fec <+12>:    ret
->> End of assembler dump.
->>
->> According to Intel SDM, this could also be a Stack Segment Fault(#SS,
->> 12), except a normal Page Fault(#PF, 14). Especially, in section 6.9
->> of Vol.3A, both stack and page faults are within the 10th(lowest
->> priority) class, and as it said, "exceptions within each class are
->> implementation-dependent and may vary from processor to processor".
->> It's expected for processors like Intel Atom to trigger stack
->> fault(SIGBUS), while we get page fault(SIGSEGV) from common Core processors.
->>
->> Signed-off-by: Tong Bo <bo.tong@intel.com>
->> Acked-by: Andy Lutomirski <luto@kernel.org>
->> ---
->>    tools/testing/selftests/x86/syscall_arg_fault.c | 10 ++++++++--
->>    1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/x86/syscall_arg_fault.c
->> b/tools/testing/selftests/x86/syscall_arg_fault.c
->> index 7db4fc9..d2548401 100644
->> --- a/tools/testing/selftests/x86/syscall_arg_fault.c
->> +++ b/tools/testing/selftests/x86/syscall_arg_fault.c
->> @@ -43,7 +43,7 @@ static sigjmp_buf jmpbuf;
->>    
->>    static volatile sig_atomic_t n_errs;
->>    
->> -static void sigsegv(int sig, siginfo_t *info, void *ctx_void)
->> +static void sigsegv_or_sigbus(int sig, siginfo_t *info, void
->> +*ctx_void)
->>    {
->>    	ucontext_t *ctx = (ucontext_t*)ctx_void;
->>    
->> @@ -73,7 +73,13 @@ int main()
->>    	if (sigaltstack(&stack, NULL) != 0)
->>    		err(1, "sigaltstack");
->>    
->> -	sethandler(SIGSEGV, sigsegv, SA_ONSTACK);
->> +	sethandler(SIGSEGV, sigsegv_or_sigbus, SA_ONSTACK);
->> +	/*
->> +	 * The actual exception can vary.  On Atom CPUs, we get #SS
->> +	 * instead of #PF when the vDSO fails to access the stack when
->> +	 * ESP is too close to 2^32, and #SS causes SIGBUS.
->> +	 */
->> +	sethandler(SIGBUS, sigsegv_or_sigbus, SA_ONSTACK);
->>    	sethandler(SIGILL, sigill, SA_ONSTACK);
->>    
->>    	/*
->>
+> v3: https://lkml.org/lkml/2019/5/9/119
+> - replaced ad hoc checks by proper test for proper value of the
+>   compatible string in drivers/usb/core/of.c
 > 
-> In case there is a dependency on x86 tree, here is my Ack
+> v2: https://lkml.org/lkml/2019/5/8/321
 > 
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> v1: https://lkml.org/lkml/2019/5/7/715
+> ---
+>  drivers/usb/host/ehci-exynos.c | 10 ++++++++++
+>  drivers/usb/host/ohci-exynos.c | 10 ++++++++++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 8e3bab1e0c1f..b127642332ee 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -39,6 +39,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>  
+>  struct exynos_ehci_hcd {
+>  	struct clk *clk;
+> +	struct device_node *of_node;
+>  	struct phy *phy[PHY_NUMBER];
+>  };
+>  
+> @@ -203,6 +204,13 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  	ehci = hcd_to_ehci(hcd);
+>  	ehci->caps = hcd->regs;
+>  
+> +	/*
+> +	 * Workaround: reset of_node pointer to avoid conflict between Exynos
+> +	 * EHCI port subnodes and generic USB device bindings
+> +	 */
+> +	exynos_ehci->of_node = pdev->dev.of_node;
+> +	pdev->dev.of_node = NULL;
+> +
+>  	/* DMA burst Enable */
+>  	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+>  
+
+You forgot to adjust the fail_add_hcd: error pathway in 
+exynos_ehci_probe().
+
+> @@ -231,6 +239,8 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+>  	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+>  
+> +	pdev->dev.of_node = exynos_ehci->of_node;
+> +
+>  	usb_remove_hcd(hcd);
+>  
+>  	exynos_ehci_phy_disable(&pdev->dev);
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index c0c4dcca6f3c..29f65963af3b 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -30,6 +30,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+>  
+>  struct exynos_ohci_hcd {
+>  	struct clk *clk;
+> +	struct device_node *of_node;
+>  	struct phy *phy[PHY_NUMBER];
+>  };
+>  
+> @@ -170,6 +171,13 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+>  		goto fail_io;
+>  	}
+>  
+> +	/*
+> +	 * Workaround: reset of_node pointer to avoid conflict between Exynos
+> +	 * OHCI port subnodes and generic USB device bindings
+> +	 */
+> +	exynos_ohci->of_node = pdev->dev.of_node;
+> +	pdev->dev.of_node = NULL;
+> +
+>  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+
+And same here.
+
+Alan Stern
+
+> @@ -192,6 +200,8 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+>  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+>  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+>  
+> +	pdev->dev.of_node = exynos_ohci->of_node;
+> +
+>  	usb_remove_hcd(hcd);
+>  
+>  	exynos_ohci_phy_disable(&pdev->dev);
 > 
 
-Looks like it got left behind in the confusion of which tree.
-
-I will apply this to my tree.
-
-thanks,
--- Shuah
