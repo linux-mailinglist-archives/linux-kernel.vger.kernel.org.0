@@ -2,129 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B1B21C3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A0621C4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 19:19:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfEQRKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 13:10:32 -0400
-Received: from mail-eopbgr770071.outbound.protection.outlook.com ([40.107.77.71]:45686
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbfEQRKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 13:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PAKADOLlQH6OjaqNSsLfmaOHfMl+eoBy3jCe/k4AUVQ=;
- b=ZMKnlfWW4C4OZ9xkPpnacmCTcU246SPs6c8uovlrFpv0MnajpCOqUaF8noYOaBp+TouOWBShfkmEbHFHwjtTA9ZreVWB4k2WFClMD1a6Ka3t739lfAuKYjHRZNOksMMxVoDBfz0zBX+GXbByQRZdeQ3MNwpE0KbLX/aqj377E18=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6696.namprd05.prod.outlook.com (20.178.235.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.10; Fri, 17 May 2019 17:10:23 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::b057:917a:f098:6098]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::b057:917a:f098:6098%7]) with mapi id 15.20.1922.002; Fri, 17 May 2019
- 17:10:23 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Julien Freche <jfreche@vmware.com>,
-        Pv-drivers <Pv-drivers@vmware.com>,
-        Jason Wang <jasowang@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH v4 0/4] vmw_balloon: Compaction and shrinker support
-Thread-Topic: [PATCH v4 0/4] vmw_balloon: Compaction and shrinker support
-Thread-Index: AQHU+5sfw4lXp6MJj0Ov0LaKSU1Rk6ZaOUgAgBV2VAA=
-Date:   Fri, 17 May 2019 17:10:23 +0000
-Message-ID: <9AD9FE33-1825-4D1A-914F-9C29DF93DC8D@vmware.com>
-References: <20190425115445.20815-1-namit@vmware.com>
- <8A2D1D43-759A-4B09-B781-31E9002AE3DA@vmware.com>
-In-Reply-To: <8A2D1D43-759A-4B09-B781-31E9002AE3DA@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3b7893ab-7413-4e4b-422e-08d6daea8cb2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR05MB6696;
-x-ms-traffictypediagnostic: BYAPR05MB6696:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-microsoft-antispam-prvs: <BYAPR05MB66962251319BC5C7A6401005D00B0@BYAPR05MB6696.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
-x-forefront-prvs: 0040126723
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(376002)(346002)(189003)(199004)(53936002)(110136005)(99286004)(76176011)(53546011)(102836004)(33656002)(6506007)(66066001)(316002)(86362001)(82746002)(5660300002)(486006)(476003)(54906003)(76116006)(73956011)(2616005)(186003)(478600001)(26005)(6512007)(14454004)(6486002)(446003)(11346002)(229853002)(6436002)(6116002)(3846002)(14444005)(66556008)(71200400001)(71190400001)(4326008)(83716004)(68736007)(25786009)(6246003)(256004)(2906002)(8936002)(36756003)(66476007)(64756008)(66446008)(66946007)(305945005)(7736002)(8676002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6696;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6Sp8TACZchpG8gzKBlId5O7YsGRXGaVhOPOjLkRuDx6bYt2bQsqNLwZlU1Ah08uvD157mq7fgd0NQxUTN7y4FskdJ54/Ol/Y18OMeC5gvBFgQLgjeUs5vsVaG2d6/Qs17tc5JFaTirnIZKtLt9aev8d/NN/7MXzM9G1AKyH+2uWt9u81WeIXUkdm6AyNxeF6XZYcg7TXrGWhYRz1UukNDnyQMAbZ+yjL44GwBuHUzo2VNW1iS7LpUlY+Y4DV2ZA+zvzFA6ybujpaRGAzzWMC9ALottnOBxc0zLssnLaD8WKpmfOkMYGd+NRy7yqAGiHGRh1FfIcqHVbSAQeIkCv8G7hh3NZ7YjZTUvK8yQz0JdwEjBYTkhXKtFR/jmgNJyQaR6cXpfE5zQ1+2JICEdMMRQhsnEDiHYoHPSxUFAGEUio=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D489544212C01046B2B5533DCF95669B@namprd05.prod.outlook.com>
+        id S1728215AbfEQRTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 13:19:12 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39705 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfEQRTL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 13:19:11 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z26so3986740pfg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 10:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=JAswoR5Qv/2WYAqzx6JaoqD58LtbqKgAkfQL5B0Gl2k=;
+        b=cPEHXVMeHFJobMu4Wmzco0x0g0cFQ6RtVK9VjgDcBBwJ/FETtzMaNoes42AVX5OI5D
+         I9u9osWJUHO/46J+S/hasOU6Bqdq0PkNgQr/J+f1fHNSP1HOO8QQgaiEnon3JhAvil1M
+         1FL36M4DDMcRmZ5ZGe4KHTc62m6soVUl2/shsWRPkNwU4eXymLb2QwTgrrkPHQ19KbQG
+         vT9HBUZ+iX1RSd757rq+2gJmgKb5nxphdUaRQtPRQtxLBsiZpugjUKd3UP2nRyOIcrSv
+         acoYce7qsgNESrZf+Gvya+FJCPAC2oIUOUpTvkRlrqtsD10tHd6Qt7qJ4DJxaC9ZBevU
+         4zUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=JAswoR5Qv/2WYAqzx6JaoqD58LtbqKgAkfQL5B0Gl2k=;
+        b=SStGdIutxXXBuT5t2LrA6Zajhfw/Lcd8nLJb2Z4/yGQHZu/4RuNMhiUYR4+GlmOmQx
+         VwX/pp3aXbX/jfFyT5ETa2gFx9Ur02skh6EZovw0jaO+QAExEQ2tJgbAGBEGKhxNxfkw
+         itcbils4IcGxznSj4fmpnuA68BZ0fD5wEzqGEMo3HsgNV3CTzKLtSpweAxWkIVMKKIjb
+         wgELWql4E/ywEvKaUXu2UvvBWIcogW9/Jvd0Xauc2Qr7fv6OGZ7kAUPJiSePZ/R7EjQ1
+         rH1cCgb9pOtlKdxe3R7NzIXDEGgS0viySKfJBxvsZoxCj/72rQIgxb3pktp+GmCGxbRk
+         tLFw==
+X-Gm-Message-State: APjAAAWuE04kcNtuMFS0FgllOgHpzBBK4bYJ30wldq+UxC7Y9vy9qbjI
+        CGZdP1W12b4OsZ3LiQqf3ZsbQg==
+X-Google-Smtp-Source: APXvYqzB8HQYLiqoUkmvgy2Qbfkq0oKD7/O5SMJJluI3vpUX7KQUH6p/CAsDENs2ofp3S28Iz4r7gA==
+X-Received: by 2002:aa7:8c10:: with SMTP id c16mr16875764pfd.89.1558113551080;
+        Fri, 17 May 2019 10:19:11 -0700 (PDT)
+Received: from [10.232.242.123] (96.sub-97-41-134.myvzw.com. [97.41.134.96])
+        by smtp.gmail.com with ESMTPSA id t2sm3841651pfh.166.2019.05.17.10.18.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 10:19:10 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b7893ab-7413-4e4b-422e-08d6daea8cb2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2019 17:10:23.6289
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6696
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Date:   Fri, 17 May 2019 10:12:40 -0700
+Message-Id: <837CE33B-A636-4BF8-B46E-0A8A40C5A563@amacapital.net>
+References: <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E38CD@ORSMSX116.amr.corp.intel.com> <CALCETrUfmyQ7ivNzQic0FyPXe1fmAnoK093jnz0i8DRn2LvdSA@mail.gmail.com> <960B34DE67B9E140824F1DCDEC400C0F654E3FB9@ORSMSX116.amr.corp.intel.com> <6a97c099-2f42-672e-a258-95bc09152363@tycho.nsa.gov> <20190517150948.GA15632@linux.intel.com> <ca807220-47e2-5ec2-982c-4fb4a72439c6@tycho.nsa.gov> <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+In-Reply-To: <80013cca-f1c2-f4d5-7558-8f4e752ada76@tycho.nsa.gov>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+X-Mailer: iPhone Mail (16E227)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On May 3, 2019, at 6:25 PM, Nadav Amit <namit@vmware.com> wrote:
+
+
+> On May 17, 2019, at 9:37 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
 >=20
->> On Apr 25, 2019, at 4:54 AM, Nadav Amit <namit@vmware.com> wrote:
->>=20
->> VMware balloon enhancements: adding support for memory compaction,
->> memory shrinker (to prevent OOM) and splitting of refused pages to
->> prevent recurring inflations.
->>=20
->> Patches 1-2: Support for compaction
->> Patch 3: Support for memory shrinker - disabled by default
->> Patch 4: Split refused pages to improve performance
->>=20
->> v3->v4:
->> * "get around to" comment [Michael]
->> * Put list_add under page lock [Michael]
->>=20
->> v2->v3:
->> * Fixing wrong argument type (int->size_t) [Michael]
->> * Fixing a comment (it) [Michael]
->> * Reinstating the BUG_ON() when page is locked [Michael]=20
->>=20
->> v1->v2:
->> * Return number of pages in list enqueue/dequeue interfaces [Michael]
->> * Removed first two patches which were already merged
->>=20
->> Nadav Amit (4):
->> mm/balloon_compaction: List interfaces
->> vmw_balloon: Compaction support
->> vmw_balloon: Add memory shrinker
->> vmw_balloon: Split refused pages
->>=20
->> drivers/misc/Kconfig               |   1 +
->> drivers/misc/vmw_balloon.c         | 489 ++++++++++++++++++++++++++---
->> include/linux/balloon_compaction.h |   4 +
->> mm/balloon_compaction.c            | 144 ++++++---
->> 4 files changed, 553 insertions(+), 85 deletions(-)
->>=20
->> --=20
->> 2.19.1
+>> On 5/17/19 12:20 PM, Stephen Smalley wrote:
+>>> On 5/17/19 11:09 AM, Sean Christopherson wrote:
+>>>> On Fri, May 17, 2019 at 09:53:06AM -0400, Stephen Smalley wrote:
+>>>>> On 5/16/19 6:23 PM, Xing, Cedric wrote:
+>>>>> I thought EXECMOD applied to files (and memory mappings backed by them=
+) but
+>>>>> I was probably wrong. It sounds like EXECMOD applies to the whole proc=
+ess so
+>>>>> would allow all pages within a process's address space to be modified t=
+hen
+>>>>> executed, regardless the backing files. Am I correct this time?
+>>>>=20
+>>>> No, you were correct the first time I think; EXECMOD is used to control=
+
+>>>> whether a process can make executable a private file mapping that has
+>>>> previously been modified (e.g. text relocation); it is a special case t=
+o
+>>>> support text relocations without having to allow full EXECMEM (i.e. exe=
+cute
+>>>> arbitrary memory).
+>>>>=20
+>>>> SELinux checks relevant to W^X include:
+>>>>=20
+>>>> - EXECMEM: mmap/mprotect PROT_EXEC an anonymous mapping (regardless of
+>>>> PROT_WRITE, since we know the content has to have been written at some
+>>>> point) or a private file mapping that is also PROT_WRITE.
+>>>> - EXECMOD: mprotect PROT_EXEC a private file mapping that has been
+>>>> previously modified, typically for text relocations,
+>>>> - FILE__WRITE: mmap/mprotect PROT_WRITE a shared file mapping,
+>>>> - FILE__EXECUTE: mmap/mprotect PROT_EXEC a file mapping.
+>>>>=20
+>>>> (ignoring EXECSTACK and EXECHEAP here since they aren't really relevant=
+ to
+>>>> this discussion)
+>>>>=20
+>>>> So if you want to ensure W^X, then you wouldn't allow EXECMEM for the
+>>>> process, EXECMOD by the process to any file, and the combination of bot=
+h
+>>>> FILE__WRITE and FILE__EXECUTE by the process to any file.
+>>>>=20
+>>>> If the /dev/sgx/enclave mappings are MAP_SHARED and you aren't using an=
+
+>>>> anonymous inode, then I would expect that only the FILE__WRITE and
+>>>> FILE__EXECUTE checks are relevant.
+>>>=20
+>>> Yep, I was just typing this up in a different thread:
+>>>=20
+>>> I think we may want to change the SGX API to alloc an anon inode for eac=
+h
+>>> enclave instead of hanging every enclave off of the /dev/sgx/enclave ino=
+de.
+>>> Because /dev/sgx/enclave is NOT private, SELinux's file_map_prot_check()=
+
+>>> will only require FILE__WRITE and FILE__EXECUTE to mprotect() enclave VM=
+As
+>>> to RWX.  Backing each enclave with an anon inode will make SELinux treat=
+
+>>> EPC memory like anonymous mappings, which is what we want (I think), e.g=
+.
+>>> making *any* EPC page executable will require PROCESS__EXECMEM (SGX is
+>>> 64-bit only at this point, so SELinux will always have default_noexec).
+>> I don't think we want to require EXECMEM (or equivalently both FILE__WRIT=
+E and FILE__EXECUTE to /dev/sgx/enclave) for making any EPC page executable,=
+ only if the page is also writable or previously modified.  The intent is to=
+ prevent arbitrary code execution without EXECMEM (or FILE__WRITE|FILE__EXEC=
+UTE), while still allowing enclaves to be created without EXECMEM as long as=
+ the EPC page mapping is only ever mapped RX and its initial contents came f=
+rom an unmodified file mapping that was PROT_EXEC (and hence already checked=
+ via FILE__EXECUTE).
 >=20
-> Ping.
+> Also, just to be clear, there is nothing inherently better about checking E=
+XECMEM instead of checking both FILE__WRITE and FILE__EXECUTE to the /dev/sg=
+x/enclave inode, so I wouldn't switch to using anon inodes for that reason. =
+ Using anon inodes also unfortunately disables SELinux inode-based checking s=
+ince we no longer have any useful inode information, so you'd lose out on SE=
+Linux ioctl whitelisting on those enclave inodes if that matters.
 
-Ping.
-
-Greg, did it got lost again?
-
+How can that work?  Unless the API changes fairly radically, users fundament=
+ally need to both write and execute the enclave.  Some of it will be written=
+ only from already executable pages, and some privilege should be needed to e=
+xecute any enclave page that was not loaded like this.=
