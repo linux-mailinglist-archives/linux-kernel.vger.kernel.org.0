@@ -2,129 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57DAF21339
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4D321341
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 06:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfEQEqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 00:46:00 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:50867 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfEQEqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 00:46:00 -0400
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x4H4jm0a023816;
-        Fri, 17 May 2019 13:45:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x4H4jm0a023816
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558068349;
-        bh=Qn7DNZWaczGYT+EoYw97KLq0hjtJgpMogyakqDUKKJs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ki17k6GL10zubUsSj926QbZ9JOfvYTdpt+etQ7NBS/vNEPfo06UO+eo5gAewC26TH
-         g1r70SYtalPE0L+pxBElnnONwmxELC0XrRtDuoYj3HCWPfAITs6D5ANINHbYqt7Xim
-         fdQ6HE4BGQANutbOlouVskeYSAZkWAOAf0Dlt54zZrak057UXDmZ8cH2SIPHE59bKG
-         9oHl57qfCgXkas5MoUZblJCMcDydzkDabls6oVQaXbYEdRluD3g0Mt7fthL/4W5O2j
-         3a1DDcq67DH20HwwPY3qdsoheh2nUHspOYU6QV+ll9m2C+j6jg+LJsFj0sCFRIH3qy
-         vD+gW261xGHhg==
-X-Nifty-SrcIP: [209.85.221.175]
-Received: by mail-vk1-f175.google.com with SMTP id o187so1672040vkg.4;
-        Thu, 16 May 2019 21:45:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAWmqRw79/0iQ4JY1Gji+ATYN4R1/9nhJwRtEsPnHsNokkUyttI1
-        dt3H6/c9Y9783I5A1gGO4o93CEKc7XBTH1tHfHo=
-X-Google-Smtp-Source: APXvYqzGuYVwx+PmAR3w6mksl8n4Iqn1f0pKRu/8urTOc6d+8VibAY+jntCkqEuxXukHLeAP+ngWhVfhAaWwupRqU0Q=
-X-Received: by 2002:a1f:30d4:: with SMTP id w203mr1444390vkw.0.1558068347755;
- Thu, 16 May 2019 21:45:47 -0700 (PDT)
+        id S1727680AbfEQExO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 00:53:14 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56156 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbfEQExO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 00:53:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 21:53:13 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 16 May 2019 21:53:11 -0700
+Cc:     baolu.lu@linux.intel.com, alex.williamson@redhat.com,
+        shameerali.kolothum.thodi@huawei.com
+Subject: Re: [PATCH v3 7/7] iommu/vt-d: Differentiate relaxable and non
+ relaxable RMRRs
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        lorenzo.pieralisi@arm.com, robin.murphy@arm.com,
+        will.deacon@arm.com, hanjun.guo@linaro.org, sudeep.holla@arm.com
+References: <20190516100817.12076-1-eric.auger@redhat.com>
+ <20190516100817.12076-8-eric.auger@redhat.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <2ebc33ed-ded6-0eee-96ef-84e6f61f692e@linux.intel.com>
+Date:   Fri, 17 May 2019 12:46:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190517042753.25857-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190517042753.25857-1-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 17 May 2019 13:45:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARvQUPPBzdq7ac67h-xhB6tHZ4WPzBHZy+c3iHE_bi_Fg@mail.gmail.com>
-Message-ID: <CAK7LNARvQUPPBzdq7ac67h-xhB6tHZ4WPzBHZy+c3iHE_bi_Fg@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: check uniqueness of module names
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190516100817.12076-8-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 1:29 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> In the recent build test of linux-next, Stephen saw a build error
-> caused by a broken .tmp_versions/*.mod file:
->
->   https://lkml.org/lkml/2019/5/13/991
->
-> drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
-> basename, and there is a race in generating .tmp_versions/asix.mod
->
-> Kbuild has not checked this before, and it suddenly shows up with
-> obscure error message when this kind of race occurs.
->
-> Non-unique module names cause various sort of problems, but it is
-> not trivial to catch them by eyes.
->
-> Hence, this script.
->
-> It checks not only real modules, but also built-in modules (i.e.
-> controlled by tristate CONFIG option, but currently compiled with =y).
-> Non-unique names for built-in modules also cause problems because
-> /sys/modules/ would fall over.
->
-> I tested allmodconfig on the latest kernel, and it detected the
-> following:
->
-> warning: same basename if the following are built as modules:
->   drivers/regulator/88pm800.ko
->   drivers/mfd/88pm800.ko
-> warning: same basename if the following are built as modules:
->   drivers/gpu/drm/bridge/adv7511/adv7511.ko
->   drivers/media/i2c/adv7511.ko
-> warning: same basename if the following are built as modules:
->   drivers/net/phy/asix.ko
->   drivers/net/usb/asix.ko
-> warning: same basename if the following are built as modules:
->   fs/coda/coda.ko
->   drivers/media/platform/coda/coda.ko
-> warning: same basename if the following are built as modules:
->   drivers/net/phy/realtek.ko
->   drivers/net/dsa/realtek.ko
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+Hi Eric,
+
+On 5/16/19 6:08 PM, Eric Auger wrote:
+> Now we have a new IOMMU_RESV_DIRECT_RELAXABLE reserved memory
+> region type, let's report USB and GFX RMRRs as relaxable ones.
+> 
+> This allows to have a finer reporting at IOMMU API level of
+> reserved memory regions. This will be exploitable by VFIO to
+> define the usable IOVA range and detect potential conflicts
+> between the guest physical address space and host reserved
+> regions.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
 > ---
+>   drivers/iommu/intel-iommu.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index a36604f4900f..af1d65fdedfc 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -5493,7 +5493,9 @@ static void intel_iommu_get_resv_regions(struct device *device,
+>   	for_each_rmrr_units(rmrr) {
+>   		for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
+>   					  i, i_dev) {
+> +			struct pci_dev *pdev = to_pci_dev(device);
 
+Probably should be:
 
-One more question popped up.
+struct pci_dev *pdev = dev_is_pci(device) ? to_pci_dev(device) : NULL;
 
-External modules are out of scope of the community,
-but it is possible that people create an external module
-that happens to have the same name as an upstream driver.
+Best regards,
+Lu Baolu
 
-drivers/this/is/upstream/subsystem/foo.ko
-/home/fred/my/own/external/module/foo.ko
-
-Is modprobe confused in this case too?
-
-Perhaps, checking for the M= build
-might be good too...
-
-
-
--- 
-Best Regards
-Masahiro Yamada
