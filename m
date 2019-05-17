@@ -2,87 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 387C021127
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 998DC21137
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfEQAIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 20:08:31 -0400
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:45274 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfEQAIb (ORCPT
+        id S1726753AbfEQATv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 20:19:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44247 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfEQATu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 20:08:31 -0400
-Received: by mail-lf1-f46.google.com with SMTP id n22so3938337lfe.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:08:30 -0700 (PDT)
+        Thu, 16 May 2019 20:19:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z16so2347209pgv.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H7aNvYWUCO6YrxXiAC0ARPuk5T1hcRQ+1DS9WOU1hfg=;
-        b=L+HJmgVBbIb6HJRTyLyYpws/txBoU0FBSG9zeyKXtuG/hUE9jdY1TeO+FiL+A1wSj3
-         vVWuQ8qozQfdl6pN0XGWMmHFff/XGAZSHYZ6wU70ceF7MJDY58xFx1Zc4rI8VblqsmuV
-         npNGzb9f2oQHMqj9dowNldBJlTpS/Ba0XyiD0=
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=grI6nIUF/mMOBdv6LrPvHsdNVES0yai/LfFYIZ4bkWY=;
+        b=trB5X+v2CFHJR5/h5Ogo8pnGEbixSq/5SbMCfW0BvmcDG2zeRdzxHL4lknPMI8JsaG
+         91o9aNowjUtiTckfyBLWY/pZJBmRERl33EcI9dq0zR0lXd+XHl45wImJtwD6qTmBiD3C
+         YvIdILOfNr02D208IUOgX7xjB1B80gLQERVK/akSkqvFqS79gmXpU/duephS4OxkvMCj
+         iFkaZbcWb+04sJYfOvlYsPNWM7LK/oP8HkDOryS8f1XdKVoMLZUlQ8YVZMbBQiMDnraB
+         fYXacmGWn0btEdYeftIv0rPSsHpeCBXpkkAwnfL+k2zqdhfQJ6WS6TGQ7DeGxI98ZyT1
+         d5aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H7aNvYWUCO6YrxXiAC0ARPuk5T1hcRQ+1DS9WOU1hfg=;
-        b=IB4P3LNbS94Ybfc0BKkvCtOVu69wOtK6tJeJMti8jbNX0l+4rjvW5/Eme+FsLssxXE
-         WfWW8DkirsZtHF1QHqyf5wqO4iMV8objUkQa6Fjy4X5G4FZ4jzEFVq59uqNOjjh3c3yb
-         ZMbXvHp0mw2K43cKl4Wp4Y1/HbR9Ou2PTHLNBJa/q9P4XBm1RQVlyiUmYp2e2COtdllL
-         2vzDTlJax3pawRVaGgqLpaIH772BIp3IqvE/oS66dVPOu60RaCeQ/HHw0GgNMg5c/EjE
-         1yrC3UI0Y6SNbsYX0AgMKGDXga3C7FHfTy7bsMp9hFeAsAj/fXwsbgTYQUKsv9bUQEqz
-         2K4g==
-X-Gm-Message-State: APjAAAX6342Tk1cOBjwqNc2pRVGOR4gqTooa+EGTL8A4o61UfIPj5KKl
-        b0g8MzOZ4A2rd6VeoLYv8coMDGfrzLo=
-X-Google-Smtp-Source: APXvYqwSo8qk+wH4lI9DLU76IdSpbv6K/Q7RgT0oroBiEu7rVeWFYQrBZyFfm/Pm0FfIaqfa23m6BQ==
-X-Received: by 2002:ac2:5337:: with SMTP id f23mr23515391lfh.52.1558051708981;
-        Thu, 16 May 2019 17:08:28 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id h123sm1230659lfe.65.2019.05.16.17.08.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 17:08:27 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id e13so4644319ljl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:08:27 -0700 (PDT)
-X-Received: by 2002:a2e:9b0c:: with SMTP id u12mr3895210lji.189.1558051707294;
- Thu, 16 May 2019 17:08:27 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=grI6nIUF/mMOBdv6LrPvHsdNVES0yai/LfFYIZ4bkWY=;
+        b=uOaIzLIdhpn0XqSxHbJGzrSnlGA1+Q+uAVgKGvG+8/rMX8qk2UC8DT3oE4riaxc6d5
+         ZI7e/zd9j7cTTpsTqm5HkmNFLLGcXXlQhBRb7TwIdVWb/k5GO09sVpQ2NDwcwxc8sY/Z
+         K62IhizVYKZEF8aSHduXrFxC5ZYXCRJmb8BQBZ6gtDoL+j7tumGf4vtifsRuYM433S4w
+         0LqWSgeLlWVYEhBPr9Yyi8vOfsmLHvakBxOS1+9FvRUa7LkUNg3a9YD2s+DF5t/xvYAQ
+         FRXDg40/bpbRlyFMiM/HxipRrYHDbNoty84a3RQSC39l//sUlV+IWCQKKYe4kbnR6vnC
+         dEdA==
+X-Gm-Message-State: APjAAAVVQsUzFJP4iRHK/ZltuWodj1UaeUJcWTH3sl3nmeKxwOJNf0wy
+        Ir+sS+WpCSQ/REYQCfFiQepxXQ==
+X-Google-Smtp-Source: APXvYqyv1iVBQbL6jyOdYGu6UtPQiwVBUuqofcSXUoK/ck1DMyLzSDgzGJaT2Ro5WErOmsiHR9V/gQ==
+X-Received: by 2002:a63:d816:: with SMTP id b22mr52619479pgh.16.1558051959951;
+        Thu, 16 May 2019 17:12:39 -0700 (PDT)
+Received: from jstaron2.mtv.corp.google.com ([2620:15c:202:201:b94f:2527:c39f:ca2d])
+        by smtp.gmail.com with ESMTPSA id a6sm7245768pgd.67.2019.05.16.17.12.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 17:12:39 -0700 (PDT)
+Subject: Re: [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
+To:     Pankaj Gupta <pagupta@redhat.com>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
+        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
+        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
+        david@fromorbit.com, cohuck@redhat.com,
+        xiaoguangrong.eric@gmail.com, pbonzini@redhat.com,
+        kilobyte@angband.pl, yuval.shaia@oracle.com, smbarber@google.com
+References: <20190514145422.16923-1-pagupta@redhat.com>
+ <20190514145422.16923-3-pagupta@redhat.com>
+From:   =?UTF-8?Q?Jakub_Staro=c5=84?= <jstaron@google.com>
+Message-ID: <c06514fd-8675-ba74-4b7b-ff0eb4a91605@google.com>
+Date:   Thu, 16 May 2019 17:12:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <14411.1558047621@warthog.procyon.org.uk>
-In-Reply-To: <14411.1558047621@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 May 2019 17:08:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgJeAYaW+CA6cC8jEyJT5Z38z1suOwib43F-vFihD8bmQ@mail.gmail.com>
-Message-ID: <CAHk-=wgJeAYaW+CA6cC8jEyJT5Z38z1suOwib43F-vFihD8bmQ@mail.gmail.com>
-Subject: Re: [GIT PULL] afs: Miscellaneous fixes
-To:     David Howells <dhowells@redhat.com>
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        Jonathan Billings <jsbillings@jsbillings.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joe Perches <joe@perches.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-afs@lists.infradead.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190514145422.16923-3-pagupta@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 4:00 PM David Howells <dhowells@redhat.com> wrote:
->
-> Could you pull this series please?
+On 5/14/19 7:54 AM, Pankaj Gupta wrote:
+> +		if (!list_empty(&vpmem->req_list)) {
+> +			req_buf = list_first_entry(&vpmem->req_list,
+> +					struct virtio_pmem_request, list);
+> +			req_buf->wq_buf_avail = true;
+> +			wake_up(&req_buf->wq_buf);
+> +			list_del(&req_buf->list);
+Yes, this change is the right one, thank you!
 
-I've pulled this, but I'm seriously considering just stopping pulling
-from you entirely.
+> +	 /*
+> +	  * If virtqueue_add_sgs returns -ENOSPC then req_vq virtual
+> +	  * queue does not have free descriptor. We add the request
+> +	  * to req_list and wait for host_ack to wake us up when free
+> +	  * slots are available.
+> +	  */
+> +	while ((err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req,
+> +					GFP_ATOMIC)) == -ENOSPC) {
+> +
+> +		dev_err(&vdev->dev, "failed to send command to virtio pmem" \
+> +			"device, no free slots in the virtqueue\n");
+> +		req->wq_buf_avail = false;
+> +		list_add_tail(&req->list, &vpmem->req_list);
+> +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +		/* A host response results in "host_ack" getting called */
+> +		wait_event(req->wq_buf, req->wq_buf_avail);
+> +		spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> +	}
+> +	err1 = virtqueue_kick(vpmem->req_vq);
+> +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +	/*
+> +	 * virtqueue_add_sgs failed with error different than -ENOSPC, we can't
+> +	 * do anything about that.
+> +	 */
+> +	if (err || !err1) {
+> +		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
+> +		err = -EIO;
+> +	} else {
+> +		/* A host repsonse results in "host_ack" getting called */
+> +		wait_event(req->host_acked, req->done);
+> +		err = req->ret;
+> +I confirm that the failures I was facing with the `-ENOSPC` error path are not present in v9.
 
-Not only is this late in the merge window, EVERY SINGLE commit I
-pulled from you is from within a day or two.
-
-And this is not a new thing. I literally dread stuff from you. Because
-it's happened before, and it keeps happening. Out-of-window changes to
-the keys layer etc etc.
-
-Why does this keep happening?
-
-                Linus
+Best,
+Jakub Staron
