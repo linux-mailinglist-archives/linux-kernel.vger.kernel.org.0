@@ -2,143 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA1EB213FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377C1213FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 09:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfEQHGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 03:06:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40120 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727386AbfEQHGj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 03:06:39 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4H6wCHN108484
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 03:06:37 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2shqvp93b6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 03:06:37 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 17 May 2019 08:06:33 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 May 2019 08:06:30 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4H76TJm48955522
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 May 2019 07:06:29 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E94A3A4067;
-        Fri, 17 May 2019 07:06:28 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86C3AA4054;
-        Fri, 17 May 2019 07:06:28 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.145.144.159])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 17 May 2019 07:06:28 +0000 (GMT)
-Date:   Fri, 17 May 2019 09:06:26 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Philipp Rudo <prudo@linux.ibm.com>
-Subject: Re: [PATCH] s390: add unreachable() to dump_fault_info() to fix
- -Wmaybe-uninitialized
-In-Reply-To: <20190517064922.22743-1-yamada.masahiro@socionext.com>
-References: <20190517064922.22743-1-yamada.masahiro@socionext.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728101AbfEQHIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 03:08:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727386AbfEQHIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 03:08:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE18081DE6;
+        Fri, 17 May 2019 07:07:42 +0000 (UTC)
+Received: from [10.36.116.17] (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 274AC5D9C4;
+        Fri, 17 May 2019 07:07:31 +0000 (UTC)
+Subject: Re: [PATCH v3 7/7] iommu/vt-d: Differentiate relaxable and non
+ relaxable RMRRs
+To:     Lu Baolu <baolu.lu@linux.intel.com>, eric.auger.pro@gmail.com,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        lorenzo.pieralisi@arm.com, robin.murphy@arm.com,
+        will.deacon@arm.com, hanjun.guo@linaro.org, sudeep.holla@arm.com
+Cc:     alex.williamson@redhat.com, shameerali.kolothum.thodi@huawei.com
+References: <20190516100817.12076-1-eric.auger@redhat.com>
+ <20190516100817.12076-8-eric.auger@redhat.com>
+ <2ebc33ed-ded6-0eee-96ef-84e6f61f692e@linux.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <65852894-2525-e67e-5fd3-55ba4a323c2f@redhat.com>
+Date:   Fri, 17 May 2019 09:07:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19051707-0028-0000-0000-0000036EA350
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051707-0029-0000-0000-0000242E40EB
-Message-Id: <20190517090626.3c707d77@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905170047
+In-Reply-To: <2ebc33ed-ded6-0eee-96ef-84e6f61f692e@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 17 May 2019 07:08:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 May 2019 15:49:22 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+Hi Lu,
 
-> When CONFIG_OPTIMIZE_INLINING is enabled for s390, I see this warning:
+On 5/17/19 6:46 AM, Lu Baolu wrote:
+> Hi Eric,
 > 
-> arch/s390/mm/fault.c:127:15: warning: 'asce' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   switch (asce & _ASCE_TYPE_MASK) {
-> arch/s390/mm/fault.c:177:16: note: 'asce' was declared here
->   unsigned long asce;
->                 ^~~~
+> On 5/16/19 6:08 PM, Eric Auger wrote:
+>> Now we have a new IOMMU_RESV_DIRECT_RELAXABLE reserved memory
+>> region type, let's report USB and GFX RMRRs as relaxable ones.
+>>
+>> This allows to have a finer reporting at IOMMU API level of
+>> reserved memory regions. This will be exploitable by VFIO to
+>> define the usable IOVA range and detect potential conflicts
+>> between the guest physical address space and host reserved
+>> regions.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>   drivers/iommu/intel-iommu.c | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index a36604f4900f..af1d65fdedfc 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -5493,7 +5493,9 @@ static void intel_iommu_get_resv_regions(struct
+>> device *device,
+>>       for_each_rmrr_units(rmrr) {
+>>           for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
+>>                         i, i_dev) {
+>> +            struct pci_dev *pdev = to_pci_dev(device);
 > 
-> If get_fault_type() is not inlined, the compiler cannot deduce that
-> all the possible paths in the 'switch' statement are covered.
+> Probably should be:
 > 
-> Of course, we could mark get_fault_type() as __always_inline to get
-> back the original behavior, but I do not think it sensible to force
-> inlining just for the purpose of suppressing the warning. Since this
-> is just a matter of warning, I want to keep as much room for compiler
-> optimization as possible.
-> 
-> I added unreachable() to teach the compiler that the 'default' label
-> is unreachable.
-> 
-> I got rid of the 'inline' marker. Even without the 'inline' hint,
-> the compiler inlines functions based on its inlining heuristic.
-> 
-> Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> struct pci_dev *pdev = dev_is_pci(device) ? to_pci_dev(device) : NULL;
 
-Added to our internal tree and I will add it to s390/linux soon. Thanks.
+That's correct. I will fix that asap.
 
-> ---
+Thanks!
+
+Eric
 > 
->  arch/s390/mm/fault.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Best regards,
+> Lu Baolu
 > 
-> diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-> index c220399ae196..91ce03fd0c84 100644
-> --- a/arch/s390/mm/fault.c
-> +++ b/arch/s390/mm/fault.c
-> @@ -85,7 +85,7 @@ static inline int notify_page_fault(struct pt_regs *regs)
->   * Find out which address space caused the exception.
->   * Access register mode is impossible, ignore space == 3.
->   */
-> -static inline enum fault_type get_fault_type(struct pt_regs *regs)
-> +static enum fault_type get_fault_type(struct pt_regs *regs)
->  {
->  	unsigned long trans_exc_code;
-> 
-> @@ -211,6 +211,8 @@ static void dump_fault_info(struct pt_regs *regs)
->  		asce = S390_lowcore.kernel_asce;
->  		pr_cont("kernel ");
->  		break;
-> +	default:
-> +		unreachable();
->  	}
->  	pr_cont("ASCE.\n");
->  	dump_pagetable(asce, regs->int_parm_long & __FAIL_ADDR_MASK);
-
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
