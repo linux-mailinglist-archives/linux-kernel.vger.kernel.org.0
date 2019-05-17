@@ -2,108 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD4221889
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 14:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3E721883
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 14:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfEQMld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 08:41:33 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19117 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbfEQMlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 08:41:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cdeabf70000>; Fri, 17 May 2019 05:41:27 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 17 May 2019 05:41:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 17 May 2019 05:41:31 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 17 May
- 2019 12:41:31 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 17 May
- 2019 12:41:31 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 17 May 2019 12:41:31 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cdeabf40001>; Fri, 17 May 2019 05:41:30 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kishon@ti.com>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>
-CC:     <mperttunen@nvidia.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V7 15/15] arm64: Add Tegra194 PCIe driver to defconfig
-Date:   Fri, 17 May 2019 18:08:46 +0530
-Message-ID: <20190517123846.3708-16-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190517123846.3708-1-vidyas@nvidia.com>
-References: <20190517123846.3708-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        id S1729141AbfEQMlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 08:41:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33548 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728474AbfEQMlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 08:41:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 410FBAF3A;
+        Fri, 17 May 2019 12:41:20 +0000 (UTC)
+Date:   Fri, 17 May 2019 14:41:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Cyrill Gorcunov <gorcunov@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 1/5] proc: use down_read_killable for /proc/pid/maps
+Message-ID: <20190517124119.GA1825@dhcp22.suse.cz>
+References: <155790967258.1319.11531787078240675602.stgit@buzz>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558096887; bh=3I0dFJgkWUIouEt8VwRg9ELWDkCaZOAqdLpchvKr2cw=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=QVyFuPCYvl/VEkP3fMlCCv6oRIiC0cLnn8vJQRbVguaXX1mpaKfJV7Ir8vM33Sy7z
-         C7R6pZk0P46PJ8F8JQCWMZI0S65Gja4bCzJTMPuy9pRy4W66jppi8PcIO8Nu35mmdc
-         umn1w4K06FhKuzFjXIDJfaV6G0JXiKzcSz7cDjv9NTpCNdeZbJJv3MaglO00Lq6PXL
-         9QsDueoDyaI2hfWDsitseSBe/DD1zVXIVcPqG6lwLXu7figM6tnP3iS3FR+DyL7/j+
-         cVhinCh1h86czn5UgREpA8+LKqtBDd2BTdhiB5xt+DRhBH2P3VU3hVvFEQgT+or/9U
-         IPb0pKfALPSHA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155790967258.1319.11531787078240675602.stgit@buzz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCIe host controller driver for DesignWare core based
-PCIe controller IP present in Tegra194.
+On Wed 15-05-19 11:41:12, Konstantin Khlebnikov wrote:
+> Do not stuck forever if something wrong.
+> This function also used for /proc/pid/smaps.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-Changes since [v6]:
-* None
+I do agree that the killable variant is better but I do not understand
+the changelog. What would keep the lock blocked for ever? I do not think
+we have writer lock held for unbound amount of time anywhere, do we?
 
-Changes since [v5]:
-* None
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-Changes since [v4]:
-* None
+Other than that
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Changes since [v3]:
-* None
+> ---
+>  fs/proc/task_mmu.c   |    6 +++++-
+>  fs/proc/task_nommu.c |    6 +++++-
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 01d4eb0e6bd1..2bf210229daf 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -166,7 +166,11 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
+>  	if (!mm || !mmget_not_zero(mm))
+>  		return NULL;
+>  
+> -	down_read(&mm->mmap_sem);
+> +	if (down_read_killable(&mm->mmap_sem)) {
+> +		mmput(mm);
+> +		return ERR_PTR(-EINTR);
+> +	}
+> +
+>  	hold_task_mempolicy(priv);
+>  	priv->tail_vma = get_gate_vma(mm);
+>  
+> diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+> index 36bf0f2e102e..7907e6419e57 100644
+> --- a/fs/proc/task_nommu.c
+> +++ b/fs/proc/task_nommu.c
+> @@ -211,7 +211,11 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+>  	if (!mm || !mmget_not_zero(mm))
+>  		return NULL;
+>  
+> -	down_read(&mm->mmap_sem);
+> +	if (down_read_killable(&mm->mmap_sem)) {
+> +		mmput(mm);
+> +		return ERR_PTR(-EINTR);
+> +	}
+> +
+>  	/* start from the Nth VMA */
+>  	for (p = rb_first(&mm->mm_rb); p; p = rb_next(p))
+>  		if (n-- == 0)
 
-Changes since [v2]:
-* None
-
-Changes since [v1]:
-* Changed CONFIG_PCIE_TEGRA194 from 'y' to 'm'
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8871cf7aaba9..52105b2c2418 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -195,6 +195,7 @@ CONFIG_PCIE_QCOM=y
- CONFIG_PCIE_ARMADA_8K=y
- CONFIG_PCIE_KIRIN=y
- CONFIG_PCIE_HISI_STB=y
-+CONFIG_PCIE_TEGRA194=m
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
