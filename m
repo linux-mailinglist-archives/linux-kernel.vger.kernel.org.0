@@ -2,124 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2602B21123
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 387C021127
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 02:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfEQADd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 20:03:33 -0400
-Received: from mga12.intel.com ([192.55.52.136]:35471 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbfEQADd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 20:03:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2019 17:03:32 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga008.fm.intel.com with ESMTP; 16 May 2019 17:03:31 -0700
-Date:   Thu, 16 May 2019 17:03:31 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190517000331.GD11204@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F4E886094@ORSMSX116.amr.corp.intel.com>
- <6da269d8-7ebb-4177-b6a7-50cc5b435cf4@fortanix.com>
- <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
- <20190513102926.GD8743@linux.intel.com>
- <20190514104323.GA7591@linux.intel.com>
- <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
- <20190514204527.GC1977@linux.intel.com>
- <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
- <20190515013031.GF1977@linux.intel.com>
- <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+        id S1727559AbfEQAIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 20:08:31 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:45274 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfEQAIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 May 2019 20:08:31 -0400
+Received: by mail-lf1-f46.google.com with SMTP id n22so3938337lfe.12
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H7aNvYWUCO6YrxXiAC0ARPuk5T1hcRQ+1DS9WOU1hfg=;
+        b=L+HJmgVBbIb6HJRTyLyYpws/txBoU0FBSG9zeyKXtuG/hUE9jdY1TeO+FiL+A1wSj3
+         vVWuQ8qozQfdl6pN0XGWMmHFff/XGAZSHYZ6wU70ceF7MJDY58xFx1Zc4rI8VblqsmuV
+         npNGzb9f2oQHMqj9dowNldBJlTpS/Ba0XyiD0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H7aNvYWUCO6YrxXiAC0ARPuk5T1hcRQ+1DS9WOU1hfg=;
+        b=IB4P3LNbS94Ybfc0BKkvCtOVu69wOtK6tJeJMti8jbNX0l+4rjvW5/Eme+FsLssxXE
+         WfWW8DkirsZtHF1QHqyf5wqO4iMV8objUkQa6Fjy4X5G4FZ4jzEFVq59uqNOjjh3c3yb
+         ZMbXvHp0mw2K43cKl4Wp4Y1/HbR9Ou2PTHLNBJa/q9P4XBm1RQVlyiUmYp2e2COtdllL
+         2vzDTlJax3pawRVaGgqLpaIH772BIp3IqvE/oS66dVPOu60RaCeQ/HHw0GgNMg5c/EjE
+         1yrC3UI0Y6SNbsYX0AgMKGDXga3C7FHfTy7bsMp9hFeAsAj/fXwsbgTYQUKsv9bUQEqz
+         2K4g==
+X-Gm-Message-State: APjAAAX6342Tk1cOBjwqNc2pRVGOR4gqTooa+EGTL8A4o61UfIPj5KKl
+        b0g8MzOZ4A2rd6VeoLYv8coMDGfrzLo=
+X-Google-Smtp-Source: APXvYqwSo8qk+wH4lI9DLU76IdSpbv6K/Q7RgT0oroBiEu7rVeWFYQrBZyFfm/Pm0FfIaqfa23m6BQ==
+X-Received: by 2002:ac2:5337:: with SMTP id f23mr23515391lfh.52.1558051708981;
+        Thu, 16 May 2019 17:08:28 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id h123sm1230659lfe.65.2019.05.16.17.08.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 17:08:27 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id e13so4644319ljl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2019 17:08:27 -0700 (PDT)
+X-Received: by 2002:a2e:9b0c:: with SMTP id u12mr3895210lji.189.1558051707294;
+ Thu, 16 May 2019 17:08:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <14411.1558047621@warthog.procyon.org.uk>
+In-Reply-To: <14411.1558047621@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 16 May 2019 17:08:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgJeAYaW+CA6cC8jEyJT5Z38z1suOwib43F-vFihD8bmQ@mail.gmail.com>
+Message-ID: <CAHk-=wgJeAYaW+CA6cC8jEyJT5Z38z1suOwib43F-vFihD8bmQ@mail.gmail.com>
+Subject: Re: [GIT PULL] afs: Miscellaneous fixes
+To:     David Howells <dhowells@redhat.com>
+Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        Jonathan Billings <jsbillings@jsbillings.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-afs@lists.infradead.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 11:27:04AM -0700, Andy Lutomirski wrote:
-> Here's a very vague proposal that's kind of like what I've been
-> thinking over the past few days.  The SGX inode could track, for each
-> page, a "safe-to-execute" bit.  When you first open /dev/sgx/enclave,
-> you get a blank enclave and all pages are safe-to-execute.  When you
-> do the ioctl to load context (which could be code, data, or anything
-> else), the kernel will check whether the *source* VMA is executable
-> and, if not, mark the page of the enclave being loaded as unsafe.
-> Once the enclave is initialized, the driver will clear the
-> safe-to-execute bit for any page that is successfully mapped writably.
-> 
-> The intent is that a page of the enclave is safe-to-execute if that
-> page was populated from executable memory and not modified since then.
-> LSMs could then enforce a policy that you can map an enclave page RX
-> if the page is safe-to-execute, you can map any page you want for
-> write if there are no executable mappings, and you can only map a page
-> for write and execute simultaneously if you can EXECMOD permission.
-> This should allow an enclave to be loaded by userspace from a file
-> with EXECUTE rights.
+On Thu, May 16, 2019 at 4:00 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Could you pull this series please?
 
-I'm still confused as to why you want to track execute permissions on the
-enclave pages and add SGX-specific LSM hooks.  Is there anything that
-prevents userspace from building the enclave like any other DSO and then
-copying it into enclave memory?  I feel like I'm missing something.
+I've pulled this, but I'm seriously considering just stopping pulling
+from you entirely.
 
-  1. Userspace loads enclave into regular memory, e.g. like a normal DSO.
-     All mmap(), mprotect(), etc... calls are subject to all existing
-     LSM policies.
+Not only is this late in the merge window, EVERY SINGLE commit I
+pulled from you is from within a day or two.
 
-  2. Userspace opens /dev/sgx/enclave to instantiate a new enclave.
+And this is not a new thing. I literally dread stuff from you. Because
+it's happened before, and it keeps happening. Out-of-window changes to
+the keys layer etc etc.
 
-  3. Userspace uses mmap() to allocate virtual memory for its enclave,
-     again subject to all existing LSM policies (sane userspaces map it RO
-     since the permissions eventually get tossed anyways).
+Why does this keep happening?
 
-  4. SGX subsystem refuses to service page faults for enclaves that have
-     not yet been initialized, e.g. signals SIGBUS or SIGSEGV.
-
-  5. Userspace invokes SGX ioctl() to copy enclave from regulary VMA to
-     enclave VMA.
-
-  6. SGX ioctl() propagates VMA protection-related flags from source VMA
-     to enclave VMA, e.g. invokes mprotect_fixup().  Enclave VMA(s) may
-     be split as part of this process.
-
-  7. At all times, mprotect() calls on the enclave VMA are subject to
-     existing LSM policies, i.e. it's not special cased for enclaves.
-
-
-The SGX ioctl() would need to take mmap_sem for write, but we can mitigate
-that issue by changing the ioctl() to take a range of memory instead of a
-single page.  That'd also provide "EADD batching" that folks have
-requested.
+                Linus
