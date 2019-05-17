@@ -2,90 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12AB321F7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D4521F7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfEQVQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 17:16:59 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36897 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbfEQVQ5 (ORCPT
+        id S1729214AbfEQVRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 17:17:52 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38600 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfEQVRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 17:16:57 -0400
-Received: by mail-oi1-f196.google.com with SMTP id f4so6195978oib.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:16:56 -0700 (PDT)
+        Fri, 17 May 2019 17:17:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d18so8494923wrs.5;
+        Fri, 17 May 2019 14:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E2H9E8ynXEsa3QuvJM4S/38HaYT5LjHH75EOqiq4bas=;
-        b=HwpC4RrWhmVT2sRECgJy6qj4/VU5z3EioWa4gwjjVsUl7jx0XN/rPuOnEi6NhYrZ2p
-         F1zjTFDItG03H+5lRuQ6zyijuZDYz9b+wXrJyshH+ix8Vfmvxo5/vcTrWlI4n5tnBiWx
-         8LnqSWEna/zgdRZlB569dAnzMWBe1JzuL1m6C+p21hStLtZyu2JAiXnVe0VAQ7kn6LsK
-         E4WyjiheJBZrsyo2mI2o+hmJr4ceNC+4/Rs6tvPC4bweoNEYcXUXDGjVlJTy6mZKTHXu
-         jOucgFyRAwEUEsOPgwJcwAHcOsLwmGWLDUCDsO4Vr8KrVNIa7uplWoeTca22GrU9TLrt
-         GN+Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j0QSp/nbNAN5CDGxs0f/bvo6nU3WJJBo15TSLrfM3Y4=;
+        b=tiIXZ4sutgDVVU7SE8IeUiaj7yo1qHobxFKA+nnT31hSDFk46N7ENbC8r5EX2YtJfC
+         BwCALt/MhUi4ZJnosTP6KRMyJbIygrOYxXPYS4fZ1g1UOxYNMX/4GI8Yg4/KkV8ytxkv
+         byFEMejpRmPz3YupaSXtzS4QlUvfYeB0teT9/m5QN4iiXDiEdsMsnbYZynUKrRxcHUfZ
+         NR5xY2Rf1rsY0eBQy6CjzgLk/qGocDmwyRHcZaSxWbC52WJolbkeH2/wmKVGKEyUx77E
+         W06EjMuaSOLbiO9vfNuVT7CnMKD0H2QVmbbvmaDdmo18r+Cyx4uHhetxf+i6FvlztObr
+         ZfZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=E2H9E8ynXEsa3QuvJM4S/38HaYT5LjHH75EOqiq4bas=;
-        b=jcuH90FFPc5ZLoqJoPEswcN+Wa+HvKqHLI/CZxWQQ3k64yVnVUgnsXZr5JuBh/LfqP
-         67fiNnLEfwd4NDXo35iPgKcYtS1srLw5uZyKRDc4S8Ox0yhcF6Vom/XFDiIycWG0bg3q
-         UGf8K7CfDCwvowxi5yCV5uRkO0jWhGt638IYsuYoopoFEOXxyBJj3gIrpZRjSEnnmrnd
-         tPH1FMT7croJ2/go9B5VUNEk2X62cLy2a7DuUuJijP8kjb0MApgKx9e+O09MBhCHp61e
-         NqOde7esJbHqYS4MkWnLjb+OnkvFC+btIHsSHyZx4/ql1CBAIdFgjqLldpjlqFWN7k/r
-         BD6A==
-X-Gm-Message-State: APjAAAWynTxuEQGZI1Agzj/6ZzRhjBbPlFZ7SC098gqXvFEBxuwoI/+A
-        wHS5v4R4O1gMq02hF2XjIy8NAQ==
-X-Google-Smtp-Source: APXvYqySaxA8Ue4p1Miit+toZFZg3BakSoFRI3b4Xx15JMWDxpnkVOH27XxQnYKZoy9nFEinxmBHqA==
-X-Received: by 2002:a05:6808:a08:: with SMTP id n8mr11031oij.20.1558127816024;
-        Fri, 17 May 2019 14:16:56 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id g102sm3352444otg.59.2019.05.17.14.16.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 14:16:55 -0700 (PDT)
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     hpa@zytor.com, Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        james.w.mcmechan@gmail.com, niveditas98@gmail.com
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <591c0770-7a82-3d45-e5b2-7ed347db812a@landley.net>
-Date:   Fri, 17 May 2019 16:17:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        bh=j0QSp/nbNAN5CDGxs0f/bvo6nU3WJJBo15TSLrfM3Y4=;
+        b=KDJEf85lF6OuYf/Xb/UvZYJf4MNx/CC1BvO4Fcp2chjHZPV7d/6JLX2qlJlvyhK+j/
+         TOFYwaJrxmgb3cTE3uGBqEYHfLAl3+nVJkyCjr3psOgDHm3cjk/eGiv+VdXnU8yPi1p3
+         UHHM+Y7/drXHPe3vynDKVqBl1ptbxGIgZutN8tFXrxAwCdtqzInUxA3jizqAt+s2r4U8
+         Tww3NU0ANkBC5GdFwsVHbqv6wGmELG9cStUKOjGqeOgpcW+aFPom7wfiXZ6OTKDX+MZR
+         khEpq3rPueFKet4CklnLiUzK7hGyeA5tt/0S1W2IVkpewaLhR8ZnWBBIVM7Ves9Xai38
+         dqeA==
+X-Gm-Message-State: APjAAAX0iUc+miem5dCqTtjeQD9pS176EuDN6UzHIxvAmyv/q9nmJP/7
+        DlWdN0Y7ElnZcYoIpKeAsZs=
+X-Google-Smtp-Source: APXvYqzQicc/iutHtLatS68TF4Wqp76ixuQit1ne4DOx7ecZiAUY9JpudaWRxE60ze3r41OtMhdwVQ==
+X-Received: by 2002:adf:fa88:: with SMTP id h8mr1792358wrr.32.1558127869602;
+        Fri, 17 May 2019 14:17:49 -0700 (PDT)
+Received: from vaio.lan ([93.55.208.142])
+        by smtp.gmail.com with ESMTPSA id 88sm20085400wrc.33.2019.05.17.14.17.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 14:17:48 -0700 (PDT)
+From:   Stefano Manni <stefano.manni@gmail.com>
+To:     nick@shmanahar.org, dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     Stefano Manni <stefano.manni@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Input: atmel_mxt_ts - add wakeup support
+Date:   Fri, 17 May 2019 23:17:40 +0200
+Message-Id: <20190517211741.8906-1-stefano.manni@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/19 3:18 PM, hpa@zytor.com wrote:
-> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
-> 
-> A side benefit is that the format can be simpler as there is no need to encode the filename.
-> 
-> A technically cleaner solution still, but which would need archiver modifications, would be to encode the xattrs as an optionally nameless file (just an empty string) with a new file mode value, immediately following the original file. The advantage there is that the archiver itself could support xattrs and other extended metadata (which has been requested elsewhere); the disadvantage obviously is that that it requires new support in the archiver. However, at least it ought to be simpler since it is still a higher protocol level than the cpio archive itself.
-> 
-> There's already one special case in cpio, which is the "!!!TRAILER!!!" filename; although I don't think it is part of the formal spec, to the extent there is one, I would expect that in practice it is always encoded with a mode of 0, which incidentally could be used to unbreak the case where such a filename actually exists. So one way to support such extended metadata would be to set mode to 0 and use the filename to encode the type of metadata. I wonder how existing GNU or BSD cpio (the BSD one is better maintained these days) would deal with reading such a file; it would at least not be a regression if it just read it still, possibly with warnings. It could also be possible to use bits 17:16 in the mode, which are traditionally always zero (mode_t being 16 bits), but I believe are present in most or all of the cpio formats for historical reasons. It might be accepted better by existing implementations to use one of these high bits combined with S_IFREG, I dont know.
-> 
+Add wakeup support to the maxtouch driver.
+The device can wake up the system from suspend,
+mark the IRQ as wakeup capable, so that device
+irq is not disabled during system suspend.
 
-I'll happily modify toybox cpio to understand xattrs (compress and decompress),
-the android guys do a lot with xattrs already. I tapped out of _this_ discussion
-from disgust with the proposed encoding.
+Signed-off-by: Stefano Manni <stefano.manni@gmail.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Rob
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 5c63d25ce84e..2e0abc0b665d 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3041,6 +3041,7 @@ static const struct dmi_system_id chromebook_T9_suspend_dmi[] = {
+ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ {
+ 	struct mxt_data *data;
++	struct device_node *node = client->dev.of_node;
+ 	int error;
+ 
+ 	/*
+@@ -3125,6 +3126,12 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		goto err_free_object;
+ 	}
+ 
++	if (node) {
++		if (of_property_read_bool(node, "wakeup-source") ||
++			of_property_read_bool(node, "linux,wakeup"))
++			device_init_wakeup(&client->dev, true);
++	}
++
+ 	return 0;
+ 
+ err_free_object:
+@@ -3156,6 +3163,9 @@ static int __maybe_unused mxt_suspend(struct device *dev)
+ 
+ 	mutex_lock(&input_dev->mutex);
+ 
++	if (device_may_wakeup(&client->dev))
++		enable_irq_wake(client->irq);
++
+ 	if (input_dev->users)
+ 		mxt_stop(data);
+ 
+@@ -3175,6 +3185,9 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 
+ 	mutex_lock(&input_dev->mutex);
+ 
++	if (device_may_wakeup(&client->dev))
++		disable_irq_wake(client->irq);
++
+ 	if (input_dev->users)
+ 		mxt_start(data);
+ 
+-- 
+2.20.1
+
