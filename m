@@ -2,116 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0587821E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9581E21E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 21:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbfEQTcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 15:32:39 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:37102 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727478AbfEQTch (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 15:32:37 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S1727945AbfEQTej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 15:34:39 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47184 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfEQTei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 15:34:38 -0400
+Received: from zn.tnic (p200300EC2F0C500031BA4AEE98C6BAA9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:5000:31ba:4aee:98c6:baa9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id EFBCAC00EC;
-        Fri, 17 May 2019 19:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1558121546; bh=fAUxrkJtkHNBYPCF1Tt5XpGFd5OGsTKlAxmk7SradgE=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=WFw4Y3wt/jOdKlXfhkdDzdK1igXiJeh/rreyGpTFJ7xrpDjpU9pctp5cJD1xVE/oV
-         m7MrlqYIGknu4/SsWx5E3vsPEOcOxsg5HHIJRP42Vnd1tGqNTLoq7SN2xNThRIEsBO
-         Jz60ZB+KFnDSBqcus/ywMfCJixaEi3znzl1hWQlWBvOZAlKIcwmAEG5U/INxzeLzmg
-         fZd0TOjVB3pkw/HsBmiBSCZuRp4VEnIg/9/6fwR2E97AElR3GtufqkVHoV8zzBcmmu
-         FlhLBPLTP57XIZ15ZrUfQLiL7z4aQgXsFQkdpC3NBE424nEHJFO8+6JWRLwsat4m8v
-         7ypKxY+QK7DTg==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 9CDECA005D;
-        Fri, 17 May 2019 19:32:35 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 17 May 2019 12:32:35 -0700
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 18 May 2019 01:02:43 +0530
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.89) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 18 May 2019 01:02:31 +0530
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [PATCH 5/5] ARC: entry: EV_Trap expects r10 (vs. r9) to have exception cause
-Date:   Fri, 17 May 2019 12:32:08 -0700
-Message-ID: <1558121528-30184-6-git-send-email-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1558121528-30184-1-git-send-email-vgupta@synopsys.com>
-References: <1558121528-30184-1-git-send-email-vgupta@synopsys.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 501B51EC027A;
+        Fri, 17 May 2019 21:34:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1558121677;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=AxcGA5Tne+rDJAVSXdY9zOHvZXqAqISJf11PxE2ArSc=;
+        b=ML39BKb02xH1lGw/s3vL9g6LieqALp11/8MSRt4jHYc2GuXt7E0Ac3pa+PLsAClU+u769F
+        uDtThA7MHcY1k2nrMo4kB3SyThXFOwaNSkdVZWILSZ18DDj6IFAbXukTfzz5CiaMqUo80H
+        rCw+YCPZZUSbgLUuzoZRKfa9tDa9FY0=
+Date:   Fri, 17 May 2019 21:34:31 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 5/6] x86/MCE: Save MCA control bits that get set in
+ hardware
+Message-ID: <20190517193431.GI13482@zn.tnic>
+References: <20190516172117.GC21857@zn.tnic>
+ <SN6PR12MB26394CD4E1BAC068B0B1AEF6F80A0@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190516203456.GD21857@zn.tnic>
+ <20190516205943.GA3299@agluck-desk>
+ <20190517101006.GA32065@zn.tnic>
+ <SN6PR12MB26391A0C3979030082EE38F8F80B0@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190517163729.GE13482@zn.tnic>
+ <20190517172648.GA18164@agluck-desk>
+ <20190517174817.GG13482@zn.tnic>
+ <20190517180607.GA21710@agluck-desk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.10.161.89]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190517180607.GA21710@agluck-desk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-avoids 1 MOV instruction in light of double load/store code
+On Fri, May 17, 2019 at 11:06:07AM -0700, Luck, Tony wrote:
+> and thus end up with that extra level on indent for the rest
+> of the function.
 
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Ok:
+
 ---
- arch/arc/include/asm/entry-arcv2.h   | 3 +--
- arch/arc/include/asm/entry-compact.h | 4 ++--
- arch/arc/kernel/entry.S              | 4 ++--
- 3 files changed, 5 insertions(+), 6 deletions(-)
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 5bcecadcf4d9..25e501a853cd 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1493,6 +1493,11 @@ static int __mcheck_cpu_mce_banks_init(void)
+ 	for (i = 0; i < n_banks; i++) {
+ 		struct mce_bank *b = &mce_banks[i];
+ 
++		/*
++		 * Init them all, __mcheck_cpu_apply_quirks() is going to apply
++		 * the required vendor quirks before
++		 * __mcheck_cpu_init_clear_banks() does the final bank setup.
++		 */
+ 		b->ctl = -1ULL;
+ 		b->init = 1;
+ 	}
+@@ -1562,6 +1567,7 @@ static void __mcheck_cpu_init_generic(void)
+ static void __mcheck_cpu_init_clear_banks(void)
+ {
+ 	struct mce_bank *mce_banks = this_cpu_read(mce_banks_array);
++	u64 msrval;
+ 	int i;
+ 
+ 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
+@@ -1569,7 +1575,13 @@ static void __mcheck_cpu_init_clear_banks(void)
+ 
+ 		if (!b->init)
+ 			continue;
++
++		/* Check if any bits are implemented in h/w */
+ 		wrmsrl(msr_ops.ctl(i), b->ctl);
++		rdmsrl(msr_ops.ctl(i), msrval);
++
++		b->init = !!msrval;
++
+ 		wrmsrl(msr_ops.status(i), 0);
+ 	}
+ }
+@@ -2095,6 +2107,9 @@ static ssize_t show_bank(struct device *s, struct device_attribute *attr,
+ 
+ 	b = &per_cpu(mce_banks_array, s->id)[bank];
+ 
++	if (!b->init)
++		return -ENODEV;
++
+ 	return sprintf(buf, "%llx\n", b->ctl);
+ }
+ 
+@@ -2113,6 +2128,9 @@ static ssize_t set_bank(struct device *s, struct device_attribute *attr,
+ 
+ 	b = &per_cpu(mce_banks_array, s->id)[bank];
+ 
++	if (!b->init)
++		return -ENODEV;
++
+ 	b->ctl = new;
+ 	mce_restart();
+ 
 
-diff --git a/arch/arc/include/asm/entry-arcv2.h b/arch/arc/include/asm/entry-arcv2.h
-index 0733752ce7fe..f5ae394ebe06 100644
---- a/arch/arc/include/asm/entry-arcv2.h
-+++ b/arch/arc/include/asm/entry-arcv2.h
-@@ -95,9 +95,8 @@
- 	lr	r10, [ecr]
- 	lr	r11, [erbta]
- 	ST2	r10, r11, PT_event
--	mov	r9, r10
- 
--	; OUTPUT: r9 has ECR
-+	; OUTPUT: r10 has ECR expected by EV_Trap
- .endm
- 
- /*------------------------------------------------------------------------
-diff --git a/arch/arc/include/asm/entry-compact.h b/arch/arc/include/asm/entry-compact.h
-index 29f3988c9424..98aff149b344 100644
---- a/arch/arc/include/asm/entry-compact.h
-+++ b/arch/arc/include/asm/entry-compact.h
-@@ -198,8 +198,8 @@
- 	PUSHAX  CTOP_AUX_EFLAGS
- #endif
- 
--	lr	r9, [ecr]
--	st      r9, [sp, PT_event]    /* EV_Trap expects r9 to have ECR */
-+	lr	r10, [ecr]
-+	st      r10, [sp, PT_event]    /* EV_Trap expects r10 to have ECR */
- .endm
- 
- /*--------------------------------------------------------------
-diff --git a/arch/arc/kernel/entry.S b/arch/arc/kernel/entry.S
-index 85d9ea4a0acc..730b83ccfbc1 100644
---- a/arch/arc/kernel/entry.S
-+++ b/arch/arc/kernel/entry.S
-@@ -235,8 +235,8 @@ ENTRY(EV_Trap)
- 	EXCEPTION_PROLOGUE
- 
- 	;============ TRAP 1   :breakpoints
--	; Check ECR for trap with arg (PROLOGUE ensures r9 has ECR)
--	bmsk.f 0, r9, 7
-+	; Check ECR for trap with arg (PROLOGUE ensures r10 has ECR)
-+	bmsk.f 0, r10, 7
- 	bnz    trap_with_param
- 
- 	;============ TRAP  (no param): syscall top level
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
