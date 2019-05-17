@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B544217F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44F87217ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 13:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfEQLzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 07:55:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43856 "EHLO
+        id S1728609AbfEQLzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 07:55:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43846 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728567AbfEQLzG (ORCPT
+        with ESMTP id S1727811AbfEQLzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 07:55:06 -0400
+        Fri, 17 May 2019 07:55:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XtwpOsw8p9+FZmwUToKYmAOI1E+3MdSkpZSo8fhVjl4=; b=Wh1daIxV0KCNScNaK2q8Q4r+w8
-        rI+f6jHPPDYUdGrjhpJ9ZU4I1buuVyD1CCkxBRMYK8hVw5BPJsv+o/6T2DqntVNw6xi+EVzBYN6QR
-        /H4LQV4/Iu/P3O6dsDB7jdw4pYMrPBUbTBGXEWTIX9BM7+pBgxPoBOdpKWUNeHkgDGRoFIkE7sbFh
-        knwLcK6B+LdluIC83f8W1R8TQDcphsVFyW8HzKCrOUfM+7bHsQfGxaoZKY++1+Te9AaCOZKKfutA1
-        DFRPMSlrqBTo8FKS0Rw/LLkNotIGr3M6yml/jb2AdlMZzz2VVKJTLLUgHN7BwEaNOA32ncX4dG6l2
-        QKP6HpYw==;
+        bh=BB+a1yAjmGBaCcsmFlZZE8gT8m2E1PyHUTm3q9L2zV8=; b=OTigpAmAdL7mg9vDisVbcjE4G0
+        pPbA5jd9aZKd4FP0X7whbf/A2shmtw7IA0uCf+L2FWO0/nmbgSs2feGC9D+ipz+w9aO/tW5tpKgHC
+        z6rHkCo6wJd7SlT2W1unKAYDuGH9f9k5Ww6uYCh+18/RBOAvo5yiB6iWsBivOQAbPxPgo40mhTWyd
+        h2iUWYwhHBFnBWcaQCTag4f9nq711zbvzXSxiscmxL2r9XbMwKZRkNvgpvAmp74f4wxWsMmteQPlw
+        3HAAZ/aMVpi2REoHtNgRgoRRxRzWVM+j+xGYzz9DUFmtbUfHLM4wV171SrcAyOvBAqdYXfmzi6vyo
+        vODmVk1A==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRbRz-00022S-0V; Fri, 17 May 2019 11:54:59 +0000
+        id 1hRbRy-00022T-W1; Fri, 17 May 2019 11:54:59 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id BC3EF2027B747; Fri, 17 May 2019 13:54:56 +0200 (CEST)
-Message-Id: <20190517115418.394192145@infradead.org>
+        id C1EF62027B748; Fri, 17 May 2019 13:54:56 +0200 (CEST)
+Message-Id: <20190517115418.481392777@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 May 2019 13:52:33 +0200
+Date:   Fri, 17 May 2019 13:52:34 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org, mingo@kernel.org
 Cc:     yabinc@google.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] perf/ring-buffer: Always use {READ,WRITE}_ONCE() for rb->user_page data
+Subject: [PATCH 4/4] perf/ring-buffer: Use regular variables for nesting
 References: <20190517115230.437269790@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +47,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We must use {READ,WRITE}_ONCE() on rb->user_page data such that
-concurrent usage will see whole values. A few key sites were missing
-this.
+While the IRQ/NMI will nest, the nest-count will be invariant over the
+actual exception, since it will decrement equal to increment.
 
-Fixes:7b732a750477 ("perf_counter: new output ABI - part 1")
-Suggested-by: Yabin Cui <yabinc@google.com>
+This means we can -- carefully -- use a regular variable since the
+typical LOAD-STORE race doesn't exist (similar to preempt_count).
+
+This optimizes the ring-buffer for all LOAD-STORE architectures, since
+they need to use atomic ops to implement local_t.
+
+Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/ring_buffer.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/events/internal.h    |    4 ++--
+ kernel/events/ring_buffer.c |   41 ++++++++++++++++++++++++++---------------
+ 2 files changed, 28 insertions(+), 17 deletions(-)
 
+--- a/kernel/events/internal.h
++++ b/kernel/events/internal.h
+@@ -24,7 +24,7 @@ struct ring_buffer {
+ 	atomic_t			poll;		/* POLL_ for wakeups */
+ 
+ 	local_t				head;		/* write position    */
+-	local_t				nest;		/* nested writers    */
++	unsigned int			nest;		/* nested writers    */
+ 	local_t				events;		/* event limit       */
+ 	local_t				wakeup;		/* wakeup stamp      */
+ 	local_t				lost;		/* nr records lost   */
+@@ -41,7 +41,7 @@ struct ring_buffer {
+ 
+ 	/* AUX area */
+ 	long				aux_head;
+-	local_t				aux_nest;
++	unsigned int			aux_nest;
+ 	long				aux_wakeup;	/* last aux_watermark boundary crossed by aux_head */
+ 	unsigned long			aux_pgoff;
+ 	int				aux_nr_pages;
 --- a/kernel/events/ring_buffer.c
 +++ b/kernel/events/ring_buffer.c
-@@ -100,7 +100,7 @@ static void perf_output_put_handle(struc
- 	 * See perf_output_begin().
+@@ -38,7 +38,12 @@ static void perf_output_get_handle(struc
+ 	struct ring_buffer *rb = handle->rb;
+ 
+ 	preempt_disable();
+-	local_inc(&rb->nest);
++
++	/*
++	 * Avoid an explicit LOAD/STORE such that architectures with memops
++	 * can use them.
++	 */
++	(*(volatile unsigned int *)&rb->nest)++;
+ 	handle->wakeup = local_read(&rb->wakeup);
+ }
+ 
+@@ -46,6 +51,17 @@ static void perf_output_put_handle(struc
+ {
+ 	struct ring_buffer *rb = handle->rb;
+ 	unsigned long head;
++	unsigned int nest;
++
++	/*
++	 * If this isn't the outermost nesting, we don't have to update
++	 * @rb->user_page->data_head.
++	 */
++	nest = READ_ONCE(rb->nest);
++	if (nest > 1) {
++		WRITE_ONCE(rb->nest, nest - 1);
++		goto out;
++	}
+ 
+ again:
+ 	/*
+@@ -65,15 +81,6 @@ static void perf_output_put_handle(struc
  	 */
- 	smp_wmb(); /* B, matches C */
--	rb->user_page->data_head = head;
-+	WRITE_ONCE(rb->user_page->data_head, head);
  
  	/*
- 	 * We must publish the head before decrementing the nest count,
-@@ -496,7 +496,7 @@ void perf_aux_output_end(struct perf_out
- 		perf_event_aux_event(handle->event, aux_head, size,
- 				     handle->aux_flags);
+-	 * If this isn't the outermost nesting, we don't have to update
+-	 * @rb->user_page->data_head.
+-	 */
+-	if (local_read(&rb->nest) > 1) {
+-		local_dec(&rb->nest);
+-		goto out;
+-	}
+-
+-	/*
+ 	 * Since the mmap() consumer (userspace) can run on a different CPU:
+ 	 *
+ 	 *   kernel				user
+@@ -108,7 +115,7 @@ static void perf_output_put_handle(struc
+ 	 * write will (temporarily) publish a stale value.
+ 	 */
+ 	barrier();
+-	local_set(&rb->nest, 0);
++	WRITE_ONCE(rb->nest, 0);
  
--	rb->user_page->aux_head = rb->aux_head;
-+	WRITE_ONCE(rb->user_page->aux_head, rb->aux_head);
- 	if (rb_need_aux_wakeup(rb))
- 		wakeup = true;
+ 	/*
+ 	 * Ensure we decrement @rb->nest before we validate the @rb->head.
+@@ -116,7 +123,7 @@ static void perf_output_put_handle(struc
+ 	 */
+ 	barrier();
+ 	if (unlikely(head != local_read(&rb->head))) {
+-		local_inc(&rb->nest);
++		WRITE_ONCE(rb->nest, 1);
+ 		goto again;
+ 	}
  
-@@ -528,7 +528,7 @@ int perf_aux_output_skip(struct perf_out
+@@ -355,6 +362,7 @@ void *perf_aux_output_begin(struct perf_
+ 	struct perf_event *output_event = event;
+ 	unsigned long aux_head, aux_tail;
+ 	struct ring_buffer *rb;
++	unsigned int nest;
  
- 	rb->aux_head += size;
+ 	if (output_event->parent)
+ 		output_event = output_event->parent;
+@@ -385,13 +393,16 @@ void *perf_aux_output_begin(struct perf_
+ 	if (!refcount_inc_not_zero(&rb->aux_refcount))
+ 		goto err;
  
--	rb->user_page->aux_head = rb->aux_head;
-+	WRITE_ONCE(rb->user_page->aux_head, rb->aux_head);
- 	if (rb_need_aux_wakeup(rb)) {
- 		perf_output_wakeup(handle);
- 		handle->wakeup = rb->aux_wakeup + rb->aux_watermark;
++	nest = READ_ONCE(rb->aux_nest);
+ 	/*
+ 	 * Nesting is not supported for AUX area, make sure nested
+ 	 * writers are caught early
+ 	 */
+-	if (WARN_ON_ONCE(local_xchg(&rb->aux_nest, 1)))
++	if (WARN_ON_ONCE(nest))
+ 		goto err_put;
+ 
++	WRITE_ONCE(rb->aux_nest, nest + 1);
++
+ 	aux_head = rb->aux_head;
+ 
+ 	handle->rb = rb;
+@@ -419,7 +430,7 @@ void *perf_aux_output_begin(struct perf_
+ 		if (!handle->size) { /* A, matches D */
+ 			event->pending_disable = smp_processor_id();
+ 			perf_output_wakeup(handle);
+-			local_set(&rb->aux_nest, 0);
++			WRITE_ONCE(rb->aux_nest, 0);
+ 			goto err_put;
+ 		}
+ 	}
+@@ -508,7 +519,7 @@ void perf_aux_output_end(struct perf_out
+ 
+ 	handle->event = NULL;
+ 
+-	local_set(&rb->aux_nest, 0);
++	WRITE_ONCE(rb->aux_nest, 0);
+ 	/* can't be last */
+ 	rb_free_aux(rb);
+ 	ring_buffer_put(rb);
 
 
