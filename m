@@ -2,122 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 221B721185
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 03:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF6542119E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 03:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfEQBBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 May 2019 21:01:54 -0400
-Received: from smtp.aristanetworks.com ([54.193.82.35]:34210 "EHLO
-        uscaw2-clmxp01.aristanetworks.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726575AbfEQBBy (ORCPT
+        id S1727379AbfEQBKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 May 2019 21:10:43 -0400
+Received: from alln-iport-3.cisco.com ([173.37.142.90]:29054 "EHLO
+        alln-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfEQBKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 May 2019 21:01:54 -0400
-X-Greylist: delayed 499 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 21:01:53 EDT
-Received: from uscaw2-clmxp01.aristanetworks.com (localhost [127.0.0.1])
-        by uscaw2-clmxp01.aristanetworks.com (Postfix) with ESMTP id 7BFD02142F2C;
-        Thu, 16 May 2019 17:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1558054414;
-        bh=OG5iz7Y2otWoE83PZVl2kJS3N6qNz01B8T1Adm2jXHQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=DsE9agfSmEgHGM52X4MfwYzUb6XZR6v7Ry+wDsxvPmdRfhSV1hL4rAazo1quosqIQ
-         bTOT4VsS8sxiHRnObTd2n+6in1OSpaQMDTNbBpEmiBiDLmYGbfRSBznD6wBi5HZNYE
-         owV7Ru5mgO3pCae53Phq7ZkorCPtAN3YvR1YE5h+epSwAc95TeLi9XEtrwgADmARlH
-         UnzxNcUxc87j0Lg1Quhg9TeeuHIHP34tXjf6z81bOqc5G6VD793OV8Ho0LJS0TkMmi
-         JgAjcNJiAcoWXycnpZ26PmHwa7XvjbmYxc0VFX1TCRLQq0W2ehgHShx2grjWgOhec+
-         EyHc+vw8X+nVA==
-Received: from chmeee (unknown [10.95.92.211])
-        by uscaw2-clmxp01.aristanetworks.com (Postfix) with ESMTP id 69B3931110E3;
-        Thu, 16 May 2019 17:53:34 -0700 (PDT)
-Received: from kevmitch by chmeee with local (Exim 4.92)
-        (envelope-from <kevmitch@chmeee>)
-        id 1hRR7t-00029G-MG; Thu, 16 May 2019 17:53:33 -0700
-From:   Kevin Mitchell <kevmitch@arista.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Kevin Mitchell <kevmitch@arista.com>
-Subject: [PATCH 3/3] iommu/amd: only free resources once on init error
-Date:   Thu, 16 May 2019 17:52:42 -0700
-Message-Id: <20190517005242.20257-4-kevmitch@arista.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190517005242.20257-1-kevmitch@arista.com>
-References: <20190517005242.20257-1-kevmitch@arista.com>
+        Thu, 16 May 2019 21:10:41 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 May 2019 21:10:40 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1954; q=dns/txt; s=iport;
+  t=1558055440; x=1559265040;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CdtFlPdIxBflewxo8eZNJ3cZUeGIx4ZiQQJbr+jUzY4=;
+  b=MceW4XnmB1ay+HdRTwqFEDWmfPqAWu2W2AyGtD1iK893bX8AwH1WyEUf
+   P6h9GSmP6+tvlpm4Lpve/frfOI9eLsX1ETBOU9T9f1jyQuybz0R1lH6J8
+   GGBPt6DTLRTetgAc25jTB54Hs496j00hguRi4pR0+LK7J2Ko/swGF2SYC
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.60,477,1549929600"; 
+   d="scan'208";a="277980231"
+Received: from alln-core-11.cisco.com ([173.36.13.133])
+  by alln-iport-3.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 17 May 2019 01:03:33 +0000
+Received: from zorba ([10.24.21.190])
+        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTPS id x4H13VMX014537
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 17 May 2019 01:03:32 GMT
+Date:   Thu, 16 May 2019 18:03:30 -0700
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     "Nikunj Kela (nkela)" <nkela@cisco.com>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] igb: add parameter to ignore nvm checksum validation
+Message-ID: <20190517010330.2wynopuhsqycqzuq@zorba>
+References: <1557357269-9498-1-git-send-email-nkela@cisco.com>
+ <9be117dc6e818ab83376cd8e0f79dbfaaf193aa9.camel@intel.com>
+ <76B41175-0CEE-466C-91BF-89A1CA857061@cisco.com>
+ <4469196a-0705-5459-8aca-3f08e9889d61@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4469196a-0705-5459-8aca-3f08e9889d61@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.24.21.190, [10.24.21.190]
+X-Outbound-Node: alln-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When amd_iommu=off was specified on the command line, free_X_resources
-functions were called immediately after early_amd_iommu_init. They were
-then called again when amd_iommu_init also failed (as expected).
+On Thu, May 16, 2019 at 03:02:18PM -0700, Florian Fainelli wrote:
+> On 5/16/19 12:55 PM, Nikunj Kela (nkela) wrote:
+> > 
+> > 
+> > On 5/16/19, 12:35 PM, "Jeff Kirsher" <jeffrey.t.kirsher@intel.com> wrote:
+> > 
+> >     On Wed, 2019-05-08 at 23:14 +0000, Nikunj Kela wrote:
+> >    >> Some of the broken NICs don't have EEPROM programmed correctly. It
+> >    >> results
+> >    >> in probe to fail. This change adds a module parameter that can be
+> >    >> used to
+> >    >> ignore nvm checksum validation.
+> >    >> 
+> >    >> Cc: xe-linux-external@cisco.com
+> >    >> Signed-off-by: Nikunj Kela <nkela@cisco.com>
+> >    >> ---
+> >    >>  drivers/net/ethernet/intel/igb/igb_main.c | 28
+> >    >> ++++++++++++++++++++++------
+> >    >>  1 file changed, 22 insertions(+), 6 deletions(-)
+> >     
+> >     >NAK for two reasons.  First, module parameters are not desirable
+> >     >because their individual to one driver and a global solution should be
+> >     >found so that all networking device drivers can use the solution.  This
+> >     >will keep the interface to change/setup/modify networking drivers
+> >     >consistent for all drivers.
+> > 
+> >     
+> >     >Second and more importantly, if your NIC is broken, fix it.  Do not try
+> >     >and create a software workaround so that you can continue to use a
+> >     >broken NIC.  There are methods/tools available to properly reprogram
+> >     >the EEPROM on a NIC, which is the right solution for your issue.
+> > 
+> > I am proposing this as a debug parameter. Obviously, we need to fix EEPROM but this helps us continuing the development while manufacturing fixes NIC.
+> 
+> Then why even bother with sending this upstream?
 
-Instead, call them only once: at the end of state_next() whenever
-there's an error. These functions should be safe to call any time and
-any number of times. However, since state_next is never called again in
-an error state, the cleanup will only ever be run once.
+It seems rather drastic to disable the entire driver because the checksum
+doesn't match. It really should be a warning, even a big warning, to let people
+know something is wrong, but disabling the whole driver doesn't make sense.
 
-This also ensures that cleanup code is run as soon as possible after an
-error is detected rather than waiting for amd_iommu_init() to be called.
-
-Signed-off-by: Kevin Mitchell <kevmitch@arista.com>
----
- drivers/iommu/amd_iommu_init.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 5f3df5ae6ba8..24fc060fe596 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -2638,8 +2638,6 @@ static int __init state_next(void)
- 		init_state = ret ? IOMMU_INIT_ERROR : IOMMU_ACPI_FINISHED;
- 		if (init_state == IOMMU_ACPI_FINISHED && amd_iommu_disabled) {
- 			pr_info("AMD IOMMU disabled on kernel command-line\n");
--			free_dma_resources();
--			free_iommu_resources();
- 			init_state = IOMMU_CMDLINE_DISABLED;
- 			ret = -EINVAL;
- 		}
-@@ -2680,6 +2678,19 @@ static int __init state_next(void)
- 		BUG();
- 	}
- 
-+	if (ret) {
-+		free_dma_resources();
-+		if (!irq_remapping_enabled) {
-+			disable_iommus();
-+			free_iommu_resources();
-+		} else {
-+			struct amd_iommu *iommu;
-+
-+			uninit_device_table_dma();
-+			for_each_iommu(iommu)
-+				iommu_flush_all_caches(iommu);
-+		}
-+	}
- 	return ret;
- }
- 
-@@ -2753,18 +2764,6 @@ static int __init amd_iommu_init(void)
- 	int ret;
- 
- 	ret = iommu_go_to_state(IOMMU_INITIALIZED);
--	if (ret) {
--		free_dma_resources();
--		if (!irq_remapping_enabled) {
--			disable_iommus();
--			free_iommu_resources();
--		} else {
--			uninit_device_table_dma();
--			for_each_iommu(iommu)
--				iommu_flush_all_caches(iommu);
--		}
--	}
--
- #ifdef CONFIG_GART_IOMMU
- 	if (ret && list_empty(&amd_iommu_list)) {
- 		/*
--- 
-2.20.1
-
+Daniel
