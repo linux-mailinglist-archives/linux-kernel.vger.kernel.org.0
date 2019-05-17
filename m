@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E07E21F75
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3581621F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 23:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbfEQVQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 17:16:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46844 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbfEQVQc (ORCPT
+        id S1729169AbfEQVRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 17:17:10 -0400
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:46355 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfEQVRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 17:16:32 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t187so3835137pgb.13
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:16:32 -0700 (PDT)
+        Fri, 17 May 2019 17:17:10 -0400
+Received: by mail-pf1-f177.google.com with SMTP id y11so4243105pfm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 14:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8C7aPoXHexIfrlHhYHRVmdZ+RVtChiwK/FINI72oIIk=;
-        b=yTfmkBZBWvUi2ekNTMUEu3+WBCpg8N2iG2HE1lr+hM6WmMtEBoX+1ancJFh8m9ySnM
-         Bj+IV+oPizUVMFsqawcvDremAnWREzKR0w4fZ90UGMvEZLKrpG+6MBLgFtYWop31KZNZ
-         suGTvhwQa5shw0t83QcF5qhwXBQd1ih2vANaBH5b3MfmJVQ5YyyZFHgHgDf4KGlfLVVC
-         WeKXH2SFJPJpwXy+ZOFDE+8oZZ35E0tfgy+hsAo859Vnrk1jd7LfUZPndKXSdQvgouaZ
-         2DVZaxcRhz5KE9d2pAmYW+OPyZNb/wQ/kj+LsQvKcIFTZHB1gseLIIYCNh0Kcc+3huvR
-         psmA==
+        bh=VfSQiZXDw9z5dZjFrjKTsYiGBGvOiJv1Tcdgk1Ayenw=;
+        b=ZQgB8svULT7m4+ckNsrmDzuqhvjxHZ1KLASM6wK8qybKMMuf8tyQFKFF/qh8cfIPgC
+         VAVycKs4s/8hNg6okfC2EAXU7FXf3ssdMfN+KPpaQM72/8YyV+s04X9OO7PBh1PDKJVa
+         SihoYwqOKL4E2fL1WK4g4vlQrM/I0m2F3x1vHBBqcYaTtPCb/XPr8fJTsqnSBXwO+J9l
+         BYDz7KUFsOV036aJB+tZYzpqlKr/GA4zci5ubzCh+kHwd0QRF4yqRi2ckgNmjCplzn71
+         h7AD22WuoMrYzDN9/rzj2BBhWzSAdUumenJKXuHjRF2c4V561/irlMcjLTvuGro5tv1n
+         yQSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8C7aPoXHexIfrlHhYHRVmdZ+RVtChiwK/FINI72oIIk=;
-        b=gmOmrtzE0JnY5bTiKULItNxhKb15qhfd9IEySpHbm6jvzyISD8hdsDkv/MKQ+aRqYy
-         x3vZUTDGo4gXU27soE7Uuxirp3JQWrjOfZRkaStDxiFVrhXp2cfrZ/sdRV5QHllZNaxE
-         vzZn92pA78VnGjzo91l2DZTGdLvY5rClg8/Dj8vVvGrwg2Whu2YTGAdZ0cKT6vHbhfXK
-         fOetkdTqPX7kF2C5WQ1VVNjqaiBXD/SrcPrBlJ5RoF+zX1uZfQPJnU9dz62c1Fuy67dk
-         ij2Nyeaw0NjSndLT5IdRhpoh7G58iqhXLJNIPrTFsOJ3QPtEfJZcc/GNS9KuyxOuukw6
-         8Kkw==
-X-Gm-Message-State: APjAAAW/9QWBAI/OYDIPw/M8yDpgg3BZU73wTCnRTGCo4ZSBcs8M7jwD
-        6Ns8XHiov0iA7h+x5gIzBmNGn5iRggezOw==
-X-Google-Smtp-Source: APXvYqzPRMxc3nKwzJh/NcOxueLogSIrrgwJZb/Sil8TltEjbTO3m3nKFnsuWTjAizapueDOZBohnw==
-X-Received: by 2002:a63:a449:: with SMTP id c9mr23257280pgp.149.1558127791244;
-        Fri, 17 May 2019 14:16:31 -0700 (PDT)
+        bh=VfSQiZXDw9z5dZjFrjKTsYiGBGvOiJv1Tcdgk1Ayenw=;
+        b=iQTZarLDVGapkfKMjtmbGd16ges8EsKbbJCeFmRtE5coyw3MSJM3AigfTUd1D8khmu
+         cg/6kskLrc6/caAsaeLq0v15WHr+vYlgr/PespLJvdJBD8/VTPcYONxfQCfs5s5U8Mpv
+         VBs+L+qzInGh+Tx1Y6rrXg2fgsj1ZBbX/VW/EotsoZtIVlMQo+sk7wYILQZlFfbKGxyo
+         PNaRp9hPkVCW33in9Z0xcxw5VDYYs0djQ9dBvIMtCyraoWLazKDrdL3Gqh6NI3+AAttq
+         +IEioR5KrqVS48PFBKT9DmHIm6Td9HO+g3s88aozUP5AiurODsDv70aHkOs6JI7aSxeu
+         c/CA==
+X-Gm-Message-State: APjAAAUDCnLYEwwLB+nIwn31Swc8ADqAc51SIPpTNDeN+qVb0wJ6BOrD
+        p2CkjBSuHYkfc9D1eECBTVJbiyJED3K0ww==
+X-Google-Smtp-Source: APXvYqxxPq8B0uWTBxjteNDiS1BP4g+8mhy1GplIdofmapADGYTuQgku8Axzh/smxiF171yIwBAh8w==
+X-Received: by 2002:a63:1d1d:: with SMTP id d29mr59156393pgd.63.1558127829276;
+        Fri, 17 May 2019 14:17:09 -0700 (PDT)
 Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id w189sm11649008pfw.147.2019.05.17.14.16.29
+        by smtp.gmail.com with ESMTPSA id 1sm10170104pfn.165.2019.05.17.14.17.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 14:16:29 -0700 (PDT)
-Subject: Re: [PATCH] aoe: list new maintainer for aoe driver
-To:     Ed Cashin <ed.cashin@acm.org>
-Cc:     Justin Sanders <justin@coraid.com>, linux-kernel@vger.kernel.org
-References: <1558125894.9571@cat.he.net>
+        Fri, 17 May 2019 14:17:08 -0700 (PDT)
+Subject: Re: [PATCH] block: bio: use struct_size() in kmalloc()
+To:     xiaolinkui <xiaolinkui@kylinos.cn>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1558084350-25632-1-git-send-email-xiaolinkui@kylinos.cn>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <856ae195-ceb8-5657-5ce7-9743f96845a5@kernel.dk>
-Date:   Fri, 17 May 2019 15:16:28 -0600
+Message-ID: <e46a73e2-b04d-371b-f199-e789dbdbd9fc@kernel.dk>
+Date:   Fri, 17 May 2019 15:17:07 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <1558125894.9571@cat.he.net>
+In-Reply-To: <1558084350-25632-1-git-send-email-xiaolinkui@kylinos.cn>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,13 +65,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/19 2:29 PM, Ed Cashin wrote:
-> Justin Sanders, who has extensive experience with ATA over Ethernet
-> in general and AoE SCSI and block-device drivers in particular, is
-> ready to take on the role of aoe maintainer.  The driver needs a more
-> active maintainer.
+On 5/17/19 3:12 AM, xiaolinkui wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+>     int stuff;
+>     struct boo entry[];
+> };
+> 
+> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
-Applied, thanks - and good luck to Justin.
+Applied, thanks.
 
 -- 
 Jens Axboe
