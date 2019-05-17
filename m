@@ -2,67 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD0321D95
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E290C21D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 20:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbfEQSlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 14:41:16 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46306 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbfEQSlQ (ORCPT
+        id S1727966AbfEQSoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 14:44:30 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36377 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfEQSoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 14:41:16 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4710F13F18517;
-        Fri, 17 May 2019 11:41:15 -0700 (PDT)
-Date:   Fri, 17 May 2019 11:41:14 -0700 (PDT)
-Message-Id: <20190517.114114.617879749254144661.davem@davemloft.net>
-To:     hujunwei4@huawei.com
-Cc:     jon.maloy@ericsson.com, ying.xue@windriver.com,
-        netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, mingfangsen@huawei.com,
-        zhoukang7@huawei.com, mousuanming@huawei.com
-Subject: Re: [PATCH] tipc: fix modprobe tipc failed after switch order of
- device registration
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <efa87f26-8766-ac92-ccaa-23a6992bd32a@huawei.com>
-References: <efa87f26-8766-ac92-ccaa-23a6992bd32a@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Fri, 17 May 2019 14:44:30 -0400
+Received: by mail-io1-f68.google.com with SMTP id e19so6301000iob.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 11:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=26Gvm8NqSnzuWy1Z2xRXYbuZqD+pzdlTw9gJXHfixmE=;
+        b=rA7y24PMNP8R5jLl62HDXXSZOMa0lZYGs0NVjI4FozRGRt3zJBR/voB3jmkibwinxZ
+         qCi7AiY9jIEtPDYI8WsUGrRCork6YqZcC0lzxcl+r/maeVhCOio/xh3+U9Ro2NemdkQk
+         3b+N83qySzcEWeZ1ONHgjNQDxkhxwDpkIawiuppA/YCz6+y2/ggrY6N3AcoR/sfUzwa1
+         R5tDkLYR1wsKn/FuPRl/o/MCzcSNCbkenvOuHIBTAYXTsZI19vVfZStz0hFZhgu1TQvZ
+         mmmtQYuyTcKJflLFD2Zr7XggXZ7F1vASxvWq7VeKbOsIE1nUl7cuHaht+PhpRnXr2xvR
+         m3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=26Gvm8NqSnzuWy1Z2xRXYbuZqD+pzdlTw9gJXHfixmE=;
+        b=gVk7akflhcslgzTk1eyIbJKGSyRXIeR/HHWQYL4VQvRTw1+eitePxxONaLBPoXdD21
+         3Ct8X24rO8wH+MVuMudeN9ehRBpjK6syJNO9Fxmlzlt6r8yuMQVhYpnsuxBFasqJbEyn
+         PzKdHzd7qTpnuGywkQIwWk1gjRF7LmFS9fArwrXQjY8Uz5GdrSMGbcIyJs01UiPh59iO
+         Mgb5Esk8FejoXjpSaKKlpFXWeijQRvF4akEE6UgWxUyDaQ9nWxPnVo+48zuWASn6/liS
+         2KRe3GIRIKWpy1f2zLiYTOcfUsow45+86m2j6QlfCmPbzGA8r37ahpPtMGGAvjYS0Go2
+         e5Tw==
+X-Gm-Message-State: APjAAAVYb5TIWYQN5ZXKq31gVaQEDanyL4aTOzaV3sBY5N/sOFZ5cGFU
+        vpxgBSGoCs4Mu7RUtkCf1A0co2sBaP4=
+X-Google-Smtp-Source: APXvYqyrFQ5MkHEI5COLlaixZdibqO4u3frTo+8Befr5i2LzWDTREkQ32AbACnorOP0zHNYA3hV8eQ==
+X-Received: by 2002:a5e:9518:: with SMTP id r24mr2074290ioj.218.1558118669276;
+        Fri, 17 May 2019 11:44:29 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id 8sm515852itd.24.2019.05.17.11.44.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 11:44:28 -0700 (PDT)
+Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190512012508.10608-1-elder@linaro.org>
+ <20190512012508.10608-10-elder@linaro.org>
+ <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com>
+ <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
+ <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org>
+Date:   Fri, 17 May 2019 13:44:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 17 May 2019 11:41:15 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: hujunwei <hujunwei4@huawei.com>
-Date: Fri, 17 May 2019 19:27:34 +0800
+On 5/17/19 1:33 PM, Arnd Bergmann wrote:
+> On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org> wrote:
+>>
+>> On 5/15/19 2:34 AM, Arnd Bergmann wrote:
+>>>> +static void gsi_trans_tre_fill(struct gsi_tre *dest_tre, dma_addr_t addr,
+>>>> +                              u32 len, bool last_tre, bool bei,
+>>>> +                              enum ipa_cmd_opcode opcode)
+>>>> +{
+>>>> +       struct gsi_tre tre;
+>>>> +
+>>>> +       tre.addr = cpu_to_le64(addr);
+>>>> +       tre.len_opcode = gsi_tre_len_opcode(opcode, len);
+>>>> +       tre.reserved = 0;
+>>>> +       tre.flags = gsi_tre_flags(last_tre, bei, opcode);
+>>>> +
+>>>> +       *dest_tre = tre;        /* Write TRE as a single (16-byte) unit */
+>>>> +}
+>>> Have you checked that the atomic write is actually what happens here,
+>>> but looking at the compiler output? You might need to add a 'volatile'
+>>> qualifier to the dest_tre argument so the temporary structure doesn't
+>>> get optimized away here.
+>>
+>> Currently, the assignment *does* become a "stp" instruction.
+>> But I don't know that we can *force* the compiler to write it
+>> as a pair of registers, so I'll soften the comment with
+>> "Attempt to write" or something similar.
+>>
+>> To my knowledge, adding a volatile qualifier only prevents the
+>> compiler from performing funny optimizations, but that has no
+>> effect on whether the 128-bit assignment is made as a single
+>> unit.  Do you know otherwise?
+> 
+> I don't think it you can force the 128-bit assignment to be
+> atomic, but marking 'dest_tre' should serve to prevent a
+> specific optimization that replaces the function with
+> 
+>     dest_tre->addr = ...
+>     dest_tre->len_opcode = ...
+>     dest_tre->reserved = ...
+>     dest_tre->flags = ...
+> 
+> which it might find more efficient than the stp and is equivalent
+> when the pointer is not marked volatile. We also have the WRITE_ONCE()
+> macro that can help prevent this, but it does not work reliably beyond
+> 64 bit assignments.
 
-> From: Junwei Hu <hujunwei4@huawei.com>
-> 
-> Error message printed:
-> modprobe: ERROR: could not insert 'tipc': Address family not
-> supported by protocol.
-> when modprobe tipc after the following patch: switch order of
-> device registration, commit 7e27e8d6130c
-> ("tipc: switch order of device registration to fix a crash")
-> 
-> Because sock_create_kern(net, AF_TIPC, ...) is called by
-> tipc_topsrv_create_listener() in the initialization process
-> of tipc_net_ops, tipc_socket_init() must be execute before that.
-> 
-> I move tipc_socket_init() into function tipc_init_net().
-> 
-> Fixes: 7e27e8d6130c
-> ("tipc: switch order of device registration to fix a crash")
-> Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
-> Reported-by: Wang Wang <wangwang2@huawei.com>
-> Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
-> Reviewed-by: Suanming Mou <mousuanming@huawei.com>
+OK, I'll mark it volatile to avoid that potential result.
+Thanks.
 
-Applied.
+					-Alex
+
+> 
+>       Arnd
+> 
+
