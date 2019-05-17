@@ -2,71 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35BC421F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E01221F32
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 22:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbfEQUmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 16:42:32 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37511 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727785AbfEQUmc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 16:42:32 -0400
-Received: from callcc.thunk.org (75-104-86-155.mobility.exede.net [75.104.86.155] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4HKgGRv017037
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 May 2019 16:42:23 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9D722420025; Fri, 17 May 2019 16:28:10 -0400 (EDT)
-Date:   Fri, 17 May 2019 16:28:10 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ext4: Variable to signed to check return code
-Message-ID: <20190517202810.GA21961@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philippe Mazenauer <philippe.mazenauer@outlook.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <AM0PR07MB4417C1C3A4E55EFE47027CA2FD0B0@AM0PR07MB4417.eurprd07.prod.outlook.com>
- <20190517102506.GU4319@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517102506.GU4319@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729182AbfEQUzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 16:55:04 -0400
+Received: from noserose.net ([66.220.18.76]:59434 "HELO noserose.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1726978AbfEQUzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 16:55:03 -0400
+X-Greylist: delayed 605 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 16:55:03 EDT
+Received: from cat.he.net ([127.0.0.1]) by noserose.net for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 13:44:54 -0700
+Message-Id: <1558125894.9571@cat.he.net>
+From:   Ed Cashin <ed.cashin@acm.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>, linux-kernel@vger.kernel.org,
+        ed.cashin@acm.org
+Date:   Fri, 17 May 2019 16:29:18 -0400
+Subject: [PATCH] aoe: list new maintainer for aoe driver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 11:25:06AM +0100, Lee Jones wrote:
-> On Fri, 17 May 2019, Philippe Mazenauer wrote:
-> 
-> > Variables 'n' and 'err' are both used for less-than-zero error checking,
-> > however both are declared as unsigned. Ensure ext4_map_blocks() and
-> > add_system_zone() are able to have their return values propagated
-> > correctly by redefining them both as signed integers.
+Justin Sanders, who has extensive experience with ATA over Ethernet
+in general and AoE SCSI and block-device drivers in particular, is
+ready to take on the role of aoe maintainer.  The driver needs a more
+active maintainer.
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is already fixed in the ext4.git tree; it will be pushed to Linus
-shortly.  (Thanks to Colin Ian King from Canonical for sending the
-patch.)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5c38f21..9a0c0838 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2568,7 +2568,7 @@ F:	Documentation/devicetree/bindings/eeprom/at24.txt
+ F:	drivers/misc/eeprom/at24.c
+ 
+ ATA OVER ETHERNET (AOE) DRIVER
+-M:	"Ed L. Cashin" <ed.cashin@acm.org>
++M:	"Justin Sanders" <justin@coraid.com>
+ W:	http://www.openaoe.org/
+ S:	Supported
+ F:	Documentation/aoe/
+-- 
+2.7.4
 
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-
-Lee, techncially this should have been Reviewed-by.  Acked-by is used
-by the maintainer when a patch is going in via some other tree other
-than the Maintainer's (it means the Maintainer has acked the patch).
-If you are reviewing a patch, the tag you should be adding is
-Reviewed-by.
-
-Cheers,
-
-					- Ted
