@@ -2,83 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 602AF215ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E96E4215F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 11:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfEQJGy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 05:06:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38947 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfEQJGy (ORCPT
+        id S1728705AbfEQJHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 05:07:23 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39981 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728422AbfEQJHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 05:06:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w22so3007343pgi.6
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 02:06:53 -0700 (PDT)
+        Fri, 17 May 2019 05:07:22 -0400
+Received: by mail-qk1-f194.google.com with SMTP id q197so4005560qke.7
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 02:07:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GgShVfrJdzVX4OHpBlPpeZRiwTUzDnQ/1+vh7MIr97A=;
-        b=rGkZXfwzMhy0gz3wN4E2bBh+lCxHuu6IdIpe86W1vX8CZoM+/oI+WtufMyZXsy5z+D
-         ZVKMXCukQQlQD6e8qb7xN55Rq5MNaPI8rMC/hxcqCwPKLz0G9QS4hnGfmGfcKJdMAs9f
-         71rKxD7hM0STMDHwahaeYvC4LcU4duF5oCEZoAjquog1LNdkmKxpu1+wCBBJIAfCypq+
-         Fv0tbclO+Ffl99VijsyVB2z7YFmb8EuNnDDw2rEGxMZ2eA0Hbmnwj8XLKudQTen6nghW
-         q1NO0qEroof+FXs1Dw38Fd7DYCcocmH/Tm74FEEUiHhAY5JzQrsNqxQ5VYFckKlVoAAE
-         M8Zw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RDY/8T5oG1sd9/9Tn8BhGcNJt4PUJySH+sHZQHkeoSg=;
+        b=bctqSvnX24/0EmDwsbx0gT/9HlxYX9WU+CRUkaRId6ptX9ok5BbWG5IZ+BKEgllupu
+         CNyterzYzW3/Sa/HI5k/yIxg/VDu+llzIfExQ64TLSP3MoXf2OhEyXGhJ3ywrDgtRDpX
+         toxYSmSXSoKL8LRVSFG982d6WLVgHnEsJLishd/vdhwNUV1A850J+hpnu4OD93Q/00D0
+         KhozlZV5vlPYZByhuQ7L3ZzwcQQzJNfehiYznPcZB1c9AFhPzL+tHk3nnk1DEw8m3/8I
+         HLwzHqjMA6PgpMYJLDOtTCpmbfdKot1QK3ogNer24z5nMu/++CdznbhRO2lUmPWwLakQ
+         VXHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GgShVfrJdzVX4OHpBlPpeZRiwTUzDnQ/1+vh7MIr97A=;
-        b=lFMqmprCn43K/YESmyOMZykmYRD2mlLAGA/38bHHY/NL/NLv1qkfrRTKow9CbpgNsn
-         UQM23uql1WAY/6PpGLKPAWRtByZYWDa7Bpr3OwoM6GSfzaGtE2mMac9bimz9kgf5e5d9
-         IHwz85E4Bg8iKK9OvPXPJg8CFuKyYwUYa0SumpWoyDflQIx8kJwi1u3U/r9GVdxW6DeE
-         me0705/DAcx33ITMFe3u9o1M+BC6hGXYcx9cNBfZEWBncj146M0kDkbv7le8eW1b7tH1
-         ZdUkvqmRlMF34GDZ1ca48Oe5hrqP1e+U+tNgQ+ibr+AGyzkDr2k6rNvea4s4Yt+kww+n
-         xEvg==
-X-Gm-Message-State: APjAAAWmower8QUqkVQtGYPZnPjNr3l4CqEWHEwVnkBDeGQgAax1BBzB
-        QRme78WXJ3h0H7gLU3YdOrL2LXJwXFs=
-X-Google-Smtp-Source: APXvYqx9ltdJabmG9EajLLgAw51/p+NhG8d/rygZJA1v7m1seb7Sea3eMHXlFcnxH4ZRXZ90Wsn1cg==
-X-Received: by 2002:a62:30c2:: with SMTP id w185mr59918683pfw.175.1558084013478;
-        Fri, 17 May 2019 02:06:53 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id n2sm10663440pgp.27.2019.05.17.02.06.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 02:06:52 -0700 (PDT)
-Date:   Fri, 17 May 2019 17:06:28 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] efi_64: Fix a missing-check bug in
- arch/x86/platform/efi/efi_64.c of Linux 5.1
-Message-ID: <20190517090628.GA4162@zhanggen-UX430UQ>
-References: <20190517082633.GA3890@zhanggen-UX430UQ>
- <CAKv+Gu98JNK34Q6MNOe3aq0W5rbv6hUFiuc7cHxHJat5aTk_gg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RDY/8T5oG1sd9/9Tn8BhGcNJt4PUJySH+sHZQHkeoSg=;
+        b=eKfiK1K8mLZks5jy3plgWlX/Lozn/gkwVZ2sCj1Foq5r3ciCK7GI5xgnkFq11+qOFO
+         1pireJlXgT5g3eOli0Gwp2uxNadPf4zrI9jCk2v0PioBhYv9oOhHKvHFedPfM87tPpma
+         AoFiMZp5usAebJStk/sH1+o3Z00XFzf7RjZ7Cl1vCR5d29uhpxgrhqooCoPe4t1XCdy1
+         P5fF15iQG0Z5RRzHiS8DHl0DwMUVqnBSuqNBsNbY26MEYixcWOF18y94E8ctRp0iOY3A
+         gS9Elr0UV4LvOdhtIeP8l+gwVLAL/bN+59EqLDCVbYhOGfshk5cgtKnjtUyWlUrVLsGS
+         E2DA==
+X-Gm-Message-State: APjAAAXnDSFx39jlN/r90tSx+r3Oxs+IeXyxMt57e84JzI/TFyvVMf6C
+        J0fe4TPbTAUfCg+QsVXkdOqpOly9CZCcg425XbcmsA==
+X-Google-Smtp-Source: APXvYqxGfInFILzcA+biwsWsB0fCBvEwoMu9dgk2tcaHarP8YIKdLxb3d7Ayd5f7ngTpms3Y0huUXEzcFMSWjRsBgcs=
+X-Received: by 2002:a37:8703:: with SMTP id j3mr42619017qkd.188.1558084041650;
+ Fri, 17 May 2019 02:07:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu98JNK34Q6MNOe3aq0W5rbv6hUFiuc7cHxHJat5aTk_gg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <cover.1557486950.git.amit.kucheria@linaro.org>
+ <8648ba97d49a9f731001e4b36611be9650e37f37.1557486950.git.amit.kucheria@linaro.org>
+ <CAHYWTt1ZiX4mC01PRwVHU7417NC2tHY-_Cd+fwn1EyY+shKW-g@mail.gmail.com>
+In-Reply-To: <CAHYWTt1ZiX4mC01PRwVHU7417NC2tHY-_Cd+fwn1EyY+shKW-g@mail.gmail.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 17 May 2019 14:37:10 +0530
+Message-ID: <CAP245DViCCMuDVF3M4GUuVm-8O4s=xFYio6Q5B4zqMxYRm875A@mail.gmail.com>
+Subject: Re: [PATCHv1 6/8] arm64: dts: qcom: msm8996: Add PSCI cpuidle low
+ power states
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:41:28AM +0200, Ard Biesheuvel wrote:
-> Returning an error here is not going to make much difference, given
-> that the caller of efi_call_phys_prolog() does not bother to check it,
-> and passes the result straight into efi_call_phys_epilog(), which
-> happily attempts to dereference it.
-> 
-> So if you want to fix this properly, please fix it at the call site as
-> well. I'd prefer to avoid ERR_PTR() and just return NULL for a failed
-> allocation though.
-Hi Ard,
-Thanks for your timely reply!
-I think returning NULL in efi_call_phys_prolog() and checking in 
-efi_call_phys_epilog() is much better. But I am confused what to return
-in efi_call_phys_epilog() if save_pgd is NULL. Definitely not return
--ENOMEM, because efi_call_phys_epilog() returns unsigned long. Could
-please light on me to fix this problem?
-Thanks
-Gen
+On Tue, May 14, 2019 at 9:42 PM Niklas Cassel <niklas.cassel@linaro.org> wrote:
+>
+> On Fri, May 10, 2019 at 04:59:44PM +0530, Amit Kucheria wrote:
+> > Add device bindings for cpuidle states for cpu devices.
+> >
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/msm8996.dtsi | 28 +++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > index c761269caf80..b615bcb9e351 100644
+> > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > @@ -95,6 +95,7 @@
+> >                       compatible = "qcom,kryo";
+> >                       reg = <0x0 0x0>;
+> >                       enable-method = "psci";
+> > +                     cpu-idle-states = <&LITTLE_CPU_PD>;
+> >                       next-level-cache = <&L2_0>;
+> >                       L2_0: l2-cache {
+> >                             compatible = "cache";
+> > @@ -107,6 +108,7 @@
+> >                       compatible = "qcom,kryo";
+> >                       reg = <0x0 0x1>;
+> >                       enable-method = "psci";
+> > +                     cpu-idle-states = <&LITTLE_CPU_PD>;
+> >                       next-level-cache = <&L2_0>;
+> >               };
+> >
+> > @@ -115,6 +117,7 @@
+> >                       compatible = "qcom,kryo";
+> >                       reg = <0x0 0x100>;
+> >                       enable-method = "psci";
+> > +                     cpu-idle-states = <&BIG_CPU_PD>;
+> >                       next-level-cache = <&L2_1>;
+> >                       L2_1: l2-cache {
+> >                             compatible = "cache";
+> > @@ -127,6 +130,7 @@
+> >                       compatible = "qcom,kryo";
+> >                       reg = <0x0 0x101>;
+> >                       enable-method = "psci";
+> > +                     cpu-idle-states = <&BIG_CPU_PD>;
+> >                       next-level-cache = <&L2_1>;
+> >               };
+> >
+> > @@ -151,6 +155,30 @@
+> >                               };
+> >                       };
+> >               };
+> > +
+> > +             idle-states {
+> > +                     entry-method="psci";
+>
+> Please add a space before and after "=".
+>
+> > +
+> > +                     LITTLE_CPU_PD: little-power-down {
+>
+> In Documentation/devicetree/bindings/arm/idle-states.txt
+> they seem to use labels such as CPU_SLEEP_0_0 for the first
+> cluster and CPU_SLEEP_1_0 for the second cluster.
+
+Will change this to LITTLE_CPU_SLEEP_0. I feel there is value in
+keeping BIG and LITTLE in the name explicitly to improve readability
+when correlating the idle state parameters to each CPU.
+
+>
+> Please also consider my comment in patch 4/8.
+>
+> > +                             compatible = "arm,idle-state";
+> > +                             idle-state-name = "standalone-power-collapse";
+> > +                             arm,psci-suspend-param = <0x00000004>;
+> > +                             entry-latency-us = <40>;
+> > +                             exit-latency-us = <40>;
+>
+> Where did you get the latency values from?
+> Downstream seems to use qcom,latency-us = <80> for "fpc".
+>
+
+Will fix.
+
+> (Sure downstream also defines "fpc-def", but that seems to require
+> additional psci code/calls that doesn't exist upstream.)
+>
+> > +                             min-residency-us = <300>;
+> > +                             local-timer-stop;
+>
+> Are you sure that the local timer is stopped?
+> the equivalent DT property to "local-timer-stop" in downstream is
+> "qcom,use-broadcast-timer", and this property seems to be missing
+> from this node:
+> https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/arch/arm/boot/dts/qcom/msm8996-pm.dtsi?h=msm-4.4#n158
+>
+> You could try to remove "local-timer-stop", if it is really needed,
+> then the system should hang without this property.
+
+Will review and test again.
+
+>
+> > +                     };
+> > +
+> > +                     BIG_CPU_PD: big-power-down {
+> > +                             compatible = "arm,idle-state";
+> > +                             idle-state-name = "standalone-power-collapse";
+> > +                             arm,psci-suspend-param = <0x00000004>;
+> > +                             entry-latency-us = <40>;
+> > +                             exit-latency-us = <40>;
+>
+> Where did you get the latency values from?
+> Downstream seems to use qcom,latency-us = <80> for "fpc".
+>
+> (Sure downstream also defines "fpc-def", but that seems to require
+> additional psci code/calls that doesn't exist upstream.)
+>
+> > +                             min-residency-us = <300>;
+> > +                             local-timer-stop;
+>
+> Are you sure that the local timer is stopped?
+> the equivalent DT property to "local-timer-stop" in downstream is
+> "qcom,use-broadcast-timer", and this property seems to be missing
+> from this node:
+> https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/arch/arm/boot/dts/qcom/msm8996-pm.dtsi?h=msm-4.4#n247
+>
+> You could try to remove "local-timer-stop", if it is really needed,
+> then the system should hang without this property.
+>
+>
+> > +                     };
+> > +             };
+> >       };
+> >
+> >       thermal-zones {
+> > --
+> > 2.17.1
+> >
