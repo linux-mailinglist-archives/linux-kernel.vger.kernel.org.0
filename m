@@ -2,86 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5743521B0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 17:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE9921B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2019 18:03:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbfEQP4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 11:56:55 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46029 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728664AbfEQP4y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 11:56:54 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a5so3520219pls.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 08:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nrqjUKLpsCtJJ04ErApfFg0RR5DmaSuhMiOpsYm4b/k=;
-        b=E7oWj3DDjt+kEdZeewfLumYWCuhjVUc/osh0djljunRfkteN7XJXNs5MS+RX5GI/Lq
-         Puj3Z3HgxCD/6AC6HOECerm430xm+nTSbJv05r7At57ftXWvGwRJYxFFEUoVKbSOr4Gr
-         iBqixCpWNw+8db7SWpOHdiN1vkT5zH1by9VEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nrqjUKLpsCtJJ04ErApfFg0RR5DmaSuhMiOpsYm4b/k=;
-        b=Ti6ojibe1PQlTMHFadCFBMvkBjqOTpPbJ4E1w+TMYmZrbUIojg+eWVT5oSum10gJXB
-         p3V22PIL7P+ALdHjYc2Bq4SJrbztcm8sunMAjTvMCI572EvGUsgHVsx935+oE6rQcdWK
-         e4Yt3n9IPZ5DmvfQq8krgbi6GCuuNZg0MjYZY1MO1x17IOSUi2s98YH/szmcIHfdyEhP
-         M1sLAqBRRK08zf9gV/mgdu+p1XG7P7KFsg1K9dntJMZvpKU7tUEtOdQOxl1MYHjz8OgW
-         o1bNE9SAVp56yIG+d4kxVpmTfQVhYOam1s54gS8heFvdojWEqk55pcb9AMWa72KsG7tA
-         /D/Q==
-X-Gm-Message-State: APjAAAXZ4DiuCBH8Qy8QcZ/OzjG1YfcYEc1+rDz9cLaQyDGHBUj3tMEL
-        371uAZtZvpKlS/1Lrmq7ctj3Bb+GMeM=
-X-Google-Smtp-Source: APXvYqx5L1JIW0KgYJL4c2qH5Z+VHBDccN7Wk+p90g4IAEzcge2qHeMGOakMMnS0HM9WEXWMQfyTKA==
-X-Received: by 2002:a17:902:2bc9:: with SMTP id l67mr21517345plb.171.1558108614314;
-        Fri, 17 May 2019 08:56:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 2sm11532199pgc.49.2019.05.17.08.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 May 2019 08:56:53 -0700 (PDT)
-Date:   Fri, 17 May 2019 08:56:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
-        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Message-ID: <201905170855.8E2E1AC616@keescook>
-References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190517084739.GB20550@quack2.suse.cz>
- <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+        id S1729386AbfEQQC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 12:02:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:62944 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728482AbfEQQC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 May 2019 12:02:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 09:02:57 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga004.fm.intel.com with ESMTP; 17 May 2019 09:02:57 -0700
+Date:   Fri, 17 May 2019 09:57:43 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] PCI: PM: Avoid possible suspend-to-idle issue
+Message-ID: <20190517155743.GB25006@localhost.localdomain>
+References: <2315917.ZGeXE6pBFC@kreacher>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+In-Reply-To: <2315917.ZGeXE6pBFC@kreacher>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 08:08:27AM -0700, Dan Williams wrote:
-> As far as I can see it's mostly check_heap_object() that is the
-> problem, so I'm open to finding a way to just bypass that sub-routine.
-> However, as far as I can see none of the other block / filesystem user
-> copy implementations submit to the hardened checks, like
-> bio_copy_from_iter(), and iov_iter_copy_from_user_atomic() . So,
-> either those need to grow additional checks, or the hardened copy
-> implementation is targeting single object copy use cases, not
-> necessarily block-I/O. Yes, Kees, please advise.
+On Fri, May 17, 2019 at 11:08:50AM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> If a PCI driver leaves the device handled by it in D0 and calls
+> pci_save_state() on the device in its ->suspend() or ->suspend_late()
+> callback, it can expect the device to stay in D0 over the whole
+> s2idle cycle.  However, that may not be the case if there is a
+> spurious wakeup while the system is suspended, because in that case
+> pci_pm_suspend_noirq() will run again after pci_pm_resume_noirq()
+> which calls pci_restore_state(), via pci_pm_default_resume_early(),
+> so state_saved is cleared and the second iteration of
+> pci_pm_suspend_noirq() will invoke pci_prepare_to_sleep() which
+> may change the power state of the device.
+> 
+> To avoid that, add a new internal flag, skip_bus_pm, that will be set
+> by pci_pm_suspend_noirq() when it runs for the first time during the
+> given system suspend-resume cycle if the state of the device has
+> been saved already and the device is still in D0.  Setting that flag
+> will cause the next iterations of pci_pm_suspend_noirq() to set
+> state_saved for pci_pm_resume_noirq(), so that it always restores the
+> device state from the originally saved data, and avoid calling
+> pci_prepare_to_sleep() for the device.
+> 
+> Fixes: 33e4f80ee69b ("ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-The intention is mainly for copies that haven't had explicit bounds
-checking already performed on them, yes. Is there something getting
-checked out of the slab, or is it literally just the overhead of doing
-the "is this slab?" check that you're seeing?
+LGTM
 
--- 
-Kees Cook
+Reviewed-by: Keith Busch <keith.busch@intel.com>
