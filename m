@@ -2,202 +2,374 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 834742212D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 03:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F5D222136
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 04:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfERB6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 21:58:41 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8445 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfERB6l (ORCPT
+        id S1728688AbfERCI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 22:08:26 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34169 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfERCIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 21:58:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cdf66d00000>; Fri, 17 May 2019 18:58:41 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 17 May 2019 18:58:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 17 May 2019 18:58:39 -0700
-Received: from [10.25.74.217] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 18 May
- 2019 01:58:32 +0000
-Subject: Re: [PATCH V6 02/15] PCI/PME: Export pcie_pme_disable_msi() &
- pcie_pme_no_msi() APIs
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Christoph Hellwig <hch@infradead.org>, <lorenzo.pieralisi@arm.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kishon@ti.com>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <mperttunen@nvidia.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190513050626.14991-1-vidyas@nvidia.com>
- <20190513050626.14991-3-vidyas@nvidia.com>
- <20190513072539.GA27708@infradead.org>
- <3a8cea93-2aeb-e5e2-4d56-f0c6449073c3@nvidia.com>
- <20190516133426.GC101793@google.com>
- <bd08ccaa-c6ee-f966-91e4-bcd5d99d5cf2@nvidia.com>
- <20190517132453.GA30700@google.com>
- <ba611a45-9589-8dce-58e1-d99dd463265d@nvidia.com>
- <20190517185545.GB49425@google.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <bf220eba-f9d7-81f3-6b75-db463c74fbfa@nvidia.com>
-Date:   Sat, 18 May 2019 07:28:29 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 17 May 2019 22:08:25 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c13so4118591pgt.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 19:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=Gss4AgGBViacHXD6UIPs07x/6J+BSVgVsU2MFMZK95w=;
+        b=c2+PCZ6i+qn/xtvWW5XkGLgKoGLgePMvoJ2sDFMbNaF0Px2qPiMKX8ms5JOBbrCWF7
+         v2gJ83MpcXuvPXEw53VPIL0im6TA6TO9Uq+waxfl7a7yiPSNLicSsO1V/8Rbaj7Psxdy
+         vcyXw2VTqBoQUM5E/fU06r5uvrUE7sjOnVV1/EMLJwKltgl8Cdv8stHpfyAnt0WBjd8e
+         eSsM3zeoynyLBdg9tTzTNn1Lb5voYiUTLP59+N6tHCYVGCZhTFq95sB5/JVuU2pqEVyx
+         gdVzyEZQSqkLrXIr8qko6712ae42AZhrPLJ1176HcRIfPHzVZzDH1DwxuFSWL4yOgQzi
+         J3Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=Gss4AgGBViacHXD6UIPs07x/6J+BSVgVsU2MFMZK95w=;
+        b=CAWm2IFY5AcH4hh6SBVMubpS/yMvcUvVbkmjdqdM9hy3nDE6BTSZY2J4k+8nBy9Ili
+         W95aOxXd9AwVz/QUsFtaq/OaA+1vMK1sEO4RvIjyWjMY4rFmAD5Pd1xvjkzY1fSJB9+2
+         ZaPVsP8zHvb8rVk8L9aJz8dsTGgZE93HgIxezw/OIvM1g4BT42EtnKHvoIBp4O23MQCw
+         hDZiRzo6jbEeCRqrPLYRQve5cJcFNeCAnN2mADcKye8r2JnXYQcbwWBa/MI2n15Xtx/U
+         ZGIdLROSVysWyZnmjenE8OetqhBKp9X2pKoq23LoAjjSbAwfSJ7C8LbPvNltJvsEGWEa
+         RlGw==
+X-Gm-Message-State: APjAAAW80qLun/gU5JcinK3jICqNMx6ip9braJS/BIYzAa7ifv/cx/f3
+        OlKZu6Ugl1wDHDCIsAqXiug=
+X-Google-Smtp-Source: APXvYqxIsIKJLsrbjlAFTg9yNh6wF6uzUGOjX8ybnynNVl6nMHDLaXY67c62ZuP/FctTYJS+P5Gz6w==
+X-Received: by 2002:a62:4607:: with SMTP id t7mr65526370pfa.138.1558145304747;
+        Fri, 17 May 2019 19:08:24 -0700 (PDT)
+Received: from localhost (193-116-98-72.tpgi.com.au. [193.116.98.72])
+        by smtp.gmail.com with ESMTPSA id o20sm12971417pgj.70.2019.05.17.19.08.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 19:08:24 -0700 (PDT)
+Date:   Sat, 18 May 2019 12:08:00 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [RFC PATCH 4/4] powerpc/ftrace: Additionally nop out the
+ preceding mflr with -mprofile-kernel
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
+        <ee2a5457d98850f51bf96eb17389b375e6955bbf.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
+In-Reply-To: <ee2a5457d98850f51bf96eb17389b375e6955bbf.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190517185545.GB49425@google.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558144721; bh=imsCMc9pMzH0x1z4chiZIBu4CmzKLhdBfR9mkxX2haY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=F6Be5xwQ3sFV2qa8WB9r7Ltw4gVLIxaSajqybSA7oEB10RFkn954eRlW5Ll/kmoIq
-         KSHQxtwJz+qxy1ycXWhHXsKxnaRCTCHLYd8R9zYmt+OI6pba+IiJL2aBqV4W0/Ri7I
-         PAmNgZDNZnxNQg6lfWJUUsJiuRQvnv5Tha0JVNm4GRPQqA5WQ9PEl+YSU1F8iORF+K
-         IlHPLLL3c/k/BZvlMR753FbXavW+Edp4hcK4eOWh5kksCUVE1jiRj70WNMC/vVZJcv
-         PFJO5gMnnqPSCZDuinj05v1CiSwbo1RMiEkIVjX3iiJl8VDuTYWLgPq/go9zS5ueZP
-         K6+QYFNA2Ehsg==
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1558144594.f92d1rcmes.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/18/2019 12:25 AM, Bjorn Helgaas wrote:
-> On Fri, May 17, 2019 at 11:23:36PM +0530, Vidya Sagar wrote:
->> On 5/17/2019 6:54 PM, Bjorn Helgaas wrote:
->>> Do you have "lspci -vvxxx" output for the root ports handy?
->>>
->>> If there's some clue in the standard config space that would tell us
->>> that MSI works for some events but not others, we could make the PCI
->>> core pay attention it.  That would be the best solution because it
->>> wouldn't require Tegra-specific code.
->>
->> Here is the output of 'lspci vvxxx' for one of Tegra194's root ports.
-> 
-> Thanks!
-> 
-> This port advertises both MSI and MSI-X, and neither one is enabled.
-> This particular port doesn't have a slot, so hotplug isn't applicable
-> to it.
-> 
-> But if I understand correctly, if MSI or MSI-X were enabled and the
-> port had a slot, the port would generate MSI/MSI-X hotplug interrupts.
-> But PME and AER events would still cause INTx interrupts (even with
-> MSI or MSI-X enabled).
-> 
-> Do I have that right?  I just want to make sure that the reason for
-> PME being INTx is a permanent hardware choice and that it's not
-> related to MSI and MSI-X currently being disabled.
-Yes. Thats right. Its hardware choice that our hardware engineers made to
-use INTx for PME instead of MSI irrespective of MSI/MSI-X enabled/disabled
-in the root port.
+Naveen N. Rao's on May 18, 2019 5:02 am:
+> With -mprofile-kernel, gcc emits 'mflr r0', followed by 'bl _mcount' to
+> enable function tracing and profiling. So far, with dynamic ftrace, we
+> used to only patch out the branch to _mcount(). However, Nick Piggin
+> points out that "mflr is executed by the branch unit that can only
+> execute one per cycle on POWER9 and shared with branches, so it would be
+> nice to avoid it where possible."
+>=20
+> We cannot simply nop out the mflr either. Michael Ellerman pointed out
+> that when enabling function tracing, there can be a race if tracing is
+> enabled when some thread was interrupted after executing a nop'ed out
+> mflr. In this case, the thread would execute the now-patched-in branch
+> to _mcount() without having executed the preceding mflr.
+>=20
+> To solve this, we now enable function tracing in 2 steps: patch in the
+> mflr instruction, use synchronize_rcu_tasks() to ensure all existing
+> threads make progress, and then patch in the branch to _mcount(). We
+> override ftrace_replace_code() with a powerpc64 variant for this
+> purpose.
+>=20
+> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-> 
->> 0005:00:00.0 PCI bridge: NVIDIA Corporation Device 1ad0 (rev a1) (prog-if 00 [Normal decode])
->> 	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR+ FastB2B- DisINTx-
->> 	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
->> 	Latency: 0
->> 	Interrupt: pin A routed to IRQ 50
->> 	Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
->> 	I/O behind bridge: None
->> 	Memory behind bridge: 40000000-400fffff [size=1M]
->> 	Prefetchable memory behind bridge: None
->> 	Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
->> 	BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
->> 		PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
->> 	Capabilities: [40] Power Management version 3
->> 		Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
->> 		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
->> 	Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
->> 		Address: 0000000000000000  Data: 0000
->> 		Masking: 00000000  Pending: 00000000
->> 	Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
->> 		DevCap:	MaxPayload 256 bytes, PhantFunc 0
->> 			ExtTag- RBE+
->> 		DevCtl:	CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
->> 			RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
->> 			MaxPayload 128 bytes, MaxReadReq 512 bytes
->> 		DevSta:	CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr+ TransPend-
->> 		LnkCap:	Port #0, Speed 16GT/s, Width x8, ASPM L0s L1, Exit Latency L0s <1us, L1 <64us
->> 			ClockPM- Surprise+ LLActRep+ BwNot+ ASPMOptComp+
->> 		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk+
->> 			ExtSynch- ClockPM- AutWidDis- BWInt+ AutBWInt-
->> 		LnkSta:	Speed 5GT/s (downgraded), Width x1 (downgraded)
->> 			TrErr- Train- SlotClk+ DLActive+ BWMgmt+ ABWMgmt+
->> 		RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna+ CRSVisible+
->> 		RootCap: CRSVisible+
->> 		RootSta: PME ReqID 0000, PMEStatus- PMEPending-
->> 		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Not Supported ARIFwd-
->> 			 AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
->> 		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR+, OBFF Disabled ARIFwd-
->> 			 AtomicOpsCtl: ReqEn- EgressBlck-
->> 		LnkCtl2: Target Link Speed: 16GT/s, EnterCompliance- SpeedDis-
->> 			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
->> 			 Compliance De-emphasis: -6dB
->> 		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-, EqualizationPhase1-
->> 			 EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
->> 	Capabilities: [b0] MSI-X: Enable- Count=8 Masked-
->> 		Vector table: BAR=2 offset=00000000
->> 		PBA: BAR=2 offset=00010000
->> 	Capabilities: [100 v2] Advanced Error Reporting
->> 		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
->> 		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
->> 		UESvrt:	DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
->> 		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
->> 		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
->> 		AERCap:	First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
->> 			MultHdrRecCap+ MultHdrRecEn- TLPPfxPres- HdrLogCap-
->> 		HeaderLog: 00000000 00000000 00000000 00000000
->> 		RootCmd: CERptEn+ NFERptEn+ FERptEn+
->> 		RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
->> 			 FirstFatal- NonFatalMsg- FatalMsg- IntMsg 0
->> 		ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
->> 	Capabilities: [148 v1] Secondary PCI Express <?>
->> 	Capabilities: [168 v1] Physical Layer 16.0 GT/s <?>
->> 	Capabilities: [190 v1] Lane Margining at the Receiver <?>
->> 	Capabilities: [1c0 v1] L1 PM Substates
->> 		L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->> 			  PortCommonModeRestoreTime=60us PortTPowerOnTime=40us
->> 		L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
->> 			   T_CommonMode=10us LTR1.2_Threshold=0ns
->> 		L1SubCtl2: T_PwrOn=10us
->> 	Capabilities: [1d0 v1] Vendor Specific Information: ID=0002 Rev=4 Len=100 <?>
->> 	Capabilities: [2d0 v1] Vendor Specific Information: ID=0001 Rev=1 Len=038 <?>
->> 	Capabilities: [308 v1] Data Link Feature <?>
->> 	Capabilities: [314 v1] Precision Time Measurement
->> 		PTMCap: Requester:+ Responder:+ Root:+
->> 		PTMClockGranularity: 16ns
->> 		PTMControl: Enabled:- RootSelected:-
->> 		PTMEffectiveGranularity: Unknown
->> 	Capabilities: [320 v1] Vendor Specific Information: ID=0004 Rev=1 Len=054 <?>
->> 	Kernel driver in use: pcieport
->> 00: de 10 d0 1a 07 01 10 00 a1 00 04 06 00 00 01 00
->> 10: 00 00 00 00 00 00 00 00 00 01 ff 00 f0 00 00 00
->> 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
->> 30: 00 00 00 00 40 00 00 00 00 00 00 00 32 01 02 00
->> 40: 01 50 c3 c9 08 00 00 00 00 00 00 00 00 00 00 00
->> 50: 05 70 80 01 00 00 00 00 00 00 00 00 00 00 00 00
->> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> 70: 10 b0 42 00 01 80 00 00 1f 28 10 00 84 4c 7b 00
->> 80: 40 04 12 f0 00 00 00 00 c0 03 40 00 18 00 01 00
->> 90: 00 00 00 00 1f 0c 01 00 00 04 00 00 1e 00 80 01
->> a0: 04 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00
->> b0: 11 00 07 00 02 00 00 00 02 00 01 00 00 00 00 00
->> c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Nice! Thanks for doing a real patch. You needn't add my SOB there: my
+hack was obviously garbage :) Suggested-by if anything, then for
+clarity of changelog you can write the motivation directly rather than
+quote me.
 
+I don't know the ftrace subsystem well, but the powerpc instructions
+and patching sequence appears to match what we agreed is the right way
+to go.
+
+As a suggestion, I would perhaps add most of information from the
+second and third paragraphs of the changelog into comments
+(and also explain that the lone mflr r0 is harmless).
+
+But otherwise it looks good
+
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+
+> ---
+>  arch/powerpc/kernel/trace/ftrace.c | 188 +++++++++++++++++++++++++----
+>  1 file changed, 166 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/arch/powerpc/kernel/trace/ftrace.c b/arch/powerpc/kernel/tra=
+ce/ftrace.c
+> index 517662a56bdc..5c3523c3b259 100644
+> --- a/arch/powerpc/kernel/trace/ftrace.c
+> +++ b/arch/powerpc/kernel/trace/ftrace.c
+> @@ -125,7 +125,7 @@ __ftrace_make_nop(struct module *mod,
+>  {
+>  	unsigned long entry, ptr, tramp;
+>  	unsigned long ip =3D rec->ip;
+> -	unsigned int op, pop;
+> +	unsigned int op;
+> =20
+>  	/* read where this goes */
+>  	if (probe_kernel_read(&op, (void *)ip, sizeof(int))) {
+> @@ -160,8 +160,6 @@ __ftrace_make_nop(struct module *mod,
+> =20
+>  #ifdef CONFIG_MPROFILE_KERNEL
+>  	/* When using -mkernel_profile there is no load to jump over */
+> -	pop =3D PPC_INST_NOP;
+> -
+>  	if (probe_kernel_read(&op, (void *)(ip - 4), 4)) {
+>  		pr_err("Fetching instruction at %lx failed.\n", ip - 4);
+>  		return -EFAULT;
+> @@ -169,26 +167,22 @@ __ftrace_make_nop(struct module *mod,
+> =20
+>  	/* We expect either a mflr r0, or a std r0, LRSAVE(r1) */
+>  	if (op !=3D PPC_INST_MFLR && op !=3D PPC_INST_STD_LR) {
+> -		pr_err("Unexpected instruction %08x around bl _mcount\n", op);
+> +		pr_err("Unexpected instruction %08x before bl _mcount\n", op);
+>  		return -EINVAL;
+>  	}
+> -#else
+> -	/*
+> -	 * Our original call site looks like:
+> -	 *
+> -	 * bl <tramp>
+> -	 * ld r2,XX(r1)
+> -	 *
+> -	 * Milton Miller pointed out that we can not simply nop the branch.
+> -	 * If a task was preempted when calling a trace function, the nops
+> -	 * will remove the way to restore the TOC in r2 and the r2 TOC will
+> -	 * get corrupted.
+> -	 *
+> -	 * Use a b +8 to jump over the load.
+> -	 */
+> =20
+> -	pop =3D PPC_INST_BRANCH | 8;	/* b +8 */
+> +	/* We should patch out the bl to _mcount first */
+> +	if (patch_instruction((unsigned int *)ip, PPC_INST_NOP)) {
+> +		pr_err("Patching NOP failed.\n");
+> +		return -EPERM;
+> +	}
+> =20
+> +	if (op =3D=3D PPC_INST_MFLR &&
+> +		patch_instruction((unsigned int *)(ip - 4), PPC_INST_NOP)) {
+> +		pr_err("Patching NOP failed.\n");
+> +		return -EPERM;
+> +	}
+> +#else
+>  	/*
+>  	 * Check what is in the next instruction. We can see ld r2,40(r1), but
+>  	 * on first pass after boot we will see mflr r0.
+> @@ -202,12 +196,25 @@ __ftrace_make_nop(struct module *mod,
+>  		pr_err("Expected %08x found %08x\n", PPC_INST_LD_TOC, op);
+>  		return -EINVAL;
+>  	}
+> -#endif /* CONFIG_MPROFILE_KERNEL */
+> =20
+> -	if (patch_instruction((unsigned int *)ip, pop)) {
+> +	/*
+> +	 * Our original call site looks like:
+> +	 *
+> +	 * bl <tramp>
+> +	 * ld r2,XX(r1)
+> +	 *
+> +	 * Milton Miller pointed out that we can not simply nop the branch.
+> +	 * If a task was preempted when calling a trace function, the nops
+> +	 * will remove the way to restore the TOC in r2 and the r2 TOC will
+> +	 * get corrupted.
+> +	 *
+> +	 * Use a b +8 to jump over the load.
+> +	 */
+> +	if (patch_instruction((unsigned int *)ip, PPC_INST_BRANCH | 8)) {
+>  		pr_err("Patching NOP failed.\n");
+>  		return -EPERM;
+>  	}
+> +#endif /* CONFIG_MPROFILE_KERNEL */
+> =20
+>  	return 0;
+>  }
+> @@ -421,6 +428,25 @@ static int __ftrace_make_nop_kernel(struct dyn_ftrac=
+e *rec, unsigned long addr)
+>  		return -EPERM;
+>  	}
+> =20
+> +#ifdef CONFIG_MPROFILE_KERNEL
+> +	if (probe_kernel_read(&op, (void *)(ip - 4), 4)) {
+> +		pr_err("Fetching instruction at %lx failed.\n", ip - 4);
+> +		return -EFAULT;
+> +	}
+> +
+> +	/* We expect either a mflr r0, or a std r0, LRSAVE(r1) */
+> +	if (op !=3D PPC_INST_MFLR && op !=3D PPC_INST_STD_LR) {
+> +		pr_err("Unexpected instruction %08x before bl _mcount\n", op);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (op =3D=3D PPC_INST_MFLR &&
+> +		patch_instruction((unsigned int *)(ip - 4), PPC_INST_NOP)) {
+> +		pr_err("Patching NOP failed.\n");
+> +		return -EPERM;
+> +	}
+> +#endif
+> +
+>  	return 0;
+>  }
+> =20
+> @@ -429,6 +455,7 @@ int ftrace_make_nop(struct module *mod,
+>  {
+>  	unsigned long ip =3D rec->ip;
+>  	unsigned int old, new;
+> +	int rc;
+> =20
+>  	/*
+>  	 * If the calling address is more that 24 bits away,
+> @@ -439,7 +466,27 @@ int ftrace_make_nop(struct module *mod,
+>  		/* within range */
+>  		old =3D ftrace_call_replace(ip, addr, 1);
+>  		new =3D PPC_INST_NOP;
+> -		return ftrace_modify_code(ip, old, new);
+> +		rc =3D ftrace_modify_code(ip, old, new);
+> +#ifdef CONFIG_MPROFILE_KERNEL
+> +		if (rc)
+> +			return rc;
+> +
+> +		if (probe_kernel_read(&old, (void *)(ip - 4), 4)) {
+> +			pr_err("Fetching instruction at %lx failed.\n", ip - 4);
+> +			return -EFAULT;
+> +		}
+> +
+> +		/* We expect either a mflr r0, or a std r0, LRSAVE(r1) */
+> +		if (old !=3D PPC_INST_MFLR && old !=3D PPC_INST_STD_LR) {
+> +			pr_err("Unexpected instruction %08x before bl _mcount\n", old);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (old =3D=3D PPC_INST_MFLR)
+> +			rc =3D patch_instruction((unsigned int *)(ip - 4),
+> +					PPC_INST_NOP);
+> +#endif
+> +		return rc;
+>  	} else if (core_kernel_text(ip))
+>  		return __ftrace_make_nop_kernel(rec, addr);
+> =20
+> @@ -863,6 +910,103 @@ void arch_ftrace_update_code(int command)
+>  	ftrace_modify_all_code(command);
+>  }
+> =20
+> +#ifdef CONFIG_MPROFILE_KERNEL
+> +static int
+> +__ftrace_make_call_prep(struct dyn_ftrace *rec)
+> +{
+> +	void *ip =3D (void *)rec->ip - MCOUNT_INSN_SIZE;
+> +	unsigned int op[2], pop;
+> +
+> +	/* read where this goes */
+> +	if (probe_kernel_read(op, ip, sizeof(op)))
+> +		return -EFAULT;
+> +
+> +	if (op[1] !=3D PPC_INST_NOP) {
+> +		pr_err("Unexpected call sequence at %p: %x %x\n",
+> +							ip, op[0], op[1]);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * nothing to do if this is using the older -mprofile-kernel
+> +	 * instruction sequence
+> +	 */
+> +	if (op[0] !=3D PPC_INST_NOP)
+> +		return 0;
+> +
+> +	pop =3D PPC_INST_MFLR;
+> +
+> +	if (patch_instruction((unsigned int *)ip, pop)) {
+> +		pr_err("Patching MFLR failed.\n");
+> +		return -EPERM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void ftrace_replace_code(int mod_flags)
+> +{
+> +	int enable =3D mod_flags & FTRACE_MODIFY_ENABLE_FL;
+> +	int schedulable =3D mod_flags & FTRACE_MODIFY_MAY_SLEEP_FL;
+> +	int ret, failed, make_call =3D 0;
+> +	struct ftrace_rec_iter *iter;
+> +	struct dyn_ftrace *rec;
+> +
+> +	if (unlikely(!ftrace_enabled))
+> +		return;
+> +
+> +	for_ftrace_rec_iter(iter) {
+> +		rec =3D ftrace_rec_iter_record(iter);
+> +
+> +		if (rec->flags & FTRACE_FL_DISABLED)
+> +			continue;
+> +
+> +		ret =3D ftrace_test_record(rec, enable);
+> +		if (ret =3D=3D FTRACE_UPDATE_MAKE_CALL) {
+> +			make_call++;
+> +			failed =3D __ftrace_make_call_prep(rec);
+> +		} else {
+> +			failed =3D ftrace_do_replace_code(rec, enable);
+> +		}
+> +
+> +		if (failed) {
+> +			ftrace_bug(failed, rec);
+> +			/* Stop processing */
+> +			return;
+> +		}
+> +
+> +		if (schedulable)
+> +			cond_resched();
+> +	}
+> +
+> +	if (!make_call)
+> +		return;
+> +
+> +	synchronize_rcu_tasks();
+> +
+> +	for_ftrace_rec_iter(iter) {
+> +		rec =3D ftrace_rec_iter_record(iter);
+> +
+> +		if (rec->flags & FTRACE_FL_DISABLED)
+> +			continue;
+> +
+> +		ret =3D ftrace_test_record(rec, enable);
+> +		if (ret =3D=3D FTRACE_UPDATE_MAKE_CALL)
+> +			failed =3D ftrace_do_replace_code(rec, enable);
+> +
+> +		if (failed) {
+> +			ftrace_bug(failed, rec);
+> +			/* Stop processing */
+> +			return;
+> +		}
+> +
+> +		if (schedulable)
+> +			cond_resched();
+> +	}
+> +
+> +}
+> +#endif
+> +
+>  #ifdef CONFIG_PPC64
+>  #define PACATOC offsetof(struct paca_struct, kernel_toc)
+> =20
+> --=20
+> 2.21.0
+>=20
+>=20
+=
