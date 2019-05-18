@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D29221D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 08:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35188221DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 08:35:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbfERGfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 02:35:02 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39392 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfERGfB (ORCPT
+        id S1729106AbfERGfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 02:35:08 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34580 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfERGfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 02:35:01 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z26so4736291pfg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 23:35:01 -0700 (PDT)
+        Sat, 18 May 2019 02:35:07 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n19so4749680pfa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 23:35:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mnwK63y6Dxz7mIJI05T7x97DYFRtJ17NMuTrKIc014M=;
-        b=asRGrqpWpdfE+Rc7WtUKB1pcF8teYsALgNKT7TQGybNVqxUP2MmEJceB/zBt/+GeZM
-         jYPOzwVuv6N+NgDdtssYNO/zekixpzX4ZytS+5+ggzC0oqUMVdrDwhqSpsdGHT9mGT65
-         id5r71CCO6lQW43uiu6ce6gwOe9vq4TGaNLeMtlQ8kLOA4fuH3loWS0n7gkRpBC51iPp
-         3P8oiqbomgexqc0jxHYxSLhNfvkJkqVShUgEfa/za74A6006zXFwTprRGxNXqyH/ehU/
-         FgU/aml4uEfT3l6fNyM84l2Z+kBhlmW/8KuRvSVV9gJAH+su+MH2D5cSGhtnJWBaA0x2
-         EkXQ==
+        bh=5mnk+Z+ykkkxx1iqAG4OvYzZ3Yw4zSRGNz5ufCwke+I=;
+        b=Oec2a1TpHwupRsO7p1zgG7T0646zlZ4BtWnC62LOFlWhSgXO4ralnDDEGmu7Dul600
+         YKvXWol+sEJm6ef+ezLzngP1hJLSNUWIbNcRDz5hoMyLCtiY9Co5WwVcyeFvjzxUAcg3
+         l/61AIet0sn535etImCbm1lQ1dxIUc2pJzPqi5oldmZc7q0dR8Ko+Le2M+nc3kSi4gtA
+         fXsT6RDBTjC7KVFvZtYRL9IrXRnItn4SAYfAtd54/oiUd8HW9BMYEf0Lpr1lgwqmczm1
+         hotOdAa7z3HXAN/J4bNCQyhGbx0OWpG+S8sGqxjdMTHLwLxTglmQzowsfh5mcSFw09bM
+         xuJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mnwK63y6Dxz7mIJI05T7x97DYFRtJ17NMuTrKIc014M=;
-        b=A+l+m4ea5/dUG4sxH4kVxdkETUtsvHWh2KDqxj5mwZOzclki02isnqmP8stsH3EYc6
-         ZvfGNTHHujfeLWjlCI7efbhTsZZN14ysFUu8XJMfT2mNrv9vWbQEkrCZc6c/W4SEvmoG
-         YUhNTBqVOWeRbZbXRTFLj2VHe1lMON5dzP3yr8SWAgjFkLbHg011VpaE3Cic/h7G0540
-         rWAiL1xzFOnxieSJgaTmUI0W/CGMTMnw12VXZd7BUk8n15nD8PXU6/OEOpSnAp1czQAO
-         969qfWvQtqeJfBB2I0hpstUuZNIAjragB8wcVTLK3vZetVd+lTc45b2qr5am+KHQgiIO
-         7ifQ==
-X-Gm-Message-State: APjAAAU3vBMfwT0Gnv6MEzkHm0BBx0EdxU/Aa0V2HboFM6DGbrCZJa5R
-        CsG5x2BM7Lmtj0c1fyEN+Nk=
-X-Google-Smtp-Source: APXvYqzy0dU1DJkuJies9x8QhHTMqulFVzTwRJrsGIDL21neEEQGcysLNHo1CtlvbkWmKfh15z+Jhg==
-X-Received: by 2002:a63:903:: with SMTP id 3mr48670314pgj.400.1558161300803;
-        Fri, 17 May 2019 23:35:00 -0700 (PDT)
+        bh=5mnk+Z+ykkkxx1iqAG4OvYzZ3Yw4zSRGNz5ufCwke+I=;
+        b=nurQTlQIXG1eSJnXVJ4dkpm56Dv2vRg8/R4+fUOqDnUAKiDJFCfdWcb/gqIK+6PA3y
+         ALEhl7TCQIfOqWaUDX5wOlrNbPDrotZR+wO/V+sW0VHJy0AOrrDUjLyPmGL6dUROQtIn
+         DjAKCqsw3zeCiST6Za8OXoJo4KYfDVT/NUYYuvvc8mVh7FXpMdaOxn1rdJalTICtVAEH
+         phwi6zsQQCaW/wTV4WF4ed8zyGaKMvOKo4fl3+enxOnDXIVtpWzkeF5SoH0ZYKtpOkJW
+         h9ZGS7cAY26/JxIPs3zuzd9ag3ArHJ3POJ/y3TRFeuG1aP2o84M4Mi1VCSmV9PcljYHl
+         DvAQ==
+X-Gm-Message-State: APjAAAUuUYBZEZcnmfEBhke2QRILkUUGaZCFJFhGuYH6rtnIM2JqOERU
+        O1Cm9r+keMxB8qauaEmY28M=
+X-Google-Smtp-Source: APXvYqxsHZcdHVIQQH3WQpAnv1MPChzSxIlUVpY8xN0ntf0z+hzEvqot+UU0pQudB6WPJYMAjC1mOQ==
+X-Received: by 2002:a63:8242:: with SMTP id w63mr60658747pgd.169.1558161306322;
+        Fri, 17 May 2019 23:35:06 -0700 (PDT)
 Received: from localhost.localdomain ([103.227.98.84])
-        by smtp.googlemail.com with ESMTPSA id h26sm14347874pgh.26.2019.05.17.23.34.56
+        by smtp.googlemail.com with ESMTPSA id h26sm14347874pgh.26.2019.05.17.23.35.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 23:35:00 -0700 (PDT)
+        Fri, 17 May 2019 23:35:05 -0700 (PDT)
 From:   Moses Christopher <moseschristopherb@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     Larry.Finger@lwfinger.net, david.kershner@unisys.com,
@@ -53,9 +53,9 @@ Cc:     Larry.Finger@lwfinger.net, david.kershner@unisys.com,
         hdegoede@redhat.com, devel@driverdev.osuosl.org,
         sparmaintainer@unisys.com,
         Moses Christopher <moseschristopherb@gmail.com>
-Subject: [PATCH v1 5/6] staging: rtl8723bs: use help instead of ---help--- in Kconfig
-Date:   Sat, 18 May 2019 12:03:40 +0530
-Message-Id: <20190518063341.11178-6-moseschristopherb@gmail.com>
+Subject: [PATCH v1 6/6] staging: vt665*: use help instead of ---help--- in Kconfig
+Date:   Sat, 18 May 2019 12:03:41 +0530
+Message-Id: <20190518063341.11178-7-moseschristopherb@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190518063341.11178-1-moseschristopherb@gmail.com>
 References: <20190518063341.11178-1-moseschristopherb@gmail.com>
@@ -69,22 +69,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Moses Christopher <moseschristopherb@gmail.com>
 ---
- drivers/staging/rtl8723bs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vt6655/Kconfig | 5 ++---
+ drivers/staging/vt6656/Kconfig | 5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/Kconfig b/drivers/staging/rtl8723bs/Kconfig
-index 744091d46f4c..a88467334dac 100644
---- a/drivers/staging/rtl8723bs/Kconfig
-+++ b/drivers/staging/rtl8723bs/Kconfig
-@@ -5,7 +5,7 @@ config RTL8723BS
- 	depends on m
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
+diff --git a/drivers/staging/vt6655/Kconfig b/drivers/staging/vt6655/Kconfig
+index e4b224fedf5b..d1cd5de46dcf 100644
+--- a/drivers/staging/vt6655/Kconfig
++++ b/drivers/staging/vt6655/Kconfig
+@@ -2,6 +2,5 @@
+ config VT6655
+    tristate "VIA Technologies VT6655 support"
+    depends on PCI && MAC80211 && m
+-   ---help---
+-   This is a vendor-written driver for VIA VT6655.
+-
++   help
++     This is a vendor-written driver for VIA VT6655.
+diff --git a/drivers/staging/vt6656/Kconfig b/drivers/staging/vt6656/Kconfig
+index 51e295265ba6..f52a3f1d9a2e 100644
+--- a/drivers/staging/vt6656/Kconfig
++++ b/drivers/staging/vt6656/Kconfig
+@@ -3,6 +3,5 @@ config VT6656
+ 	tristate "VIA Technologies VT6656 support"
+ 	depends on MAC80211 && USB && WLAN && m
+ 	select FW_LOADER
 -	---help---
+-	This is a vendor-written driver for VIA VT6656.
+-
 +	help
- 	This option enables support for RTL8723BS SDIO drivers, such as
- 	the wifi found on the 1st gen Intel Compute Stick, the CHIP
- 	and many other Intel Atom and ARM based devices.
++	  This is a vendor-written driver for VIA VT6656.
 -- 
 2.17.1
 
