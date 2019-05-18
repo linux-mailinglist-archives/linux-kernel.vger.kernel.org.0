@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BE9722393
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 15:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8494C2239A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 16:15:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbfERNwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 09:52:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43024 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728557AbfERNwY (ORCPT
+        id S1729485AbfEROPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 10:15:40 -0400
+Received: from [49.216.8.140] ([49.216.8.140]:55278 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729440AbfEROPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 09:52:24 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4IDpNir027680
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 09:52:23 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sjej779ck-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 09:52:23 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Sat, 18 May 2019 14:52:21 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 18 May 2019 14:52:16 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4IDqFpp37814272
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 18 May 2019 13:52:15 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9741A4054;
-        Sat, 18 May 2019 13:52:15 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24114A405B;
-        Sat, 18 May 2019 13:52:14 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.199.47.185])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 18 May 2019 13:52:13 +0000 (GMT)
-Date:   Sat, 18 May 2019 19:22:11 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jikos@kernel.org, jpoimboe@redhat.com, pmladek@suse.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH] stacktrace: fix CONFIG_ARCH_STACKWALK
- stack_trace_save_tsk_reliable return
-References: <20190517185117.24642-1-joe.lawrence@redhat.com>
+        Sat, 18 May 2019 10:15:40 -0400
+X-Greylist: delayed 331 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 May 2019 10:15:40 EDT
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 3858DC023A;
+        Sat, 18 May 2019 22:10:08 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v2] clocksource: Untrust the clocksource watchdog when its interval is too small
+Date:   Sat, 18 May 2019 22:10:05 +0800
+Message-Id: <20190518141005.1132-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190516090651.1396-1-harry.pan@intel.com>
+References: <20190516090651.1396-1-harry.pan@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517185117.24642-1-joe.lawrence@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-TM-AS-GCONF: 00
-x-cbid: 19051813-0028-0000-0000-0000036F091B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19051813-0029-0000-0000-0000242EAA75
-Message-Id: <20190518135211.GA17374@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-18_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905180099
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 02:51:17PM -0400, Joe Lawrence wrote:
-> Miroslav reported that the livepatch self-tests were failing,
-> specifically a case in which the consistency model ensures that we do
-> not patch a current executing function, "TEST: busy target module".
-> 
-> Recent renovations to stack_trace_save_tsk_reliable() left it returning
-> only an -ERRNO success indication in some configuration combinations:
-> 
->   klp_check_stack()
->     ret = stack_trace_save_tsk_reliable()
->       #ifdef CONFIG_ARCH_STACKWALK && CONFIG_HAVE_RELIABLE_STACKTRACE
->         stack_trace_save_tsk_reliable()
->           ret = arch_stack_walk_reliable()
->             return 0
->             return -EINVAL
->           ...
->           return ret;
->     ...
->     if (ret < 0)
->       /* stack_trace_save_tsk_reliable error */
->     nr_entries = ret;                               << 0
-> 
-> Previously (and currently for !CONFIG_ARCH_STACKWALK &&
-> CONFIG_HAVE_RELIABLE_STACKTRACE) stack_trace_save_tsk_reliable()
-> returned the number of entries that it consumed in the passed storage
-> array.
-> 
-> In the case of the above config and trace, be sure to return the
-> stacktrace_cookie.len on stack_trace_save_tsk_reliable() success.
-> 
-> Fixes: 25e39e32b0a3f ("livepatch: Simplify stack trace retrieval")
-> Reported-by: Miroslav Benes <mbenes@suse.cz>
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+This patch performs a sanity check on the deviation of the clocksource watchdog,
+target to reduce false alarm that incorrectly marks current clocksource unstable
+when there comes discrepancy.
 
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Say if there is a discrepancy between the current clocksource and watchdog,
+validate the watchdog deviation first, if its interval is too small against
+the expected timer interval, we shall trust the current clocksource.
+
+It is identified on some Coffee Lake platform w/ PC10 allowed, when the CPU
+entered and exited from PC10 (the residency counter is increased), the HPET
+generates timestamp delay, this causes discrepancy making kernel incorrectly
+untrust the current clocksource (TSC in this case) and re-select the next
+clocksource which is the problematic HPET, this eventually causes a user
+sensible wall clock delay.
+
+The HPET timestamp delay shall be tackled in firmware domain in order to
+properly handle the timer offload between XTAL and RTC when it enters PC10,
+while this patch is a mitigation to reduce the false alarm of clocksource
+unstable regardless what clocksources are paired.
+
+v2: fix resource leak: the locked watchdog_lock
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203183
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+
+---
+
+ kernel/time/clocksource.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3bcc19ceb073..090d937d5ec4 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -96,6 +96,7 @@ static u64 suspend_start;
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+ static void clocksource_watchdog_work(struct work_struct *work);
+ static void clocksource_select(void);
++static void clocksource_dequeue_watchdog(struct clocksource *cs);
+ 
+ static LIST_HEAD(watchdog_list);
+ static struct clocksource *watchdog;
+@@ -236,6 +237,12 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 
+ 		/* Check the deviation from the watchdog clocksource. */
+ 		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
++			if (wd_nsec < jiffies_to_nsecs(WATCHDOG_INTERVAL) - WATCHDOG_THRESHOLD) {
++				pr_err("Stop timekeeping watchdog '%s' because expected interval is too small in %lld ns only\n",
++					watchdog->name, wd_nsec);
++				clocksource_dequeue_watchdog(cs);
++				goto out;
++			}
+ 			pr_warn("timekeeping watchdog on CPU%d: Marking clocksource '%s' as unstable because the skew is too large:\n",
+ 				smp_processor_id(), cs->name);
+ 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
+-- 
+2.20.1
 
