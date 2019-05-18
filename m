@@ -2,228 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00DAD220D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 02:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A90C220DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 02:06:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfERACY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 20:02:24 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34560 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726774AbfERACY (ORCPT
+        id S1729041AbfERAGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 20:06:10 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42736 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbfERAGK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 20:02:24 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4HNr8Tw029763;
-        Fri, 17 May 2019 17:02:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=0yJFAjjXi07wEJ4fA+FNNXJlqovIbNk2gdEErTE86u4=;
- b=SWsTNEXN5oyVqNvQm3KKYQfVGfUKXSMXT00I68bCuf7OCvF+vasbBtRLP0DRJkeJUeSQ
- XjZz9A1q0wFTPk024WaoWfrgHkR4TnR3CvlPz0tJsgmbyVExmMONqV6JaBtaD7f87prw
- KCj/zcf4sItlTCTFRpwv5bbOL+sanw4uj8U= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sj0k71byq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 17 May 2019 17:02:14 -0700
-Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
- ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 17 May 2019 17:02:12 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 17 May 2019 17:02:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0yJFAjjXi07wEJ4fA+FNNXJlqovIbNk2gdEErTE86u4=;
- b=FBCEySafzGBYQ6hINRqfbreX61Sxe/OUyMC8oKUXJZ1Jvk0Fmw25zaqWcWGKjZvVdZGWOiGQaPoybgpgU7M3ZzT0mTPqa6gcPle5x7YlmhD2YFDMrAgiCU4+YmVnwzt+aadp0u/Niv2Z90yFDgrvbbNPLoCCQLtGD2oxc1xRnPM=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2440.namprd15.prod.outlook.com (52.135.198.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.25; Sat, 18 May 2019 00:02:10 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1900.010; Sat, 18 May 2019
- 00:02:10 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Shakeel Butt <shakeelb@google.com>
-CC:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chris Down <chris@chrisdown.name>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, memcg: introduce memory.events.local
-Thread-Topic: [PATCH] mm, memcg: introduce memory.events.local
-Thread-Index: AQHVDQs6vMYC7L0Mr0mdinpaIfY8mqZv/8SA
-Date:   Sat, 18 May 2019 00:02:10 +0000
-Message-ID: <20190518000203.GA13413@tower.DHCP.thefacebook.com>
-References: <20190517234909.175734-1-shakeelb@google.com>
-In-Reply-To: <20190517234909.175734-1-shakeelb@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR21CA0034.namprd21.prod.outlook.com
- (2603:10b6:300:129::20) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::b22a]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6925400e-b708-4265-226d-08d6db2412e1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB2440;
-x-ms-traffictypediagnostic: BYAPR15MB2440:
-x-microsoft-antispam-prvs: <BYAPR15MB244099E10F0E1ADCED94F5E5BE040@BYAPR15MB2440.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0041D46242
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(376002)(136003)(346002)(366004)(189003)(199004)(8676002)(229853002)(478600001)(33656002)(102836004)(53936002)(81156014)(76176011)(68736007)(52116002)(6506007)(99286004)(386003)(81166006)(66446008)(8936002)(86362001)(46003)(64756008)(66476007)(66556008)(1076003)(71190400001)(316002)(4326008)(446003)(476003)(66946007)(25786009)(5660300002)(73956011)(186003)(2906002)(6246003)(256004)(6116002)(6916009)(6512007)(14454004)(11346002)(486006)(71200400001)(9686003)(14444005)(6486002)(54906003)(6436002)(305945005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2440;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pC79anZDT7JnqgjfyR0A8BP7iQqBaTQ9/Yt3OQHSozW3OLYESKpCDMTj1+QyrJel0Tt+gvNlDLgyaGZ/6HxxNwXr/iHwqDN6nVluXVHiMZ7OnCVnWSN0ijv91oJBSboI1pzAAcLnU6FL9r8EAEHB+aYyNEjXn2etNUHiRLqUTQQS/J69muz1M9U0ibPiGEp6kGlorhj5xGzDunBLSMrkdgOgz5+ixLy7kNQj93yWZseXorkyW6dJY99z9zfB67ktB34XAUol3OZ0imfHmhPCi7rp2afqLxZMgvjLAIPCUIvDcElsaRi0Xlt+qGaZYAPysPiqZMHX2xlle/DWHldHwSTciBgs7d9hIrb9gXjzKlVutUGjR0MvUB/ISfPENCZI/htievQxPeonEM8z3T/9JrfuulnLL9iKQlTXyxS1Nfg=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A243B38FB7E72E45A0F5595CB9DE1504@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 17 May 2019 20:06:10 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d4so5510744qkc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 17:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qUU/PCHJ10Cnm4pEYGt2NYLBE8MczWcaqgp3zO0rTb0=;
+        b=XpHCXZ0vlW6ZB0LjNM3gSWk+gqE+tUaKl7t5x0Uy0r30UxhLbJy+WPkVwwq+x9/KQw
+         +CRNhMn/4++Gq8rK/DF2O3PN4lwDVocPTCjf90D6TQL/JFiByl1VKPohza0LgoggQUBz
+         PBQbfib83VzeF6lJ7d6/ERQaZw7rah61nnorKe+b9YXK0B+pXNDa5VZsNEEl7foC4tjD
+         1/Bh+WHotDx8JFM0DJ3sa09ujJ/a8zWFMl0O2QphX/caCiFP54RYDbSlvUZFlGbJK594
+         7fySsbMJ780nVzcYMRutROAriGZ/5rGlAuaXRPOzLRCsbglNSZkVH0rCdmrEB4TiipDl
+         cTYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qUU/PCHJ10Cnm4pEYGt2NYLBE8MczWcaqgp3zO0rTb0=;
+        b=d726qp1ocScQEqe1YGpXEo6K4wq4OCTa/nwYiWanRNFENyBESL3ABOeqfCZvxzwyEq
+         EgHE9V/UveoHVRstQ4ktZVUIQYXZ6f9tUCk36glL6LJxiHw1aXMsrZvxyqsWAuXVZtCh
+         6w/7NejZ/iTSJVwJvwFeKPe9Ostn/y9CijrknBDiYJ7iS/2LrHLikd/KjPfQ7/OTOP0+
+         wARHS0Z3/hfHjw+msIlSYo3kacIo63K1DDmGiVVjzGLx24g6KCGRimtQOVCpTMskMUIz
+         vNp/iDYz+nN4NkxKJVwtWB/tJbhuZ5ORsgtGagjW94AvOI1BPRdc5IG9SiJtX2pbL5p/
+         GYXg==
+X-Gm-Message-State: APjAAAVWINa0Z5zFEuiKmKU8zn3ToQ//DjOnx+OyNrG6Ap3Cg1Gd/tjB
+        GmhOO9mkBxHPQFFyIOaYNwYXiQXGykMS8kWpg43y
+X-Google-Smtp-Source: APXvYqx9dlDkMrn2MOaCbua3SEWTUfkJSCGmXC5rRUtuNpy08kKWyNNzYC2LUnAUQvuDM1Xcl2tLkYeLd/8PvwCfoRM=
+X-Received: by 2002:a37:4948:: with SMTP id w69mr49213504qka.122.1558137968878;
+ Fri, 17 May 2019 17:06:08 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6925400e-b708-4265-226d-08d6db2412e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2019 00:02:10.5551
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2440
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-17_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905170144
-X-FB-Internal: deliver
+References: <b8487de1-83a8-2761-f4a6-26c583eba083@oracle.com>
+ <B447B6E8-8CEF-46FF-9967-DFB2E00E55DB@amacapital.net> <4e7d52d7-d4d2-3008-b967-c40676ed15d2@oracle.com>
+ <CALCETrXtwksWniEjiWKgZWZAyYLDipuq+sQ449OvDKehJ3D-fg@mail.gmail.com>
+ <e5fedad9-4607-0aa4-297e-398c0e34ae2b@oracle.com> <20190514170522.GW2623@hirez.programming.kicks-ass.net>
+ <20190514180936.GA1977@linux.intel.com> <CALCETrVzbBLokip5n0KEyG6irH6aoEWqyNODTy8embpXhB1GQg@mail.gmail.com>
+ <20190514210603.GD1977@linux.intel.com> <A1EB80C0-2D88-4DC0-A898-3BED50A4F5A8@amacapital.net>
+ <20190514223823.GE1977@linux.intel.com>
+In-Reply-To: <20190514223823.GE1977@linux.intel.com>
+From:   Jonathan Adams <jwadams@google.com>
+Date:   Fri, 17 May 2019 17:05:32 -0700
+Message-ID: <CA+VK+GOL_sY5aWYijg1_X6VgvDtFbRX2ymuSXhsZeZH2_tO2qg@mail.gmail.com>
+Subject: Re: [RFC KVM 18/27] kvm/isolation: function to copy page table
+ entries for percpu buffer
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 04:49:09PM -0700, Shakeel Butt wrote:
-> The memory controller in cgroup v2 exposes memory.events file for each
-> memcg which shows the number of times events like low, high, max, oom
-> and oom_kill have happened for the whole tree rooted at that memcg.
-> Users can also poll or register notification to monitor the changes in
-> that file. Any event at any level of the tree rooted at memcg will
-> notify all the listeners along the path till root_mem_cgroup. There are
-> existing users which depend on this behavior.
->=20
-> However there are users which are only interested in the events
-> happening at a specific level of the memcg tree and not in the events in
-> the underlying tree rooted at that memcg. One such use-case is a
-> centralized resource monitor which can dynamically adjust the limits of
-> the jobs running on a system. The jobs can create their sub-hierarchy
-> for their own sub-tasks. The centralized monitor is only interested in
-> the events at the top level memcgs of the jobs as it can then act and
-> adjust the limits of the jobs. Using the current memory.events for such
-> centralized monitor is very inconvenient. The monitor will keep
-> receiving events which it is not interested and to find if the received
-> event is interesting, it has to read memory.event files of the next
-> level and compare it with the top level one. So, let's introduce
-> memory.events.local to the memcg which shows and notify for the events
-> at the memcg level.
->=20
-> Now, does memory.stat and memory.pressure need their local versions.
-> IMHO no due to the no internal process contraint of the cgroup v2. The
-> memory.stat file of the top level memcg of a job shows the stats and
-> vmevents of the whole tree. The local stats or vmevents of the top level
-> memcg will only change if there is a process running in that memcg but
-> v2 does not allow that. Similarly for memory.pressure there will not be
-> any process in the internal nodes and thus no chance of local pressure.
+On Tue, May 14, 2019 at 3:38 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+> On Tue, May 14, 2019 at 02:55:18PM -0700, Andy Lutomirski wrote:
+> > > On May 14, 2019, at 2:06 PM, Sean Christopherson <sean.j.christophers=
+on@intel.com> wrote:
+> > >> On Tue, May 14, 2019 at 01:33:21PM -0700, Andy Lutomirski wrote:
+> > >> I suspect that the context switch is a bit of a red herring.  A
+> > >> PCID-don't-flush CR3 write is IIRC under 300 cycles.  Sure, it's slo=
+w,
+> > >> but it's probably minor compared to the full cost of the vm exit.  T=
+he
+> > >> pain point is kicking the sibling thread.
+> > >
+> > > Speaking of PCIDs, a separate mm for KVM would mean consuming another
+> > > ASID, which isn't good.
+> >
+> > I=E2=80=99m not sure we care. We have many logical address spaces (two =
+per mm plus a
+> > few more).  We have 4096 PCIDs, but we only use ten or so.  And we have=
+ some
+> > undocumented number of *physical* ASIDs with some undocumented mechanis=
+m by
+> > which PCID maps to a physical ASID.
+>
+> Yeah, I was referring to physical ASIDs.
+>
+> > I don=E2=80=99t suppose you know how many physical ASIDs we have?
+>
+> Limited number of physical ASIDs.  I'll leave it at that so as not to
+> disclose something I shouldn't.
+>
+> > And how it interacts with the VPID stuff?
+>
+> VPID and PCID get factored into the final ASID, i.e. changing either one
+> results in a new ASID.  The SDM's oblique way of saying that:
+>
+>   VPIDs and PCIDs (see Section 4.10.1) can be used concurrently. When thi=
+s
+>   is done, the processor associates cached information with both a VPID a=
+nd
+>   a PCID. Such information is used only if the current VPID and PCID both
+>   match those associated with the cached information.
+>
+> E.g. enabling PTI in both the host and guest consumes four ASIDs just to
+> run a single task in the guest:
+>
+>   - VPID=3D0, PCID=3Dkernel
+>   - VPID=3D0, PCID=3Duser
+>   - VPID=3D1, PCID=3Dkernel
+>   - VPID=3D1, PCID=3Duser
+>
+> The impact of consuming another ASID for KVM would likely depend on both
+> the guest and host configurations/worloads, e.g. if the guest is using a
+> lot of PCIDs then it's probably a moot point.  It's something to keep in
+> mind though if we go down this path.
 
-Hi Shakeel!
+One answer to that would be to have the KVM page tables use the same
+PCID as the normal user-mode PTI page tables.  It's not ideal (since
+the qemu/whatever process can see some kernel data via meltdown it
+wouldn't be able to normally see), but might be an option to
+investigate.
 
-Local counters make total sense to me. And I think they will very useful
-in certain cases. Thank you for working on it!
-
->=20
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
->  include/linux/memcontrol.h |  7 ++++++-
->  mm/memcontrol.c            | 25 +++++++++++++++++++++++++
->  2 files changed, 31 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 36bdfe8e5965..de77405eec46 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -239,8 +239,9 @@ struct mem_cgroup {
->  	/* OOM-Killer disable */
->  	int		oom_kill_disable;
-> =20
-> -	/* memory.events */
-> +	/* memory.events and memory.events.local */
->  	struct cgroup_file events_file;
-> +	struct cgroup_file events_local_file;
-> =20
->  	/* handle for "memory.swap.events" */
->  	struct cgroup_file swap_events_file;
-> @@ -286,6 +287,7 @@ struct mem_cgroup {
->  	atomic_long_t		vmevents_local[NR_VM_EVENT_ITEMS];
-> =20
->  	atomic_long_t		memory_events[MEMCG_NR_MEMORY_EVENTS];
-> +	atomic_long_t		memory_events_local[MEMCG_NR_MEMORY_EVENTS];
-> =20
->  	unsigned long		socket_pressure;
-> =20
-> @@ -761,6 +763,9 @@ static inline void count_memcg_event_mm(struct mm_str=
-uct *mm,
->  static inline void memcg_memory_event(struct mem_cgroup *memcg,
->  				      enum memcg_memory_event event)
->  {
-> +	atomic_long_inc(&memcg->memory_events_local[event]);
-> +	cgroup_file_notify(&memcg->events_local_file);
-> +
->  	do {
->  		atomic_long_inc(&memcg->memory_events[event]);
->  		cgroup_file_notify(&memcg->events_file);
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 2713b45ec3f0..a746127012fa 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5648,6 +5648,25 @@ static int memory_events_show(struct seq_file *m, =
-void *v)
->  	return 0;
->  }
-> =20
-> +static int memory_events_local_show(struct seq_file *m, void *v)
-> +{
-> +	struct mem_cgroup *memcg =3D mem_cgroup_from_seq(m);
-> +
-> +	seq_printf(m, "low %lu\n",
-> +		   atomic_long_read(&memcg->memory_events_local[MEMCG_LOW]));
-> +	seq_printf(m, "high %lu\n",
-> +		   atomic_long_read(&memcg->memory_events_local[MEMCG_HIGH]));
-> +	seq_printf(m, "max %lu\n",
-> +		   atomic_long_read(&memcg->memory_events_local[MEMCG_MAX]));
-> +	seq_printf(m, "oom %lu\n",
-> +		   atomic_long_read(&memcg->memory_events_local[MEMCG_OOM]));
-> +	seq_printf(m, "oom_kill %lu\n",
-> +		   atomic_long_read(&memcg->memory_events_local[MEMCG_OOM_KILL])
-> +		   );
-
-Can you, please, merge this part with the non-local version? Then we'll hav=
-e
-a guarantee that the format is the same.
-
-A helper like this can be used, for example:
-    static void __memory_events_show(struct seq_file *m, atomic_long_t *eve=
-nts)
-    {
-    	seq_printf(...);
-    }
-
-Other than that looks good to me.
-
-Thanks!
+Cheers,
+- jonathan
