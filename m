@@ -2,154 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 488812244E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 19:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5409322463
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 20:05:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbfERRo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 13:44:26 -0400
-Received: from mailoutvs59.siol.net ([185.57.226.250]:42530 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726050AbfERRo0 (ORCPT
+        id S1729532AbfERSFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 14:05:41 -0400
+Received: from [49.216.8.140] ([49.216.8.140]:55394 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728283AbfERSFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 13:44:26 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 3DCC6520A8D;
-        Sat, 18 May 2019 19:44:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id GueISRJvbvib; Sat, 18 May 2019 19:44:21 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id C2B30520939;
-        Sat, 18 May 2019 19:44:21 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id F058D520A8D;
-        Sat, 18 May 2019 19:44:20 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     paul.kocialkowski@bootlin.com, maxime.ripard@bootlin.com
-Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cedrus: Allow different mod clock rates
-Date:   Sat, 18 May 2019 19:44:15 +0200
-Message-Id: <20190518174415.17795-1-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.21.0
+        Sat, 18 May 2019 14:05:41 -0400
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 21BACC023A;
+        Sun, 19 May 2019 01:45:14 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v3] clocksource: Untrust the watchdog if its interval is too small
+Date:   Sun, 19 May 2019 01:45:12 +0800
+Message-Id: <20190518174512.21053-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190518141005.1132-1-harry.pan@intel.com>
+References: <20190518141005.1132-1-harry.pan@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some VPU variants may run at higher clock speeds. They actually need
-extra speed to be capable of decoding more complex codecs like HEVC or
-bigger image sizes (4K).
+Perform sanity check on the watchdog to validate its interval, avoid
+to generate a false alarm that incorrectly marks the main clocksource
+as unstable when there comes discrepancy.
 
-Expand variant structure with mod_rate information.
+Say if there is a discrepancy between the current clocksource and watchdog,
+validate the watchdog deviation first, if its interval is too small against
+the expected timer interval, we shall trust the current clocksource, else
+incorrectly kick off the main clocksource could mess up the wall clock.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+It is identified on some Coffee Lake platform w/ PC10 allowed, it has a
+problematic HPET timer in the platform integration, when the CPU exited
+from the low power mode of PC10, the HPET generates timestamp delay, this
+causes discrepancy making kernel incorrectly untrust the current clocksource
+(TSC in this case) and re-select the next clocksource which is the problematic
+HPET, this eventually causes a user sensible wall clock delay.
+
+v2: fix resource leak: the locked watchdog_lock
+v3: revise the communication: focus on the timer self validation
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203183
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+
 ---
- drivers/staging/media/sunxi/cedrus/cedrus.c    | 11 ++++++++---
- drivers/staging/media/sunxi/cedrus/cedrus.h    |  1 +
- drivers/staging/media/sunxi/cedrus/cedrus_hw.c |  2 +-
- drivers/staging/media/sunxi/cedrus/cedrus_hw.h |  2 --
- 4 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/stagin=
-g/media/sunxi/cedrus/cedrus.c
-index d0429c0e6b6b..9349a082a29c 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-@@ -369,36 +369,41 @@ static int cedrus_remove(struct platform_device *pd=
-ev)
- }
-=20
- static const struct cedrus_variant sun4i_a10_cedrus_variant =3D {
--	/* No particular capability. */
-+	.mod_rate	=3D 320000000,
- };
-=20
- static const struct cedrus_variant sun5i_a13_cedrus_variant =3D {
--	/* No particular capability. */
-+	.mod_rate	=3D 320000000,
- };
-=20
- static const struct cedrus_variant sun7i_a20_cedrus_variant =3D {
--	/* No particular capability. */
-+	.mod_rate	=3D 320000000,
- };
-=20
- static const struct cedrus_variant sun8i_a33_cedrus_variant =3D {
- 	.capabilities	=3D CEDRUS_CAPABILITY_UNTILED,
-+	.mod_rate	=3D 320000000,
- };
-=20
- static const struct cedrus_variant sun8i_h3_cedrus_variant =3D {
- 	.capabilities	=3D CEDRUS_CAPABILITY_UNTILED,
-+	.mod_rate	=3D 402000000,
- };
-=20
- static const struct cedrus_variant sun50i_a64_cedrus_variant =3D {
- 	.capabilities	=3D CEDRUS_CAPABILITY_UNTILED,
-+	.mod_rate	=3D 402000000,
- };
-=20
- static const struct cedrus_variant sun50i_h5_cedrus_variant =3D {
- 	.capabilities	=3D CEDRUS_CAPABILITY_UNTILED,
-+	.mod_rate	=3D 402000000,
- };
-=20
- static const struct cedrus_variant sun50i_h6_cedrus_variant =3D {
- 	.capabilities	=3D CEDRUS_CAPABILITY_UNTILED,
- 	.quirks		=3D CEDRUS_QUIRK_NO_DMA_OFFSET,
-+	.mod_rate	=3D 600000000,
- };
-=20
- static const struct of_device_id cedrus_dt_match[] =3D {
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/stagin=
-g/media/sunxi/cedrus/cedrus.h
-index c57c04b41d2e..25ee1f80f2c7 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.h
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
-@@ -94,6 +94,7 @@ struct cedrus_dec_ops {
- struct cedrus_variant {
- 	unsigned int	capabilities;
- 	unsigned int	quirks;
-+	unsigned int	mod_rate;
- };
-=20
- struct cedrus_dev {
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/sta=
-ging/media/sunxi/cedrus/cedrus_hw.c
-index fbfff7c1c771..60406b2d4595 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-@@ -236,7 +236,7 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
- 		goto err_sram;
- 	}
-=20
--	ret =3D clk_set_rate(dev->mod_clk, CEDRUS_CLOCK_RATE_DEFAULT);
-+	ret =3D clk_set_rate(dev->mod_clk, variant->mod_rate);
- 	if (ret) {
- 		dev_err(dev->dev, "Failed to set clock rate\n");
-=20
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h b/drivers/sta=
-ging/media/sunxi/cedrus/cedrus_hw.h
-index b43c77d54b95..27d0882397aa 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-@@ -16,8 +16,6 @@
- #ifndef _CEDRUS_HW_H_
- #define _CEDRUS_HW_H_
-=20
--#define CEDRUS_CLOCK_RATE_DEFAULT	320000000
--
- int cedrus_engine_enable(struct cedrus_dev *dev, enum cedrus_codec codec=
-);
- void cedrus_engine_disable(struct cedrus_dev *dev);
-=20
---=20
-2.21.0
+ kernel/time/clocksource.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3bcc19ceb073..090d937d5ec4 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -96,6 +96,7 @@ static u64 suspend_start;
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+ static void clocksource_watchdog_work(struct work_struct *work);
+ static void clocksource_select(void);
++static void clocksource_dequeue_watchdog(struct clocksource *cs);
+ 
+ static LIST_HEAD(watchdog_list);
+ static struct clocksource *watchdog;
+@@ -236,6 +237,12 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 
+ 		/* Check the deviation from the watchdog clocksource. */
+ 		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
++			if (wd_nsec < jiffies_to_nsecs(WATCHDOG_INTERVAL) - WATCHDOG_THRESHOLD) {
++				pr_err("Stop timekeeping watchdog '%s' because expected interval is too small in %lld ns only\n",
++					watchdog->name, wd_nsec);
++				clocksource_dequeue_watchdog(cs);
++				goto out;
++			}
+ 			pr_warn("timekeeping watchdog on CPU%d: Marking clocksource '%s' as unstable because the skew is too large:\n",
+ 				smp_processor_id(), cs->name);
+ 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
+-- 
+2.20.1
 
