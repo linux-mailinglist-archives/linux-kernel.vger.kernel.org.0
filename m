@@ -2,129 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4769222F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 12:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E53C2230B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 12:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbfERKAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 06:00:50 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36603 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfERKAt (ORCPT
+        id S1729799AbfERKFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 06:05:10 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:47090 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729301AbfERKFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 06:00:49 -0400
-Received: by mail-io1-f66.google.com with SMTP id e19so7442816iob.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 03:00:49 -0700 (PDT)
+        Sat, 18 May 2019 06:05:08 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f37so14639367edb.13
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 03:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JRtjnzNcf3yhB2MxCBJqAnArNNc7Fr+SZA5dBOrEV90=;
-        b=ZIdkarl5Xn8hlQtMF0N5Ak3sHU9OmA6a3MbeviitO/YD7kxl6R0PDXc2zuCNPeSBm2
-         KzoxF+mJkTlpMJqXnaXkrkEanhwuClbA6nLEgFSfZ/HgmFuiWSlzu77QaxVBPVENosSo
-         5jjIqGxv7SlDz5gJ9n60bexQKxCZA9vABP0f5NY8QixxJdMeJ2abD1kbD/aaRFlIUpIV
-         h1DPQMeR4Oywgi1tRclsA/eLxYlIAgRg2X+mv/shkCPzBRDObVSyfEdOojCkdxNCjzHE
-         wCH6WZINfdmiyv0ZW3Ko8UV+PXK0BBomoi61/58Joj46jsB8Nj8EnreSAV40IVfsciWW
-         7KSg==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kuxvODYNXQX1UADGYTekrXKJHl9GqTdixhHyMJoLFkg=;
+        b=MzXf8JwF72gJj2Pq8n12P+UywZxc2BVXTvpiVUKrEniJVb1LIFP3IbcOliQYISdvq7
+         CigvtYVzwi+8s8BzhGA7JzeYEAEgELRKSJUGXkBeKo3jIoY+k+AIz1NIGNQ3IbqWFvd/
+         pZcoiBfjP1G87UNeXXgpYPrDlzF+SvvAxTS1B9J01RvJsEbVREubCnWtrpwlE+W8uhC8
+         abJb2p1WNSljrqCFAQH7at9A4yXrlhg+5ZrhECybT+pFDJTv4XLPhvmKoEIQriQEdsEE
+         2qeWRYeIhjWVjN8Omnws0ZotrB2BKKuxhO4+QGekj7Ec6VajrUKLl5oRB10tcR/KFGxb
+         SomA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JRtjnzNcf3yhB2MxCBJqAnArNNc7Fr+SZA5dBOrEV90=;
-        b=OQYxPPuNZXy5rnT9Ux3hGq5SogLx8Wm8eN96iJJoopQlzzC5USVxuTK2Oode/RcDXL
-         +5IF8XkV66wsamTTI/jfQm6iM7PKChiwgP8rkZVw9YbPkyA7qaSIU5IYq4yft7iM0mli
-         zwUDsIJkigHHH4lf723Oayy7IffBz63XgUQdiaFn3fAM4A4eRgfmzBwS+lr7GcFOa4YZ
-         k5Pc4a666zHSko0Vq9lf5nikUAtpTbkS0O9Sw6J+m7dxDyvgYIij3xqIUTO0A9weTyjU
-         WIC6V9xj3zTUf8owrPucKX/qEggSzcxiHqY1VtQp89b1otZwXwr0lx2/ygJetjzEugCU
-         x0KA==
-X-Gm-Message-State: APjAAAXuX+CylkRWfnZASsoXxNu6ME0h99gf8QLWIDV7MvMoju2UJ1Cq
-        FQ6mSf1eoFh/xpH7yFgsmId/HhO5EtlUg/1M6sC9AA==
-X-Google-Smtp-Source: APXvYqx4bvatpfL3NIuIe/lAYXvJa6LopMNSIHJiCMAb1SC4s1Ha0Ad/9vYk/fc50prgdpkalcj4sHsk3kWAy1dnzH0=
-X-Received: by 2002:a5d:968e:: with SMTP id m14mr2874037ion.49.1558173648766;
- Sat, 18 May 2019 03:00:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kuxvODYNXQX1UADGYTekrXKJHl9GqTdixhHyMJoLFkg=;
+        b=N/RSNISHPl/2Y54+QeSOKnW8w4nbXFFqybLcvb/acWoy25ixUHAAlTFlgjTbhHOSv2
+         8OqIwsivVO3oss/wnhcNJ+CINmlNKkgSG1Y2fEPznBzqI4YV4fy4Deg62NGwme2GHM7k
+         LFHePnLPi5cAWyRtKpFzoaKPMrOSI6JqRee7Ht/0zWSj3IXmHeJvVHGDDutPt+FsIjuP
+         G5gUTVdWRKqiRhpYrkfrBf1TbtpnclD8mTYre+BUAJjT8pVHUSZvFaDqjstNICe5GDxL
+         pfh1t3Epumi9uChpsn7xxH58DellauVdHYXtgDfNSdP2U6yuByHQdszawi+sUIkcob8m
+         MXdA==
+X-Gm-Message-State: APjAAAUV2fLFhNc7Lp18QZZGBX20On2cr30XUNW+yZmyrcT9PdTRwdl9
+        2cKOtrf2I8Ao4ndpJVJQBuRfoA==
+X-Google-Smtp-Source: APXvYqyJ8cSwup5T+wLOXgE4G1RIJN3Q14FiCUfotn6HCvE35vO+QFm+mQrHo4U4TisKcq8ZEYMBDQ==
+X-Received: by 2002:a50:b82d:: with SMTP id j42mr63022736ede.186.1558173905455;
+        Sat, 18 May 2019 03:05:05 -0700 (PDT)
+Received: from brauner.io ([46.183.103.8])
+        by smtp.gmail.com with ESMTPSA id y30sm3741910edc.83.2019.05.18.03.04.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 18 May 2019 03:05:04 -0700 (PDT)
+Date:   Sat, 18 May 2019 12:04:46 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     jannh@google.com, oleg@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, akpm@linux-foundation.org, cyphar@cyphar.com,
+        dhowells@redhat.com, ebiederm@xmission.com,
+        elena.reshetova@intel.com, keescook@chromium.org,
+        luto@amacapital.net, luto@kernel.org, tglx@linutronix.de,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.orgg, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        dancol@google.com, serge@hallyn.com, surenb@google.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH v1 1/2] pid: add pidfd_open()
+Message-ID: <20190518100435.c5bqpcnra53dsr6p@brauner.io>
+References: <20190516135944.7205-1-christian@brauner.io>
+ <20190516224949.GA15401@localhost>
 MIME-Version: 1.0
-References: <20190429145159.GA29076@hc> <CAHk-=wjPqcPYkiWKFc=R3+18DXqEhV+Nfbo=JWa32Xp8Nze67g@mail.gmail.com>
- <20190502082741.GE13955@hc> <CAHk-=wjmtMrxC1nSEHarBn8bW+hNXGv=2YeAWmTw1o54V8GKWA@mail.gmail.com>
- <20190502231858.GB13168@dc5-eodlnx05.marvell.com> <CAHk-=wiEahkwDXpoy=-SzJHNMRXKVSjPa870+eKKenufhO_Hgw@mail.gmail.com>
- <20190506061100.GA8465@dc5-eodlnx05.marvell.com> <20190506181039.GA2875@brain-police>
- <20190518042424.GA28517@dc5-eodlnx05.marvell.com>
-In-Reply-To: <20190518042424.GA28517@dc5-eodlnx05.marvell.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 18 May 2019 12:00:34 +0200
-Message-ID: <CAKv+Gu9U9z3iAuz4V1c5zTHuz1As8FSNGY-TJon4OLErB8ts8Q@mail.gmail.com>
-Subject: Re: [RFC] Disable lockref on arm64
-To:     Jayachandran Chandrasekharan Nair <jnair@marvell.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190516224949.GA15401@localhost>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 May 2019 at 06:25, Jayachandran Chandrasekharan Nair
-<jnair@marvell.com> wrote:
->
-> On Mon, May 06, 2019 at 07:10:40PM +0100, Will Deacon wrote:
-> > On Mon, May 06, 2019 at 06:13:12AM +0000, Jayachandran Chandrasekharan Nair wrote:
-> > > Perhaps someone from ARM can chime in here how the cas/yield combo
-> > > is expected to work when there is contention. ThunderX2 does not
-> > > do much with the yield, but I don't expect any ARM implementation
-> > > to treat YIELD as a hint not to yield, but to get/keep exclusive
-> > > access to the last failed CAS location.
-> >
-> > Just picking up on this as "someone from ARM".
-> >
-> > The yield instruction in our implementation of cpu_relax() is *only* there
-> > as a scheduling hint to QEMU so that it can treat it as an internal
-> > scheduling hint and run some other thread; see 1baa82f48030 ("arm64:
-> > Implement cpu_relax as yield"). We can't use WFE or WFI blindly here, as it
-> > could be a long time before we see a wake-up event such as an interrupt. Our
-> > implementation of smp_cond_load_acquire() is much better for that kind of
-> > thing, but doesn't help at all for a contended CAS loop where the variable
-> > is actually changing constantly.
->
-> Looking thru the perf output of this case (open/close of a file from
-> multiple CPUs), I see that refcount is a significant factor in most
-> kernel configurations - and that too uses cmpxchg (without yield).
-> x86 has an optimized inline version of refcount that helps
-> significantly. Do you think this is worth looking at for arm64?
->
+On Sat, May 18, 2019 at 05:48:03AM -0400, Joel Fernandes wrote:
+> Hi Christian,
+> 
+> For next revision, could you also CC surenb@google.com as well? He is also
+> working on the low memory killer. And also suggest CC to
+> kernel-team@android.com. And mentioned some comments below, thanks.
 
-I looked into this a while ago [0], but at the time, we decided to
-stick with the generic implementation until we encountered a use case
-that benefits from it. Worth a try, I suppose ...
+Yip, totally. Just added them both to my Cc list. :)
+(I saw you added Suren manually. I added the Android kernel team now too.)
 
-[0] https://lore.kernel.org/linux-arm-kernel/20170903101622.12093-1-ard.biesheuvel@linaro.org/
+> 
+> On Thu, May 16, 2019 at 03:59:42PM +0200, Christian Brauner wrote:
+> [snip]  
+> > diff --git a/kernel/pid.c b/kernel/pid.c
+> > index 20881598bdfa..4afca3d6dcb8 100644
+> > --- a/kernel/pid.c
+> > +++ b/kernel/pid.c
+> > @@ -38,6 +38,7 @@
+> >  #include <linux/syscalls.h>
+> >  #include <linux/proc_ns.h>
+> >  #include <linux/proc_fs.h>
+> > +#include <linux/sched/signal.h>
+> >  #include <linux/sched/task.h>
+> >  #include <linux/idr.h>
+> >  
+> > @@ -451,6 +452,55 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
+> >  	return idr_get_next(&ns->idr, &nr);
+> >  }
+> >  
+> > +/**
+> > + * pidfd_open() - Open new pid file descriptor.
+> > + *
+> > + * @pid:   pid for which to retrieve a pidfd
+> > + * @flags: flags to pass
+> > + *
+> > + * This creates a new pid file descriptor with the O_CLOEXEC flag set for
+> > + * the process identified by @pid. Currently, the process identified by
+> > + * @pid must be a thread-group leader. This restriction currently exists
+> > + * for all aspects of pidfds including pidfd creation (CLONE_PIDFD cannot
+> > + * be used with CLONE_THREAD) and pidfd polling (only supports thread group
+> > + * leaders).
+> > + *
+> > + * Return: On success, a cloexec pidfd is returned.
+> > + *         On error, a negative errno number will be returned.
+> > + */
+> > +SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
+> > +{
+> > +	int fd, ret;
+> > +	struct pid *p;
+> > +	struct task_struct *tsk;
+> > +
+> > +	if (flags)
+> > +		return -EINVAL;
+> > +
+> > +	if (pid <= 0)
+> > +		return -EINVAL;
+> > +
+> > +	p = find_get_pid(pid);
+> > +	if (!p)
+> > +		return -ESRCH;
+> > +
+> > +	ret = 0;
+> > +	rcu_read_lock();
+> > +	/*
+> > +	 * If this returns non-NULL the pid was used as a thread-group
+> > +	 * leader. Note, we race with exec here: If it changes the
+> > +	 * thread-group leader we might return the old leader.
+> > +	 */
+> > +	tsk = pid_task(p, PIDTYPE_TGID);
+> 
+> Just trying to understand the comment here. The issue is that we might either
+> return the new leader, or the old leader depending on the overlap with
+> concurrent de_thread right? In either case, we don't care though.
+> 
+> I suggest to remove the "Note..." part of the comment since it doesn't seem the
+> race is relevant here unless we are doing something else with tsk in the
+> function, but if you want to keep it that's also fine. Comment text should
+> probably should be 'return the new leader' though.
 
-> > Implementing yield in the CPU may generally be beneficial for SMT designs so
-> > that the hardware resources aren't wasted when spinning round a busy loop.
->
-> Yield is probably used in sub-optimal implementations of delay or wait.
-> It is going to be different across multiple implementations and
-> revisions (given the description in ARM spec). Having a more yielding(?)
-> implementation would be equally problematic especially in the lockref
-> case.
->
-> > For this particular discussion (i.e. lockref), however, it seems as though
-> > the cpu_relax() call is questionable to start with.
->
-> In case of lockref, taking out the yield/pause and dropping to queued
-> spinlock after some cycles appears to me to be a better approach.
-> Relying on the quality of cpu_relax() on the specific processor to
-> mitigate against contention is going to be tricky anyway.
->
-> We will do some more work here, but would appreciate any pointers
-> based on your experience here.
->
-> Thanks,
-> JC
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Nah, I actually removed the comment already independently (cf. see [1]).
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/commit/?h=pidfd_open&id=dcfc98c2d957bf3ac14b06414cb2cf4c673fc297
+> 
+> > +	if (!tsk)
+> > +		ret = -ESRCH;
+> 
+> Perhaps -EINVAL?  AFAICS, this can only happen if a CLONE_THREAD pid was
+> passed as argument to pidfd_open which is invalid. But let me know what you
+> had in mind..
+
+Hm, from the kernel's perspective ESRCH is correct but I guess EINVAL is
+nicer for userspace. So I don't have objections to using EINVAL. My
+first version did too I think.
+
+Thanks!
+Christian
