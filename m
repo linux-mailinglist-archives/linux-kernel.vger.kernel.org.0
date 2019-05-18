@@ -2,54 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F238D22215
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 09:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6396322217
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 09:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728519AbfERHe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 03:34:27 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37131 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfERHe0 (ORCPT
+        id S1728551AbfERHgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 03:36:25 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:40951 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbfERHgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 03:34:26 -0400
-Received: by mail-ua1-f67.google.com with SMTP id t18so3597832uar.4
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 00:34:26 -0700 (PDT)
+        Sat, 18 May 2019 03:36:25 -0400
+Received: by mail-ua1-f68.google.com with SMTP id d4so3591856uaj.7
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 00:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Y8FNKcZOaMHE8OeRBGHAiQ0Wkl/50EQKGniKvCcPbF8=;
-        b=Low1hR0af9FVEwuNJlp+CW8WNLe2Bvq4cV1qM8ndzcedSFxmXmiWNGSCq7porUOF30
-         ZBrrXWXDuCNXo2PQNob4J7Uu3jA2C7LoavJAFolTcwt5lI2XSBG/N8NWRGw09b6Qwf7s
-         P0jdGTAQwSVGsR+aiXQQ1yXI07kvz6LZBxojMXz5emTZ71vZs7QnBFLXNT+eMeRspmCn
-         LwgyN64KdVahTHTI2XigQP3aGe64JgTKxUmSkrswBZuXWei7/Td9wZq0vjXixYz3yBMM
-         iyMc8jo6Psc3+5QajeWDfU5ztd3dY2VtIeUDHpo7ceWIjooqG94LH5f3CCPq6wyqIkEL
-         +IWw==
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A5RwhDAP7/J1pDvTAiUDBR+MHgpw4LlKX0b6CEjmItY=;
+        b=vIa7qd4so/Vd21TmmtOdwuMHc3kXNhGCSCPFnGLt8oHHd6zkIXgQGmuQRaLELWbU3q
+         Wg702o/CWej3i12w0EGiMyO6YyJEt2qbM4pyTV0Q5FOG5WlKLlbybEd0DMnrOVcWS8fp
+         DuzJECGhlpP5RykRyvIx/LwIPn3buQd8dt1QTeUIZQ9KRHdMrztYgAePkFE1bhKTieCw
+         wUgeCC/BOoSImurLRiQ8ST0/pmSL8zlgoZ+q9LqqPH0Cj7/KIXixUrLtz9XRl4e+69xr
+         9OdRSxVxrJBxaW5PMZ0appMng0Hkv5m4evgETN+YLvibsg0mcQRAFmHhSH5zrK3Al1N2
+         dmzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Y8FNKcZOaMHE8OeRBGHAiQ0Wkl/50EQKGniKvCcPbF8=;
-        b=MFFfRK4ew15uEvl6YDJNK/gliFqmJ521siBPEc+Lvm8mKLILmIpKaSot2uZg2qwDj2
-         pJvdhLY+GVEGj7ESCrd+ZgerZb+QYlEehKk02thgJZVrhQlJ0VTRKJfy6WpMf2fW2p3F
-         9gG9kF/waAky+Gb7r4ArV0+DlrErU2O4/BYGoW5hAVWdoBY30t2tmRfm1aQAvW/If0/h
-         Be9Tda6aGhvxRyE1O+6pNSJvS9XtMpFyzX/G4IsrO4u3aK/sPUOaY4P4MJIG5mys/Hs5
-         i5hsP0a34Julw2GiDleQf5T6nK/fNhSuxAQb6WMwe3+P2FInLDcvvPLHAvsFL+pteE6T
-         v6ZQ==
-X-Gm-Message-State: APjAAAU5NB7q5UU+lO1SqT24+hYhMt17hHA/5Wnb2vv8u903PXP+vhb0
-        xI9TUg0Cyh9UMOksA8zJnGs0W4M6tupK0KxBASI=
-X-Google-Smtp-Source: APXvYqyj2I/6L5jmeHGjGyaC/ILw1LEf7TK/xqwmVDkJOtwXj4fNxordqPQgdYSlGdWQzWce1Eu5VFrjTCDHRYOr73Q=
-X-Received: by 2002:ab0:3058:: with SMTP id x24mr26651595ual.95.1558164865787;
- Sat, 18 May 2019 00:34:25 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A5RwhDAP7/J1pDvTAiUDBR+MHgpw4LlKX0b6CEjmItY=;
+        b=ODEBPCcuBQ2ox0LmdX9t2J/FsY32aD0QwPRx1/cr+PWqcGQByg63oJmcReljxVGbaZ
+         K9F7EHoIUr9t2u0dtdaBB/tyQ7Hi/e+zefzQoURa1YfHjPqo1j9+nV6d1svO5XXjtBaG
+         NLxFPCN4BHgBWYXJMixpJOrYb65iv2ihlvyVKoD67A1cdnX6bOtRzWo5h9xhuTpV73w2
+         7G0qvqDR6522xkpWL79XQaoBbF3mnqIKAuyenkDFCVZGyOWkNBuwFpnoBKWLq7NLwUhK
+         Vu0L8yajLx9G1fpfkRm9GDOmPXEZf5Bt3v3aDWNIi55dXGMdcHiVJpM4h/tcslw0HJlE
+         fIIw==
+X-Gm-Message-State: APjAAAV94RyZoKPuqyd2WDmdHZo7ZcJvkvnUmM0YHXKQ5Nr3kSOytNVF
+        T48njeHebF0Z6eNDUmZV9Ceu60oqa97wQNR6Rtx+BA==
+X-Google-Smtp-Source: APXvYqyQ3Z9FjlYf6e3EPpIIi/tS6QFWFUTVOX/BEDU6KhGJZajaaWWHlUvyLoVOQlW3V24I5M8CcgwGTrjbgRPwPfg=
+X-Received: by 2002:ab0:5930:: with SMTP id n45mr17287080uad.87.1558164983986;
+ Sat, 18 May 2019 00:36:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9f:25f3:0:0:0:0:0 with HTTP; Sat, 18 May 2019 00:34:25
- -0700 (PDT)
-Reply-To: michellegoodman45@gmail.com
-From:   Michelle <michellegood044@gmail.com>
-Date:   Sat, 18 May 2019 07:34:25 +0000
-Message-ID: <CAJ5e1jYJKuUbGT9r-4JRLRO=+ggnPUrdjvbuggZy=ALV19fcww@mail.gmail.com>
-Subject: From Michelle
-To:     undisclosed-recipients:;
+References: <20190418133913.9122-1-gilad@benyossef.com> <CAOtvUMd9WUZAFgTqVH0U2ZZp8bbHXNg9Ae_ZFvGKJTSKNct8JA@mail.gmail.com>
+ <20190517145235.GB10613@kroah.com>
+In-Reply-To: <20190517145235.GB10613@kroah.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Sat, 18 May 2019 10:36:11 +0300
+Message-ID: <CAOtvUMc++UtTP3fvXofuJA4JpdT86s5gbSx6WRtDK=sWnuUZrg@mail.gmail.com>
+Subject: Re: [PATCH 00/35] crypto: ccree: features and bug fixes for 5.2
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,9 +62,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo Schatz, wie geht es dir heute? Ich hoffe, es geht dir gut,
-bitte, ich m=C3=B6chte
-Wenn Sie meine Nachricht erhalten, brauche ich Ihre dringende Antwort.
-Vielen Dank
-Deine
-Michelle
+Hi
+
+On Fri, May 17, 2019 at 5:52 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Apr 21, 2019 at 11:52:55AM +0300, Gilad Ben-Yossef wrote:
+> > On Thu, Apr 18, 2019 at 4:39 PM Gilad Ben-Yossef <gilad@benyossef.com> =
+wrote:
+> > >
+> > > A set of new features, mostly support for CryptoCell 713
+> > > features including protected keys, security disable mode and
+> > > new HW revision indetification interface alongside many bug fixes.
+> >
+> > FYI,
+> >
+> > A port of those patches from this patch series which have been marked
+> > for stable is available at
+> > https://github.com/gby/linux/tree/4.19-ccree
+>
+> Hm, all I seem to need are 2 patches that failed to apply.  Can you just
+> provide backports for them?
+
+Sure, I'll send them early next week.
+
+Thanks,
+Gilad
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
