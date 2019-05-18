@@ -2,145 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D2C2224D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5189722250
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfERIqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 04:46:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbfERIqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 04:46:13 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D41520872;
-        Sat, 18 May 2019 08:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558169171;
-        bh=BAmzia/juQlU1FpjFzPY18M0wybiA82UzSc67eiEOxo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zAhkYO/WuYgMNfFwyeHFO3T2ohMfJb+E5kAZoyyPjvHyI91xAfZCnRy7Qzeh1ci7D
-         Iz0xKTZbzrTefspuCi0ZoiMSOYrQAV0UjWHylG6/VPU7Wcl9+4cHBdtpuAYVngiQdz
-         TV5fwwrlJfwykxju+jtbZ0LhzjR+t86aBlNKeONs=
-Date:   Sat, 18 May 2019 09:46:07 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@jms.id.au, pmeerw@pmeerw.net, lars@metafoo.de, knaack.h@gmx.de
-Subject: Re: [PATCH v2 1/3] iio: Add driver for Infineon DPS310
-Message-ID: <20190518094607.50909f16@archlinux>
-In-Reply-To: <cf108058-dd50-4651-6c97-a5c7e82ef085@linux.ibm.com>
-References: <1557344128-690-1-git-send-email-eajames@linux.ibm.com>
-        <1557344128-690-2-git-send-email-eajames@linux.ibm.com>
-        <20190511102236.4c5f9585@archlinux>
-        <cf108058-dd50-4651-6c97-a5c7e82ef085@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729156AbfERIqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 04:46:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50549 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbfERIqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 May 2019 04:46:47 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I8kLWp1731480
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 18 May 2019 01:46:21 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I8kLWp1731480
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558169182;
+        bh=jzKe6OoXGUczvNJ7aYNFg9+utOHpMMn5yu7IoexwlAs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=GNNwsoP/yAZEePMyY1aETwN7z0rRH01i7kPYNdI3k1au1WXg4rQ++KVI0SoVoGmF6
+         PO/xYgsobMBWpDbml39fdfDTBhP2IgYE96ai1Pe9/Z+QSZhpsn8Iv0GnRt3Z/6t/J3
+         0k+5Dh6wElDhjeLGZ1jDvAlFYPNDbUz3eHYuQvfDTF64ITImnWznydtsK5HkPssKym
+         oTwso+yZtU9LvExj+ZNMuZMLoaO5XfkgqobWjqzLklJlcm8cK8fdhNj/IbfgBynbGy
+         VzD3ekS4cIRZjFOrK13zlCewjmS7qY5yDjM+GWu1nCtrZBwIeAdgx9qUpZIcjluhkQ
+         C/PEHbgo8DilA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I8kE4D1731455;
+        Sat, 18 May 2019 01:46:14 -0700
+Date:   Sat, 18 May 2019 01:46:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-bdd1666b3d03d675bdb7f8d92b29f2797acbc5e8@git.kernel.org>
+Cc:     acme@redhat.com, ak@linux.intel.com, peterz@infradead.org,
+        kan.liang@linux.intel.com, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
+        yao.jin@intel.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de,
+          alexander.shishkin@linux.intel.com, yao.jin@intel.com,
+          hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          peterz@infradead.org, kan.liang@linux.intel.com,
+          yao.jin@linux.intel.com, ak@linux.intel.com, acme@redhat.com
+In-Reply-To: <1552684577-29041-1-git-send-email-yao.jin@linux.intel.com>
+References: <1552684577-29041-1-git-send-email-yao.jin@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf annotate: Remove hist__account_cycles() from
+ callback
+Git-Commit-ID: bdd1666b3d03d675bdb7f8d92b29f2797acbc5e8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 May 2019 13:46:46 -0500
-Eddie James <eajames@linux.ibm.com> wrote:
+Commit-ID:  bdd1666b3d03d675bdb7f8d92b29f2797acbc5e8
+Gitweb:     https://git.kernel.org/tip/bdd1666b3d03d675bdb7f8d92b29f2797acbc5e8
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Sat, 16 Mar 2019 05:16:17 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 15 May 2019 16:36:46 -0300
 
-> On 5/11/19 4:22 AM, Jonathan Cameron wrote:
-> > On Wed,  8 May 2019 14:35:26 -0500
-> > Eddie James <eajames@linux.ibm.com> wrote:
-> >  
-> >> From: Joel Stanley <joel@jms.id.au>
-> >>
-> >> The DPS310 is a temperature and pressure sensor. It can be accessed over
-> >> i2c and SPI.
-> >>
-> >> Signed-off-by: Eddie James <eajames@linux.ibm.com>  
-> > Hi Eddie,
-> >
-> > Ideally we'll get a sign off form Joel as well on this.
-> >
-> > A few comments inline.
-> >
-> > I 'think' this is probably fine without any locking to prevent simultaneous reads
-> > and /or writes to the registers because the few functions that do multiple reads
-> > and writes look fine.  Please do take another look at that though to confirm there
-> > are no corner cases.
-> >
-> > Otherwise there is a race in the remove path that needs fixing.
-> > Various minor bits and bobs inline.
-> >
-> > thanks,
-> >
-> > Jonathan
-> >
-> >
-> >  
-> >> ---
-> >>   MAINTAINERS                   |   6 +
-> >>   drivers/iio/pressure/Kconfig  |  10 +
-> >>   drivers/iio/pressure/Makefile |   1 +
-> >>   drivers/iio/pressure/dps310.c | 429 ++++++++++++++++++++++++++++++++++++++++++
-> >>   4 files changed, 446 insertions(+)
-> >>   create mode 100644 drivers/iio/pressure/dps310.c
-> >>  
-> 
-> >> +};
-> >> +MODULE_DEVICE_TABLE(i2c, dps310_id);
-> >> +
-> >> +static const unsigned short normal_i2c[] = {
-> >> +	0x77, 0x76, I2C_CLIENT_END
-> >> +};
-> >> +
-> >> +static struct i2c_driver dps310_driver = {
-> >> +	.driver = {
-> >> +		.name = "dps310",
-> >> +	},
-> >> +	.probe = dps310_probe,
-> >> +	.remove = dps310_remove,
-> >> +	.address_list = normal_i2c,  
-> > I'm fairly sure the address list is only used along with the detection
-> > infrastructure.  As such it doesn't actually provide any value unless
-> > you have a detect callback.  Please remove.
-> >
-> > I would like to see a DT and/or ACPI binding though as that is the
-> > means most people will use to find the device.  
-> 
-> 
-> Somehow the device is already present in the witherspoon device tree 
-> where it's currently being used, so I don't have anything to add. 
-> arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-Yes, there is a fallback path (which in theory will be removed one day)
-in which the vendor is stripped off the dts entry and the rest matched
-against the registered i2c device table.
+perf annotate: Remove hist__account_cycles() from callback
 
-However, it's less than ideal as it'll lead to a potential false match
-if some other company uses dps310 as a part number.
+The hist__account_cycles() function is executed when the
+hist_iter__branch_callback() is called.
 
-Hence it is preferred to always provide and explicit dt binding which is
-checked before this fallback path.
+But it looks it's not necessary.  In hist__account_cycles, it already
+walks on all branch entries.
 
-As a side note, this is a classic thing for people to pick up on and send
-follow up patches for.  Makes everyone's life easier to do it early!
+This patch moves the hist__account_cycles out of callback, now the data
+processing is much faster than before.
 
-Thanks,
+Previous code has an issue that the ch[offset].num++ (in
+__symbol__account_cycles) is executed repeatedly since
+hist__account_cycles is called in each hist_iter__branch_callback, so
+the counting of ch[offset].num is not correct (too big).
 
-Jonathan
+With this patch, the issue is fixed. And we don't need the code of
+"ch->reset >= ch->num / 2" to check if there are too many overlaps (in
+annotation__count_and_fill), otherwise some data would be hidden.
 
-> 
-> Thanks,
-> 
-> Eddie
-> 
-> 
-> >  
-> >> +	.id_table = dps310_id,
-> >> +};
-> >> +module_i2c_driver(dps310_driver);
-> >> +
-> >> +MODULE_AUTHOR("Joel Stanley <joel@jms.id.au>");
-> >> +MODULE_DESCRIPTION("Infineon DPS310 pressure and temperature sensor");
-> >> +MODULE_LICENSE("GPL v2");  
-> 
+Now, we can try, for example:
 
+  perf record -b ...
+  perf annotate or perf report -s symbol
+
+The before/after output should be no change.
+
+ v3:
+ ---
+ Fix the crash in stdio mode.
+ Like previous code, it needs the checking of ui__has_annotation()
+ before hist__account_cycles()
+
+ v2:
+ ---
+ 1. Cover the similar perf report
+ 2. Remove the checking code "ch->reset >= ch->num / 2"
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1552684577-29041-1-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-annotate.c |  4 ++--
+ tools/perf/builtin-report.c   | 11 +++++------
+ tools/perf/util/annotate.c    |  2 +-
+ 3 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 67f9d9ffacfb..77deb3a40596 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -159,8 +159,6 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 	struct perf_evsel *evsel = iter->evsel;
+ 	int err;
+ 
+-	hist__account_cycles(sample->branch_stack, al, sample, false);
+-
+ 	bi = he->branch_info;
+ 	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+ 
+@@ -199,6 +197,8 @@ static int process_branch_callback(struct perf_evsel *evsel,
+ 	if (a.map != NULL)
+ 		a.map->dso->hit = 1;
+ 
++	hist__account_cycles(sample->branch_stack, al, sample, false);
++
+ 	ret = hist_entry_iter__add(&iter, &a, PERF_MAX_STACK_DEPTH, ann);
+ 	return ret;
+ }
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 4054eb1f98ac..91e27ac297c2 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -136,9 +136,6 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+ 	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+-	hist__account_cycles(sample->branch_stack, al, sample,
+-			     rep->nonany_branch_mode);
+-
+ 	if (sort__mode == SORT_MODE__BRANCH) {
+ 		bi = he->branch_info;
+ 		err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+@@ -181,9 +178,6 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+-	hist__account_cycles(sample->branch_stack, al, sample,
+-			     rep->nonany_branch_mode);
+-
+ 	bi = he->branch_info;
+ 	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
+ 	if (err)
+@@ -282,6 +276,11 @@ static int process_sample_event(struct perf_tool *tool,
+ 	if (al.map != NULL)
+ 		al.map->dso->hit = 1;
+ 
++	if (ui__has_annotation() || rep->symbol_ipc) {
++		hist__account_cycles(sample->branch_stack, &al, sample,
++				     rep->nonany_branch_mode);
++	}
++
+ 	ret = hist_entry_iter__add(&iter, &al, rep->max_stack, rep);
+ 	if (ret < 0)
+ 		pr_debug("problem adding hist entry, skipping event\n");
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 09762985c713..0b8573fd9b05 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1021,7 +1021,7 @@ static void annotation__count_and_fill(struct annotation *notes, u64 start, u64
+ 		float ipc = n_insn / ((double)ch->cycles / (double)ch->num);
+ 
+ 		/* Hide data when there are too many overlaps. */
+-		if (ch->reset >= 0x7fff || ch->reset >= ch->num / 2)
++		if (ch->reset >= 0x7fff)
+ 			return;
+ 
+ 		for (offset = start; offset <= end; offset++) {
