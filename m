@@ -2,193 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3631D22212
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 09:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F238D22215
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 09:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfERHeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 03:34:06 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:37903 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfERHeG (ORCPT
+        id S1728519AbfERHe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 03:34:27 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37131 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbfERHe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 03:34:06 -0400
-Received: by mail-it1-f200.google.com with SMTP id m20so8626165itn.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 00:34:05 -0700 (PDT)
+        Sat, 18 May 2019 03:34:26 -0400
+Received: by mail-ua1-f67.google.com with SMTP id t18so3597832uar.4
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 00:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Y8FNKcZOaMHE8OeRBGHAiQ0Wkl/50EQKGniKvCcPbF8=;
+        b=Low1hR0af9FVEwuNJlp+CW8WNLe2Bvq4cV1qM8ndzcedSFxmXmiWNGSCq7porUOF30
+         ZBrrXWXDuCNXo2PQNob4J7Uu3jA2C7LoavJAFolTcwt5lI2XSBG/N8NWRGw09b6Qwf7s
+         P0jdGTAQwSVGsR+aiXQQ1yXI07kvz6LZBxojMXz5emTZ71vZs7QnBFLXNT+eMeRspmCn
+         LwgyN64KdVahTHTI2XigQP3aGe64JgTKxUmSkrswBZuXWei7/Td9wZq0vjXixYz3yBMM
+         iyMc8jo6Psc3+5QajeWDfU5ztd3dY2VtIeUDHpo7ceWIjooqG94LH5f3CCPq6wyqIkEL
+         +IWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=6cOhUqDBTNuDCsm6/KkPyzSPG5CwBmbnSt8sCm1qFcs=;
-        b=anezt3xle3xkuPZX+d3//uDQpumueR3ST6vdt+ueuBmv0DuLbvNQWJGXX5Q72H35vY
-         j3S1xIipjI8eYp3akjbhhL7lzmBEEe4118JDEgjB/QRL/G2f/Kf47EpsIbMdsvvYNo4m
-         9NJsFty91uzM0ggu9umOGrqTkBz7cOB5k96bufxsumXGK3MtFTlVZ4eJuMy3YqwNjqzG
-         O4EEi4B35m3KFwyY0hJMaVCuwvJjzQXZD2DIDiHCw/B++LkQUmGr6OM9Gx7TcswyDq9e
-         kfPNYq+idkRCBld0WDF8dMUhO6HujaArdCXvKrcZs220234ySyYUM+rsKIH1ZDxCJUgj
-         t1Pg==
-X-Gm-Message-State: APjAAAUBOm+K3DhBJQfJnqC6OD3g+3bUATcR9IT2miqUTbKTpwsyx2Tw
-        CLW28z9NlOfKxpKw5aT1S4YWMHnxlg/q//7yRu7L59GB90U2
-X-Google-Smtp-Source: APXvYqyexnNpF8ZFJY2kef94sLG3owM8ucOKbX0IFpkLEOs1tYXHPRYTWgN3VfdHzwyqKqsZ2Q5E3MITzUvGRt1a6jmPa2YHQnmJ
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Y8FNKcZOaMHE8OeRBGHAiQ0Wkl/50EQKGniKvCcPbF8=;
+        b=MFFfRK4ew15uEvl6YDJNK/gliFqmJ521siBPEc+Lvm8mKLILmIpKaSot2uZg2qwDj2
+         pJvdhLY+GVEGj7ESCrd+ZgerZb+QYlEehKk02thgJZVrhQlJ0VTRKJfy6WpMf2fW2p3F
+         9gG9kF/waAky+Gb7r4ArV0+DlrErU2O4/BYGoW5hAVWdoBY30t2tmRfm1aQAvW/If0/h
+         Be9Tda6aGhvxRyE1O+6pNSJvS9XtMpFyzX/G4IsrO4u3aK/sPUOaY4P4MJIG5mys/Hs5
+         i5hsP0a34Julw2GiDleQf5T6nK/fNhSuxAQb6WMwe3+P2FInLDcvvPLHAvsFL+pteE6T
+         v6ZQ==
+X-Gm-Message-State: APjAAAU5NB7q5UU+lO1SqT24+hYhMt17hHA/5Wnb2vv8u903PXP+vhb0
+        xI9TUg0Cyh9UMOksA8zJnGs0W4M6tupK0KxBASI=
+X-Google-Smtp-Source: APXvYqyj2I/6L5jmeHGjGyaC/ILw1LEf7TK/xqwmVDkJOtwXj4fNxordqPQgdYSlGdWQzWce1Eu5VFrjTCDHRYOr73Q=
+X-Received: by 2002:ab0:3058:: with SMTP id x24mr26651595ual.95.1558164865787;
+ Sat, 18 May 2019 00:34:25 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9b90:: with SMTP id r16mr1739027iom.62.1558164844895;
- Sat, 18 May 2019 00:34:04 -0700 (PDT)
-Date:   Sat, 18 May 2019 00:34:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000014e65905892486ab@google.com>
-Subject: INFO: trying to register non-static key in rhashtable_walk_enter
-From:   syzbot <syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a9f:25f3:0:0:0:0:0 with HTTP; Sat, 18 May 2019 00:34:25
+ -0700 (PDT)
+Reply-To: michellegoodman45@gmail.com
+From:   Michelle <michellegood044@gmail.com>
+Date:   Sat, 18 May 2019 07:34:25 +0000
+Message-ID: <CAJ5e1jYJKuUbGT9r-4JRLRO=+ggnPUrdjvbuggZy=ALV19fcww@mail.gmail.com>
+Subject: From Michelle
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    510e2ced ipv6: fix src addr routing with the exception table
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b7e608a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=82f0809e8f0a8c87
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e8114b61079bfe9cbc5
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
-
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 0 PID: 27370 Comm: syz-executor.2 Not tainted 5.1.0+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  assign_lock_key kernel/locking/lockdep.c:774 [inline]
-  register_lock_class+0x167e/0x1860 kernel/locking/lockdep.c:1083
-  __lock_acquire+0x116/0x5490 kernel/locking/lockdep.c:3673
-  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4302
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  rhashtable_walk_enter+0xf9/0x390 lib/rhashtable.c:669
-  __tipc_dump_start+0x1fa/0x3c0 net/tipc/socket.c:3414
-  tipc_dump_start+0x70/0x90 net/tipc/socket.c:3396
-  __netlink_dump_start+0x4fb/0x7e0 net/netlink/af_netlink.c:2351
-  netlink_dump_start include/linux/netlink.h:226 [inline]
-  tipc_sock_diag_handler_dump+0x1d9/0x270 net/tipc/diag.c:91
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x322/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2486
-  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1337
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1926
-  sock_sendmsg_nosec net/socket.c:660 [inline]
-  sock_sendmsg+0x12e/0x170 net/socket.c:671
-  ___sys_sendmsg+0x81d/0x960 net/socket.c:2292
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2330
-  __do_sys_sendmsg net/socket.c:2339 [inline]
-  __se_sys_sendmsg net/socket.c:2337 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2337
-  do_syscall_64+0x103/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458da9
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fea7516cc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458da9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fea7516d6d4
-R13: 00000000004c6790 R14: 00000000004db3e8 R15: 00000000ffffffff
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 27370 Comm: syz-executor.2 Not tainted 5.1.0+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_add_valid+0x27/0xa0 lib/list_debug.c:23
-Code: 90 90 90 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 55 49 89 fd 48  
-8d 7a 08 41 54 49 89 d4 48 89 fa 48 83 ec 08 48 c1 ea 03 <80> 3c 02 00 75  
-52 49 8b 54 24 08 48 39 f2 0f 85 5a 01 00 00 48 b8
-RSP: 0018:ffff888086ee7608 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88808d9e2a80 RCX: ffff88808d9e2a98
-RDX: 007d58291f51291c RSI: ffffffff85f1d1ae RDI: 03eac148fa8948e7
-RBP: ffff888086ee7620 R08: ffff8880a65d8280 R09: ffffed1010ddceb4
-R10: ffffed1010ddceb3 R11: 0000000000000003 R12: 03eac148fa8948df
-R13: ffff88808d9e2a98 R14: ffffffff85f1d19e R15: ffffffff85f1d1ae
-FS:  00007fea7516d700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000015b77d0 CR3: 0000000076601000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_add include/linux/list.h:60 [inline]
-  list_add include/linux/list.h:79 [inline]
-  rhashtable_walk_enter+0x1b0/0x390 lib/rhashtable.c:672
-  __tipc_dump_start+0x1fa/0x3c0 net/tipc/socket.c:3414
-  tipc_dump_start+0x70/0x90 net/tipc/socket.c:3396
-  __netlink_dump_start+0x4fb/0x7e0 net/netlink/af_netlink.c:2351
-  netlink_dump_start include/linux/netlink.h:226 [inline]
-  tipc_sock_diag_handler_dump+0x1d9/0x270 net/tipc/diag.c:91
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x322/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2486
-  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1337
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1926
-  sock_sendmsg_nosec net/socket.c:660 [inline]
-  sock_sendmsg+0x12e/0x170 net/socket.c:671
-  ___sys_sendmsg+0x81d/0x960 net/socket.c:2292
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2330
-  __do_sys_sendmsg net/socket.c:2339 [inline]
-  __se_sys_sendmsg net/socket.c:2337 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2337
-  do_syscall_64+0x103/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458da9
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fea7516cc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458da9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fea7516d6d4
-R13: 00000000004c6790 R14: 00000000004db3e8 R15: 00000000ffffffff
-Modules linked in:
----[ end trace dc952ec41476acbb ]---
-RIP: 0010:__list_add_valid+0x27/0xa0 lib/list_debug.c:23
-Code: 90 90 90 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 55 49 89 fd 48  
-8d 7a 08 41 54 49 89 d4 48 89 fa 48 83 ec 08 48 c1 ea 03 <80> 3c 02 00 75  
-52 49 8b 54 24 08 48 39 f2 0f 85 5a 01 00 00 48 b8
-RSP: 0018:ffff888086ee7608 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88808d9e2a80 RCX: ffff88808d9e2a98
-RDX: 007d58291f51291c RSI: ffffffff85f1d1ae RDI: 03eac148fa8948e7
-RBP: ffff888086ee7620 R08: ffff8880a65d8280 R09: ffffed1010ddceb4
-R10: ffffed1010ddceb3 R11: 0000000000000003 R12: 03eac148fa8948df
-R13: ffff88808d9e2a98 R14: ffffffff85f1d19e R15: ffffffff85f1d1ae
-FS:  00007fea7516d700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000015b77d0 CR3: 0000000076601000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Hallo Schatz, wie geht es dir heute? Ich hoffe, es geht dir gut,
+bitte, ich m=C3=B6chte
+Wenn Sie meine Nachricht erhalten, brauche ich Ihre dringende Antwort.
+Vielen Dank
+Deine
+Michelle
