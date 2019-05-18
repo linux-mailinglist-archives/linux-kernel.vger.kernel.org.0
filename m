@@ -2,121 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7D6222F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CB8222BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbfERJ5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 05:57:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8206 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728654AbfERJ5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 05:57:36 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C449A285E9918B8D2269;
-        Sat, 18 May 2019 17:57:33 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Sat, 18 May 2019
- 17:57:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <socketcan@hartkopp.net>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] can: gw: Fix error path of cgw_module_init
-Date:   Sat, 18 May 2019 17:35:43 +0800
-Message-ID: <20190518093543.11016-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <80ca1430-da86-42c3-75c7-eadf91b20220@pengutronix.de>
-References: <80ca1430-da86-42c3-75c7-eadf91b20220@pengutronix.de>
+        id S1730110AbfERJgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 05:36:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55371 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729137AbfERJgX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 May 2019 05:36:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9a61l1742998
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 18 May 2019 02:36:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9a61l1742998
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558172167;
+        bh=3Z48mcT8j8am1sRY0udwCO08Hmk2fDYgq3uU6MG3WEw=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=H/Rs0B3U28xgjUGIgpip/ZTFemV/YF4479uaNtjRP8E042jeF7kq5pIfCqT+ljdlj
+         Mus1Wh2aECfu1yEz3qQafOd8hBgDyYzkpaQVFxRwmmgWBDmPY2bYAPXsLcAsbiuVYb
+         OX6uGk5uo5pVABRSJMpAVlRk2Qd5jO9eXNgvioiPS1jVEe0GtCKQXTybTd1VyzAJ3o
+         ifWpPjrQXuYFGOzrBGEIu0oB7/eVzbFTASyNx18C+xUHfPlcP5QywhV1V3Iht6ghKU
+         MG/lB1m2Vr85FkjmLGncvIWd5wS44l/OxzhkMZb0aV/3s7KcuC6xluwsuRarlw4cdQ
+         18W2Q0yal10Hg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9a62M1742995;
+        Sat, 18 May 2019 02:36:06 -0700
+Date:   Sat, 18 May 2019 02:36:06 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-40480a8136700d678dc07222c4d7287c89d0c04d@git.kernel.org>
+Cc:     yao.jin@intel.com, acme@redhat.com, kan.liang@linux.intel.com,
+        yao.jin@linux.intel.com, jolsa@kernel.org,
+        ravi.bangoria@linux.ibm.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org,
+        hpa@zytor.com
+Reply-To: ak@linux.intel.com, mingo@kernel.org,
+          alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          hpa@zytor.com, acme@redhat.com, kan.liang@linux.intel.com,
+          jolsa@kernel.org, ravi.bangoria@linux.ibm.com, yao.jin@intel.com,
+          yao.jin@linux.intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1555077590-27664-3-git-send-email-yao.jin@linux.intel.com>
+References: <1555077590-27664-3-git-send-email-yao.jin@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Factor out aggregate counts printing
+Git-Commit-ID: 40480a8136700d678dc07222c4d7287c89d0c04d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add error path for cgw_module_init
-to avoid possible crash if some error occurs.
+Commit-ID:  40480a8136700d678dc07222c4d7287c89d0c04d
+Gitweb:     https://git.kernel.org/tip/40480a8136700d678dc07222c4d7287c89d0c04d
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Fri, 12 Apr 2019 21:59:48 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 16 May 2019 14:17:24 -0300
 
-Fixes: c1aabdf379bc ("can-gw: add netlink based CAN routing")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+perf stat: Factor out aggregate counts printing
+
+Move the aggregate counts printing to a new function
+print_counter_aggrdata, which will be used in following patches.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1555077590-27664-3-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- net/can/gw.c | 48 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ tools/perf/util/stat-display.c | 64 +++++++++++++++++++++++++-----------------
+ 1 file changed, 39 insertions(+), 25 deletions(-)
 
-diff --git a/net/can/gw.c b/net/can/gw.c
-index 53859346..bd21614 100644
---- a/net/can/gw.c
-+++ b/net/can/gw.c
-@@ -1046,32 +1046,50 @@ static __init int cgw_module_init(void)
- 	pr_info("can: netlink gateway (rev " CAN_GW_VERSION ") max_hops=%d\n",
- 		max_hops);
- 
--	register_pernet_subsys(&cangw_pernet_ops);
-+	ret = register_pernet_subsys(&cangw_pernet_ops);
-+	if (ret)
-+		return ret;
-+
-+	ret = -ENOMEM;
- 	cgw_cache = kmem_cache_create("can_gw", sizeof(struct cgw_job),
- 				      0, 0, NULL);
--
- 	if (!cgw_cache)
--		return -ENOMEM;
-+		goto out_cache_create;
- 
- 	/* set notifier */
- 	notifier.notifier_call = cgw_notifier;
--	register_netdevice_notifier(&notifier);
-+	ret = register_netdevice_notifier(&notifier);
-+	if (ret)
-+		goto out_register_notifier;
- 
- 	ret = rtnl_register_module(THIS_MODULE, PF_CAN, RTM_GETROUTE,
- 				   NULL, cgw_dump_jobs, 0);
--	if (ret) {
--		unregister_netdevice_notifier(&notifier);
--		kmem_cache_destroy(cgw_cache);
--		return -ENOBUFS;
--	}
--
--	/* Only the first call to rtnl_register_module can fail */
--	rtnl_register_module(THIS_MODULE, PF_CAN, RTM_NEWROUTE,
--			     cgw_create_job, NULL, 0);
--	rtnl_register_module(THIS_MODULE, PF_CAN, RTM_DELROUTE,
--			     cgw_remove_job, NULL, 0);
-+	if (ret)
-+		goto out_rtnl_register1;
-+
-+	ret = rtnl_register_module(THIS_MODULE, PF_CAN, RTM_NEWROUTE,
-+				   cgw_create_job, NULL, 0);
-+	if (ret)
-+		goto out_rtnl_register2;
-+	ret = rtnl_register_module(THIS_MODULE, PF_CAN, RTM_DELROUTE,
-+				   cgw_remove_job, NULL, 0);
-+	if (ret)
-+		goto out_rtnl_register3;
- 
- 	return 0;
-+
-+out_rtnl_register3:
-+	rtnl_unregister(PF_CAN, RTM_NEWROUTE);
-+out_rtnl_register2:
-+	rtnl_unregister(PF_CAN, RTM_GETROUTE);
-+out_rtnl_register1:
-+	unregister_netdevice_notifier(&notifier);
-+out_register_notifier:
-+	kmem_cache_destroy(cgw_cache);
-+out_cache_create:
-+	unregister_pernet_subsys(&cangw_pernet_ops);
-+
-+	return ret;
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index 3324f23c7efc..f5b4ee79568c 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -594,6 +594,41 @@ static void aggr_cb(struct perf_stat_config *config,
+ 	}
  }
  
- static __exit void cgw_module_exit(void)
--- 
-1.8.3.1
-
-
++static void print_counter_aggrdata(struct perf_stat_config *config,
++				   struct perf_evsel *counter, int s,
++				   char *prefix, bool metric_only,
++				   bool *first)
++{
++	struct aggr_data ad;
++	FILE *output = config->output;
++	u64 ena, run, val;
++	int id, nr;
++	double uval;
++
++	ad.id = id = config->aggr_map->map[s];
++	ad.val = ad.ena = ad.run = 0;
++	ad.nr = 0;
++	if (!collect_data(config, counter, aggr_cb, &ad))
++		return;
++
++	nr = ad.nr;
++	ena = ad.ena;
++	run = ad.run;
++	val = ad.val;
++	if (*first && metric_only) {
++		*first = false;
++		aggr_printout(config, counter, id, nr);
++	}
++	if (prefix && !metric_only)
++		fprintf(output, "%s", prefix);
++
++	uval = val * counter->scale;
++	printout(config, id, nr, counter, uval, prefix,
++		 run, ena, 1.0, &rt_stat);
++	if (!metric_only)
++		fputc('\n', output);
++}
++
+ static void print_aggr(struct perf_stat_config *config,
+ 		       struct perf_evlist *evlist,
+ 		       char *prefix)
+@@ -601,9 +636,7 @@ static void print_aggr(struct perf_stat_config *config,
+ 	bool metric_only = config->metric_only;
+ 	FILE *output = config->output;
+ 	struct perf_evsel *counter;
+-	int s, id, nr;
+-	double uval;
+-	u64 ena, run, val;
++	int s;
+ 	bool first;
+ 
+ 	if (!(config->aggr_map || config->aggr_get_id))
+@@ -616,33 +649,14 @@ static void print_aggr(struct perf_stat_config *config,
+ 	 * Without each counter has its own line.
+ 	 */
+ 	for (s = 0; s < config->aggr_map->nr; s++) {
+-		struct aggr_data ad;
+ 		if (prefix && metric_only)
+ 			fprintf(output, "%s", prefix);
+ 
+-		ad.id = id = config->aggr_map->map[s];
+ 		first = true;
+ 		evlist__for_each_entry(evlist, counter) {
+-			ad.val = ad.ena = ad.run = 0;
+-			ad.nr = 0;
+-			if (!collect_data(config, counter, aggr_cb, &ad))
+-				continue;
+-			nr = ad.nr;
+-			ena = ad.ena;
+-			run = ad.run;
+-			val = ad.val;
+-			if (first && metric_only) {
+-				first = false;
+-				aggr_printout(config, counter, id, nr);
+-			}
+-			if (prefix && !metric_only)
+-				fprintf(output, "%s", prefix);
+-
+-			uval = val * counter->scale;
+-			printout(config, id, nr, counter, uval, prefix,
+-				 run, ena, 1.0, &rt_stat);
+-			if (!metric_only)
+-				fputc('\n', output);
++			print_counter_aggrdata(config, counter, s,
++					       prefix, metric_only,
++					       &first);
+ 		}
+ 		if (metric_only)
+ 			fputc('\n', output);
