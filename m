@@ -2,308 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2332225C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B14182225E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfERIvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 04:51:17 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54797 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfERIvR (ORCPT
+        id S1729421AbfERIwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 04:52:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41193 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbfERIwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 04:51:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i3so8906103wml.4
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 01:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=/wF9v2iVkRv3vieWULL9HEr1N+pHzbIwb5kSK4YkLQs=;
-        b=QtrA4U4tF6capQu4B/+J8InDu1aggugu5pAl82N3MKinE9QGyfb09wtjRbO9/0lM6H
-         bxX4iFEj1Pn9njgxa5zGESdKkg686gdksWLaupo3DbVvQmI/4jCSVSeQ3f71YNoHOS6Q
-         Eb6+xGqQKLvV918K2zjz3w9s5EvTGKdh3cOVyK7mXdlNv7e4vDDj4myEY97MjeZJXINi
-         WZzhiPR6Q2JiGuZljfq8y6sbX975mPLg5q/t6KxEi+yu+kg4NdSufehJXezrWGrtQFbX
-         8448TOm5BPe7fEIgJ+0uQuH0zNvI76tuRFR8DWS0Z0vzUu4R+pgYoZlPHisTJWcOuVw7
-         362Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=/wF9v2iVkRv3vieWULL9HEr1N+pHzbIwb5kSK4YkLQs=;
-        b=Y+vbdfXQPK3eHQJVyfVFiBcQ7nenBA/m1AsFe0TQcjfkRdvpSzC2CEFWKHCxQx/x12
-         +8IWLWT+b8wUK2tdPWNcytKzF4kr1mYSOdB2l2eD59oV8yZFzF0IRn9h3eHOBxbi9kC0
-         wl0hTXPZya+kPQZdKYUsuDyL2qDz5A8D6CJZ30WpruhtlcIEsFtwCKbKi7NekugX+vMH
-         ZBdUmVyBQG92U4zyhMJ9jEBTsZGrb+ERRYNjtFPDO6+db1eJZ09mwiiU0lXmZOpdNqMN
-         5aKU3yDctSJ363R5nUfcCttzUO6WPlzj4mMOjClKcGaLEyqrxkHNN894nMMHAHPohkPy
-         WjSQ==
-X-Gm-Message-State: APjAAAXJ2Q/x5OeLkGB3+YBTbksgZO0nILFfNrVnwZFKbDjMbUelDByE
-        avp/yWvU+Pi9oj6QddCspnE=
-X-Google-Smtp-Source: APXvYqxPXnXc3eVcJ0yDU/MdT5ajkvKguJ5+EVbMr2hjAvHmlz1i5afAVPz7vhfnctkBcOVJlR3SfA==
-X-Received: by 2002:a1c:cb81:: with SMTP id b123mr4882378wmg.107.1558169474180;
-        Sat, 18 May 2019 01:51:14 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id m13sm9725889wrs.87.2019.05.18.01.51.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 18 May 2019 01:51:13 -0700 (PDT)
-Date:   Sat, 18 May 2019 10:51:11 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Borislav Petkov <bp@alien8.de>, Dave Hansen <dave@sr71.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] core kernel fixes
-Message-ID: <20190518085111.GA45888@gmail.com>
+        Sat, 18 May 2019 04:52:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I8pp5Q1732403
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 18 May 2019 01:51:51 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I8pp5Q1732403
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558169512;
+        bh=xwA+5eOFpsEd9JJyqQA7UkKcbj+nBkadPUdDXDLiHPY=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=jaFq6SanGo+wxdjwAeGP+5YUKMwZqaUN/wnmnLNFX0IL8YaCMo7v070F5DbRZqPZQ
+         tCAH48zmeWC0vrExr+PWWU5zB0mI1R2Ej3yacS6bbhRZuKHr6FyPmt2wtcvTlkyXRu
+         TRpAgDMnK9Iis1gQmzXDUc8xcjcU9W+rmqv5nLA5RaPFZzPeL33HgqRrfm2/2Fh6W/
+         42r4FUwY0jatJ0IUtTO0DBQ6GSKioq3zjEIZM76x/gfhuqGcRZEWycUq+FWxso1pn5
+         q+0/JUE8yH1uJbfUSxfDF/3QvvNOk0ssjGF+6gL3+aq9nWcgBqDHJ82Em4rhWCHJ6U
+         3WH84Shu2Sm1g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I8pokX1732400;
+        Sat, 18 May 2019 01:51:50 -0700
+Date:   Sat, 18 May 2019 01:51:50 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-9re6bd7eh9epi3koslkv3ocn@git.kernel.org>
+Cc:     gustavo.pimentel@synopsys.com, acme@redhat.com, tglx@linutronix.de,
+        lorenzo.pieralisi@arm.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
+        jolsa@kernel.org, kishon@ti.com, linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, adrian.hunter@intel.com, jolsa@kernel.org,
+          hpa@zytor.com, kishon@ti.com, linux-kernel@vger.kernel.org,
+          acme@redhat.com, gustavo.pimentel@synopsys.com,
+          tglx@linutronix.de, lorenzo.pieralisi@arm.com,
+          namhyung@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools pci: Do not delete pcitest.sh in 'make clean'
+Git-Commit-ID: c9a7078750531c189c04ddd184c4367a5cb77780
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Commit-ID:  c9a7078750531c189c04ddd184c4367a5cb77780
+Gitweb:     https://git.kernel.org/tip/c9a7078750531c189c04ddd184c4367a5cb77780
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 13 May 2019 13:53:20 -0400
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 15 May 2019 16:36:46 -0300
 
-Please pull the latest core-urgent-for-linus git tree from:
+tools pci: Do not delete pcitest.sh in 'make clean'
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+When running 'make -C tools clean' I noticed that a revision controlled
+file was being deleted:
 
-   # HEAD: 8ea58f1e8b11cca3087b294779bf5959bf89cc10 objtool: Allow AR to be overridden with HOSTAR
+  $ git diff
+  diff --git a/tools/pci/pcitest.sh b/tools/pci/pcitest.sh
+  deleted file mode 100644
+  index 75ed48ff2990..000000000000
+  --- a/tools/pci/pcitest.sh
+  +++ /dev/null
+  @@ -1,72 +0,0 @@
+  -#!/bin/sh
+  -# SPDX-License-Identifier: GPL-2.0
+  -
+  -echo "BAR tests"
+  -echo
+  <SNIP>
 
-This fixes a particularly thorny munmap() bug with MPX, plus fixes a host 
-build environment assumption in objtool.
+So I changed the make variables to fix that, testing it should produce
+the same intended result while not deleting revision controlled files.
 
- Thanks,
+  $ make O=/tmp/build/pci -C tools/pci install
+  make: Entering directory '/home/acme/git/perf/tools/pci'
+  make -f /home/acme/git/perf/tools/build/Makefile.build dir=. obj=pcitest
+  install -d -m 755 /usr/bin;		\
+  for program in /tmp/build/pci/pcitest pcitest.sh; do	\
+  	install $program /usr/bin;	\
+  done
+  install: cannot change permissions of ‘/usr/bin’: Operation not permitted
+  install: cannot create regular file '/usr/bin/pcitest': Permission denied
+  install: cannot create regular file '/usr/bin/pcitest.sh': Permission denied
+  make: *** [Makefile:46: install] Error 1
+  make: Leaving directory '/home/acme/git/perf/tools/pci'
+  $ ls -la /tmp/build/pci/pcitest
+  -rwxrwxr-x. 1 acme acme 27152 May 13 13:52 /tmp/build/pci/pcitest
+  $ /tmp/build/pci/pcitest
+  can't open PCI Endpoint Test device: No such file or directory
+  $
 
-	Ingo
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 1ce78ce09430 ("tools: PCI: Change pcitest compiling process")
+Link: https://lkml.kernel.org/n/tip-9re6bd7eh9epi3koslkv3ocn@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/pci/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------------------->
-Dave Hansen (1):
-      x86/mpx, mm/core: Fix recursive munmap() corruption
-
-Nathan Chancellor (1):
-      objtool: Allow AR to be overridden with HOSTAR
-
-
- arch/powerpc/include/asm/mmu_context.h   |  1 -
- arch/um/include/asm/mmu_context.h        |  1 -
- arch/unicore32/include/asm/mmu_context.h |  1 -
- arch/x86/include/asm/mmu_context.h       |  6 +++---
- arch/x86/include/asm/mpx.h               | 15 ++++++++-------
- arch/x86/mm/mpx.c                        | 10 ++++++----
- include/asm-generic/mm_hooks.h           |  1 -
- mm/mmap.c                                | 15 ++++++++-------
- tools/objtool/Makefile                   |  3 ++-
- 9 files changed, 27 insertions(+), 26 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
-index 6ee8195a2ffb..4a6dd3ba0b0b 100644
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -237,7 +237,6 @@ extern void arch_exit_mmap(struct mm_struct *mm);
- #endif
+diff --git a/tools/pci/Makefile b/tools/pci/Makefile
+index 46e4c2f318c9..f64da817bc03 100644
+--- a/tools/pci/Makefile
++++ b/tools/pci/Makefile
+@@ -14,7 +14,7 @@ MAKEFLAGS += -r
  
- static inline void arch_unmap(struct mm_struct *mm,
--			      struct vm_area_struct *vma,
- 			      unsigned long start, unsigned long end)
- {
- 	if (start <= mm->context.vdso_base && mm->context.vdso_base < end)
-diff --git a/arch/um/include/asm/mmu_context.h b/arch/um/include/asm/mmu_context.h
-index fca34b2177e2..9f4b4bb78120 100644
---- a/arch/um/include/asm/mmu_context.h
-+++ b/arch/um/include/asm/mmu_context.h
-@@ -22,7 +22,6 @@ static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
- }
- extern void arch_exit_mmap(struct mm_struct *mm);
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/unicore32/include/asm/mmu_context.h b/arch/unicore32/include/asm/mmu_context.h
-index 5c205a9cb5a6..9f06ea5466dd 100644
---- a/arch/unicore32/include/asm/mmu_context.h
-+++ b/arch/unicore32/include/asm/mmu_context.h
-@@ -88,7 +88,6 @@ static inline int arch_dup_mmap(struct mm_struct *oldmm,
- }
+ CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
  
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 93dff1963337..9024236693d2 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -278,8 +278,8 @@ static inline void arch_bprm_mm_init(struct mm_struct *mm,
- 	mpx_mm_init(mm);
- }
+-ALL_TARGETS := pcitest pcitest.sh
++ALL_TARGETS := pcitest
+ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
  
--static inline void arch_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--			      unsigned long start, unsigned long end)
-+static inline void arch_unmap(struct mm_struct *mm, unsigned long start,
-+			      unsigned long end)
- {
- 	/*
- 	 * mpx_notify_unmap() goes and reads a rarely-hot
-@@ -299,7 +299,7 @@ static inline void arch_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * consistently wrong.
- 	 */
- 	if (unlikely(cpu_feature_enabled(X86_FEATURE_MPX)))
--		mpx_notify_unmap(mm, vma, start, end);
-+		mpx_notify_unmap(mm, start, end);
- }
+ all: $(ALL_PROGRAMS)
+@@ -44,7 +44,7 @@ clean:
  
- /*
-diff --git a/arch/x86/include/asm/mpx.h b/arch/x86/include/asm/mpx.h
-index d0b1434fb0b6..143a5c193ed3 100644
---- a/arch/x86/include/asm/mpx.h
-+++ b/arch/x86/include/asm/mpx.h
-@@ -64,12 +64,15 @@ struct mpx_fault_info {
- };
+ install: $(ALL_PROGRAMS)
+ 	install -d -m 755 $(DESTDIR)$(bindir);		\
+-	for program in $(ALL_PROGRAMS); do		\
++	for program in $(ALL_PROGRAMS) pcitest.sh; do	\
+ 		install $$program $(DESTDIR)$(bindir);	\
+ 	done
  
- #ifdef CONFIG_X86_INTEL_MPX
--int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs);
--int mpx_handle_bd_fault(void);
-+
-+extern int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs);
-+extern int mpx_handle_bd_fault(void);
-+
- static inline int kernel_managing_mpx_tables(struct mm_struct *mm)
- {
- 	return (mm->context.bd_addr != MPX_INVALID_BOUNDS_DIR);
- }
-+
- static inline void mpx_mm_init(struct mm_struct *mm)
- {
- 	/*
-@@ -78,11 +81,10 @@ static inline void mpx_mm_init(struct mm_struct *mm)
- 	 */
- 	mm->context.bd_addr = MPX_INVALID_BOUNDS_DIR;
- }
--void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--		      unsigned long start, unsigned long end);
- 
--unsigned long mpx_unmapped_area_check(unsigned long addr, unsigned long len,
--		unsigned long flags);
-+extern void mpx_notify_unmap(struct mm_struct *mm, unsigned long start, unsigned long end);
-+extern unsigned long mpx_unmapped_area_check(unsigned long addr, unsigned long len, unsigned long flags);
-+
- #else
- static inline int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs)
- {
-@@ -100,7 +102,6 @@ static inline void mpx_mm_init(struct mm_struct *mm)
- {
- }
- static inline void mpx_notify_unmap(struct mm_struct *mm,
--				    struct vm_area_struct *vma,
- 				    unsigned long start, unsigned long end)
- {
- }
-diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
-index c805db6236b4..7aeb9fe2955f 100644
---- a/arch/x86/mm/mpx.c
-+++ b/arch/x86/mm/mpx.c
-@@ -881,9 +881,10 @@ static int mpx_unmap_tables(struct mm_struct *mm,
-  * the virtual address region start...end have already been split if
-  * necessary, and the 'vma' is the first vma in this range (start -> end).
-  */
--void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
--		unsigned long start, unsigned long end)
-+void mpx_notify_unmap(struct mm_struct *mm, unsigned long start,
-+		      unsigned long end)
- {
-+	struct vm_area_struct *vma;
- 	int ret;
- 
- 	/*
-@@ -902,11 +903,12 @@ void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * which should not occur normally. Being strict about it here
- 	 * helps ensure that we do not have an exploitable stack overflow.
- 	 */
--	do {
-+	vma = find_vma(mm, start);
-+	while (vma && vma->vm_start < end) {
- 		if (vma->vm_flags & VM_MPX)
- 			return;
- 		vma = vma->vm_next;
--	} while (vma && vma->vm_start < end);
-+	}
- 
- 	ret = mpx_unmap_tables(mm, start, end);
- 	if (ret)
-diff --git a/include/asm-generic/mm_hooks.h b/include/asm-generic/mm_hooks.h
-index 8ac4e68a12f0..6736ed2f632b 100644
---- a/include/asm-generic/mm_hooks.h
-+++ b/include/asm-generic/mm_hooks.h
-@@ -18,7 +18,6 @@ static inline void arch_exit_mmap(struct mm_struct *mm)
- }
- 
- static inline void arch_unmap(struct mm_struct *mm,
--			struct vm_area_struct *vma,
- 			unsigned long start, unsigned long end)
- {
- }
-diff --git a/mm/mmap.c b/mm/mmap.c
-index bd7b9f293b39..2d6a6662edb9 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2735,9 +2735,17 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 		return -EINVAL;
- 
- 	len = PAGE_ALIGN(len);
-+	end = start + len;
- 	if (len == 0)
- 		return -EINVAL;
- 
-+	/*
-+	 * arch_unmap() might do unmaps itself.  It must be called
-+	 * and finish any rbtree manipulation before this code
-+	 * runs and also starts to manipulate the rbtree.
-+	 */
-+	arch_unmap(mm, start, end);
-+
- 	/* Find the first overlapping VMA */
- 	vma = find_vma(mm, start);
- 	if (!vma)
-@@ -2746,7 +2754,6 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* we have  start < vma->vm_end  */
- 
- 	/* if it doesn't overlap, we have nothing.. */
--	end = start + len;
- 	if (vma->vm_start >= end)
- 		return 0;
- 
-@@ -2816,12 +2823,6 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/* Detach vmas from rbtree */
- 	detach_vmas_to_be_unmapped(mm, vma, prev, end);
- 
--	/*
--	 * mpx unmap needs to be called with mmap_sem held for write.
--	 * It is safe to call it before unmap_region().
--	 */
--	arch_unmap(mm, vma, start, end);
--
- 	if (downgrade)
- 		downgrade_write(&mm->mmap_sem);
- 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index 53f8be0f4a1f..88158239622b 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -7,11 +7,12 @@ ARCH := x86
- endif
- 
- # always use the host compiler
-+HOSTAR	?= ar
- HOSTCC	?= gcc
- HOSTLD	?= ld
-+AR	 = $(HOSTAR)
- CC	 = $(HOSTCC)
- LD	 = $(HOSTLD)
--AR	 = ar
- 
- ifeq ($(srctree),)
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
