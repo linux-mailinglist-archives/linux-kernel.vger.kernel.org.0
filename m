@@ -2,228 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64A82224F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A01082225D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 10:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfERIqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 04:46:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8205 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725446AbfERIqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 04:46:17 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 636DA98F3BD9CDE92B79;
-        Sat, 18 May 2019 16:46:14 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.188.162) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 18 May 2019 16:46:04 +0800
-From:   jianhong chen <chenjianhong2@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <akpm@linux-foundation.org>,
-        <mhocko@suse.com>, <vbabka@suse.cz>,
-        <kirill.shutemov@linux.intel.com>, <yang.shi@linux.alibaba.com>,
-        <jannh@google.com>, <steve.capper@arm.com>,
-        <tiny.windzz@gmail.com>, <walken@google.com>, <willy@infradead.org>
-CC:     <chenjianhong2@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <stable@vger.kernel.org>, <hughd@google.com>,
-        <linux@arm.linux.org.uk>, <ralf@linux-mips.org>,
-        <lethal@linux-sh.org>, <davem@davemloft.net>,
-        <cmetcalf@tilera.com>, <mingo@elte.hu>, <tglx@linutronix.de>,
-        <hpa@zytor.com>
-Subject: [PATCH] mm/mmap: fix the adjusted length error
-Date:   Sat, 18 May 2019 16:50:33 +0800
-Message-ID: <1558169433-121358-1-git-send-email-chenjianhong2@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
+        id S1729408AbfERIvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 04:51:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48237 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfERIvW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 May 2019 04:51:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I8pAKa1732371
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 18 May 2019 01:51:10 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I8pAKa1732371
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558169471;
+        bh=Nq6LqO1MNEwwcI90/cveX6gdF/RX80mWpOL6K8VOhPw=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=Q+5hS98RcCmVvvnXVwgqnuzVEQHsPN08i3BBI2lm57T0zixRRJLGypSQoe232D3YG
+         fp48bzTefgt58jU2RrokMJeffodmH7UpN6UwGn/soRHd8YyBrR0yRDCvi202ihwD0Z
+         zmYOu/AyaCCW0zhFpYC6WBg9czIIdQNQ3NMGScqnzvM6RNzGN/NiVUEx6LQJYxdnUz
+         g52X/YZlbWBdQUfQs7Rky+m5Zfda2swdZ9oCTUUwAUchtRQjuAmWib60CXjUIlAYfC
+         ba3VM3WBdHuTbjNdrZ7KwxbK0BZWCpj4e1OzE21vIzweh/TCVFn7S1QlN9UBMvD1zr
+         2j5v9QlCMy6Kg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I8pAPJ1732365;
+        Sat, 18 May 2019 01:51:10 -0700
+Date:   Sat, 18 May 2019 01:51:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-6pjnnrzqt3x3n2cd6br3wk7k@git.kernel.org>
+Cc:     peterz@infradead.org, adrian.hunter@intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        kan.liang@linux.intel.com, ak@linux.intel.com, jolsa@kernel.org,
+        hpa@zytor.com
+Reply-To: kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, peterz@infradead.org,
+          adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org,
+          tglx@linutronix.de, ak@linux.intel.com,
+          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+          hpa@zytor.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools x86 uapi asm: Sync the pt_regs.h copy with
+ the kernel sources
+Git-Commit-ID: 0ceb5499a8001e5ddac2c8bd7b45eb4c643469ad
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.188.162]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In linux version 4.4, a 32-bit process may fail to allocate 64M hugepage
-memory by function shmat even though there is a 64M memory gap in
-the process.
+Commit-ID:  0ceb5499a8001e5ddac2c8bd7b45eb4c643469ad
+Gitweb:     https://git.kernel.org/tip/0ceb5499a8001e5ddac2c8bd7b45eb4c643469ad
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 13 May 2019 13:35:38 -0400
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 15 May 2019 16:36:46 -0300
 
-It is the adjusted length that causes the problem, introduced from
-commit db4fbfb9523c935 ("mm: vm_unmapped_area() lookup function").
-Accounting for the worst case alignment overhead, function unmapped_area
-and unmapped_area_topdown adjust the search length before searching
-for available vma gap. This is an estimated length, sum of the desired
-length and the longest alignment offset, which can cause misjudgement
-if the system has very few virtual memory left. For example, if the
-longest memory gap available is 64M, we can’t get it from the system
-by allocating 64M hugepage memory via shmat function. The reason is
-that it requires a longger length, the sum of the desired length(64M)
-and the longest alignment offset.
+tools x86 uapi asm: Sync the pt_regs.h copy with the kernel sources
 
-To fix this error ,we can calculate the alignment offset of
-gap_start or gap_end to get a desired gap_start or gap_end value,
-before searching for the available gap. In this way, we don't
-need to adjust the search length.
+To get the changes in:
 
-Problem reproduces procedure:
-1. allocate a lot of virtual memory segments via shmat and malloc
-2. release one of the biggest memory segment via shmdt
-3. attach the biggest memory segment via shmat
+  878068ea270e ("perf/x86: Support outputting XMM registers")
 
-e.g.
-process maps:
-00008000-00009000 r-xp 00000000 00:12 3385    /tmp/memory_mmap
-00011000-00012000 rw-p 00001000 00:12 3385    /tmp/memory_mmap
-27536000-f756a000 rw-p 00000000 00:00 0
-f756a000-f7691000 r-xp 00000000 01:00 560     /lib/libc-2.11.1.so
-f7691000-f7699000 ---p 00127000 01:00 560     /lib/libc-2.11.1.so
-f7699000-f769b000 r--p 00127000 01:00 560     /lib/libc-2.11.1.so
-f769b000-f769c000 rw-p 00129000 01:00 560     /lib/libc-2.11.1.so
-f769c000-f769f000 rw-p 00000000 00:00 0
-f769f000-f76c0000 r-xp 00000000 01:00 583     /lib/libgcc_s.so.1
-f76c0000-f76c7000 ---p 00021000 01:00 583     /lib/libgcc_s.so.1
-f76c7000-f76c8000 rw-p 00020000 01:00 583     /lib/libgcc_s.so.1
-f76c8000-f76e5000 r-xp 00000000 01:00 543     /lib/ld-2.11.1.so
-f76e9000-f76ea000 rw-p 00000000 00:00 0
-f76ea000-f76ec000 rw-p 00000000 00:00 0
-f76ec000-f76ed000 r--p 0001c000 01:00 543     /lib/ld-2.11.1.so
-f76ed000-f76ee000 rw-p 0001d000 01:00 543     /lib/ld-2.11.1.so
-f7800000-f7a00000 rw-s 00000000 00:0e 0       /SYSV000000ea (deleted)
-fba00000-fca00000 rw-s 00000000 00:0e 65538   /SYSV000000ec (deleted)
-fca00000-fce00000 rw-s 00000000 00:0e 98307   /SYSV000000ed (deleted)
-fce00000-fd800000 rw-s 00000000 00:0e 131076  /SYSV000000ee (deleted)
-ff913000-ff934000 rw-p 00000000 00:00 0       [stack]
-ffff0000-ffff1000 r-xp 00000000 00:00 0       [vectors]
+That will be used in a followup patch to allow users to ask for some or
+all of those registers to be collected in certain contatexts.
 
-from 0xf7a00000 to fba00000, it has 64M memory gap, but we can't get
-it from kernel.
+This silences the following perf build warning:
 
-Signed-off-by: jianhong chen <chenjianhong2@huawei.com>
-Cc: stable@vger.kernel.org
+  Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/perf_regs.h' differs from latest version at 'arch/x86/include/uapi/asm/perf_regs.h'
+  diff -u tools/arch/x86/include/uapi/asm/perf_regs.h arch/x86/include/uapi/asm/perf_regs.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/n/tip-6pjnnrzqt3x3n2cd6br3wk7k@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- mm/mmap.c | 43 +++++++++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+ tools/arch/x86/include/uapi/asm/perf_regs.h | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index bd7b9f2..c5a5782 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1865,6 +1865,22 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	return error;
- }
- 
-+static inline unsigned long gap_start_offset(struct vm_unmapped_area_info *info,
-+					unsigned long addr)
-+{
-+	/* get gap_start offset to adjust gap address to the
-+	 * desired alignment
-+	 */
-+	return (info->align_offset - addr) & info->align_mask;
-+}
-+
-+static inline unsigned long gap_end_offset(struct vm_unmapped_area_info *info,
-+					unsigned long addr)
-+{
-+	/* get gap_end offset to adjust gap address to the desired alignment */
-+	return (addr - info->align_offset) & info->align_mask;
-+}
-+
- unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- {
- 	/*
-@@ -1879,10 +1895,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 	struct vm_area_struct *vma;
- 	unsigned long length, low_limit, high_limit, gap_start, gap_end;
- 
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask;
--	if (length < info->length)
--		return -ENOMEM;
-+	length = info->length;
- 
- 	/* Adjust search limits by the desired length */
- 	if (info->high_limit < length)
-@@ -1914,6 +1927,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 		}
- 
- 		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0;
-+		gap_start += gap_start_offset(info, gap_start);
- check_current:
- 		/* Check if current node has a suitable gap */
- 		if (gap_start > high_limit)
-@@ -1942,6 +1956,7 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- 				       struct vm_area_struct, vm_rb);
- 			if (prev == vma->vm_rb.rb_left) {
- 				gap_start = vm_end_gap(vma->vm_prev);
-+				gap_start += gap_start_offset(info, gap_start);
- 				gap_end = vm_start_gap(vma);
- 				goto check_current;
- 			}
-@@ -1951,17 +1966,17 @@ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- check_highest:
- 	/* Check highest gap, which does not precede any rbtree node */
- 	gap_start = mm->highest_vm_end;
-+	gap_start += gap_start_offset(info, gap_start);
- 	gap_end = ULONG_MAX;  /* Only for VM_BUG_ON below */
- 	if (gap_start > high_limit)
- 		return -ENOMEM;
- 
- found:
- 	/* We found a suitable gap. Clip it with the original low_limit. */
--	if (gap_start < info->low_limit)
-+	if (gap_start < info->low_limit) {
- 		gap_start = info->low_limit;
+diff --git a/tools/arch/x86/include/uapi/asm/perf_regs.h b/tools/arch/x86/include/uapi/asm/perf_regs.h
+index f3329cabce5c..ac67bbea10ca 100644
+--- a/tools/arch/x86/include/uapi/asm/perf_regs.h
++++ b/tools/arch/x86/include/uapi/asm/perf_regs.h
+@@ -27,8 +27,29 @@ enum perf_event_x86_regs {
+ 	PERF_REG_X86_R13,
+ 	PERF_REG_X86_R14,
+ 	PERF_REG_X86_R15,
 -
--	/* Adjust gap address to the desired alignment */
--	gap_start += (info->align_offset - gap_start) & info->align_mask;
-+		gap_start += gap_start_offset(info, gap_start);
-+	}
- 
- 	VM_BUG_ON(gap_start + info->length > info->high_limit);
- 	VM_BUG_ON(gap_start + info->length > gap_end);
-@@ -1974,16 +1989,14 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- 	struct vm_area_struct *vma;
- 	unsigned long length, low_limit, high_limit, gap_start, gap_end;
- 
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask;
--	if (length < info->length)
--		return -ENOMEM;
-+	length = info->length;
- 
- 	/*
- 	 * Adjust search limits by the desired length.
- 	 * See implementation comment at top of unmapped_area().
- 	 */
- 	gap_end = info->high_limit;
-+	gap_end -= gap_end_offset(info, gap_end);
- 	if (gap_end < length)
- 		return -ENOMEM;
- 	high_limit = gap_end - length;
-@@ -2020,6 +2033,7 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- check_current:
- 		/* Check if current node has a suitable gap */
- 		gap_end = vm_start_gap(vma);
-+		gap_end -= gap_end_offset(info, gap_end);
- 		if (gap_end < low_limit)
- 			return -ENOMEM;
- 		if (gap_start <= high_limit &&
-@@ -2054,13 +2068,14 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
- 
- found:
- 	/* We found a suitable gap. Clip it with the original high_limit. */
--	if (gap_end > info->high_limit)
-+	if (gap_end > info->high_limit) {
- 		gap_end = info->high_limit;
-+		gap_end -= gap_end_offset(info, gap_end);
-+	}
- 
- found_highest:
- 	/* Compute highest gap address at the desired alignment */
- 	gap_end -= info->length;
--	gap_end -= (gap_end - info->align_offset) & info->align_mask;
- 
- 	VM_BUG_ON(gap_end < info->low_limit);
- 	VM_BUG_ON(gap_end < gap_start);
--- 
-1.8.5.6
-
++	/* These are the limits for the GPRs. */
+ 	PERF_REG_X86_32_MAX = PERF_REG_X86_GS + 1,
+ 	PERF_REG_X86_64_MAX = PERF_REG_X86_R15 + 1,
++
++	/* These all need two bits set because they are 128bit */
++	PERF_REG_X86_XMM0  = 32,
++	PERF_REG_X86_XMM1  = 34,
++	PERF_REG_X86_XMM2  = 36,
++	PERF_REG_X86_XMM3  = 38,
++	PERF_REG_X86_XMM4  = 40,
++	PERF_REG_X86_XMM5  = 42,
++	PERF_REG_X86_XMM6  = 44,
++	PERF_REG_X86_XMM7  = 46,
++	PERF_REG_X86_XMM8  = 48,
++	PERF_REG_X86_XMM9  = 50,
++	PERF_REG_X86_XMM10 = 52,
++	PERF_REG_X86_XMM11 = 54,
++	PERF_REG_X86_XMM12 = 56,
++	PERF_REG_X86_XMM13 = 58,
++	PERF_REG_X86_XMM14 = 60,
++	PERF_REG_X86_XMM15 = 62,
++
++	/* These include both GPRs and XMMX registers */
++	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+ };
+ #endif /* _ASM_X86_PERF_REGS_H */
