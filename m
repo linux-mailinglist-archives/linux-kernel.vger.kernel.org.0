@@ -2,143 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C2022282
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDE9C22284
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfERJJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 05:09:02 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33404 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfERJJB (ORCPT
+        id S1729714AbfERJJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 05:09:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53491 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfERJJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 05:09:01 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x132so7006257lfd.0;
-        Sat, 18 May 2019 02:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JMJMxJ4pxlUz8asklfXu2+f43mE5Z5/GW0LwxKJU/nI=;
-        b=Ctp4zeKDTdrgBiXbI4X8Zcrd9YuEgiitY8MhoX5s6yaOPgi3ig821+yXq3T3EYw2Hv
-         8rAnvJrac4pPcY1mZmlqCQ12K77lOlFTfuQJ5f6hfssXLukOlcGLhyY+WmzvcdGs3lOd
-         qs1QudsMYyz3+0VdkKCCn8FUkJu5t5dlBgtd4CzgC5D+C0V/aoFjFz6hWkWKhapSkEwY
-         S3gtNWLfL6A/SHFn20zzJWhakp7mjc4vEJjBX1lpofL/aKXti4XyhsPstG9qaZ2hUHQ1
-         BFguhbaSwauVckqL3Fv6eiM/V9e0PNXd2xIThaq8QEGkmB3R/Qfl+BAZMYIAM0l1Gr+L
-         gnZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JMJMxJ4pxlUz8asklfXu2+f43mE5Z5/GW0LwxKJU/nI=;
-        b=I8pHsiHi8Zs+1R9n6x8Ba5OwiI4R9G040zwC+JNvNejLw2Lm5zrQEV8200mPtGmLI7
-         GsVU9PyynyVIIg1DsbZwg0d/PP+8kBltQqaXxDJc0E9XY8BYYMyZ8bXhxTB9pN2Bmh3S
-         tbrG8GbR2kl5gn/y5flDpfWGrorA6ipqY4F32Ap3ItFTaSmuZiM2yQwqLNtGamZmFP4w
-         APceDaicNHyPiFXrqNybqnHkkKB5lCv7pCm+h1jo2h+73IsWzGCW7r0UZKhicAsEAbtP
-         ahV4qIzTY0uAjMBjsxOvS9sBhDDq9aGAdGhb4AWuuEVY+JXYMLtI2SG+7qw56+56jGe0
-         KIMw==
-X-Gm-Message-State: APjAAAXeR+4Z1Ow3UQuql2/v8elH3RUReJAw/BnAgdp2orQaKr0zv2P5
-        S/z+v4nNYI4vc84c4ppMbeBLig+a2aw=
-X-Google-Smtp-Source: APXvYqy0r9DsbizCqrexPf9rUX12ja5WC7syNRm9Q4CKHVB7psLJiiPZPg+vaEdPhLPIeeqlAA81mw==
-X-Received: by 2002:a05:6512:309:: with SMTP id t9mr29680176lfp.103.1558170539702;
-        Sat, 18 May 2019 02:08:59 -0700 (PDT)
-Received: from [192.168.1.111] ([77.123.15.14])
-        by smtp.googlemail.com with ESMTPSA id f21sm2211511ljk.94.2019.05.18.02.08.58
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 May 2019 02:08:58 -0700 (PDT)
-Subject: Re: [PATCH v3] HID: fix A4Tech horizontal scrolling
-To:     =?UTF-8?B?QsWCYcW8ZWogU3pjenlnaWXFgg==?= <spaz16@wp.pl>
-Cc:     peter.hutterer@who-t.net, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190507050029.GA5197@jelly>
- <20190512203313.18756-1-spaz16@wp.pl>
-From:   Igor Kushnir <igorkuo@gmail.com>
-Message-ID: <858498ef-b43a-f382-bfbc-e3a2ac9935e4@gmail.com>
-Date:   Sat, 18 May 2019 12:08:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 18 May 2019 05:09:54 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I99UiK1736972
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 18 May 2019 02:09:30 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I99UiK1736972
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558170570;
+        bh=22iwg4vE2A/cF38F7Fv9unq86DIk7aEhj95Y7TSiS+Y=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=VTRu2YmLuvCB78+IpntuaG/ODp6sBZ3mSN9/6/VOz8sbJ7n+3NmfdKPHX/zErT7Ao
+         PLOPXUlCMvLvvSpONBY+88F2J1NQUrECXGrOQaNeAbsxQ72EWbZDlxbgnaC/oBV3cL
+         9XKcodc4ZNPiUFmiTtueQJZqPLuvK0BebjHpIJjNE9HK3sRF6zEbIfQFqKOlN1Hryq
+         JXYzb/DnNPWQRWehrmYE5xqbsP3ZWyK7yCZEdULgOVH+l2g9ow1RIGM9ZSU6aMsWg9
+         VMzFtaOmwsgaHFJb6uNnAIoClSh+490yQH53zWDlxep9rcqEm1Z9XMz8fBOdXXUg3P
+         eN6ESLUT7eYkg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I99T2K1736969;
+        Sat, 18 May 2019 02:09:29 -0700
+Date:   Sat, 18 May 2019 02:09:29 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Tzvetomir Stoyanov <tipbot@zytor.com>
+Message-ID: <tip-86e8076e93ff69213931f867878709f2c6139032@git.kernel.org>
+Cc:     tstoyanov@vmware.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        namhyung@kernel.org, rostedt@goodmis.org, hpa@zytor.com,
+        tglx@linutronix.de, jolsa@redhat.com, acme@redhat.com
+Reply-To: tstoyanov@vmware.com, mingo@kernel.org,
+          akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, rostedt@goodmis.org, hpa@zytor.com,
+          jolsa@redhat.com, tglx@linutronix.de, acme@redhat.com
+In-Reply-To: <20190510200108.197407057@goodmis.org>
+References: <20190510200108.197407057@goodmis.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools lib traceevent: Man pages for event find APIs
+Git-Commit-ID: 86e8076e93ff69213931f867878709f2c6139032
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190512203313.18756-1-spaz16@wp.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: uk-UA
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Commit-ID:  86e8076e93ff69213931f867878709f2c6139032
+Gitweb:     https://git.kernel.org/tip/86e8076e93ff69213931f867878709f2c6139032
+Author:     Tzvetomir Stoyanov <tstoyanov@vmware.com>
+AuthorDate: Fri, 10 May 2019 15:56:21 -0400
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 15 May 2019 16:36:48 -0300
 
-I have verified that the PATCH v3 applied to kernel 5.0.15 fixes 
-horizontal scrolling for my A4Tech WOP-49Z mouse just as well as the 
-previous patch did.
+tools lib traceevent: Man pages for event find APIs
 
-Thank you,
-Igor
+Create man pages for libtraceevent APIs:
 
-On 5/12/19 11:33 PM, Błażej Szczygieł wrote:
-> Since recent high resolution scrolling changes the A4Tech driver must
-> check for the "REL_WHEEL_HI_RES" usage code.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203369
-> Fixes: 2dc702c991e3774af9d7ce410eef410ca9e2357e ("HID: input: use the
-> Resolution Multiplier for high-resolution scrolling")
-> 
-> Signed-off-by: Błażej Szczygieł <spaz16@wp.pl>
-> ---
-> Changes in v2:
-> - changed commit message
-> 
-> Changes in v3:
-> - send also high resolution events
-> 
->   drivers/hid/hid-a4tech.c | 11 ++++++++---
->   1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
-> index 9428ea7cdf8a..c3a6ce3613fe 100644
-> --- a/drivers/hid/hid-a4tech.c
-> +++ b/drivers/hid/hid-a4tech.c
-> @@ -38,8 +38,10 @@ static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,
->   {
->   	struct a4tech_sc *a4 = hid_get_drvdata(hdev);
->   
-> -	if (usage->type == EV_REL && usage->code == REL_WHEEL)
-> +	if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES) {
->   		set_bit(REL_HWHEEL, *bit);
-> +		set_bit(REL_HWHEEL_HI_RES, *bit);
-> +	}
->   
->   	if ((a4->quirks & A4_2WHEEL_MOUSE_HACK_7) && usage->hid == 0x00090007)
->   		return -1;
-> @@ -60,7 +62,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
->   	input = field->hidinput->input;
->   
->   	if (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8) {
-> -		if (usage->type == EV_REL && usage->code == REL_WHEEL) {
-> +		if (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES) {
->   			a4->delayed_value = value;
->   			return 1;
->   		}
-> @@ -68,6 +70,8 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
->   		if (usage->hid == 0x000100b8) {
->   			input_event(input, EV_REL, value ? REL_HWHEEL :
->   					REL_WHEEL, a4->delayed_value);
-> +			input_event(input, EV_REL, value ? REL_HWHEEL_HI_RES :
-> +					REL_WHEEL_HI_RES, a4->delayed_value * 120);
->   			return 1;
->   		}
->   	}
-> @@ -77,8 +81,9 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
->   		return 1;
->   	}
->   
-> -	if (usage->code == REL_WHEEL && a4->hw_wheel) {
-> +	if (usage->code == REL_WHEEL_HI_RES && a4->hw_wheel) {
->   		input_event(input, usage->type, REL_HWHEEL, value);
-> +		input_event(input, usage->type, REL_HWHEEL_HI_RES, value * 120);
->   		return 1;
->   	}
->   
-> 
+  tep_find_event()
+  tep_find_event_by_name()
+  tep_find_event_by_record()
+
+Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-trace-devel@vger.kernel.org
+Link: http://lore.kernel.org/linux-trace-devel/20190503091119.23399-15-tstoyanov@vmware.com
+Link: http://lkml.kernel.org/r/20190510200108.197407057@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../Documentation/libtraceevent-event_find.txt     | 103 +++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-event_find.txt b/tools/lib/traceevent/Documentation/libtraceevent-event_find.txt
+new file mode 100644
+index 000000000000..7bc062c9f76f
+--- /dev/null
++++ b/tools/lib/traceevent/Documentation/libtraceevent-event_find.txt
+@@ -0,0 +1,103 @@
++libtraceevent(3)
++================
++
++NAME
++----
++tep_find_event,tep_find_event_by_name,tep_find_event_by_record -
++Find events by given key.
++
++SYNOPSIS
++--------
++[verse]
++--
++*#include <event-parse.h>*
++
++struct tep_event pass:[*]*tep_find_event*(struct tep_handle pass:[*]_tep_, int _id_);
++struct tep_event pass:[*]*tep_find_event_by_name*(struct tep_handle pass:[*]_tep_, const char pass:[*]_sys_, const char pass:[*]_name_);
++struct tep_event pass:[*]*tep_find_event_by_record*(struct tep_handle pass:[*]_tep_, struct tep_record pass:[*]_record_);
++--
++
++DESCRIPTION
++-----------
++This set of functions can be used to search for an event, based on a given
++criteria. All functions require a pointer to a _tep_, trace event parser
++context.
++
++The _tep_find_event()_ function searches for an event by given event _id_. The
++event ID is assigned dynamically and can be viewed in event's format file,
++"ID" field.
++
++The tep_find_event_by_name()_ function searches for an event by given
++event _name_, under the system _sys_. If the _sys_ is NULL (not specified),
++the first event with _name_ is returned.
++
++The tep_find_event_by_record()_ function searches for an event from a given
++_record_.
++
++RETURN VALUE
++------------
++All these functions return a pointer to the found event, or NULL if there is no
++such event.
++
++EXAMPLE
++-------
++[source,c]
++--
++#include <event-parse.h>
++...
++struct tep_handle *tep = tep_alloc();
++...
++struct tep_event *event;
++
++event = tep_find_event(tep, 1857);
++if (event == NULL) {
++	/* There is no event with ID 1857 */
++}
++
++event = tep_find_event_by_name(tep, "kvm", "kvm_exit");
++if (event == NULL) {
++	/* There is no kvm_exit event, from kvm system */
++}
++
++void event_from_record(struct tep_record *record)
++{
++ struct tep_event *event = tep_find_event_by_record(tep, record);
++	if (event == NULL) {
++		/* There is no event from given record */
++	}
++}
++...
++--
++
++FILES
++-----
++[verse]
++--
++*event-parse.h*
++	Header file to include in order to have access to the library APIs.
++*-ltraceevent*
++	Linker switch to add when building a program that uses the library.
++--
++
++SEE ALSO
++--------
++_libtraceevent(3)_, _trace-cmd(1)_
++
++AUTHOR
++------
++[verse]
++--
++*Steven Rostedt* <rostedt@goodmis.org>, author of *libtraceevent*.
++*Tzvetomir Stoyanov* <tz.stoyanov@gmail.com>, author of this man page.
++--
++REPORTING BUGS
++--------------
++Report bugs to  <linux-trace-devel@vger.kernel.org>
++
++LICENSE
++-------
++libtraceevent is Free Software licensed under the GNU LGPL 2.1
++
++RESOURCES
++---------
++https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
