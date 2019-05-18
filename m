@@ -2,90 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5409322463
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 20:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7771722452
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 19:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfERSFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 14:05:41 -0400
-Received: from [49.216.8.140] ([49.216.8.140]:55394 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728283AbfERSFl (ORCPT
+        id S1729798AbfERRtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 13:49:50 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:57213 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728990AbfERRtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 14:05:41 -0400
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 21BACC023A;
-        Sun, 19 May 2019 01:45:14 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v3] clocksource: Untrust the watchdog if its interval is too small
-Date:   Sun, 19 May 2019 01:45:12 +0800
-Message-Id: <20190518174512.21053-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190518141005.1132-1-harry.pan@intel.com>
-References: <20190518141005.1132-1-harry.pan@intel.com>
+        Sat, 18 May 2019 13:49:50 -0400
+Received: (qmail 11573 invoked by uid 500); 18 May 2019 13:49:49 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 18 May 2019 13:49:49 -0400
+Date:   Sat, 18 May 2019 13:49:49 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     syzbot <syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <chunkeey@gmail.com>,
+        <chunkeey@googlemail.com>, <davem@davemloft.net>,
+        <kvalo@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <oneukum@suse.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in p54u_load_firmware_cb
+In-Reply-To: <000000000000b8203405892cee43@google.com>
+Message-ID: <Pine.LNX.4.44L0.1905181346380.10594-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perform sanity check on the watchdog to validate its interval, avoid
-to generate a false alarm that incorrectly marks the main clocksource
-as unstable when there comes discrepancy.
+On Sat, 18 May 2019, syzbot wrote:
 
-Say if there is a discrepancy between the current clocksource and watchdog,
-validate the watchdog deviation first, if its interval is too small against
-the expected timer interval, we shall trust the current clocksource, else
-incorrectly kick off the main clocksource could mess up the wall clock.
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer still triggered  
+> crash:
+> KASAN: use-after-free Read in usb_driver_release_interface
+> 
+> usb 1-1: Loading firmware file isl3887usb
+> usb 1-1: Direct firmware load for isl3887usb failed with error -2
+> usb 1-1: Firmware not found.
+> p54usb 1-1:0.143: failed to initialize device (-2)
+> ==================================================================
+> BUG: KASAN: use-after-free in usb_driver_release_interface+0x16b/0x190  
+> drivers/usb/core/driver.c:584
+> Read of size 8 at addr ffff88808fc31218 by task kworker/0:1/12
 
-It is identified on some Coffee Lake platform w/ PC10 allowed, it has a
-problematic HPET timer in the platform integration, when the CPU exited
-from the low power mode of PC10, the HPET generates timestamp delay, this
-causes discrepancy making kernel incorrectly untrust the current clocksource
-(TSC in this case) and re-select the next clocksource which is the problematic
-HPET, this eventually causes a user sensible wall clock delay.
+Now the bad access is in a different place.  That's a good sign.
+In this case it indicates that although udev is still hanging around, 
+intf has already been freed.  We really should acquire a reference to 
+it instead.
 
-v2: fix resource leak: the locked watchdog_lock
-v3: revise the communication: focus on the timer self validation
+Alan Stern
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203183
-Signed-off-by: Harry Pan <harry.pan@intel.com>
 
----
+#syz test: https://github.com/google/kasan.git usb-fuzzer
 
- kernel/time/clocksource.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/wireless/intersil/p54/p54usb.c |   43 ++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 3bcc19ceb073..090d937d5ec4 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -96,6 +96,7 @@ static u64 suspend_start;
- #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
- static void clocksource_watchdog_work(struct work_struct *work);
- static void clocksource_select(void);
-+static void clocksource_dequeue_watchdog(struct clocksource *cs);
+Index: usb-devel/drivers/net/wireless/intersil/p54/p54usb.c
+===================================================================
+--- usb-devel.orig/drivers/net/wireless/intersil/p54/p54usb.c
++++ usb-devel/drivers/net/wireless/intersil/p54/p54usb.c
+@@ -33,6 +33,8 @@ MODULE_ALIAS("prism54usb");
+ MODULE_FIRMWARE("isl3886usb");
+ MODULE_FIRMWARE("isl3887usb");
  
- static LIST_HEAD(watchdog_list);
- static struct clocksource *watchdog;
-@@ -236,6 +237,12 @@ static void clocksource_watchdog(struct timer_list *unused)
++static struct usb_driver p54u_driver;
++
+ /*
+  * Note:
+  *
+@@ -921,9 +923,9 @@ static void p54u_load_firmware_cb(const
+ {
+ 	struct p54u_priv *priv = context;
+ 	struct usb_device *udev = priv->udev;
++	struct usb_interface *intf = priv->intf;
+ 	int err;
  
- 		/* Check the deviation from the watchdog clocksource. */
- 		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
-+			if (wd_nsec < jiffies_to_nsecs(WATCHDOG_INTERVAL) - WATCHDOG_THRESHOLD) {
-+				pr_err("Stop timekeeping watchdog '%s' because expected interval is too small in %lld ns only\n",
-+					watchdog->name, wd_nsec);
-+				clocksource_dequeue_watchdog(cs);
-+				goto out;
-+			}
- 			pr_warn("timekeeping watchdog on CPU%d: Marking clocksource '%s' as unstable because the skew is too large:\n",
- 				smp_processor_id(), cs->name);
- 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
--- 
-2.20.1
+-	complete(&priv->fw_wait_load);
+ 	if (firmware) {
+ 		priv->fw = firmware;
+ 		err = p54u_start_ops(priv);
+@@ -932,26 +934,22 @@ static void p54u_load_firmware_cb(const
+ 		dev_err(&udev->dev, "Firmware not found.\n");
+ 	}
+ 
+-	if (err) {
+-		struct device *parent = priv->udev->dev.parent;
+-
+-		dev_err(&udev->dev, "failed to initialize device (%d)\n", err);
+-
+-		if (parent)
+-			device_lock(parent);
++	complete(&priv->fw_wait_load);
++	/*
++	 * At this point p54u_disconnect may have already freed
++	 * the "priv" context. Do not use it anymore!
++	 */
++	priv = NULL;
+ 
+-		device_release_driver(&udev->dev);
+-		/*
+-		 * At this point p54u_disconnect has already freed
+-		 * the "priv" context. Do not use it anymore!
+-		 */
+-		priv = NULL;
++	if (err) {
++		dev_err(&intf->dev, "failed to initialize device (%d)\n", err);
+ 
+-		if (parent)
+-			device_unlock(parent);
++		usb_lock_device(udev);
++		usb_driver_release_interface(&p54u_driver, intf);
++		usb_unlock_device(udev);
+ 	}
+ 
+-	usb_put_dev(udev);
++	usb_put_intf(intf);
+ }
+ 
+ static int p54u_load_firmware(struct ieee80211_hw *dev,
+@@ -972,14 +970,14 @@ static int p54u_load_firmware(struct iee
+ 	dev_info(&priv->udev->dev, "Loading firmware file %s\n",
+ 	       p54u_fwlist[i].fw);
+ 
+-	usb_get_dev(udev);
++	usb_get_intf(intf);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, p54u_fwlist[i].fw,
+ 				      device, GFP_KERNEL, priv,
+ 				      p54u_load_firmware_cb);
+ 	if (err) {
+ 		dev_err(&priv->udev->dev, "(p54usb) cannot load firmware %s "
+ 					  "(%d)!\n", p54u_fwlist[i].fw, err);
+-		usb_put_dev(udev);
++		usb_put_intf(intf);
+ 	}
+ 
+ 	return err;
+@@ -1011,8 +1009,6 @@ static int p54u_probe(struct usb_interfa
+ 	skb_queue_head_init(&priv->rx_queue);
+ 	init_usb_anchor(&priv->submitted);
+ 
+-	usb_get_dev(udev);
+-
+ 	/* really lazy and simple way of figuring out if we're a 3887 */
+ 	/* TODO: should just stick the identification in the device table */
+ 	i = intf->altsetting->desc.bNumEndpoints;
+@@ -1053,10 +1049,8 @@ static int p54u_probe(struct usb_interfa
+ 		priv->upload_fw = p54u_upload_firmware_net2280;
+ 	}
+ 	err = p54u_load_firmware(dev, intf);
+-	if (err) {
+-		usb_put_dev(udev);
++	if (err)
+ 		p54_free_common(dev);
+-	}
+ 	return err;
+ }
+ 
+@@ -1072,7 +1066,6 @@ static void p54u_disconnect(struct usb_i
+ 	wait_for_completion(&priv->fw_wait_load);
+ 	p54_unregister_common(dev);
+ 
+-	usb_put_dev(interface_to_usbdev(intf));
+ 	release_firmware(priv->fw);
+ 	p54_free_common(dev);
+ }
 
