@@ -2,51 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58BD6222AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA573222B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbfERJb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 05:31:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34727 "EHLO
+        id S1730039AbfERJcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 05:32:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33133 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfERJb3 (ORCPT
+        with ESMTP id S1725268AbfERJcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 05:31:29 -0400
+        Sat, 18 May 2019 05:32:08 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9VJ6C1742078
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9W0Jl1742102
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 18 May 2019 02:31:19 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9VJ6C1742078
+        Sat, 18 May 2019 02:32:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9W0Jl1742102
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1558171880;
-        bh=4Qd8xv/bKZ75un3Hrz2gqPJOSLiD9F8jnyGYDogsqFo=;
+        s=2019041745; t=1558171921;
+        bh=eTmpATsAv4NbvDbMC8kXrrdD6yHFNKQOoQTPJh7MR8A=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=SR3Kdy6BMViy8T+symMgVCjE4bmAlnEcRnaJRJiI0N/TGQ3wbQtCJNdcQXyLGwM/q
-         B6AtUt0BMURzXv4TP9kkCLbQcnK5n7p9b3jHuq2208c/30DIfM01nXzSev6MiUYMZ1
-         9HHYxAkO6LkXjYBozxUw2b7GwfD710EYqCrWQvM7DJyQFxW8Sh7hM+aNCihBwhRJIV
-         Gjc9Vk1tg18b+5ZUGvuOC744cDURl5xaPA8q1mzc+uLS2alsjDtb1C4TI78NOJOg45
-         ZgRSCc7kT1sEIhK58Tvp6LQDPJlvIr5lfXIhF6W6oVJBv9fbMhhHTuRTp7VHi7LM1d
-         h6IpG4mcnS4XQ==
+        b=UhKmp6BMJQGqmesunFHZUKuC7q5JUMyyY6K7CBCcOTQP7DLgew90WeYzRlqU3Nz8G
+         5AyaUYdGdvbcPkt9rQwG2TTOHnf6OveQmSV5+gl+oIDYljLeTaKv5/M9TUdPkQusl/
+         eHtn2jUtDlpMbZLUM2omrme0g0RXp94vVamNAhAE8YpwoZxN5iE+XhAVHyq7kuDA36
+         NAfds8I2k34xpjYpsUOO3rRfZzGRDC9QE6ZFeGPbaBEeNj6wq/LHUdpiRgJ0xwE2w2
+         qwR8+osgG/7sGzwLqJYsIEMgtqqXKLlTqHLJxvzV+gcwBqLLMc/oQWn79LUdCO/8m9
+         M7q2liFc8xVIw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9VJYW1742075;
-        Sat, 18 May 2019 02:31:19 -0700
-Date:   Sat, 18 May 2019 02:31:19 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9VxU91742099;
+        Sat, 18 May 2019 02:31:59 -0700
+Date:   Sat, 18 May 2019 02:31:59 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-af785e75bf616704cab031e66403b6adcf5b700a@git.kernel.org>
-Cc:     ravi.bangoria@linux.ibm.com, mingo@kernel.org, tglx@linutronix.de,
-        acme@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        ak@linux.intel.com, kan.liang@linux.intel.com, hpa@zytor.com
-Reply-To: ravi.bangoria@linux.ibm.com, mingo@kernel.org,
-          tglx@linutronix.de, acme@redhat.com,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          ak@linux.intel.com, kan.liang@linux.intel.com, hpa@zytor.com
-In-Reply-To: <1557865174-56264-2-git-send-email-kan.liang@linux.intel.com>
-References: <1557865174-56264-2-git-send-email-kan.liang@linux.intel.com>
+Message-ID: <tip-6466ec14aaf44ff14a05369dcf0929d0f01171c6@git.kernel.org>
+Cc:     ak@linux.intel.com, jolsa@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        kan.liang@linux.intel.com, acme@redhat.com, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          ak@linux.intel.com, jolsa@kernel.org, acme@redhat.com,
+          mingo@kernel.org, hpa@zytor.com, kan.liang@linux.intel.com
+In-Reply-To: <1557865174-56264-3-git-send-email-kan.liang@linux.intel.com>
+References: <1557865174-56264-3-git-send-email-kan.liang@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf parse-regs: Add generic support for
- arch__intr/user_reg_mask()
-Git-Commit-ID: af785e75bf616704cab031e66403b6adcf5b700a
+Subject: [tip:perf/core] perf regs x86: Add X86 specific
+ arch__intr_reg_mask()
+Git-Commit-ID: 6466ec14aaf44ff14a05369dcf0929d0f01171c6
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,120 +63,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  af785e75bf616704cab031e66403b6adcf5b700a
-Gitweb:     https://git.kernel.org/tip/af785e75bf616704cab031e66403b6adcf5b700a
+Commit-ID:  6466ec14aaf44ff14a05369dcf0929d0f01171c6
+Gitweb:     https://git.kernel.org/tip/6466ec14aaf44ff14a05369dcf0929d0f01171c6
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 14 May 2019 13:19:33 -0700
+AuthorDate: Tue, 14 May 2019 13:19:34 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 16 May 2019 14:17:12 -0300
+CommitDate: Thu, 16 May 2019 14:17:23 -0300
 
-perf parse-regs: Add generic support for arch__intr/user_reg_mask()
+perf regs x86: Add X86 specific arch__intr_reg_mask()
 
-There may be different register mask for use with intr or user on some
-platforms, e.g. Icelake.
+XMM registers can be collected on Icelake and later platforms.
 
-Add weak functions arch__intr_reg_mask() and arch__user_reg_mask() to
-return intr and user register mask respectively.
+Add specific arch__intr_reg_mask(), which creating an event to check if
+the kernel and hardware can collect XMM registers.
 
-Check mask before printing or comparing the register name.
+Test on Skylake which doesn't support XMM registers collection. There is
+nothing changed.
 
-Generic code always return PERF_REGS_MASK. No functional change.
+   #perf record -I?
+   available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9
+   R10 R11 R12 R13 R14 R15
 
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+   Usage: perf record [<options>] [<command>]
+    or: perf record [<options>] -- <command> [<options>]
+
+    -I, --intr-regs[=<any register>]
+                          sample selected machine registers on
+   interrupt, use '-I?' to list register names
+
+   #perf record -I
+   [ perf record: Woken up 1 times to write data ]
+   [ perf record: Captured and wrote 0.905 MB perf.data (2520 samples) ]
+
+   #perf evlist -v
+   cycles: size: 112, { sample_period, sample_freq }: 4000, sample_type:
+   IP|TID|TIME|CPU|PERIOD|REGS_INTR, read_format: ID, disabled: 1,
+   inherit: 1, mmap: 1, comm: 1, freq: 1, task: 1, precise_ip: 3,
+   sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol:
+   1, bpf_event: 1, sample_regs_intr: 0xff0fff
+
+Test on Icelake which support XMM registers collection.
+
+   #perf record -I?
+   available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9 R10
+   R11 R12 R13 R14 R15 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6 XMM7 XMM8 XMM9
+   XMM10 XMM11 XMM12 XMM13 XMM14 XMM15
+
+   Usage: perf record [<options>] [<command>]
+    or: perf record [<options>] -- <command> [<options>]
+
+    -I, --intr-regs[=<any register>]
+                          sample selected machine registers on
+   interrupt, use '-I?' to list register names
+
+   #perf record -I
+   [ perf record: Woken up 1 times to write data ]
+   [ perf record: Captured and wrote 0.800 MB perf.data (318 samples) ]
+
+   #perf evlist -v
+   cycles: size: 112, { sample_period, sample_freq }: 4000, sample_type:
+   IP|TID|TIME|CPU|PERIOD|REGS_INTR, read_format: ID, disabled: 1,
+   inherit: 1, mmap: 1, comm: 1, freq: 1, task: 1, precise_ip: 3,
+   sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol:
+   1, bpf_event: 1, sample_regs_intr: 0xffffffff00ff0fff
+
+Committer notes:
+
+Don't set attr.sample_period as a named struct init, as it is part of an
+unnamed union in 'struct perf_event_attr', and doing so breaks the build
+on older gcc versions, such as:
+
+  gcc version 4.1.2 20080704 (Red Hat 4.1.2-55)
+  gcc version 4.4.7 20120313 (Red Hat 4.4.7-23) (GCC)
+
+  arch/x86/util/perf_regs.c: In function 'arch__intr_reg_mask':
+  arch/x86/util/perf_regs.c:279: error: unknown field 'sample_period' specified in initializer
+  cc1: warnings being treated as errors
+  arch/x86/util/perf_regs.c:279: warning: missing braces around initializer
+  arch/x86/util/perf_regs.c:279: warning: (near initialization for 'attr.<anonymous>')
+
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+[ Only on a lenovo t480s, a skylake machine, where the XMM registers didn't show up in -I?/--user-regs=? as expected ]
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/1557865174-56264-2-git-send-email-kan.liang@linux.intel.com
+Link: http://lkml.kernel.org/r/1557865174-56264-3-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/parse-regs-options.c | 13 ++++++++++---
- tools/perf/util/perf_regs.c          | 10 ++++++++++
- tools/perf/util/perf_regs.h          |  2 ++
- 3 files changed, 22 insertions(+), 3 deletions(-)
+ tools/perf/arch/x86/include/perf_regs.h |  1 +
+ tools/perf/arch/x86/util/perf_regs.c    | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/tools/perf/util/parse-regs-options.c b/tools/perf/util/parse-regs-options.c
-index b21617f2bec1..08581e276225 100644
---- a/tools/perf/util/parse-regs-options.c
-+++ b/tools/perf/util/parse-regs-options.c
-@@ -12,6 +12,7 @@ __parse_regs(const struct option *opt, const char *str, int unset, bool intr)
- 	const struct sample_reg *r;
- 	char *s, *os = NULL, *p;
- 	int ret = -1;
-+	uint64_t mask;
+diff --git a/tools/perf/arch/x86/include/perf_regs.h b/tools/perf/arch/x86/include/perf_regs.h
+index b7321337d100..b7cd91a9014f 100644
+--- a/tools/perf/arch/x86/include/perf_regs.h
++++ b/tools/perf/arch/x86/include/perf_regs.h
+@@ -9,6 +9,7 @@
+ void perf_regs_load(u64 *regs);
  
- 	if (unset)
- 		return 0;
-@@ -22,6 +23,11 @@ __parse_regs(const struct option *opt, const char *str, int unset, bool intr)
- 	if (*mode)
- 		return -1;
+ #define PERF_REGS_MAX PERF_REG_X86_XMM_MAX
++#define PERF_XMM_REGS_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
+ #ifndef HAVE_ARCH_X86_64_SUPPORT
+ #define PERF_REGS_MASK ((1ULL << PERF_REG_X86_32_MAX) - 1)
+ #define PERF_SAMPLE_REGS_ABI PERF_SAMPLE_REGS_ABI_32
+diff --git a/tools/perf/arch/x86/util/perf_regs.c b/tools/perf/arch/x86/util/perf_regs.c
+index 71d7604dbf0b..7886ca5263e3 100644
+--- a/tools/perf/arch/x86/util/perf_regs.c
++++ b/tools/perf/arch/x86/util/perf_regs.c
+@@ -270,3 +270,31 @@ int arch_sdt_arg_parse_op(char *old_op, char **new_op)
  
-+	if (intr)
-+		mask = arch__intr_reg_mask();
-+	else
-+		mask = arch__user_reg_mask();
-+
- 	/* str may be NULL in case no arg is passed to -I */
- 	if (str) {
- 		/* because str is read-only */
-@@ -37,14 +43,15 @@ __parse_regs(const struct option *opt, const char *str, int unset, bool intr)
- 			if (!strcmp(s, "?")) {
- 				fprintf(stderr, "available registers: ");
- 				for (r = sample_reg_masks; r->name; r++) {
--					fprintf(stderr, "%s ", r->name);
-+					if (r->mask & mask)
-+						fprintf(stderr, "%s ", r->name);
- 				}
- 				fputc('\n', stderr);
- 				/* just printing available regs */
- 				return -1;
- 			}
- 			for (r = sample_reg_masks; r->name; r++) {
--				if (!strcasecmp(s, r->name))
-+				if ((r->mask & mask) && !strcasecmp(s, r->name))
- 					break;
- 			}
- 			if (!r->name) {
-@@ -65,7 +72,7 @@ __parse_regs(const struct option *opt, const char *str, int unset, bool intr)
- 
- 	/* default to all possible regs */
- 	if (*mode == 0)
--		*mode = PERF_REGS_MASK;
-+		*mode = mask;
- error:
- 	free(os);
- 	return ret;
-diff --git a/tools/perf/util/perf_regs.c b/tools/perf/util/perf_regs.c
-index 2acfcc527cac..2774cec1f15f 100644
---- a/tools/perf/util/perf_regs.c
-+++ b/tools/perf/util/perf_regs.c
-@@ -13,6 +13,16 @@ int __weak arch_sdt_arg_parse_op(char *old_op __maybe_unused,
- 	return SDT_ARG_SKIP;
+ 	return SDT_ARG_VALID;
  }
- 
-+uint64_t __weak arch__intr_reg_mask(void)
++
++uint64_t arch__intr_reg_mask(void)
 +{
++	struct perf_event_attr attr = {
++		.type			= PERF_TYPE_HARDWARE,
++		.config			= PERF_COUNT_HW_CPU_CYCLES,
++		.sample_type		= PERF_SAMPLE_REGS_INTR,
++		.sample_regs_intr	= PERF_XMM_REGS_MASK,
++		.precise_ip		= 1,
++		.disabled 		= 1,
++		.exclude_kernel		= 1,
++	};
++	int fd;
++	/*
++	 * In an unnamed union, init it here to build on older gcc versions
++	 */
++	attr.sample_period = 1;
++
++	event_attr_init(&attr);
++
++	fd = sys_perf_event_open(&attr, 0, -1, -1, 0);
++	if (fd != -1) {
++		close(fd);
++		return (PERF_XMM_REGS_MASK | PERF_REGS_MASK);
++	}
++
 +	return PERF_REGS_MASK;
 +}
-+
-+uint64_t __weak arch__user_reg_mask(void)
-+{
-+	return PERF_REGS_MASK;
-+}
-+
- #ifdef HAVE_PERF_REGS_SUPPORT
- int perf_reg_value(u64 *valp, struct regs_dump *regs, int id)
- {
-diff --git a/tools/perf/util/perf_regs.h b/tools/perf/util/perf_regs.h
-index 1a15a4bfc28d..cb9c246c8962 100644
---- a/tools/perf/util/perf_regs.h
-+++ b/tools/perf/util/perf_regs.h
-@@ -23,6 +23,8 @@ enum {
- };
- 
- int arch_sdt_arg_parse_op(char *old_op, char **new_op);
-+uint64_t arch__intr_reg_mask(void);
-+uint64_t arch__user_reg_mask(void);
- 
- #ifdef HAVE_PERF_REGS_SUPPORT
- #include <perf_regs.h>
