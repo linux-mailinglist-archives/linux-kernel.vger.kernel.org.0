@@ -2,51 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB84522298
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BEB2229A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbfERJUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 05:20:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56587 "EHLO
+        id S1729810AbfERJUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 05:20:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36495 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfERJUQ (ORCPT
+        with ESMTP id S1728773AbfERJUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 05:20:16 -0400
+        Sat, 18 May 2019 05:20:54 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9J0mw1738521
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9JfFs1738574
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 18 May 2019 02:19:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9J0mw1738521
+        Sat, 18 May 2019 02:19:41 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9JfFs1738574
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1558171141;
-        bh=xZ/VRyCOrAE295V/4ATX0FBf1ij1uBlrKwFGtlzSEFs=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=Kh5yNZJ4Xm4jz/I6PHLXgmDA0YbdzvjNCCf28aAW1bejvFY9fQzGyjgtRbsKB+MVv
-         cwN2mGTW3dwfBM514aaM9mCiqz0+gPjcOud73mMB+TfTKfCKcbStuDR5zoR7jElTgK
-         YTsZn3pTElZb4FWU018dQ/43rys/K0KXa02kR54M9QR9XSJ8LGtdnT55rBkSUjdvUu
-         e8DSaYYsmXHcb+BNLCWYBcRrcbFC1eMm+Hkdo8OhRtUjMx7Fsv5QtxWelh5qxBDHGH
-         5jvy0XEXk0wdZLvbAoowlI2765PtF4kEfkfgqk8RhgZAxOrmy94PWkwJ+hxI42pN5w
-         tpXvJ8JilLJjQ==
+        s=2019041745; t=1558171182;
+        bh=y2YvIvacy81jkTEkUCEJ+ijWYoaTBwF+kalY8B4t9AE=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=EDeHhMgQlTtuoMNOH5cifUB0bNIpKD62htmVB3tGKu7vPz2naG5ZQOjYs2YeEY9li
+         01+wkEfCXNNDoETPkPqEBrdfSdsRrwzk/nN2BBzz/bFk1WvK8Sz8kXlKarCdKYy6AZ
+         wK3f753Mjo06+JSNxpBqCG9RaIZ278v5FVRLXzlZHNsiHs5NYDFCliB8LgPBSJ7Vs3
+         rPd16qvi9h9UDeQbe+HsoHYuaOAqnEeD2UOH6JCIOWM65fvkNdfLI8lbCP1lYFdGo2
+         8WsxBJHKm2Sn5fvJtVzXLpiBQUOWTOjFclozund6C/Aocfa7mcHxz9Zuc26jNWg5xa
+         plxfUV0ZqW5gQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9Ixx61738518;
-        Sat, 18 May 2019 02:18:59 -0700
-Date:   Sat, 18 May 2019 02:18:59 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9Jfv41738571;
+        Sat, 18 May 2019 02:19:41 -0700
+Date:   Sat, 18 May 2019 02:19:41 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-7o65mfl10wlvm8v3f0ombxd1@git.kernel.org>
-Cc:     jolsa@kernel.org, alexey.budankov@linux.intel.com, acme@redhat.com,
-        mingo@kernel.org, ak@linux.intel.com, namhyung@kernel.org,
-        hpa@zytor.com, peterz@infradead.org,
+From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
+Message-ID: <tip-d3c8c08e75c4cbb6a940323092b40fcfd1de5380@git.kernel.org>
+Cc:     jolsa@kernel.org, peterz@infradead.org, ak@linux.intel.com,
         alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, alexey.budankov@linux.intel.com,
-          jolsa@kernel.org, hpa@zytor.com, peterz@infradead.org,
-          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-          mingo@kernel.org, ak@linux.intel.com, namhyung@kernel.org
+        namhyung@kernel.org, acme@redhat.com, hpa@zytor.com,
+        alexey.budankov@linux.intel.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          tglx@linutronix.de, ak@linux.intel.com,
+          alexey.budankov@linux.intel.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, peterz@infradead.org
+In-Reply-To: <1d4bf499-cb03-26dc-6fc6-f14fec7622ce@linux.intel.com>
+References: <1d4bf499-cb03-26dc-6fc6-f14fec7622ce@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf build tests: Add NO_LIBZSTD=1 to make_minimal
-Git-Commit-ID: 5b6f5aef10f65863151fd4daed61657ad2681f98
+Subject: [tip:perf/core] perf session: Define 'bytes_transferred' and
+ 'bytes_compressed' metrics
+Git-Commit-ID: d3c8c08e75c4cbb6a940323092b40fcfd1de5380
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,40 +67,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5b6f5aef10f65863151fd4daed61657ad2681f98
-Gitweb:     https://git.kernel.org/tip/5b6f5aef10f65863151fd4daed61657ad2681f98
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 14 May 2019 16:48:13 -0300
+Commit-ID:  d3c8c08e75c4cbb6a940323092b40fcfd1de5380
+Gitweb:     https://git.kernel.org/tip/d3c8c08e75c4cbb6a940323092b40fcfd1de5380
+Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate: Mon, 18 Mar 2019 20:41:02 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 15 May 2019 16:36:49 -0300
 
-perf build tests: Add NO_LIBZSTD=1 to make_minimal
+perf session: Define 'bytes_transferred' and 'bytes_compressed' metrics
 
-So that we can test the ifdef parts for this feature.
+Define 'bytes_transferred' and 'bytes_compressed' metrics to calculate
+ratio in the end of the data collection:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+	compression ratio = bytes_transferred / bytes_compressed
+
+The 'bytes_transferred' metric accumulates the amount of bytes that was
+extracted from the mmaped kernel buffers for compression, while
+'bytes_compressed' accumulates the amount of bytes that was received
+after applying compression.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-7o65mfl10wlvm8v3f0ombxd1@git.kernel.org
+Link: http://lkml.kernel.org/r/1d4bf499-cb03-26dc-6fc6-f14fec7622ce@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/make | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-record.c | 14 +++++++++++++-
+ tools/perf/util/env.h       |  1 +
+ tools/perf/util/session.h   |  2 ++
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/make b/tools/perf/tests/make
-index e46723568516..5363a12a8b9b 100644
---- a/tools/perf/tests/make
-+++ b/tools/perf/tests/make
-@@ -107,7 +107,7 @@ make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1
- make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1
- make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
- make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
--make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
-+make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index d2b5a22b7249..386e665a166f 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1186,6 +1186,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 	bool disabled = false, draining = false;
+ 	struct perf_evlist *sb_evlist = NULL;
+ 	int fd;
++	float ratio = 0;
  
- # $(run) contains all available tests
- run := make_pure
+ 	atexit(record__sig_exit);
+ 	signal(SIGCHLD, sig_handler);
+@@ -1491,6 +1492,11 @@ out_child:
+ 	record__mmap_read_all(rec, true);
+ 	record__aio_mmap_read_sync(rec);
+ 
++	if (rec->session->bytes_transferred && rec->session->bytes_compressed) {
++		ratio = (float)rec->session->bytes_transferred/(float)rec->session->bytes_compressed;
++		session->header.env.comp_ratio = ratio + 0.5;
++	}
++
+ 	if (forks) {
+ 		int exit_status;
+ 
+@@ -1537,9 +1543,15 @@ out_child:
+ 		else
+ 			samples[0] = '\0';
+ 
+-		fprintf(stderr,	"[ perf record: Captured and wrote %.3f MB %s%s%s ]\n",
++		fprintf(stderr,	"[ perf record: Captured and wrote %.3f MB %s%s%s",
+ 			perf_data__size(data) / 1024.0 / 1024.0,
+ 			data->path, postfix, samples);
++		if (ratio) {
++			fprintf(stderr,	", compressed (original %.3f MB, ratio is %.3f)",
++					rec->session->bytes_transferred / 1024.0 / 1024.0,
++					ratio);
++		}
++		fprintf(stderr, " ]\n");
+ 	}
+ 
+ out_delete_session:
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index 4f8e2b485c01..34868ca7efd1 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -62,6 +62,7 @@ struct perf_env {
+ 	struct cpu_topology_map	*cpu;
+ 	struct cpu_cache_level	*caches;
+ 	int			 caches_cnt;
++	u32			comp_ratio;
+ 	struct numa_node	*numa_nodes;
+ 	struct memory_node	*memory_nodes;
+ 	unsigned long long	 memory_bsize;
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index d96eccd7d27f..0e14884f28b2 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -35,6 +35,8 @@ struct perf_session {
+ 	struct ordered_events	ordered_events;
+ 	struct perf_data	*data;
+ 	struct perf_tool	*tool;
++	u64			bytes_transferred;
++	u64			bytes_compressed;
+ };
+ 
+ struct perf_tool;
