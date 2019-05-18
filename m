@@ -2,126 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F7D220D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 02:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A62220DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 02:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbfERAFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 20:05:42 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53680 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfERAFm (ORCPT
+        id S1729158AbfERAM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 20:12:58 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41418 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfERAM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 20:05:42 -0400
-Received: by mail-it1-f193.google.com with SMTP id m141so14610981ita.3;
-        Fri, 17 May 2019 17:05:41 -0700 (PDT)
+        Fri, 17 May 2019 20:12:58 -0400
+Received: by mail-ua1-f66.google.com with SMTP id s30so3360194uas.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 17:12:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:mime-version:subject:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=a7C3dDuMzG9dHiTnNVWPV79gGpjU//Ll/DxT8px+pnA=;
-        b=CVyVw5podqSpC5UGS+ZuDip7eZbEJsXzX5VFUZwanx1U0toRMkJnW3butmBLZQY9PS
-         C2ucdTjm40bKAPWLQKIm1QHIW2OZwTATdIX2W7RyZ6qwXmEU12TPRwcIA8rIGrEA8ozV
-         WpYrpWX18EtaXAVcolUj8CHOfnPvtAd+YJaS0/zd+VhWWS/sUqQinu5Fr3LcMIpBhOts
-         hQ6ZQnvpmZmZML5TlzCYpKJU8QzrmEQKlQ7apx9yh6ncuua//ixyuEAmWJtNZPb1QXhJ
-         zAP+dr+X1iAeedRZ5dI2Uat1j1lXAxvnRlfeW1qvhvowaM/wUznImexj8fdBqFkNnAtS
-         Je2w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jqgp/AAKfQLeMa+FXIn1qxTEO8Ap0fwZ5EF6f7NI8mA=;
+        b=Fq1j7oUtiICi06u8iNXtEC7qmvh4syEHGr5Mq4/Lew78h6OigQR5ARlU7EvYQ1kZ1b
+         pL3kxt3eZ7UdOQuTUE+p4ve4ydMeS6hXBKWqEwdqNnIkd1Rr3wyYoLcTvpmplMokWB28
+         OPELO3mssUQpXGpzu3kunZn8XVNJpzRozv82BWhR0vf3erhTd6VTSbSlMLLXtI+S13qZ
+         yUDWpfCmfM24aM8VIfyL7fxRJdB5lyVGAvFv3sgMQfQ0JN9lbYL2F2RelgkazWm2zF+/
+         0saqM2rW5m5k25nZBX3FvdwFAc9BV1qF9ZtkOFM0ukKomQbAlTPw5T4WDVv6qGn/ABTI
+         64cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:subject:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=a7C3dDuMzG9dHiTnNVWPV79gGpjU//Ll/DxT8px+pnA=;
-        b=UMYnfzh+D4zOVmjrqJC0sZ2BSE7m4GR4W5mk3RGgJTgkB8zV205ypMrgaR6Dy/Sjq6
-         MY9jZ5t9JevipvU4aa+XcvS09IgRrs/WBMxKwcoPu2r688B1ys8H2VExyvOeY85EHWk/
-         UtUwg4VJYmn0m5vidG2PvVSH2CakZxeYbW3YcvyVsBKBmGdC949YuGtmoYo8JyYkioXa
-         SbTTCQTthdj+cXO6ijvllq/QG3wO9wY1H3NQ8BE10Xt0uplOo754IecSRNuoiwQvV6Or
-         NkK6pZjGA1bo9ABFW3A2OXto8tWW6ndK2C0c3vd/+ZDvhL68ZH3ulmfvkeBt4o21jPMC
-         FJCg==
-X-Gm-Message-State: APjAAAWTDcpEhf6tqAQOoPeEFo48VI45w0yi1Vn38dfE04FGa6k+ua3f
-        DQhmBzguzjMHCV98rlHWor4=
-X-Google-Smtp-Source: APXvYqynYhiMRG2RP3SVmO493+tsMr68p2mZGv/8isY4LI0ixkxiunudS0yasg6Q4VxiyV87VJawxg==
-X-Received: by 2002:a24:9c47:: with SMTP id b68mr19781273ite.169.1558137940994;
-        Fri, 17 May 2019 17:05:40 -0700 (PDT)
-Received: from ?IPv6:2607:fea8:7a60:20d:68be:67af:76aa:290f? ([2607:fea8:7a60:20d:68be:67af:76aa:290f])
-        by smtp.gmail.com with ESMTPSA id 74sm1095659itk.3.2019.05.17.17.05.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 17:05:40 -0700 (PDT)
-From:   Donald Yandt <donald.yandt@gmail.com>
-X-Google-Original-From: Donald Yandt <Donald.Yandt@gmail.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 20/73] perf machine: Null-terminate version char array upon fgets(/proc/version) error
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <20190517193611.4974-21-acme@kernel.org>
-Date:   Fri, 17 May 2019 20:05:39 -0400
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Avi Kivity <avi@scylladb.com>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yanmin Zhang <yanmin_zhang@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jqgp/AAKfQLeMa+FXIn1qxTEO8Ap0fwZ5EF6f7NI8mA=;
+        b=Z9bU/FjdyfBHYYlYBEZ5BCrCBGV1buXm3HPZDgU+NFeqohl5UsBghDY7IOijuY4lM6
+         w+tvY8+mcXjbQGzovf86Jsh7MpNbe3CRoTgtBUiutbgCL71OrljbrbMdm8w3oEGAV4F/
+         zzwGzzpCVxiy76VY+74fivs8w0L+OGyDsoo+4fsJncB76U/1O5fXa5hlzpHwyyCBsyOM
+         Cw76el+o1R9CF1mjUU8mViDE8OXlXq4BLjG3jWViocF4Gh8WC5pv74JQLAD4uO7ulgZL
+         0frzQf0wUaU8QmkAJ+thRN6ctI//mLIpD3K9VdjX9tlXL9mYi/LXoDyH0AWBOGZViBD2
+         pDrA==
+X-Gm-Message-State: APjAAAUQnCiF9+Xm6FMm7XWaijlSV0YM5v307rtxhYsCoNiYUVN4xLKE
+        FluvAXoJVf5KU7okmmLj72sSGWLtkenMTOMVmD6L7Q==
+X-Google-Smtp-Source: APXvYqw6wAGTgIFK7xCUwoa4xEUAb53JdQRVmL0FhMGxX1gn9XVKTZuOFfV0bylHnx+sB3bG0oj/Kvochg+FbdGoYNk=
+X-Received: by 2002:a9f:2246:: with SMTP id 64mr30748332uad.47.1558138376557;
+ Fri, 17 May 2019 17:12:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <1558073209-79549-1-git-send-email-chenjianhong2@huawei.com>
+In-Reply-To: <1558073209-79549-1-git-send-email-chenjianhong2@huawei.com>
+From:   Michel Lespinasse <walken@google.com>
+Date:   Fri, 17 May 2019 17:12:43 -0700
+Message-ID: <CANN689G6mGLSOkyj31ympGgnqxnJosPVc4EakW5gYGtA_45L7g@mail.gmail.com>
+Subject: Re: [PATCH] mm/mmap: fix the adjusted length error
+To:     jianhong chen <chenjianhong2@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>, jannh@google.com,
+        steve.capper@arm.com, tiny.windzz@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <2D532F76-A57F-4CC4-BAA5-B466AFC0305D@gmail.com>
-References: <20190517193611.4974-1-acme@kernel.org> <20190517193611.4974-21-acme@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Arnaldo for signing my patch.
+I worry that the proposed change turns the search from an O(log N)
+worst case into a O(N) one.
 
-     I think we should use version 4 of my patch and return NULL instead of n=
-ull-terminating for efficiency.
+To see why the current search is O(log N), it is easiest to start by
+imagining a simplified search algorithm that wouldn't include the low
+and high address limits. In that algorithm, backtracking through the
+vma tree is never necessary - the tree walk can always know, prior to
+going left or right, if a suitable gap will be found in the
+corresponding subtree.
 
-Thanks,
+The code we have today does have to respect the low and high address
+limits, so it does need to implement backtracking - but this
+backtracking only occurs to back out of subtrees that include the low
+address limit (the search went 'left' into a subtree that has a large
+enough gap, but the gap turns out to be below the limit so it can't be
+used and the search needs to go 'right' instead). Because of this, the
+amount of backtracking that can occur is very limited, and the search
+is still O(log N) in the worst case.
 
-Donald
+With your proposed change, backtracking could occur not only around
+the low address limit, but also at any node within the search tree,
+when it turns out that a gap that seemed large enough actually isn't
+due to alignment constraints. So, the code should still work, but it
+could backtrack more in the worst case, turning the worst case search
+into an O(N) thing.
 
-> On May 17, 2019, at 3:35 PM, Arnaldo Carvalho de Melo <acme@kernel.org> wr=
-ote:
->=20
-> From: Donald Yandt <donald.yandt@gmail.com>
->=20
-> If fgets() fails due to any other error besides end-of-file, the version
-> char array may not even be null-terminated.
->=20
-> Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Avi Kivity <avi@scylladb.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Yanmin Zhang <yanmin_zhang@linux.intel.com>
-> Fixes: a1645ce12adb ("perf: 'perf kvm' tool for monitoring guest performan=
-ce from host")
-> Link: http://lkml.kernel.org/r/20190514110100.22019-1-donald.yandt@gmail.c=
-om
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
-> tools/perf/util/machine.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 3c520baa198c..28a9541c4835 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -1234,8 +1234,9 @@ static char *get_kernel_version(const char *root_dir=
-)
->    if (!file)
->        return NULL;
->=20
-> -    version[0] =3D '\0';
->    tmp =3D fgets(version, sizeof(version), file);
-> +    if (!tmp)
-> +        *version =3D '\0';
->    fclose(file);
->=20
->    name =3D strstr(version, prefix);
-> --=20
-> 2.20.1
->=20
+I am not sure what to do about this. First I would want to understand
+more about your test case; is this something that you stumbled upon
+without expecting it or was it an artificially constructed case to
+show the limitations of the current search algorithm ? Also, if your
+process does something unusual and expects to be able to map (close
+to) the entirety of its address space, would it be reasonable for it
+to manually manage the address space and pass explicit addresses to
+mmap / shmat ?
+
+On Thu, May 16, 2019 at 11:02 PM jianhong chen <chenjianhong2@huawei.com> w=
+rote:
+> In linux version 4.4, a 32-bit process may fail to allocate 64M hugepage
+> memory by function shmat even though there is a 64M memory gap in
+> the process.
+>
+> It is the adjusted length that causes the problem, introduced from
+> commit db4fbfb9523c935 ("mm: vm_unmapped_area() lookup function").
+> Accounting for the worst case alignment overhead, function unmapped_area
+> and unmapped_area_topdown adjust the search length before searching
+> for available vma gap. This is an estimated length, sum of the desired
+> length and the longest alignment offset, which can cause misjudgement
+> if the system has very few virtual memory left. For example, if the
+> longest memory gap available is 64M, we can=E2=80=99t get it from the sys=
+tem
+> by allocating 64M hugepage memory via shmat function. The reason is
+> that it requires a longger length, the sum of the desired length(64M)
+> and the longest alignment offset.
+>
+> To fix this error ,we can calculate the alignment offset of
+> gap_start or gap_end to get a desired gap_start or gap_end value,
+> before searching for the available gap. In this way, we don't
+> need to adjust the search length.
+>
+> Problem reproduces procedure:
+> 1. allocate a lot of virtual memory segments via shmat and malloc
+> 2. release one of the biggest memory segment via shmdt
+> 3. attach the biggest memory segment via shmat
+>
+> e.g.
+> process maps:
+> 00008000-00009000 r-xp 00000000 00:12 3385    /tmp/memory_mmap
+> 00011000-00012000 rw-p 00001000 00:12 3385    /tmp/memory_mmap
+> 27536000-f756a000 rw-p 00000000 00:00 0
+> f756a000-f7691000 r-xp 00000000 01:00 560     /lib/libc-2.11.1.so
+> f7691000-f7699000 ---p 00127000 01:00 560     /lib/libc-2.11.1.so
+> f7699000-f769b000 r--p 00127000 01:00 560     /lib/libc-2.11.1.so
+> f769b000-f769c000 rw-p 00129000 01:00 560     /lib/libc-2.11.1.so
+> f769c000-f769f000 rw-p 00000000 00:00 0
+> f769f000-f76c0000 r-xp 00000000 01:00 583     /lib/libgcc_s.so.1
+> f76c0000-f76c7000 ---p 00021000 01:00 583     /lib/libgcc_s.so.1
+> f76c7000-f76c8000 rw-p 00020000 01:00 583     /lib/libgcc_s.so.1
+> f76c8000-f76e5000 r-xp 00000000 01:00 543     /lib/ld-2.11.1.so
+> f76e9000-f76ea000 rw-p 00000000 00:00 0
+> f76ea000-f76ec000 rw-p 00000000 00:00 0
+> f76ec000-f76ed000 r--p 0001c000 01:00 543     /lib/ld-2.11.1.so
+> f76ed000-f76ee000 rw-p 0001d000 01:00 543     /lib/ld-2.11.1.so
+> f7800000-f7a00000 rw-s 00000000 00:0e 0       /SYSV000000ea (deleted)
+> fba00000-fca00000 rw-s 00000000 00:0e 65538   /SYSV000000ec (deleted)
+> fca00000-fce00000 rw-s 00000000 00:0e 98307   /SYSV000000ed (deleted)
+> fce00000-fd800000 rw-s 00000000 00:0e 131076  /SYSV000000ee (deleted)
+> ff913000-ff934000 rw-p 00000000 00:00 0       [stack]
+> ffff0000-ffff1000 r-xp 00000000 00:00 0       [vectors]
+>
+> from 0xf7a00000 to fba00000, it has 64M memory gap, but we can't get
+> it from kernel.
