@@ -2,133 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36724221D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 08:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B61221DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 08:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfERGfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 02:35:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbfERGfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 02:35:04 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D209D20848;
-        Sat, 18 May 2019 06:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558161304;
-        bh=cbQxEDUMUnjV9fqBk/G2W8OaeEiXUXJBn48F5Pv0RZE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zt0DxaB5vYVAeOnL6lXWGix86p0MB8+VBuFNEzcxsIgaYPvsMxtfO1YoeL4zRgctT
-         H9BIiQcvRlOtTWZBge0I8vp1uzb4eglga8xXeaVbA1Gx/Uz7BxdUZXRjuPggwmqgcU
-         nAPWU2uQ1vViLsTVK14KdMKxMqDJnx9FwKfRo1EQ=
-Date:   Sat, 18 May 2019 08:35:01 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Liming Sun <lsun@mellanox.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        David Woods <dwoods@mellanox.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH v5 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI
- definitions
-Message-ID: <20190518063501.GA26163@kroah.com>
-References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
- <1558115345-32476-2-git-send-email-lsun@mellanox.com>
- <20190517175926.GA24535@kroah.com>
- <DB6PR05MB32235A6F891E438131471CE2A10B0@DB6PR05MB3223.eurprd05.prod.outlook.com>
+        id S1727439AbfERGil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 02:38:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56120 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfERGij (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 May 2019 02:38:39 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x64so8720090wmb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 23:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=UjvV69Pw38TY+UWCm958W3BhSAELE7Lrbyek85Eb+1Q=;
+        b=ySHFdMXrg33fBSHehaQMTmzJVaqwtm+OJZocGViEljI8nlSfI28hu0S4MMER2QcMZK
+         vk5yH/MYOXm5qtMxKvtGUORTVQx90c/v9BAksqNfMJe8tqNDsQ5wKV2BO1vJ4fY97Ntr
+         Kwut1D0y0jHyK1mdhN7xpam0WMKzVFLvwSMAlXydRFkD0MMzCihW72p4fEMRE/p9Psc3
+         nm0D6NPG1oU0S9fVYGvRdA6/TfmcJ8zp6DgkF5kJOZGv/WWJYtIRQPIAlL9b/ObdeZLE
+         jrtZewLcINorntjfth3JxuckQcPW8F/qjJt6cc95bcdmokb+V3PIOwNdq5uFiF3R2x8E
+         0cig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=UjvV69Pw38TY+UWCm958W3BhSAELE7Lrbyek85Eb+1Q=;
+        b=n9/OY/36BZBIUeUZpYJAcy52Yn7Qd4MjdJO9n31pVSi0Dp0tmTqatK1i9fEMrv4cCd
+         AFtjJQhWHw31h1uCyqNC4TlBR9IX921RrH612qoqyji/R4Wa0ckLLTv0T4mJm6ZY6Y4x
+         S23mizXaLn+4jvuxyHSkvr2vlY5JQJJ192NAVwQfFeduilAOmQbGwJ3EYj50DwKP4Bwu
+         vY49ux7TVxEsDVafMax6DzUT29Et2Qan2nU7ZPkuqUOhSekH/SsXoYj38aUoVaDqlGzW
+         NEVMUCIcw/Gd2SQyt+j+STb43LTv4TDAgRf5VYi2mNBbTB+TqWKIvUfTHM8gP8d6ocn6
+         1YBw==
+X-Gm-Message-State: APjAAAUly4TpwcHDPGMn/1FLnhRXeKIFnKbKDjaMU7fpU3Ey+zC6b2h3
+        At9Oiu0PUxttCGl2E4YDDKzccw==
+X-Google-Smtp-Source: APXvYqwNDJIp4PvB+a8yC5VIFYDeUcjM+xuvOJLOkzug9UL4qIro5CmakUjLQd5a+rNQaZRi8yCwEQ==
+X-Received: by 2002:a1c:48d7:: with SMTP id v206mr35374564wma.38.1558161517515;
+        Fri, 17 May 2019 23:38:37 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id m206sm12881593wmf.21.2019.05.17.23.38.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 May 2019 23:38:36 -0700 (PDT)
+Date:   Sat, 18 May 2019 07:38:34 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Philippe Mazenauer <philippe.mazenauer@outlook.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ext4: Variable to signed to check return code
+Message-ID: <20190518063834.GX4319@dell>
+References: <AM0PR07MB4417C1C3A4E55EFE47027CA2FD0B0@AM0PR07MB4417.eurprd07.prod.outlook.com>
+ <20190517102506.GU4319@dell>
+ <20190517202810.GA21961@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DB6PR05MB32235A6F891E438131471CE2A10B0@DB6PR05MB3223.eurprd05.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190517202810.GA21961@mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 08:36:53PM +0000, Liming Sun wrote:
-> Thanks Greg for the comments!  Please see my response inline.
-> 
-> Regards,
-> - Liming
-> 
-> > -----Original Message-----
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Sent: Friday, May 17, 2019 1:59 PM
-> > To: Liming Sun <lsun@mellanox.com>
-> > Cc: Andy Shevchenko <andy@infradead.org>; Darren Hart <dvhart@infradead.org>; Vadim Pasternak <vadimp@mellanox.com>; David
-> > Woods <dwoods@mellanox.com>; platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org; David S. Miller
-> > <davem@davemloft.net>; Mauro Carvalho Chehab <mchehab+samsung@kernel.org>; Jonathan Cameron
-> > <Jonathan.Cameron@huawei.com>; Nicolas Ferre <nicolas.ferre@microchip.com>; Paul E. McKenney <paulmck@linux.ibm.com>
-> > Subject: Re: [PATCH v5 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI definitions
+On Fri, 17 May 2019, Theodore Ts'o wrote:
+
+> On Fri, May 17, 2019 at 11:25:06AM +0100, Lee Jones wrote:
+> > On Fri, 17 May 2019, Philippe Mazenauer wrote:
 > > 
-> > On Fri, May 17, 2019 at 01:49:05PM -0400, Liming Sun wrote:
-> > > This commit adds the ABI definitions exposed to userspace for
-> > > the platform/mellanox/mlxbf-bootctl driver.
-> > >
-> > > Reviewed-by: Vadim Pasternak <vadimp@mellanox.com>
-> > > Signed-off-by: Liming Sun <lsun@mellanox.com>
-> > > ---
-> > >  .../ABI/testing/sysfs-platform-mellanox-bootctl    | 58 ++++++++++++++++++++++
-> > >  MAINTAINERS                                        |  1 +
-> > >  2 files changed, 59 insertions(+)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
-> > >
-> > > diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl b/Documentation/ABI/testing/sysfs-platform-mellanox-
-> > bootctl
-> > > new file mode 100644
-> > > index 0000000..19a14db
-> > > --- /dev/null
-> > > +++ b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
-> > > @@ -0,0 +1,58 @@
-> > > +What:		/sys/bus/platform/drivers/mlxbf-bootctl/lifecycle_state
-> > > +Date:		May 2019
-> > > +KernelVersion:	5.3
-> > > +Contact:	"Liming Sun <lsun@mellanox.com>"
-> > > +Description:
-> > > +		The Life-cycle state of the SoC, which could be one of the
-> > > +		following values.
-> > > +		  Production - Production state and can be updated to secure
-> > > +		  GA Secured - Secure chip and not able to change state
-> > > +		  GA Non-Secured - Non-Secure chip and not able to change state
-> > > +		  RMA - Return Merchandise Authorization
-> > 
-> > A "driver" does not have a lifecycle state, a "device" does.
-> > 
-> > You are putting all of these attributes in the wrong place.  Put them on
-> > your device please, not the driver.  driver-specific attributes are
-> > _VERY_ rare, and only for things that can modify/show for all devices
-> > attached to that driver.
+> > > Variables 'n' and 'err' are both used for less-than-zero error checking,
+> > > however both are declared as unsigned. Ensure ext4_map_blocks() and
+> > > add_system_zone() are able to have their return values propagated
+> > > correctly by redefining them both as signed integers.
 > 
-> This driver is running on the ARM processor of the SoC. The 'device' is
-> the SoC itself. That's to say, there is only one device here attached to
-> the driver and the driver state will also be the device state.
+> This is already fixed in the ext4.git tree; it will be pushed to Linus
+> shortly.  (Thanks to Colin Ian King from Canonical for sending the
+> patch.)
+> 
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
+> Lee, techncially this should have been Reviewed-by.  Acked-by is used
+> by the maintainer when a patch is going in via some other tree other
+> than the Maintainer's (it means the Maintainer has acked the patch).
+> If you are reviewing a patch, the tag you should be adding is
+> Reviewed-by.
 
-That might be true today, but maybe not tomorrow :)
+Actually, that's not technically correct.
 
-Anyway, again, this is device state, not driver state.
+  "- Acked-by: indicates an agreement by another developer (often a
+     maintainer of the relevant code) that the patch is appropriate for
+     inclusion into the kernel."
 
-> This interface has been used by user-space applications for a couple of
-> releases. It'll be great if it could stay in such way for compatibility. Please
-> advise if this is strongly preferred to move them under devices.
+And I, as a developer (and not a Maintainer in this case) do indicate
+that this patch is appropriate for inclusion into the kernel.
 
-So this is code that is already in the tree, and is just now being
-documented?  What .c file(s) is this referring to?
+Reviewed-by has stronger connotations and implies I have in-depth
+knowledge of the subsystem/driver AND agree to the Reviewer's
+Statement.  I use Acked-by in this case as a weaker agreement after a
+shallow review of the patch based on its merits alone.
 
-As for "comptability", sysfs is made such that if a file is not present,
-userspace should be able to survive, that is why it is
-one-value-per-file.  What tool is using this, and where is the source
-for it?
-
-thanks,
-
-greg k-h
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
