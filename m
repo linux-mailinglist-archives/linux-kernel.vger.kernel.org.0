@@ -2,58 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24715222AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E07222AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 11:31:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbfERJaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 05:30:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38665 "EHLO
+        id S1730021AbfERJbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 05:31:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45533 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfERJae (ORCPT
+        with ESMTP id S1725268AbfERJbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 05:30:34 -0400
+        Sat, 18 May 2019 05:31:49 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9U0rf1741785
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4I9UeB61742052
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 18 May 2019 02:30:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9U0rf1741785
+        Sat, 18 May 2019 02:30:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4I9UeB61742052
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1558171801;
-        bh=kvtoq5yZBuVHiqSl5bAZi2dNFpi/zDZNYvheWwGi/8s=;
+        s=2019041745; t=1558171841;
+        bh=6veWEyauEbwAT9CnyjcJx+j3ulVb/X1n35V/4eyveE0=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=VbjaTBSG5+gp7Ja6Ou6v46w/GV0a72MMH30r6jdL+jW59YPUt8hJ5y7ut7Wxd1NLY
-         If8VE7noZxLIqvMHC88FlOz25obHxZVxh0ACcpjCPkqe67eVzvlpqKuyo/N0uxWY/m
-         g+VSd1BEdCIG/TB+hp4L7Mn79+w5N07pwH10/mwbrQ0iSAXYKqASVw5UOIjGySfmEA
-         lWRREoLfNj9ISDUVJIjP6EXJnRyLXt0lOn9I+usF+qze74QakXXd5AQ1Pe4Pd8SCLf
-         BPuTh4HnjfZOisyrSblQ3/aiWXSwUzXxs/ngzHQS+CCQjI9V1gxGkGklTp3dM5t3XB
-         fZOS00+s961oQ==
+        b=iTtOOn3I02crY7JNLgfvx1cVIISn7PbuenwfHHWJL9oGv4UkQ5d9AsFFZ6Uw9MVrY
+         s+/YLu3s+1se4Fh6TS+vdAdMT/a0xehxuc3bzzOogPgotS7BYENAZm4raAfTBBhpht
+         lWEsZgql2UQu+oWk5+f9n0NLCVpd/CbPcu4SQDq9ChPQbldCyC3MFBCW2Hg1gauZ9k
+         fhEthG1LsUJujyRD3ft0DHeR4mM3smWg7kLK6kAh8cY/eadRVqi7oEbcKss+XW9MG5
+         wnDkDsCvqa/pjnWpK+iNJ6ktSG4rsskNPVMdmTOwgKWf8I2ooEx4lHUeoRLjfDFxlb
+         c/Z4poGhgYhtQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9U0D01741782;
-        Sat, 18 May 2019 02:30:00 -0700
-Date:   Sat, 18 May 2019 02:30:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4I9UdwT1742049;
+        Sat, 18 May 2019 02:30:39 -0700
+Date:   Sat, 18 May 2019 02:30:39 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Florian Fainelli <tipbot@zytor.com>
-Message-ID: <tip-7025fdbea3a67c5980b94574b755a5fd65ea8a36@git.kernel.org>
-Cc:     acme@redhat.com, tglx@linutronix.de, mark.rutland@arm.com,
-        john.garry@huawei.com, ganapatrao.kulkarni@cavium.com,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, mingo@kernel.org, seanvk.dev@oregontracks.org,
-        will.deacon@arm.com, namhyung@kernel.org, peterz@infradead.org,
-        f.fainelli@gmail.com
-Reply-To: mingo@kernel.org, jolsa@redhat.com, namhyung@kernel.org,
-          f.fainelli@gmail.com, peterz@infradead.org, will.deacon@arm.com,
-          seanvk.dev@oregontracks.org, john.garry@huawei.com,
-          mark.rutland@arm.com, tglx@linutronix.de, acme@redhat.com,
-          linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-          alexander.shishkin@linux.intel.com, hpa@zytor.com,
-          ganapatrao.kulkarni@cavium.com
-In-Reply-To: <20190513202522.9050-4-f.fainelli@gmail.com>
-References: <20190513202522.9050-4-f.fainelli@gmail.com>
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-aeea9062d949584ac1f2f9a20f0e5ed306539a3e@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, ak@linux.intel.com, kan.liang@linux.intel.com,
+        ravi.bangoria@linux.ibm.com, jolsa@kernel.org, acme@redhat.com
+Reply-To: acme@redhat.com, jolsa@kernel.org, ravi.bangoria@linux.ibm.com,
+          kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, ak@linux.intel.com,
+          mingo@kernel.org
+In-Reply-To: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
+References: <1557865174-56264-1-git-send-email-kan.liang@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events arm64: Add Cortex-A57 and
- Cortex-A72 events
-Git-Commit-ID: 7025fdbea3a67c5980b94574b755a5fd65ea8a36
+Subject: [tip:perf/core] perf parse-regs: Split parse_regs
+Git-Commit-ID: aeea9062d949584ac1f2f9a20f0e5ed306539a3e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,213 +54,128 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7025fdbea3a67c5980b94574b755a5fd65ea8a36
-Gitweb:     https://git.kernel.org/tip/7025fdbea3a67c5980b94574b755a5fd65ea8a36
-Author:     Florian Fainelli <f.fainelli@gmail.com>
-AuthorDate: Mon, 13 May 2019 13:25:22 -0700
+Commit-ID:  aeea9062d949584ac1f2f9a20f0e5ed306539a3e
+Gitweb:     https://git.kernel.org/tip/aeea9062d949584ac1f2f9a20f0e5ed306539a3e
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Tue, 14 May 2019 13:19:32 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 15 May 2019 16:36:49 -0300
 
-perf vendor events arm64: Add Cortex-A57 and Cortex-A72 events
+perf parse-regs: Split parse_regs
 
-The Cortex-A57 and Cortex-A72 both support all ARMv8 recommended events
-up to the RC_ST_SPEC (0x91) event with the exception of:
+The available registers for --int-regs and --user-regs may be different,
+e.g. XMM registers.
 
-- L1D_CACHE_REFILL_INNER (0x44)
-- L1D_CACHE_REFILL_OUTER (0x45)
-- L1D_TLB_RD (0x4E)
-- L1D_TLB_WR (0x4F)
-- L2D_TLB_REFILL_RD (0x5C)
-- L2D_TLB_REFILL_WR (0x5D)
-- L2D_TLB_RD (0x5E)
-- L2D_TLB_WR (0x5F)
-- STREX_SPEC (0x6F)
+Split parse_regs into two dedicated functions for --int-regs and
+--user-regs respectively.
 
-Create an appropriate JSON file for mapping those events and update the
-mapfile.csv for matching the Cortex-A57 and Cortex-A72 MIDR to that
-file.
+Modify the warning message. "--user-regs=?" should be applied to show
+the available registers for --user-regs.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sean V Kelley <seanvk.dev@oregontracks.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org (moderated list:arm pmu profiling and debugging)
-Link: http://lkml.kernel.org/r/20190513202522.9050-4-f.fainelli@gmail.com
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/1557865174-56264-1-git-send-email-kan.liang@linux.intel.com
+[ Changed docs as suggested by Ravi and agreed by Kan ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../cortex-a57-a72}/core-imp-def.json              | 92 +++++++++++++++++++---
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |  2 +
- 2 files changed, 81 insertions(+), 13 deletions(-)
+ tools/perf/Documentation/perf-record.txt |  3 ++-
+ tools/perf/builtin-record.c              |  4 ++--
+ tools/perf/util/parse-regs-options.c     | 19 ++++++++++++++++---
+ tools/perf/util/parse-regs-options.h     |  3 ++-
+ 4 files changed, 22 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a57-a72/core-imp-def.json
-similarity index 52%
-copy from tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-copy to tools/perf/pmu-events/arch/arm64/arm/cortex-a57-a72/core-imp-def.json
-index 752e47eb6977..0ac9b7927450 100644
---- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a57-a72/core-imp-def.json
-@@ -11,12 +11,6 @@
-     {
-         "ArchStdEvent": "L1D_CACHE_REFILL_WR",
-     },
--    {
--        "ArchStdEvent": "L1D_CACHE_REFILL_INNER",
--    },
--    {
--        "ArchStdEvent": "L1D_CACHE_REFILL_OUTER",
--    },
-     {
-         "ArchStdEvent": "L1D_CACHE_WB_VICTIM",
-     },
-@@ -33,22 +27,25 @@
-         "ArchStdEvent": "L1D_TLB_REFILL_WR",
-     },
-     {
--        "ArchStdEvent": "L1D_TLB_RD",
-+        "ArchStdEvent": "L2D_CACHE_RD",
-     },
-     {
--        "ArchStdEvent": "L1D_TLB_WR",
-+        "ArchStdEvent": "L2D_CACHE_WR",
-     },
-     {
--        "ArchStdEvent": "L2D_TLB_REFILL_RD",
-+        "ArchStdEvent": "L2D_CACHE_REFILL_RD",
-     },
-     {
--        "ArchStdEvent": "L2D_TLB_REFILL_WR",
-+        "ArchStdEvent": "L2D_CACHE_REFILL_WR",
-     },
-     {
--        "ArchStdEvent": "L2D_TLB_RD",
-+        "ArchStdEvent": "L2D_CACHE_WB_VICTIM",
-     },
-     {
--        "ArchStdEvent": "L2D_TLB_WR",
-+        "ArchStdEvent": "L2D_CACHE_WB_CLEAN",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_INVAL",
-     },
-     {
-         "ArchStdEvent": "BUS_ACCESS_RD",
-@@ -56,6 +53,18 @@
-     {
-         "ArchStdEvent": "BUS_ACCESS_WR",
-     },
-+    {
-+        "ArchStdEvent": "BUS_ACCESS_SHARED",
-+    },
-+    {
-+        "ArchStdEvent": "BUS_ACCESS_NOT_SHARED",
-+    },
-+    {
-+        "ArchStdEvent": "BUS_ACCESS_NORMAL",
-+    },
-+    {
-+        "ArchStdEvent": "BUS_ACCESS_PERIPH",
-+    },
-     {
-         "ArchStdEvent": "MEM_ACCESS_RD",
-     },
-@@ -71,6 +80,57 @@
-     {
-         "ArchStdEvent": "UNALIGNED_LDST_SPEC",
-     },
-+    {
-+        "ArchStdEvent": "LDREX_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "STREX_PASS_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "STREX_FAIL_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "LD_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "ST_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "LDST_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "DP_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "ASE_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "VFP_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "PC_WRITE_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "CRYPTO_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "BR_IMMED_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "BR_RETURN_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "BR_INDIRECT_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "ISB_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "DSB_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "DMB_SPEC",
-+    },
-     {
-         "ArchStdEvent": "EXC_UNDEF",
-     },
-@@ -109,5 +169,11 @@
-     },
-     {
-         "ArchStdEvent": "EXC_TRAP_FIQ",
--    }
-+    },
-+    {
-+        "ArchStdEvent": "RC_LD_SPEC",
-+    },
-+    {
-+        "ArchStdEvent": "RC_ST_SPEC",
-+    },
- ]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index 013155f1eb58..927fcddcb4aa 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -14,6 +14,8 @@
- #Family-model,Version,Filename,EventType
- 0x00000000410fd030,v1,arm/cortex-a53,core
- 0x00000000420f1000,v1,arm/cortex-a53,core
-+0x00000000410fd070,v1,arm/cortex-a57-a72,core
-+0x00000000410fd080,v1,arm/cortex-a57-a72,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
- 0x00000000430f0af0,v1,cavium/thunderx2,core
- 0x00000000480fd010,v1,hisilicon/hip08,core
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 27b37624c376..de269430720a 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -406,7 +406,8 @@ symbolic names, e.g. on x86, ax, si. To list the available registers use
+ --intr-regs=ax,bx. The list of register is architecture dependent.
+ 
+ --user-regs::
+-Capture user registers at sample time. Same arguments as -I.
++Similar to -I, but capture user registers at sample time. To list the available
++user registers use --user-regs=\?.
+ 
+ --running-time::
+ Record running and enabled time for read events (:S)
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 861395753c25..e2c3a585a61e 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -2168,10 +2168,10 @@ static struct option __record_options[] = {
+ 		    "use per-thread mmaps"),
+ 	OPT_CALLBACK_OPTARG('I', "intr-regs", &record.opts.sample_intr_regs, NULL, "any register",
+ 		    "sample selected machine registers on interrupt,"
+-		    " use '-I?' to list register names", parse_regs),
++		    " use '-I?' to list register names", parse_intr_regs),
+ 	OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs, NULL, "any register",
+ 		    "sample selected machine registers on interrupt,"
+-		    " use '-I?' to list register names", parse_regs),
++		    " use '--user-regs=?' to list register names", parse_user_regs),
+ 	OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
+ 		    "Record running/enabled time of read (:S) events"),
+ 	OPT_CALLBACK('k', "clockid", &record.opts,
+diff --git a/tools/perf/util/parse-regs-options.c b/tools/perf/util/parse-regs-options.c
+index 9cb187a20fe2..b21617f2bec1 100644
+--- a/tools/perf/util/parse-regs-options.c
++++ b/tools/perf/util/parse-regs-options.c
+@@ -5,8 +5,8 @@
+ #include <subcmd/parse-options.h>
+ #include "util/parse-regs-options.h"
+ 
+-int
+-parse_regs(const struct option *opt, const char *str, int unset)
++static int
++__parse_regs(const struct option *opt, const char *str, int unset, bool intr)
+ {
+ 	uint64_t *mode = (uint64_t *)opt->value;
+ 	const struct sample_reg *r;
+@@ -48,7 +48,8 @@ parse_regs(const struct option *opt, const char *str, int unset)
+ 					break;
+ 			}
+ 			if (!r->name) {
+-				ui__warning("Unknown register \"%s\", check man page or run \"perf record -I?\"\n", s);
++				ui__warning("Unknown register \"%s\", check man page or run \"perf record %s?\"\n",
++					    s, intr ? "-I" : "--user-regs=");
+ 				goto error;
+ 			}
+ 
+@@ -69,3 +70,15 @@ error:
+ 	free(os);
+ 	return ret;
+ }
++
++int
++parse_user_regs(const struct option *opt, const char *str, int unset)
++{
++	return __parse_regs(opt, str, unset, false);
++}
++
++int
++parse_intr_regs(const struct option *opt, const char *str, int unset)
++{
++	return __parse_regs(opt, str, unset, true);
++}
+diff --git a/tools/perf/util/parse-regs-options.h b/tools/perf/util/parse-regs-options.h
+index cdefb1acf6be..2b23d25c6394 100644
+--- a/tools/perf/util/parse-regs-options.h
++++ b/tools/perf/util/parse-regs-options.h
+@@ -2,5 +2,6 @@
+ #ifndef _PERF_PARSE_REGS_OPTIONS_H
+ #define _PERF_PARSE_REGS_OPTIONS_H 1
+ struct option;
+-int parse_regs(const struct option *opt, const char *str, int unset);
++int parse_user_regs(const struct option *opt, const char *str, int unset);
++int parse_intr_regs(const struct option *opt, const char *str, int unset);
+ #endif /* _PERF_PARSE_REGS_OPTIONS_H */
