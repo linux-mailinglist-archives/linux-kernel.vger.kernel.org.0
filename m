@@ -2,46 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6F32235B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 13:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DF02235C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 13:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbfERLPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 07:15:03 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34819 "EHLO ozlabs.org"
+        id S1729734AbfERLPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 07:15:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:41647 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfERLPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 07:15:03 -0400
+        id S1726263AbfERLPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 May 2019 07:15:05 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 455jHT6z5wz9s4Y; Sat, 18 May 2019 21:15:01 +1000 (AEST)
+        id 455jHW4zv1z9s9y; Sat, 18 May 2019 21:15:03 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 397d2300b08cdee052053e362018cdb6dd65eea2
+X-powerpc-patch-commit: 672eaf37db9f99fd794eed2c68a8b3b05d484081
 X-Patchwork-Hint: ignore
-In-Reply-To: <a4e5d99c5173797b7242652be99801a9bb5d68fc.1557406475.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+In-Reply-To: <20190515090750.30647-1-tobin@kernel.org>
+To:     "Tobin C. Harding" <tobin@kernel.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, erhard_f@mailbox.org
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] powerpc/32s: fix flush_hash_pages() on SMP
-Message-Id: <455jHT6z5wz9s4Y@ozlabs.org>
-Date:   Sat, 18 May 2019 21:15:01 +1000 (AEST)
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        "Tobin C. Harding" <tobin@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Remove double free
+Message-Id: <455jHW4zv1z9s9y@ozlabs.org>
+Date:   Sat, 18 May 2019 21:15:03 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-05-09 at 12:59:38 UTC, Christophe Leroy wrote:
-> flush_hash_pages() runs with data translation off, so current
-> task_struct has to be accesssed using physical address.
+On Wed, 2019-05-15 at 09:07:50 UTC, "Tobin C. Harding" wrote:
+> kfree() after kobject_put().  Who ever wrote this was on crack.
 > 
-> Reported-by: Erhard F. <erhard_f@mailbox.org>
-> Fixes: f7354ccac844 ("powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Fixes: 7e8039795a80 ("powerpc/cacheinfo: Fix kobject memleak")
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 
 Applied to powerpc fixes, thanks.
 
-https://git.kernel.org/powerpc/c/397d2300b08cdee052053e362018cdb6
+https://git.kernel.org/powerpc/c/672eaf37db9f99fd794eed2c68a8b3b0
 
 cheers
