@@ -2,160 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C292241D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 18:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD3E2240B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 18:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbfERQiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 12:38:06 -0400
-Received: from gateway20.websitewelcome.com ([192.185.53.25]:17603 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727073AbfERQiG (ORCPT
+        id S1729594AbfERQMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 12:12:43 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37616 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729515AbfERQMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 12:38:06 -0400
-X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 May 2019 12:38:05 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 2DDFC400C6E2F
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 10:52:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id S1dmhTQ2F4FKpS1dmhqkbK; Sat, 18 May 2019 10:52:54 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.88.202] (port=34780 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hS1dl-000hEL-QU; Sat, 18 May 2019 10:52:53 -0500
-Subject: Re: [PATCH] nvme: target: use struct_size() in kmalloc()
-To:     xiaolinkui <xiaolinkui@kylinos.cn>, hch@lst.de, sagi@grimberg.me
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1558076615-8576-1-git-send-email-xiaolinkui@kylinos.cn>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <b6df7288-9b44-145a-f8be-b2ada6dcd360@embeddedor.com>
-Date:   Sat, 18 May 2019 10:52:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 18 May 2019 12:12:42 -0400
+Received: by mail-it1-f196.google.com with SMTP id m140so16801662itg.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 09:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
+        b=mIEuqgFsXiDW3fTmdpRG+x6vjSNL10IgQt/XYQCA3tvAVqhB7QGkBxHPCI8wxwDhNd
+         LKhT/cUnMNci9N1bDfqzL1yn8/f8bRZj27gZzeRWqddEubo6SN4yvRpclKXOZMz5xKUq
+         5Jy0L71fygPiUrbWvc/eNo4ajwTAUj4ROThEKRkR+Wv3qIFs2Yax6JCqkAcALdbSrrhk
+         WixeukZ6A7rXQIIZ9adTcNBIRr66Pun66C+sC6rAy6XWix2BA/oWWbHiorYXcrJmzbUr
+         5C07cBiMW18gR75dHA5Mn8Jww09N2/+p29DRtnNsM/qqTrha/L3WWKTRqa3+fK63gTJd
+         qIcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NUYaBpI7HtM+jFnabamgjA4IxjSWFzxdWp6kmm3cyvc=;
+        b=It4g6CJWtYR/89xQIRduHO3S2Rs8q6s7XBJuiA5YNqgcpBZyYdNhOUawo7JXZmfscF
+         zgUAqSmwFmfekICBm/QlUxoYxwBaO927AmZFZoFTgCD+pnSaF5SJG7pr8HIvAND16cZF
+         U23qKtpBn2Hu6+kC4iwXvBBDJ3l9WxxN43RlaoArN1BWgYLumTdfbjPQm8ORPnUbSISw
+         LHC4iFtgtrPhNJ082OrIVvl83pG/ZLnX+/7hyXOjxjSrsLqYobUEZxJfci0GCV0owAJk
+         E1nZeK4QTKZqWVl5XGI9R+jkMcjTiwB8VIUxW0cBPrQ/f+QbCbXAO9mz1/WyL05bVLRa
+         ql8g==
+X-Gm-Message-State: APjAAAVUyFHFMzTz2YZ3YftgC1P8peHpTu0DU99F77n5WDCP3fP2Dkc/
+        u0RVj9NVFJj/uVkbCv7GvgFmC6gm7eFjoDs9fDdP7g==
+X-Google-Smtp-Source: APXvYqwUL20YHqglcJVp2NUVYSoE87eqr/iSK2JugWCY2czDEEDb0iLbCV5bCK7vWFO/qjW7HnckzFSJVyUOyW4coOE=
+X-Received: by 2002:a24:ca84:: with SMTP id k126mr4027300itg.104.1558195961792;
+ Sat, 18 May 2019 09:12:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1558076615-8576-1-git-send-email-xiaolinkui@kylinos.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.88.202
-X-Source-L: No
-X-Exim-ID: 1hS1dl-000hEL-QU
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.88.202]:34780
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190517213918.26045-1-matthewgarrett@google.com> <20190517213918.26045-5-matthewgarrett@google.com>
+In-Reply-To: <20190517213918.26045-5-matthewgarrett@google.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 18 May 2019 18:12:29 +0200
+Message-ID: <CAKv+Gu935UN8D5pkD8S9G-7=06JmsN66RdXVOCMaJfcLz=37ew@mail.gmail.com>
+Subject: Re: [PATCH V6 4/4] efi: Attempt to get the TCG2 event log in the boot stub
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 17 May 2019 at 23:39, Matthew Garrett <matthewgarrett@google.com> wrote:
+>
+> From: Matthew Garrett <mjg59@google.com>
+>
+> Right now we only attempt to obtain the SHA1-only event log. The
+> protocol also supports a crypto agile log format, which contains digests
+> for all algorithms in use. Attempt to obtain this first, and fall back
+> to obtaining the older format if the system doesn't support it. This is
+> lightly complicated by the event sizes being variable (as we don't know
+> in advance which algorithms are in use), and the interface giving us
+> back a pointer to the start of the final entry rather than a pointer to
+> the end of the log - as a result, we need to parse the final entry to
+> figure out its length in order to know how much data to copy up to the
+> OS.
+>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
+This signoff doesn't belong here I think?
 
-On 5/17/19 2:03 AM, xiaolinkui wrote:
-> Use struct_size() to keep code sample.
-
-What do you mean by that?
-
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
->     int stuff;
->     struct boo entry[];
-> };
-> 
-> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-
-How did you find this code?
-
-If you used a tool like Coccinelle, mention it in the changelog text.
-
-Did you compile it?
-
---
-Gustavo
-
-> Signed-off-by: xiaolinkui <xiaolinkui@kylinos.cn>
 > ---
->  drivers/nvme/target/admin-cmd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
-> index 9f72d51..6f9f830 100644
-> --- a/drivers/nvme/target/admin-cmd.c
-> +++ b/drivers/nvme/target/admin-cmd.c
-> @@ -248,8 +248,8 @@ static void nvmet_execute_get_log_page_ana(struct nvmet_req *req)
->  	u16 status;
->  
->  	status = NVME_SC_INTERNAL;
-> -	desc = kmalloc(sizeof(struct nvme_ana_group_desc) +
-> -			NVMET_MAX_NAMESPACES * sizeof(__le32), GFP_KERNEL);
-> +	desc = kmalloc(struct_size(desc, nsids, NVMET_MAX_NAMESPACES),
-> +			GFP_KERNEL);
->  	if (!desc)
->  		goto out;
->  
-> 
+>  drivers/firmware/efi/libstub/tpm.c | 57 ++++++++++++++++++++----------
+>  1 file changed, 39 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+> index 5bd04f75d8d6..b3f30448e454 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -8,8 +8,13 @@
+>   *     Thiebaud Weksteen <tweek@google.com>
+>   */
+>  #include <linux/efi.h>
+> -#include <linux/tpm_eventlog.h>
+>  #include <asm/efi.h>
+> +/*
+> + * KASAN redefines memcpy() in a way that isn't available in the EFI stub.
+> + * We need to include asm/efi.h before linux/tpm_eventlog.h in order to avoid
+> + * the wrong memcpy() being referenced.
+> + */
+> +#include <linux/tpm_eventlog.h>
+>
+
+Please drop this hunk. I just sent out a patch to fix this properly.
+
+>  #include "efistub.h"
+>
+> @@ -57,7 +62,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+>
+>  #endif
+>
+> -static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+>  {
+>         efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+>         efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> @@ -67,6 +72,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         unsigned long first_entry_addr, last_entry_addr;
+>         size_t log_size, last_entry_size;
+>         efi_bool_t truncated;
+> +       int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+>         void *tcg2_protocol = NULL;
+>
+>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+> @@ -74,14 +80,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>         if (status != EFI_SUCCESS)
+>                 return;
+>
+> -       status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
+> -                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+> -                               &log_location, &log_last_entry, &truncated);
+> -       if (status != EFI_SUCCESS)
+> -               return;
+> +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                               tcg2_protocol, version, &log_location,
+> +                               &log_last_entry, &truncated);
+> +
+> +       if (status != EFI_SUCCESS || !log_location) {
+> +               version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +               status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> +                                       tcg2_protocol, version, &log_location,
+> +                                       &log_last_entry, &truncated);
+> +               if (status != EFI_SUCCESS || !log_location)
+> +                       return;
+> +
+> +       }
+>
+> -       if (!log_location)
+> -               return;
+>         first_entry_addr = (unsigned long) log_location;
+>
+>         /*
+> @@ -96,8 +108,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>                  * We need to calculate its size to deduce the full size of
+>                  * the logs.
+>                  */
+> -               last_entry_size = sizeof(struct tcpa_event) +
+> -                       ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+> +                       /*
+> +                        * The TCG2 log format has variable length entries,
+> +                        * and the information to decode the hash algorithms
+> +                        * back into a size is contained in the first entry -
+> +                        * pass a pointer to the final entry (to calculate its
+> +                        * size) and the first entry (so we know how long each
+> +                        * digest is)
+> +                        */
+> +                       last_entry_size =
+> +                               __calc_tpm2_event_size((void *)last_entry_addr,
+> +                                                   (void *)(long)log_location,
+> +                                                   false);
+> +               } else {
+> +                       last_entry_size = sizeof(struct tcpa_event) +
+> +                          ((struct tcpa_event *) last_entry_addr)->event_size;
+> +               }
+>                 log_size = log_last_entry - log_location + last_entry_size;
+>         }
+>
+> @@ -114,7 +141,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>
+>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>         log_tbl->size = log_size;
+> -       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +       log_tbl->version = version;
+>         memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+>
+>         status = efi_call_early(install_configuration_table,
+> @@ -126,9 +153,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>  err_free:
+>         efi_call_early(free_pool, log_tbl);
+>  }
+> -
+> -void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+> -{
+> -       /* Only try to retrieve the logs in 1.2 format. */
+> -       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+> -}
+> --
+> 2.21.0.1020.gf2820cf01a-goog
+>
