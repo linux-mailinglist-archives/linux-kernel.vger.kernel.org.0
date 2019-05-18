@@ -2,165 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE54622145
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 04:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3944622153
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 04:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfERCbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 May 2019 22:31:14 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41261 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbfERCbN (ORCPT
+        id S1727714AbfERC6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 May 2019 22:58:23 -0400
+Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:32949 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727367AbfERC6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 May 2019 22:31:13 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y22so10229792qtn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2019 19:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Jx7wOgjO71cyvryJW/ALg7Y34849UqscRe/zdQWObUQ=;
-        b=HyAG7rMv3BEUuyj9kZ97Pyx3nP2G+He64Vc/T+z5iEq6S7vbPpTTEJ5CsyefdAkMXP
-         OFEmK7e4xWR6nL4IHQNz6aOXhCFeTuWgC0GieX63aTM5rQjg+egveUFW5em71vAJRbt7
-         B+MZtKenHp7mGKN1YzIG4mmDz7uwzQQHOmRVAtuNgDw8wTPsdDA0BzXRvl238WdzF2ib
-         jZHM1y4Cm3WqdHFOJUyoBBzcrZVSJCGdHZuuvwulX7VdSBeZVAEVPkcnvx4fzLoFbxH7
-         Qzhx+r+qud5zk7vQwuei270GYm+yc5/rCB1Nt2/xPT+zpJgLg8/zRlUnxQZZ+0hcysrb
-         xU8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Jx7wOgjO71cyvryJW/ALg7Y34849UqscRe/zdQWObUQ=;
-        b=joifbC2oT1zLJCP/Xs7+gv48PL1l3Qhmz+bimwZubogrpRZqSvz6WvIsG+SshzWtyw
-         b4l9PB2K28YOhwRubm2nBX8jxv2gwYBs01By1EqAFfKzJb1LI8E7vRIICCb9Ha4tdAHs
-         76Si6TNu3VY9xIUolmlujeIenHNHbN/qYn/oZX1cqLxrbM7h4tfDA/vK3k+GkLRjT6Ru
-         l+tD3oNd6MNtb93syTB7TPWkmSjiGB0pGbRKmjdmummNCRQshFvzhiRAQmtvS0XoqlAS
-         jId43xK2BtHIY2OGlE3TKQx9BuRvV/SQeNbCPOqT8BIlsiV06cFWBURhCi70w4Opu8yg
-         lxGw==
-X-Gm-Message-State: APjAAAXmLwFe5N9G3Hn5Lsb5ZqrO1Lr+SXd7qHIb6Q2noIl9ZP8M2FKt
-        IkVepm/tZj2dohSJri06z9o=
-X-Google-Smtp-Source: APXvYqzV3iF+9yyRJp56As3DgJ4K6qFxCx3cRrp3JFL7fXnyUl0tb1yWsiDUqRCBe0D02GZmC5TdzA==
-X-Received: by 2002:aed:354c:: with SMTP id b12mr53038932qte.251.1558146671624;
-        Fri, 17 May 2019 19:31:11 -0700 (PDT)
-Received: from arch-01.home (c-73-132-202-198.hsd1.dc.comcast.net. [73.132.202.198])
-        by smtp.gmail.com with ESMTPSA id n66sm5210322qke.6.2019.05.17.19.31.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 May 2019 19:31:11 -0700 (PDT)
-From:   Geordan Neukum <gneukum1@gmail.com>
-To:     gneukum1@gmail.com,
+        Fri, 17 May 2019 22:58:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id DEC82100E806B;
+        Sat, 18 May 2019 02:58:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3866:3867:3868:4321:5007:10004:10400:10848:11232:11657:11658:11914:12043:12048:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21212:21433:21611:21627:30029:30046:30054:30091,0,RBL:23.242.70.174:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
+X-HE-Tag: knot77_2bcab207af217
+X-Filterd-Recvd-Size: 1751
+Received: from XPS-9350 (cpe-23-242-70-174.socal.res.rr.com [23.242.70.174])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 18 May 2019 02:58:20 +0000 (UTC)
+Message-ID: <9e30f140e314f03057a2941f4d091d8965391c17.camel@perches.com>
+Subject: Re: [PATCH 4/5] staging: kpc2000: kpc_i2c: use %s with __func__
+ identifier in log messages
+From:   Joe Perches <joe@perches.com>
+To:     Geordan Neukum <gneukum1@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] staging: kpc2000: kpc_i2c: fixup block comment style in i2c_driver.c
-Date:   Sat, 18 May 2019 02:30:00 +0000
-Message-Id: <1103bc883e10f356a4eb6f78ec3c52ebe1f9b043.1558146549.git.gneukum1@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1558146549.git.gneukum1@gmail.com>
+Date:   Fri, 17 May 2019 19:58:19 -0700
+In-Reply-To: <ffd66b415e67f6b03483a6ee57b7b3dc0bab388f.1558146549.git.gneukum1@gmail.com>
 References: <cover.1558146549.git.gneukum1@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+         <ffd66b415e67f6b03483a6ee57b7b3dc0bab388f.1558146549.git.gneukum1@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Throughout i2c_driver.c, there are numerous deviations from the two
-standards of:
-	- placing a '*' at the beginning of every line containing a
-	  block comment.
-	- placing the closing comment marker '*/' on a new line.
+On Sat, 2019-05-18 at 02:29 +0000, Geordan Neukum wrote:
+> Throughout i2c_driver.c, there are instances where the log strings
+> contain the function's name hardcoded into the string. Instead, use the
+> printk conversion specifier '%s' with the __func__ preprocessor
+> identifier to more maintainably print the function's name.
 
-Instead, use a block comment style that is more consistent with the
-prescribed guidelines.
+Might as well remove all of these and use the
+builtin ftrace function tracing mechanism instead.
 
-Signed-off-by: Geordan Neukum <gneukum1@gmail.com>
----
- drivers/staging/kpc2000/kpc_i2c/i2c_driver.c | 36 ++++++++++++--------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+> diff --git a/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c b/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
+[]
+> @@ -142,7 +142,7 @@ static int i801_check_pre(struct i2c_device *priv)
+>  {
+>  	int status;
+>  
+> -	dev_dbg(&priv->adapter.dev, "i801_check_pre\n");
+> +	dev_dbg(&priv->adapter.dev, "%s\n", __func__);
 
-diff --git a/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c b/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-index 03e401322a18..986148c72185 100644
---- a/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-+++ b/drivers/staging/kpc2000/kpc_i2c/i2c_driver.c
-@@ -137,7 +137,8 @@ MODULE_PARM_DESC(disable_features, "Disable selected driver features");
- #define outb_p(d,a) writeq(d,(void*)a)
- 
- /* Make sure the SMBus host is ready to start transmitting.
--   Return 0 if it is, -EBUSY if it is not. */
-+ * Return 0 if it is, -EBUSY if it is not.
-+ */
- static int i801_check_pre(struct i2c_device *priv)
- {
- 	int status;
-@@ -226,7 +227,8 @@ static int i801_transaction(struct i2c_device *priv, int xact)
- 		return result;
- 	}
- 	/* the current contents of SMBHSTCNT can be overwritten, since PEC,
--	 * INTREN, SMBSCMD are passed in xact */
-+	 * INTREN, SMBSCMD are passed in xact
-+	 */
- 	outb_p(xact | I801_START, SMBHSTCNT(priv));
- 
- 	/* We will always wait for a fraction of a second! */
-@@ -424,8 +426,9 @@ static int i801_block_transaction(struct i2c_device *priv, union i2c_smbus_data
- 	}
- 
- 	/* Experience has shown that the block buffer can only be used for
--	   SMBus (not I2C) block transactions, even though the datasheet
--	   doesn't mention this limitation. */
-+	 * SMBus (not I2C) block transactions, even though the datasheet
-+	 * doesn't mention this limitation.
-+	 */
- 	if ((priv->features & FEATURE_BLOCK_BUFFER) && command != I2C_SMBUS_I2C_BLOCK_DATA && i801_set_block_buffer_mode(priv) == 0) {
- 		result = i801_block_transaction_by_block(priv, data, read_write, hwpec);
- 	} else {
-@@ -499,11 +502,13 @@ static s32 i801_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
- 	case I2C_SMBUS_I2C_BLOCK_DATA:
- 		dev_dbg(&priv->adapter.dev, "  [acc] SMBUS_I2C_BLOCK_DATA\n");
- 		/* NB: page 240 of ICH5 datasheet shows that the R/#W
--		 * bit should be cleared here, even when reading */
-+		 * bit should be cleared here, even when reading
-+		 */
- 		outb_p((addr & 0x7f) << 1, SMBHSTADD(priv));
- 		if (read_write == I2C_SMBUS_READ) {
- 			/* NB: page 240 of ICH5 datasheet also shows
--			 * that DATA1 is the cmd field when reading */
-+			 * that DATA1 is the cmd field when reading
-+			 */
- 			outb_p(command, SMBHSTDAT1(priv));
- 		} else {
- 			outb_p(command, SMBHSTCMD(priv));
-@@ -533,8 +538,9 @@ static s32 i801_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
- 	}
- 
- 	/* Some BIOSes don't like it when PEC is enabled at reboot or resume
--	   time, so we forcibly disable it after every transaction. Turn off
--	   E32B for the same reason. */
-+	 * time, so we forcibly disable it after every transaction. Turn off
-+	 * E32B for the same reason.
-+	 */
- 	if (hwpec || block) {
- 		dev_dbg(&priv->adapter.dev, "  [acc] hwpec || block\n");
- 		outb_p(inb_p(SMBAUXCTL(priv)) & ~(SMBAUXCTL_CRC | SMBAUXCTL_E32B), SMBAUXCTL(priv));
-@@ -573,13 +579,13 @@ static u32 i801_func(struct i2c_adapter *adapter)
- 	struct i2c_device *priv = i2c_get_adapdata(adapter);
- 
- 	/* original settings
--	   u32 f = I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
--	   I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
--	   I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
--	   ((priv->features & FEATURE_SMBUS_PEC) ? I2C_FUNC_SMBUS_PEC : 0) |
--	   ((priv->features & FEATURE_I2C_BLOCK_READ) ?
--	   I2C_FUNC_SMBUS_READ_I2C_BLOCK : 0);
--	*/
-+	 * u32 f = I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
-+	 * I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
-+	 * I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
-+	 * ((priv->features & FEATURE_SMBUS_PEC) ? I2C_FUNC_SMBUS_PEC : 0) |
-+	 * ((priv->features & FEATURE_I2C_BLOCK_READ) ?
-+	 * I2C_FUNC_SMBUS_READ_I2C_BLOCK : 0);
-+	 */
- 
- 	// http://lxr.free-electrons.com/source/include/uapi/linux/i2c.h#L85
- 
--- 
-2.21.0
+etc...
 
