@@ -2,113 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE272245C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 19:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFFE22465
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2019 20:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbfERRxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 13:53:32 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:41412 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728337AbfERRxc (ORCPT
+        id S1729801AbfERSJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 May 2019 14:09:56 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:37664 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbfERSJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 13:53:32 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 0404F2E0A08;
-        Sat, 18 May 2019 20:53:29 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 54vWVqcd4G-rS0mMCtj;
-        Sat, 18 May 2019 20:53:28 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1558202008; bh=2Na3aZIHWPhYafymUlsMXFaNb8PBXDNnOv14maVCKog=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=p/A5osodo5llEGV2/QwvoFAIbzLD1sn0bC/xzasjVPvdfmuurmertOZsrR7Uju/EA
-         jGXGOYY1+XHBcUn/Y37RbeLVpCsHgCOK4yD4sAud4tlFtFhGpSOHn58GutXpDRsfe5
-         VKFsFkWhNMPQ/zRJpYwDApF0RBRPhzFAvH+hWToc=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:0:3713::1:8])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id kQqN4rdwLk-rSdamr3E;
-        Sat, 18 May 2019 20:53:28 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH RFC] time: validate watchdog clocksource using second best
- candidate
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <155790645605.1933.906798561802423361.stgit@buzz>
- <alpine.DEB.2.21.1905181712000.3019@nanos.tec.linutronix.de>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <602b155f-4108-2865-3f1c-4e63d73405ed@yandex-team.ru>
-Date:   Sat, 18 May 2019 20:53:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 18 May 2019 14:09:56 -0400
+Received: by mail-yb1-f193.google.com with SMTP id p134so3989360ybc.4
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 11:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qKwzC7+9dFa3APPTisEwxUdLiJEcokybHIkZLdfOQgU=;
+        b=HP7uv2G7guSKmSVG8Z2PpC8Q+y2qv/S3jM8lQOSq9E99UtkRMLaGCEbmDtZmmoTKcM
+         QsW3HaNs5Tk7fgkVGcrd9zXcUelxRpyODQASlHI5iOlWQgWWLe2MRIWPFjN29t3xBQ2q
+         RL3ZJZ2LCdn5+vlWgchQhwy6oIZBPpu74IygxLQZmRjHIFNdljrHw6D8I3io0p/TBdH6
+         nxVTHk8LTLglio3bcxaIXANCsFPUCU+C6NRxvHlDh+GMOWfK84aD07IiJbv3x/xCt7cg
+         0AChUF9PLPlwcR6AORccDuXoMAsLg9GgjF/D2RHJu7T6sLUIwM/uHv453rPenfwkfNEz
+         wyjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qKwzC7+9dFa3APPTisEwxUdLiJEcokybHIkZLdfOQgU=;
+        b=Or0rspP7hDaPhGF0o+unpgmgFlKOkZGNp5+/p2KbYokpArunwrPfkPegSAPMpbLs1/
+         NZAy5Rz/29vCN6Mb73nmRi8Yvl3nE5PynmTxI2Zj1lXjNGn6wheAjH+F4D3FbZvRUEC/
+         DZbUan5LRc3LUnOUuXu06d8fsqpMWn+4Kv18Ex3PTAPsJG9zTWc0D+iI9LalyvhhMOU3
+         9Qlz6Yyx1aG3MvwjLptb+BlISF7g29LRMOAWkmBMExWktXOzo9Kl2IQmOU/vV1JZK7h4
+         mhJP52DtzPlkelwQaZmcX+F6eJldDlujkooe1/hmD5JR3H7mSmib1k8GQ6768SQ5S6aR
+         QWkA==
+X-Gm-Message-State: APjAAAVHWp8gLys5gLqWIi4k5TDUD+2oaLm+4Fj4y1O3x2dwPP5Wc+RR
+        nVmdmw31slyQfA+K4uCPSFF0SPDi
+X-Google-Smtp-Source: APXvYqyr2pdqtKkNDAWg6BQdJuLYTZvgWCoMD8bmH3DyWEVQ5EHuxZtcOXXlkB3LVTQyEWTZBxhelw==
+X-Received: by 2002:a25:6d54:: with SMTP id i81mr29891075ybc.444.1558202994229;
+        Sat, 18 May 2019 11:09:54 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id j189sm4701724ywa.42.2019.05.18.11.09.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 18 May 2019 11:09:52 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id t62so3966800ybi.11
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 11:09:52 -0700 (PDT)
+X-Received: by 2002:a25:6ec1:: with SMTP id j184mr7425869ybc.441.1558202991919;
+ Sat, 18 May 2019 11:09:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1905181712000.3019@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <00000000000014e65905892486ab@google.com>
+In-Reply-To: <00000000000014e65905892486ab@google.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Sat, 18 May 2019 14:09:15 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSeM5qzyf_D+70Xe5k=3d+dYp2WyVZC-YM=K4=9kCCst6A@mail.gmail.com>
+Message-ID: <CA+FuTSeM5qzyf_D+70Xe5k=3d+dYp2WyVZC-YM=K4=9kCCst6A@mail.gmail.com>
+Subject: Re: INFO: trying to register non-static key in rhashtable_walk_enter
+To:     syzbot <syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com>
+Cc:     David Miller <davem@davemloft.net>, jon.maloy@ericsson.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        tipc-discussion@lists.sourceforge.net,
+        Ying Xue <ying.xue@windriver.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <edumazet@google.com>, hujunwei4@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.05.2019 18:17, Thomas Gleixner wrote:
-> On Wed, 15 May 2019, Konstantin Khlebnikov wrote:
-> 
->> Timekeeping watchdog verifies doubtful clocksources using more reliable
->> candidates. For x86 it likely verifies 'tsc' using 'hpet'. But 'hpet'
->> is far from perfect too. It's better to have second opinion if possible.
->>
->> We're seeing sudden jumps of hpet counter to 0xffffffff:
-> 
-> On which kind of hardware? A particular type of CPU or random ones?
+On Sat, May 18, 2019 at 3:34 AM syzbot
+<syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    510e2ced ipv6: fix src addr routing with the exception table
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b7e608a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=82f0809e8f0a8c87
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1e8114b61079bfe9cbc5
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
+>
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
 
-In general this is very rare event.
+All these five rhashtable_walk_enter probably have the same root cause.
 
-This exact pattern have been seen ten times or so on several servers with
-Intel(R) Xeon(R) CPU E5-2660 v4 @ 2.00GHz
-(this custom built platform with chipset Intel C610)
+Bisected to commit 7e27e8d6130c (" tipc: switch order of device
+registration to fix a crash"). Reverting that fixes it.
 
-and haven't seen for previous generation
-Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
-(this is another custom built platform)
+Before the commit, tipc_init succeeds. After the commit it fails at
+register_pernet_subsys(&tipc_net_ops) due to error in
 
-So, this might be not related to cpu model.
+  tipc_init_net
+    tipc_topsrv_start
+      tipc_topsrv_create_listener
+        sock_create_kern
 
-> 
->> timekeeping watchdog on CPU56: Marking clocksource 'tsc' as unstable because the skew is too large:
->> 'hpet' wd_now: ffffffff wd_last: 19ec5720 mask: ffffffff
->> 'tsc' cs_now: 69b8a15f0aed cs_last: 69b862c9947d mask: ffffffffffffffff
->>
->> Shaohua Li reported the same case three years ago.
->> His patch backlisted this exact value and re-read hpet counter.
-> 
-> Can you provide a reference please? Preferrably a lore.kernel.org/... URL
-
-Link was in patch: https://lore.kernel.org/patchwork/patch/667413/
-
-> 
->> This patch uses second reliable clocksource as backup for validation.
->> For x86 this is usually 'acpi_pm'. If watchdog and backup are not consent
->> then other clocksources will not be marked as unstable at this iteration.
-> 
-> The mess you add to the watchdog code is unholy and that's broken as there
-> is no guarantee for acpi_pm (or any other secondary watchdog) being
-> available.
-
-ACPI power management timer is a pretty standard x86 hardware.
-But my patch should work for any platform with any second reliable clocksource.
-
-If there is no second clocksource my patch does noting:
-watchdog_backup stays NULL and backup_consent always true.
-
-> 
-> If the only wreckaged value is always ffffffff then I rather reread the
-> hpet in that case. But not in the watchdog code, we need to do that in the
-> HPET code as this affects any other HPET user as well.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
+On a related note, in tipc_topsrv_start srv is also not freed on later
+error paths.
