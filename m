@@ -2,118 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD93225B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 03:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB1422801
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbfESB4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 May 2019 21:56:23 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43400 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729724AbfESB4X (ORCPT
+        id S1728711AbfESRtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:49:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45932 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbfESRtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 May 2019 21:56:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t22so5060929pgi.10
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2019 18:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+kj4OJTopW4rotB8qihKVkdclA94Kw2w9hND/ZASmD4=;
-        b=aDGV5YuWdqbIJilBO0WAM7gcfKLGH5t9gO/0KJVJ47LOMrp1HdMMS6jlrxipv7HfJD
-         3lCFORRxYNin9JkiebhDNWTH4fM2d0xnjPrAZ29NlQyaz52fXr7/d4uy5D0jVIVt0q7M
-         z3F+hS80VGUNPrsZWXwO1nfcpijgFKG2ERmZM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+kj4OJTopW4rotB8qihKVkdclA94Kw2w9hND/ZASmD4=;
-        b=TNJXmUMKe5KcOHMSm8uS3bwtadJU0o11Ecb5hbuiZ3V4VMvUAaXmNjWaUciNvF7s7f
-         Hhr3UkwfExyXhJ6uXfyjzoxU63+hIPZgpgSyvKOidQjG0GaNjC/U7FtyxYm0eFVkUPZW
-         Qp322Ktae4fz1uO9tnp1ZSnCFcFMo9pZmPj37nBk8uiWuf3jOCQB3dUW00zLTwUKdbJt
-         Yi1N+qXKEfVmxV5/yeWriDgRxHJzX/UNlTHocDF6ZkohkSSrVs+vZZQoiHkHizKpCKOH
-         I9GT1xj7atbiobzxLCp2xRkwSi8AbHhKmxyEgFn8ptazOcUcLdw3pfVcQ22PNPmm3slR
-         Z8Pg==
-X-Gm-Message-State: APjAAAXc7r1K+hPgkIOljGp7Q98KIscoyreqyI489dQvBNek2YCM91TD
-        jtDZhfXbtGXT0SFxxFfdXUwyKQ==
-X-Google-Smtp-Source: APXvYqxPCwPSZydCQNb24+pWdRNYEyp8uXWZRnLGTAIxluddIHLpHn7S4Gzf1USIDt211iw0hLpNTQ==
-X-Received: by 2002:a63:7146:: with SMTP id b6mr62397520pgn.426.1558230982600;
-        Sat, 18 May 2019 18:56:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u66sm15405640pfb.76.2019.05.18.18.56.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 18 May 2019 18:56:21 -0700 (PDT)
-Date:   Sat, 18 May 2019 18:56:20 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Weitao Hou <houweitaoo@gmail.com>
-Cc:     mcgrof@kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] kernel: fix typos and some coding style in comments
-Message-ID: <201905181855.91DE502D@keescook>
-References: <20190518101628.14633-1-houweitaoo@gmail.com>
+        Sun, 19 May 2019 13:49:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WkSri6KdzdPoSDtpcQbCQ546W7rQSzg2uVsaczN2X7g=; b=m59KHU1154ZMkq7fBg+iRMZFYl
+        VMPbpWyTtNDy7o/EAfkA3x3q5oZUMhBOjOnebDji8P0qGLpQrV+WHlsKcd4wYsZ1LBQGjoIXfoBXy
+        Gn7R9Vd4Jm54uGE2JKNyrpYgYhY/e6HUFMY/jA5HXvAv4O1Nbut2Hv3ENKQK8FbQMTpcJB3GlfMT1
+        1HT3xfli1JuDht4koR+DTA1cuoEtS393JX9P1i/hQbCYNE1VF3FgpzgOPzFSNxa5pjOuSJF3hV4ha
+        4t+PTojt3ZBzhO3zO/kkan/HgFUgMfV0vuMY2ihMqXQZKnQ5WVR27Oce4FBdUiDioJzMmHIA/iDD6
+        b/dVNRAw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hSBkN-0006UP-PD; Sun, 19 May 2019 02:40:24 +0000
+Subject: Re: drivers/soc/Kconfig:23: 'menu' in different file than 'menu'
+To:     kbuild test robot <lkp@intel.com>,
+        Patrick Venture <venture@google.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Olof Johansson <olof@lixom.net>
+References: <201905171226.xchw0NQ2%lkp@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <777141e2-4aff-cc89-0258-cc933a485bed@infradead.org>
+Date:   Sat, 18 May 2019 19:40:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190518101628.14633-1-houweitaoo@gmail.com>
+In-Reply-To: <201905171226.xchw0NQ2%lkp@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 18, 2019 at 06:16:28PM +0800, Weitao Hou wrote:
-> fix lenght to length
-
-Can you please fix all the instances of this in the tree?
-
-$ git grep lenght | grep -v spelling.txt
-Documentation/devicetree/bindings/usb/s3c2410-usb.txt: - reg: address and lenght of the controller memory mapped region
-drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c:   * length, need to update lenght of it and the last packet.
-kernel/sysctl.c: *      passed the max lenght will be ignored. Multiple writes will append
-sound/soc/qcom/qdsp6/q6asm.c: * @len: lenght in bytes
-
-> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+On 5/16/19 9:40 PM, kbuild test robot wrote:
+> Hi Patrick,
+> 
+> FYI, the error/warning still remains.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   0d74471924f2a01dcd32d154510c0500780b531a
+> commit: 524feb799408e5d45c6aa82763a9f52489d1e19f soc: add aspeed folder and misc drivers
+> date:   3 weeks ago
+> config: xtensa-allyesconfig
+> compiler: xtensa-linux-gcc (GCC) 8.1.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 524feb799408e5d45c6aa82763a9f52489d1e19f
+>         GCC_VERSION=8.1.0 make.cross ARCH=xtensa  allyesconfig
+>         GCC_VERSION=8.1.0 make.cross ARCH=xtensa 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> drivers/soc/Kconfig:23: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>>> drivers/Kconfig:233: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>    <none>:34: syntax error
+>>> drivers/Kconfig:2: missing end statement for this entry
+>    make[2]: *** [allyesconfig] Error 1
+>    make[1]: *** [allyesconfig] Error 2
+>    make: *** [sub-make] Error 2
+> --
+>>> drivers/soc/Kconfig:23: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>>> drivers/Kconfig:233: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>    <none>:34: syntax error
+>>> drivers/Kconfig:2: missing end statement for this entry
+>    make[2]: *** [oldconfig] Error 1
+>    make[1]: *** [oldconfig] Error 2
+>    make: *** [sub-make] Error 2
+> --
+>>> drivers/soc/Kconfig:23: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>>> drivers/Kconfig:233: 'menu' in different file than 'menu'
+>>> drivers/soc/aspeed/Kconfig:1: location of the 'menu'
+>    <none>:34: syntax error
+>>> drivers/Kconfig:2: missing end statement for this entry
+>    make[2]: *** [olddefconfig] Error 1
+>    make[1]: *** [olddefconfig] Error 2
+>    make: *** [sub-make] Error 2
+> 
+> vim +23 drivers/soc/Kconfig
+> 
+> 5d144e36 Andy Gross        2014-04-24  22  
+> 3a6e0821 Santosh Shilimkar 2014-04-23 @23  endmenu
+> 
+> :::::: The code at line 23 was first introduced by commit
+> :::::: 3a6e08218f36baa9c49282ad2fe0dfbf001d8f23 soc: Introduce drivers/soc place-holder for SOC specific drivers
+> 
+> :::::: TO: Santosh Shilimkar <santosh.shilimkar@ti.com>
+> :::::: CC: Kumar Gala <galak@codeaurora.org>
+> 
 > ---
->  kernel/sysctl.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 943c89178e3d..0736a1d580df 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -187,17 +187,17 @@ extern int no_unaligned_warning;
->   * enum sysctl_writes_mode - supported sysctl write modes
->   *
->   * @SYSCTL_WRITES_LEGACY: each write syscall must fully contain the sysctl value
-> - * 	to be written, and multiple writes on the same sysctl file descriptor
-> - * 	will rewrite the sysctl value, regardless of file position. No warning
-> - * 	is issued when the initial position is not 0.
-> + * to be written, and multiple writes on the same sysctl file descriptor
-> + * will rewrite the sysctl value, regardless of file position. No warning
-> + * is issued when the initial position is not 0.
->   * @SYSCTL_WRITES_WARN: same as above but warn when the initial file position is
-> - * 	not 0.
-> + * not 0.
->   * @SYSCTL_WRITES_STRICT: writes to numeric sysctl entries must always be at
-> - * 	file position 0 and the value must be fully contained in the buffer
-> - * 	sent to the write syscall. If dealing with strings respect the file
-> - * 	position, but restrict this to the max length of the buffer, anything
-> - * 	passed the max lenght will be ignored. Multiple writes will append
-> - * 	to the buffer.
-> + * file position 0 and the value must be fully contained in the buffer
-> + * sent to the write syscall. If dealing with strings respect the file
-> + * position, but restrict this to the max length of the buffer, anything
-> + * passed the max length will be ignored. Multiple writes will append
-> + * to the buffer.
-
-Also, why the reflow? It looks like these should stay indented...
-
->   *
->   * These write modes control how current file position affects the behavior of
->   * updating sysctl values through the proc interface on each write.
-> -- 
-> 2.18.0
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 > 
 
-Besides that, thanks for noticing and sending a patch!
+Fixed by:
+
+commit 80d0c649244253d8cb3ba32d708c1431e7ac8fbf
+Author: Olof Johansson <olof@lixom.net>
+Date:   Mon Apr 29 12:25:41 2019 -0700
+
+    soc: aspeed: fix Kconfig
+
+which is now in mainline.
+
 
 -- 
-Kees Cook
+~Randy
