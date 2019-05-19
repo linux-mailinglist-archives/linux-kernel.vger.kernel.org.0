@@ -2,151 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E050922847
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1DB22855
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfESSSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 14:18:01 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:42405 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfESSSB (ORCPT
+        id S1729917AbfESSes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 14:34:48 -0400
+Received: from mail-pg1-f177.google.com ([209.85.215.177]:43346 "EHLO
+        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbfESSes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 14:18:01 -0400
-Received: by mail-it1-f200.google.com with SMTP id s18so9443067itl.7
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:18:00 -0700 (PDT)
+        Sun, 19 May 2019 14:34:48 -0400
+Received: by mail-pg1-f177.google.com with SMTP id t22so5655058pgi.10
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=11epPDMxJKikdDuH5v438Dqzhu+8xiuwN8/dlEEPf7w=;
+        b=IrPi4dzjuT6IuaUnXQW4C/RlKY8SAQGAI5efWh0a40wMRM8t2LHgHcz1avoKtU3abK
+         bFUrCDyneTCImqczkLbYkM6PeugMcl6RjCaBzPHsUMb2p2Qfu+d2cdlSbWEhnOqUdzd4
+         2H6Hc9rb8zKSVSzvYcSMEXscOSsySGNNd1unU/69ZUdiwH8CToKoW11BzMulBk5jOYJa
+         +H0GbeS85k3CzVc3RfSojyBPlo6/khO7Y7mF0IU6XLofQ4eJlBUFLEtkP0hBnuCAZJyx
+         VZwLlivrukrcR2MuFInFQFIZ+SZZZvgRjujyAsXkfkLjoB7fGeVs54Ztp/RiBvut1iUN
+         UlMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=M1TghxkZ2cqK/XU0n2a61ItohSKPfNjC9hEQzfL0wnc=;
-        b=hyXdn2x8+h9el5XBZ7GIIex2+nqbHWS9DmoAJXyUA+qUF1+fcwjKLtwmhaFYpCSwst
-         GPdflWTSi4SFKNFMnZz0Vx8nm5l/8sENcNC201k1fK26Y2E62p2XQMjAlR1/YYYaQrPs
-         1XK7VgZkfEFDRFN1ZO1GWL4ww5ElFdqXftFZA9DL3LFtWszvvBjYgHVxDKe29BtslXc4
-         o6mYRVMf+Kb9sv0HA6ZiM6RADAULYhWQU6Pku2nLMx/rAcrtvbhFUPDLN6lrf6BVUmIZ
-         czBZ+X2+lhOJhkT3fKEl7EXNYjL2fQVg+A2OsChbk/zd2Scb820ZF0bAqCSug6ICnyy2
-         vafg==
-X-Gm-Message-State: APjAAAWcKH/1j9y2NIMxFpFMKkK4Ax5V0NYhJirR0slfVZeer3kpogR6
-        CBtImqxRVDL/kxaEDhUTZl8hZ5ZFAvU3BB10nEOjIevjwuLk
-X-Google-Smtp-Source: APXvYqwJMvHP1nHjqR08pleCqoffj1JzDsim7beyXZUNubPpMK3yQh38HPUVLvyiIJD+FgMh1dtC7AoKpHKqET2ojtRwpjpVGXez
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=11epPDMxJKikdDuH5v438Dqzhu+8xiuwN8/dlEEPf7w=;
+        b=s23+4aKluYAu7VTXPMBX59DFPT55xyrnLP3eyVtQ1NQdkrXgCy9134dKA8fl1ySl3q
+         bjW3wGW9ZTnUjsJqZSR/Jsl+X6v/Wg7bxYiY8eOszMG8DrCrcjjCYO/4d4qyk7Tg2m0H
+         aKkMFqA4f1gKY3GLtpWnrQYZOLwVFBhVQOXZV91ntL3bKpxB/+Xk1Krhk9Er4KDThXxA
+         f89KUuyw6i+OHQsoSmdB8c2h3dGUUJtawnT5u/HEhtgpMG/U/hY656urD0ZnEWgJ5Cp6
+         ojnmHmmVU3nOS5SMvq9WnEzYY6YyQpzy97626tjEyPIwhuDYa2RNVnX+VLR59xconYaf
+         /KXQ==
+X-Gm-Message-State: APjAAAVNfbI+rSXcbdWfCFsxkjdssDI30ccl+l1AjpPpipPgiI/OUeGT
+        ifhRbQnDV1dvvZ3K7rj5cpwPIOAw
+X-Google-Smtp-Source: APXvYqxvavbTr5Llg15jkn4mHoaZyPh1phIxnZxhyXOoqbUxbMz6gbjUaChu1TIA3y6jx3n1pcJ2/A==
+X-Received: by 2002:a63:7141:: with SMTP id b1mr68253806pgn.331.1558258486280;
+        Sun, 19 May 2019 02:34:46 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id w189sm16622660pfw.147.2019.05.19.02.34.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 02:34:45 -0700 (PDT)
+Date:   Sun, 19 May 2019 15:04:40 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [Patch v2] staging: erofs: fix Warning Use BUG_ON instead of if
+ condition followed by BUG
+Message-ID: <20190519093440.GA16838@hari-Inspiron-1545>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:221:: with SMTP id f1mr41655686jaq.1.1558258025060;
- Sun, 19 May 2019 02:27:05 -0700 (PDT)
-Date:   Sun, 19 May 2019 02:27:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000d60e405893a38f0@google.com>
-Subject: general protection fault in rhashtable_walk_enter
-From:   syzbot <syzbot+153641db1759e576ec8e@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+fix below warning reported by  coccicheck
 
-syzbot found the following crash on:
+drivers/staging/erofs/unzip_pagevec.h:74:2-5: WARNING: Use BUG_ON
+instead of if condition followed by BUG.
 
-HEAD commit:    b1d6682e Add linux-next specific files for 20190517
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1022b8bca00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d3758876561d8cec
-dashboard link: https://syzkaller.appspot.com/bug?extid=153641db1759e576ec8e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+153641db1759e576ec8e@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 2377 Comm: syz-executor.0 Not tainted 5.1.0-next-20190517 #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:strlen+0x1f/0xa0 lib/string.c:516
-Code: 00 66 2e 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48  
-89 fa 48 89 e5 48 c1 ea 03 41 54 49 89 fc 53 48 83 ec 08 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c 24
-RSP: 0018:ffff88803eacf488 EFLAGS: 00010096
-RAX: dffffc0000000000 RBX: ffff8880a4dba828 RCX: 0000000000000000
-RDX: 00000000200002ce RSI: ffff888093223440 RDI: 0000000100001674
-RBP: ffff88803eacf4a0 R08: 0000000000000000 R09: 0000000000000001
-R10: ffffed1015d06bdf R11: 0000000000000001 R12: 0000000100001674
-R13: 0000000000000000 R14: ffff888093223440 R15: ffff88803eacf570
-FS:  00007fa96d643700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000738000 CR3: 00000000a8324000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  trace_event_get_offsets_lock_acquire include/trace/events/lock.h:13  
-[inline]
-  perf_trace_lock_acquire+0xb9/0x530 include/trace/events/lock.h:13
-  trace_lock_acquire include/trace/events/lock.h:13 [inline]
-  lock_acquire+0x299/0x3f0 kernel/locking/lockdep.c:4301
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  rhashtable_walk_enter+0xf9/0x390 lib/rhashtable.c:669
-  __tipc_dump_start+0x1fa/0x3c0 net/tipc/socket.c:3414
-  tipc_dump_start+0x70/0x90 net/tipc/socket.c:3396
-  __netlink_dump_start+0x4f8/0x7d0 net/netlink/af_netlink.c:2351
-  netlink_dump_start include/linux/netlink.h:226 [inline]
-  tipc_sock_diag_handler_dump+0x1d9/0x270 net/tipc/diag.c:91
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x319/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2486
-  sock_diag_rcv+0x2b/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
-  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1337
-  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1926
-  sock_sendmsg_nosec net/socket.c:660 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:671
-  ___sys_sendmsg+0x803/0x920 net/socket.c:2292
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2330
-  __do_sys_sendmsg net/socket.c:2339 [inline]
-  __se_sys_sendmsg net/socket.c:2337 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2337
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458da9
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa96d642c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458da9
-RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa96d6436d4
-R13: 00000000004c6790 R14: 00000000004db3e8 R15: 00000000ffffffff
-Modules linked in:
----[ end trace 88f78024ddc40fcd ]---
-RIP: 0010:strlen+0x1f/0xa0 lib/string.c:516
-Code: 00 66 2e 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48  
-89 fa 48 89 e5 48 c1 ea 03 41 54 49 89 fc 53 48 83 ec 08 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c 24
-RSP: 0018:ffff88803eacf488 EFLAGS: 00010096
-RAX: dffffc0000000000 RBX: ffff8880a4dba828 RCX: 0000000000000000
-RDX: 00000000200002ce RSI: ffff888093223440 RDI: 0000000100001674
-RBP: ffff88803eacf4a0 R08: 0000000000000000 R09: 0000000000000001
-R10: ffffed1015d06bdf R11: 0000000000000001 R12: 0000000100001674
-R13: 0000000000000000 R14: ffff888093223440 R15: ffff88803eacf570
-FS:  00007fa96d643700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000738000 CR3: 00000000a8324000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+-----
+Changes in v2:
+  - replace BUG_ON with  DBG_BUGON
+-----
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/staging/erofs/unzip_pagevec.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/staging/erofs/unzip_pagevec.h b/drivers/staging/erofs/unzip_pagevec.h
+index f37d8fd..7938ee3 100644
+--- a/drivers/staging/erofs/unzip_pagevec.h
++++ b/drivers/staging/erofs/unzip_pagevec.h
+@@ -70,8 +70,7 @@ z_erofs_pagevec_ctor_next_page(struct z_erofs_pagevec_ctor *ctor,
+ 			return tagptr_unfold_ptr(t);
+ 	}
+ 
+-	if (unlikely(nr >= ctor->nr))
+-		BUG();
++	DBG_BUGON(nr >= ctor->nr);
+ 
+ 	return NULL;
+ }
+-- 
+2.7.4
+
