@@ -2,129 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABEB2278B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5EBC2281E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfESRMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:12:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41999 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfESRMp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:12:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4J9kSic2199405
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 19 May 2019 02:46:28 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4J9kSic2199405
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019041745; t=1558259189;
-        bh=EZEwnXKHEaFP80xAKay6xT1gVs9KTDVZTlMPotFvqNg=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=b6gDC8ENRMFKCLTan2gD7NIRuKZ5vAvs/Y1IHNgPWCwCwDLIZy3zp7fcq/a5w9bXN
-         xxTDn7d/7egh+yxIZsoHjlcw2TRMHFGntiy60P/8qiUxGoYTwoHqyYy5zcvYnLqVSX
-         XVi4jy/Rbhdw+QwGx43emLCANhXDtNf5ebOfAs7n3soienpJ7mFr7F219EeEiEAVS2
-         SU4hvqZx6zxoeOtLZG0vKdjKIp/Cp6GCc1K3oTaxcSTUuqGm1ECZU165KOtDc2NI/C
-         frvMSazF8tLTsAcMxcoMRTMfXi7g6Q9io19p53x8sjokwiKaFWet4x+Kh6dw8lakwm
-         evTfPKW0OtA8w==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4J9kPQC2199396;
-        Sun, 19 May 2019 02:46:25 -0700
-Date:   Sun, 19 May 2019 02:46:25 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joe Lawrence <tipbot@zytor.com>
-Message-ID: <tip-7eaf51a2e094229b75cc0c315f1cbbe2f3960058@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, kamalesh@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, joe.lawrence@redhat.com,
-        hpa@zytor.com, jpoimboe@redhat.com, mbenes@suse.cz
-Reply-To: tglx@linutronix.de, mingo@kernel.org, mbenes@suse.cz,
-          jpoimboe@redhat.com, hpa@zytor.com, joe.lawrence@redhat.com,
-          linux-kernel@vger.kernel.org, kamalesh@linux.vnet.ibm.com
-In-Reply-To: <20190517185117.24642-1-joe.lawrence@redhat.com>
-References: <20190517185117.24642-1-joe.lawrence@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] stacktrace: Unbreak
- stack_trace_save_tsk_reliable()
-Git-Commit-ID: 7eaf51a2e094229b75cc0c315f1cbbe2f3960058
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1729000AbfESR52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:57:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41786 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727620AbfESR50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:57:26 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2FE1C505548047439AB4;
+        Sun, 19 May 2019 18:07:38 +0800 (CST)
+Received: from HGHY1z004218071.china.huawei.com (10.177.29.32) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Sun, 19 May 2019 18:07:29 +0800
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
+CC:     <christoffer.dall@arm.com>, <marc.zyngier@arm.com>,
+        <james.morse@arm.com>, <julien.thierry@arm.com>,
+        <suzuki.poulose@arm.com>, <wanghaibin.wang@huawei.com>,
+        <shannon.zhaosl@gmail.com>, Xiang Zheng <zhengxiang9@huawei.com>
+Subject: [PATCH] KVM: ARM64: Update perf event when setting PMU count value
+Date:   Sun, 19 May 2019 18:05:59 +0800
+Message-ID: <20190519100559.7188-1-zhengxiang9@huawei.com>
+X-Mailer: git-send-email 2.15.1.windows.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7eaf51a2e094229b75cc0c315f1cbbe2f3960058
-Gitweb:     https://git.kernel.org/tip/7eaf51a2e094229b75cc0c315f1cbbe2f3960058
-Author:     Joe Lawrence <joe.lawrence@redhat.com>
-AuthorDate: Fri, 17 May 2019 14:51:17 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 19 May 2019 11:43:22 +0200
+Guest will adjust the sample period and set PMU counter value when
+it takes a long time to handle the PMU interrupts.
 
-stacktrace: Unbreak stack_trace_save_tsk_reliable()
+However, we don't have a corresponding change on the virtual PMU
+which is emulated via a perf event. It could cause a large number
+of PMU interrupts injected to guest. Then guest will get hang for
+handling these interrupts.
 
-Miroslav reported that the livepatch self-tests were failing, specifically
-a case in which the consistency model ensures that a current executing
-function is not allowed to be patched, "TEST: busy target module".
+So update the sample_period of perf event if the counter value is
+changed to avoid this case.
 
-Recent renovations of stack_trace_save_tsk_reliable() left it returning
-only an -ERRNO success indication in some configuration combinations:
-
-  klp_check_stack()
-    ret = stack_trace_save_tsk_reliable()
-      #ifdef CONFIG_ARCH_STACKWALK && CONFIG_HAVE_RELIABLE_STACKTRACE
-        stack_trace_save_tsk_reliable()
-          ret = arch_stack_walk_reliable()
-            return 0
-            return -EINVAL
-          ...
-          return ret;
-    ...
-    if (ret < 0)
-      /* stack_trace_save_tsk_reliable error */
-    nr_entries = ret;                               << 0
-
-Previously (and currently for !CONFIG_ARCH_STACKWALK &&
-CONFIG_HAVE_RELIABLE_STACKTRACE) stack_trace_save_tsk_reliable() returned
-the number of entries that it consumed in the passed storage array.
-
-In the case of the above config and trace, be sure to return the
-stacktrace_cookie.len on stack_trace_save_tsk_reliable() success.
-
-Fixes: 25e39e32b0a3f ("livepatch: Simplify stack trace retrieval")
-Reported-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: live-patching@vger.kernel.org
-Cc: jikos@kernel.org
-Cc: pmladek@suse.com
-Link: https://lkml.kernel.org/r/20190517185117.24642-1-joe.lawrence@redhat.com
-
+Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
 ---
- kernel/stacktrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/pmu.c | 54 +++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index 27bafc1e271e..90d3e0bf0302 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -206,7 +206,7 @@ int stack_trace_save_tsk_reliable(struct task_struct *tsk, unsigned long *store,
+diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+index 1c5b76c..cbad3ec 100644
+--- a/virt/kvm/arm/pmu.c
++++ b/virt/kvm/arm/pmu.c
+@@ -24,6 +24,11 @@
+ #include <kvm/arm_pmu.h>
+ #include <kvm/arm_vgic.h>
  
- 	ret = arch_stack_walk_reliable(consume_entry, &c, tsk);
- 	put_task_stack(tsk);
--	return ret;
-+	return ret ? ret : c.len;
++static void kvm_pmu_stop_counter(struct kvm_vcpu *vcpu, struct kvm_pmc *pmc);
++static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
++						    struct kvm_pmc *pmc,
++						    struct perf_event_attr *attr);
++
+ /**
+  * kvm_pmu_get_counter_value - get PMU counter value
+  * @vcpu: The vcpu pointer
+@@ -57,11 +62,29 @@ u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu, u64 select_idx)
+  */
+ void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val)
+ {
+-	u64 reg;
++	u64 reg, counter, old_sample_period;
++	struct kvm_pmu *pmu = &vcpu->arch.pmu;
++	struct kvm_pmc *pmc = &pmu->pmc[select_idx];
++	struct perf_event *event;
++	struct perf_event_attr attr;
+ 
+ 	reg = (select_idx == ARMV8_PMU_CYCLE_IDX)
+ 	      ? PMCCNTR_EL0 : PMEVCNTR0_EL0 + select_idx;
+ 	__vcpu_sys_reg(vcpu, reg) += (s64)val - kvm_pmu_get_counter_value(vcpu, select_idx);
++
++	if (pmc->perf_event) {
++		attr = pmc->perf_event->attr;
++		old_sample_period = attr.sample_period;
++		counter = kvm_pmu_get_counter_value(vcpu, select_idx);
++		attr.sample_period = (-counter) & pmc->bitmask;
++		if (attr.sample_period == old_sample_period)
++			return;
++
++		kvm_pmu_stop_counter(vcpu, pmc);
++		event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
++		if (event)
++			pmc->perf_event = event;
++	}
  }
- #endif
  
+ /**
+@@ -303,6 +326,24 @@ static void kvm_pmu_perf_overflow(struct perf_event *perf_event,
+ 	}
+ }
+ 
++static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
++						    struct kvm_pmc *pmc,
++						    struct perf_event_attr *attr)
++{
++	struct perf_event *event;
++
++	event = perf_event_create_kernel_counter(attr, -1, current,
++						 kvm_pmu_perf_overflow, pmc);
++
++	if (IS_ERR(event)) {
++		pr_err_once("kvm: pmu event creation failed %ld\n",
++			    PTR_ERR(event));
++		return NULL;
++	}
++
++	return event;
++}
++
+ /**
+  * kvm_pmu_software_increment - do software increment
+  * @vcpu: The vcpu pointer
+@@ -416,15 +457,10 @@ void kvm_pmu_set_counter_event_type(struct kvm_vcpu *vcpu, u64 data,
+ 	/* The initial sample period (overflow count) of an event. */
+ 	attr.sample_period = (-counter) & pmc->bitmask;
+ 
+-	event = perf_event_create_kernel_counter(&attr, -1, current,
+-						 kvm_pmu_perf_overflow, pmc);
+-	if (IS_ERR(event)) {
+-		pr_err_once("kvm: pmu event creation failed %ld\n",
+-			    PTR_ERR(event));
+-		return;
+-	}
++	event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
+ 
+-	pmc->perf_event = event;
++	if (event)
++		pmc->perf_event = event;
+ }
+ 
+ bool kvm_arm_support_pmu_v3(void)
+-- 
+1.8.3.1
+
+
