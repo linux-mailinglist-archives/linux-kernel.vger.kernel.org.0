@@ -2,121 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F9422821
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B822022837
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfESR5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:57:40 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43162 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbfESR50 (ORCPT
+        id S1729509AbfESSHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 14:07:06 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46937 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728418AbfESSHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:57:26 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w33so19916938edb.10
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YXXH5t9TTRLBW2BHaBe8u0lhH1b3Av66zK7Fxpl6yxw=;
-        b=GAtLPg50hmCYoeXb6A/edx2LgTxQ/v0NLySw+fcbnq+PngK+PEo/XaGqJYs4qySqwO
-         DkqVvZ4VXWp6RIt4YxpfT1rlxQkpfHr73Nl9cmLBOqYwNNkSupAoWeHqdhBJLboFwtRh
-         bbaGetGNiFIgYyNZf03+hXl+rS7tAhj4a/XgwWwuUvBEeXDqNMVgRta7TCKqTeTrQhxI
-         3X7PwVuHResA4PsbKM5I9K5e7DLEoWE/KwQ3k18ujyCVmbuBYUcgKH92RiiadDLDH8Wj
-         +DRM8JFA3rkKxcdoBIQCbNNYSptSOnXyoAZNKTCdAAKtYZOU7BIeJsmUmygdICbbosp8
-         YfLA==
+        Sun, 19 May 2019 14:07:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id q21so9237563iog.13
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:07:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YXXH5t9TTRLBW2BHaBe8u0lhH1b3Av66zK7Fxpl6yxw=;
-        b=j9BLKDnIsXZojvFiWDubCBT1RXkaAwhxNXx54bTfiipW+3ggnb4OlXwD/IOILLN5UB
-         Yrcc18FNO2Cb/eYGhb/e7rDmGoTXDQ2fsrg8RQas4YB11rN/VaSziqcd4BU8SIzR2GpV
-         CKJyuJPmmkmhTLlNFy3PkT54MiF78y0ypy4wiWnFOM/u6ACh+D5A0SaBXY5cjehBv7Xw
-         Kb56n6Tawc8p7EgTVvWgys1F1eCaK8JeVF2mbZCCB1UjSc7nOslw/WkbPIGLYBaKfSjh
-         g5Pk/xVzb1rxSu9VEuZhmr1NRaRMen2V6WYfzR1/ccvnX5yQ0C69E76uCVHw/ycxUAJE
-         1o3w==
-X-Gm-Message-State: APjAAAWXGrL7f3Oe5mlnwc6tVjCb8ugr+yWFuZ2Pb1NwOfjveBEXhvTv
-        Oy/Y/Wdx1B5YMYUigxksVwc=
-X-Google-Smtp-Source: APXvYqxWrIwrCTIPqJP+H56HIVs5ZNIE4+Jcq5Aw1EY+qIZZroKHkaH3M4jxWm5IplbffUqLP9WElg==
-X-Received: by 2002:a17:906:5d12:: with SMTP id g18mr42455993ejt.286.1558288644893;
-        Sun, 19 May 2019 10:57:24 -0700 (PDT)
-Received: from elitebook-localhost (84-106-70-146.cable.dynamic.v4.ziggo.nl. [84.106.70.146])
-        by smtp.gmail.com with ESMTPSA id o47sm4959975edc.37.2019.05.19.10.57.24
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 19 May 2019 10:57:24 -0700 (PDT)
-From:   nariman <narimantos@gmail.com>
-To:     broonie@kernel.org, hdegoede@redhat.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Cc:     Jordy Ubink <jordyubink@hotmail.nl>,
-        Nariman Etemadi <narimantos@gmail.com>
-Subject: [PATCH] ASoC: Intel: bytcr_rt5651.c: remove string buffers 'byt_rt5651_cpu_dai_name' and 'byt_rt5651_cpu_dai_name'
-Date:   Sun, 19 May 2019 19:57:06 +0200
-Message-Id: <20190519175706.3998-4-narimantos@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190519175706.3998-1-narimantos@gmail.com>
-References: <20190519175706.3998-1-narimantos@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MrJ+8w3q4C2ZYv1/8t+7v0iFZoScN0cheuy7tMbszSA=;
+        b=PolxRgpUjd2MXKTsIsonCrJLyNQRTDJ9AdwhTV/7fz3kr9zrdVg82SxZOXzjCq/X6p
+         fZ/MEo2DBVKZuqLAEutoSvO9AZjEE1+VyS+v90H8LIHOK304m5xCjjky4/JlAKr4SReB
+         1HUUsDAiPE8hQrfBNvbS7SYQu41/2YrvNhxkyy5gPiYWGIe2WGdVLAXi3ewUTxVngzlP
+         85KSR9aJttpxArLHXmk+3YJlo9cLluWBBaswij/fKIke93j27E981SVPqTVMlSQKtqxn
+         VPkaFILr138mA0yMsfPST7GCaiSl337t39x4Iy8dENI6EGf+mUUBd5bpyh+k1wlqD00K
+         dfpg==
+X-Gm-Message-State: APjAAAUF4Ahb8sOhPvMK5OX92N/MpCcUBpGafZojSKrsCbsLwzZC3BKO
+        e2fuWlxzJPBwGMbgJCfXhYQ3JVOlIF5VxBVzWyu2lw==
+X-Google-Smtp-Source: APXvYqy1XROmNEZrT2qxm6jsC0ny+x7qxxPnQf9qM8ZsWe9g/PqSWqm7OW/MwwlBoVYHrD2cnsDtsbxmX6BSu5mYL+0=
+X-Received: by 2002:a6b:7d0d:: with SMTP id c13mr8028833ioq.249.1558289224445;
+ Sun, 19 May 2019 11:07:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <3CD3EE63-0CD2-404A-A403-E11DCF2DF8D9@fb.com> <20190517074600.GJ2623@hirez.programming.kicks-ass.net>
+ <20190517081057.GQ2650@hirez.programming.kicks-ass.net> <CACPcB9cB5n1HOmZcVpusJq8rAV5+KfmZ-Lxv3tgsSoy7vNrk7w@mail.gmail.com>
+ <20190517091044.GM2606@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190517091044.GM2606@hirez.programming.kicks-ass.net>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Mon, 20 May 2019 02:06:54 +0800
+Message-ID: <CACPcB9cpNp5CBqoRs+XMCwufzAFa8Pj-gbmj9fb+g5wVdue=ig@mail.gmail.com>
+Subject: Re: Getting empty callchain from perf_callchain_kernel()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jordy Ubink <jordyubink@hotmail.nl>
+On Fri, May 17, 2019 at 5:10 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, May 17, 2019 at 04:15:39PM +0800, Kairui Song wrote:
+> > Hi, I think the actual problem is that bpf_get_stackid_tp (and maybe
+> > some other bfp functions) is now broken, or, strating an unwind
+> > directly inside a bpf program will end up strangely. It have following
+> > kernel message:
+>
+> Urgh, what is that bpf_get_stackid_tp() doing to get the regs? I can't
+> follow.
 
-The snprintf calls filling byt_rt5651_cpu_dai_name / byt_rt5651_cpu_dai_name always fill them with the same string (ssp0-port" resp "rt5651-aif2"). So instead of keeping these buffers around and making the cpu_dai_name / codec_dai_name point to this, simply update the foo_dai_name pointers to directly point to a string constant containing the desired string.
+bpf_get_stackid_tp will just use the regs passed to it from the trace
+point. And then it will eventually call perf_get_callchain to get the
+call chain.
+With a tracepoint we have the fake regs, so unwinder will start from
+where it is called, and use the fake regs as the indicator of the
+target frame it want, and keep unwinding until reached the actually
+callsite.
 
-Signed-off-by: Jordy Ubink <jordyubink@hotmail.nl>
-Signed-off-by: Nariman Etemadi <narimantos@gmail.com>
----
- sound/soc/intel/boards/bytcr_rt5651.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+But if the stack trace is started withing a bpf func call then it's broken...
 
-diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-index e528995668b7..2e1bf43820d8 100644
---- a/sound/soc/intel/boards/bytcr_rt5651.c
-+++ b/sound/soc/intel/boards/bytcr_rt5651.c
-@@ -730,8 +730,6 @@ static struct snd_soc_dai_link byt_rt5651_dais[] = {
- 
- /* SoC card */
- static char byt_rt5651_codec_name[SND_ACPI_I2C_ID_LEN];
--static char byt_rt5651_codec_aif_name[12]; /*  = "rt5651-aif[1|2]" */
--static char byt_rt5651_cpu_dai_name[10]; /*  = "ssp[0|2]-port" */
- static char byt_rt5651_long_name[50]; /* = "bytcr-rt5651-*-spk-*-mic[-swapped-hp]" */
- 
- static int byt_rt5651_suspend(struct snd_soc_card *card)
-@@ -1009,26 +1007,12 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
- 	log_quirks(&pdev->dev);
- 
- 	if ((byt_rt5651_quirk & BYT_RT5651_SSP2_AIF2) ||
--	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2)) {
--		/* fixup codec aif name */
--		snprintf(byt_rt5651_codec_aif_name,
--			sizeof(byt_rt5651_codec_aif_name),
--			"%s", "rt5651-aif2");
--
--		byt_rt5651_dais[dai_index].codec_dai_name =
--			byt_rt5651_codec_aif_name;
--	}
-+	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2))
-+		byt_rt5651_dais[dai_index].codec_dai_name = "rt5651-aif2";
- 
- 	if ((byt_rt5651_quirk & BYT_RT5651_SSP0_AIF1) ||
--	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2)) {
--		/* fixup cpu dai name name */
--		snprintf(byt_rt5651_cpu_dai_name,
--			sizeof(byt_rt5651_cpu_dai_name),
--			"%s", "ssp0-port");
--
--		byt_rt5651_dais[dai_index].cpu_dai_name =
--			byt_rt5651_cpu_dai_name;
--	}
-+	    (byt_rt5651_quirk & BYT_RT5651_SSP0_AIF2))
-+		byt_rt5651_dais[dai_index].cpu_dai_name = "ssp0-port";
- 
- 	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
- 		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+If the unwinder could trace back through the bpf func call then there
+will be no such problem.
+
+For frame pointer unwinder, set the indicator flag (X86_EFLAGS_FIXED)
+before bpf call, and ensure bp is also dumped could fix it (so it will
+start using the regs for bpf calls, like before the commit
+d15d356887e7). But for ORC I don't see a clear way to fix the problem.
+First though is maybe dump some callee's regs for ORC (IP, BP, SP, DI,
+DX, R10, R13, else?) in the trace point handler, then use the flag to
+indicate ORC to do one more unwind (because can't get caller's regs,
+so get callee's regs instaed) before actually giving output?
+
+I had a try, for framepointer unwinder, mark the indicator flag before
+calling bpf functions, and dump bp as well in the trace point. Then
+with frame pointer, it works, test passed:
+
+diff --git a/arch/x86/include/asm/perf_event.h
+b/arch/x86/include/asm/perf_event.h
+index 1392d5e6e8d6..6f1192e9776b 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -302,12 +302,25 @@ extern unsigned long perf_misc_flags(struct
+pt_regs *regs);
+
+ #include <asm/stacktrace.h>
+
++#ifdef CONFIG_FRAME_POINTER
++static inline unsigned long caller_frame_pointer(void)
++{
++       return (unsigned long)__builtin_frame_address(1);
++}
++#else
++static inline unsigned long caller_frame_pointer(void)
++{
++       return 0;
++}
++#endif
++
+ /*
+  * We abuse bit 3 from flags to pass exact information, see perf_misc_flags
+  * and the comment with PERF_EFLAGS_EXACT.
+  */
+ #define perf_arch_fetch_caller_regs(regs, __ip)                {       \
+        (regs)->ip = (__ip);                                    \
++       (regs)->bp = caller_frame_pointer();                    \
+        (regs)->sp = (unsigned long)__builtin_frame_address(0); \
+        (regs)->cs = __KERNEL_CS;                               \
+        regs->flags = 0;                                        \
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index abbd4b3b96c2..ca7b95ee74f0 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8549,6 +8549,7 @@ void perf_trace_run_bpf_submit(void *raw_data,
+int size, int rctx,
+                               struct task_struct *task)
+ {
+        if (bpf_prog_array_valid(call)) {
++               regs->flags |= X86_EFLAGS_FIXED;
+                *(struct pt_regs **)raw_data = regs;
+                if (!trace_call_bpf(call, raw_data) || hlist_empty(head)) {
+                        perf_swevent_put_recursion_context(rctx);
+@@ -8822,6 +8823,8 @@ static void bpf_overflow_handler(struct perf_event *event,
+        int ret = 0;
+
+        ctx.regs = perf_arch_bpf_user_pt_regs(regs);
++       ctx.regs->flags |= X86_EFLAGS_FIXED;
++
+        preempt_disable();
+        if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1))
+                goto out;
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index f92d6ad5e080..e1fa656677dc 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -497,6 +497,8 @@ u64 bpf_event_output(struct bpf_map *map, u64
+flags, void *meta, u64 meta_size,
+        };
+
+        perf_fetch_caller_regs(regs);
++       regs->flags |= X86_EFLAGS_FIXED;
++
+        perf_sample_data_init(sd, 0, 0);
+        sd->raw = &raw;
+
+@@ -831,6 +833,8 @@ BPF_CALL_5(bpf_perf_event_output_raw_tp, struct
+bpf_raw_tracepoint_args *, args,
+        struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
+
+        perf_fetch_caller_regs(regs);
++       regs->flags |= X86_EFLAGS_FIXED;
++
+        return ____bpf_perf_event_output(regs, map, flags, data, size);
+ }
+
+@@ -851,6 +855,8 @@ BPF_CALL_3(bpf_get_stackid_raw_tp, struct
+bpf_raw_tracepoint_args *, args,
+        struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
+
+        perf_fetch_caller_regs(regs);
++       regs->flags |= X86_EFLAGS_FIXED;
++
+        /* similar to bpf_perf_event_output_tp, but pt_regs fetched
+differently */
+        return bpf_get_stackid((unsigned long) regs, (unsigned long) map,
+                               flags, 0, 0);
+@@ -871,6 +877,8 @@ BPF_CALL_4(bpf_get_stack_raw_tp, struct
+bpf_raw_tracepoint_args *, args,
+        struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
+
+        perf_fetch_caller_regs(regs);
++       regs->flags |= X86_EFLAGS_FIXED;
++
+        return bpf_get_stack((unsigned long) regs, (unsigned long) buf,
+                             (unsigned long) size, flags, 0);
+ }
+
+And *_raw_tp functions will fetch the regs by themselves so a bit
+trouble some...
+
+----------
+
+And another approach is to make unwinder direct unwinding works when
+called by bpf (if possible and reasonable). I also had a nasty hacky
+experiment (posted below) to just force frame pointer unwinder's
+get_stack_info pass for bpf, then problem is fixed without any other
+workaround:
+
+diff --git a/arch/x86/kernel/dumpstack_64.c b/arch/x86/kernel/dumpstack_64.c
+index 753b8cfe8b8a..c0cfdf25f5ed 100644
+--- a/arch/x86/kernel/dumpstack_64.c
++++ b/arch/x86/kernel/dumpstack_64.c
+@@ -166,7 +166,8 @@ int get_stack_info(unsigned long *stack, struct
+task_struct *task,
+        if (in_entry_stack(stack, info))
+                goto recursion_check;
+
+-       goto unknown;
++       goto recursion_check;
+
+ recursion_check:
+        /*
+
+Don't know how to do it the right way, or is it even possible for all
+unwinders yet...
+
 -- 
-2.20.1
-
+Best Regards,
+Kairui Song
