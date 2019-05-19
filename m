@@ -2,179 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC1A22783
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 666022278A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:12:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfESRLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:11:34 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34276 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfESRLd (ORCPT
+        id S1727130AbfESRMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:12:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39631 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfESRMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:11:33 -0400
-Received: by mail-io1-f68.google.com with SMTP id g84so9248879ioa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:11:33 -0700 (PDT)
+        Sun, 19 May 2019 13:12:34 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w22so5612557pgi.6
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:12:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vuMFQvHw3H3yFO0Rb0gaZGrXZFFLgufmmyZYl4ovM8k=;
-        b=Tm3w/KLqHWnE8q+z6u4cYVBY3EDszRWhZ+C9oiUbcnyLD1zNdDig4nTU4oBFXw6Srl
-         myzxEzLSQQIeFa9E0P7a/4SPrF34poS84Gvf90C6Z/bukLGhXE7iTaHZEfAqXHaTpMOC
-         p/nX5GdVjmyqWvAIELJtSFkX9OCuuDLg1grQzT3syrbpd8lSAEKYz7EQwZBZFpmlVJiV
-         oNo9k0FupK+li+mKtLXMcebYTY55/klqBlIhDq3GnvB8Z0hKTxwy5PSxMKkuK7c9pfFC
-         4Xai7U7I6vhvXR7xOz4CCaaiQHeiU2jcTdUvjuYrmBIkdV6JqM3IML2ciqeGTLQ5G/Oy
-         FBBA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2aJVDwIx9CNCJgquAEUdJfowE2zu/TP85bAx23aqgcE=;
+        b=aa1xhBGV+J6MUtB32Shj+5dPHvNdaqFAnSUVX2fFGJSKdL62Clq1dNrTbNuhBZxCOg
+         19a+Bbu50onEJQS/Vqmzcjl47CKbkJ8sj5jM/NPFw5mrhv942OOjwHDJE0QhP1w+6zZf
+         mPIWoXmcpbXCTQGFBnrnE6wMgKkap7wymXycMEkT9WWwv+aAd4xBQ5BqDP5M9X3PTxfZ
+         n79Uj7yFVO/tdfrDtb121GelXnybzzqQZ6A8l8rsbGa4JkeEa05RH+Ora5oMf8PYj/v8
+         axxgVQHGFBrCp1dC/dtFDbgvYfOaoRkkFrVJafB3kxZJmllbPEAU5bWDyIazb8YJKv5j
+         TlVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vuMFQvHw3H3yFO0Rb0gaZGrXZFFLgufmmyZYl4ovM8k=;
-        b=E+Aw+ob365BeFueljr7zTYU9jLXQ95QA4n7uMK/uuwIYPbW5pxnCd+ErHnqerw4feT
-         2CBVOJbr2YjDO4FyGz1F1wSokX70IOVRq99mwjMfD3VRYHpIqb1xW5gLzUlH4gLdcWdJ
-         3tzZQZ3zBet8DUpE3NRTlGO5Sto+L4s/Ot2pzX+hYK7NHEKFUYJcNC8ij+Ls6/qDF9C4
-         6IHe5ipctcKiQ7Aq4rTcSLdBUYWNHw/vYkJn4b2OmlFkh3WVTJpBak9ubf64y5ZjXkbH
-         H5XxpX1BO2RLETSfSfukwD2fhTyGUzxR8mT6tG8/j7bLmIjrVPPDgwn+nLnTofBhESe2
-         bObg==
-X-Gm-Message-State: APjAAAWKBmHpgnh5l7CC83TIvZ32y6NILFzoXb4Zomj1e/TP6jz/dSP9
-        xRC4JYfulg7/TYciUIjLmZK1dv6K8Fc=
-X-Google-Smtp-Source: APXvYqws8ofFQBVreQ0OsK8niqj57MUtF0VcKQZ5J4NsgmwPu0Kj2ifLEOg/YMjnB4JjKaVLJAbrRg==
-X-Received: by 2002:a6b:ef07:: with SMTP id k7mr38214990ioh.276.1558285892004;
-        Sun, 19 May 2019 10:11:32 -0700 (PDT)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id u194sm3431362ita.1.2019.05.19.10.11.29
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2aJVDwIx9CNCJgquAEUdJfowE2zu/TP85bAx23aqgcE=;
+        b=D67yzSuKsDdkSsbdKJhT/XVMDRaSAIUN+VIdA7bloEKLw4JixvyAlWiERimGFXqO1t
+         Tnl7pye4VUHyjcAn6g9rB3oA8LJPoFmwreq1F0yvppGU8TSG9EVmaEu7RiZ0M2zsqRsG
+         ROfnKiHNweyN6xwYF1ZGogpgyFPWPiciu62IipRdc3zMLy354fwXW1CXTGNTOLYenh4i
+         GdYK0EDLijbqL24tioiaA+3HRr3QmrlIAyckzMQaVmIcYsqvxE/l6dec4qdefXLRpvpg
+         sIm4k9BNGwuRuV05b0zVfc0jIBjpWWGIpYE3KpXXvR7GvJD6hAqhJ/stv9RZP/orgdi3
+         E9tg==
+X-Gm-Message-State: APjAAAVEA6JguJkxwGvkT9bb68C69/71qe/tX3RhO3ITmxOVQUXkjpSz
+        JgIjELO599TIAfacEmGuNERn5IF0oz8=
+X-Google-Smtp-Source: APXvYqxsn5ZvQTyKQYV5eB5cw3Gz6/f1BFVE0KCPTTWYwjlRlpndUVeNuqyi3oOVshg2U+TQzzQflQ==
+X-Received: by 2002:aa7:9289:: with SMTP id j9mr30426595pfa.251.1558285953896;
+        Sun, 19 May 2019 10:12:33 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id c76sm28951727pfc.43.2019.05.19.10.12.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 May 2019 10:11:31 -0700 (PDT)
-Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
-From:   Alex Elder <elder@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
-        evgreen@chromium.org, Ben Chan <benchan@google.com>,
-        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190512012508.10608-1-elder@linaro.org>
- <20190512012508.10608-10-elder@linaro.org>
- <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com>
- <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
- <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
- <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org>
-Message-ID: <dcd648f2-5305-04dd-8997-be87a9961fd9@linaro.org>
-Date:   Sun, 19 May 2019 12:11:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sun, 19 May 2019 10:12:33 -0700 (PDT)
+Date:   Sun, 19 May 2019 22:42:27 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Vatsala Narang <vatsalanarang@gmail.com>,
+        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
+        Young Xiao <YangX92@hotmail.com>,
+        Aymen Qader <qader.aymen@gmail.com>,
+        Henriette Hofmeier <passt@h-hofmeier.de>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: core: rtw_mlme_ext: fix warning Unneeded
+ variable: "ret"
+Message-ID: <20190519171227.GA8089@hari-Inspiron-1545>
 MIME-Version: 1.0
-In-Reply-To: <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/19 1:44 PM, Alex Elder wrote:
-> On 5/17/19 1:33 PM, Arnd Bergmann wrote:
->> On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org>
->> wrote:
->>> 
->>> On 5/15/19 2:34 AM, Arnd Bergmann wrote:
->>>>> +static void gsi_trans_tre_fill(struct gsi_tre *dest_tre,
->>>>> dma_addr_t addr, +                              u32 len, bool
->>>>> last_tre, bool bei, +                              enum
->>>>> ipa_cmd_opcode opcode) +{ +       struct gsi_tre tre; + +
->>>>> tre.addr = cpu_to_le64(addr); +       tre.len_opcode =
->>>>> gsi_tre_len_opcode(opcode, len); +       tre.reserved = 0; +
->>>>> tre.flags = gsi_tre_flags(last_tre, bei, opcode); + +
->>>>> *dest_tre = tre;        /* Write TRE as a single (16-byte)
->>>>> unit */ +}
->>>> Have you checked that the atomic write is actually what happens
->>>> here, but looking at the compiler output? You might need to add
->>>> a 'volatile' qualifier to the dest_tre argument so the
->>>> temporary structure doesn't get optimized away here.
->>> 
->>> Currently, the assignment *does* become a "stp" instruction. But
->>> I don't know that we can *force* the compiler to write it as a
->>> pair of registers, so I'll soften the comment with "Attempt to
->>> write" or something similar.
->>> 
->>> To my knowledge, adding a volatile qualifier only prevents the 
->>> compiler from performing funny optimizations, but that has no 
->>> effect on whether the 128-bit assignment is made as a single 
->>> unit.  Do you know otherwise?
->> 
->> I don't think it you can force the 128-bit assignment to be atomic,
->> but marking 'dest_tre' should serve to prevent a specific
->> optimization that replaces the function with
->> 
->> dest_tre->addr = ... dest_tre->len_opcode = ... dest_tre->reserved
->> = ... dest_tre->flags = ...
->> 
->> which it might find more efficient than the stp and is equivalent 
->> when the pointer is not marked volatile. We also have the
->> WRITE_ONCE() macro that can help prevent this, but it does not work
->> reliably beyond 64 bit assignments.
-> 
-> OK, I'll mark it volatile to avoid that potential result.
+This patch fixes below warnings reported by coccicheck
 
-OK I got interesting results so I wanted to report back.
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:1888:14-17: Unneeded
+variable: "ret". Return "_FAIL" on line 1920
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:466:5-8: Unneeded
+variable: "res". Return "_SUCCESS" on line 494
 
-The way it is currently written (no volatile qualifier) is
-the *only* way I get a 16-byte store instruction.
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Specifically, with dest_tre having type (struct gsi_tre *):
-        *dest_tre = tre;
-
-Produces this:
- 4ec: a9002013        stp     x19, x8, [x0]
-
-I attempted to make the assigned-to pointer volatile:
-        *(volatile struct gsi_tre *)dest_tre = tre;
-
-But that apparently is interpreted as "assign things
-in the destination in exactly the way they were assigned
-above into the "tre" structure."  Because it produced this:
- 748: f9000348        str     x8, [x26]
- 74c: 7940c3e8        ldrh    w8, [sp, #96]
- 750: 79001348        strh    w8, [x26, #8]
- 754: 7940bbe8        ldrh    w8, [sp, #92]
- 758: 79001748        strh    w8, [x26, #10]
- 75c: b9405be8        ldr     w8, [sp, #88]
- 760: b9000f48        str     w8, [x26, #12]
-
-From there I went back and changed the type of the dest_tre pointer
-parameter to (volatile struct gsi_tre *), and changed the the type
-of the values passed through that argument in the two callers to
-also have the volatile qualifier.  This way there was no need to
-use a cast in the left-hand side.  That too produced a string of
-separate assignments, not a single 128-bit one.
-
-I also attempted this:
-	*dest_tre = *(volatile struct gsi_tre *)&tre;
-And even this:
-        *(volatile struct gsi_tre *)dest_tre = *(volatile struct gsi_tre *)&tre;
-But neither produced a single "stp" instruction; all produced
-the same sequence of instructions above.
-
-So it seems that I must *not* apply a volatile qualifier,
-because doing so restricts the compiler from making the
-single instruction optimization.
-
-If I've missed something and you have another suggestion for
-me to try let me know and I'll try it.
-
-					-Alex
-
-
-> Thanks.
-> 
-> -Alex
-> 
->> 
->> Arnd
->> 
-> 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index d110d45..6a2eb66 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -463,7 +463,6 @@ static u8 init_channel_set(struct adapter *padapter, u8 ChannelPlan, RT_CHANNEL_
+ 
+ int	init_mlme_ext_priv(struct adapter *padapter)
+ {
+-	int	res = _SUCCESS;
+ 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+ 	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
+@@ -491,7 +490,7 @@ int	init_mlme_ext_priv(struct adapter *padapter)
+ 	pmlmeext->fixed_chan = 0xFF;
+ #endif
+ 
+-	return res;
++	return _SUCCESS;
+ 
+ }
+ 
+@@ -1885,7 +1884,6 @@ unsigned int OnAtim(struct adapter *padapter, union recv_frame *precv_frame)
+ 
+ unsigned int on_action_spct(struct adapter *padapter, union recv_frame *precv_frame)
+ {
+-	unsigned int ret = _FAIL;
+ 	struct sta_info *psta = NULL;
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	u8 *pframe = precv_frame->u.hdr.rx_data;
+@@ -1917,7 +1915,7 @@ unsigned int on_action_spct(struct adapter *padapter, union recv_frame *precv_fr
+ 	}
+ 
+ exit:
+-	return ret;
++	return _FAIL;
+ }
+ 
+ unsigned int OnAction_back(struct adapter *padapter, union recv_frame *precv_frame)
+-- 
+2.7.4
 
