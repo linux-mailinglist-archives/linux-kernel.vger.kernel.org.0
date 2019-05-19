@@ -2,58 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 228E8227D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BCE2227E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfESRff convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 19 May 2019 13:35:35 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41188 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbfESRfe (ORCPT
+        id S1727955AbfESRh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:37:56 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33099 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfESRh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:35:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B546C13F0734F;
-        Sun, 19 May 2019 10:35:33 -0700 (PDT)
-Date:   Sun, 19 May 2019 10:35:33 -0700 (PDT)
-Message-Id: <20190519.103533.1752298588551711978.davem@davemloft.net>
-To:     ynezz@true.cz
-Cc:     robh+dt@kernel.org, frowand.list@gmail.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, mlindner@marvell.com,
-        stephen@networkplumber.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of_net: fix of_get_mac_address retval if compiled
- without CONFIG_OF
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1558268324-5596-1-git-send-email-ynezz@true.cz>
-References: <1558268324-5596-1-git-send-email-ynezz@true.cz>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-15
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 19 May 2019 10:35:34 -0700 (PDT)
+        Sun, 19 May 2019 13:37:56 -0400
+Received: by mail-it1-f193.google.com with SMTP id j17so171894itk.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ELOLp820iKQ5CxVO8qWkK8zW3j9TRYamyPt2iVH39r0=;
+        b=Jgnsc9kZGWDhDPJ6z1gRDUsx2t2SWq2zYDJ+pf9NHdf+w8Ot+/UXZsgNVTGuz4qczO
+         /2Ztc57bOMFkiQqd4f9O8wg90j7T5IEp8qENYFywH6p/hX9QSGEC+WHflRz2AzrOx2OQ
+         7Ie8nVckPH9+VWe3EWl4wAtVIkRb9hfTzE8W3ZXXT5W0DGHzGfI8c0ewIGcyaFQtoK62
+         4uK0od2W4rPb4mNw+DPt82OaDG6alUXhuJ8WBafV6u4lxVRvfIP7RYnzmgXTtuXvO/WT
+         0K0VcIe2CHYOTfZJ/Ye6ATsK+i5i9nHtVNrOGYksLq4/Xl7gCCOi4TBivhI09PtgIf+q
+         VxGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ELOLp820iKQ5CxVO8qWkK8zW3j9TRYamyPt2iVH39r0=;
+        b=s78bYtORRtzm1VdOO4nZwBbqId0NnSEZAINKlhwG/9CJhF9sBafu2MK/ZRhzMFqw7O
+         bwS+orZ93++/Yc84NYCloKn5fHzVssuCb9irYCR8tmQrV2mAZBOIValQ7qPwMZoPVHRY
+         vowROttqDJ3WjcoQMoK9lzjUNPUYWS+RdJ3lEZyHpX32P5UXkUt2Asa0VBmwV9JXoJfv
+         WoUTiP8zssNuj8ehmDjyMpQ6JIATUQ1ul3b+K2pxZaC//fk4+VzRI3yw6qmpRH1Dej1w
+         LIViEw3gYa/C9zJz2cBROUw0A7yPCY/3BLJUFxC4fmfgO36AzrKRbs9JKSRgCvT1qBWc
+         P+KA==
+X-Gm-Message-State: APjAAAW8dW3dbHiqZrrdjRK41wl3MzuXkRQyVXqQPK70XIxYfTTBH+Eq
+        Zm/IQRN36RMgQjPJ6NLkwxx5BymyHg0=
+X-Google-Smtp-Source: APXvYqy44vJk5cqx0zVaJDKF11lZPmL7HwwoD6nw1Roc4owDyJ5pGSxbMAFD42egtwqA7J0bLw3NmQ==
+X-Received: by 2002:a02:77d7:: with SMTP id g206mr10133834jac.97.1558287474645;
+        Sun, 19 May 2019 10:37:54 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id t10sm2768517itj.15.2019.05.19.10.37.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 10:37:53 -0700 (PDT)
+Subject: Re: [PATCH 02/18] soc: qcom: create "include/soc/qcom/rmnet.h"
+To:     Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        stranche@codeaurora.org, YueHaibing <yuehaibing@huawei.com>,
+        Joe Perches <joe@perches.com>, syadagir@codeaurora.org,
+        mjavid@codeaurora.org, evgreen@chromium.org, benchan@google.com,
+        ejcaruso@google.com, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190512012508.10608-1-elder@linaro.org>
+ <20190512012508.10608-3-elder@linaro.org>
+ <CAK8P3a16HpKEUB7_6G_W_RKkyVeVBW_rofLbdhC2QmWjVOAHMg@mail.gmail.com>
+ <9cae00c4-29ab-6c3e-7437-6ed878a3061f@linaro.org>
+ <005ae8fb4ea9ba86fd0924b1719f1753@codeaurora.org>
+ <eca367f2-e019-f785-509d-5662ed7b7398@linaro.org>
+ <5ea0235d9fb24322681303591450b02a@codeaurora.org>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <d07b5488-d7e0-1e0f-f1db-90d334e51f5b@linaro.org>
+Date:   Sun, 19 May 2019 12:37:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <5ea0235d9fb24322681303591450b02a@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr �tetiar <ynezz@true.cz>
-Date: Sun, 19 May 2019 14:18:44 +0200
-
-> of_get_mac_address prior to commit d01f449c008a ("of_net: add NVMEM
-> support to of_get_mac_address") could return only valid pointer or NULL,
-> after this change it could return only valid pointer or ERR_PTR encoded
-> error value, but I've forget to change the return value of
-> of_get_mac_address in case where the kernel is compiled without
-> CONFIG_OF, so I'm doing so now.
+On 5/17/19 1:08 PM, Subash Abhinov Kasiviswanathan wrote:
+> On 2019-05-17 11:27, Alex Elder wrote:
+. . .
+>> Can you provide a good explanation about why these
+>> definitions belong in "include/linux/if_rmnet.h" instead
+>> of "include/soc/qcom/rmnet.h"?
+>>
+>> Thanks.
+>>
+>>                     -Alex
 > 
-> Cc: Mirko Lindner <mlindner@marvell.com>
-> Cc: Stephen Hemminger <stephen@networkplumber.org>
-> Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-> Reported-by: Octavio Alvarez <octallk1@alvarezp.org>
-> Signed-off-by: Petr �tetiar <ynezz@true.cz>
+> rmnet was designed similar to vlan / macvlan / ipvlan / bridge.
+> These drivers support creation of virtual netdevices,
+> define custom rtnl_link_ops, expose netlink attributes to
+> uapi via if_link.h and register rx_handlers.
+> 
+> They expose some common structs and helpers via if_vlan.h /
+> if_macvlan.h / if_bridge.h. I would prefer rmnet to use if_rmnet.h
+> similar to them.
 
-Applied, thanks.
+OK, I will name the file "include/linux/if_rmnet.h" as you suggest.
+It will still only define the three structures that I need in the
+IPA driver; I won't expose anything else from the rmnet_data driver.
+
+I will mention now that, to facilitate addressing Arnd's concerns
+about the portability of using C bit-fields in these structures,
+I made a set of other changes (including a bug fix in one of
+the structure definitions).  As a preview, here are the subject
+lines for that series:
+    net: qualcomm: rmnet: fix struct rmnet_map_header
+    net: qualcomm: rmnet: kill RMNET_MAP_GET_*() accessor macros
+    net: qualcomm: rmnet: use field masks instead of C bit-fields
+    net: qualcomm: rmnet: don't use C bit-fields in rmnet checksum header
+    net: qualcomm: rmnet: don't use C bit-fields in rmnet checksum trailer
+    soc: qcom: ipa: get rid of a variable in rmnet_map_ipv4_ul_csum_header()
+    net: create "include/linux/if_rmnet.h"
+
+I will be posting that as a separate series now and will have
+the IPA driver series mention a dependence on that.
+
+					-Alex
