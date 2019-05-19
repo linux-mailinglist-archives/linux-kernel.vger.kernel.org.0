@@ -2,124 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B899E227B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B143227AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfESRaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:30:25 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43031 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbfESRaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:30:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id gn7so1441079plb.10
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3nXBmIh7/vFkJ4Tm2l4dtTScuooDKNvEF1jpFXfvwsc=;
-        b=prPrOvv+nXzlq37dw9S0qdmegNQMY9mMQmGxVdosiPQlKvmQHZwzyNNaISmaHYISPL
-         X+MnJT//NcQ21npBKca3WpAApauj41TAIoPfE8Yn1PKHUg9dRm+3twylCz1VcUhpj9AY
-         TcBLFLBaEYI9qMBT/BXar0olvQLimM1sWud1T1/GfOO13CqMdqbUwAOF6akeVMHvShBG
-         389EvyUF/W8ChWuTLWfKobvsEmxcppXOOvx5AbluLHXBrSxVUDsPtbnSGtuNc47AipJP
-         LrRYAfePFA7lz8yV6lvkrbyhb38/XY3u7Pi4ItdkOP+VRZUORZzNtLVvNvBwQHUVJgbK
-         jkPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3nXBmIh7/vFkJ4Tm2l4dtTScuooDKNvEF1jpFXfvwsc=;
-        b=R+jVfNpSHDcdY7aT9vJ1878WuMHrDX4OWUdb6plfP+2TDQ7+u7u+E/axbDuKEnV9SX
-         9KbStvbn3Z+c1MAWyVhjV+eS92vAnQCsTRaAuuQhUFy8BeeP9z90ge4Tko8XIRtHs9WU
-         l7eZ+9nWNmTRV56Y51extDtVhN8KpygiKCxozOGqgOBqLhi3t4XQNYDNhZTY4YhLXEzu
-         oLTMwEcjTKJ+cVeFAogm6AESDHav3kwM2VJEaKGtEj6kpPKInGwhZZ+ymBW2aWP5l8Le
-         ncLftjB4fskQ0JCpoDx1MVC9n16vNGOBXJajaq9ERARtxGA52umn5QfkZJgrHPEIb3xQ
-         QWjg==
-X-Gm-Message-State: APjAAAUgHDBYV5C8zbqiAjyW/7qrtHHpAsdHvL6co3ZlxUsUNVtj9hJg
-        x9CfKydRXHR1WZX6OR25eW6jb57s
-X-Google-Smtp-Source: APXvYqxWU8wpTJXHBJp+Rkhz1pg1a0Wph4MXE9asWBt0UGUSJ69BeobNf1W2Emh5hysyAcKSb/AXeQ==
-X-Received: by 2002:a17:902:204:: with SMTP id 4mr17066355plc.21.1558260698892;
-        Sun, 19 May 2019 03:11:38 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.73])
-        by smtp.gmail.com with ESMTPSA id c17sm9740268pfo.114.2019.05.19.03.11.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 May 2019 03:11:38 -0700 (PDT)
-Date:   Sun, 19 May 2019 15:41:32 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Gao Xiang <hsiangkao@aol.com>, Gao Xiang <gaoxiang25@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Patch v2] staging: erofs: fix Warning Use BUG_ON instead of if
- condition followed by BUG
-Message-ID: <20190519101132.GA22620@hari-Inspiron-1545>
-References: <20190519093440.GA16838@hari-Inspiron-1545>
- <b32e6bca-60ec-2004-f1d6-16d2b8a478ae@aol.com>
+        id S1727165AbfESR0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:26:51 -0400
+Received: from gofer.mess.org ([88.97.38.141]:35459 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726607AbfESR0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:26:50 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 13CF460ADD; Sun, 19 May 2019 11:17:33 +0100 (BST)
+Date:   Sun, 19 May 2019 11:17:33 +0100
+From:   Sean Young <sean@mess.org>
+To:     Stefan =?iso-8859-1?Q?Br=FCns?= <stefan.bruens@rwth-aachen.de>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Antti Palosaari <crope@iki.fi>
+Subject: Re: [PATCH 1/3] media: dvb-usb-v2: Report error on all error paths
+Message-ID: <20190519101733.qaef5ricdqnmlf73@gofer.mess.org>
+References: <20190412011300.5468-1-stefan.bruens@rwth-aachen.de>
+ <f58ff4ca-9b9e-44af-a617-cdaa9e71f15f@rwthex-w2-a.rwth-ad.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b32e6bca-60ec-2004-f1d6-16d2b8a478ae@aol.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <f58ff4ca-9b9e-44af-a617-cdaa9e71f15f@rwthex-w2-a.rwth-ad.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 05:50:40PM +0800, Gao Xiang wrote:
-> 
-> 
-> On 2019/5/19 下午5:34, Hariprasad Kelam wrote:
-> > fix below warning reported by  coccicheck
-> > 
-> > drivers/staging/erofs/unzip_pagevec.h:74:2-5: WARNING: Use BUG_ON
-> > instead of if condition followed by BUG.
-> > 
-> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> > -----
-> > Changes in v2:
-> >   - replace BUG_ON with  DBG_BUGON
-> > -----
-> > ---
-> >  drivers/staging/erofs/unzip_pagevec.h | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/staging/erofs/unzip_pagevec.h b/drivers/staging/erofs/unzip_pagevec.h
-> > index f37d8fd..7938ee3 100644
-> > --- a/drivers/staging/erofs/unzip_pagevec.h
-> > +++ b/drivers/staging/erofs/unzip_pagevec.h
-> > @@ -70,8 +70,7 @@ z_erofs_pagevec_ctor_next_page(struct z_erofs_pagevec_ctor *ctor,
-> >  			return tagptr_unfold_ptr(t);
-> >  	}
-> >  
-> 
-> I'd like to delete this line
-> 
-> > -	if (unlikely(nr >= ctor->nr))
-> > -		BUG();
-> > +	DBG_BUGON(nr >= ctor->nr);
-> >  
-> 
-> and this line.. I have already sent a new patch based on your v1 patch,
-> could you please check it out if it is acceptable for you? :)
-> 
-> Thanks,
-> Gao Xiang
+Hi Stefan,
 
-Hi Gai Xiang,
+On Fri, Apr 12, 2019 at 03:12:58AM +0200, Stefan Br�ns wrote:
+> actual_length != wlen is the only error path which does not generate an
+> error message. Adding an error message here allows to report a more
+> specific error and to remove the error reporting from the call sites.
+> 
+> Also clean up the error paths - in case of an error, the remaining
+> code is skipped, and ret is returned. Skip setting ret and return
+> immediately (no cleanup necessary).
 
-The patch which you sent has all required. 
-Thanks for the  patch. We can ignore this v2 patch.
+There is no Signed-off-by: line:
 
-Thanks,
-Hariprasad k
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html?highlight=signed%20off#sign-your-work-the-developer-s-certificate-of-origin
 
+This is needed for merging. 
 
+Sean
 
-> >  	return NULL;
-> >  }
-> > 
+> ---
+>  drivers/media/usb/dvb-usb-v2/dvb_usb_urb.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb_urb.c b/drivers/media/usb/dvb-usb-v2/dvb_usb_urb.c
+> index 5bafeb6486be..5b32d159f968 100644
+> --- a/drivers/media/usb/dvb-usb-v2/dvb_usb_urb.c
+> +++ b/drivers/media/usb/dvb-usb-v2/dvb_usb_urb.c
+> @@ -37,14 +37,19 @@ static int dvb_usb_v2_generic_io(struct dvb_usb_device *d,
+>  	ret = usb_bulk_msg(d->udev, usb_sndbulkpipe(d->udev,
+>  			d->props->generic_bulk_ctrl_endpoint), wbuf, wlen,
+>  			&actual_length, 2000);
+> -	if (ret < 0)
+> +	if (ret) {
+>  		dev_err(&d->udev->dev, "%s: usb_bulk_msg() failed=%d\n",
+>  				KBUILD_MODNAME, ret);
+> -	else
+> -		ret = actual_length != wlen ? -EIO : 0;
+> +		return ret;
+> +	}
+> +	if (actual_length != wlen) {
+> +		dev_err(&d->udev->dev, "%s: usb_bulk_msg() write length=%d, actual=%d\n",
+> +				KBUILD_MODNAME, wlen, actual_length);
+> +		return -EIO;
+> +	}
+>  
+> -	/* an answer is expected, and no error before */
+> -	if (!ret && rbuf && rlen) {
+> +	/* an answer is expected */
+> +	if (rbuf && rlen) {
+>  		if (d->props->generic_bulk_ctrl_delay)
+>  			usleep_range(d->props->generic_bulk_ctrl_delay,
+>  					d->props->generic_bulk_ctrl_delay
+> -- 
+> 2.21.0
