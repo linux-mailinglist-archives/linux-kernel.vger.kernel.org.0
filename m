@@ -2,111 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188C0227E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E730B227FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfESRmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:42:18 -0400
-Received: from sauhun.de ([88.99.104.3]:44874 "EHLO pokefinder.org"
+        id S1728678AbfESRr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:47:58 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:39363 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728499AbfESRmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:42:18 -0400
-Received: from localhost (p5486CF3F.dip0.t-ipconnect.de [84.134.207.63])
-        by pokefinder.org (Postfix) with ESMTPSA id A6F142C3740;
-        Sun, 19 May 2019 16:02:31 +0200 (CEST)
-Date:   Sun, 19 May 2019 16:02:31 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Asmaa Mnebhi <Asmaa@mellanox.com>
-Cc:     minyard@acm.org, vadimp@mellanox.com, michaelsh@mellanox.com,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v9 1/1] Add support for IPMB driver
-Message-ID: <20190519140231.GA7291@kunai>
-References: <cover.1557322882.git.Asmaa@mellanox.com>
- <a4d9fe418013b604e7224bf3038c294da42d5534.1557322882.git.Asmaa@mellanox.com>
+        id S1726739AbfESRr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:47:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=nGfJ2GuiWeyt9rdjobbqK26MJz6zWpxPp9VLVvLGkgg=; b=slfu0BFzLQZn1MmTp8hvrsCDeP
+        n2F9RinHqlueAn0CJbdWP+F9UROtNCunHcWodts0o01XtaINKnv04y3eAUwf39bsJpe5iPFvWzywb
+        ik0VOfEmH09QalAOH1lWpLPzll0uyscXaV+v12FeXr0ykAQtOae7BXuaeuEBdzHAOrU8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hSMOl-0005Vi-PL; Sun, 19 May 2019 16:02:47 +0200
+Date:   Sun, 19 May 2019 16:02:47 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Mirko Lindner <mlindner@marvell.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] of_net: fix of_get_mac_address retval if compiled
+ without CONFIG_OF
+Message-ID: <20190519140247.GB30854@lunn.ch>
+References: <1558268324-5596-1-git-send-email-ynezz@true.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a4d9fe418013b604e7224bf3038c294da42d5534.1557322882.git.Asmaa@mellanox.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558268324-5596-1-git-send-email-ynezz@true.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, May 19, 2019 at 02:18:44PM +0200, Petr Štetiar wrote:
+> of_get_mac_address prior to commit d01f449c008a ("of_net: add NVMEM
+> support to of_get_mac_address") could return only valid pointer or NULL,
+> after this change it could return only valid pointer or ERR_PTR encoded
+> error value, but I've forget to change the return value of
+> of_get_mac_address in case where the kernel is compiled without
+> CONFIG_OF, so I'm doing so now.
+> 
+> Cc: Mirko Lindner <mlindner@marvell.com>
+> Cc: Stephen Hemminger <stephen@networkplumber.org>
+> Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
+> Reported-by: Octavio Alvarez <octallk1@alvarezp.org>
+> Signed-off-by: Petr Štetiar <ynezz@true.cz>
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-
-> +static int receive_ipmb_request(struct ipmb_dev *ipmb_dev,
-> +				bool non_blocking,
-> +				struct ipmb_msg *ipmb_request)
-> +{
-> +	struct ipmb_request_elem *queue_elem;
-> +	unsigned long flags;
-> +	int res;
-> +
-> +	spin_lock_irqsave(&ipmb_dev->lock, flags);
-> +
-> +	while (!atomic_read(&ipmb_dev->request_queue_len)) {
-
-Am I overlooking something? Why are you protecting an atomic_read with a
-spinlock?
-
-> +		spin_unlock_irqrestore(&ipmb_dev->lock, flags);
-> +
-> +		if (non_blocking)
-> +			return -EAGAIN;
-> +
-> +		res = wait_event_interruptible(ipmb_dev->wait_queue,
-> +				atomic_read(&ipmb_dev->request_queue_len));
-> +		if (res)
-> +			return res;
-> +
-> +		spin_lock_irqsave(&ipmb_dev->lock, flags);
-> +	}
-
-...
-
-> +	rq_sa = msg[RQ_SA_8BIT_IDX] >> 1;
-> +	netf_rq_lun = msg[NETFN_LUN_IDX];
-> +	/*
-> +	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
-> +	 * i2c_smbus_write_block_data_local
-> +	 */
-> +	msg_len = msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
-> +
-> +	strcpy(rq_client.name, "ipmb_requester");
-> +	rq_client.adapter = ipmb_dev->client->adapter;
-> +	rq_client.flags = ipmb_dev->client->flags;
-> +	rq_client.addr = rq_sa;
-
-Is it possible to determine in a race-free way if rq_sa (which came from
-userspace AFAIU) is really the address from which the request came in
-(again if I understood all this correctly)?
-
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzhYfMACgkQFA3kzBSg
-KbaUFBAAhYsyH1aaRJTDSRpDGGcd3ZnZ3zTzRUjf4prl/rhXfBIaroHb3Mrp1aYX
-ZGScerkOwHtVFSat1vAn3xsrzkHL/X5ADObbm3Jdx3ofZhLrP1pKT3mL3ah7xJ7H
-zXuLF5F/8xc6sd5BEsdh/Iazw/v+Q8rkfgZZ6ExZV+cueh8R5M5PxyaFKXj6327k
-qRePyE64zjfzzCL1rupNLzmegvp2qnXE7ZO0+vWuhVpw3PWO1kBh4mTmPxl3TkAk
-onbXPgqWJgg56Kh7ZMm1BfiIaUGYeiDR1DI8IHzTWJVBmOMpPItgvMaVqKBDU2M5
-ZmFXzm6o8ADuqM1+xLTXTgUJC92pDtzEpu/OP8neMbiqsZUvJlZ2R9AMEPf6XDbU
-d+nYOivm1KLkK5iZR7DsZwi+ZsSWM1VVeQ1huagrJ9AM5QN+nlxdxv30+Wff86BP
-aGfSuNqw0mwA/ZLp59jv6QeqKa/C21bPdUUZklZ28cEXHOOfVZFtTl4tfG62VV/0
-HQW4fxqk9yZue6Lh7PoW9f/eDHRi6/8FXLRieNdxjhjl4vH5My48znKij5XE3WKj
-uzI2qHHHRMno5AAoo42n97KAvxAdMGAdjkmnzkn1sRq36SfA5YRPFL5EcFbxQC0K
-edcChltpC+mULAVOc2Le6pgXeCJ5fGVNNY64iGNxIvtWSx9p9t0=
-=N/9+
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+    Andrew
