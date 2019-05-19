@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5432322809
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EBAF2280A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfESRuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:50:09 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13419 "EHLO
+        id S1729096AbfESRuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:50:15 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13421 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfESRuJ (ORCPT
+        with ESMTP id S1726741AbfESRuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:50:09 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce0f7df0000>; Sat, 18 May 2019 23:29:51 -0700
+        Sun, 19 May 2019 13:50:14 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce0f7df0001>; Sat, 18 May 2019 23:29:51 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
+  by hqpgpgate101.nvidia.com (PGP Universal service);
   Sat, 18 May 2019 23:29:49 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sat, 18 May 2019 23:29:49 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
+        by hqpgpgate101.nvidia.com on Sat, 18 May 2019 23:29:49 -0700
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
  2019 06:29:49 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
  2019 06:29:48 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Sun, 19 May 2019 06:29:48 +0000
 Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ce0f7dc0001>; Sat, 18 May 2019 23:29:48 -0700
+        id <B5ce0f7dc0002>; Sat, 18 May 2019 23:29:48 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Frederic Weisbecker <frederic@kernel.org>
@@ -40,38 +40,52 @@ CC:     John Hubbard <jhubbard@nvidia.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 0/1] lockdep: fix warning: print_lock_trace defined but not used
-Date:   Sat, 18 May 2019 23:29:45 -0700
-Message-ID: <20190519062946.27040-1-jhubbard@nvidia.com>
+Subject: [PATCH] lockdep: fix warning: print_lock_trace defined but not used
+Date:   Sat, 18 May 2019 23:29:46 -0700
+Message-ID: <20190519062946.27040-2-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190519062946.27040-1-jhubbard@nvidia.com>
+References: <20190519062946.27040-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558247391; bh=ksr1pGeZiBQIqfKuyg0qGKN6OFXkV0WvzgMDp21VSw0=;
+        t=1558247391; bh=+mMeJXHl5ecrfmgXb1fLjcKTsuYCwxL+S6q5TJ9ck6o=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Type:
-         Content-Transfer-Encoding;
-        b=GMFr8l9zwrT1Y7ZChMy/1xlma42OCTcqMV0zIArGQ94iNhpTq4QG61u25BygWcbDv
-         uChBkUYCNq1mBXjS59BQZx7W8xdo/MeV3G9HusQzPOlCZT9sp5/KloFHboAogeT3gL
-         61wkbYj4O3bED7BV85IOBFJp2vZH2OMEcz/Jm73toFi+kHC6oNzL/luqM6tZGiTgsP
-         oXMKcjXav6J+5pAKcxvnz8GXMLhAz358P/TXYlgLO4plW8A+o0DlpXh+riQ1bvegjP
-         XU21z7WBj6NQbJuNTEU8GU/EZuBHq87bfMcnEeRQdWklKoEfXVULQV2TbPdD3ubCwh
-         lBRATSr15QFrg==
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding;
+        b=L5AIrXSZa1VcLK4AtyW/PdNDcLQCBig/gNswh+Nh+u5kvkf6mBf+g9RKmTJiLlJEx
+         QqBR/tIPYNvLnjhgf7amcSVAQ5aiJYI+IoWdE2NVnjl+6p6ep+y6iPKcBSCsBc5ihB
+         xPP6bBA7PEYDtIevnJBiHO/WrLQXThLrddKqb7q2sHY4gRx9R7h7MEJSLRhYpZA+Jd
+         9nkDDjwwqbEq9T8evV1DXJp3Rkj5AafCEb51Z9RbYNZDRFZBhRZTpI33or+fybxxMF
+         fTjxzDCBWBNt7Ym7lIFt+q6l04MeEtJxbsPRE8e6ba0EN2vz1R8hKG832F5v4qWrZe
+         aE6vZwGWdFacw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside
+CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING") moved the only usage of
+print_lock_trace() that was originally outside of the CONFIG_PROVE_LOCKING
+case. It moved that usage into a different case: CONFIG_PROVE_LOCKING &&
+CONFIG_TRACE_IRQFLAGS. That leaves things not symmetrical, and as a result,
+the following warning fires on my build, when I have
 
-I ran across this minor warning while building against today's linux.git.
+!CONFIG_TRACE_IRQFLAGS && !CONFIG_PROVE_LOCKING
 
-The proposed trivial fix leaves it a little fragile from a "what if someone
-adds a new call to print_lock_trace()" point of view, but I believe that it
-makes the current combination of ifdefs accurate, anyway.
+set:
 
+kernel/locking/lockdep.c:2821:13: warning: =E2=80=98print_lock_trace=E2=80=
+=99 defined
+    but not used [-Wunused-function]
+
+Fix this by only defining print_lock_trace() in cases in which is it
+called.
+
+Fixes: 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside CONFIG_TRA=
+CE_IRQFLAGS && CONFIG_PROVE_LOCKING")
 Cc: Frederic Weisbecker <frederic@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -79,13 +93,32 @@ Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-
-John Hubbard (1):
-  lockdep: fix warning: print_lock_trace defined but not used
-
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
  kernel/locking/lockdep.c | 3 +++
  1 file changed, 3 insertions(+)
 
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index d06190fa5082..3065dc36c27a 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2817,11 +2817,14 @@ static inline int validate_chain(struct task_struct=
+ *curr,
+ 	return 1;
+ }
+=20
++#if defined(CONFIG_TRACE_IRQFLAGS)
+ static void print_lock_trace(struct lock_trace *trace, unsigned int spaces=
+)
+ {
+ }
+ #endif
+=20
++#endif
++
+ /*
+  * We are building curr_chain_key incrementally, so double-check
+  * it from scratch, to make sure that it's done correctly:
 --=20
 2.21.0
 
