@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F372227C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86243227BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfESRes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:34:48 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45278 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfESRes (ORCPT
+        id S1727519AbfESRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:31:12 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39445 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfESRbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:34:48 -0400
-Received: by mail-pf1-f196.google.com with SMTP id s11so6038723pfm.12
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:34:47 -0700 (PDT)
+        Sun, 19 May 2019 13:31:12 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z26so6056231pfg.6
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=clJHY7KyFyDcM9FkV4yHc3Tj8r0uZgSu3tfBFo7C+aY=;
-        b=KFPKUQZNtyglYSGyldyc0U0Pa14GqiTJrcbRXwVIjV6nQ8+y8qkBgdJCSBimIjltfq
-         k5ra/g8y5IHzwWhPqMQlcFCiCjIVeRs3oxboogMipNXB0prlMqY7hI1UQmcUm7cOMC3g
-         p6oL2Igq4PjUDdNsej1qxElqZJMSzEMtcE0GHHGGL2ih2xhxEUTOXlYWoFWW40fG+SAC
-         Zs9BplhcuHu0kvEScraT+01B2ZG07BEkulX5LMU8neCXQXzzQ0B/wP0hVWltMmdhLue8
-         7KhkM3OtmlBe4R5hi6GnTJeIDH2PMDivRXnZPpkV3fxQ+8z9Pox1I7Op9PWe2YSg62Tu
-         52QA==
+        bh=3QptrOrhoRrb+8UfSBrbIZc3gQ6845r98RHnMaT6MkU=;
+        b=NTnrrmFjSAkT60/o3iMiUogVQSY9vFrlR941e/UEVCPbk7my1cYpToGhOVsbHjEFjP
+         3zDpnUc4FdRMlgm1Nrblkd3XZHcr0l89OZGXVpBddWBkyN8DlU8yqG52Cm7Gv/LhXBrb
+         HGo/AYFcgTGn9k0UqOK3iUF7FhvHyCNCjdpAt9DMwjzzCSLCLwJ9nJPF55vtRsK/i60/
+         dJ3ViHfAyIgIxKd/5pLms/Hoidm6ba4JrcSSAvll88MZhanV1UHaXqgZJi/OXDs7W8HU
+         qyKQGsRzok+Bt9Y5clcxEf1jtAIaXo+MNbWWfAF32omH6E857+EyzebipgXjQ4VebecE
+         WuJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=clJHY7KyFyDcM9FkV4yHc3Tj8r0uZgSu3tfBFo7C+aY=;
-        b=Dw4yijgPE2Q+jHC5Up1DRzSHWneu0Z8BUXZVGQH6IWd/WV9E9egVo0Xn76h1ZC6Lgb
-         Ce2xfMmGQs9ajvsvBN05Lpjzm6oOi1RZVfsYf9CxZJHYdnx0m2pkQaAsnKf0E94vCGAW
-         rT0FIcF5kSkS2i1VmTTYWiXEwwYShBaHSffLE2gAI0DZwL2ut2pK3EqbV3iuTc4VP5Na
-         SSF1BpqSEyFusH9bWNQxNx2p4N5uIMOHc3DbHX1H8hjpvOBAHuCxJM0KYwnWSxPL0h3x
-         LDenRr8sw6cKSNJe9fLRw6cOluyWfDDG0jkYO8WzqodGddjhfwoCMunEZ8cm4pBJ9c8Q
-         FPVw==
-X-Gm-Message-State: APjAAAWMdPWC9xJf0VmfgbUI8KpnRkd38rt7ySk9ny086CaRrg7yvspC
-        0/bw8dThr3aQ+Vd92iyoyZElQ92L
-X-Google-Smtp-Source: APXvYqyDwgvW1xe02eBXhVjmNxyvJppF3skscKoM538q4GCNdvOPLkS7NGAZ4/Wz20SfFSzUTKwVvQ==
-X-Received: by 2002:aa7:8b57:: with SMTP id i23mr54011253pfd.54.1558278452344;
-        Sun, 19 May 2019 08:07:32 -0700 (PDT)
+        bh=3QptrOrhoRrb+8UfSBrbIZc3gQ6845r98RHnMaT6MkU=;
+        b=a+sZ8O8bOOlNLlT47epxv9788TGbnheGO8KMUTvqtoS3CCv60ZZNAkxnHfpBUvauYw
+         Dqk3nGPxm1xBV36SRU+pSM05GOl5yBd24k20zQJwgnOgBWzujnSWPBkXtH6bJkY5N+UG
+         2IzihTjVbUMYYs8aBr2h3Odl7z75vq9uh8caHo+Y7qz5zYC6L9wkumPo4ldq2VAhlnxu
+         mIf8TobqVVvqDupd2NHFRNGPADLSWu0jGdiE55bV1+GtNV2E05zgUFynZaveflQjdCRz
+         5sTlNOCM62rbpzEgo/+u7IgmjBTKvTB5cdmrQqkXvIZdZgP8dkRt+4P5HuM5fdM01Gon
+         lCdg==
+X-Gm-Message-State: APjAAAV9BBYeOwT/b+Pp3wIIbJPOPEoZyC2wRw2wC20+XVxw8Lb9wEud
+        hLrAayvfpfMUXYQZg0ultJiXRS3F
+X-Google-Smtp-Source: APXvYqzHNKOqcWO25MtIB2d+/lQBkISHLKuHtnvwtHM/ktImBVFZhohz6aCLT34vgGaW+GF85+FAwg==
+X-Received: by 2002:a62:1483:: with SMTP id 125mr45143058pfu.137.1558278455161;
+        Sun, 19 May 2019 08:07:35 -0700 (PDT)
 Received: from mita-MS-7A45.lan ([240f:34:212d:1:5085:bb4a:e3a8:fc9d])
-        by smtp.gmail.com with ESMTPSA id g17sm2441105pfb.56.2019.05.19.08.07.29
+        by smtp.gmail.com with ESMTPSA id g17sm2441105pfb.56.2019.05.19.08.07.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 19 May 2019 08:07:31 -0700 (PDT)
+        Sun, 19 May 2019 08:07:34 -0700 (PDT)
 From:   Akinobu Mita <akinobu.mita@gmail.com>
 To:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
@@ -54,9 +54,9 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Minwoo Im <minwoo.im.dev@gmail.com>,
         Kenneth Heitke <kenneth.heitke@intel.com>,
         Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Subject: [PATCH v4 6/7] nvme-pci: trigger device coredump on command timeout
-Date:   Mon, 20 May 2019 00:06:57 +0900
-Message-Id: <1558278418-5702-7-git-send-email-akinobu.mita@gmail.com>
+Subject: [PATCH v4 7/7] nvme-pci: enable to trigger device coredump by hand
+Date:   Mon, 20 May 2019 00:06:58 +0900
+Message-Id: <1558278418-5702-8-git-send-email-akinobu.mita@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558278418-5702-1-git-send-email-akinobu.mita@gmail.com>
 References: <1558278418-5702-1-git-send-email-akinobu.mita@gmail.com>
@@ -65,15 +65,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the nvme driver to trigger a device coredump when command
-timeout occurs, and it helps diagnose and debug issues.
-
-This can be tested with fail_io_timeout fault injection.
-
-	# echo 1 > /sys/kernel/debug/fail_io_timeout/probability
-	# echo 1 > /sys/kernel/debug/fail_io_timeout/times
-	# echo 1 > /sys/block/nvme0n1/io-timeout-fail
-	# dd if=/dev/nvme0n1 of=/dev/null
+This provides a way to trigger the nvme device coredump by writing
+anything to /sys/devices/.../coredump attribute.
 
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Cc: Keith Busch <keith.busch@intel.com>
@@ -86,169 +79,49 @@ Cc: Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
 Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
 ---
 * v4
-- Abandon the reset if nvme_coredump_logs() returns error code
+- No change since v3
 
- drivers/nvme/host/pci.c | 41 +++++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
+ drivers/nvme/host/pci.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 8a29c52..6436e72 100644
+index 6436e72..04084b9 100644
 --- a/drivers/nvme/host/pci.c
 +++ b/drivers/nvme/host/pci.c
-@@ -87,12 +87,12 @@ MODULE_PARM_DESC(poll_queues, "Number of queues to use for polled IO.");
- struct nvme_dev;
- struct nvme_queue;
- 
--static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
-+static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown, bool dump);
- static bool __nvme_disable_io_queues(struct nvme_dev *dev, u8 opcode);
- 
--static void __maybe_unused nvme_coredump_init(struct nvme_dev *dev);
--static int __maybe_unused nvme_coredump_logs(struct nvme_dev *dev);
--static void __maybe_unused nvme_coredump_complete(struct nvme_dev *dev);
-+static void nvme_coredump_init(struct nvme_dev *dev);
-+static int nvme_coredump_logs(struct nvme_dev *dev);
-+static void nvme_coredump_complete(struct nvme_dev *dev);
- 
- /*
-  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
-@@ -1280,7 +1280,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
- 	 */
- 	if (nvme_should_reset(dev, csts)) {
- 		nvme_warn_reset(dev, csts);
--		nvme_dev_disable(dev, false);
-+		nvme_dev_disable(dev, false, true);
- 		nvme_reset_ctrl(&dev->ctrl);
- 		return BLK_EH_DONE;
- 	}
-@@ -1310,7 +1310,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
- 		dev_warn_ratelimited(dev->ctrl.device,
- 			 "I/O %d QID %d timeout, disable controller\n",
- 			 req->tag, nvmeq->qid);
--		nvme_dev_disable(dev, shutdown);
-+		nvme_dev_disable(dev, shutdown, true);
- 		nvme_req(req)->flags |= NVME_REQ_CANCELLED;
- 		return BLK_EH_DONE;
- 	default:
-@@ -1326,7 +1326,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
- 		dev_warn(dev->ctrl.device,
- 			 "I/O %d QID %d timeout, reset controller\n",
- 			 req->tag, nvmeq->qid);
--		nvme_dev_disable(dev, false);
-+		nvme_dev_disable(dev, false, true);
- 		nvme_reset_ctrl(&dev->ctrl);
- 
- 		nvme_req(req)->flags |= NVME_REQ_CANCELLED;
-@@ -2382,7 +2382,7 @@ static void nvme_pci_disable(struct nvme_dev *dev)
- 	}
+@@ -3266,6 +3266,14 @@ static void nvme_coredump_complete(struct nvme_dev *dev)
+ 	nvme_coredump_clear(dev);
  }
  
--static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
-+static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown, bool dump)
- {
- 	bool dead = true;
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
-@@ -2407,6 +2407,9 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
- 	}
- 
-+	if (dump)
-+		nvme_coredump_init(dev);
++static void nvme_coredump(struct device *dev)
++{
++	struct nvme_dev *ndev = dev_get_drvdata(dev);
 +
- 	nvme_stop_queues(&dev->ctrl);
- 
- 	if (!dead && dev->ctrl.queue_count > 0) {
-@@ -2477,7 +2480,7 @@ static void nvme_remove_dead_ctrl(struct nvme_dev *dev, int status)
- 	dev_warn(dev->ctrl.device, "Removing after probe failure status: %d\n", status);
- 
- 	nvme_get_ctrl(&dev->ctrl);
--	nvme_dev_disable(dev, false);
-+	nvme_dev_disable(dev, false, false);
- 	nvme_kill_queues(&dev->ctrl);
- 	if (!queue_work(nvme_wq, &dev->remove_work))
- 		nvme_put_ctrl(&dev->ctrl);
-@@ -2499,7 +2502,7 @@ static void nvme_reset_work(struct work_struct *work)
- 	 * moving on.
- 	 */
- 	if (dev->ctrl.ctrl_config & NVME_CC_ENABLE)
--		nvme_dev_disable(dev, false);
-+		nvme_dev_disable(dev, false, false);
- 
- 	mutex_lock(&dev->shutdown_lock);
- 	result = nvme_pci_enable(dev);
-@@ -2536,6 +2539,11 @@ static void nvme_reset_work(struct work_struct *work)
- 	if (result)
- 		goto out;
- 
-+	result = nvme_coredump_logs(dev);
-+	if (result)
-+		goto out;
-+	nvme_coredump_complete(dev);
++	nvme_dev_disable(ndev, false, true);
++	nvme_reset_ctrl_sync(&ndev->ctrl);
++}
 +
- 	if (dev->ctrl.oacs & NVME_CTRL_OACS_SEC_SUPP) {
- 		if (!dev->ctrl.opal_dev)
- 			dev->ctrl.opal_dev =
-@@ -2598,6 +2606,7 @@ static void nvme_reset_work(struct work_struct *work)
-  out_unlock:
- 	mutex_unlock(&dev->shutdown_lock);
-  out:
-+	nvme_coredump_complete(dev);
- 	nvme_remove_dead_ctrl(dev, result);
- }
+ #else
  
-@@ -2788,7 +2797,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- static void nvme_reset_prepare(struct pci_dev *pdev)
+ static void nvme_coredump_init(struct nvme_dev *dev)
+@@ -3281,6 +3289,10 @@ static void nvme_coredump_complete(struct nvme_dev *dev)
  {
- 	struct nvme_dev *dev = pci_get_drvdata(pdev);
--	nvme_dev_disable(dev, false);
-+	nvme_dev_disable(dev, false, false);
  }
  
- static void nvme_reset_done(struct pci_dev *pdev)
-@@ -2800,7 +2809,7 @@ static void nvme_reset_done(struct pci_dev *pdev)
- static void nvme_shutdown(struct pci_dev *pdev)
- {
- 	struct nvme_dev *dev = pci_get_drvdata(pdev);
--	nvme_dev_disable(dev, true);
-+	nvme_dev_disable(dev, true, false);
- }
++static void nvme_coredump(struct device *dev)
++{
++}
++
+ #endif /* CONFIG_DEV_COREDUMP */
  
- /*
-@@ -2817,14 +2826,14 @@ static void nvme_remove(struct pci_dev *pdev)
- 
- 	if (!pci_device_is_present(pdev)) {
- 		nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_DEAD);
--		nvme_dev_disable(dev, true);
-+		nvme_dev_disable(dev, true, false);
- 		nvme_dev_remove_admin(dev);
- 	}
- 
- 	flush_work(&dev->ctrl.reset_work);
- 	nvme_stop_ctrl(&dev->ctrl);
- 	nvme_remove_namespaces(&dev->ctrl);
--	nvme_dev_disable(dev, true);
-+	nvme_dev_disable(dev, true, false);
- 	nvme_release_cmb(dev);
- 	nvme_free_host_mem(dev);
- 	nvme_dev_remove_admin(dev);
-@@ -2841,7 +2850,7 @@ static int nvme_suspend(struct device *dev)
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct nvme_dev *ndev = pci_get_drvdata(pdev);
- 
--	nvme_dev_disable(ndev, true);
-+	nvme_dev_disable(ndev, true, false);
- 	return 0;
- }
- 
-@@ -3290,7 +3299,7 @@ static pci_ers_result_t nvme_error_detected(struct pci_dev *pdev,
- 	case pci_channel_io_frozen:
- 		dev_warn(dev->ctrl.device,
- 			"frozen state error detected, reset controller\n");
--		nvme_dev_disable(dev, false);
-+		nvme_dev_disable(dev, false, false);
- 		return PCI_ERS_RESULT_NEED_RESET;
- 	case pci_channel_io_perm_failure:
- 		dev_warn(dev->ctrl.device,
+ static pci_ers_result_t nvme_error_detected(struct pci_dev *pdev,
+@@ -3388,6 +3400,7 @@ static struct pci_driver nvme_driver = {
+ 	.shutdown	= nvme_shutdown,
+ 	.driver		= {
+ 		.pm	= &nvme_dev_pm_ops,
++		.coredump = nvme_coredump,
+ 	},
+ 	.sriov_configure = pci_sriov_configure_simple,
+ 	.err_handler	= &nvme_err_handler,
 -- 
 2.7.4
 
