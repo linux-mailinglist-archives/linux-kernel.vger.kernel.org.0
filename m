@@ -2,267 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A9922827
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8253722819
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729362AbfESR72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:59:28 -0400
-Received: from vps.xff.cz ([195.181.215.36]:43302 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbfESR72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:59:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1558275760; bh=lFF/AdVO9omdk1uyvjkzJYRIbqcQEkaQzcuTPAnqh4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cV97mwD3nF9Z06u79LQgsT1o028s5wCQnA0408IymvQPuQI5rKEdY8m5dFchP8EPO
-         xZsfbl6rUP8Ka9h7enBDJ/l2QqbyHFRHTIJRnNf8lZhUwPyzsJfnZYWAkZYZMdRYeb
-         4iDwT2iUSUDJ2DLD1nqHSbbTdFGkjuaRtdQYEQKo=
-Date:   Sun, 19 May 2019 16:22:39 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     rui.zhang@intel.com, Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan.Cameron@huawei.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        paulmck@linux.ibm.com, Andy Gross <andy.gross@linaro.org>,
-        olof@lixom.net, bjorn.andersson@linaro.org,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
-        enric.balletbo@collabora.com, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
-Message-ID: <20190519142239.eolisexp5mrdyafz@core.my.home>
-Mail-Followup-To: Frank Lee <tiny.windzz@gmail.com>, rui.zhang@intel.com,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, catalin.marinas@arm.com,
-        will.deacon@arm.com, David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan.Cameron@huawei.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>, paulmck@linux.ibm.com,
-        Andy Gross <andy.gross@linaro.org>, olof@lixom.net,
-        bjorn.andersson@linaro.org, Jagan Teki <jagan@amarulasolutions.com>,
-        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
-        enric.balletbo@collabora.com, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <20190512082614.9045-1-tiny.windzz@gmail.com>
- <20190512082614.9045-3-tiny.windzz@gmail.com>
- <20190512221612.ubmknvim4utnqpl4@core.my.home>
- <CAEExFWv5A5mhpV7afQT=AaYx2ko5QnfbM6HvfuTgT1Na=ssOcw@mail.gmail.com>
- <20190516182936.h6xdzp3gtg4ikave@core.my.home>
- <CAEExFWvDO3wJd6wp1hFudf3EGF0NixgKAwAd5-b1=VLF+7-jCw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEExFWvDO3wJd6wp1hFudf3EGF0NixgKAwAd5-b1=VLF+7-jCw@mail.gmail.com>
+        id S1729214AbfESRxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:53:54 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35197 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfESRxx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:53:53 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p1so246844plo.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7U4GWlu3NhNM+H5m0c8v1GRLQbRyHo7s1euACcIsXE0=;
+        b=hZ2jJ1lV41sUooh+QYN+pA+yjuoXiY4VHfZYxskGzaKOZWy5Hw1p68M40Y6IB0E7PN
+         c1JJmnhOQ/bS2iqdMwdNSbNd3dF7sv9qdvZ60VgXvxQzqKET3bT9IEsI9AlGelCvIdwc
+         FwTyMi+7VtJNS4CBAY9fuIAESaBJOfW3mXLXM+exlywXR3DbxUdlRCjGrGP1cse3W8OJ
+         zgjuS0BfZkTC58mdJJDxxa6Y2WzWXZQQANIcTA0hlshoz02yScOS6CKxbedXg8BeIwB3
+         d5rEtDwouKwJXxsyYa8b/JSTsVdk1c25ACqkMd6JGS4LSGni7rzBChpOh93kAyAP4kOK
+         4NqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7U4GWlu3NhNM+H5m0c8v1GRLQbRyHo7s1euACcIsXE0=;
+        b=nbklrEiV/bCjMRZXm2HiWA4lvq23c4OSlAG0JPoW2um+ULBmEWQmrQ10eg6NHiLdLt
+         sFWFKMtXac9V+us918shWxV47id/2Xi8uLHVDlWYZnQ0XEOUnNbQLFwd0Jyv4c29si29
+         X6tcaG252w5r0aw6OdYzwF5P+Hh6HJBdoFVZ/9MpN+YKhKHvqU+J86Pzzcj5Y4VbUy9r
+         S+1C7P4TR7xLW2X+c9F69fi6DhykiQmnKd/KjKMt5thdxHXxxJEeBsts+PsjgVJBy8IX
+         mwyeCMerNmug4LKYcLCzQgi7/UhanxafF7zTxzumZcEsE2rOQTmrflvNLYIc1TZMF8PI
+         THmA==
+X-Gm-Message-State: APjAAAUnCWcf+j6QgAegH6c5Df5/xyfjg5IIx5OJ/lmXQClH54HyHmL2
+        2ww2Mqh3e1oXlwOJhC40JOWU98VN
+X-Google-Smtp-Source: APXvYqyayPBWTYNdQszcQhIMFK+aS0ZvpndSym28CO3lemv+V5G3d3inoDU6heKFHo+0JAyJ5HeyNQ==
+X-Received: by 2002:a17:902:108a:: with SMTP id c10mr70960833pla.48.1558278435099;
+        Sun, 19 May 2019 08:07:15 -0700 (PDT)
+Received: from mita-MS-7A45.lan ([240f:34:212d:1:5085:bb4a:e3a8:fc9d])
+        by smtp.gmail.com with ESMTPSA id g17sm2441105pfb.56.2019.05.19.08.07.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 19 May 2019 08:07:14 -0700 (PDT)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+To:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Kenneth Heitke <kenneth.heitke@intel.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+Subject: [PATCH v4 0/7] nvme-pci: support device coredump
+Date:   Mon, 20 May 2019 00:06:51 +0900
+Message-Id: <1558278418-5702-1-git-send-email-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yangtao,
+This enables to collect snapshot of controller information via device
+coredump mechanism.  The nvme device coredump is triggered when command
+timeout occurs, and can also be triggered by writing sysfs attribute.
 
-On Sat, May 18, 2019 at 12:34:57AM +0800, Frank Lee wrote:
-> HI,
-> 
-> On Fri, May 17, 2019 at 2:29 AM Ondřej Jirman <megous@megous.com> wrote:
-> >
-> > Hi Yangtao,
-> >
-> > thank you for work on this driver.
-> >
-> > On Fri, May 17, 2019 at 02:06:53AM +0800, Frank Lee wrote:
-> > > HI Ondřej,
-> > >
-> > > On Mon, May 13, 2019 at 6:16 AM Ondřej Jirman <megous@megous.com> wrote:
-> > > > > +
-> > > > > +/* Temp Unit: millidegree Celsius */
-> > > > > +static int tsens_reg2temp(struct tsens_device *tmdev,
-> > > > > +                           int reg)
-> > > >
-> > > > Please name all functions so that they are more clearly identifiable
-> > > > in stack traces as belonging to this driver. For example:
-> > > >
-> > > >   sun8i_ths_reg2temp
-> > > >
-> > > > The same applies for all tsens_* functions below. tsens_* is too
-> > > > generic.
-> > >
-> > > Done but no sun8i_ths_reg2temp.
-> > >
-> > > ths_reg2tem() should be a generic func.
-> > > I think it should be suitable for all platforms， so no platform prefix.
-> >
-> > You've missed my point. The driver name is sun8i_thermal and if you get
-> > and oops from the kernel you'll get a stack trace where there are just function
-> > names. If you use too generic function names, it will not be clear which
-> > driver is oopsing.
-> >
-> >   - sun8i_ths_reg2temp will tell you much more clearly where to search than
-> >   - ths_reg2temp
-> >
-> > Of course you can always grep, but most thermal drivers are thermal sensor (ths)
-> > drivers, and if multiple of them used this too-generic naming scheme you'd
-> > have hard time debugging.
-> >
-> > Look at other thermal drivers. They usually encode driver name in the function
-> > names to help with identification (even if these are static driver-local
-> > functions).
-> >
-> 
-> Can we change to sunxi_ths_ prefix?
+After finishing the nvme device coredump, the following files are created.
 
-It should probably match the driver name, but yes, that's better.
+ - regs: NVMe controller registers (00h to 4Fh)
+ - sq<qid>: Submission queue
+ - cq<qid>: Completion queue
+ - telemetry-ctrl-log: Telemetry controller-initiated log (if available)
+ - data: Empty
 
-> > > > > +static int tsens_probe(struct platform_device *pdev)
-> > > > > +{
-> > > > > +     struct tsens_device *tmdev;
-> > > > > +     struct device *dev = &pdev->dev;
-> > > > > +     int ret;
-> > > > > +
-> > > > > +     tmdev = devm_kzalloc(dev, sizeof(*tmdev), GFP_KERNEL);
-> > > > > +     if (!tmdev)
-> > > > > +             return -ENOMEM;
-> > > > > +
-> > > > > +     tmdev->dev = dev;
-> > > > > +     tmdev->chip = of_device_get_match_data(&pdev->dev);
-> > > > > +     if (!tmdev->chip)
-> > > > > +             return -EINVAL;
-> > > > > +
-> > > > > +     ret = tsens_init(tmdev);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +
-> > > > > +     ret = tsens_register(tmdev);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > >
-> > > > Why split this out of probe into separate functions?
-> > > >
-> > > > > +     ret = tmdev->chip->enable(tmdev);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +
-> > > > > +     platform_set_drvdata(pdev, tmdev);
-> > > > > +
-> > > > > +     return ret;
-> > > > > +}
-> > > > > +
-> > > > > +static int tsens_remove(struct platform_device *pdev)
-> > > > > +{
-> > > > > +     struct tsens_device *tmdev = platform_get_drvdata(pdev);
-> > > > > +
-> > > > > +     tmdev->chip->disable(tmdev);
-> > > > > +
-> > > > > +     return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int sun50i_thermal_enable(struct tsens_device *tmdev)
-> > > > > +{
-> > > > > +     int ret, val;
-> > > > > +
-> > > > > +     ret = reset_control_deassert(tmdev->reset);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +
-> > > > > +     ret = clk_prepare_enable(tmdev->bus_clk);
-> > > > > +     if (ret)
-> > > > > +             goto assert_reset;
-> > > > > +
-> > > > > +     ret = tsens_calibrate(tmdev);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > >
-> > > > If this fails (it may likely fail with EPROBE_DEFER) you are leaving reset
-> > > > deasserted, and clock enabled.
-> > > >
-> > > > Overall, I think, reset/clock management and nvmem reading will be common
-> > > > to all the HW variants, so it doesn't make much sense splitting it out
-> > > > of probe into separate functions, and makes it more error prone.
-> > >
-> > > Our long-term goal is to support all platforms.
-> > > Bacicallt there is a differencr between each generation.
-> > > So I feel it necessary to isolate these differences.
-> > >
-> > > Maybe:
-> > > At some point, we can draw a part of the public part and platform
-> > > difference into different
-> > > files. something like qcom thermal driver.
-> >
-> > I understand, but I wrote ths drivers for H3/H5/A83T and it so far it looks like
-> > all of them would share these 3 calls.
-> >
-> > You'll be enabling clock/reset and callibrating everywhere. So putting this to
-> > per-SoC function seems premature.
-> 
-> In fact, enalbe and disable are the suspend and resume functions.(PM
-> callback will be added in the future)
-> When exiting from s2ram, the register will become the initial value.
-> We need to do all the work, enabling reset/clk ,calibrating and
-> initializing other reg.
-> 
-> So I think it is no need to put enabling reset/clk and calibrating to
-> probe func, and I'd like
-> to keep enable and disable func.
+The device coredump mechanism currently allows drivers to create only a
+single coredump file, so this also provides a new function that allows
+drivers to create several device coredump files in one crashed device.
 
-I know, I don't think it needs to be per-soc. These actions are all shared by
-all SoCs. Maybe with an exception that some SoCs may need one more clock, but
-that can be made optionally-required by some flag in struct sunxi_thermal_chip.
+* v4
+- Add Reviewed-by tags
+- Add nvme_get_telemetry_log() to nvme core module.
+- Copy struct nvme_telemetry_log_page_hdr from the latest nvme-cli
+- Use bio_vec instead of sg_table to store telemetry log page
+- Make nvme_coredump_logs() return error if the device didn't produce
+  a response.
+- Abandon the reset if nvme_coredump_logs() returns error code
 
-Only highly SoC specific thing is configuring the THS registers for sampling
-frequency/averaging/enabling interrupts. The reset/clock enable is generic, and
-already abstracted by the clock/reset framework.
+* v3
+- Merge 'add telemetry log page definisions' patch and 'add facility to
+  check log page attributes' patch
+- Copy struct nvme_telemetry_log_page_hdr from the latest nvme-cli
+- Add BUILD_BUG_ON for the size of struct nvme_telemetry_log_page_hdr
+- Fix typo s/machanism/mechanism/ in commit log
+- Fix max transfer size calculation for get log page
+- Add function comments
+- Extract 'enable to trigger device coredump by hand' patch
+- Don't try to get telemetry log when admin queue is not available
+- Avoid deadlock in .coredump callback
 
-So what I suggest is having:
+* v2
+- Add Reviewed-by tag.
+- Add patch to fix typo in comment
+- Remove unneeded braces.
+- Allocate device_entry followed by an array of devcd_file elements.
+- Add telemetry log page definisions
+- Add facility to check log page attributes
+- Exclude the doorbell registers from register dump.
+- Save controller registers in a binary format instead of a text format.
+- Create an empty 'data' file in the device coredump.
+- Save telemetry controller-initiated log if available
+- Make coredump procedure into two phases (before resetting controller and
+  after resetting as soon as admin queue is available).
 
-sunxi_ths_enable()
-	reset deassert
-	bus clock prepare enable
-	optionally module clock prepare enable (in the future)
-	call per-soc calibration
-	call per-soc setup callback
+Akinobu Mita (7):
+  devcoredump: use memory_read_from_buffer
+  devcoredump: fix typo in comment
+  devcoredump: allow to create several coredump files in one device
+  nvme: add basic facilities to get telemetry log page
+  nvme-pci: add device coredump infrastructure
+  nvme-pci: trigger device coredump on command timeout
+  nvme-pci: enable to trigger device coredump by hand
 
-sunxi_ths_disable()
-	reset assert
-	bus clock unprepare disable
-	optionally module clock unprepare disable
+ drivers/base/devcoredump.c  | 168 ++++++++++------
+ drivers/nvme/host/Kconfig   |   1 +
+ drivers/nvme/host/core.c    |  59 ++++++
+ drivers/nvme/host/nvme.h    |   3 +
+ drivers/nvme/host/pci.c     | 473 ++++++++++++++++++++++++++++++++++++++++++--
+ include/linux/devcoredump.h |  33 ++++
+ include/linux/nvme.h        |  32 +++
+ 7 files changed, 696 insertions(+), 73 deletions(-)
 
-And if you could move devm_nvmem_cell_get to probe that should make per-SoC
-calibration callback also less repetitive and could avoid undoing the enable
-in case it returns EPROBE_DEFER (which is possible).
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Minwoo Im <minwoo.im.dev@gmail.com>
+Cc: Kenneth Heitke <kenneth.heitke@intel.com>
+Cc: Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+-- 
+2.7.4
 
-All this should make it easier to support PM in the future and add less
-cumbersome to add support for A83T and H3/H5.
-
-BTW, what are your plans for more SoC support? I'd like to add support for
-A83T and H3/H5, maybe even during the 5.3 cycle if this driver happens to land
-early enough. If you don't have any plans I'll take it on.
-
-thank you and regards,
- 	o.
-
-> >
-> > thank you and regards,
-> >         o.
-> >
-> > > Regards,
-> > > Yangtao
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
