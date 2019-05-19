@@ -2,73 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0844A22778
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BD0322761
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 18:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfESRG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:06:29 -0400
-Received: from smtp-out.xnet.cz ([178.217.244.18]:22240 "EHLO smtp-out.xnet.cz"
+        id S1726622AbfESQ72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 12:59:28 -0400
+Received: from vps.xff.cz ([195.181.215.36]:43092 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbfESRG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:06:28 -0400
-Received: from meh.true.cz (meh.true.cz [108.61.167.218])
-        (Authenticated sender: petr@true.cz)
-        by smtp-out.xnet.cz (Postfix) with ESMTPSA id 0E4444ACA;
-        Sun, 19 May 2019 14:19:01 +0200 (CEST)
-Received: by meh.true.cz (OpenSMTPD) with ESMTP id d9c28ecb;
-        Sun, 19 May 2019 14:18:59 +0200 (CEST)
-From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] of_net: fix of_get_mac_address retval if compiled without CONFIG_OF
-Date:   Sun, 19 May 2019 14:18:44 +0200
-Message-Id: <1558268324-5596-1-git-send-email-ynezz@true.cz>
-X-Mailer: git-send-email 1.9.1
+        id S1726545AbfESQ72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 12:59:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1558274063; bh=lXTBePQTd66A2iS+g6VRPcxOuAD2+KiPtXMZZvonC7Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=neK8JtgsXP3XLtC81Zyx6VE8nBcKHll5MldQfBfDf7T2/nzOZo+FNT3sptDKnPgmE
+         Tt9Ugu3Y18OSBH3bCGeTdfE5HCGy/zLHCqWsBwzWotZHkiMyMJLnxvgwh7af1zsLbg
+         P0RKVp9/xpl+lcEUJIMHU/qO5UIlr2qwLZsQPHUU=
+Date:   Sun, 19 May 2019 15:54:22 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
+ (Camera Sensor Interface)
+Message-ID: <20190519135422.l2bnumyjr3dxehhx@core.my.home>
+Mail-Followup-To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+References: <20190408165744.11672-1-wens@kernel.org>
+ <20190408165744.11672-5-wens@kernel.org>
+ <20190409075804.4zrwjil7ie2gjigu@flea>
+ <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
+ <20190409082818.z33mq2qrxethldzf@flea>
+ <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
+ <20190409145225.2ltluiyqa5xha4zd@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190409145225.2ltluiyqa5xha4zd@flea>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_get_mac_address prior to commit d01f449c008a ("of_net: add NVMEM
-support to of_get_mac_address") could return only valid pointer or NULL,
-after this change it could return only valid pointer or ERR_PTR encoded
-error value, but I've forget to change the return value of
-of_get_mac_address in case where the kernel is compiled without
-CONFIG_OF, so I'm doing so now.
+Hi Maxime,
 
-Cc: Mirko Lindner <mlindner@marvell.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-Reported-by: Octavio Alvarez <octallk1@alvarezp.org>
-Signed-off-by: Petr Štetiar <ynezz@true.cz>
----
- include/linux/of_net.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Apr 09, 2019 at 04:52:25PM +0200, Maxime Ripard wrote:
+> On Tue, Apr 09, 2019 at 04:40:40PM +0800, Chen-Yu Tsai wrote:
+> > On Tue, Apr 9, 2019 at 4:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
+> > > > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
+> > > > > > From: Chen-Yu Tsai <wens@csie.org>
+> > > > > >
+> > > > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+> > > > > > lingo), which is similar to the one found on the A64 and H3. The only
+> > > > > > difference seems to be that support of MIPI CSI through a connected
+> > > > > > MIPI CSI-2 bridge.
+> > > > > >
+> > > > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
+> > > > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
+> > > > > > the pinctrl nodes to keep the device tree blob size down if they are
+> > > > > > unused.
+> > > > > >
+> > > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > > > > ---
+> > > > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
+> > > > > >  1 file changed, 31 insertions(+)
+> > > > > >
+> > > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > index f739b88efb53..0c52f945fd5f 100644
+> > > > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > @@ -682,6 +682,20 @@
+> > > > > >                       #interrupt-cells = <3>;
+> > > > > >                       #gpio-cells = <3>;
+> > > > > >
+> > > > > > +                     /omit-if-no-ref/
+> > > > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
+> > > > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
+> > > > > > +                                    "PE8", "PE9", "PE10", "PE11",
+> > > > > > +                                    "PE12", "PE13";
+> > > > > > +                             function = "csi";
+> > > > > > +                     };
+> > > > > > +
+> > > > > > +                     /omit-if-no-ref/
+> > > > > > +                     csi_mclk_pin: csi-mclk-pin {
+> > > > > > +                             pins = "PE1";
+> > > > > > +                             function = "csi";
+> > > > > > +                     };
+> > > > > > +
+> > > > > >                       emac_rgmii_pins: emac-rgmii-pins {
+> > > > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+> > > > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
+> > > > > > @@ -994,6 +1008,23 @@
+> > > > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+> > > > > >               };
+> > > > > >
+> > > > > > +             csi: camera@1cb0000 {
+> > > > > > +                     compatible = "allwinner,sun8i-a83t-csi";
+> > > > > > +                     reg = <0x01cb0000 0x1000>;
+> > > > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > +                     clocks = <&ccu CLK_BUS_CSI>,
+> > > > > > +                              <&ccu CLK_CSI_SCLK>,
+> > > > > > +                              <&ccu CLK_DRAM_CSI>;
+> > > > > > +                     clock-names = "bus", "mod", "ram";
+> > > > > > +                     resets = <&ccu RST_BUS_CSI>;
+> > > > > > +                     status = "disabled";
+> > > > > > +
+> > > > > > +                     csi_in: port {
+> > > > > > +                             #address-cells = <1>;
+> > > > > > +                             #size-cells = <0>;
+> > > > >
+> > > > > If we expect a single enpoint, then we don't need the address-cells
+> > > > > and size-cells properties.
+> > > >
+> > > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
+> > > > is kind of genius if not very hacky. They have two "identical" sensors
+> > > > on the same I2C bus and CSI bus, with shared reset line but separate
+> > > > shutdown lines. Since they are identical, they also have the same I2C
+> > > > address. I haven't figured out how to model this in the device tree.
+> > > >
+> > > > The point is, it's perfectly possible to have two or more sensors use
+> > > > the same controller, provided only one be active at a time.
+> > >
+> > > Right, but I guess the common case would be to have a single sensor,
+> > > where that wouldn't be needed.
+> > >
+> > > In odd cases, we can always specify it in the DTS, and if it becomes
+> > > common enough, we can move it to the DTSI.
+> >
+> > Makes sense. Do you want me to re-spin?
+> 
+> If there's no other comment, we'll fix it when applying.
 
-diff --git a/include/linux/of_net.h b/include/linux/of_net.h
-index 9cd72aab76fe..0f0346e6829c 100644
---- a/include/linux/of_net.h
-+++ b/include/linux/of_net.h
-@@ -22,7 +22,7 @@ static inline int of_get_phy_mode(struct device_node *np)
- 
- static inline const void *of_get_mac_address(struct device_node *np)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
- 
- static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
--- 
-1.9.1
+This patch series seems to have been forgotten. It doesn't seem there are any
+blockers. Can you please apply it now? I have some further series (camera module
+support for TBS-A711) that depend on this.
+
+thank you and regards,
+	Ondrej
+
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
