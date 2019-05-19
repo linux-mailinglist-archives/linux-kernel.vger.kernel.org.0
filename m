@@ -2,123 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EBAF2280A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F36E22816
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfESRuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:50:15 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13421 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfESRuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:50:14 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce0f7df0001>; Sat, 18 May 2019 23:29:51 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sat, 18 May 2019 23:29:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sat, 18 May 2019 23:29:49 -0700
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
- 2019 06:29:49 +0000
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
- 2019 06:29:48 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sun, 19 May 2019 06:29:48 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ce0f7dc0002>; Sat, 18 May 2019 23:29:48 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-CC:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1729347AbfESRwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:52:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727883AbfESRwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:52:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E8592133F;
+        Sun, 19 May 2019 07:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558250214;
+        bh=ZxpcTYPDeqA9hbzxoEyOc3nx7/tnxge/HI1C8VBQqYI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nsTXLDLl6k6AfhgV4VI11c6wRNUeVKzo7OdR3OyZx5DCAsDslojLJhhg3rf5QUwe4
+         QQC/MEh/Bj7FNOAhS8BVbxEbqXZsJun7tGtQ/9ys1kQDEC+g+Weueu4aAbVG+/VtOx
+         LPFZCfi6m5U9rjQZ87ubIqn1hIs3x+JBFFEmIpXY=
+Date:   Sun, 19 May 2019 09:16:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jessica Yu <jeyu@kernel.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH] lockdep: fix warning: print_lock_trace defined but not used
-Date:   Sat, 18 May 2019 23:29:46 -0700
-Message-ID: <20190519062946.27040-2-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190519062946.27040-1-jhubbard@nvidia.com>
-References: <20190519062946.27040-1-jhubbard@nvidia.com>
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Kees Cook <keescook@chromium.org>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kbuild: check uniqueness of module names
+Message-ID: <20190519071651.GA19681@kroah.com>
+References: <1558109235-23042-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558247391; bh=+mMeJXHl5ecrfmgXb1fLjcKTsuYCwxL+S6q5TJ9ck6o=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding;
-        b=L5AIrXSZa1VcLK4AtyW/PdNDcLQCBig/gNswh+Nh+u5kvkf6mBf+g9RKmTJiLlJEx
-         QqBR/tIPYNvLnjhgf7amcSVAQ5aiJYI+IoWdE2NVnjl+6p6ep+y6iPKcBSCsBc5ihB
-         xPP6bBA7PEYDtIevnJBiHO/WrLQXThLrddKqb7q2sHY4gRx9R7h7MEJSLRhYpZA+Jd
-         9nkDDjwwqbEq9T8evV1DXJp3Rkj5AafCEb51Z9RbYNZDRFZBhRZTpI33or+fybxxMF
-         fTjxzDCBWBNt7Ym7lIFt+q6l04MeEtJxbsPRE8e6ba0EN2vz1R8hKG832F5v4qWrZe
-         aE6vZwGWdFacw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558109235-23042-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside
-CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING") moved the only usage of
-print_lock_trace() that was originally outside of the CONFIG_PROVE_LOCKING
-case. It moved that usage into a different case: CONFIG_PROVE_LOCKING &&
-CONFIG_TRACE_IRQFLAGS. That leaves things not symmetrical, and as a result,
-the following warning fires on my build, when I have
+On Sat, May 18, 2019 at 01:07:15AM +0900, Masahiro Yamada wrote:
+> In the recent build test of linux-next, Stephen saw a build error
+> caused by a broken .tmp_versions/*.mod file:
+> 
+>   https://lkml.org/lkml/2019/5/13/991
+> 
+> drivers/net/phy/asix.ko and drivers/net/usb/asix.ko have the same
+> basename, and there is a race in generating .tmp_versions/asix.mod
+> 
+> Kbuild has not checked this before, and it suddenly shows up with
+> obscure error message when this kind of race occurs.
+> 
+> Non-unique module names cause various sort of problems, but it is
+> not trivial to catch them by eyes.
+> 
+> Hence, this script.
+> 
+> It checks not only real modules, but also built-in modules (i.e.
+> controlled by tristate CONFIG option, but currently compiled with =y).
+> Non-unique names for built-in modules also cause problems because
+> /sys/modules/ would fall over.
+> 
+> I tested allmodconfig on the latest kernel, and it detected the
+> following:
+> 
+> warning: same basename if the following are built as modules:
+>   drivers/regulator/88pm800.ko
+>   drivers/mfd/88pm800.ko
+> warning: same basename if the following are built as modules:
+>   drivers/gpu/drm/bridge/adv7511/adv7511.ko
+>   drivers/media/i2c/adv7511.ko
+> warning: same basename if the following are built as modules:
+>   drivers/net/phy/asix.ko
+>   drivers/net/usb/asix.ko
+> warning: same basename if the following are built as modules:
+>   fs/coda/coda.ko
+>   drivers/media/platform/coda/coda.ko
+> warning: same basename if the following are built as modules:
+>   drivers/net/phy/realtek.ko
+>   drivers/net/dsa/realtek.ko
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
 
-!CONFIG_TRACE_IRQFLAGS && !CONFIG_PROVE_LOCKING
-
-set:
-
-kernel/locking/lockdep.c:2821:13: warning: =E2=80=98print_lock_trace=E2=80=
-=99 defined
-    but not used [-Wunused-function]
-
-Fix this by only defining print_lock_trace() in cases in which is it
-called.
-
-Fixes: 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside CONFIG_TRA=
-CE_IRQFLAGS && CONFIG_PROVE_LOCKING")
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- kernel/locking/lockdep.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index d06190fa5082..3065dc36c27a 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2817,11 +2817,14 @@ static inline int validate_chain(struct task_struct=
- *curr,
- 	return 1;
- }
-=20
-+#if defined(CONFIG_TRACE_IRQFLAGS)
- static void print_lock_trace(struct lock_trace *trace, unsigned int spaces=
-)
- {
- }
- #endif
-=20
-+#endif
-+
- /*
-  * We are building curr_chain_key incrementally, so double-check
-  * it from scratch, to make sure that it's done correctly:
---=20
-2.21.0
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
