@@ -2,65 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4262022833
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D8722755
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 18:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbfESSGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 14:06:09 -0400
-Received: from smtprelay0160.hostedemail.com ([216.40.44.160]:41984 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727623AbfESSGI (ORCPT
+        id S1725971AbfESQ5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 12:57:20 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48618 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725769AbfESQ5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 14:06:08 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id DC7AE182D7B29
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 05:07:55 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id C7428837F24A;
-        Sun, 19 May 2019 05:07:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 20,1.5,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:2904:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:3874:4250:4321:5007:8957:9010:9012:10004:10026:10400:10848:11232:11658:11914:12043:12294:12296:12740:12760:12895:13069:13311:13357:13439:13868:13972:14096:14097:14181:14659:14721:14989:21080:21451:21611:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: money15_44f87b89aa330
-X-Filterd-Recvd-Size: 1863
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 19 May 2019 05:07:53 +0000 (UTC)
-Message-ID: <201b9ab622b8359225f3a3b673a05047ffce5744.camel@perches.com>
-Subject: Re: [PATCH] scripts/spelling.txt: drop "sepc" from the misspelling
- list
-From:   Joe Perches <joe@perches.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Sun, 19 May 2019 12:57:19 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4J5x94A021513
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 19 May 2019 01:59:10 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 77C90420027; Sun, 19 May 2019 01:58:48 -0400 (EDT)
+Date:   Sun, 19 May 2019 01:58:48 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     torvalds@linux-foundation.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ext4 fixes for 5.1-rc1
+Message-ID: <20190519055848.GA16693@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>
-Date:   Sat, 18 May 2019 22:07:52 -0700
-In-Reply-To: <20190518210037.13674-1-paul.walmsley@sifive.com>
-References: <20190518210037.13674-1-paul.walmsley@sifive.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-05-18 at 14:00 -0700, Paul Walmsley wrote:
-> The RISC-V architecture has a register named the "Supervisor Exception
-> Program Counter", or "sepc".  This abbreviation triggers
-> checkpatch.pl's misspelling detector, resulting in noise in the
-> checkpatch output.  The risk that this noise could cause more useful
-> warnings to be missed seems to outweigh the harm of an occasional
-> misspelling of "spec".  Thus drop the "sepc" entry from the
-> misspelling list.
+The following changes since commit db90f41916cf04c020062f8d8b0385942248283e:
 
-I would agree if you first fixed the existing sepc/spec
-and sepcific/specific typos.
+  ext4: export /sys/fs/ext4/feature/casefold if Unicode support is present (2019-05-06 14:03:52 -0400)
 
-arch/powerpc/kvm/book3s_xics.c:	 * a pending interrupt, this is a SW error and PAPR sepcifies
-arch/unicore32/include/mach/regs-gpio.h: * Sepcial Voltage Detect Reg GPIO_GPIR.
-drivers/net/wireless/realtek/rtlwifi/wifi.h:/* Ref: 802.11i sepc D10.0 7.3.2.25.1
-drivers/scsi/lpfc/lpfc_init.c:		/* Stop any OneConnect device sepcific driver timers */
-drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c:* OverView:	Read "sepcific bits" from BB register
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
 
+for you to fetch changes up to 2c1d0e3631e5732dba98ef49ac0bec1388776793:
+
+  ext4: avoid panic during forced reboot due to aborted journal (2019-05-17 17:37:18 -0400)
+
+----------------------------------------------------------------
+Some bug fixes, and an update to the URL's for the final version of
+Unicode 12.1.0.
+
+----------------------------------------------------------------
+Chengguang Xu (1):
+      jbd2: fix potential double free
+
+Colin Ian King (1):
+      ext4: unsigned int compared against zero
+
+Jan Kara (1):
+      ext4: avoid panic during forced reboot due to aborted journal
+
+Lukas Czerner (1):
+      ext4: fix data corruption caused by overlapping unaligned and aligned IO
+
+Sahitya Tummala (1):
+      ext4: fix use-after-free in dx_release()
+
+Sriram Rajagopalan (1):
+      ext4: zero out the unused memory region in the extent tree block
+
+Theodore Ts'o (4):
+      ext4: fix miscellaneous sparse warnings
+      unicode: add missing check for an error return from utf8lookup()
+      unicode: update to Unicode 12.1.0 final
+      ext4: fix block validity checks for journal inodes using indirect blocks
+
+ fs/ext4/block_validity.c   |  8 +++++++-
+ fs/ext4/extents.c          | 17 +++++++++++++++--
+ fs/ext4/file.c             |  7 +++++++
+ fs/ext4/fsmap.c            |  2 +-
+ fs/ext4/ioctl.c            |  2 +-
+ fs/ext4/namei.c            |  5 ++++-
+ fs/ext4/super.c            |  4 ++--
+ fs/jbd2/journal.c          | 49 +++++++++++++++++++++++++++++++------------------
+ fs/jbd2/revoke.c           | 32 ++++++++++++++++++++------------
+ fs/jbd2/transaction.c      |  8 +++++---
+ fs/unicode/README.utf8data | 28 +++++++---------------------
+ fs/unicode/utf8-norm.c     |  2 ++
+ include/linux/jbd2.h       |  8 +++++---
+ 13 files changed, 107 insertions(+), 65 deletions(-)
