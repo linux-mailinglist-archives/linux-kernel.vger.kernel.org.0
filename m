@@ -2,81 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D868A22844
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBD3227B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfESSPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 14:15:38 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45311 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729251AbfESSPi (ORCPT
+        id S1727465AbfESRas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:30:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34790 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfESRas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 14:15:38 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s11so6067563pfm.12;
-        Sun, 19 May 2019 11:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=LvoOGjtS9Q4v/OhQz+Xvt2yLQuispJiUfyTAeVDnMZ4=;
-        b=bbRR2bxzUuOllnh0/6nD2eAg5pGTqwoSpcBcQaFo8iNh0RHv2G1k2pQ4c1QaPL9SXa
-         NV0HHNI4IOKBJjVtUSkNJKOmUmqRIzz1ziVWFtDM1Z2kxBM1M8+8MxMZss9oXSfI2vfq
-         zVA8+Y0cSykPo5ytUKv4j/vwduPDRq2U2bQhZ0EyuUtRqO7Kf/ozSApKW9EdGHIyHdFM
-         Fpp5Of40958AdVd7rzupfDZSClSGIIoobTEdTmBSyf+g+PN051tgvztE7JAS26MnNZ1U
-         Hor1qStqQVSlC/bblDycPbwp2WL29cnbm4NI8KN4F90N2ygDm+JQ+nrBtYyoSTgjdXnu
-         1mmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LvoOGjtS9Q4v/OhQz+Xvt2yLQuispJiUfyTAeVDnMZ4=;
-        b=AAars4n4wQXOcidKuaNj1ISdxBVwo1WEsF8CKzyA3NbZM0FvGewtowCN719I6s3I7U
-         pWrekPU0bd7gWhd9YM6jn7oVUrZ1McZiest24LaYmSmBXzKlvfsnOXT+7bJ1klGfD2+e
-         whXqrn+9zUwR81b+X3o15AYa3V6QS38kXNxpPq3652fXt3QFHP+JTRvmw4faFfuV+UIx
-         540Es4dQMCnD4+mNDi3RnBsH2hTyxvs7lNMbPXeazNK3dUFRyt/+JpXYfasjcB+CiHz1
-         1xo3j2cu528L1a2ofhaJMmNctwpYy902W6MYVvepgVUe0Jgpx95OYc3xiMatLJRtG5bB
-         h44Q==
-X-Gm-Message-State: APjAAAXRTH9WRdJs6FWGvg/mbhXzqNdu7JQ7RS5SBfDAvbJgFRUlZQ6W
-        qPCDFOR5bS20kVcwGXiWHoDo3/JDFL0=
-X-Google-Smtp-Source: APXvYqy3lkVNGdk2GsXbhC3BVFIuGkQcOtV/abTkec19BkOZMMKFGsQMT/jBr9HzKg45Z2p2n3q2XQ==
-X-Received: by 2002:a63:2cc9:: with SMTP id s192mr25216471pgs.24.1558238148827;
-        Sat, 18 May 2019 20:55:48 -0700 (PDT)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id a11sm5188982pff.128.2019.05.18.20.55.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 May 2019 20:55:48 -0700 (PDT)
-From:   Weitao Hou <houweitaoo@gmail.com>
-To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Weitao Hou <houweitaoo@gmail.com>
-Subject: [PATCH] usb: fix typos in code comments
-Date:   Sun, 19 May 2019 11:55:42 +0800
-Message-Id: <20190519035542.22094-1-houweitaoo@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Sun, 19 May 2019 13:30:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f5cN1mjIK4arJv5nxA+9gsIwVDLFcCDiUgKYVbUOMOo=; b=LX6LYvYYN+sOMe2wiacM1uzR3
+        zyvtL3DggelCbv5RiTtNft2qx7wFDxH5pTpIbCDTaoJqYX5E91v4TP2kfm5xN50a6/egfLVwuPd9e
+        c4S+CzzslEPNlKXjStrmXj/SvMJnh15TCDdcJAdw1TBKVbf2LJj7MMA6PUMmW8rKa7OTxYDc05RTl
+        n3Vy4MmzUg38kQlJrky+fVTsL2NzPF097e/IML8fmGeuI09yKl057LEsCLXbWGn+6xoFLHawUwhiY
+        1bM8EmSsPVOJkv2Lt4JXFNs1fmtgxVbbKfqIc43YlZXAukSjSkDqdsshbBlYtlKR3cYL8freek6Ne
+        qPyvJa5eA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hSDSR-0006bj-41; Sun, 19 May 2019 04:29:59 +0000
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-iio@vger.kernel.org,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] counter: fix Documentation build error due to incorrect
+ source file name
+Message-ID: <b6475070-f336-1093-ff0f-6bc8d5fda35e@infradead.org>
+Date:   Sat, 18 May 2019 21:29:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix lenght to length
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+Fix kernel-doc build error in Documentation/driver-api/generic-counter.rst
+of incorrect source file name.
+Fixes this warning and error:
+
+Error: Cannot open file ../drivers/counter/generic-counter.c
+WARNING: kernel-doc '../scripts/kernel-doc -rst -enable-lineno -export ../drivers/counter/generic-counter.c' failed with return code 2
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linux-iio@vger.kernel.org
 ---
- Documentation/devicetree/bindings/usb/s3c2410-usb.txt | 2 +-
+ Documentation/driver-api/generic-counter.rst |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-index e45b38ce2986..26c85afd0b53 100644
---- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-@@ -4,7 +4,7 @@ OHCI
+--- linux-next-20190517.orig/Documentation/driver-api/generic-counter.rst
++++ linux-next-20190517/Documentation/driver-api/generic-counter.rst
+@@ -251,7 +251,7 @@ for defining a counter device.
+ .. kernel-doc:: include/linux/counter.h
+    :internal:
  
- Required properties:
-  - compatible: should be "samsung,s3c2410-ohci" for USB host controller
-- - reg: address and lenght of the controller memory mapped region
-+ - reg: address and length of the controller memory mapped region
-  - interrupts: interrupt number for the USB OHCI controller
-  - clocks: Should reference the bus and host clocks
-  - clock-names: Should contain two strings
--- 
-2.18.0
+-.. kernel-doc:: drivers/counter/generic-counter.c
++.. kernel-doc:: drivers/counter/counter.c
+    :export:
+ 
+ Implementation
+
 
