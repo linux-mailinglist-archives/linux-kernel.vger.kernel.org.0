@@ -2,92 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 692B722840
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3AC92284A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfESSMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 14:12:03 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45456 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfESSMD (ORCPT
+        id S1729677AbfESSUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 14:20:20 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33341 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfESSUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 14:12:03 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a5so5608139pls.12
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:12:02 -0700 (PDT)
+        Sun, 19 May 2019 14:20:20 -0400
+Received: by mail-oi1-f194.google.com with SMTP id q186so1759316oia.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=0bkKTyKYnhFPDlSX68YGNfeLYH++JQQQW+qUhMyZqg8=;
-        b=vCUyKhRfrhRkIsTNCZU7vDPV84pSHhJxo02gsYlUNJlz9lUfP945+vbSGTYFkjmf6O
-         jWnqrrnlwj8y//OcQgtxYCg1iJEzt78GTEXALjPB1ZcR1Tn3hu9Dks+YARGRCl9+GrTE
-         0eY8eEHfmauSyxMRVxwGmi6KAaZaamP/4Nnc7p0e8Egxvztdtz/3VRuWIOIsBXEZe1t/
-         NvbfAjXV3/fw6xFDvFNxuNOVMLWIrjejbyzv2kxJkwq328zLOCPXKYV49SuxiEPSoqFC
-         US5DvslcrXyVCFxlcJ6Wh+SV6pHKVUmTQridm1KZLaWWcgvxMMUed3uNOveD6nxtGO2c
-         vueQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gj9Btx/jtZWCRzYf1e68GHq9hnNL+Ogbx99PZIgoB74=;
+        b=he4EegSmAY2zYl4r6S9HGzKLVkT8LcOlIiHygVYp7zaifYHKTOnLMI3o86dBf9LnbA
+         hNpn27eEyN+qjhPr4EWsh41NZcuWKx0QV/Lm3hbJvmg4w/a4SM3A6yP64JFNN7ArzrWN
+         LmBZN1YUxjOCOk3FCPXXbnD3ysP2yAjgaksZCoteXGH8VH61lmvwvYl8cSGa8tPvrlXr
+         xPan3agZZxXKJmJ5Js9Nz6/gSEQCRSxaaZuflHI0xI3I3tFi+kBW1X+kpQ85pzisWSZk
+         tKdYRCV0JX/Fq5SKy2oGR4hlkUeMEXHgWn14Ltr+Tbi08WwF6ZAeblRmiNNtO42MgwiT
+         kfCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=0bkKTyKYnhFPDlSX68YGNfeLYH++JQQQW+qUhMyZqg8=;
-        b=pjcw2wrsps0bDD0h6IlRJPs8rRyDQegA6uJ45WLoZatZi5sd/cyCSH7zqCwn3XihfD
-         DfJekFjxeb9su8s3mT/tJU5LL3HOrvJylNUUXAjSh3LAK9A008ckVljDKzAEIpJBRdXY
-         kqc3d8BAJfiXpcjCdNcEMOlpeh+rDEm62gJqwdxIW4EK6ne+KMljXYNz4R+SkjSUnylS
-         eo3SbGF7QIsI2o9M0Kf3Mm+Qxb8u85bTn1jC4owiPZkKeHyHUWwUJsSWkQfW86ayFIM7
-         dEjTD4v/wcJlF558Wc8pHfGvyubjUI75RMLse5llBCS2hlGjTuD4EzFy0YufsfZHFjHM
-         Sj4g==
-X-Gm-Message-State: APjAAAW65iStKaC7M4J7sRtgSFHutFmp717trlJqQ7Xm7NAw+DStGLXz
-        FiCv60RQGuTEcx4qJagERYDvHhM/ZMU=
-X-Google-Smtp-Source: APXvYqxTaej6US56dxAOlOzySYvZzu1OU1GiK24oDnA8nE3dQqCOUhAUTGzuQJKDp90IaIV1Jc5BpQ==
-X-Received: by 2002:a17:902:6b:: with SMTP id 98mr68384959pla.271.1558240984723;
-        Sat, 18 May 2019 21:43:04 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id j10sm14335787pgk.37.2019.05.18.21.43.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 18 May 2019 21:43:03 -0700 (PDT)
-Date:   Sat, 18 May 2019 21:43:02 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Gen Zhang <blackgod016574@gmail.com>
-cc:     iamjoonsoo.kim@lge.com, linux-kernel@vger.kernel.org
-Subject: Re: [Patch] slub: Fix a missing-check bug in mm/slub.c file of Linux
- 5.1.1
-In-Reply-To: <20190515064457.GA29939@zhanggen-UX430UQ>
-Message-ID: <alpine.DEB.2.21.1905182141280.180590@chino.kir.corp.google.com>
-References: <20190515064457.GA29939@zhanggen-UX430UQ>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gj9Btx/jtZWCRzYf1e68GHq9hnNL+Ogbx99PZIgoB74=;
+        b=qTd0Rf2xh2SHPyHWSVkS//kxGZNk9FDHOXm64JhKCbb1G0Nkj3/qiLa4sHcM3LYxat
+         lne4QRoEE42cnKyCGC/leqmfFDu+roPDe/inHicseOpGfoNVjJuyMJK5IRvpR28bUcM6
+         NEEleILLonIaDQlFD+4j+7QRYan22Ny20U8PZFqzG5zyUopsJKdZ6mru85buqoUILax1
+         CTp6wnbgLcgYgCBc/u9unW6feERKqX1DDMkNvINeH6O7JIdADhda/OktcJELjBh6Czsc
+         wcOkXBvHU2BTvooJMs/3ZUnS/0+j1PQO3N8UTuIZFDDoU6sYPpDqq6a9tXzRubB2fpvb
+         bu/A==
+X-Gm-Message-State: APjAAAW4FgkMKfWmTzfzdNVJjv3zvKby8S3iBFxXykoN7cAf2bVwgRb6
+        NR1FQcxQePJRS3ZKzc4aGOeTlk4gRRkZVfB4Hw2atFsk
+X-Google-Smtp-Source: APXvYqzKuIF7DjE9geOB0iP+nbKCvx7yts/nthzaKm8X4SzrLuLauoovdM83byX6mPO6HfMrjjhanslT2cwm2r59jc8=
+X-Received: by 2002:aca:ab07:: with SMTP id u7mr2335808oie.73.1558241173924;
+ Sat, 18 May 2019 21:46:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190517084739.GB20550@quack2.suse.cz> <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+ <201905170855.8E2E1AC616@keescook> <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+ <201905171225.29F9564BA2@keescook>
+In-Reply-To: <201905171225.29F9564BA2@keescook>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 18 May 2019 21:46:03 -0700
+Message-ID: <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 May 2019, Gen Zhang wrote:
+On Fri, May 17, 2019 at 12:25 PM Kees Cook <keescook@chromium.org> wrote:
+> On Fri, May 17, 2019 at 10:28:48AM -0700, Dan Williams wrote:
+> > It seems dax_iomap_actor() is not a path where we'd be worried about
+> > needing hardened user copy checks.
+>
+> I would agree: I think the proposed patch makes sense. :)
 
-> Pointer s is allocated with kmem_cache_zalloc(). And s is used in the 
-> follwoing codes. However, when kmem_cache_zalloc fails, using s will
-> cause null pointer dereference and the kernel will go wrong. Thus we 
-> check whether the kmem_cache_zalloc fails.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> 
-
-It's ok if we encounter a NULL pointer dereference here, if we are ENOMEM 
-then there is no way to initialize the slub allocator to be able to 
-perform any future memory allocation.  Returning an error code won't help.
-
-> ---
-> --- mm/slub.c
-> +++ mm/slub.c
-> @@ -4201,6 +4201,8 @@ static struct kmem_cache * __init bootst
->  {
->  	int node;
->  	struct kmem_cache *s = kmem_cache_zalloc(kmem_cache, GFP_NOWAIT);
-> +	if (!s)
-> +		return ERR_PTR(-ENOMEM);
->  	struct kmem_cache_node *n;
->  
->  	memcpy(s, static_cache, kmem_cache->object_size);
-
-It's not legal to mix declarations within the C code here.
+Sounds like an acked-by to me.
