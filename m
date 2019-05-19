@@ -2,63 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD6E2278C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B302275C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 18:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfESROh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:14:37 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45691 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfESROh (ORCPT
+        id S1726173AbfESQ6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 12:58:05 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39852 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfESQ6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:14:37 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a5so5572603pls.12
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:14:37 -0700 (PDT)
+        Sun, 19 May 2019 12:58:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id z26so6036797pfg.6
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 09:58:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=onWg9sXJkwr5YDouwUnwMigAm53+6Ypsow5mIz9jnVY=;
-        b=DsCB2O3R3rEIST8TFYsL76ySpcSxa2N2xCasptSobJ7Wpiu/A0m518d6+7QBQGFRRe
-         qxABKKsMQLE3ZKvSzzNSkx2REVO//M3z/mKDpfR607d35S9GYBB6N5kA581JGnG0E6lj
-         CU7RGFMW9ERAIRyjjRthI71b2jjKaLqFt9V5eh83suyYye+DNItxj6Y4E5c9f3BXD2sT
-         Mkc5b6dwGR83UGASHefQCGaQ60BpSmDuqnT2v2MQl5Y0YB55O4hz0pN34SosRhf+zf46
-         XfvPM1yT9Nm2gR4DiqvwStHv5/LBXhO/nFnI7r6+hMSerChNlgOPhVvFtCVaugpMc7/G
-         jp5w==
+        bh=uOHbz+DwgepgwTxMGLbqewLAE0oXzfTmrvtxmoDPPc0=;
+        b=nWgXoMfdrHftYK6fHFfMSoOKNLOH1lM+ykgVX+u9jyCWR1GGk1yqGG8Cx+dycje2v2
+         /hUfCupLxLQOYbw/dp+cjSQDHP5bNHKmug3EuniBORbOwGWX51e8Kn2u88DbQZLQINjn
+         nMrLm8+/emUYKMaN/CVozfh+DO7PZoUp8ayAwHJ+9zdWqzqnO18+dL8vWgJxV9TJMW+H
+         g4642uqH2WOCCHUrAPOuxoVAuV2SLneOkZOrxihf2m1ZXhH5dyhibRNyi9aRlcgxqi4N
+         ehhvFWU1lzCmaaoxVTe3QoYDBkN28FKd3BlihkBB5D2kffdZcloMvvs5OZRwAM1S4B73
+         TVqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=onWg9sXJkwr5YDouwUnwMigAm53+6Ypsow5mIz9jnVY=;
-        b=h71JJZJ5oYbrxhmZ3cwhdQIeiydnAtm0ADXiNMWIz5AIegNFYWMhizzZGkh5Grt7p3
-         OE5dHPw1njNAgNzs19O8SKauRTqEv62zQ+4HcHfL9dPunQm6jCgh9sHO6EQE5XH4YCq3
-         exP526fUxkDVSSnrCVt+VOOVml5KeM9x1fYgOW1wgGQ/HHFVkk9e/NEKLUOeHB9bcX6n
-         CCXRAHGtT1rJ8Dj3idYR4KuynZk3R8lflZcAfLLRznckiZ3Dq691t9HHFrKydwt+6m75
-         at99bUZUDcYxoOu0v73J9l3KiH1xaH6owc1RcHluhBVzk3Mcan/O3DCWVBsVWfYzZ3o6
-         l3lA==
-X-Gm-Message-State: APjAAAV88zELFnRzhss5WVNYpSzkKaxTEGqKrJbhZp0w2hfPQBnAtDVY
-        GSnbAGGdXbUNQ7sK3CpeyKYZfmx/
-X-Google-Smtp-Source: APXvYqyLtcTyGcxDncp6K5Uf7tQPnwHwO5gdsxW9nfOf4fMa5PVWAmaLsk5dmK4ctZrfjihhZ8UhOg==
-X-Received: by 2002:a17:902:6a83:: with SMTP id n3mr71412894plk.109.1558284291995;
-        Sun, 19 May 2019 09:44:51 -0700 (PDT)
+        bh=uOHbz+DwgepgwTxMGLbqewLAE0oXzfTmrvtxmoDPPc0=;
+        b=i8A913CsrpkLplJCTfGK4voqwutfdjlIBlnudZfBjqbneaIpQ0PRQkotyCQMunVJBX
+         hemG4fv8JJU6u2Hoz9SSNB/t8K/5xfahrZ9ZljIJdHqclQYWH0o3DoxTazaXmLKI0KdC
+         AFlqvDGBXEZSzVFc1q7D5/RDW3TT5IcKeqs2wZz8CFEMLJuL+akgCUZd0gqlrYVZB7hp
+         CImLXRr64PtgZlD0uYZDF5cNLOcW5lgBQrkREEc2zLOz+Iqxyg32ZykTYHZ8YxmWop4Y
+         d0uK5GTMnmVCvy+n8L9Tbka4l1kU14Q6D3vowZsMUySS4IDYidAnNlHZs4eHWvja2EmZ
+         fP5A==
+X-Gm-Message-State: APjAAAUqbGYTuaXKmyaSmpcLGNgXguw+V+wrWXjLa1+Mjzwei962lDRD
+        qKnTi2THX5h/69MIwxCzPZoA8Ayz
+X-Google-Smtp-Source: APXvYqyz0QIjyF3X+z2I2bbuS8+jmyk+CjlMiRgLJA/U9/2MWPtLXEYxMrTSTCsiwokGDoMYsnpjbA==
+X-Received: by 2002:a63:8449:: with SMTP id k70mr69468888pgd.53.1558285084642;
+        Sun, 19 May 2019 09:58:04 -0700 (PDT)
 Received: from hari-Inspiron-1545 ([183.83.92.73])
-        by smtp.gmail.com with ESMTPSA id q75sm21542256pfa.175.2019.05.19.09.44.48
+        by smtp.gmail.com with ESMTPSA id b16sm26112273pfd.12.2019.05.19.09.58.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 May 2019 09:44:51 -0700 (PDT)
-Date:   Sun, 19 May 2019 22:14:45 +0530
+        Sun, 19 May 2019 09:58:04 -0700 (PDT)
+Date:   Sun, 19 May 2019 22:27:58 +0530
 From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Anirudh Rayabharam <anirudh.rayabharam@gmail.com>,
-        Murray McAllister <murray.mcallister@insomniasec.com>,
-        Kimberly Brown <kimbrownkd@gmail.com>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
         Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: core: rtw_ap: fix Unneeded variable:
- "ret". Return "0"
-Message-ID: <20190519164445.GA5268@hari-Inspiron-1545>
+        Paolo Abeni <pabeni@redhat.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: os_dep: os_intfs: fix warning Unneeded
+ variable: "status". Return "_SUCCESS"
+Message-ID: <20190519165758.GA6375@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,63 +71,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch fixes below warnings reported by coccicheck
 
-drivers/staging/rtl8723bs/core/rtw_ap.c:1400:5-8: Unneeded variable:
-"ret". Return "0" on line 1441
-drivers/staging/rtl8723bs/core/rtw_ap.c:2195:5-8: Unneeded variable:
-"ret". Return "0" on line 2205
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:228:6-12: Unneeded variable:
+"status". Return "_SUCCESS" on line 333
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:607:4-7: Unneeded variable:
+"ret". Return "_SUCCESS" on line 669
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:713:4-8: Unneeded variable:
+"ret8". Return "_SUCCESS" on line 743
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:1379:5-8: Unneeded variable:
+"ret". Return "_SUCCESS" on line 1421
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:1429:5-8: Unneeded variable:
+"ret". Return "_SUCCESS" on line 1451
+drivers/staging/rtl8723bs/os_dep/os_intfs.c:1300:5-8: Unneeded variable:
+"ret". Return "_SUCCESS" on line 1368
 
 Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_ap.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/os_intfs.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index bc02306..a1b5ba4 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -1397,7 +1397,6 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
- int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
+diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
+index 8a9d838..71dfac5 100644
+--- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
++++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
+@@ -225,7 +225,6 @@ static int netdev_close (struct net_device *pnetdev);
+ 
+ static uint loadparam(struct adapter *padapter, _nic_hdl pnetdev)
  {
- 	struct list_head	*plist, *phead;
--	int ret = 0;
- 	struct rtw_wlan_acl_node *paclnode;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
-@@ -1438,7 +1437,7 @@ int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
+-	uint status = _SUCCESS;
+ 	struct registry_priv  *registry_par = &padapter->registrypriv;
  
- 	DBG_871X("%s, acl_num =%d\n", __func__, pacl_list->num);
+ 	registry_par->chip_version = (u8)rtw_chip_version;
+@@ -330,7 +329,7 @@ static uint loadparam(struct adapter *padapter, _nic_hdl pnetdev)
+ 	registry_par->qos_opt_enable = (u8)rtw_qos_opt_enable;
  
--	return ret;
-+	return 0;
+ 	registry_par->hiq_filter = (u8)rtw_hiq_filter;
+-	return status;
++	return _SUCCESS;
  }
  
- u8 rtw_ap_set_pairwise_key(struct adapter *padapter, struct sta_info *psta)
-@@ -2192,7 +2191,6 @@ u8 ap_free_sta(
- int rtw_sta_flush(struct adapter *padapter)
+ static int rtw_net_set_mac_address(struct net_device *pnetdev, void *p)
+@@ -603,7 +602,6 @@ void rtw_stop_drv_threads (struct adapter *padapter)
+ 
+ static u8 rtw_init_default_value(struct adapter *padapter)
  {
- 	struct list_head	*phead, *plist;
--	int ret = 0;
- 	struct sta_info *psta = NULL;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-@@ -2202,7 +2200,7 @@ int rtw_sta_flush(struct adapter *padapter)
- 	DBG_871X(FUNC_NDEV_FMT"\n", FUNC_NDEV_ARG(padapter->pnetdev));
- 
- 	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
--		return ret;
-+		return 0;
- 
- 	spin_lock_bh(&pstapriv->asoc_list_lock);
- 	phead = &pstapriv->asoc_list;
-@@ -2227,7 +2225,7 @@ int rtw_sta_flush(struct adapter *padapter)
- 
- 	associated_clients_update(padapter, true);
+-	u8 ret  = _SUCCESS;
+ 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
+ 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+@@ -665,7 +663,7 @@ static u8 rtw_init_default_value(struct adapter *padapter)
+ 	padapter->driver_ampdu_spacing = 0xFF;
+ 	padapter->driver_rx_ampdu_factor =  0xFF;
  
 -	return ret;
-+	return 0;
++	return _SUCCESS;
  }
  
- /* called > TSR LEVEL for USB or SDIO Interface*/
+ struct dvobj_priv *devobj_init(void)
+@@ -709,7 +707,6 @@ void devobj_deinit(struct dvobj_priv *pdvobj)
+ 
+ u8 rtw_reset_drv_sw(struct adapter *padapter)
+ {
+-	u8 ret8 = _SUCCESS;
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	struct pwrctrl_priv *pwrctrlpriv = adapter_to_pwrctl(padapter);
+ 
+@@ -739,7 +736,7 @@ u8 rtw_reset_drv_sw(struct adapter *padapter)
+ 
+ 	rtw_set_signal_stat_timer(&padapter->recvpriv);
+ 
+-	return ret8;
++	return _SUCCESS;
+ }
+ 
+ 
+@@ -1296,7 +1293,6 @@ int rtw_suspend_wow(struct adapter *padapter)
+ 	struct net_device *pnetdev = padapter->pnetdev;
+ 	struct pwrctrl_priv *pwrpriv = adapter_to_pwrctl(padapter);
+ 	struct wowlan_ioctl_param poidparam;
+-	int ret = _SUCCESS;
+ 
+ 	DBG_871X("==> " FUNC_ADPT_FMT " entry....\n", FUNC_ADPT_ARG(padapter));
+ 
+@@ -1364,7 +1360,7 @@ int rtw_suspend_wow(struct adapter *padapter)
+ 		DBG_871X_LEVEL(_drv_always_, "%s: ### ERROR ### wowlan_mode =%d\n", __func__, pwrpriv->wowlan_mode);
+ 	}
+ 	DBG_871X("<== " FUNC_ADPT_FMT " exit....\n", FUNC_ADPT_ARG(padapter));
+-	return ret;
++	return _SUCCESS;
+ }
+ #endif /* ifdef CONFIG_WOWLAN */
+ 
+@@ -1375,7 +1371,6 @@ int rtw_suspend_ap_wow(struct adapter *padapter)
+ 	struct net_device *pnetdev = padapter->pnetdev;
+ 	struct pwrctrl_priv *pwrpriv = adapter_to_pwrctl(padapter);
+ 	struct wowlan_ioctl_param poidparam;
+-	int ret = _SUCCESS;
+ 
+ 	DBG_871X("==> " FUNC_ADPT_FMT " entry....\n", FUNC_ADPT_ARG(padapter));
+ 
+@@ -1417,7 +1412,7 @@ int rtw_suspend_ap_wow(struct adapter *padapter)
+ 	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, 0, "AP-WOWLAN");
+ 
+ 	DBG_871X("<== " FUNC_ADPT_FMT " exit....\n", FUNC_ADPT_ARG(padapter));
+-	return ret;
++	return _SUCCESS;
+ }
+ #endif /* ifdef CONFIG_AP_WOWLAN */
+ 
+@@ -1425,7 +1420,6 @@ int rtw_suspend_ap_wow(struct adapter *padapter)
+ static int rtw_suspend_normal(struct adapter *padapter)
+ {
+ 	struct net_device *pnetdev = padapter->pnetdev;
+-	int ret = _SUCCESS;
+ 
+ 	DBG_871X("==> " FUNC_ADPT_FMT " entry....\n", FUNC_ADPT_ARG(padapter));
+ 	if (pnetdev) {
+@@ -1447,7 +1441,7 @@ static int rtw_suspend_normal(struct adapter *padapter)
+ 		padapter->intf_deinit(adapter_to_dvobj(padapter));
+ 
+ 	DBG_871X("<== " FUNC_ADPT_FMT " exit....\n", FUNC_ADPT_ARG(padapter));
+-	return ret;
++	return _SUCCESS;
+ }
+ 
+ int rtw_suspend_common(struct adapter *padapter)
 -- 
 2.7.4
 
