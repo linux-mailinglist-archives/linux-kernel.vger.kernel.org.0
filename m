@@ -2,85 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06399227A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B87622772
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfESRWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:22:18 -0400
-Received: from sauhun.de ([88.99.104.3]:44792 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbfESRWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:22:17 -0400
-Received: from localhost (p5486CF3F.dip0.t-ipconnect.de [84.134.207.63])
-        by pokefinder.org (Postfix) with ESMTPSA id AA86B2C36A9;
-        Sun, 19 May 2019 11:06:42 +0200 (CEST)
-Date:   Sun, 19 May 2019 11:06:42 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        linux-rockchip@lists.infradead.org,
-        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
-        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Jiong Wu <lohengrin1024@gmail.com>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Avri Altman <avri.altman@wdc.com>, Martin Hicks <mort@bork.org>
-Subject: Re: [PATCH 2/3] mmc: core: API for temporarily disabling
- auto-retuning due to errors
-Message-ID: <20190519090642.GA2279@kunai>
-References: <20190517225420.176893-1-dianders@chromium.org>
- <20190517225420.176893-3-dianders@chromium.org>
+        id S1726622AbfESREY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:04:24 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53536 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725777AbfESREX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:04:23 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6CEBF1A028E709A6FC32;
+        Sun, 19 May 2019 17:13:54 +0800 (CST)
+Received: from [127.0.0.1] (10.184.191.73) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 May 2019
+ 17:13:47 +0800
+To:     <davem@davemloft.net>, <willemdebruijn.kernel@gmail.com>,
+        <jon.maloy@ericsson.com>, <ying.xue@windriver.com>,
+        <sfr@canb.auug.org.au>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        <tipc-discussion@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <mingfangsen@huawei.com>
+From:   hujunwei <hujunwei4@huawei.com>
+Subject: [PATCH v3] tipc: fix modprobe tipc failed after switch order of
+ device registration
+Message-ID: <529aff15-5f3a-1bf1-76fa-691911ff6170@huawei.com>
+Date:   Sun, 19 May 2019 17:13:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
-Content-Disposition: inline
-In-Reply-To: <20190517225420.176893-3-dianders@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.191.73]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Junwei Hu <hujunwei4@huawei.com>
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Error message printed:
+modprobe: ERROR: could not insert 'tipc': Address family not
+supported by protocol.
+when modprobe tipc after the following patch: switch order of
+device registration, commit 7e27e8d6130c
+("tipc: switch order of device registration to fix a crash")
 
+Because sock_create_kern(net, AF_TIPC, ...) called by
+tipc_topsrv_create_listener() in the initialization process
+of tipc_init_net(), so tipc_socket_init() must be execute before that.
+Meanwhile, tipc_net_id need to be initialized when sock_create()
+called, and tipc_socket_init() is no need to be called for each namespace.
 
-> Let's add an API that the SDIO card drivers can call that will
-> temporarily disable the auto-tuning functionality.  Then we can add a
-> call to this in the Broadcom WiFi driver and any other driver that
-> might have similar needs.
+I add a variable tipc_topsrv_net_ops, and split the
+register_pernet_subsys() of tipc into two parts, and split
+tipc_socket_init() with initialization of pernet params.
 
-Can't you fix the WiFi driver to return something else than -EILSEQ
-before calling mmc_request_done() to skip the retuning?
+By the way, I fixed resources rollback error when tipc_bcast_init()
+failed in tipc_init_net().
 
+Fixes: 7e27e8d6130c
+("tipc: switch order of device registration to fix a crash")
+Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
+Reported-by: Wang Wang <wangwang2@huawei.com>
+Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
+Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
+Reviewed-by: Suanming Mou <mousuanming@huawei.com>
+---
+V1->V2:
+- split the register_pernet_subsys() of tipc into two parts
+V2->V3:
+- update Reported-by
+---
+ net/tipc/core.c   | 18 ++++++++++++------
+ net/tipc/subscr.h |  5 +++--
+ net/tipc/topsrv.c | 14 ++++++++++++--
+ 3 files changed, 27 insertions(+), 10 deletions(-)
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/net/tipc/core.c b/net/tipc/core.c
+index ddd2e0f67c07..ed536c05252a 100644
+--- a/net/tipc/core.c
++++ b/net/tipc/core.c
+@@ -77,9 +77,6 @@ static int __net_init tipc_init_net(struct net *net)
+ 		goto out_nametbl;
 
------BEGIN PGP SIGNATURE-----
+ 	INIT_LIST_HEAD(&tn->dist_queue);
+-	err = tipc_topsrv_start(net);
+-	if (err)
+-		goto out_subscr;
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzhHJ4ACgkQFA3kzBSg
-KbbeARAAjRwuYMVRg9/KiLaxQrOgOKoCgflbt6sCKz+IWQYwpHqy/NMeXxogeaZp
-y/kpClhWulThbXbH5kiV59qh55aSNFsNM0yA+IZFwbye0fKtXEtkJIjBVAOfQDdz
-PY2Jx2nNSJWWJeUzcfbW1LwvygH2a3Hon2p1/UubaqYvLPoZPCZmwVC/1LFdJPPN
-fv2uN5ukpVcfmNBSbQUUaoMPZp6oeuAxHa1+58aQzpCMo3h329ERrcgkDDcw4WP9
-K20azhSC961CnA7Syj84BsmlMnARaCyZ9S8atXXCtX6R5hbgUXLkBIcqtbfB+npd
-j0sTjbHGDh7eaQ0l14Xh3FVSeHZiepGlupQ1wW6HuHkR1Be1mL6nEdCvSqT0mNHf
-TsHkuq9Loh/95/eInWqtpGVM2XOpwDkN8czDOwwiO4ejRHaIEaoZX6FWeV80lDnX
-emtFSLifF0VaH5GqM4HwOu3iXFBxpuj6zwnADaxYZqwnFNyi0+nvhp9W2tHyaLey
-fcB6sw/i+2Knu5k2JnaSHZutc2hqY6lhoLaJyjQKMfk2fxRBmdimnt3u6bNV9U+N
-Qo4IQM5w5wgRGUbUAcfo9/aLXnEdVbEuSy6QJdLgp7pZUBaIj4c5U7XROP6RQRFJ
-6XB4ckAS0xBjDQ/mFNM/W2+Keu+9dcqNtDrAEn3vchAKecUJdO0=
-=k7qP
------END PGP SIGNATURE-----
+ 	err = tipc_bcast_init(net);
+ 	if (err)
+@@ -88,8 +85,6 @@ static int __net_init tipc_init_net(struct net *net)
+ 	return 0;
 
---envbJBWh7q8WU6mo--
+ out_bclink:
+-	tipc_bcast_stop(net);
+-out_subscr:
+ 	tipc_nametbl_stop(net);
+ out_nametbl:
+ 	tipc_sk_rht_destroy(net);
+@@ -99,7 +94,6 @@ static int __net_init tipc_init_net(struct net *net)
+
+ static void __net_exit tipc_exit_net(struct net *net)
+ {
+-	tipc_topsrv_stop(net);
+ 	tipc_net_stop(net);
+ 	tipc_bcast_stop(net);
+ 	tipc_nametbl_stop(net);
+@@ -113,6 +107,11 @@ static struct pernet_operations tipc_net_ops = {
+ 	.size = sizeof(struct tipc_net),
+ };
+
++static struct pernet_operations tipc_topsrv_net_ops = {
++	.init = tipc_topsrv_init_net,
++	.exit = tipc_topsrv_exit_net,
++};
++
+ static int __init tipc_init(void)
+ {
+ 	int err;
+@@ -143,6 +142,10 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_socket;
+
++	err = register_pernet_subsys(&tipc_topsrv_net_ops);
++	if (err)
++		goto out_pernet_topsrv;
++
+ 	err = tipc_bearer_setup();
+ 	if (err)
+ 		goto out_bearer;
+@@ -150,6 +153,8 @@ static int __init tipc_init(void)
+ 	pr_info("Started in single node mode\n");
+ 	return 0;
+ out_bearer:
++	unregister_pernet_subsys(&tipc_topsrv_net_ops);
++out_pernet_topsrv:
+ 	tipc_socket_stop();
+ out_socket:
+ 	unregister_pernet_subsys(&tipc_net_ops);
+@@ -167,6 +172,7 @@ static int __init tipc_init(void)
+ static void __exit tipc_exit(void)
+ {
+ 	tipc_bearer_cleanup();
++	unregister_pernet_subsys(&tipc_topsrv_net_ops);
+ 	tipc_socket_stop();
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ 	tipc_netlink_stop();
+diff --git a/net/tipc/subscr.h b/net/tipc/subscr.h
+index d793b4343885..aa015c233898 100644
+--- a/net/tipc/subscr.h
++++ b/net/tipc/subscr.h
+@@ -77,8 +77,9 @@ void tipc_sub_report_overlap(struct tipc_subscription *sub,
+ 			     u32 found_lower, u32 found_upper,
+ 			     u32 event, u32 port, u32 node,
+ 			     u32 scope, int must);
+-int tipc_topsrv_start(struct net *net);
+-void tipc_topsrv_stop(struct net *net);
++
++int __net_init tipc_topsrv_init_net(struct net *net);
++void __net_exit tipc_topsrv_exit_net(struct net *net);
+
+ void tipc_sub_put(struct tipc_subscription *subscription);
+ void tipc_sub_get(struct tipc_subscription *subscription);
+diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
+index b45932d78004..f345662890a6 100644
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -635,7 +635,7 @@ static void tipc_topsrv_work_stop(struct tipc_topsrv *s)
+ 	destroy_workqueue(s->send_wq);
+ }
+
+-int tipc_topsrv_start(struct net *net)
++static int tipc_topsrv_start(struct net *net)
+ {
+ 	struct tipc_net *tn = tipc_net(net);
+ 	const char name[] = "topology_server";
+@@ -668,7 +668,7 @@ int tipc_topsrv_start(struct net *net)
+ 	return ret;
+ }
+
+-void tipc_topsrv_stop(struct net *net)
++static void tipc_topsrv_stop(struct net *net)
+ {
+ 	struct tipc_topsrv *srv = tipc_topsrv(net);
+ 	struct socket *lsock = srv->listener;
+@@ -693,3 +693,13 @@ void tipc_topsrv_stop(struct net *net)
+ 	idr_destroy(&srv->conn_idr);
+ 	kfree(srv);
+ }
++
++int __net_init tipc_topsrv_init_net(struct net *net)
++{
++	return tipc_topsrv_start(net);
++}
++
++void __net_exit tipc_topsrv_exit_net(struct net *net)
++{
++	tipc_topsrv_stop(net);
++}
+-- 
+2.21.GIT
+
