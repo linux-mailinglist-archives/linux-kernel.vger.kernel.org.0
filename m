@@ -2,109 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5B82277C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:07:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD1F22788
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfESRHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:07:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfESRHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:07:21 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 261A121773;
-        Sun, 19 May 2019 11:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558264144;
-        bh=EWgtkwVlfGD1NpiyhG72Pl8PdGw5ndsf4DuG+VXBfoQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SU6WiHoGoZwJA0tSPSr8Ct/WNAg1LtBoU6srRdyCmijlkebPylyz4FaGaB3XPni5e
-         3IYxkD1ZBKMrCjjzwLIpMg3xsk8CW+vwXEt/hC9rVDq4QVdm95e5JGj05RMiX1jJZn
-         KruLdpWUU8gLN7dBNDKMrc8SYGvZisuKG077+660=
-Date:   Sun, 19 May 2019 12:09:00 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     =?UTF-8?B?Sm/Do28=?= Seckler <joaoseckler@gmail.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: ad7746: add device tree support
-Message-ID: <20190519120900.3bef9481@archlinux>
-In-Reply-To: <20190519120250.4644c255@archlinux>
-References: <20190518222733.2ttcgvy7fct4awra@smtp.gmail.com>
-        <20190519120250.4644c255@archlinux>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S1727090AbfESRM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:12:27 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55274 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfESRM0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:12:26 -0400
+Received: by mail-wm1-f67.google.com with SMTP id i3so10975065wml.4
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EFKYpxqjUgA8HzBjiRCRwuGMXowQ2+hz3v8LScRXBnk=;
+        b=XH2H0sZvvAQy/qBRtlQscFZeOSj54hKcB57GEOQbYorOgNMmEyyUy1+3lpu5Hh5mPY
+         k5k3/VDSYnUv2FZrHGLAxtY57c3GFYJXx6/2YcFBd74XcVVp7yJi3sbmigns5JS3sv1X
+         nziYkoPMEDPP0caS76UCI+RZ+SdZBV2d/hNpYsd07+sBBbc0aRA/+hXBsLXlI1et+DeG
+         n9DpdcoEsvocotRXhKnmRslqezZ2G3X8OxmAQQBDXMKNQaL4v+MqwRPTv6KP2J+9iKuH
+         IPTo1oIYap7QrsBNeA+HVDHF+C4JZIZ0qEcrJZzAWAV5uMNDLsmrj9tHK0k8YkEJf2eO
+         +qgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EFKYpxqjUgA8HzBjiRCRwuGMXowQ2+hz3v8LScRXBnk=;
+        b=bsLv24rlL9Q7JzBC7qXvEzsPR3maiGkr6GtNZ002D6hOAE2YJdfLqjY1eaXpZJjkTG
+         A3gAi4pq8CrLL0FOrOwaKxa9f9QS+suLHews/UlpsQDHqELL3UBCzpSowN1GFbAHhB4c
+         Bqw9LG449/Xj5vJyk4VTeU2deH0H3hgIOmnTc/OXLzB8LOKymLTuYPEBVasnIV5jEhKv
+         Sk/anbS34RcxfAl8RtzlYLOyqz/U50cF/su+VIkXqRVMCuN1iDC0ZIWma1sS/2mLeJ46
+         SNGTynAex34qDjqH/p+tuxxZKphO5L5mzW7GSxjRlzpubmIhbHvxU1QBMPzR7VyjnBws
+         BY5w==
+X-Gm-Message-State: APjAAAXokvEgDjKHyJBt2LcHL4Ll1Ryhe3jNXM1dWfCRbGt1+j0mxapw
+        cp8K+MsuMjChdO6mmWuF92AxGVq3
+X-Google-Smtp-Source: APXvYqwH90bJYZgc5/3UxmkH9HSBXjCEauN9/++rWvVnzze+b1QnrrHaZSJh34VdL3I6q0Mg5rxl1Q==
+X-Received: by 2002:a05:600c:10ca:: with SMTP id l10mr14088433wmd.23.1558264364289;
+        Sun, 19 May 2019 04:12:44 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id s3sm26612570wre.97.2019.05.19.04.12.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 04:12:43 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org
+Subject: [PATCH 1/2] habanalabs: support device memory memset > 4GB
+Date:   Sun, 19 May 2019 14:12:40 +0300
+Message-Id: <20190519111241.23359-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 19 May 2019 12:02:50 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+This patch adds support to the goya memset function to perform memset to
+device memory with size larger then 4GB. In this case, we need to use
+multiple LIN_DMA packets because a single packet supports up to 4GB.
 
-> On Sat, 18 May 2019 19:27:33 -0300
-> Jo=C3=A3o Seckler <joaoseckler@gmail.com> wrote:
->=20
-> > Add a of_device_id struct variable and subsequent call to
-> > MODULE_DEVICE_TABLE macro to support device tree.
-> >=20
-> > Signed-off-by: Jo=C3=A3o Seckler <joaoseckler@gmail.com>
-> > Signed-off-by: Lucas Oshiro <lucasseikioshiro@gmail.com>
-> > Co-developed-by: Lucas Oshiro <lucasseikioshiro@gmail.com> =20
-> Applied to the togreg branch of iio.git and pushed out as testing
-> for the autobuilders to play with it.
->=20
-> For a future improvement, try to explain the 'why' rather than
-> 'what' of a patch in the description.   This particular change
-> is so common I don't mind that much, but it is a good habit to
-> get into!
-Ah, you do say to support device tree at the end, but more
-detail on that would have been good!
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/goya/goya.c | 49 ++++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-Thanks,
-
-J
->=20
-> Thanks,
->=20
-> Jonathan
-> > ---
-> >  drivers/staging/iio/cdc/ad7746.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >=20
-> > diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc=
-/ad7746.c
-> > index 47610d863908..21527d84f940 100644
-> > --- a/drivers/staging/iio/cdc/ad7746.c
-> > +++ b/drivers/staging/iio/cdc/ad7746.c
-> > @@ -748,9 +748,19 @@ static const struct i2c_device_id ad7746_id[] =3D {
-> > =20
-> >  MODULE_DEVICE_TABLE(i2c, ad7746_id);
-> > =20
-> > +static const struct of_device_id ad7746_of_match[] =3D {
-> > +	{ .compatible =3D "adi,ad7745" },
-> > +	{ .compatible =3D "adi,ad7746" },
-> > +	{ .compatible =3D "adi,ad7747" },
-> > +	{ },
-> > +};
-> > +
-> > +MODULE_DEVICE_TABLE(of, ad7746_of_match);
-> > +
-> >  static struct i2c_driver ad7746_driver =3D {
-> >  	.driver =3D {
-> >  		.name =3D KBUILD_MODNAME,
-> > +		.of_match_table =3D ad7746_of_match,
-> >  	},
-> >  	.probe =3D ad7746_probe,
-> >  	.id_table =3D ad7746_id, =20
->=20
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index be27ec6cf5fd..6ee5db697ca5 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -4478,36 +4478,47 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	return goya->events_stat;
+ }
+ 
+-static int goya_memset_device_memory(struct hl_device *hdev, u64 addr, u32 size,
++static int goya_memset_device_memory(struct hl_device *hdev, u64 addr, u64 size,
+ 				u64 val, bool is_dram)
+ {
+ 	struct packet_lin_dma *lin_dma_pkt;
+ 	struct hl_cs_job *job;
+ 	u32 cb_size, ctl;
+ 	struct hl_cb *cb;
+-	int rc;
++	int rc, lin_dma_pkts_cnt;
+ 
+-	cb = hl_cb_kernel_create(hdev, PAGE_SIZE);
++	lin_dma_pkts_cnt = DIV_ROUND_UP_ULL(size, SZ_2G);
++	cb_size = lin_dma_pkts_cnt * sizeof(struct packet_lin_dma) +
++						sizeof(struct packet_msg_prot);
++	cb = hl_cb_kernel_create(hdev, cb_size);
+ 	if (!cb)
+-		return -EFAULT;
++		return -ENOMEM;
+ 
+ 	lin_dma_pkt = (struct packet_lin_dma *) (uintptr_t) cb->kernel_address;
+ 
+-	memset(lin_dma_pkt, 0, sizeof(*lin_dma_pkt));
+-	cb_size = sizeof(*lin_dma_pkt);
+-
+-	ctl = ((PACKET_LIN_DMA << GOYA_PKT_CTL_OPCODE_SHIFT) |
+-			(1 << GOYA_PKT_LIN_DMA_CTL_MEMSET_SHIFT) |
+-			(1 << GOYA_PKT_LIN_DMA_CTL_WO_SHIFT) |
+-			(1 << GOYA_PKT_CTL_RB_SHIFT) |
+-			(1 << GOYA_PKT_CTL_MB_SHIFT));
+-	ctl |= (is_dram ? DMA_HOST_TO_DRAM : DMA_HOST_TO_SRAM) <<
+-			GOYA_PKT_LIN_DMA_CTL_DMA_DIR_SHIFT;
+-	lin_dma_pkt->ctl = cpu_to_le32(ctl);
++	do {
++		memset(lin_dma_pkt, 0, sizeof(*lin_dma_pkt));
++
++		ctl = ((PACKET_LIN_DMA << GOYA_PKT_CTL_OPCODE_SHIFT) |
++				(1 << GOYA_PKT_LIN_DMA_CTL_MEMSET_SHIFT) |
++				(1 << GOYA_PKT_LIN_DMA_CTL_WO_SHIFT) |
++				(1 << GOYA_PKT_CTL_RB_SHIFT) |
++				(1 << GOYA_PKT_CTL_MB_SHIFT));
++		ctl |= (is_dram ? DMA_HOST_TO_DRAM : DMA_HOST_TO_SRAM) <<
++				GOYA_PKT_LIN_DMA_CTL_DMA_DIR_SHIFT;
++		lin_dma_pkt->ctl = cpu_to_le32(ctl);
++
++		lin_dma_pkt->src_addr = cpu_to_le64(val);
++		lin_dma_pkt->dst_addr = cpu_to_le64(addr);
++		if (lin_dma_pkts_cnt > 1)
++			lin_dma_pkt->tsize = cpu_to_le32(SZ_2G);
++		else
++			lin_dma_pkt->tsize = cpu_to_le32(size);
+ 
+-	lin_dma_pkt->src_addr = cpu_to_le64(val);
+-	lin_dma_pkt->dst_addr = cpu_to_le64(addr);
+-	lin_dma_pkt->tsize = cpu_to_le32(size);
++		size -= SZ_2G;
++		addr += SZ_2G;
++		lin_dma_pkt++;
++	} while (--lin_dma_pkts_cnt);
+ 
+ 	job = hl_cs_allocate_job(hdev, true);
+ 	if (!job) {
+@@ -4522,7 +4533,7 @@ static int goya_memset_device_memory(struct hl_device *hdev, u64 addr, u32 size,
+ 	job->user_cb_size = cb_size;
+ 	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
+ 	job->patched_cb = job->user_cb;
+-	job->job_cb_size = job->user_cb_size + sizeof(struct packet_msg_prot);
++	job->job_cb_size = job->user_cb_size;
+ 
+ 	hl_debugfs_add_job(hdev, job);
+ 
+-- 
+2.17.1
 
