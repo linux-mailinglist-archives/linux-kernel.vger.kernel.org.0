@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2D32277A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD6E2278C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfESRGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:06:45 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45301 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfESRGp (ORCPT
+        id S1727008AbfESROh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:14:37 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45691 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfESROh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:06:45 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i21so5595385pgi.12
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:06:45 -0700 (PDT)
+        Sun, 19 May 2019 13:14:37 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a5so5572603pls.12
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:14:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=w75P38v9z8QHVdxS6R3Brz2jpMYqR+5eP/w8pQb1nPA=;
-        b=myLhk+2HXFCrC8o/7PfbYOhTcA2jCqzU4GnMO+/qE7+tzW5/ihlU7K3wVqAd3P3qFp
-         xICCMbgzhgD631AA2NeQrSpXLwscwnDUO0aBm5iHLE0zRWfGzEbHCzknrCjQkhuHMmxX
-         hGH4+kQwZHWBpzmD1p050soj0o6GVYepZs0Mw=
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=onWg9sXJkwr5YDouwUnwMigAm53+6Ypsow5mIz9jnVY=;
+        b=DsCB2O3R3rEIST8TFYsL76ySpcSxa2N2xCasptSobJ7Wpiu/A0m518d6+7QBQGFRRe
+         qxABKKsMQLE3ZKvSzzNSkx2REVO//M3z/mKDpfR607d35S9GYBB6N5kA581JGnG0E6lj
+         CU7RGFMW9ERAIRyjjRthI71b2jjKaLqFt9V5eh83suyYye+DNItxj6Y4E5c9f3BXD2sT
+         Mkc5b6dwGR83UGASHefQCGaQ60BpSmDuqnT2v2MQl5Y0YB55O4hz0pN34SosRhf+zf46
+         XfvPM1yT9Nm2gR4DiqvwStHv5/LBXhO/nFnI7r6+hMSerChNlgOPhVvFtCVaugpMc7/G
+         jp5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=w75P38v9z8QHVdxS6R3Brz2jpMYqR+5eP/w8pQb1nPA=;
-        b=SnWJVjjhxxwJVdJ2O0CTS8kj+Io9g+ECTapGXSp6ul8EGMZby6/r0hm7gxpA5GSvHQ
-         zHUqVOGKXOpRUCCne2YI+mhZ02qbvNYH7y7xGxc2wXR6/rasursAuMSa7/AOyQSRm7NP
-         gwalcvyprN/ycPPT5kLsIte307ZtCBzC0isM8fGPeeLm0TXcrDJ/GwfaHKQjkXKAbm/k
-         mNLQlX81BNXHqlxawacn4wZfkk7k81E9o2epFAMF1lPi067p0I3bvewhKCaSU91kl5tE
-         mR3az8pIvpiUThynMh7kZdt+LNTsfxuGkDkk28a9yrqUQK7h8iLRIGJ9dAqASgqWC9lP
-         C16A==
-X-Gm-Message-State: APjAAAWaKbKo9YD/0P11UgXYRN4pBeZ+I98XhO/j8YidJkVfIoPASJHk
-        FXEaHO37+JlP9JZ4Il8gEELRlYBacfJaug==
-X-Google-Smtp-Source: APXvYqwrm3lDeGRnJx7g5EY5lJ5ZBzglEq7ClMbsGc6X8fVoF80Kv6SGb8mBvxA9elUTdo5UIIKIrw==
-X-Received: by 2002:a63:6884:: with SMTP id d126mr70417545pgc.154.1558281916225;
-        Sun, 19 May 2019 09:05:16 -0700 (PDT)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id b23sm17547007pfi.6.2019.05.19.09.05.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 19 May 2019 09:05:15 -0700 (PDT)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v4 3/3] arm64: kexec_file: add rng-seed support
-Date:   Mon, 20 May 2019 00:04:46 +0800
-Message-Id: <20190519160446.320-3-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190519160446.320-1-hsinyi@chromium.org>
-References: <20190519160446.320-1-hsinyi@chromium.org>
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=onWg9sXJkwr5YDouwUnwMigAm53+6Ypsow5mIz9jnVY=;
+        b=h71JJZJ5oYbrxhmZ3cwhdQIeiydnAtm0ADXiNMWIz5AIegNFYWMhizzZGkh5Grt7p3
+         OE5dHPw1njNAgNzs19O8SKauRTqEv62zQ+4HcHfL9dPunQm6jCgh9sHO6EQE5XH4YCq3
+         exP526fUxkDVSSnrCVt+VOOVml5KeM9x1fYgOW1wgGQ/HHFVkk9e/NEKLUOeHB9bcX6n
+         CCXRAHGtT1rJ8Dj3idYR4KuynZk3R8lflZcAfLLRznckiZ3Dq691t9HHFrKydwt+6m75
+         at99bUZUDcYxoOu0v73J9l3KiH1xaH6owc1RcHluhBVzk3Mcan/O3DCWVBsVWfYzZ3o6
+         l3lA==
+X-Gm-Message-State: APjAAAV88zELFnRzhss5WVNYpSzkKaxTEGqKrJbhZp0w2hfPQBnAtDVY
+        GSnbAGGdXbUNQ7sK3CpeyKYZfmx/
+X-Google-Smtp-Source: APXvYqyLtcTyGcxDncp6K5Uf7tQPnwHwO5gdsxW9nfOf4fMa5PVWAmaLsk5dmK4ctZrfjihhZ8UhOg==
+X-Received: by 2002:a17:902:6a83:: with SMTP id n3mr71412894plk.109.1558284291995;
+        Sun, 19 May 2019 09:44:51 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id q75sm21542256pfa.175.2019.05.19.09.44.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 09:44:51 -0700 (PDT)
+Date:   Sun, 19 May 2019 22:14:45 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Anirudh Rayabharam <anirudh.rayabharam@gmail.com>,
+        Murray McAllister <murray.mcallister@insomniasec.com>,
+        Kimberly Brown <kimbrownkd@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: core: rtw_ap: fix Unneeded variable:
+ "ret". Return "0"
+Message-ID: <20190519164445.GA5268@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding "rng-seed" to dtb. It's fine to add this property if original
-fdt doesn't contain it. Since original seed will be deleted after
-read, so use a default size 128 bytes here.
+This patch fixes below warnings reported by coccicheck
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
----
-* Will add corresponding part to userspace kexec-tools if this is accepted.
----
- arch/arm64/kernel/machine_kexec_file.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+drivers/staging/rtl8723bs/core/rtw_ap.c:1400:5-8: Unneeded variable:
+"ret". Return "0" on line 1441
+drivers/staging/rtl8723bs/core/rtw_ap.c:2195:5-8: Unneeded variable:
+"ret". Return "0" on line 2205
 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 58871333737a..d40fde72a023 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -27,6 +27,8 @@
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
- #define FDT_PROP_KASLR_SEED	"kaslr-seed"
-+#define FDT_PROP_RNG_SEED	"rng-seed"
-+#define RNG_SEED_SIZE		128
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_ap.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+index bc02306..a1b5ba4 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ap.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+@@ -1397,7 +1397,6 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
+ int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
+ {
+ 	struct list_head	*plist, *phead;
+-	int ret = 0;
+ 	struct rtw_wlan_acl_node *paclnode;
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
+@@ -1438,7 +1437,7 @@ int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
  
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
-@@ -102,6 +104,23 @@ static int setup_dtb(struct kimage *image,
- 				FDT_PROP_KASLR_SEED);
- 	}
+ 	DBG_871X("%s, acl_num =%d\n", __func__, pacl_list->num);
  
-+	/* add rng-seed */
-+	if (rng_is_initialized()) {
-+		void *rng_seed = kmalloc(RNG_SEED_SIZE, GFP_ATOMIC);
-+		get_random_bytes(rng_seed, RNG_SEED_SIZE);
-+
-+		ret = fdt_setprop(dtb, off, FDT_PROP_RNG_SEED, rng_seed,
-+				RNG_SEED_SIZE);
-+		kfree(rng_seed);
-+
-+		if (ret)
-+			goto out;
-+
-+	} else {
-+		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
-+				FDT_PROP_RNG_SEED);
-+	}
-+
- out:
- 	if (ret)
- 		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
-@@ -110,7 +129,8 @@ static int setup_dtb(struct kimage *image,
+-	return ret;
++	return 0;
  }
  
- /*
-- * More space needed so that we can add initrd, bootargs and kaslr-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed, and
-+ * rng-seed.
-  */
- #define DTB_EXTRA_SPACE 0x1000
+ u8 rtw_ap_set_pairwise_key(struct adapter *padapter, struct sta_info *psta)
+@@ -2192,7 +2191,6 @@ u8 ap_free_sta(
+ int rtw_sta_flush(struct adapter *padapter)
+ {
+ 	struct list_head	*phead, *plist;
+-	int ret = 0;
+ 	struct sta_info *psta = NULL;
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+@@ -2202,7 +2200,7 @@ int rtw_sta_flush(struct adapter *padapter)
+ 	DBG_871X(FUNC_NDEV_FMT"\n", FUNC_NDEV_ARG(padapter->pnetdev));
  
+ 	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
+-		return ret;
++		return 0;
+ 
+ 	spin_lock_bh(&pstapriv->asoc_list_lock);
+ 	phead = &pstapriv->asoc_list;
+@@ -2227,7 +2225,7 @@ int rtw_sta_flush(struct adapter *padapter)
+ 
+ 	associated_clients_update(padapter, true);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ /* called > TSR LEVEL for USB or SDIO Interface*/
 -- 
-2.20.1
+2.7.4
 
