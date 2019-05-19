@@ -2,179 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD0322761
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 18:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 188C0227E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfESQ72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 12:59:28 -0400
-Received: from vps.xff.cz ([195.181.215.36]:43092 "EHLO vps.xff.cz"
+        id S1727623AbfESRmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:42:18 -0400
+Received: from sauhun.de ([88.99.104.3]:44874 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbfESQ72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 12:59:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1558274063; bh=lXTBePQTd66A2iS+g6VRPcxOuAD2+KiPtXMZZvonC7Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=neK8JtgsXP3XLtC81Zyx6VE8nBcKHll5MldQfBfDf7T2/nzOZo+FNT3sptDKnPgmE
-         Tt9Ugu3Y18OSBH3bCGeTdfE5HCGy/zLHCqWsBwzWotZHkiMyMJLnxvgwh7af1zsLbg
-         P0RKVp9/xpl+lcEUJIMHU/qO5UIlr2qwLZsQPHUU=
-Date:   Sun, 19 May 2019 15:54:22 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
- (Camera Sensor Interface)
-Message-ID: <20190519135422.l2bnumyjr3dxehhx@core.my.home>
-Mail-Followup-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-References: <20190408165744.11672-1-wens@kernel.org>
- <20190408165744.11672-5-wens@kernel.org>
- <20190409075804.4zrwjil7ie2gjigu@flea>
- <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
- <20190409082818.z33mq2qrxethldzf@flea>
- <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
- <20190409145225.2ltluiyqa5xha4zd@flea>
+        id S1728499AbfESRmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:42:18 -0400
+Received: from localhost (p5486CF3F.dip0.t-ipconnect.de [84.134.207.63])
+        by pokefinder.org (Postfix) with ESMTPSA id A6F142C3740;
+        Sun, 19 May 2019 16:02:31 +0200 (CEST)
+Date:   Sun, 19 May 2019 16:02:31 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Asmaa Mnebhi <Asmaa@mellanox.com>
+Cc:     minyard@acm.org, vadimp@mellanox.com, michaelsh@mellanox.com,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v9 1/1] Add support for IPMB driver
+Message-ID: <20190519140231.GA7291@kunai>
+References: <cover.1557322882.git.Asmaa@mellanox.com>
+ <a4d9fe418013b604e7224bf3038c294da42d5534.1557322882.git.Asmaa@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
 Content-Disposition: inline
-In-Reply-To: <20190409145225.2ltluiyqa5xha4zd@flea>
+In-Reply-To: <a4d9fe418013b604e7224bf3038c294da42d5534.1557322882.git.Asmaa@mellanox.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
 
-On Tue, Apr 09, 2019 at 04:52:25PM +0200, Maxime Ripard wrote:
-> On Tue, Apr 09, 2019 at 04:40:40PM +0800, Chen-Yu Tsai wrote:
-> > On Tue, Apr 9, 2019 at 4:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
-> > > > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
-> > > > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > > > >
-> > > > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
-> > > > > > lingo), which is similar to the one found on the A64 and H3. The only
-> > > > > > difference seems to be that support of MIPI CSI through a connected
-> > > > > > MIPI CSI-2 bridge.
-> > > > > >
-> > > > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
-> > > > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
-> > > > > > the pinctrl nodes to keep the device tree blob size down if they are
-> > > > > > unused.
-> > > > > >
-> > > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > > > ---
-> > > > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
-> > > > > >  1 file changed, 31 insertions(+)
-> > > > > >
-> > > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > > index f739b88efb53..0c52f945fd5f 100644
-> > > > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> > > > > > @@ -682,6 +682,20 @@
-> > > > > >                       #interrupt-cells = <3>;
-> > > > > >                       #gpio-cells = <3>;
-> > > > > >
-> > > > > > +                     /omit-if-no-ref/
-> > > > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
-> > > > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
-> > > > > > +                                    "PE8", "PE9", "PE10", "PE11",
-> > > > > > +                                    "PE12", "PE13";
-> > > > > > +                             function = "csi";
-> > > > > > +                     };
-> > > > > > +
-> > > > > > +                     /omit-if-no-ref/
-> > > > > > +                     csi_mclk_pin: csi-mclk-pin {
-> > > > > > +                             pins = "PE1";
-> > > > > > +                             function = "csi";
-> > > > > > +                     };
-> > > > > > +
-> > > > > >                       emac_rgmii_pins: emac-rgmii-pins {
-> > > > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-> > > > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
-> > > > > > @@ -994,6 +1008,23 @@
-> > > > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> > > > > >               };
-> > > > > >
-> > > > > > +             csi: camera@1cb0000 {
-> > > > > > +                     compatible = "allwinner,sun8i-a83t-csi";
-> > > > > > +                     reg = <0x01cb0000 0x1000>;
-> > > > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +                     clocks = <&ccu CLK_BUS_CSI>,
-> > > > > > +                              <&ccu CLK_CSI_SCLK>,
-> > > > > > +                              <&ccu CLK_DRAM_CSI>;
-> > > > > > +                     clock-names = "bus", "mod", "ram";
-> > > > > > +                     resets = <&ccu RST_BUS_CSI>;
-> > > > > > +                     status = "disabled";
-> > > > > > +
-> > > > > > +                     csi_in: port {
-> > > > > > +                             #address-cells = <1>;
-> > > > > > +                             #size-cells = <0>;
-> > > > >
-> > > > > If we expect a single enpoint, then we don't need the address-cells
-> > > > > and size-cells properties.
-> > > >
-> > > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
-> > > > is kind of genius if not very hacky. They have two "identical" sensors
-> > > > on the same I2C bus and CSI bus, with shared reset line but separate
-> > > > shutdown lines. Since they are identical, they also have the same I2C
-> > > > address. I haven't figured out how to model this in the device tree.
-> > > >
-> > > > The point is, it's perfectly possible to have two or more sensors use
-> > > > the same controller, provided only one be active at a time.
-> > >
-> > > Right, but I guess the common case would be to have a single sensor,
-> > > where that wouldn't be needed.
-> > >
-> > > In odd cases, we can always specify it in the DTS, and if it becomes
-> > > common enough, we can move it to the DTSI.
-> >
-> > Makes sense. Do you want me to re-spin?
-> 
-> If there's no other comment, we'll fix it when applying.
-
-This patch series seems to have been forgotten. It doesn't seem there are any
-blockers. Can you please apply it now? I have some further series (camera module
-support for TBS-A711) that depend on this.
-
-thank you and regards,
-	Ondrej
-
-> Maxime
-> 
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> +static int receive_ipmb_request(struct ipmb_dev *ipmb_dev,
+> +				bool non_blocking,
+> +				struct ipmb_msg *ipmb_request)
+> +{
+> +	struct ipmb_request_elem *queue_elem;
+> +	unsigned long flags;
+> +	int res;
+> +
+> +	spin_lock_irqsave(&ipmb_dev->lock, flags);
+> +
+> +	while (!atomic_read(&ipmb_dev->request_queue_len)) {
 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Am I overlooking something? Why are you protecting an atomic_read with a
+spinlock?
 
+> +		spin_unlock_irqrestore(&ipmb_dev->lock, flags);
+> +
+> +		if (non_blocking)
+> +			return -EAGAIN;
+> +
+> +		res = wait_event_interruptible(ipmb_dev->wait_queue,
+> +				atomic_read(&ipmb_dev->request_queue_len));
+> +		if (res)
+> +			return res;
+> +
+> +		spin_lock_irqsave(&ipmb_dev->lock, flags);
+> +	}
+
+...
+
+> +	rq_sa = msg[RQ_SA_8BIT_IDX] >> 1;
+> +	netf_rq_lun = msg[NETFN_LUN_IDX];
+> +	/*
+> +	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
+> +	 * i2c_smbus_write_block_data_local
+> +	 */
+> +	msg_len = msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
+> +
+> +	strcpy(rq_client.name, "ipmb_requester");
+> +	rq_client.adapter = ipmb_dev->client->adapter;
+> +	rq_client.flags = ipmb_dev->client->flags;
+> +	rq_client.addr = rq_sa;
+
+Is it possible to determine in a race-free way if rq_sa (which came from
+userspace AFAIU) is really the address from which the request came in
+(again if I understood all this correctly)?
+
+
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzhYfMACgkQFA3kzBSg
+KbaUFBAAhYsyH1aaRJTDSRpDGGcd3ZnZ3zTzRUjf4prl/rhXfBIaroHb3Mrp1aYX
+ZGScerkOwHtVFSat1vAn3xsrzkHL/X5ADObbm3Jdx3ofZhLrP1pKT3mL3ah7xJ7H
+zXuLF5F/8xc6sd5BEsdh/Iazw/v+Q8rkfgZZ6ExZV+cueh8R5M5PxyaFKXj6327k
+qRePyE64zjfzzCL1rupNLzmegvp2qnXE7ZO0+vWuhVpw3PWO1kBh4mTmPxl3TkAk
+onbXPgqWJgg56Kh7ZMm1BfiIaUGYeiDR1DI8IHzTWJVBmOMpPItgvMaVqKBDU2M5
+ZmFXzm6o8ADuqM1+xLTXTgUJC92pDtzEpu/OP8neMbiqsZUvJlZ2R9AMEPf6XDbU
+d+nYOivm1KLkK5iZR7DsZwi+ZsSWM1VVeQ1huagrJ9AM5QN+nlxdxv30+Wff86BP
+aGfSuNqw0mwA/ZLp59jv6QeqKa/C21bPdUUZklZ28cEXHOOfVZFtTl4tfG62VV/0
+HQW4fxqk9yZue6Lh7PoW9f/eDHRi6/8FXLRieNdxjhjl4vH5My48znKij5XE3WKj
+uzI2qHHHRMno5AAoo42n97KAvxAdMGAdjkmnzkn1sRq36SfA5YRPFL5EcFbxQC0K
+edcChltpC+mULAVOc2Le6pgXeCJ5fGVNNY64iGNxIvtWSx9p9t0=
+=N/9+
+-----END PGP SIGNATURE-----
+
+--8t9RHnE3ZwKMSgU+--
