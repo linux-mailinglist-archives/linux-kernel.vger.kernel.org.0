@@ -2,53 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC9102293C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 23:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A5722941
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 23:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbfESVfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 17:35:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729314AbfESVfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 17:35:20 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF11820578;
-        Sun, 19 May 2019 21:35:19 +0000 (UTC)
-Date:   Sun, 19 May 2019 17:35:18 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing: silence GCC 9 array bounds warning
-Message-ID: <20190519173518.5f40adfb@gandalf.local.home>
-In-Reply-To: <CANiq72=hUULnd_oDoGoD2gjE-QvL2Kw2n7hMxke+gkS2_gzCqw@mail.gmail.com>
-References: <20190517092502.GA22779@gmail.com>
-        <CAHk-=wiNkOU-Ng+9_+tj4-AqJ4Q9JQpVbR4QVVAWLY68yQ62Gw@mail.gmail.com>
-        <CANiq72=hUULnd_oDoGoD2gjE-QvL2Kw2n7hMxke+gkS2_gzCqw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729699AbfESVir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 17:38:47 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59981 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728678AbfESVir (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 17:38:47 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 04D75803A3; Sun, 19 May 2019 23:38:34 +0200 (CEST)
+Date:   Sun, 19 May 2019 23:38:44 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Ran Wang <ran.wang_1@nxp.com>
+Cc:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH V2 3/3] soc: fsl: add RCPM driver
+Message-ID: <20190519213844.GH31403@amd>
+References: <20190517033946.30763-1-ran.wang_1@nxp.com>
+ <20190517033946.30763-3-ran.wang_1@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="OpLPJvDmhXTZE4Lg"
+Content-Disposition: inline
+In-Reply-To: <20190517033946.30763-3-ran.wang_1@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 May 2019 21:09:21 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
 
-> By the way, how do you all feel about moving this as a generic
-> facility to zero out the suffix/prefix of an structure? In particular,
-> since we won't have the LAT* stuff according to Steven.
+--OpLPJvDmhXTZE4Lg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is this done in other places? If so, how many.
+Hi!
 
-Note, the LAT* update doesn't belong in the iterator reset function,
-but the pos = -1 still does.
 
-Thanks!
+> +
+> +struct rcpm {
+> +	unsigned int wakeup_cells;
+> +	void __iomem *ippdexpcr_base;
+> +	bool	little_endian;
+> +};
 
--- Steve
+Inconsistent whitespace
+
+
+> +static int rcpm_pm_prepare(struct device *dev)
+> +{
+> +	struct device_node *np =3D dev->of_node;
+> +	struct wakeup_source *ws;
+> +	struct rcpm *rcpm;
+> +	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1], tmp;
+> +	int i, ret;
+> +
+> +	rcpm =3D dev_get_drvdata(dev);
+> +	if (!rcpm)
+> +		return -EINVAL;
+> +
+> +	/* Begin with first registered wakeup source */
+> +	ws =3D wakeup_source_get_next(NULL);
+> +	while (ws) {
+
+while (ws =3D wakeup_source_get_next(NULL)) ?
+
+
+> +static int rcpm_probe(struct platform_device *pdev)
+> +{
+> +	struct device	*dev =3D &pdev->dev;
+> +	struct resource *r;
+> +	struct rcpm		*rcpm;
+> +	int ret;
+
+Whitespace.
+
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--OpLPJvDmhXTZE4Lg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzhzOQACgkQMOfwapXb+vI6ywCfVCMHtkjXb3a+eeg4lf0cWVnK
+ltAAn0s9Rg5VoedxYnGb5y+G2Eo0Kxic
+=n8eU
+-----END PGP SIGNATURE-----
+
+--OpLPJvDmhXTZE4Lg--
