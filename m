@@ -2,142 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8342283B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5C022851
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 20:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfESSHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 14:07:30 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40252 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729552AbfESSH3 (ORCPT
+        id S1726946AbfESSYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 14:24:25 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39991 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfESSYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 14:07:29 -0400
-Received: by mail-it1-f196.google.com with SMTP id g71so19615342ita.5
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:07:28 -0700 (PDT)
+        Sun, 19 May 2019 14:24:24 -0400
+Received: by mail-it1-f193.google.com with SMTP id g71so19652071ita.5
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 11:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=C+DlauQ+0YDeQ9hpa7miHNz0JB22ujJpGsz1lZ3FnHs=;
+        b=TXz8mklJRncCXd+yICCPibA/REO9Zf9MWiDvZOVxPLwLS1YhAE+ayCpQmznYoF71K/
+         MYJFnvpPM4q7hrnSknx4T68RGqbNoZtbPMS0l6kcdHdJETJMP1aq1tTAMBpA4AN0kHl1
+         fK9zVEBgUgIVBxyfdPQFA3VGynvIBkWsu8F4564sQ1I6dt1Lpj1+scWFihYMjvRMrXaF
+         OdPuC/qJN8T2WUN65sH+E/KaNxDAS+URqFc4jomKZ6/XaKTKJqawGQJa5S10wgzjMqyp
+         BbOOgBfLsdQ4o+uW08z3j8K7CYA2iC4GShEtoaxV2VT1Ss7lFAHT/f61D5jXEp3iJNmf
+         aoDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w7S1JiY5XMndUySOPpCBhO3vugzf338c54HkvkOEdUI=;
-        b=Lj5W4lPyxHETuoM6XjTL2ZdKowHojfbzwCsVBvZMh9MqsV+oal3A8yDMlxLUqw5msL
-         +6JEFnLOyRK3zH3ytEn3c11iMaJn/RlOI7lUvRrIWRpnWBh14Pxklmw2Q5m3Y2DmPDhW
-         SK2ZDQum94izdLXpaF76VDeqQDMS12L7h5fmv2nLEPGi5PlTSqabX55kDrHT54vB+T3u
-         xCfAYzISmdv7QZAwvkE4kwScOVQBjzNAnRECbqrjut9q5cTW5v/oI63I3Vr1J/WrgLtW
-         77Cpp5DsmpDeHlBEf9tvLF888jw/myWZq9CTpfGhf5JhrOEYzucOQnRvOmy+lrRZhbRe
-         DOgA==
-X-Gm-Message-State: APjAAAWgzOAXtkadVwtWTEu19BAy1Uer7DpoFpmD/ltxJEJvJKNZkixJ
-        7Gm8FCTTXThVvHeNPdH/bPqytfQwXcTMQIXpmsvk6w==
-X-Google-Smtp-Source: APXvYqzP5hoR7AStmML42U8uNCorWch+uTjHRCykkRZbdO5pXKwP6oCjkjO5vOQkA/sKjCaQPRa48D4ntAa22XdygUI=
-X-Received: by 2002:a24:7a90:: with SMTP id a138mr25523149itc.95.1558289248398;
- Sun, 19 May 2019 11:07:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=C+DlauQ+0YDeQ9hpa7miHNz0JB22ujJpGsz1lZ3FnHs=;
+        b=KuwrQ6/rUifUJqz4pwi7349634/WgZ3Yy26PbCcG1c+pOvAqtM6Ti2JaEnFf80vxIO
+         GhEK40ayp5pfXuzXeE3u8Z0LZwXiScpxuSKB8RqKD9FAW05JmZ9Y/z7xiwxvb63YsRyf
+         ohbLRfirSuKst2RtFMlq00YX3Dcy8FwUicSVnFPaTa/L5+ZaIbSO+OzOhF7S6Bg3C8WD
+         0O2G0QMESkGQUbMnT7qFZntpOf+x3RPVmDFHHBVKMRqR/XZCh4eKOTHB0WzFcODx2tGp
+         i4iC5AtGsmcKiJOW6fqFvQ1uYjf9noyIEQyYcIh+1k3nEUoY7eGXdyNkFgS5Hti1vyr0
+         NUGQ==
+X-Gm-Message-State: APjAAAUDcqBjDDZgO/2l4erTEp1GSTfdpoqm8IrDMos2bgSLEIq/y7FU
+        fF0zTkceC2LplFMRI7rjhGQVma7jmeA=
+X-Google-Smtp-Source: APXvYqyZrAB83RtBUG5r/o9WgBzpueGHylDo9jY4WrgM39PWjf+vB72Itw8yjHyRRhKOfFaLM9jYwA==
+X-Received: by 2002:a24:aa42:: with SMTP id y2mr11505586iti.23.1558290263973;
+        Sun, 19 May 2019 11:24:23 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id 202sm1451053itw.2.2019.05.19.11.24.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 19 May 2019 11:24:23 -0700 (PDT)
+Date:   Sun, 19 May 2019 11:24:22 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Joe Perches <joe@perches.com>
+cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] scripts/spelling.txt: drop "sepc" from the misspelling
+ list
+In-Reply-To: <201b9ab622b8359225f3a3b673a05047ffce5744.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.9999.1905191108180.10723@viisi.sifive.com>
+References: <20190518210037.13674-1-paul.walmsley@sifive.com> <201b9ab622b8359225f3a3b673a05047ffce5744.camel@perches.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-References: <3CD3EE63-0CD2-404A-A403-E11DCF2DF8D9@fb.com> <20190517074600.GJ2623@hirez.programming.kicks-ass.net>
- <20190517081057.GQ2650@hirez.programming.kicks-ass.net> <CACPcB9cB5n1HOmZcVpusJq8rAV5+KfmZ-Lxv3tgsSoy7vNrk7w@mail.gmail.com>
- <20190517091044.GM2606@hirez.programming.kicks-ass.net> <8C814E68-B0B6-47E4-BDD6-917B01EC62D0@fb.com>
- <c881767d-b6f3-c53e-5c70-556d09ea8d89@fb.com> <8449BBF3-E754-4ABC-BFEF-A8F264297F2D@fb.com>
-In-Reply-To: <8449BBF3-E754-4ABC-BFEF-A8F264297F2D@fb.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Mon, 20 May 2019 02:07:19 +0800
-Message-ID: <CACPcB9emh9T23sixx-91mg2wL6kgrYF4MVfmuTCE0SsD=8efcQ@mail.gmail.com>
-Subject: Re: Getting empty callchain from perf_callchain_kernel()
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Alexei Starovoitov <ast@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 18, 2019 at 5:48 AM Song Liu <songliubraving@fb.com> wrote:
->
->
->
-> > On May 17, 2019, at 2:06 PM, Alexei Starovoitov <ast@fb.com> wrote:
-> >
-> > On 5/17/19 11:40 AM, Song Liu wrote:
-> >> +Alexei, Daniel, and bpf
-> >>
-> >>> On May 17, 2019, at 2:10 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> >>>
-> >>> On Fri, May 17, 2019 at 04:15:39PM +0800, Kairui Song wrote:
-> >>>> Hi, I think the actual problem is that bpf_get_stackid_tp (and maybe
-> >>>> some other bfp functions) is now broken, or, strating an unwind
-> >>>> directly inside a bpf program will end up strangely. It have following
-> >>>> kernel message:
-> >>>
-> >>> Urgh, what is that bpf_get_stackid_tp() doing to get the regs? I can't
-> >>> follow.
-> >>
-> >> I guess we need something like the following? (we should be able to
-> >> optimize the PER_CPU stuff).
-> >>
-> >> Thanks,
-> >> Song
-> >>
-> >>
-> >> diff --git i/kernel/trace/bpf_trace.c w/kernel/trace/bpf_trace.c
-> >> index f92d6ad5e080..c525149028a7 100644
-> >> --- i/kernel/trace/bpf_trace.c
-> >> +++ w/kernel/trace/bpf_trace.c
-> >> @@ -696,11 +696,13 @@ static const struct bpf_func_proto bpf_perf_event_output_proto_tp = {
-> >>         .arg5_type      = ARG_CONST_SIZE_OR_ZERO,
-> >>  };
-> >>
-> >> +static DEFINE_PER_CPU(struct pt_regs, bpf_stackid_tp_regs);
-> >>  BPF_CALL_3(bpf_get_stackid_tp, void *, tp_buff, struct bpf_map *, map,
-> >>            u64, flags)
-> >>  {
-> >> -       struct pt_regs *regs = *(struct pt_regs **)tp_buff;
-> >> +       struct pt_regs *regs = this_cpu_ptr(&bpf_stackid_tp_regs);
-> >>
-> >> +       perf_fetch_caller_regs(regs);
-> >
-> > No. pt_regs is already passed in. It's the first argument.
-> > If we call perf_fetch_caller_regs() again the stack trace will be wrong.
-> > bpf prog should not see itself, interpreter or all the frames in between.
->
-> Thanks Alexei! I get it now.
->
-> In bpf_get_stackid_tp(), the pt_regs is get by dereferencing the first field
-> of tp_buff:
->
->         struct pt_regs *regs = *(struct pt_regs **)tp_buff;
->
-> tp_buff points to something like
->
->         struct sched_switch_args {
->                 unsigned long long pad;
->                 char prev_comm[16];
->                 int prev_pid;
->                 int prev_prio;
->                 long long prev_state;
->                 char next_comm[16];
->                 int next_pid;
->                 int next_prio;
->         };
->
-> where the first field "pad" is a pointer to pt_regs.
->
-> @Kairui, I think you confirmed that current code will give empty call trace
-> with ORC unwinder? If that's the case, can we add regs->ip back? (as in the
-> first email of this thread.
->
-> Thanks,
-> Song
->
+On Sat, 18 May 2019, Joe Perches wrote:
 
-Hi thanks for the suggestion, yes we can add it should be good an idea
-to always have IP when stack trace is not available.
-But stack trace is actually still broken, it will always give only one
-level of stacktrace (the IP).
+> On Sat, 2019-05-18 at 14:00 -0700, Paul Walmsley wrote:
+> > The RISC-V architecture has a register named the "Supervisor Exception
+> > Program Counter", or "sepc".  This abbreviation triggers
+> > checkpatch.pl's misspelling detector, resulting in noise in the
+> > checkpatch output.  The risk that this noise could cause more useful
+> > warnings to be missed seems to outweigh the harm of an occasional
+> > misspelling of "spec".  Thus drop the "sepc" entry from the
+> > misspelling list.
+> 
+> I would agree if you first fixed the existing sepc/spec
+> and sepcific/specific typos.
+> 
+> arch/powerpc/kvm/book3s_xics.c:	 * a pending interrupt, this is a SW error and PAPR sepcifies
+> arch/unicore32/include/mach/regs-gpio.h: * Sepcial Voltage Detect Reg GPIO_GPIR.
+> drivers/scsi/lpfc/lpfc_init.c:		/* Stop any OneConnect device sepcific driver timers */
+> drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c:* OverView:	Read "sepcific bits" from BB register
+> drivers/net/wireless/realtek/rtlwifi/wifi.h:/* Ref: 802.11i sepc D10.0 7.3.2.25.1
 
--- 
-Best Regards,
-Kairui Song
+Your agreement shouldn't be needed for the patch I sent.
+
+
+- Paul
