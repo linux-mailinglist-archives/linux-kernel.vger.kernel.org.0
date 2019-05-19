@@ -2,178 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 635A62276A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B899E227B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfESRBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:01:07 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:36148 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726482AbfESRBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:01:06 -0400
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x4JA9OiJ007435;
-        Sun, 19 May 2019 13:09:25 +0300
-Date:   Sun, 19 May 2019 13:09:24 +0300 (EEST)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     YueHaibing <yuehaibing@huawei.com>
-cc:     davem@davemloft.net, wensong@linux-vs.org, horms@verge.net.au,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: Re: [PATCH v2] ipvs: Fix use-after-free in ip_vs_in
-In-Reply-To: <20190517143149.17016-1-yuehaibing@huawei.com>
-Message-ID: <alpine.LFD.2.21.1905191258160.2448@ja.home.ssi.bg>
-References: <alpine.LFD.2.21.1905171015040.2233@ja.home.ssi.bg> <20190517143149.17016-1-yuehaibing@huawei.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727249AbfESRaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:30:25 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43031 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfESRaZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 13:30:25 -0400
+Received: by mail-pl1-f193.google.com with SMTP id gn7so1441079plb.10
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3nXBmIh7/vFkJ4Tm2l4dtTScuooDKNvEF1jpFXfvwsc=;
+        b=prPrOvv+nXzlq37dw9S0qdmegNQMY9mMQmGxVdosiPQlKvmQHZwzyNNaISmaHYISPL
+         X+MnJT//NcQ21npBKca3WpAApauj41TAIoPfE8Yn1PKHUg9dRm+3twylCz1VcUhpj9AY
+         TcBLFLBaEYI9qMBT/BXar0olvQLimM1sWud1T1/GfOO13CqMdqbUwAOF6akeVMHvShBG
+         389EvyUF/W8ChWuTLWfKobvsEmxcppXOOvx5AbluLHXBrSxVUDsPtbnSGtuNc47AipJP
+         LrRYAfePFA7lz8yV6lvkrbyhb38/XY3u7Pi4ItdkOP+VRZUORZzNtLVvNvBwQHUVJgbK
+         jkPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3nXBmIh7/vFkJ4Tm2l4dtTScuooDKNvEF1jpFXfvwsc=;
+        b=R+jVfNpSHDcdY7aT9vJ1878WuMHrDX4OWUdb6plfP+2TDQ7+u7u+E/axbDuKEnV9SX
+         9KbStvbn3Z+c1MAWyVhjV+eS92vAnQCsTRaAuuQhUFy8BeeP9z90ge4Tko8XIRtHs9WU
+         l7eZ+9nWNmTRV56Y51extDtVhN8KpygiKCxozOGqgOBqLhi3t4XQNYDNhZTY4YhLXEzu
+         oLTMwEcjTKJ+cVeFAogm6AESDHav3kwM2VJEaKGtEj6kpPKInGwhZZ+ymBW2aWP5l8Le
+         ncLftjB4fskQ0JCpoDx1MVC9n16vNGOBXJajaq9ERARtxGA52umn5QfkZJgrHPEIb3xQ
+         QWjg==
+X-Gm-Message-State: APjAAAUgHDBYV5C8zbqiAjyW/7qrtHHpAsdHvL6co3ZlxUsUNVtj9hJg
+        x9CfKydRXHR1WZX6OR25eW6jb57s
+X-Google-Smtp-Source: APXvYqxWU8wpTJXHBJp+Rkhz1pg1a0Wph4MXE9asWBt0UGUSJ69BeobNf1W2Emh5hysyAcKSb/AXeQ==
+X-Received: by 2002:a17:902:204:: with SMTP id 4mr17066355plc.21.1558260698892;
+        Sun, 19 May 2019 03:11:38 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id c17sm9740268pfo.114.2019.05.19.03.11.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 03:11:38 -0700 (PDT)
+Date:   Sun, 19 May 2019 15:41:32 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Gao Xiang <hsiangkao@aol.com>, Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] staging: erofs: fix Warning Use BUG_ON instead of if
+ condition followed by BUG
+Message-ID: <20190519101132.GA22620@hari-Inspiron-1545>
+References: <20190519093440.GA16838@hari-Inspiron-1545>
+ <b32e6bca-60ec-2004-f1d6-16d2b8a478ae@aol.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b32e6bca-60ec-2004-f1d6-16d2b8a478ae@aol.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-	Hello,
-
-On Fri, 17 May 2019, YueHaibing wrote:
-
-> BUG: KASAN: use-after-free in ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
-> Read of size 4 at addr ffff8881e9b26e2c by task sshd/5603
+On Sun, May 19, 2019 at 05:50:40PM +0800, Gao Xiang wrote:
 > 
-> CPU: 0 PID: 5603 Comm: sshd Not tainted 4.19.39+ #30
-> Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-> Call Trace:
->  dump_stack+0x71/0xab
->  print_address_description+0x6a/0x270
->  kasan_report+0x179/0x2c0
->  ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
->  ip_vs_in+0xd8/0x170 [ip_vs]
->  nf_hook_slow+0x5f/0xe0
->  __ip_local_out+0x1d5/0x250
->  ip_local_out+0x19/0x60
->  __tcp_transmit_skb+0xba1/0x14f0
->  tcp_write_xmit+0x41f/0x1ed0
->  ? _copy_from_iter_full+0xca/0x340
->  __tcp_push_pending_frames+0x52/0x140
->  tcp_sendmsg_locked+0x787/0x1600
->  ? tcp_sendpage+0x60/0x60
->  ? inet_sk_set_state+0xb0/0xb0
->  tcp_sendmsg+0x27/0x40
->  sock_sendmsg+0x6d/0x80
->  sock_write_iter+0x121/0x1c0
->  ? sock_sendmsg+0x80/0x80
->  __vfs_write+0x23e/0x370
->  vfs_write+0xe7/0x230
->  ksys_write+0xa1/0x120
->  ? __ia32_sys_read+0x50/0x50
->  ? __audit_syscall_exit+0x3ce/0x450
->  do_syscall_64+0x73/0x200
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x7ff6f6147c60
-> Code: 73 01 c3 48 8b 0d 28 12 2d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 5d 73 2d 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83
-> RSP: 002b:00007ffd772ead18 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000034 RCX: 00007ff6f6147c60
-> RDX: 0000000000000034 RSI: 000055df30a31270 RDI: 0000000000000003
-> RBP: 000055df30a31270 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00007ffd772ead70 R11: 0000000000000246 R12: 00007ffd772ead74
-> R13: 00007ffd772eae20 R14: 00007ffd772eae24 R15: 000055df2f12ddc0
 > 
-> Allocated by task 6052:
->  kasan_kmalloc+0xa0/0xd0
->  __kmalloc+0x10a/0x220
->  ops_init+0x97/0x190
->  register_pernet_operations+0x1ac/0x360
->  register_pernet_subsys+0x24/0x40
->  0xffffffffc0ea016d
->  do_one_initcall+0x8b/0x253
->  do_init_module+0xe3/0x335
->  load_module+0x2fc0/0x3890
->  __do_sys_finit_module+0x192/0x1c0
->  do_syscall_64+0x73/0x200
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> On 2019/5/19 下午5:34, Hariprasad Kelam wrote:
+> > fix below warning reported by  coccicheck
+> > 
+> > drivers/staging/erofs/unzip_pagevec.h:74:2-5: WARNING: Use BUG_ON
+> > instead of if condition followed by BUG.
+> > 
+> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> > -----
+> > Changes in v2:
+> >   - replace BUG_ON with  DBG_BUGON
+> > -----
+> > ---
+> >  drivers/staging/erofs/unzip_pagevec.h | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/staging/erofs/unzip_pagevec.h b/drivers/staging/erofs/unzip_pagevec.h
+> > index f37d8fd..7938ee3 100644
+> > --- a/drivers/staging/erofs/unzip_pagevec.h
+> > +++ b/drivers/staging/erofs/unzip_pagevec.h
+> > @@ -70,8 +70,7 @@ z_erofs_pagevec_ctor_next_page(struct z_erofs_pagevec_ctor *ctor,
+> >  			return tagptr_unfold_ptr(t);
+> >  	}
+> >  
 > 
-> Freed by task 6067:
->  __kasan_slab_free+0x130/0x180
->  kfree+0x90/0x1a0
->  ops_free_list.part.7+0xa6/0xc0
->  unregister_pernet_operations+0x18b/0x1f0
->  unregister_pernet_subsys+0x1d/0x30
->  ip_vs_cleanup+0x1d/0xd2f [ip_vs]
->  __x64_sys_delete_module+0x20c/0x300
->  do_syscall_64+0x73/0x200
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> I'd like to delete this line
 > 
-> The buggy address belongs to the object at ffff8881e9b26600 which belongs to the cache kmalloc-4096 of size 4096
-> The buggy address is located 2092 bytes inside of 4096-byte region [ffff8881e9b26600, ffff8881e9b27600)
-> The buggy address belongs to the page:
-> page:ffffea0007a6c800 count:1 mapcount:0 mapping:ffff888107c0e600 index:0x0 compound_mapcount: 0
-> flags: 0x17ffffc0008100(slab|head)
-> raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff888107c0e600
-> raw: 0000000000000000 0000000080070007 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
+> > -	if (unlikely(nr >= ctor->nr))
+> > -		BUG();
+> > +	DBG_BUGON(nr >= ctor->nr);
+> >  
 > 
-> while unregistering ipvs module, ops_free_list calls
-> __ip_vs_cleanup, then nf_unregister_net_hooks be called to
-> do remove nf hook entries. It need a RCU period to finish,
-> however net->ipvs is set to NULL immediately, which will
-> trigger NULL pointer dereference when a packet is hooked
-> and handled by ip_vs_in where net->ipvs is dereferenced.
+> and this line.. I have already sent a new patch based on your v1 patch,
+> could you please check it out if it is acceptable for you? :)
 > 
-> Another scene is ops_free_list call ops_free to free the
-> net_generic directly while __ip_vs_cleanup finished, then
-> calling ip_vs_in will triggers use-after-free.
-> 
-> This patch moves nf_unregister_net_hooks from __ip_vs_cleanup()
-> to __ip_vs_dev_cleanup(),  where rcu_barrier() is called by
-> unregister_pernet_device -> unregister_pernet_operations,
-> that will do the needed grace period.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: efe41606184e ("ipvs: convert to use pernet nf_hook api")
-> Suggested-by: Julian Anastasov <ja@ssi.bg>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Thanks,
+> Gao Xiang
 
-	Looks good to me, thanks!
+Hi Gai Xiang,
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
+The patch which you sent has all required. 
+Thanks for the  patch. We can ignore this v2 patch.
 
-	It should restore the order of unregistrations before
-the mentioned commit and to ensure grace period before stopping
-the traffic and unregistering ipvs_core_ops where traffic is not
-expected.
+Thanks,
+Hariprasad k
 
-> ---
-> v2: fix by moving nf_unregister_net_hooks from __ip_vs_cleanup() to __ip_vs_dev_cleanup()
-> ---
->  net/netfilter/ipvs/ip_vs_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-> index 14457551bcb4..8ebf21149ec3 100644
-> --- a/net/netfilter/ipvs/ip_vs_core.c
-> +++ b/net/netfilter/ipvs/ip_vs_core.c
-> @@ -2312,7 +2312,6 @@ static void __net_exit __ip_vs_cleanup(struct net *net)
->  {
->  	struct netns_ipvs *ipvs = net_ipvs(net);
->  
-> -	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
->  	ip_vs_service_net_cleanup(ipvs);	/* ip_vs_flush() with locks */
->  	ip_vs_conn_net_cleanup(ipvs);
->  	ip_vs_app_net_cleanup(ipvs);
-> @@ -2327,6 +2326,7 @@ static void __net_exit __ip_vs_dev_cleanup(struct net *net)
->  {
->  	struct netns_ipvs *ipvs = net_ipvs(net);
->  	EnterFunction(2);
-> +	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
->  	ipvs->enable = 0;	/* Disable packet reception */
->  	smp_wmb();
->  	ip_vs_sync_net_cleanup(ipvs);
-> -- 
-> 2.20.1
 
-Regards
 
---
-Julian Anastasov <ja@ssi.bg>
+> >  	return NULL;
+> >  }
+> > 
