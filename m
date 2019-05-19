@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B942289E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 21:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4867B228BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 22:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfESTyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 15:54:14 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:41970 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbfESTyN (ORCPT
+        id S1730130AbfESU2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 16:28:04 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:53956 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730116AbfESU2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 15:54:13 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 9100D608325B;
-        Sun, 19 May 2019 21:54:11 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Yw-_UYOxrkNz; Sun, 19 May 2019 21:54:11 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5192F6083279;
-        Sun, 19 May 2019 21:54:11 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 8tku6GKN3dxf; Sun, 19 May 2019 21:54:11 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 30BB3608325B;
-        Sun, 19 May 2019 21:54:11 +0200 (CEST)
-Date:   Sun, 19 May 2019 21:54:11 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     torvalds <torvalds@linux-foundation.org>
-Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <273612995.64271.1558295651158.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UBIFS fixes for 5.2-rc2
+        Sun, 19 May 2019 16:28:03 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1hSSPS-0004g9-41; Sun, 19 May 2019 22:27:54 +0200
+Date:   Sun, 19 May 2019 22:27:53 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Thomas Haller <thaller@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH 4.9 41/51] fib_rules: return 0 directly if an exactly
+ same rule exists when NLM_F_EXCL not supplied
+Message-ID: <20190519202753.p5hsfe2uqmgsfbcq@breakpoint.cc>
+References: <20190515090616.669619870@linuxfoundation.org>
+ <20190515090628.066392616@linuxfoundation.org>
+ <20190519154348.GA113991@archlinux-epyc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
-Thread-Index: WLFwXOwMNVbr8u9epEt1vaZn/sWOVw==
-Thread-Topic: UBIFS fixes for 5.2-rc2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190519154348.GA113991@archlinux-epyc>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Nathan Chancellor <natechancellor@gmail.com> wrote:
+> On Wed, May 15, 2019 at 12:56:16PM +0200, Greg Kroah-Hartman wrote:
+> > From: Hangbin Liu <liuhangbin@gmail.com>
+> > 
+> > [ Upstream commit e9919a24d3022f72bcadc407e73a6ef17093a849 ]
 
-The following changes since commit 2bbacd1a92788ee334c7e92b765ea16ebab68dfe:
+[..]
 
-  Merge tag 'kconfig-v5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild (2019-05-15 09:06:14 -0700)
+> > Fixes: 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to fib_nl_newrule")
+> > Reported-by: Thomas Haller <thaller@redhat.com>
+> > Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  net/core/fib_rules.c |    6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > --- a/net/core/fib_rules.c
+> > +++ b/net/core/fib_rules.c
+> > @@ -429,9 +429,9 @@ int fib_nl_newrule(struct sk_buff *skb,
+> >  	if (rule->l3mdev && rule->table)
+> >  		goto errout_free;
+> >  
+> > -	if ((nlh->nlmsg_flags & NLM_F_EXCL) &&
+> > -	    rule_exists(ops, frh, tb, rule)) {
+> > -		err = -EEXIST;
+> > +	if (rule_exists(ops, frh, tb, rule)) {
+> > +		if (nlh->nlmsg_flags & NLM_F_EXCL)
+> > +			err = -EEXIST;
+> This commit is causing issues on Android devices when Wi-Fi and mobile
+> data are both enabled. The device will do a soft reboot consistently.
 
-are available in the Git repository at:
+Not surprising, the patch can't be applied to 4.9 as-is.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/upstream-5.2-rc2
+In 4.9, code looks like this:
 
-for you to fetch changes up to 4dd0481584d09221849ac8a3af4cd3cefd58c11e:
+ err = -EINVAL;
+ /* irrelevant */
+ if (rule_exists(ops, frh, tb, rule)) {
+  if (nlh->nlmsg_flags & NLM_F_EXCL)
+    err = -EEXIST;
+    goto errout_free;
+ }
 
-  ubifs: Convert xattr inum to host order (2019-05-15 21:56:48 +0200)
+So, if rule_exists() is true, we return -EINVAL to caller
+instead of 0, unlike upstream.
 
-----------------------------------------------------------------
-This pull request contains the following fixes for UBIFS:
-
-- Build errors wrt. xattrs
-- Mismerge which lead to a wrong Kconfig ifdef
-- Missing endianness conversion
-
-----------------------------------------------------------------
-Richard Weinberger (2):
-      ubifs: Use correct config name for encryption
-      ubifs: Convert xattr inum to host order
-
-YueHaibing (1):
-      ubifs: Fix build error without CONFIG_UBIFS_FS_XATTR
-
- fs/ubifs/sb.c    | 4 ++--
- fs/ubifs/ubifs.h | 6 +++++-
- fs/ubifs/xattr.c | 2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+I don't think this commit is stable material.
