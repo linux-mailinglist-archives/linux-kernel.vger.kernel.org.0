@@ -2,65 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 666022278A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A81A227B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfESRMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:12:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39631 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfESRMe (ORCPT
+        id S1727539AbfESR1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:27:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32900 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfESR1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:12:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w22so5612557pgi.6
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:12:34 -0700 (PDT)
+        Sun, 19 May 2019 13:27:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id z28so6075557pfk.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:27:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=2aJVDwIx9CNCJgquAEUdJfowE2zu/TP85bAx23aqgcE=;
-        b=aa1xhBGV+J6MUtB32Shj+5dPHvNdaqFAnSUVX2fFGJSKdL62Clq1dNrTbNuhBZxCOg
-         19a+Bbu50onEJQS/Vqmzcjl47CKbkJ8sj5jM/NPFw5mrhv942OOjwHDJE0QhP1w+6zZf
-         mPIWoXmcpbXCTQGFBnrnE6wMgKkap7wymXycMEkT9WWwv+aAd4xBQ5BqDP5M9X3PTxfZ
-         n79Uj7yFVO/tdfrDtb121GelXnybzzqQZ6A8l8rsbGa4JkeEa05RH+Ora5oMf8PYj/v8
-         axxgVQHGFBrCp1dC/dtFDbgvYfOaoRkkFrVJafB3kxZJmllbPEAU5bWDyIazb8YJKv5j
-         TlVQ==
+        bh=u2lVPbWCs/nw7GnzyUIhDMrqS7+oEodUC8PkBDuay7I=;
+        b=NRo/fDBPGQhDg7e7L2Cq6GJmTZKWrObVIfHPuz8uDY7bH2HMdU4ac3V54Skt3THW44
+         s3Wi/iPla03SRCoQSgwlufGjwYTJ3HuS4OosoGDRU9DHipd0AcgnLsFnxmJEFqnCpr7k
+         UCpjDiw3Nv6/j2dHEot66VQdym4BP6+UE80tUuJzaNSktSLcNnBE1ICS9cN2gUUGY9ls
+         zFoioWW/V4DNGGqjShx6Xo8cYcl/aecbJjC5XwnSPYg2Rc/IHc9cHN6lZajeF6uCxZkT
+         t81iT/AE86e06JJZR+5UFy6fSCUQ3IBrtqClC2Pee8HXuGjWi7Ign89F2G+xa5G3JduY
+         yKWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=2aJVDwIx9CNCJgquAEUdJfowE2zu/TP85bAx23aqgcE=;
-        b=D67yzSuKsDdkSsbdKJhT/XVMDRaSAIUN+VIdA7bloEKLw4JixvyAlWiERimGFXqO1t
-         Tnl7pye4VUHyjcAn6g9rB3oA8LJPoFmwreq1F0yvppGU8TSG9EVmaEu7RiZ0M2zsqRsG
-         ROfnKiHNweyN6xwYF1ZGogpgyFPWPiciu62IipRdc3zMLy354fwXW1CXTGNTOLYenh4i
-         GdYK0EDLijbqL24tioiaA+3HRr3QmrlIAyckzMQaVmIcYsqvxE/l6dec4qdefXLRpvpg
-         sIm4k9BNGwuRuV05b0zVfc0jIBjpWWGIpYE3KpXXvR7GvJD6hAqhJ/stv9RZP/orgdi3
-         E9tg==
-X-Gm-Message-State: APjAAAVEA6JguJkxwGvkT9bb68C69/71qe/tX3RhO3ITmxOVQUXkjpSz
-        JgIjELO599TIAfacEmGuNERn5IF0oz8=
-X-Google-Smtp-Source: APXvYqxsn5ZvQTyKQYV5eB5cw3Gz6/f1BFVE0KCPTTWYwjlRlpndUVeNuqyi3oOVshg2U+TQzzQflQ==
-X-Received: by 2002:aa7:9289:: with SMTP id j9mr30426595pfa.251.1558285953896;
-        Sun, 19 May 2019 10:12:33 -0700 (PDT)
+        bh=u2lVPbWCs/nw7GnzyUIhDMrqS7+oEodUC8PkBDuay7I=;
+        b=oA6ptAN6BmH72WcLbUe0s4R2mDuh1pKLrLfL1+ZUc0gCo3l/Iz5ckrPrv/78PqbNoi
+         qakB5EcEOIyfxGu3Ud+cSqc7zugJjb1mQQ8HOvJOg2RPf8wYmOhTuQZRyJ9tg56RBmTU
+         5zGXtSW98C8JXV89wfJCkTYcD6pXeDo8WXq/BwIqpsehG7Bu41l6ppG5fkrPMwLL5yM8
+         KBknSbVens9LVbbLffISLINn5LCVW9f7ls5s187UeYLfRxtAizW5kC2Ao7ty79cf3uPs
+         cJR6uIk/HPUV2SsOOzA6wkZPucUfiqYLlnbgGv6CAttmTIrvfMeJF4RNRG+zleb1JCW8
+         LDCQ==
+X-Gm-Message-State: APjAAAX6Vk+s2B4yT+jHDb2ChZy7ytUt54mdeZ0O5l0pL4Y9tdYl73yP
+        lQq/XIWv97n44IRRHdOg09M=
+X-Google-Smtp-Source: APXvYqy95PTGfppcoksREPaceYCdDH/7TXPCeJ3K9hlWWD5C+YgPSFmlUTIpVtSRCKW5b51Rx2oS9A==
+X-Received: by 2002:a63:2260:: with SMTP id t32mr32743695pgm.222.1558286849851;
+        Sun, 19 May 2019 10:27:29 -0700 (PDT)
 Received: from hari-Inspiron-1545 ([183.83.92.73])
-        by smtp.gmail.com with ESMTPSA id c76sm28951727pfc.43.2019.05.19.10.12.30
+        by smtp.gmail.com with ESMTPSA id o20sm18727736pgj.70.2019.05.19.10.27.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 May 2019 10:12:33 -0700 (PDT)
-Date:   Sun, 19 May 2019 22:42:27 +0530
+        Sun, 19 May 2019 10:27:29 -0700 (PDT)
+Date:   Sun, 19 May 2019 22:57:24 +0530
 From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Emanuel Bennici <benniciemanuel78@gmail.com>,
-        Vatsala Narang <vatsalanarang@gmail.com>,
-        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
-        Young Xiao <YangX92@hotmail.com>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        Henriette Hofmeier <passt@h-hofmeier.de>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
-        Michael Straube <straube.linux@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: core: rtw_mlme_ext: fix warning Unneeded
- variable: "ret"
-Message-ID: <20190519171227.GA8089@hari-Inspiron-1545>
+Subject: [Patch v2] staging: rtl8723bs: hal: odm_HWConfig: odm_HWConfig:
+ Unneeded variable: "result". Return "HAL_STATUS_SUCCESS"
+Message-ID: <20190519172723.GA9329@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -72,54 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch fixes below warnings reported by coccicheck
 
-drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:1888:14-17: Unneeded
-variable: "ret". Return "_FAIL" on line 1920
-drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:466:5-8: Unneeded
-variable: "res". Return "_SUCCESS" on line 494
+drivers/staging/rtl8723bs/hal/odm_HWConfig.c:501:4-10: Unneeded
+variable: "result". Return "HAL_STATUS_SUCCESS" on line 526
 
 Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+-----
+Changes in v2:
+  - fixed typo in commit message
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index d110d45..6a2eb66 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -463,7 +463,6 @@ static u8 init_channel_set(struct adapter *padapter, u8 ChannelPlan, RT_CHANNEL_
+---
+ drivers/staging/rtl8723bs/hal/odm_HWConfig.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+index d802a1f..4711c65 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
++++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+@@ -498,8 +498,6 @@ HAL_STATUS ODM_ConfigBBWithHeaderFile(
  
- int	init_mlme_ext_priv(struct adapter *padapter)
+ HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm)
  {
--	int	res = _SUCCESS;
- 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-@@ -491,7 +490,7 @@ int	init_mlme_ext_priv(struct adapter *padapter)
- 	pmlmeext->fixed_chan = 0xFF;
- #endif
+-	u8 result = HAL_STATUS_SUCCESS;
+-
+ 	ODM_RT_TRACE(
+ 		pDM_Odm,
+ 		ODM_COMP_INIT,
+@@ -523,5 +521,5 @@ HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm)
  
--	return res;
-+	return _SUCCESS;
+ 	READ_AND_CONFIG(8723B, _MAC_REG);
  
+-	return result;
++	return HAL_STATUS_SUCCESS;
  }
- 
-@@ -1885,7 +1884,6 @@ unsigned int OnAtim(struct adapter *padapter, union recv_frame *precv_frame)
- 
- unsigned int on_action_spct(struct adapter *padapter, union recv_frame *precv_frame)
- {
--	unsigned int ret = _FAIL;
- 	struct sta_info *psta = NULL;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	u8 *pframe = precv_frame->u.hdr.rx_data;
-@@ -1917,7 +1915,7 @@ unsigned int on_action_spct(struct adapter *padapter, union recv_frame *precv_fr
- 	}
- 
- exit:
--	return ret;
-+	return _FAIL;
- }
- 
- unsigned int OnAction_back(struct adapter *padapter, union recv_frame *precv_frame)
 -- 
 2.7.4
 
