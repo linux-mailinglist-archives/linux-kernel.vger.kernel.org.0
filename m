@@ -2,94 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D8722755
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 18:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5432322809
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725971AbfESQ5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 12:57:20 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48618 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725769AbfESQ5T (ORCPT
+        id S1729021AbfESRuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:50:09 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13419 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfESRuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 12:57:19 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4J5x94A021513
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 19 May 2019 01:59:10 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 77C90420027; Sun, 19 May 2019 01:58:48 -0400 (EDT)
-Date:   Sun, 19 May 2019 01:58:48 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     torvalds@linux-foundation.org
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ext4 fixes for 5.1-rc1
-Message-ID: <20190519055848.GA16693@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Sun, 19 May 2019 13:50:09 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce0f7df0000>; Sat, 18 May 2019 23:29:51 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sat, 18 May 2019 23:29:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sat, 18 May 2019 23:29:49 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
+ 2019 06:29:49 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 19 May
+ 2019 06:29:48 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sun, 19 May 2019 06:29:48 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5ce0f7dc0001>; Sat, 18 May 2019 23:29:48 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+CC:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 0/1] lockdep: fix warning: print_lock_trace defined but not used
+Date:   Sat, 18 May 2019 23:29:45 -0700
+Message-ID: <20190519062946.27040-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558247391; bh=ksr1pGeZiBQIqfKuyg0qGKN6OFXkV0WvzgMDp21VSw0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=GMFr8l9zwrT1Y7ZChMy/1xlma42OCTcqMV0zIArGQ94iNhpTq4QG61u25BygWcbDv
+         uChBkUYCNq1mBXjS59BQZx7W8xdo/MeV3G9HusQzPOlCZT9sp5/KloFHboAogeT3gL
+         61wkbYj4O3bED7BV85IOBFJp2vZH2OMEcz/Jm73toFi+kHC6oNzL/luqM6tZGiTgsP
+         oXMKcjXav6J+5pAKcxvnz8GXMLhAz358P/TXYlgLO4plW8A+o0DlpXh+riQ1bvegjP
+         XU21z7WBj6NQbJuNTEU8GU/EZuBHq87bfMcnEeRQdWklKoEfXVULQV2TbPdD3ubCwh
+         lBRATSr15QFrg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit db90f41916cf04c020062f8d8b0385942248283e:
+Hi,
 
-  ext4: export /sys/fs/ext4/feature/casefold if Unicode support is present (2019-05-06 14:03:52 -0400)
+I ran across this minor warning while building against today's linux.git.
 
-are available in the Git repository at:
+The proposed trivial fix leaves it a little fragile from a "what if someone
+adds a new call to print_lock_trace()" point of view, but I believe that it
+makes the current combination of ifdefs accurate, anyway.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
 
-for you to fetch changes up to 2c1d0e3631e5732dba98ef49ac0bec1388776793:
+John Hubbard (1):
+  lockdep: fix warning: print_lock_trace defined but not used
 
-  ext4: avoid panic during forced reboot due to aborted journal (2019-05-17 17:37:18 -0400)
+ kernel/locking/lockdep.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-----------------------------------------------------------------
-Some bug fixes, and an update to the URL's for the final version of
-Unicode 12.1.0.
+--=20
+2.21.0
 
-----------------------------------------------------------------
-Chengguang Xu (1):
-      jbd2: fix potential double free
-
-Colin Ian King (1):
-      ext4: unsigned int compared against zero
-
-Jan Kara (1):
-      ext4: avoid panic during forced reboot due to aborted journal
-
-Lukas Czerner (1):
-      ext4: fix data corruption caused by overlapping unaligned and aligned IO
-
-Sahitya Tummala (1):
-      ext4: fix use-after-free in dx_release()
-
-Sriram Rajagopalan (1):
-      ext4: zero out the unused memory region in the extent tree block
-
-Theodore Ts'o (4):
-      ext4: fix miscellaneous sparse warnings
-      unicode: add missing check for an error return from utf8lookup()
-      unicode: update to Unicode 12.1.0 final
-      ext4: fix block validity checks for journal inodes using indirect blocks
-
- fs/ext4/block_validity.c   |  8 +++++++-
- fs/ext4/extents.c          | 17 +++++++++++++++--
- fs/ext4/file.c             |  7 +++++++
- fs/ext4/fsmap.c            |  2 +-
- fs/ext4/ioctl.c            |  2 +-
- fs/ext4/namei.c            |  5 ++++-
- fs/ext4/super.c            |  4 ++--
- fs/jbd2/journal.c          | 49 +++++++++++++++++++++++++++++++------------------
- fs/jbd2/revoke.c           | 32 ++++++++++++++++++++------------
- fs/jbd2/transaction.c      |  8 +++++---
- fs/unicode/README.utf8data | 28 +++++++---------------------
- fs/unicode/utf8-norm.c     |  2 ++
- include/linux/jbd2.h       |  8 +++++---
- 13 files changed, 107 insertions(+), 65 deletions(-)
