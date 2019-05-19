@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8192A2281D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FC4F2281F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2019 19:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbfESR5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 13:57:25 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38948 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbfESR5Z (ORCPT
+        id S1729364AbfESR5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 13:57:33 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38961 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfESR5a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 13:57:25 -0400
-Received: by mail-ed1-f65.google.com with SMTP id e24so19942539edq.6
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:57:24 -0700 (PDT)
+        Sun, 19 May 2019 13:57:30 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e24so19942804edq.6
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 10:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2KDJMNJfIv5qLkX9gjcuIru5PdS9zm2I9aje75Yv/6w=;
-        b=l+8759gGZy5S/jxlabgPPs2V+a/SRM9cdSQ0+67gyx5DqfYk/5qoGhbTTHeO+8/kt1
-         vAga7RE/6uB7F6XPw1TefZgf+ucaQEcCOgkaBina5W5iFyhc26yYaa7UZL1LO8r1sApo
-         7Fhqa3UuuFLVKn2j4VMOtnn1zO6z7KVCsfhg+6vH9/fyEbe6ntyEqCuWcXz9WoLkRdiI
-         YPXcl30wRvNkI556ukv4n3zPklKb6nyhgyY6tW87V7iaR4qeCPxHh2Ztdxv5pKp7KTuD
-         6X7BpL+Pzw3I1efXxXSYLs9ZtXrOMIYiaO9UMiRN6PiTaIxeM3djj7cQwnbPjeuaSRtT
-         rDyw==
+        bh=hSaFCnfR2bfpWEW9+IDASa3q4Pa8ivn5CKtNahd44Kw=;
+        b=a1Om4Lg2C4tZiOySg407er5np9/4sFg5OyicTgChtep3koC5J4Tq5ZOCeAdArP4JR8
+         qJWUcrttMW0Sxm4FGjhIZY0RbgRIkszIDnSvKEXWtx0iyKeaCOSCFE/i8RCX5qASIjZp
+         9eheKazLMp2cN10t+brNYq+fiVTdjdIIIZCmEwX6XCWEreYVF3KELUiVRpe//V1bnKek
+         eTa5zqObwT3B8jMtczMbR0tIFovKr0E+I/EDjxVcTbJxgTa3w2QsslPcVeCH1iX6BXLj
+         9iN3A/kkj5nIqcZA0DzO4Ifi7Ub9G03q7WJOsSG8ms9023GUxugT6Uo9wI1KiD/GpE1U
+         qdOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2KDJMNJfIv5qLkX9gjcuIru5PdS9zm2I9aje75Yv/6w=;
-        b=Qs2mZUwoSP5RD2vfX35GZe//RM8BRiF9twAsXUn1/hDy+tFjIA29wJYy2b/m0H+u+J
-         /F0HEHU0g9Eozu/m0AvfdG9vsz2JB9b/ZpZbnSIDNXMX/OlCppUHJE5Hx+licm1xt+ag
-         GM1cej5lKL1g5khNU60MsIare54t6rR0/a5ChoHoqmZSk7DFLYGAlzzgSn2NwdvyYhG8
-         ZQZl4pZTL0qShlPu3GEdp4TzC6j/stbvxLAa8JNeguLYvWfM9e5GhXcUelPrXatgjkzK
-         N36fqinECU59B0h2x+IztuKKP1yHPi0jGRgE/llExYzaGfVRQbmLxq+HwNGBsakp6+uP
-         cEyg==
-X-Gm-Message-State: APjAAAXzmrU/3Cw52mNiGjVjteMDiL5ToqKcdH97nvMCdOz+cjl+5RBU
-        7gLRLg8AdSplXoN2qn/l7KE=
-X-Google-Smtp-Source: APXvYqzEvNUVnANyNFltuSglkuQsB1moXN98HHJaC97f/0xeIx8YKGzQqYpDqwYWt1s50urnsGQjHw==
-X-Received: by 2002:a17:906:3955:: with SMTP id g21mr54442419eje.61.1558288643498;
-        Sun, 19 May 2019 10:57:23 -0700 (PDT)
+        bh=hSaFCnfR2bfpWEW9+IDASa3q4Pa8ivn5CKtNahd44Kw=;
+        b=AiSdKF2FYv4i+h34t7v7uqQLtC10MbcT2mkhVHTA8O5oc9bNg0gJ4Zfpy030k2tYeD
+         b11G9suKxit8WV2gtgMHVgEiJlXefpI32lVYHchLk1zlZc7wVHLzJMfJcbLBIWmBrq4y
+         G+sUeZ4Z8eMwM5imc6Cjj0lLRxYru/uS+v1iR48mdt0YdVoe7U64kSE3QbyLq8dcG5w3
+         1CLk9RPTaOgfLzVdlkzijQeOX2sJ/NgrFnTVwP7HpJWv40HBnrmZuVYmXI+nkjzx5Tc/
+         u5P+zq8Qag8YwtvuaWoGFc0ZGmwMg0KJabmuRX8XWVdAbU24XzcjzVXaUuYxXN52C1ml
+         lh2A==
+X-Gm-Message-State: APjAAAUyv0TskYhz914r5HT14RDBDxD/zf1K9o4yr5Gx1JmiZXeYO1J6
+        hsBD6khaaZCXKWnoBOA9urg=
+X-Google-Smtp-Source: APXvYqyPTzo5wN45lTEMnmrBzu4K9xsaODSRQIEWRmXE+7IyXmsFj5WvAzAKwjjPXJD3Yr7suxsa+w==
+X-Received: by 2002:aa7:c4d2:: with SMTP id p18mr70897008edr.232.1558288648755;
+        Sun, 19 May 2019 10:57:28 -0700 (PDT)
 Received: from elitebook-localhost (84-106-70-146.cable.dynamic.v4.ziggo.nl. [84.106.70.146])
-        by smtp.gmail.com with ESMTPSA id z10sm4921920edl.35.2019.05.19.10.57.22
+        by smtp.gmail.com with ESMTPSA id x22sm5000877edd.59.2019.05.19.10.57.27
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 19 May 2019 10:57:22 -0700 (PDT)
+        Sun, 19 May 2019 10:57:28 -0700 (PDT)
 From:   nariman <narimantos@gmail.com>
 To:     broonie@kernel.org, hdegoede@redhat.com,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Cc:     Damian van Soelen <dj.vsoelen@gmail.com>,
+Cc:     Erik Bussing <eabbussing@outlook.com>,
         Nariman Etemadi <narimantos@gmail.com>
-Subject: [PATCH] ASoC: Intel: cht_bsw_rt5645.c: Remove buffer and snprintf calls
-Date:   Sun, 19 May 2019 19:57:04 +0200
-Message-Id: <20190519175706.3998-2-narimantos@gmail.com>
+Subject: [PATCH] ASoC: Intel: bytcr_5640.c: refactored codec_fixup
+Date:   Sun, 19 May 2019 19:57:05 +0200
+Message-Id: <20190519175706.3998-3-narimantos@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190519175706.3998-1-narimantos@gmail.com>
 References: <20190519175706.3998-1-narimantos@gmail.com>
@@ -63,66 +63,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damian van Soelen <dj.vsoelen@gmail.com>
+From: Erik Bussing <eabbussing@outlook.com>
 
-The snprintf calls filling cht_rt5645_cpu_dai_name / cht_rt5645_codec_aif_name
-always fill them with the same string ("ssp0-port" resp "rt5645-aif2") so
-instead of keeping these buffers around and making the cpu_dai_name /
-codec_aif_name point to this, simply update the foo_dai_name and foo_aif_name pointers to
-directly point to a string constant containing the desired string.
+Remove code duplication in byt_rt5640_codec_fixup
 
-Signed-off-by: Damian van Soelen <dj.vsoelen@gmail.com>
+Signed-off-by: Erik Bussing <eabbussing@outlook.com>
 Signed-off-by: Nariman Etemadi <narimantos@gmail.com>
 ---
- sound/soc/intel/boards/cht_bsw_rt5645.c | 26 ++++---------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ sound/soc/intel/boards/bytcr_rt5640.c | 64 ++++++++++-----------------
+ 1 file changed, 23 insertions(+), 41 deletions(-)
 
-diff --git a/sound/soc/intel/boards/cht_bsw_rt5645.c b/sound/soc/intel/boards/cht_bsw_rt5645.c
-index cbc2d458483f..b15459e56665 100644
---- a/sound/soc/intel/boards/cht_bsw_rt5645.c
-+++ b/sound/soc/intel/boards/cht_bsw_rt5645.c
-@@ -506,8 +506,6 @@ static struct cht_acpi_card snd_soc_cards[] = {
- };
+diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
+index a22366ce33c4..679be55418bf 100644
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -939,6 +939,7 @@ static int byt_rt5640_codec_fixup(struct snd_soc_pcm_runtime *rtd,
+ 	struct snd_interval *channels = hw_param_interval(params,
+ 						SNDRV_PCM_HW_PARAM_CHANNELS);
+ 	int ret;
++	int bits;
  
- static char cht_rt5645_codec_name[SND_ACPI_I2C_ID_LEN];
--static char cht_rt5645_codec_aif_name[12]; /*  = "rt5645-aif[1|2]" */
--static char cht_rt5645_cpu_dai_name[10]; /*  = "ssp[0|2]-port" */
+ 	/* The DSP will covert the FE rate to 48k, stereo */
+ 	rate->min = rate->max = 48000;
+@@ -949,53 +950,34 @@ static int byt_rt5640_codec_fixup(struct snd_soc_pcm_runtime *rtd,
  
- static bool is_valleyview(void)
- {
-@@ -641,28 +639,12 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	log_quirks(&pdev->dev);
- 
- 	if ((cht_rt5645_quirk & CHT_RT5645_SSP2_AIF2) ||
--		(cht_rt5645_quirk & CHT_RT5645_SSP0_AIF2)) {
+ 		/* set SSP0 to 16-bit */
+ 		params_set_format(params, SNDRV_PCM_FORMAT_S16_LE);
 -
--		/* fixup codec aif name */
--		snprintf(cht_rt5645_codec_aif_name,
--			sizeof(cht_rt5645_codec_aif_name),
--			"%s", "rt5645-aif2");
+-		/*
+-		 * Default mode for SSP configuration is TDM 4 slot, override config
+-		 * with explicit setting to I2S 2ch 16-bit. The word length is set with
+-		 * dai_set_tdm_slot() since there is no other API exposed
+-		 */
+-		ret = snd_soc_dai_set_fmt(rtd->cpu_dai,
+-					SND_SOC_DAIFMT_I2S     |
+-					SND_SOC_DAIFMT_NB_NF   |
+-					SND_SOC_DAIFMT_CBS_CFS
+-			);
+-		if (ret < 0) {
+-			dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
+-			return ret;
+-		}
 -
--		cht_dailink[dai_index].codec_dai_name =
--			cht_rt5645_codec_aif_name;
--	}
-+		(cht_rt5645_quirk & CHT_RT5645_SSP0_AIF2))
-+			cht_dailink[dai_index].codec_dai_name = "rt5645-aif2";
+-		ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, 16);
+-		if (ret < 0) {
+-			dev_err(rtd->dev, "can't set I2S config, err %d\n", ret);
+-			return ret;
+-		}
+-
++	bits = 16;
+ 	} else {
  
- 	if ((cht_rt5645_quirk & CHT_RT5645_SSP0_AIF1) ||
--		(cht_rt5645_quirk & CHT_RT5645_SSP0_AIF2)) {
--
--		/* fixup cpu dai name name */
--		snprintf(cht_rt5645_cpu_dai_name,
--			sizeof(cht_rt5645_cpu_dai_name),
--			"%s", "ssp0-port");
--
--		cht_dailink[dai_index].cpu_dai_name =
--			cht_rt5645_cpu_dai_name;
--	}
-+		(cht_rt5645_quirk & CHT_RT5645_SSP0_AIF2))
-+			cht_dailink[dai_index].cpu_dai_name = "ssp0-port";
+ 		/* set SSP2 to 24-bit */
+ 		params_set_format(params, SNDRV_PCM_FORMAT_S24_LE);
++		bits = 24;
++	}
  
- 	/* override plaform name, if required */
- 	platform_name = mach->mach_params.platform;
+-		/*
+-		 * Default mode for SSP configuration is TDM 4 slot, override config
+-		 * with explicit setting to I2S 2ch 24-bit. The word length is set with
+-		 * dai_set_tdm_slot() since there is no other API exposed
+-		 */
+-		ret = snd_soc_dai_set_fmt(rtd->cpu_dai,
+-					SND_SOC_DAIFMT_I2S     |
+-					SND_SOC_DAIFMT_NB_NF   |
+-					SND_SOC_DAIFMT_CBS_CFS
+-			);
+-		if (ret < 0) {
+-			dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
+-			return ret;
+-		}
+ 
+-		ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, 24);
+-		if (ret < 0) {
+-			dev_err(rtd->dev, "can't set I2S config, err %d\n", ret);
+-			return ret;
+-		}
++	/*
++	 * Default mode for SSP configuration is TDM 4 slot, override config
++	 * with explicit setting to I2S 2ch 24-bit. The word length is set with
++	 * dai_set_tdm_slot() since there is no other API exposed
++	 */
++	ret = snd_soc_dai_set_fmt(rtd->cpu_dai,
++		SND_SOC_DAIFMT_I2S     |
++		SND_SOC_DAIFMT_NB_NF   |
++		SND_SOC_DAIFMT_CBS_CFS
++	);
++	if (ret < 0) {
++		dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, bits);
++	if (ret < 0) {
++		dev_err(rtd->dev, "can't set I2S config, err %d\n", ret);
++		return ret;
+ 	}
+ 	return 0;
+ }
 -- 
 2.20.1
 
