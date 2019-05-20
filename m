@@ -2,98 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5064323C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AEF123C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392337AbfETPmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:42:44 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36136 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732399AbfETPmi (ORCPT
+        id S2392217AbfETPiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:38:07 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37630 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730766AbfETPiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:42:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s17so15186190wru.3;
-        Mon, 20 May 2019 08:42:36 -0700 (PDT)
+        Mon, 20 May 2019 11:38:06 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g3so7416116pfi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:38:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pTMTqWY8E4+UnCZ9AjMEiomm00MjjGjXsokoRCkoYLc=;
-        b=DRl+KqdIokWtcnwsE6se0zRs1ML6Kgm5bl5siV1nJDAo4iSmjRnWsw0M798AjhjBF3
-         ew4/B/7NlF3XRd8e0/QekmlLtPWw5uoRKUKLuubsrSH6GpaUcg+og9IqBjsqVWjLerZ9
-         ASrOFalwLhiL/xx7tppP5YrCN5ob3vLKQUKynHSCEPcZSghHuYvgPZLP6u/VKIh5KO2z
-         Hb1AUo1BFbB+4jCjVqnJE7UTQD6RKoB81ZXyEVpV/kjwjO9tpvd+R1Ob50jWsXEAW/ia
-         JlbVfWAMOSB+17SuHnnlTbLOzDl1RPLMzHH5UQEGxIQmVKe9rscdfomvyFZQlX/6K4HN
-         1Byg==
+        h=from:to:cc:subject:date:message-id;
+        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
+        b=igniLd0MBlYjxgzMR5kyXnl8VT8ZtjRPrKt7aUAacEDN/OkL9DAh4o+l/pKeqrh2lr
+         eazLg/XVLVN92cJwNeJ1uyI6xggkx6sPaD9q25GCBSuNHuBJWYH8kZE7Y/ZeQjZUQhI+
+         0Nv1nUmCeOYqS1ALsMqdADZig3yQcYNOlwRGTtolAXwu1raNQ4E/NLQJ74VGu7WkO3Du
+         R/iLAFIZxnFjll0A6PR6TQE7RaWbYQM05Jg7/zdl2nZcMNHit5Tc9/wItAOyecRQNATJ
+         sRL+cW/t2bQZqRIYKiBgAy5R1lFcBA2yhUo+Vb9wNAY2VBMuCmpnGk/S85cDKIOQrPJ7
+         VYWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=pTMTqWY8E4+UnCZ9AjMEiomm00MjjGjXsokoRCkoYLc=;
-        b=hviR3VTPFZETcBTQyAEyKEMkKEl06dxAhjjbNKoLYCQtgHPuxrmmEnIChMs3QHYneT
-         X/dE5W2PFG/NwqkO7oif4D0LjPEr2IacX2AIZPXzByiX84t4CK5Qa5xnwBuyCtdLCAB5
-         ntuCz2XPEsL/miEsZ56FvFVQ+pnvYU6s4ZcNfV9tq415vdiiCZbxycBL0352hdeoatUl
-         vM7swRbM8nIj76MZXvUgEFeTWwZ1Wk6fpyJaLNFo9gWd+ghv2FLQdxJaBKVBvpFmP7O4
-         tqCwyJfKOW5RcixNtFH4OjQfW78YxmG6y/hd3xm4arO4GLgv8lH1NapMP46u7D62jur1
-         6tTw==
-X-Gm-Message-State: APjAAAUzfg/GXv36QFgWn1L4QVGGYt/hfXMgNA3DSUCYVPBrQaV9uvBI
-        IixlUwpwZybyMlUyWDuWyMg7e3Im
-X-Google-Smtp-Source: APXvYqx/JY1VdrUlB1N4GQpIfYrei6E013ax5TCwwP3gyNNdvMlBuS3CQRLeTY+cgMRCa9akd05eSw==
-X-Received: by 2002:a05:6000:41:: with SMTP id k1mr14631085wrx.332.1558366955908;
-        Mon, 20 May 2019 08:42:35 -0700 (PDT)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id v11sm15851995wrq.80.2019.05.20.08.42.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 08:42:35 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 2/2] KVM: x86/pmu: do not mask the value that is written to fixed PMUs
-Date:   Mon, 20 May 2019 17:42:31 +0200
-Message-Id: <1558366951-19259-3-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1558366951-19259-1-git-send-email-pbonzini@redhat.com>
-References: <1558366951-19259-1-git-send-email-pbonzini@redhat.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
+        b=ON1lnvuwwFxJYxMYYXR0wz+B3tEjPT9f6TxGICP3g8cqvExSD9AdiTN72je8++cCQ4
+         E05GmeOyoX4Vv0NY3mtWiKqoOZkGN5HJrGaUzwzL/540PXTBrkhsDygY0/QfSXHqdEOr
+         LujVlfeD/BnhudXoVGw76CWfTBMbmDkfTGrXnykMsVr77UkSpge6omDaJJ9IGbJHCWye
+         x49P2AUm4K/KjKVC4WqMOQpvrI964mtpdJxNHKHWBDPbmIiDCMfTKwO5z/Rw0onhW4T4
+         MJbBEUO3BW+jatjaRA3kUkkvC85PDMD9xalEiftaWK2a6uDTA4dNCix4qVse5WCfKG3f
+         g8fw==
+X-Gm-Message-State: APjAAAWLpBEvKJvrqf4xwg34zZy5P59Sh6Xn7MEw8jJI6MRE4HD3ECSi
+        8TmwCPxBjHRNMwedJ+OgCYw=
+X-Google-Smtp-Source: APXvYqxDPl+B5/1wJyOPopG3XncxecQB7K5MLcwywRUNYTmdLcE6DD4ncAqutVAEsvnyk4pQ1XGeBQ==
+X-Received: by 2002:a63:5c5b:: with SMTP id n27mr76820777pgm.52.1558366685895;
+        Mon, 20 May 2019 08:38:05 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.19.216])
+        by smtp.gmail.com with ESMTPSA id s28sm28429620pgl.88.2019.05.20.08.38.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 08:38:04 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, ak@linux.intel.com, yao.jin@linux.intel.com,
+        eranian@google.com, linux-kernel@vger.kernel.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] perf: Remove duplicate headers
+Date:   Mon, 20 May 2019 21:12:43 +0530
+Message-Id: <1558366963-4163-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the SDM, for MSR_IA32_PERFCTR0/1 "the lower-order 32 bits of
-each MSR may be written with any value, and the high-order 8 bits are
-sign-extended according to the value of bit 31", but the fixed counters
-in real hardware appear to be limited to the width of the fixed counters.
-Fix KVM to do the same.
+Removed duplicate headers which are included twice.
 
-Reported-by: Nadav Amit <nadav.amit@gmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 ---
- arch/x86/kvm/vmx/pmu_intel.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ tools/perf/util/data.c                 | 1 -
+ tools/perf/util/get_current_dir_name.c | 1 -
+ tools/perf/util/stat-display.c         | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index b6f5157445fe..a99613a060dd 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -240,11 +240,14 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		}
- 		break;
- 	default:
--		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
--		    (pmc = get_fixed_pmc(pmu, msr))) {
--			if (!msr_info->host_initiated)
--				data = (s64)(s32)data;
--			pmc->counter += data - pmc_read_counter(pmc);
-+		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0))) {
-+			if (msr_info->host_initiated)
-+				pmc->counter = data;
-+			else
-+				pmc->counter = (s32)data;
-+			return 0;
-+		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
-+			pmc->counter = data;
- 			return 0;
- 		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
- 			if (data == pmc->eventsel)
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index 6a64f71..509a41e 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -8,7 +8,6 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <asm/bug.h>
+-#include <sys/types.h>
+ #include <dirent.h>
+ 
+ #include "data.h"
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+index 267aa60..ebb80cd 100644
+--- a/tools/perf/util/get_current_dir_name.c
++++ b/tools/perf/util/get_current_dir_name.c
+@@ -5,7 +5,6 @@
+ #include "util.h"
+ #include <unistd.h>
+ #include <stdlib.h>
+-#include <stdlib.h>
+ 
+ /* Android's 'bionic' library, for one, doesn't have this */
+ 
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index 6d043c7..7b3a16c 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -12,7 +12,6 @@
+ #include "string2.h"
+ #include "sane_ctype.h"
+ #include "cgroup.h"
+-#include <math.h>
+ #include <api/fs/fs.h>
+ 
+ #define CNTR_NOT_SUPPORTED	"<not supported>"
 -- 
-1.8.3.1
+1.9.1
 
