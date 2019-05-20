@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C499233E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79B27234B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbfETMUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34316 "EHLO mail.kernel.org"
+        id S2389587AbfETM3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:29:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731797AbfETMUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:50 -0400
+        id S2389975AbfETM3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:29:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B4B8213F2;
-        Mon, 20 May 2019 12:20:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FEFC20645;
+        Mon, 20 May 2019 12:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354849;
-        bh=p/F0Eyhuvuh8BFZ332m6Psyifb9HDAehpKdQ6ZdZLyE=;
+        s=default; t=1558355388;
+        bh=RFoZ3jeziuJ6r1BSpEWc6IiRxtwNs2eooGT9dLw8uJA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QooHau7SQCBO0y2G1TAmEBmETFx1YON/KXKNzktbmFOi8NkYVYn1SOFbhWZIIrRAQ
-         +E7Sth7vWm8hEmk03h2DKGc1asmfwRhG6czrKEQEjCYj0x4mavFdtwjIVfEc6YQ3R8
-         yQEUoMZ7FYiSvXgYPALJmE5HAJMZoKr9apIF3++M=
+        b=BPAm1nCVbVMglBA5kBxFuLy2bgNZ+Oq5nSQIA+97oGKiVaMZngFPC75nc2sQqK9Aw
+         Puj/GZ1ii2WsekH1aWLg5bI3dhRud0Y2Fu2MNACXOMNPfIlai25RHCuK+me6GGGKvK
+         7WM3lMTidn7YO4+CHhAOB9SBF1Ntf+TvkNnfm6v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
-Subject: [PATCH 4.14 59/63] ext4: fix use-after-free in dx_release()
+        stable@vger.kernel.org, Kiran Kolukuluru <kirank@ami.com>,
+        Kamlakant Patel <kamlakantp@marvell.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 5.0 098/123] ipmi:ssif: compare block number correctly for multi-part return messages
 Date:   Mon, 20 May 2019 14:14:38 +0200
-Message-Id: <20190520115237.422924505@linuxfoundation.org>
+Message-Id: <20190520115251.534792655@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Kamlakant Patel <kamlakantp@marvell.com>
 
-commit 08fc98a4d6424af66eb3ac4e2cedd2fc927ed436 upstream.
+commit 55be8658c7e2feb11a5b5b33ee031791dbd23a69 upstream.
 
-The buffer_head (frames[0].bh) and it's corresping page can be
-potentially free'd once brelse() is done inside the for loop
-but before the for loop exits in dx_release(). It can be free'd
-in another context, when the page cache is flushed via
-drop_caches_sysctl_handler(). This results into below data abort
-when accessing info->indirect_levels in dx_release().
+According to ipmi spec, block number is a number that is incremented,
+starting with 0, for each new block of message data returned using the
+middle transaction.
 
-Unable to handle kernel paging request at virtual address ffffffc17ac3e01e
-Call trace:
- dx_release+0x70/0x90
- ext4_htree_fill_tree+0x2d4/0x300
- ext4_readdir+0x244/0x6f8
- iterate_dir+0xbc/0x160
- SyS_getdents64+0x94/0x174
+Here, the 'blocknum' is data[0] which always starts from zero(0) and
+'ssif_info->multi_pos' starts from 1.
+So, we need to add +1 to blocknum while comparing with multi_pos.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-Cc: stable@kernel.org
+Fixes: 7d6380cd40f79 ("ipmi:ssif: Fix handling of multi-part return messages").
+Reported-by: Kiran Kolukuluru <kirank@ami.com>
+Signed-off-by: Kamlakant Patel <kamlakantp@marvell.com>
+Message-Id: <1556106615-18722-1-git-send-email-kamlakantp@marvell.com>
+[Also added a debug log if the block numbers don't match.]
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.4
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_ssif.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -870,12 +870,15 @@ static void dx_release(struct dx_frame *
- {
- 	struct dx_root_info *info;
- 	int i;
-+	unsigned int indirect_levels;
- 
- 	if (frames[0].bh == NULL)
- 		return;
- 
- 	info = &((struct dx_root *)frames[0].bh->b_data)->info;
--	for (i = 0; i <= info->indirect_levels; i++) {
-+	/* save local copy, "info" may be freed after brelse() */
-+	indirect_levels = info->indirect_levels;
-+	for (i = 0; i <= indirect_levels; i++) {
- 		if (frames[i].bh == NULL)
- 			break;
- 		brelse(frames[i].bh);
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -690,12 +690,16 @@ static void msg_done_handler(struct ssif
+ 			/* End of read */
+ 			len = ssif_info->multi_len;
+ 			data = ssif_info->data;
+-		} else if (blocknum != ssif_info->multi_pos) {
++		} else if (blocknum + 1 != ssif_info->multi_pos) {
+ 			/*
+ 			 * Out of sequence block, just abort.  Block
+ 			 * numbers start at zero for the second block,
+ 			 * but multi_pos starts at one, so the +1.
+ 			 */
++			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
++				dev_dbg(&ssif_info->client->dev,
++					"Received message out of sequence, expected %u, got %u\n",
++					ssif_info->multi_pos - 1, blocknum);
+ 			result = -EIO;
+ 		} else {
+ 			ssif_inc_stat(ssif_info, received_message_parts);
 
 
