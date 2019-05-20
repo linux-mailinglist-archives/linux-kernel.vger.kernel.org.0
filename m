@@ -2,39 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED94723359
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E5D23413
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732780AbfETMQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:16:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
+        id S2388532AbfETMXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731553AbfETMQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:16:10 -0400
+        id S2388519AbfETMXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD8BE20815;
-        Mon, 20 May 2019 12:16:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2B3B21019;
+        Mon, 20 May 2019 12:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354570;
-        bh=R7+OcQ0pRtTFgra2O4wzWliBW/uQmdF2ZzODnmYQO8w=;
+        s=default; t=1558354983;
+        bh=FnOiAWCxbxKZVe4E+ZcIN19Am0EYnQ0noptC7Y+yIqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xEAsFLF1woPWHhBlaj2tYk9FW7CUCe/527uPLkekxoOUTyyYXglwmHdf7+FCcW+Eg
-         N89qJ9MxYR4ckf8AgyhNrUmkQ+dI3Z2vQPT+3gm8YaOneA/GMJUypDxNV+Ux85c3Ia
-         36HxPnhtDstL4TJsKMeLNXOdjONhB/B2JKjmZvJM=
+        b=RTKZRRg1YHRvm7rV96wwn8ua+v79ABSZwNwDNGswW5qYEpHLD1q+7ERv+4+QMTLnQ
+         MewUZbuSENBKo4MC9Ob9ehMzOOX33ohmCLgSnN85DG+SEmfFnd5kk3VUiMnJHHGQ2w
+         1AsOBNXXemOo5W/v/1reE4NWzt41nTE2zpzPSeOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 10/44] arm64: Clear OSDLR_EL1 on CPU boot
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Josh Snyder <joshs@netflix.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Chinner <david@fromorbit.com>,
+        Kevin Easton <kevin@guarana.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Daniel Gruss <daniel@gruss.cc>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Subject: [PATCH 4.19 053/105] mm/mincore.c: make mincore() more conservative
 Date:   Mon, 20 May 2019 14:13:59 +0200
-Message-Id: <20190520115232.246013965@linuxfoundation.org>
+Message-Id: <20190520115250.721190520@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +55,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit 6fda41bf12615ee7c3ddac88155099b1a8cf8d00 upstream.
+commit 134fca9063ad4851de767d1768180e5dede9a881 upstream.
 
-Some firmwares may reboot CPUs with OS Double Lock set. Make sure that
-it is unlocked, in order to use debug exceptions.
+The semantics of what mincore() considers to be resident is not
+completely clear, but Linux has always (since 2.3.52, which is when
+mincore() was initially done) treated it as "page is available in page
+cache".
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+That's potentially a problem, as that [in]directly exposes
+meta-information about pagecache / memory mapping state even about
+memory not strictly belonging to the process executing the syscall,
+opening possibilities for sidechannel attacks.
+
+Change the semantics of mincore() so that it only reveals pagecache
+information for non-anonymous mappings that belog to files that the
+calling process could (if it tried to) successfully open for writing;
+otherwise we'd be including shared non-exclusive mappings, which
+
+ - is the sidechannel
+
+ - is not the usecase for mincore(), as that's primarily used for data,
+   not (shared) text
+
+[jkosina@suse.cz: v2]
+  Link: http://lkml.kernel.org/r/20190312141708.6652-2-vbabka@suse.cz
+[mhocko@suse.com: restructure can_do_mincore() conditions]
+Link: http://lkml.kernel.org/r/nycvar.YFH.7.76.1903062342020.19912@cbobk.fhfr.pm
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Josh Snyder <joshs@netflix.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Originally-by: Linus Torvalds <torvalds@linux-foundation.org>
+Originally-by: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Kevin Easton <kevin@guarana.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Cyril Hrubis <chrubis@suse.cz>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: Daniel Gruss <daniel@gruss.cc>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/debug-monitors.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/mincore.c |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -132,6 +132,7 @@ NOKPROBE_SYMBOL(disable_debug_monitors);
-  */
- static int clear_os_lock(unsigned int cpu)
- {
-+	write_sysreg(0, osdlr_el1);
- 	write_sysreg(0, oslar_el1);
- 	isb();
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -169,6 +169,22 @@ out:
  	return 0;
+ }
+ 
++static inline bool can_do_mincore(struct vm_area_struct *vma)
++{
++	if (vma_is_anonymous(vma))
++		return true;
++	if (!vma->vm_file)
++		return false;
++	/*
++	 * Reveal pagecache information only for non-anonymous mappings that
++	 * correspond to the files the calling process could (if tried) open
++	 * for writing; otherwise we'd be including shared non-exclusive
++	 * mappings, which opens a side channel.
++	 */
++	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
++		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
++}
++
+ /*
+  * Do a chunk of "sys_mincore()". We've already checked
+  * all the arguments, we hold the mmap semaphore: we should
+@@ -189,8 +205,13 @@ static long do_mincore(unsigned long add
+ 	vma = find_vma(current->mm, addr);
+ 	if (!vma || addr < vma->vm_start)
+ 		return -ENOMEM;
+-	mincore_walk.mm = vma->vm_mm;
+ 	end = min(vma->vm_end, addr + (pages << PAGE_SHIFT));
++	if (!can_do_mincore(vma)) {
++		unsigned long pages = DIV_ROUND_UP(end - addr, PAGE_SIZE);
++		memset(vec, 1, pages);
++		return pages;
++	}
++	mincore_walk.mm = vma->vm_mm;
+ 	err = walk_page_range(addr, end, &mincore_walk);
+ 	if (err < 0)
+ 		return err;
 
 
