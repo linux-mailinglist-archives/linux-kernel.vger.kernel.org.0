@@ -2,60 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D15124426
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7262442F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbfETXUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 19:20:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35748 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727414AbfETXUT (ORCPT
+        id S1727478AbfETXUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 19:20:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33661 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727424AbfETXUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 19:20:19 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t87so7985650pfa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 16:20:18 -0700 (PDT)
+        Mon, 20 May 2019 19:20:20 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y3so7452756plp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 16:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ONzLx8copuFlv9pFt6ADTFJUuBuIxgCmzCGCG/RdIgo=;
-        b=V/b5UP+FcE4d2e4MWXezl3uUdVXP+/4i56SZjUcx2yGPGkZjECQSxkRgvLzwD3RJmQ
-         cE9XtYTwwWYFZvgpeP4jA5/+3jwtbgXhtWSf3/W6gs3UhvfKr19knIh9vqDZ7hR+tI3A
-         lBMJDYKsrpyO7lh+2qQArup3WoLVnvi6e49lk=
+        bh=1tp0hWg+Fv4tFS/1ogVPOUXaReV0m0NPqcPhlDEcA4M=;
+        b=V2XT6VyD2+DXGZSgdKWFvfyai33es5DC+pNYfU1uPcQQUXoX4sf/c4bDjhULluZD/c
+         MfaAquz2qQ7KJQkg9vWSvHcjVIvgRjEQ2Gqt453NVNd8pDuqKvbFpR3SRpLoo9Fhn3Bn
+         YPOOGVv69va+6L6dfkLJtQqk9v+n5hsgQ/cqw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ONzLx8copuFlv9pFt6ADTFJUuBuIxgCmzCGCG/RdIgo=;
-        b=BMvSijJ3uKYymrcMkQtfQ6Vj7bd/wDf/OXDBBHDxmTlSRbee82f+hFqc2F2zCubdcx
-         SF6ITHwNjcLLfXDBuEe9kgJZpruX+IMHEcnsO40wHufEm3bkyhyMvjYjNpb7E8X0YwnU
-         GH5M1hZ7f8ibr3YIwjVrUqJDnFHLSjGENUPjWGjvNsXXtW4Fzizxj80teYDkWwW+LGzm
-         mgnWYIip3VqWZ5SId573XIGu1Q657GsSjg20oli98BwhtWZ/CfkpmQu/YiKQmMthUopq
-         HQcBQdlB107zh0KUnpEm6VeK9658CkvPdh3hFMFzFEeWbXBD/rKaxNTBRdEN9tOiJPMf
-         /PIg==
-X-Gm-Message-State: APjAAAW8fmIwmA3R/X1vOxJvszKesQjIxVyW71ibfL5Za+7FzG5Hh2pB
-        mSuOumUnJS0bORFsjnqZxSc1ug==
-X-Google-Smtp-Source: APXvYqx1QPTzMDZloi/cuDWG9ySjuBIhqqqFhJ+cbduVxoKXqU6NNipLlJPVOZyuKBaoGJkrxkDo5w==
-X-Received: by 2002:a62:ea0a:: with SMTP id t10mr82844553pfh.236.1558394418619;
-        Mon, 20 May 2019 16:20:18 -0700 (PDT)
+        bh=1tp0hWg+Fv4tFS/1ogVPOUXaReV0m0NPqcPhlDEcA4M=;
+        b=YM2pbJeuPzLEhfhmbkSBOjHMZx4H+hXgGhjyec4MDQNvpyXBypyKb17pJN0gt+zeLM
+         DIe8u1iNdHeMuIe5gPuolj0S8+SfFqkEMI4NrXVvs42gUYl8DDs/xP3uIIFWVfXu5mLD
+         uSYUADDP7mzgDZCUkCym4sWy2bJ123IiDDHRaBo6KvCzKY4mTIcF1aPbqjhikB2xhpdc
+         VltvpcvPMFbIhsfovSuQ14Zg4UeU8dGbBcFlfeBoXXDrjKotEK6obaezDSL6nAdRUm48
+         /PTYfYdf+rHPOtYOYrTOPPCBOcWAkLS0vP6aIDP01UbaNRpONiVCjQkZUCJ0KVkhtmpH
+         Fc7Q==
+X-Gm-Message-State: APjAAAXOTGO9gPLfnHK33Zfgk1mNwR2fhCGqAJPYTV2idrr3LsLfYIdb
+        1J6WP+UNQO6YsZqBAoTzaM7hkg==
+X-Google-Smtp-Source: APXvYqzGnLop82FsJKmnNwPR3WWLt5KGSTjBnQrRed8+UZU4RsaefgYELhyIPHlFuCzzzBwKRGJPNA==
+X-Received: by 2002:a17:902:9348:: with SMTP id g8mr36216437plp.174.1558394419565;
+        Mon, 20 May 2019 16:20:19 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id h13sm19350861pgk.55.2019.05.20.16.20.17
+        by smtp.gmail.com with ESMTPSA id h13sm19350861pgk.55.2019.05.20.16.20.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 16:20:18 -0700 (PDT)
+        Mon, 20 May 2019 16:20:19 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Maran Wilson <maran.wilson@oracle.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 09/12] x86/boot/64: Adapt assembly for PIE support
-Date:   Mon, 20 May 2019 16:19:34 -0700
-Message-Id: <20190520231948.49693-10-thgarnie@chromium.org>
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 10/12] x86/power/64: Adapt assembly for PIE support
+Date:   Mon, 20 May 2019 16:19:35 -0700
+Message-Id: <20190520231948.49693-11-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 In-Reply-To: <20190520231948.49693-1-thgarnie@chromium.org>
 References: <20190520231948.49693-1-thgarnie@chromium.org>
@@ -71,73 +70,38 @@ From: Thomas Garnier <thgarnie@google.com>
 Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
-Early at boot, the kernel is mapped at a temporary address while preparing
-the page table. To know the changes needed for the page table with KASLR,
-the boot code calculate the difference between the expected address of the
-kernel and the one chosen by KASLR. It does not work with PIE because all
-symbols in code are relatives. Instead of getting the future relocated
-virtual address, you will get the current temporary mapping.
-Instructions were changed to have absolute 64-bit references.
-
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/x86/kernel/head_64.S | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/x86/power/hibernate_asm_64.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index bcd206c8ac90..64a4f0a22b20 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -90,8 +90,10 @@ startup_64:
- 	popq	%rsi
+diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
+index 3008baa2fa95..9ed980efef72 100644
+--- a/arch/x86/power/hibernate_asm_64.S
++++ b/arch/x86/power/hibernate_asm_64.S
+@@ -24,7 +24,7 @@
+ #include <asm/frame.h>
  
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	addq	$(early_top_pgt - __START_KERNEL_map), %rax
-+	movabs  $(early_top_pgt - __START_KERNEL_map), %rcx
-+	addq    %rcx, %rax
- 	jmp 1f
-+
- ENTRY(secondary_startup_64)
- 	UNWIND_HINT_EMPTY
- 	/*
-@@ -120,7 +122,8 @@ ENTRY(secondary_startup_64)
- 	popq	%rsi
+ ENTRY(swsusp_arch_suspend)
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	%rsp, pt_regs_sp(%rax)
+ 	movq	%rbp, pt_regs_bp(%rax)
+ 	movq	%rsi, pt_regs_si(%rax)
+@@ -115,7 +115,7 @@ ENTRY(restore_registers)
+ 	movq	%rax, %cr4;  # turn PGE back on
  
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	addq	$(init_top_pgt - __START_KERNEL_map), %rax
-+	movabs	$(init_top_pgt - __START_KERNEL_map), %rcx
-+	addq    %rcx, %rax
- 1:
- 
- 	/* Enable PAE mode, PGE and LA57 */
-@@ -138,7 +141,7 @@ ENTRY(secondary_startup_64)
- 	movq	%rax, %cr3
- 
- 	/* Ensure I am executing from virtual addresses */
--	movq	$1f, %rax
-+	movabs  $1f, %rax
- 	ANNOTATE_RETPOLINE_SAFE
- 	jmp	*%rax
- 1:
-@@ -235,11 +238,12 @@ ENTRY(secondary_startup_64)
- 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
- 	 *		address given in m16:64.
- 	 */
--	pushq	$.Lafter_lret	# put return address on stack for unwinder
-+	movabs  $.Lafter_lret, %rax
-+	pushq	%rax		# put return address on stack for unwinder
- 	xorl	%ebp, %ebp	# clear frame pointer
--	movq	initial_code(%rip), %rax
-+	leaq	initial_code(%rip), %rax
- 	pushq	$__KERNEL_CS	# set correct cs
--	pushq	%rax		# target address in negative space
-+	pushq	(%rax)		# target address in negative space
- 	lretq
- .Lafter_lret:
- END(secondary_startup_64)
+ 	/* We don't restore %rax, it must be 0 anyway */
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	pt_regs_sp(%rax), %rsp
+ 	movq	pt_regs_bp(%rax), %rbp
+ 	movq	pt_regs_si(%rax), %rsi
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
