@@ -2,254 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52B223296
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 077662329B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbfETLdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:33:07 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:37373 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732957AbfETLdG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:33:06 -0400
-X-Originating-IP: 90.88.22.185
-Received: from aptenodytes (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 7FDA81BF20D;
-        Mon, 20 May 2019 11:32:59 +0000 (UTC)
-Date:   Mon, 20 May 2019 13:32:59 +0200
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: Re: [PATCH v3 5/7] drm/fourcc: Pass the format_info pointer to
- drm_format_plane_width/height
-Message-ID: <20190520113258.GC6789@aptenodytes>
-References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
- <514af1d489d80b8b1767e3716b663ce5103da6eb.1558002671.git-series.maxime.ripard@bootlin.com>
+        id S1733013AbfETLd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:33:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:40492 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731422AbfETLd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:33:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:33:28 -0700
+X-ExtLoop1: 1
+Received: from mhauser-mobl.ger.corp.intel.com (HELO localhost) ([10.252.47.244])
+  by orsmga006.jf.intel.com with ESMTP; 20 May 2019 04:33:14 -0700
+Date:   Mon, 20 May 2019 14:33:13 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190520113313.GB27805@linux.intel.com>
+References: <CALCETrWCZQwg-TUCm58DVG43=xCKRsMe1tVHrR8vdt06hf4fWA@mail.gmail.com>
+ <20190513102926.GD8743@linux.intel.com>
+ <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com>
+ <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com>
+ <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <20190516051622.GC6388@linux.intel.com>
+ <CALCETrVx1hgY67mP+73w5rT+eY+APcfS0YJ+XwtTLNz3CbVNMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <514af1d489d80b8b1767e3716b663ce5103da6eb.1558002671.git-series.maxime.ripard@bootlin.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CALCETrVx1hgY67mP+73w5rT+eY+APcfS0YJ+XwtTLNz3CbVNMA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, May 16, 2019 at 02:02:58PM -0700, Andy Lutomirski wrote:
+> That certainly *could* be done, and I guess the decision could be left
+> to the LSMs, but I'm not convinced this adds value.  What security use
+> case does this cover that isn't already covered by requiring EXECUTE
+> (e.g. lib_t) on the enclave file and some new SIGSTRUCT right on the
+> .sigstruct?
 
-On Thu 16 May 19, 12:31, Maxime Ripard wrote:
-> So far, the drm_format_plane_height/width functions were operating on the
-> format's fourcc and was doing a lookup to retrieve the drm_format_info
-> structure and return the cpp.
-> 
-> However, this is inefficient since in most cases, we will have the
-> drm_format_info pointer already available so we shouldn't have to perform a
-> new lookup. Some drm_fourcc functions also already operate on the
-> drm_format_info pointer for that reason, so the API is quite inconsistent
-> there.
-> 
-> Let's follow the latter pattern and remove the extra lookup while being a
-> bit more consistent.
-> 
-> In order to be extra consistent, also rename that function to
-> drm_format_info_plane_cpp and to a static function in the header to match
-> the current policy. The parameters order have also be changed to match the
-> other functions prototype.
+I guess you are right as SIGSTRUCT completely shields the memory layout
+and contents of an enclave.
 
-Same comment about plane being int instead of unsigned int, but I think we
-can fix that later.
-
-Another thing that I find odd is that the division by vsub/hsub is not
-rounded up, but again, it's something independent from your patch.
-
-Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Cheers,
-
-Paul
-
-> Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  drivers/gpu/drm/drm_fourcc.c          | 48 +----------------------------
->  drivers/gpu/drm/meson/meson_overlay.c | 12 +++----
->  include/drm/drm_fourcc.h              | 46 +++++++++++++++++++++++++--
->  3 files changed, 50 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 5f63fc74e265..35b459d186c5 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -333,54 +333,6 @@ drm_get_format_info(struct drm_device *dev,
->  EXPORT_SYMBOL(drm_get_format_info);
->  
->  /**
-> - * drm_format_plane_width - width of the plane given the first plane
-> - * @width: width of the first plane
-> - * @format: pixel format
-> - * @plane: plane index
-> - *
-> - * Returns:
-> - * The width of @plane, given that the width of the first plane is @width.
-> - */
-> -int drm_format_plane_width(int width, uint32_t format, int plane)
-> -{
-> -	const struct drm_format_info *info;
-> -
-> -	info = drm_format_info(format);
-> -	if (!info || plane >= info->num_planes)
-> -		return 0;
-> -
-> -	if (plane == 0)
-> -		return width;
-> -
-> -	return width / info->hsub;
-> -}
-> -EXPORT_SYMBOL(drm_format_plane_width);
-> -
-> -/**
-> - * drm_format_plane_height - height of the plane given the first plane
-> - * @height: height of the first plane
-> - * @format: pixel format
-> - * @plane: plane index
-> - *
-> - * Returns:
-> - * The height of @plane, given that the height of the first plane is @height.
-> - */
-> -int drm_format_plane_height(int height, uint32_t format, int plane)
-> -{
-> -	const struct drm_format_info *info;
-> -
-> -	info = drm_format_info(format);
-> -	if (!info || plane >= info->num_planes)
-> -		return 0;
-> -
-> -	if (plane == 0)
-> -		return height;
-> -
-> -	return height / info->vsub;
-> -}
-> -EXPORT_SYMBOL(drm_format_plane_height);
-> -
-> -/**
->   * drm_format_info_block_width - width in pixels of block.
->   * @info: pixel format info
->   * @plane: plane index
-> diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
-> index fb8515b2860c..55b3f2f2e608 100644
-> --- a/drivers/gpu/drm/meson/meson_overlay.c
-> +++ b/drivers/gpu/drm/meson/meson_overlay.c
-> @@ -466,8 +466,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
->  		priv->viu.vd1_addr2 = gem->paddr + fb->offsets[2];
->  		priv->viu.vd1_stride2 = fb->pitches[2];
->  		priv->viu.vd1_height2 =
-> -			drm_format_plane_height(fb->height,
-> -						fb->format->format, 2);
-> +			drm_format_info_plane_height(fb->format,
-> +						fb->height, 2);
->  		DRM_DEBUG("plane 2 addr 0x%x stride %d height %d\n",
->  			 priv->viu.vd1_addr2,
->  			 priv->viu.vd1_stride2,
-> @@ -478,8 +478,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
->  		priv->viu.vd1_addr1 = gem->paddr + fb->offsets[1];
->  		priv->viu.vd1_stride1 = fb->pitches[1];
->  		priv->viu.vd1_height1 =
-> -			drm_format_plane_height(fb->height,
-> -						fb->format->format, 1);
-> +			drm_format_info_plane_height(fb->format,
-> +						fb->height, 1);
->  		DRM_DEBUG("plane 1 addr 0x%x stride %d height %d\n",
->  			 priv->viu.vd1_addr1,
->  			 priv->viu.vd1_stride1,
-> @@ -490,8 +490,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
->  		priv->viu.vd1_addr0 = gem->paddr + fb->offsets[0];
->  		priv->viu.vd1_stride0 = fb->pitches[0];
->  		priv->viu.vd1_height0 =
-> -			drm_format_plane_height(fb->height,
-> -						fb->format->format, 0);
-> +			drm_format_info_plane_height(fb->format,
-> +						fb->height, 0);
->  		DRM_DEBUG("plane 0 addr 0x%x stride %d height %d\n",
->  			 priv->viu.vd1_addr0,
->  			 priv->viu.vd1_stride0,
-> diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-> index 6b5a82b31bc4..4ef8ccb5d236 100644
-> --- a/include/drm/drm_fourcc.h
-> +++ b/include/drm/drm_fourcc.h
-> @@ -277,6 +277,50 @@ int drm_format_info_plane_cpp(const struct drm_format_info *info, int plane)
->  	return info->cpp[plane];
->  }
->  
-> +/**
-> + * drm_format_info_plane_width - width of the plane given the first plane
-> + * @format: pixel format info
-> + * @width: width of the first plane
-> + * @plane: plane index
-> + *
-> + * Returns:
-> + * The width of @plane, given that the width of the first plane is @width.
-> + */
-> +static inline
-> +int drm_format_info_plane_width(const struct drm_format_info *info, int width,
-> +				int plane)
-> +{
-> +	if (!info || plane >= info->num_planes)
-> +		return 0;
-> +
-> +	if (plane == 0)
-> +		return width;
-> +
-> +	return width / info->hsub;
-> +}
-> +
-> +/**
-> + * drm_format_info_plane_height - height of the plane given the first plane
-> + * @format: pixel format info
-> + * @height: height of the first plane
-> + * @plane: plane index
-> + *
-> + * Returns:
-> + * The height of @plane, given that the height of the first plane is @height.
-> + */
-> +static inline
-> +int drm_format_info_plane_height(const struct drm_format_info *info, int height,
-> +				 int plane)
-> +{
-> +	if (!info || plane >= info->num_planes)
-> +		return 0;
-> +
-> +	if (plane == 0)
-> +		return height;
-> +
-> +	return height / info->vsub;
-> +}
-> +
->  const struct drm_format_info *__drm_format_info(u32 format);
->  const struct drm_format_info *drm_format_info(u32 format);
->  const struct drm_format_info *
-> @@ -285,8 +329,6 @@ drm_get_format_info(struct drm_device *dev,
->  uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
->  uint32_t drm_driver_legacy_fb_format(struct drm_device *dev,
->  				     uint32_t bpp, uint32_t depth);
-> -int drm_format_plane_width(int width, uint32_t format, int plane);
-> -int drm_format_plane_height(int height, uint32_t format, int plane);
->  unsigned int drm_format_info_block_width(const struct drm_format_info *info,
->  					 int plane);
->  unsigned int drm_format_info_block_height(const struct drm_format_info *info,
-> -- 
-> git-series 0.9.1
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+/Jarkko
