@@ -2,104 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0002222DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55ABF22E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbfETIGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:06:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730907AbfETIFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:39 -0400
-Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2352D2081C;
-        Mon, 20 May 2019 08:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558339539;
-        bh=floqJEFt/0sKhoKAfaGA+qdG6Nfli1fbrU7TJiPTg9k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQsN17i++35mtQsDQEp2V2rNfKeyXuu+84V7lV2kDammDq4fLdOxl2M1b4DqUndu1
-         vUS+CJg/dAmJ3uzOgqcMRfNzmB+kIZT9GOZLMBwTVndy287VwTQ6n9zRMcTkJ/IetT
-         /keBM6ZthO+mrHldBPTASOrEkmeZHwPK9nv0KHSU=
-Received: by wens.tw (Postfix, from userid 1000)
-        id A02CC65825; Mon, 20 May 2019 16:05:32 +0800 (CST)
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/25] clk: sunxi-ng: h3: Use local parent references for CLK_FIXED_FACTOR
+        id S1730960AbfETIMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:12:09 -0400
+Received: from regular1.263xmail.com ([211.150.70.199]:60552 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728551AbfETIMJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:12:09 -0400
+X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 04:12:07 EDT
+Received: from wxt?rock-chips.com (unknown [192.168.167.161])
+        by regular1.263xmail.com (Postfix) with ESMTP id 1F4D63EE;
+        Mon, 20 May 2019 16:04:14 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.21.194] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P32757T140039436609280S1558339450334725_;
+        Mon, 20 May 2019 16:04:11 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <c6a2d7109fd86b9f3d455bed21fbadbc>
+X-RL-SENDER: wxt@rock-chips.com
+X-SENDER: wxt@rock-chips.com
+X-LOGIN-NAME: wxt@rock-chips.com
+X-FST-TO: hjc@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH] phy: rockchip-dp: Avoid power leak by leaving the PHY
+ power on
+To:     Douglas Anderson <dianders@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     hl@rock-chips.com, linux-rockchip@lists.infradead.org,
+        dbasehore@chromium.org, mka@chromium.org, ryandcase@chromium.org,
+        groeck@chromium.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "nickey.yang (nickey.yang@rock-chips.com)" 
+        <nickey.yang@rock-chips.com>, wzz <wzz@rock-chips.com>,
+        Huang Jiachai <hjc@rock-chips.com>
+References: <20190507234857.81414-1-dianders@chromium.org>
+From:   Caesar Wang <wxt@rock-chips.com>
+Message-ID: <79ca5499-6b7d-fe55-2030-283f5cfb1d27@rock-chips.com>
 Date:   Mon, 20 May 2019 16:04:11 +0800
-Message-Id: <20190520080421.12575-16-wens@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
-References: <20190520080421.12575-1-wens@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190507234857.81414-1-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+Hi Doug,
 
-With the new clk parenting code and CLK_FIXED_FACTOR_{HW,FW_NAME}
-macros, we can reference parents locally via pointers to struct clk_hw
-or DT clock-names.
+For now,  nobody of rockchip is responsible for this driver.
+Cc: Nickey, Zain, Hjc
 
-Convert existing CLK_FIXED_FACTOR definitions to either the _HW or
-_FW_NAME variant based on whether the parent clock is internal or
-external to the CCU.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+On 5/8/19 7:48 AM, Douglas Anderson wrote:
+> While testing a newer kernel on rk3288-based Chromebooks I found that
+> the power draw in suspend was higher on newer kernels compared to the
+> downstream Chrome OS 3.14 kernel.  Specifically the power of an
+> rk3288-veyron-jerry board that I tested (as measured by the smart
+> battery) was ~16 mA on Chrome OS 3.14 and ~21 mA on a newer kernel.
+>
+> I tracked the regression down to the fact that the "DP PHY" driver
+> didn't exist in our downstream 3.14.  We relied on the eDP driver to
+> turn on the clock and relied on the fact that the power for the PHY
+> was default turned on.
+>
+> Specifically the thing that caused the power regression was turning
+> the eDP PHY _off_.  Presumably there is some sort of power leak in the
+> system and when we turn the PHY off something is leaching power from
+> something else and causing excessive power draw.
+>
+> Doing a search through device trees shows that this PHY is only ever
+> used on rk3288.  Presumably this power leak is present on all
+> rk3288-SoCs running upstream Linux so let's just whack the driver to
+> make sure we never turn off power.  We'll still leave the parts that
+> turn _on_ the power and grab the clock, though.
+>
+> NOTES:
+> A) If someone can identify what this power leak is and fix it in some
+>     other way we can revert this patch.
+> B) If someone can show that their particular board doesn't have this
+>     power leak (maybe they have rails hooked up differently?) we can
+>     perhaps add a device tree property indicating that for some boards
+>     it's OK to turn this rail off.  I don't want to add this property
+>     until I know of a board that needs it.
+>
+> Fixes: fd968973de95 ("phy: Add driver for rockchip Display Port PHY")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 0f3df565c6c1..d5b5cd558ecf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -725,17 +725,26 @@ static struct ccu_common *sun50i_h5_ccu_clks[] = {
- 	&gpu_clk.common,
- };
- 
-+static const struct clk_hw *clk_parent_pll_audio[] = {
-+	&pll_audio_base_clk.common.hw
-+};
-+
- /* We hardcode the divider to 1 for now */
--static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
--			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
--			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
--			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
--static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
--			"pll-periph0", 1, 2, 0);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
-+			    clk_parent_pll_audio,
-+			    1, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
-+			    clk_parent_pll_audio,
-+			    2, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
-+			    clk_parent_pll_audio,
-+			    1, 1, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HWS(pll_audio_8x_clk, "pll-audio-8x",
-+			    clk_parent_pll_audio,
-+			    1, 2, CLK_SET_RATE_PARENT);
-+static CLK_FIXED_FACTOR_HW(pll_periph0_2x_clk, "pll-periph0-2x",
-+			   &pll_periph0_clk.common.hw,
-+			   1, 2, 0);
- 
- static struct clk_hw_onecell_data sun8i_h3_hw_clks = {
- 	.hws	= {
--- 
-2.20.1
+
+Reviewed-by: Caesar Wang <wxt@rock-chips.com>
+
+> ---
+> As far as I know Yakir (the original author) is no longer at Rockchip.
+> I've added a few other Rockchip people and hopefully one of them can
+> help direct even if they're not directly responsible.
+>
+>   drivers/phy/rockchip/phy-rockchip-dp.c | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/phy/rockchip/phy-rockchip-dp.c b/drivers/phy/rockchip/phy-rockchip-dp.c
+> index 8b267a746576..10bbcd69d6f5 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-dp.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-dp.c
+> @@ -35,7 +35,7 @@ struct rockchip_dp_phy {
+>   static int rockchip_set_phy_state(struct phy *phy, bool enable)
+>   {
+>   	struct rockchip_dp_phy *dp = phy_get_drvdata(phy);
+> -	int ret;
+> +	int ret = 0;
+>   
+>   	if (enable) {
+>   		ret = regmap_write(dp->grf, GRF_SOC_CON12,
+> @@ -50,9 +50,12 @@ static int rockchip_set_phy_state(struct phy *phy, bool enable)
+>   	} else {
+>   		clk_disable_unprepare(dp->phy_24m);
+>   
+> -		ret = regmap_write(dp->grf, GRF_SOC_CON12,
+> -				   GRF_EDP_PHY_SIDDQ_HIWORD_MASK |
+> -				   GRF_EDP_PHY_SIDDQ_OFF);
+> +		/*
+> +		 * Intentionally don't turn SIDDQ off when disabling
+> +		 * the PHY.  There is a power leak on rk3288 and
+> +		 * suspend power _increases_ by 5 mA if you turn this
+> +		 * off.
+> +		 */
+
+
+As described by TRM, The “GRF_EDP_PHY_SIDDQ_OFF” that all circuits are 
+power down, all
+IO are high-Z. That should make sure the PD_VIO[0] was disabled first, 
+no active.
+But the rk3288 can't turn pd_vio off at the moment.
+
+[0]
+PD_VIO Which clock are device clocks:
+              *    clocks        devices
+              *    *_IEP        IEP:Image Enhancement Processor
+              *    *_ISP        ISP:Image Signal Processing
+              *    *_VIP        VIP:Video Input Processor
+              *    *_VOP*        VOP:Visual Output Processor
+              *    *_RGA        RGA
+              *    *_EDP*        EDP
+              *    *_LVDS_*    LVDS
+              *    *_HDMI        HDMI
+              *    *_MIPI_*    MIPI
+
+
+Thanks,
+-Caesar
+
+
+>   	}
+>   
+>   	return ret;
+
 
