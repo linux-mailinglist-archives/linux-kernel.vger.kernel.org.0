@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD3023634
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21702233A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389692AbfETM2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:28:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44258 "EHLO mail.kernel.org"
+        id S2387813AbfETMTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:19:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389674AbfETM22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:28 -0400
+        id S2387801AbfETMTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:19:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F14D520675;
-        Mon, 20 May 2019 12:28:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F59C20815;
+        Mon, 20 May 2019 12:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355307;
-        bh=L1rYs2lfQrWT2wVK+AlESVJJiDMYSo9Gf0EDmc2C7/4=;
+        s=default; t=1558354756;
+        bh=nkjVUnaYiahUX1ExbUzV/31xwNKk5fVHRqckHsd1opo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EQzVXXro1BlcXHHOvF5tgtvnYeQtd3c5AnpTfG26IcsyWHh1LlJmFM+3hOJ0sdSW4
-         H2aGVGRngzY8Eiy0JIZnypZIPigdmh3/Nm45SlcS62w0sXV3tJSg44K6HfbpDjHo8Y
-         B2Es5D3RHBxRZgh1ThtD9gRffUsQXwbFq2DQ84FE=
+        b=J+DSeOxqOT//I61+S+O/i5OYJx5qZ40gPNM3/IPK2P5OztegDj8vgE3mgRlf9PA7+
+         qZlvdls4dfcLYmK+sHB9yzlbG+MIIxo9cFugABXLC/RFU1FdDRQ1q1CDK/4kuuZMHz
+         h6HFzLuw9L76W8a1UYK5FLpGJQHR+xl+p8Nc616g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.0 070/123] hugetlb: use same fault hash key for shared and private mappings
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.14 31/63] bpf, arm64: remove prefetch insn in xadd mapping
 Date:   Mon, 20 May 2019 14:14:10 +0200
-Message-Id: <20190520115249.495415792@linuxfoundation.org>
+Message-Id: <20190520115234.777269637@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,177 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 1b426bac66e6cc83c9f2d92b96e4e72acf43419a upstream.
+commit 8968c67a82ab7501bc3b9439c3624a49b42fe54c upstream.
 
-hugetlb uses a fault mutex hash table to prevent page faults of the
-same pages concurrently.  The key for shared and private mappings is
-different.  Shared keys off address_space and file index.  Private keys
-off mm and virtual address.  Consider a private mappings of a populated
-hugetlbfs file.  A fault will map the page from the file and if needed
-do a COW to map a writable page.
+Prefetch-with-intent-to-write is currently part of the XADD mapping in
+the AArch64 JIT and follows the kernel's implementation of atomic_add.
+This may interfere with other threads executing the LDXR/STXR loop,
+leading to potential starvation and fairness issues. Drop the optional
+prefetch instruction.
 
-Hugetlbfs hole punch uses the fault mutex to prevent mappings of file
-pages.  It uses the address_space file index key.  However, private
-mappings will use a different key and could race with this code to map
-the file page.  This causes problems (BUG) for the page cache remove
-code as it expects the page to be unmapped.  A sample stack is:
-
-page dumped because: VM_BUG_ON_PAGE(page_mapped(page))
-kernel BUG at mm/filemap.c:169!
-...
-RIP: 0010:unaccount_page_cache_page+0x1b8/0x200
-...
-Call Trace:
-__delete_from_page_cache+0x39/0x220
-delete_from_page_cache+0x45/0x70
-remove_inode_hugepages+0x13c/0x380
-? __add_to_page_cache_locked+0x162/0x380
-hugetlbfs_fallocate+0x403/0x540
-? _cond_resched+0x15/0x30
-? __inode_security_revalidate+0x5d/0x70
-? selinux_file_permission+0x100/0x130
-vfs_fallocate+0x13f/0x270
-ksys_fallocate+0x3c/0x80
-__x64_sys_fallocate+0x1a/0x20
-do_syscall_64+0x5b/0x180
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-There seems to be another potential COW issue/race with this approach
-of different private and shared keys as noted in commit 8382d914ebf7
-("mm, hugetlb: improve page-fault scalability").
-
-Since every hugetlb mapping (even anon and private) is actually a file
-mapping, just use the address_space index key for all mappings.  This
-results in potentially more hash collisions.  However, this should not
-be the common case.
-
-Link: http://lkml.kernel.org/r/20190328234704.27083-3-mike.kravetz@oracle.com
-Link: http://lkml.kernel.org/r/20190412165235.t4sscoujczfhuiyt@linux-r8p5
-Fixes: b5cec28d36f5 ("hugetlbfs: truncate_hugepages() takes a range of pages")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 85f68fe89832 ("bpf, arm64: implement jiting of BPF_XADD")
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/hugetlbfs/inode.c    |    7 ++-----
- include/linux/hugetlb.h |    4 +---
- mm/hugetlb.c            |   22 ++++++----------------
- mm/userfaultfd.c        |    3 +--
- 4 files changed, 10 insertions(+), 26 deletions(-)
+ arch/arm64/net/bpf_jit.h      |    6 ------
+ arch/arm64/net/bpf_jit_comp.c |    1 -
+ 2 files changed, 7 deletions(-)
 
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -426,9 +426,7 @@ static void remove_inode_hugepages(struc
- 			u32 hash;
+--- a/arch/arm64/net/bpf_jit.h
++++ b/arch/arm64/net/bpf_jit.h
+@@ -100,12 +100,6 @@
+ #define A64_STXR(sf, Rt, Rn, Rs) \
+ 	A64_LSX(sf, Rt, Rn, Rs, STORE_EX)
  
- 			index = page->index;
--			hash = hugetlb_fault_mutex_hash(h, current->mm,
--							&pseudo_vma,
--							mapping, index, 0);
-+			hash = hugetlb_fault_mutex_hash(h, mapping, index, 0);
- 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 			/*
-@@ -625,8 +623,7 @@ static long hugetlbfs_fallocate(struct f
- 		addr = index * hpage_size;
- 
- 		/* mutex taken here, fault path and hole punch */
--		hash = hugetlb_fault_mutex_hash(h, mm, &pseudo_vma, mapping,
--						index, addr);
-+		hash = hugetlb_fault_mutex_hash(h, mapping, index, addr);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 		/* See if already present in mapping to avoid alloc/free */
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -123,9 +123,7 @@ void move_hugetlb_state(struct page *old
- void free_huge_page(struct page *page);
- void hugetlb_fix_reserve_counts(struct inode *inode);
- extern struct mutex *hugetlb_fault_mutex_table;
--u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
--				struct vm_area_struct *vma,
--				struct address_space *mapping,
-+u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
- 				pgoff_t idx, unsigned long address);
- 
- pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud);
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3777,8 +3777,7 @@ retry:
- 			 * handling userfault.  Reacquire after handling
- 			 * fault to make calling code simpler.
- 			 */
--			hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping,
--							idx, haddr);
-+			hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			ret = handle_userfault(&vmf, VM_UFFD_MISSING);
- 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
-@@ -3886,21 +3885,14 @@ backout_unlocked:
- }
- 
- #ifdef CONFIG_SMP
--u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
--			    struct vm_area_struct *vma,
--			    struct address_space *mapping,
-+u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
- 			    pgoff_t idx, unsigned long address)
- {
- 	unsigned long key[2];
- 	u32 hash;
- 
--	if (vma->vm_flags & VM_SHARED) {
--		key[0] = (unsigned long) mapping;
--		key[1] = idx;
--	} else {
--		key[0] = (unsigned long) mm;
--		key[1] = address >> huge_page_shift(h);
--	}
-+	key[0] = (unsigned long) mapping;
-+	key[1] = idx;
- 
- 	hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
- 
-@@ -3911,9 +3903,7 @@ u32 hugetlb_fault_mutex_hash(struct hsta
-  * For uniprocesor systems we always use a single mutex, so just
-  * return 0 and avoid the hashing overhead.
-  */
--u32 hugetlb_fault_mutex_hash(struct hstate *h, struct mm_struct *mm,
--			    struct vm_area_struct *vma,
--			    struct address_space *mapping,
-+u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
- 			    pgoff_t idx, unsigned long address)
- {
- 	return 0;
-@@ -3958,7 +3948,7 @@ vm_fault_t hugetlb_fault(struct mm_struc
- 	 * get spurious allocation failures if two CPUs race to instantiate
- 	 * the same page in the page cache.
- 	 */
--	hash = hugetlb_fault_mutex_hash(h, mm, vma, mapping, idx, haddr);
-+	hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
- 	mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 	entry = huge_ptep_get(ptep);
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -271,8 +271,7 @@ retry:
- 		 */
- 		idx = linear_page_index(dst_vma, dst_addr);
- 		mapping = dst_vma->vm_file->f_mapping;
--		hash = hugetlb_fault_mutex_hash(h, dst_mm, dst_vma, mapping,
--								idx, dst_addr);
-+		hash = hugetlb_fault_mutex_hash(h, mapping, idx, dst_addr);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 		err = -ENOMEM;
+-/* Prefetch */
+-#define A64_PRFM(Rn, type, target, policy) \
+-	aarch64_insn_gen_prefetch(Rn, AARCH64_INSN_PRFM_TYPE_##type, \
+-				  AARCH64_INSN_PRFM_TARGET_##target, \
+-				  AARCH64_INSN_PRFM_POLICY_##policy)
+-
+ /* Add/subtract (immediate) */
+ #define A64_ADDSUB_IMM(sf, Rd, Rn, imm12, type) \
+ 	aarch64_insn_gen_add_sub_imm(Rd, Rn, imm12, \
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -712,7 +712,6 @@ emit_cond_jmp:
+ 	case BPF_STX | BPF_XADD | BPF_DW:
+ 		emit_a64_mov_i(1, tmp, off, ctx);
+ 		emit(A64_ADD(1, tmp, tmp, dst), ctx);
+-		emit(A64_PRFM(tmp, PST, L1, STRM), ctx);
+ 		emit(A64_LDXR(isdw, tmp2, tmp), ctx);
+ 		emit(A64_ADD(isdw, tmp2, tmp2, src), ctx);
+ 		emit(A64_STXR(isdw, tmp2, tmp, tmp3), ctx);
 
 
