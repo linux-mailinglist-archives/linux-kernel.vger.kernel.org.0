@@ -2,160 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A0223001
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0F4123030
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbfETJQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:16:44 -0400
-Received: from mga17.intel.com ([192.55.52.151]:12516 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730302AbfETJQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:16:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 02:16:44 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 20 May 2019 02:16:41 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        intel-gfx@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [Intel-gfx] [RFC 1/3] kbuild: add support for ensuring headers are self-contained
-In-Reply-To: <CAK7LNAQv-fm2iV6HW_FM0Fe6hNDeJ25c9CS2SbroSOneoepFMQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190516194818.29230-1-jani.nikula@intel.com> <CAK7LNAQv-fm2iV6HW_FM0Fe6hNDeJ25c9CS2SbroSOneoepFMQ@mail.gmail.com>
-Date:   Mon, 20 May 2019 12:20:01 +0300
-Message-ID: <87zhnh8ou6.fsf@intel.com>
+        id S1731161AbfETJWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:22:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41728 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729598AbfETJWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:22:44 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D299CDB958CE3EFD0220;
+        Mon, 20 May 2019 17:22:42 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.180) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
+ 17:22:36 +0800
+Subject: Re: [PATCH 2/2] hwtracing: stm: fix double-free in
+ stm_source_register_device()
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     Hulk Robot <hulkci@huawei.com>
+References: <20190520091315.27898-1-wangkefeng.wang@huawei.com>
+ <20190520091315.27898-2-wangkefeng.wang@huawei.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <edba9581-3a7b-e8c6-8bb5-89846d84cf98@huawei.com>
+Date:   Mon, 20 May 2019 17:20:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190520091315.27898-2-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.177.19.180]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 May 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-> On Fri, May 17, 2019 at 4:48 AM Jani Nikula <jani.nikula@intel.com> wrote:
->>
->> Sometimes it's useful to be able to explicitly ensure certain headers
->> remain self-contained, i.e. that they are compilable as standalone
->> units, by including and/or forward declaring everything they depend on.
->>
->> Add special target header-test-y where individual Makefiles can add
->> headers to be tested if CONFIG_HEADER_TEST is enabled. This will
->> generate a dummy C file per header that gets built as part of extra-y.
->>
->> Cc: Chris Wilson <chris@chris-wilson.co.uk>
->> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Cc: Michal Marek <michal.lkml@markovi.net>
->> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
->> ---
->>  Documentation/kbuild/makefiles.txt |  7 +++++++
->>  init/Kconfig                       |  9 +++++++++
->>  scripts/Makefile.build             | 10 ++++++++++
->>  scripts/Makefile.lib               |  3 +++
->>  4 files changed, 29 insertions(+)
->>
->> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
->> index 03c065855eaf..73df58e5ea0c 100644
->> --- a/Documentation/kbuild/makefiles.txt
->> +++ b/Documentation/kbuild/makefiles.txt
->> @@ -1036,6 +1036,13 @@ When kbuild executes, the following steps are followed (roughly):
->>         In this example, extra-y is used to list object files that
->>         shall be built, but shall not be linked as part of built-in.a.
->>
->> +    header-test-y
->> +
->> +       header-test-y specifies headers (*.h) in the current directory that
->> +       should be compile tested to ensure they are self-contained,
->> +       i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
->> +       this autogenerates dummy sources to include the headers, and builds them
->> +       as part of extra-y.
->>
->>  --- 6.7 Commands useful for building a boot image
->>
->> diff --git a/init/Kconfig b/init/Kconfig
->> index 4592bf7997c0..d91b157201b1 100644
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -95,6 +95,15 @@ config COMPILE_TEST
->>           here. If you are a user/distributor, say N here to exclude useless
->>           drivers to be distributed.
->>
->> +config HEADER_TEST
->> +       bool "Compile test headers that should be standalone compilable"
->> +       help
->> +         Compile test headers listed in header-test-y target to ensure they are
->> +         self-contained, i.e. compilable as standalone units.
->> +
->> +         If you are a developer or tester and want to ensure the requested
->> +         headers are self-contained, say Y here. Otherwise, choose N.
->> +
->>  config LOCALVERSION
->>         string "Local version - append to kernel release"
->>         help
->> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
->> index 76ca30cc4791..4d4bf698467a 100644
->> --- a/scripts/Makefile.build
->> +++ b/scripts/Makefile.build
->> @@ -291,6 +291,16 @@ quiet_cmd_cc_lst_c = MKLST   $@
->>  $(obj)/%.lst: $(src)/%.c FORCE
->>         $(call if_changed_dep,cc_lst_c)
->>
->> +# Dummy C sources for header test (header-test-y target)
->> +# ---------------------------------------------------------------------------
->> +
->> +quiet_cmd_header_test = HDRTEST $@
->> +      cmd_header_test = echo "\#include \"$(<F)\"" > $@
->> +
->> +# FIXME: would be nice to be able to limit this implicit rule to header-test-y
->> +$(obj)/%.header_test.c: $(src)/%.h FORCE
->> +       $(call if_changed,header_test)
->> +
->>  # Compile assembler sources (.S)
->>  # ---------------------------------------------------------------------------
->>
->> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->> index 8a1f64f17740..c2839de06485 100644
->> --- a/scripts/Makefile.lib
->> +++ b/scripts/Makefile.lib
->> @@ -66,6 +66,9 @@ extra-y += $(patsubst %.dtb,%.dt.yaml, $(dtb-y))
->>  extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
->>  endif
->>
->> +# Test self-contained headers
->> +extra-$(CONFIG_HEADER_TEST) += $(patsubst %.h,%.header_test.o,$(header-test-y))
->> +
->>  # Add subdir path
->>
->>  extra-y                := $(addprefix $(obj)/,$(extra-y))
->> --
->> 2.20.1
->>
+sorry, send wrong version,  please ignore.
+
+On 2019/5/20 17:13, Kefeng Wang wrote:
+> If device_add() in stm_source_register_device() fails,
+> stm_source_device_release() is called to free src, free
+> src again on err path will trigger double free issue.
 >
+> BUG: KASAN: double-free or invalid-free in stm_source_register_device+0xd0/0x1a0 [stm_core]
 >
-> Thanks, probably we should do this.
+> CPU: 1 PID: 8556 Comm: syz-executor.0 Tainted: G         C        5.1.0+ #28
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xa9/0x10e lib/dump_stack.c:113
+>  print_address_description+0x65/0x270 mm/kasan/report.c:188
+>  kasan_report_invalid_free+0x60/0xa0 mm/kasan/report.c:279
+>  __kasan_slab_free+0x159/0x180 mm/kasan/common.c:430
+>  slab_free_hook mm/slub.c:1420 [inline]
+>  slab_free_freelist_hook mm/slub.c:1447 [inline]
+>  slab_free mm/slub.c:2994 [inline]
+>  kfree+0xe1/0x270 mm/slub.c:3949
+>  stm_source_register_device+0xd0/0x1a0 [stm_core]
+>  stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
+>  do_one_initcall+0xb9/0x3b5 init/main.c:914
+>  do_init_module+0xe0/0x330 kernel/module.c:3468
+>  load_module+0x38eb/0x4270 kernel/module.c:3819
+>  __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
+>  do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 >
-> At least, this check will be useful
-> for uapi headers since the kernel does not
-> test the self-containedness of
-> exported headers, (then turned out be problematic
-> later in user-space).
+>  ...
 >
-> I will take a little time to considier
-> how far we can extend the idea about
-> "headers should be self-contained".
+> Allocated by task 8556:
+>  save_stack+0x19/0x80 mm/kasan/common.c:71
+>  set_track mm/kasan/common.c:79 [inline]
+>  __kasan_kmalloc.constprop.2+0xa0/0xd0 mm/kasan/common.c:489
+>  stm_source_register_device+0x46/0x1a0 [stm_core]
+>  stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
+>  do_one_initcall+0xb9/0x3b5 init/main.c:914
+>  do_init_module+0xe0/0x330 kernel/module.c:3468
+>  load_module+0x38eb/0x4270 kernel/module.c:3819
+>  __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
+>  do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 8556:
+>  save_stack+0x19/0x80 mm/kasan/common.c:71
+>  set_track mm/kasan/common.c:79 [inline]
+>  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
+>  slab_free_hook mm/slub.c:1420 [inline]
+>  slab_free_freelist_hook mm/slub.c:1447 [inline]
+>  slab_free mm/slub.c:2994 [inline]
+>  kfree+0xe1/0x270 mm/slub.c:3949
+>  device_release+0x46/0x100 drivers/base/core.c:1064
+>  kobject_cleanup lib/kobject.c:691 [inline]
+>  kobject_release lib/kobject.c:720 [inline]
+>  kref_put include/linux/kref.h:67 [inline]
+>  kobject_put+0x1a8/0x220 lib/kobject.c:737
+>  put_device+0x1b/0x30 drivers/base/core.c:2210
+>  stm_source_register_device+0xc8/0x1a0 [stm_core]
+>  stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
+>  do_one_initcall+0xb9/0x3b5 init/main.c:914
+>  do_init_module+0xe0/0x330 kernel/module.c:3468
+>  load_module+0x38eb/0x4270 kernel/module.c:3819
+>  __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
+>  do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Don't call kfree(src) if device_add() fails to fix it.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>  drivers/hwtracing/stm/core.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+> index 7b2ab7b2cc4d..5ce30f8f8c4f 100644
+> --- a/drivers/hwtracing/stm/core.c
+> +++ b/drivers/hwtracing/stm/core.c
+> @@ -1258,15 +1258,20 @@ int stm_source_register_device(struct device *parent,
+>  	src->dev.release = stm_source_device_release;
+>  
+>  	err = kobject_set_name(&src->dev.kobj, "%s", data->name);
+> -	if (err)
+> +	if (err) {
+> +		put_device(&src->dev);
+> +		kfree(src);
+>  		goto err;
+> +	}
+>  
+>  	pm_runtime_no_callbacks(&src->dev);
+>  	pm_runtime_forbid(&src->dev);
+>  
+>  	err = device_add(&src->dev);
+> -	if (err)
+> -		goto err;
+> +	if (err) {
+> +		put_device(&src->dev);
+> +		return err;
+> +	}
+>  
+>  	stm_output_init(&src->output);
+>  	spin_lock_init(&src->link_lock);
+> @@ -1275,12 +1280,6 @@ int stm_source_register_device(struct device *parent,
+>  	data->src = src;
+>  
+>  	return 0;
+> -
+> -err:
+> -	put_device(&src->dev);
+> -	kfree(src);
+> -
+> -	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(stm_source_register_device);
+>  
 
-Thanks! Please let me know if/when you need further action from me, I
-won't post new versions until then.
-
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
