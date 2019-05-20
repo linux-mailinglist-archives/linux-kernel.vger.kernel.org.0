@@ -2,60 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7EB23A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E12CA23A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391614AbfETOfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:35:00 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37770 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731713AbfETOe7 (ORCPT
+        id S2389897AbfETOf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:35:57 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:50632 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730966AbfETOf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:34:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 7so13317231wmo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:34:58 -0700 (PDT)
+        Mon, 20 May 2019 10:35:56 -0400
+Received: by mail-wm1-f51.google.com with SMTP id f204so13595290wme.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jL8EOSTC/B97Q4hYmRDMBEhteRV4Llk3yLW6XJX3YpI=;
-        b=WOQGo5E3cBke6q8UgR21NkLOtOUFmM9cJSAy8j0HGje6MfYqcjKkfQ6zQhG+HrG6yP
-         tVTmu021qWNJ0EP6J/uvHe/UnTsSzLi58ScfYOr8hRnQr1aEligQKbtbWPPuK0zd66MP
-         OgqWP2IGRpvc7D6/qBR6k95C6yNMuUtOYM9cBWSH6Lrj4MFrDPneMgbYJIvK6/rXx1S/
-         ZB6nb4s0sRBxmATJZi2b+oG+T3TB9sJTG0jbi0xUo12BwK8Lz/Ze/0t4jJLf1yn5CICi
-         ClQSm0KVnlq8x/QxBtZ6K4ZNrpSOiB7b3gvmL0sd4Xg7uOjpyms8cGcVg+5y/SmlEesx
-         R40w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ejqilo1yto88LxSnrCJSQqgQ1iaCyh2m+KasJchWoQA=;
+        b=PmFsDuszt8zbmDWBibaKVcHa3d90eVt4oIYeL7/WxtMyAqEGQbecyxivNB16FD1jmy
+         OHpQWFInSxzYr3AAThREgWvzyqMI+SaJxcNBwZBcoBFeIvDMoe9HlOmkrBc15EgKVUuH
+         Tt/f5FbDD7obeidLvSTYxokhRD4N4rjLqyXCMK9q6nxvsWr2H+mR/VgFUWGiEyrhHSes
+         0FEtNlU63uUSmpRlQnApY+moyhJO2/ZlPc6SoHNLxHaqZAn+wKTgAivHht17C3UHos0w
+         wHHcfwtKgT8Wee7OkOXAKp5LRgzqbXgCUN6XreuRrzjTg93nK43V3yQwDGibXoIvkOJn
+         nhQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jL8EOSTC/B97Q4hYmRDMBEhteRV4Llk3yLW6XJX3YpI=;
-        b=A5zbFM7BNmFdJqVJwMgTJVgbH2UqSM9zrwbsHWVUDLY0YHFkYhhQBECqP1vpxZdUKB
-         rCzzlm2mFRRgtF60vBVW+IcLhrxF0E4xWiefRHK7EE7iXgfb4WAaOCKutSfwmh+HR2Ul
-         SkAXKbC1v4Cx6FUuc2dDV1/1kA8VL8vUoD79Ac559rGwtKO1227PpIHtBMHtcuYXP6hY
-         5hJd1vGLe0dznV8taRgiHfZRCdvAyNE5apuhZX7rUaHipLo7gfyHM3UbCE7qYqF0JGG+
-         0ABN7dSN+IDXbvz0eJoWD6Jue4ktnUrJ2QQ3h80D8SlQr2hyK6wb5PIVFoG5I+SOt/K+
-         cM6g==
-X-Gm-Message-State: APjAAAXLMtH0HzOKVQnVk22G5Oz43yx5JvnauARcZBQ5A3hCSP4Jrvvy
-        C8SpDv5XCTflKIXWntp3ubr4PrF8jSfn3A==
-X-Google-Smtp-Source: APXvYqxZ3+v/oE9giWxGxEusI5X93pq9x7W3ufJ2uNkz5Lh5e9NxuHzhkG+fIq3auPMxo0dZb4l8gw==
-X-Received: by 2002:a7b:cd0e:: with SMTP id f14mr28896695wmj.127.1558362897942;
-        Mon, 20 May 2019 07:34:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ejqilo1yto88LxSnrCJSQqgQ1iaCyh2m+KasJchWoQA=;
+        b=Q1z2qnNByBQkgY4M5LfBSrokaB3bNOb5whdHXmHC3CxodXa2hubwdmCqR2Ak2+kZOe
+         /3PlqlL7fGOq55ZVGXptCzCElbybYsFfxswZaJRT4IB6BbwSOilR471r+Fn6whsLddpM
+         fJhOofAMLP3RS2r7EjuWr4MghazhFlHUNupF8f/7K07Feru+iXgbr9RT6ifZzGobZPKD
+         RynYvls7rnPK/KbsvJ1R422bVshtWUrdpyN+EUqys/uP9RpLbxTAb9BJKRDA5lf1UYDe
+         eO/dFCM5NFnlVhvaD1AehWV7xWnJ86vznrWz0ayQIIr+NRlqmwP2T+X8i9keN0aI8/io
+         Iegw==
+X-Gm-Message-State: APjAAAUVaEpuInLKHL8Ea9r5+mCDBSxhMRLcF6RgtqSh4QpgzsKFopH6
+        trSDqdbkhU+UriFsF6giIDppPg==
+X-Google-Smtp-Source: APXvYqzCnbrhWCGv6z19ZfaxyrIPmjh819MAp3NfOSe8oAbofCIxL969Y+24vhzKZK1CnQnZkZVN6A==
+X-Received: by 2002:a1c:7312:: with SMTP id d18mr12188411wmb.147.1558362954239;
+        Mon, 20 May 2019 07:35:54 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c2sm12756186wrr.13.2019.05.20.07.34.57
+        by smtp.gmail.com with ESMTPSA id j13sm14042591wru.78.2019.05.20.07.35.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:34:57 -0700 (PDT)
+        Mon, 20 May 2019 07:35:53 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-amlogic@lists.infradead.org,
+To:     kishon@ti.com
+Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH net-next 2/2] net: stmmac: dwmac-meson8b: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:34:50 +0200
-Message-Id: <20190520143450.2143-3-narmstrong@baylibre.com>
+Subject: [PATCH 0/2] phy: amlogic: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:35:49 +0200
+Message-Id: <20190520143551.2330-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520143450.2143-1-narmstrong@baylibre.com>
-References: <20190520143450.2143-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,31 +61,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Update the SPDX Licence identifier for the Amlogic Meson8b and GXL PHY
+drivers.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-index c5979569fd60..c06295ec1ef0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -1,14 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Amlogic Meson8b, Meson8m2 and GXBB DWMAC glue layer
-  *
-  * Copyright (C) 2016 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/clk.h>
+Neil Armstrong (2):
+  phy: amlogic: phy-meson-gxl-usb2: update with SPDX Licence identifier
+  phy: amlogic: phy-meson8b-usb2: update with SPDX Licence identifier
+
+ drivers/phy/amlogic/phy-meson-gxl-usb2.c | 8 +-------
+ drivers/phy/amlogic/phy-meson8b-usb2.c   | 8 +-------
+ 2 files changed, 2 insertions(+), 14 deletions(-)
+
 -- 
 2.21.0
 
