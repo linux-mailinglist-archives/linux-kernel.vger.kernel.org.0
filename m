@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630FE235DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7BFF2373A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403810AbfETMkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:40:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49868 "EHLO mail.kernel.org"
+        id S2388513AbfETMXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390633AbfETMcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:32:51 -0400
+        id S2387767AbfETMWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:22:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BA7204FD;
-        Mon, 20 May 2019 12:32:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EF9E214AE;
+        Mon, 20 May 2019 12:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355571;
-        bh=m2OBlvN8mbEPP164pnDww0IyPiWYtAYv6jdY+RysYcs=;
+        s=default; t=1558354972;
+        bh=zfS+tafhgl+KxH3yuXDCnV/5oruOSkTddix6yyBhaWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1qxRwm7soe2fXnvHv4V3WvaKpYGbtTdMUxFlu9rATxOn0FYTZvY7TzQ99HJKwROCg
-         3sx1yj4P7DKGSC9KkoyPCXF1JXvuQiE0DNecHul96NLMYqZRUI/J3lmXS7Eq+At95m
-         efXaPDvyzrprrTsKrvMN6z3t/6Fq/Tc9T4lZGS7U=
+        b=JP1SmMXwHoNpwRWSKTup2tZVaWgb+TeAdXsXmeDUkMz85MpL2/BJ5i2I+Byj7bxb/
+         4bC/rZiGBAVIlSQ9i7UhsGXK63yizDVGR56vVhT2lzN/IQBjfswdUlabvlH0v1nNoi
+         Wo2cHoSnEf/iPxDlABsaW1093BoanHQcXVuvmiYw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5.1 009/128] ARM: dts: exynos: Fix audio routing on Odroid XU3
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 4.19 010/105] power: supply: axp288_charger: Fix unchecked return value
 Date:   Mon, 20 May 2019 14:13:16 +0200
-Message-Id: <20190520115250.073006506@linuxfoundation.org>
+Message-Id: <20190520115247.763133797@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 34dc82257488ccbdfb6ecdd087b3c8b371e03ee3 upstream.
+commit c3422ad5f84a66739ec6a37251ca27638c85b6be upstream.
 
-Add missing audio routing entry for the capture stream, this change
-is required to fix audio recording on Odroid XU3/XU3-Lite.
+Currently there is no check on platform_get_irq() return value
+in case it fails, hence never actually reporting any errors and
+causing unexpected behavior when using such value as argument
+for function regmap_irq_get_virq().
 
-Fixes: 885b005d232c ("ARM: dts: exynos: Add support for secondary DAI to Odroid XU3")
+Fix this by adding a proper check, a message reporting any errors
+and returning *pirq*
+
+Addresses-Coverity-ID: 1443940 ("Improper use of negative value")
+Fixes: 843735b788a4 ("power: axp288_charger: axp288 charger driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/power/supply/axp288_charger.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -26,7 +26,8 @@
- 			"Speakers", "SPKL",
- 			"Speakers", "SPKR",
- 			"I2S Playback", "Mixer DAI TX",
--			"HiFi Playback", "Mixer DAI TX";
-+			"HiFi Playback", "Mixer DAI TX",
-+			"Mixer DAI RX", "HiFi Capture";
- 
- 		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -832,6 +832,10 @@ static int axp288_charger_probe(struct p
+ 	/* Register charger interrupts */
+ 	for (i = 0; i < CHRG_INTR_END; i++) {
+ 		pirq = platform_get_irq(info->pdev, i);
++		if (pirq < 0) {
++			dev_err(&pdev->dev, "Failed to get IRQ: %d\n", pirq);
++			return pirq;
++		}
+ 		info->irq[i] = regmap_irq_get_virq(info->regmap_irqc, pirq);
+ 		if (info->irq[i] < 0) {
+ 			dev_warn(&info->pdev->dev,
 
 
