@@ -2,96 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDDA123661
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39163237B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391475AbfETMp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:45:29 -0400
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:37758 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389437AbfETMp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:45:27 -0400
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KCefq1019411;
-        Mon, 20 May 2019 05:45:21 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=pfpt0818;
- bh=DnYcpObWTuNxMqWTKSiW08f0YpZsIp8D6UxdO7lCUao=;
- b=YJ92PSD/5kpBHZWp3ghsL3eNwSn1tYN73MnEeOqDz20ELgdI/ZxtL2DMpyRCHzHlfaJy
- zniTefqahjbilBInh3HIx7hcTn9bkw7OZ5yWJfERIiMhMdE266YiU1YTFDp6UHASgmVr
- VDZ7vfwSrM3nEFaxbw38KU5aIqMgSBFQ7EfexiRq/nHY05KFcaMVe0pJyEdil2YRN0AS
- Idf+EcciOJs4GLoXOhIAJfbQMug84ejnulE5Eht67dbAT3QeA34ejsK3HwTn+DhK2gF6
- FJ8e/VthJx3TPoH8WmD8o4UyDJI0Moo1L3N7wYjihKH98LE1OkPusOAMnmVUy+yAjlWC Bg== 
-Received: from sc-exch04.marvell.com ([199.233.58.184])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2sjhjjr4bj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 20 May 2019 05:45:20 -0700
-Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH04.marvell.com
- (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 20 May
- 2019 05:45:19 -0700
-Received: from maili.marvell.com (10.93.176.43) by SC-EXCH03.marvell.com
- (10.93.176.83) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Mon, 20 May 2019 05:45:19 -0700
-Received: from lb-tlvb-michal.il.qlogic.org (unknown [10.5.220.215])
-        by maili.marvell.com (Postfix) with ESMTP id EBB613F703F;
-        Mon, 20 May 2019 05:45:17 -0700 (PDT)
-From:   Michal Kalderon <michal.kalderon@marvell.com>
-To:     <michal.kalderon@marvell.com>, <leon@kernel.org>,
-        <apw@canonical.com>, <joe@perches.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] checkpatch: add test for empty line after Fixes statement
-Date:   Mon, 20 May 2019 15:42:38 +0300
-Message-ID: <20190520124238.10298-1-michal.kalderon@marvell.com>
-X-Mailer: git-send-email 2.14.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_06:,,
- signatures=0
+        id S2388304AbfETM46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:56:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58430 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728898AbfETM45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:56:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2C64AAE45;
+        Mon, 20 May 2019 12:56:56 +0000 (UTC)
+Message-ID: <1558356237.12672.3.camel@suse.com>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        sboyd@kernel.org, ptesarik@suse.com,
+        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 20 May 2019 14:43:57 +0200
+In-Reply-To: <20190520104708.11980-4-nsaenzjulienne@suse.de>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+         <20190520104708.11980-4-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that there is no empty line after a fixes statement
+On Mo, 2019-05-20 at 12:47 +0200, Nicolas Saenz Julienne wrote:
+> + * For more information on the firmware interface check:
+> + * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+> + */
+> +struct bcm2835_firmware_prop {
+> +       u32 id;
+> +       u32 val;
+> +       u32 disable_turbo;
+> +} __packed;
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
----
- scripts/checkpatch.pl | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Hi,
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a09333fd7cef..6cbc07364d4f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -62,6 +62,7 @@ my $conststructsfile = "$D/const_structs.checkpatch";
- my $typedefsfile = "";
- my $color = "auto";
- my $allow_c99_comments = 1; # Can be overridden by --ignore C99_COMMENT_TOLERANCE
-+my $fixes = 0;
- 
- sub help {
- 	my ($exitcode) = @_;
-@@ -2792,6 +2793,18 @@ sub process {
- 			}
- 		}
- 
-+# Check if Fixes statement to make sure next line is not blank
-+		if ($fixes) {
-+			if ($line =~ /^\s*$/) {
-+				WARN("EMPTY_LINE_AFTER_FIXES", "No Empty line after Fixes statement\n" . $here);
-+			}
-+			$fixes = 0;
-+		}
-+
-+		if ($in_commit_log && $line =~ /Fixes/) {
-+			$fixes = 1;
-+		}
-+
- # Check for added, moved or deleted files
- 		if (!$reported_maintainer_file && !$in_commit_log &&
- 		    ($line =~ /^(?:new|deleted) file mode\s*\d+\s*$/ ||
--- 
-2.14.5
+technically we are not in arch and those fields have a defined
+endianness.
+
+	Regards
+		Oliver
 
