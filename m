@@ -2,84 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD8123042
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:26:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41BAF2304A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732054AbfETJ0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:26:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33406 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729357AbfETJ0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:26:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m32so15500633qtf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:26:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JctNbqwCh+WC0TVQRye/r7+oJO/aUarkrBr7ivkC6/o=;
-        b=VsHtOE34lK+CD3AvPJbCXC2icSOevCjgzq5TLXYAsakpociB+DrMJ5T3yViXyOCm8/
-         3u271aT3PrT8PK9SNgH52EbxWB9BXNmxmaZMiuNARAUSwbK97n5e5eIsBh6HGJKTf0e0
-         aaXA4nFEd+yTVCJ599Pu9FbOPpZehw+CufVc05VKDGJcS58n8H5Z73WziXN0Y1Wb0FHG
-         BHcycNfqlCvrUR9b6IXK70lqSP49i5DQlFqrADSwJIp6qu57JpJAJkYpEZ+pwrltSrLA
-         MdKlOGbiDoWXM62F9Pt24WGYu1LJv+ZIMi0eWIC+7iZukTkZYT8l2IU+kfxUpAKq4Nz/
-         NSTw==
-X-Gm-Message-State: APjAAAX6Ogc9ABIvpZstO54nSOlTf6N96vaROaXBPO23C9767ObNE6mC
-        Z72qOUtwYrFSy9jxI/tGF69Mfy0xSdxT3RsX+yw=
-X-Google-Smtp-Source: APXvYqwWFFg8iqO2pEVzmzHeh6gtzK9wwts/yfXyepEIpCbzxiWfMYaKQvMwkrVVdXXkTDdMOIVNSTGBZM3SRS/EUh0=
-X-Received: by 2002:ac8:6750:: with SMTP id n16mr39381624qtp.142.1558344361121;
- Mon, 20 May 2019 02:26:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190512012508.10608-1-elder@linaro.org> <20190512012508.10608-10-elder@linaro.org>
- <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com>
- <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org> <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
- <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org> <dcd648f2-5305-04dd-8997-be87a9961fd9@linaro.org>
-In-Reply-To: <dcd648f2-5305-04dd-8997-be87a9961fd9@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 20 May 2019 11:25:44 +0200
-Message-ID: <CAK8P3a0FfSvTF8kkQ8pyKFNX9-fSXvtEyMBYTjtM+VOPxMPkWg@mail.gmail.com>
-Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
-To:     Alex Elder <elder@linaro.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
-        evgreen@chromium.org, Ben Chan <benchan@google.com>,
-        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1732063AbfETJ0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:26:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39706 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726146AbfETJ0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:26:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3908ABD7;
+        Mon, 20 May 2019 09:26:49 +0000 (UTC)
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] firmware: Add support for loading compressed files
+Date:   Mon, 20 May 2019 11:26:42 +0200
+Message-Id: <20190520092647.8622-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 7:11 PM Alex Elder <elder@linaro.org> wrote:
-> On 5/17/19 1:44 PM, Alex Elder wrote:
-> > On 5/17/19 1:33 PM, Arnd Bergmann wrote:
-> >> On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org>
->
-> So it seems that I must *not* apply a volatile qualifier,
-> because doing so restricts the compiler from making the
-> single instruction optimization.
+Hi,
 
-Right, I guess that makes sense.
+this is a patch set to add the support for loading compressed firmware
+files.
 
-> If I've missed something and you have another suggestion for
-> me to try let me know and I'll try it.
+The primary motivation is to reduce the storage size; e.g. currently
+the amount of /lib/firmware on my machine counts up to 419MB, and this
+can be reduced to 130MB file compression.  No bad deal.
 
-A memcpy() might do the right thing as well. Another idea would
-be a cast to __int128 like
+The feature adds only fallback to the compressed file, so it should
+work as it was as long as the normal firmware file is present.  The
+f/w loader decompresses the content, so that there is no change needed
+in the caller side.
 
-#ifdef CONFIG_ARCH_SUPPORTS_INT128
-typedef __int128 tre128_t;
-#else
-typedef struct { __u64 a; __u64 b; } tre128_t;
-#else
+Currently only XZ format is supported.  A caveat is that the kernel XZ
+helper code supports only CRC32 (or none) integrity check type, so
+you'll have to compress the files via xz -C crc32 option.
 
-static inline void set_tre(struct gsi_tre *dest_tre, struct gs_tre *src_tre)
-{
-     *(volatile tre128_t *)dest_tre = *(tre128_t *)src_tre;
-}
+The patch set begins with a few other improvements and refactoring,
+followed by the compression support.
 
-      Arnd
+In addition to this, dracut needs a small fix to deal with the *.xz
+files.
+
+Also, the latest patchset is found in topic/fw-decompress branch of my
+sound.git tree:
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+
+
+thanks,
+
+Takashi
+
+===
+
+Takashi Iwai (5):
+  firmware: Free temporary page table after vmapping
+  firmware: Unify the paged buffer release helper
+  firmware: Use kvmalloc for page tables
+  firmware: Factor out the paged buffer handling code
+  firmware: Add support for loading compressed files
+
+ drivers/base/firmware_loader/Kconfig    |  18 +++
+ drivers/base/firmware_loader/fallback.c |  63 ++--------
+ drivers/base/firmware_loader/firmware.h |  16 ++-
+ drivers/base/firmware_loader/main.c     | 212 +++++++++++++++++++++++++++++---
+ 4 files changed, 235 insertions(+), 74 deletions(-)
+
+-- 
+2.16.4
+
