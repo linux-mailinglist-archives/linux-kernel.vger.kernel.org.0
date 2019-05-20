@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 553C1234A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18B69233DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389854AbfETM3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:29:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45272 "EHLO mail.kernel.org"
+        id S2388031AbfETMUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:20:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389843AbfETM3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:29:14 -0400
+        id S1732283AbfETMUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:20:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E98820645;
-        Mon, 20 May 2019 12:29:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5527620656;
+        Mon, 20 May 2019 12:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355354;
-        bh=jS18uhjhZFB0J7GPa296xwoUoszjtacB5vvBJtErWs8=;
+        s=default; t=1558354836;
+        bh=uhh8Vg9x5wvRtl1mwTABIvrWtt1cWlVM/KKhsPkU4vE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yTWndb4kDopFDVLmcwB1PffqwKgstb5BW6Gt484s9Xp9p7OHdCGTCnZKPQhnR7dVT
-         4+MiNy0qYHq6biWFMtZo62hX9dHu6OPFj/WHsASWuMIf6CnzgKprqgI0M1jBXIYIaj
-         MJng72E+DGPzBrL8HmiL7ZXX3jvdc1wH8BuA15cw=
+        b=0W1Ve45LY53AYHhjjeeQz+LsULqAL3cGa0kqNM96ViUxIBZoI9kn2yhpVTz4JRQlJ
+         bj5bE7BKebPlm03EYCzLOlHkfVjSLAPW5pEDYR9nUiU6Lz9yKiB45axgdyVi9YgcIw
+         64aRkvBbQvY3vkndt5VOG2FXYE0uI7xyDlvdaZSA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 060/123] crypto: ccree - dont map MAC key on stack
+Subject: [PATCH 4.14 21/63] crypto: x86/crct10dif-pcl - fix use via crypto_shash_digest()
 Date:   Mon, 20 May 2019 14:14:00 +0200
-Message-Id: <20190520115248.773914614@linuxfoundation.org>
+Message-Id: <20190520115233.333013162@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,91 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 874e163759f27e0a9988c5d1f4605e3f25564fd2 upstream.
+commit dec3d0b1071a0f3194e66a83d26ecf4aa8c5910e upstream.
 
-The MAC hash key might be passed to us on stack. Copy it to
-a slab buffer before mapping to gurantee proper DMA mapping.
+The ->digest() method of crct10dif-pclmul reads the current CRC value
+from the shash_desc context.  But this value is uninitialized, causing
+crypto_shash_digest() to compute the wrong result.  Fix it.
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: stable@vger.kernel.org # v4.19+
+Probably this wasn't noticed before because lib/crc-t10dif.c only uses
+crypto_shash_update(), not crypto_shash_digest().  Likewise,
+crypto_shash_digest() is not yet tested by the crypto self-tests because
+those only test the ahash API which only uses shash init/update/final.
+
+Fixes: 0b95a7f85718 ("crypto: crct10dif - Glue code to cast accelerated CRCT10DIF assembly as a crypto transform")
+Cc: <stable@vger.kernel.org> # v3.11+
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccree/cc_hash.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ arch/x86/crypto/crct10dif-pclmul_glue.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/crypto/ccree/cc_hash.c
-+++ b/drivers/crypto/ccree/cc_hash.c
-@@ -69,6 +69,7 @@ struct cc_hash_alg {
- struct hash_key_req_ctx {
- 	u32 keylen;
- 	dma_addr_t key_dma_addr;
-+	u8 *key;
- };
- 
- /* hash per-session context */
-@@ -730,13 +731,20 @@ static int cc_hash_setkey(struct crypto_
- 	ctx->key_params.keylen = keylen;
- 	ctx->key_params.key_dma_addr = 0;
- 	ctx->is_hmac = true;
-+	ctx->key_params.key = NULL;
- 
- 	if (keylen) {
-+		ctx->key_params.key = kmemdup(key, keylen, GFP_KERNEL);
-+		if (!ctx->key_params.key)
-+			return -ENOMEM;
-+
- 		ctx->key_params.key_dma_addr =
--			dma_map_single(dev, (void *)key, keylen, DMA_TO_DEVICE);
-+			dma_map_single(dev, (void *)ctx->key_params.key, keylen,
-+				       DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, ctx->key_params.key_dma_addr)) {
- 			dev_err(dev, "Mapping key va=0x%p len=%u for DMA failed\n",
--				key, keylen);
-+				ctx->key_params.key, keylen);
-+			kzfree(ctx->key_params.key);
- 			return -ENOMEM;
- 		}
- 		dev_dbg(dev, "mapping key-buffer: key_dma_addr=%pad keylen=%u\n",
-@@ -887,6 +895,9 @@ out:
- 		dev_dbg(dev, "Unmapped key-buffer: key_dma_addr=%pad keylen=%u\n",
- 			&ctx->key_params.key_dma_addr, ctx->key_params.keylen);
- 	}
-+
-+	kzfree(ctx->key_params.key);
-+
- 	return rc;
+--- a/arch/x86/crypto/crct10dif-pclmul_glue.c
++++ b/arch/x86/crypto/crct10dif-pclmul_glue.c
+@@ -76,15 +76,14 @@ static int chksum_final(struct shash_des
+ 	return 0;
  }
  
-@@ -913,11 +924,16 @@ static int cc_xcbc_setkey(struct crypto_
- 
- 	ctx->key_params.keylen = keylen;
- 
-+	ctx->key_params.key = kmemdup(key, keylen, GFP_KERNEL);
-+	if (!ctx->key_params.key)
-+		return -ENOMEM;
-+
- 	ctx->key_params.key_dma_addr =
--		dma_map_single(dev, (void *)key, keylen, DMA_TO_DEVICE);
-+		dma_map_single(dev, ctx->key_params.key, keylen, DMA_TO_DEVICE);
- 	if (dma_mapping_error(dev, ctx->key_params.key_dma_addr)) {
- 		dev_err(dev, "Mapping key va=0x%p len=%u for DMA failed\n",
- 			key, keylen);
-+		kzfree(ctx->key_params.key);
- 		return -ENOMEM;
- 	}
- 	dev_dbg(dev, "mapping key-buffer: key_dma_addr=%pad keylen=%u\n",
-@@ -969,6 +985,8 @@ static int cc_xcbc_setkey(struct crypto_
- 	dev_dbg(dev, "Unmapped key-buffer: key_dma_addr=%pad keylen=%u\n",
- 		&ctx->key_params.key_dma_addr, ctx->key_params.keylen);
- 
-+	kzfree(ctx->key_params.key);
-+
- 	return rc;
+-static int __chksum_finup(__u16 *crcp, const u8 *data, unsigned int len,
+-			u8 *out)
++static int __chksum_finup(__u16 crc, const u8 *data, unsigned int len, u8 *out)
+ {
+ 	if (irq_fpu_usable()) {
+ 		kernel_fpu_begin();
+-		*(__u16 *)out = crc_t10dif_pcl(*crcp, data, len);
++		*(__u16 *)out = crc_t10dif_pcl(crc, data, len);
+ 		kernel_fpu_end();
+ 	} else
+-		*(__u16 *)out = crc_t10dif_generic(*crcp, data, len);
++		*(__u16 *)out = crc_t10dif_generic(crc, data, len);
+ 	return 0;
  }
  
+@@ -93,15 +92,13 @@ static int chksum_finup(struct shash_des
+ {
+ 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 
+-	return __chksum_finup(&ctx->crc, data, len, out);
++	return __chksum_finup(ctx->crc, data, len, out);
+ }
+ 
+ static int chksum_digest(struct shash_desc *desc, const u8 *data,
+ 			 unsigned int length, u8 *out)
+ {
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	return __chksum_finup(&ctx->crc, data, length, out);
++	return __chksum_finup(0, data, length, out);
+ }
+ 
+ static struct shash_alg alg = {
 
 
