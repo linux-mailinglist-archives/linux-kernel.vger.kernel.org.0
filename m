@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187D124266
+	by mail.lfdr.de (Postfix) with ESMTP id 96AFC24267
 	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfETVAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:00:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36054 "EHLO mx1.redhat.com"
+        id S1727106AbfETVAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:00:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52842 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbfETVAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:00:09 -0400
+        id S1726933AbfETVAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 17:00:11 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99F0D30842B5;
-        Mon, 20 May 2019 21:00:08 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0AC42301E3D2;
+        Mon, 20 May 2019 21:00:10 +0000 (UTC)
 Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 50C4964049;
-        Mon, 20 May 2019 21:00:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B95D717995;
+        Mon, 20 May 2019 21:00:08 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -32,120 +32,165 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Tim Chen <tim.c.chen@linux.intel.com>,
         huang ying <huang.ying.caritas@gmail.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v8 10/19] locking/rwsem: Wake up almost all readers in wait queue
-Date:   Mon, 20 May 2019 16:59:09 -0400
-Message-Id: <20190520205918.22251-11-longman@redhat.com>
+Subject: [PATCH v8 11/19] locking/rwsem: Clarify usage of owner's nonspinaable bit
+Date:   Mon, 20 May 2019 16:59:10 -0400
+Message-Id: <20190520205918.22251-12-longman@redhat.com>
 In-Reply-To: <20190520205918.22251-1-longman@redhat.com>
 References: <20190520205918.22251-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 20 May 2019 21:00:08 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 20 May 2019 21:00:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the front of the wait queue is a reader, other readers
-immediately following the first reader will also be woken up at the
-same time. However, if there is a writer in between. Those readers
-behind the writer will not be woken up.
+Bit 1 of sem->owner (RWSEM_ANONYMOUSLY_OWNED) is used to designate an
+anonymous owner - readers or an anonymous writer. The setting of this
+anonymous bit is used as an indicator that optimistic spinning cannot
+be done on this rwsem.
 
-Because of optimistic spinning, the lock acquisition order is not FIFO
-anyway. The lock handoff mechanism will ensure that lock starvation
-will not happen.
+With the upcoming reader optimistic spinning patches, a reader-owned
+rwsem can be spinned on for a limit period of time. We still need
+this bit to indicate a rwsem is nonspinnable, but not setting this
+bit loses its meaning that the owner is known. So rename the bit
+to RWSEM_NONSPINNABLE to clarify its meaning.
 
-Assuming that the lock hold times of the other readers still in the
-queue will be about the same as the readers that are being woken up,
-there is really not much additional cost other than the additional
-latency due to the wakeup of additional tasks by the waker. Therefore
-all the readers up to a maximum of 256 in the queue are woken up when
-the first waiter is a reader to improve reader throughput. This is
-somewhat similar in concept to a phase-fair R/W lock.
-
-With a locking microbenchmark running on 5.1 based kernel, the total
-locking rates (in kops/s) on a 8-socket IvyBridge-EX system with
-equal numbers of readers and writers before and after this patch were
-as follows:
-
-   # of Threads  Pre-Patch   Post-patch
-   ------------  ---------   ----------
-        4          1,641        1,674
-        8            731        1,062
-       16            564          924
-       32             78          300
-       64             38          195
-      240             50          149
-
-There is no performance gain at low contention level. At high contention
-level, however, this patch gives a pretty decent performance boost.
+This patch also fixes a DEBUG_RWSEMS_WARN_ON() bug in __up_write().
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/rwsem.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ include/linux/rwsem.h  |  2 +-
+ kernel/locking/rwsem.c | 43 +++++++++++++++++++++---------------------
+ 2 files changed, 22 insertions(+), 23 deletions(-)
 
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 148983e21d47..bb76e82398b2 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -50,7 +50,7 @@ struct rw_semaphore {
+ };
+ 
+ /*
+- * Setting bit 1 of the owner field but not bit 0 will indicate
++ * Setting all bits of the owner field except bit 0 will indicate
+  * that the rwsem is writer-owned with an unknown owner.
+  */
+ #define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-2L)
 diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index eb43201b89b4..b8e209c5fa55 100644
+index b8e209c5fa55..be939accd60c 100644
 --- a/kernel/locking/rwsem.c
 +++ b/kernel/locking/rwsem.c
-@@ -254,6 +254,14 @@ enum writer_wait_state {
-  */
- #define RWSEM_WAIT_TIMEOUT	DIV_ROUND_UP(HZ, 250)
- 
-+/*
-+ * Magic number to batch-wakeup waiting readers, even when writers are
-+ * also present in the queue. This both limits the amount of work the
-+ * waking thread must do and also prevents any potential counter overflow,
-+ * however unlikely.
-+ */
-+#define MAX_READERS_WAKEUP	0x100
-+
+@@ -33,17 +33,18 @@
  /*
-  * handle the lock release when processes blocked on it that can now run
-  * - if we come here from up_xxxx(), then the RWSEM_FLAG_WAITERS bit must
-@@ -329,11 +337,17 @@ static void rwsem_mark_wake(struct rw_semaphore *sem,
- 	}
+  * The least significant 2 bits of the owner value has the following
+  * meanings when set.
+- *  - RWSEM_READER_OWNED (bit 0): The rwsem is owned by readers
+- *  - RWSEM_ANONYMOUSLY_OWNED (bit 1): The rwsem is anonymously owned,
+- *    i.e. the owner(s) cannot be readily determined. It can be reader
+- *    owned or the owning writer is indeterminate.
++ *  - Bit 0: RWSEM_READER_OWNED - The rwsem is owned by readers
++ *  - Bit 1: RWSEM_NONSPINNABLE - Waiters cannot spin on the rwsem
++ *    The rwsem is anonymously owned, i.e. the owner(s) cannot be
++ *    readily determined. It can be reader owned or the owning writer
++ *    is indeterminate.
+  *
+  * When a writer acquires a rwsem, it puts its task_struct pointer
+  * into the owner field. It is cleared after an unlock.
+  *
+  * When a reader acquires a rwsem, it will also puts its task_struct
+  * pointer into the owner field with both the RWSEM_READER_OWNED and
+- * RWSEM_ANONYMOUSLY_OWNED bits set. On unlock, the owner field will
++ * RWSEM_NONSPINNABLE bits set. On unlock, the owner field will
+  * largely be left untouched. So for a free or reader-owned rwsem,
+  * the owner value may contain information about the last reader that
+  * acquires the rwsem. The anonymous bit is set because that particular
+@@ -55,7 +56,8 @@
+  * a rwsem, but the overhead is simply too big.
+  */
+ #define RWSEM_READER_OWNED	(1UL << 0)
+-#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 1)
++#define RWSEM_NONSPINNABLE	(1UL << 1)
++#define RWSEM_OWNER_FLAGS_MASK	(RWSEM_READER_OWNED | RWSEM_NONSPINNABLE)
  
- 	/*
--	 * Grant an infinite number of read locks to the readers at the front
--	 * of the queue. We know that woken will be at least 1 as we accounted
-+	 * Grant up to MAX_READERS_WAKEUP read locks to all the readers in the
-+	 * queue. We know that the woken will be at least 1 as we accounted
- 	 * for above. Note we increment the 'active part' of the count by the
- 	 * number of readers before waking any processes up.
- 	 *
-+	 * This is an adaptation of the phase-fair R/W locks where at the
-+	 * reader phase (first waiter is a reader), all readers are eligible
-+	 * to acquire the lock at the same time irrespective of their order
-+	 * in the queue. The writers acquire the lock according to their
-+	 * order in the queue.
-+	 *
- 	 * We have to do wakeup in 2 passes to prevent the possibility that
- 	 * the reader count may be decremented before it is incremented. It
- 	 * is because the to-be-woken waiter may not have slept yet. So it
-@@ -345,13 +359,20 @@ static void rwsem_mark_wake(struct rw_semaphore *sem,
- 	 * 2) For each waiters in the new list, clear waiter->task and
- 	 *    put them into wake_q to be woken up later.
- 	 */
--	list_for_each_entry(waiter, &sem->wait_list, list) {
-+	INIT_LIST_HEAD(&wlist);
-+	list_for_each_entry_safe(waiter, tmp, &sem->wait_list, list) {
- 		if (waiter->type == RWSEM_WAITING_FOR_WRITE)
--			break;
-+			continue;
+ #ifdef CONFIG_DEBUG_RWSEMS
+ # define DEBUG_RWSEMS_WARN_ON(c, sem)	do {			\
+@@ -132,7 +134,7 @@ static inline void __rwsem_set_reader_owned(struct rw_semaphore *sem,
+ 					    struct task_struct *owner)
+ {
+ 	unsigned long val = (unsigned long)owner | RWSEM_READER_OWNED
+-						 | RWSEM_ANONYMOUSLY_OWNED;
++						 | RWSEM_NONSPINNABLE;
  
- 		woken++;
-+		list_move_tail(&waiter->list, &wlist);
-+
-+		/*
-+		 * Limit # of readers that can be woken up per wakeup call.
-+		 */
-+		if (woken >= MAX_READERS_WAKEUP)
-+			break;
- 	}
--	list_cut_before(&wlist, &sem->wait_list, &waiter->list);
+ 	WRITE_ONCE(sem->owner, (struct task_struct *)val);
+ }
+@@ -144,20 +146,12 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
  
- 	adjustment = woken * RWSEM_READER_BIAS - adjustment;
- 	lockevent_cond_inc(rwsem_wake_reader, woken);
+ /*
+  * Return true if the a rwsem waiter can spin on the rwsem's owner
+- * and steal the lock, i.e. the lock is not anonymously owned.
++ * and steal the lock.
+  * N.B. !owner is considered spinnable.
+  */
+ static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
+ {
+-	return !((unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED);
+-}
+-
+-/*
+- * Return true if rwsem is owned by an anonymous writer or readers.
+- */
+-static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
+-{
+-	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
++	return !((unsigned long)owner & RWSEM_NONSPINNABLE);
+ }
+ 
+ #ifdef CONFIG_DEBUG_RWSEMS
+@@ -170,10 +164,10 @@ static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
+ static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
+ {
+ 	unsigned long val = (unsigned long)current | RWSEM_READER_OWNED
+-						   | RWSEM_ANONYMOUSLY_OWNED;
++						   | RWSEM_NONSPINNABLE;
+ 	if (READ_ONCE(sem->owner) == (struct task_struct *)val)
+ 		cmpxchg_relaxed((unsigned long *)&sem->owner, val,
+-				RWSEM_READER_OWNED | RWSEM_ANONYMOUSLY_OWNED);
++				RWSEM_READER_OWNED | RWSEM_NONSPINNABLE);
+ }
+ #else
+ static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
+@@ -495,7 +489,7 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ 	struct task_struct *owner;
+ 	bool ret = true;
+ 
+-	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
++	BUILD_BUG_ON(is_rwsem_owner_spinnable(RWSEM_OWNER_UNKNOWN));
+ 
+ 	if (need_resched())
+ 		return false;
+@@ -534,7 +528,7 @@ static inline enum owner_state rwsem_owner_state(unsigned long owner)
+ 	if (!owner)
+ 		return OWNER_NULL;
+ 
+-	if (owner & RWSEM_ANONYMOUSLY_OWNED)
++	if (owner & RWSEM_NONSPINNABLE)
+ 		return OWNER_NONSPINNABLE;
+ 
+ 	if (owner & RWSEM_READER_OWNED)
+@@ -1043,7 +1037,12 @@ static inline void __up_write(struct rw_semaphore *sem)
+ {
+ 	long tmp;
+ 
+-	DEBUG_RWSEMS_WARN_ON(sem->owner != current, sem);
++	/*
++	 * sem->owner may differ from current if the ownership is transferred
++	 * to an anonymous writer by setting the RWSEM_NONSPINNABLE bits.
++	 */
++	DEBUG_RWSEMS_WARN_ON((sem->owner != current) &&
++			    !((long)sem->owner & RWSEM_NONSPINNABLE), sem);
+ 	rwsem_clear_owner(sem);
+ 	tmp = atomic_long_fetch_add_release(-RWSEM_WRITER_LOCKED, &sem->count);
+ 	if (unlikely(tmp & RWSEM_FLAG_WAITERS))
 -- 
 2.18.1
 
