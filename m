@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78E823559
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1403A23380
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390963AbfETMei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:34:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
+        id S2387569AbfETMRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:17:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387431AbfETMeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:31 -0400
+        id S2387523AbfETMR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:17:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0627320645;
-        Mon, 20 May 2019 12:34:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A361921019;
+        Mon, 20 May 2019 12:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355670;
-        bh=5QImTVuc0lxp89bL2HI9b6Gh4NBrFme6P7Laz59P0CI=;
+        s=default; t=1558354648;
+        bh=Oew7obFmunycMIJ2UJPJdli7xmc7FLlH1V4LzxOuboI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWgwM5L9X8rxw8dS0J7EB5sDpn/zGMalbwiC/FSZwMQnsVZQgHokUfb0xvBHMDN53
-         6GIIgvqhCU/vIQO3PhIWv5oBJN089aQ1rtEMBmd/7aPqsq4kVYlyN0VyELHXGvmRx4
-         xrSiM9y9kqWeCbgfhefzJ0UglKcBSekYnYZ+roDw=
+        b=uBvx0J2Ux3gArt9ROzFeWrcLF7FJZFqRoSYkAKN5/fc2bOW3O61RJKPuuIKniHVt8
+         LDxyFomOgZFXznw7BXDuJUxrPdQk109v5j/pGuu6v0BASqidWwfizt5jmdlMmgw08X
+         WS3z8ZonIbh/6+2gpZmlfsu82Q7X9Z0E7izPeMAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Romain Porte <romain.porte@nokia.com>,
-        Pascal Fabreges <pascal.fabreges@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 5.1 079/128] mtd: spi-nor: intel-spi: Avoid crossing 4K address boundary on read/write
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 37/44] crypto: arm/aes-neonbs - dont access already-freed walk.iv
 Date:   Mon, 20 May 2019 14:14:26 +0200
-Message-Id: <20190520115255.006434205@linuxfoundation.org>
+Message-Id: <20190520115235.408291823@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,69 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 2b75ebeea6f4937d4d05ec4982c471cef9a29b7f upstream.
+commit 767f015ea0b7ab9d60432ff6cd06b664fd71f50f upstream.
 
-It was observed that reads crossing 4K address boundary are failing.
+If the user-provided IV needs to be aligned to the algorithm's
+alignmask, then skcipher_walk_virt() copies the IV into a new aligned
+buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
+if the caller unconditionally accesses walk.iv, it's a use-after-free.
 
-This limitation is mentioned in Intel documents:
+arm32 xts-aes-neonbs doesn't set an alignmask, so currently it isn't
+affected by this despite unconditionally accessing walk.iv.  However
+this is more subtle than desired, and it was actually broken prior to
+the alignmask being removed by commit cc477bf64573 ("crypto: arm/aes -
+replace bit-sliced OpenSSL NEON code").  Thus, update xts-aes-neonbs to
+start checking the return value of skcipher_walk_virt().
 
-Intel(R) 9 Series Chipset Family Platform Controller Hub (PCH) Datasheet:
-
-"5.26.3 Flash Access
-Program Register Access:
-* Program Register Accesses are not allowed to cross a 4 KB boundary..."
-
-Enhanced Serial Peripheral Interface (eSPI)
-Interface Base Specification (for Client and Server Platforms):
-
-"5.1.4 Address
-For other memory transactions, the address may start or end at any byte
-boundary. However, the address and payload length combination must not
-cross the naturally aligned address boundary of the corresponding Maximum
-Payload Size. It must not cross a 4 KB address boundary."
-
-Avoid this by splitting an operation crossing the boundary into two
-operations.
-
-Fixes: 8afda8b26d01 ("spi-nor: Add support for Intel SPI serial flash controller")
-Cc: stable@vger.kernel.org
-Reported-by: Romain Porte <romain.porte@nokia.com>
-Tested-by: Pascal Fabreges <pascal.fabreges@nokia.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Fixes: e4e7f10bfc40 ("ARM: add support for bit sliced AES using NEON instructions")
+Cc: <stable@vger.kernel.org> # v3.13+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/mtd/spi-nor/intel-spi.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
 
---- a/drivers/mtd/spi-nor/intel-spi.c
-+++ b/drivers/mtd/spi-nor/intel-spi.c
-@@ -632,6 +632,10 @@ static ssize_t intel_spi_read(struct spi
- 	while (len > 0) {
- 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
+---
+ arch/arm/crypto/aesbs-glue.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/arch/arm/crypto/aesbs-glue.c
++++ b/arch/arm/crypto/aesbs-glue.c
+@@ -265,6 +265,8 @@ static int aesbs_xts_encrypt(struct blkc
  
-+		/* Read cannot cross 4K boundary */
-+		block_size = min_t(loff_t, from + block_size,
-+				   round_up(from + 1, SZ_4K)) - from;
-+
- 		writel(from, ispi->base + FADDR);
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 8 * AES_BLOCK_SIZE);
++	if (err)
++		return err;
  
- 		val = readl(ispi->base + HSFSTS_CTL);
-@@ -685,6 +689,10 @@ static ssize_t intel_spi_write(struct sp
- 	while (len > 0) {
- 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
+ 	/* generate the initial tweak */
+ 	AES_encrypt(walk.iv, walk.iv, &ctx->twkey);
+@@ -289,6 +291,8 @@ static int aesbs_xts_decrypt(struct blkc
  
-+		/* Write cannot cross 4K boundary */
-+		block_size = min_t(loff_t, to + block_size,
-+				   round_up(to + 1, SZ_4K)) - to;
-+
- 		writel(to, ispi->base + FADDR);
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 8 * AES_BLOCK_SIZE);
++	if (err)
++		return err;
  
- 		val = readl(ispi->base + HSFSTS_CTL);
+ 	/* generate the initial tweak */
+ 	AES_encrypt(walk.iv, walk.iv, &ctx->twkey);
 
 
