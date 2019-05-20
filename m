@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D262355B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91AA523431
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390975AbfETMem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:34:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52006 "EHLO mail.kernel.org"
+        id S2388837AbfETMY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:24:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732749AbfETMeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:36 -0400
+        id S2388821AbfETMYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:24:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3729D21479;
-        Mon, 20 May 2019 12:34:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D51720675;
+        Mon, 20 May 2019 12:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355675;
-        bh=Oiizy4XV1wKvFexkefBV11yaUlynaoRXxjtvagQSq8U=;
+        s=default; t=1558355063;
+        bh=Cw6AfNVwd6J7h6gKJMpXsWrvyEHcG2I1ykekQ3qiNXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tkfTZGNkCI+MXFUBAV5cHMWf5AQM5QBiEjHFJr2JGF6jGmbmkmKklnifKCkYjfXRx
-         EZTWQ//4sL4c6c9pRzG2ntCP3m9O2GzQBT/Bg05zYaQ+XXlFtPUt+mePfVGytuIAN5
-         24KH8flRNG4YOJePzG+GbNYlwt5mkO6m6v9NJL5M=
+        b=Z1r79jQ3DJl+k3KxOyJaPd5e4zFZre0SyxtplqCudzo3+VnXEGRZcmU4l/U7aF7FC
+         7lp3wbN5a8mqKC7J1C3EdQD63yaM8FFcT/DGDhGkhyqjarc1xdIiRDZp0VDANqXUTj
+         d9jEKODGu3BQuMq+OD3ZTYutkagalAgi0phyiq7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.1 081/128] mtd: maps: Allow MTD_PHYSMAP with MTD_RAM
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 082/105] crypto: ccm - fix incompatibility between "ccm" and "ccm_base"
 Date:   Mon, 20 May 2019 14:14:28 +0200
-Message-Id: <20190520115255.091840189@linuxfoundation.org>
+Message-Id: <20190520115252.923979601@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +43,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Eric Biggers <ebiggers@google.com>
 
-commit d41970097f10d898cef0eb04bf53d786efd6bbbc upstream.
+commit 6a1faa4a43f5fabf9cbeaa742d916e7b5e73120f upstream.
 
-When the physmap_of_core.c code was merged into physmap-core.c the
-ability to use MTD_PHYSMAP_OF with only MTD_RAM selected was lost.
-Restore this by adding MTD_RAM to the dependencies of MTD_PHYSMAP.
+CCM instances can be created by either the "ccm" template, which only
+allows choosing the block cipher, e.g. "ccm(aes)"; or by "ccm_base",
+which allows choosing the ctr and cbcmac implementations, e.g.
+"ccm_base(ctr(aes-generic),cbcmac(aes-generic))".
 
-Fixes: commit 642b1e8dbed7 ("mtd: maps: Merge physmap_of.c into physmap-core.c")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+However, a "ccm_base" instance prevents a "ccm" instance from being
+registered using the same implementations.  Nor will the instance be
+found by lookups of "ccm".  This can be used as a denial of service.
+Moreover, "ccm_base" instances are never tested by the crypto
+self-tests, even if there are compatible "ccm" tests.
+
+The root cause of these problems is that instances of the two templates
+use different cra_names.  Therefore, fix these problems by making
+"ccm_base" instances set the same cra_name as "ccm" instances, e.g.
+"ccm(aes)" instead of "ccm_base(ctr(aes-generic),cbcmac(aes-generic))".
+
+This requires extracting the block cipher name from the name of the ctr
+and cbcmac algorithms.  It also requires starting to verify that the
+algorithms are really ctr and cbcmac using the same block cipher, not
+something else entirely.  But it would be bizarre if anyone were
+actually using non-ccm-compatible algorithms with ccm_base, so this
+shouldn't break anyone in practice.
+
+Fixes: 4a49b499dfa0 ("[CRYPTO] ccm: Added CCM mode")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/mtd/maps/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/maps/Kconfig
-+++ b/drivers/mtd/maps/Kconfig
-@@ -10,7 +10,7 @@ config MTD_COMPLEX_MAPPINGS
+---
+ crypto/ccm.c |   44 ++++++++++++++++++--------------------------
+ 1 file changed, 18 insertions(+), 26 deletions(-)
+
+--- a/crypto/ccm.c
++++ b/crypto/ccm.c
+@@ -455,7 +455,6 @@ static void crypto_ccm_free(struct aead_
  
- config MTD_PHYSMAP
- 	tristate "Flash device in physical memory map"
--	depends on MTD_CFI || MTD_JEDECPROBE || MTD_ROM || MTD_LPDDR
-+	depends on MTD_CFI || MTD_JEDECPROBE || MTD_ROM || MTD_RAM || MTD_LPDDR
- 	help
- 	  This provides a 'mapping' driver which allows the NOR Flash and
- 	  ROM driver code to communicate with chips which are mapped
+ static int crypto_ccm_create_common(struct crypto_template *tmpl,
+ 				    struct rtattr **tb,
+-				    const char *full_name,
+ 				    const char *ctr_name,
+ 				    const char *mac_name)
+ {
+@@ -483,7 +482,8 @@ static int crypto_ccm_create_common(stru
+ 
+ 	mac = __crypto_hash_alg_common(mac_alg);
+ 	err = -EINVAL;
+-	if (mac->digestsize != 16)
++	if (strncmp(mac->base.cra_name, "cbcmac(", 7) != 0 ||
++	    mac->digestsize != 16)
+ 		goto out_put_mac;
+ 
+ 	inst = kzalloc(sizeof(*inst) + sizeof(*ictx), GFP_KERNEL);
+@@ -506,23 +506,27 @@ static int crypto_ccm_create_common(stru
+ 
+ 	ctr = crypto_spawn_skcipher_alg(&ictx->ctr);
+ 
+-	/* Not a stream cipher? */
++	/* The skcipher algorithm must be CTR mode, using 16-byte blocks. */
+ 	err = -EINVAL;
+-	if (ctr->base.cra_blocksize != 1)
++	if (strncmp(ctr->base.cra_name, "ctr(", 4) != 0 ||
++	    crypto_skcipher_alg_ivsize(ctr) != 16 ||
++	    ctr->base.cra_blocksize != 1)
+ 		goto err_drop_ctr;
+ 
+-	/* We want the real thing! */
+-	if (crypto_skcipher_alg_ivsize(ctr) != 16)
++	/* ctr and cbcmac must use the same underlying block cipher. */
++	if (strcmp(ctr->base.cra_name + 4, mac->base.cra_name + 7) != 0)
+ 		goto err_drop_ctr;
+ 
+ 	err = -ENAMETOOLONG;
++	if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
++		     "ccm(%s", ctr->base.cra_name + 4) >= CRYPTO_MAX_ALG_NAME)
++		goto err_drop_ctr;
++
+ 	if (snprintf(inst->alg.base.cra_driver_name, CRYPTO_MAX_ALG_NAME,
+ 		     "ccm_base(%s,%s)", ctr->base.cra_driver_name,
+ 		     mac->base.cra_driver_name) >= CRYPTO_MAX_ALG_NAME)
+ 		goto err_drop_ctr;
+ 
+-	memcpy(inst->alg.base.cra_name, full_name, CRYPTO_MAX_ALG_NAME);
+-
+ 	inst->alg.base.cra_flags = ctr->base.cra_flags & CRYPTO_ALG_ASYNC;
+ 	inst->alg.base.cra_priority = (mac->base.cra_priority +
+ 				       ctr->base.cra_priority) / 2;
+@@ -564,7 +568,6 @@ static int crypto_ccm_create(struct cryp
+ 	const char *cipher_name;
+ 	char ctr_name[CRYPTO_MAX_ALG_NAME];
+ 	char mac_name[CRYPTO_MAX_ALG_NAME];
+-	char full_name[CRYPTO_MAX_ALG_NAME];
+ 
+ 	cipher_name = crypto_attr_alg_name(tb[1]);
+ 	if (IS_ERR(cipher_name))
+@@ -578,12 +581,7 @@ static int crypto_ccm_create(struct cryp
+ 		     cipher_name) >= CRYPTO_MAX_ALG_NAME)
+ 		return -ENAMETOOLONG;
+ 
+-	if (snprintf(full_name, CRYPTO_MAX_ALG_NAME, "ccm(%s)", cipher_name) >=
+-	    CRYPTO_MAX_ALG_NAME)
+-		return -ENAMETOOLONG;
+-
+-	return crypto_ccm_create_common(tmpl, tb, full_name, ctr_name,
+-					mac_name);
++	return crypto_ccm_create_common(tmpl, tb, ctr_name, mac_name);
+ }
+ 
+ static struct crypto_template crypto_ccm_tmpl = {
+@@ -596,23 +594,17 @@ static int crypto_ccm_base_create(struct
+ 				  struct rtattr **tb)
+ {
+ 	const char *ctr_name;
+-	const char *cipher_name;
+-	char full_name[CRYPTO_MAX_ALG_NAME];
++	const char *mac_name;
+ 
+ 	ctr_name = crypto_attr_alg_name(tb[1]);
+ 	if (IS_ERR(ctr_name))
+ 		return PTR_ERR(ctr_name);
+ 
+-	cipher_name = crypto_attr_alg_name(tb[2]);
+-	if (IS_ERR(cipher_name))
+-		return PTR_ERR(cipher_name);
+-
+-	if (snprintf(full_name, CRYPTO_MAX_ALG_NAME, "ccm_base(%s,%s)",
+-		     ctr_name, cipher_name) >= CRYPTO_MAX_ALG_NAME)
+-		return -ENAMETOOLONG;
++	mac_name = crypto_attr_alg_name(tb[2]);
++	if (IS_ERR(mac_name))
++		return PTR_ERR(mac_name);
+ 
+-	return crypto_ccm_create_common(tmpl, tb, full_name, ctr_name,
+-					cipher_name);
++	return crypto_ccm_create_common(tmpl, tb, ctr_name, mac_name);
+ }
+ 
+ static struct crypto_template crypto_ccm_base_tmpl = {
 
 
