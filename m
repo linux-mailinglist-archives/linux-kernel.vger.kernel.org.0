@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B8B23376
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A39C235DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbfETMRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:17:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57834 "EHLO mail.kernel.org"
+        id S2391423AbfETMkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387413AbfETMRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:17:00 -0400
+        id S2390653AbfETMdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:33:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A568213F2;
-        Mon, 20 May 2019 12:16:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 388FB204FD;
+        Mon, 20 May 2019 12:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354619;
-        bh=/i0L0JKA+iBWngfkDkWpnXkwBJ6zp/hZP3orqZ9dooU=;
+        s=default; t=1558355586;
+        bh=Zj0sigm9uLM+pqL/O9ZT4QLHWYsxYUJ+aO89sZtK7+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lu5JZbdQ4esP0CrJx7aHTGBR2CZEmebQpzrGKpxIdNWDdnMiyqsf77hXOhs5ZUX0C
-         2Ab4QEilnis7pwSOxf1T8HPe2ga4/EIJ1gilg9cuvNSfbAY415oIpozju4WRL3OGAI
-         957fvytGurAUbMW8i4OxTiR3c9MVFH47xs3U93n8=
+        b=psO/UzQeMrVwOumST7HZUojh3Pc4+av0OPdHkmHcCU99SnP8bzOVtY4YpI2aildau
+         su1zP2+uPBEDh/5VlQ6+5sVAgjxQEjLnX8UEElzq5R4g45+2CJ3PCFO+JlpR0intX8
+         sx21dnQAGXWe7wOXk8ob9WR37IadCT7TQC+IYY/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4.9 08/44] power: supply: axp288_charger: Fix unchecked return value
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.1 050/128] ALSA: hda/hdmi - Read the pin sense from register when repolling
 Date:   Mon, 20 May 2019 14:13:57 +0200
-Message-Id: <20190520115232.016025272@linuxfoundation.org>
+Message-Id: <20190520115253.152190923@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit c3422ad5f84a66739ec6a37251ca27638c85b6be upstream.
+commit 8c2e6728c2bf95765b724e07d0278ae97cd1ee0d upstream.
 
-Currently there is no check on platform_get_irq() return value
-in case it fails, hence never actually reporting any errors and
-causing unexpected behavior when using such value as argument
-for function regmap_irq_get_virq().
+The driver will check the monitor presence when resuming from suspend,
+starting poll or interrupt triggers. In these 3 situations, the
+jack_dirty will be set to 1 first, then the hda_jack.c reads the
+pin_sense from register, after reading the register, the jack_dirty
+will be set to 0. But hdmi_repoll_work() is enabled in these 3
+situations, It will read the pin_sense a couple of times subsequently,
+since the jack_dirty is 0 now, It does not read the register anymore,
+instead it uses the shadow pin_sense which is read at the first time.
 
-Fix this by adding a proper check, a message reporting any errors
-and returning *pirq*
+It is meaningless to check the shadow pin_sense a couple of times,
+we need to read the register to check the real plugging state, so
+we set the jack_dirty to 1 in the hdmi_repoll_work().
 
-Addresses-Coverity-ID: 1443940 ("Improper use of negative value")
-Fixes: 843735b788a4 ("power: axp288_charger: axp288 charger driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/axp288_charger.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/pci/hda/patch_hdmi.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/power/supply/axp288_charger.c
-+++ b/drivers/power/supply/axp288_charger.c
-@@ -899,6 +899,10 @@ static int axp288_charger_probe(struct p
- 	/* Register charger interrupts */
- 	for (i = 0; i < CHRG_INTR_END; i++) {
- 		pirq = platform_get_irq(info->pdev, i);
-+		if (pirq < 0) {
-+			dev_err(&pdev->dev, "Failed to get IRQ: %d\n", pirq);
-+			return pirq;
-+		}
- 		info->irq[i] = regmap_irq_get_virq(info->regmap_irqc, pirq);
- 		if (info->irq[i] < 0) {
- 			dev_warn(&info->pdev->dev,
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1663,6 +1663,11 @@ static void hdmi_repoll_eld(struct work_
+ 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
+ 	struct hda_codec *codec = per_pin->codec;
+ 	struct hdmi_spec *spec = codec->spec;
++	struct hda_jack_tbl *jack;
++
++	jack = snd_hda_jack_tbl_get(codec, per_pin->pin_nid);
++	if (jack)
++		jack->jack_dirty = 1;
+ 
+ 	if (per_pin->repoll_count++ > 6)
+ 		per_pin->repoll_count = 0;
 
 
