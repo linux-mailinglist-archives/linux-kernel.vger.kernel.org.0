@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A80942357B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6119823445
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403837AbfETMf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:35:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53722 "EHLO mail.kernel.org"
+        id S2389036AbfETMZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:25:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403827AbfETMfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:35:25 -0400
+        id S2389015AbfETMZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:25:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2DB9204FD;
-        Mon, 20 May 2019 12:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2167E20645;
+        Mon, 20 May 2019 12:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355725;
-        bh=1qOe4n5VMfhsU5xaKxXciIoYVp3Rlgrs9JzAvTEh0tY=;
+        s=default; t=1558355114;
+        bh=5zCdNk6o7TvfEzmsRexz2WXo2rRTLCTto/KnK33XGaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xk54u0RbP5GxJ2Nw62YibfTKkzu04y6r5yJ7SNuhNZXMZkCCj1/6jcHvcFa7zizjD
-         7AJZQECUSE42MQZR7MUcDmZ6iW6ghxPI0jAQiOZiBosekBEbRohrC/mJHlB4zwmbOy
-         dc/GIXTjwbsQVkWJs9O0dwPfu13P6bvK+wxXtz74=
+        b=OaY5FlHFNieQjDACbYlw53UkCR6g11OO3pQ1+nf4icSqUhsNnUJGrnXLUpuBMUvgo
+         b19bbRRSXiTQWt1DdAXW7ThxLqr+lx8OvLrE/cw+N3Pl09IScjpeJX0VFWRU7IMlkQ
+         euL/cs83Ee/52LoKx1ftDtti6Z5AVCvSm3Gj1R+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kiran Kolukuluru <kirank@ami.com>,
-        Kamlakant Patel <kamlakantp@marvell.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 5.1 102/128] ipmi:ssif: compare block number correctly for multi-part return messages
+        stable@vger.kernel.org,
+        Arthur Marsh <arthur.marsh@internode.on.net>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.19 103/105] ext4: fix block validity checks for journal inodes using indirect blocks
 Date:   Mon, 20 May 2019 14:14:49 +0200
-Message-Id: <20190520115256.044578072@linuxfoundation.org>
+Message-Id: <20190520115254.348194358@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamlakant Patel <kamlakantp@marvell.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 55be8658c7e2feb11a5b5b33ee031791dbd23a69 upstream.
+commit 170417c8c7bb2cbbdd949bf5c443c0c8f24a203b upstream.
 
-According to ipmi spec, block number is a number that is incremented,
-starting with 0, for each new block of message data returned using the
-middle transaction.
+Commit 345c0dbf3a30 ("ext4: protect journal inode's blocks using
+block_validity") failed to add an exception for the journal inode in
+ext4_check_blockref(), which is the function used by ext4_get_branch()
+for indirect blocks.  This caused attempts to read from the ext3-style
+journals to fail with:
 
-Here, the 'blocknum' is data[0] which always starts from zero(0) and
-'ssif_info->multi_pos' starts from 1.
-So, we need to add +1 to blocknum while comparing with multi_pos.
+[  848.968550] EXT4-fs error (device sdb7): ext4_get_branch:171: inode #8: block 30343695: comm jbd2/sdb7-8: invalid block
 
-Fixes: 7d6380cd40f79 ("ipmi:ssif: Fix handling of multi-part return messages").
-Reported-by: Kiran Kolukuluru <kirank@ami.com>
-Signed-off-by: Kamlakant Patel <kamlakantp@marvell.com>
-Message-Id: <1556106615-18722-1-git-send-email-kamlakantp@marvell.com>
-[Also added a debug log if the block numbers don't match.]
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
+Fix this by adding the missing exception check.
+
+Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
+Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_ssif.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/ext4/block_validity.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -727,12 +727,16 @@ static void msg_done_handler(struct ssif
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum != ssif_info->multi_pos) {
-+		} else if (blocknum + 1 != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
- 			 * but multi_pos starts at one, so the +1.
- 			 */
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				dev_dbg(&ssif_info->client->dev,
-+					"Received message out of sequence, expected %u, got %u\n",
-+					ssif_info->multi_pos - 1, blocknum);
- 			result = -EIO;
- 		} else {
- 			ssif_inc_stat(ssif_info, received_message_parts);
+--- a/fs/ext4/block_validity.c
++++ b/fs/ext4/block_validity.c
+@@ -276,6 +276,11 @@ int ext4_check_blockref(const char *func
+ 	__le32 *bref = p;
+ 	unsigned int blk;
+ 
++	if (ext4_has_feature_journal(inode->i_sb) &&
++	    (inode->i_ino ==
++	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
++		return 0;
++
+ 	while (bref < p+max) {
+ 		blk = le32_to_cpu(*bref++);
+ 		if (blk &&
 
 
