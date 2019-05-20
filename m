@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEA922DEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183F422DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730794AbfETIHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:07:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
+        id S1730720AbfETIFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:05:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730647AbfETIFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730659AbfETIFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 May 2019 04:05:35 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19C12081C;
+        by mail.kernel.org (Postfix) with ESMTPSA id CABDC20863;
         Mon, 20 May 2019 08:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558339534;
-        bh=xnei+IQeBrteeMu2IJuJYcNap1qcD8QFf+i0AMgPxKE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=R5xwEHoXcgt6AHWxLLDlnReqAu7XtRw5r/L0naoRuPEeCBEq+TfNcB6+H8o9brqq9
-         aR1zQCoWIQUXGhqhJX4Gn6WHnTYltLUhGG7XJITetHRjMTOsNqBpYtyIqmvQvqrp5L
-         4pmV+3E/MIHh0qBJiSNhrpmipkxUCHJbn+L6L2Lg=
+        s=default; t=1558339535;
+        bh=Wtf8ydMMfyfJ3sAFi/Hglgs7fc07JVIK7VJrnPdLjpg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ohkKS1kFeDs6AhPfm0BNhc9ncVna0zNXm3TuOb/f415FmPUmgzkuJN3D3fmyfO4dV
+         msBkbh4oDb4g9ejSUgHSxDiE+kQVFKeqFbUvskJZHcZf0cOKdrOurBr3vDRgp8WwiP
+         6wGIau8oUMVS68VhR3fzBU00in/UlHRKWLPp+4rs=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 1B4765FCE3; Mon, 20 May 2019 16:05:32 +0800 (CST)
+        id 2AD595FABC; Mon, 20 May 2019 16:05:32 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/25] clk: sunxi-ng: clk parent rewrite part 1
-Date:   Mon, 20 May 2019 16:03:56 +0800
-Message-Id: <20190520080421.12575-1-wens@kernel.org>
+Subject: [PATCH 01/25] clk: Fix debugfs clk_possible_parents for clks without parent string names
+Date:   Mon, 20 May 2019 16:03:57 +0800
+Message-Id: <20190520080421.12575-2-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
+References: <20190520080421.12575-1-wens@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,107 +46,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-Hi everyone,
+Following the commit fc0c209c147f ("clk: Allow parents to be specified
+without string names"), the parent name string is not always populated.
 
-This is series is the first part of a large series (I haven't done the
-rest) of patches to rewrite the clk parent relationship handling within
-the sunxi-ng clk driver. This is based on Stephen's recent work allowing
-clk drivers to specify clk parents using struct clk_hw * or parsing DT
-phandles in the clk node.
+Instead, fetch the parents clk_core struct using the appropriate helper,
+and read its name directly.
 
-This series can be split into a few major parts:
+Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/clk.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-1) The first patch is a small fix for clk debugfs representation. This
-   was done before commit 1a079560b145 ("clk: Cache core in 
-   clk_fetch_parent_index() without names") was posted, so it might or
-   might not be needed. Found this when checking my work using
-   clk_possible_parents.
-
-2) A bunch of CLK_HW_INIT_* helper macros are added. These cover the
-   situations I encountered, or assume I will encounter, such as single
-   internal (struct clk_hw *) parent, single DT (struct clk_parent_data
-   .fw_name), multiple internal parents, and multiple mixed (internal +
-   DT) parents. A special variant for just an internal single parent is
-   added, CLK_HW_INIT_HWS, which lets the driver share the singular
-   list, instead of having the compiler create a compound literal every
-   time. It might even make sense to only keep this variant.
-
-3) A bunch of CLK_FIXED_FACTOR_* helper macros are added. The rationale
-   is the same as the single parent CLK_HW_INIT_* helpers.
-
-4) Bulk conversion of CLK_FIXED_FACTOR to use local parent references,
-   either struct clk_hw * or DT .fw_name types, whichever the hardware
-   requires.
-
-5) The beginning of SUNXI_CCU_GATE conversion to local parent
-   references. This part is not done. They are included as justification
-   and examples for the shared list of clk parents case.
-
-I realize this is going to be many patches every time I convert a clock
-type. Going forward would the people involved prefer I send out
-individual patches like this series, or squash them all together?
-
-Stephen, would it make sense for you to pick up the first 7 patches that
-touch the clk core? And then we can base our clk branch on top of those?
-
-
-Thanks
-ChenYu
-
-
-Chen-Yu Tsai (25):
-  clk: Fix debugfs clk_possible_parents for clks without parent string
-    names
-  clk: Add CLK_HW_INIT_* macros using .parent_hws
-  clk: Add CLK_HW_INIT_FW_NAME macro using .fw_name in .parent_data
-  clk: Add CLK_HW_INIT_PARENT_DATA macro using .parent_data
-  clk: fixed-factor: Add CLK_FIXED_FACTOR_HW which takes clk_hw pointer
-    as parent
-  clk: fixed-factor: Add CLK_FIXED_FACTOR_HWS which takes list of struct
-    clk_hw *
-  clk: fixed-factor: Add CLK_FIXED_FACTOR_FW_NAME for DT clock-names
-    parent
-  clk: sunxi-ng: switch to of_clk_hw_register() for registering clks
-  clk: sunxi-ng: sun8i-r: Use local parent references for CLK_HW_INIT_*
-  clk: sunxi-ng: a10: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: sun5i: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: a31: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: a23: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: a33: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: h3: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: r40: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: v3s: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: sun8i-r: Use local parent references for
-    CLK_FIXED_FACTOR
-  clk: sunxi-ng: f1c100s: Use local parent references for
-    CLK_FIXED_FACTOR
-  clk: sunxi-ng: a64: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: h6: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: h6-r: Use local parent references for CLK_FIXED_FACTOR
-  clk: sunxi-ng: gate: Add macros for referencing local clock parents
-  clk: sunxi-ng: a80-usb: Use local parent references for SUNXI_CCU_GATE
-  clk: sunxi-ng: sun8i-r: Use local parent references for SUNXI_CCU_GATE
-
- drivers/clk/clk.c                        |  10 ++-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  39 ++++++---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  41 +++++----
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |   2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  69 +++++++++------
- drivers/clk/sunxi-ng/ccu-sun5i.c         |  34 +++++---
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  39 ++++++---
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  34 +++++---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  34 +++++---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  29 ++++---
- drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 104 +++++++++++------------
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  46 ++++++----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  29 ++++---
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  32 ++++---
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  29 ++++---
- drivers/clk/sunxi-ng/ccu_common.c        |   2 +-
- drivers/clk/sunxi-ng/ccu_gate.h          |  53 ++++++++++++
- include/linux/clk-provider.h             |  84 ++++++++++++++++++
- 18 files changed, 487 insertions(+), 223 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756fd4d6..bdb077ba59b9 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3000,12 +3000,16 @@ DEFINE_SHOW_ATTRIBUTE(clk_flags);
+ static int possible_parents_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *core = s->private;
++	struct clk_core *parent;
+ 	int i;
+ 
+-	for (i = 0; i < core->num_parents - 1; i++)
+-		seq_printf(s, "%s ", core->parents[i].name);
++	for (i = 0; i < core->num_parents - 1; i++) {
++		parent = clk_core_get_parent_by_index(core, i);
++		seq_printf(s, "%s ", parent ? parent->name : NULL);
++	}
+ 
+-	seq_printf(s, "%s\n", core->parents[i].name);
++	parent = clk_core_get_parent_by_index(core, i);
++	seq_printf(s, "%s", parent ? parent->name : NULL);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
