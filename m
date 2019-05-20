@@ -2,118 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E696E23B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 092F323B4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390244AbfETOwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:52:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732002AbfETOwZ (ORCPT
+        id S2392040AbfETOya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:54:30 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:37939 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732387AbfETOy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:52:25 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KERGVr129762
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:52:23 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2skwduu5kx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:52:23 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Mon, 20 May 2019 15:52:22 +0100
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 May 2019 15:52:20 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KEqJTo35913734
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 14:52:19 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D70D1B205F;
-        Mon, 20 May 2019 14:52:19 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35855B2064;
-        Mon, 20 May 2019 14:52:19 +0000 (GMT)
-Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.204.144])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 20 May 2019 14:52:19 +0000 (GMT)
-Subject: Re: [PATCH] scsi: ses: Fix out-of-bounds memory access in
- ses_enclosure_data_process()
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Waiman Long <longman@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 20 May 2019 07:52:18 -0700
-In-Reply-To: <1fd39969-4413-2f11-86b2-729787680efa@redhat.com>
-References: <20190501180535.26718-1-longman@redhat.com>
-         <1fd39969-4413-2f11-86b2-729787680efa@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052014-0064-0000-0000-000003E18EF8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011131; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01206071; UDB=6.00633282; IPR=6.00987030;
- MB=3.00026971; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-20 14:52:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052014-0065-0000-0000-00003D89E864
-Message-Id: <1558363938.3742.1.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=909 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905200096
+        Mon, 20 May 2019 10:54:29 -0400
+Received: by mail-ua1-f66.google.com with SMTP id r19so4745369uap.5;
+        Mon, 20 May 2019 07:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=8cXCSMG/utY4UucWb4ekygNexeTn9aJiisIiVvtivhA=;
+        b=ZU1x/Bp2X6efOLs6VCJ6w1Y0/Tx//zW4Ud90lRRbRSmCiz5AojOo473KCRA1bw98rL
+         Xr8VvLNK5CrMk2GXwtG407SUCkWPF3GcdHtkGzyYxq9CO0MN8PeXxCh2EVJV95XXloKQ
+         ts6dEhyIdh71+h7iYVn147d+/97Sj7jezcx+AncoJt0Js2Pki95HdfKfeuxQ4aK0LrEg
+         L8w8tHdtnJzu6vuHtsCmaj698Jci8ICsaiU5knDuPLCDSgalX75JuSBfVb/yntUmDFBz
+         guLP5Ak5FGNc8SFTBSYNfxGmPH3qKxIYZspdEBK9dNELQhFtZteuW8hrYaPt9WWJauX4
+         qMNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=8cXCSMG/utY4UucWb4ekygNexeTn9aJiisIiVvtivhA=;
+        b=BecE2poLD9b7h0/Gw1+3K9L+dXx6sAzX8uUnGHCEdkWkJP+arJNdx6A1gPplJkK3u2
+         C0JQEfm6ha+Aeq+Y0sdK7VXVsj/1MehKWvf5XNWK0XApxbkOG6SUR+ecJKRXnryduTN4
+         dMOJCTQiqQkz9wukJMjDJYukyREf+QsTRnM2vYVVQfMyVflEsSSd7vxlGBPrBYOF11IM
+         xCcR7NNOAtTTNfpr3vNtWGQMlbA860dQWYKed5mbvV09gDWrR3xoWghow6XHiYQwC+yj
+         kx8Uof+GWBYFAwtR0fvDnLGLd/DfD2CeG94d+Bl0iyZaJ128edBuFu6+c/RENYAq6a13
+         eLyg==
+X-Gm-Message-State: APjAAAWJfLjYtmJl8iNZFkH13mFFw45kj54HYHBDpsozKAsttQAHRWCg
+        jzl/LraKRMU2Z6vD1uU4cVueq4mZ
+X-Google-Smtp-Source: APXvYqwlmD0ueYLqSZ4VSGxhwR1uaHyYJwtikMj8/LvKbmobY+swajNr6uJX9UnneAMOHiTbm0GAbw==
+X-Received: by 2002:ab0:42e4:: with SMTP id j91mr14823452uaj.28.1558364067745;
+        Mon, 20 May 2019 07:54:27 -0700 (PDT)
+Received: from llong.remote.csb (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id 125sm5502165vkt.11.2019.05.20.07.54.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 07:54:26 -0700 (PDT)
+Subject: Re: [PATCH v4 5/7] mm: rework non-root kmem_cache lifecycle
+ management
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Lameter <cl@linux.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>
+References: <20190514213940.2405198-1-guro@fb.com>
+ <20190514213940.2405198-6-guro@fb.com>
+ <CALvZod6Zb_kYHyG02jXBY9gvvUn_gOug7kq_hVa8vuCbXdPdjQ@mail.gmail.com>
+From:   Waiman Long <longman9394@gmail.com>
+Message-ID: <5e3c4646-3e4f-414a-0eca-5249956d68a5@gmail.com>
+Date:   Mon, 20 May 2019 10:54:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CALvZod6Zb_kYHyG02jXBY9gvvUn_gOug7kq_hVa8vuCbXdPdjQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-20 at 10:41 -0400, Waiman Long wrote:
-[...]
-> > --- a/drivers/scsi/ses.c
-> > +++ b/drivers/scsi/ses.c
-> > @@ -605,9 +605,14 @@ static void ses_enclosure_data_process(struct
-> > enclosure_device *edev,
-> >  			     /* these elements are optional */
-> >  			     type_ptr[0] ==
-> > ENCLOSURE_COMPONENT_SCSI_TARGET_PORT ||
-> >  			     type_ptr[0] ==
-> > ENCLOSURE_COMPONENT_SCSI_INITIATOR_PORT ||
-> > -			     type_ptr[0] ==
-> > ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS))
-> > +			     type_ptr[0] ==
-> > ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS)) {
-> >  				addl_desc_ptr += addl_desc_ptr[1]
-> > + 2;
-> >  
-> > +				/* Ensure no out-of-bounds memory
-> > access */
-> > +				if (addl_desc_ptr >= ses_dev-
-> > >page10 +
-> > +						     ses_dev-
-> > >page10_len)
-> > +					addl_desc_ptr = NULL;
-> > +			}
-> >  		}
-> >  	}
-> >  	kfree(buf);
-> 
-> Ping! Any comment on this patch.
+On 5/14/19 8:06 PM, Shakeel Butt wrote:
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 4e5b4292a763..1ee967b4805e 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -45,6 +45,8 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work);
+>  static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
+>                     slab_caches_to_rcu_destroy_workfn);
+>
+> +static void kmemcg_queue_cache_shutdown(struct percpu_ref *percpu_ref);
+> +
 
-The update looks fine to me:
+kmemcg_queue_cache_shutdown is only defined if CONFIG_MEMCG_KMEM is
+defined. If it is not defined, a compilation warning can be produced.
+Maybe putting the declaration inside a CONFIG_MEMCG_KMEM block:
 
-Reviewed-by: James E.J. Bottomley <jejb@linux.ibm.com>
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 61d7a96a917b..57ba6cf3dc39 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -45,7 +45,9 @@ static void slab_caches_to_rcu_destroy_workfn(struct
+work_stru
+ct *work);
+ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
+             slab_caches_to_rcu_destroy_workfn);
+ 
++#ifdef CONFIG_MEMCG_KMEM
+ static void kmemcg_queue_cache_shutdown(struct percpu_ref *percpu_ref);
++#endif
+ 
+ /*
+  * Set of flags that will prevent slab merging
+-- 
 
-It might also be interesting to find out how the proliant is
-structuring this descriptor array to precipitate the out of bounds: Is
-it just an off by one or something more serious?
-
-James
+Cheers,
+Longman
 
