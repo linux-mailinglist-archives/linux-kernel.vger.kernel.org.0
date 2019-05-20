@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E11233A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85DA9234BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387786AbfETMTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:19:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
+        id S2390050AbfETMaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:30:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731059AbfETMTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:06 -0400
+        id S2390030AbfETMaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:30:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 403A621019;
-        Mon, 20 May 2019 12:19:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C881320645;
+        Mon, 20 May 2019 12:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354745;
-        bh=SMlUCFzB7D9IhOqhz8J3MWnfPtLj/lM1tXz0zcqXkWs=;
+        s=default; t=1558355407;
+        bh=evbFVzhLxEg4SbCoKYUaCDJhdyPgsuUfMr8WxKWYoSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iNn1W6URj2VWeytp7iIrAegAvWgOCHrhKnIGLktUU53i8rTr7xjtgb9Sx2Zx9eklM
-         8uvSzbuf85p0LIda3lk9MNWXNe38F1IRN4l2u8SP1wtu6ajRaFJWrDmKyLYD7Fhoxl
-         j7cI7h9DpWVwdzmIy3nM1/c+NUJsdbE2TZpBVKGA=
+        b=j6oMMwDJCsz00d/YmJS4GtQjDApvoHtByj0eb8BzAbRMSHn1DW62LMfEyCdV2445l
+         ITngMtbWcvGmgpOxWKSp0KtFbS9UH6gO1LKh8jvVQhLrScmy2sNNvfKTerh3NbL1ay
+         ZyMrmXPlWGuKIVChIr9OidrxKk+dB1yN+AcixNBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 27/63] ALSA: hda/hdmi - Consider eld_valid when reporting jack event
+        stable@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.0 066/123] crypto: ccree - handle tee fips error during power management resume
 Date:   Mon, 20 May 2019 14:14:06 +0200
-Message-Id: <20190520115234.116870531@linuxfoundation.org>
+Message-Id: <20190520115249.216173085@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Ofir Drang <ofir.drang@arm.com>
 
-commit 7f641e26a6df9269cb25dd7a4b0a91d6586ed441 upstream.
+commit 7138377ce10455b7183c6dde4b2c51b33f464c45 upstream.
 
-On the machines with AMD GPU or Nvidia GPU, we often meet this issue:
-after s3, there are 4 HDMI/DP audio devices in the gnome-sound-setting
-even there is no any monitors plugged.
+in order to support cryptocell tee fips error that may occurs while
+cryptocell ree is suspended, an cc_tee_handle_fips_error  call added
+to the cc_pm_resume function.
 
-When this problem happens, we check the /proc/asound/cardX/eld#N.M, we
-will find the monitor_present=1, eld_valid=0.
-
-The root cause is BIOS or GPU driver makes the PRESENCE valid even no
-monitor plugged, and of course the driver will not get the valid
-eld_data subsequently.
-
-In this situation, we should not report the jack_plugged event, to do
-so, let us change the function hdmi_present_sense_via_verbs(). In this
-function, it reads the pin_sense via snd_hda_pin_sense(), after
-calling this function, the jack_dirty is 0, and before exiting
-via_verbs(), we change the shadow pin_sense according to both
-monitor_present and eld_valid, then in the snd_hda_jack_report_sync(),
-since the jack_dirty is still 0, it will report jack event according
-to this modified shadow pin_sense.
-
-After this change, the driver will not report Jack_is_plugged event
-through hdmi_present_sense_via_verbs() if monitor_present is 1 and
-eld_valid is 0.
-
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ofir Drang <ofir.drang@arm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_pm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1549,9 +1549,11 @@ static bool hdmi_present_sense_via_verbs
- 	ret = !repoll || !eld->monitor_present || eld->eld_valid;
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -11,6 +11,7 @@
+ #include "cc_ivgen.h"
+ #include "cc_hash.h"
+ #include "cc_pm.h"
++#include "cc_fips.h"
  
- 	jack = snd_hda_jack_tbl_get(codec, pin_nid);
--	if (jack)
-+	if (jack) {
- 		jack->block_report = !ret;
+ #define POWER_DOWN_ENABLE 0x01
+ #define POWER_DOWN_DISABLE 0x00
+@@ -50,12 +51,13 @@ int cc_pm_resume(struct device *dev)
+ 	}
+ 
+ 	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_DISABLE);
 -
-+		jack->pin_sense = (eld->monitor_present && eld->eld_valid) ?
-+			AC_PINSENSE_PRESENCE : 0;
-+	}
- 	mutex_unlock(&per_pin->lock);
- 	return ret;
- }
+ 	rc = init_cc_regs(drvdata, false);
+ 	if (rc) {
+ 		dev_err(dev, "init_cc_regs (%x)\n", rc);
+ 		return rc;
+ 	}
++	/* check if tee fips error occurred during power down */
++	cc_tee_handle_fips_error(drvdata);
+ 
+ 	rc = cc_resume_req_queue(drvdata);
+ 	if (rc) {
 
 
