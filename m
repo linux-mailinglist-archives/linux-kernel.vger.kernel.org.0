@@ -2,49 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 360BA23630
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EFD923421
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389716AbfETM2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:28:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44366 "EHLO mail.kernel.org"
+        id S2388661AbfETMXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389693AbfETM2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:33 -0400
+        id S2388637AbfETMXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0EA620645;
-        Mon, 20 May 2019 12:28:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF22020645;
+        Mon, 20 May 2019 12:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355312;
-        bh=4MqpRGZefz7Um9TTQzbpqPbOnyQLQcMfqVf5dEROAJ4=;
+        s=default; t=1558355019;
+        bh=gjf+mOszHMrKvbqtvIw9132vFb8gT0KeTwcDppoOEo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hV+GHCdLW0fTy8JH9ylG3YoOM5xyn6EVs2j/wMP8cPGaCw/Li0ypnd5RZn46yAE9O
-         pnAWO8buj0JrxMG2XogOGzzhZ3wA1v7n7gVWG4k7CSIj+ZELTk+55HQu9nfg+bukxj
-         erEFIOr2vhjWtB62vlRI/vUh+1Xm7/7VFIsNpWfg=
+        b=rCH0ReiBA6o3rLmcr7TrhKcFr0S7MQcrSMCKu0s7SAszwhp/nRmHdLv08LvczxvJb
+         0EFDaamJgxpheu9PNtR5tyH3ZSzLI/DUWfvyE8c5FBIe6EtZdjCxxsgrz4AigJzgt0
+         jr09hBhQO7XqBGclWijEuGO92AkPTN3r/X8o1kyI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        syzbot+cbb52e396df3e565ab02@syzkaller.appspotmail.com,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Xu <peterx@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.0 072/123] userfaultfd: use RCU to free the task struct when fork fails
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 066/105] ext4: make sanity check in mballoc more strict
 Date:   Mon, 20 May 2019 14:14:12 +0200
-Message-Id: <20190520115249.634554502@linuxfoundation.org>
+Message-Id: <20190520115251.734458015@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,135 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Jan Kara <jack@suse.cz>
 
-commit c3f3ce049f7d97cc7ec9c01cb51d9ec74e0f37c2 upstream.
+commit 31562b954b60f02acb91b7349dc6432d3f8c3c5f upstream.
 
-The task structure is freed while get_mem_cgroup_from_mm() holds
-rcu_read_lock() and dereferences mm->owner.
+The sanity check in mb_find_extent() only checked that returned extent
+does not extend past blocksize * 8, however it should not extend past
+EXT4_CLUSTERS_PER_GROUP(sb). This can happen when clusters_per_group <
+blocksize * 8 and the tail of the bitmap is not properly filled by 1s
+which happened e.g. when ancient kernels have grown the filesystem.
 
-  get_mem_cgroup_from_mm()                failing fork()
-  ----                                    ---
-  task = mm->owner
-                                          mm->owner = NULL;
-                                          free(task)
-  if (task) *task; /* use after free */
-
-The fix consists in freeing the task with RCU also in the fork failure
-case, exactly like it always happens for the regular exit(2) path.  That
-is enough to make the rcu_read_lock hold in get_mem_cgroup_from_mm()
-(left side above) effective to avoid a use after free when dereferencing
-the task structure.
-
-An alternate possible fix would be to defer the delivery of the
-userfaultfd contexts to the monitor until after fork() is guaranteed to
-succeed.  Such a change would require more changes because it would
-create a strict ordering dependency where the uffd methods would need to
-be called beyond the last potentially failing branch in order to be
-safe.  This solution as opposed only adds the dependency to common code
-to set mm->owner to NULL and to free the task struct that was pointed by
-mm->owner with RCU, if fork ends up failing.  The userfaultfd methods
-can still be called anywhere during the fork runtime and the monitor
-will keep discarding orphaned "mm" coming from failed forks in userland.
-
-This race condition couldn't trigger if CONFIG_MEMCG was set =n at build
-time.
-
-[aarcange@redhat.com: improve changelog, reduce #ifdefs per Michal]
-  Link: http://lkml.kernel.org/r/20190429035752.4508-1-aarcange@redhat.com
-Link: http://lkml.kernel.org/r/20190325225636.11635-2-aarcange@redhat.com
-Fixes: 893e26e61d04 ("userfaultfd: non-cooperative: Add fork() event")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Tested-by: zhong jiang <zhongjiang@huawei.com>
-Reported-by: syzbot+cbb52e396df3e565ab02@syzkaller.appspotmail.com
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: zhong jiang <zhongjiang@huawei.com>
-Cc: syzbot+cbb52e396df3e565ab02@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ fs/ext4/mballoc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -953,6 +953,15 @@ static void mm_init_aio(struct mm_struct
- #endif
- }
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -1539,7 +1539,7 @@ static int mb_find_extent(struct ext4_bu
+ 		ex->fe_len += 1 << order;
+ 	}
  
-+static __always_inline void mm_clear_owner(struct mm_struct *mm,
-+					   struct task_struct *p)
-+{
-+#ifdef CONFIG_MEMCG
-+	if (mm->owner == p)
-+		WRITE_ONCE(mm->owner, NULL);
-+#endif
-+}
-+
- static void mm_init_owner(struct mm_struct *mm, struct task_struct *p)
- {
- #ifdef CONFIG_MEMCG
-@@ -1332,6 +1341,7 @@ static struct mm_struct *dup_mm(struct t
- free_pt:
- 	/* don't put binfmt in mmput, we haven't got module yet */
- 	mm->binfmt = NULL;
-+	mm_init_owner(mm, NULL);
- 	mmput(mm);
- 
- fail_nomem:
-@@ -1663,6 +1673,21 @@ static inline void rcu_copy_process(stru
- #endif /* #ifdef CONFIG_TASKS_RCU */
- }
- 
-+static void __delayed_free_task(struct rcu_head *rhp)
-+{
-+	struct task_struct *tsk = container_of(rhp, struct task_struct, rcu);
-+
-+	free_task(tsk);
-+}
-+
-+static __always_inline void delayed_free_task(struct task_struct *tsk)
-+{
-+	if (IS_ENABLED(CONFIG_MEMCG))
-+		call_rcu(&tsk->rcu, __delayed_free_task);
-+	else
-+		free_task(tsk);
-+}
-+
- /*
-  * This creates a new process as a copy of the old one,
-  * but does not actually start it yet.
-@@ -2124,8 +2149,10 @@ bad_fork_cleanup_io:
- bad_fork_cleanup_namespaces:
- 	exit_task_namespaces(p);
- bad_fork_cleanup_mm:
--	if (p->mm)
-+	if (p->mm) {
-+		mm_clear_owner(p->mm, p);
- 		mmput(p->mm);
-+	}
- bad_fork_cleanup_signal:
- 	if (!(clone_flags & CLONE_THREAD))
- 		free_signal_struct(p->signal);
-@@ -2156,7 +2183,7 @@ bad_fork_cleanup_count:
- bad_fork_free:
- 	p->state = TASK_DEAD;
- 	put_task_stack(p);
--	free_task(p);
-+	delayed_free_task(p);
- fork_out:
- 	spin_lock_irq(&current->sighand->siglock);
- 	hlist_del_init(&delayed.node);
+-	if (ex->fe_start + ex->fe_len > (1 << (e4b->bd_blkbits + 3))) {
++	if (ex->fe_start + ex->fe_len > EXT4_CLUSTERS_PER_GROUP(e4b->bd_sb)) {
+ 		/* Should never happen! (but apparently sometimes does?!?) */
+ 		WARN_ON(1);
+ 		ext4_error(e4b->bd_sb, "corruption or bug in mb_find_extent "
 
 
