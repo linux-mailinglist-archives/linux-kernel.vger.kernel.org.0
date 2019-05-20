@@ -2,139 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 911BE23A9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7770D23A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391900AbfETOlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:41:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391882AbfETOlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:41:44 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 557FE3082B44;
-        Mon, 20 May 2019 14:41:44 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C834460BEC;
-        Mon, 20 May 2019 14:41:43 +0000 (UTC)
-Subject: Re: [PATCH] scsi: ses: Fix out-of-bounds memory access in
- ses_enclosure_data_process()
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190501180535.26718-1-longman@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1fd39969-4413-2f11-86b2-729787680efa@redhat.com>
-Date:   Mon, 20 May 2019 10:41:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2391916AbfETOmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:42:06 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:42403 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732661AbfETOmE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:42:04 -0400
+Received: by mail-wr1-f43.google.com with SMTP id l2so14917854wrb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:42:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=qvb4/MYOh/F4z+jslECvXrNmSGK3orIs9ar0F2P/zn0=;
+        b=gufPss1uRT6AaphHiW9ep9KCv4QfJlBkYOcNrfaTGd+569R5odhI8khfgeoN7ZRULn
+         /WMrku7hEt4i3uC2j2Cu1Fm3oPRlbXSv8ydZzmmjMB3toKl3xldk0X9OdBgA26t1m5qx
+         Up/CV14kfBHF7idysIlXepJz842izeUC8UTv62AQTt65/p/YlK724Iz9Y6W/KfEbxdVa
+         /ku6vjoYWTw4dSpAbLgUGCw/mHH+9zmBJ/+RWcAqoYdWPuWTvdB98K5blOv5NxHZPs6o
+         SZ27NQCdrNDvqVyrYL0L49MkYuq4INFFyDfytB76S3NfXmgCQFJbGSBIRDcsyMm4wltx
+         lQtA==
+X-Gm-Message-State: APjAAAUUaKSjOh3HkE2A4UPldSQLIEe8avZK7u9kvi6J/nk+RF498KGD
+        Kk2JlaXizWtLE2qOMF3MdMDnyQ==
+X-Google-Smtp-Source: APXvYqz+psEb5MNkYrRCQUkFi+XkddM/38OApyYNxcdepWDdLvxUIQLUB5+UzdDZRBlgPldzrZ+t2w==
+X-Received: by 2002:a05:6000:1150:: with SMTP id d16mr9294845wrx.63.1558363322592;
+        Mon, 20 May 2019 07:42:02 -0700 (PDT)
+Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id o8sm32493773wra.4.2019.05.20.07.42.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 May 2019 07:42:01 -0700 (PDT)
+Date:   Mon, 20 May 2019 16:42:00 +0200
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+Message-ID: <20190520144200.cpiqhxxbxyovmk7h@butterfly.localdomain>
+References: <20190520035254.57579-1-minchan@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190501180535.26718-1-longman@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 20 May 2019 14:41:44 +0000 (UTC)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190520035254.57579-1-minchan@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/1/19 2:05 PM, Waiman Long wrote:
-> KASAN has found a slab-out-of-bounds error in ses_enclosure_data_process().
->
-> [   27.298092] BUG: KASAN: slab-out-of-bounds in ses_enclosure_data_process+0x919/0xe80 [ses]
-> [   27.306407] Read of size 1 at addr ffff8807c99048b1 by task systemd-udevd/1563
-> [   27.315173] CPU: 18 PID: 1563 Comm: systemd-udevd Not tainted 4.18.0-80.23.el8.x86_64+debug #1
-> [   27.323835] Hardware name: HPE ProLiant XL450 Gen10/ProLiant XL450 Gen10, BIOS U40 10/02/2018
-> [   27.332410] Call Trace:
->   :
-> [   27.348557]  kasan_report.cold.6+0x92/0x1a6
-> [   27.352771]  ses_enclosure_data_process+0x919/0xe80 [ses]
-> [   27.358211]  ? kfree+0xd6/0x2e0
-> [   27.361376]  ses_intf_add+0xa23/0xef1 [ses]
-> [   27.365590]  ? class_dev_iter_next+0x6c/0xc0
-> [   27.370034]  class_interface_register+0x298/0x400
-> [   27.374769]  ? tsc_cs_mark_unstable+0x60/0x60
-> [   27.379163]  ? class_dev_iter_exit+0x10/0x10
-> [   27.384857]  ? 0xffffffffc0838000
-> [   27.389580]  ses_init+0x12/0x1000 [ses]
-> [   27.394832]  do_one_initcall+0xe9/0x5fd
->   :
-> [   27.562322] Allocated by task 1563:
-> [   27.562330]  kasan_kmalloc+0xbf/0xe0
-> [   27.569433]  __kmalloc+0x150/0x360
-> [   27.572858]  ses_intf_add+0x76a/0xef1 [ses]
-> [   27.577068]  class_interface_register+0x298/0x400
-> [   27.581803]  ses_init+0x12/0x1000 [ses]
-> [   27.587053]  do_one_initcall+0xe9/0x5fd
-> [   27.592309]  do_init_module+0x1f2/0x710
-> [   27.597564]  load_module+0x3e19/0x5910
-> [   27.601336]  __do_sys_init_module+0x1dd/0x260
-> [   27.606673]  do_syscall_64+0xa5/0x4a0
-> [   27.610359]  entry_SYSCALL_64_after_hwframe+0x6a/0xdf
->   :
-> [   27.624932] The buggy address belongs to the object at ffff8807c9904400
->                 which belongs to the cache kmalloc-2048 of size 2048
-> [   27.637701] The buggy address is located 1201 bytes inside of
->                 2048-byte region [ffff8807c9904400, ffff8807c9904c00)
-> [   27.649683] The buggy address belongs to the page:
-> [   27.654503] page:ffffea001f264000 count:1 mapcount:0 mapping:ffff880107c15d80 index:0x0 compound_mapcount: 0
-> [   27.664393] flags: 0x17ffffc0008100(slab|head)
-> [   27.668865] raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff880107c15d80
-> [   27.676656] raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
-> [   27.684444] page dumped because: kasan: bad access detected
->
-> The out-of-bounds memory access happens to ses_dev->page10 which has a
-> size of 1200 bytes in this case. The invalid memory access happens in:
->
->  600 if (addl_desc_ptr &&
->  601     /* only find additional descriptions for specific devices */
->  602     (type_ptr[0] == ENCLOSURE_COMPONENT_DEVICE ||
->  603      type_ptr[0] == ENCLOSURE_COMPONENT_ARRAY_DEVICE ||
->  604      type_ptr[0] == ENCLOSURE_COMPONENT_SAS_EXPANDER ||
->  605      /* these elements are optional */
->  606      type_ptr[0] == ENCLOSURE_COMPONENT_SCSI_TARGET_PORT ||
->  607      type_ptr[0] == ENCLOSURE_COMPONENT_SCSI_INITIATOR_PORT ||
->  608      type_ptr[0] == ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS))
->  609         addl_desc_ptr += addl_desc_ptr[1] + 2; <-- here
->
-> To fix the out-of-bounds memory access, code is now added to make sure
-> that addl_desc_ptr will never point to an address outside of its bounds.
->
-> With this patch, the KASAN warning is gone.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  drivers/scsi/ses.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/ses.c b/drivers/scsi/ses.c
-> index 0fc39224ce1e..dbc9acc2df2f 100644
-> --- a/drivers/scsi/ses.c
-> +++ b/drivers/scsi/ses.c
-> @@ -605,9 +605,14 @@ static void ses_enclosure_data_process(struct enclosure_device *edev,
->  			     /* these elements are optional */
->  			     type_ptr[0] == ENCLOSURE_COMPONENT_SCSI_TARGET_PORT ||
->  			     type_ptr[0] == ENCLOSURE_COMPONENT_SCSI_INITIATOR_PORT ||
-> -			     type_ptr[0] == ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS))
-> +			     type_ptr[0] == ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS)) {
->  				addl_desc_ptr += addl_desc_ptr[1] + 2;
->  
-> +				/* Ensure no out-of-bounds memory access */
-> +				if (addl_desc_ptr >= ses_dev->page10 +
-> +						     ses_dev->page10_len)
-> +					addl_desc_ptr = NULL;
-> +			}
->  		}
->  	}
->  	kfree(buf);
+Hi.
 
-Ping! Any comment on this patch.
+On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
+> - Background
+> 
+> The Android terminology used for forking a new process and starting an app
+> from scratch is a cold start, while resuming an existing app is a hot start.
+> While we continually try to improve the performance of cold starts, hot
+> starts will always be significantly less power hungry as well as faster so
+> we are trying to make hot start more likely than cold start.
+> 
+> To increase hot start, Android userspace manages the order that apps should
+> be killed in a process called ActivityManagerService. ActivityManagerService
+> tracks every Android app or service that the user could be interacting with
+> at any time and translates that into a ranked list for lmkd(low memory
+> killer daemon). They are likely to be killed by lmkd if the system has to
+> reclaim memory. In that sense they are similar to entries in any other cache.
+> Those apps are kept alive for opportunistic performance improvements but
+> those performance improvements will vary based on the memory requirements of
+> individual workloads.
+> 
+> - Problem
+> 
+> Naturally, cached apps were dominant consumers of memory on the system.
+> However, they were not significant consumers of swap even though they are
+> good candidate for swap. Under investigation, swapping out only begins
+> once the low zone watermark is hit and kswapd wakes up, but the overall
+> allocation rate in the system might trip lmkd thresholds and cause a cached
+> process to be killed(we measured performance swapping out vs. zapping the
+> memory by killing a process. Unsurprisingly, zapping is 10x times faster
+> even though we use zram which is much faster than real storage) so kill
+> from lmkd will often satisfy the high zone watermark, resulting in very
+> few pages actually being moved to swap.
+> 
+> - Approach
+> 
+> The approach we chose was to use a new interface to allow userspace to
+> proactively reclaim entire processes by leveraging platform information.
+> This allowed us to bypass the inaccuracy of the kernel’s LRUs for pages
+> that are known to be cold from userspace and to avoid races with lmkd
+> by reclaiming apps as soon as they entered the cached state. Additionally,
+> it could provide many chances for platform to use much information to
+> optimize memory efficiency.
+> 
+> IMHO we should spell it out that this patchset complements MADV_WONTNEED
+> and MADV_FREE by adding non-destructive ways to gain some free memory
+> space. MADV_COLD is similar to MADV_WONTNEED in a way that it hints the
+> kernel that memory region is not currently needed and should be reclaimed
+> immediately; MADV_COOL is similar to MADV_FREE in a way that it hints the
+> kernel that memory region is not currently needed and should be reclaimed
+> when memory pressure rises.
+> 
+> To achieve the goal, the patchset introduce two new options for madvise.
+> One is MADV_COOL which will deactive activated pages and the other is
+> MADV_COLD which will reclaim private pages instantly. These new options
+> complement MADV_DONTNEED and MADV_FREE by adding non-destructive ways to
+> gain some free memory space. MADV_COLD is similar to MADV_DONTNEED in a way
+> that it hints the kernel that memory region is not currently needed and
+> should be reclaimed immediately; MADV_COOL is similar to MADV_FREE in a way
+> that it hints the kernel that memory region is not currently needed and
+> should be reclaimed when memory pressure rises.
+> 
+> This approach is similar in spirit to madvise(MADV_WONTNEED), but the
+> information required to make the reclaim decision is not known to the app.
+> Instead, it is known to a centralized userspace daemon, and that daemon
+> must be able to initiate reclaim on its own without any app involvement.
+> To solve the concern, this patch introduces new syscall -
+> 
+> 	struct pr_madvise_param {
+> 		int size;
+> 		const struct iovec *vec;
+> 	}
+> 
+> 	int process_madvise(int pidfd, ssize_t nr_elem, int *behavior,
+> 				struct pr_madvise_param *restuls,
+> 				struct pr_madvise_param *ranges,
+> 				unsigned long flags);
+> 
+> The syscall get pidfd to give hints to external process and provides
+> pair of result/ranges vector arguments so that it could give several
+> hints to each address range all at once.
+> 
+> I guess others have different ideas about the naming of syscall and options
+> so feel free to suggest better naming.
+> 
+> - Experiment
+> 
+> We did bunch of testing with several hundreds of real users, not artificial
+> benchmark on android. We saw about 17% cold start decreasement without any
+> significant battery/app startup latency issues. And with artificial benchmark
+> which launches and switching apps, we saw average 7% app launching improvement,
+> 18% less lmkd kill and good stat from vmstat.
+> 
+> A is vanilla and B is process_madvise.
+> 
+> 
+>                                        A          B      delta   ratio(%)
+>                allocstall_dma          0          0          0       0.00
+>            allocstall_movable       1464        457      -1007     -69.00
+>             allocstall_normal     263210     190763     -72447     -28.00
+>              allocstall_total     264674     191220     -73454     -28.00
+>           compact_daemon_wake      26912      25294      -1618      -7.00
+>                  compact_fail      17885      14151      -3734     -21.00
+>          compact_free_scanned 4204766409 3835994922 -368771487      -9.00
+>              compact_isolated    3446484    2967618    -478866     -14.00
+>       compact_migrate_scanned 1621336411 1324695710 -296640701     -19.00
+>                 compact_stall      19387      15343      -4044     -21.00
+>               compact_success       1502       1192       -310     -21.00
+> kswapd_high_wmark_hit_quickly        234        184        -50     -22.00
+>             kswapd_inodesteal     221635     233093      11458       5.00
+>  kswapd_low_wmark_hit_quickly      66065      54009     -12056     -19.00
+>                    nr_dirtied     259934     296476      36542      14.00
+>   nr_vmscan_immediate_reclaim       2587       2356       -231      -9.00
+>               nr_vmscan_write    1274232    2661733    1387501     108.00
+>                    nr_written    1514060    2937560    1423500      94.00
+>                    pageoutrun      67561      55133     -12428     -19.00
+>                    pgactivate    2335060    1984882    -350178     -15.00
+>                   pgalloc_dma   13743011   14096463     353452       2.00
+>               pgalloc_movable          0          0          0       0.00
+>                pgalloc_normal   18742440   16802065   -1940375     -11.00
+>                 pgalloc_total   32485451   30898528   -1586923      -5.00
+>                  pgdeactivate    4262210    2930670   -1331540     -32.00
+>                       pgfault   30812334   31085065     272731       0.00
+>                        pgfree   33553970   31765164   -1788806      -6.00
+>                  pginodesteal      33411      15084     -18327     -55.00
+>                   pglazyfreed          0          0          0       0.00
+>                    pgmajfault     551312    1508299     956987     173.00
+>                pgmigrate_fail      43927      29330     -14597     -34.00
+>             pgmigrate_success    1399851    1203922    -195929     -14.00
+>                        pgpgin   24141776   19032156   -5109620     -22.00
+>                       pgpgout     959344    1103316     143972      15.00
+>                  pgpgoutclean    4639732    3765868    -873864     -19.00
+>                      pgrefill    4884560    3006938   -1877622     -39.00
+>                     pgrotated      37828      25897     -11931     -32.00
+>                 pgscan_direct    1456037     957567    -498470     -35.00
+>        pgscan_direct_throttle          0          0          0       0.00
+>                 pgscan_kswapd    6667767    5047360   -1620407     -25.00
+>                  pgscan_total    8123804    6004927   -2118877     -27.00
+>                    pgskip_dma          0          0          0       0.00
+>                pgskip_movable          0          0          0       0.00
+>                 pgskip_normal      14907      25382      10475      70.00
+>                  pgskip_total      14907      25382      10475      70.00
+>                pgsteal_direct    1118986     690215    -428771     -39.00
+>                pgsteal_kswapd    4750223    3657107   -1093116     -24.00
+>                 pgsteal_total    5869209    4347322   -1521887     -26.00
+>                        pswpin     417613    1392647     975034     233.00
+>                       pswpout    1274224    2661731    1387507     108.00
+>                 slabs_scanned   13686905   10807200   -2879705     -22.00
+>           workingset_activate     668966     569444     -99522     -15.00
+>        workingset_nodereclaim      38957      32621      -6336     -17.00
+>            workingset_refault    2816795    2179782    -637013     -23.00
+>            workingset_restore     294320     168601    -125719     -43.00
+> 
+> pgmajfault is increased by 173% because swapin is increased by 200% by
+> process_madvise hint. However, swap read based on zram is much cheaper
+> than file IO in performance point of view and app hot start by swapin is
+> also cheaper than cold start from the beginning of app which needs many IO
+> from storage and initialization steps.
+> 
+> This patchset is against on next-20190517.
+> 
+> Minchan Kim (7):
+>   mm: introduce MADV_COOL
+>   mm: change PAGEREF_RECLAIM_CLEAN with PAGE_REFRECLAIM
+>   mm: introduce MADV_COLD
+>   mm: factor out madvise's core functionality
+>   mm: introduce external memory hinting API
+>   mm: extend process_madvise syscall to support vector arrary
+>   mm: madvise support MADV_ANONYMOUS_FILTER and MADV_FILE_FILTER
+> 
+>  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  include/linux/page-flags.h             |   1 +
+>  include/linux/page_idle.h              |  15 +
+>  include/linux/proc_fs.h                |   1 +
+>  include/linux/swap.h                   |   2 +
+>  include/linux/syscalls.h               |   2 +
+>  include/uapi/asm-generic/mman-common.h |  12 +
+>  include/uapi/asm-generic/unistd.h      |   2 +
+>  kernel/signal.c                        |   2 +-
+>  kernel/sys_ni.c                        |   1 +
+>  mm/madvise.c                           | 600 +++++++++++++++++++++----
+>  mm/swap.c                              |  43 ++
+>  mm/vmscan.c                            |  80 +++-
+>  14 files changed, 680 insertions(+), 83 deletions(-)
+> 
+> -- 
+> 2.21.0.1020.gf2820cf01a-goog
+> 
 
-Cheers,
-Longman
+Please Cc me for the next iteration since I was working on the very same
+thing recently [1].
 
+Thank you.
+
+[1] https://gitlab.com/post-factum/pf-kernel/commits/remote-madvise-v3
+
+-- 
+  Best regards,
+    Oleksandr Natalenko (post-factum)
+    Senior Software Maintenance Engineer
