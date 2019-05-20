@@ -2,135 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C836523AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 648C223AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:48:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389685AbfETOrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:47:15 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36697 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387992AbfETOrP (ORCPT
+        id S2392077AbfETOsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:48:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392061AbfETOsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:47:15 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a17so16640651qth.3;
-        Mon, 20 May 2019 07:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GrBSD2oTzT6Za/pH9I+6y3E5QTGBGNREi52pUy2AGCo=;
-        b=dt5Hj+14YN4Qx35l2bBCMhmZyP7P/cJ/woxmew6tnzhiWKaI7m29H0YPGJO79atC5i
-         V0itOx5bUq9J2vWgS/ACmVs0XxsbaGhlQHg7v2qgRw6axVe5Apf1H87UZwDt9K/wVhGX
-         tG7JpPC/cIDfjNPd7nyAs9iiPyOVoWZFtfF4meUHOo56213U2R3rpTLirOlyLEsnZACj
-         BfiWtyy0nLfhGpH2Rx6iRtyGa7bGJVgjFXm4rGzUx9Xm+OJIclUIDJL4wKmBbKEx7vpV
-         kGbD/aMQjhCCy2vrZEtjQiGrsv7K3/t9hM0Kv5DojCLjXuLGVAUrz0NGYcy6OGwMoqwn
-         ypiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GrBSD2oTzT6Za/pH9I+6y3E5QTGBGNREi52pUy2AGCo=;
-        b=Pcjy72tcIp97oU6xxPjEXYfDqyfTQty8XeUcMOceAfMl7g81+HUEs4ygi5vwINCtEF
-         UN5VERryM9z9XF997WvqSEaP4QAgGMDx7e278VtvloJLUrWAqBF/mg+aGCzMR5N8ZEFB
-         2NelbIpzNQCZfYs3oat+cLRxbXhvlQOfslWq46w7MUCtQs6RWnrCahQoUlKQ9RprA530
-         4KeDGsO5P1RzAj2rkjt5M8YnRI0JuznjwosLOOvJV3/Amd5eNRi65C3ZbVX/iLVDvdag
-         k4MT156h36Wu/c4ZA4NzW8ywnJaOBKbvPEYRHMijKRzEgXk0ketDKkLenk6JGFMEFje/
-         NE9Q==
-X-Gm-Message-State: APjAAAUch89FpRXWZv7bGxNyPuURtB9Ke6N/pDLTvWDS/+KAdGhqbBD5
-        z8r6wcXd8Z+T76QDK8JPBIw=
-X-Google-Smtp-Source: APXvYqzN88Zsli1FBeLYOmv/DK14XNHLxTvV31o2fVFlMVlaDybEgwrmG5G3xP7ZPTwbgnaAIy2MNQ==
-X-Received: by 2002:ac8:fdd:: with SMTP id f29mr15757296qtk.17.1558363633805;
-        Mon, 20 May 2019 07:47:13 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.215.206])
-        by smtp.gmail.com with ESMTPSA id v12sm3887069qto.15.2019.05.20.07.47.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 07:47:12 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 9FC12404A1; Mon, 20 May 2019 11:46:48 -0300 (-03)
-Date:   Mon, 20 May 2019 11:46:48 -0300
-To:     Donald Yandt <donald.yandt@gmail.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Avi Kivity <avi@scylladb.com>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yanmin Zhang <yanmin_zhang@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 20/73] perf machine: Null-terminate version char array
- upon fgets(/proc/version) error
-Message-ID: <20190520144648.GM8945@kernel.org>
-References: <20190517193611.4974-1-acme@kernel.org>
- <20190517193611.4974-21-acme@kernel.org>
- <2D532F76-A57F-4CC4-BAA5-B466AFC0305D@gmail.com>
+        Mon, 20 May 2019 10:48:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vVHp8mOWmedrndUR5L2vnWJIylwIXvsfY4K0aos+6CI=; b=DxHhUVlzt2iJixNr6Pi/XXTGl
+        dJ5rX9lt9r/k+ab9nVFKnh/X6rGK5fl6EVUgLulHeAlNhXurPncne8yfmqj7qv9pSzci/orPQy8QY
+        PpyaksLsUdIYgAOsWNd2Wzh766N7tIJDXCjjpqb9ClmShpMuV4XTZIob6cv/d1bsYT2Iam+JRFdxk
+        pw4ekXZ1cl7jk8L+ELc4XF6ugpU8B7BuZWZfHuvZhDWDPC1iLWCEIWCCXa+OJlQCw+3Uk8f3aPI+m
+        LV+uDACRFpxnsjk7EqD7VFYxgRyKNhw/tWtWEfYk33BwUu1oxncS1lEgP0kFDqAhVqI4bHUglVIGY
+        qJo/idIjA==;
+Received: from [179.176.119.151] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hSjaC-0000Ud-HE; Mon, 20 May 2019 14:48:08 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hSjZo-00010a-90; Mon, 20 May 2019 11:47:44 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 00/10] Fix broken documentation references at v5.2-rc1
+Date:   Mon, 20 May 2019 11:47:29 -0300
+Message-Id: <cover.1558362030.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2D532F76-A57F-4CC4-BAA5-B466AFC0305D@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, May 17, 2019 at 08:05:39PM -0400, Donald Yandt escreveu:
-> Thank you Arnaldo for signing my patch.
-> 
->      I think we should use version 4 of my patch and return NULL instead of null-terminating for efficiency.
+There are several broken Documentation/* references within the Kernel
+tree. There are some reasons for several of them:
 
-Please resubmit then, v3 is already upstream.
+1. The acpi and x86 documentation files were renamed, but the
+   references weren't updated;
+2. The DT files have been converted to JSON format, causing them
+   to be renamed;
+3. Translated files point to future translation work still pending merge
+   or require some action from someone that it is fluent at the
+   translated language;
+4. Some files (specially at DT) weren't accepted yet, but there are already
+   references for them (at MAINTAINERS and on other DT files);
+5. Some files got removed without addressing Documentation, with
+   needs them to describe some things.
 
-- Arnaldo
- 
-> Thanks,
-> 
-> Donald
-> 
-> > On May 17, 2019, at 3:35 PM, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > From: Donald Yandt <donald.yandt@gmail.com>
-> > 
-> > If fgets() fails due to any other error besides end-of-file, the version
-> > char array may not even be null-terminated.
-> > 
-> > Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
-> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Cc: Avi Kivity <avi@scylladb.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Yanmin Zhang <yanmin_zhang@linux.intel.com>
-> > Fixes: a1645ce12adb ("perf: 'perf kvm' tool for monitoring guest performance from host")
-> > Link: http://lkml.kernel.org/r/20190514110100.22019-1-donald.yandt@gmail.com
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> > tools/perf/util/machine.c | 3 ++-
-> > 1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index 3c520baa198c..28a9541c4835 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -1234,8 +1234,9 @@ static char *get_kernel_version(const char *root_dir)
-> >    if (!file)
-> >        return NULL;
-> > 
-> > -    version[0] = '\0';
-> >    tmp = fgets(version, sizeof(version), file);
-> > +    if (!tmp)
-> > +        *version = '\0';
-> >    fclose(file);
-> > 
-> >    name = strstr(version, prefix);
-> > -- 
-> > 2.20.1
-> > 
+This series addresses problems 1 and 2, plus other random trivial
+breakages. Problems 3 to 5 depend on either accepting a patch or
+some specific knowledge. So, won't be addressed by this series.
+
+The first 4 patches improve the documentation script to address some
+corner cases I detected while doing this series. The remaining ones are
+documentation fixes, being the last one having just trivial renaming
+stuff all over the Kernel tree.
+
+After this series, only those warnings will be reported on v5.2-rc1:
+
+Removed file without a non-trivial documentation adjustment:
+
+    Documentation/cgroup-v1/blkio-controller.txt: Documentation/block/cfq-iosched.txt
+    Documentation/cgroup-v1/blkio-controller.txt: Documentation/block/cfq-iosched.txt
+
+The documentation file uses cfq as an example, but it got removed
+recently. Some parts of doc should be re-written to use another
+scheduler as an example.
+
+Files pending addition (as far as I identified, there were e-mails asking
+their inclusions, but it didn't happen upstream yet):
+
+    Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt: Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+    Documentation/driver-api/generic-counter.rst: Documentation/ABI/testing/sys-bus-counter-generic-sysfs
+    Documentation/driver-api/generic-counter.rst: Documentation/ABI/testing/sys-bus-counter
+    MAINTAINERS: Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+
+Translation files with broken stuff:
+
+    Documentation/translations/it_IT/process/adding-syscalls.rst: Documentation/translations/it_IT/filesystems/sysfs.txt
+    Documentation/translations/it_IT/process/coding-style.rst: Documentation/translations/it_IT/kbuild/kconfig-language.txt
+    Documentation/translations/it_IT/process/magic-number.rst: Documentation/process/magic-numbers.rst
+    Documentation/translations/zh_CN/basic_profiling.txt: Documentation/basic_profiling
+    Documentation/translations/zh_CN/basic_profiling.txt: Documentation/basic_profiling
+    Documentation/translations/zh_CN/process/howto.rst: Documentation/DocBook/
+
+Mauro Carvalho Chehab (10):
+  scripts/documentation-file-ref-check: better handle translations
+  scripts/documentation-file-ref-check: exclude false-positives
+  scripts/documentation-file-ref-check: improve tools ref handling
+  scripts/documentation-file-ref-check: teach about .txt -> .yaml
+    renames
+  ABI: sysfs-devices-system-cpu: point to the right docs
+  isdn: mISDN: remove a bogus reference to a non-existing doc
+  mfd: madera: point to the right pinctrl binding file
+  dt: fix refs that were renamed to json with the same file name
+  dt: fix broken references to nand.txt
+  docs: fix broken documentation links
+
+ .../ABI/testing/sysfs-devices-system-cpu      |  3 +-
+ Documentation/acpi/dsd/leds.txt               |  2 +-
+ .../admin-guide/kernel-parameters.rst         |  6 +--
+ .../admin-guide/kernel-parameters.txt         | 16 +++----
+ Documentation/admin-guide/ras.rst             |  2 +-
+ .../devicetree/bindings/arm/omap/crossbar.txt |  2 +-
+ .../bindings/clock/samsung,s5pv210-clock.txt  |  2 +-
+ .../marvell,odmi-controller.txt               |  2 +-
+ .../bindings/leds/irled/spi-ir-led.txt        |  2 +-
+ .../bindings/mtd/amlogic,meson-nand.txt       |  2 +-
+ .../devicetree/bindings/mtd/gpmc-nand.txt     |  2 +-
+ .../devicetree/bindings/mtd/marvell-nand.txt  |  2 +-
+ .../devicetree/bindings/mtd/tango-nand.txt    |  2 +-
+ .../devicetree/bindings/net/fsl-enetc.txt     |  7 ++-
+ .../bindings/pci/amlogic,meson-pcie.txt       |  2 +-
+ .../regulator/qcom,rpmh-regulator.txt         |  2 +-
+ .../devicetree/booting-without-of.txt         |  2 +-
+ Documentation/driver-api/gpio/board.rst       |  2 +-
+ Documentation/driver-api/gpio/consumer.rst    |  2 +-
+ .../firmware-guide/acpi/enumeration.rst       |  2 +-
+ .../firmware-guide/acpi/method-tracing.rst    |  2 +-
+ Documentation/i2c/instantiating-devices       |  2 +-
+ Documentation/sysctl/kernel.txt               |  4 +-
+ .../translations/it_IT/process/4.Coding.rst   |  2 +-
+ .../translations/it_IT/process/howto.rst      |  2 +-
+ .../it_IT/process/stable-kernel-rules.rst     |  4 +-
+ .../translations/zh_CN/process/4.Coding.rst   |  2 +-
+ Documentation/x86/x86_64/5level-paging.rst    |  2 +-
+ Documentation/x86/x86_64/boot-options.rst     |  4 +-
+ .../x86/x86_64/fake-numa-for-cpusets.rst      |  2 +-
+ MAINTAINERS                                   | 10 ++---
+ arch/arm/Kconfig                              |  2 +-
+ arch/arm64/kernel/kexec_image.c               |  2 +-
+ arch/powerpc/Kconfig                          |  2 +-
+ arch/x86/Kconfig                              | 16 +++----
+ arch/x86/Kconfig.debug                        |  2 +-
+ arch/x86/boot/header.S                        |  2 +-
+ arch/x86/entry/entry_64.S                     |  2 +-
+ arch/x86/include/asm/bootparam_utils.h        |  2 +-
+ arch/x86/include/asm/page_64_types.h          |  2 +-
+ arch/x86/include/asm/pgtable_64_types.h       |  2 +-
+ arch/x86/kernel/cpu/microcode/amd.c           |  2 +-
+ arch/x86/kernel/kexec-bzimage64.c             |  2 +-
+ arch/x86/kernel/pci-dma.c                     |  2 +-
+ arch/x86/mm/tlb.c                             |  2 +-
+ arch/x86/platform/pvh/enlighten.c             |  2 +-
+ drivers/acpi/Kconfig                          | 10 ++---
+ drivers/isdn/mISDN/dsp_core.c                 |  2 -
+ drivers/net/ethernet/faraday/ftgmac100.c      |  2 +-
+ .../fieldbus/Documentation/fieldbus_dev.txt   |  4 +-
+ drivers/vhost/vhost.c                         |  2 +-
+ include/acpi/acpi_drivers.h                   |  2 +-
+ include/linux/fs_context.h                    |  2 +-
+ include/linux/lsm_hooks.h                     |  2 +-
+ include/linux/mfd/madera/pdata.h              |  3 +-
+ mm/Kconfig                                    |  2 +-
+ scripts/documentation-file-ref-check          | 44 +++++++++++++++----
+ security/Kconfig                              |  2 +-
+ tools/include/linux/err.h                     |  2 +-
+ .../Documentation/stack-validation.txt        |  4 +-
+ tools/testing/selftests/x86/protection_keys.c |  2 +-
+ 61 files changed, 127 insertions(+), 102 deletions(-)
 
 -- 
+2.21.0
 
-- Arnaldo
+
