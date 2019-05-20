@@ -2,57 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF5622A23
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A80E22A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbfETDAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 23:00:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbfETDAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 23:00:16 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89B5D20644;
-        Mon, 20 May 2019 03:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558321216;
-        bh=jfXJLpbE4kXVGEV+hjaGh9tglvbqgZpjqOPGuhlXhw8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q04B34MHld4TgcGDc2o8fyDiFEHWoWvO3RVgFsIzdQXhPoJ5V8FHCymqVcamGjl17
-         cL2yBja8Ycz72rJgso+rQEPMEjf5HZcsDa+kQrSbmG9bcOQW3i2gdSKw9Yl4n6V4oC
-         IqowJfnhugvmFMzNVO0J3SVwxICZoSaSQxBU7G+I=
-Date:   Mon, 20 May 2019 10:59:28 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH RESEND] ARM: dts: imx6ul: add clock-frequency to CPU node
-Message-ID: <20190520025927.GM15856@dragon>
-References: <1557651135-12109-1-git-send-email-Anson.Huang@nxp.com>
+        id S1730160AbfETDCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 23:02:00 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41498 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727008AbfETDB7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 23:01:59 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TSAay54_1558321316;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TSAay54_1558321316)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 20 May 2019 11:01:56 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     cgroups@vger.kernel.org
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Shuah Khan <shuah@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jay Kamat <jgkamat@fb.com>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] kselftest/cgroup: fix unexpected testing failure on test_memcontrol
+Date:   Mon, 20 May 2019 11:01:38 +0800
+Message-Id: <20190520030140.203605-2-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.856.g8858448bb
+In-Reply-To: <20190520030140.203605-1-alex.shi@linux.alibaba.com>
+References: <20190520030140.203605-1-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557651135-12109-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 12, 2019 at 08:57:16AM +0000, Anson Huang wrote:
-> Add clock-frequency property to CPU node. Avoids warnings like
-> "/cpus/cpu@0 missing clock-frequency property" for "arm,cortex-a7".
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+The cgroup testing relies on the root cgroup's subtree_control setting,
+If the 'memory' controller isn't set, all test cases will be failed
+as following:
 
-Applied, thanks.
+$ sudo ./test_memcontrol
+not ok 1 test_memcg_subtree_control
+not ok 2 test_memcg_current
+ok 3 # skip test_memcg_min
+not ok 4 test_memcg_low
+not ok 5 test_memcg_high
+not ok 6 test_memcg_max
+not ok 7 test_memcg_oom_events
+ok 8 # skip test_memcg_swap_max
+not ok 9 test_memcg_sock
+not ok 10 test_memcg_oom_group_leaf_events
+not ok 11 test_memcg_oom_group_parent_events
+not ok 12 test_memcg_oom_group_score_events
+
+To correct this unexpected failure, this patch write the 'memory' to
+subtree_control of root to get a right result.
+
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Jay Kamat <jgkamat@fb.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Roman Gushchin <guro@fb.com>
+---
+ tools/testing/selftests/cgroup/test_memcontrol.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index 6f339882a6ca..73612d604a2a 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -1205,6 +1205,10 @@ int main(int argc, char **argv)
+ 	if (cg_read_strstr(root, "cgroup.controllers", "memory"))
+ 		ksft_exit_skip("memory controller isn't available\n");
+ 
++	if (cg_read_strstr(root, "cgroup.subtree_control", "memory"))
++	    if (cg_write(root, "cgroup.subtree_control", "+memory"))
++		ksft_exit_skip("Failed to set root memory controller\n");
++
+ 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
+ 		switch (tests[i].fn(root)) {
+ 		case KSFT_PASS:
+-- 
+2.19.1.856.g8858448bb
+
