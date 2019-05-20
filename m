@@ -2,59 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3608323722
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 315A923427
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388212AbfETMVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:21:39 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34659 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387506AbfETMVb (ORCPT
+        id S2388723AbfETMX4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:23:56 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:59241 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388680AbfETMXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:21:31 -0400
-Received: by mail-oi1-f193.google.com with SMTP id u64so565882oib.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=upp0HCpfJgrZEl2GWK/PJ+Q2gjRSy1rU5zLrEBmDB74=;
-        b=eIZ8BB4yFQKM/kh4LPy29hOv6mh/qVQK6m2i52VSOmt309TZnb6+WGx0+ex1pdGpOc
-         zr37T4bi3f7W7woQjCMEUXof4u2kugkXARD77nF7M2yh77zovskNbT2lPHlllnDY7tnk
-         aYYjJjxzdz6GjnpaBU61/hJddec0wlyAR55yVZX0l/u7coYBGwht9IWM3O4H/qdgRv/F
-         kV5gOAU5VDArQHim8MuX6hXNymp7rIBulxnnIG+e214C/YtJVszbrDfdhU+tM6QawtIB
-         a9NUjIIhmQya47jVIIDKUpeRsH2c8Z4pjc+n8CmXmRKDYSAn49Np2D4NM1RUkpcsVA6X
-         xHSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=upp0HCpfJgrZEl2GWK/PJ+Q2gjRSy1rU5zLrEBmDB74=;
-        b=c+I6hCRS4d5v4kOsbZLGS15oEYQXF1tlJN8WmFNfNZBgzN8t0XnKP9Lf4BGZaerEss
-         ZI2onizXX/ZaoqnMXz7MMgMp4lzorolWYmFqWZ4KPv3/11+yg7DCxfD3ejtPg/qHLUR0
-         68wW8GImtL5uemWu5BJtByghbxiJZDdgHw62a9bXuPFNnFvrf6R63v0pVwyDGtfn6aDt
-         Z2Fr9cVG8FkLEgCaNRYVB/pBQCtpWu1EvvvjeTh7fLtgBoUz62eG2pB9D6jQDopLRdwR
-         H6Yxom7p1yyWYmOzUpmG/PAhnROb0BsVtTJMrba0aRUCpxNZidXxBqfv56uD9gG7tKda
-         Q3xg==
-X-Gm-Message-State: APjAAAXS/yh07U9WdW2PInO1XBNpesSaTaFNMgl02qmKlTueju+U8T3x
-        dgOsNgm1aqcUxX2dSoPLbaSpIwFGGYmpjP/qW4M=
-X-Google-Smtp-Source: APXvYqxX84I4DhWrVVRKuSw+ZOYCx0dno8a0VtP0eVucPzCOEHuSuLgE2NQLvUYffZLXfsRvDSDhAD+7AhHFFPjMFtA=
-X-Received: by 2002:aca:50d3:: with SMTP id e202mr22664482oib.88.1558354891352;
- Mon, 20 May 2019 05:21:31 -0700 (PDT)
+        Mon, 20 May 2019 08:23:54 -0400
+X-Originating-IP: 90.88.22.185
+Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 36B8EFF810;
+        Mon, 20 May 2019 12:23:34 +0000 (UTC)
+Date:   Mon, 20 May 2019 14:23:33 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        christophe.kerello@st.com, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        geert@linux-m68k.org, juliensu@mxic.com.tw, lee.jones@linaro.org,
+        liang.yang@amlogic.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marcel.ziswiler@toradex.com, marek.vasut@gmail.com,
+        mark.rutland@arm.com, paul.burton@mips.com, richard@nod.at,
+        robh+dt@kernel.org, stefan@agner.ch, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 2/4] mtd: rawnand: Add Macronix MX25F0A NAND
+ controller
+Message-ID: <20190520142333.390091d5@xps13>
+In-Reply-To: <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
+References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
+        <1555320234-15802-3-git-send-email-masonccyang@mxic.com.tw>
+        <20190512151820.4f2dd9da@xps13>
+        <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a9d:861:0:0:0:0:0 with HTTP; Mon, 20 May 2019 05:21:30 -0700 (PDT)
-From:   talab mohamud <talabmohamud2@gmail.com>
-Date:   Mon, 20 May 2019 13:21:30 +0100
-Message-ID: <CA+Zxo_awRgpcf9zOa_ORThKdRbmbtgM7VosoMswKM3v8ss3Jnw@mail.gmail.com>
-Subject: hope
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day , my name is Talab Mohamud, i sent you a mail and there was
-no response , please confirm that you did get this mail for more
-details.
+Hi Mason,
 
-Regards.
-Talab Mohamud
+masonccyang@mxic.com.tw wrote on Fri, 17 May 2019 17:30:21 +0800:
+
+> Hi Miquel,
+> 
+> > > +
+> > > +static void mxic_nand_select_chip(struct nand_chip *chip, int chipnr)  
+> > 
+> > _select_target() is preferred now  
+> 
+> Do you mean I implement mxic_nand_select_target() to control #CS ?
+> 
+> If so, I need to call mxic_nand_select_target( ) to control #CS ON
+> and then #CS OFF in _exec_op() due to nand_select_target()<in nand_base,c>
+> is still calling chip->legacy.select_chip ?
+
+You must forget about the ->select_chip() callback. Now it should be
+handled directly from the controller driver. Please have a look at the
+commit pointed against the marvell_nand.c driver.
+
+[...]
+
+> > > +   if (!mxic)
+> > > +      return -ENOMEM;
+> > > +
+> > > +   nand_chip = &mxic->nand;
+> > > +   mtd = nand_to_mtd(nand_chip);
+> > > +   mtd->dev.parent = pdev->dev.parent;
+> > > +   nand_chip->ecc.priv = NULL;
+> > > +   nand_set_flash_node(nand_chip, pdev->dev.parent->of_node);
+> > > +   nand_chip->priv = mxic;
+> > > +
+> > > +   mxic->mfd = mfd;
+> > > +
+> > > +   nand_chip->legacy.select_chip = mxic_nand_select_chip;  
+> > 
+> > Please don't implement legacy interfaces. You can check in
+> > marvell_nand.c how this is handled now:
+> > 
+> > b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
+> >   
+> 
+> Does it mean chip->legacy.select_chip() will phase-out ?
+
+Yes it will.
+
+Thanks,
+Miquèl
