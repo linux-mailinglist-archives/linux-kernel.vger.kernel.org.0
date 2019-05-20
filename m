@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6E4523451
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 771B7233E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389149AbfETMZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:25:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40870 "EHLO mail.kernel.org"
+        id S2388095AbfETMVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:21:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389138AbfETMZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:25:41 -0400
+        id S2388077AbfETMVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:21:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5C8721721;
-        Mon, 20 May 2019 12:25:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06D8F20656;
+        Mon, 20 May 2019 12:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355141;
-        bh=yk4aF3+3CUmWowkLP/XwgQN2IGk4lmHrWxdYxoIbi+8=;
+        s=default; t=1558354860;
+        bh=aoak7GZr+DL/b67tuvNtNkms+8SOBqbrBSp9kWjJFA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2abbYaitgosUsZyVi+GMY5OrCNJQwKmRuNcyGTCnTsbqQr7w7/VsK/7YIkEv7FKHl
-         C/+f6gWhM3Spc6C1cea5qjQBMU9fYlYZQ48sA9F/w6hUU/9K4f3AsEPxjVFf9pySBt
-         8VCqjiWt1z4vjgD0fT74iXtmIb1+Zu7KLf+iDrHY=
+        b=R1QCSEAEp+7MdSTBQDEOfgQE5FepZCISt1ydWul8vIPnvy4lAu06ookzuCBJgLjao
+         1HXkdkpzicqUMsoFdXHX86U01W4jR7C9T6zm3OLuelPKj/8XAgP7pHsVWQCwYtRmiv
+         YGGdiBmtwzoIAWE88eggv5Vy8OUKWjKYEioZu2kU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.19 096/105] xen/pvh: set xen_domain_type to HVM in xen_pvh_init
+        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 63/63] ext4: fix compile error when using BUFFER_TRACE
 Date:   Mon, 20 May 2019 14:14:42 +0200
-Message-Id: <20190520115253.861262520@linuxfoundation.org>
+Message-Id: <20190520115237.837048692@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roger Pau Monne <roger.pau@citrix.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-commit c9f804d64bb93c8dbf957df1d7e9de11380e522d upstream.
+commit ddccb6dbe780d68133191477571cb7c69e17bb8c upstream.
 
-Or else xen_domain() returns false despite xen_pvh being set.
+Fix compile error below when using BUFFER_TRACE.
 
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # 4.19+
+fs/ext4/inode.c: In function ‘ext4_expand_extra_isize’:
+fs/ext4/inode.c:5979:19: error: request for member ‘bh’ in something not a structure or union
+  BUFFER_TRACE(iloc.bh, "get_write_access");
+
+Fixes: c03b45b853f58 ("ext4, project: expand inode extra size if possible")
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/enlighten_pvh.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -97,6 +97,7 @@ void __init xen_prepare_pvh(void)
- 	}
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5818,7 +5818,7 @@ int ext4_expand_extra_isize(struct inode
  
- 	xen_pvh = 1;
-+	xen_domain_type = XEN_HVM_DOMAIN;
- 	xen_start_flags = pvh_start_info.flags;
+ 	ext4_write_lock_xattr(inode, &no_expand);
  
- 	msr = cpuid_ebx(xen_cpuid_base() + 2);
+-	BUFFER_TRACE(iloc.bh, "get_write_access");
++	BUFFER_TRACE(iloc->bh, "get_write_access");
+ 	error = ext4_journal_get_write_access(handle, iloc->bh);
+ 	if (error) {
+ 		brelse(iloc->bh);
 
 
