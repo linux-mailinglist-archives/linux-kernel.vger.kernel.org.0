@@ -2,104 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B4323BB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C918C23BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbfETPI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:08:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55224 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733027AbfETPI6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:08:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id i3so13703509wml.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P9y3c6/pdf3tbErI0Do1diigP58TG78CE1J0hIezm6I=;
-        b=je0V+f8q316pSmPHnXBh0zlNCIMMIf0OTbOsKzKgqpiT5HJoGx7mgp0OmmrbCA6ypD
-         T+8lsnJPKUBVQTt2YUj4Hjldoscaw/3gfqWtUsK/glWrq5k2hsbzgoAW58zf0vxCqogH
-         GOdrfDuW/v5LxD5eTjNRHz5sknGLMr+DWSpm8/Fy7P5AsMxnI53jQ8fTyN5GuUIlLR9Z
-         S0up4Y3meHZxSb07WX1pbkLBgwWdNf3po14WBinDKeARTl6purwLBpNsNE3KYHuS+6c8
-         zfd6w/dQFy7+34oXkA4FVEGxYMhLqFuhoC9SyGvSo65ZV86AJ746EGnz1oC6vjAbDD+i
-         QqmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P9y3c6/pdf3tbErI0Do1diigP58TG78CE1J0hIezm6I=;
-        b=EmtEJTii3e076Cbsp/m/tB2t7h1up2YKQVsIHNnVlZbkDqv7NrIz87b8LkZwawPQ6M
-         wBXEW+dgobEJ51fvzFyvMRiAAhxxAyawezM8hX6fC6fZdCMaxesvPFZx2ZDh0tG+2ivx
-         oMtAOKe6uG+RUGL7VRBNRjCDzAzz0KU0d06h2dQFO3QIm4To6nh4Cl3AOy33VIm91aYM
-         /8J1Hl19EaOY8NH5ozBho6IdjFNVnSLo4EWXKKKlSACyYcav3JSsCw0S2c5KKC5xNsCT
-         ZY7XzSPm+Li+qQJMYPbdaTnRxSitpQ3PlqKfy0DN6+kkdT+Em4HuKxCq65pA2GQxanha
-         vm4w==
-X-Gm-Message-State: APjAAAV+yQbC1/jXnxS/WgP+t0HO+MPD2JdeN5hhHr4euSwMyEFvGSFQ
-        aS9gbyZv7DF3IIuTtWBXIF5JciyyfdoAJLvKwkPMKT7bDP0=
-X-Google-Smtp-Source: APXvYqwTvkGu1GK/0tSXG4iFUHM6unRNHVZf1lF2nENMPjqEy8F0XxkWnj/B1GwuSNTjbSbtEZH2Wip0AFBPNQmrDik=
-X-Received: by 2002:a1c:dcc2:: with SMTP id t185mr11431100wmg.143.1558364935763;
- Mon, 20 May 2019 08:08:55 -0700 (PDT)
+        id S2388458AbfETPKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:10:07 -0400
+Received: from vps.xff.cz ([195.181.215.36]:54942 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731033AbfETPKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 11:10:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1558365003; bh=8nCbuBb8AQYXYxa/0A6aE2P2rf6UNECJI6ZQ3RM4O4s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MRX9WqxNodPeHwXsP4QSCQe787L8IZiRWDj4v4DP7Lp8fp5wsoxbbq+5AkoHEN7fl
+         /5/RfXuSI0p9l/ZB2m2yZUQ1ncOLA4igNcBYBKvIcskxHYbT/7wrVS/4eSU9mpCkX6
+         TY7gnn18kr+fNhSYjct+LUD0IuX88Jl6/DISY0eU=
+Date:   Mon, 20 May 2019 17:10:03 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Chen-Yu Tsai <wens@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] ARM: sun8i: a83t: Support Camera Sensor Interface
+ controller
+Message-ID: <20190520151003.uklhhak5clxi5zpf@core.my.home>
+Mail-Followup-To: Chen-Yu Tsai <wens@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20190520150637.23557-1-megous@megous.com>
 MIME-Version: 1.0
-References: <20190520035254.57579-1-minchan@kernel.org> <20190520035254.57579-2-minchan@kernel.org>
- <20190520081621.GV6836@dhcp22.suse.cz> <20190520081943.GW6836@dhcp22.suse.cz>
-In-Reply-To: <20190520081943.GW6836@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 20 May 2019 08:08:45 -0700
-Message-ID: <CAJuCfpE60ZOcpFfE6MpF0PBujK9sfeRjbkhUa243Bo9QmOoARg@mail.gmail.com>
-Subject: Re: [RFC 1/7] mm: introduce MADV_COOL
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520150637.23557-1-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 1:19 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 20-05-19 10:16:21, Michal Hocko wrote:
-> > [CC linux-api]
-> >
-> > On Mon 20-05-19 12:52:48, Minchan Kim wrote:
-> > > When a process expects no accesses to a certain memory range
-> > > it could hint kernel that the pages can be reclaimed
-> > > when memory pressure happens but data should be preserved
-> > > for future use.  This could reduce workingset eviction so it
-> > > ends up increasing performance.
-> > >
-> > > This patch introduces the new MADV_COOL hint to madvise(2)
-> > > syscall. MADV_COOL can be used by a process to mark a memory range
-> > > as not expected to be used in the near future. The hint can help
-> > > kernel in deciding which pages to evict early during memory
-> > > pressure.
-> >
-> > I do not want to start naming fight but MADV_COOL sounds a bit
-> > misleading. Everybody thinks his pages are cool ;). Probably MADV_COLD
-> > or MADV_DONTNEED_PRESERVE.
->
-> OK, I can see that you have used MADV_COLD for a different mode.
-> So this one is effectively a non destructive MADV_FREE alternative
-> so MADV_FREE_PRESERVE would sound like a good fit. Your MADV_COLD
-> in other patch would then be MADV_DONTNEED_PRESERVE. Right?
->
+On Mon, May 20, 2019 at 05:06:34PM +0200, verejna wrote:
+> From: Ondrej Jirman <megous@megous.com>
+> 
+> This is a re-send of Chen-Yu's A83T CSI patch series with review tags
+> applied and removed address/size cells from csi_in port. Already applied
+> patches from v1  were dropped.
+> 
+> The series is ready to be merged:
+> 
+>   Patch 1 and 2 via sunxi tree
+>   Patch 3 via media tree
 
-I agree that naming them this way would be more in-line with the
-existing API. Another good option IMO could be MADV_RECLAIM_NOW /
-MADV_RECLAIM_LAZY which might explain a bit better what they do but
-Michal's proposal is more consistent with the current API.
+Sorry, wrong numbers. 2 is for media tree, 3 is for sunxi, 1 is a dt-bindings
+patch, where I'm not sure.
 
-> --
-> Michal Hocko
-> SUSE Labs
+thanks,
+	Ondrej
+
+> v2:
+> - dropped address/size cells from csi_in port
+> - added review tags
+> 
+> Please take a look and merge.
+> 
+> Thank you,
+> 	Ondrej
+> 
+> --------------------------
+> Original description:
+> 
+> Hi everyone,
+> 
+> This series adds support for the camera sensor interface controller
+> found on the Allwinner A83T SoC. The controller is similar to the one
+> found on  the H3, with the addition of a MIPI CSI-2 interface. However,
+> this series only supports parallel and BT.656 interfaces, based on the
+> existing driver.
+> 
+> Patch 1 adds an undocumented clock parent of the CSI MCLK. This was
+> found after finding the default value to sometimes work and sometimes
+> not, and then comparing against BSP code.
+> 
+> Patch 2 adds a compatible string for the A83T variant.
+> 
+> Patch 3 adds support for the A83T variant to the existing sun6i-csi
+> driver.
+> 
+> Patch 4 adds a device node for the controller, as well as commonly
+> used pin muxing options.
+> 
+> Patch 5 adds a pin muxing option for I2C1 on the PE pins, used in
+> conjunction with the CSI pins.
+> 
+> Patch 6 provides an example usage of the CSI controller: the Bananapi M3
+> with its camera module attached.
+> 
+> Please have a look.
+> 
+> Regards
+> ChenYu
+> 
+> Chen-Yu Tsai (3):
+>   dt-bindings: media: sun6i-csi: Add compatible string for A83T variant
+>   media: sun6i: Support A83T variant
+>   ARM: dts: sun8i: a83t: Add device node for CSI (Camera Sensor
+>     Interface)
+> 
+>  .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+>  arch/arm/boot/dts/sun8i-a83t.dtsi             | 29 +++++++++++++++++++
+>  .../platform/sunxi/sun6i-csi/sun6i_csi.c      |  1 +
+>  3 files changed, 31 insertions(+)
+> 
+> -- 
+> 2.21.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
