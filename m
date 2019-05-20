@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F33F23794
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C318E2341C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388683AbfETMv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:51:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60544 "EHLO mail.kernel.org"
+        id S2388627AbfETMXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731642AbfETMTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:14 -0400
+        id S2388036AbfETMXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79B1D216C4;
-        Mon, 20 May 2019 12:19:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DDB920645;
+        Mon, 20 May 2019 12:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354754;
-        bh=/B/0EtqfRBrUENRKPP4M3U8Yy6d259wygfXGgcBSuao=;
+        s=default; t=1558355011;
+        bh=Mitkq/mNc3PsR+GS8+sgxQ9ccjBADF3myYWbMFia4IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iowDOPzCnzWvYDnDR3X2/yHfrjTbU/IbmOFAwEIH1iDpE1TfSgpoGdCbBYSp0lNcm
-         aaWQFLv34IuOAZLzHk860ueZY9jBw6Jq8Qi3asJO4+berljFyM3Dl7Iy/FMtCZdIal
-         ok7f5BWBqkU+c5FmtjqOiftRDp5uTXKoJiGkGkY0=
+        b=V3HOHvc6Tv3bDbT8ycKagZ3wZU4cQN5xZ2cH+d4PP7KCQx2YESxK5PCh8MNKzN3eG
+         DsyH8nm3fjjhXcykQUBJ0wBRTSo6+1C9j5lH5IOBYNDa2PORH7XKP7cCt333lfYPqC
+         sfQxzzvsQltocJ1LUYXfulfEeM35INvteTOu/vuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Ben Zhang <benzh@chromium.org>, Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 30/63] ASoC: RT5677-SPI: Disable 16Bit SPI Transfers
+        stable@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Yifeng Li <tomli@tomli.me>
+Subject: [PATCH 4.19 063/105] tty: vt.c: Fix TIOCL_BLANKSCREEN console blanking if blankinterval == 0
 Date:   Mon, 20 May 2019 14:14:09 +0200
-Message-Id: <20190520115234.567465560@linuxfoundation.org>
+Message-Id: <20190520115251.512795386@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,131 +43,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Curtis Malainey <cujomalainey@chromium.org>
+From: Yifeng Li <tomli@tomli.me>
 
-commit a46eb523220e242affb9a6bc9bb8efc05f4f7459 upstream.
+commit 75ddbc1fb11efac87b611d48e9802f6fe2bb2163 upstream.
 
-The current algorithm allows 3 types of transfers, 16bit, 32bit and
-burst. According to Realtek, 16bit transfers have a special restriction
-in that it is restricted to the memory region of
-0x18020000 ~ 0x18021000. This region is the memory location of the I2C
-registers. The current algorithm does not uphold this restriction and
-therefore fails to complete writes.
+Previously, in the userspace, it was possible to use the "setterm" command
+from util-linux to blank the VT console by default, using the following
+command.
 
-Since this has been broken for some time it likely no one is using it.
-Better to simply disable the 16 bit writes. This will allow users to
-properly load firmware over SPI without data corruption.
+According to the man page,
 
-Signed-off-by: Curtis Malainey <cujomalainey@chromium.org>
-Reviewed-by: Ben Zhang <benzh@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+> The force option keeps the screen blank even if a key is pressed.
+
+It was implemented by calling TIOCL_BLANKSCREEN.
+
+	case BLANKSCREEN:
+		ioctlarg = TIOCL_BLANKSCREEN;
+		if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
+			warn(_("cannot force blank"));
+		break;
+
+However, after Linux 4.12, this command ceased to work anymore, which is
+unexpected. By inspecting the kernel source, it shows that the issue was
+triggered by the side-effect from commit a4199f5eb809 ("tty: Disable
+default console blanking interval").
+
+The console blanking is implemented by function do_blank_screen() in vt.c:
+"blank_state" will be initialized to "blank_normal_wait" in con_init() if
+AND ONLY IF ("blankinterval" > 0). If "blankinterval" is 0, "blank_state"
+will be "blank_off" (== 0), and a call to do_blank_screen() will always
+abort, even if a forced blanking is required from the user by calling
+TIOCL_BLANKSCREEN, the console won't be blanked.
+
+This behavior is unexpected from a user's point-of-view, since it's not
+mentioned in any documentation. The setterm man page suggests it will
+always work, and the kernel comments in uapi/linux/tiocl.h says
+
+> /* keep screen blank even if a key is pressed */
+> #define TIOCL_BLANKSCREEN 14
+
+To fix it, we simply remove the "blank_state != blank_off" check, as
+pointed out by Nicolas Pitre, this check doesn't logically make sense
+and it's safe to remove.
+
+Suggested-by: Nicolas Pitre <nicolas.pitre@linaro.org>
+Fixes: a4199f5eb809 ("tty: Disable default console blanking interval")
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/rt5677-spi.c |   35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ drivers/tty/vt/vt.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/sound/soc/codecs/rt5677-spi.c
-+++ b/sound/soc/codecs/rt5677-spi.c
-@@ -58,13 +58,15 @@ static DEFINE_MUTEX(spi_mutex);
-  * RT5677_SPI_READ/WRITE_32:	Transfer 4 bytes
-  * RT5677_SPI_READ/WRITE_BURST:	Transfer any multiples of 8 bytes
-  *
-- * For example, reading 260 bytes at 0x60030002 uses the following commands:
-- * 0x60030002 RT5677_SPI_READ_16	2 bytes
-+ * Note:
-+ * 16 Bit writes and reads are restricted to the address range
-+ * 0x18020000 ~ 0x18021000
-+ *
-+ * For example, reading 256 bytes at 0x60030004 uses the following commands:
-  * 0x60030004 RT5677_SPI_READ_32	4 bytes
-  * 0x60030008 RT5677_SPI_READ_BURST	240 bytes
-  * 0x600300F8 RT5677_SPI_READ_BURST	8 bytes
-  * 0x60030100 RT5677_SPI_READ_32	4 bytes
-- * 0x60030104 RT5677_SPI_READ_16	2 bytes
-  *
-  * Input:
-  * @read: true for read commands; false for write commands
-@@ -79,15 +81,13 @@ static u8 rt5677_spi_select_cmd(bool rea
- {
- 	u8 cmd;
- 
--	if (align == 2 || align == 6 || remain == 2) {
--		cmd = RT5677_SPI_READ_16;
--		*len = 2;
--	} else if (align == 4 || remain <= 6) {
-+	if (align == 4 || remain <= 4) {
- 		cmd = RT5677_SPI_READ_32;
- 		*len = 4;
- 	} else {
- 		cmd = RT5677_SPI_READ_BURST;
--		*len = min_t(u32, remain & ~7, RT5677_SPI_BURST_LEN);
-+		*len = (((remain - 1) >> 3) + 1) << 3;
-+		*len = min_t(u32, *len, RT5677_SPI_BURST_LEN);
- 	}
- 	return read ? cmd : cmd + 1;
- }
-@@ -108,7 +108,7 @@ static void rt5677_spi_reverse(u8 *dst,
- 	}
- }
- 
--/* Read DSP address space using SPI. addr and len have to be 2-byte aligned. */
-+/* Read DSP address space using SPI. addr and len have to be 4-byte aligned. */
- int rt5677_spi_read(u32 addr, void *rxbuf, size_t len)
- {
- 	u32 offset;
-@@ -124,7 +124,7 @@ int rt5677_spi_read(u32 addr, void *rxbu
- 	if (!g_spi)
- 		return -ENODEV;
- 
--	if ((addr & 1) || (len & 1)) {
-+	if ((addr & 3) || (len & 3)) {
- 		dev_err(&g_spi->dev, "Bad read align 0x%x(%zu)\n", addr, len);
- 		return -EACCES;
- 	}
-@@ -159,13 +159,13 @@ int rt5677_spi_read(u32 addr, void *rxbu
- }
- EXPORT_SYMBOL_GPL(rt5677_spi_read);
- 
--/* Write DSP address space using SPI. addr has to be 2-byte aligned.
-- * If len is not 2-byte aligned, an extra byte of zero is written at the end
-+/* Write DSP address space using SPI. addr has to be 4-byte aligned.
-+ * If len is not 4-byte aligned, then extra zeros are written at the end
-  * as padding.
-  */
- int rt5677_spi_write(u32 addr, const void *txbuf, size_t len)
- {
--	u32 offset, len_with_pad = len;
-+	u32 offset;
- 	int status = 0;
- 	struct spi_transfer t;
- 	struct spi_message m;
-@@ -178,22 +178,19 @@ int rt5677_spi_write(u32 addr, const voi
- 	if (!g_spi)
- 		return -ENODEV;
- 
--	if (addr & 1) {
-+	if (addr & 3) {
- 		dev_err(&g_spi->dev, "Bad write align 0x%x(%zu)\n", addr, len);
- 		return -EACCES;
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -4155,8 +4155,6 @@ void do_blank_screen(int entering_gfx)
+ 		return;
  	}
  
--	if (len & 1)
--		len_with_pad = len + 1;
--
- 	memset(&t, 0, sizeof(t));
- 	t.tx_buf = buf;
- 	t.speed_hz = RT5677_SPI_FREQ;
- 	spi_message_init_with_transfers(&m, &t, 1);
+-	if (blank_state != blank_normal_wait)
+-		return;
+ 	blank_state = blank_off;
  
--	for (offset = 0; offset < len_with_pad;) {
-+	for (offset = 0; offset < len;) {
- 		spi_cmd = rt5677_spi_select_cmd(false, (addr + offset) & 7,
--				len_with_pad - offset, &t.len);
-+				len - offset, &t.len);
- 
- 		/* Construct SPI message header */
- 		buf[0] = spi_cmd;
+ 	/* don't blank graphics */
 
 
