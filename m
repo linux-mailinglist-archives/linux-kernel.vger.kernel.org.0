@@ -2,65 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03E0A235D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7597F235DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390903AbfETMjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:39:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7663 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391027AbfETMjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:39:20 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BD55920955D48F696694;
-        Mon, 20 May 2019 20:39:17 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
- 20:39:09 +0800
-Subject: Re: [PATCH] scsi: libsas: no need to join wide port again in
- sas_ex_discover_dev()
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190518094057.18046-1-yanaijie@huawei.com>
- <1860c624-1216-bb84-7091-d41a4d43f244@huawei.com>
- <61b6d28d-7b5f-f078-c035-77e855fbe8bf@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
-        <hch@lst.de>, <huangdaode@hisilicon.com>,
-        <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
-        <zhaohongjiang@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <83a50fae-78f4-d236-a007-7e8d95553415@huawei.com>
-Date:   Mon, 20 May 2019 13:39:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2391431AbfETMkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:40:17 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54078 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391226AbfETMkQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:40:16 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 94E4680350; Mon, 20 May 2019 14:40:04 +0200 (CEST)
+Date:   Mon, 20 May 2019 14:40:14 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     stable@kernel.org, kernel list <linux-kernel@vger.kernel.org>,
+        gustavo@embeddedor.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Subject: net: atm: Spectre v1 fix introduced bug in bcb964012d1b in -stable
+Message-ID: <20190520124014.GA5205@amd>
 MIME-Version: 1.0
-In-Reply-To: <61b6d28d-7b5f-f078-c035-77e855fbe8bf@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/2019 13:06, Jason Yan wrote:
-> OK.
->
->>
->> In case of "second fanout expander...", before this, we don't attempt
->> to discover, and just disable the PHY. In that case, is the log proper?
->>
->
-> In that case the log is not proper. I think we can directly return in
-> the case of "second fanout expander..."? Actually nothing to do after
-> the phy is disabled.
 
-Yeah, that looks fine.
-
->
->> And, if indeed proper, it would seem to merit a higher log level than
->> debug, maybe notice is better.
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
+In lecd_attach, if arg is < 0, it was treated as 0. Spectre v1 fix
+changed that. Bug does not exist in mainline AFAICT.
+
+Signed-off-by: Pavel Machek <pavel@denx.de>
+# for 4.19.y
+
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index ad4f829193f0..ed279cd912f4 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -731,7 +731,7 @@ static int lecd_attach(struct atm_vcc *vcc, int arg)
+ 		i =3D arg;
+ 	if (arg >=3D MAX_LEC_ITF)
+ 		return -EINVAL;
+-	i =3D array_index_nospec(arg, MAX_LEC_ITF);
++	i =3D array_index_nospec(i, MAX_LEC_ITF);
+ 	if (!dev_lec[i]) {
+ 		int size;
+=20
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzioC0ACgkQMOfwapXb+vLAjACeOlgtOzrrBAegsl6a1fZoRiIb
+lXsAnRFbWxVub7cuBl8jlTjcZKhX5MRO
+=MB+O
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
