@@ -2,210 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0175B230EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEBD230F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732394AbfETKFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 06:05:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46274 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729834AbfETKFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 06:05:09 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C217B3082133;
-        Mon, 20 May 2019 10:04:58 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 648EA704DB;
-        Mon, 20 May 2019 10:04:56 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 432F61806B13;
-        Mon, 20 May 2019 10:04:50 +0000 (UTC)
-Date:   Mon, 20 May 2019 06:04:46 -0400 (EDT)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, lkp@01.org,
-        Roman Gushchin <guro@fb.com>, ltp@lists.linux.it,
-        naresh.kamboju@linaro.org
-Message-ID: <875220079.23570847.1558346686738.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190520032018.GW31424@shao2-debian>
-References: <20190520032018.GW31424@shao2-debian>
-Subject: Re: [LTP] [mm]  8c7829b04c: ltp.overcommit_memory01.fail
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.43.17.163, 10.4.195.9]
-Thread-Topic: 8c7829b04c: ltp.overcommit_memory01.fail
-Thread-Index: dCTlD5jI9boDoW478vfOqrfGG+birA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 20 May 2019 10:05:08 +0000 (UTC)
+        id S1732414AbfETKMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 06:12:23 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36048 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732402AbfETKMX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 06:12:23 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d21so6514370plr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 03:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=nj86Nyw3KJK7Z3FsC5eQxrUvkQQ/Oi+NDG8wLjmFGQU=;
+        b=XC8PRwo84WSBd/TUs7O4kUryHVFjZ0XnohBkePvQGh3CobFgptIyYyK9QPrxq+moTw
+         qheK3uDYfkxqc+38JpOr+MuQx3M+slPhb4hsHvX/1FdLomKsDGaJBTXctgbRuPwhMo6I
+         +ItbFYvP1KMvoATv/mJdHRFf42AEBmhCLxJ14QY8cCi6i5VRzHv6VW72gfwzM8yUvUm7
+         H+nNdj2feSOkTDc1EC8y6kKnXffkzwVY6UGQ1UscoSQKq+jiqwPU+ZbHj6fmu/jr3bKY
+         ytyKTtebsLfAXv25ZfqOOLmPcisMLpAYSSglfz3JVyN8wMm6N+4iV+lpY3eGVvGcgFev
+         ee/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nj86Nyw3KJK7Z3FsC5eQxrUvkQQ/Oi+NDG8wLjmFGQU=;
+        b=W8DUpig9bU2g9spOqVMNVBZ/lzUzm//lH2AmNf4k/DcOD3xjNxgr2h5nUhXkdr054G
+         rQJTNQaVb0wfAHy30rvI1ukugmlOWz2FY+p3UJYc/4h66gpJmXUBZRPRqSZDLL3TSMMD
+         RN5N4SwqO4ofLEAbexaAXlVGUzk4sUbXz65iO+b0zxoVezWWkR9ZQDyDSMQJSrKyngj3
+         NlbakABKtchNfzovLexo/kczU7up1lj6RcU3JedpCqPiFIeSWXaPdh72NnqmDXfqWyCM
+         YF8+uRs+QQnBstvRJEeWfL/nITTW/cNBtdZR8DVdvKVOjrpTe0LAoY1PN6sLgxL/PbQB
+         MlwA==
+X-Gm-Message-State: APjAAAVq1mm+gq2uWoZDKVo1Yb2QxlqtkiJuUlRFwARxvGzupS3IjkxK
+        FIqZxoJ1D08eH4y3V63qa1Nwxw==
+X-Google-Smtp-Source: APXvYqxs+7628IuHBHqhbphPC8vlchUw/ugXo/fGIy1jfQpK4ADRQzLXXHQQSf8RfDbtwEP9NVZqPQ==
+X-Received: by 2002:a17:902:860c:: with SMTP id f12mr76409294plo.127.1558347142768;
+        Mon, 20 May 2019 03:12:22 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id b3sm30098127pfr.146.2019.05.20.03.12.17
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 03:12:22 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
+Cc:     baolin.wang@linaro.org, vincent.guittot@linaro.org, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 0/9] Add SD host controller support for SC9860 platform
+Date:   Mon, 20 May 2019 18:11:53 +0800
+Message-Id: <cover.1558346019.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch set adds optional clock support, HS400 enhanced strobe mode support,
+PHY DLL configuration and other optimization to make the SD host controller
+can work well on the Spreadtrum SC9860 platform.
 
+Baolin Wang (9):
+  mmc: sdhci-sprd: Check the enable clock's return value correctly
+  dt-bindings: mmc: sprd: Add another optional clock documentation
+  mmc: sdhci-sprd: Add optional gate clock support
+  mmc: sdhci-sprd: Implement the get_max_timeout_count() interface
+  mmc: sdhci-sprd: Add HS400 enhanced strobe mode
+  mmc: sdhci-sprd: Enable PHY DLL to make clock stable
+  dt-bindings: mmc: sprd: Add PHY DLL delay documentation
+  mmc: sdhci-sprd: Add PHY DLL delay configuration
+  arm64: dts: sprd: Add Spreadtrum SD host controller support
 
------ Original Message -----
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 8c7829b04c523cdc732cb77f59f03320e09f3386 ("mm: fix false-positive
-> OVERCOMMIT_GUESS failures")
+ .../devicetree/bindings/mmc/sdhci-sprd.txt         |   19 +++
+ arch/arm64/boot/dts/sprd/whale2.dtsi               |   35 ++++
+ drivers/mmc/host/sdhci-sprd.c                      |  171 +++++++++++++++++++-
+ 3 files changed, 217 insertions(+), 8 deletions(-)
 
-This matches report from Naresh:
-  http://lists.linux.it/pipermail/ltp/2019-May/011962.html
+-- 
+1.7.9.5
 
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> in testcase: ltp
-> with following parameters:
-> 
-> 	disk: 1HDD
-> 	test: mm-01
-> 
-> test-description: The LTP testsuite contains a collection of tools for
-> testing the Linux kernel and related features.
-> test-url: http://linux-test-project.github.io/
-> 
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire
-> log/backtrace):
-> 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
-> 
-> 
-> [  554.112267 ] <<<test_start>>>
-> [  554.112269 ]
-> [  554.115806 ] tag=overcommit_memory01 stime=1558074982
-> [  554.115809 ]
-> [  554.119303 ] cmdline="overcommit_memory"
-> [  554.119306 ]
-> [  554.121962 ] contacts=""
-> [  554.121965 ]
-> [  554.124459 ] analysis=exit
-> [  554.124463 ]
-> [  554.127140 ] <<<test_output>>>
-> [  554.127144 ]
-> [  554.131401 ] tst_test.c:1096: INFO: Timeout per run is 0h 05m 00s
-> [  554.131404 ]
-> [  554.136248 ] overcommit_memory.c:117: INFO: MemTotal is 4033124 kB
-> [  554.136251 ]
-> [  554.141365 ] overcommit_memory.c:119: INFO: SwapTotal is 268435452 kB
-> [  554.141368 ]
-> [  554.146664 ] overcommit_memory.c:123: INFO: CommitLimit is 270452012 kB
-> [  554.146666 ]
-> [  554.151375 ] mem.c:814: INFO: set overcommit_ratio to 50
-> [  554.151378 ]
-> [  554.155796 ] mem.c:814: INFO: set overcommit_memory to 2
-> [  554.155799 ]
-> [  554.159951 ] overcommit_memory.c:190: INFO: malloc 538608648 kB failed
-> [  554.159953 ]
-> [  554.164801 ] overcommit_memory.c:211: PASS: alloc failed as expected
-> [  554.164804 ]
-> [  554.170196 ] overcommit_memory.c:190: INFO: malloc 270452012 kB failed
-> [  554.170199 ]
-> [  554.175344 ] overcommit_memory.c:211: PASS: alloc failed as expected
-> [  554.175347 ]
-> [  554.180932 ] overcommit_memory.c:186: INFO: malloc 134651878 kB
-> successfully
-> [  554.180935 ]
-> [  554.186522 ] overcommit_memory.c:205: PASS: alloc passed as expected
-> [  554.186524 ]
-> [  554.191234 ] mem.c:814: INFO: set overcommit_memory to 0
-> [  554.191237 ]
-> [  554.196930 ] overcommit_memory.c:186: INFO: malloc 134734122 kB
-> successfully
-> [  554.196933 ]
-> [  554.202738 ] overcommit_memory.c:205: PASS: alloc passed as expected
-> [  554.202742 ]
-> [  554.208563 ] overcommit_memory.c:190: INFO: malloc 538936488 kB failed
-> [  554.208566 ]
-> [  554.214355 ] overcommit_memory.c:211: PASS: alloc failed as expected
-> [  554.214357 ]
-> [  554.220506 ] overcommit_memory.c:186: INFO: malloc 272468576 kB
-> successfully
-> [  554.220509 ]
-> [  554.226564 ] overcommit_memory.c:213: FAIL: alloc passed, expected to fail
-> [  554.226568 ]
-> [  554.231870 ] mem.c:814: INFO: set overcommit_memory to 1
-> [  554.231873 ]
-> [  554.237819 ] overcommit_memory.c:186: INFO: malloc 136234288 kB
-> successfully
-> [  554.237821 ]
-> [  554.243711 ] overcommit_memory.c:205: PASS: alloc passed as expected
-> [  554.243713 ]
-> [  554.249791 ] overcommit_memory.c:186: INFO: malloc 272468576 kB
-> successfully
-> [  554.249794 ]
-> [  554.255069 ] overcommit_memory.c:205: PASS: alloc passed as expected
-> [  554.255073 ]
-> [  554.261594 ] overcommit_memory.c:186: INFO: malloc 544937152 kB
-> successfully
-> [  554.261597 ]
-> [  554.267855 ] overcommit_memory.c:205: PASS: alloc passed as expected
-> [  554.267858 ]
-> [  554.273445 ] mem.c:814: INFO: set overcommit_memory to 0
-> [  554.273448 ]
-> [  554.278882 ] mem.c:814: INFO: set overcommit_ratio to 50
-> [  554.278885 ]
-> [  554.282419 ]
-> [  554.284170 ] Summary:
-> [  554.284173 ]
-> [  554.287476 ] passed   8
-> [  554.287480 ]
-> [  554.290740 ] failed   1
-> [  554.290743 ]
-> [  554.293971 ] skipped  0
-> [  554.293974 ]
-> [  554.297123 ] warnings 0
-> [  554.297126 ]
-> [  554.300746 ] <<<execution_status>>>
-> [  554.300749 ]
-> [  554.304489 ] initiation_status="ok"
-> [  554.304492 ]
-> [  554.309762 ] duration=0 termination_type=exited termination_id=1
-> corefile=no
-> [  554.309765 ]
-> [  554.313681 ] cutime=0 cstime=0
-> [  554.313685 ]
-> [  554.316880 ] <<<test_end>>>
-> 
-> 
-> 
-> To reproduce:
-> 
->         # build kernel
-> 	cd linux
-> 	cp config-5.1.0-10246-g8c7829b .config
-> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig
-> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 prepare
-> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 modules_prepare
-> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 SHELL=/bin/bash
-> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 bzImage
-> 
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
-> 	bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script is attached
-> 	in this email
-> 
-> 
-> 
-> 
-> Thanks,
-> Rong Chen
-> 
-> 
-> 
-> --
-> Mailing list info: https://lists.linux.it/listinfo/ltp
-> 
