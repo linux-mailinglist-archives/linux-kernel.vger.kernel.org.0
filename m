@@ -2,168 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B382D23983
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7AB2399C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388135AbfETOMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:12:19 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:37211 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733122AbfETOMR (ORCPT
+        id S2387441AbfETOOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:14:37 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39263 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732627AbfETOOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:12:17 -0400
-Received: by mail-it1-f196.google.com with SMTP id m140so23350874itg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YU2Hk+oQzPQtUHiv1l161xo5DuGg7ti6IldSS88QBWw=;
-        b=NEh5IhEsz1G82YNK42ntz4UQRVBbHjehpTlIHUBmVwOm5nopRST3U8a8Nnu5ozfEjy
-         IdbQ0F0odZUIKx6adbHEgmM/5qxF57n84LoJkxl3QnhCrUJS72qw5A8VYp1CFxgjcCHG
-         7umzINnbdZBp9v+xH3Yd0jI+ffN18QPeE5eMnJlGuRY7OTDschEOgC8ikexhEG9bKdVb
-         +eGWmugkuKP1VmisOezHEWvjKGbs6mDdFTqdu8kG75MTQid/67WueSa/nmeuO+1zXIZw
-         PaEhpuMmOGbfvNKCdbberg5gUAxryfut7IAYavNh1Shj1whXtKzi0o/f9M9nPeylnqhP
-         xd1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YU2Hk+oQzPQtUHiv1l161xo5DuGg7ti6IldSS88QBWw=;
-        b=FA/a8tV3kDYPKlTatVmA9CW5U1mg/dZO018I93TOc0MVGSkSyHOPVU91WXEULcCDdk
-         5zVSxOJ2/wc8KodxvcJiVehsnXiT/4UHHKwvGopsn1SaXvvKV5i3lsY0BskLmDBz2GDB
-         J1aon8bs+oV4xqnkBr5CB3GZjBMVvFcV3DSxwpICJGR9Ay1/JAVsVc5UG6A5eJ8Qsh0V
-         9KTpG3dU01WwWruzEA7S30K1jef+PX9ZNGBpUVrdu/WNd7MMtxqQJhAu8b4jVpR8/n/2
-         UWBFdWocVnZiqLt79zY85BvZDHBlfdqLPwFHbYsQxWEwlRlaqwW7TH/LeQ9gFSwctfdp
-         oCwQ==
-X-Gm-Message-State: APjAAAUsUz9/7770jPnYGkKg+m/BMIADRMuLsso8zai3faYT089ADd5y
-        bZkJ3+1DPvURWkv1eqW72raXcrgxmMozXHJ9A7xv7A==
-X-Google-Smtp-Source: APXvYqxlCe+++Lk7vYe+F5tBuGoqXcVwC6IRvGv7VG8UyrBCiED8+5J5QK8VurvmgLZLcQkrw1L50j7vXQpHsiwUW20=
-X-Received: by 2002:a24:c204:: with SMTP id i4mr27878219itg.83.1558361536256;
- Mon, 20 May 2019 07:12:16 -0700 (PDT)
+        Mon, 20 May 2019 10:14:36 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190520141435euoutp02582be08355e6b137a037d1421cefcd8d~gaa-lVNYK2201422014euoutp026
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 14:14:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190520141435euoutp02582be08355e6b137a037d1421cefcd8d~gaa-lVNYK2201422014euoutp026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1558361675;
+        bh=a+67DmDkClFtpAgMeS+zXOJHhcsdo4J+1xpAUxugMTw=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=dw/CaZmy1Zvc9gtL80ybdfrBiiBUWc5CVbYr6onqBdgn0Vas/wlrHHomyNFtuH7oR
+         x97lWdFE1f/gHD4UWomthRYvQKruE/CHtHcAVpj1XTRVkYCoGsinkp66CFZ6Ts5cPC
+         j4vXs4zsmmMoX77F7ZpsnW4OwCLxyVNifKMFBeqc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190520141434eucas1p1cd9e0023f5f7eff509adf981de18239d~gaa-GJZTc1461814618eucas1p1n;
+        Mon, 20 May 2019 14:14:34 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 32.F3.04377.A46B2EC5; Mon, 20
+        May 2019 15:14:34 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190520141434eucas1p266520a2ef8db42b3deee004e1cba3a1f~gaa_cKhPC1951819518eucas1p23;
+        Mon, 20 May 2019 14:14:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190520141433eusmtrp1101749c9066f7835498fa085359cf24f~gaa_OIh581805218052eusmtrp1F;
+        Mon, 20 May 2019 14:14:33 +0000 (GMT)
+X-AuditID: cbfec7f4-5632c9c000001119-4a-5ce2b64a053c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 70.24.04146.946B2EC5; Mon, 20
+        May 2019 15:14:33 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190520141433eusmtip1ec047f15af34170449c0afaf8ab29ecf~gaa96gClh0462604626eusmtip1b;
+        Mon, 20 May 2019 14:14:33 +0000 (GMT)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] usb: remove redundant 'default n' from Kconfig-s
+Message-ID: <79726177-d524-4f83-eeb2-18ae9b2e50cf@samsung.com>
+Date:   Mon, 20 May 2019 16:14:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <00000000000014285d05765bf72a@google.com> <0000000000000eaf23058912af14@google.com>
- <20190517134850.GG17978@ZenIV.linux.org.uk> <CACT4Y+Z8760uYQP0jKgJmVC5sstqTv9pE6K6YjK_feeK6-Obfg@mail.gmail.com>
- <CACT4Y+bQ+zW_9a3F4jY0xcAn_Hdk5yAwX2K3E38z9fttbF0SJA@mail.gmail.com> <20190518162142.GH17978@ZenIV.linux.org.uk>
-In-Reply-To: <20190518162142.GH17978@ZenIV.linux.org.uk>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 20 May 2019 16:12:03 +0200
-Message-ID: <CACT4Y+bYfyKDi3ARkV6O-MaBJmxbOB5qdcuwG_r5-UHfxRcwjQ@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel paging request in do_mount
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, sabin.rapan@gmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zk757iaHKfhy4wuA6t10cyUpSWNAkdF9FN0WCtPajkvO97L
+        Ms17NzdLmlpLY+qwlCGahgjzMszSIq2IwEsrzBwYGlSk5fFM8t/Dc/ne54GPwiRGoZSKT0xl
+        dImaBBkhwtv6fw3vPto2qd7TNytV9Bc6SEV+XTOhuPq7i1S86awmFLXmAuyQUGW1lBCq7pom
+        UtXaPYdUc9aNJ/FI0YEYJiE+ndH5h50WxZX36gXJFnlmYVlwLhrYXIrcKKD3wfSzFkEpElES
+        ugHBq0+zAk6Q0PMIRuoyeGEOwf32crSSGJ1+7krUI7BYZ1wJJwJHYxSHvehAuPXSSHImjC5B
+        YKhvWjYRdAiUF1mWX/KklTBUMIpzWEyHwcRC75KHonDaFxYbYjh6PR0BY/0tQt7iAQP3HMt2
+        jPaGD44HAh5vgnZnNcbdArqIhJqZWZxvegSqjA8JHnvCtL2V5PEGGDRcx/nAEwQLxVOudDuC
+        esOiKxEKPfbXQq4RRsuhudOfp5VgnviOOBpod3jv9OBLuIO+rRLjaTEUF0p491ZoMbcQK2dL
+        OxoxHqvg5sgPdBttMa6aZlw1zbhqmvF/BxPCLcibSWO1sQy7N5HJ8GM1WjYtMdbvbJLWipZ+
+        zOCiff4p6vxzxoZoCsnWieMqJtUSoSadzdLaEFCYzEscuG1MLRHHaLKyGV3SKV1aAsPakA+F
+        y7zFF9eMR0noWE0qc4Fhkhndiiqg3KS5KDQ/m9wfdCmMuDLlXPs473BKSFmIHAJUlbV2ZUfK
+        uO2cdPhz8ExfdCAVE3b5WsXQ8ZqcptxMAxkU51mlD4/0sZgEPhHhyp1/86K/ws989TEmZ5fp
+        S9J2LLhWbzsxr7phfnHwziNMXvqusuv8vMlXYZtM/3h3IVcE33rsbzMIGc7GaQJ2YDpW8w+w
+        0vAgLQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsVy+t/xu7qe2x7FGCx4rm1xrO0Ju0Xz4vVs
+        Fo2/9rJbXN41h81i0bJWZgdWj02rOtk89s9dw+6xZf9nRo/Pm+QCWKL0bIryS0tSFTLyi0ts
+        laINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0MiYemcRUsEqzoq3brIHxpEIX
+        IyeHhICJxNVXp5i6GLk4hASWMkqsX3CStYuRAyghI3F8fRlEjbDEn2tdbBA1rxkl/tw7ygiS
+        EBEwlug/O4sdJMEs0M4ocfYnSDMnB5uAlcTE9lVgRcICjhLnWq+ygNi8AnYSD/8eYQJZwCKg
+        KvFvRQpIWFQgQuLM+xVQJYISJ2c+AbOZBdQl/sy7xAxhi0vcejKfCcKWl9j+dg7zBEaBWUha
+        ZiFpmYWkZRaSlgWMLKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECY2TbsZ+bdzBe2hh8iFGA
+        g1GJhzdjyqMYIdbEsuLK3EOMEhzMSiK8xur3Y4R4UxIrq1KL8uOLSnNSiw8xmgL9M5FZSjQ5
+        Hxi/eSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGO2Ys/N/L1w5
+        ZeKkiKyzi34tMdef+j1m1g/jtPne/W7SexQXb5y13fRGyVmRCQVzZc8qH2Bdr3B1UWRp8bS1
+        WT815n3SuPLdfbYF1/5Ppr6NPOeEee0ct6SplKnfmvD4W4HS5H+HD4Yw+3fYtsh4uyjO/9ib
+        43Yq6ca2w9nCnGpHT0SZrg24V6vEUpyRaKjFXFScCACxKkxYpwIAAA==
+X-CMS-MailID: 20190520141434eucas1p266520a2ef8db42b3deee004e1cba3a1f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190520141434eucas1p266520a2ef8db42b3deee004e1cba3a1f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190520141434eucas1p266520a2ef8db42b3deee004e1cba3a1f
+References: <CGME20190520141434eucas1p266520a2ef8db42b3deee004e1cba3a1f@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.On Sat, May 18, 2019 at 6:21 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sat, May 18, 2019 at 05:00:39PM +0200, Dmitry Vyukov wrote:
-> > On Fri, May 17, 2019 at 4:08 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > >
-> > > On Fri, May 17, 2019 at 3:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > >
-> > > > On Fri, May 17, 2019 at 03:17:02AM -0700, syzbot wrote:
-> > > > > This bug is marked as fixed by commit:
-> > > > > vfs: namespace: error pointer dereference in do_remount()
-> > > > > But I can't find it in any tested tree for more than 90 days.
-> > > > > Is it a correct commit? Please update it by replying:
-> > > > > #syz fix: exact-commit-title
-> > > > > Until then the bug is still considered open and
-> > > > > new crashes with the same signature are ignored.
-> > > >
-> > > > Could somebody explain how the following situation is supposed to
-> > > > be handled:
-> > > >
-> > > > 1) branch B1 with commits  C1, C2, C3, C4 is pushed out
-> > > > 2) C2 turns out to have a bug, which gets caught and fixed
-> > > > 3) fix is folded in and branch B2 with C1, C2', C3', C4' is
-> > > > pushed out.  The bug is not in it anymore.
-> > > > 4) B1 is left mouldering (or is entirely removed); B2 is
-> > > > eventually merged into other trees.
-> > > >
-> > > > This is normal and it appears to be problematic for syzbot.
-> > > > How to deal with that?  One thing I will *NOT* do in such
-> > > > situations is giving up on folding the fixes in.  Bisection
-> > > > hazards alone make that a bad idea.
-> > >
-> > > linux-next creates a bit of a havoc.
-> > >
-> > > The ideal way of handling this is including Tested-by: tag into C2'.
-> > > Reported-by: would work too, but people suggested that Reported-by: is
-> > > confusing in this situation because it suggests that the commit fixes
-> > > a bug in some previous commit. Technically, syzbot now accepts any
-> > > tag, so With-inputs-from:
-> > > syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com would work too.
-> > >
-> > > At this point we obvious can't fix up C2'. For such cases syzbot
-> > > accepts #syz fix command to associate bugs with fixes. So replying
-> > > with "#syz fix: C2'-commit-title" should do.
-> >
-> > What is that C2'?
->
-> In this case?  Take a look at
->
-> commit fd0002870b453c58d0d8c195954f5049bc6675fb
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Tue Aug 28 14:45:06 2018 +0100
->
->     vfs: Implement a filesystem superblock creation/configuration context
->
-> and compare with
->
-> commit f18edd10d3c7d6127b1fa97c8f3299629cf58ed5
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Thu Nov 1 23:07:25 2018 +0000
->
->     vfs: Implement a filesystem superblock creation/configuration context
->
-> There might have been intermediate forms, but that should illustrate what
-> happened.  Diff of those two contains (among other things) this:
-> @@ -985,6 +989,9 @@
->  +      fc = vfs_new_fs_context(path->dentry->d_sb->s_type,
->  +                              path->dentry, sb_flags, MS_RMT_MASK,
->  +                              FS_CONTEXT_FOR_RECONFIGURE);
-> ++      err = PTR_ERR(fc);
-> ++      if (IS_ERR(fc))
-> ++              goto err;
->  +
->  +      err = parse_monolithic_mount_data(fc, data, data_size);
->  +      if (err < 0)
->
-> IOW, Dan's fix folded into the offending commit.  And that kind of
-> pattern is not rare; I would argue that appending Dan's patch at
-> the end of queue and leaving the crap in between would be a fucking
-> bad idea - it would've left a massive bisection hazard *and* made
-> life much more unpleasant when the things got to merging into the
-> mainline (or reviewing, for that matter).
->
-> What would you prefer to happen in such situations?  Commit summaries
-> modified enough to confuse CI tools into *NOT* noticing that those
-> are versions of the same patch?  Some kind of metadata telling the
-> same tools that such-and-such commits got folded in (and they might
-> have been split in process, with parts folded into different spots
-> in the series, at that)?
->
-> Because "never fold in, never reorder, just accumulate patches in
-> the end of the series" is not going to fly.  For a lot of reasons.
+'default n' is the default value for any bool or tristate Kconfig
+setting so there is no need to write it explicitly.
 
-I don't advocate for stopping folding/amending/rebasing patches in any
-way. I understand this is required to get sane commits.
+Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+is not set' for visible symbols") the Kconfig behavior is the same
+regardless of 'default n' being present or not:
 
-But what I said in the previous email still applies:
- - either include the tag into the first commit version that fixes the
-reported bug
- - or link report and the fixing commit manually using the final commit title
+    ...
+    One side effect of (and the main motivation for) this change is making
+    the following two definitions behave exactly the same:
+    
+        config FOO
+                bool
+    
+        config FOO
+                bool
+                default n
+    
+    With this change, neither of these will generate a
+    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+    That might make it clearer to people that a bare 'default n' is
+    redundant.
+    ...
 
-As far as I understand in this case it would be adding Tested-by (or
-some other tag) to f18edd10d3c7d6127b1fa97c8f3299629cf58ed5.
-We can't do this now, so this should work:
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/usb/atm/Kconfig           |    1 -
+ drivers/usb/core/Kconfig          |    1 -
+ drivers/usb/dwc2/Kconfig          |    1 -
+ drivers/usb/gadget/legacy/Kconfig |    2 --
+ drivers/usb/host/Kconfig          |    5 -----
+ drivers/usb/renesas_usbhs/Kconfig |    1 -
+ 6 files changed, 11 deletions(-)
 
-#syz fix:
-vfs: Implement a filesystem superblock creation/configuration context
+Index: b/drivers/usb/atm/Kconfig
+===================================================================
+--- a/drivers/usb/atm/Kconfig
++++ b/drivers/usb/atm/Kconfig
+@@ -7,7 +7,6 @@ menuconfig USB_ATM
+ 	tristate "USB DSL modem support"
+ 	depends on ATM
+ 	select CRC32
+-	default n
+ 	help
+ 	  Say Y here if you want to connect a USB Digital Subscriber Line (DSL)
+ 	  modem to your computer's USB port.  You will then need to choose your
+Index: b/drivers/usb/core/Kconfig
+===================================================================
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -45,7 +45,6 @@ config USB_DYNAMIC_MINORS
+ config USB_OTG
+ 	bool "OTG support"
+ 	depends on PM
+-	default n
+ 	help
+ 	  The most notable feature of USB OTG is support for a
+ 	  "Dual-Role" device, which can act as either a device
+Index: b/drivers/usb/dwc2/Kconfig
+===================================================================
+--- a/drivers/usb/dwc2/Kconfig
++++ b/drivers/usb/dwc2/Kconfig
+@@ -58,7 +58,6 @@ config USB_DWC2_PCI
+ 	tristate "DWC2 PCI"
+ 	depends on USB_PCI
+ 	depends on USB_GADGET || !USB_GADGET
+-	default n
+ 	select NOP_USB_XCEIV
+ 	help
+ 	  The Designware USB2.0 PCI interface module for controllers
+Index: b/drivers/usb/gadget/legacy/Kconfig
+===================================================================
+--- a/drivers/usb/gadget/legacy/Kconfig
++++ b/drivers/usb/gadget/legacy/Kconfig
+@@ -153,7 +153,6 @@ config USB_ETH_EEM
+        depends on USB_ETH
+ 	select USB_LIBCOMPOSITE
+ 	select USB_F_EEM
+-       default n
+        help
+          CDC EEM is a newer USB standard that is somewhat simpler than CDC ECM
+          and therefore can be supported by more hardware.  Technically ECM and
+@@ -419,7 +418,6 @@ config USB_G_MULTI_RNDIS
+ config USB_G_MULTI_CDC
+ 	bool "CDC Ethernet + CDC Serial + Storage configuration"
+ 	depends on USB_G_MULTI
+-	default n
+ 	select USB_F_ECM
+ 	help
+ 	  This option enables a configuration with CDC Ethernet (ECM), CDC
+Index: b/drivers/usb/host/Kconfig
+===================================================================
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -161,7 +161,6 @@ config USB_EHCI_PCI
+ config USB_EHCI_HCD_PMC_MSP
+ 	tristate "EHCI support for on-chip PMC MSP71xx USB controller"
+ 	depends on MSP_HAS_USB
+-	default n
+ 	select USB_EHCI_BIG_ENDIAN_DESC
+ 	select USB_EHCI_BIG_ENDIAN_MMIO
+ 	---help---
+@@ -308,7 +307,6 @@ config USB_CNS3XXX_EHCI
+ 
+ config USB_EHCI_HCD_PLATFORM
+ 	tristate "Generic EHCI driver for a platform device"
+-	default n
+ 	---help---
+ 	  Adds an EHCI host driver for a generic platform device, which
+ 	  provides a memory space and an irq.
+@@ -318,7 +316,6 @@ config USB_EHCI_HCD_PLATFORM
+ config USB_OCTEON_EHCI
+ 	bool "Octeon on-chip EHCI support (DEPRECATED)"
+ 	depends on CAVIUM_OCTEON_SOC
+-	default n
+ 	select USB_EHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
+ 	select USB_EHCI_HCD_PLATFORM
+ 	help
+@@ -526,7 +523,6 @@ config USB_OHCI_HCD_SSB
+ 	depends on (SSB = y || SSB = USB_OHCI_HCD)
+ 	select USB_HCD_SSB
+ 	select USB_OHCI_HCD_PLATFORM
+-	default n
+ 	---help---
+ 	  This option is deprecated now and the driver was removed, use
+ 	  USB_HCD_SSB and USB_OHCI_HCD_PLATFORM instead.
+@@ -569,7 +565,6 @@ config USB_CNS3XXX_OHCI
+ 
+ config USB_OHCI_HCD_PLATFORM
+ 	tristate "Generic OHCI driver for a platform device"
+-	default n
+ 	---help---
+ 	  Adds an OHCI host driver for a generic platform device, which
+ 	  provides a memory space and an irq.
+Index: b/drivers/usb/renesas_usbhs/Kconfig
+===================================================================
+--- a/drivers/usb/renesas_usbhs/Kconfig
++++ b/drivers/usb/renesas_usbhs/Kconfig
+@@ -8,7 +8,6 @@ config USB_RENESAS_USBHS
+ 	depends on USB_GADGET
+ 	depends on ARCH_RENESAS || SUPERH || COMPILE_TEST
+ 	depends on EXTCON || !EXTCON # if EXTCON=m, USBHS cannot be built-in
+-	default n
+ 	help
+ 	  Renesas USBHS is a discrete USB host and peripheral controller chip
+ 	  that supports both full and high speed USB 2.0 data transfers.
