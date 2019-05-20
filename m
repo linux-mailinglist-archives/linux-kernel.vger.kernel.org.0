@@ -2,155 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0016C2426C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC9B24269
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfETVAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:00:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbfETVAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:00:24 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 706F55D61E;
-        Mon, 20 May 2019 21:00:23 +0000 (UTC)
-Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D60F64049;
-        Mon, 20 May 2019 21:00:22 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v8 19/19] locking/rwsem: Disable preemption in down_read*() if owner in count
-Date:   Mon, 20 May 2019 16:59:18 -0400
-Message-Id: <20190520205918.22251-20-longman@redhat.com>
-In-Reply-To: <20190520205918.22251-1-longman@redhat.com>
-References: <20190520205918.22251-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 20 May 2019 21:00:23 +0000 (UTC)
+        id S1727150AbfETVAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:00:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40629 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfETVAP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 17:00:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 1167980472; Mon, 20 May 2019 23:00:03 +0200 (CEST)
+Date:   Mon, 20 May 2019 23:00:12 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, Pavel Machek <pavel@denx.de>,
+        stable@kernel.org, kernel list <linux-kernel@vger.kernel.org>,
+        davem@davemloft.net
+Subject: Re: net: atm: Spectre v1 fix introduced bug in bcb964012d1b in
+ -stable
+Message-ID: <20190520210012.GA18021@amd>
+References: <20190520124014.GA5205@amd>
+ <20190520140007.GA6397@kroah.com>
+ <101e123e-9dfa-7c98-b182-e4ef277560f9@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <101e123e-9dfa-7c98-b182-e4ef277560f9@embeddedor.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is very unlikely that successive preemption at the middle of
-down_read's inc-check-dec sequence will cause the reader count to
-overflow, For absolute correctness, however, we still need to prevent
-that possibility from happening. So preemption will be disabled during
-the down_read*() call.
 
-For PREEMPT=n kernels, there isn't much overhead in doing that.
-For PREEMPT=y kernels, there will be some additional cost. RT kernels
-have their own rwsem code, so it will not be a problem for them.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If MERGE_OWNER_INTO_COUNT isn't defined, we don't need to worry about
-reader count overflow and so we don't need to disable preemption.
+On Mon 2019-05-20 09:26:45, Gustavo A. R. Silva wrote:
+>=20
+>=20
+> On 5/20/19 9:00 AM, Greg KH wrote:
+> > On Mon, May 20, 2019 at 02:40:14PM +0200, Pavel Machek wrote:
+> >>
+> >> In lecd_attach, if arg is < 0, it was treated as 0. Spectre v1 fix
+> >> changed that. Bug does not exist in mainline AFAICT.
+> >>
+> >> Signed-off-by: Pavel Machek <pavel@denx.de>
+> >> # for 4.19.y
+> >>
+> >> diff --git a/net/atm/lec.c b/net/atm/lec.c
+> >> index ad4f829193f0..ed279cd912f4 100644
+> >> --- a/net/atm/lec.c
+> >> +++ b/net/atm/lec.c
+> >> @@ -731,7 +731,7 @@ static int lecd_attach(struct atm_vcc *vcc, int ar=
+g)
+> >>  		i =3D arg;
+> >>  	if (arg >=3D MAX_LEC_ITF)
+> >>  		return -EINVAL;
+> >> -	i =3D array_index_nospec(arg, MAX_LEC_ITF);
+> >> +	i =3D array_index_nospec(i, MAX_LEC_ITF);
+> >>  	if (!dev_lec[i]) {
+> >>  		int size;
+> >> =20
+> >=20
+> > Why is this only for 4.19.y?  What is different in Linus's tree that
+> > makes this not needed there?
+> >=20
+>=20
+> The only difference is this clean up:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Dfdd1a8103a6df50bdeacd8bb04c3f6976cb9ae41
+>=20
+> As Dan says, the code works fine, but the *i* value wasn't being used
+> anymore, so that piece of code was a bit confusing.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/rwsem.c | 38 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
+Yep, you are right, code managed to confused me: array_index_nospec
+really returns 0 if it is out of bounds,
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 29f0e0e5b62e..cede2f99220b 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -356,6 +356,24 @@ static inline void rwsem_set_nonspinnable(struct rw_semaphore *sem)
- }
- 
- #ifdef MERGE_OWNER_INTO_COUNT
-+/*
-+ * It is very unlikely that successive preemption at the middle of
-+ * down_read's inc-check-dec sequence will cause the reader count to
-+ * overflow, For absolute correctness, we still need to prevent
-+ * that possibility from happening. So preemption will be disabled
-+ * during the down_read*() call.
-+ *
-+ * For PREEMPT=n kernels, there isn't much overhead in doing that.
-+ * For PREEMPT=y kernels, there will be some additional cost.
-+ *
-+ * If MERGE_OWNER_INTO_COUNT isn't defined, we don't need to worry
-+ * about reader count overflow and so we don't need to disable
-+ * preemption.
-+ */
-+#define rwsem_preempt_disable()			preempt_disable()
-+#define rwsem_preempt_enable()			preempt_enable()
-+#define rwsem_schedule_preempt_disabled()	schedule_preempt_disabled()
-+
- /*
-  * Get the owner value from count to have early access to the task structure.
-  */
-@@ -420,6 +438,10 @@ late_initcall(rwsem_show_count_status);
- 
- #else /* !MERGE_OWNER_INTO_COUNT */
- 
-+#define rwsem_preempt_disable()
-+#define rwsem_preempt_enable()
-+#define rwsem_schedule_preempt_disabled()	schedule()
-+
- /*
-  * Return just the real task structure pointer of the owner
-  */
-@@ -1247,7 +1269,7 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state, long adjustment)
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			break;
- 		}
--		schedule();
-+		rwsem_schedule_preempt_disabled();
- 		lockevent_inc(rwsem_sleep_reader);
- 	}
- 
-@@ -1472,28 +1494,36 @@ static struct rw_semaphore *rwsem_downgrade_wake(struct rw_semaphore *sem)
-  */
- inline void __down_read(struct rw_semaphore *sem)
- {
--	long tmp, adjustment = rwsem_read_trylock(sem, &tmp);
-+	long tmp, adjustment;
- 
-+	rwsem_preempt_disable();
-+	adjustment = rwsem_read_trylock(sem, &tmp);
- 	if (unlikely(tmp & RWSEM_READ_FAILED_MASK)) {
- 		rwsem_down_read_slowpath(sem, TASK_UNINTERRUPTIBLE, adjustment);
- 		DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem), sem);
- 	} else {
- 		rwsem_set_reader_owned(sem);
- 	}
-+	rwsem_preempt_enable();
- }
- 
- static inline int __down_read_killable(struct rw_semaphore *sem)
- {
--	long tmp, adjustment = rwsem_read_trylock(sem, &tmp);
-+	long tmp, adjustment;
- 
-+	rwsem_preempt_disable();
-+	adjustment = rwsem_read_trylock(sem, &tmp);
- 	if (unlikely(tmp & RWSEM_READ_FAILED_MASK)) {
- 		if (IS_ERR(rwsem_down_read_slowpath(sem, TASK_KILLABLE,
--						    adjustment)))
-+						    adjustment))) {
-+			rwsem_preempt_enable();
- 			return -EINTR;
-+		}
- 		DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem), sem);
- 	} else {
- 		rwsem_set_reader_owned(sem);
- 	}
-+	rwsem_preempt_enable();
- 	return 0;
- }
- 
--- 
-2.18.1
+(typeof(_i)) (_i & _mask);
 
+because _mask is always 0 or ~0.
+
+Best regards,
+								Pavel
+
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzjFVsACgkQMOfwapXb+vIOdACdFJ1200MBtPQjoH/vzXDK2uDA
+uIMAn0Fu7hzFkA9vMdpWxvRqEjO0FusR
+=nUkY
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
