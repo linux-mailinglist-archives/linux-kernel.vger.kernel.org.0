@@ -2,94 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31471237A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 426202379B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391546AbfETMxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:53:01 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:43303 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387687AbfETMSC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:18:02 -0400
-Received: by mail-vk1-f196.google.com with SMTP id h72so3775460vkh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5kXQ6vS4Br8b/GkN8FOpSIOl9zcEW2Y4KrZy5M2Bkl4=;
-        b=Yx6LH/QBl9AFZ1DfZ3Mwi+k36+t6Xj5HfRu5wUC6OlUof7wTBotOL3t1bRiVkZ1XTr
-         kBXZTpQ/OMpZ0PkZskacBuBO2xAWvS17siok2nvGgnQD5AxPW+ZcXuad/XakbtWYtZvo
-         T1belaPyupntkOEmLZRAwYRX7ttz5yM5rcFeASiVLucqVMNXDoWD60wcCK1JRV2Pt33l
-         zTQckKj8Ho2tFI8GH4rgB1WREuRPozYS2ZflbTJOLmVCHoaMvQ6tA5n6eZCAc0iirkSi
-         ObdBdoTbsVEk3SwqddZ7u53K3WRIyN+H/ew9oeBvwTVzKBwPOh4O2bJOTNJWfTDGWCms
-         QOKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5kXQ6vS4Br8b/GkN8FOpSIOl9zcEW2Y4KrZy5M2Bkl4=;
-        b=clzVlKC/dROYCRnpM4NCkvsGZc3vuB1Zjyiz0qG4FTJevYBFfzghaEvQfzGfSwD77J
-         7nJgpqmWR5FPtANS5RX3t12q+mzueqJgga9IopE2rGpbSyEVEcHMMYu84ymUCeJ7eek9
-         sITTr+B0pZtx6KFlhM3549ZxsvF2Cqemk83/nfo1w+3HvISQsyu68w+8CP5g1/gFYXoU
-         bONUdMz8S+Mn1dlLGVDX4ImBwBMaBsP/Omp8GMbSQxggG5rojKEglas4UR5aIkP8iR29
-         xmdNnw/3j6f6w9LKtQFs4lu+8AEt1sORNHjOx8cwC4jIft1ww4IQgyvbYGcgvhXfBuwi
-         YpDw==
-X-Gm-Message-State: APjAAAUL/dkUJrPQ2EtEx1onKzlPJKrUaFZdTC6tNqWdADJq3t2WaZR/
-        OPcc5vwM95FPoANwx+ohqbTqYdI02MDN3pwpE+MPlg==
-X-Google-Smtp-Source: APXvYqz3r+hI9oibZ9dmSgzGJipU45wIDIXpfO13g+0ueygZn7O/8r1kzEQ38a+qqAQTN6Mb/8jTggg0KGPxm80/Rh8=
-X-Received: by 2002:a1f:2e8e:: with SMTP id u136mr6454712vku.1.1558354681339;
- Mon, 20 May 2019 05:18:01 -0700 (PDT)
+        id S2391538AbfETMw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:52:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32957 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387725AbfETMSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:48 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 48F69DF4E0C69AB1F29D;
+        Mon, 20 May 2019 13:18:47 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 20 May
+ 2019 13:18:45 +0100
+Subject: Re: [PATCH 2/3 v5] add a new template field buf to contain the buffer
+To:     prakhar srivastava <prsriva02@gmail.com>
+CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Mimi Zohar" <zohar@linux.ibm.com>, <ebiederm@xmission.com>,
+        <vgoyal@redhat.com>, Prakhar Srivastava <prsriva@microsoft.com>
+References: <20190510223744.10154-1-prsriva02@gmail.com>
+ <20190510223744.10154-3-prsriva02@gmail.com>
+ <45344b2f-d9ea-f7df-e45f-18037e2ba5ca@huawei.com>
+ <CAEFn8qJVvNivP6Lmx+nVewPcHjH=V2OrR_HyHR6nOeuVQW0A4w@mail.gmail.com>
+ <ec8ee6f7-3a1d-6498-e009-f85e677b448a@huawei.com>
+ <CAEFn8qKgH5FMLaudqTH6W0k7NpSoWV_NHbmiVduaQPbUNF_4Lg@mail.gmail.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <50235394-58da-18a6-c149-c385efa080cc@huawei.com>
+Date:   Mon, 20 May 2019 14:18:52 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190520115025.16457-1-gilad@benyossef.com> <20190520115025.16457-2-gilad@benyossef.com>
- <20190520120903.GB13524@kroah.com>
-In-Reply-To: <20190520120903.GB13524@kroah.com>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Mon, 20 May 2019 15:17:48 +0300
-Message-ID: <CAOtvUMedfV_Zb4Y7YW7nmv2LUfQPfgGixmaOj7VFasHKmApwkg@mail.gmail.com>
-Subject: Re: [STABLE PATCH 1/2] crypto: ccree: zap entire sg on aead request unmap
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAEFn8qKgH5FMLaudqTH6W0k7NpSoWV_NHbmiVduaQPbUNF_4Lg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 3:09 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Mon, May 20, 2019 at 02:50:23PM +0300, Gilad Ben-Yossef wrote:
-> > We were trying to be clever zapping out of the cache only the required
-> > length out of scatter list on AEAD request completion and getting it
-> > wrong.
-> >
-> > As Knuth said: "when in douby, use brute force". Zap the whole length o=
-f
-> > the scatter list.
-> >
-> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> > ---
-> >  drivers/crypto/ccree/cc_buffer_mgr.c | 18 ++----------------
-> >  1 file changed, 2 insertions(+), 16 deletions(-)
->
-> This does not apply on top of my latest 4.19 tree with the current
-> pending queue applied, nor does it apply to 5.1 or 5.0.
->
-> How about waiting a few days and resending after I do the next round of
-> stable updates, so you can rebase on top of them easier?
+On 5/18/2019 1:32 AM, prakhar srivastava wrote:
+> On Tue, May 14, 2019 at 6:22 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>>
+>> On 5/14/2019 7:07 AM, prakhar srivastava wrote:
+>>> On Mon, May 13, 2019 at 6:48 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>>>>
+>>>> On 5/11/2019 12:37 AM, Prakhar Srivastava wrote:
+>>>>> From: Prakhar Srivastava <prsriva02@gmail.com>
+>>>>>
+>>>>> The buffer(cmdline args) added to the ima log cannot be attested
+>>>>> without having the actual buffer. Thus to make the measured buffer
+>>>>> available to store/read a new ima template (buf) is added.
+>>>>
+>>>> Hi Prakhar
+>>>>
+>>>> please fix the typos. More comments below.
+>>>>
+>>>>
+>>>>> +     buffer_event_data->type = IMA_XATTR_BUFFER;
+>>>>> +     buffer_event_data->buf_length = size;
+>>>>> +     memcpy(buffer_event_data->buf, buf, size);
+>>>>> +
+>>>>> +     event_data.xattr_value = (struct evm_ima_xattr_data *)buffer_event_data;
+>>>>> +     event_data.xattr_len = alloc_length;
+>>>>
+>>>> I would prefer that you introduce two new fields in the ima_event_data
+>>>> structure. You can initialize them directly with the parameters of
+>>>> process_buffer_measurement().
+>>> I will make the edits, this will definitely save the kzalloc in this code
+>>> path.
+>>>>
+>>>> ima_write_template_field_data() will make
+>>>> a copy.
+>>>>
+>>> Since event_data->type is used to distinguish what the template field
+>>>    should contain.
+>>> Removing the type and subsequent check in the template_init,
+>>>    buf template fmt will result in the whole event_Data structure
+>>> being added to the log, which is not the expected output.
+>>> For buffer entries, the buf template fmt will contains the buffer itself.
+> 
+>>
+>> The purpose of ima_event_data is to pass data to the init method of
+>> template fields. Each method takes the data it needs.
+>>
+>> If you pass event_data->buf and event_data->buf_len to
+>> ima_write_template_field_data() this should be fine.
+> 
+> Hi Roberto,
+> I did some testing after making the needed code changes,
+> the output is as expected the buf template field only contains
+> the buf when the ima_event_data.buf is set.
+> 
+> However i just want to double check if adding two new fields to
+> the struct ima_event_data is approach you want me to take?
+> Mimi any concerns?
 
-Yes, will do.
+I think it should not be a problem. ima_event_data was introduced to
+pass more information to a function for a new template field, without
+changing the definition of existing functions.
 
-Thanks,
-Gilad
 
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
+> what all tests do i need to run to confirm i am not
+> in-inadvertently breaking some thing else?
 
-values of =CE=B2 will give rise to dom!
+ima_event_data is not used for marshaling/unmarshaling. Adding two new
+members to the structure won't change the behavior of existing code.
+
+Roberto
+
+
+> Thanks,
+> Prakhar Srivastava
+>>
+>> Roberto
+>>
+>>
+>>>>> +      .field_show = ima_show_template_buf},
+>>>>
+>>>> Please update Documentation/security/IMA-templates.rst
+>>> Will update the documentation.
+>>>
+>>> Thanks,
+>>> Prakhar Srivastava
+>>>>
+>>>> Thanks
+>>>>
+>>>> Roberto
+>>
+>> --
+>> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+>> Managing Director: Bo PENG, Jian LI, Yanli SHI
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
