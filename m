@@ -2,97 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D0B2430E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA4E24306
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfETVo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:44:58 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35111 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfETVoy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:44:54 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a39so18166630qtk.2;
-        Mon, 20 May 2019 14:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UG1n+V7lSXkpzMqb+/8NjtbCanwIJGBK36IxMqbY4ZA=;
-        b=XkXe6QhYdB4VBaHnd+Hw8wN/Y+0TnpYdFKrmo7hcj8rXBZprke7XLaK3o3kjb2kgII
-         j8UeywVY7urhYKlNbdkNrisExeeYR2xQJPSOpGgrqfTYBaAEWCnaCmdo8AiaPWv7iky8
-         TKrDBNg4VRgJxLzmStjdthSSQM4CzG6ZFNyDyUZ5VLPvxLHg+0yKOb3mqVyQ2HSnlUCz
-         krxFDiDb2gn4D5HYqQaMquOvI4KwJKJGYwFF1EKwFXWrZ0eRsXGjZNqclF326YWKIekA
-         u5Ps3Xb/NG2ylkcveyfWCxc3NYegXkTOed9HSQRaNegXv0ZVVOYhK0358avCV1oI1zWE
-         /SnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UG1n+V7lSXkpzMqb+/8NjtbCanwIJGBK36IxMqbY4ZA=;
-        b=LO6pokbNOlGDaG9i3X/XcI3+z8mjkl6bUKf49Jm9FwVsX8K5ZjB0J6At0U5yeqRMmH
-         1OeSabDPR0+gS+g9pUYhsuN94I+kbQU99iXC9Wei5tBmS/2UsxcV69NMy9WDPjShgw3K
-         1R21IB2zDpHWKiZ5IUYirwzkJi1jLq9dp5yZnCUgcfBse/gShJqSHGvyhjuEMN76MsL7
-         MRMpO9hrDiNvb+rPAr0JdFQ3s057w3ncjczlk0/+i5YlasrZ143ZO1Z60hAHwX2EEcCa
-         8w+nwbTkK8inc0sd2Fk5eP7PkHri+7Fd3QjO3XDD78Fx6hvcfXr8g+736Djp3IV2U9w+
-         XjqQ==
-X-Gm-Message-State: APjAAAVCEpFmzm/g0TT4pkH90qSko+ycxJ2sS3aUb0WDFbIcItd/D1uZ
-        b/WPn45u9pUbQ+7VP1JH7KzINK0Y
-X-Google-Smtp-Source: APXvYqzt4IDFt1AZwTag4af5BRZAFJpMQsCgSRKuwLRjSHrIKwRouZR8/szIXmPOeVaOtguKBbtThA==
-X-Received: by 2002:a0c:b0e7:: with SMTP id p36mr24385686qvc.25.1558388692707;
-        Mon, 20 May 2019 14:44:52 -0700 (PDT)
-Received: from localhost.localdomain ([179.185.210.219])
-        by smtp.gmail.com with ESMTPSA id t30sm11427530qtc.80.2019.05.20.14.44.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 14:44:52 -0700 (PDT)
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org (open list:SOFTWARE RAID (Multiple Disks)
-        SUPPORT)
-Subject: [PATCH 4/4] md: raid0: Make ret local in raid0_run
-Date:   Mon, 20 May 2019 18:44:27 -0300
-Message-Id: <20190520214427.18729-5-marcos.souza.org@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520214427.18729-1-marcos.souza.org@gmail.com>
-References: <20190520214427.18729-1-marcos.souza.org@gmail.com>
+        id S1726642AbfETVoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:44:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:47289 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbfETVop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 17:44:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 457C965Z0Vz9s9T;
+        Tue, 21 May 2019 07:44:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558388683;
+        bh=HVxZBFmlkHReoHXPhmJDd/bzuwCJbZjr6MZwdbFJasY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=F4GXlucuK/N1NHNXw0PDM0KLBk9dDB9yEPts5F4LfkrFTrEBy6pm0KWrnNZ8Rkdqr
+         4I8xANJF+UbBK6uSXjH8bmbwFpCEl71Twao4N9wTFpuOmETi+g8rapwCqrCQRS1f+f
+         j+OVizMY/czkvpg97XRVUfJUVBOFcNUhC6BYBfUEeGkfgPEajU30Cx3aDQ+ecrmUSS
+         UJthsw+7/4V+jhWrdiNNvpuU8nVLVhX6+kdAXOxmoVTLL09LLmS2JJG6f2ysnRjf9t
+         ydHCuys7cOwz1oXqHxTbEgv3eje7Mn3W/87ECTevT35vBCMx5xrs/EaSWomzBNWymt
+         2HTkkxJS8x6gg==
+Date:   Tue, 21 May 2019 07:44:35 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sven Eckelmann <sven@narfation.org>
+Subject: linux-next: Fixes tag needs some work in the jc_docs tree
+Message-ID: <20190521074435.7a277fd6@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/V4O.sG0YFJXoinnNPT=P0d="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ret variable is only used in a specific situation, so make it local
-instead of global.
+--Sig_/V4O.sG0YFJXoinnNPT=P0d=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
----
- drivers/md/raid0.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index e72255464c09..b28dbb797f76 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -364,7 +364,6 @@ static void raid0_free(struct mddev *mddev, void *priv);
- static int raid0_run(struct mddev *mddev)
- {
- 	struct r0conf *conf;
--	int ret;
- 
- 	if (mddev->chunk_sectors == 0) {
- 		pr_warn("md/raid0:%s: chunk size must be set.\n", mdname(mddev));
-@@ -375,7 +374,7 @@ static int raid0_run(struct mddev *mddev)
- 
- 	/* if private is not null, we are here after takeover */
- 	if (mddev->private == NULL) {
--		ret = create_strip_zones(mddev, &conf);
-+		int ret = create_strip_zones(mddev, &conf);
- 		if (ret < 0)
- 			return ret;
- 		mddev->private = conf;
--- 
-2.21.0
+In commit
 
+  9eaa65e8aad5 ("scripts/spdxcheck.py: Add dual license subdirectory")
+
+Fixes tag
+
+  Fixes: 99871f2f9a4d ("scripts/spdxcheck.py: Fix path to deprecated licens=
+es")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: e6d319f68d4d ("scripts/spdxcheck.py: Fix path to deprecated licenses=
+")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/V4O.sG0YFJXoinnNPT=P0d=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjH8MACgkQAVBC80lX
+0GzBOgf/QfSfS+HQRpf3I36LDtv+x/5+F5QiUXWyRAx1FTTkCf53Z7QRNu+qhyQn
+yBM0eHrOdluiX4DpBKNC2VheMFeSY5Ic8i30fHM2JPvOE8mSpDJ52UIg7qptA1nS
+q6Lv+GmOtwNpXFUF35SXGrkllTluTri8hiRU51zq6VOOumBMrZSsnMXfxrs4whck
+8kuFTZcL0Lma5ZGx1WaYsTizaj2BdFuIzAWUyvdBVWO7FVMA2xqc6DDyEh1C2U+J
+pt5m8Jp1cT2CYT01Z+N2h0Hjxe9WvdJh9zmewSP0Lf0UUsOkxNOYLz+yfW2D9RlR
+fCXU6vvYdAbtxaocFlnzfR5TyArCrg==
+=FpY+
+-----END PGP SIGNATURE-----
+
+--Sig_/V4O.sG0YFJXoinnNPT=P0d=--
