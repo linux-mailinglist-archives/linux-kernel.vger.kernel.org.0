@@ -2,82 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A1A23A12
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E15123A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391612AbfETOcB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 10:32:01 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60737 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731054AbfETOcA (ORCPT
+        id S1732596AbfETOe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:34:59 -0400
+Received: from mail-wm1-f53.google.com ([209.85.128.53]:38687 "EHLO
+        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731054AbfETOe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:32:00 -0400
-X-Originating-IP: 90.88.22.185
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 3B8801C001A;
-        Mon, 20 May 2019 14:31:52 +0000 (UTC)
-Date:   Mon, 20 May 2019 16:31:51 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Fabien Dessenne <fabien.dessenne@st.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Christophe Kerello <christophe.kerello@st.com>,
-        <linux-mtd@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: rawnand: stm32_fmc2: manage the get_irq error case
-Message-ID: <20190520163151.7408b005@xps13>
-In-Reply-To: <1556117346-5608-1-git-send-email-fabien.dessenne@st.com>
-References: <1556117346-5608-1-git-send-email-fabien.dessenne@st.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 20 May 2019 10:34:58 -0400
+Received: by mail-wm1-f53.google.com with SMTP id t5so11946984wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T+BMa4gsX2SpWHDg4/WOwzhZkAoB1v5cWmwKV6NHcXY=;
+        b=ukY8+mENM/jud63R4hHoyLnpb5YoLntE59nddqMWgAWBxvI8Ge+UqHnh2bsKJMcHrg
+         z4bfVaI0pNwpaiTKqWx9fvMdMUE+3W1FE9QBzIUA9kpLOhx+VTOAniJ7Ys+sLj1VP8jO
+         q5uurLzzFO6dmFja+ooLoRdGt9x6ZaUlsgBi31xyuSapXUPbNylOjSx3gBMPbOcPKU5C
+         AK2lIN1NNbvyviI+UaDdFYkSKP/dtX468MCfLg/UCqGZQWza7rz74tCw/Gisx5P0N+/g
+         UmU60+F+YHqLMfcdS1P+tY2ZDYVWXYicA6VdTFokP+cKB8ZC0ZmmLcb/txe/VdsBhJq2
+         PhNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T+BMa4gsX2SpWHDg4/WOwzhZkAoB1v5cWmwKV6NHcXY=;
+        b=MStfZFHFhA/MkMxLkEGolGE5HNYNuTng4aEPCxXoPQlwzSlKHsRw5ODSKAWpop0Hna
+         /9mmicdAPEtg6RT5Ik9xsKgECl8pOqSrPFCimsiJBUCAPV9TmlwOjZsdXT94ZIAsGCJ/
+         bvu6yk424KaZ4Gk06K7UlCqh6BaO4FKdOfwTw9pp8DC1eF9/2svAfHBu00N4vew3x92u
+         8rM8pp4X86Mv53X6vUIfcPDAM6iQXViwl4tclVIlzpHQbbw8em5gAtkc2Of7wajsQEzs
+         7y13B8qPx72Ple+fun8aGxn/8ZT7YhTy55oH6GgAvE6r3ehQkRhVDZvX5pDUKZY79khA
+         Xk5w==
+X-Gm-Message-State: APjAAAUebGFZzwklmt83MQYXTap82f17+NiBm3aL0WB2xz1dMAauy1sK
+        SEjR2Btd5f93gq3Ef0Y5H0l86g==
+X-Google-Smtp-Source: APXvYqzlWv9ZU+3BpEhFfR0ZEw53esmcczKsZgnkpqrvwm3DR8JioPy73X+ScQPOKEO+mUDg1IMuKw==
+X-Received: by 2002:a1c:ed07:: with SMTP id l7mr8758291wmh.148.1558362896292;
+        Mon, 20 May 2019 07:34:56 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id c2sm12756186wrr.13.2019.05.20.07.34.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 07:34:55 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH net-next 0/2] net: stmmac: dwmac-meson: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:34:48 +0200
+Message-Id: <20190520143450.2143-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabien,
+Update the SPDX Licence identifier for the Amlogic Meson6 and Meson8 dwmac
+glue drivers.
 
-Fabien Dessenne <fabien.dessenne@st.com> wrote on Wed, 24 Apr 2019
-16:49:06 +0200:
+Neil Armstrong (2):
+  net: stmmac: dwmac-meson: update with SPDX Licence identifier
+  net: stmmac: dwmac-meson8b: update with SPDX Licence identifier
 
-> During probe, check the "get_irq" error value.
-> 
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-> ---
->  drivers/mtd/nand/raw/stm32_fmc2_nand.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-> index 999ca6a..4aabea2 100644
-> --- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-> +++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-> @@ -1909,6 +1909,12 @@ static int stm32_fmc2_probe(struct platform_device *pdev)
->  	}
->  
->  	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		if (irq != -EPROBE_DEFER)
-> +			dev_err(dev, "IRQ error missing or invalid\n");
-> +		return irq;
-> +	}
-> +
->  	ret = devm_request_irq(dev, irq, stm32_fmc2_irq, 0,
->  			       dev_name(dev), fmc2);
->  	if (ret) {
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c   | 8 +-------
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 8 +-------
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
+-- 
+2.21.0
 
-Applied to nand/next.
-
-Thanks,
-Miquèl
