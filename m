@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5985B2344E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A07A42356B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389125AbfETMZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:25:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40758 "EHLO mail.kernel.org"
+        id S2391045AbfETMfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:35:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389115AbfETMZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:25:36 -0400
+        id S2391029AbfETMfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:35:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7841A20675;
-        Mon, 20 May 2019 12:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8DDC20815;
+        Mon, 20 May 2019 12:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355136;
-        bh=AKbEKwcOJ3m1dz7P1Ldurh2Qf2+9jI6jVxDWugo79ek=;
+        s=default; t=1558355699;
+        bh=wMysaQ3mcpJRBkYBdixKwbCLRInR2XMkVP2NpRpAiyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lk/D5ORTVajCEGWEtwxPGrq8UtqBs5ITseb/hcjIpGbVY9tWiae8ndwodBfpGoznR
-         /4fnpLyBYzT4/l6eJ5h1NLCF/KYZGAuirriI1TNujcuAQLUGBQVm4b2k5GGeE6WsBF
-         gdylh6PXv7m7Z3hrJxdtUt/V8+fPy4YHmqXzS8X8=
+        b=2VdC1qhdMiW5yNRetaFeBqz2B0NYWfFfnckQonandyPPfLXItmUhKtDC5nbIQ+zUA
+         dNgjQsU7CL0yAnvVj+DbPufPGQA+X9O0mpbaJGivgJ+PooX4lb1kZS4kp+EKd4rsiG
+         glYvWvVUnSy4uDsHbry9xuPNYiMDY36z84vkgmeE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 094/105] KVM: lapic: Busy wait for timer to expire when using hv_timer
+        stable@vger.kernel.org, Jungyeon <jungyeon@gatech.edu>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.1 093/128] btrfs: Correctly free extent buffer in case btree_read_extent_buffer_pages fails
 Date:   Mon, 20 May 2019 14:14:40 +0200
-Message-Id: <20190520115253.743557788@linuxfoundation.org>
+Message-Id: <20190520115255.602959893@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit ee66e453db13d4837a0dcf9d43efa7a88603161b upstream.
+commit 537f38f019fa0b762dbb4c0fc95d7fcce9db8e2d upstream.
 
-...now that VMX's preemption timer, i.e. the hv_timer, also adjusts its
-programmed time based on lapic_timer_advance_ns.  Without the delay, a
-guest can see a timer interrupt arrive before the requested time when
-KVM is using the hv_timer to emulate the guest's interrupt.
+If a an eb fails to be read for whatever reason - it's corrupted on disk
+and parent transid/key validations fail or IO for eb pages fail then
+this buffer must be removed from the buffer cache. Currently the code
+calls free_extent_buffer if an error occurs. Unfortunately this doesn't
+achieve the desired behavior since btrfs_find_create_tree_block returns
+with eb->refs == 2.
 
-Fixes: c5ce8235cffa0 ("KVM: VMX: Optimize tscdeadline timer latency")
-Cc: <stable@vger.kernel.org>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On the other hand free_extent_buffer will only decrement the refs once
+leaving it added to the buffer cache radix tree.  This enables later
+code to look up the buffer from the cache and utilize it potentially
+leading to a crash.
+
+The correct way to free the buffer is call free_extent_buffer_stale.
+This function will correctly call atomic_dec explicitly for the buffer
+and subsequently call release_extent_buffer which will decrement the
+final reference thus correctly remove the invalid buffer from buffer
+cache. This change affects only newly allocated buffers since they have
+eb->refs == 2.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202755
+Reported-by: Jungyeon <jungyeon@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/lapic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/disk-io.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1449,7 +1449,7 @@ static void apic_timer_expired(struct kv
- 	if (swait_active(q))
- 		swake_up_one(q);
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1018,13 +1018,18 @@ void readahead_tree_block(struct btrfs_f
+ {
+ 	struct extent_buffer *buf = NULL;
+ 	struct inode *btree_inode = fs_info->btree_inode;
++	int ret;
  
--	if (apic_lvtt_tscdeadline(apic))
-+	if (apic_lvtt_tscdeadline(apic) || ktimer->hv_timer_in_use)
- 		ktimer->expired_tscdeadline = ktimer->tscdeadline;
+ 	buf = btrfs_find_create_tree_block(fs_info, bytenr);
+ 	if (IS_ERR(buf))
+ 		return;
+-	read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree,
+-				 buf, WAIT_NONE, 0);
+-	free_extent_buffer(buf);
++
++	ret = read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree, buf,
++			WAIT_NONE, 0);
++	if (ret < 0)
++		free_extent_buffer_stale(buf);
++	else
++		free_extent_buffer(buf);
  }
  
+ int reada_tree_block_flagged(struct btrfs_fs_info *fs_info, u64 bytenr,
+@@ -1044,12 +1049,12 @@ int reada_tree_block_flagged(struct btrf
+ 	ret = read_extent_buffer_pages(io_tree, buf, WAIT_PAGE_LOCK,
+ 				       mirror_num);
+ 	if (ret) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return ret;
+ 	}
+ 
+ 	if (test_bit(EXTENT_BUFFER_CORRUPT, &buf->bflags)) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return -EIO;
+ 	} else if (extent_buffer_uptodate(buf)) {
+ 		*eb = buf;
+@@ -1103,7 +1108,7 @@ struct extent_buffer *read_tree_block(st
+ 	ret = btree_read_extent_buffer_pages(fs_info, buf, parent_transid,
+ 					     level, first_key);
+ 	if (ret) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return ERR_PTR(ret);
+ 	}
+ 	return buf;
 
 
