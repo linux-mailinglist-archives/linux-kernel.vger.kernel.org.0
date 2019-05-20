@@ -2,94 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C9C23A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A863B23A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391797AbfETOig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:38:36 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34250 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391738AbfETOiY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:38:24 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f8so8507878wrt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dvB2+EbZJAEiPxI5LMXTznof0qGaQVfAy18zyWtxPt0=;
-        b=bdsY8zm8d9QrdoAErzkY6w5y5GhDLd+0CM0NghfSuvmTM9QjpQxPbHHyfyvQ8nK0FL
-         i/5jXsplJdCFJSss1I7KvNwT9hfFKGCILpDqGemMvH4xnUy1lZVvi8spd/dIAXGDU0iL
-         9Hu5/S7UJd0Q1VsUkyXgP0uRWSqGXL6AzzPYlSL/1Xm5mkSfDflDAqhuLM7Kh026i7hz
-         jAJ0Is5haokKQbWyOGtPLA1jb5O7fH++Tn2kffKk7iuYW6dGenvh5rhvfeeJR+5wU1fZ
-         wEV5a+eMNVz6DkQkFaIn0r/bmANWHz6Y9Y1dv7pe/bQOnSdyom6qDqM+JaWTvu4i4BXV
-         OVag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dvB2+EbZJAEiPxI5LMXTznof0qGaQVfAy18zyWtxPt0=;
-        b=I7qjbZ6i63wOID2CSIK8UiL0yfORhont7bgzXjWVps5qI+v34LSlqJYFfAQvlD22c4
-         XqMvfR46IqrctzZhyfPQ0DcHrIgBME/Gnow4VU5s2Gyo6KwNmfGnC1Ja+YTEakq3u3Rq
-         W+U4G4ohPZzAXmqlnNDdXEpyAXVDx05CLvtOhXGIy3le9fCgSgFA9I4e9v7xnGNT7Tlh
-         8lwrjyPFUsCqltBbVO7Qz2Ybbg+Qy6L0/jd+qgrASd+y3zq0F/5tYjxVVr6TxRPGDpWt
-         hJIugHHmux8OdrWAR9HI6lVotakJL0d9B4W+FWkSsPPqbJ+GjCd/3SsP8Y+i3+F6B/BL
-         DMoA==
-X-Gm-Message-State: APjAAAVsaiPOu29Rgbephzugv0/3feMB4ugRsz4sLSswlj4yKr+Ujifk
-        VB82bzdPZ7RXLQBPGlVnuXNFaN/1/95ocQ==
-X-Google-Smtp-Source: APXvYqx5B6BX/GzQuGkYQP0Ny5r5a+UZNfs1rZNVD0lELNHvTd7wSCDsCUOigyVIJta2FxsByvsvPQ==
-X-Received: by 2002:adf:f643:: with SMTP id x3mr7807032wrp.320.1558363102613;
-        Mon, 20 May 2019 07:38:22 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y4sm12505976wmj.20.2019.05.20.07.38.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:38:21 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 10/10] ARM: mach-meson: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:38:12 +0200
-Message-Id: <20190520143812.2801-11-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520143812.2801-1-narmstrong@baylibre.com>
-References: <20190520143812.2801-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2387605AbfETOjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:39:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52934 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731217AbfETOjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:39:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 002FAAFE8;
+        Mon, 20 May 2019 14:39:37 +0000 (UTC)
+Date:   Mon, 20 May 2019 16:39:37 +0200
+Message-ID: <s5hwoil5gwm.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] firmware: Add support for loading compressed files
+In-Reply-To: <20190520093929.GB15326@kroah.com>
+References: <20190520092647.8622-1-tiwai@suse.de>
+        <20190520093929.GB15326@kroah.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm/mach-meson/meson.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+On Mon, 20 May 2019 11:39:29 +0200,
+Greg Kroah-Hartman wrote:
+> 
+> On Mon, May 20, 2019 at 11:26:42AM +0200, Takashi Iwai wrote:
+> > Hi,
+> > 
+> > this is a patch set to add the support for loading compressed firmware
+> > files.
+> > 
+> > The primary motivation is to reduce the storage size; e.g. currently
+> > the amount of /lib/firmware on my machine counts up to 419MB, and this
+> > can be reduced to 130MB file compression.  No bad deal.
+> > 
+> > The feature adds only fallback to the compressed file, so it should
+> > work as it was as long as the normal firmware file is present.  The
+> > f/w loader decompresses the content, so that there is no change needed
+> > in the caller side.
+> > 
+> > Currently only XZ format is supported.  A caveat is that the kernel XZ
+> > helper code supports only CRC32 (or none) integrity check type, so
+> > you'll have to compress the files via xz -C crc32 option.
+> > 
+> > The patch set begins with a few other improvements and refactoring,
+> > followed by the compression support.
+> > 
+> > In addition to this, dracut needs a small fix to deal with the *.xz
+> > files.
+> > 
+> > Also, the latest patchset is found in topic/fw-decompress branch of my
+> > sound.git tree:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+> 
+> After a quick review, these all look good to me, nice job.
+> 
+> One recommendation, can we add support for testing this to the
+> tools/testing/selftests/firmware/ tests?  And you did run those
+> regression tests to verify that you didn't get any of the config options
+> messed up, right? :)
 
-diff --git a/arch/arm/mach-meson/meson.c b/arch/arm/mach-meson/meson.c
-index c8d99df32f9b..04ae414d88c9 100644
---- a/arch/arm/mach-meson/meson.c
-+++ b/arch/arm/mach-meson/meson.c
-@@ -1,16 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (C) 2014 Carlo Caione <carlo@caione.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-  */
- 
- #include <linux/of_platform.h>
--- 
-2.21.0
+Now I've been testing the firmware selftest, and this turned out to be
+surprisingly difficult on my system.  By some reason, the test always
+fails at the point triggering the request (line 58 of
+fw_filesystem.sh):
 
+  if ! echo -n "$NAME" >"$DIR"/trigger_request ; then
+	....
+
+Judging from the strace output, this echo writes only the first byte
+of $NAME.  Then kernfs write op is invoked and it deals this one byte
+input as if a whole argument were passed, leading to an error.
+
+My temporary workaround was to replace the all "echo" call with
+"/usr/bin/echo".
+
+Then it hits a similar write error at the places like:
+
+	echo 1 > $DIR/config_sync_direct
+
+This could be worked around by adding -n option to echo.
+
+Finally, I noticed that the user-fallback doesn't work on my system
+any longer and the test stopped.  This is expected, so it implies that
+all direct loading tests passed.
+
+FWIW, my system is openSUSE Leap 15.1.  Does anyone experience a
+similar problem?
+
+
+BTW, about adding the new tests for the compressed file support.
+Would we want to add a new proc entry for toggling the behavior, like
+other tested stuff?  Or just check CONFIG_FW_LOADER_COMPRESS and test
+the compressed files conditionally?
+
+
+thanks,
+
+Takashi
