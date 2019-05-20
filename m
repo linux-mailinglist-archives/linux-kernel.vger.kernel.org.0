@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF272233D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFF4233E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387970AbfETMUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:19 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:34681 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732617AbfETMUP (ORCPT
+        id S1727626AbfETMVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:21:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41188 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388116AbfETMVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:15 -0400
-Received: by mail-ot1-f44.google.com with SMTP id l17so12775963otq.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:20:14 -0700 (PDT)
+        Mon, 20 May 2019 08:21:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q17so7139303pfq.8
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lucidpixels.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=noE5KqZTJm+9I8W88mdzCe6x03a8fEWEy+6jsHjq17U=;
-        b=OfaCB8ZDMOk+B9K3K2Fb2f5KnExXVRrqAi78qzu4vYWQMS7bNmngMgcDypOrTCqz6e
-         Kui4x0S6U6ouL0mpVQbKn3CNin1JUG8C8nm1RH+oRvIKQ+AScuXoNxE53wp2so+eAW7H
-         58sqGesLiEajC7UQpFcMkP3m/ygYe4CR4IQrk=
+        d=sifive.com; s=google;
+        h=from:to:subject:date:message-id;
+        bh=UI2Ry4LzPxHOIisYc6asfzOtY8boyegN6334Ds6sCEI=;
+        b=ZIILwPW/GJbpNHIG2d6GJNUh+YC8INguJPg/D9EiCOET24LSnZ2HU2IclERXRMRbw/
+         uSaF3s4WN/heNoFQbThqG4Wg6gG86+2+/XewENDYMptRiJ6zDVQqMR4uxClQBdYiR4/e
+         RtClcu2Gmc+PTZ0Y8R2pFm/MVF5PMDGtBC72bosaGIQ1P+k+RSfUgWXERbsc8VeBXOm3
+         o5MOQemeQ8MmbuTjd9pC2XiLk5XiNfGJZM0J4K+2ZS7j2pkDa7tR2NdlpWvvcMAMB6dj
+         qnjyZO3S5tkGQ0sVSXw0LF8aKsW1vU0fTelaptg5kzu0UrtSLZn2l45hc5EVZHbJsjY8
+         ekEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=noE5KqZTJm+9I8W88mdzCe6x03a8fEWEy+6jsHjq17U=;
-        b=QSuHye+xAep3E9kN4AjTmQTUPwa6Zy1men4M2iL4yqAbeH5l8feyGc7JejMVQhJrxM
-         QoVHV6dtfIXasEVidL56mTCHejf63/hZaZd6x+quaLndGTCoKrX4n1jLODvuXfHLX6pL
-         QYDS1p4ZQnZMvzIApl8F9/NXQCiJzKkUe1Mwa0tZ4WUQP4RApP9ziGAKNjWyYNRAVDFx
-         +6vvdoqYXCQZy9P2hv2UhJC66UQNVA3QA02O7DzEouHDKOl/PZyL3PRce3g0HUek3p2K
-         q//fBV/mk/r7Umji4TBe+ToxM0mFk3sLhrL65lAKKiPY6vja+KO0HVvYOu/2tVeoXgsz
-         IuBA==
-X-Gm-Message-State: APjAAAUdmoOGC9wRrHImKJPhdf39hZjtIUE1E4oiVxyfBbMetn3rPhCX
-        bUCMHkK2dYotVXJgxvtkceColJHFtxtzdDGLoV0ic//Q+fybRw==
-X-Google-Smtp-Source: APXvYqyXtxwUOmQO5vwucLFJvIeTlWu1rXTrqccJbqqpzHHH0p1nOSRvqGd/S3s0xIu8GbEc85stnqZ22H+OTe8EXm0=
-X-Received: by 2002:a05:6830:154c:: with SMTP id l12mr6660917otp.66.1558354814026;
- Mon, 20 May 2019 05:20:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAO9zADzXTQpv5cGp61BzsVPvWQz5xbSJv_N71jBa3zopr7CB=Q@mail.gmail.com>
- <20190520115608.GK18914@techsingularity.net>
-In-Reply-To: <20190520115608.GK18914@techsingularity.net>
-From:   Justin Piszcz <jpiszcz@lucidpixels.com>
-Date:   Mon, 20 May 2019 08:20:03 -0400
-Message-ID: <CAO9zADxf7VdzHWC2C-uCbeqhvN2oTW4KhU=o4GEXfLoVGpEt5w@mail.gmail.com>
-Subject: Re: 5.1 and 5.1.1: BUG: unable to handle kernel paging request at ffffea0002030000
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=UI2Ry4LzPxHOIisYc6asfzOtY8boyegN6334Ds6sCEI=;
+        b=orSVY7bxJqN74pPJ0Oj8XfeuaHEIDtCtEC6h+bPfo67vXN5zEgvQO6EfKOK7tVrcVy
+         WQ0kM6F0lKbyM13hL6YHO7n6NNDO0+GWgfLU9jQFio3iQYGTvv65zA2euR6khOwoVTTA
+         MUlSsuPgjNQql0FNXYgut1NlQCJ5axuH1ZkoLz+h7+Z1/qnpVYJUR31wrBU7Bb+739y0
+         H1iOrtBfILgO+8BXa1LiWrivIz/WtqqVX8FSFfJYumoZGAXT79Rz6supkaGmXTs8clo2
+         n18C4dM29qrBg7UVbhDznRe68LMTwcoYuPDo/ojsxH5gdKOGeyiJI1/mRN67sK7a4Njb
+         SfjA==
+X-Gm-Message-State: APjAAAXKzbdge+e3OsGqGZcHJoYI62ZcYiT/TkbP6XoMO/QFRdCbt/fe
+        vzmrHPr72eoVFd/XDox0G+ZZww==
+X-Google-Smtp-Source: APXvYqylN7mBlUiyo1w+cBYmG/xrjqleVn9q2ejjZEJx8kMEyN8NtMLL9j6m9WUAjkDxTwcIBncIew==
+X-Received: by 2002:a62:604:: with SMTP id 4mr80517445pfg.38.1558354872449;
+        Mon, 20 May 2019 05:21:12 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id n27sm38137077pfb.129.2019.05.20.05.21.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 05:21:11 -0700 (PDT)
+From:   Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
+        andrew@lunn.ch, palmer@sifive.com, paul.walmsley@sifive.com,
+        sagar.kadam@sifive.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Extend dt bindings to support I2C on sifive devices and a fix broken IRQ in polling mode.
+Date:   Mon, 20 May 2019 17:50:14 +0530
+Message-Id: <1558354817-12034-1-git-send-email-sagar.kadam@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 7:56 AM Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> On Sun, May 12, 2019 at 04:27:45AM -0400, Justin Piszcz wrote:
-> > Hello,
-> >
-> > I've turned off zram/zswap and I am still seeing the following during
-> > periods of heavy I/O, I am returning to 5.0.xx in the meantime.
-> >
-> > Kernel: 5.1.1
-> > Arch: x86_64
-> > Dist: Debian x86_64
-> >
-> > [29967.019411] BUG: unable to handle kernel paging request at ffffea0002030000
-> > [29967.019414] #PF error: [normal kernel read fault]
-> > [29967.019415] PGD 103ffee067 P4D 103ffee067 PUD 103ffed067 PMD 0
-> > [29967.019417] Oops: 0000 [#1] SMP PTI
-> > [29967.019419] CPU: 10 PID: 77 Comm: khugepaged Tainted: G
-> >    T 5.1.1 #4
-> > [29967.019420] Hardware name: Supermicro X9SRL-F/X9SRL-F, BIOS 3.2 01/16/2015
-> > [29967.019424] RIP: 0010:isolate_freepages_block+0xb9/0x310
-> > [29967.019425] Code: 24 28 48 c1 e0 06 40 f6 c5 1f 48 89 44 24 20 49
-> > 8d 45 79 48 89 44 24 18 44 89 f0 4d 89 ee 45 89 fd 41 89 c7 0f 84 ef
-> > 00 00 00 <48> 8b 03 41 83 c4 01 a9 00 00 01 00 75 0c 48 8b 43 08 a8 01
-> > 0f 84
->
-> If you have debugging symbols installed, can you translate the faulting
-> address with the following?
->
-> ADDR=`nm /path/to/vmlinux-or-debuginfo-file | grep "t isolate_freepages_block\$" | awk '{print $1}'`
-> addr2line -i -e vmlinux `printf "0x%lX" $((0x$ADDR+0xb9))`
->
-> I haven't seen this particular error before so I want to see if the
-> faulting address could have anything to do with the randomising of
-> struct fields. Similarly a full dmesg log would be nice so I can see
-> what your memory layout looks like.
->
-> Thanks Justin.
+The patch is based on mainline v5.1 and extends DT-bindings for Opencore based I2C IP block reimplemented 
+in FU540 SoC, available on HiFive unleashed board (Rev A00), and also provides a workaround for broken IRQ
+which affects the already available I2C polling mode interface in mainline, for FU540-C000 chipsets. 
 
-Hello,
+The polling mode workaround patch fixes the CPU stall issue, when-ever i2c transfer are initiated.
 
-DMESG output in the interim:
-http://installkernel.tripod.com/20190520_dmesg_full.txt
+This workaround checks if it's a FU540 chipset based on device tree information, and check's for open
+core's IF(interrupt flag) and TIP flags to break from the polling loop upon completion of transfer.
 
-Once the error happens again I will post another dmesg link and get
-the addr2line output.
+To test the patch, a PMOD-AD2 sensor is connected to HiFive Unleashed board over J1 connector, and 
+appropriate device node is added into board specific device tree as per the information provided in 
+dt-bindings in Documentation/devicetree/bindings/i2c/i2c-sifive.txt.
+Without this workaround, the CPU stall's infinitely.
 
-Justin.
+Busybox i2c utilities used to verify workaround : i2cdetect, i2cdump, i2cset, i2cget
+
+
+Patch History:
+
+V3<->V4:
+-Incorporated suggestions on v3 patch as follows:
+-OCORES_FLAG_BROKEN_IRQ BIT position rectified.
+-Updated BORKEN_IRQ flag checks such that if sifive device (Fu540-C000) is identified,then use polling mode as IRQ is broken.
+
+V2<->V3:
+-Incorporated review comments on v2 patch as follows:
+-Rectified compatibility string sequence with the most specific one at the first (dt bindings). 
+-Moved interrupts and interrupt-parent under optional property list (dt-bindings).
+-Updated reference to sifive-blocks-ip-versioning.txt and URL to IP repository used (dt-bindings).
+-Removed example for i2c0 device node from binding doc (dt-bindings).
+-Included sifive,i2c0 device under compatibility table in i2c-ocores driver (i2c-ocores).
+-Updated polling mode hooks for SoC specific fix to handle broken IRQ (i2c-ocores).
+
+
+V1<->V2:
+-Incorporate review comments from Andrew
+-Extend dt bindings into i2c-ocores.txt instead of adding new file
+-Rename SIFIVE_FLAG_POLL to OCORES_FLAG_BROKEN_IRQ
+
+V1:
+-Update dt bindings for sifive i2c devices
+-Fix broken IRQ affecting i2c polling mode interface.
+
+Sagar Shrikant Kadam (3):
+  dt-bindings: i2c: extend existing opencore bindings.
+  i2c-ocores: sifive: add support for i2c device on FU540-c000 SoC.
+  i2c-ocores: sifive: add polling mode workaround for FU540-C000 SoC
+
+ .../devicetree/bindings/i2c/i2c-ocores.txt         |  7 +++-
+ drivers/i2c/busses/i2c-ocores.c                    | 40 +++++++++++++++++++---
+ 2 files changed, 41 insertions(+), 6 deletions(-)
+
+-- 
+1.9.1
+
