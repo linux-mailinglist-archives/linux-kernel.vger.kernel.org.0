@@ -2,64 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0086024011
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F41D2402C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbfETSIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 14:08:50 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41625 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbfETSIu (ORCPT
+        id S1727515AbfETSUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 14:20:40 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:43374 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbfETSUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 14:08:50 -0400
-Received: by mail-oi1-f196.google.com with SMTP id y10so10699511oia.8;
-        Mon, 20 May 2019 11:08:49 -0700 (PDT)
+        Mon, 20 May 2019 14:20:39 -0400
+Received: by mail-vs1-f66.google.com with SMTP id d128so9490511vsc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 11:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=k7G1MGSx6nHwpQNyADoCOs+yAwPJeVT4zKxuY01zrPw=;
-        b=p0rilSq2HK/3GLFdIsM3W0esD1E70bZ4ap80QtZkmUwFik8fQLlRneXhyF69OUOLTR
-         +dptkfa5Qvgd5BuCPhZZJ6NhjUlWda9smxTObo/ubrx/1pV9kduFim2wv9XuGdXkgFy1
-         8KcMIcnNIk22Anzc2GO/iwhtyM2zEE4Zrz/dMqMHY8naFqRBrVx5TAgQZM0S4PSjINd+
-         +CLOU8blq8nhhgJTo2gr5j8xEPZtjhn1ykKcN13D7C1dqAusMCsn+QwJXPwArwS9oMTq
-         +m0t6bsGevtfOUgJjwVD1uKt7KLnb0WudnzeKk9ADP09ux2mdWfxK14WGgz3wmAfx2VR
-         XlzQ==
+        bh=cEsXYaOHHpFfqvOIf/R9j2mgz7hkA3ZSG0hiHjJfsfQ=;
+        b=oYB6QTOAyrW+xrurBLaMKPFnUo9r8uSNIw0B5/zqa2y0TSIR3nr+FiEhLSwmdmx4XT
+         PSW8n6oIFIvgbr1Q8u1FLhEjC2pMWGPcFrxz9D/vDnrjHb6YxdngV4/rsvj4XVMkiS7u
+         zji43e+I4SpiwFIfKB7pf85C9sv2FuOd9EGRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=k7G1MGSx6nHwpQNyADoCOs+yAwPJeVT4zKxuY01zrPw=;
-        b=R04hCYeUzT6/Ie7dx/AtG9eZ/6UYG/B0X+zA/OcQr/T81y3DJR2V4DTQQroikaeJbR
-         1JGMuwPTyyJBU3vkg/Fqv+2eL8vjsUl4piOlTaI6Wr64oVlsRmFwF9xPiul9ywONuVFu
-         vz+xJHR/mG1DsrzYNJLEMn/DUaTl2c3ZFGKtHmpms1ghT1VrZvoM1iopSKe/RoYc7W3u
-         Z73THZM8R6aBEcOaVeFodcynJCsxWiM6ArWCn3Shl65NHd6j7mVJ6LetWpBewlta/s7B
-         3TRAjtsp0/UkHgXSZJxyT7ByjbPeKYuPmz/xlTMUG9zbvlD8gB2pH01zJRECq1VQiR/5
-         pQzg==
-X-Gm-Message-State: APjAAAVU7jVqQzMoHw+tjM3dfSZLj2PqNWzcnozprATNAUdOpgCQzwBm
-        +OBDyO0QBNxZ7GFNYg9CkxQH+Z3GVYb2pvu/ffQ=
-X-Google-Smtp-Source: APXvYqwo63kXnxppc/g8GoRRU2jASvWNgeVjHOKQoTWH78i0rEmmwsrELvB7RuW8hSB4HTgDUfOK0kTXRZAhylYphKE=
-X-Received: by 2002:aca:f144:: with SMTP id p65mr322071oih.47.1558375728938;
- Mon, 20 May 2019 11:08:48 -0700 (PDT)
+        bh=cEsXYaOHHpFfqvOIf/R9j2mgz7hkA3ZSG0hiHjJfsfQ=;
+        b=o1UzQQp1RDbjh2nHcWNWAeV0gj6kwgdnLpKx6rupHXcSylfuptdCXjFBK/hu/lVNOO
+         MX/39wDJwwcL0rSAcmJovYbvS3ZZGQy/lwP2MZE2eyaFmAKtf0D0r0oE/yhtAz0e0AID
+         d0T1nWzUzFvpF1kmbUm0n5TJ8N5obigFO7yQh7cATpfEuEELLdjQVJ6TZXc0ylYAI06g
+         OxH+Tlp7DACy0BvR1hQ+MhDDra7eo0l5cv8me0lKJHg3PeqlIzTbauZQg7pwEb2tCphs
+         uBXEvZtwYkuCij7s3cbELXipLO2QMghQtLn6bbPdeOzGgIKOSrdA/MP6FHpQ1JmUz5rP
+         iksQ==
+X-Gm-Message-State: APjAAAUUpvp06yWveqZWQ+UX1p2IFOofzit/O7/D6BT4a9dtP07fNtgt
+        oD2Clskzr9iZkk8iuNjGI2jRdrimXtE=
+X-Google-Smtp-Source: APXvYqx6tvmqJsmEDv/aDQTv2cQsvAfccgX2Q9zvB7zSfEN5dpmFzczY+EEj1y7IAfhvOPUWrnrzFw==
+X-Received: by 2002:a05:6102:382:: with SMTP id m2mr17617742vsq.134.1558376438361;
+        Mon, 20 May 2019 11:20:38 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id n23sm11555732vsj.27.2019.05.20.11.20.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 11:20:34 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id u4so5602715uau.10
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 11:20:34 -0700 (PDT)
+X-Received: by 2002:a9f:24a3:: with SMTP id 32mr13553176uar.109.1558376433588;
+ Mon, 20 May 2019 11:20:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190520144108.3787-1-narmstrong@baylibre.com> <20190520144108.3787-6-narmstrong@baylibre.com>
-In-Reply-To: <20190520144108.3787-6-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 20 May 2019 20:08:37 +0200
-Message-ID: <CAFBinCBV_TYz_gf91iMBFk8bWBwx4kpAQ+d0n7wJQ=Xo5xKmOw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: gpio: meson8b-gpio: update with SPDX
- Licence identifier
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
+References: <20190517225420.176893-1-dianders@chromium.org>
+ <20190517225420.176893-2-dianders@chromium.org> <e3f54bcb-8d10-1336-1458-2bd11cfc1010@broadcom.com>
+In-Reply-To: <e3f54bcb-8d10-1336-1458-2bd11cfc1010@broadcom.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 20 May 2019 11:20:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Uvc1wUQe-W1Jvm_gQ722pFm2a4OWvJDNVtkyQynFe4Gw@mail.gmail.com>
+Message-ID: <CAD=FV=Uvc1wUQe-W1Jvm_gQ722pFm2a4OWvJDNVtkyQynFe4Gw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] brcmfmac: re-enable command decode in sdio_aos for
+ BRCM 4354
+To:     Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Franky Lin <franky.lin@broadcom.com>,
+        netdev <netdev@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        brcm80211-dev-list@cypress.com, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 4:42 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+Hi,
+
+On Mon, May 20, 2019 at 1:09 AM Arend Van Spriel
+<arend.vanspriel@broadcom.com> wrote:
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> On 5/18/2019 12:54 AM, Douglas Anderson wrote:
+> > In commit 29f6589140a1 ("brcmfmac: disable command decode in
+> > sdio_aos") we disabled something called "command decode in sdio_aos"
+> > for a whole bunch of Broadcom SDIO WiFi parts.
+> >
+> > After that patch landed I find that my kernel log on
+> > rk3288-veyron-minnie and rk3288-veyron-speedy is filled with:
+> >    brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+> >
+> > This seems to happen every time the Broadcom WiFi transitions out of
+> > sleep mode.  Reverting the part of the commit that affects the WiFi on
+> > my boards fixes the problem for me, so that's what this patch does.
+>
+> This sounds very similar to the issue we had during integration of wifi
+> on rk3288 chromebooks years ago.
+
+I'm working on those same Chromebooks.  ;-)  I'm working on trying to
+make them well on newer kernels.
+
+...but I guess you're saying that the problem faced by the people who
+wanted commit 29f6589140a1 ("brcmfmac: disable command decode in
+sdio_aos") are similar to the problems we saw in the past on those
+Chromebooks.  I'd tend to agree.  In general it's difficult to get a
+SD Host Controller to be fully robust in the fact of any/all errors on
+the bus.  While dw_mmc is pretty robust these days I'm assuming that
+some other host controllers aren't.
+
+
+> > Note that, in general, the justification in the original commit seemed
+> > a little weak.  It looked like someone was testing on a SD card
+> > controller that would sometimes die if there were CRC errors on the
+> > bus.  This used to happen back in early days of dw_mmc (the controller
+> > on my boards), but we fixed it.  Disabling a feature on all boards
+> > just because one SD card controller is broken seems bad.  ...so
+> > instead of just this patch possibly the right thing to do is to fully
+> > revert the original commit.
+>
+> I am leaning towards a full revert, but let's wait for more background info.
+
+I'd be fine with a full revert too.  Presumably that will break
+someone but maybe they need to come up with a better solution?
+
+-Doug
