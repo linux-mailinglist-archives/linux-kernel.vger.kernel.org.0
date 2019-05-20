@@ -2,134 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC362379A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88DAC237A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391354AbfETMw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:52:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60527 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387769AbfETMwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:52:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 05:52:20 -0700
-X-ExtLoop1: 1
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga006.jf.intel.com with ESMTP; 20 May 2019 05:52:19 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 06C7C20788; Mon, 20 May 2019 15:52:17 +0300 (EEST)
-Date:   Mon, 20 May 2019 15:52:17 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] device property: Add helpers to count items in an
- array
-Message-ID: <20190520125217.q65fkmqtizb54gnb@paasikivi.fi.intel.com>
-References: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
+        id S2391565AbfETMxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:53:05 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34225 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387973AbfETMxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:53:03 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h1so16148099qtp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:53:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FNAZcWqflA9IRxmObxU4/lbcnrS1uyVvwLBkqQKN8z8=;
+        b=HzSTEqiZQO3w1vdsAkT5r38H7hYuYbds0MWRQpO9CIi0JjAVigJWdQ2FcNiVx1slki
+         cx/ht35b5R6DltwMenH7RBNvnfzvb97xOj4ixfl+dUPGy2SRQRXJ0ZvDfVc5ZuspNmqP
+         QF8IeRQ6rNXVvMEqzqHRb6wQvgE5vZ2bu2DOBBARq/jbEDmBwJj84KV9BlPPRqDIsUdn
+         Dgvl9WR/mc1C9+eeoTAOsfanYo41sCDcpA4vGm665lxjidh1AAV+LD7ukNppOBw7Kzy8
+         XznFxeMyMaFlNFS5M4p6wYZylTXj/NQP7YlitFPna6S4Nk6BtLVlptL7SX+408HbOxUa
+         +Jig==
+X-Gm-Message-State: APjAAAXoe9I3Lhyrv6VWCN8FCSIFXChmtpl1RMf+POSxR2WSFauNDXNi
+        OTHKbkNPUTVRIB7OVNu5iU84MQ==
+X-Google-Smtp-Source: APXvYqxZc3EADFrIKvZtBidjDNyX7MfQHCtBgDMnAiOTyPCPBnueOwuGeJwhQyllR7iNwwTq6Wygtw==
+X-Received: by 2002:ac8:2ea1:: with SMTP id h30mr21686178qta.333.1558356782974;
+        Mon, 20 May 2019 05:53:02 -0700 (PDT)
+Received: from redhat.com (pool-173-76-105-71.bstnma.fios.verizon.net. [173.76.105.71])
+        by smtp.gmail.com with ESMTPSA id v3sm13052762qtc.97.2019.05.20.05.53.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 20 May 2019 05:53:01 -0700 (PDT)
+Date:   Mon, 20 May 2019 08:52:59 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, stefanha@redhat.com
+Subject: Re: [PATCH V2 0/4] Prevent vhost kthread from hogging CPU
+Message-ID: <20190520085207-mutt-send-email-mst@kernel.org>
+References: <1558067392-11740-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1558067392-11740-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Fri, May 17, 2019 at 12:29:48AM -0400, Jason Wang wrote:
+> Hi:
+> 
+> This series try to prevent a guest triggerable CPU hogging through
+> vhost kthread. This is done by introducing and checking the weight
+> after each requrest. The patch has been tested with reproducer of
+> vsock and virtio-net. Only compile test is done for vhost-scsi.
+> 
+> Please review.
+> This addresses CVE-2019-3900.
 
-On Mon, May 20, 2019 at 03:38:48PM +0300, Andy Shevchenko wrote:
-> The usual pattern to allocate the necessary space for an array of properties is
-> to count them fist using:
+OK I think we should clean this code some more but given
+it's a CVE fix maybe it's best to do as a patch on top.
 
-s/fist/first/
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-With that,
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Dave do you want to merge this or should I?
 
 > 
->   count = device_property_read_uXX_array(dev, propname, NULL, 0);
+> Changs from V1:
+> - fix user-ater-free in vosck patch
 > 
-> Introduce helpers device_property_count_uXX() to count items by supplying hard
-> coded last two parameters to device_property_readXX_array().
+> Jason Wang (4):
+>   vhost: introduce vhost_exceeds_weight()
+>   vhost_net: fix possible infinite loop
+>   vhost: vsock: add weight support
+>   vhost: scsi: add weight support
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+>  drivers/vhost/net.c   | 41 ++++++++++++++---------------------------
+>  drivers/vhost/scsi.c  | 21 ++++++++++++++-------
+>  drivers/vhost/vhost.c | 20 +++++++++++++++++++-
+>  drivers/vhost/vhost.h |  5 ++++-
+>  drivers/vhost/vsock.c | 28 +++++++++++++++++++++-------
+>  5 files changed, 72 insertions(+), 43 deletions(-)
 > 
-> diff --git a/include/linux/property.h b/include/linux/property.h
-> index a29369c89e6e..65e31c090f9f 100644
-> --- a/include/linux/property.h
-> +++ b/include/linux/property.h
-> @@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
->  	return device_property_read_u64_array(dev, propname, val, 1);
->  }
->  
-> +static inline int device_property_count_u8(struct device *dev, const char *propname)
-> +{
-> +	return device_property_read_u8_array(dev, propname, NULL, 0);
-> +}
-> +
-> +static inline int device_property_count_u16(struct device *dev, const char *propname)
-> +{
-> +	return device_property_read_u16_array(dev, propname, NULL, 0);
-> +}
-> +
-> +static inline int device_property_count_u32(struct device *dev, const char *propname)
-> +{
-> +	return device_property_read_u32_array(dev, propname, NULL, 0);
-> +}
-> +
-> +static inline int device_property_count_u64(struct device *dev, const char *propname)
-> +{
-> +	return device_property_read_u64_array(dev, propname, NULL, 0);
-> +}
-> +
->  static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
->  					     const char *propname)
->  {
-> @@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
->  	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
->  }
->  
-> +static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
-> +					   const char *propname)
-> +{
-> +	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
-> +}
-> +
-> +static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
-> +					    const char *propname)
-> +{
-> +	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
-> +}
-> +
-> +static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
-> +					    const char *propname)
-> +{
-> +	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
-> +}
-> +
-> +static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
-> +					    const char *propname)
-> +{
-> +	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
-> +}
-> +
->  /**
->   * struct property_entry - "Built-in" device property representation.
->   * @name: Name of the property.
 > -- 
-> 2.20.1
-> 
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+> 1.8.3.1
