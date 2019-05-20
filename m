@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A5C22DA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:05:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72DE822DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbfETIFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:05:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36240 "EHLO mail.kernel.org"
+        id S1730757AbfETIHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfETIFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:35 -0400
+        id S1730841AbfETIFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:05:37 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A544720856;
-        Mon, 20 May 2019 08:05:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5505208C3;
+        Mon, 20 May 2019 08:05:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558339534;
-        bh=bQgehpdwJzg1v6T6W08qkEx1c9bSqawoCkXT0ME7XwA=;
+        s=default; t=1558339537;
+        bh=UH9oqVCe7Dp6WGo3nZFvV6Debv4vruY9AL9X+Dbmoe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CbFn0yPghbZ2rjhsPAaW+eVmdn/Luj2YxI/1PbriDe7mAPNSDrOWfUlsSjRD2B5ZU
-         O2LJ8UNu7WzmPUirO5KrqsPTT/42mc4VaqN1iLCYcOEHLscADbWhbkCEOSz4T9g7AU
-         DKgUbVZJpwMh3CZ+zhLz/IgDfraSuDKBZI4Sm5/o=
+        b=OYLhZUkr8atpajMwGAZcCQEPdVh0k+kQsEjUoV/eOoGzJr/OO8QftFMgHS+gnfJzL
+         GfmnFrTqhgUGQBOB5cQ4T6nmcWsMuIVCmPu7LBIrUE1I92qkSu6OWTvolI0Q0zB8P5
+         2ghINoVBHFxbisyQRWMpZq4yJN4qbt+xc3rzkDOs=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 55EC6602F9; Mon, 20 May 2019 16:05:32 +0800 (CST)
+        id 6151D5FF6A; Mon, 20 May 2019 16:05:32 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/25] clk: Add CLK_HW_INIT_PARENT_DATA macro using .parent_data
-Date:   Mon, 20 May 2019 16:04:00 +0800
-Message-Id: <20190520080421.12575-5-wens@kernel.org>
+Subject: [PATCH 05/25] clk: fixed-factor: Add CLK_FIXED_FACTOR_HW which takes clk_hw pointer as parent
+Date:   Mon, 20 May 2019 16:04:01 +0800
+Message-Id: <20190520080421.12575-6-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
 References: <20190520080421.12575-1-wens@kernel.org>
@@ -46,39 +46,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-With the new clk parenting code, struct clk_init_data was expanded to
-include .parent_data, for clk drivers that have parents referenced using
-a combination of device tree clock-names, clock indices, and/or struct
-clk_hw pointers.
+With the new clk parenting code, clk_init_data was expanded to include
+.parent_hws, for clk drivers to directly reference parents by clk_hw.
 
-Add a new macro that can take a list of struct clk_parent_data for
-drivers to use.
+Add a new macro, CLK_FIXED_FACTOR_HW, that can take a struct clk_hw
+pointer, instead of a string, as its parent.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- include/linux/clk-provider.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/linux/clk-provider.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index edad4ad5d897..d0d58c49f3ad 100644
+index d0d58c49f3ad..c7b10dd32c39 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -951,6 +951,15 @@ extern struct of_device_id __clk_of_table;
- 		.ops		= _ops,				\
- 	})
+@@ -980,6 +980,17 @@ extern struct of_device_id __clk_of_table;
+ 					      _flags),			\
+ 	}
  
-+#define CLK_HW_INIT_PARENTS_DATA(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_data	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
++#define CLK_FIXED_FACTOR_HW(_struct, _name, _parent,			\
++			    _div, _mult, _flags)			\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT_HW(_name,			\
++						 _parent,		\
++						 &clk_fixed_factor_ops,	\
++						 _flags),		\
++	}
 +
- #define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
- 	(&(struct clk_init_data) {			\
- 		.flags          = _flags,		\
+ #ifdef CONFIG_OF
+ int of_clk_add_provider(struct device_node *np,
+ 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
 -- 
 2.20.1
 
