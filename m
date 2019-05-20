@@ -2,71 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D71E23826
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C662385A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388031AbfETNey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:34:54 -0400
-Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:55539 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728634AbfETNex (ORCPT
+        id S1732429AbfETNh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:37:59 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32843 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730555AbfETNh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:34:53 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 0D1D818224BBB;
-        Mon, 20 May 2019 13:34:52 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:69:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2551:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3868:3871:3874:4250:4321:5007:7576:9545:10004:10400:10848:11232:11658:11914:12043:12050:12683:12740:12760:12895:13069:13141:13230:13311:13357:13436:13439:14096:14097:14110:14181:14659:14721:14777:21080:21433:21451:21627:21819:30022:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: tooth67_2a5456d1fb301
-X-Filterd-Recvd-Size: 2098
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 20 May 2019 13:34:50 +0000 (UTC)
-Message-ID: <60717bc4cdf327ffe671c328d47c315eefd385c8.camel@perches.com>
-Subject: Re: [EXT] Re: [PATCH] checkpatch: add test for empty line after
- Fixes statement
-From:   Joe Perches <joe@perches.com>
-To:     Michal Kalderon <mkalderon@marvell.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "apw@canonical.com" <apw@canonical.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Date:   Mon, 20 May 2019 06:34:49 -0700
-In-Reply-To: <MN2PR18MB318292E37F3AB9383D9FBE0FA1060@MN2PR18MB3182.namprd18.prod.outlook.com>
-References: <20190520124238.10298-1-michal.kalderon@marvell.com>
-         <ed26df86d7d0e12263404842895460b1611def61.camel@perches.com>
-         <MN2PR18MB318292E37F3AB9383D9FBE0FA1060@MN2PR18MB3182.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 20 May 2019 09:37:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d9so1696939wrx.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:37:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I6G0MyMU3h5OB0O4nHOQOZaH9nZxvNQnPCN8hItt310=;
+        b=Wu/evQfLtHMDRV7nVLyUt9S+NgZOjI0Xpdpf7vk+eLfcfhsI4H8ZD8fg/9is2Heb83
+         1iECSj30NX8xy9OQXoOApX7n+lsgz70UoK4txOLhlg2cWvAabO88f0mo/itWsp5Oo1Fo
+         k25caGap24naJPEvMoSo1VfTPA6broJ53cy3iY0rnatOlDLOjH5554AZ3HLVlmiN+v+T
+         ZEb4p9IPO/9/a+EPo9C7EAAvscMQnIeLCYseDB+rJWbqOf0kbvHXrSKDwbJt2YDDcv5p
+         +JPVRDikhVtu9pGNIN/Zill4tpS+6swH5OKWVdyV3M1SGFo0V6NELkfibFcjUaJveo0b
+         W+hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I6G0MyMU3h5OB0O4nHOQOZaH9nZxvNQnPCN8hItt310=;
+        b=NTVhUl2OrxZt8Itbxrb18LVtze4I8ecCvyIga3fSMssihngIhKxxJlE/unUCQ0SkEm
+         y8zG29DEPzAFWIQQzYZiMT3om18qL5/QCg9LD1fNU3oD/6DofoJPWn+e68sSeNruryLR
+         xmv2fbrJUu2yOYFmhj07FHSeMFL29BTBBzk0ThIXkuIzpuFR4aOchOxMBl7axMJ2Zpsg
+         LUJh+vxsD6RIYrhPsSt+6YEQjOP+Sg/snzVjW7mwvFXtW3GyyobipB9/oeck7ycRo9J8
+         T/qMOVH5KuzElQNp/3auBLHZxab/Ga7s0P3+0fCW+b7BIBL5U6lOyWT6ZKkQzNUWrSwU
+         6Ffw==
+X-Gm-Message-State: APjAAAULnuEU1wki/61is9Vr4xMhV0KL8AE4tvO+i/X2eFxMdwmrA+mv
+        AulH+3yAq6Ua3uYGwyinBVY86A==
+X-Google-Smtp-Source: APXvYqyUsx6BWDMbs6M/qDpPzB1MW+xaQ5meKg2UcdD2zHeFLRipUXrqqBZ2pzKqNcgOvybYHGCFKA==
+X-Received: by 2002:adf:e845:: with SMTP id d5mr18649788wrn.154.1558359476773;
+        Mon, 20 May 2019 06:37:56 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t19sm12167059wmi.42.2019.05.20.06.37.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 06:37:56 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com
+Cc:     jonas@kwiboo.se, hverkuil@xs4all.nl,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, jernej.skrabec@siol.net,
+        heiko@sntech.de, maxime.ripard@bootlin.com, hjc@rock-chips.com,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] drm/meson: Add support for HDMI2.0 YUV420 4k60
+Date:   Mon, 20 May 2019 15:37:48 +0200
+Message-Id: <20190520133753.23871-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-20 at 13:16 +0000, Michal Kalderon wrote:
-> > From: Joe Perches <joe@perches.com>
-> > Sent: Monday, May 20, 2019 3:57 PM
-> > Subject: [EXT] Re: [PATCH] checkpatch: add test for empty line after Fixes
-> > statement
-> > 
-> > External Email
-> > 
-> > ----------------------------------------------------------------------
-> > On Mon, 2019-05-20 at 15:42 +0300, Michal Kalderon wrote:
-> > > Check that there is no empty line after a fixes statement
-> > 
-> > why?
-> > 
-> This comment is given a lot on the netdev and rdma mailing lists when patches are submitted with
-> an empty line between Fixes: tag and SOB tags. Since "Fixes:" is just another tag and should be kept
-> together with the other ones.
+The Synopsys DW-HDMI CSC does not support downsampling to YUV420, so
+the encoder must downsamle before, feeding the controller with a YUV420
+pixel stream.
 
-So test that all signature blocks and Fixes do not have
-blank lines between them instead of just the "Fixes:" line.
+The encoder must declare the new bus format enc encoding the bridge, in
+order to take it in account.
 
-And if there is some specific ordering required, perhaps a
-test for that ordering should be added as well.
+To solve this, a new format_set() bridge op is added, permitting setting
+a new input bus format and encoding to the bridge chain.
+
+This solves YUV420 setup, but also solved setting 10bit, 12bit or 16bit
+input bus format in order to support HDMI >8bit depths.
+
+The DW-HDMI controller is updated to dynamically select a coherent output
+bus format depending on the input bus format and on the internal CSC
+supported modes.
+
+The DW-HDMI is also updated to support the connector display_info bus_formats
+entry to permit forcing a specific output bus format to force, for example,
+an YUV444 output format instead of the default RGB output bus format.
+
+Only the meson DRM dw_hdmi glue allows ycbcr420 modes, so no breakage
+is expected here.
+
+The remaining patches adds support for 4:2:0 output and clock setup for
+the meson DW-HDMI glue, and how YUV444 output can be forced.
+
+Changes since rfc:
+* Fixed small logic error in drm_bridge_format_set()
+* rebased on v5.2-rc1
+
+Neil Armstrong (5):
+  drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+  drm/bridge: add encoder support to specify bridge input format
+  drm/bridge: dw-hdmi: Add support for dynamic output format setup
+  drm/meson: Add YUV420 output support
+  drm/meson: Output in YUV444 if sink supports it
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 127 ++++++++++++++++++++--
+ drivers/gpu/drm/drm_bridge.c              |  35 ++++++
+ drivers/gpu/drm/meson/meson_dw_hdmi.c     | 111 ++++++++++++++++---
+ drivers/gpu/drm/meson/meson_vclk.c        |  93 ++++++++++++----
+ drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
+ drivers/gpu/drm/meson/meson_venc.c        |   6 +-
+ drivers/gpu/drm/meson/meson_venc.h        |  11 ++
+ drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
+ include/drm/bridge/dw_hdmi.h              |   1 +
+ include/drm/drm_bridge.h                  |  19 ++++
+ 10 files changed, 358 insertions(+), 55 deletions(-)
+
+-- 
+2.21.0
 
