@@ -2,48 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04891236D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D2323646
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387465AbfETMRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:17:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57918 "EHLO mail.kernel.org"
+        id S2389550AbfETM1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:27:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387446AbfETMRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:17:05 -0400
+        id S2389171AbfETM1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:27:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 372C0214DA;
-        Mon, 20 May 2019 12:17:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ED1920675;
+        Mon, 20 May 2019 12:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354624;
-        bh=pMhJBov8FCnLw4exJBoL5XcFYktewII0T/VxOTtlouk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uhNEl19iJ3DKhAB6vjafMkn8H6iZ1nW+F4ldpqHu7597agDWnI4jlveJs8lPT7/9s
-         nFl6hgntXufWSaf3vfPvkPykj4BvJecqM64CN/K+OCj40pMkdk2+DL9fssDhQrjKMs
-         jnh651swNvIDjM1uc/Wng+l8ldwgQTavKiI10t2E=
+        s=default; t=1558355260;
+        bh=ZcfGYjcTJYQ2Gn8coona0MK2VNNKyljTHwHSF+fKYWE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KwHhH/ny9NVpUM22YVcFPSul0jR4rsS4lBgm3Ndluw3W0cBhtJlAc6pj+Zsm7Ay4w
+         kiP511iwWzlFSZs3UqJKytseA2dggWnqBJ/J+xsSOY09oAfTpd1WN48GPZSsl5i5b2
+         jc46F2PQUfWpArJO1Snta6HuMeVWwPRuk3xwETJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/44] 4.9.178-stable review
-Date:   Mon, 20 May 2019 14:13:49 +0200
-Message-Id: <20190520115230.720347034@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.0 050/123] ALSA: hda/hdmi - Consider eld_valid when reporting jack event
+Date:   Mon, 20 May 2019 14:13:50 +0200
+Message-Id: <20190520115248.060176587@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.178-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.178-rc1
-X-KernelTest-Deadline: 2019-05-22T11:52+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,215 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.178 release.
-There are 44 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Hui Wang <hui.wang@canonical.com>
 
-Responses should be made by Wed 22 May 2019 11:50:58 AM UTC.
-Anything received after that time might be too late.
+commit 7f641e26a6df9269cb25dd7a4b0a91d6586ed441 upstream.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.178-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+On the machines with AMD GPU or Nvidia GPU, we often meet this issue:
+after s3, there are 4 HDMI/DP audio devices in the gnome-sound-setting
+even there is no any monitors plugged.
 
-thanks,
+When this problem happens, we check the /proc/asound/cardX/eld#N.M, we
+will find the monitor_present=1, eld_valid=0.
 
-greg k-h
+The root cause is BIOS or GPU driver makes the PRESENCE valid even no
+monitor plugged, and of course the driver will not get the valid
+eld_data subsequently.
 
--------------
-Pseudo-Shortlog of commits:
+In this situation, we should not report the jack_plugged event, to do
+so, let us change the function hdmi_present_sense_via_verbs(). In this
+function, it reads the pin_sense via snd_hda_pin_sense(), after
+calling this function, the jack_dirty is 0, and before exiting
+via_verbs(), we change the shadow pin_sense according to both
+monitor_present and eld_valid, then in the snd_hda_jack_report_sync(),
+since the jack_dirty is still 0, it will report jack event according
+to this modified shadow pin_sense.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.178-rc1
+After this change, the driver will not report Jack_is_plugged event
+through hdmi_present_sense_via_verbs() if monitor_present is 1 and
+eld_valid is 0.
 
-Sean Christopherson <sean.j.christopherson@intel.com>
-    KVM: x86: Skip EFER vs. guest CPUID checks for host-initiated writes
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Michał Wadowski <wadosm@gmail.com>
-    ALSA: hda/realtek - Fix for Lenovo B50-70 inverted internal microphone bug
+---
+ sound/pci/hda/patch_hdmi.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Lukas Czerner <lczerner@redhat.com>
-    ext4: fix data corruption caused by overlapping unaligned and aligned IO
-
-Sriram Rajagopalan <sriramr@arista.com>
-    ext4: zero out the unused memory region in the extent tree block
-
-Jiufei Xue <jiufei.xue@linux.alibaba.com>
-    fs/writeback.c: use rcu_barrier() to wait for inflight wb switches going into workqueue when umount
-
-Tejun Heo <tj@kernel.org>
-    writeback: synchronize sync(2) against cgroup writeback membership switches
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    fib_rules: fix error in backport of e9919a24d302 ("fib_rules: return 0...")
-
-Eric Biggers <ebiggers@google.com>
-    crypto: arm/aes-neonbs - don't access already-freed walk.iv
-
-Eric Biggers <ebiggers@google.com>
-    crypto: salsa20 - don't access already-freed walk.iv
-
-Eric Biggers <ebiggers@google.com>
-    crypto: gcm - fix incompatibility between "gcm" and "gcm_base"
-
-Wei Yongjun <weiyongjun1@huawei.com>
-    crypto: gcm - Fix error return code in crypto_gcm_create_common()
-
-Kamlakant Patel <kamlakantp@marvell.com>
-    ipmi:ssif: compare block number correctly for multi-part return messages
-
-Coly Li <colyli@suse.de>
-    bcache: never set KEY_PTRS of journal key to 0 in journal_reclaim()
-
-Liang Chen <liangchen.linux@gmail.com>
-    bcache: fix a race between cache register and cacheset unregister
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: do not start a transaction at iterate_extent_inodes()
-
-Debabrata Banerjee <dbanerje@akamai.com>
-    ext4: fix ext4_show_options for file systems w/o journal
-
-Kirill Tkhai <ktkhai@virtuozzo.com>
-    ext4: actually request zeroing of inode table after grow
-
-Jiufei Xue <jiufei.xue@linux.alibaba.com>
-    jbd2: check superblock mapped prior to committing
-
-Sergei Trofimovich <slyfox@gentoo.org>
-    tty/vt: fix write/write race in ioctl(KDSKBSENT) handler
-
-Dmitry Osipenko <digetx@gmail.com>
-    mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
-
-Steve Twiss <stwiss.opensource@diasemi.com>
-    mfd: da9063: Fix OTP control register names to match datasheets for DA9063/63L
-
-Shuning Zhang <sunny.s.zhang@oracle.com>
-    ocfs2: fix ocfs2 read inode data panic in ocfs2_iget
-
-Jiri Kosina <jkosina@suse.cz>
-    mm/mincore.c: make mincore() more conservative
-
-Curtis Malainey <cujomalainey@chromium.org>
-    ASoC: RT5677-SPI: Disable 16Bit SPI Transfers
-
-Jon Hunter <jonathanh@nvidia.com>
-    ASoC: max98090: Fix restore of DAPM Muxes
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - EAPD turn on later
-
-Hui Wang <hui.wang@canonical.com>
-    ALSA: hda/hdmi - Consider eld_valid when reporting jack event
-
-Hui Wang <hui.wang@canonical.com>
-    ALSA: hda/hdmi - Read the pin sense from register when repolling
-
-Wenwen Wang <wang6495@umn.edu>
-    ALSA: usb-audio: Fix a memory leak bug
-
-Eric Biggers <ebiggers@google.com>
-    crypto: x86/crct10dif-pcl - fix use via crypto_shash_digest()
-
-Eric Biggers <ebiggers@google.com>
-    crypto: crct10dif-generic - fix use via crypto_shash_digest()
-
-Daniel Axtens <dja@axtens.net>
-    crypto: vmx - fix copy-paste error in CTR mode
-
-Eric Biggers <ebiggers@google.com>
-    crypto: chacha20poly1305 - set cra_name correctly
-
-Peter Zijlstra <peterz@infradead.org>
-    sched/x86: Save [ER]FLAGS on context switch
-
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-    arm64: Clear OSDLR_EL1 on CPU boot
-
-Vincenzo Frascino <vincenzo.frascino@arm.com>
-    arm64: compat: Reduce address limit
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    power: supply: axp288_charger: Fix unchecked return value
-
-Wen Yang <wen.yang99@zte.com.cn>
-    ARM: exynos: Fix a leaked reference by adding missing of_node_put
-
-Josh Poimboeuf <jpoimboe@redhat.com>
-    objtool: Fix function fallthrough detection
-
-Andy Lutomirski <luto@kernel.org>
-    x86/speculation/mds: Improve CPU buffer clear documentation
-
-Andy Lutomirski <luto@kernel.org>
-    x86/speculation/mds: Revert CPU buffer clear on double fault exit
-
-Dexuan Cui <decui@microsoft.com>
-    PCI: hv: Fix a memory leak in hv_eject_device_work()
-
-Waiman Long <longman@redhat.com>
-    locking/rwsem: Prevent decrement of reader count before increment
-
-Sasha Levin <sashal@kernel.org>
-    net: core: another layer of lists, around PF_MEMALLOC skb handling
-
-
--------------
-
-Diffstat:
-
- Documentation/x86/mds.rst               | 44 ++++------------------------
- Makefile                                |  4 +--
- arch/arm/crypto/aesbs-glue.c            |  4 +++
- arch/arm/mach-exynos/firmware.c         |  1 +
- arch/arm/mach-exynos/suspend.c          |  2 ++
- arch/arm64/include/asm/processor.h      |  8 ++++++
- arch/arm64/kernel/debug-monitors.c      |  1 +
- arch/x86/crypto/crct10dif-pclmul_glue.c | 13 ++++-----
- arch/x86/entry/entry_32.S               |  2 ++
- arch/x86/entry/entry_64.S               |  2 ++
- arch/x86/include/asm/switch_to.h        |  1 +
- arch/x86/kernel/process_32.c            |  7 +++++
- arch/x86/kernel/process_64.c            |  8 ++++++
- arch/x86/kernel/traps.c                 |  8 ------
- arch/x86/kvm/x86.c                      | 33 ++++++++++++++-------
- crypto/chacha20poly1305.c               |  4 +--
- crypto/crct10dif_generic.c              | 11 +++----
- crypto/gcm.c                            | 36 ++++++++---------------
- crypto/salsa20_generic.c                |  2 +-
- drivers/char/ipmi/ipmi_ssif.c           |  6 +++-
- drivers/crypto/vmx/aesp8-ppc.pl         |  4 +--
- drivers/md/bcache/journal.c             | 11 ++++---
- drivers/md/bcache/super.c               |  2 +-
- drivers/pci/host/pci-hyperv.c           |  1 +
- drivers/power/supply/axp288_charger.c   |  4 +++
- drivers/tty/vt/keyboard.c               | 33 +++++++++++++++++----
- fs/btrfs/backref.c                      | 18 ++++++++----
- fs/ext4/extents.c                       | 17 +++++++++--
- fs/ext4/file.c                          |  7 +++++
- fs/ext4/ioctl.c                         |  2 +-
- fs/ext4/super.c                         |  2 +-
- fs/fs-writeback.c                       | 51 +++++++++++++++++++++++++++++----
- fs/jbd2/journal.c                       |  4 +++
- fs/ocfs2/export.c                       | 30 ++++++++++++++++++-
- include/linux/backing-dev-defs.h        |  1 +
- include/linux/list.h                    | 30 +++++++++++++++++++
- include/linux/mfd/da9063/registers.h    |  6 ++--
- include/linux/mfd/max77620.h            |  4 +--
- kernel/locking/rwsem-xadd.c             | 44 +++++++++++++++++++---------
- mm/backing-dev.c                        |  1 +
- mm/mincore.c                            | 23 ++++++++++++++-
- net/core/fib_rules.c                    |  1 +
- sound/pci/hda/patch_hdmi.c              | 11 +++++--
- sound/pci/hda/patch_realtek.c           |  5 ++--
- sound/soc/codecs/max98090.c             | 12 ++++----
- sound/soc/codecs/rt5677-spi.c           | 35 +++++++++++-----------
- sound/usb/mixer.c                       |  2 ++
- tools/objtool/check.c                   |  3 +-
- 48 files changed, 379 insertions(+), 182 deletions(-)
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1548,9 +1548,11 @@ static bool hdmi_present_sense_via_verbs
+ 	ret = !repoll || !eld->monitor_present || eld->eld_valid;
+ 
+ 	jack = snd_hda_jack_tbl_get(codec, pin_nid);
+-	if (jack)
++	if (jack) {
+ 		jack->block_report = !ret;
+-
++		jack->pin_sense = (eld->monitor_present && eld->eld_valid) ?
++			AC_PINSENSE_PRESENCE : 0;
++	}
+ 	mutex_unlock(&per_pin->lock);
+ 	return ret;
+ }
 
 
