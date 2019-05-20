@@ -2,152 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BC3235CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF4F235CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391419AbfETMip convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:38:45 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:33753 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390971AbfETMen (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:43 -0400
-X-Originating-IP: 90.88.22.185
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 3C106FF811;
-        Mon, 20 May 2019 12:34:38 +0000 (UTC)
-Date:   Mon, 20 May 2019 14:34:38 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     bbrezillon@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        vigneshr@ti.com, frieder.schrempf@kontron.de, juliensu@mxic.com.tw,
-        zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v2] mtd: rawnand: Add Macronix NAND read retry support
-Message-ID: <20190520143438.46248bfc@xps13>
-In-Reply-To: <1558076001-29579-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1558076001-29579-1-git-send-email-masonccyang@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2391334AbfETMiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:38:55 -0400
+Received: from mga12.intel.com ([192.55.52.136]:15751 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390990AbfETMiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:38:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 05:38:51 -0700
+X-ExtLoop1: 1
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 20 May 2019 05:38:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 8841E9B; Mon, 20 May 2019 15:38:49 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] device property: Add helpers to count items in an array
+Date:   Mon, 20 May 2019 15:38:48 +0300
+Message-Id: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+The usual pattern to allocate the necessary space for an array of properties is
+to count them fist using:
 
-Mason Yang <masonccyang@mxic.com.tw> wrote on Fri, 17 May 2019 14:53:21
-+0800:
+  count = device_property_read_uXX_array(dev, propname, NULL, 0);
 
-> Add support for Macronix NAND read retry.
-> 
-> Macronix NANDs support specific read operation for data recovery,
-> which can be enabled/disabled with a SET/GET_FEATURE.
-> Driver checks byte 167 of Vendor Blocks in ONFI parameter page table
-> to see if this high-reliability function is supported.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> ---
->  drivers/mtd/nand/raw/nand_macronix.c | 57 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-> index e287e71..1a4dc92 100644
-> --- a/drivers/mtd/nand/raw/nand_macronix.c
-> +++ b/drivers/mtd/nand/raw/nand_macronix.c
-> @@ -17,6 +17,62 @@
->  
->  #include "internals.h"
->  
-> +#define MACRONIX_READ_RETRY_BIT BIT(0)
-> +#define MACRONIX_READ_RETRY_MODE 6
+Introduce helpers device_property_count_uXX() to count items by supplying hard
+coded last two parameters to device_property_readXX_array().
 
-Can you name this define MACRONIX_NUM_READ_RETRY_MODES?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-> +
-> +struct nand_onfi_vendor_macronix {
-> +	u8 reserved[1];
+diff --git a/include/linux/property.h b/include/linux/property.h
+index a29369c89e6e..65e31c090f9f 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
+ 	return device_property_read_u64_array(dev, propname, val, 1);
+ }
+ 
++static inline int device_property_count_u8(struct device *dev, const char *propname)
++{
++	return device_property_read_u8_array(dev, propname, NULL, 0);
++}
++
++static inline int device_property_count_u16(struct device *dev, const char *propname)
++{
++	return device_property_read_u16_array(dev, propname, NULL, 0);
++}
++
++static inline int device_property_count_u32(struct device *dev, const char *propname)
++{
++	return device_property_read_u32_array(dev, propname, NULL, 0);
++}
++
++static inline int device_property_count_u64(struct device *dev, const char *propname)
++{
++	return device_property_read_u64_array(dev, propname, NULL, 0);
++}
++
+ static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
+ 					     const char *propname)
+ {
+@@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
+ 	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
+ }
+ 
++static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
++					   const char *propname)
++{
++	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
++}
++
++static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
++					    const char *propname)
++{
++	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
++}
++
++static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
++					    const char *propname)
++{
++	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
++}
++
++static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
++					    const char *propname)
++{
++	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
++}
++
+ /**
+  * struct property_entry - "Built-in" device property representation.
+  * @name: Name of the property.
+-- 
+2.20.1
 
-Do you need this "[1]" ?
-
-> +	u8 reliability_func;
-> +} __packed;
-> +
-> +/*
-> + * Macronix NANDs support using SET/GET_FEATURES to enter/exit read retry mode
-> + */
-> +static int macronix_nand_setup_read_retry(struct nand_chip *chip, int mode)
-> +{
-> +	u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
-> +	int ret, feature_addr = ONFI_FEATURE_ADDR_READ_RETRY;
-> +
-> +	if (chip->parameters.supports_set_get_features &&
-> +	    test_bit(feature_addr, chip->parameters.set_feature_list) &&
-> +	    test_bit(feature_addr, chip->parameters.get_feature_list)) {
-> +		feature[0] = mode;
-> +		ret =  nand_set_features(chip, feature_addr, feature);
-> +		if (ret)
-> +			pr_err("Failed to set read retry moded:%d\n", mode);
-
-Do you have to call nand_get_features() on error?
-
-> +
-> +		ret =  nand_get_features(chip, feature_addr, feature);
-> +		if (ret || feature[0] != mode)
-> +			pr_err("Failed to verify read retry moded:%d(%d)\n",
-> +			       mode, feature[0]);
-
-if ret == 0 but feature[0] != mode, shouldn't you return an error?
-
-> +	}
-> +
-> +	return ret;
-
-This will produce a Warning at compile time (ret may be used
-uninitialized). Have you tested it?
-
-> +}
-> +
-> +static void macronix_nand_onfi_init(struct nand_chip *chip)
-> +{
-> +	struct nand_parameters *p = &chip->parameters;
-> +	struct nand_onfi_vendor_macronix *mxic;
-> +
-> +	if (!p->onfi)
-> +		return;
-> +
-> +	mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
-> +	if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
-> +		return;
-> +
-> +	chip->read_retries = MACRONIX_READ_RETRY_MODE;
-> +	chip->setup_read_retry = macronix_nand_setup_read_retry;
-> +
-> +	if (p->supports_set_get_features) {
-> +		bitmap_set(p->set_feature_list,
-> +			   ONFI_FEATURE_ADDR_READ_RETRY, 1);
-> +		bitmap_set(p->get_feature_list,
-> +			   ONFI_FEATURE_ADDR_READ_RETRY, 1);
-> +	}
-> +}
-> +
->  /*
->   * Macronix AC series does not support using SET/GET_FEATURES to change
->   * the timings unlike what is declared in the parameter page. Unflag
-> @@ -65,6 +121,7 @@ static int macronix_nand_init(struct nand_chip *chip)
->  		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	macronix_nand_fix_broken_get_timings(chip);
-> +	macronix_nand_onfi_init(chip);
->  
->  	return 0;
->  }
-
-
-Thanks,
-Miquèl
