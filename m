@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8F1234E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C70F23640
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390347AbfETMbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:31:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48056 "EHLO mail.kernel.org"
+        id S2389625AbfETM2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390331AbfETMb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:31:28 -0400
+        id S2389265AbfETM2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:28:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 305C020645;
-        Mon, 20 May 2019 12:31:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE73020815;
+        Mon, 20 May 2019 12:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355487;
-        bh=ljhw1NtefORkXSEcsCILjXYghqr+KIzORm1z49WSosU=;
+        s=default; t=1558355287;
+        bh=CsZ3fU+KNH8Lb2E/bENn7G/dAUdvCuX7xDC+u13lcI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h5a+P1EvFnWbi5sTKJj4TKGf1Cz13Gm8x9zPHI56imDaM/x5qgNE9++5fpDv/wJlC
-         0DnzbQ2L8Jgjv/6Jwy9f2Qr7w5Je2Xrmf01Hk7a3sol57/eTaz+4Vx4Pyr8M9C627E
-         T7mMZDIwN+ydzWbscN3YXmnu65FVCocgt8BS9oDc=
+        b=FaERPTXFrOhN7Aq5eAjyYHb5o+5xAkePo8PlBWesWhLoOe1tGu8msYIu25zp95vyj
+         LNuoxjJOGEZMAlA5aDQqoxXI65njW8G0FDlbq+leoosV33WPAiAJIazxx3/uq/s3nx
+         8fOyWaj6emcsK3TGbjARBk6U1BR1EIsbgEggCbY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 5.1 014/128] power: supply: axp288_fuel_gauge: Add ACEPC T8 and T11 mini PCs to the blacklist
+        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        x86-ml <x86@kernel.org>
+Subject: [PATCH 5.0 021/123] x86/MCE/AMD: Turn off MC4_MISC thresholding on all family 0x15 models
 Date:   Mon, 20 May 2019 14:13:21 +0200
-Message-Id: <20190520115250.424049155@linuxfoundation.org>
+Message-Id: <20190520115246.275461772@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +48,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Shirish S <Shirish.S@amd.com>
 
-commit 9274c78305e12c5f461bec15f49c38e0f32ca705 upstream.
+commit c95b323dcd3598dd7ef5005d6723c1ba3b801093 upstream.
 
-The ACEPC T8 and T11 Cherry Trail Z8350 mini PCs use an AXP288 and as PCs,
-rather then portables, they does not have a battery. Still for some
-reason the AXP288 not only thinks there is a battery, it actually
-thinks it is discharging while the PC is running, slowly going to
-0% full, causing userspace to shutdown the system due to the battery
-being critically low after a while.
+MC4_MISC thresholding is not supported on all family 0x15 processors,
+hence skip the x86_model check when applying the quirk.
 
-This commit adds the ACEPC T8 and T11 to the axp288 fuel-gauge driver
-blacklist, so that we stop reporting bogus battery readings on this device.
+ [ bp: massage commit message. ]
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1690852
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1547106849-3476-2-git-send-email-shirish.s@amd.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/axp288_fuel_gauge.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/kernel/cpu/mce/core.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/power/supply/axp288_fuel_gauge.c
-+++ b/drivers/power/supply/axp288_fuel_gauge.c
-@@ -686,6 +686,26 @@ intr_failed:
-  */
- static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
- 	{
-+		/* ACEPC T8 Cherry Trail Z8350 mini PC */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T8"),
-+			/* also match on somewhat unique bios-version */
-+			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
-+		},
-+	},
-+	{
-+		/* ACEPC T11 Cherry Trail Z8350 mini PC */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T11"),
-+			/* also match on somewhat unique bios-version */
-+			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
-+		},
-+	},
-+	{
- 		/* Intel Cherry Trail Compute Stick, Windows version */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Intel Corporation"),
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1613,11 +1613,10 @@ static int __mcheck_cpu_apply_quirks(str
+ 			mce_flags.overflow_recov = 1;
+ 
+ 		/*
+-		 * Turn off MC4_MISC thresholding banks on those models since
++		 * Turn off MC4_MISC thresholding banks on all models since
+ 		 * they're not supported there.
+ 		 */
+-		if (c->x86 == 0x15 &&
+-		    (c->x86_model >= 0x10 && c->x86_model <= 0x1f)) {
++		if (c->x86 == 0x15) {
+ 			int i;
+ 			u64 hwcr;
+ 			bool need_toggle;
 
 
