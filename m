@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99289234B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A82462367F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389979AbfETM3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:29:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45920 "EHLO mail.kernel.org"
+        id S2389103AbfETMZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:25:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389959AbfETM3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:29:47 -0400
+        id S2389089AbfETMZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:25:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8429A20675;
-        Mon, 20 May 2019 12:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B07120675;
+        Mon, 20 May 2019 12:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355386;
-        bh=gDXp1YTVd1ZDb9dpxjABJtOXO5WdHbIWePTo2Hqkyqk=;
+        s=default; t=1558355130;
+        bh=aBn1CDcoGYdWf7sfnjczcbVWhLFfpZiyvEQj9A6nXxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M2SxiAqJXyrYn+9h66uAtI/hcQ7davda2Akk1ajGbrxvrWLzUyehD6xB913AJYTZg
-         nx5GLGb1Yl55DC63oxeiqn0YQJrTauU0jrHkl2XhyxSf+cXXNd4x0YKvWcxGFGL7v4
-         ZGIUjBog2yADSZnYsALzlEJPYYxx7XztQkS0izdM=
+        b=P11maDgKZhQzChyIAbblddUzHBXlZszCECYpP6uiuJ+gT9tof1zVtHHkgyfRh+12q
+         NXIRpxvsuzHRJc6BIuk1xRqLDpTbYS5ydlHRV01f9Dvn0WNB0K/a7XaoFugR6i/LnL
+         TW+Mw9FfGpU05SHyttq46dHdjX6hyLYg2yjpYiuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.0 097/123] bcache: never set KEY_PTRS of journal key to 0 in journal_reclaim()
-Date:   Mon, 20 May 2019 14:14:37 +0200
-Message-Id: <20190520115251.461190489@linuxfoundation.org>
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 092/105] jbd2: fix potential double free
+Date:   Mon, 20 May 2019 14:14:38 +0200
+Message-Id: <20190520115253.618688109@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,96 +43,230 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Chengguang Xu <cgxu519@gmail.com>
 
-commit 1bee2addc0c8470c8aaa65ef0599eeae96dd88bc upstream.
+commit 0d52154bb0a700abb459a2cbce0a30fc2549b67e upstream.
 
-In journal_reclaim() ja->cur_idx of each cache will be update to
-reclaim available journal buckets. Variable 'int n' is used to count how
-many cache is successfully reclaimed, then n is set to c->journal.key
-by SET_KEY_PTRS(). Later in journal_write_unlocked(), a for_each_cache()
-loop will write the jset data onto each cache.
+When failing from creating cache jbd2_inode_cache, we will destroy the
+previously created cache jbd2_handle_cache twice.  This patch fixes
+this by moving each cache initialization/destruction to its own
+separate, individual function.
 
-The problem is, if all jouranl buckets on each cache is full, the
-following code in journal_reclaim(),
-
-529 for_each_cache(ca, c, iter) {
-530       struct journal_device *ja = &ca->journal;
-531       unsigned int next = (ja->cur_idx + 1) % ca->sb.njournal_buckets;
-532
-533       /* No space available on this device */
-534       if (next == ja->discard_idx)
-535               continue;
-536
-537       ja->cur_idx = next;
-538       k->ptr[n++] = MAKE_PTR(0,
-539                         bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
-540                         ca->sb.nr_this_dev);
-541 }
-542
-543 bkey_init(k);
-544 SET_KEY_PTRS(k, n);
-
-If there is no available bucket to reclaim, the if() condition at line
-534 will always true, and n remains 0. Then at line 544, SET_KEY_PTRS()
-will set KEY_PTRS field of c->journal.key to 0.
-
-Setting KEY_PTRS field of c->journal.key to 0 is wrong. Because in
-journal_write_unlocked() the journal data is written in following loop,
-
-649	for (i = 0; i < KEY_PTRS(k); i++) {
-650-671		submit journal data to cache device
-672	}
-
-If KEY_PTRS field is set to 0 in jouranl_reclaim(), the journal data
-won't be written to cache device here. If system crahed or rebooted
-before bkeys of the lost journal entries written into btree nodes, data
-corruption will be reported during bcache reload after rebooting the
-system.
-
-Indeed there is only one cache in a cache set, there is no need to set
-KEY_PTRS field in journal_reclaim() at all. But in order to keep the
-for_each_cache() logic consistent for now, this patch fixes the above
-problem by not setting 0 KEY_PTRS of journal key, if there is no bucket
-available to reclaim.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Chengguang Xu <cgxu519@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/journal.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/jbd2/journal.c     |   49 +++++++++++++++++++++++++++++++------------------
+ fs/jbd2/revoke.c      |   32 ++++++++++++++++++++------------
+ fs/jbd2/transaction.c |    8 +++++---
+ include/linux/jbd2.h  |    8 +++++---
+ 4 files changed, 61 insertions(+), 36 deletions(-)
 
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -540,11 +540,11 @@ static void journal_reclaim(struct cache
- 				  ca->sb.nr_this_dev);
- 	}
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2389,22 +2389,19 @@ static struct kmem_cache *jbd2_journal_h
+ static atomic_t nr_journal_heads = ATOMIC_INIT(0);
+ #endif
  
--	bkey_init(k);
--	SET_KEY_PTRS(k, n);
+-static int jbd2_journal_init_journal_head_cache(void)
++static int __init jbd2_journal_init_journal_head_cache(void)
+ {
+-	int retval;
 -
--	if (n)
-+	if (n) {
-+		bkey_init(k);
-+		SET_KEY_PTRS(k, n);
- 		c->journal.blocks_free = c->sb.bucket_size >> c->block_bits;
-+	}
- out:
- 	if (!journal_full(&c->journal))
- 		__closure_wake_up(&c->journal.wait);
-@@ -671,6 +671,9 @@ static void journal_write_unlocked(struc
- 		ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
+-	J_ASSERT(jbd2_journal_head_cache == NULL);
++	J_ASSERT(!jbd2_journal_head_cache);
+ 	jbd2_journal_head_cache = kmem_cache_create("jbd2_journal_head",
+ 				sizeof(struct journal_head),
+ 				0,		/* offset */
+ 				SLAB_TEMPORARY | SLAB_TYPESAFE_BY_RCU,
+ 				NULL);		/* ctor */
+-	retval = 0;
+ 	if (!jbd2_journal_head_cache) {
+-		retval = -ENOMEM;
+ 		printk(KERN_EMERG "JBD2: no memory for journal_head cache\n");
++		return -ENOMEM;
  	}
+-	return retval;
++	return 0;
+ }
  
-+	/* If KEY_PTRS(k) == 0, this jset gets lost in air */
-+	BUG_ON(i == 0);
+ static void jbd2_journal_destroy_journal_head_cache(void)
+@@ -2650,28 +2647,38 @@ static void __exit jbd2_remove_jbd_stats
+ 
+ struct kmem_cache *jbd2_handle_cache, *jbd2_inode_cache;
+ 
++static int __init jbd2_journal_init_inode_cache(void)
++{
++	J_ASSERT(!jbd2_inode_cache);
++	jbd2_inode_cache = KMEM_CACHE(jbd2_inode, 0);
++	if (!jbd2_inode_cache) {
++		pr_emerg("JBD2: failed to create inode cache\n");
++		return -ENOMEM;
++	}
++	return 0;
++}
 +
- 	atomic_dec_bug(&fifo_back(&c->journal.pin));
- 	bch_journal_next(&c->journal);
- 	journal_reclaim(c);
+ static int __init jbd2_journal_init_handle_cache(void)
+ {
++	J_ASSERT(!jbd2_handle_cache);
+ 	jbd2_handle_cache = KMEM_CACHE(jbd2_journal_handle, SLAB_TEMPORARY);
+-	if (jbd2_handle_cache == NULL) {
++	if (!jbd2_handle_cache) {
+ 		printk(KERN_EMERG "JBD2: failed to create handle cache\n");
+ 		return -ENOMEM;
+ 	}
+-	jbd2_inode_cache = KMEM_CACHE(jbd2_inode, 0);
+-	if (jbd2_inode_cache == NULL) {
+-		printk(KERN_EMERG "JBD2: failed to create inode cache\n");
+-		kmem_cache_destroy(jbd2_handle_cache);
+-		return -ENOMEM;
+-	}
+ 	return 0;
+ }
+ 
++static void jbd2_journal_destroy_inode_cache(void)
++{
++	kmem_cache_destroy(jbd2_inode_cache);
++	jbd2_inode_cache = NULL;
++}
++
+ static void jbd2_journal_destroy_handle_cache(void)
+ {
+ 	kmem_cache_destroy(jbd2_handle_cache);
+ 	jbd2_handle_cache = NULL;
+-	kmem_cache_destroy(jbd2_inode_cache);
+-	jbd2_inode_cache = NULL;
+ }
+ 
+ /*
+@@ -2682,21 +2689,27 @@ static int __init journal_init_caches(vo
+ {
+ 	int ret;
+ 
+-	ret = jbd2_journal_init_revoke_caches();
++	ret = jbd2_journal_init_revoke_record_cache();
++	if (ret == 0)
++		ret = jbd2_journal_init_revoke_table_cache();
+ 	if (ret == 0)
+ 		ret = jbd2_journal_init_journal_head_cache();
+ 	if (ret == 0)
+ 		ret = jbd2_journal_init_handle_cache();
+ 	if (ret == 0)
++		ret = jbd2_journal_init_inode_cache();
++	if (ret == 0)
+ 		ret = jbd2_journal_init_transaction_cache();
+ 	return ret;
+ }
+ 
+ static void jbd2_journal_destroy_caches(void)
+ {
+-	jbd2_journal_destroy_revoke_caches();
++	jbd2_journal_destroy_revoke_record_cache();
++	jbd2_journal_destroy_revoke_table_cache();
+ 	jbd2_journal_destroy_journal_head_cache();
+ 	jbd2_journal_destroy_handle_cache();
++	jbd2_journal_destroy_inode_cache();
+ 	jbd2_journal_destroy_transaction_cache();
+ 	jbd2_journal_destroy_slabs();
+ }
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -178,33 +178,41 @@ static struct jbd2_revoke_record_s *find
+ 	return NULL;
+ }
+ 
+-void jbd2_journal_destroy_revoke_caches(void)
++void jbd2_journal_destroy_revoke_record_cache(void)
+ {
+ 	kmem_cache_destroy(jbd2_revoke_record_cache);
+ 	jbd2_revoke_record_cache = NULL;
++}
++
++void jbd2_journal_destroy_revoke_table_cache(void)
++{
+ 	kmem_cache_destroy(jbd2_revoke_table_cache);
+ 	jbd2_revoke_table_cache = NULL;
+ }
+ 
+-int __init jbd2_journal_init_revoke_caches(void)
++int __init jbd2_journal_init_revoke_record_cache(void)
+ {
+ 	J_ASSERT(!jbd2_revoke_record_cache);
+-	J_ASSERT(!jbd2_revoke_table_cache);
+-
+ 	jbd2_revoke_record_cache = KMEM_CACHE(jbd2_revoke_record_s,
+ 					SLAB_HWCACHE_ALIGN|SLAB_TEMPORARY);
+-	if (!jbd2_revoke_record_cache)
+-		goto record_cache_failure;
+ 
++	if (!jbd2_revoke_record_cache) {
++		pr_emerg("JBD2: failed to create revoke_record cache\n");
++		return -ENOMEM;
++	}
++	return 0;
++}
++
++int __init jbd2_journal_init_revoke_table_cache(void)
++{
++	J_ASSERT(!jbd2_revoke_table_cache);
+ 	jbd2_revoke_table_cache = KMEM_CACHE(jbd2_revoke_table_s,
+ 					     SLAB_TEMPORARY);
+-	if (!jbd2_revoke_table_cache)
+-		goto table_cache_failure;
+-	return 0;
+-table_cache_failure:
+-	jbd2_journal_destroy_revoke_caches();
+-record_cache_failure:
++	if (!jbd2_revoke_table_cache) {
++		pr_emerg("JBD2: failed to create revoke_table cache\n");
+ 		return -ENOMEM;
++	}
++	return 0;
+ }
+ 
+ static struct jbd2_revoke_table_s *jbd2_journal_init_revoke_table(int hash_size)
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -42,9 +42,11 @@ int __init jbd2_journal_init_transaction
+ 					0,
+ 					SLAB_HWCACHE_ALIGN|SLAB_TEMPORARY,
+ 					NULL);
+-	if (transaction_cache)
+-		return 0;
+-	return -ENOMEM;
++	if (!transaction_cache) {
++		pr_emerg("JBD2: failed to create transaction cache\n");
++		return -ENOMEM;
++	}
++	return 0;
+ }
+ 
+ void jbd2_journal_destroy_transaction_cache(void)
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1317,7 +1317,7 @@ extern void		__wait_on_journal (journal_
+ 
+ /* Transaction cache support */
+ extern void jbd2_journal_destroy_transaction_cache(void);
+-extern int  jbd2_journal_init_transaction_cache(void);
++extern int __init jbd2_journal_init_transaction_cache(void);
+ extern void jbd2_journal_free_transaction(transaction_t *);
+ 
+ /*
+@@ -1445,8 +1445,10 @@ static inline void jbd2_free_inode(struc
+ /* Primary revoke support */
+ #define JOURNAL_REVOKE_DEFAULT_HASH 256
+ extern int	   jbd2_journal_init_revoke(journal_t *, int);
+-extern void	   jbd2_journal_destroy_revoke_caches(void);
+-extern int	   jbd2_journal_init_revoke_caches(void);
++extern void	   jbd2_journal_destroy_revoke_record_cache(void);
++extern void	   jbd2_journal_destroy_revoke_table_cache(void);
++extern int __init jbd2_journal_init_revoke_record_cache(void);
++extern int __init jbd2_journal_init_revoke_table_cache(void);
+ 
+ extern void	   jbd2_journal_destroy_revoke(journal_t *);
+ extern int	   jbd2_journal_revoke (handle_t *, unsigned long long, struct buffer_head *);
 
 
