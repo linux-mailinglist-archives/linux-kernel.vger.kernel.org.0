@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A98B623A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0407C23A9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391864AbfETOlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:41:36 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39502 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732554AbfETOlX (ORCPT
+        id S2391909AbfETOl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:41:57 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45879 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388595AbfETOlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 May 2019 10:41:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w8so14930707wrl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:21 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id b18so14865704wrq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QuVh9TVsMqZSn9qS73DaH0TkGBsg1S2LZDD25U2BAlk=;
-        b=WCbRRamr4ZuC30uvTI0zqjb40m9TBkUAGNetbDmjURtBHYQm7JZtDqmVMxLVisKum/
-         moGYyeiHx3jCWiteFsGfm4mPMmCsxdH78GkvOfkaU5lonf//0m0Bl3uCi2q5WF6yv8ho
-         Ah6+4VpJzq9M7+ls7RGtlxvPhRVjGc2QOvfTzoXReszIvluY+i4h49bcycRWP4gsZoZb
-         wKHZrHV4MOUIDPsmO6HdT5tYMaWH8hXFwlpxzLYroMXXh2fREFmFkobxSB5owMkU5/x2
-         E/IR4jNBR7MI4HTWFR9yUr62+KxcB/c5atuMEKHB0mDNkYsgsXY2QFe441f48s7bBOBn
-         JpQQ==
+        bh=30PJ+hCzDjQrVZsjGcZ/FXod6I84WDUG4kPyRzhauWE=;
+        b=EeFetSQar48eOERqadrJy/r1TMYWe3tvZZ9D73uAfTEe7xVlG9kEpGi8cKF+fZimcE
+         vm0msi4QvsnBhRfGIWhN5NNnIwMhd93/3iJtEhj5AL3iIQrATygF4+gQuTFsMqLYlFLN
+         K8lCV0yr+e+dSMqXTPM60wWxKOFL0s5xNJRlB/AXELJESu2AnSF2NWxHl/PjfcHkluhC
+         BRI320Yx0G12ddsNFsbrCxYlX3WgQFy9wj/vrNsVbEp4AfInuuV5cspNpMkKwhQHM4DR
+         PcO6080P3WqMfMpZxg0SuTR/h8UMnUQRpCWASqneD6F01V0xT4DLrhqhv9+ip0oEoCqT
+         OwLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QuVh9TVsMqZSn9qS73DaH0TkGBsg1S2LZDD25U2BAlk=;
-        b=PGmr7cvEQrKBAb6eiw6jABvMyP9zIP/7/HTZMny9P/HvtqW5MnnSAiu8AR7k30IhvT
-         wf/eS98CVbDjUpuQjEUhwNPU4bJYgoYZJBSEQ3JQFuUcHfEZ5nMFIjkNNAeix180URY/
-         iuHNWYR1s2dPymVaFqFwwT3P/YXWiY2/N2ZAOwtm5NqSpp4PbrG0ADv2FvFTPjM9+H08
-         m5xKqbzFMyaYbiWzP4eZglQqCQLF5Jk90wwW6IsF44Y+Vv/PsVqlOGlJlsnKhbaysTzQ
-         y068n9rNd9z1Dl3/GSVSr9+jEBPR7V9mmm3NLjhIQi4p2tlf4rocFGvOByK/VjkbHLGj
-         LeRg==
-X-Gm-Message-State: APjAAAUX7N9U2N1qbNJzrjTRPl/E3QstPKuck+ZUmZJlrowp94vfqoSm
-        MDjH6vQFd95enmGHWKunsjG2lw==
-X-Google-Smtp-Source: APXvYqwLWGWrmt9aWGH3uyiRHLGzj2Yw71bsYLdFfvi+AaABiH/XMU4nW2WLFlYBNK/Qtb3WCPayTQ==
-X-Received: by 2002:adf:e40c:: with SMTP id g12mr29036029wrm.98.1558363281095;
+        bh=30PJ+hCzDjQrVZsjGcZ/FXod6I84WDUG4kPyRzhauWE=;
+        b=b8zTaWRML8MFJyj0OvOsdDbR6DRXlfd0GmUIfriyqS2r73+A6TqJ2NVz+LcCaHITwh
+         2msg7q1q2y+jmF3yJT5MXpZ3MXxdWZd2mOhqEnjWCEwNBQC263QFstvK20A38lX13Z7H
+         RztqrNTDan5ras6CxACu5VOhJl7pYY+NqmC23VfDaw8x9YYGE8eBOmFLqt8cWFSVjJfw
+         ltyAWkf3DCpXaKxdTywAbSudLPV2BimFXJgsnks5PowsU1cQthOZfW4eBkMSN/40UNwh
+         Xn3J4OfBY/p2scnXrjXG8Bw1TmdZ6e6grXnNJXj5VbfACT1a/8cGywYUwtmwl5NV9su0
+         Bmhw==
+X-Gm-Message-State: APjAAAXahiKBmlMsdhQVMcFKXEynoNiwO5yeZfTkHsLB6f0iHcJh5Njb
+        AW0fH9aKX+nbr0v+PK3Hgp+foA==
+X-Google-Smtp-Source: APXvYqwy0QdFmLf4P0q3Gllfwk9oesu78IlGZ97TtHhp2ZY2oBw/SZe5fTVEuzIPvAu1zn35uG6lRA==
+X-Received: by 2002:adf:c60e:: with SMTP id n14mr14278140wrg.255.1558363281892;
         Mon, 20 May 2019 07:41:21 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id w3sm6743679wrv.25.2019.05.20.07.41.20
+        by smtp.gmail.com with ESMTPSA id w3sm6743679wrv.25.2019.05.20.07.41.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:41:20 -0700 (PDT)
+        Mon, 20 May 2019 07:41:21 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 1/5] pinctrl: meson: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:41:04 +0200
-Message-Id: <20190520144108.3787-2-narmstrong@baylibre.com>
+Subject: [PATCH 2/5] dt-bindings: gpio: meson-gxbb-gpio: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:41:05 +0200
+Message-Id: <20190520144108.3787-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520144108.3787-1-narmstrong@baylibre.com>
 References: <20190520144108.3787-1-narmstrong@baylibre.com>
@@ -65,24 +65,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson.c      | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson.h      | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson8-pmx.c | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson8-pmx.h | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson8.c     | 8 +-------
- drivers/pinctrl/meson/pinctrl-meson8b.c    | 8 +-------
- 8 files changed, 8 insertions(+), 56 deletions(-)
+ include/dt-bindings/gpio/meson-gxbb-gpio.h | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 4edeb4cae72a..83c0b1753e70 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+diff --git a/include/dt-bindings/gpio/meson-gxbb-gpio.h b/include/dt-bindings/gpio/meson-gxbb-gpio.h
+index 43a68a1110f0..c93274d7e108 100644
+--- a/include/dt-bindings/gpio/meson-gxbb-gpio.h
++++ b/include/dt-bindings/gpio/meson-gxbb-gpio.h
 @@ -1,15 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * Pin controller and GPIO driver for Amlogic Meson GXBB.
+  * GPIO definitions for Amlogic Meson GXBB SoCs
   *
   * Copyright (C) 2016 Endless Mobile, Inc.
   * Author: Carlo Caione <carlo@endlessm.com>
@@ -95,151 +88,7 @@ index 4edeb4cae72a..83c0b1753e70 100644
 - * along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
- #include <dt-bindings/gpio/meson-gxbb-gpio.h>
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 0c0a5018102b..813f2bdd90a5 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -1,15 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Pin controller and GPIO driver for Amlogic Meson GXL.
-  *
-  * Copyright (C) 2016 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <dt-bindings/gpio/meson-gxl-gpio.h>
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 96a4a72708e4..54fe8f0e4e6d 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -1,14 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Pin controller and GPIO driver for Amlogic Meson SoCs
-  *
-  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 5eaab925f427..29ca94926af0 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -1,14 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Pin controller and GPIO driver for Amlogic Meson SoCs
-  *
-  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/gpio/driver.h>
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-index b93b058c8a07..3810b066df16 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-@@ -1,15 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * First generation of pinmux driver for Amlogic Meson SoCs
-  *
-  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
-  * Copyright (C) 2017 Jerome Brunet  <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /* For this first generation of pinctrl driver every pinmux group can be
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.h b/drivers/pinctrl/meson/pinctrl-meson8-pmx.h
-index 47293c28f913..47c0c28bb8fe 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.h
-@@ -1,15 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * First generation of pinmux driver for Amlogic Meson SoCs
-  *
-  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
-  * Copyright (C) 2017 Jerome Brunet  <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- struct meson8_pmx_data {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 785e29e74a56..2070e3c61a34 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -1,14 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Pin controller and GPIO driver for Amlogic Meson8 and Meson8m2.
-  *
-  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <dt-bindings/gpio/meson8-gpio.h>
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 7f76000cc12e..8d2d430ea02d 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -1,15 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Pin controller and GPIO driver for Amlogic Meson8b.
-  *
-  * Copyright (C) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <dt-bindings/gpio/meson8b-gpio.h>
+ #ifndef _DT_BINDINGS_MESON_GXBB_GPIO_H
 -- 
 2.21.0
 
