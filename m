@@ -2,114 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D66422FEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A38C022FA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbfETJLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:11:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfETJLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:11:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC74420656;
-        Mon, 20 May 2019 09:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558343494;
-        bh=U76uCPWwkjAlQMoQuk81T5lqeD1YoluVf7Go70H7KkY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RVY8Ip1ZIHJa47llpQIR+xlhZFIjFM2mNqU7bQOaQCZKKmr0HZdum/SK2Ufw9j+N5
-         haRFjmJW2ZHWFyjvr9ABoHwQBGKA8ZCvG5A/7WjMFZSnzObB2AtBY/VIwBGeg8QNzv
-         16GBOD3fLTHAClbFFk6ZinGouARHnBWxm2nl6RmQ=
-Date:   Mon, 20 May 2019 11:11:31 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Haller <thaller@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH 4.9 41/51] fib_rules: return 0 directly if an exactly
- same rule exists when NLM_F_EXCL not supplied
-Message-ID: <20190520091131.GA1593@kroah.com>
-References: <20190515090616.669619870@linuxfoundation.org>
- <20190515090628.066392616@linuxfoundation.org>
- <20190519154348.GA113991@archlinux-epyc>
- <a36e3204-b52d-0bf0-f956-654189a18156@gmail.com>
- <20190520090429.GA25812@kroah.com>
+        id S1731786AbfETJEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:04:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8218 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727301AbfETJEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:04:41 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D2B7C1D3391B934B038E;
+        Mon, 20 May 2019 17:04:38 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 20 May 2019 17:04:29 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH 1/2] hwtracing: stm: fix vfree() nonexistent vm_area
+Date:   Mon, 20 May 2019 17:13:14 +0800
+Message-ID: <20190520091315.27898-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520090429.GA25812@kroah.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:04:29AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, May 19, 2019 at 06:29:19PM -0600, David Ahern wrote:
-> > On 5/19/19 9:43 AM, Nathan Chancellor wrote:
-> > > Hi all,
-> > > 
-> > > This commit is causing issues on Android devices when Wi-Fi and mobile
-> > > data are both enabled. The device will do a soft reboot consistently.
-> > > So far, I've had reports on the Pixel 3 XL, OnePlus 6, Pocophone, and
-> > > Note 9 and I can reproduce on my OnePlus 6.
-> > > 
-> > > Sorry for taking so long to report this, I just figured out how to
-> > > reproduce it today and I didn't want to report it without that.
-> > > 
-> > > Attached is a full dmesg and the relevant snippet from Android's logcat.
-> > > 
-> > > Let me know what I can do to help debug,
-> > > Nathan
-> > > 
-> > 
-> > It's a backport problem. err needs to be reset to 0 before the goto.
-> 
-> Ah, I see it, let me go queue up a fix for this.
+If device_add() in stm_register_device() fails, stm_device_release()
+is called to free stm, free stm again on err_device path will trigger
+following warning,
 
-Here's the fix I'm queueing up now:
+  Trying to vfree() nonexistent vm area (0000000054b5e7bc)
+  WARNING: CPU: 0 PID: 6004 at mm/vmalloc.c:1595 __vunmap+0x72/0x480 mm/vmalloc.c:1594
+  Kernel panic - not syncing: panic_on_warn set ...
+  CPU: 0 PID: 6004 Comm: syz-executor.0 Tainted: G         C 5.1.0+ #28
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+  Call Trace:
+   __vfree+0x2a/0x80 mm/vmalloc.c:1658
+   _vfree+0x49/0x70 mm/vmalloc.c:1688
+   stm_register_device+0x295/0x330 [stm_core]
+   dummy_stm_init+0xfe/0x1e0 [dummy_stm]
+   do_one_initcall+0xb9/0x3b5 init/main.c:914
+   do_init_module+0xe0/0x330 kernel/module.c:3468
+   load_module+0x38eb/0x4270 kernel/module.c:3819
+   __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
+   do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+Only free stm once if device_add() fails to fix it.
 
-From b42f0ebbe4431ff7ce99c916555418f4a4c2be67 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 20 May 2019 11:07:29 +0200
-Subject: [PATCH] fib_rules: fix error in backport of e9919a24d302 ("fib_rules:
- return 0...")
-
-When commit e9919a24d302 ("fib_rules: return 0 directly if an exactly
-same rule exists when NLM_F_EXCL not supplied") was backported to 4.9.y,
-it changed the logic a bit as err should have been reset before exiting
-the test, like it happens in the original logic.
-
-If this is not set, errors happen :(
-
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Reported-by: David Ahern <dsahern@gmail.com>
-Reported-by: Florian Westphal <fw@strlen.de>
-Cc: Hangbin Liu <liuhangbin@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- net/core/fib_rules.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/stm/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/fib_rules.c b/net/core/fib_rules.c
-index bb26457e8c21..c03dd2104d33 100644
---- a/net/core/fib_rules.c
-+++ b/net/core/fib_rules.c
-@@ -430,6 +430,7 @@ int fib_nl_newrule(struct sk_buff *skb, struct nlmsghdr *nlh)
- 		goto errout_free;
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index e55b902560de..7b2ab7b2cc4d 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -864,6 +864,7 @@ static void stm_device_release(struct device *dev)
+ 	struct stm_device *stm = to_stm_device(dev);
  
- 	if (rule_exists(ops, frh, tb, rule)) {
-+		err = 0;
- 		if (nlh->nlmsg_flags & NLM_F_EXCL)
- 			err = -EEXIST;
- 		goto errout_free;
+ 	vfree(stm);
++	stm->data->stm = NULL;
+ }
+ 
+ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+@@ -933,7 +934,8 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+ 	/* matches device_initialize() above */
+ 	put_device(&stm->dev);
+ err_free:
+-	vfree(stm);
++	if (stm->data->stm)
++		vfree(stm);
+ 
+ 	return err;
+ }
 -- 
-2.21.0
+2.20.1
 
