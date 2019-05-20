@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F286923545
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFA123426
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390862AbfETMeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:34:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51282 "EHLO mail.kernel.org"
+        id S2388712AbfETMXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390216AbfETMeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:06 -0400
+        id S2388700AbfETMXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F837204FD;
-        Mon, 20 May 2019 12:34:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 023A321019;
+        Mon, 20 May 2019 12:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355644;
-        bh=JheYeRemG7ge/RLfTC3Z7uqYXL7mC8+knXY/kzQ4Qac=;
+        s=default; t=1558355032;
+        bh=WupPEC+hMOVZof/t7zKnzKz3HLKKT+Ri07zHZ5ruEwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UWGsgT0nNzCN8gwBw4oDReC3lJoOIS2XHzWa4okV1QW4bUzc1nOwirfl5D64gEO16
-         hIUzdVp+jfrmwPWnyHvHVULzIdTQbtjvhFVlvz70826fiIIHwuoLqcimX3SmrR+Ikb
-         FQzJobBqanGeG16qYZ4IOX77pv7N+LZBX1zAcIWw=
+        b=D5hSu/fQFxK5em0xTVJVSc1xPBWKLA3F1zwQDx0HuDKA4nt//Y7XieWpw6NnVmN1X
+         RY5Ge7A1dFy8hurGgIPGVNhrBGsDbMwHWuTsyp+vYLwSLZWq9IWgq8UFtL/uFB9dg6
+         HVTIi2T0Zj+MAJxk0Gz/OtWHxvlzente1JQ/Za0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Piotr Balcer <piotr.balcer@intel.com>,
-        Yan Ma <yan.ma@intel.com>, Pankaj Gupta <pagupta@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Chandan Rajendra <chandan@linux.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.1 070/128] mm/huge_memory: fix vmf_insert_pfn_{pmd, pud}() crash, handle unaligned addresses
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 4.19 071/105] ext4: actually request zeroing of inode table after grow
 Date:   Mon, 20 May 2019 14:14:17 +0200
-Message-Id: <20190520115254.543150708@linuxfoundation.org>
+Message-Id: <20190520115252.087715801@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,171 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit fce86ff5802bac3a7b19db171aa1949ef9caac31 upstream.
+commit 310a997fd74de778b9a4848a64be9cda9f18764a upstream.
 
-Starting with c6f3c5ee40c1 ("mm/huge_memory.c: fix modifying of page
-protection by insert_pfn_pmd()") vmf_insert_pfn_pmd() internally calls
-pmdp_set_access_flags().  That helper enforces a pmd aligned @address
-argument via VM_BUG_ON() assertion.
+It is never possible, that number of block groups decreases,
+since only online grow is supported.
 
-Update the implementation to take a 'struct vm_fault' argument directly
-and apply the address alignment fixup internally to fix crash signatures
-like:
+But after a growing occured, we have to zero inode tables
+for just created new block groups.
 
-    kernel BUG at arch/x86/mm/pgtable.c:515!
-    invalid opcode: 0000 [#1] SMP NOPTI
-    CPU: 51 PID: 43713 Comm: java Tainted: G           OE     4.19.35 #1
-    [..]
-    RIP: 0010:pmdp_set_access_flags+0x48/0x50
-    [..]
-    Call Trace:
-     vmf_insert_pfn_pmd+0x198/0x350
-     dax_iomap_fault+0xe82/0x1190
-     ext4_dax_huge_fault+0x103/0x1f0
-     ? __switch_to_asm+0x40/0x70
-     __handle_mm_fault+0x3f6/0x1370
-     ? __switch_to_asm+0x34/0x70
-     ? __switch_to_asm+0x40/0x70
-     handle_mm_fault+0xda/0x200
-     __do_page_fault+0x249/0x4f0
-     do_page_fault+0x32/0x110
-     ? page_fault+0x8/0x30
-     page_fault+0x1e/0x30
-
-Link: http://lkml.kernel.org/r/155741946350.372037.11148198430068238140.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: c6f3c5ee40c1 ("mm/huge_memory.c: fix modifying of page protection by insert_pfn_pmd()")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Piotr Balcer <piotr.balcer@intel.com>
-Tested-by: Yan Ma <yan.ma@intel.com>
-Tested-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Fixes: 19c5246d2516 ("ext4: add new online resize interface")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Chandan Rajendra <chandan@linux.ibm.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dax/device.c    |    6 ++----
- fs/dax.c                |    6 ++----
- include/linux/huge_mm.h |    6 ++----
- mm/huge_memory.c        |   16 ++++++++++------
- 4 files changed, 16 insertions(+), 18 deletions(-)
+ fs/ext4/ioctl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -184,8 +184,7 @@ static vm_fault_t __dev_dax_pmd_fault(st
- 
- 	*pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
- 
--	return vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd, *pfn,
--			vmf->flags & FAULT_FLAG_WRITE);
-+	return vmf_insert_pfn_pmd(vmf, *pfn, vmf->flags & FAULT_FLAG_WRITE);
- }
- 
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-@@ -235,8 +234,7 @@ static vm_fault_t __dev_dax_pud_fault(st
- 
- 	*pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
- 
--	return vmf_insert_pfn_pud(vmf->vma, vmf->address, vmf->pud, *pfn,
--			vmf->flags & FAULT_FLAG_WRITE);
-+	return vmf_insert_pfn_pud(vmf, *pfn, vmf->flags & FAULT_FLAG_WRITE);
- }
- #else
- static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1575,8 +1575,7 @@ static vm_fault_t dax_iomap_pmd_fault(st
- 		}
- 
- 		trace_dax_pmd_insert_mapping(inode, vmf, PMD_SIZE, pfn, entry);
--		result = vmf_insert_pfn_pmd(vma, vmf->address, vmf->pmd, pfn,
--					    write);
-+		result = vmf_insert_pfn_pmd(vmf, pfn, write);
- 		break;
- 	case IOMAP_UNWRITTEN:
- 	case IOMAP_HOLE:
-@@ -1686,8 +1685,7 @@ dax_insert_pfn_mkwrite(struct vm_fault *
- 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
- #ifdef CONFIG_FS_DAX_PMD
- 	else if (order == PMD_ORDER)
--		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
--			pfn, true);
-+		ret = vmf_insert_pfn_pmd(vmf, pfn, FAULT_FLAG_WRITE);
- #endif
- 	else
- 		ret = VM_FAULT_FALLBACK;
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -47,10 +47,8 @@ extern bool move_huge_pmd(struct vm_area
- extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 			unsigned long addr, pgprot_t newprot,
- 			int prot_numa);
--vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
--			pmd_t *pmd, pfn_t pfn, bool write);
--vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
--			pud_t *pud, pfn_t pfn, bool write);
-+vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-+vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
- enum transparent_hugepage_flag {
- 	TRANSPARENT_HUGEPAGE_FLAG,
- 	TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -793,11 +793,13 @@ out_unlock:
- 		pte_free(mm, pgtable);
- }
- 
--vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
--			pmd_t *pmd, pfn_t pfn, bool write)
-+vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
- {
-+	unsigned long addr = vmf->address & PMD_MASK;
-+	struct vm_area_struct *vma = vmf->vma;
- 	pgprot_t pgprot = vma->vm_page_prot;
- 	pgtable_t pgtable = NULL;
-+
- 	/*
- 	 * If we had pmd_special, we could avoid all these restrictions,
- 	 * but we need to be consistent with PTEs and architectures that
-@@ -820,7 +822,7 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_
- 
- 	track_pfn_insert(vma, &pgprot, pfn);
- 
--	insert_pfn_pmd(vma, addr, pmd, pfn, pgprot, write, pgtable);
-+	insert_pfn_pmd(vma, addr, vmf->pmd, pfn, pgprot, write, pgtable);
- 	return VM_FAULT_NOPAGE;
- }
- EXPORT_SYMBOL_GPL(vmf_insert_pfn_pmd);
-@@ -869,10 +871,12 @@ out_unlock:
- 	spin_unlock(ptl);
- }
- 
--vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
--			pud_t *pud, pfn_t pfn, bool write)
-+vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
- {
-+	unsigned long addr = vmf->address & PUD_MASK;
-+	struct vm_area_struct *vma = vmf->vma;
- 	pgprot_t pgprot = vma->vm_page_prot;
-+
- 	/*
- 	 * If we had pud_special, we could avoid all these restrictions,
- 	 * but we need to be consistent with PTEs and architectures that
-@@ -889,7 +893,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_
- 
- 	track_pfn_insert(vma, &pgprot, pfn);
- 
--	insert_pfn_pud(vma, addr, pud, pfn, pgprot, write);
-+	insert_pfn_pud(vma, addr, vmf->pud, pfn, pgprot, write);
- 	return VM_FAULT_NOPAGE;
- }
- EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud);
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -977,7 +977,7 @@ mext_out:
+ 		if (err == 0)
+ 			err = err2;
+ 		mnt_drop_write_file(filp);
+-		if (!err && (o_group > EXT4_SB(sb)->s_groups_count) &&
++		if (!err && (o_group < EXT4_SB(sb)->s_groups_count) &&
+ 		    ext4_has_group_desc_csum(sb) &&
+ 		    test_opt(sb, INIT_INODE_TABLE))
+ 			err = ext4_register_li_request(sb, o_group);
 
 
