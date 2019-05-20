@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7C62349B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8B39234F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389379AbfETM2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:28:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
+        id S2390487AbfETMcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:32:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389399AbfETM0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:26:47 -0400
+        id S1732867AbfETMb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:31:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D626520645;
-        Mon, 20 May 2019 12:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEA4D214DA;
+        Mon, 20 May 2019 12:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355207;
-        bh=0msjDw4e8JU1SNWYIWYp0Zm3hjgfapzuhX6gELrNtSI=;
+        s=default; t=1558355519;
+        bh=rmffEHAhueVbENrjSXU8HS106ZhLz6ZVTjAObWH7Cp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R/0JLT3YW4DIWouLEzO5J5eqyXTb3zciqjPjWaA30bU7v04ebSaqS3Ye6V5YTivB8
-         82v+tI08lh+6vOR6VOa7uJilIHCXZ2i13g3ymKEPOBeOrtSwMVvvqDysD9q9BE/wjP
-         Q/Ea4fu/VgQboqoxn+Isa/X8UcvMiyHxBR3hbx0s=
+        b=azTcyF2xlYWpZLyWlEW/mO/WvKyhovf6sema9BO/a7nwcGpwa5esbDpnE2WCWLyla
+         rdyAv5T6VFGIk16JQJ9SnZtcHdutT7taoJHpdkW5hwWQ/0LtHZKuto0IcINibTGw/a
+         AmCAhckDykoKQSstUs+3y8UIHNKDdqKorT2aUDIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Ondrej=20Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 032/123] crypto: vmx - fix copy-paste error in CTR mode
+Subject: [PATCH 5.1 025/128] crypto: salsa20 - dont access already-freed walk.iv
 Date:   Mon, 20 May 2019 14:13:32 +0200
-Message-Id: <20190520115246.894646115@linuxfoundation.org>
+Message-Id: <20190520115251.271406658@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Eric Biggers <ebiggers@google.com>
 
-commit dcf7b48212c0fab7df69e84fab22d6cb7c8c0fb9 upstream.
+commit edaf28e996af69222b2cb40455dbb5459c2b875a upstream.
 
-The original assembly imported from OpenSSL has two copy-paste
-errors in handling CTR mode. When dealing with a 2 or 3 block tail,
-the code branches to the CBC decryption exit path, rather than to
-the CTR exit path.
+If the user-provided IV needs to be aligned to the algorithm's
+alignmask, then skcipher_walk_virt() copies the IV into a new aligned
+buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
+if the caller unconditionally accesses walk.iv, it's a use-after-free.
 
-This leads to corruption of the IV, which leads to subsequent blocks
-being corrupted.
+salsa20-generic doesn't set an alignmask, so currently it isn't affected
+by this despite unconditionally accessing walk.iv.  However this is more
+subtle than desired, and it was actually broken prior to the alignmask
+being removed by commit b62b3db76f73 ("crypto: salsa20-generic - cleanup
+and convert to skcipher API").
 
-This can be detected with libkcapi test suite, which is available at
-https://github.com/smuellerDD/libkcapi
+Since salsa20-generic does not update the IV and does not need any IV
+alignment, update it to use req->iv instead of walk.iv.
 
-Reported-by: Ondrej Mosnáček <omosnacek@gmail.com>
-Fixes: 5c380d623ed3 ("crypto: vmx - Add support for VMS instructions by ASM")
+Fixes: 2407d60872dd ("[CRYPTO] salsa20: Salsa20 stream cipher")
 Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-Tested-by: Ondrej Mosnacek <omosnacek@gmail.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aesp8-ppc.pl |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ crypto/salsa20_generic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/vmx/aesp8-ppc.pl
-+++ b/drivers/crypto/vmx/aesp8-ppc.pl
-@@ -1854,7 +1854,7 @@ Lctr32_enc8x_three:
- 	stvx_u		$out1,$x10,$out
- 	stvx_u		$out2,$x20,$out
- 	addi		$out,$out,0x30
--	b		Lcbc_dec8x_done
-+	b		Lctr32_enc8x_done
+--- a/crypto/salsa20_generic.c
++++ b/crypto/salsa20_generic.c
+@@ -161,7 +161,7 @@ static int salsa20_crypt(struct skcipher
  
- .align	5
- Lctr32_enc8x_two:
-@@ -1866,7 +1866,7 @@ Lctr32_enc8x_two:
- 	stvx_u		$out0,$x00,$out
- 	stvx_u		$out1,$x10,$out
- 	addi		$out,$out,0x20
--	b		Lcbc_dec8x_done
-+	b		Lctr32_enc8x_done
+ 	err = skcipher_walk_virt(&walk, req, false);
  
- .align	5
- Lctr32_enc8x_one:
+-	salsa20_init(state, ctx, walk.iv);
++	salsa20_init(state, ctx, req->iv);
+ 
+ 	while (walk.nbytes > 0) {
+ 		unsigned int nbytes = walk.nbytes;
 
 
