@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98FD5232BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1DF7232C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbfETLiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:38:15 -0400
+        id S1733258AbfETLi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:38:26 -0400
 Received: from mga04.intel.com ([192.55.52.120]:48121 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733206AbfETLiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:38:12 -0400
+        id S1733219AbfETLiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:38:13 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:38:12 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:38:13 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:38:10 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:38:12 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/22] perf scripts python: exported-sql-viewer.py: Add IPC information to Call Graph Graph
-Date:   Mon, 20 May 2019 14:37:26 +0300
-Message-Id: <20190520113728.14389-21-adrian.hunter@intel.com>
+Subject: [PATCH 21/22] perf scripts python: exported-sql-viewer.py: Add IPC information to Call Tree
+Date:   Mon, 20 May 2019 14:37:27 +0300
+Message-Id: <20190520113728.14389-22-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190520113728.14389-1-adrian.hunter@intel.com>
 References: <20190520113728.14389-1-adrian.hunter@intel.com>
@@ -33,7 +33,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enhance the call graph to display IPC information if it is available.
+Enhance the call tree to display IPC information if it is available.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
@@ -41,41 +41,43 @@ Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
  1 file changed, 56 insertions(+), 13 deletions(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index b3508bd4eb00..f5b1b63995b0 100755
+index f5b1b63995b0..94489cf2ce0e 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -505,18 +505,24 @@ class CallGraphLevelItemBase(object):
+@@ -781,11 +781,13 @@ class CallGraphModel(CallGraphModelBase):
  
- class CallGraphLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
  
--	def __init__(self, glb, params, row, comm_id, thread_id, call_path_id, time, branch_count, parent_item):
-+	def __init__(self, glb, params, row, comm_id, thread_id, call_path_id, time, insn_cnt, cyc_cnt, branch_count, parent_item):
- 		super(CallGraphLevelTwoPlusItemBase, self).__init__(glb, params, row, parent_item)
+-	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, time, branch_count, parent_item):
++	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item):
+ 		super(CallTreeLevelTwoPlusItemBase, self).__init__(glb, params, row, parent_item)
  		self.comm_id = comm_id
  		self.thread_id = thread_id
- 		self.call_path_id = call_path_id
+ 		self.calls_id = calls_id
 +		self.insn_cnt = insn_cnt
 +		self.cyc_cnt = cyc_cnt
  		self.branch_count = branch_count
  		self.time = time
  
- 	def Select(self):
- 		self.query_done = True;
- 		query = QSqlQuery(self.glb.db)
--		QueryExec(query, "SELECT call_path_id, name, short_name, COUNT(calls.id), SUM(return_time - call_time), SUM(branch_count)"
+@@ -795,8 +797,12 @@ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ 			comm_thread = " AND comm_id = " + str(self.comm_id) + " AND thread_id = " + str(self.thread_id)
+ 		else:
+ 			comm_thread = ""
 +		if self.params.have_ipc:
-+			ipc_str = ", SUM(insn_count), SUM(cyc_count)"
++			ipc_str = ", insn_count, cyc_count"
 +		else:
 +			ipc_str = ""
-+		QueryExec(query, "SELECT call_path_id, name, short_name, COUNT(calls.id), SUM(return_time - call_time)" + ipc_str + ", SUM(branch_count)"
+ 		query = QSqlQuery(self.glb.db)
+-		QueryExec(query, "SELECT calls.id, name, short_name, call_time, return_time - call_time, branch_count"
++		QueryExec(query, "SELECT calls.id, name, short_name, call_time, return_time - call_time" + ipc_str + ", branch_count"
  					" FROM calls"
  					" INNER JOIN call_paths ON calls.call_path_id = call_paths.id"
  					" INNER JOIN symbols ON call_paths.symbol_id = symbols.id"
-@@ -527,7 +533,15 @@ class CallGraphLevelTwoPlusItemBase(CallGraphLevelItemBase):
- 					" GROUP BY call_path_id, name, short_name"
- 					" ORDER BY call_path_id")
+@@ -804,7 +810,15 @@ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ 					" WHERE calls.parent_id = " + str(self.calls_id) + comm_thread +
+ 					" ORDER BY call_time, calls.id")
  		while query.next():
--			child_item = CallGraphLevelThreeItem(self.glb, self.params, self.child_count, self.comm_id, self.thread_id, query.value(0), query.value(1), query.value(2), query.value(3), int(query.value(4)), int(query.value(5)), self)
+-			child_item = CallTreeLevelThreeItem(self.glb, self.params, self.child_count, self.comm_id, self.thread_id, query.value(0), query.value(1), query.value(2), query.value(3), int(query.value(4)), int(query.value(5)), self)
 +			if self.params.have_ipc:
 +				insn_cnt = int(query.value(5))
 +				cyc_cnt = int(query.value(6))
@@ -84,18 +86,18 @@ index b3508bd4eb00..f5b1b63995b0 100755
 +				insn_cnt = 0
 +				cyc_cnt = 0
 +				branch_count = int(query.value(5))
-+			child_item = CallGraphLevelThreeItem(self.glb, self.params, self.child_count, self.comm_id, self.thread_id, query.value(0), query.value(1), query.value(2), query.value(3), int(query.value(4)), insn_cnt, cyc_cnt, branch_count, self)
++			child_item = CallTreeLevelThreeItem(self.glb, self.params, self.child_count, self.comm_id, self.thread_id, query.value(0), query.value(1), query.value(2), query.value(3), int(query.value(4)), insn_cnt, cyc_cnt, branch_count, self)
  			self.child_items.append(child_item)
  			self.child_count += 1
  
-@@ -535,10 +549,17 @@ class CallGraphLevelTwoPlusItemBase(CallGraphLevelItemBase):
+@@ -812,10 +826,17 @@ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
  
- class CallGraphLevelThreeItem(CallGraphLevelTwoPlusItemBase):
+ class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
  
--	def __init__(self, glb, params, row, comm_id, thread_id, call_path_id, name, dso, count, time, branch_count, parent_item):
--		super(CallGraphLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, call_path_id, time, branch_count, parent_item)
-+	def __init__(self, glb, params, row, comm_id, thread_id, call_path_id, name, dso, count, time, insn_cnt, cyc_cnt, branch_count, parent_item):
-+		super(CallGraphLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, call_path_id, time, insn_cnt, cyc_cnt, branch_count, parent_item)
+-	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, count, time, branch_count, parent_item):
+-		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, time, branch_count, parent_item)
++	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, count, time, insn_cnt, cyc_cnt, branch_count, parent_item):
++		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item)
  		dso = dsoname(dso)
 -		self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
 +		if self.params.have_ipc:
@@ -106,16 +108,16 @@ index b3508bd4eb00..f5b1b63995b0 100755
 +			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(insn_cnt), insn_pcnt, str(cyc_cnt), cyc_pcnt, ipc, str(branch_count), br_pcnt ]
 +		else:
 +			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
- 		self.dbid = call_path_id
+ 		self.dbid = calls_id
  
- # Context-sensitive call graph data model level two item
-@@ -546,18 +567,28 @@ class CallGraphLevelThreeItem(CallGraphLevelTwoPlusItemBase):
- class CallGraphLevelTwoItem(CallGraphLevelTwoPlusItemBase):
+ # Call tree data model level two item
+@@ -823,18 +844,28 @@ class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
+ class CallTreeLevelTwoItem(CallTreeLevelTwoPlusItemBase):
  
  	def __init__(self, glb, params, row, comm_id, thread_id, pid, tid, parent_item):
--		super(CallGraphLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 1, 0, 0, parent_item)
+-		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, parent_item)
 -		self.data = [str(pid) + ":" + str(tid), "", "", "", "", "", ""]
-+		super(CallGraphLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 1, 0, 0, 0, 0, parent_item)
++		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, 0, 0, parent_item)
 +		if self.params.have_ipc:
 +			self.data = [str(pid) + ":" + str(tid), "", "", "", "", "", "", "", "", "", "", ""]
 +		else:
@@ -123,7 +125,7 @@ index b3508bd4eb00..f5b1b63995b0 100755
  		self.dbid = thread_id
  
  	def Select(self):
- 		super(CallGraphLevelTwoItem, self).Select()
+ 		super(CallTreeLevelTwoItem, self).Select()
  		for child_item in self.child_items:
  			self.time += child_item.time
 +			self.insn_cnt += child_item.insn_cnt
@@ -139,12 +141,12 @@ index b3508bd4eb00..f5b1b63995b0 100755
 +			else:
 +				child_item.data[6] = PercentToOneDP(child_item.branch_count, self.branch_count)
  
- # Context-sensitive call graph data model level one item
+ # Call tree data model level one item
  
-@@ -565,7 +596,10 @@ class CallGraphLevelOneItem(CallGraphLevelItemBase):
+@@ -842,7 +873,10 @@ class CallTreeLevelOneItem(CallGraphLevelItemBase):
  
  	def __init__(self, glb, params, row, comm_id, comm, parent_item):
- 		super(CallGraphLevelOneItem, self).__init__(glb, params, row, parent_item)
+ 		super(CallTreeLevelOneItem, self).__init__(glb, params, row, parent_item)
 -		self.data = [comm, "", "", "", "", "", ""]
 +		if self.params.have_ipc:
 +			self.data = [comm, "", "", "", "", "", "", "", "", "", "", ""]
@@ -153,8 +155,8 @@ index b3508bd4eb00..f5b1b63995b0 100755
  		self.dbid = comm_id
  
  	def Select(self):
-@@ -694,14 +728,23 @@ class CallGraphModel(CallGraphModelBase):
- 		return CallGraphRootItem(self.glb, self.params)
+@@ -885,14 +919,23 @@ class CallTreeModel(CallGraphModelBase):
+ 		return CallTreeRootItem(self.glb, self.params)
  
  	def columnCount(self, parent=None):
 -		return 7
@@ -164,11 +166,11 @@ index b3508bd4eb00..f5b1b63995b0 100755
 +			return 7
  
  	def columnHeader(self, column):
--		headers = ["Call Path", "Object", "Count ", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
+-		headers = ["Call Path", "Object", "Call Time", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
 +		if self.params.have_ipc:
-+			headers = ["Call Path", "Object", "Count ", "Time (ns) ", "Time (%) ", "Insn Cnt", "Insn Cnt (%)", "Cyc Cnt", "Cyc Cnt (%)", "IPC", "Branch Count ", "Branch Count (%) "]
++			headers = ["Call Path", "Object", "Call Time", "Time (ns) ", "Time (%) ", "Insn Cnt", "Insn Cnt (%)", "Cyc Cnt", "Cyc Cnt (%)", "IPC", "Branch Count ", "Branch Count (%) "]
 +		else:
-+			headers = ["Call Path", "Object", "Count ", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
++			headers = ["Call Path", "Object", "Call Time", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
  		return headers[column]
  
  	def columnAlignment(self, column):
