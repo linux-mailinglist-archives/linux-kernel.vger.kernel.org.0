@@ -2,122 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD600238C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 527E8238C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389967AbfETNuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:50:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54250 "EHLO mga04.intel.com"
+        id S2390085AbfETNua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:50:30 -0400
+Received: from mga06.intel.com ([134.134.136.31]:33552 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731680AbfETNuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:50:07 -0400
+        id S1731680AbfETNu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 09:50:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 06:50:07 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 06:50:29 -0700
 X-ExtLoop1: 1
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 20 May 2019 06:50:05 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F063E81; Mon, 20 May 2019 16:50:04 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2] device property: Add helpers to count items in an array
-Date:   Mon, 20 May 2019 16:50:04 +0300
-Message-Id: <20190520135004.15203-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+Received: from ejleta-mobl.amr.corp.intel.com (HELO [10.254.104.211]) ([10.254.104.211])
+  by orsmga006.jf.intel.com with ESMTP; 20 May 2019 06:50:28 -0700
+Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: bytcr_5640.c:Refactored if
+ statement and removed buffer
+To:     Hans de Goede <hdegoede@redhat.com>,
+        nariman <narimantos@gmail.com>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20190519175706.3998-1-narimantos@gmail.com>
+ <783c330c-b706-9d19-467d-a19d2f414a05@redhat.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <b4e2ee77-cab9-5457-9649-2ff0804fc2b9@linux.intel.com>
+Date:   Mon, 20 May 2019 08:50:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <783c330c-b706-9d19-467d-a19d2f414a05@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usual pattern to allocate the necessary space for an array of properties is
-to count them first by calling:
 
-  count = device_property_read_uXX_array(dev, propname, NULL, 0);
-  if (count < 0)
-	return count;
 
-Introduce helpers device_property_count_uXX() to count items by supplying hard
-coded last two parameters to device_property_readXX_array().
+On 5/20/19 3:37 AM, Hans de Goede wrote:
+> Hi all,
+> 
+> On 19-05-19 19:57, nariman wrote:
+>> From: Nariman Etemadi <narimantos@gmail.com>
+>>
+>> in function snd_byt_rt5640_mc_probe and removed buffer 
+>> yt_rt5640_codec_aif_name & byt_rt5640_cpu_dai_name
+>>
+>> Signed-off-by: Nariman Etemadi <narimantos@gmail.com>
+> 
+> Series (all 4 patches) look good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
-- gathered tags
-- rephrase a bit the commit message and fix a typo (Sakari)
- include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Thanks for the update (I believe it's the v2, yes?)
 
-diff --git a/include/linux/property.h b/include/linux/property.h
-index a29369c89e6e..65e31c090f9f 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
- 	return device_property_read_u64_array(dev, propname, val, 1);
- }
- 
-+static inline int device_property_count_u8(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u8_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u16(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u16_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u32(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u32_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u64(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u64_array(dev, propname, NULL, 0);
-+}
-+
- static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
- 					     const char *propname)
- {
-@@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
- 	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
- }
- 
-+static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
-+					   const char *propname)
-+{
-+	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
-+}
-+
- /**
-  * struct property_entry - "Built-in" device property representation.
-  * @name: Name of the property.
--- 
-2.20.1
+the code is fine but can be polished to fix a couple of
+alignment issues
 
++	bits = 16;
+  	} else {
+
+and checkpatch.pl --strict is quite verbose here. Some reports look like 
+false-alarms but the commit message should be wrapped and alignement fixed.
+
+---------------------------------------------------------
+0001-ASoC-Intel-bytcr_5640.c-refactored-codec_fixup.patch
+---------------------------------------------------------
+CHECK: Alignment should match open parenthesis
+#86: FILE: sound/soc/intel/boards/bytcr_rt5640.c:980:
++	ret = snd_soc_dai_set_fmt(rtd->cpu_dai,
++		SND_SOC_DAIFMT_I2S     |
+
+total: 0 errors, 0 warnings, 1 checks, 82 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0001-ASoC-Intel-bytcr_5640.c-refactored-codec_fixup.patch has style 
+problems, please review.
+---------------------------------------------------------------
+0002-ASoC-Intel-bytcr_5640.c-Refactored-if-statement-and-.patch
+---------------------------------------------------------------
+WARNING: Possible unwrapped commit description (prefer a maximum 75 
+chars per line)
+#7:
+in function snd_byt_rt5640_mc_probe and removed buffer 
+yt_rt5640_codec_aif_name & byt_rt5640_cpu_dai_name
+
+total: 0 errors, 1 warnings, 0 checks, 40 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0002-ASoC-Intel-bytcr_5640.c-Refactored-if-statement-and-.patch has 
+style problems, please review.
+---------------------------------------------------------------
+0003-ASoC-Intel-bytcr_rt5651.c-remove-string-buffers-byt_.patch
+---------------------------------------------------------------
+WARNING: Possible unwrapped commit description (prefer a maximum 75 
+chars per line)
+#7:
+The snprintf calls filling byt_rt5651_cpu_dai_name / 
+byt_rt5651_cpu_dai_name always fill them with the same string 
+(ssp0-port" resp "rt5651-aif2"). So instead of keeping these buffers 
+around and making the cpu_dai_name / codec_dai_name point to this, 
+simply update the foo_dai_name pointers to directly point to a string 
+constant containing the desired string.
+
+total: 0 errors, 1 warnings, 0 checks, 38 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0003-ASoC-Intel-bytcr_rt5651.c-remove-string-buffers-byt_.patch has 
+style problems, please review.
+---------------------------------------------------------------
+0004-ASoC-Intel-cht_bsw_rt5645.c-Remove-buffer-and-snprin.patch
+---------------------------------------------------------------
+WARNING: Possible unwrapped commit description (prefer a maximum 75 
+chars per line)
+#7:
+The snprintf calls filling cht_rt5645_cpu_dai_name / 
+cht_rt5645_codec_aif_name
+
+WARNING: suspect code indent for conditional statements (8, 24)
+#35: FILE: sound/soc/intel/boards/cht_bsw_rt5645.c:642:
+  	if ((cht_rt5645_quirk & CHT_RT5645_SSP2_AIF2) ||
+[...]
++			cht_dailink[dai_index].codec_dai_name = "rt5645-aif2";
+
+WARNING: suspect code indent for conditional statements (8, 24)
+#49: FILE: sound/soc/intel/boards/cht_bsw_rt5645.c:646:
+  	if ((cht_rt5645_quirk & CHT_RT5645_SSP0_AIF1) ||
+[...]
++			cht_dailink[dai_index].cpu_dai_name = "ssp0-port";
+
+total: 0 errors, 3 warnings, 0 checks, 40 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0004-ASoC-Intel-cht_bsw_rt5645.c-Remove-buffer-and-snprin.patch has 
+style problems, please review.
+
+
+
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+>> ---
+>>   sound/soc/intel/boards/bytcr_rt5640.c | 26 ++++----------------------
+>>   1 file changed, 4 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/sound/soc/intel/boards/bytcr_rt5640.c 
+>> b/sound/soc/intel/boards/bytcr_rt5640.c
+>> index 940eb27158da..0d91642ca287 100644
+>> --- a/sound/soc/intel/boards/bytcr_rt5640.c
+>> +++ b/sound/soc/intel/boards/bytcr_rt5640.c
+>> @@ -1075,8 +1075,6 @@ static struct snd_soc_dai_link byt_rt5640_dais[] 
+>> = {
+>>   /* SoC card */
+>>   static char byt_rt5640_codec_name[SND_ACPI_I2C_ID_LEN];
+>> -static char byt_rt5640_codec_aif_name[12]; /*  = "rt5640-aif[1|2]" */
+>> -static char byt_rt5640_cpu_dai_name[10]; /*  = "ssp[0|2]-port" */
+>>   static char byt_rt5640_long_name[40]; /* = 
+>> "bytcr-rt5640-*-spk-*-mic" */
+>>   static int byt_rt5640_suspend(struct snd_soc_card *card)
+>> @@ -1268,28 +1266,12 @@ static int snd_byt_rt5640_mc_probe(struct 
+>> platform_device *pdev)
+>>       log_quirks(&pdev->dev);
+>>       if ((byt_rt5640_quirk & BYT_RT5640_SSP2_AIF2) ||
+>> -        (byt_rt5640_quirk & BYT_RT5640_SSP0_AIF2)) {
+>> -
+>> -        /* fixup codec aif name */
+>> -        snprintf(byt_rt5640_codec_aif_name,
+>> -            sizeof(byt_rt5640_codec_aif_name),
+>> -            "%s", "rt5640-aif2");
+>> -
+>> -        byt_rt5640_dais[dai_index].codec_dai_name =
+>> -            byt_rt5640_codec_aif_name;
+>> -    }
+>> +        (byt_rt5640_quirk & BYT_RT5640_SSP0_AIF2))
+>> +        byt_rt5640_dais[dai_index].codec_dai_name = "rt5640-aif2";
+>>       if ((byt_rt5640_quirk & BYT_RT5640_SSP0_AIF1) ||
+>> -        (byt_rt5640_quirk & BYT_RT5640_SSP0_AIF2)) {
+>> -
+>> -        /* fixup cpu dai name name */
+>> -        snprintf(byt_rt5640_cpu_dai_name,
+>> -            sizeof(byt_rt5640_cpu_dai_name),
+>> -            "%s", "ssp0-port");
+>> -
+>> -        byt_rt5640_dais[dai_index].cpu_dai_name =
+>> -            byt_rt5640_cpu_dai_name;
+>> -    }
+>> +        (byt_rt5640_quirk & BYT_RT5640_SSP0_AIF2))
+>> +        byt_rt5640_dais[dai_index].cpu_dai_name = "ssp0-port";
+>>       if (byt_rt5640_quirk & BYT_RT5640_MCLK_EN) {
+>>           priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+>>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
