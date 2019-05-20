@@ -2,88 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1036122A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC6122A61
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbfETDYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 23:24:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8214 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728932AbfETDYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 23:24:51 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3BFDE2B496AE44860F57;
-        Mon, 20 May 2019 11:24:49 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 11:24:40 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] intel_th: msu: Fix unused variable warning on arm64 platform
-Date:   Mon, 20 May 2019 11:23:20 +0800
-Message-ID: <1558322600-63308-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+        id S1729906AbfETDYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 23:24:08 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37977 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728932AbfETDYH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 23:24:07 -0400
+Received: by mail-pg1-f193.google.com with SMTP id j26so6056905pgl.5;
+        Sun, 19 May 2019 20:24:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8lynjc9FImYn3DS1nNlFKZK9eba4zI8O5MGLVIpLl4U=;
+        b=PT40jLcY25cxWe9jUc2043282okhendavje06zKTnAmi0FzyAAAre32s7o/Pu5VMNt
+         qlA+PxKsNv8lIq9PmvnJtTkWKzzESHi6HftLWRG6VrIOGSa1Zn0lRpiGuz2Q/gIBDBaE
+         zsriR/4YcsTERCM3L/OBj+96aN12nZruKRSoKaa54mD/6T8wAAtkdnJ3dZHcOrhStsC5
+         r+jw47uL2Y17t5IjJoJ54y7u6HcKzaCV/vMEhI7YDROcTWP3ucOIHSCR4DRL8mFcj4Jd
+         k41X4OGhL+U1kkDaUb0FJcUpIUn+SBY0xDfY37SgVQ3R4tgqA5KfKbZVav45fHodZnHC
+         xcSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8lynjc9FImYn3DS1nNlFKZK9eba4zI8O5MGLVIpLl4U=;
+        b=Zw+/GQyOdLyl+W9OG1259HMoC31VtVK744EpNx9JmjT0EVEUWH2gLOjmZusotodm5m
+         ELSWSwNIj0yOgoW1tQ5TwOGFmhypZoKMmKFiii0l5+JtmoOXogca20A5+PRt3k5ho3il
+         6t4j6sFoCx29gcyh+t2kokdCRhjeGdZPPCiSfCD6SWM0jus+BhQomTT6s3FRyZ6S6op5
+         JKLcLWKbiv25vfFVjrKLJbuorw75qbx9E1vEPSZ+1FBO2fwcx5yDagW1JavlqvFEsCCx
+         8lYW9R/1JJqVA0CijMH2bq6V984S3b3VbCsOSzpyCGIUys5RBFBm9cf8MDyl0kA7aB+B
+         mwZw==
+X-Gm-Message-State: APjAAAXE1Eb8rn/eN6mxrdiPv80YAWeUt9VdzZoEGd2y/ompbAUPnQE1
+        f+S3A5tj6BCwuRxCQL5VEK0=
+X-Google-Smtp-Source: APXvYqyCZT0pmKBNeTy1hX617tFwAmlnRw184XgWnkTGtOBmuOjMleyAZL2FGjRqQIQyMRsZMUyttw==
+X-Received: by 2002:a62:7608:: with SMTP id r8mr76407314pfc.190.1558322647205;
+        Sun, 19 May 2019 20:24:07 -0700 (PDT)
+Received: from localhost ([43.224.245.181])
+        by smtp.gmail.com with ESMTPSA id i7sm11977259pfo.19.2019.05.19.20.24.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2019 20:24:06 -0700 (PDT)
+From:   Weitao Hou <houweitaoo@gmail.com>
+To:     jinpu.wang@profitbricks.com, lindar_liu@usish.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Weitao Hou <houweitaoo@gmail.com>
+Subject: [PATCH] scsi: fix typos in code comments
+Date:   Mon, 20 May 2019 11:24:03 +0800
+Message-Id: <20190520032403.12513-1-houweitaoo@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix this compiler warning on arm64 platform.
+fix abord to abort
 
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
 ---
- drivers/hwtracing/intel_th/msu.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/scsi/pm8001/pm8001_sas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index 81bb54fa3ce8..e15ed5c308e1 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -780,7 +780,7 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
- static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index 88eef3b18e41..3de57c5a3299 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -1181,7 +1181,7 @@ int pm8001_query_task(struct sas_task *task)
+ 	return rc;
+ }
+ 
+-/*  mandatory SAM-3, still need free task/ccb info, abord the specified task */
++/*  mandatory SAM-3, still need free task/ccb info, abort the specified task */
+ int pm8001_abort_task(struct sas_task *task)
  {
- 	struct msc_window *win;
--	int ret = -ENOMEM, i;
-+	int ret = -ENOMEM;
- 
- 	if (!nr_blocks)
- 		return 0;
-@@ -812,7 +812,7 @@ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
- 		goto err_nomem;
- 
- #ifdef CONFIG_X86
--	for (i = 0; i < ret; i++)
-+	for (int i = 0; i < ret; i++)
- 		/* Set the page as uncached */
- 		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
- #endif
-@@ -860,8 +860,6 @@ static void __msc_buffer_win_free(struct msc *msc, struct msc_window *win)
-  */
- static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- {
--	int i;
--
- 	msc->nr_pages -= win->nr_blocks;
- 
- 	list_del(&win->entry);
-@@ -871,7 +869,7 @@ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- 	}
- 
- #ifdef CONFIG_X86
--	for (i = 0; i < win->nr_blocks; i++)
-+	for (int i = 0; i < win->nr_blocks; i++)
- 		/* Reset the page to write-back */
- 		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
- #endif
+ 	unsigned long flags;
 -- 
-2.7.4
+2.18.0
 
