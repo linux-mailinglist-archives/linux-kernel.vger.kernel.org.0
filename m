@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D64023BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 780D123C01
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391012AbfETPYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:24:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38346 "EHLO mx1.redhat.com"
+        id S2392129AbfETP0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:26:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730766AbfETPYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:24:41 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730766AbfETP0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 11:26:09 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3FA22369CC;
-        Mon, 20 May 2019 15:24:41 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C49D717DD0;
-        Mon, 20 May 2019 15:24:39 +0000 (UTC)
-Subject: Re: [PATCH] scsi: ses: Fix out-of-bounds memory access in
- ses_enclosure_data_process()
-To:     James Bottomley <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190501180535.26718-1-longman@redhat.com>
- <1fd39969-4413-2f11-86b2-729787680efa@redhat.com>
- <1558363938.3742.1.camel@linux.ibm.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <3385cf54-7b6c-3f28-e037-f0d4037368eb@redhat.com>
-Date:   Mon, 20 May 2019 11:24:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FC8F2054F;
+        Mon, 20 May 2019 15:26:07 +0000 (UTC)
+Date:   Mon, 20 May 2019 11:26:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>,
+        Joel Fernandes <joel@joelfernandes.org>, yhs@fb.com
+Subject: Re: [PATCH -tip v9 0/6] tracing/probes: uaccess: Add support
+ user-space access
+Message-ID: <20190520112605.421bda88@gandalf.local.home>
+In-Reply-To: <20190515055534.GA39270@gmail.com>
+References: <155789866428.26965.8344923934342528416.stgit@devnote2>
+        <20190515055534.GA39270@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1558363938.3742.1.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 20 May 2019 15:24:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 10:52 AM, James Bottomley wrote:
-> On Mon, 2019-05-20 at 10:41 -0400, Waiman Long wrote:
-> [...]
->>> --- a/drivers/scsi/ses.c
->>> +++ b/drivers/scsi/ses.c
->>> @@ -605,9 +605,14 @@ static void ses_enclosure_data_process(struct
->>> enclosure_device *edev,
->>>  			     /* these elements are optional */
->>>  			     type_ptr[0] ==
->>> ENCLOSURE_COMPONENT_SCSI_TARGET_PORT ||
->>>  			     type_ptr[0] ==
->>> ENCLOSURE_COMPONENT_SCSI_INITIATOR_PORT ||
->>> -			     type_ptr[0] ==
->>> ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS))
->>> +			     type_ptr[0] ==
->>> ENCLOSURE_COMPONENT_CONTROLLER_ELECTRONICS)) {
->>>  				addl_desc_ptr += addl_desc_ptr[1]
->>> + 2;
->>>  
->>> +				/* Ensure no out-of-bounds memory
->>> access */
->>> +				if (addl_desc_ptr >= ses_dev-
->>>> page10 +
->>> +						     ses_dev-
->>>> page10_len)
->>> +					addl_desc_ptr = NULL;
->>> +			}
->>>  		}
->>>  	}
->>>  	kfree(buf);
->> Ping! Any comment on this patch.
-> The update looks fine to me:
->
-> Reviewed-by: James E.J. Bottomley <jejb@linux.ibm.com>
->
-> It might also be interesting to find out how the proliant is
-> structuring this descriptor array to precipitate the out of bounds: Is
-> it just an off by one or something more serious?
+On Wed, 15 May 2019 07:55:34 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-I didn't look into the detail the enclosure message returned by the
-hardware, but I believe it may have more description entries (page7)
-than extended description entries (page10).
+> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hi,
+> > 
+> > Here is the v9 series of probe-event to support user-space access.
+> > Previous version is here.
+> > 
+> > https://lkml.kernel.org/r/155741476971.28419.15837024173365724167.stgit@devnote2
+> > 
+> > In this version, I fixed more typos/style issues.
+> > 
+> > Changes in v9:
+> >  [3/6]
+> >       - Fix other style & coding issues (Thanks Ingo!)
+> >       - Update fetch_store_string() for style consistency.
+> >  [4/6]
+> >       - Remove an unneeded line break.
+> >       - Move || and && in if-condition at the end of line.  
+> 
+> LGTM:
+> 
+> Acked-by: Ingo Molnar <mingo@kernel.org>
+> 
 
-I can try to reserve the system and find out what exactly is wrong with
-that system if you really want to find that out.
+Hi Ingo,
 
-Cheers,
-Longman
+Do you want me to take this through my tree, or do you want to take it
+through yours?
 
+Thanks,
+
+-- Steve
