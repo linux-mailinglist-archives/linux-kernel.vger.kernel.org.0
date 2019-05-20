@@ -2,219 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0C922E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7369322E49
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbfETIT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:19:57 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39614 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbfETIT5 (ORCPT
+        id S1731244AbfETIUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:20:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727878AbfETIUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:19:57 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v2so9326400oie.6;
-        Mon, 20 May 2019 01:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Io8U2uxD7AxFcrvz9R7N8axfmbAkr2qEV9G+U3v4mUM=;
-        b=PGe3DtvjNrOxtHbxnpL666wCxe3YyG46ZOiZiiygJ/JZ6zcpkZR3tZghhSUCHZ6RpU
-         9qfMxyv0F7AbQB9aOEWtXcaLDIndkW28fTC+aRlxzn1awXUnvNXk8+S77h2h2AXWWBRn
-         d9UMM4tgXXP+bWhyKjPZYy0PUkPmYNLE37Vx1LS+p5UWk7FSTuY8rrZWNzGVB5Ogd5l6
-         l6mvMg3MrZC33Y09Fz8SluXr97z5044KVJBFZ8bQUgpmzIbNpVmLi8Fmy2L3BWetPZ9b
-         9y5HuBNZOa5074aW04kDJlyG74FKE4XpLCuwQt9O/w0UoorkbzZFftOrieYICqaZK+cU
-         VXpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Io8U2uxD7AxFcrvz9R7N8axfmbAkr2qEV9G+U3v4mUM=;
-        b=iQsozkLfNXXVPI/YcQSXi+hPaJnT6Y33LoPy/VpS1graJLHJrxmy9nHuazDd+Y0vso
-         6etHZ+AFwq8qZNjW1yfm8w9kZwO/7YsJlIKYSFkEzcj9z1AaVep7THpmFbdkY5tTdN9v
-         QJ8JrSviCAZ2H8WQyjVddJWnEnwSg1NW5xaRruohTVN9GRCoUKlQ4fjGeoBCMALPR7aJ
-         Zf6eba8/qp5fCid3vW+s/9RkLLcfhj6vBH3PXwce79O33oi85GN62CkcS+0AHNiVCUQu
-         1wN1qyXlmkNMemuzokE1Nt6YNgVIlrHTWgFlAZ3zT5rJIV0xrY4TwySgIJYjDUY5+Y9s
-         IyAQ==
-X-Gm-Message-State: APjAAAV9BmlGqkoE8Rr94l9FLK+G/HHOtpaYakuXyupWlhJgq8bYkBjw
-        ai/lRMwS/2nrHrG2yDChKDtZrgChKdExm75Tsxo=
-X-Google-Smtp-Source: APXvYqxwBPJTrJRMWYDJHKYX+JLUubFq4AZB+BrSKFkshE8IDhEU8yoGvoIEdwo3CZps18UUrSiTsXiu9H43mA6+BCk=
-X-Received: by 2002:aca:ea55:: with SMTP id i82mr22043801oih.33.1558340396639;
- Mon, 20 May 2019 01:19:56 -0700 (PDT)
+        Mon, 20 May 2019 04:20:45 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4K8HOA4121409
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:20:45 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2skrbdrwen-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:20:44 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bharata@linux.ibm.com>;
+        Mon, 20 May 2019 09:20:42 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 May 2019 09:20:39 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4K8KcNM41615518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 May 2019 08:20:38 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADC194C044;
+        Mon, 20 May 2019 08:20:38 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F1874C050;
+        Mon, 20 May 2019 08:20:37 +0000 (GMT)
+Received: from in.ibm.com (unknown [9.124.35.55])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 20 May 2019 08:20:37 +0000 (GMT)
+Date:   Mon, 20 May 2019 13:50:35 +0530
+From:   Bharata B Rao <bharata@linux.ibm.com>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     aneesh.kumar@linux.ibm.com, bharata@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        srikanth <sraithal@linux.vnet.ibm.com>
+Subject: Re: PROBLEM: Power9: kernel oops on memory hotunplug from ppc64le
+ guest
+Reply-To: bharata@linux.ibm.com
+References: <16a7a635-c592-27e2-75b4-d02071833278@linux.vnet.ibm.com>
+ <20190518141434.GA22939@in.ibm.com>
+ <878sv1993k.fsf@concordia.ellerman.id.au>
+ <20190520042533.GB22939@in.ibm.com>
+ <1558327521.633yjtl8ki.astroid@bobo.none>
+ <20190520055622.GC22939@in.ibm.com>
+ <1558335484.9inx69a7ea.astroid@bobo.none>
 MIME-Version: 1.0
-References: <1557975980-9875-1-git-send-email-wanpengli@tencent.com>
- <1557975980-9875-6-git-send-email-wanpengli@tencent.com> <20190517195049.GI15006@linux.intel.com>
-In-Reply-To: <20190517195049.GI15006@linux.intel.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 20 May 2019 16:19:47 +0800
-Message-ID: <CANRm+CwfDbVS2tYG0XCD8Gvx6GtszGLphiTvFMBYmwdt13P=1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] KVM: LAPIC: Optimize timer latency further
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558335484.9inx69a7ea.astroid@bobo.none>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19052008-0016-0000-0000-0000027D850F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052008-0017-0000-0000-000032DA6802
+Message-Id: <20190520082035.GD22939@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905200060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 May 2019 at 03:50, Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, May 16, 2019 at 11:06:20AM +0800, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Advance lapic timer tries to hidden the hypervisor overhead between the
-> > host emulated timer fires and the guest awares the timer is fired. Howe=
-ver,
-> > it just hidden the time between apic_timer_fn/handle_preemption_timer -=
->
-> > wait_lapic_expire, instead of the real position of vmentry which is
-> > mentioned in the orignial commit d0659d946be0 ("KVM: x86: add option to
-> > advance tscdeadline hrtimer expiration"). There is 700+ cpu cycles betw=
-een
-> > the end of wait_lapic_expire and before world switch on my haswell desk=
-top.
-> >
-> > This patch tries to narrow the last gap(wait_lapic_expire -> world swit=
-ch),
-> > it takes the real overhead time between apic_timer_fn/handle_preemption=
-_timer
-> > and before world switch into consideration when adaptively tuning timer
-> > advancement. The patch can reduce 40% latency (~1600+ cycles to ~1000+ =
-cycles
-> > on a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testi=
-ng
-> > busy waits.
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Cc: Liran Alon <liran.alon@oracle.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> >  arch/x86/kvm/lapic.c   | 3 ++-
-> >  arch/x86/kvm/lapic.h   | 2 +-
-> >  arch/x86/kvm/svm.c     | 4 ++++
-> >  arch/x86/kvm/vmx/vmx.c | 4 ++++
-> >  arch/x86/kvm/x86.c     | 3 ---
-> >  5 files changed, 11 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index af38ece..63513de 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -1531,7 +1531,7 @@ static inline void adaptive_tune_timer_advancemen=
-t(struct kvm_vcpu *vcpu,
-> >       apic->lapic_timer.timer_advance_ns =3D timer_advance_ns;
-> >  }
-> >
-> > -void wait_lapic_expire(struct kvm_vcpu *vcpu)
-> > +void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
-> >  {
-> >       struct kvm_lapic *apic =3D vcpu->arch.apic;
-> >       u64 guest_tsc, tsc_deadline;
-> > @@ -1553,6 +1553,7 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
-> >       if (unlikely(!apic->lapic_timer.timer_advance_adjust_done))
-> >               adaptive_tune_timer_advancement(vcpu, apic->lapic_timer.a=
-dvance_expire_delta);
-> >  }
-> > +EXPORT_SYMBOL_GPL(kvm_wait_lapic_expire);
-> >
-> >  static void start_sw_tscdeadline(struct kvm_lapic *apic)
-> >  {
-> > diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-> > index 3e72a25..f974a3d 100644
-> > --- a/arch/x86/kvm/lapic.h
-> > +++ b/arch/x86/kvm/lapic.h
-> > @@ -220,7 +220,7 @@ static inline int kvm_lapic_latched_init(struct kvm=
-_vcpu *vcpu)
-> >
-> >  bool kvm_apic_pending_eoi(struct kvm_vcpu *vcpu, int vector);
-> >
-> > -void wait_lapic_expire(struct kvm_vcpu *vcpu);
-> > +void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu);
-> >
-> >  bool kvm_intr_is_single_vcpu_fast(struct kvm *kvm, struct kvm_lapic_ir=
-q *irq,
-> >                       struct kvm_vcpu **dest_vcpu);
-> > diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> > index 6b92eaf..955cfcb 100644
-> > --- a/arch/x86/kvm/svm.c
-> > +++ b/arch/x86/kvm/svm.c
-> > @@ -5638,6 +5638,10 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-> >       clgi();
-> >       kvm_load_guest_xcr0(vcpu);
-> >
-> > +     if (lapic_in_kernel(vcpu) &&
-> > +             vcpu->arch.apic->lapic_timer.timer_advance_ns)
->
-> Nit: align the two lines of the if statement, doing so makes it easier to
->      differentiate between the condition and execution, e.g.:
->
->         if (lapic_in_kernel(vcpu) &&
->             vcpu->arch.apic->lapic_timer.timer_advance_ns)
->                 kvm_wait_lapic_expire(vcpu);
+On Mon, May 20, 2019 at 05:00:21PM +1000, Nicholas Piggin wrote:
+> Bharata B Rao's on May 20, 2019 3:56 pm:
+> > On Mon, May 20, 2019 at 02:48:35PM +1000, Nicholas Piggin wrote:
+> >> >> > git bisect points to
+> >> >> >
+> >> >> > commit 4231aba000f5a4583dd9f67057aadb68c3eca99d
+> >> >> > Author: Nicholas Piggin <npiggin@gmail.com>
+> >> >> > Date:   Fri Jul 27 21:48:17 2018 +1000
+> >> >> >
+> >> >> >     powerpc/64s: Fix page table fragment refcount race vs speculative references
+> >> >> >
+> >> >> >     The page table fragment allocator uses the main page refcount racily
+> >> >> >     with respect to speculative references. A customer observed a BUG due
+> >> >> >     to page table page refcount underflow in the fragment allocator. This
+> >> >> >     can be caused by the fragment allocator set_page_count stomping on a
+> >> >> >     speculative reference, and then the speculative failure handler
+> >> >> >     decrements the new reference, and the underflow eventually pops when
+> >> >> >     the page tables are freed.
+> >> >> >
+> >> >> >     Fix this by using a dedicated field in the struct page for the page
+> >> >> >     table fragment allocator.
+> >> >> >
+> >> >> >     Fixes: 5c1f6ee9a31c ("powerpc: Reduce PTE table memory wastage")
+> >> >> >     Cc: stable@vger.kernel.org # v3.10+
+> >> >> 
+> >> >> That's the commit that added the BUG_ON(), so prior to that you won't
+> >> >> see the crash.
+> >> > 
+> >> > Right, but the commit says it fixes page table page refcount underflow by
+> >> > introducing a new field &page->pt_frag_refcount. Now we are hitting the underflow
+> >> > for this pt_frag_refcount.
+> >> 
+> >> The fixed underflow is caused by a bug (race on page count) that got 
+> >> fixed by that patch. You are hitting a different underflow here. It's
+> >> not certain my patch caused it, I'm just trying to reproduce now.
+> > 
+> > Ok.
+> 
+> Can't reproduce I'm afraid, tried adding and removing 8GB memory from a
+> 4GB guest (via host adding / removing memory device), and it just works.
 
-This can result in checkpatch.pl complain:
+Boot, add 8G, reboot, remove 8G is the sequence to reproduce.
 
-WARNING: suspect code indent for conditional statements (8, 24)
-#94: FILE: arch/x86/kvm/vmx/vmx.c:6436:
-+    if (lapic_in_kernel(vcpu) &&
-[...]
-+            kvm_wait_lapic_expire(vcpu);
+> 
+> It's likely to be an edge case like an off by one or rounding error
+> that just happens to trigger in your config. Might be easiest if you
+> could test with a debug patch.
+
+Sure, I will continue debugging.
 
 Regards,
-Wanpeng Li
+Bharata.
 
->
-> > +             kvm_wait_lapic_expire(vcpu);
-> > +
-> >       /*
-> >        * If this vCPU has touched SPEC_CTRL, restore the guest's value =
-if
-> >        * it's non-zero. Since vmentry is serialising on affected CPUs, =
-there
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index e1fa935..771d3bf 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -6423,6 +6423,10 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
-> >
-> >       vmx_update_hv_timer(vcpu);
-> >
-> > +     if (lapic_in_kernel(vcpu) &&
-> > +             vcpu->arch.apic->lapic_timer.timer_advance_ns)
-> > +             kvm_wait_lapic_expire(vcpu);
->
-> Same comment as above.  With those fixed:
->
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> > +
-> >       /*
-> >        * If this vCPU has touched SPEC_CTRL, restore the guest's value =
-if
-> >        * it's non-zero. Since vmentry is serialising on affected CPUs, =
-there
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 4a7b00c..e154f52 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -7903,9 +7903,6 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu=
-)
-> >       }
-> >
-> >       trace_kvm_entry(vcpu->vcpu_id);
-> > -     if (lapic_in_kernel(vcpu) &&
-> > -         vcpu->arch.apic->lapic_timer.timer_advance_ns)
-> > -             wait_lapic_expire(vcpu);
-> >       guest_enter_irqoff();
-> >
-> >       fpregs_assert_state_consistent();
-> > --
-> > 2.7.4
-> >
