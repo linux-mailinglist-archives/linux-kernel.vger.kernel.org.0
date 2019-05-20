@@ -2,105 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F79722F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8128D22F84
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbfETI4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:56:50 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47730 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfETI4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:56:50 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 197348021D; Mon, 20 May 2019 10:56:38 +0200 (CEST)
-Date:   Mon, 20 May 2019 10:56:47 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Ran Wang <ran.wang_1@nxp.com>
-Cc:     Pavel Machek <pavel@denx.de>, Leo Li <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V2 3/3] soc: fsl: add RCPM driver
-Message-ID: <20190520085647.GA9748@amd>
-References: <20190517033946.30763-1-ran.wang_1@nxp.com>
- <20190517033946.30763-3-ran.wang_1@nxp.com>
- <20190519213844.GH31403@amd>
- <AM5PR0402MB2865EC5E1EF12C6C1D3C5566F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+        id S1731705AbfETI5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:57:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfETI5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:57:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9A56204FD;
+        Mon, 20 May 2019 08:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558342631;
+        bh=sqBRBNYx88jBR4CAFDwy0bVCEpQ/bWh2PM+rtQzV+Uo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kBghcluu904iLZDgDasB1qWGsD1n65j6ly4K7EwC5tyFIyy9xsPyVKKMgaRPTbANg
+         u0OP6z70K/Dh/64Rdj4KSaIr3Rno1yrKWcaa3CjB8tG0sXsz74M0usmQVngvW68VRb
+         ghI/2JiwB78f+zmRVRji3Fnpx619EVvlYF81WW0A=
+Date:   Mon, 20 May 2019 10:57:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] staging: rtl8723bs: hal: odm_HWConfig: odm_HWConfig:
+ Unneeded variable: "result". Return "HAL_STATUS_SUCCESS"
+Message-ID: <20190520085709.GE19183@kroah.com>
+References: <20190519172723.GA9329@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM5PR0402MB2865EC5E1EF12C6C1D3C5566F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190519172723.GA9329@hari-Inspiron-1545>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, May 19, 2019 at 10:57:24PM +0530, Hariprasad Kelam wrote:
+> This patch fixes below warnings reported by coccicheck
+> 
+> drivers/staging/rtl8723bs/hal/odm_HWConfig.c:501:4-10: Unneeded
+> variable: "result". Return "HAL_STATUS_SUCCESS" on line 526
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> -----
+> Changes in v2:
+>   - fixed typo in commit message
+> ---
+> 
+> ---
+>  drivers/staging/rtl8723bs/hal/odm_HWConfig.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+> index d802a1f..4711c65 100644
+> --- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+> +++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+> @@ -498,8 +498,6 @@ HAL_STATUS ODM_ConfigBBWithHeaderFile(
+>  
+>  HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm)
+>  {
+> -	u8 result = HAL_STATUS_SUCCESS;
+> -
+>  	ODM_RT_TRACE(
+>  		pDM_Odm,
+>  		ODM_COMP_INIT,
+> @@ -523,5 +521,5 @@ HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm)
+>  
+>  	READ_AND_CONFIG(8723B, _MAC_REG);
+>  
+> -	return result;
+> +	return HAL_STATUS_SUCCESS;
+>  }
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This whole function should really be reduced to just one line (the trace
+stuff is not needed), and as this can not fail, it should not be
+returning a value.
 
-Hi!
+And if it can be one line, then why is it a function at all?  It's only
+called in one place.
 
-> > > +static int rcpm_pm_prepare(struct device *dev) {
-> > > +	struct device_node *np =3D dev->of_node;
-> > > +	struct wakeup_source *ws;
-> > > +	struct rcpm *rcpm;
-> > > +	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1], tmp;
-> > > +	int i, ret;
-> > > +
-> > > +	rcpm =3D dev_get_drvdata(dev);
-> > > +	if (!rcpm)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* Begin with first registered wakeup source */
-> > > +	ws =3D wakeup_source_get_next(NULL);
-> > > +	while (ws) {
-> >=20
-> > while (ws =3D wakeup_source_get_next(NULL)) ?
->=20
-> Actually, we only pass NULL to wakeup_source_get_next() at very first
-> call to get 1st wakeup source. Then in the while loop, we will fetch
-> next source but not 1st, that's different. I am afraid your suggestion
-> is not quite correct.
+thanks,
 
-Sorry, I seen your next version before seeing this explanation.
-
-You are right, but the current code is "interesting". What about
-
-    ws =3D NULL;
-    while (ws =3D wakeup_source_get_next(NULL)) ...
-
-then?
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzia88ACgkQMOfwapXb+vLCHQCdEiZVnts+sVGDltC60TnL3F9y
-ltIAn0M2k/oHNFq1zm74JskvAw6PG/L7
-=/fdT
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
+greg k-h
