@@ -2,77 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AC823F8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0FC23FEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfETRzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:55:44 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36005 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfETRzn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:55:43 -0400
-Received: by mail-oi1-f195.google.com with SMTP id y124so6356890oiy.3;
-        Mon, 20 May 2019 10:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TmOplSbOfwPXiFLdMSnHPPDbLWjw+oFluB1geaReHmI=;
-        b=KZjhBKGLwyndxwWL6jtb95hY1xBVkukLaGn9BsJy2YgB9WI9qT5FUGS8fweJo82pMN
-         FEVaoluxUufAssA0ighz7jFjymDluWnk0dPaXuThEfHLH20ItweBAuY7OZx9Fo7ztOcp
-         gm2NNK7UdUnNEt4hCYMsK5iKjn5xPL3i6kht8hl4AWIVaN8BFVU6Qve7hGvouVopgfR/
-         4czpH6/ycX1pHYeBexVlbIgnzgOocLq/qc/aO1Ih8v+BblWAn6Mgz+XyXa+uNsmiGQlU
-         IgpfuMQ+QzlcDleA35auW9O6vee/TqOr8zXg+pL5yKfkOR2M77+sU5KBn2wLeOlcivMt
-         X15g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TmOplSbOfwPXiFLdMSnHPPDbLWjw+oFluB1geaReHmI=;
-        b=gtrVuFTjaowMKiLgYpCS0DqkshGs0Y6lww4KQp1iZXIbuEm5FigURi3dgJztzD93Cq
-         3DKinQXwTaanCGD57xHQApxr1AXd6adZM/G7hgczdu4RgHuLE4JCVowFMR+v6YsAmpkE
-         86VfAwSoPtrWUGABNGfiOatb2OsL67PVTtdVL0tyIlID2pA68NpevEOVQbg8lvUtBcUJ
-         ZlQOgBJ8QWN7gBnAUvkTdwTHTjO0XxRvCPCwjHua1/8BI7z9FoP/zMFVSykJt1w0OI5P
-         LOQR8UQ1txVPYvLmlnaZLEB3BO4t+lb6HTMabv96di/w2oS648u0Ac9PbIDndD03KDlW
-         D35g==
-X-Gm-Message-State: APjAAAVs9f+JRyBikiEMSqr1kOZ/tR3njxJKwzLUzOx7CmSpaYWRCvuy
-        Y7TPh/2mHkimuDUmylPAMLJPUxbktDZDiNMgXIQ=
-X-Google-Smtp-Source: APXvYqyG0v0OSWuexhekflnwntq/Q+vi0aE9b2sYgWysotk+X4xcLiCnq0ct6UNtu0iUbwSdClu2x6C9Fc4llN1jktw=
-X-Received: by 2002:aca:f144:: with SMTP id p65mr277382oih.47.1558374942891;
- Mon, 20 May 2019 10:55:42 -0700 (PDT)
+        id S1727281AbfETSGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 14:06:17 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:47715 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbfETSGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 14:06:16 -0400
+X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 14:06:15 EDT
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 45763m0MdZz9t;
+        Mon, 20 May 2019 19:54:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1558374886; bh=hXE7AHhk3hVcTSSePlYKB9Bnza+wPxYvgvUVa4FLAsI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZDYqeYDGoE2mL3x/+uC0/QalyZqGXXaVmCUQpPqRVyY4+7M0TsipHp97zwKXyKVIy
+         GbYocBIkcKAONIMVifes8muu0oUVHPBtqkfkhX2a6oQ+DzJ+mN7UgB8hLy0Kdq5zKp
+         MRJwLUWypLRdkoa61oo2R0OB9FI4eoR42+MLq5KOOAhj3bHYYBxJSWALmKUUqLAKqb
+         jvdTEp1YKmsGAaw2IbVWqtQvUCTUO5qMndwhtXTVeHRnaz5tRIXIGufEBAXC17fZIF
+         YKdv3eoHpCgLsvYhzvEbUFoO8tE2KTbKffBb+hTWdrOdIQVVjcOqjCKEpcfcskAERk
+         5COH+wX22iT7g==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at mail
+Date:   Mon, 20 May 2019 19:55:55 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Eric Piel <eric.piel@tremplin-utc.net>,
+        Frank Haverkamp <haver@linux.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] misc: remove redundant 'default n' from Kconfig-s
+Message-ID: <20190520175555.GA5429@qmqm.qmqm.pl>
+References: <CGME20190520141047eucas1p2c6006d1ecfc3eb287b6b33d131f66180@eucas1p2.samsung.com>
+ <1ab818ae-4d9f-d17a-f11f-7caaa5bf98bc@samsung.com>
 MIME-Version: 1.0
-References: <20190520140228.29325-1-narmstrong@baylibre.com>
-In-Reply-To: <20190520140228.29325-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 20 May 2019 19:55:32 +0200
-Message-ID: <CAFBinCD8Gkb0aRXWPb1uuezSHuS9DxQmnhuuSttspDzWHNAV1w@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: meson_saradc: update with SPDX Licence identifier
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ab818ae-4d9f-d17a-f11f-7caaa5bf98bc@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Mon, May 20, 2019 at 04:10:46PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> 'default n' is the default value for any bool or tristate Kconfig
+> setting so there is no need to write it explicitly.
+> 
+> Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+> is not set' for visible symbols") the Kconfig behavior is the same
+> regardless of 'default n' being present or not:
+> 
+>     ...
+>     One side effect of (and the main motivation for) this change is making
+>     the following two definitions behave exactly the same:
+>     
+>         config FOO
+>                 bool
+>     
+>         config FOO
+>                 bool
+>                 default n
+>     
+>     With this change, neither of these will generate a
+>     '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+>     That might make it clearer to people that a bare 'default n' is
+>     redundant.
+>     ...
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+[...]
+>  drivers/misc/cb710/Kconfig        |    1 -
 
-On Mon, May 20, 2019 at 4:02 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/iio/adc/meson_saradc.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
-> index 510d8b7ef3a0..e39d95734496 100644
-> --- a/drivers/iio/adc/meson_saradc.c
-> +++ b/drivers/iio/adc/meson_saradc.c
-> @@ -1,14 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-the original license text didn't mention "... or later"
-personally I'm happy with either GPL-2.0 or GPL-2.0+
+Acked-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
