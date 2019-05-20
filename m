@@ -2,110 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5300E23C34
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA3823CE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392188AbfETPcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:32:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55240 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731262AbfETPcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:32:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jKdrdCTZgDXkXxUUja9CogRGjradAVpD3DVJ1Pki/4I=; b=aCs7wcUoxJB8THDFLmuZN/+csc
-        5NGo+6Hhw0XMmUbANSxQ7NJU2gfKmJHnzo44SwBSayzJeCPWccr8FscvvREcDy1WjOGho6C2htYE+
-        mIxTx79sMlV//glSG7G9LDo/4SFf6NpH9ECirOYqMWXAAgULqtthi9lseEemVvXaWNXSeTU63aDYR
-        2iRbTBZQVAplgi2JJdiEiDIdxlwgGj2kC+PZckcbpRI6eWrCKo6P30LxYKl2vuiqOhkmn06iObX01
-        AWPdB8eTatr1a4x0fGuHHLzgjlEt7r4TiCZqnpq9jbXFBZJOoOCCjHe9MnLEGfnuPPRrseTfLA+DU
-        veo0VVig==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hSkGy-0000J5-UT; Mon, 20 May 2019 15:32:21 +0000
-Subject: Re: linux-next: Tree for May 20 (amdgpu)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Oded Gabbay <oded.gabbay@gmail.com>
-References: <20190520115530.46cf100d@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9e9c29f2-bb6e-572e-5486-7ddde2982ba0@infradead.org>
-Date:   Mon, 20 May 2019 08:32:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2391900AbfETQIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 12:08:02 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:50786 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387973AbfETQIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 12:08:01 -0400
+X-Greylist: delayed 2127 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 12:08:01 EDT
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hSkH4-00086s-4a; Mon, 20 May 2019 23:32:26 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hSkGx-00023C-KB; Mon, 20 May 2019 23:32:19 +0800
+Date:   Mon, 20 May 2019 23:32:19 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Anirudh Gupta <anirudhrudr@gmail.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Anirudh Gupta <anirudh.gupta@sophos.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] xfrm: Fix xfrm sel prefix length validation
+Message-ID: <20190520153219.oq3se5wvkasgbtkp@gondor.apana.org.au>
+References: <20190520093157.59825-1-anirudh.gupta@sophos.com>
 MIME-Version: 1.0
-In-Reply-To: <20190520115530.46cf100d@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520093157.59825-1-anirudh.gupta@sophos.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/19/19 6:55 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190517:
-> 
-> Non-merge commits (relative to Linus' tree): 553
->  519 files changed, 11723 insertions(+), 3396 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 298 trees (counting Linus' and 69 trees of bug
-> fix patches pending for the current merge release).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
-> 
+On Mon, May 20, 2019 at 03:01:56PM +0530, Anirudh Gupta wrote:
+>
+> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+> index eb8d14389601..fc2a8c08091b 100644
+> --- a/net/xfrm/xfrm_user.c
+> +++ b/net/xfrm/xfrm_user.c
+> @@ -149,7 +149,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+>  	int err;
+>  
+>  	err = -EINVAL;
+> -	switch (p->family) {
+> +	switch (p->sel.family) {
+>  	case AF_INET:
+>  		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+>  			goto out;
 
-on i386, when built as loadable module:
-
-in amdgpu_ras_sysfs_badpages_read():
-ERROR: "__divdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-
-or when builtin:
-ld: drivers/gpu/drm/amd/amdgpu/amdgpu_ras.o: in function `amdgpu_ras_sysfs_badpages_read':
-amdgpu_ras.c:(.text+0x9ec): undefined reference to `__divdi3'
-ld: amdgpu_ras.c:(.text+0xa0a): undefined reference to `__divdi3'
-
-
-
+You just removed the only verification of p->family...
 -- 
-~Randy
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
