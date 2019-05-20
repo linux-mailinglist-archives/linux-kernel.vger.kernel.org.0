@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE21D2362D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B15023541
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389133AbfETM2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:28:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44564 "EHLO mail.kernel.org"
+        id S2390841AbfETMeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:34:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389724AbfETM2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:40 -0400
+        id S1733307AbfETMeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:34:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCBF8214DA;
-        Mon, 20 May 2019 12:28:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AE07204FD;
+        Mon, 20 May 2019 12:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355320;
-        bh=7msc1tKFakpzZ9gI2yrE7V/oN5Mph5vD65JhgljuaQs=;
+        s=default; t=1558355639;
+        bh=evbFVzhLxEg4SbCoKYUaCDJhdyPgsuUfMr8WxKWYoSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eB6vmEYNj7u0XjLFg7SiC1iR2vtz8nJNuaXY99YMn1dF/1xqkjePZBLqIT2suV17S
-         vszIBP8fmix7No8LXUd1ZpEAB8sYi8s6Fg8idI/M5JibJsENf+PGDad6Dq1bmjr9EM
-         UUdHNnO97Pp8qD9c5IS3pf+8iFTglRWVotdGnTHg=
+        b=fi/ZjgZpIa5N2zbyDfBAc5c93bbWdlggeESZy5O5RPtlPEGuNWbWHkUaxSes2wfZM
+         ApaqpiIL6kWMukNSIlKa2JKixJO2SAodo8qC7TCw7ZEMglpR4U0yb3VD+RJBCwijxs
+         wu4OGQ0gZ0xsY0EOZ+t1N6Yk1K88XTqgRQGT0M5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 5.0 075/123] mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
+        stable@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.1 068/128] crypto: ccree - handle tee fips error during power management resume
 Date:   Mon, 20 May 2019 14:14:15 +0200
-Message-Id: <20190520115249.830342843@linuxfoundation.org>
+Message-Id: <20190520115254.401097564@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Ofir Drang <ofir.drang@arm.com>
 
-commit ea611d1cc180fbb56982c83cd5142a2b34881f5c upstream.
+commit 7138377ce10455b7183c6dde4b2c51b33f464c45 upstream.
 
-The FPS_PERIOD_MAX_US definitions are swapped for MAX20024 and MAX77620,
-fix it.
+in order to support cryptocell tee fips error that may occurs while
+cryptocell ree is suspended, an cc_tee_handle_fips_error  call added
+to the cc_pm_resume function.
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Ofir Drang <ofir.drang@arm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/mfd/max77620.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_pm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/mfd/max77620.h
-+++ b/include/linux/mfd/max77620.h
-@@ -136,8 +136,8 @@
- #define MAX77620_FPS_PERIOD_MIN_US		40
- #define MAX20024_FPS_PERIOD_MIN_US		20
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -11,6 +11,7 @@
+ #include "cc_ivgen.h"
+ #include "cc_hash.h"
+ #include "cc_pm.h"
++#include "cc_fips.h"
  
--#define MAX77620_FPS_PERIOD_MAX_US		2560
--#define MAX20024_FPS_PERIOD_MAX_US		5120
-+#define MAX20024_FPS_PERIOD_MAX_US		2560
-+#define MAX77620_FPS_PERIOD_MAX_US		5120
+ #define POWER_DOWN_ENABLE 0x01
+ #define POWER_DOWN_DISABLE 0x00
+@@ -50,12 +51,13 @@ int cc_pm_resume(struct device *dev)
+ 	}
  
- #define MAX77620_REG_FPS_GPIO1			0x54
- #define MAX77620_REG_FPS_GPIO2			0x55
+ 	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_DISABLE);
+-
+ 	rc = init_cc_regs(drvdata, false);
+ 	if (rc) {
+ 		dev_err(dev, "init_cc_regs (%x)\n", rc);
+ 		return rc;
+ 	}
++	/* check if tee fips error occurred during power down */
++	cc_tee_handle_fips_error(drvdata);
+ 
+ 	rc = cc_resume_req_queue(drvdata);
+ 	if (rc) {
 
 
