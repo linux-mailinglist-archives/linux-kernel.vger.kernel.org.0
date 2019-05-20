@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67810233D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1735223439
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732777AbfETMUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33690 "EHLO mail.kernel.org"
+        id S2388913AbfETMYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:24:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387969AbfETMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:19 -0400
+        id S2388502AbfETMYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:24:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43BC120656;
-        Mon, 20 May 2019 12:20:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3568421479;
+        Mon, 20 May 2019 12:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354818;
-        bh=SouYgWQauP5ZFkhFFMqWevfg1i6+eLajnGKQ+6SjZq4=;
+        s=default; t=1558355084;
+        bh=N9QFeO4yQVMQCWzkv0CVm3igV/vAF6zg1t8BEEZGIbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l28Rxt1otr9s43vDW6TEIqQglVMfhFD8iNEdJqtw/GwsHc3DT00CRiPn9INFX9Djy
-         X1FKnBfe69IXzFHbmfKK6GUAMKG7139jPLihzvI+DPLmYsaw6NebZbXiylUqL1hLr3
-         Oh5H/W2umeSNDH3pkNH8MUktRZGfhcL4oRbCWlOY=
+        b=ahne2PDQSWZq8HCKGvhI9xFDo26wLPwCLzV+WBr0bt4q1qC263BVV18NUbP2uqZjU
+         qYzafox2TF8bwAMoSxp0nrVpUabnPxRR+OS0uQjresGdHxLkQiS9+fcjjhcpzW3opX
+         PI9D0xuJoKMaaqf5mVh3QLs4Kc8SchpI79wc/vzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 17/63] crypto: chacha20poly1305 - set cra_name correctly
+Subject: [PATCH 4.19 050/105] crypto: ccree - HOST_POWER_DOWN_EN should be the last CC access during suspend
 Date:   Mon, 20 May 2019 14:13:56 +0200
-Message-Id: <20190520115232.959361482@linuxfoundation.org>
+Message-Id: <20190520115250.492893602@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ofir Drang <ofir.drang@arm.com>
 
-commit 5e27f38f1f3f45a0c938299c3a34a2d2db77165a upstream.
+commit 3499efbeed39d114873267683b9e776bcb34b058 upstream.
 
-If the rfc7539 template is instantiated with specific implementations,
-e.g. "rfc7539(chacha20-generic,poly1305-generic)" rather than
-"rfc7539(chacha20,poly1305)", then the implementation names end up
-included in the instance's cra_name.  This is incorrect because it then
-prevents all users from allocating "rfc7539(chacha20,poly1305)", if the
-highest priority implementations of chacha20 and poly1305 were selected.
-Also, the self-tests aren't run on an instance allocated in this way.
+During power management suspend the driver need to prepare the device
+for the power down operation and as a last indication write to the
+HOST_POWER_DOWN_EN register which signals to the hardware that
+The ccree is ready for power down.
 
-Fix it by setting the instance's cra_name from the underlying
-algorithms' actual cra_names, rather than from the requested names.
-This matches what other templates do.
-
-Fixes: 71ebc4d1b27d ("crypto: chacha20poly1305 - Add a ChaCha20-Poly1305 AEAD construction, RFC7539")
-Cc: <stable@vger.kernel.org> # v4.2+
-Cc: Martin Willi <martin@strongswan.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Ofir Drang <ofir.drang@arm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/chacha20poly1305.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_pm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/chacha20poly1305.c
-+++ b/crypto/chacha20poly1305.c
-@@ -647,8 +647,8 @@ static int chachapoly_create(struct cryp
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -25,13 +25,13 @@ int cc_pm_suspend(struct device *dev)
+ 	int rc;
  
- 	err = -ENAMETOOLONG;
- 	if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
--		     "%s(%s,%s)", name, chacha_name,
--		     poly_name) >= CRYPTO_MAX_ALG_NAME)
-+		     "%s(%s,%s)", name, chacha->base.cra_name,
-+		     poly->cra_name) >= CRYPTO_MAX_ALG_NAME)
- 		goto out_drop_chacha;
- 	if (snprintf(inst->alg.base.cra_driver_name, CRYPTO_MAX_ALG_NAME,
- 		     "%s(%s,%s)", name, chacha->base.cra_driver_name,
+ 	dev_dbg(dev, "set HOST_POWER_DOWN_EN\n");
+-	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_ENABLE);
+ 	rc = cc_suspend_req_queue(drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "cc_suspend_req_queue (%x)\n", rc);
+ 		return rc;
+ 	}
+ 	fini_cc_regs(drvdata);
++	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_ENABLE);
+ 	cc_clk_off(drvdata);
+ 	return 0;
+ }
 
 
