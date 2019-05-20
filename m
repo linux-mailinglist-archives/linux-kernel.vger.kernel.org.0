@@ -2,307 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE6823DFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5250A23E02
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392694AbfETRDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:03:33 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42454 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390006AbfETRDc (ORCPT
+        id S2392720AbfETRFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:05:38 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41759 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390006AbfETRFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:03:32 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j53so17125591qta.9;
-        Mon, 20 May 2019 10:03:31 -0700 (PDT)
+        Mon, 20 May 2019 13:05:38 -0400
+Received: by mail-ed1-f68.google.com with SMTP id m4so24908908edd.8;
+        Mon, 20 May 2019 10:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8nYD/wBghMjI7r+sxYc83dAfSUCCIPAsTu8Qqxt/jkE=;
-        b=S/XJsMIyYLprGStC8Zt2qzRXDcAVTnhtaxSy2sqDq/tNuuvgyAG7Mnwjp8sLeqPWgs
-         lEEbyWbQ7KkVMn4y3fYCDwerOb5EmNnyAP+EFui6sCdoMyiZWbK0Nq06QN9sH9eKKQM6
-         8AzLFo14qmmwFHWvuMsF0+WbLmEqd4fK2ggzw9Gg1lc9IMZJ6whhgCmfdo20ktMHGlDS
-         /e2niFuxfRvi6jvmTergBnvdXgtH9mgwWNRYIS2HeAvxude/ZlwTMoaJXsBbNTp5x8AS
-         LT0DUlaE291xUagCC2rI8rgfNk6jy+rR/YP/AADHRSmh0WRbobqoYPP1VMf+Jp1lDCZF
-         7XpA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OXzVLW5EpqxY+BN5u1Vsu4+duiB4QcdQ8sWM4u2JA90=;
+        b=Gwww3aaU7y7zOHYkwmwbAcjKvlfAz1HeiKD4eRIU+qd+YGOBBI56iOegMUzaDNtS5/
+         tPdvuZ3Z+U/Io2cAZF/KT1/OhZRlGWqAePyYuoxibxy28XmvUa0kxOgh6T7RgglrPGjG
+         ZOKjTrS7GzJ1yAFQpgUYCNziSE6qCu4+dCczcnc1f4vXlrCz3tDiJHEuCa6rIN/99t2I
+         2Pq2mxvREq1171PWoBo8NTGIKLqwoZ3Lt1isLRShBUuSm1ly6sTpJ4yizWr0I6UQ6qTO
+         J2PEj3xurmc1ZCYOa9ndBgma1FoXnWlh222pMhCthpz+2QI8/Ih09tLUTXyodLk3h/vF
+         hmxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8nYD/wBghMjI7r+sxYc83dAfSUCCIPAsTu8Qqxt/jkE=;
-        b=c8b77PloM+cz48fPiITW/3g6np1h99b1Le0A5nyZgKeYQDc7yNFDAePK5XdXoxIrjt
-         BwJoogdKwt2tza/vL4BaKtvyAKB7K/hp1cqTz26xSAA1ZsLs2GnHdAWBmSEzSUQGGQmO
-         /AmVhqdZSnKalTPniv33KR/QTdw24kvq8k7Ain7B6WoIc3QOVXa3JCXmNIF8KERIwN2q
-         Hl2gjf9l/0Q+U4fjCeqe+B6q3TqzsvbfFxecUt3uhjSa1jh2AZsqcnxZUff/Z0vhYION
-         B5o5CN+/sdrKGCvmXHU4jD/PG1LrGPJ4lmmJrPlG7fHrOL0AyvJ+h85cRIQQPaNQrdKQ
-         BN+w==
-X-Gm-Message-State: APjAAAXVH/IgfVD1YgdUC8DYz+CV+KuFQx9z7YejJ8mTFdvF10r6081o
-        pWBR+1RXE2MXqG7fmZ1lKD7Auvlt
-X-Google-Smtp-Source: APXvYqzn75gjiw2pq1ki1IyfGXYmUIKUlcnTQ/n3B/KAtvsWn3SUzafe1skG0L9dy155192yTEWCfw==
-X-Received: by 2002:ac8:2291:: with SMTP id f17mr11906528qta.51.1558371810658;
-        Mon, 20 May 2019 10:03:30 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (179-241-218-42.3g.claro.net.br. [179.241.218.42])
-        by smtp.gmail.com with ESMTPSA id c9sm11695580qtc.39.2019.05.20.10.03.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 10:03:29 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id ADF43404A1; Mon, 20 May 2019 14:03:22 -0300 (-03)
-Date:   Mon, 20 May 2019 14:03:22 -0300
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] pert/report: Support s390 diag event display on x86
-Message-ID: <20190520170322.GN8945@kernel.org>
-References: <20190520144242.53207-1-tmricht@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OXzVLW5EpqxY+BN5u1Vsu4+duiB4QcdQ8sWM4u2JA90=;
+        b=YlvnNKFUM0nntVAKwUzpk1j8ANkdMn1/Lpx2t0skSJk/sMxDKfa0+fEzxmAEC1vQi5
+         ofuiQJapCuaCNG1KGaHtIb/haCBFzel0UC6cJ3H38VEutmIXyJlVQME+qJFrv3+4y87v
+         yflTHPYsS9rrPZqJWajCSUIa8RvGKe2uywsLeiYiZyq1xRD973gZr90wxluO89LxG2fd
+         9T/ceLM7YebJjoVC3tXniLkqIY93Zx2Ln3RFmm2JU5/vAg7j2RSrBL6Xo3nuSNG22RSO
+         Kbk/m2uGZgPhHujDJTxtvVCqF8tN2g2aX8v9XkPmiNCQGXE24uAVy4vJ8DscZEk6s6ad
+         9wmQ==
+X-Gm-Message-State: APjAAAWLGLdsWW+eKUwTqsVgxCDioulOB9fMAysGdme2QS4Ce+pm1KuP
+        3XyzkQRIxYxxOy4b+W6gZayVWQveITjDzZrPdOo=
+X-Google-Smtp-Source: APXvYqwAWYjUqNwga3IGqyvDXRz6Ayeuvbmx8E0yma/gdydaSLC2gGlrdIps5FN3Mr4TU31/EVCepxajOSqZgABdl9g=
+X-Received: by 2002:a50:9968:: with SMTP id l37mr76248294edb.143.1558371936408;
+ Mon, 20 May 2019 10:05:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520144242.53207-1-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190520093157.59825-1-anirudh.gupta@sophos.com> <20190520153219.oq3se5wvkasgbtkp@gondor.apana.org.au>
+In-Reply-To: <20190520153219.oq3se5wvkasgbtkp@gondor.apana.org.au>
+From:   Anirudh Gupta <anirudhrudr@gmail.com>
+Date:   Mon, 20 May 2019 22:35:24 +0530
+Message-ID: <CAN2cbVc3bbEcDB87S4UpySnMtC7oi40bWPK8bd4wW_nv5qEDJg@mail.gmail.com>
+Subject: Re: [PATCH net] xfrm: Fix xfrm sel prefix length validation
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Anirudh Gupta <anirudh.gupta@sophos.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, May 20, 2019 at 04:42:42PM +0200, Thomas Richter escreveu:
-> Perf report fails to display s390 specific event numbered bd000
-> on an x86 platform. For example on s390 this works without error:
-> 
-> [root@m35lp76 perf]# uname -m
-> s390x
-> [root@m35lp76 perf]# ./perf record -e rbd000 -- find / >/dev/null
-> [ perf record: Woken up 3 times to write data ]
-> [ perf record: Captured and wrote 0.549 MB perf.data ]
-> [root@m35lp76 perf]# ./perf report -D --stdio  > /dev/null
-> [root@m35lp76 perf]#
-> 
-> Transfering this perf.data file to an x86 platform and executing
-> the same report command produces:
-> 
-> [root@f29 perf]# uname -m
-> x86_64
-> [root@f29 perf]# ./perf report -i ~/perf.data.m35lp76 --stdio
-> interpreting bpf_prog_info from systems with endianity is not yet supported
-> interpreting btf from systems with endianity is not yet supported
-> 0x8c890 [0x8]: failed to process type: 68
-> Error:
-> failed to process sample
-> 
-> Event bd000 generates auxiliary data which is stored in big endian
-> format in the perf data file.
-> This error is caused by missing endianess handling on the x86 platform
-> when the data is displayed. Fix this by handling s390 auxiliary event
-> data depending on the local platform endianness.
-> 
-> Output after on x86:
-> 
-> [root@f29 perf]# ./perf report -D -i ~/perf.data.m35lp76 --stdio > /dev/null
-> interpreting bpf_prog_info from systems with endianity is not yet supported
-> interpreting btf from systems with endianity is not yet supported
-> [root@f29 perf]#
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> ---
->  tools/perf/util/s390-cpumsf.c | 95 ++++++++++++++++++++++++++++-------
->  1 file changed, 77 insertions(+), 18 deletions(-)
-> 
-> diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-> index c215704931dc..884ac79528ff 100644
-> --- a/tools/perf/util/s390-cpumsf.c
-> +++ b/tools/perf/util/s390-cpumsf.c
-> @@ -17,8 +17,8 @@
->   *	see Documentation/perf.data-file-format.txt.
->   * PERF_RECORD_AUXTRACE_INFO:
->   *	Defines a table of contains for PERF_RECORD_AUXTRACE records. This
-> - *	record is generated during 'perf record' command. Each record contains up
-> - *	to 256 entries describing offset and size of the AUXTRACE data in the
-> + *	record is generated during 'perf record' command. Each record contains
-> + *	up to 256 entries describing offset and size of the AUXTRACE data in the
+Hi Herbert,
+Yes, I notice that is the only verification of p->family from userspace.
+However, the underlying conditions added in commit '07bf7908950a',
+validates the selector src/dest prefix len.
 
-What is this for? Just a text reflow?
+So, In case when adding a new SA entry, the family of Selector src/dst
+is IPv6 and state id src/dst family is IPv4.
+Then, the IPv6 selector prefix verification falls in IPv4 switch case.
+This results in not being able to provide prefix length of more than
+32, even for IPv6 src/dst.
 
-Also, can you get a Reviewed-by from some other person that works with
-s/390?
+The above mentioned behaviour can easily be reproduced using below
+command having IPv6 selector src/dst with greater than 32 prefix
+length.
+ip xfrm state add src 1.1.6.1 dst 1.1.6.2 proto esp spi 4260196 \
+reqid 20004 mode tunnel aead "rfc4106(gcm(aes))" \
+0x1111016400000000000000000000000044440001 128 \
+sel src 1011:1:4::2/128 sel dst 1021:1:4::2/128 dev Port5
 
-- Arnaldo
+Please let me know, if I fail to explain my point or I am overlooking anything.
 
->   *	perf.data file.
->   * PERF_RECORD_AUXTRACE_ERROR:
->   *	Indicates an error during AUXTRACE collection such as buffer overflow.
-> @@ -237,10 +237,33 @@ static int s390_cpumcf_dumpctr(struct s390_cpumsf *sf,
->  	return rc;
->  }
->  
-> -/* Display s390 CPU measurement facility basic-sampling data entry */
-> +/* Display s390 CPU measurement facility basic-sampling data entry
-> + * Data written on s390 in big endian byte order and contains bit
-> + * fields across byte boundaries.
-> + */
->  static bool s390_cpumsf_basic_show(const char *color, size_t pos,
-> -				   struct hws_basic_entry *basic)
-> +				   struct hws_basic_entry *basicp)
->  {
-> +	struct hws_basic_entry *basic = basicp;
-> +#if __BYTE_ORDER == __LITTLE_ENDIAN
-> +	struct hws_basic_entry local;
-> +	unsigned long word = be64toh(*(unsigned long *)basicp);
-> +
-> +	memset(&local, 0, sizeof(local));
-> +	local.def = be16toh(basicp->def);
-> +	local.prim_asn = word & 0xffff;
-> +	local.CL = word >> 30 & 0x3;
-> +	local.I = word >> 32 & 0x1;
-> +	local.AS = word >> 33 & 0x3;
-> +	local.P = word >> 35 & 0x1;
-> +	local.W = word >> 36 & 0x1;
-> +	local.T = word >> 37 & 0x1;
-> +	local.U = word >> 40 & 0xf;
-> +	local.ia = be64toh(basicp->ia);
-> +	local.gpp = be64toh(basicp->gpp);
-> +	local.hpp = be64toh(basicp->hpp);
-> +	basic = &local;
-> +#endif
->  	if (basic->def != 1) {
->  		pr_err("Invalid AUX trace basic entry [%#08zx]\n", pos);
->  		return false;
-> @@ -258,10 +281,22 @@ static bool s390_cpumsf_basic_show(const char *color, size_t pos,
->  	return true;
->  }
->  
-> -/* Display s390 CPU measurement facility diagnostic-sampling data entry */
-> +/* Display s390 CPU measurement facility diagnostic-sampling data entry.
-> + * Data written on s390 in big endian byte order and contains bit
-> + * fields across byte boundaries.
-> + */
->  static bool s390_cpumsf_diag_show(const char *color, size_t pos,
-> -				  struct hws_diag_entry *diag)
-> +				  struct hws_diag_entry *diagp)
->  {
-> +	struct hws_diag_entry *diag = diagp;
-> +#if __BYTE_ORDER == __LITTLE_ENDIAN
-> +	struct hws_diag_entry local;
-> +	unsigned long word = be64toh(*(unsigned long *)diagp);
-> +
-> +	local.def = be16toh(diagp->def);
-> +	local.I = word >> 32 & 0x1;
-> +	diag = &local;
-> +#endif
->  	if (diag->def < S390_CPUMSF_DIAG_DEF_FIRST) {
->  		pr_err("Invalid AUX trace diagnostic entry [%#08zx]\n", pos);
->  		return false;
-> @@ -272,35 +307,51 @@ static bool s390_cpumsf_diag_show(const char *color, size_t pos,
->  }
->  
->  /* Return TOD timestamp contained in an trailer entry */
-> -static unsigned long long trailer_timestamp(struct hws_trailer_entry *te)
-> +static unsigned long long trailer_timestamp(struct hws_trailer_entry *te,
-> +					    int idx)
->  {
->  	/* te->t set: TOD in STCKE format, bytes 8-15
->  	 * to->t not set: TOD in STCK format, bytes 0-7
->  	 */
->  	unsigned long long ts;
->  
-> -	memcpy(&ts, &te->timestamp[te->t], sizeof(ts));
-> -	return ts;
-> +	memcpy(&ts, &te->timestamp[idx], sizeof(ts));
-> +	return be64toh(ts);
->  }
->  
->  /* Display s390 CPU measurement facility trailer entry */
->  static bool s390_cpumsf_trailer_show(const char *color, size_t pos,
->  				     struct hws_trailer_entry *te)
->  {
-> +#if __BYTE_ORDER == __LITTLE_ENDIAN
-> +	struct hws_trailer_entry local;
-> +
-> +	memset(&local, 0, sizeof(local));
-> +	local.f = be64toh(te->flags) >> 63 & 0x1;
-> +	local.a = be64toh(te->flags) >> 62 & 0x1;
-> +	local.t = be64toh(te->flags) >> 61 & 0x1;
-> +	local.bsdes = be16toh((be64toh(te->flags) >> 16 & 0xffff));
-> +	local.dsdes = be16toh((be64toh(te->flags) & 0xffff));
-> +	memcpy(&local.timestamp, te->timestamp, sizeof(te->timestamp));
-> +	local.overflow = be64toh(te->overflow);
-> +	local.clock_base = be64toh(te->progusage[0]) >> 63 & 1;
-> +	local.progusage2 = be64toh(te->progusage2);
-> +	te = &local;
-> +#endif
->  	if (te->bsdes != sizeof(struct hws_basic_entry)) {
->  		pr_err("Invalid AUX trace trailer entry [%#08zx]\n", pos);
->  		return false;
->  	}
->  	color_fprintf(stdout, color, "    [%#08zx] Trailer %c%c%c bsdes:%d"
->  		      " dsdes:%d Overflow:%lld Time:%#llx\n"
-> -		      "\t\tC:%d TOD:%#lx 1:%#llx 2:%#llx\n",
-> +		      "\t\tC:%d TOD:%#lx\n",
->  		      pos,
->  		      te->f ? 'F' : ' ',
->  		      te->a ? 'A' : ' ',
->  		      te->t ? 'T' : ' ',
->  		      te->bsdes, te->dsdes, te->overflow,
-> -		      trailer_timestamp(te), te->clock_base, te->progusage2,
-> -		      te->progusage[0], te->progusage[1]);
-> +		      trailer_timestamp(te, te->clock_base),
-> +		      te->clock_base, te->progusage2);
->  	return true;
->  }
->  
-> @@ -327,13 +378,13 @@ static bool s390_cpumsf_validate(int machine_type,
->  	*dsdes = *bsdes = 0;
->  	if (len & (S390_CPUMSF_PAGESZ - 1))	/* Illegal size */
->  		return false;
-> -	if (basic->def != 1)		/* No basic set entry, must be first */
-> +	if (be16toh(basic->def) != 1)	/* No basic set entry, must be first */
->  		return false;
->  	/* Check for trailer entry at end of SDB */
->  	te = (struct hws_trailer_entry *)(buf + S390_CPUMSF_PAGESZ
->  					      - sizeof(*te));
-> -	*bsdes = te->bsdes;
-> -	*dsdes = te->dsdes;
-> +	*bsdes = be16toh(te->bsdes);
-> +	*dsdes = be16toh(te->dsdes);
->  	if (!te->bsdes && !te->dsdes) {
->  		/* Very old hardware, use CPUID */
->  		switch (machine_type) {
-> @@ -495,19 +546,27 @@ static bool s390_cpumsf_make_event(size_t pos,
->  static unsigned long long get_trailer_time(const unsigned char *buf)
->  {
->  	struct hws_trailer_entry *te;
-> -	unsigned long long aux_time;
-> +	unsigned long long aux_time, progusage2;
-> +	bool clock_base;
->  
->  	te = (struct hws_trailer_entry *)(buf + S390_CPUMSF_PAGESZ
->  					      - sizeof(*te));
->  
-> -	if (!te->clock_base)	/* TOD_CLOCK_BASE value missing */
-> +#if __BYTE_ORDER == __LITTLE_ENDIAN
-> +	clock_base = be64toh(te->progusage[0]) >> 63 & 0x1;
-> +	progusage2 = be64toh(te->progusage[1]);
-> +#else
-> +	clock_base = te->clock_base;
-> +	progusage2 = te->progusage2;
-> +#endif
-> +	if (!clock_base)	/* TOD_CLOCK_BASE value missing */
->  		return 0;
->  
->  	/* Correct calculation to convert time stamp in trailer entry to
->  	 * nano seconds (taken from arch/s390 function tod_to_ns()).
->  	 * TOD_CLOCK_BASE is stored in trailer entry member progusage2.
->  	 */
-> -	aux_time = trailer_timestamp(te) - te->progusage2;
-> +	aux_time = trailer_timestamp(te, clock_base) - progusage2;
->  	aux_time = (aux_time >> 9) * 125 + (((aux_time & 0x1ff) * 125) >> 9);
->  	return aux_time;
->  }
-> -- 
-> 2.19.1
+Thanks & Regards,
+Anirudh
+
+
+On Mon, May 20, 2019 at 9:02 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Mon, May 20, 2019 at 03:01:56PM +0530, Anirudh Gupta wrote:
+> >
+> > diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+> > index eb8d14389601..fc2a8c08091b 100644
+> > --- a/net/xfrm/xfrm_user.c
+> > +++ b/net/xfrm/xfrm_user.c
+> > @@ -149,7 +149,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+> >       int err;
+> >
+> >       err = -EINVAL;
+> > -     switch (p->family) {
+> > +     switch (p->sel.family) {
+> >       case AF_INET:
+> >               if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+> >                       goto out;
+>
+> You just removed the only verification of p->family...
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+
 
 -- 
+Regards
 
-- Arnaldo
+Anirudh Gupta
