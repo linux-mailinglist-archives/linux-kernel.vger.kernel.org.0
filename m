@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9795823238
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 744232323F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbfETLY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:24:26 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51499 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730534AbfETLY0 (ORCPT
+        id S1732706AbfETLZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:25:19 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45420 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732695AbfETLZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:24:26 -0400
-Received: by mail-it1-f193.google.com with SMTP id m3so18490820itl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:24:26 -0700 (PDT)
+        Mon, 20 May 2019 07:25:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b18so14109245wrq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=TDjszUfHnd7S+J8wfavv0FB53R2qjyDVSRZ9W8sr6Ps=;
-        b=WJiPsx1NVwTYFex+f+L016917Wp1Psrqmisn5SI0CyIWMW6uqeoVmU55afCo7iRFxN
-         1GhaUXT62JwJLfUI0A/larYqXzPNxF110EuBB44Kmee20sBtFfxVyM0Ra8nXwmrUzStT
-         trz4LT6DPjw6yjh0huY4TgrNoJYgib8/TnEtoFs346Nd74ysjUNIO9sIRXh2uzSWk/NW
-         0S+REd+dut+PWyO9Xnmt+Zj64ZmUmmwqFvng+8UkaaA/6Emg1e/9Xt/3pQBQ2R5nsyAb
-         +yZVj83/CrJV7EwERy7WI3bM4cuC+/dT8MrDex3BOkCdv8HRZBIbjWSqDCPWbiVbH4lm
-         wCeA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=jjlgRqd7/3GdbXtzivENZGFK0W6UGcne26rpZyW4X3o=;
+        b=KH9eQMCgAcp+vePFV58EJikabmf6tk7CPaw16nowcMlcJ9rfsp+jqtVbW4ziTIqtJn
+         pWBQacIbPY+n191m2WqHswFszkMDXBbauB4/HyE6ZwSzMGnaDM8mc8BC2ItArt3r48p2
+         hDW8UVhT/aOcBwNkv3AV39O5SBWYxCLPywsppIcLpCzNlu/SO8Kh6XrvNVW+vDf3BVGO
+         dgf7CDa6gkuA6sajvyDCOePcqFxpVeLPk1UFIDhhneZxknvlnqxb4xVh9g1wgPR2ykgo
+         bBj2h5PQdq+NXx0DTW2epwkjiXbsm30gJiyeKCUH09+ynK2MOyTfMXH1G5PwwvMSpl9b
+         Ihnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=TDjszUfHnd7S+J8wfavv0FB53R2qjyDVSRZ9W8sr6Ps=;
-        b=oVs5weUEWysshjXQf+o1KUpJJI1nU/GmhbiWDjSUTEWOWpAbZUJXCODpHmXlj0hHoJ
-         vo0h/aFqyORblk4g/mI4pMhFoP/pyKvreKqd5r4k5V8e0TPYxVcq5X9+zS71B6VcbvxB
-         yHwrDUsmMRL1ElP8okrOsFQs2M/GmfM8HtIB8cXM4vJPpPurPz2NhlqR3ShwtJ7qOVzQ
-         2hAeSTTSrq/jHbxzYNSRqmLyKmAAU1GLZOS0cznrQ0Dy86giVWk6eKXyVqvCEiSkYqWa
-         A86G3OufAb2Anu2uQmnGf//hcKd0zWfi7JnW8+P5dpS91rLVg/FF5LhoSib8FSEpUVue
-         wIFw==
-X-Gm-Message-State: APjAAAVH7K7lRhe1+rNSByAKRKLpclRhUxuHpqQEkquzA8/Deu4T2U2M
-        ZHcThhW3hvkPNyk5nXYMEo3h/izYoiRwgLa3Ho0=
-X-Google-Smtp-Source: APXvYqyPvecmesFon/VnPTMOCbRt/STXuB8vCJlK0hhOTChieSaRKXbupGuXkBFy2/qH01TqboluzZT3Mgv5bfmDL/4=
-X-Received: by 2002:a24:4648:: with SMTP id j69mr29311358itb.103.1558351465568;
- Mon, 20 May 2019 04:24:25 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: tumogamba01@gmail.com
-Received: by 2002:a05:6638:532:0:0:0:0 with HTTP; Mon, 20 May 2019 04:24:25
- -0700 (PDT)
-From:   Gamba Tumo <tumogamba01@gmail.com>
-Date:   Mon, 20 May 2019 13:24:25 +0200
-X-Google-Sender-Auth: ZFs_eOPkAdq_Uv_k9ZLWrq41mP0
-Message-ID: <CADRfTEAGyKuDfU=efQK4Lr0zWb3wcEZq9T6Qy9jB2PHMiNBCTQ@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=jjlgRqd7/3GdbXtzivENZGFK0W6UGcne26rpZyW4X3o=;
+        b=VYkyIRC5T5RYkoNfJf+7a5EyEpyBkHu9OiYdQSkhO2JRy3bgZZ0LLmHHFTH0rlST0w
+         WuTDk+lD9tMcZsAIdGaoQEkrnq+rdigfnux6J6Ld+V84N3wiEWgJ8y1yv6xo70M5tl+m
+         Pq+F0wBfCU6S45cjLE4qU47XF8tMeUZsCGpq/4mfrXHxdC9zoZ6zDm61kwG7Mu3CwfVb
+         2DioeK8ifDwW9cPYQebxramSe6iZhm/EZmzSpu8Pjm4N6mB5yu3bynNvRuBxMiFKMmG3
+         sKhN3xfQULBkpgHdbMVuH4twezQOwXlv2nDm6zkpwwCqOKroH48HqtPese6byPkTRqHr
+         fXWg==
+X-Gm-Message-State: APjAAAVZHQte1PbY0OB3rV4AhG8NCS1mHHTxg6dY6C19JzHRspje01Aq
+        Tt18CIXzeTumlFl+s9IoeNRA6w==
+X-Google-Smtp-Source: APXvYqwD19LntnajDRGhTBQ60xM1YyUoHyMgHC0GjSUru7HiinTiDHC+FsHKj7HQJg4LRDftmwD8dQ==
+X-Received: by 2002:a5d:624d:: with SMTP id m13mr45190092wrv.305.1558351516800;
+        Mon, 20 May 2019 04:25:16 -0700 (PDT)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id m13sm15690440wrs.87.2019.05.20.04.25.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 20 May 2019 04:25:16 -0700 (PDT)
+Message-ID: <fa275d9d4a451d6ef5332a6836e8316c5644d913.camel@baylibre.com>
+Subject: Re: [PATCH 1/1] clk: meson: meson8b: fix a typo in the VPU parent
+ names array variable
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 20 May 2019 13:25:14 +0200
+In-Reply-To: <20190512194300.7445-2-martin.blumenstingl@googlemail.com>
+References: <20190512194300.7445-1-martin.blumenstingl@googlemail.com>
+         <20190512194300.7445-2-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,I need your urgent assistance to carry out this business
-opportunity in my bank. In transferring the sum of $11.6million
-dollars, to your private account. The money has been here in our Bank
-lying dormant for years now without anybody coming for the claim of
-it. You don't need to worry about anything in this business because am
-here to give you all the information's you need in this transaction.
+On Sun, 2019-05-12 at 21:43 +0200, Martin Blumenstingl wrote:
+> The variable which holds the parent names for the VPU clocks has a typo
+> in it. Fix this typo to make the variable naming in the driver
+> consistent. No functional changes.
+> 
+> Fixes: 41785ce562491d ("clk: meson: meson8b: add the VPU clock trees")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a longtime with his supposed
-Next of Kin since July 22, 2003,The Banking law here does not allow
-such money to stay more than 18 years, because the money will be
-recalled to the Bank treasury account as unclaimed fund.
+applied to v5.3/fixes
 
-I am seeking for your support to stand as beneficiary to claim these
-funds so that we move it into useful investments, i am ready to share
-with you 40% for you and 60% will be kept for me. By indicating your
-interest i will send you the full details on how the business will be
-executed.
-
-Mr.Tumo
