@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3033023677
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929E32350F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389224AbfETM0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:26:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41264 "EHLO mail.kernel.org"
+        id S2390181AbfETMcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:32:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388503AbfETMZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:25:57 -0400
+        id S1732999AbfETMco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:32:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3089F21479;
-        Mon, 20 May 2019 12:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88D13214DA;
+        Mon, 20 May 2019 12:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355156;
-        bh=kYit0N1s3XyiwEJ9BAPv+JHUmMpjAlox7xrrRbfxqOI=;
+        s=default; t=1558355563;
+        bh=2j4wA9QcwcPQOSKy4nWCDZfQMwJfMuCwE2+iBO7jLlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XrHHa80+GiUQX7Fwhho+e87iqtHiwjmCW9vG6GKwzmrda061wLFNkFUNd6ZAWahXI
-         MtKwNwevoDaUMR966OztgqozBNB4PetJFtI9ik4Rh/2g+bTf9jLELdpNTvY7evx9k7
-         b6FvRpT1s6n7jgKSSv+LOwmGrC7rAkj45f954vmU=
+        b=11wHiS0T57eZzaV/OuSU2rOOIT9mP2KTQBIg2UjplxhqJZj4Ze0DuYDmcO/M1Tq7w
+         4A0HhwCkbCgmNOo2SBXVBKsywNtHJcuRfe4ltoSBZl4wq6zxjaDlzA4umkhmLgo8Pa
+         Ptdpgmmh6EObokYo8XKsrQQedsVprY8ceyaFD/6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 5.0 013/123] power: supply: axp288_fuel_gauge: Add ACEPC T8 and T11 mini PCs to the blacklist
+        stable@vger.kernel.org,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 5.1 006/128] arm64: dts: rockchip: Disable DCMDs on RK3399s eMMC controller.
 Date:   Mon, 20 May 2019 14:13:13 +0200
-Message-Id: <20190520115245.968557214@linuxfoundation.org>
+Message-Id: <20190520115249.881270787@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Christoph Muellner <christoph.muellner@theobroma-systems.com>
 
-commit 9274c78305e12c5f461bec15f49c38e0f32ca705 upstream.
+commit a3eec13b8fd2b9791a21fa16e38dfea8111579bf upstream.
 
-The ACEPC T8 and T11 Cherry Trail Z8350 mini PCs use an AXP288 and as PCs,
-rather then portables, they does not have a battery. Still for some
-reason the AXP288 not only thinks there is a battery, it actually
-thinks it is discharging while the PC is running, slowly going to
-0% full, causing userspace to shutdown the system due to the battery
-being critically low after a while.
+When using direct commands (DCMDs) on an RK3399, we get spurious
+CQE completion interrupts for the DCMD transaction slot (#31):
 
-This commit adds the ACEPC T8 and T11 to the axp288 fuel-gauge driver
-blacklist, so that we stop reporting bogus battery readings on this device.
+[  931.196520] ------------[ cut here ]------------
+[  931.201702] mmc1: cqhci: spurious TCN for tag 31
+[  931.206906] WARNING: CPU: 0 PID: 1433 at /usr/src/kernel/drivers/mmc/host/cqhci.c:725 cqhci_irq+0x2e4/0x490
+[  931.206909] Modules linked in:
+[  931.206918] CPU: 0 PID: 1433 Comm: irq/29-mmc1 Not tainted 4.19.8-rt6-funkadelic #1
+[  931.206920] Hardware name: Theobroma Systems RK3399-Q7 SoM (DT)
+[  931.206924] pstate: 40000005 (nZcv daif -PAN -UAO)
+[  931.206927] pc : cqhci_irq+0x2e4/0x490
+[  931.206931] lr : cqhci_irq+0x2e4/0x490
+[  931.206933] sp : ffff00000e54bc80
+[  931.206934] x29: ffff00000e54bc80 x28: 0000000000000000
+[  931.206939] x27: 0000000000000001 x26: ffff000008f217e8
+[  931.206944] x25: ffff8000f02ef030 x24: ffff0000091417b0
+[  931.206948] x23: ffff0000090aa000 x22: ffff8000f008b000
+[  931.206953] x21: 0000000000000002 x20: 000000000000001f
+[  931.206957] x19: ffff8000f02ef018 x18: ffffffffffffffff
+[  931.206961] x17: 0000000000000000 x16: 0000000000000000
+[  931.206966] x15: ffff0000090aa6c8 x14: 0720072007200720
+[  931.206970] x13: 0720072007200720 x12: 0720072007200720
+[  931.206975] x11: 0720072007200720 x10: 0720072007200720
+[  931.206980] x9 : 0720072007200720 x8 : 0720072007200720
+[  931.206984] x7 : 0720073107330720 x6 : 00000000000005a0
+[  931.206988] x5 : ffff00000860d4b0 x4 : 0000000000000000
+[  931.206993] x3 : 0000000000000001 x2 : 0000000000000001
+[  931.206997] x1 : 1bde3a91b0d4d900 x0 : 0000000000000000
+[  931.207001] Call trace:
+[  931.207005]  cqhci_irq+0x2e4/0x490
+[  931.207009]  sdhci_arasan_cqhci_irq+0x5c/0x90
+[  931.207013]  sdhci_irq+0x98/0x930
+[  931.207019]  irq_forced_thread_fn+0x2c/0xa0
+[  931.207023]  irq_thread+0x114/0x1c0
+[  931.207027]  kthread+0x128/0x130
+[  931.207032]  ret_from_fork+0x10/0x20
+[  931.207035] ---[ end trace 0000000000000002 ]---
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1690852
+The driver shows this message only for the first spurious interrupt
+by using WARN_ONCE(). Changing this to WARN() shows, that this is
+happening quite frequently (up to once a second).
+
+Since the eMMC 5.1 specification, where CQE and CQHCI are specified,
+does not mention that spurious TCN interrupts for DCMDs can be simply
+ignored, we must assume that using this feature is not working reliably.
+
+The current implementation uses DCMD for REQ_OP_FLUSH only, and
+I could not see any performance/power impact when disabling
+this optional feature for RK3399.
+
+Therefore this patch disables DCMDs for RK3399.
+
+Signed-off-by: Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Signed-off-by: Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
+Fixes: 84362d79f436 ("mmc: sdhci-of-arasan: Add CQHCI support for arasan,sdhci-5.1")
 Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+[the corresponding code changes are queued for 5.2 so doing that as well]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/axp288_fuel_gauge.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/power/supply/axp288_fuel_gauge.c
-+++ b/drivers/power/supply/axp288_fuel_gauge.c
-@@ -696,6 +696,26 @@ intr_failed:
-  */
- static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
- 	{
-+		/* ACEPC T8 Cherry Trail Z8350 mini PC */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T8"),
-+			/* also match on somewhat unique bios-version */
-+			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
-+		},
-+	},
-+	{
-+		/* ACEPC T11 Cherry Trail Z8350 mini PC */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T11"),
-+			/* also match on somewhat unique bios-version */
-+			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
-+		},
-+	},
-+	{
- 		/* Intel Cherry Trail Compute Stick, Windows version */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Intel Corporation"),
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -333,6 +333,7 @@
+ 		phys = <&emmc_phy>;
+ 		phy-names = "phy_arasan";
+ 		power-domains = <&power RK3399_PD_EMMC>;
++		disable-cqe-dcmd;
+ 		status = "disabled";
+ 	};
+ 
 
 
