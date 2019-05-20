@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B0A233D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D602362A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733300AbfETMUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33968 "EHLO mail.kernel.org"
+        id S2390960AbfETMnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:43:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388003AbfETMUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:34 -0400
+        id S2389741AbfETM2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:28:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B93DD213F2;
-        Mon, 20 May 2019 12:20:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB4BA20645;
+        Mon, 20 May 2019 12:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354834;
-        bh=NELJ4Hu6YiJbJlmxwVlRRrxhcEXBUQ4E/XUnMCsrArw=;
+        s=default; t=1558355325;
+        bh=Vc76SIEwx46ODrXQqltdqyN2/mHnKSGbQiibyzx/1hQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NNh9ox5z1AAOF2wxJJrVaSHDbvjbNMpAC/tTOkQnE40QHnF2rEMAL6YEuQkxqLYBH
-         P7cbfSv0lWOTZzik/cTzRZoECQqh40TKxmpwH+KqLo/jP9eav7z/wfbZOYZQI6hfSp
-         Ghgu+ABtQtPk071M4jZWSq6DU5LzBd4olF/Hc3aI=
+        b=u3fL8GWx5H2E4fXJg3vZp359nb0eI5emHn+kqjplqzM/GTfYpaMckmXA6Pl+TPpx6
+         oBvKj/PkRcW4OkY+ZYpHidy4Nsmf99tghxty7lPg4VjJJuhIiNO6n2a9yLd+Edrm1r
+         HhBsRxGBZDRHdEPFnrMaX3ptgIWKFiet+Q2YJlkM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 20/63] crypto: crct10dif-generic - fix use via crypto_shash_digest()
+Subject: [PATCH 5.0 059/123] crypto: ccree - fix mem leak on error path
 Date:   Mon, 20 May 2019 14:13:59 +0200
-Message-Id: <20190520115233.234676472@linuxfoundation.org>
+Message-Id: <20190520115248.697804651@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-commit 307508d1072979f4435416f87936f87eaeb82054 upstream.
+commit d574b707c873d6ef1a2a155f8cfcfecd821e9a2e upstream.
 
-The ->digest() method of crct10dif-generic reads the current CRC value
-from the shash_desc context.  But this value is uninitialized, causing
-crypto_shash_digest() to compute the wrong result.  Fix it.
+Fix a memory leak on the error path of IV generation code.
 
-Probably this wasn't noticed before because lib/crc-t10dif.c only uses
-crypto_shash_update(), not crypto_shash_digest().  Likewise,
-crypto_shash_digest() is not yet tested by the crypto self-tests because
-those only test the ahash API which only uses shash init/update/final.
-
-This bug was detected by my patches that improve testmgr to fuzz
-algorithms against their generic implementation.
-
-Fixes: 2d31e518a428 ("crypto: crct10dif - Wrap crc_t10dif function all to use crypto transform framework")
-Cc: <stable@vger.kernel.org> # v3.11+
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crct10dif_generic.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/crypto/ccree/cc_ivgen.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/crypto/crct10dif_generic.c
-+++ b/crypto/crct10dif_generic.c
-@@ -65,10 +65,9 @@ static int chksum_final(struct shash_des
- 	return 0;
- }
+--- a/drivers/crypto/ccree/cc_ivgen.c
++++ b/drivers/crypto/ccree/cc_ivgen.c
+@@ -154,9 +154,6 @@ void cc_ivgen_fini(struct cc_drvdata *dr
+ 	}
  
--static int __chksum_finup(__u16 *crcp, const u8 *data, unsigned int len,
--			u8 *out)
-+static int __chksum_finup(__u16 crc, const u8 *data, unsigned int len, u8 *out)
- {
--	*(__u16 *)out = crc_t10dif_generic(*crcp, data, len);
-+	*(__u16 *)out = crc_t10dif_generic(crc, data, len);
- 	return 0;
- }
- 
-@@ -77,15 +76,13 @@ static int chksum_finup(struct shash_des
- {
- 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
- 
--	return __chksum_finup(&ctx->crc, data, len, out);
-+	return __chksum_finup(ctx->crc, data, len, out);
- }
- 
- static int chksum_digest(struct shash_desc *desc, const u8 *data,
- 			 unsigned int length, u8 *out)
- {
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 	ivgen_ctx->pool = NULL_SRAM_ADDR;
 -
--	return __chksum_finup(&ctx->crc, data, length, out);
-+	return __chksum_finup(0, data, length, out);
+-	/* release "this" context */
+-	kfree(ivgen_ctx);
  }
  
- static struct shash_alg alg = {
+ /*!
+@@ -174,10 +171,12 @@ int cc_ivgen_init(struct cc_drvdata *drv
+ 	int rc;
+ 
+ 	/* Allocate "this" context */
+-	ivgen_ctx = kzalloc(sizeof(*ivgen_ctx), GFP_KERNEL);
++	ivgen_ctx = devm_kzalloc(device, sizeof(*ivgen_ctx), GFP_KERNEL);
+ 	if (!ivgen_ctx)
+ 		return -ENOMEM;
+ 
++	drvdata->ivgen_handle = ivgen_ctx;
++
+ 	/* Allocate pool's header for initial enc. key/IV */
+ 	ivgen_ctx->pool_meta = dma_alloc_coherent(device, CC_IVPOOL_META_SIZE,
+ 						  &ivgen_ctx->pool_meta_dma,
+@@ -196,8 +195,6 @@ int cc_ivgen_init(struct cc_drvdata *drv
+ 		goto out;
+ 	}
+ 
+-	drvdata->ivgen_handle = ivgen_ctx;
+-
+ 	return cc_init_iv_sram(drvdata);
+ 
+ out:
 
 
