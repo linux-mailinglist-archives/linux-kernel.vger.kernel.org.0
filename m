@@ -2,56 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D4623257
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB2623259
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732764AbfETL1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:27:22 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:60746 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732739AbfETL1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:27:22 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id C0CE825AD7A;
-        Mon, 20 May 2019 21:27:19 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id BBBB49404D4; Mon, 20 May 2019 13:27:17 +0200 (CEST)
-Date:   Mon, 20 May 2019 13:27:17 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] ARM: dts: r7s72100: Add IRQC device node
-Message-ID: <20190520112717.yqkbdhmkq57dixgs@verge.net.au>
-References: <20190502123220.3016-1-geert+renesas@glider.be>
- <20190502123220.3016-5-geert+renesas@glider.be>
+        id S1732771AbfETL2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:28:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731297AbfETL2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:28:39 -0400
+Received: from localhost (unknown [37.142.3.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B68B920644;
+        Mon, 20 May 2019 11:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558351719;
+        bh=oXq5PmrUR+iri82vJveI8uZ0P0yyBXZCj0puouX9vZI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1rOSQagg8SmW4bYkEQNIVOBHEltRE3PqS6FY2keMLz5NJ5q/ax4NwdZZPl4g75t8i
+         nD7ytc8d1o7pWYc3410uE4URPt2d7uR+MNo//sqInjI6Vp8zpzGXirDabNUapoeCvY
+         wPuj5ccLd3T+UNotAzio3FKWJWUIoHrtBQuKqAGA=
+Date:   Mon, 20 May 2019 14:28:35 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Ariel Levkovich <lariel@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mlx5: avoid 64-bit division
+Message-ID: <20190520112835.GF4573@mtr-leonro.mtl.com>
+References: <20190520111902.7104DE0184@unicorn.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190502123220.3016-5-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190520111902.7104DE0184@unicorn.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 02, 2019 at 02:32:19PM +0200, Geert Uytterhoeven wrote:
-> Enable support for the IRQC on RZ/A1H, which is a small front-end to the
-> GIC.  This allows to use up to 8 external interrupts with configurable
-> sense select.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Mon, May 20, 2019 at 01:19:02PM +0200, Michal Kubecek wrote:
+> Commit 25c13324d03d ("IB/mlx5: Add steering SW ICM device memory type")
+> breaks i386 build by introducing three 64-bit divisions. As the divisor
+> is MLX5_SW_ICM_BLOCK_SIZE() which is always a power of 2, we can replace
+> the division with bit operations.
 
-Thanks Geert,
+Interesting, we tried to solve it differently.
+I added it to our regression to be on the same side.
 
-I have applied this for inclusion in v5.3
+Thanks
