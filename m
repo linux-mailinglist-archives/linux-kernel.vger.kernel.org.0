@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0606E233D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80DB2234AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387952AbfETMUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33512 "EHLO mail.kernel.org"
+        id S2389898AbfETM32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:29:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730449AbfETMUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:11 -0400
+        id S2389492AbfETM3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:29:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18ED620656;
-        Mon, 20 May 2019 12:20:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C4ED20815;
+        Mon, 20 May 2019 12:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354810;
-        bh=SgXpXZq9XtdhF8LXnJ1SB4sVb3RKPlH5SPcOkCu6N1g=;
+        s=default; t=1558355364;
+        bh=9F2urZGiUSCTtGpIbm8fQ79y0ev7GzYg8R+c8rTft8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0oLJwQTNw/AApYFDcgF7P9g7jZwjc8EejCAQrWin+tvEBB9OLZQylI7OhFhKE3VQn
-         ePCVDIxEknLEfO0gUBPfYfzrSQfT+qjQ63DscO+LTIf8VYNpfCKPXuVG4Ge3PPfuQu
-         jHz7ceWTxPFq3GAov8HARGFB+d3V/nSY2g71G208=
+        b=Yo8RPD5FtN15DVfsqC48m8vqXlKT1Airxyp5L96X9+C/ZbTe0rB1lIvdNnnb78sIy
+         dmZylJBV++KfDgZqwkRgRP3K7f22YlqWCPUDUgNEGGhpxnyEgZ3V44oHFyQK9g/Zzb
+         27GsLERag+dtGdrm+n+X5nbbMvaB8W5bh4HeKSfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.14 50/63] ext4: fix ext4_show_options for file systems w/o journal
-Date:   Mon, 20 May 2019 14:14:29 +0200
-Message-Id: <20190520115236.563016206@linuxfoundation.org>
+        stable@vger.kernel.org, Jungyeon <jungyeon@gatech.edu>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.0 090/123] btrfs: Correctly free extent buffer in case btree_read_extent_buffer_pages fails
+Date:   Mon, 20 May 2019 14:14:30 +0200
+Message-Id: <20190520115250.895614551@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Debabrata Banerjee <dbanerje@akamai.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 50b29d8f033a7c88c5bc011abc2068b1691ab755 upstream.
+commit 537f38f019fa0b762dbb4c0fc95d7fcce9db8e2d upstream.
 
-Instead of removing EXT4_MOUNT_JOURNAL_CHECKSUM from s_def_mount_opt as
-I assume was intended, all other options were blown away leading to
-_ext4_show_options() output being incorrect.
+If a an eb fails to be read for whatever reason - it's corrupted on disk
+and parent transid/key validations fail or IO for eb pages fail then
+this buffer must be removed from the buffer cache. Currently the code
+calls free_extent_buffer if an error occurs. Unfortunately this doesn't
+achieve the desired behavior since btrfs_find_create_tree_block returns
+with eb->refs == 2.
 
-Fixes: 1e381f60dad9 ("ext4: do not allow journal_opts for fs w/o journal")
-Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+On the other hand free_extent_buffer will only decrement the refs once
+leaving it added to the buffer cache radix tree.  This enables later
+code to look up the buffer from the cache and utilize it potentially
+leading to a crash.
+
+The correct way to free the buffer is call free_extent_buffer_stale.
+This function will correctly call atomic_dec explicitly for the buffer
+and subsequently call release_extent_buffer which will decrement the
+final reference thus correctly remove the invalid buffer from buffer
+cache. This change affects only newly allocated buffers since they have
+eb->refs == 2.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202755
+Reported-by: Jungyeon <jungyeon@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/disk-io.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4209,7 +4209,7 @@ static int ext4_fill_super(struct super_
- 				 "data=, fs mounted w/o journal");
- 			goto failed_mount_wq;
- 		}
--		sbi->s_def_mount_opt &= EXT4_MOUNT_JOURNAL_CHECKSUM;
-+		sbi->s_def_mount_opt &= ~EXT4_MOUNT_JOURNAL_CHECKSUM;
- 		clear_opt(sb, JOURNAL_CHECKSUM);
- 		clear_opt(sb, DATA_FLAGS);
- 		sbi->s_journal = NULL;
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1017,13 +1017,18 @@ void readahead_tree_block(struct btrfs_f
+ {
+ 	struct extent_buffer *buf = NULL;
+ 	struct inode *btree_inode = fs_info->btree_inode;
++	int ret;
+ 
+ 	buf = btrfs_find_create_tree_block(fs_info, bytenr);
+ 	if (IS_ERR(buf))
+ 		return;
+-	read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree,
+-				 buf, WAIT_NONE, 0);
+-	free_extent_buffer(buf);
++
++	ret = read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree, buf,
++			WAIT_NONE, 0);
++	if (ret < 0)
++		free_extent_buffer_stale(buf);
++	else
++		free_extent_buffer(buf);
+ }
+ 
+ int reada_tree_block_flagged(struct btrfs_fs_info *fs_info, u64 bytenr,
+@@ -1043,12 +1048,12 @@ int reada_tree_block_flagged(struct btrf
+ 	ret = read_extent_buffer_pages(io_tree, buf, WAIT_PAGE_LOCK,
+ 				       mirror_num);
+ 	if (ret) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return ret;
+ 	}
+ 
+ 	if (test_bit(EXTENT_BUFFER_CORRUPT, &buf->bflags)) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return -EIO;
+ 	} else if (extent_buffer_uptodate(buf)) {
+ 		*eb = buf;
+@@ -1102,7 +1107,7 @@ struct extent_buffer *read_tree_block(st
+ 	ret = btree_read_extent_buffer_pages(fs_info, buf, parent_transid,
+ 					     level, first_key);
+ 	if (ret) {
+-		free_extent_buffer(buf);
++		free_extent_buffer_stale(buf);
+ 		return ERR_PTR(ret);
+ 	}
+ 	return buf;
 
 
