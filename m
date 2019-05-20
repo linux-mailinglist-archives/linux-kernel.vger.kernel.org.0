@@ -2,117 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5576B240C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DA1240B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfETTA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:00:28 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41347 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfETTA1 (ORCPT
+        id S1726061AbfETS5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 14:57:18 -0400
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:40959 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfETS5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:00:27 -0400
-Received: by mail-ot1-f66.google.com with SMTP id l25so5635932otp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 12:00:27 -0700 (PDT)
+        Mon, 20 May 2019 14:57:17 -0400
+Received: by mail-pl1-f170.google.com with SMTP id g69so7127950plb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 11:57:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wT81sA73prwjBsqvneE0nbb4zGsqTgjv/ErvD6Lkzzw=;
-        b=Q2ZvmjGTacUUOs5fbuhnrA6Wr2XUFQFnYsPj9j7PrBl7WzFcR9qhhhOoKQh++mdR0f
-         0YNT8dqvY9XRrep6/Gl5xt8G/DrBDRRbA0YTIz7mGP8WG2+qWdjmPdWZsTGyB7RUKOPx
-         h/gjeBGv9LnFBL98Caa3RLNhkAwG8yksaRRdTioQnoUhhLLf7/tqKprIoHFiVMFZcWJH
-         x81dNJsAF33+dyWCE9HotSRfO+nnkWl5h/rp4iyupAobkJoMCbKyOI5J46AcPdwaXIt8
-         +SDgrX9kJf8yDczFvjxsCjhkU2OlicK02qE7WywQBzvK/RLwIOhzUlCMPY/VwNDpoSbB
-         4XLw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Lt7rSnSkayzVvx67ZsDNX8yUH1XBDbeQw+L9abvZe8=;
+        b=MmIoi8oqygXCLZy6E+9vNzH0H+XcQpdYN8P2HUH/MXWiF0urxOgo5E08QftQCPg6bx
+         1YJ4p50CDP1Nph8zBNIQc7mL2PqtMChBUcWCTbJHNH43+tC3C1Hcm/mFCySjP+ImYnbV
+         qqKhTuMgWXz3s3Shx9KcZqWOf4mvchFNq3FD48g3ALRHMHPOOOnUM++tgvnQ62pEGzsm
+         h3USo901W3k+/b5bFvdhmwdDI9eZ3nfLz9t+1+L9qbtHHC6PUXRSkdgEu7bEGDiDbHjt
+         /BMp2HqmwC7azDnhJNtLO3dnHe9f4mzljiAuXqMIROzSpk+Td5PadV9Kb9DQSDTZzkeS
+         0msQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wT81sA73prwjBsqvneE0nbb4zGsqTgjv/ErvD6Lkzzw=;
-        b=U6uYG9hBGYa7xx2ULKcTHDsgo5cEUGer41E0qBaq/qT6aAgm5vY6gU9J3+iGYSEK+K
-         Sq/m3Z6Lxv6tasqbq7LLD7dLa5dZZQxKsEvSwvA99vX2t6+asevR9OzxAkHADY/EhgYr
-         Ozce0YTbfwfJ8RB0oS5VqTDniUIeqn+aY0qghY7FWuMFb2IqNL8+ojO3MJ8rsCvM94JM
-         POkGOJxGKmAE8klSRXICSQWdOs8wKP2qqWVw7YGICjolc0seGA5ddZgCVVuEAg8Gje+w
-         eMyg4vvk2x5KHy+Ye6e+bkiB2R9OBU88nUJwsLOd/UJiGVSDlZC7i5umoc5zA+DOpclj
-         zQIA==
-X-Gm-Message-State: APjAAAW+rMM0SxKVqbSkWF7ip5wm93n00EGUlz8VPdCnOOrCzSzQt/fx
-        QXvVsBgVRij9xEijlYvQaeefE3orPAravyxun+RWTA==
-X-Google-Smtp-Source: APXvYqxY1aZ42ZhklyO4YSGancB5WqzPtQVKG8B6/X5MmZ+sCMgjK7BOHJprDezZUAhy6RWai7+JrGPqPs3PTdKdkp8=
-X-Received: by 2002:a05:6830:1182:: with SMTP id u2mr34775429otq.71.1558378827193;
- Mon, 20 May 2019 12:00:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <1558089514-25067-1-git-send-email-anshuman.khandual@arm.com>
- <20190517145050.2b6b0afdaab5c3c69a4b153e@linux-foundation.org> <cb8cbd57-9220-aba9-7579-dbcf35f02672@arm.com>
-In-Reply-To: <cb8cbd57-9220-aba9-7579-dbcf35f02672@arm.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 20 May 2019 12:00:16 -0700
-Message-ID: <CAPcyv4iSTxmnORJY_UwXqeP2kiWc55j5h1Z+HgC8orRSaxTgfA@mail.gmail.com>
-Subject: Re: [PATCH] mm/dev_pfn: Exclude MEMORY_DEVICE_PRIVATE while computing
- virtual address
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Lt7rSnSkayzVvx67ZsDNX8yUH1XBDbeQw+L9abvZe8=;
+        b=quLDpLC+Qu1xxwwDNb4wyufBklcYmmLa0y4fkBnwM3JnYU/w3k4M0WecCragNBm12C
+         QL4GWV0vsWAaz/1/avKyCAy9F2XQ55xIWyvCm2IJVMVvmRVrBnYrQwtUkys/PNujp/f4
+         I9HWGQAMdOUwhGa4cqf4m8UAFnpTZLs279XkzfPVTHPK0t+GCK07kEFV7NEYiB8dQIsa
+         SsSa1L8NvgXXk0AK9z+Ga/keCGOGUWWrZZwVVg1t11CMlj1L8dt6wM76usjZB5kJkAmH
+         J1AIQGf35Z85tDyS79yLXbj7RJ1uiW3kgMTb4LU1gMeH8eP+Jh/2zG8QiFtckSwHjoP2
+         zyeg==
+X-Gm-Message-State: APjAAAWkLZ6xlIoqFY1FfW8DwxZ5WuAL3boEIyoi26dkPDNrVDLUIZYq
+        owioU0+ETO+YQ+YHm3pFWGM=
+X-Google-Smtp-Source: APXvYqxVlxI+C53z9BfpApHBqX5Bh4zPMCrVSRk4CROsV3Nz+iH6IjFXfgCxjIhzf4CaBiwwWe3nUw==
+X-Received: by 2002:a17:902:d896:: with SMTP id b22mr64516718plz.40.1558378637077;
+        Mon, 20 May 2019 11:57:17 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.23.153])
+        by smtp.gmail.com with ESMTPSA id k30sm13607075pgl.89.2019.05.20.11.57.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 11:57:15 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     bskeggs@redhat.com, airlied@linux.ie, daniel@ffwll.ch,
+        jglisse@redhat.com
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] drm/nouveau/svm: Convert to use hmm_range_fault()
+Date:   Tue, 21 May 2019 00:31:58 +0530
+Message-Id: <1558378918-25279-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 10:37 PM Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
->
-> On 05/18/2019 03:20 AM, Andrew Morton wrote:
-> > On Fri, 17 May 2019 16:08:34 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> >
-> >> The presence of struct page does not guarantee linear mapping for the pfn
-> >> physical range. Device private memory which is non-coherent is excluded
-> >> from linear mapping during devm_memremap_pages() though they will still
-> >> have struct page coverage. Just check for device private memory before
-> >> giving out virtual address for a given pfn.
-> >
-> > I was going to give my standard "what are the user-visible runtime
-> > effects of this change?", but...
-> >
-> >> All these helper functions are all pfn_t related but could not figure out
-> >> another way of determining a private pfn without looking into it's struct
-> >> page. pfn_t_to_virt() is not getting used any where in mainline kernel.Is
-> >> it used by out of tree drivers ? Should we then drop it completely ?
-> >
-> > Yeah, let's kill it.
+Convert to use hmm_range_fault().
 
-+1 to killing it, since there has been a paucity of 'unsigned long
-pfn' code path conversions to 'pfn_t', and it continues to go unused.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > But first, let's fix it so that if someone brings it back, they bring
-> > back a non-buggy version.
+diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+index 93ed43c..8d56bd6 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_svm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+@@ -649,7 +649,7 @@ struct nouveau_svmm {
+ 		range.values = nouveau_svm_pfn_values;
+ 		range.pfn_shift = NVIF_VMM_PFNMAP_V0_ADDR_SHIFT;
+ again:
+-		ret = hmm_vma_fault(&range, true);
++		ret = hmm_range_fault(&range, true);
+ 		if (ret == 0) {
+ 			mutex_lock(&svmm->mutex);
+ 			if (!hmm_vma_range_done(&range)) {
+-- 
+1.9.1
 
-Not sure this can be solved without a rethink of who owns the virtual
-address space corresponding to MEMORY_DEVICE_PRIVATE, and clawing back
-some of the special-ness of HMM.
-
->
-> Makes sense.
->
-> >
-> > So...  what (would be) the user-visible runtime effects of this change?
->
-> I am not very well aware about the user interaction with the drivers which
-> hotplug and manage ZONE_DEVICE memory in general. Hence will not be able to
-> comment on it's user visible runtime impact. I just figured this out from
-> code audit while testing ZONE_DEVICE on arm64 platform. But the fix makes
-> the function bit more expensive as it now involve some additional memory
-> references.
-
-MEMORY_DEVICE_PRIVATE semantics were part of the package of the
-initial HMM submission that landed in the kernel without an upstream
-user. While pfn_t_to_virt() also does not have an upstream user it was
-at least modeled after the existing pfn_to_virt() api to allow for
-future 'unsigned long pfn' to 'pfn_t' conversions. As for what a fix
-might look like, it seems to me that we should try to unify 'pfn_t'
-and 'hmm_pfn's. I don't see why 'hmm_pfn's need to exist as their own
-concept vs trying consume more flag space out of pfn_t. That would at
-least allow the pfn_t_has_page() helper to detect the HMM case.
