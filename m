@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817A723912
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6282023940
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390675AbfETOAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:00:50 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45532 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732237AbfETOAu (ORCPT
+        id S1732784AbfETOBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:01:39 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32998 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731231AbfETOBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:00:50 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b18so14695746wrq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:00:48 -0700 (PDT)
+        Mon, 20 May 2019 10:01:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d9so1793154wrx.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=P9mL4O5UKxgeQ6YgVpvHFfuhwxbNZ5YHPxsK8gfhi68=;
-        b=Ecr0J2lDt2WmB+uNkzfbXRDF2lIXqOPdSPEi+quISw8aJCpu/hEJKP37CfN8xM90pe
-         rzVEFd+Tzm2bAyEl6wpifclLxw3NffujRuFHLXDRRYia+I5y1IxRM9L49Yxby7G5s1MN
-         2PZalXgXFXiht3BlfnASJn8b49sFcV/0p01o9F6ZgCjGZ0e+X0Ii6vyE/ScTE0L7qYuk
-         ELp35CNOva/X/T2xbpw5hQOBlnElKoBDK1canzWOAa2Y8Vvu4MMrSuGq8MqOZf5yY3pT
-         XqtsEZnrHo1q1MAMwa244hkx4zx8xQjOLZBbDSgzbSdI98vhFwbRuwRNpWSFDH2v+HXw
-         ntIQ==
+        bh=Z4tnU+N/DU1N5SPy41/fi/miGaLy6d3wjz6icgaZVuI=;
+        b=0WoDOm7eSUPpLoIkMOSusIKkzLWDQndtkVtMrGv8KeIPGtwW9IqpBlwAf//CG+IO9b
+         q7aVWcfLGjukA/a5dBEMZ0iwfWK22jsX7ha+nyfdiYkjP4D2eMGlGeoIGa3bQ84wsKS8
+         TMAnpVntCcP2PVlcvED5ml1PjmoIkaRBsiXxHt05BNDwFma0SSCOafqRpg9eXjLBlEll
+         N1J0oUsHG58CHkYHl922OZ9xuT6FSEyUr/2/6pa8v6s2R7m4xoijYYVdnJ50lx1Jetwo
+         DRW724JkkmwuowaoF6lh8n70DvlR4bqUPhpAETLXkg6GfrTq9Gr7o61SKJT3nq1cM9iE
+         RjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=P9mL4O5UKxgeQ6YgVpvHFfuhwxbNZ5YHPxsK8gfhi68=;
-        b=PL5V8diLSa96FCC+P6nkyAgA4iQBrMBngsMAz23YNW2Xd8NO1LxASUMFHDHRAwh84g
-         LLXwN1+ygc7KgSB7zz5wtMT6ftcMqn56gUtdE2lXJfa6sLXRdm+Yy/wKnpWEHHhuAFMR
-         +0RhPdwbdPT43r2HzSpGt7TvwyitAcmleAdNhrujYH0xXMnFtM6HUxNVsOBUU51HpFnk
-         5JoSTpqvVrIXOrRUma/IH15v2kWHIgD6FsBG3lQtfsuY/00NzGjHr7x0KQxIbRlIPdjO
-         sHPVLpgpfMQbBDUT9dQCEKoLj4m/GsMmPAJaSNdutt/yyrvUmKtlJ6fdf69U7VX434Xg
-         n5Gw==
-X-Gm-Message-State: APjAAAUdj0IVMINK9x9RKngxZpWNJadVVSaYYfbjLuwjjiV/LdXsgdAV
-        wNE8vlqzk9rtQVIlbU6AkCA3yw==
-X-Google-Smtp-Source: APXvYqxMh33+I8kq6JhPQH8T+UhQDbExP4qPLZU0cohanQu1ilJqgxLnPPggT85p1cjHMhE/I9oTXA==
-X-Received: by 2002:adf:ec8c:: with SMTP id z12mr36015735wrn.209.1558360848054;
-        Mon, 20 May 2019 07:00:48 -0700 (PDT)
+        bh=Z4tnU+N/DU1N5SPy41/fi/miGaLy6d3wjz6icgaZVuI=;
+        b=eFeMRcv0Pt7PZHolAUuStdPBPjDMpIaa2C2VA1Y6HdM0u9fUUWttVFWs+DYzWWIwtR
+         oc5/To3hl60hQtfZe9K9sbFkm/NU1l4h0ifbbZGLld3/Hv1IebvizMhQ9rYIw3THD2Ky
+         NGCYWN9SuZOXrLc7slfNo3f/lKqNWGpt5HoPf4JCAfPiO+XvcZ53j+SbyjB2BNmejjJd
+         2yMFfyUAEuWEiukwL6UkXDowlPub1oCo6/8UusZNHeXVMN3hcPBor+5S38VijBIMGuq9
+         YjiHvFsJ1vQ/XGI1UbziOY7U0MypJhhDYbF8fViBHlAOOe4LQQlXmmoa/9ENFLZyFFfs
+         jrQQ==
+X-Gm-Message-State: APjAAAWn7RCPks9kLjTP+2RNcYIKSUpcUyeL5X6WJraM+BslJ2CY0v97
+        fXHbZpor+fF3Q5F4k0xGxdVPLg==
+X-Google-Smtp-Source: APXvYqwEEdJHWNWT9tmdPHAERp5H+E+95z5naZ9rAlFKjxLflOoHQqlwBCMhp9NAPjMi8a5idFRzog==
+X-Received: by 2002:a5d:448e:: with SMTP id j14mr26575282wrq.158.1558360897097;
+        Mon, 20 May 2019 07:01:37 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x2sm5292076wrs.39.2019.05.20.07.00.47
+        by smtp.gmail.com with ESMTPSA id f10sm24622307wrg.24.2019.05.20.07.01.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:00:47 -0700 (PDT)
+        Mon, 20 May 2019 07:01:36 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
+To:     linux-i2c@vger.kernel.org
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH] firmware: meson: meson_sm: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:00:45 +0200
-Message-Id: <20190520140045.29125-1-narmstrong@baylibre.com>
+Subject: [PATCH] i2c: i2c-meson: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:01:33 +0200
+Message-Id: <20190520140133.29230-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,50 +63,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/firmware/meson/meson_sm.c       | 8 +-------
- include/linux/firmware/meson/meson_sm.h | 8 +-------
- 2 files changed, 2 insertions(+), 14 deletions(-)
+ drivers/i2c/busses/i2c-meson.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
-index 29fbc818a573..4ef8c04ef80c 100644
---- a/drivers/firmware/meson/meson_sm.c
-+++ b/drivers/firmware/meson/meson_sm.c
-@@ -1,15 +1,9 @@
+diff --git a/drivers/i2c/busses/i2c-meson.c b/drivers/i2c/busses/i2c-meson.c
+index 90f5d0407d73..f530d9a0450b 100644
+--- a/drivers/i2c/busses/i2c-meson.c
++++ b/drivers/i2c/busses/i2c-meson.c
+@@ -1,11 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Amlogic Secure Monitor driver
+  * I2C bus driver for Amlogic Meson SoCs
   *
-  * Copyright (C) 2016 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
+  * Copyright (C) 2014 Beniamino Galvani <b.galvani@gmail.com>
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
   */
  
- #define pr_fmt(fmt) "meson-sm: " fmt
-diff --git a/include/linux/firmware/meson/meson_sm.h b/include/linux/firmware/meson/meson_sm.h
-index f98c20dd266e..7b855deb1b15 100644
---- a/include/linux/firmware/meson/meson_sm.h
-+++ b/include/linux/firmware/meson/meson_sm.h
-@@ -1,13 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2016 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _MESON_SM_FW_H_
+ #include <linux/clk.h>
 -- 
 2.21.0
 
