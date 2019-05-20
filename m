@@ -2,120 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C002022DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 039B822DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbfETIGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:06:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730931AbfETIFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:40 -0400
-Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 849C121743;
-        Mon, 20 May 2019 08:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558339539;
-        bh=raAt8ipYjBhGFbDlGMuzDJpgi0ln4BsxFF01Er+hiOc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jdYWZljd+XAmUtm4/Z1mZgnln1MY3TLs3bGN2c3jBzfPq+orINhXfSAKftcTlfG42
-         G2+RG50MhGqJnLEouQF/taYE5GkqfuaPqKJurtmjX5r8y3xw5u0RtkjwIXLmgBy8t9
-         0EKyN9ENR6AglhM0KnypGVLs62aHiDQoRQizQPXU=
-Received: by wens.tw (Postfix, from userid 1000)
-        id 07DF46586A; Mon, 20 May 2019 16:05:32 +0800 (CST)
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/25] clk: sunxi-ng: sun8i-r: Use local parent references for SUNXI_CCU_GATE
-Date:   Mon, 20 May 2019 16:04:21 +0800
-Message-Id: <20190520080421.12575-26-wens@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
-References: <20190520080421.12575-1-wens@kernel.org>
+        id S1730628AbfETIFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:05:23 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40728 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfETIFX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:05:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190520080521euoutp010896e16f4f345ac5a18967c069c747d7~gVYnVPm7-2042520425euoutp01i
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:05:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190520080521euoutp010896e16f4f345ac5a18967c069c747d7~gVYnVPm7-2042520425euoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1558339521;
+        bh=kbyN3TjyDx8oqa74b4izYV9eIuvgOoK3g1XdrHecRGY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=LzcDMs6EFgsJFBQrpFGrsqvuvQV9EGN9FB+89CGeQiwRNuM980dA39XU1H+SbQDst
+         QG17gEesI5PDlt68tzkQD8+fcCIiU3JapL8lDsLt7V7PJeU6gpSafKT6QbcK4yGVRu
+         iMpCHqzuV5nSOV7fj9NQMmHfLbONiviRN5qkkj68=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190520080520eucas1p11d8bfb238865f0d54f1d8911fb03a991~gVYmz07Oq2609826098eucas1p1M;
+        Mon, 20 May 2019 08:05:20 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 33.0F.04325.0CF52EC5; Mon, 20
+        May 2019 09:05:20 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190520080520eucas1p10a60f58f21cf785ffe449c213daecdc1~gVYmCBIlQ2358323583eucas1p1Z;
+        Mon, 20 May 2019 08:05:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190520080520eusmtrp2f5847286dfd832358321f43a292a3299~gVYmBcNjX0781107811eusmtrp2r;
+        Mon, 20 May 2019 08:05:20 +0000 (GMT)
+X-AuditID: cbfec7f5-b75ff700000010e5-e5-5ce25fc08206
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.15.04140.0CF52EC5; Mon, 20
+        May 2019 09:05:20 +0100 (BST)
+Received: from [106.120.51.74] (unknown [106.120.51.74]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190520080519eusmtip238cfac07af457a6f10ed1f969256f4bb~gVYlq8eCV1233512335eusmtip2W;
+        Mon, 20 May 2019 08:05:19 +0000 (GMT)
+Subject: Re: [PATCH v2] drm/bridge: Remove duplicate header
+To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        architt@codeaurora.org, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie
+Cc:     jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <4e46d26e-675c-23db-5b5d-5030f64cda56@samsung.com>
+Date:   Mon, 20 May 2019 10:05:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5cdd8109.1c69fb81.6e003.b84b@mx.google.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djP87oH4h/FGOy9pW7Re+4kk0VTx1tW
+        iytf37NZXLvawGzROXEJu8XlXXPYLC59PMTkwO5xua+XyWPnrLvsHrM7ZrJ6bP/2gNXjfvdx
+        Jo/Pm+QC2KK4bFJSczLLUov07RK4Mo53P2cu+M9ecWjxRrYGxlNsXYycHBICJhLbu5exdjFy
+        cQgJrGCUeD+tgQnC+cIo8e3ya3YI5zOjxOzJb9lhWrp/NUNVLWeUWN79mRHCecsocWHmfVaQ
+        KmEBa4m2zuVg7SICDYwSt7bfB9vILBApMffOAkYQm01AU+Lv5ptgcV4BO4meTfPAVrAIqErM
+        vj8TzBYViJC4f2wDK0SNoMTJmU9YQGxOAUuJZT0bGCFmyktsfzuHGcIWl7j1ZD7YeRIC29gl
+        2k9tY4K420Vi1foHrBC2sMSr41ug/pGR+L9zPlRNvcT9FS3MEM0djBJbN+xkhkhYSxw+fhGo
+        mQNog6bE+l36EGFHiQOnnzGBhCUE+CRuvBWEuIFPYtK26cwQYV6JjjYhiGpFiftnt0INFJdY
+        euEr2wRGpVlIPpuF5JtZSL6ZhbB3ASPLKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMCE
+        dPrf8a87GPf9STrEKMDBqMTD6zH9YYwQa2JZcWXuIUYJDmYlEV5j9fsxQrwpiZVVqUX58UWl
+        OanFhxilOViUxHmrGR5ECwmkJ5akZqemFqQWwWSZODilGhg17k2Uv+2Y84Mr+52r4Hd+uUON
+        QesO/+gJ4rOydHExDZb4yqXhxy1tr6NxtVJrXc+0FOusi2wPcsL35ipt1fm9IDpwp8PaOyYz
+        v1uf3HJP2XvmLRXNKcEn1GXP/FWMqJJMLkoXYHU74uzuw/bx8xXf6qTktL0Sc7dxTz18VOX3
+        FbkNVd4/GJVYijMSDbWYi4oTAVyVth5EAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xe7oH4h/FGDx+yGrRe+4kk0VTx1tW
+        iytf37NZXLvawGzROXEJu8XlXXPYLC59PMTkwO5xua+XyWPnrLvsHrM7ZrJ6bP/2gNXjfvdx
+        Jo/Pm+QC2KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov0
+        7RL0Mo53P2cu+M9ecWjxRrYGxlNsXYycHBICJhLdv5qZuhi5OIQEljJKfJp3lhEiIS6xe/5b
+        ZghbWOLPtS6wBiGB14wSf5fGgNjCAtYSbZ3L2UGaRQQaGCUabk8Bcjg4mAUiJd6fYYeo72GU
+        OHQvDMRmE9CU+Lv5JtgcXgE7iZ5N88BqWARUJWbfnwlmiwpESJx5v4IFokZQ4uTMJ2A2p4Cl
+        xLKeDWC3MQuoS/yZd4kZwpaX2P52DpQtLnHryXymCYxCs5C0z0LSMgtJyywkLQsYWVYxiqSW
+        Fuem5xYb6RUn5haX5qXrJefnbmIERt+2Yz+37GDsehd8iFGAg1GJh/fDlIcxQqyJZcWVuYcY
+        JTiYlUR4jdXvxwjxpiRWVqUW5ccXleakFh9iNAV6biKzlGhyPjAx5JXEG5oamltYGpobmxub
+        WSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYNS82SXQm/AhtK131cZ7Wqkbrj+Xf+5XN6Gu
+        WPUAX+a2X4uanoY7ngvrNPI8LmMMTDSvov7nRdwPvJ59SWzPPYveSerRueZOByZK98fGuem3
+        bZmpsW/Jz9pbG2YbKOwI+590VCf2SfORO3Yf1ouYe+2TlnY4eeqQ28r5eQc2GZ79+fWlb+XN
+        RUosxRmJhlrMRcWJAJkXpBLUAgAA
+X-CMS-MailID: 20190520080520eucas1p10a60f58f21cf785ffe449c213daecdc1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3
+References: <CGME20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3@epcas1p1.samsung.com>
+        <5cdd8109.1c69fb81.6e003.b84b@mx.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+On 16.05.2019 17:25, Sabyasachi Gupta wrote:
+> Remove duplicate header which is included twice
+>
+> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
 
-With the new clk parenting code and SUNXI_CCU_GATE macros, we can
-reference parents locally via pointers to struct clk_hw or DT
-clock-names.
 
-Convert existing SUNXI_CCU_GATE definitions to SUNXI_CCU_GATE_HWS
-as the parent clock is internal to this clock unit.
+Queued to drm-misc-next.
 
-To avoid duplication of clock definitions, we fix up the parent
-reference for A83T in the A83T init function.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r.c | 37 +++++++++++++++++++-----------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+Regards
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index 4a111c28b8c3..a7a21feaf143 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -73,20 +73,26 @@ static struct ccu_div apb0_clk = {
- 
- static SUNXI_CCU_M(a83t_apb0_clk, "apb0", "ahb0", 0x0c, 0, 2, 0);
- 
--static SUNXI_CCU_GATE(apb0_pio_clk,	"apb0-pio",	"apb0",
--		      0x28, BIT(0), 0);
--static SUNXI_CCU_GATE(apb0_ir_clk,	"apb0-ir",	"apb0",
--		      0x28, BIT(1), 0);
--static SUNXI_CCU_GATE(apb0_timer_clk,	"apb0-timer",	"apb0",
--		      0x28, BIT(2), 0);
--static SUNXI_CCU_GATE(apb0_rsb_clk,	"apb0-rsb",	"apb0",
--		      0x28, BIT(3), 0);
--static SUNXI_CCU_GATE(apb0_uart_clk,	"apb0-uart",	"apb0",
--		      0x28, BIT(4), 0);
--static SUNXI_CCU_GATE(apb0_i2c_clk,	"apb0-i2c",	"apb0",
--		      0x28, BIT(6), 0);
--static SUNXI_CCU_GATE(apb0_twd_clk,	"apb0-twd",	"apb0",
--		      0x28, BIT(7), 0);
-+/*
-+ * Define the parent as an array that can be reused to save space
-+ * instead of having compound literals for each gate. Also have it
-+ * non-const so we can change it on the A83T.
-+ */
-+static const struct clk_hw *apb0_gate_parent[] = { &apb0_clk.common.hw };
-+static SUNXI_CCU_GATE_HWS(apb0_pio_clk,		"apb0-pio",
-+			  apb0_gate_parent, 0x28, BIT(0), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_ir_clk,		"apb0-ir",
-+			  apb0_gate_parent, 0x28, BIT(1), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_timer_clk,	"apb0-timer",
-+			  apb0_gate_parent, 0x28, BIT(2), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_rsb_clk,		"apb0-rsb",
-+			  apb0_gate_parent, 0x28, BIT(3), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_uart_clk,	"apb0-uart",
-+			  apb0_gate_parent, 0x28, BIT(4), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_i2c_clk,		"apb0-i2c",
-+			  apb0_gate_parent, 0x28, BIT(6), 0);
-+static SUNXI_CCU_GATE_HWS(apb0_twd_clk,		"apb0-twd",
-+			  apb0_gate_parent, 0x28, BIT(7), 0);
- 
- static const char * const r_mod0_default_parents[] = { "osc32k", "osc24M" };
- static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
-@@ -284,6 +290,9 @@ static void __init sunxi_r_ccu_init(struct device_node *node,
- 
- static void __init sun8i_a83t_r_ccu_setup(struct device_node *node)
- {
-+	/* Fix apb0 bus gate parents here */
-+	apb0_gate_parent[0] = &a83t_apb0_clk.common.hw;
-+
- 	sunxi_r_ccu_init(node, &sun8i_a83t_r_ccu_desc);
- }
- CLK_OF_DECLARE(sun8i_a83t_r_ccu, "allwinner,sun8i-a83t-r-ccu",
--- 
-2.20.1
+Andrzej
+
+
+> ---
+> v2: rebased the code against drm -next and arranged the headers alphabetically
+>
+>  drivers/gpu/drm/bridge/panel.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
+> index 38eeaf8..000ba7c 100644
+> --- a/drivers/gpu/drm/bridge/panel.c
+> +++ b/drivers/gpu/drm/bridge/panel.c
+> @@ -9,13 +9,12 @@
+>   */
+>  
+>  #include <drm/drmP.h>
+> -#include <drm/drm_panel.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_connector.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_modeset_helper_vtables.h>
+> -#include <drm/drm_probe_helper.h>
+>  #include <drm/drm_panel.h>
+> +#include <drm/drm_probe_helper.h>
+>  
+>  struct panel_bridge {
+>  	struct drm_bridge bridge;
+
 
