@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98871233B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4619F2342E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387886AbfETMTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:19:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32986 "EHLO mail.kernel.org"
+        id S2388774AbfETMYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:24:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387855AbfETMTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:45 -0400
+        id S2387451AbfETMYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:24:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6391820815;
-        Mon, 20 May 2019 12:19:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE21A20815;
+        Mon, 20 May 2019 12:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354784;
-        bh=FNyDz1pMxz6Z+YQxf9P827uXTCVV/xaBJ++WrK60164=;
+        s=default; t=1558355045;
+        bh=A70ERJCpw2XeA0ZmvbUTTGlAu2BvYj8SBPLlPWWiQOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZhLjBtNPThlYR2HLXkQR5vOedRmUrGBloNQkuzVpo7K3XqpNnSKUI+uqgnh2TTxq
-         f7Bo637BVOnzFkBgNBZhl/DsAjeTezEr6Tfw9r2J3qur44W8RcByxJ83SCe7QqeWBW
-         1Sdp7eZJtPpbdsxKXdC1Aw53+LLMXIDdQi3KgprA=
+        b=hYlXsZMsmjI1lSac2KhPIUAkVm1yIqXMWh2irG6Ci1LdYN6Q1yVH0mLsjX2ebl1jQ
+         fFn7Ja1WsQWUPEXorSvhFnt8fsrKNHSLO8R1xML5PK4d73c7uxkHDECQ7UpEoBQICA
+         uyftb2/GLk93t5K3LI0LPofXpCgJKlab3x+wP55o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 41/63] ext4: make sanity check in mballoc more strict
-Date:   Mon, 20 May 2019 14:14:20 +0200
-Message-Id: <20190520115235.648852887@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 075/105] btrfs: Honour FITRIM range constraints during free space trim
+Date:   Mon, 20 May 2019 14:14:21 +0200
+Message-Id: <20190520115252.400703952@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 31562b954b60f02acb91b7349dc6432d3f8c3c5f upstream.
+commit c2d1b3aae33605a61cbab445d8ae1c708ccd2698 upstream.
 
-The sanity check in mb_find_extent() only checked that returned extent
-does not extend past blocksize * 8, however it should not extend past
-EXT4_CLUSTERS_PER_GROUP(sb). This can happen when clusters_per_group <
-blocksize * 8 and the tail of the bitmap is not properly filled by 1s
-which happened e.g. when ancient kernels have grown the filesystem.
+Up until now trimming the freespace was done irrespective of what the
+arguments of the FITRIM ioctl were. For example fstrim's -o/-l arguments
+will be entirely ignored. Fix it by correctly handling those paramter.
+This requires breaking if the found freespace extent is after the end of
+the passed range as well as completing trim after trimming
+fstrim_range::len bytes.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Fixes: 499f377f49f0 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/mballoc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/extent-tree.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -1555,7 +1555,7 @@ static int mb_find_extent(struct ext4_bu
- 		ex->fe_len += 1 << order;
- 	}
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10789,9 +10789,9 @@ int btrfs_error_unpin_extent_range(struc
+  * held back allocations.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+-				   u64 minlen, u64 *trimmed)
++				   struct fstrim_range *range, u64 *trimmed)
+ {
+-	u64 start = 0, len = 0;
++	u64 start = range->start, len = 0;
+ 	int ret;
  
--	if (ex->fe_start + ex->fe_len > (1 << (e4b->bd_blkbits + 3))) {
-+	if (ex->fe_start + ex->fe_len > EXT4_CLUSTERS_PER_GROUP(e4b->bd_sb)) {
- 		/* Should never happen! (but apparently sometimes does?!?) */
- 		WARN_ON(1);
- 		ext4_error(e4b->bd_sb, "corruption or bug in mb_find_extent "
+ 	*trimmed = 0;
+@@ -10834,8 +10834,8 @@ static int btrfs_trim_free_extents(struc
+ 		if (!trans)
+ 			up_read(&fs_info->commit_root_sem);
+ 
+-		ret = find_free_dev_extent_start(trans, device, minlen, start,
+-						 &start, &len);
++		ret = find_free_dev_extent_start(trans, device, range->minlen,
++						 start, &start, &len);
+ 		if (trans) {
+ 			up_read(&fs_info->commit_root_sem);
+ 			btrfs_put_transaction(trans);
+@@ -10848,6 +10848,16 @@ static int btrfs_trim_free_extents(struc
+ 			break;
+ 		}
+ 
++		/* If we are out of the passed range break */
++		if (start > range->start + range->len - 1) {
++			mutex_unlock(&fs_info->chunk_mutex);
++			ret = 0;
++			break;
++		}
++
++		start = max(range->start, start);
++		len = min(range->len, len);
++
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 
+@@ -10857,6 +10867,10 @@ static int btrfs_trim_free_extents(struc
+ 		start += len;
+ 		*trimmed += bytes;
+ 
++		/* We've trimmed enough */
++		if (*trimmed >= range->len)
++			break;
++
+ 		if (fatal_signal_pending(current)) {
+ 			ret = -ERESTARTSYS;
+ 			break;
+@@ -10940,8 +10954,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->devices;
+ 	list_for_each_entry(device, devices, dev_list) {
+-		ret = btrfs_trim_free_extents(device, range->minlen,
+-					      &group_trimmed);
++		ret = btrfs_trim_free_extents(device, range, &group_trimmed);
+ 		if (ret) {
+ 			dev_failed++;
+ 			dev_ret = ret;
 
 
