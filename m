@@ -2,120 +2,324 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08DBA23267
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4BD62326D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbfETLai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:30:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731193AbfETLah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:30:37 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B7B8368B1;
-        Mon, 20 May 2019 11:30:37 +0000 (UTC)
-Received: from thuth.remote.csb (ovpn-117-9.ams2.redhat.com [10.36.117.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 058B95C553;
-        Mon, 20 May 2019 11:30:31 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/4] KVM selftests for s390x
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
-        Andrew Jones <drjones@redhat.com>
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <20190516111253.4494-1-thuth@redhat.com>
- <b412e591-3983-ebef-510b-43f9b7be4147@redhat.com>
-From:   Thomas Huth <thuth@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-Organization: Red Hat
-Message-ID: <9423ba89-b10e-5e6e-3cc8-8088f3088233@redhat.com>
-Date:   Mon, 20 May 2019 13:30:31 +0200
+        id S1732874AbfETLav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:30:51 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:44465 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732850AbfETLav (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:30:51 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id SgVBhrJ9u3qlsSgVEhjKRz; Mon, 20 May 2019 13:30:48 +0200
+Subject: Re: [PATCH v6 2/3] drm/bridge: dw-hdmi: pass connector info to the
+ CEC adapter
+To:     Dariusz Marcinkiewicz <darekm@google.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20190517154256.255696-1-darekm@google.com>
+ <20190517154256.255696-2-darekm@google.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <8f2ceecd-da9e-a923-da72-cdc660eecb3a@xs4all.nl>
+Date:   Mon, 20 May 2019 13:30:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <b412e591-3983-ebef-510b-43f9b7be4147@redhat.com>
+In-Reply-To: <20190517154256.255696-2-darekm@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 20 May 2019 11:30:37 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFpVPeIn/BZiBwm4I/6JYNDg/CHDm7A9caDxP2rg6j+8SEd3c0LwfqA7CEWxSpD9JwXEWaRRGDP5t5UEcJQit+nGOm70HDdQTjVN03MxIdL5B6QgdiR3
+ av94njpBA1XO7S5FDB4/4RphpvyFRKh9dEuLTvzVDY3G6nv3AxI/23Paye5jiSmk+Mdox4S/4PVs732oy9kowMFNFzdPmCdRg7d6hNCLB1sBCCBhG94mfiI5
+ NAJ5qbkodrSo7L8XIsJhgg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/2019 13.20, Paolo Bonzini wrote:
-> On 16/05/19 13:12, Thomas Huth wrote:
->> This patch series enables the KVM selftests for s390x. As a first
->> test, the sync_regs from x86 has been adapted to s390x.
->>
->> Please note that the ucall() interface is not used yet - since
->> s390x neither has PIO nor MMIO, this needs some more work first
->> before it becomes usable (we likely should use a DIAG hypercall
->> here, which is what the sync_reg test is currently using, too...).
+On 5/17/19 5:42 PM, Dariusz Marcinkiewicz wrote:
+> This patch makes dw-hdmi pass DRM connector info to a respective
+> CEC adapter. In order to be able to do that it delays creation of
+> the dw-hdmi-cec platform device until DRM connector is initialized.
 > 
-> No objections at all, though it would be like to have ucall plumbed in
-> from the beginning.
+> Requires testing.
 
-I'm still looking at the ucall interface ... what I don't quite get yet
-is the question why the ucall_type there is selectable during runtime?
+Testing this patch with the Khadas VIM2 board gives this kernel warning:
 
-Are there plans to have test that could either use UCALL_PIO or
-UCALL_MMIO? If not, what about moving ucall_init() and ucall() to
-architecture specific code in tools/testing/selftests/kvm/lib/aarch64/
-and tools/testing/selftests/kvm/lib/x86_64 instead, and to remove the
-ucall_type stuff again (so that x86 is hard-wired to PIO and aarch64
-is hard-wired to MMIO)? ... then I could add a DIAG-based ucall
-on s390x more easily, I think.
+[    3.468499] meson-dw-hdmi c883a000.hdmi-tx: Detected HDMI TX controller v2.01a with HDCP (meson_dw_hdmi_phy)
+[    3.473123] meson-dw-hdmi c883a000.hdmi-tx: registered DesignWare HDMI I2C bus driver
+[    3.481151] WARNING: CPU: 4 PID: 66 at mm/page_alloc.c:4584 __alloc_pages_nodemask+0x7c8/0xb98
+[    3.488962] Modules linked in:
+[    3.491984] CPU: 4 PID: 66 Comm: kworker/4:1 Not tainted 5.1.0-rc1-arm64 #26
+[    3.498965] Hardware name: Khadas VIM2 (DT)
+[    3.503114] Workqueue: events deferred_probe_work_func
+[    3.508197] pstate: 20000005 (nzCv daif -PAN -UAO)
+[    3.512941] pc : __alloc_pages_nodemask+0x7c8/0xb98
+[    3.517771] lr : alloc_pages_current+0x80/0xf0
+[    3.522167] sp : ffff0000119db680
+[    3.525444] x29: ffff0000119db680 x28: 0000000000000000
+[    3.530705] x27: ffff000010c0d108 x26: ffff8000be900cf0
+[    3.535966] x25: 0000000000000001 x24: ffff8000be93d400
+[    3.541228] x23: ffff00001119cd90 x22: ffff8000be900c80
+[    3.546489] x21: 0000000000000000 x20: 000000000000001a
+[    3.551750] x19: 0000000000040cc0 x18: 0000000000000001
+[    3.557011] x17: 0000000000000001 x16: 0000000000000019
+[    3.562273] x15: ffffffffffffffff x14: ffff00001103d6c8
+[    3.567534] x13: ffff8000be529e09 x12: 0000000000000018
+[    3.572795] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
+[    3.578056] x9 : 0000000000000000 x8 : ffff8000bdb4f000
+[    3.583317] x7 : ffff8000bdb4ecf0 x6 : 0000000000000041
+[    3.588579] x5 : 0000000000000000 x4 : ffff00001103d6c8
+[    3.593840] x3 : 0000000000000000 x2 : 0000000000000000
+[    3.599101] x1 : 000000000000001a x0 : 0000000000040cc0
+[    3.604363] Call trace:
+[    3.606781]  __alloc_pages_nodemask+0x7c8/0xb98
+[    3.611264]  alloc_pages_current+0x80/0xf0
+[    3.615320]  kmalloc_order+0x14/0x38
+[    3.618857]  __kmalloc_track_caller+0x1c8/0x220
+[    3.623341]  kmemdup+0x28/0x50
+[    3.626360]  platform_device_add_resources+0x30/0x68
+[    3.631275]  platform_device_register_full+0xa8/0x130
+[    3.636279]  dw_hdmi_bridge_attach+0xc4/0xd0
+[    3.640507]  drm_bridge_attach+0x64/0xc0
+[    3.644384]  dw_hdmi_bind+0x4c/0x98
+[    3.647838]  meson_dw_hdmi_bind+0x424/0x568
+[    3.651975]  component_bind_all+0x110/0x238
+[    3.656116]  meson_drv_bind_master+0x308/0x488
+[    3.660514]  meson_drv_bind+0x10/0x18
+[    3.664136]  try_to_bring_up_master+0x164/0x1c0
+[    3.668621]  component_master_add_with_match+0xbc/0xf8
+[    3.673710]  meson_drv_probe+0xd0/0x120
+[    3.677505]  platform_drv_probe+0x50/0xa8
+[    3.681472]  really_probe+0x1c8/0x2a0
+[    3.685094]  driver_probe_device+0x54/0xf0
+[    3.689148]  __device_attach_driver+0x80/0xb8
+[    3.693463]  bus_for_each_drv+0x78/0xc8
+[    3.697255]  __device_attach+0xd4/0x130
+[    3.701051]  device_initial_probe+0x10/0x18
+[    3.705190]  bus_probe_device+0x90/0x98
+[    3.708986]  deferred_probe_work_func+0x6c/0xa0
+[    3.713473]  process_one_work+0x1e0/0x330
+[    3.717439]  worker_thread+0x240/0x448
+[    3.721150]  kthread+0x120/0x128
+[    3.724340]  ret_from_fork+0x10/0x1c
+[    3.727874] ---[ end trace 729b3a53d3f3eac1 ]---
+[    3.732510] meson-drm d0100000.vpu: bound c883a000.hdmi-tx (ops meson_dw_hdmi_ops)
+[    3.740366] [drm] Initialized meson 1.0.0 20161109 for d0100000.vpu on minor 0
+[    3.747158] [drm] Cannot find any crtc or sizes
+[    3.752380] libphy: mdio_mux: probed
+[    3.755243] [drm] Cannot find any crtc or sizes
 
- Thomas
+If I revert this patch, then it's fine again.
+
+I get this even if CONFIG_DRM_DW_HDMI_CEC is not set.
+
+The Khadas VIM2 board uses dw-hdmi for the HDMI support, but it uses its own CEC
+meson driver. I do have other HW that uses dw-hdmi for CEC, but won't have access
+to it until next week.
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c |  5 +-
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.h |  2 +
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 82 +++++++++++--------
+>  3 files changed, 52 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
+> index 84fb7b6a0a5e0..cf879629e0726 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
+> @@ -232,6 +232,7 @@ static void dw_hdmi_cec_del(void *data)
+>  static int dw_hdmi_cec_probe(struct platform_device *pdev)
+>  {
+>  	struct dw_hdmi_cec_data *data = dev_get_platdata(&pdev->dev);
+> +	struct cec_connector_info conn_info;
+>  	struct dw_hdmi_cec *cec;
+>  	int ret;
+>  
+> @@ -258,10 +259,12 @@ static int dw_hdmi_cec_probe(struct platform_device *pdev)
+>  	dw_hdmi_write(cec, ~0, HDMI_IH_MUTE_CEC_STAT0);
+>  	dw_hdmi_write(cec, 0, HDMI_CEC_POLARITY);
+>  
+> +	cec_fill_connector_info(&conn_info, data->connector);
+> +
+>  	cec->adap = cec_allocate_adapter(&dw_hdmi_cec_ops, cec, "dw_hdmi",
+>  					 CEC_CAP_LOG_ADDRS | CEC_CAP_TRANSMIT |
+>  					 CEC_CAP_RC | CEC_CAP_PASSTHROUGH,
+> -					 CEC_MAX_LOG_ADDRS, NULL);
+> +					 CEC_MAX_LOG_ADDRS, &conn_info);
+>  	if (IS_ERR(cec->adap))
+>  		return PTR_ERR(cec->adap);
+>  
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.h
+> index cf4dc121a2c43..a2ac91ec845ed 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.h
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.h
+> @@ -1,6 +1,7 @@
+>  #ifndef DW_HDMI_CEC_H
+>  #define DW_HDMI_CEC_H
+>  
+> +struct drm_connector;
+>  struct dw_hdmi;
+>  
+>  struct dw_hdmi_cec_ops {
+> @@ -13,6 +14,7 @@ struct dw_hdmi_cec_ops {
+>  struct dw_hdmi_cec_data {
+>  	struct dw_hdmi *hdmi;
+>  	const struct dw_hdmi_cec_ops *ops;
+> +	const struct drm_connector *connector;
+>  	int irq;
+>  };
+>  
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index ab7968c8f6a29..1275cb74299a8 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -138,6 +138,8 @@ struct dw_hdmi {
+>  	struct drm_connector connector;
+>  	struct drm_bridge bridge;
+>  
+> +	int irq;
+> +
+>  	unsigned int version;
+>  
+>  	struct platform_device *audio;
+> @@ -189,6 +191,7 @@ struct dw_hdmi {
+>  	void (*enable_audio)(struct dw_hdmi *hdmi);
+>  	void (*disable_audio)(struct dw_hdmi *hdmi);
+>  
+> +	bool cec_configured;
+>  	struct cec_notifier *cec_notifier;
+>  };
+>  
+> @@ -2113,6 +2116,29 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+>  	.get_modes = dw_hdmi_connector_get_modes,
+>  };
+>  
+> +static void dw_hdmi_cec_enable(struct dw_hdmi *hdmi)
+> +{
+> +	mutex_lock(&hdmi->mutex);
+> +	hdmi->mc_clkdis &= ~HDMI_MC_CLKDIS_CECCLK_DISABLE;
+> +	hdmi_writeb(hdmi, hdmi->mc_clkdis, HDMI_MC_CLKDIS);
+> +	mutex_unlock(&hdmi->mutex);
+> +}
+> +
+> +static void dw_hdmi_cec_disable(struct dw_hdmi *hdmi)
+> +{
+> +	mutex_lock(&hdmi->mutex);
+> +	hdmi->mc_clkdis |= HDMI_MC_CLKDIS_CECCLK_DISABLE;
+> +	hdmi_writeb(hdmi, hdmi->mc_clkdis, HDMI_MC_CLKDIS);
+> +	mutex_unlock(&hdmi->mutex);
+> +}
+> +
+> +static const struct dw_hdmi_cec_ops dw_hdmi_cec_ops = {
+> +	.write = hdmi_writeb,
+> +	.read = hdmi_readb,
+> +	.enable = dw_hdmi_cec_enable,
+> +	.disable = dw_hdmi_cec_disable,
+> +};
+> +
+>  static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>  {
+>  	struct dw_hdmi *hdmi = bridge->driver_private;
+> @@ -2129,6 +2155,23 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>  
+>  	drm_connector_attach_encoder(connector, encoder);
+>  
+> +	if (hdmi->cec_configured) {
+> +		struct platform_device_info pdevinfo;
+> +		struct dw_hdmi_cec_data cec;
+> +
+> +		cec.hdmi = hdmi;
+> +		cec.ops = &dw_hdmi_cec_ops;
+> +		cec.irq = hdmi->irq;
+> +		cec.connector = connector;
+> +
+> +		pdevinfo.name = "dw-hdmi-cec";
+> +		pdevinfo.data = &cec;
+> +		pdevinfo.size_data = sizeof(cec);
+> +		pdevinfo.dma_mask = 0;
+> +
+> +		hdmi->cec = platform_device_register_full(&pdevinfo);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2398,29 +2441,6 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
+>  	return -ENODEV;
+>  }
+>  
+> -static void dw_hdmi_cec_enable(struct dw_hdmi *hdmi)
+> -{
+> -	mutex_lock(&hdmi->mutex);
+> -	hdmi->mc_clkdis &= ~HDMI_MC_CLKDIS_CECCLK_DISABLE;
+> -	hdmi_writeb(hdmi, hdmi->mc_clkdis, HDMI_MC_CLKDIS);
+> -	mutex_unlock(&hdmi->mutex);
+> -}
+> -
+> -static void dw_hdmi_cec_disable(struct dw_hdmi *hdmi)
+> -{
+> -	mutex_lock(&hdmi->mutex);
+> -	hdmi->mc_clkdis |= HDMI_MC_CLKDIS_CECCLK_DISABLE;
+> -	hdmi_writeb(hdmi, hdmi->mc_clkdis, HDMI_MC_CLKDIS);
+> -	mutex_unlock(&hdmi->mutex);
+> -}
+> -
+> -static const struct dw_hdmi_cec_ops dw_hdmi_cec_ops = {
+> -	.write = hdmi_writeb,
+> -	.read = hdmi_readb,
+> -	.enable = dw_hdmi_cec_enable,
+> -	.disable = dw_hdmi_cec_disable,
+> -};
+> -
+>  static const struct regmap_config hdmi_regmap_8bit_config = {
+>  	.reg_bits	= 32,
+>  	.val_bits	= 8,
+> @@ -2443,7 +2463,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  	struct device_node *np = dev->of_node;
+>  	struct platform_device_info pdevinfo;
+>  	struct device_node *ddc_node;
+> -	struct dw_hdmi_cec_data cec;
+>  	struct dw_hdmi *hdmi;
+>  	struct resource *iores = NULL;
+>  	int irq;
+> @@ -2593,6 +2612,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  		ret = irq;
+>  		goto err_iahb;
+>  	}
+> +	hdmi->irq = irq;
+>  
+>  	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+>  					dw_hdmi_irq, IRQF_SHARED,
+> @@ -2668,18 +2688,8 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  		hdmi->audio = platform_device_register_full(&pdevinfo);
+>  	}
+>  
+> -	if (config0 & HDMI_CONFIG0_CEC) {
+> -		cec.hdmi = hdmi;
+> -		cec.ops = &dw_hdmi_cec_ops;
+> -		cec.irq = irq;
+> -
+> -		pdevinfo.name = "dw-hdmi-cec";
+> -		pdevinfo.data = &cec;
+> -		pdevinfo.size_data = sizeof(cec);
+> -		pdevinfo.dma_mask = 0;
+> -
+> -		hdmi->cec = platform_device_register_full(&pdevinfo);
+> -	}
+> +	if (config0 & HDMI_CONFIG0_CEC)
+> +		hdmi->cec_configured = true;
+>  
+>  	/* Reset HDMI DDC I2C master controller and mute I2CM interrupts */
+>  	if (hdmi->i2c)
+> 
 
