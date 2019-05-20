@@ -2,57 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C424B24240
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E63E24247
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfETUwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 16:52:15 -0400
-Received: from mga03.intel.com ([134.134.136.65]:16868 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfETUwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 16:52:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 13:52:14 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 20 May 2019 13:52:14 -0700
-From:   ira.weiny@intel.com
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] Documentation/x86: Fix path to entry_32.S
-Date:   Mon, 20 May 2019 13:52:53 -0700
-Message-Id: <20190520205253.23762-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726874AbfETUzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 16:55:09 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:56460 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfETUzH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 16:55:07 -0400
+Received: by mail-qk1-f201.google.com with SMTP id q17so13660241qkc.23
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 13:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
+        b=KwKcFS84Od+0uDcbkZwTpIrT43f2kU8zmORrILLiHk2F8YkNKiv1DApHnhAMtYlYNA
+         TTKtXmA8TJ8/ipv7ecH3TyAPVRf9bZ8GXZEFmFgwDXPD4Hjtc9OoZlG6aBmwZtYTn8Oc
+         Nvt9VJVKM4ko0egxxq7cUr2yFh5bt2A6FPsfeESlkTgj+tTo5HipWQkdt0PV7yGNpC2p
+         qwWO/zif0wXn7M/9LQBi1kh21TF0FRSHZu9qfX+5MMJsj7woSz3xBh9gb5WkU4/0KX4c
+         dnI+ZE7GgTCEi7VKzXkA1bmYAkK0Nv9eJ0xJyAJqd/DQAikMJoy/AIkKcuCOHk84b2v+
+         el5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
+        b=D1VI96gUvihKUBKdMVCHebHRPwGhbC67YHm2TsbXB80QjZ123sUmHF8No6q7x7MrY3
+         DWXJd81N2B6UZzy+Ywj5JyG2r4MwW4Bv7IHg/adv+WhgmzesDd+WFhWiwgexgMYRkrt4
+         ecQU+O+hvNvBfLQRBG5UnHqjYtjMhM4cRbpxUGx3P/I0UNl+AHOkmIuSOyQ0uoC4dG7g
+         hIm/Nz0L5yJfegc0f1jn+L2wmbejgA0COyDmYYL+ljf053gzhwI+A9EKMoIhQaE5ti6R
+         t6o5xdktPTCHtdVWyNv8QjUNw10QSSA/9tkamnXjM8eg2TjJ2lgyqwlSlmwj2Lmb9B3B
+         02RQ==
+X-Gm-Message-State: APjAAAWFl23ylEVTNXUqFdZZDKn+nG5zLh1QTDK6ZAOoIEWwXf0ZZray
+        SW46fo5o7QY2QGKBr+vChOwoAahnJ9ukiVijoB7mIQ==
+X-Google-Smtp-Source: APXvYqxcgPZwWQB2M99XR5b353YmJ/Ei17uYUIv35ZBhj13nsYbaZL7VC+EcLkbxPlvT59VqEEmZiqG52LG+K02tnRds4g==
+X-Received: by 2002:a05:620a:144c:: with SMTP id i12mr32298826qkl.243.1558385706056;
+ Mon, 20 May 2019 13:55:06 -0700 (PDT)
+Date:   Mon, 20 May 2019 13:54:57 -0700
+Message-Id: <20190520205501.177637-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH V7 0/4] Add support for crypto agile logs
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+Identical to previous version except without the KSAN workaround - Ard
+has a better solution for that.
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
- Documentation/x86/exception-tables.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/x86/exception-tables.txt b/Documentation/x86/exception-tables.txt
-index e396bcd8d830..001c0f1ad935 100644
---- a/Documentation/x86/exception-tables.txt
-+++ b/Documentation/x86/exception-tables.txt
-@@ -30,7 +30,7 @@ page fault handler
- void do_page_fault(struct pt_regs *regs, unsigned long error_code)
- 
- in arch/x86/mm/fault.c. The parameters on the stack are set up by
--the low level assembly glue in arch/x86/kernel/entry_32.S. The parameter
-+the low level assembly glue in arch/x86/entry/entry_32.S. The parameter
- regs is a pointer to the saved registers on the stack, error_code
- contains a reason code for the exception.
- 
--- 
-2.20.1
 
