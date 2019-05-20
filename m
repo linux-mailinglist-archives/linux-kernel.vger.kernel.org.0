@@ -2,89 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 418A7237C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B30D623D7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733284AbfETNI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:08:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfETNIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:08:54 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99DCC20815;
-        Mon, 20 May 2019 13:08:53 +0000 (UTC)
-Date:   Mon, 20 May 2019 09:08:52 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/4] ftrace: Expose flags used for
- ftrace_replace_code()
-Message-ID: <20190520090852.66f6f629@gandalf.local.home>
-In-Reply-To: <f2aa621d26056aa9fc8a6b82e3ceeaf44201d86d.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
-References: <cover.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
-        <f2aa621d26056aa9fc8a6b82e3ceeaf44201d86d.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2392605AbfETQbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 12:31:33 -0400
+Received: from mail.kelantan.gov.my ([210.187.31.6]:54672 "EHLO
+        mail.kelantan.gov.my" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389524AbfETQbc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 12:31:32 -0400
+X-Greylist: delayed 9673 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 12:31:31 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.kelantan.gov.my (Postfix) with ESMTP id 2E88BAA72A3;
+        Mon, 20 May 2019 21:10:39 +0800 (+08)
+Received: from mail.kelantan.gov.my ([127.0.0.1])
+        by localhost (mail.kelantan.gov.my [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 8S5F6H2QAfuZ; Mon, 20 May 2019 21:10:38 +0800 (+08)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.kelantan.gov.my (Postfix) with ESMTP id 7C999AA729E;
+        Mon, 20 May 2019 21:10:38 +0800 (+08)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.kelantan.gov.my 7C999AA729E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kelantan.gov.my;
+        s=2E4A83DC-38E1-11E8-8B9F-F555E2234FB1; t=1558357838;
+        bh=ZaR+42Sv4vIO8UyCnDH43lk1opt4cejyC+1u0qRyZ1Y=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=CDXoJdpJWKfh8+BsIVERBt6nU60Wxp6LA35x4w8qLVSFBlj18FcKfReujzit6K/xN
+         MDmMJEABAt/yGNwVJ8OHEc89eXChs1SBF1DCJU1y4O2Qpk4e0FSUqQshRconKgQGvn
+         knJFJdwxeQXlYfzfCZVyTQNo2t1A4jRKk460DsbVIKUs/tGiVQ8Gx6lYVx2JPTqkwL
+         YZEwiWB4VQzYKQrpwwWVxFme0WiNjVAuyqWE9KtR2k0Ry+/SULE7IMooN/ib7kxeH2
+         Cw68oUwMQfnc/91TjgME8ehhIvE02/WHtSPqYKjn7NXJb+vC5IcjGpp4gWZ/YpOzPH
+         +5mob0VY0zhBw==
+X-Virus-Scanned: amavisd-new at kelantan.gov.my
+Received: from mail.kelantan.gov.my ([127.0.0.1])
+        by localhost (mail.kelantan.gov.my [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2DSCjtPCSrUZ; Mon, 20 May 2019 21:10:38 +0800 (+08)
+Received: from [192.168.10.103] (unknown [160.152.49.36])
+        by mail.kelantan.gov.my (Postfix) with ESMTPSA id 9BDF5AA71A5;
+        Mon, 20 May 2019 21:10:29 +0800 (+08)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: HELLO.......
+To:     Recipients <ptjb@kelantan.gov.my>
+From:   " Pedro Lite" <ptjb@kelantan.gov.my>
+Date:   Mon, 20 May 2019 14:10:17 +0100
+Reply-To: pedroliteeuromega0@gmail.com
+Message-Id: <20190520131029.9BDF5AA71A5@mail.kelantan.gov.my>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 May 2019 00:32:45 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+I am Pedro Lite,System Operation manager in charge of the Euro Millions Dra=
+ws.I have a confidential deal to discuss with you if only you will be inter=
+ested in the deal.
 
-> Since ftrace_replace_code() is a __weak function and can be overridden,
-> we need to expose the flags that can be set. So, move the flags enum to
-> the header file.
-> 
-> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Thanks,
+Pedro Lite
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
--- Steve
 
-> ---
->  include/linux/ftrace.h | 5 +++++
->  kernel/trace/ftrace.c  | 5 -----
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index 20899919ead8..835e761f63b0 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -162,6 +162,11 @@ enum {
->  	FTRACE_OPS_FL_TRACE_ARRAY		= 1 << 15,
->  };
->  
-> +enum {
-> +	FTRACE_MODIFY_ENABLE_FL		= (1 << 0),
-> +	FTRACE_MODIFY_MAY_SLEEP_FL	= (1 << 1),
-> +};
-> +
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  /* The hash used to know what functions callbacks trace */
->  struct ftrace_ops_hash {
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index b920358dd8f7..38c15cd27fc4 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -78,11 +78,6 @@
->  #define ASSIGN_OPS_HASH(opsname, val)
->  #endif
->  
-> -enum {
-> -	FTRACE_MODIFY_ENABLE_FL		= (1 << 0),
-> -	FTRACE_MODIFY_MAY_SLEEP_FL	= (1 << 1),
-> -};
-> -
->  struct ftrace_ops ftrace_list_end __read_mostly = {
->  	.func		= ftrace_stub,
->  	.flags		= FTRACE_OPS_FL_RECURSION_SAFE | FTRACE_OPS_FL_STUB,
+
+
+
+
+
+
+
 
