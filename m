@@ -2,97 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 315A923427
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B27D23625
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388723AbfETMX4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:23:56 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:59241 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388680AbfETMXy (ORCPT
+        id S2390492AbfETMn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:43:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43999 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389397AbfETM2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:23:54 -0400
-X-Originating-IP: 90.88.22.185
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 36B8EFF810;
-        Mon, 20 May 2019 12:23:34 +0000 (UTC)
-Date:   Mon, 20 May 2019 14:23:33 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        christophe.kerello@st.com, computersforpeace@gmail.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        geert@linux-m68k.org, juliensu@mxic.com.tw, lee.jones@linaro.org,
-        liang.yang@amlogic.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        marcel.ziswiler@toradex.com, marek.vasut@gmail.com,
-        mark.rutland@arm.com, paul.burton@mips.com, richard@nod.at,
-        robh+dt@kernel.org, stefan@agner.ch, zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v3 2/4] mtd: rawnand: Add Macronix MX25F0A NAND
- controller
-Message-ID: <20190520142333.390091d5@xps13>
-In-Reply-To: <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
-References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
-        <1555320234-15802-3-git-send-email-masonccyang@mxic.com.tw>
-        <20190512151820.4f2dd9da@xps13>
-        <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 20 May 2019 08:28:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f25so189909pgv.10;
+        Mon, 20 May 2019 05:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=hB3PHyrs53San/vhDwKRpRyPdI0a/I1a2f3pjFTkUE4=;
+        b=Dj6rxER+7wkxWxh9ncQ8235KU6jkkd6A60sumII2etXOJfRWzKRMI+PilghA5nj4EG
+         jRr+1A3Q7sDU1MIUwj5Ln1rQmAzYMjqW0wXbeHqt4fmdseaVwTVi4djbj/JdjOHxFNLR
+         pyamqSgmB1aFeaW4Z9n8kmVJrpWDvw1Gn/4nn8Lw1A7aA3SSsppCi4fWPgJqbclRf4Sl
+         7d6v4T7sX1kRHyCxbwC8lhdpDbY9e3DOsZZvvNdVzKJ+o/XDxhaPYlbxIeGMfuge4vUa
+         ArvAoihzT4Y3V9a1Sw7sbFd9GWzgmA1HCuzhhHJY+2JaYHiwq5IXOugEoKcGvJ+AtYlC
+         VJxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hB3PHyrs53San/vhDwKRpRyPdI0a/I1a2f3pjFTkUE4=;
+        b=I7sQpabtCwB/Lsz/eCdLSbectA4U2npASBlXeL4ttTNk97BxjFRZoSIdIOHyD75tA6
+         Ujvf3Pt6APhLV2OmgF6/TP6siQ3ZXnYMSFno1mb6xIcmXUE764pcHW09NXPz8FiqSdRm
+         iur64syb55wJDi+dY4dWgHiMfyNaJBibe/nndTpoj0Bm8qWhvgg7ES8QX6IE82tewG1x
+         AGbm5ewEbm72fPARGoezOIOuSlluAmbA+Zme7n/xkLpzsxQrI4Nx6Do+QDpY4F284kFn
+         r5wYIwH+WtETQhVScmBWWpV7OpnlOI4PcZm8IcBi/lhrPWD898YW1eURnuMtf4IAJDom
+         PohA==
+X-Gm-Message-State: APjAAAXmFFMhfddaPAyJYothzyp3XrkhfZgq3VzAISj0kQ5jA16wnhu/
+        PjkVqv9cL6maolktBMZDImI=
+X-Google-Smtp-Source: APXvYqwaLDrWw7c0Fs1bKjKOaDP5fyg9p7qm+2PKXEbMZux7rZ1ZmgUv7+LmqyKVykIc0nPFeA/87Q==
+X-Received: by 2002:a63:7909:: with SMTP id u9mr68890137pgc.223.1558355334363;
+        Mon, 20 May 2019 05:28:54 -0700 (PDT)
+Received: from localhost ([43.224.245.181])
+        by smtp.gmail.com with ESMTPSA id s2sm16226302pfe.105.2019.05.20.05.28.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 05:28:53 -0700 (PDT)
+From:   Weitao Hou <houweitaoo@gmail.com>
+To:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
+        houweitaoo@gmail.com, rafal@milecki.pl
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] brcmfmac: fix typos in code comments
+Date:   Mon, 20 May 2019 20:28:25 +0800
+Message-Id: <20190520122825.981-1-houweitaoo@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+fix lengh to length
 
-masonccyang@mxic.com.tw wrote on Fri, 17 May 2019 17:30:21 +0800:
+Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+---
+- fix prefix
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Hi Miquel,
-> 
-> > > +
-> > > +static void mxic_nand_select_chip(struct nand_chip *chip, int chipnr)  
-> > 
-> > _select_target() is preferred now  
-> 
-> Do you mean I implement mxic_nand_select_target() to control #CS ?
-> 
-> If so, I need to call mxic_nand_select_target( ) to control #CS ON
-> and then #CS OFF in _exec_op() due to nand_select_target()<in nand_base,c>
-> is still calling chip->legacy.select_chip ?
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
+index 8ea27489734e..edd2f09613d8 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
+@@ -314,7 +314,7 @@ brcmf_create_bsscfg(s32 bsscfgidx, char *name, char *data, u32 datalen,
+ 		return brcmf_create_iovar(name, data, datalen, buf, buflen);
+ 
+ 	prefixlen = strlen(prefix);
+-	namelen = strlen(name) + 1; /* lengh of iovar  name + null */
++	namelen = strlen(name) + 1; /* length of iovar  name + null */
+ 	iolen = prefixlen + namelen + sizeof(bsscfgidx_le) + datalen;
+ 
+ 	if (buflen < iolen) {
+-- 
+2.18.0
 
-You must forget about the ->select_chip() callback. Now it should be
-handled directly from the controller driver. Please have a look at the
-commit pointed against the marvell_nand.c driver.
-
-[...]
-
-> > > +   if (!mxic)
-> > > +      return -ENOMEM;
-> > > +
-> > > +   nand_chip = &mxic->nand;
-> > > +   mtd = nand_to_mtd(nand_chip);
-> > > +   mtd->dev.parent = pdev->dev.parent;
-> > > +   nand_chip->ecc.priv = NULL;
-> > > +   nand_set_flash_node(nand_chip, pdev->dev.parent->of_node);
-> > > +   nand_chip->priv = mxic;
-> > > +
-> > > +   mxic->mfd = mfd;
-> > > +
-> > > +   nand_chip->legacy.select_chip = mxic_nand_select_chip;  
-> > 
-> > Please don't implement legacy interfaces. You can check in
-> > marvell_nand.c how this is handled now:
-> > 
-> > b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
-> >   
-> 
-> Does it mean chip->legacy.select_chip() will phase-out ?
-
-Yes it will.
-
-Thanks,
-Miquèl
