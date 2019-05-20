@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DDF239A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30397239A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390702AbfETOPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:15:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57026 "EHLO mx1.redhat.com"
+        id S2403900AbfETOPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:15:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55284 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389951AbfETOPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:15:11 -0400
+        id S2403878AbfETOPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:15:19 -0400
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A4C7C81F1B;
-        Mon, 20 May 2019 14:15:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A991D30832EA;
+        Mon, 20 May 2019 14:15:13 +0000 (UTC)
 Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C50841001DD9;
-        Mon, 20 May 2019 14:15:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C526D100EBDF;
+        Mon, 20 May 2019 14:15:11 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -27,88 +27,226 @@ Cc:     linux-kernel@vger.kernel.org,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Qian Cai <cai@gmx.us>, Zhong Jiang <zhongjiang@huawei.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH 3/5] debugobjects: Reduce number of pool_lock acquisitions in fill_pool()
-Date:   Mon, 20 May 2019 10:14:48 -0400
-Message-Id: <20190520141450.7575-4-longman@redhat.com>
+Subject: [PATCH 4/5] debugobjects: Less aggressive freeing of excess debug objects
+Date:   Mon, 20 May 2019 10:14:49 -0400
+Message-Id: <20190520141450.7575-5-longman@redhat.com>
 In-Reply-To: <20190520141450.7575-1-longman@redhat.com>
 References: <20190520141450.7575-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 20 May 2019 14:15:11 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 20 May 2019 14:15:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In fill_pool(), the pool_lock is acquired and then released once per
-debug object. If many objects are to be filled, the constant lock and
-unlock operations are extra overhead. To reduce these overhead, we
-batch them up and do an allocation of 4 objects per lock/unlock sequence.
+After a system bootup and 3 parallel kernel builds, a partial output
+of the debug objects stats file was:
+
+pool_free     :5101
+pool_pcp_free :4181
+pool_min_free :220
+pool_used     :104172
+pool_max_used :171920
+on_free_list  :0
+objs_allocated:39268280
+objs_freed    :39160031
+
+More than 39 millions debug objects had since been allocated and then
+freed. The pool_max_used, however, was only about 172k. So this is a
+lot of extra overhead in freeing and allocating objects from slabs. It
+may also causes the slabs to be more fragmented and harder to reclaim.
+
+This patch tries to make the freeing of excess debug objects less
+aggressive by freeing it at a maximum frequency of 10Hz and about 1k
+objects at each round of freeing.
+
+With that change applied, the partial output of the debug objects stats
+file after similar actions became:
+
+pool_free     :5901
+pool_pcp_free :3742
+pool_min_free :1022
+pool_used     :104805
+pool_max_used :168081
+on_free_list  :0
+objs_allocated:5796864
+objs_freed    :5687182
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- lib/debugobjects.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ lib/debugobjects.c | 61 +++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 12 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index c30c9d308e9f..7573c736da7d 100644
+index 7573c736da7d..065770254899 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -120,7 +120,7 @@ static const char *obj_states[ODEBUG_STATE_MAX] = {
- static void fill_pool(void)
- {
- 	gfp_t gfp = GFP_ATOMIC | __GFP_NORETRY | __GFP_NOWARN;
--	struct debug_obj *new, *obj;
-+	struct debug_obj *obj;
- 	unsigned long flags;
+@@ -32,6 +32,14 @@
+ #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
+ #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
  
- 	if (likely(obj_pool_free >= debug_objects_pool_min_level))
-@@ -136,7 +136,7 @@ static void fill_pool(void)
- 		 * Recheck with the lock held as the worker thread might have
- 		 * won the race and freed the global free list already.
- 		 */
--		if (obj_nr_tofree) {
-+		while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
- 			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
- 			hlist_del(&obj->node);
- 			obj_nr_tofree--;
-@@ -150,15 +150,23 @@ static void fill_pool(void)
++/*
++ * We limit the freeing of debug objects via workqueue at a maximum
++ * frequency of 10Hz and about 1024 objects for each freeing operation.
++ * So it is freeing at most 10k debug objects per second.
++ */
++#define ODEBUG_FREE_WORK_MAX	1024
++#define ODEBUG_FREE_WORK_DELAY	DIV_ROUND_UP(HZ, 10)
++
+ struct debug_bucket {
+ 	struct hlist_head	list;
+ 	raw_spinlock_t		lock;
+@@ -68,6 +76,7 @@ static int			obj_pool_min_free = ODEBUG_POOL_SIZE;
+ static int			obj_pool_free = ODEBUG_POOL_SIZE;
+ static int			obj_pool_used;
+ static int			obj_pool_max_used;
++static bool			obj_freeing;
+ /* The number of objs on the global free list */
+ static int			obj_nr_tofree;
+ 
+@@ -91,7 +100,7 @@ static int			debug_objects_allocated;
+ static int			debug_objects_freed;
+ 
+ static void free_obj_work(struct work_struct *work);
+-static DECLARE_WORK(debug_obj_work, free_obj_work);
++static DECLARE_DELAYED_WORK(debug_obj_work, free_obj_work);
+ 
+ static int __init enable_object_debug(char *str)
+ {
+@@ -282,13 +291,19 @@ static void free_obj_work(struct work_struct *work)
+ 	unsigned long flags;
+ 	HLIST_HEAD(tofree);
+ 
++	WRITE_ONCE(obj_freeing, false);
+ 	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
  		return;
  
- 	while (obj_pool_free < debug_objects_pool_min_level) {
-+		struct debug_obj *new[ODEBUG_BATCH_SIZE];
-+		int cnt;
- 
--		new = kmem_cache_zalloc(obj_cache, gfp);
--		if (!new)
-+		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
-+			new[cnt] = kmem_cache_zalloc(obj_cache, gfp);
-+			if (!new[cnt])
-+				break;
-+		}
-+		if (!cnt)
- 			return;
- 
- 		raw_spin_lock_irqsave(&pool_lock, flags);
--		hlist_add_head(&new->node, &obj_pool);
--		debug_objects_allocated++;
--		obj_pool_free++;
-+		while (cnt) {
-+			hlist_add_head(&new[--cnt]->node, &obj_pool);
-+			debug_objects_allocated++;
-+			obj_pool_free++;
-+		}
- 		raw_spin_unlock_irqrestore(&pool_lock, flags);
- 	}
- }
-@@ -280,7 +288,7 @@ static void free_obj_work(struct work_struct *work)
++	if (obj_pool_free >= debug_objects_pool_size)
++		goto free_objs;
++
  	/*
  	 * The objs on the pool list might be allocated before the work is
  	 * run, so recheck if pool list it full or not, if not fill pool
--	 * list from the global free list
-+	 * list from the global free list.
+-	 * list from the global free list.
++	 * list from the global free list. As it is likely that a workload
++	 * may be gearing up to use more and more objects, don't free any
++	 * of them until the next round.
  	 */
  	while (obj_nr_tofree && obj_pool_free < debug_objects_pool_size) {
  		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+@@ -297,7 +312,10 @@ static void free_obj_work(struct work_struct *work)
+ 		obj_pool_free++;
+ 		obj_nr_tofree--;
+ 	}
++	raw_spin_unlock_irqrestore(&pool_lock, flags);
++	return;
+ 
++free_objs:
+ 	/*
+ 	 * Pool list is already full and there are still objs on the free
+ 	 * list. Move remaining free objs to a temporary list to free the
+@@ -316,7 +334,7 @@ static void free_obj_work(struct work_struct *work)
+ 	}
+ }
+ 
+-static bool __free_object(struct debug_obj *obj)
++static void __free_object(struct debug_obj *obj)
+ {
+ 	unsigned long flags;
+ 	bool work;
+@@ -336,7 +354,7 @@ static bool __free_object(struct debug_obj *obj)
+ 		hlist_add_head(&obj->node, &percpu_pool->free_objs);
+ 		percpu_pool->obj_free++;
+ 		local_irq_restore(flags);
+-		return false;
++		return;
+ 	}
+ 
+ 	/*
+@@ -352,7 +370,8 @@ static bool __free_object(struct debug_obj *obj)
+ 
+ free_to_obj_pool:
+ 	raw_spin_lock(&pool_lock);
+-	work = (obj_pool_free > debug_objects_pool_size) && obj_cache;
++	work = (obj_pool_free > debug_objects_pool_size) && obj_cache &&
++	       (obj_nr_tofree < ODEBUG_FREE_WORK_MAX);
+ 	obj_pool_used--;
+ 
+ 	if (work) {
+@@ -365,6 +384,21 @@ static bool __free_object(struct debug_obj *obj)
+ 				hlist_add_head(&objs[--lookahead_count]->node,
+ 					       &obj_to_free);
+ 		}
++
++		if ((obj_pool_free > debug_objects_pool_size) &&
++		    (obj_nr_tofree < ODEBUG_FREE_WORK_MAX)) {
++			int i;
++
++			/*
++			 * Free one more batch of objects from obj_pool.
++			 */
++			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
++				obj = __alloc_object(&obj_pool);
++				hlist_add_head(&obj->node, &obj_to_free);
++				obj_pool_free--;
++				obj_nr_tofree++;
++			}
++		}
+ 	} else {
+ 		obj_pool_free++;
+ 		hlist_add_head(&obj->node, &obj_pool);
+@@ -378,7 +412,6 @@ static bool __free_object(struct debug_obj *obj)
+ 	}
+ 	raw_spin_unlock(&pool_lock);
+ 	local_irq_restore(flags);
+-	return work;
+ }
+ 
+ /*
+@@ -387,8 +420,11 @@ static bool __free_object(struct debug_obj *obj)
+  */
+ static void free_object(struct debug_obj *obj)
+ {
+-	if (__free_object(obj))
+-		schedule_work(&debug_obj_work);
++	__free_object(obj);
++	if (!obj_freeing && obj_nr_tofree) {
++		WRITE_ONCE(obj_freeing, true);
++		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
++	}
+ }
+ 
+ /*
+@@ -878,7 +914,6 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 	struct hlist_node *tmp;
+ 	struct debug_obj *obj;
+ 	int cnt, objs_checked = 0;
+-	bool work = false;
+ 
+ 	saddr = (unsigned long) address;
+ 	eaddr = saddr + size;
+@@ -909,7 +944,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 				goto repeat;
+ 			default:
+ 				hlist_del(&obj->node);
+-				work |= __free_object(obj);
++				__free_object(obj);
+ 				break;
+ 			}
+ 		}
+@@ -925,8 +960,10 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 		debug_objects_maxchecked = objs_checked;
+ 
+ 	/* Schedule work to actually kmem_cache_free() objects */
+-	if (work)
+-		schedule_work(&debug_obj_work);
++	if (!obj_freeing && obj_nr_tofree) {
++		WRITE_ONCE(obj_freeing, true);
++		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
++	}
+ }
+ 
+ void debug_check_no_obj_freed(const void *address, unsigned long size)
 -- 
 2.18.1
 
