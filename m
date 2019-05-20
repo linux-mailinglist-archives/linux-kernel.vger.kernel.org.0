@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCE9C235C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF531234AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391168AbfETMiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:38:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53598 "EHLO mail.kernel.org"
+        id S2389906AbfETM3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:29:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391074AbfETMfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:35:23 -0400
+        id S2389896AbfETM32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:29:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4784720815;
-        Mon, 20 May 2019 12:35:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E39D220675;
+        Mon, 20 May 2019 12:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355722;
-        bh=bUrpkPG9EvsqvYWC0sEWmB2EMOMb11lNz/mUWzxCLPo=;
+        s=default; t=1558355367;
+        bh=DBGX2oj/oOpoUbOD+YZNLeqUupMQg52GiLvBkERzb3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCPqiC28k32eaML/9N4j/EjIkMqahkpVlcpC0PKvWnCCJChz8YNPY/7wjZNFvTidX
-         AJjjywd1KYKotmUTIIuyjolAcTGoD9l8F7uLRQstowG9p2xWDflKu69sJCMbl8z6Jd
-         ZjDLgscgqAwVL1Zih+/sSzc6oQNyLutrqH0lN5eo=
+        b=rkwMDcsHprHvAAiQkCtcBIOqOMgJkzabhGvbDnoAaKbqzwQlBaMEUR+cUk/IlA9qU
+         RLBjI4b4nHwtkpD8EZPTkzWfA3MpwjOyB48JE4wSAZQmu8+HFI5yuzcOmqV1Wgn/Fv
+         42B5nWike/A6wI3O7sqqTK0Sp+oFc0+XfgryeRVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Ren <renzhen@linux.alibaba.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 5.1 084/128] jbd2: check superblock mapped prior to committing
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.0 091/123] btrfs: Honour FITRIM range constraints during free space trim
 Date:   Mon, 20 May 2019 14:14:31 +0200
-Message-Id: <20190520115255.230136659@linuxfoundation.org>
+Message-Id: <20190520115250.986341927@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 742b06b5628f2cd23cb51a034cb54dc33c6162c5 upstream.
+commit c2d1b3aae33605a61cbab445d8ae1c708ccd2698 upstream.
 
-We hit a BUG at fs/buffer.c:3057 if we detached the nbd device
-before unmounting ext4 filesystem.
+Up until now trimming the freespace was done irrespective of what the
+arguments of the FITRIM ioctl were. For example fstrim's -o/-l arguments
+will be entirely ignored. Fix it by correctly handling those paramter.
+This requires breaking if the found freespace extent is after the end of
+the passed range as well as completing trim after trimming
+fstrim_range::len bytes.
 
-The typical chain of events leading to the BUG:
-jbd2_write_superblock
-  submit_bh
-    submit_bh_wbc
-      BUG_ON(!buffer_mapped(bh));
-
-The block device is removed and all the pages are invalidated. JBD2
-was trying to write journal superblock to the block device which is
-no longer present.
-
-Fix this by checking the journal superblock's buffer head prior to
-submitting.
-
-Reported-by: Eric Ren <renzhen@linux.alibaba.com>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+Fixes: 499f377f49f0 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/btrfs/extent-tree.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1350,6 +1350,10 @@ static int jbd2_write_superblock(journal
- 	journal_superblock_t *sb = journal->j_superblock;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -11192,9 +11192,9 @@ int btrfs_error_unpin_extent_range(struc
+  * held back allocations.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+-				   u64 minlen, u64 *trimmed)
++				   struct fstrim_range *range, u64 *trimmed)
+ {
+-	u64 start = 0, len = 0;
++	u64 start = range->start, len = 0;
  	int ret;
  
-+	/* Buffer got discarded which means block device got invalidated */
-+	if (!buffer_mapped(bh))
-+		return -EIO;
+ 	*trimmed = 0;
+@@ -11237,8 +11237,8 @@ static int btrfs_trim_free_extents(struc
+ 		if (!trans)
+ 			up_read(&fs_info->commit_root_sem);
+ 
+-		ret = find_free_dev_extent_start(trans, device, minlen, start,
+-						 &start, &len);
++		ret = find_free_dev_extent_start(trans, device, range->minlen,
++						 start, &start, &len);
+ 		if (trans) {
+ 			up_read(&fs_info->commit_root_sem);
+ 			btrfs_put_transaction(trans);
+@@ -11251,6 +11251,16 @@ static int btrfs_trim_free_extents(struc
+ 			break;
+ 		}
+ 
++		/* If we are out of the passed range break */
++		if (start > range->start + range->len - 1) {
++			mutex_unlock(&fs_info->chunk_mutex);
++			ret = 0;
++			break;
++		}
 +
- 	trace_jbd2_write_superblock(journal, write_flags);
- 	if (!(journal->j_flags & JBD2_BARRIER))
- 		write_flags &= ~(REQ_FUA | REQ_PREFLUSH);
++		start = max(range->start, start);
++		len = min(range->len, len);
++
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 
+@@ -11260,6 +11270,10 @@ static int btrfs_trim_free_extents(struc
+ 		start += len;
+ 		*trimmed += bytes;
+ 
++		/* We've trimmed enough */
++		if (*trimmed >= range->len)
++			break;
++
+ 		if (fatal_signal_pending(current)) {
+ 			ret = -ERESTARTSYS;
+ 			break;
+@@ -11343,8 +11357,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->devices;
+ 	list_for_each_entry(device, devices, dev_list) {
+-		ret = btrfs_trim_free_extents(device, range->minlen,
+-					      &group_trimmed);
++		ret = btrfs_trim_free_extents(device, range, &group_trimmed);
+ 		if (ret) {
+ 			dev_failed++;
+ 			dev_ret = ret;
 
 
