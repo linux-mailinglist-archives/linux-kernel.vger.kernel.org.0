@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F95B2342C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5125A236D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388762AbfETMYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38846 "EHLO mail.kernel.org"
+        id S2387500AbfETMRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:17:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388746AbfETMYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:24:03 -0400
+        id S2387480AbfETMRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:17:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 535E921019;
-        Mon, 20 May 2019 12:24:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC8B020815;
+        Mon, 20 May 2019 12:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355042;
-        bh=ZyO2+CO4S/HcphVrzKwg2uGxCfCMMKt6+PAFr3DstdU=;
+        s=default; t=1558354632;
+        bh=FShAbIvuo5Dxjc1FjFgVxxINTXvXvWkM+qxwB8esTp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWwDSf60aFu2hf+TvBuqrGEltWD1oOa0i53ecc1rVbUxxjyZOu4gQ+6Z9nlSm1rF/
-         3MmyOqCya1IpVf0HM9mVCDqesmGAiMjFAZa4xpHmV6Bg5OooJwojWjPfXJ18JxvOeU
-         5y6AYAnX0ARC9v+7Oh3JHyWWUKDUxNQ2q8F30qKQ=
+        b=Xf4nYM3yXTtvRrmsaZ9E8pPtzcVF4WMG3ukllu4nPfPf0dyRqgBuuQjggYH79PDSF
+         mZgk+5WEU4XjyeW8n40gCruYrCL5osm8We/m4Cc9gWlEkKePmN6+x3oEz7m9nVcAXj
+         A8XTVh37SlLkj1i6cUTV/1/nHLcVBt3+qOes0AsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jungyeon <jungyeon@gatech.edu>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 074/105] btrfs: Correctly free extent buffer in case btree_read_extent_buffer_pages fails
+        stable@vger.kernel.org, Liang Chen <liangchen.linux@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 31/44] bcache: fix a race between cache register and cacheset unregister
 Date:   Mon, 20 May 2019 14:14:20 +0200
-Message-Id: <20190520115252.322297644@linuxfoundation.org>
+Message-Id: <20190520115234.879079375@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,88 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Liang Chen <liangchen.linux@gmail.com>
 
-commit 537f38f019fa0b762dbb4c0fc95d7fcce9db8e2d upstream.
+commit a4b732a248d12cbdb46999daf0bf288c011335eb upstream.
 
-If a an eb fails to be read for whatever reason - it's corrupted on disk
-and parent transid/key validations fail or IO for eb pages fail then
-this buffer must be removed from the buffer cache. Currently the code
-calls free_extent_buffer if an error occurs. Unfortunately this doesn't
-achieve the desired behavior since btrfs_find_create_tree_block returns
-with eb->refs == 2.
+There is a race between cache device register and cache set unregister.
+For an already registered cache device, register_bcache will call
+bch_is_open to iterate through all cachesets and check every cache
+there. The race occurs if cache_set_free executes at the same time and
+clears the caches right before ca is dereferenced in bch_is_open_cache.
+To close the race, let's make sure the clean up work is protected by
+the bch_register_lock as well.
 
-On the other hand free_extent_buffer will only decrement the refs once
-leaving it added to the buffer cache radix tree.  This enables later
-code to look up the buffer from the cache and utilize it potentially
-leading to a crash.
+This issue can be reproduced as follows,
+while true; do echo /dev/XXX> /sys/fs/bcache/register ; done&
+while true; do echo 1> /sys/block/XXX/bcache/set/unregister ; done &
 
-The correct way to free the buffer is call free_extent_buffer_stale.
-This function will correctly call atomic_dec explicitly for the buffer
-and subsequently call release_extent_buffer which will decrement the
-final reference thus correctly remove the invalid buffer from buffer
-cache. This change affects only newly allocated buffers since they have
-eb->refs == 2.
+and results in the following oops,
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=202755
-Reported-by: Jungyeon <jungyeon@gatech.edu>
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+[  +0.000053] BUG: unable to handle kernel NULL pointer dereference at 0000000000000998
+[  +0.000457] #PF error: [normal kernel read fault]
+[  +0.000464] PGD 800000003ca9d067 P4D 800000003ca9d067 PUD 3ca9c067 PMD 0
+[  +0.000388] Oops: 0000 [#1] SMP PTI
+[  +0.000269] CPU: 1 PID: 3266 Comm: bash Not tainted 5.0.0+ #6
+[  +0.000346] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+[  +0.000472] RIP: 0010:register_bcache+0x1829/0x1990 [bcache]
+[  +0.000344] Code: b0 48 83 e8 50 48 81 fa e0 e1 10 c0 0f 84 a9 00 00 00 48 89 c6 48 89 ca 0f b7 ba 54 04 00 00 4c 8b 82 60 0c 00 00 85 ff 74 2f <49> 3b a8 98 09 00 00 74 4e 44 8d 47 ff 31 ff 49 c1 e0 03 eb 0d
+[  +0.000839] RSP: 0018:ffff92ee804cbd88 EFLAGS: 00010202
+[  +0.000328] RAX: ffffffffc010e190 RBX: ffff918b5c6b5000 RCX: ffff918b7d8e0000
+[  +0.000399] RDX: ffff918b7d8e0000 RSI: ffffffffc010e190 RDI: 0000000000000001
+[  +0.000398] RBP: ffff918b7d318340 R08: 0000000000000000 R09: ffffffffb9bd2d7a
+[  +0.000385] R10: ffff918b7eb253c0 R11: ffffb95980f51200 R12: ffffffffc010e1a0
+[  +0.000411] R13: fffffffffffffff2 R14: 000000000000000b R15: ffff918b7e232620
+[  +0.000384] FS:  00007f955bec2740(0000) GS:ffff918b7eb00000(0000) knlGS:0000000000000000
+[  +0.000420] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  +0.000801] CR2: 0000000000000998 CR3: 000000003cad6000 CR4: 00000000001406e0
+[  +0.000837] Call Trace:
+[  +0.000682]  ? _cond_resched+0x10/0x20
+[  +0.000691]  ? __kmalloc+0x131/0x1b0
+[  +0.000710]  kernfs_fop_write+0xfa/0x170
+[  +0.000733]  __vfs_write+0x2e/0x190
+[  +0.000688]  ? inode_security+0x10/0x30
+[  +0.000698]  ? selinux_file_permission+0xd2/0x120
+[  +0.000752]  ? security_file_permission+0x2b/0x100
+[  +0.000753]  vfs_write+0xa8/0x1a0
+[  +0.000676]  ksys_write+0x4d/0xb0
+[  +0.000699]  do_syscall_64+0x3a/0xf0
+[  +0.000692]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/md/bcache/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -995,13 +995,18 @@ void readahead_tree_block(struct btrfs_f
- {
- 	struct extent_buffer *buf = NULL;
- 	struct inode *btree_inode = fs_info->btree_inode;
-+	int ret;
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1357,6 +1357,7 @@ static void cache_set_free(struct closur
+ 	bch_btree_cache_free(c);
+ 	bch_journal_free(c);
  
- 	buf = btrfs_find_create_tree_block(fs_info, bytenr);
- 	if (IS_ERR(buf))
- 		return;
--	read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree,
--				 buf, WAIT_NONE, 0);
--	free_extent_buffer(buf);
-+
-+	ret = read_extent_buffer_pages(&BTRFS_I(btree_inode)->io_tree, buf,
-+			WAIT_NONE, 0);
-+	if (ret < 0)
-+		free_extent_buffer_stale(buf);
-+	else
-+		free_extent_buffer(buf);
- }
++	mutex_lock(&bch_register_lock);
+ 	for_each_cache(ca, c, i)
+ 		if (ca) {
+ 			ca->set = NULL;
+@@ -1379,7 +1380,6 @@ static void cache_set_free(struct closur
+ 		mempool_destroy(c->search);
+ 	kfree(c->devices);
  
- int reada_tree_block_flagged(struct btrfs_fs_info *fs_info, u64 bytenr,
-@@ -1021,12 +1026,12 @@ int reada_tree_block_flagged(struct btrf
- 	ret = read_extent_buffer_pages(io_tree, buf, WAIT_PAGE_LOCK,
- 				       mirror_num);
- 	if (ret) {
--		free_extent_buffer(buf);
-+		free_extent_buffer_stale(buf);
- 		return ret;
- 	}
+-	mutex_lock(&bch_register_lock);
+ 	list_del(&c->list);
+ 	mutex_unlock(&bch_register_lock);
  
- 	if (test_bit(EXTENT_BUFFER_CORRUPT, &buf->bflags)) {
--		free_extent_buffer(buf);
-+		free_extent_buffer_stale(buf);
- 		return -EIO;
- 	} else if (extent_buffer_uptodate(buf)) {
- 		*eb = buf;
-@@ -1080,7 +1085,7 @@ struct extent_buffer *read_tree_block(st
- 	ret = btree_read_extent_buffer_pages(fs_info, buf, parent_transid,
- 					     level, first_key);
- 	if (ret) {
--		free_extent_buffer(buf);
-+		free_extent_buffer_stale(buf);
- 		return ERR_PTR(ret);
- 	}
- 	return buf;
 
 
