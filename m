@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439D023373
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 638BA23519
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbfETMQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        id S2390644AbfETMdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:33:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387403AbfETMQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:16:52 -0400
+        id S2390453AbfETMdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:33:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32CCF20656;
-        Mon, 20 May 2019 12:16:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B7FE204FD;
+        Mon, 20 May 2019 12:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354611;
-        bh=hcCWdm8G1C81OZqG9T6IE40vqZ2g7WBEfGBUW8Mt+Bg=;
+        s=default; t=1558355579;
+        bh=oylC+PnrQAI7xZixoEnQt8HZ1NVPrVmRDNirD/k4gVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JOfEv6Wa1kpp2SMlrUuGJZm8LPC8k3BH9Fvviu+Id9RO7G0OxPhiyErgaoenHjN2E
-         E4E4fPx669yvhKGH0zdrUihDgl3uZVZr6EU4zr6Jwu+mda06dxnpiObgBMMI6hJ8Hn
-         6ktlpgwXQUr9OkNAP/53dqBDLAX2AwbaQWXDmIOU=
+        b=EK2brj8Xsv/bWpiefnOA0e/Zpwm3M/03JIX84IiBYI4oTeEu1nvsyvf83vgVvo/RG
+         xCQq65I7GCPBXFPjeMyhe7aVsBAaFwhg5uIgpH2bnqAUr2tFfxgwWv5nIBHaQ6VzRd
+         Z1WWDdSjgL932HKtPRCry53NgK09x2YL/JQrVcac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jon Masters <jcm@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 05/44] x86/speculation/mds: Improve CPU buffer clear documentation
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.1 047/128] mmc: sdhci-pci: Fix BYT OCP setting
 Date:   Mon, 20 May 2019 14:13:54 +0200
-Message-Id: <20190520115231.555191031@linuxfoundation.org>
+Message-Id: <20190520115252.931010312@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,80 +43,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 9d8d0294e78a164d407133dea05caf4b84247d6a upstream.
+commit 0a49a619e7e1aeb3f5f5511ca59314423c83dae2 upstream.
 
-On x86_64, all returns to usermode go through
-prepare_exit_to_usermode(), with the sole exception of do_nmi().
-This even includes machine checks -- this was added several years
-ago to support MCE recovery.  Update the documentation.
+Some time ago, a fix was done for the sdhci-acpi driver, refer
+commit 6e1c7d6103fe ("mmc: sdhci-acpi: Reduce Baytrail eMMC/SD/SDIO
+hangs"). The same issue was not expected to affect the sdhci-pci driver,
+but there have been reports to the contrary, so make the same hardware
+setting change.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+This patch applies to v5.0+ but before that backports will be required.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
-Fixes: 04dcbdb80578 ("x86/speculation/mds: Clear CPU buffers on exit to user")
-Link: http://lkml.kernel.org/r/999fa9e126ba6a48e9d214d2f18dbde5c62ac55c.1557865329.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/x86/mds.rst |   39 +++++++--------------------------------
- 1 file changed, 7 insertions(+), 32 deletions(-)
+ drivers/mmc/host/Kconfig          |    1 
+ drivers/mmc/host/sdhci-pci-core.c |   96 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
 
---- a/Documentation/x86/mds.rst
-+++ b/Documentation/x86/mds.rst
-@@ -142,38 +142,13 @@ Mitigation points
-    mds_user_clear.
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -92,6 +92,7 @@ config MMC_SDHCI_PCI
+ 	tristate "SDHCI support on PCI bus"
+ 	depends on MMC_SDHCI && PCI
+ 	select MMC_CQHCI
++	select IOSF_MBI if X86
+ 	help
+ 	  This selects the PCI Secure Digital Host Controller Interface.
+ 	  Most controllers found today are PCI devices.
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -31,6 +31,10 @@
+ #include <linux/mmc/sdhci-pci-data.h>
+ #include <linux/acpi.h>
  
-    The mitigation is invoked in prepare_exit_to_usermode() which covers
--   most of the kernel to user space transitions. There are a few exceptions
--   which are not invoking prepare_exit_to_usermode() on return to user
--   space. These exceptions use the paranoid exit code.
--
--   - Non Maskable Interrupt (NMI):
--
--     Access to sensible data like keys, credentials in the NMI context is
--     mostly theoretical: The CPU can do prefetching or execute a
--     misspeculated code path and thereby fetching data which might end up
--     leaking through a buffer.
--
--     But for mounting other attacks the kernel stack address of the task is
--     already valuable information. So in full mitigation mode, the NMI is
--     mitigated on the return from do_nmi() to provide almost complete
--     coverage.
--
--   - Machine Check Exception (#MC):
--
--     Another corner case is a #MC which hits between the CPU buffer clear
--     invocation and the actual return to user. As this still is in kernel
--     space it takes the paranoid exit path which does not clear the CPU
--     buffers. So the #MC handler repopulates the buffers to some
--     extent. Machine checks are not reliably controllable and the window is
--     extremly small so mitigation would just tick a checkbox that this
--     theoretical corner case is covered. To keep the amount of special
--     cases small, ignore #MC.
--
--   - Debug Exception (#DB):
--
--     This takes the paranoid exit path only when the INT1 breakpoint is in
--     kernel space. #DB on a user space address takes the regular exit path,
--     so no extra mitigation required.
-+   all but one of the kernel to user space transitions.  The exception
-+   is when we return from a Non Maskable Interrupt (NMI), which is
-+   handled directly in do_nmi().
++#ifdef CONFIG_X86
++#include <asm/iosf_mbi.h>
++#endif
 +
-+   (The reason that NMI is special is that prepare_exit_to_usermode() can
-+    enable IRQs.  In NMI context, NMIs are blocked, and we don't want to
-+    enable IRQs with NMIs blocked.)
+ #include "cqhci.h"
  
+ #include "sdhci.h"
+@@ -451,6 +455,50 @@ static const struct sdhci_pci_fixes sdhc
+ 	.probe_slot	= pch_hc_probe_slot,
+ };
  
- 2. C-State transition
++#ifdef CONFIG_X86
++
++#define BYT_IOSF_SCCEP			0x63
++#define BYT_IOSF_OCP_NETCTRL0		0x1078
++#define BYT_IOSF_OCP_TIMEOUT_BASE	GENMASK(10, 8)
++
++static void byt_ocp_setting(struct pci_dev *pdev)
++{
++	u32 val = 0;
++
++	if (pdev->device != PCI_DEVICE_ID_INTEL_BYT_EMMC &&
++	    pdev->device != PCI_DEVICE_ID_INTEL_BYT_SDIO &&
++	    pdev->device != PCI_DEVICE_ID_INTEL_BYT_SD &&
++	    pdev->device != PCI_DEVICE_ID_INTEL_BYT_EMMC2)
++		return;
++
++	if (iosf_mbi_read(BYT_IOSF_SCCEP, MBI_CR_READ, BYT_IOSF_OCP_NETCTRL0,
++			  &val)) {
++		dev_err(&pdev->dev, "%s read error\n", __func__);
++		return;
++	}
++
++	if (!(val & BYT_IOSF_OCP_TIMEOUT_BASE))
++		return;
++
++	val &= ~BYT_IOSF_OCP_TIMEOUT_BASE;
++
++	if (iosf_mbi_write(BYT_IOSF_SCCEP, MBI_CR_WRITE, BYT_IOSF_OCP_NETCTRL0,
++			   val)) {
++		dev_err(&pdev->dev, "%s write error\n", __func__);
++		return;
++	}
++
++	dev_dbg(&pdev->dev, "%s completed\n", __func__);
++}
++
++#else
++
++static inline void byt_ocp_setting(struct pci_dev *pdev)
++{
++}
++
++#endif
++
+ enum {
+ 	INTEL_DSM_FNS		=  0,
+ 	INTEL_DSM_V18_SWITCH	=  3,
+@@ -715,6 +763,8 @@ static void byt_probe_slot(struct sdhci_
+ 
+ 	byt_read_dsm(slot);
+ 
++	byt_ocp_setting(slot->chip->pdev);
++
+ 	ops->execute_tuning = intel_execute_tuning;
+ 	ops->start_signal_voltage_switch = intel_start_signal_voltage_switch;
+ 
+@@ -938,7 +988,35 @@ static int byt_sd_probe_slot(struct sdhc
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++
++static int byt_resume(struct sdhci_pci_chip *chip)
++{
++	byt_ocp_setting(chip->pdev);
++
++	return sdhci_pci_resume_host(chip);
++}
++
++#endif
++
++#ifdef CONFIG_PM
++
++static int byt_runtime_resume(struct sdhci_pci_chip *chip)
++{
++	byt_ocp_setting(chip->pdev);
++
++	return sdhci_pci_runtime_resume_host(chip);
++}
++
++#endif
++
+ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
++#ifdef CONFIG_PM_SLEEP
++	.resume		= byt_resume,
++#endif
++#ifdef CONFIG_PM
++	.runtime_resume	= byt_runtime_resume,
++#endif
+ 	.allow_runtime_pm = true,
+ 	.probe_slot	= byt_emmc_probe_slot,
+ 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
+@@ -972,6 +1050,12 @@ static const struct sdhci_pci_fixes sdhc
+ };
+ 
+ static const struct sdhci_pci_fixes sdhci_ni_byt_sdio = {
++#ifdef CONFIG_PM_SLEEP
++	.resume		= byt_resume,
++#endif
++#ifdef CONFIG_PM
++	.runtime_resume	= byt_runtime_resume,
++#endif
+ 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
+ 			  SDHCI_QUIRK_NO_LED,
+ 	.quirks2	= SDHCI_QUIRK2_HOST_OFF_CARD_ON |
+@@ -983,6 +1067,12 @@ static const struct sdhci_pci_fixes sdhc
+ };
+ 
+ static const struct sdhci_pci_fixes sdhci_intel_byt_sdio = {
++#ifdef CONFIG_PM_SLEEP
++	.resume		= byt_resume,
++#endif
++#ifdef CONFIG_PM
++	.runtime_resume	= byt_runtime_resume,
++#endif
+ 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
+ 			  SDHCI_QUIRK_NO_LED,
+ 	.quirks2	= SDHCI_QUIRK2_HOST_OFF_CARD_ON |
+@@ -994,6 +1084,12 @@ static const struct sdhci_pci_fixes sdhc
+ };
+ 
+ static const struct sdhci_pci_fixes sdhci_intel_byt_sd = {
++#ifdef CONFIG_PM_SLEEP
++	.resume		= byt_resume,
++#endif
++#ifdef CONFIG_PM
++	.runtime_resume	= byt_runtime_resume,
++#endif
+ 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
+ 			  SDHCI_QUIRK_NO_LED,
+ 	.quirks2	= SDHCI_QUIRK2_CARD_ON_NEEDS_BUS_ON |
 
 
