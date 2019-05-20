@@ -2,100 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5446D23060
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B5C2308A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbfETJa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:30:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8220 "EHLO huawei.com"
+        id S1730265AbfETJju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:39:50 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32956 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731543AbfETJa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:30:57 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 164E21D770B4A287A969;
-        Mon, 20 May 2019 17:30:56 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 17:30:48 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH v2] hwtracing: stm: fix vfree() nonexistent vm_area
-Date:   Mon, 20 May 2019 17:39:33 +0800
-Message-ID: <20190520093933.29066-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727720AbfETJju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:39:50 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 4A75E6FA85003A8236AE;
+        Mon, 20 May 2019 10:39:48 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 20 May
+ 2019 10:39:40 +0100
+Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        "H. Peter Anvin" <hpa@zytor.com>
+CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
+        <takondra@cisco.com>, <kamensky@cisco.com>, <arnd@arndb.de>,
+        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>
+References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+ <20190517165519.11507-3-roberto.sassu@huawei.com>
+ <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
+ <20190517210219.GA5998@rani.riverdale.lan>
+ <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
+ <20190517221731.GA11358@rani.riverdale.lan>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
+Date:   Mon, 20 May 2019 11:39:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+In-Reply-To: <20190517221731.GA11358@rani.riverdale.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If device_add() in stm_register_device() fails, stm_device_release()
-is called by put_device() to free stm, free stm again on err_device
-path will trigger following warning,
+On 5/18/2019 12:17 AM, Arvind Sankar wrote:
+> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
+>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
+>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
+>>>>
+>>>> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
+>>> This version of the patch was changed from the previous one exactly to deal with this case --
+>>> it allows for the bootloader to load multiple initramfs archives, each
+>>> with its own .xattr-list file, and to have that work properly.
+>>> Could you elaborate on the issue that you see?
+>>>
+>>
+>> Well, for one thing, how do you define "cpio archive", each with its own
+>> .xattr-list file? Second, that would seem to depend on the ordering, no,
+>> in which case you depend critically on .xattr-list file following the
+>> files, which most archivers won't do.
+>>
+>> Either way it seems cleaner to have this per file; especially if/as it
+>> can be done without actually mucking up the format.
+>>
+>> I need to run, but I'll post a more detailed explanation of what I did
+>> in a little bit.
+>>
+>> 	-hpa
+>>
+> Not sure what you mean by how do I define it? Each cpio archive will
+> contain its own .xattr-list file with signatures for the files within
+> it, that was the idea.
+> 
+> You need to review the code more closely I think -- it does not depend
+> on the .xattr-list file following the files to which it applies.
+> 
+> The code first extracts .xattr-list as though it was a regular file. If
+> a later dupe shows up (presumably from a second archive, although the
+> patch will actually allow a second one in the same archive), it will
+> then process the existing .xattr-list file and apply the attributes
+> listed within it. It then will proceed to read the second one and
+> overwrite the first one with it (this is the normal behaviour in the
+> kernel cpio parser). At the end once all the archives have been
+> extracted, if there is an .xattr-list file in the rootfs it will be
+> parsed (it would've been the last one encountered, which hasn't been
+> parsed yet, just extracted).
+> 
+> Regarding the idea to use the high 16 bits of the mode field in
+> the header that's another possibility. It would just require additional
+> support in the program that actually creates the archive though, which
+> the current patch doesn't.
 
-  Trying to vfree() nonexistent vm area (0000000054b5e7bc)
-  WARNING: CPU: 0 PID: 6004 at mm/vmalloc.c:1595 __vunmap+0x72/0x480 mm/vmalloc.c:1594
-  Kernel panic - not syncing: panic_on_warn set ...
-  CPU: 0 PID: 6004 Comm: syz-executor.0 Tainted: G         C 5.1.0+ #28
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-  Call Trace:
-   __vfree+0x2a/0x80 mm/vmalloc.c:1658
-   _vfree+0x49/0x70 mm/vmalloc.c:1688
-   stm_register_device+0x295/0x330 [stm_core]
-   dummy_stm_init+0xfe/0x1e0 [dummy_stm]
-   do_one_initcall+0xb9/0x3b5 init/main.c:914
-   do_init_module+0xe0/0x330 kernel/module.c:3468
-   load_module+0x38eb/0x4270 kernel/module.c:3819
-   __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
-   do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Yes, for adding signatures for a subset of files, no changes to the ram
+disk generator are necessary. Everything is done by a custom module. To
+support a generic use case, it would be necessary to modify the
+generator to execute getfattr and the awk script after files have been
+placed in the temporary directory.
 
-Change error handling path and only free stm once if device_add() fails
-to fix it.
+If I understood the new proposal correctly, it would be task for cpio to
+read file metadata after the content and create a new record for each
+file with mode 0x18000, type of metadata encoded in the file name and
+metadata as file content. I don't know how easy it would be to modify
+cpio. Probably the amount of changes would be reasonable.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/hwtracing/stm/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+The kernel will behave in a similar way. It will call do_readxattrs() in
+do_copy() for each file. Since the only difference between the current
+and the new proposal would be two additional calls to do_readxattrs() in
+do_name() and unpack_to_rootfs(), maybe we could support both.
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index e55b902560de..afb7999eb863 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -885,8 +885,10 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- 		return -ENOMEM;
- 
- 	stm->major = register_chrdev(0, stm_data->name, &stm_fops);
--	if (stm->major < 0)
--		goto err_free;
-+	if (stm->major < 0) {
-+		vfree(stm);
-+		return stm->major;
-+	}
- 
- 	device_initialize(&stm->dev);
- 	stm->dev.devt = MKDEV(stm->major, 0);
-@@ -932,8 +934,6 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- 
- 	/* matches device_initialize() above */
- 	put_device(&stm->dev);
--err_free:
--	vfree(stm);
- 
- 	return err;
- }
+Roberto
+
 -- 
-2.20.1
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
