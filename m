@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B257323291
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0411B23294
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbfETLdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:33:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46982 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732957AbfETLdB (ORCPT
+        id S1732983AbfETLdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:33:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40561 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732972AbfETLdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:33:01 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y11so7074136pfm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:33:01 -0700 (PDT)
+        Mon, 20 May 2019 07:33:06 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d30so6670620pgm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:33:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=MjWLMAdBW11KI57uPKHpmOc8QO2EQsc2Bw5TFtq2aeM=;
-        b=QlKJ6r1aObcZ4e/504tulmS44XDtvOqWXOeJ7wgE1B+qEzdF8A6Ye8ybl6JSbXdowf
-         Fbx4Y0P9D/5zijVUhbgS/2hpOtRgBIilgav6Fn3qZV4A3hbgw25/Rzxea6lEyHRrDxBu
-         0w+Jp7JdKp0vaJ1ZAHGJtNsZ195h2NaCgScaAnpZoqGbhRlItoawUBO+LTSL5fjnQC3r
-         I03Bp6Fj4PFLvnYB8H8DaqWfJ4K4bfuNVzatgSU40EKQZzG31HCHatdZY3FPBK056x7r
-         4AMw+Z9y8lJiDFYI3oQodoGTmTvmu9ekhcWYEM4ei6PXFx2sADK/ZiIWk3YLrnnIpeu5
-         wUHA==
+        bh=S4gzzO6EwH6f41hdnpuqebXlIsK5G8TT4DFszJQHgV0=;
+        b=kGzjAWx09b8i614qTj93eApuhAYdKFfSCQb0+hZtpocLm2MSIaH0rF9+HiZf0A+vcj
+         DFTljdFN5pWcPxuYfUOJ68tQFKj30ZgtibGH2S3BXHbVCKNLZZhwrhp/XsRkXdFInukP
+         Xjk9fWaCFqZJ8jZcXhR3aezzU8FJfnpD/f2ytgb8QX23t5dF/R+yuoTqXH0C0ZF9DjXK
+         kK/Z6PNz6xn9BbWuEogWU+jIyoiUOisWLQVu90JBLpFdeKSeAFeaYkcaW1tllFwwnKdZ
+         nJfsJF6cAcVhHJ/woNRx2z15cQYdmwdMhtceda3QpfeXnUfr/bh84yM2S2fBpXB8Pd1R
+         Y6ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=MjWLMAdBW11KI57uPKHpmOc8QO2EQsc2Bw5TFtq2aeM=;
-        b=I5WR+rRuhPzakEeh38gaK8a6B+AFEx6KSFoyPtd0Wq368hGsk3dYqMO0nXBtHkWnJU
-         T6Yayut9aYA50x9MIcacQYqL4JF6viEIf86rsO6ZxhLIDcuvEwFdDxTp/ZFzHa7hZBDv
-         RTeLqpesgSESIADwbgVFBSJQwppHEuVDML89PH2qzkB7sISSUIk5fUMav+nFIQ9/9VE5
-         /X/p3j3yGzcjwwVKjrz2ydNxWxAp6UGLqYtuubd2YPlwYHjB+0qeLGtWpKoiM4RiXuCf
-         Va1lBhXc3y7T+fy7ZYpkuQatVEVlL0VSW+jHQE2Xj4ILBVGP+3Kk7ufxJuzywm0DHSt0
-         W+4Q==
-X-Gm-Message-State: APjAAAVhZQtpkio5ikgQakKZufNG+Q3BfWE2I18kYCQCMfByfuBF9cCV
-        HMlv7CPQK1dJMlBaCdKC/LRjNQ==
-X-Google-Smtp-Source: APXvYqzvbnYheVzjLAwm4HomvMFLaeeJKqzxnDKXoHl0dMjK1k4k08i8lD/BQRS3A+Rm2kIGCkj5/Q==
-X-Received: by 2002:a65:5302:: with SMTP id m2mr62317316pgq.369.1558351980703;
-        Mon, 20 May 2019 04:33:00 -0700 (PDT)
+        bh=S4gzzO6EwH6f41hdnpuqebXlIsK5G8TT4DFszJQHgV0=;
+        b=kE82bO7m2nhGyE5dV8MD53cGtqNV0orliJDh24HOJlwsLBh5tVeGsc2pISjhHmFbOI
+         LbCSdjDlPUZxs6z8+YfG3OScVXaEQDtLxV3TNzlkK2CVXV4SSgKT5U1SlgDX6H82fYYz
+         nrsVbGnwpNfqAcKM8GiKtbzZ9syqwiGd68jdWnR0ABNSHWOz2+1uVxb99j7eS58aehrT
+         o1Cn347j7bsMsEDCgHRdbLzLDc4O7ojIxfqqp1AEJuT+gEXB0eYSaBzR0FY2hCwJe8zx
+         UwXoK/5O2tjmkHgvHXfOWASSWuVCaYmKPQiE0jNwNMyUZNRUVTQJ5xmAAL6M6o0x15WL
+         8ijg==
+X-Gm-Message-State: APjAAAX1aHppyj/VsvlXV60J6tkqf0/v8kRCjGgSNolg+6M5LCklerdU
+        NLxPm3XKEKL3tigqa4H8jNmgbA==
+X-Google-Smtp-Source: APXvYqz1+ao7UVqG40GQmasG5WxCT+39UIx+E5Jw485BRv+ugxfxElvHdFQ11VJd43Wx3nTx7nGipA==
+X-Received: by 2002:a63:6cc5:: with SMTP id h188mr13909311pgc.105.1558351985496;
+        Mon, 20 May 2019 04:33:05 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id z124sm21310020pfz.116.2019.05.20.04.32.56
+        by smtp.gmail.com with ESMTPSA id z124sm21310020pfz.116.2019.05.20.04.33.00
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 04:33:00 -0700 (PDT)
+        Mon, 20 May 2019 04:33:05 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     dan.j.williams@intel.com, vkoul@kernel.org
 Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
@@ -54,9 +54,9 @@ Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
         jroedel@suse.de, vincent.guittot@linaro.org,
         baolin.wang@linaro.org, dmaengine@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 6/8] dmaengine: mxs-dma: Let the core do the device node validation
-Date:   Mon, 20 May 2019 19:32:19 +0800
-Message-Id: <15bd5303ecf61f3a3aacd0b078d13f042dea73c6.1558351667.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 7/8] dmaengine: sh: rcar-dmac: Let the core do the device node validation
+Date:   Mon, 20 May 2019 19:32:20 +0800
+Message-Id: <6e544656cea22f93bdb2626620b381b00d1b38bf.1558351667.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1558351667.git.baolin.wang@linaro.org>
 References: <cover.1558351667.git.baolin.wang@linaro.org>
@@ -71,47 +71,33 @@ Let the DMA engine core do the device node validation instead of drivers.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/mxs-dma.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/dma/sh/rcar-dmac.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/mxs-dma.c b/drivers/dma/mxs-dma.c
-index 22cc7f6..8ce5e79 100644
---- a/drivers/dma/mxs-dma.c
-+++ b/drivers/dma/mxs-dma.c
-@@ -716,7 +716,6 @@ static int __init mxs_dma_init(struct mxs_dma_engine *mxs_dma)
- }
- 
- struct mxs_dma_filter_param {
--	struct device_node *of_node;
- 	unsigned int chan_id;
- };
- 
-@@ -727,9 +726,6 @@ static bool mxs_dma_filter_fn(struct dma_chan *chan, void *fn_param)
- 	struct mxs_dma_engine *mxs_dma = mxs_chan->mxs_dma;
- 	int chan_irq;
- 
--	if (mxs_dma->dma_device.dev->of_node != param->of_node)
--		return false;
--
- 	if (chan->chan_id != param->chan_id)
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 33ab1b6..67df54a 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1654,8 +1654,7 @@ static bool rcar_dmac_chan_filter(struct dma_chan *chan, void *arg)
+ 	 * Forcing it to call dma_request_channel() and iterate through all
+ 	 * channels from all controllers is just pointless.
+ 	 */
+-	if (chan->device->device_config != rcar_dmac_device_config ||
+-	    dma_spec->np != chan->device->dev->of_node)
++	if (chan->device->device_config != rcar_dmac_device_config)
  		return false;
  
-@@ -752,13 +748,13 @@ static struct dma_chan *mxs_dma_xlate(struct of_phandle_args *dma_spec,
- 	if (dma_spec->args_count != 1)
- 		return NULL;
+ 	return !test_and_set_bit(dma_spec->args[0], dmac->modules);
+@@ -1675,7 +1674,8 @@ static struct dma_chan *rcar_dmac_of_xlate(struct of_phandle_args *dma_spec,
+ 	dma_cap_zero(mask);
+ 	dma_cap_set(DMA_SLAVE, mask);
  
--	param.of_node = ofdma->of_node;
- 	param.chan_id = dma_spec->args[0];
- 
- 	if (param.chan_id >= mxs_dma->nr_channels)
- 		return NULL;
- 
--	return dma_request_channel(mask, mxs_dma_filter_fn, &param);
-+	return __dma_request_channel(&mask, mxs_dma_filter_fn, &param,
+-	chan = dma_request_channel(mask, rcar_dmac_chan_filter, dma_spec);
++	chan = __dma_request_channel(&mask, rcar_dmac_chan_filter, dma_spec,
 +				     ofdma->of_node);
- }
+ 	if (!chan)
+ 		return NULL;
  
- static int __init mxs_dma_probe(struct platform_device *pdev)
 -- 
 1.7.9.5
 
