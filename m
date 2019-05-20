@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF1C02378A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52DBA23435
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389819AbfETMuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:50:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33632 "EHLO mail.kernel.org"
+        id S2388881AbfETMYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:24:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387960AbfETMUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:16 -0400
+        id S2388137AbfETMYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:24:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D4020815;
-        Mon, 20 May 2019 12:20:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80CAE20645;
+        Mon, 20 May 2019 12:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354816;
-        bh=o1/rNX20DjlCczabEvoAUEIDbXG/Birwp6TcGz9eaRY=;
+        s=default; t=1558355074;
+        bh=VpgFCPF+VQV+9StQj8r5gpwZ4Ry5MHG0rcvGOeYFJvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wrt13EWtFVF0oJS4gIMrB6PtwigJXCSjX8lDK0YRcbN3+TXuT7+v45VU9pmMONTZR
-         8PGwqn+sepoSWxC2pQTYvrjo3YAS9P0mjfcCziEbvzYn2GzvZOpVnx0qB0Fun0o+df
-         7UfcNd5LneMRt3TK5vQ650zvX/J1bt1wFNHO0DF8=
+        b=ytd3YYQfyxup3OQxZ8JPU0ii97wDWT0ZRVz7Lb3IWr20wMFILNsFdxSFdmLZJs2Fd
+         Ks8OYbD0//zpLOWgcqNmGNBx2yu5N8aO3xHti2HLSJhR1N/7X1+19nj6oTKcSnzgkn
+         CfwvBW5tD29qWH6r0hkgxYCYv2PvsPXS4FEmJOxA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 52/63] crypto: arm64/aes-neonbs - dont access already-freed walk.iv
+        stable@vger.kernel.org, Sriram Rajagopalan <sriramr@arista.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 085/105] ext4: zero out the unused memory region in the extent tree block
 Date:   Mon, 20 May 2019 14:14:31 +0200
-Message-Id: <20190520115236.777081682@linuxfoundation.org>
+Message-Id: <20190520115253.137578627@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +43,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Sriram Rajagopalan <sriramr@arista.com>
 
-commit 4a8108b70508df0b6c4ffa4a3974dab93dcbe851 upstream.
+commit 592acbf16821288ecdc4192c47e3774a4c48bb64 upstream.
 
-If the user-provided IV needs to be aligned to the algorithm's
-alignmask, then skcipher_walk_virt() copies the IV into a new aligned
-buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
-if the caller unconditionally accesses walk.iv, it's a use-after-free.
+This commit zeroes out the unused memory region in the buffer_head
+corresponding to the extent metablock after writing the extent header
+and the corresponding extent node entries.
 
-xts-aes-neonbs doesn't set an alignmask, so currently it isn't affected
-by this despite unconditionally accessing walk.iv.  However this is more
-subtle than desired, and unconditionally accessing walk.iv has caused a
-real problem in other algorithms.  Thus, update xts-aes-neonbs to start
-checking the return value of skcipher_walk_virt().
+This is done to prevent random uninitialized data from getting into
+the filesystem when the extent block is synced.
 
-Fixes: 1abee99eafab ("crypto: arm64/aes - reimplement bit-sliced ARM/NEON implementation for arm64")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This fixes CVE-2019-11833.
+
+Signed-off-by: Sriram Rajagopalan <sriramr@arista.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm64/crypto/aes-neonbs-glue.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/extents.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/crypto/aes-neonbs-glue.c
-+++ b/arch/arm64/crypto/aes-neonbs-glue.c
-@@ -307,6 +307,8 @@ static int __xts_crypt(struct skcipher_r
- 	int err;
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -1035,6 +1035,7 @@ static int ext4_ext_split(handle_t *hand
+ 	__le32 border;
+ 	ext4_fsblk_t *ablocks = NULL; /* array of allocated blocks */
+ 	int err = 0;
++	size_t ext_size = 0;
  
- 	err = skcipher_walk_virt(&walk, req, true);
-+	if (err)
-+		return err;
+ 	/* make decision: where to split? */
+ 	/* FIXME: now decision is simplest: at current extent */
+@@ -1126,6 +1127,10 @@ static int ext4_ext_split(handle_t *hand
+ 		le16_add_cpu(&neh->eh_entries, m);
+ 	}
  
- 	kernel_neon_begin();
++	/* zero out unused area in the extent block */
++	ext_size = sizeof(struct ext4_extent_header) +
++		sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries);
++	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
+ 	ext4_extent_block_csum_set(inode, neh);
+ 	set_buffer_uptodate(bh);
+ 	unlock_buffer(bh);
+@@ -1205,6 +1210,11 @@ static int ext4_ext_split(handle_t *hand
+ 				sizeof(struct ext4_extent_idx) * m);
+ 			le16_add_cpu(&neh->eh_entries, m);
+ 		}
++		/* zero out unused area in the extent block */
++		ext_size = sizeof(struct ext4_extent_header) +
++		   (sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries));
++		memset(bh->b_data + ext_size, 0,
++			inode->i_sb->s_blocksize - ext_size);
+ 		ext4_extent_block_csum_set(inode, neh);
+ 		set_buffer_uptodate(bh);
+ 		unlock_buffer(bh);
+@@ -1270,6 +1280,7 @@ static int ext4_ext_grow_indepth(handle_
+ 	ext4_fsblk_t newblock, goal = 0;
+ 	struct ext4_super_block *es = EXT4_SB(inode->i_sb)->s_es;
+ 	int err = 0;
++	size_t ext_size = 0;
  
+ 	/* Try to prepend new index to old one */
+ 	if (ext_depth(inode))
+@@ -1295,9 +1306,11 @@ static int ext4_ext_grow_indepth(handle_
+ 		goto out;
+ 	}
+ 
++	ext_size = sizeof(EXT4_I(inode)->i_data);
+ 	/* move top-level index/leaf into new block */
+-	memmove(bh->b_data, EXT4_I(inode)->i_data,
+-		sizeof(EXT4_I(inode)->i_data));
++	memmove(bh->b_data, EXT4_I(inode)->i_data, ext_size);
++	/* zero out unused area in the extent block */
++	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
+ 
+ 	/* set size of new block */
+ 	neh = ext_block_hdr(bh);
 
 
