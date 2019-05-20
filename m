@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 660D7234BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E300235C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390074AbfETMaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:30:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46492 "EHLO mail.kernel.org"
+        id S2391265AbfETMiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:38:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390045AbfETMaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:30:13 -0400
+        id S2390550AbfETMfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:35:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31CAC20815;
-        Mon, 20 May 2019 12:30:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CCB8204FD;
+        Mon, 20 May 2019 12:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355412;
-        bh=VpgFCPF+VQV+9StQj8r5gpwZ4Ry5MHG0rcvGOeYFJvY=;
+        s=default; t=1558355704;
+        bh=55R11hn68ok3pmwLcWUc8/u/Khor9f6UQacwivXnHnI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jc1ezlajnoa+D0DobZLFqeZGS7y+wPF115lIgyn1uGCGj7HNMNwLDH88sI8YTicKL
-         sFeHPXq1AhyqXcchFWe+541gYpDS8prcv/B2kHWrEc1NNZPlxOqBnJHl2k0ueDOh3k
-         u8icG0r0XP2eXFIPTbN3AjfkEZRzLosy/sYmQHlE=
+        b=2C7X05gDZvkTN4s4xpzAFDw6gBShTesYypTzLZhTsn6ijS6BEjp55Rlv7Y7JR+5eq
+         Dfto8AV8WlT886BIhF6ej+cubRX4umWdktvrYgFrMnWaFxE+VciYBRPqY1pg5NB7Az
+         tD25nS9rP6yb+0Y2fgwgKDwu8wjj4t3QMG7c4L9s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sriram Rajagopalan <sriramr@arista.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 5.0 102/123] ext4: zero out the unused memory region in the extent tree block
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.1 095/128] Btrfs: send, flush dellaloc in order to avoid data loss
 Date:   Mon, 20 May 2019 14:14:42 +0200
-Message-Id: <20190520115251.812957758@linuxfoundation.org>
+Message-Id: <20190520115255.704058582@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,82 +43,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sriram Rajagopalan <sriramr@arista.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 592acbf16821288ecdc4192c47e3774a4c48bb64 upstream.
+commit 9f89d5de8631c7930898a601b6612e271aa2261c upstream.
 
-This commit zeroes out the unused memory region in the buffer_head
-corresponding to the extent metablock after writing the extent header
-and the corresponding extent node entries.
+When we set a subvolume to read-only mode we do not flush dellaloc for any
+of its inodes (except if the filesystem is mounted with -o flushoncommit),
+since it does not affect correctness for any subsequent operations - except
+for a future send operation. The send operation will not be able to see the
+delalloc data since the respective file extent items, inode item updates,
+backreferences, etc, have not hit yet the subvolume and extent trees.
 
-This is done to prevent random uninitialized data from getting into
-the filesystem when the extent block is synced.
+Effectively this means data loss, since the send stream will not contain
+any data from existing delalloc. Another problem from this is that if the
+writeback starts and finishes while the send operation is in progress, we
+have the subvolume tree being being modified concurrently which can result
+in send failing unexpectedly with EIO or hitting runtime errors, assertion
+failures or hitting BUG_ONs, etc.
 
-This fixes CVE-2019-11833.
+Simple reproducer:
 
-Signed-off-by: Sriram Rajagopalan <sriramr@arista.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount /dev/sdb /mnt
+
+  $ btrfs subvolume create /mnt/sv
+  $ xfs_io -f -c "pwrite -S 0xea 0 108K" /mnt/sv/foo
+
+  $ btrfs property set /mnt/sv ro true
+  $ btrfs send -f /tmp/send.stream /mnt/sv
+
+  $ od -t x1 -A d /mnt/sv/foo
+  0000000 ea ea ea ea ea ea ea ea ea ea ea ea ea ea ea ea
+  *
+  0110592
+
+  $ umount /mnt
+  $ mkfs.btrfs -f /dev/sdc
+  $ mount /dev/sdc /mnt
+
+  $ btrfs receive -f /tmp/send.stream /mnt
+  $ echo $?
+  0
+  $ od -t x1 -A d /mnt/sv/foo
+  0000000
+  # ---> empty file
+
+Since this a problem that affects send only, fix it in send by flushing
+dellaloc for all the roots used by the send operation before send starts
+to process the commit roots.
+
+This is a problem that affects send since it was introduced (commit
+31db9f7c23fbf7 ("Btrfs: introduce BTRFS_IOC_SEND for btrfs send/receive"))
+but backporting it to older kernels has some dependencies:
+
+- For kernels between 3.19 and 4.20, it depends on commit 3cd24c698004d2
+  ("btrfs: use tagged writepage to mitigate livelock of snapshot") because
+  the function btrfs_start_delalloc_snapshot() does not exist before that
+  commit. So one has to either pick that commit or replace the calls to
+  btrfs_start_delalloc_snapshot() in this patch with calls to
+  btrfs_start_delalloc_inodes().
+
+- For kernels older than 3.19 it also requires commit e5fa8f865b3324
+  ("Btrfs: ensure send always works on roots without orphans") because
+  it depends on the function ensure_commit_roots_uptodate() which that
+  commits introduced.
+
+- No dependencies for 5.0+ kernels.
+
+A test case for fstests follows soon.
+
+CC: stable@vger.kernel.org # 3.19+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/extents.c |   17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ fs/btrfs/send.c |   36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -1035,6 +1035,7 @@ static int ext4_ext_split(handle_t *hand
- 	__le32 border;
- 	ext4_fsblk_t *ablocks = NULL; /* array of allocated blocks */
- 	int err = 0;
-+	size_t ext_size = 0;
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -6579,6 +6579,38 @@ commit_trans:
+ 	return btrfs_commit_transaction(trans);
+ }
  
- 	/* make decision: where to split? */
- 	/* FIXME: now decision is simplest: at current extent */
-@@ -1126,6 +1127,10 @@ static int ext4_ext_split(handle_t *hand
- 		le16_add_cpu(&neh->eh_entries, m);
- 	}
++/*
++ * Make sure any existing dellaloc is flushed for any root used by a send
++ * operation so that we do not miss any data and we do not race with writeback
++ * finishing and changing a tree while send is using the tree. This could
++ * happen if a subvolume is in RW mode, has delalloc, is turned to RO mode and
++ * a send operation then uses the subvolume.
++ * After flushing delalloc ensure_commit_roots_uptodate() must be called.
++ */
++static int flush_delalloc_roots(struct send_ctx *sctx)
++{
++	struct btrfs_root *root = sctx->parent_root;
++	int ret;
++	int i;
++
++	if (root) {
++		ret = btrfs_start_delalloc_snapshot(root);
++		if (ret)
++			return ret;
++		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
++	}
++
++	for (i = 0; i < sctx->clone_roots_cnt; i++) {
++		root = sctx->clone_roots[i].root;
++		ret = btrfs_start_delalloc_snapshot(root);
++		if (ret)
++			return ret;
++		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
++	}
++
++	return 0;
++}
++
+ static void btrfs_root_dec_send_in_progress(struct btrfs_root* root)
+ {
+ 	spin_lock(&root->root_item_lock);
+@@ -6803,6 +6835,10 @@ long btrfs_ioctl_send(struct file *mnt_f
+ 			NULL);
+ 	sort_clone_roots = 1;
  
-+	/* zero out unused area in the extent block */
-+	ext_size = sizeof(struct ext4_extent_header) +
-+		sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries);
-+	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
- 	ext4_extent_block_csum_set(inode, neh);
- 	set_buffer_uptodate(bh);
- 	unlock_buffer(bh);
-@@ -1205,6 +1210,11 @@ static int ext4_ext_split(handle_t *hand
- 				sizeof(struct ext4_extent_idx) * m);
- 			le16_add_cpu(&neh->eh_entries, m);
- 		}
-+		/* zero out unused area in the extent block */
-+		ext_size = sizeof(struct ext4_extent_header) +
-+		   (sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries));
-+		memset(bh->b_data + ext_size, 0,
-+			inode->i_sb->s_blocksize - ext_size);
- 		ext4_extent_block_csum_set(inode, neh);
- 		set_buffer_uptodate(bh);
- 		unlock_buffer(bh);
-@@ -1270,6 +1280,7 @@ static int ext4_ext_grow_indepth(handle_
- 	ext4_fsblk_t newblock, goal = 0;
- 	struct ext4_super_block *es = EXT4_SB(inode->i_sb)->s_es;
- 	int err = 0;
-+	size_t ext_size = 0;
- 
- 	/* Try to prepend new index to old one */
- 	if (ext_depth(inode))
-@@ -1295,9 +1306,11 @@ static int ext4_ext_grow_indepth(handle_
++	ret = flush_delalloc_roots(sctx);
++	if (ret)
++		goto out;
++
+ 	ret = ensure_commit_roots_uptodate(sctx);
+ 	if (ret)
  		goto out;
- 	}
- 
-+	ext_size = sizeof(EXT4_I(inode)->i_data);
- 	/* move top-level index/leaf into new block */
--	memmove(bh->b_data, EXT4_I(inode)->i_data,
--		sizeof(EXT4_I(inode)->i_data));
-+	memmove(bh->b_data, EXT4_I(inode)->i_data, ext_size);
-+	/* zero out unused area in the extent block */
-+	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
- 
- 	/* set size of new block */
- 	neh = ext_block_hdr(bh);
 
 
