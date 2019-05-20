@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1454723397
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BDE23485
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387705AbfETMS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:18:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59480 "EHLO mail.kernel.org"
+        id S2389561AbfETM1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:27:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733232AbfETMSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:18:24 -0400
+        id S2389527AbfETM1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:27:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6232214AE;
-        Mon, 20 May 2019 12:18:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0CCB20675;
+        Mon, 20 May 2019 12:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354703;
-        bh=fVRF+z9eHZvFLa3JaWu/hPJmz6sXeV2/0oh0lbOT2OM=;
+        s=default; t=1558355263;
+        bh=Y5gLgaKUCRhk57m/UXAViF0p7JGbNm1P9I90M+EkMGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f2keHMWxTwTpkFUE6EZxA+mTakniZF/Uq1PCOFZ+nYUaMHKwfmfzIlVz4oKJJHNbr
-         e+n38Qc5ZX2sX0BQ5T7WhRF3m8rgmQoKHj/tr65ij9r/9wemiLOHtYO2MiGn2UaDYh
-         50+GiUw3xNqpTfVgD52qasZQS5AWvlqg1mAkqjX0=
+        b=i5+P7mxew/+nKSX5IM/+YsKeMfPT+iX84ANL/33Fw/3gtA9K6RReyj18mHhD5wDgL
+         NuAuJnAicFvKf8JQ/xhha4TZrDg6U2ASn/sFQtS9VPhucsEFahyjTXjjfqQKXhdYDY
+         59kAZaE4upZukj7nuJGVok+YPKeNc+9FZ3Pd5q94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 11/63] ARM: exynos: Fix a leaked reference by adding missing of_node_put
-Date:   Mon, 20 May 2019 14:13:50 +0200
-Message-Id: <20190520115232.460580977@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.0 051/123] ALSA: hda/realtek - EAPD turn on later
+Date:   Mon, 20 May 2019 14:13:51 +0200
+Message-Id: <20190520115248.128333567@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 629266bf7229cd6a550075f5961f95607b823b59 upstream.
+commit 607ca3bd220f4022e6f5356026b19dafc363863a upstream.
 
-The call to of_get_next_child returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Let EAPD turn on after set pin output.
 
-Detected by coccinelle with warnings like:
-    arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put;
-        acquired a node pointer with refcount incremented on line 193,
-        but without a corresponding object release within this function.
+[ NOTE: This change is supposed to reduce the possible click noises at
+  (runtime) PM resume.  The functionality should be same (i.e. the
+  verbs are executed correctly) no matter which order is, so this
+  should be safe to apply for all codecs -- tiwai ]
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-exynos/firmware.c |    1 +
- arch/arm/mach-exynos/suspend.c  |    2 ++
- 2 files changed, 3 insertions(+)
+ sound/pci/hda/patch_realtek.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -205,6 +205,7 @@ void __init exynos_firmware_init(void)
- 		return;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -803,11 +803,10 @@ static int alc_init(struct hda_codec *co
+ 	if (spec->init_hook)
+ 		spec->init_hook(codec);
  
- 	addr = of_get_address(nd, 0, NULL, NULL);
-+	of_node_put(nd);
- 	if (!addr) {
- 		pr_err("%s: No address specified.\n", __func__);
- 		return;
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -649,8 +649,10 @@ void __init exynos_pm_init(void)
++	snd_hda_gen_init(codec);
+ 	alc_fix_pll(codec);
+ 	alc_auto_init_amp(codec, spec->init_amp);
  
- 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
- 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-+		of_node_put(np);
- 		return;
- 	}
-+	of_node_put(np);
+-	snd_hda_gen_init(codec);
+-
+ 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
  
- 	pm_data = (const struct exynos_pm_data *) match->data;
- 
+ 	return 0;
 
 
