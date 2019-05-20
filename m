@@ -2,125 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8815242B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D9A2423C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfETVUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:20:36 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44409 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbfETVUf (ORCPT
+        id S1726642AbfETUvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 16:51:18 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39165 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfETUvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:20:35 -0400
-Received: by mail-lj1-f193.google.com with SMTP id e13so13815146ljl.11;
-        Mon, 20 May 2019 14:20:34 -0700 (PDT)
+        Mon, 20 May 2019 16:51:17 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r7so14304923otn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 13:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eeXGl4OisvD9va1fGMuq+T3d0J26MMP0kgZu3foyCjo=;
-        b=OYoUqfsV7mnWmXy+IkWaJk4b+/wAkvrpvuM+z79nSyjzwjwcS6AbOID0/NRi0HEY/c
-         vrGdesXrxKXYljPfOXnKFv+7ZR9dlIDKxl3uwE+YUCimbotSmyNR6J02eiwvneuH31xk
-         2AVqmnjLPRb4k/vLeJAsZNbdPxTMqp0X+Y947Xs7Vd2p4HfUCsK0z1QMjP2ujrKc1rgA
-         5O++K6uhB1xVh7CdROgmc8FJVG1BJ6x1YKY9klnWLd82mQ2FO8/GkUhw0trQJMPmguVo
-         swQdsXmwhG6gynTTtXQp4Gtftjgi98VHaObRFRvLwXDhOP/flvotiFMMxVtxRJkJufIn
-         TRuA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xX33wYQ67BtuLkYMr+xwu06mBddsySPu3x4wvepJkq0=;
+        b=VBygtDimWlxiSshmooC0IL60kWo+ww+p0YIcnyIyT2jgCllNeE0M/Y4QMmho24DWWZ
+         QiOjPNi2E03oRxh9D46TyFNULT/3BFbop1NXR+n8Sm9MoRzXEXWW8KEEYPZN8G85IE+e
+         7qeQfXPKgVac0jQMMXr5VbiCgCzJMESBeQUH0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eeXGl4OisvD9va1fGMuq+T3d0J26MMP0kgZu3foyCjo=;
-        b=lANFTL0HwkftuZKtQ3rSsJYg9xD8uAadY9ZQIHG2zG0FRHFxqXTCUOHwdZm5gX6vX6
-         MN1gNXGUbRe84Y4g/n6KFQ/+yqRAjUd7vI/nQXgcUSn2KSkrg7oM/+RexHQgMXquRQGH
-         ghr3DPnp48WL7Nnvq/a6I5gGdCdu1NFhIY3qq3DeXmbmZinnLUXEVOC5y+R8I9xm4uu1
-         rPru/tE9TNAj7XZnLCg4pT1RjhLqT5/S1S6baq+b1wcVVQnRC3QtWks5V1kORLNYXnAs
-         rd8zjl6LoYIBiIAnWYWMRMQIH9UOY9pppJTCzfGdJ1j559Z52c7UpLGjvYYGoQsBwhx1
-         nnLg==
-X-Gm-Message-State: APjAAAXOE4drpxfkOsG5JOJpCT98W+D9xpAJanvHWkPiyLYlAXmATwD2
-        iDQEib32pnxPtbP/QhGcbt4=
-X-Google-Smtp-Source: APXvYqzxP/xb+w6wE/ZkGlf3K3toIPvyEsdt0fzUOzdIzNGu0FtAMPR2E1Ma/ja1p9A3sd6h2qEGRQ==
-X-Received: by 2002:a2e:8857:: with SMTP id z23mr38822150ljj.73.1558387233349;
-        Mon, 20 May 2019 14:20:33 -0700 (PDT)
-Received: from z50.gdansk-morena.vectranet.pl (109241207190.gdansk.vectranet.pl. [109.241.207.190])
-        by smtp.gmail.com with ESMTPSA id e12sm4149897lfb.70.2019.05.20.14.20.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 14:20:32 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v7 0/3] media: v4l2-subdev: Verify arguments in  v4l2_subdev_call()
-Date:   Mon, 20 May 2019 22:50:19 +0200
-Message-Id: <20190520205022.8714-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xX33wYQ67BtuLkYMr+xwu06mBddsySPu3x4wvepJkq0=;
+        b=B4v4FHTvvHuvIM8M2HvWpigQhRq/GlLN7B0ossD0vdr9fquJc5fGWVf8grDgzQcuc9
+         ULHSEQ91TYubOKsfrW+2RuR5Ye3a3ydBs4FJAMuzX0w5+HM0hvjaVw+kUcQpShCdxaV4
+         IzrUGLL838x+7OB72bbOSN8XoYiTmN9gAXpLTg6/69POuhRS3Ovn9qInG7IWsNP3NmM4
+         m1J45UjUHIB+iRyJ4czK552NUWDPwIO2ru0UVKROUjWr49+HPfcb4rOw/XP2rlpHMMUR
+         i5zLzAzeU65ougtrG2cXS3RXwIN/cO9S/iR58toJQsuQEHdp9J729g60vL3vkPN9jWQQ
+         8uyg==
+X-Gm-Message-State: APjAAAWq3dAksN5CtEy+Lje8wwtrZ+1VwN4eZoRgsIQiZk7HNGODXvwC
+        dyQoO9R4IdPZcq4v9fLCZEnzUf7VvJW9Ph4KFyUFlw==
+X-Google-Smtp-Source: APXvYqwz/n+U8mN/3YqxKA4t9a9YLtbp9CRxHd/+W9i5b9zpl48GPLah04km34FANYnTc1u71D0UTWakADsPbJV06o4=
+X-Received: by 2002:a9d:a6e:: with SMTP id 101mr17212527otg.356.1558385476481;
+ Mon, 20 May 2019 13:51:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190429224143.192506-1-sjg@chromium.org> <CAL_JsqL3HrX5K4A3bLBrkR7LKNTCSj+--ip7z-xiCrgpmdZN6A@mail.gmail.com>
+In-Reply-To: <CAL_JsqL3HrX5K4A3bLBrkR7LKNTCSj+--ip7z-xiCrgpmdZN6A@mail.gmail.com>
+From:   Simon Glass <sjg@chromium.org>
+Date:   Mon, 20 May 2019 14:51:04 -0600
+Message-ID: <CAPnjgZ1YXUK1+hXgLf_GoS=WybnR+qhEpLPys+ikbQ-_epzUWQ@mail.gmail.com>
+Subject: Re: [PATCH] RFC: Example schema files written in Python
+To:     Rob Herring <robh@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Devicetree Discuss <devicetree@vger.kernel.org>,
+        Grant Likely <grant.likely@secretlab.ca>,
+        Frank Rowand <frank.rowand@sony.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correctness of format type (try or active) and pad ID parameters passed
-to subdevice operation callbacks is now verified only for IOCTL calls.
-However, those callbacks are also used by drivers, e.g., V4L2 host
-interfaces.
-    
-Since both subdev_do_ioctl() and drivers are using v4l2_subdev_call()
-macro while calling subdevice operations, move those parameter checks
-from subdev_do_ioctl() to v4l2_subdev_call().  Also, add check for
-non-NULL pointers, including pad config if V4L2_SUBDEV_FORMAT_TRY is
-requested.
+Hi Rob,
 
-Having that done, we can avoid taking care of those checks inside
-drivers.
+On Wed, 8 May 2019 at 13:21, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Apr 29, 2019 at 5:41 PM Simon Glass <sjg@chromium.org> wrote:
+> >
+> > Most of these are hand-written, but xilinx-xadc.py is auto-generated by
+> > binding_to_py.py as an example of the use of that tool.
+> >
+> > This is part of a proof-of-concept device-tree validator. See the patch
+> > on the dtc mailing list for details:
+>
+> Honestly, we are pretty far down the path of using json-schema to
+> consider changing to something else. We've already gone thru plenty of
+> concepts over the years with different languages for the schema.
 
-Janusz Krzysztofik (3):
-  media: v4l2-subdev: Verify arguments in v4l2_subdev_call()
-  media: v4l2-subdev: Verify v4l2_subdev_call() pointer arguments
-  media: v4l2-subdev: Verify v4l2_subdev_call() pad config argument
+I don't think I saw much of that. I did hear that others has suggested
+such options but the yaml/json design is the only one I'm aware of.
 
- drivers/media/v4l2-core/v4l2-subdev.c | 268 +++++++++++++++++---------
- include/media/v4l2-subdev.h           |   6 +
- 2 files changed, 188 insertions(+), 86 deletions(-)
+Anyway, it sounds like things are pretty set in stone right now. Even
+so, I'll reply to this email.
 
-Changelog:
-v6->v7:
-Changes suggested by Sakari - thanks!
-- never succeed pad check on media entities with pad_num == 0,
-- allow pad 0 on subdevies not registered as media entities.
+>
+> While I think there are some cases where being able to do schema with
+> code is useful or necessary, the vast majority of cases can be handled
+> just fine with structured data. I'd rather see how we could augment
+> the data with code. Maybe that's snippets of code within the schema or
+> making the validation code more modular. I would like to see the dtc
+> checks infrastructure be extendable without modifying dtc. That could
+> include supporting checks written in python.
+>
+> One example where we need more than just schema data is validating
+> properties that depend on a provider #.*-cells property. We can't
+> really do that with json-schema. At least the number of cells being
+> correct is covered by dtc already. So it would really be how do we
+> validate the cell data itself. OTOH, I think that is pretty far down
+> the list in priorities of things to validate. There's already
+> thousands of warnings generated by dtc and the json-schema which are
+> slow to get fixed (though some are really subjective and more what to
+> avoid for new users).
+>
+> >
+> >    RFC: Python-based device-tree validation
+> >
+> > Signed-off-by: Simon Glass <sjg@chromium.org>
+> > ---
+>
+> I'll use this one to comment on. Comments are most around goals for
+> the binding doc format.
+>
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py
+> > new file mode 100644
+> > index 0000000000000..9f55f48f7cde7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.py
+> > @@ -0,0 +1,61 @@
+> > +# SPDX-License-Identifier: GPL-2.0+
+> > +#
+> > +
+> > +# Xilinx XADC device driver
+>
+> Having some defined structure at the top-level is beneficial for
+> extracting data and automating review checks.
 
-v5->v6:
-- rename wrappers to call_something() as suggested by Sakari - thanks!
-- make check_ functions inline - also on Sakari's suggestion, thanks!
-- drop patch 2/4 and remove WARN_ONs from remaining patches to avoid
-  kernel WARNs on non-kernel bugs - thanks Hans for pointing this out!
+What does this refer to?
 
-v4->v5:
-- a few coding style and code formatting changes,
-- require CONFIG_MEDIA_CONTROLLER, not CONFIG_VIDEO_V4L2_SUBDEV_API,
-  for a valid pad ID check,
-- perform pad ID check only if at least one pad is configured so
-  drivers which don't configure pads are not affected if built with
-  CONFIG_MEDIA_CONTROLLER defined,
-- issue kernel warnings on invalid parameters (new patch - 2/4),
-- validate pointers before using them (new patch - 3/4).
+>
+> > +
+> > +from kschema import NodeDesc, PropBool, PropClocks, PropInt, PropIntList, PropInterrupts, PropReg, PropStringList
+> > +
+> > +schema = [
+> > +    NodeDesc('xilinx-xadc', ['xlnx,zynq-xadc-1.00.a', 'xlnx,axi-xadc-1.00.a'], False, desc=
+>
+> If one desires to generate a list of all possible compatible strings
+> (to find undocumented ones), how would you do that?
 
-v3->v4:
-- fix 'struct' keyword missing from patch 2/2,
-- fix checkpatch reported style issue in patch 2/2
-Sorry for that.
+Read in all the schema files and then walk through the entire schema
+looking for compatible strings.
 
-v2->v3:
-- add patch 2/2 with pad config check,
-- adjust continuation line alignments in patch 1/2 to match those
-  used in 2/2.
+>
+> > +            'This binding document describes the bindings for both of them since the'
+> > +            'bindings are very similar. The Xilinx XADC is a ADC that can be found in the'
+> > +            'series 7 FPGAs from Xilinx. The XADC has a DRP interface for communication.'
+> > +            'Currently two different frontends for the DRP interface exist. One that is only'
+> > +            'available on the ZYNQ family as a hardmacro in the SoC portion of the ZYNQ. The'
+> > +            'other one is available on all series 7 platforms and is a softmacro with a AXI'
+> > +            'interface. This binding document describes the bindings for both of them since'
+> > +            'the bindings are very similar.', elements=[
+>
+> One goal with the schema (at least core ones) is to generate
+> documentation from it. That would need to be a format such as rST so
+> we can have formatting. And we'd want to be able to parse the
+> properties and generate tables from them.
 
-v1->v2:
-- replace the horrible macro with a structure of wrapper functions;
-  inspired by Hans' and Sakari's comments - thanks!
+The docs above are taken verbatim from the binding, so there is no
+formatting really, except for blank lines.1
 
--- 
-2.21.0
+>
+> If someone really gets an itch, we'll rewrite sections of the DT spec
+> in schema.
+>
+> > +        PropReg(required=True,
+> > +            desc='Address and length of the register set for the device'),
+>
+> For any standard property, we'd have to create the class before
+> bindings can use it.
 
+There is a 'generic' property (PropDesc) which is the base class for
+all properties. So most properties would not have their own class.
+
+>
+> > +        PropInterrupts(required=True,
+>
+> How would you handle a property being conditionally required?
+
+The cond_props dictionary is attached to each property. See
+ElementPresent for the implementation.
+
+>
+> > +            desc='Interrupt for the XADC control interface.'),
+> > +        PropClocks(required=True,
+> > +            desc='When using the ZYNQ this must be the ZYNQ PCAP clock,'
+> > +            'when using the AXI-XADC pcore this must be the clock that provides the'
+> > +            'clock to the AXI bus interface of the core.'),
+> > +        PropStringList('xlnx,external-mux', str_pattern='none|single|dual',
+> > +            desc=''),
+> > +        PropIntList('xlnx,external-mux-channel', valid_list='0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|16|1|2|3|4|5|6|8',
+> > +            desc='Configures which pair of pins is used to'
+> > +            'sample data in external mux mode.'
+> > +            'Valid values for single external multiplexer mode are:'
+> > +            'Valid values for dual external multiplexer mode are:'
+> > +            ''
+> > +            'This property needs to be present if the device is configured for'
+> > +            'external multiplexer mode (either single or dual). If the device is'
+> > +            'not using external multiplexer mode the property is ignored.'),
+> > +        NodeDesc('xlnx,channels', None, False, desc=
+> > +                'List of external channels that are connected to the ADC', elements=[
+> > +            PropInt('#address-cells', required=True,
+> > +                desc='Should be 1.'),
+> > +            PropInt('#size-cells', required=True,
+> > +                desc='Should be 0.'),
+> > +            NodeDesc('None', None, False, desc=
+> > +                    'The child nodes of this node represent the external channels which are'
+> > +                    'connected to the ADC. If the property is no present no external'
+> > +                    'channels will be assumed to be connected.', elements=[
+> > +                NodeDesc('None', None, False, desc=
+> > +                        'Each child node represents one channel and has the following'
+> > +                        'properties:', elements=[
+> > +                    PropIntList('reg', required=True, valid_list='0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|16',
+>
+> We need a different method or arg for every possible way we need to
+> express constraints? For example, say the value must be a power of 2.
+
+That's one of the nice things about Python is that it is easy to code
+up a custom validator. See the Validate() method in each class.
+
+At some point it might worth putting this sort of thing into its own
+validator class. How is this done with yaml?
+
+>
+> > +                        desc='Pair of pins the channel is connected to.'
+> > +                        'Note each channel number should only be used at most'
+> > +                        'once.'),
+> > +                    PropBool('xlnx,bipolar',
+> > +                        desc='If set the channel is used in bipolar'
+> > +                        'mode.'),
+> > +                    ]),
+> > +                ]),
+> > +            ]),
+> > +        ]),
+> > +    ]
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
+> > index e0e0755cabd8a..24def33e6d6b8 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
+> > +++ b/Documentation/devicetree/bindings/iio/adc/xilinx-xadc.txt
+> > @@ -32,24 +32,26 @@ Optional properties:
+> >         - xlnx,external-mux-channel: Configures which pair of pins is used to
+> >           sample data in external mux mode.
+> >           Valid values for single external multiplexer mode are:
+> > -               0: VP/VN
+> > -               1: VAUXP[0]/VAUXN[0]
+> > -               2: VAUXP[1]/VAUXN[1]
+> > +               * 0: VP/VN
+> > +               * 1: VAUXP[0]/VAUXN[0]
+> > +               * 2: VAUXP[1]/VAUXN[1]
+>
+> Not really automatic conversion if you have to tweak the source. Is
+> your thought we'd make the txt files more structured to do automatic
+> conversions or we'd commit the python files?
+
+I was hoping to fix up the binding files a little, such that automatic
+conversion is good enough, make sure that the Python file can emit the
+original binding (in whatever format is chosen) then commit the Python
+files as the source of truth.
+
+Regards,
+Simon
