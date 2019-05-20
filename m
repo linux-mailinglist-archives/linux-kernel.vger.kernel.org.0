@@ -2,118 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57FBA232C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA642232C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733269AbfETLid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:38:33 -0400
-Received: from mail-eopbgr780052.outbound.protection.outlook.com ([40.107.78.52]:22263
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733189AbfETLiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:38:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ri41Hk2PeTEYPfX3rLrPJt/RkFPdxeWVJHmvEMfJ558=;
- b=Q5kl7vMeQDBRmF88RXANEnCDDfwbvNimUdGh4VVl17FWhJbitNYcDwUMvOMxZ28SS8SIji4ixwNwHJ7mMS+/nNnNR/q5yXiY9DL3JcjDr6Ue/o1BuSdqX2/48FLVTORfZqaYwAwvRChK5THR/vOYeCJVBTm79dYqYnkY8FfzQaQ=
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com (10.172.36.23) by
- DM5PR12MB1497.namprd12.prod.outlook.com (10.172.38.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.16; Mon, 20 May 2019 11:38:07 +0000
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::e1b1:5b6f:b2df:afa5]) by DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::e1b1:5b6f:b2df:afa5%7]) with mapi id 15.20.1900.020; Mon, 20 May 2019
- 11:38:07 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: Confusing lockdep message
-Thread-Topic: Confusing lockdep message
-Thread-Index: AQHVDv3eZSxJAKf8tkC9hTFvn+DMEKZz4vmA
-Date:   Mon, 20 May 2019 11:38:07 +0000
-Message-ID: <2f4fb196-e66e-bb0e-c5b2-d9072561f648@amd.com>
-References: <386d7978-18fd-318e-ddc9-784266b75d9e@amd.com>
-In-Reply-To: <386d7978-18fd-318e-ddc9-784266b75d9e@amd.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-x-clientproxiedby: AM3PR05CA0100.eurprd05.prod.outlook.com
- (2603:10a6:207:1::26) To DM5PR12MB1546.namprd12.prod.outlook.com
- (2603:10b6:4:8::23)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fe891905-63f1-4ed7-44c5-08d6dd17a0e4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1497;
-x-ms-traffictypediagnostic: DM5PR12MB1497:
-x-microsoft-antispam-prvs: <DM5PR12MB149757523FD48C0C0206B07283060@DM5PR12MB1497.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 004395A01C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(366004)(396003)(346002)(136003)(199004)(189003)(51874003)(52116002)(99286004)(76176011)(7116003)(6512007)(65806001)(65956001)(36756003)(102836004)(3480700005)(2906002)(6116002)(53936002)(86362001)(65826007)(8676002)(81156014)(81166006)(71190400001)(8936002)(305945005)(7736002)(71200400001)(316002)(6486002)(6436002)(229853002)(4326008)(478600001)(15650500001)(72206003)(386003)(64756008)(68736007)(46003)(31696002)(186003)(6246003)(73956011)(66946007)(66476007)(14454004)(66556008)(66446008)(11346002)(31686004)(446003)(5660300002)(476003)(66574012)(2616005)(256004)(14444005)(58126008)(64126003)(110136005)(25786009)(6506007)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1497;H:DM5PR12MB1546.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pHkFoGwBwTkmmg4aGz7gCEijLU+JNRzmdzaeDJ8eXd3RpkjO/ILucbmr5lQjvn6DpeOOoePp+yc5BGs7votAh3nIp83e2D6rZBBsEoN/k7Vh8l1N8PtHf9cwhqGagrc90Y3k2qk1ZHEfSxhw4Ql5mNhrio6vajSSHyCLPJGsGq1FvLWPXX69WIAGka7xI0pRr50UIIvt41KaQ5yWmRoMGupDXWU6Wf/BDwtIn9NcVa1OXFdwvl6OqxpBkUoyQWVdACzWgRUp7SeAhUDd/ASK+0LqO3OvdicRIxa8SFWqI4o2953IeABUWFdRfaKyPgHK20hwWf2wqva9lmiywj2iPh3w2StDDij0WOidFuD2CCq16dZ9DpTN8L/o9Szk0L7FT/80xV3rxkdq69mHfqTd0GcIr3s4qd/dXGASYx4Y/Tk=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <77D0C8EE18AE0B4EB3D66FA21B50A68E@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1733121AbfETLi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:38:59 -0400
+Received: from vps.xff.cz ([195.181.215.36]:52566 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725772AbfETLi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:38:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1558352334; bh=rAw4E5u5yC+I7cC6PCbSVyMvIwVJ8vK/VlOL2T4E4AQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dppL/+PYlejvDtRHTB5HhLGEFp5Mv+vfXDWeZEYAgjF+32qoDGlDN9yzAQ6ZZi/s+
+         kokNdiDrhAdqsx5R7NMaVzI7Iw1Ojmda461UQcCE6B06pfXZHM+5fuEvVlSoSrdDgh
+         +Skzmd3/tQdP5l9EKK8hTFbrJOI3mhwZ2ZnrM3WQ=
+Date:   Mon, 20 May 2019 13:38:54 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: a83t: Add device node for CSI
+ (Camera Sensor Interface)
+Message-ID: <20190520113854.ngyaw4mgki77gdbn@core.my.home>
+Mail-Followup-To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+References: <20190408165744.11672-1-wens@kernel.org>
+ <20190408165744.11672-5-wens@kernel.org>
+ <20190409075804.4zrwjil7ie2gjigu@flea>
+ <CAGb2v64CYV68Q0a7x5p-XabS74vaQWP3paPopodmqQPTOrq2gQ@mail.gmail.com>
+ <20190409082818.z33mq2qrxethldzf@flea>
+ <CAGb2v67pX+7ccihmGEWPKrXg8mMhht-vh37p2auWYgt=qGDA6A@mail.gmail.com>
+ <20190409145225.2ltluiyqa5xha4zd@flea>
+ <20190519135422.l2bnumyjr3dxehhx@core.my.home>
+ <20190520111048.cnh435fnmz7esyks@flea>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe891905-63f1-4ed7-44c5-08d6dd17a0e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 11:38:07.5867
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1497
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190520111048.cnh435fnmz7esyks@flea>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGxlYXNlIGlnbm9yZSB0aGlzIG1haWwsDQoNCkkndmUgZml4ZWQgdGhlIGRvdWJsZSB1bmxvY2sg
-YW5kIGxvY2tkZXAgaXMgc3RpbGwgY29tcGxhaW5pbmcgYWJvdXQgdGhlIA0KbmVzdGVkIGxvY2tp
-bmcsIHNvIEknbSBhY3R1YWxseSBmYWNpbmcgbXVsdGlwbGUgaXNzdWVzIGhlcmUuDQoNClNvcnJ5
-IHRvIHdhc3RlIHlvdXIgdGltZSwNCkNocmlzdGlhbi4NCg0KQW0gMjAuMDUuMTkgdW0gMTM6MTkg
-c2NocmllYiBDaHJpc3RpYW4gS8O2bmlnOg0KPiBIaSBndXlzLA0KPg0KPiB3cml0aW5nIHRoZSB1
-c3VhbCBzdXNwZWN0cyBhYm91dCBsb2NraW5nL2xvY2tkZXAgc3R1ZmYgYW5kIGFsc28gRGFuaWVs
-IA0KPiBpbiBDQyBiZWNhdXNlIGhlIG1pZ2h0IGhhdmUgc3R1bWJsZWQgb3ZlciB0aGlzIGFzIHdl
-bGwuDQo+DQo+IEl0IHRvb2sgbWUgYSB3aGlsZSB0byBmaWd1cmluZyBvdXQgd2hhdCB0aGUgaGVj
-ayBsb2NrZGVwIHdhcyANCj4gY29tcGxhaW5pbmcgYWJvdXQuIFRoZSByZWxldmFudCBkbWVzZyB3
-YXMgdGhlIGZvbGxvd2luZzoNCj4+IFvCoCAxNDUuNjIzMDA1XSA9PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09DQo+PiBbwqAgMTQ1LjYyMzA5NF0gV0FSTklORzogTmVzdGVkIGxvY2sg
-d2FzIG5vdCB0YWtlbg0KPj4gW8KgIDE0NS42MjMxODRdIDUuMC4wLXJjMSsgIzE0NCBOb3QgdGFp
-bnRlZA0KPj4gW8KgIDE0NS42MjMyNjFdIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0NCj4+IFvCoCAxNDUuNjIzMzUxXSBhbWRncHVfdGVzdC8xNDExIGlzIHRyeWluZyB0byBsb2Nr
-Og0KPj4gW8KgIDE0NS42MjM0NDJdIDAwMDAwMDAwOThhMWM0ZDMgKHJlc2VydmF0aW9uX3d3X2Ns
-YXNzX211dGV4KXsrLisufSwgDQo+PiBhdDogdHRtX2V1X3Jlc2VydmVfYnVmZmVycysweDQ2ZS8w
-eDkxMCBbdHRtXQ0KPj4gW8KgIDE0NS42MjM2NTFdDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIGJ1dCB0aGlzIHRhc2sgaXMgbm90IGhvbGRpbmc6DQo+PiBbwqAgMTQ1LjYyMzc1OF0g
-cmVzZXJ2YXRpb25fd3dfY2xhc3NfYWNxdWlyZQ0KPj4gW8KgIDE0NS42MjM4MzZdDQo+PiDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0YWNrIGJhY2t0cmFjZToNCj4+IFvCoCAxNDUuNjIz
-OTI0XSBDUFU6IDQgUElEOiAxNDExIENvbW06IGFtZGdwdV90ZXN0IE5vdCB0YWludGVkIA0KPj4g
-NS4wLjAtcmMxKyAjMTQ0DQo+PiBbwqAgMTQ1LjYyNDA1OF0gSGFyZHdhcmUgbmFtZTogU3lzdGVt
-IG1hbnVmYWN0dXJlciBTeXN0ZW0gUHJvZHVjdCANCj4+IE5hbWUvUFJJTUUgWDM5OS1BLCBCSU9T
-IDA4MDggMTAvMTIvMjAxOA0KPj4gW8KgIDE0NS42MjQyMzRdIENhbGwgVHJhY2U6DQo+PiAuLi4N
-Cj4NCj4gVGhlIHByb2JsZW0gaXMgbm93IHRoYXQgdGhlIG1lc3NhZ2UgaXMgdmVyeSBjb25mdXNp
-b24gYmVjYXVzZSB0aGUgDQo+IGlzc3VlIHdhcyAqbm90KiB0aGF0IEkgdHJpZWQgdG8gYWNxdWly
-ZSBhIGxvY2ssIGJ1dCByYXRoZXIgdGhhdCBJIA0KPiBhY2NpZGVudGFsbHkgcmVsZWFzZWQgYSBs
-b2NrIHR3aWNlLg0KPg0KPiBOb3cgcmVsZWFzaW5nIGEgbG9jayB0d2ljZSBpcyBhIHJhdGhlciBj
-b21tb24gbWlzdGFrZSBhbmQgSSdtIHJlYWxseSANCj4gc3VycHJpc2VkIHRoYXQgSSBkaWRuJ3Qg
-Z2V0IHRoYXQgcG9pbnRlZCBvdXQgYnkgbG9ja2RlcCBpbW1lZGlhdGVseS4NCj4NCj4gQWRkaXRp
-b25hbCB0byB0aGF0IEknbSBwcmV0dHkgc3VyZSB0aGF0IHRoaXMgdXNlZCB0byB3b3JrIGNvcnJl
-Y3RseSANCj4gc29tZXRpbWVzIGluIHRoZSBwYXN0LCBzbyBJJ20gZWl0aGVyIGhpdHRpbmcgYSBy
-YXJlIGNvcm5lciBjYXNlIG9yIA0KPiB0aGlzIGJyb2tlIGp1c3QgcmVjZW50bHkuDQo+DQo+IEFu
-eXdheSBjYW4gc29tZWJvZHkgdGFrZSBhIGxvb2s/IEkgY2FuIHRyeSB0byBwcm92aWRlIGEgdGVz
-dCBjYXNlIGlmIA0KPiByZXF1aXJlZC4NCj4NCj4gVGhhbmtzIGluIGFkdmFuY2UsDQo+IENocmlz
-dGlhbi4NCg0K
+Hi Maxime,
+
+On Mon, May 20, 2019 at 01:10:49PM +0200, Maxime Ripard wrote:
+> Hi Ondřej,
+> 
+> On Sun, May 19, 2019 at 03:54:22PM +0200, Ondřej Jirman wrote:
+> > On Tue, Apr 09, 2019 at 04:52:25PM +0200, Maxime Ripard wrote:
+> > > On Tue, Apr 09, 2019 at 04:40:40PM +0800, Chen-Yu Tsai wrote:
+> > > > On Tue, Apr 9, 2019 at 4:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > >
+> > > > > On Tue, Apr 09, 2019 at 04:07:34PM +0800, Chen-Yu Tsai wrote:
+> > > > > > On Tue, Apr 9, 2019 at 3:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > > > > On Tue, Apr 09, 2019 at 12:57:42AM +0800, Chen-Yu Tsai wrote:
+> > > > > > > > From: Chen-Yu Tsai <wens@csie.org>
+> > > > > > > >
+> > > > > > > > The A83T SoC has a camera sensor interface (known as CSI in Allwinner
+> > > > > > > > lingo), which is similar to the one found on the A64 and H3. The only
+> > > > > > > > difference seems to be that support of MIPI CSI through a connected
+> > > > > > > > MIPI CSI-2 bridge.
+> > > > > > > >
+> > > > > > > > Add a device node for it, and pinctrl nodes for the commonly used MCLK
+> > > > > > > > and 8-bit parallel interface. The property /omit-if-no-ref/ is added to
+> > > > > > > > the pinctrl nodes to keep the device tree blob size down if they are
+> > > > > > > > unused.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > > > > > > ---
+> > > > > > > >  arch/arm/boot/dts/sun8i-a83t.dtsi | 31 +++++++++++++++++++++++++++++++
+> > > > > > > >  1 file changed, 31 insertions(+)
+> > > > > > > >
+> > > > > > > > diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > > > index f739b88efb53..0c52f945fd5f 100644
+> > > > > > > > --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > > > +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> > > > > > > > @@ -682,6 +682,20 @@
+> > > > > > > >                       #interrupt-cells = <3>;
+> > > > > > > >                       #gpio-cells = <3>;
+> > > > > > > >
+> > > > > > > > +                     /omit-if-no-ref/
+> > > > > > > > +                     csi_8bit_parallel_pins: csi-8bit-parallel-pins {
+> > > > > > > > +                             pins = "PE0", "PE2", "PE3", "PE6", "PE7",
+> > > > > > > > +                                    "PE8", "PE9", "PE10", "PE11",
+> > > > > > > > +                                    "PE12", "PE13";
+> > > > > > > > +                             function = "csi";
+> > > > > > > > +                     };
+> > > > > > > > +
+> > > > > > > > +                     /omit-if-no-ref/
+> > > > > > > > +                     csi_mclk_pin: csi-mclk-pin {
+> > > > > > > > +                             pins = "PE1";
+> > > > > > > > +                             function = "csi";
+> > > > > > > > +                     };
+> > > > > > > > +
+> > > > > > > >                       emac_rgmii_pins: emac-rgmii-pins {
+> > > > > > > >                               pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+> > > > > > > >                                      "PD11", "PD12", "PD13", "PD14", "PD18",
+> > > > > > > > @@ -994,6 +1008,23 @@
+> > > > > > > >                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+> > > > > > > >               };
+> > > > > > > >
+> > > > > > > > +             csi: camera@1cb0000 {
+> > > > > > > > +                     compatible = "allwinner,sun8i-a83t-csi";
+> > > > > > > > +                     reg = <0x01cb0000 0x1000>;
+> > > > > > > > +                     interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > > > +                     clocks = <&ccu CLK_BUS_CSI>,
+> > > > > > > > +                              <&ccu CLK_CSI_SCLK>,
+> > > > > > > > +                              <&ccu CLK_DRAM_CSI>;
+> > > > > > > > +                     clock-names = "bus", "mod", "ram";
+> > > > > > > > +                     resets = <&ccu RST_BUS_CSI>;
+> > > > > > > > +                     status = "disabled";
+> > > > > > > > +
+> > > > > > > > +                     csi_in: port {
+> > > > > > > > +                             #address-cells = <1>;
+> > > > > > > > +                             #size-cells = <0>;
+> > > > > > >
+> > > > > > > If we expect a single enpoint, then we don't need the address-cells
+> > > > > > > and size-cells properties.
+> > > > > >
+> > > > > > I wouldn't bet on anything. The way the Q8 tablets did front/back cameras
+> > > > > > is kind of genius if not very hacky. They have two "identical" sensors
+> > > > > > on the same I2C bus and CSI bus, with shared reset line but separate
+> > > > > > shutdown lines. Since they are identical, they also have the same I2C
+> > > > > > address. I haven't figured out how to model this in the device tree.
+> > > > > >
+> > > > > > The point is, it's perfectly possible to have two or more sensors use
+> > > > > > the same controller, provided only one be active at a time.
+> > > > >
+> > > > > Right, but I guess the common case would be to have a single sensor,
+> > > > > where that wouldn't be needed.
+> > > > >
+> > > > > In odd cases, we can always specify it in the DTS, and if it becomes
+> > > > > common enough, we can move it to the DTSI.
+> > > >
+> > > > Makes sense. Do you want me to re-spin?
+> > >
+> > > If there's no other comment, we'll fix it when applying.
+> >
+> > This patch series seems to have been forgotten. It doesn't seem there are any
+> > blockers.
+> 
+> Sorry about that :/
+> 
+> > Can you please apply it now? I have some further series (camera module
+> > support for TBS-A711) that depend on this.
+> 
+> Some parts of it will have to be merged through v4l2, and I can't
+> apply those patches.
+> 
+> Can you resend that series, and ping on a regular basis (like once a
+> week) if you don't get any feedback?
+
+You mean this series for A83t CSI?
+
+regards,
+	o.
+
+> Thanks!
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
