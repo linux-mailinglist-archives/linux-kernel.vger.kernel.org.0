@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B541223A69
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473AB23A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391806AbfETOiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:38:50 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52280 "EHLO
+        id S2391731AbfETOiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:38:21 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40266 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732877AbfETOiT (ORCPT
+        with ESMTP id S2391707AbfETOiT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 May 2019 10:38:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y3so13593745wmm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:38:17 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id 15so9265428wmg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gsXRVF+Q4Xl1eJydcYQleu4f8bJRfycH0peR8dxLr58=;
-        b=LxgGhVu87BajYbSzmXi0IzSAiHiTAYKHLacnLWWV7vXsrDMMNhNEDTbyA84BeXaYIk
-         ec/9sfy4kZ6Cw0rtYk8QKvGQnSMOlY2IWAbVGrZ10rY++c+xzDjUDtTb0uYihYzh3Ir6
-         T5YcwqIS21nZgaIl0J1zc41HhzAWyCApOBXpchVLeSScvGqYikxymiUUtxTDnBpTtLL6
-         ohZt7Loy1JE2i3X8uKjvCj/OK4OLMdI1TG2PeRCHYEdULKhe6t6XiNCNIFTm16kcQDbz
-         svNnyMHCquBY3JcHr4OeoyQICrvktG0FjlrrbCY1kYb1kbLrmmF7iZ7aG63widp0XvUD
-         zxSw==
+        bh=7fXId43znoURHIEgvEgBbx6jyFkNkDQCOlHnOrw38gs=;
+        b=Gn8uBGli1Sc6+GDVYqZjvexihUGvjpyt1WZ3EKCrkBTa+bdMmS6tukhn+bn+0qpQFj
+         0W10CLWrVu8rodRqQDmD8jaTM6J4bm7B+N1mWZUGOjV2Xcvr6huKJLCVuh5nNGJTASqz
+         3kmd8CQIce55JjTegyK/KzioLwviWkCI14eY/fDXJD5gmrUcfNuP0FhqjPybeWJK8Jfr
+         pnzxGchj2BGuGPYa1X/vI4NwVUwZ0Zh95/sVMF/zMGnrRziDyJ5BPxoKxUwfRlvXsJwi
+         rq7YwoNWGnLkf2IQumU2oBVGdqo7mwNrYbCF8JvNHNsDg/0/8Xg9ImSXw+FQvbFtDMPe
+         5vhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gsXRVF+Q4Xl1eJydcYQleu4f8bJRfycH0peR8dxLr58=;
-        b=Z9yT5yc8OStTAurwiCCOYuFRWQKXT7Scn10yxGvucQDBPm5hWigXxs/s5kB9VUZUkW
-         yNPzkSgX2ntseKm0VwYJRdG2Z1nD+7XQkrlG5i2eUHJ8/akmS8Mqqbd0yRVXncKtuPiX
-         3YgTW9agR2L+OYBtXu30WqAAAE/kudYBYlSpYc4LKHeKIjNhhEfPcr7q5k480MYAWXBQ
-         SM0TPryVRx4UGfV1AgS6i/ZIY7SYToilP2faVSqNkKuYZf+HSzTjJhw+pH1WHPzOh374
-         Qm0GwefHIXvxi/tiVhqlnBwK5Kp3Iee+yu3kwTCyAD5V5qDJJ8PncZrFwGNODT7xfcD1
-         aBVQ==
-X-Gm-Message-State: APjAAAVQTZZFzZJmz0dFyTb9ffNQalV3IPtcqc0mO3stWNnEWRKD+BEi
-        Vc60ci/lfVTtg5vgJWOUHPw4PtrLa9MzeA==
-X-Google-Smtp-Source: APXvYqweBWN2ESfxa4/+dEXt37jaGm0QmgzGH5jH9Agalj8dDA35BL5pOixdonfwJ0DfZHMLhn+f9A==
-X-Received: by 2002:a1c:b782:: with SMTP id h124mr2889396wmf.20.1558363096676;
-        Mon, 20 May 2019 07:38:16 -0700 (PDT)
+        bh=7fXId43znoURHIEgvEgBbx6jyFkNkDQCOlHnOrw38gs=;
+        b=N1INL11fRLzl8D710ZoMGP9rYT8WUPR489fE5wtImCEdDcHBikdWTcsNgNdSa3iD0S
+         1fXxDlXEZUU0q1YAzrye8zF5qk2CsMFMtAhJ+IlgeAec1qnLRroA0M6drc12BcBdJjYO
+         uMFQkFHduTLHZYTbQ6G8TmiK29apKKyWxLk2+HpfDutwi3/WMqdy2b5JUtn54eOwtsZ0
+         VM36Zbyy2/Nw89ybP1/GA3L5ro8g/W4kjInnmOK30AK88vZd1IfwNtTkoQjBeUnRuJuO
+         /EqT6ceh8Ex7BJPDjTfNOGR7RrHh6S/wKCovJDNZW0VI13mM+CFGxZZaz7qkKa+pPKsj
+         FtqQ==
+X-Gm-Message-State: APjAAAWpYtUw1kPM+1Gl0KQJx96ObicNH0s8B2M0HvmZ5rHq8JsmI2ud
+        9dDa0y5aSW7CA/lqE6+og35Bxg==
+X-Google-Smtp-Source: APXvYqzpwGJ0wgU381MFS7JmTq3cw/qfDdbTQ68HoDgqrF9UUoAXStgMXCv+xWG+2+c4G4nQV3F7Ow==
+X-Received: by 2002:a1c:be0b:: with SMTP id o11mr12604576wmf.63.1558363097439;
+        Mon, 20 May 2019 07:38:17 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y4sm12505976wmj.20.2019.05.20.07.38.15
+        by smtp.gmail.com with ESMTPSA id y4sm12505976wmj.20.2019.05.20.07.38.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
         Mon, 20 May 2019 07:38:16 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
@@ -50,9 +50,9 @@ To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 02/10] ARM: dts: meson6-atv1200: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:38:04 +0200
-Message-Id: <20190520143812.2801-3-narmstrong@baylibre.com>
+Subject: [PATCH 03/10] ARM: dts: meson6: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:38:05 +0200
+Message-Id: <20190520143812.2801-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520143812.2801-1-narmstrong@baylibre.com>
 References: <20190520143812.2801-1-narmstrong@baylibre.com>
@@ -65,13 +65,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm/boot/dts/meson6-atv1200.dts | 44 +---------------------------
+ arch/arm/boot/dts/meson6.dtsi | 44 +----------------------------------
  1 file changed, 1 insertion(+), 43 deletions(-)
 
-diff --git a/arch/arm/boot/dts/meson6-atv1200.dts b/arch/arm/boot/dts/meson6-atv1200.dts
-index 997e69c5963e..4d2a37da0161 100644
---- a/arch/arm/boot/dts/meson6-atv1200.dts
-+++ b/arch/arm/boot/dts/meson6-atv1200.dts
+diff --git a/arch/arm/boot/dts/meson6.dtsi b/arch/arm/boot/dts/meson6.dtsi
+index 65585255910a..39903172ea7c 100644
+--- a/arch/arm/boot/dts/meson6.dtsi
++++ b/arch/arm/boot/dts/meson6.dtsi
 @@ -1,48 +1,6 @@
 +// SPDX-License-Identifier: GPL-2.0 OR X11
  /*
@@ -121,7 +121,7 @@ index 997e69c5963e..4d2a37da0161 100644
 - *     OTHER DEALINGS IN THE SOFTWARE.
   */
  
- /dts-v1/;
+ #include "meson.dtsi"
 -- 
 2.21.0
 
