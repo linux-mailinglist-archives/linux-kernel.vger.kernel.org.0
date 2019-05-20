@@ -2,85 +2,334 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0377B22F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4D322FAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfETIzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:55:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57224 "EHLO mail.kernel.org"
+        id S1731694AbfETJFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:05:23 -0400
+Received: from mga09.intel.com ([134.134.136.24]:27087 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730823AbfETIzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:55:42 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 482B2204FD;
-        Mon, 20 May 2019 08:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558342541;
-        bh=Oee/c2MDV3HNg8hnxn5HjjMAZd7qfmNnxGQ5OCvwopI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O5F6SFVQ3q7yTeuTaEgQdA4PTRRLzNIx/A0ruDGhMl2xgHlouZPiVEYr9s/bj2pBJ
-         K8LpDTVsB6Y8VQsty+TM43JBqHxZYQJIy5eyIXTY6uVmKUMhT/hjqM1sD0U1KPZFIQ
-         HVpTsw4KwlXfaRSlvs9gfk4l9jDIM7BxzKH0pRrg=
-Date:   Mon, 20 May 2019 10:55:39 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     Emanuel Bennici <benniciemanuel78@gmail.com>,
-        Vatsala Narang <vatsalanarang@gmail.com>,
-        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
-        Young Xiao <YangX92@hotmail.com>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        Henriette Hofmeier <passt@h-hofmeier.de>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
-        Michael Straube <straube.linux@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: core: rtw_mlme_ext: fix warning
- Unneeded variable: "ret"
-Message-ID: <20190520085539.GD19183@kroah.com>
-References: <20190519171227.GA8089@hari-Inspiron-1545>
+        id S1726316AbfETJFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:05:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 02:05:21 -0700
+X-ExtLoop1: 1
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 02:05:19 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Vitaly Lubart <vitaly.lubart@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc-next] mei: Convert to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Mon, 20 May 2019 11:55:39 +0300
+Message-Id: <20190520085539.6013-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190519171227.GA8089@hari-Inspiron-1545>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 10:42:27PM +0530, Hariprasad Kelam wrote:
-> This patch fixes below warnings reported by coccicheck
-> 
-> drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:1888:14-17: Unneeded
-> variable: "ret". Return "_FAIL" on line 1920
-> drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:466:5-8: Unneeded
-> variable: "res". Return "_SUCCESS" on line 494
-> 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-> index d110d45..6a2eb66 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-> @@ -463,7 +463,6 @@ static u8 init_channel_set(struct adapter *padapter, u8 ChannelPlan, RT_CHANNEL_
->  
->  int	init_mlme_ext_priv(struct adapter *padapter)
->  {
-> -	int	res = _SUCCESS;
->  	struct registry_priv *pregistrypriv = &padapter->registrypriv;
->  	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
->  	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-> @@ -491,7 +490,7 @@ int	init_mlme_ext_priv(struct adapter *padapter)
->  	pmlmeext->fixed_chan = 0xFF;
->  #endif
->  
-> -	return res;
-> +	return _SUCCESS;
+From: Vitaly Lubart <vitaly.lubart@intel.com>
 
-If it can never fail, it should not be returning a value :(
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+
+Signed-off-by: Vitaly Lubart <vitaly.lubart@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/debugfs.c | 184 +++++++++++--------------------------
+ 1 file changed, 52 insertions(+), 132 deletions(-)
+
+diff --git a/drivers/misc/mei/debugfs.c b/drivers/misc/mei/debugfs.c
+index 0970142bcace..47cfd5005e1b 100644
+--- a/drivers/misc/mei/debugfs.c
++++ b/drivers/misc/mei/debugfs.c
+@@ -8,6 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+ #include <linux/debugfs.h>
++#include <linux/seq_file.h>
+ 
+ #include <linux/mei.h>
+ 
+@@ -15,104 +16,56 @@
+ #include "client.h"
+ #include "hw.h"
+ 
+-static ssize_t mei_dbgfs_read_meclients(struct file *fp, char __user *ubuf,
+-					size_t cnt, loff_t *ppos)
++static int mei_dbgfs_meclients_show(struct seq_file *m, void *unused)
+ {
+-	struct mei_device *dev = fp->private_data;
++	struct mei_device *dev = m->private;
+ 	struct mei_me_client *me_cl;
+-	size_t bufsz = 1;
+-	char *buf;
+ 	int i = 0;
+-	int pos = 0;
+-	int ret;
+ 
+-#define HDR \
+-"  |id|fix|         UUID                       |con|msg len|sb|refc|\n"
++	if (!dev)
++		return -ENODEV;
+ 
+ 	down_read(&dev->me_clients_rwsem);
+-	list_for_each_entry(me_cl, &dev->me_clients, list)
+-		bufsz++;
+ 
+-	bufsz *= sizeof(HDR) + 1;
+-	buf = kzalloc(bufsz, GFP_KERNEL);
+-	if (!buf) {
+-		up_read(&dev->me_clients_rwsem);
+-		return -ENOMEM;
+-	}
+-
+-	pos += scnprintf(buf + pos, bufsz - pos, HDR);
+-#undef HDR
++	seq_puts(m, "  |id|fix|         UUID                       |con|msg len|sb|refc|\n");
+ 
+ 	/*  if the driver is not enabled the list won't be consistent */
+ 	if (dev->dev_state != MEI_DEV_ENABLED)
+ 		goto out;
+ 
+ 	list_for_each_entry(me_cl, &dev->me_clients, list) {
+-
+-		if (mei_me_cl_get(me_cl)) {
+-			pos += scnprintf(buf + pos, bufsz - pos,
+-				"%2d|%2d|%3d|%pUl|%3d|%7d|%2d|%4d|\n",
+-				i++, me_cl->client_id,
+-				me_cl->props.fixed_address,
+-				&me_cl->props.protocol_name,
+-				me_cl->props.max_number_of_connections,
+-				me_cl->props.max_msg_length,
+-				me_cl->props.single_recv_buf,
+-				kref_read(&me_cl->refcnt));
+-
+-			mei_me_cl_put(me_cl);
+-		}
++		if (!mei_me_cl_get(me_cl))
++			continue;
++
++		seq_printf(m, "%2d|%2d|%3d|%pUl|%3d|%7d|%2d|%4d|\n",
++			   i++, me_cl->client_id,
++			   me_cl->props.fixed_address,
++			   &me_cl->props.protocol_name,
++			   me_cl->props.max_number_of_connections,
++			   me_cl->props.max_msg_length,
++			   me_cl->props.single_recv_buf,
++			   kref_read(&me_cl->refcnt));
++		mei_me_cl_put(me_cl);
+ 	}
+ 
+ out:
+ 	up_read(&dev->me_clients_rwsem);
+-	ret = simple_read_from_buffer(ubuf, cnt, ppos, buf, pos);
+-	kfree(buf);
+-	return ret;
++	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(mei_dbgfs_meclients);
+ 
+-static const struct file_operations mei_dbgfs_fops_meclients = {
+-	.open = simple_open,
+-	.read = mei_dbgfs_read_meclients,
+-	.llseek = generic_file_llseek,
+-};
+-
+-static ssize_t mei_dbgfs_read_active(struct file *fp, char __user *ubuf,
+-					size_t cnt, loff_t *ppos)
++static int mei_dbgfs_active_show(struct seq_file *m, void *unused)
+ {
+-	struct mei_device *dev = fp->private_data;
++	struct mei_device *dev = m->private;
+ 	struct mei_cl *cl;
+-	size_t bufsz = 1;
+-	char *buf;
+ 	int i = 0;
+-	int pos = 0;
+-	int ret;
+-
+-#define HDR "   |me|host|state|rd|wr|wrq\n"
+ 
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+ 	mutex_lock(&dev->device_lock);
+ 
+-	/*
+-	 * if the driver is not enabled the list won't be consistent,
+-	 * we output empty table
+-	 */
+-	if (dev->dev_state == MEI_DEV_ENABLED)
+-		list_for_each_entry(cl, &dev->file_list, link)
+-			bufsz++;
+-
+-	bufsz *= sizeof(HDR) + 1;
+-
+-	buf = kzalloc(bufsz, GFP_KERNEL);
+-	if  (!buf) {
+-		mutex_unlock(&dev->device_lock);
+-		return -ENOMEM;
+-	}
+-
+-	pos += scnprintf(buf + pos, bufsz - pos, HDR);
+-#undef HDR
++	seq_puts(m, "   |me|host|state|rd|wr|wrq\n");
+ 
+ 	/*  if the driver is not enabled the list won't be consistent */
+ 	if (dev->dev_state != MEI_DEV_ENABLED)
+@@ -120,76 +73,44 @@ static ssize_t mei_dbgfs_read_active(struct file *fp, char __user *ubuf,
+ 
+ 	list_for_each_entry(cl, &dev->file_list, link) {
+ 
+-		pos += scnprintf(buf + pos, bufsz - pos,
+-			"%3d|%2d|%4d|%5d|%2d|%2d|%3u\n",
+-			i, mei_cl_me_id(cl), cl->host_client_id, cl->state,
+-			!list_empty(&cl->rd_completed), cl->writing_state,
+-			cl->tx_cb_queued);
++		seq_printf(m, "%3d|%2d|%4d|%5d|%2d|%2d|%3u\n",
++			   i, mei_cl_me_id(cl), cl->host_client_id, cl->state,
++			   !list_empty(&cl->rd_completed), cl->writing_state,
++			   cl->tx_cb_queued);
+ 		i++;
+ 	}
+ out:
+ 	mutex_unlock(&dev->device_lock);
+-	ret = simple_read_from_buffer(ubuf, cnt, ppos, buf, pos);
+-	kfree(buf);
+-	return ret;
++	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(mei_dbgfs_active);
+ 
+-static const struct file_operations mei_dbgfs_fops_active = {
+-	.open = simple_open,
+-	.read = mei_dbgfs_read_active,
+-	.llseek = generic_file_llseek,
+-};
+-
+-static ssize_t mei_dbgfs_read_devstate(struct file *fp, char __user *ubuf,
+-					size_t cnt, loff_t *ppos)
++static int mei_dbgfs_devstate_show(struct seq_file *m, void *unused)
+ {
+-	struct mei_device *dev = fp->private_data;
+-	const size_t bufsz = 1024;
+-	char *buf = kzalloc(bufsz, GFP_KERNEL);
+-	int pos = 0;
+-	int ret;
+-
+-	if  (!buf)
+-		return -ENOMEM;
++	struct mei_device *dev = m->private;
+ 
+-	pos += scnprintf(buf + pos, bufsz - pos, "dev: %s\n",
+-			mei_dev_state_str(dev->dev_state));
+-	pos += scnprintf(buf + pos, bufsz - pos, "hbm: %s\n",
+-			mei_hbm_state_str(dev->hbm_state));
++	seq_printf(m, "dev: %s\n", mei_dev_state_str(dev->dev_state));
++	seq_printf(m, "hbm: %s\n", mei_hbm_state_str(dev->hbm_state));
+ 
+ 	if (dev->hbm_state >= MEI_HBM_ENUM_CLIENTS &&
+ 	    dev->hbm_state <= MEI_HBM_STARTED) {
+-		pos += scnprintf(buf + pos, bufsz - pos, "hbm features:\n");
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tPG: %01d\n",
+-				 dev->hbm_f_pg_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tDC: %01d\n",
+-				 dev->hbm_f_dc_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tIE: %01d\n",
+-				 dev->hbm_f_ie_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tDOT: %01d\n",
+-				 dev->hbm_f_dot_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tEV: %01d\n",
+-				 dev->hbm_f_ev_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tFA: %01d\n",
+-				 dev->hbm_f_fa_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tOS: %01d\n",
+-				 dev->hbm_f_os_supported);
+-		pos += scnprintf(buf + pos, bufsz - pos, "\tDR: %01d\n",
+-				 dev->hbm_f_dr_supported);
++		seq_puts(m, "hbm features:\n");
++		seq_printf(m, "\tPG: %01d\n", dev->hbm_f_pg_supported);
++		seq_printf(m, "\tDC: %01d\n", dev->hbm_f_dc_supported);
++		seq_printf(m, "\tIE: %01d\n", dev->hbm_f_ie_supported);
++		seq_printf(m, "\tDOT: %01d\n", dev->hbm_f_dot_supported);
++		seq_printf(m, "\tEV: %01d\n", dev->hbm_f_ev_supported);
++		seq_printf(m, "\tFA: %01d\n", dev->hbm_f_fa_supported);
++		seq_printf(m, "\tOS: %01d\n", dev->hbm_f_os_supported);
++		seq_printf(m, "\tDR: %01d\n", dev->hbm_f_dr_supported);
+ 	}
+ 
+-	pos += scnprintf(buf + pos, bufsz - pos, "pg:  %s, %s\n",
+-			mei_pg_is_enabled(dev) ? "ENABLED" : "DISABLED",
+-			mei_pg_state_str(mei_pg_state(dev)));
+-	ret = simple_read_from_buffer(ubuf, cnt, ppos, buf, pos);
+-	kfree(buf);
+-	return ret;
++	seq_printf(m, "pg:  %s, %s\n",
++		   mei_pg_is_enabled(dev) ? "ENABLED" : "DISABLED",
++		   mei_pg_state_str(mei_pg_state(dev)));
++	return 0;
+ }
+-static const struct file_operations mei_dbgfs_fops_devstate = {
+-	.open = simple_open,
+-	.read = mei_dbgfs_read_devstate,
+-	.llseek = generic_file_llseek,
+-};
++DEFINE_SHOW_ATTRIBUTE(mei_dbgfs_devstate);
+ 
+ static ssize_t mei_dbgfs_write_allow_fa(struct file *file,
+ 					const char __user *user_buf,
+@@ -208,7 +129,7 @@ static ssize_t mei_dbgfs_write_allow_fa(struct file *file,
+ 	return ret;
+ }
+ 
+-static const struct file_operations mei_dbgfs_fops_allow_fa = {
++static const struct file_operations mei_dbgfs_allow_fa_fops = {
+ 	.open = simple_open,
+ 	.read = debugfs_read_file_bool,
+ 	.write = mei_dbgfs_write_allow_fa,
+@@ -247,26 +168,26 @@ int mei_dbgfs_register(struct mei_device *dev, const char *name)
+ 	dev->dbgfs_dir = dir;
+ 
+ 	f = debugfs_create_file("meclients", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_meclients);
++				dev, &mei_dbgfs_meclients_fops);
+ 	if (!f) {
+ 		dev_err(dev->dev, "meclients: registration failed\n");
+ 		goto err;
+ 	}
+ 	f = debugfs_create_file("active", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_active);
++				dev, &mei_dbgfs_active_fops);
+ 	if (!f) {
+ 		dev_err(dev->dev, "active: registration failed\n");
+ 		goto err;
+ 	}
+ 	f = debugfs_create_file("devstate", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_devstate);
++				dev, &mei_dbgfs_devstate_fops);
+ 	if (!f) {
+ 		dev_err(dev->dev, "devstate: registration failed\n");
+ 		goto err;
+ 	}
+ 	f = debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
+ 				&dev->allow_fixed_address,
+-				&mei_dbgfs_fops_allow_fa);
++				&mei_dbgfs_allow_fa_fops);
+ 	if (!f) {
+ 		dev_err(dev->dev, "allow_fixed_address: registration failed\n");
+ 		goto err;
+@@ -276,4 +197,3 @@ int mei_dbgfs_register(struct mei_device *dev, const char *name)
+ 	mei_dbgfs_deregister(dev);
+ 	return -ENODEV;
+ }
+-
+-- 
+2.20.1
 
