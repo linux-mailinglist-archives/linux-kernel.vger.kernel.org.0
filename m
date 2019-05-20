@@ -2,147 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F5523992
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B382D23983
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390394AbfETONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:13:07 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43322 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388999AbfETONG (ORCPT
+        id S2388135AbfETOMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:12:19 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37211 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733122AbfETOMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:13:06 -0400
-Received: by mail-pl1-f196.google.com with SMTP id gn7so2625722plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:13:06 -0700 (PDT)
+        Mon, 20 May 2019 10:12:17 -0400
+Received: by mail-it1-f196.google.com with SMTP id m140so23350874itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=KECfzIlIxEDfVdyErNUrjun4OGvSgTJTFJXl1TIJwHg=;
-        b=Io8Djg5IajMWP4jrjZz+XJT0xkaQiY/xIrp3FP/B/kghGek0Q/EEW9Itb8Ti2zjMmi
-         nOu3fLxeW0Rdqh/vA/JlG1/RiCGKxBs7n4aNh5O2rR+/mADH0YJCAYkBtkzS1D2Oiefl
-         gPUWRIvc/LWxfW/8yRG745QLWWOKS5RRINiqT+q/JbAuSsb56bIeGRdStsNYnsQFK/AJ
-         xnzH2cMLcr9HkXuP1i0yfFu4Yk0d5vGu9tlZ2IJIxxvAnfzffcF4njZHkljSccFgIsuB
-         6jDqZaI25gW5Co/g2Z6S6uhig1ZxS/TtkwJTIH125L0NmvtvkHeSvRvW+ZNq7hHdNrKN
-         CtnQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YU2Hk+oQzPQtUHiv1l161xo5DuGg7ti6IldSS88QBWw=;
+        b=NEh5IhEsz1G82YNK42ntz4UQRVBbHjehpTlIHUBmVwOm5nopRST3U8a8Nnu5ozfEjy
+         IdbQ0F0odZUIKx6adbHEgmM/5qxF57n84LoJkxl3QnhCrUJS72qw5A8VYp1CFxgjcCHG
+         7umzINnbdZBp9v+xH3Yd0jI+ffN18QPeE5eMnJlGuRY7OTDschEOgC8ikexhEG9bKdVb
+         +eGWmugkuKP1VmisOezHEWvjKGbs6mDdFTqdu8kG75MTQid/67WueSa/nmeuO+1zXIZw
+         PaEhpuMmOGbfvNKCdbberg5gUAxryfut7IAYavNh1Shj1whXtKzi0o/f9M9nPeylnqhP
+         xd1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=KECfzIlIxEDfVdyErNUrjun4OGvSgTJTFJXl1TIJwHg=;
-        b=h08vPdFKpHqZeKdrCBVIyb5MLZ0Qx3h7RbGXaiFBwtg+mBQ4i0ELWJt48RjBSBiQlz
-         U4Z2DPQVHwAr6wBIZ3K71zhNqirDEhXPPrJvIahDXMkLoRCQ8rY1IUHhntFS81YssHwG
-         9MeTOsmtsIYtt23U8M8mJlIO4rfzztY2n7uzV6z2Bzpcsv+UxRlaeblwLzHlmz6HZTYY
-         rbzL4uaurbtMH0GyW+LOum+YPcFmlBQIW9lhPI2zjGQROrWSW8HYGNWtYZO9uwN5C5Aj
-         wjY2N6F8PWPvH7spk7iW6Wk+EbVnwDZ4ts0Ga20SeDkRn3OzVFnZuBVOQ9ZXO+mnzNO1
-         DUNw==
-X-Gm-Message-State: APjAAAWJcEX3HKHIwoSrq04EnCD342v5aozc+l89DOSSB4JaZimCqOT/
-        g0bhjvGYmDL9eSEeJ1DiSyZx2A==
-X-Google-Smtp-Source: APXvYqzr5Do1Q2Uusd8GpZ+9iK5oqKiy872Tx3Ms8RWbPMtHje6T82nYT6m4tFsbLCdVefsHrX6nNQ==
-X-Received: by 2002:a17:902:3283:: with SMTP id z3mr49834232plb.278.1558361586328;
-        Mon, 20 May 2019 07:13:06 -0700 (PDT)
-Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id a9sm26388248pgw.72.2019.05.20.07.13.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:13:05 -0700 (PDT)
-From:   Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
-        andrew@lunn.ch, palmer@sifive.com, paul.walmsley@sifive.com,
-        sagar.kadam@sifive.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] i2c-ocores: sifive: add polling mode workaround for FU540-C000 SoC.
-Date:   Mon, 20 May 2019 19:41:18 +0530
-Message-Id: <1558361478-4381-4-git-send-email-sagar.kadam@sifive.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1558361478-4381-1-git-send-email-sagar.kadam@sifive.com>
-References: <1558361478-4381-1-git-send-email-sagar.kadam@sifive.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YU2Hk+oQzPQtUHiv1l161xo5DuGg7ti6IldSS88QBWw=;
+        b=FA/a8tV3kDYPKlTatVmA9CW5U1mg/dZO018I93TOc0MVGSkSyHOPVU91WXEULcCDdk
+         5zVSxOJ2/wc8KodxvcJiVehsnXiT/4UHHKwvGopsn1SaXvvKV5i3lsY0BskLmDBz2GDB
+         J1aon8bs+oV4xqnkBr5CB3GZjBMVvFcV3DSxwpICJGR9Ay1/JAVsVc5UG6A5eJ8Qsh0V
+         9KTpG3dU01WwWruzEA7S30K1jef+PX9ZNGBpUVrdu/WNd7MMtxqQJhAu8b4jVpR8/n/2
+         UWBFdWocVnZiqLt79zY85BvZDHBlfdqLPwFHbYsQxWEwlRlaqwW7TH/LeQ9gFSwctfdp
+         oCwQ==
+X-Gm-Message-State: APjAAAUsUz9/7770jPnYGkKg+m/BMIADRMuLsso8zai3faYT089ADd5y
+        bZkJ3+1DPvURWkv1eqW72raXcrgxmMozXHJ9A7xv7A==
+X-Google-Smtp-Source: APXvYqxlCe+++Lk7vYe+F5tBuGoqXcVwC6IRvGv7VG8UyrBCiED8+5J5QK8VurvmgLZLcQkrw1L50j7vXQpHsiwUW20=
+X-Received: by 2002:a24:c204:: with SMTP id i4mr27878219itg.83.1558361536256;
+ Mon, 20 May 2019 07:12:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <00000000000014285d05765bf72a@google.com> <0000000000000eaf23058912af14@google.com>
+ <20190517134850.GG17978@ZenIV.linux.org.uk> <CACT4Y+Z8760uYQP0jKgJmVC5sstqTv9pE6K6YjK_feeK6-Obfg@mail.gmail.com>
+ <CACT4Y+bQ+zW_9a3F4jY0xcAn_Hdk5yAwX2K3E38z9fttbF0SJA@mail.gmail.com> <20190518162142.GH17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190518162142.GH17978@ZenIV.linux.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 20 May 2019 16:12:03 +0200
+Message-ID: <CACT4Y+bYfyKDi3ARkV6O-MaBJmxbOB5qdcuwG_r5-UHfxRcwjQ@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, sabin.rapan@gmail.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i2c-ocore driver already has a polling mode interface.But it needs
-a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
-There is an erratum in FU540 chip that prevents interrupt driven i2c
-transfers from working, and also the I2C controller's interrupt bit
-cannot be cleared if set, due to this the existing i2c polling mode
-interface added in mainline earlier doesn't work, and CPU stall's
-infinitely, when-ever i2c transfer is initiated.
+.On Sat, May 18, 2019 at 6:21 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, May 18, 2019 at 05:00:39PM +0200, Dmitry Vyukov wrote:
+> > On Fri, May 17, 2019 at 4:08 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > On Fri, May 17, 2019 at 3:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > On Fri, May 17, 2019 at 03:17:02AM -0700, syzbot wrote:
+> > > > > This bug is marked as fixed by commit:
+> > > > > vfs: namespace: error pointer dereference in do_remount()
+> > > > > But I can't find it in any tested tree for more than 90 days.
+> > > > > Is it a correct commit? Please update it by replying:
+> > > > > #syz fix: exact-commit-title
+> > > > > Until then the bug is still considered open and
+> > > > > new crashes with the same signature are ignored.
+> > > >
+> > > > Could somebody explain how the following situation is supposed to
+> > > > be handled:
+> > > >
+> > > > 1) branch B1 with commits  C1, C2, C3, C4 is pushed out
+> > > > 2) C2 turns out to have a bug, which gets caught and fixed
+> > > > 3) fix is folded in and branch B2 with C1, C2', C3', C4' is
+> > > > pushed out.  The bug is not in it anymore.
+> > > > 4) B1 is left mouldering (or is entirely removed); B2 is
+> > > > eventually merged into other trees.
+> > > >
+> > > > This is normal and it appears to be problematic for syzbot.
+> > > > How to deal with that?  One thing I will *NOT* do in such
+> > > > situations is giving up on folding the fixes in.  Bisection
+> > > > hazards alone make that a bad idea.
+> > >
+> > > linux-next creates a bit of a havoc.
+> > >
+> > > The ideal way of handling this is including Tested-by: tag into C2'.
+> > > Reported-by: would work too, but people suggested that Reported-by: is
+> > > confusing in this situation because it suggests that the commit fixes
+> > > a bug in some previous commit. Technically, syzbot now accepts any
+> > > tag, so With-inputs-from:
+> > > syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com would work too.
+> > >
+> > > At this point we obvious can't fix up C2'. For such cases syzbot
+> > > accepts #syz fix command to associate bugs with fixes. So replying
+> > > with "#syz fix: C2'-commit-title" should do.
+> >
+> > What is that C2'?
+>
+> In this case?  Take a look at
+>
+> commit fd0002870b453c58d0d8c195954f5049bc6675fb
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Tue Aug 28 14:45:06 2018 +0100
+>
+>     vfs: Implement a filesystem superblock creation/configuration context
+>
+> and compare with
+>
+> commit f18edd10d3c7d6127b1fa97c8f3299629cf58ed5
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Thu Nov 1 23:07:25 2018 +0000
+>
+>     vfs: Implement a filesystem superblock creation/configuration context
+>
+> There might have been intermediate forms, but that should illustrate what
+> happened.  Diff of those two contains (among other things) this:
+> @@ -985,6 +989,9 @@
+>  +      fc = vfs_new_fs_context(path->dentry->d_sb->s_type,
+>  +                              path->dentry, sb_flags, MS_RMT_MASK,
+>  +                              FS_CONTEXT_FOR_RECONFIGURE);
+> ++      err = PTR_ERR(fc);
+> ++      if (IS_ERR(fc))
+> ++              goto err;
+>  +
+>  +      err = parse_monolithic_mount_data(fc, data, data_size);
+>  +      if (err < 0)
+>
+> IOW, Dan's fix folded into the offending commit.  And that kind of
+> pattern is not rare; I would argue that appending Dan's patch at
+> the end of queue and leaving the crap in between would be a fucking
+> bad idea - it would've left a massive bisection hazard *and* made
+> life much more unpleasant when the things got to merging into the
+> mainline (or reviewing, for that matter).
+>
+> What would you prefer to happen in such situations?  Commit summaries
+> modified enough to confuse CI tools into *NOT* noticing that those
+> are versions of the same patch?  Some kind of metadata telling the
+> same tools that such-and-such commits got folded in (and they might
+> have been split in process, with parts folded into different spots
+> in the series, at that)?
+>
+> Because "never fold in, never reorder, just accumulate patches in
+> the end of the series" is not going to fly.  For a lot of reasons.
 
-Ref:previous polling mode support in mainline
+I don't advocate for stopping folding/amending/rebasing patches in any
+way. I understand this is required to get sane commits.
 
-	commit 69c8c0c0efa8 ("i2c: ocores: add polling interface")
+But what I said in the previous email still applies:
+ - either include the tag into the first commit version that fixes the
+reported bug
+ - or link report and the fixing commit manually using the final commit title
 
-The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
-FU540-COOO SoC.
+As far as I understand in this case it would be adding Tested-by (or
+some other tag) to f18edd10d3c7d6127b1fa97c8f3299629cf58ed5.
+We can't do this now, so this should work:
 
-Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
----
- drivers/i2c/busses/i2c-ocores.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index aee1d86..c3bc97d 100644
---- a/drivers/i2c/busses/i2c-ocores.c
-+++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -27,6 +27,7 @@
- #include <linux/jiffies.h>
- 
- #define OCORES_FLAG_POLL BIT(0)
-+#define OCORES_FLAG_BROKEN_IRQ BIT(1) /* Broken IRQ for FU540-C000 SoC */
- 
- /*
-  * 'process_lock' exists because ocores_process() and ocores_process_timeout()
-@@ -239,9 +240,13 @@ static irqreturn_t ocores_isr(int irq, void *dev_id)
- 	struct ocores_i2c *i2c = dev_id;
- 	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
- 
--	if (!(stat & OCI2C_STAT_IF))
-+	if (i2c->flags & OCORES_FLAG_BROKEN_IRQ) {
-+		if (stat & OCI2C_STAT_IF)
-+			if (!(stat & OCI2C_STAT_BUSY))
-+				return IRQ_NONE;
-+	} else if (!(stat & OCI2C_STAT_IF)) {
- 		return IRQ_NONE;
--
-+	}
- 	ocores_process(i2c, stat);
- 
- 	return IRQ_HANDLED;
-@@ -356,6 +361,11 @@ static void ocores_process_polling(struct ocores_i2c *i2c)
- 		ret = ocores_isr(-1, i2c);
- 		if (ret == IRQ_NONE)
- 			break; /* all messages have been transferred */
-+		else {
-+			if (i2c->flags & OCORES_FLAG_BROKEN_IRQ)
-+				if (i2c->state == STATE_DONE)
-+					break;
-+		}
- 	}
- }
- 
-@@ -601,6 +611,7 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- {
- 	struct ocores_i2c *i2c;
- 	struct ocores_i2c_platform_data *pdata;
-+	const struct of_device_id *match;
- 	struct resource *res;
- 	int irq;
- 	int ret;
-@@ -683,6 +694,13 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq == -ENXIO) {
- 		i2c->flags |= OCORES_FLAG_POLL;
-+		/*
-+		 * Set in OCORES_FLAG_BROKEN_IRQ to enable workaround for
-+		 * FU540-C000 SoC in polling mode.
-+		 */
-+		match = of_match_node(ocores_i2c_match, pdev->dev.of_node);
-+		if (match && (long)match->data == TYPE_SIFIVE_REV0)
-+			i2c->flags |= OCORES_FLAG_BROKEN_IRQ;
- 	} else {
- 		if (irq < 0)
- 			return irq;
--- 
-1.9.1
-
+#syz fix:
+vfs: Implement a filesystem superblock creation/configuration context
