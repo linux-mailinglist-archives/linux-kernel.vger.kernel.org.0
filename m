@@ -2,235 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7722F23E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE24A23E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392812AbfETRRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:17:46 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39111 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392787AbfETRRp (ORCPT
+        id S2390639AbfETRSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:18:55 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41984 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390145AbfETRSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:17:45 -0400
-Received: by mail-pf1-f193.google.com with SMTP id z26so7541145pfg.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:17:45 -0700 (PDT)
+        Mon, 20 May 2019 13:18:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l2so15492859wrb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2FjhOwFKrVIJAl2LxDN32kEB+6yjli62tiwHSqu8m3Y=;
-        b=W6H3wrKJKcaUjX12VWVVjTzD+FZk9cPmlEyg+n4tTPMRomuqZN8oGiT8ftSwORrLWu
-         SrU1sNgEtcmMHUQTG5Q+SGNl1x4eWyTP86Wa72FlIcB6b23JStrVyE4xHjlS7usHaDNb
-         At223MiDbKz8gzE6A3qG9pLtUnhxudhyFQeBmLqGQLc2gwhMkrIzVaaBPyi3S0ZQ4JNk
-         +i6gOtm8/AxGiZ8TnZJT5tuZOrKikNFZz96dr/BoRQFccYpQnuMedMXUdbXaJ7sVkU5+
-         jaQ+yGo4yqEBt6urvlbJm6Xe4n9DzeSTKBnvXSp/Y0cnamgtP3DqTCSRheQVi9muWH6D
-         dTMQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QQbDIy8UjviDfDxju8ALldRPMrrWAP6vGdw+VPh2bvA=;
+        b=s8SLxhFvvdMKyTPB9YXA6VjEISJQIeQ2sbCPiw41ijsXFpBkkeO1Iy6BLIWvRCh+Uq
+         R9KL1585aPQpNYdH3/vXFkkT19vEhBU+3z8dTobrQuqNnbtNw5SrKgPOQv1ZOzdQmchG
+         edkrSf+d0iyAl3LmhWVIyG92wtFW9Yugs67YqDSsBj6IdqfRpbXdt+rAFLzq/RPmqV0a
+         6Kr7byYJW9OruxPq6yqQmEV0XkQZtNSVtrDO9YtatlDEZK4Sl4ndqbR7YO3FzVv0UUaH
+         9k/SyZtIYUFkP9bDhFxPpcnhQj9HpeM6+agMKMwGHIUaSzEUYgJ16hfKpHDEfXS38759
+         +ixA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2FjhOwFKrVIJAl2LxDN32kEB+6yjli62tiwHSqu8m3Y=;
-        b=AD4u7S6X6UpiH5s1C9U92kupbKW7PzgG+ozpNc9JXpUiwmYt5qKBWzdMM3Za4nRfZ/
-         ONl9V+pEgLugeq37/6U1PoHZj0iIISH5hKFp3iYd7eE/6LYRqcWsn7HqGHFEBjTfGMYP
-         HKNsETJv/09nRkaR4PXA6VplYb611s39UEmZWyPBIXiOjSHwWmutWlxwkM7c5x9r0sMz
-         JGZEBQi2EsYzLH0cScZHdoQH7GWzNhIT3F86S97+dM+DG8yBC/SF6i7GwgVNxx+snXju
-         hs+aMiaQHred06qcStV5GZZcRumoZfRZyR/Y/Q4xOTUqiH/KDSpgY39B6xDoPGkiDQTz
-         u1YQ==
-X-Gm-Message-State: APjAAAWFXICbvnlQJBQK8QeJnBdwBmHa7SeUG71NFylopMn693N5G/+y
-        0LmQV1nZZPEMZkVvrASexJgnBA==
-X-Google-Smtp-Source: APXvYqxGJODZVZZkYCQrDnuhEME1l3MVyx+Qrn7x3ga7XFxkr9lg/WGqNAAC5bsYmf2gHA+/s9ScVw==
-X-Received: by 2002:a65:42ca:: with SMTP id l10mr23345678pgp.181.1558372664547;
-        Mon, 20 May 2019 10:17:44 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h11sm20833183pfn.170.2019.05.20.10.17.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 10:17:44 -0700 (PDT)
-Date:   Mon, 20 May 2019 10:18:11 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     arnd@arndb.de, subashab@codeaurora.org, david.brown@linaro.org,
-        agross@kernel.org, davem@davemloft.net,
-        ilias.apalodimas@linaro.org, cpratapa@codeaurora.org,
-        syadagir@codeaurora.org, evgreen@chromium.org, benchan@google.com,
-        ejcaruso@google.com, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] net: introduce "include/linux/if_rmnet.h"
-Message-ID: <20190520171811.GW2085@tuxbook-pro>
-References: <20190520135354.18628-1-elder@linaro.org>
- <20190520135354.18628-9-elder@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QQbDIy8UjviDfDxju8ALldRPMrrWAP6vGdw+VPh2bvA=;
+        b=nDQ1HLzcNj5rbF9V4VsA15sFxgbr9elSm43zw07lvna0dEqLKo/sxiZI6GbsGyAo+8
+         ztmWzMH4VE3pNKYb2VrvGFkFwG8AVt4BWpV1oyvsAMDgto3A1b5qdyKOTJdkjYRkhNW7
+         j9hBNefuGGvbb2UnI2YZw6ypmdokl4TGLvAQKomA4VcsQap48nUZTzFgxavq86IOr6ty
+         lqTa7DW0jGrb+6nDl/Gj3ZWI8kHJUcQiK6+yqA+HHp65Yx9M8BZcYm3JgziBPNWnmdFv
+         gJKoasWrfVjuszG7qBNvps/lXb/ZOrOHxxpXiHRtcEGjA+sdS0pMwS5jS1J0hesdWJzJ
+         mP9Q==
+X-Gm-Message-State: APjAAAWqs8j5t92/38+VJqIVXQVB0ReN29r7HQsAshus43a3hQbeJQYu
+        HNZsemDl5mEPNn0BdYEe7ge4yQlI3e5Ii8VJE6Y=
+X-Google-Smtp-Source: APXvYqxI7bGtQgHqVry3QKsocdaEEQXUxiplX99tuHTRPLmGsC32Ze8R94RVDLoM2a9g1r5b+ZnniOJSSxPynslqqGE=
+X-Received: by 2002:adf:cd11:: with SMTP id w17mr13496033wrm.83.1558372733581;
+ Mon, 20 May 2019 10:18:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520135354.18628-9-elder@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190518134141.23214-1-houweitaoo@gmail.com>
+In-Reply-To: <20190518134141.23214-1-houweitaoo@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 20 May 2019 13:18:40 -0400
+Message-ID: <CADnq5_OURX-qSsendCS9qOfi1CoWUK9BV9HJgTkFzB87bgjMmA@mail.gmail.com>
+Subject: Re: [PATCH] gpu: fix typos in code comments
+To:     Weitao Hou <houweitaoo@gmail.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        "Daenzer, Michel" <michel.daenzer@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>,
+        Ken Chalmers <ken.chalmers@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 20 May 06:53 PDT 2019, Alex Elder wrote:
+On Mon, May 20, 2019 at 1:04 PM Weitao Hou <houweitaoo@gmail.com> wrote:
+>
+> fix eror to error
+>
+> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
 
-> The IPA driver requires some (but not all) symbols defined in
-> "drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h".  Create a new
-> public header file "include/linux/if_rmnet.h" and move the needed
-> definitions there.
-> 
+Applied.  Thanks!
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Alex
 
-> Signed-off-by: Alex Elder <elder@linaro.org>
 > ---
->  .../ethernet/qualcomm/rmnet/rmnet_handlers.c  |  1 +
->  .../net/ethernet/qualcomm/rmnet/rmnet_map.h   | 31 -------------
->  .../qualcomm/rmnet/rmnet_map_command.c        |  1 +
->  .../ethernet/qualcomm/rmnet/rmnet_map_data.c  |  1 +
->  .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |  1 +
->  include/linux/if_rmnet.h                      | 45 +++++++++++++++++++
->  6 files changed, 49 insertions(+), 31 deletions(-)
->  create mode 100644 include/linux/if_rmnet.h
-> 
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> index 5fff6c78ecd5..8e00e14f4ac9 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> @@ -18,6 +18,7 @@
->  #include <linux/netdev_features.h>
->  #include <linux/if_arp.h>
->  #include <net/sock.h>
-> +#include <linux/if_rmnet.h>
->  #include "rmnet_private.h"
->  #include "rmnet_config.h"
->  #include "rmnet_vnd.h"
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> index 775b98d34e94..d101cabb04c3 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> @@ -39,37 +39,6 @@ enum rmnet_map_commands {
->  	RMNET_MAP_COMMAND_ENUM_LENGTH
->  };
->  
-> -struct rmnet_map_header {
-> -	u8  cmd_pad_len;	/* RMNET_MAP_* */
-> -	u8  mux_id;
-> -	__be16 pkt_len;
-> -}  __aligned(1);
-> -
-> -#define RMNET_MAP_CMD_FMASK		GENMASK(0, 0)   /* 0: data; 1: cmd */
-> -#define RMNET_MAP_RESERVED_FMASK	GENMASK(1, 1)
-> -#define RMNET_MAP_PAD_LEN_FMASK		GENMASK(7, 2)
-> -
-> -struct rmnet_map_dl_csum_trailer {
-> -	u8  reserved1;
-> -	u8  flags;		/* RMNET_MAP_DL_* */
-> -	__be16 csum_start_offset;
-> -	__be16 csum_length;
-> -	__be16 csum_value;
-> -} __aligned(1);
-> -
-> -#define RMNET_MAP_DL_CSUM_VALID_FMASK	GENMASK(0, 0)
-> -#define RMNET_MAP_DL_RESERVED_FMASK	GENMASK(7, 1)
-> -
-> -struct rmnet_map_ul_csum_header {
-> -	__be16 csum_start_offset;
-> -	__be16 csum_info;	/* RMNET_MAP_UL_* */
-> -} __aligned(1);
-> -
-> -/* NOTE:  These field masks are defined in CPU byte order */
-> -#define RMNET_MAP_UL_CSUM_INSERT_FMASK	GENMASK(13, 0)
-> -#define RMNET_MAP_UL_CSUM_UDP_FMASK	GENMASK(14, 14)   /* 0: IP; 1: UDP */
-> -#define RMNET_MAP_UL_CSUM_ENABLED_FMASK	GENMASK(15, 15)
-> -
->  #define RMNET_MAP_COMMAND_REQUEST     0
->  #define RMNET_MAP_COMMAND_ACK         1
->  #define RMNET_MAP_COMMAND_UNSUPPORTED 2
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> index f675f47c3495..6832c5939cae 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> @@ -11,6 +11,7 @@
->   */
->  
->  #include <linux/netdevice.h>
-> +#include <linux/if_rmnet.h>
->  #include "rmnet_config.h"
->  #include "rmnet_map.h"
->  #include "rmnet_private.h"
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> index 61b7dbab2056..370aee7402e0 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> @@ -18,6 +18,7 @@
->  #include <linux/ip.h>
->  #include <linux/ipv6.h>
->  #include <net/ip6_checksum.h>
-> +#include <linux/if_rmnet.h>
->  #include "rmnet_config.h"
->  #include "rmnet_map.h"
->  #include "rmnet_private.h"
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-> index d11c16aeb19a..6b39d4d8e523 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
-> @@ -17,6 +17,7 @@
->  #include <linux/etherdevice.h>
->  #include <linux/if_arp.h>
->  #include <net/pkt_sched.h>
-> +#include <linux/if_rmnet.h>
->  #include "rmnet_config.h"
->  #include "rmnet_handlers.h"
->  #include "rmnet_private.h"
-> diff --git a/include/linux/if_rmnet.h b/include/linux/if_rmnet.h
-> new file mode 100644
-> index 000000000000..ae60472ecc79
-> --- /dev/null
-> +++ b/include/linux/if_rmnet.h
-> @@ -0,0 +1,45 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/* Copyright (c) 2013-2018, The Linux Foundation. All rights reserved.
-> + * Copyright (C) 2019 Linaro Ltd.
-> + */
-> +#ifndef _LINUX_IF_RMNET_H_
-> +#define _LINUX_IF_RMNET_H_
-> +
-> +#include <linux/types.h>
-> +
-> +/* Header structure that precedes packets in ETH_P_MAP protocol */
-> +struct rmnet_map_header {
-> +	u8  cmd_pad_len;	/* RMNET_MAP_* */
-> +	u8  mux_id;
-> +	__be16 pkt_len;
-> +}  __aligned(1);
-> +
-> +#define RMNET_MAP_CMD_FMASK		GENMASK(0, 0)   /* 0: data; 1: cmd */
-> +#define RMNET_MAP_RESERVED_FMASK	GENMASK(1, 1)
-> +#define RMNET_MAP_PAD_LEN_FMASK		GENMASK(7, 2)
-> +
-> +/* Checksum offload metadata header for outbound packets*/
-> +struct rmnet_map_ul_csum_header {
-> +	__be16 csum_start_offset;
-> +	__be16 csum_info;	/* RMNET_MAP_UL_* */
-> +} __aligned(1);
-> +
-> +/* NOTE:  These field masks are defined in CPU byte order */
-> +#define RMNET_MAP_UL_CSUM_INSERT_FMASK	GENMASK(13, 0)
-> +#define RMNET_MAP_UL_CSUM_UDP_FMASK	GENMASK(14, 14)   /* 0: IP; 1: UDP */
-> +#define RMNET_MAP_UL_CSUM_ENABLED_FMASK	GENMASK(15, 15)
-> +
-> +/* Checksum offload metadata trailer for inbound packets */
-> +struct rmnet_map_dl_csum_trailer {
-> +	u8  reserved1;
-> +	u8  flags;		/* RMNET_MAP_DL_* */
-> +	__be16 csum_start_offset;
-> +	__be16 csum_length;
-> +	__be16 csum_value;
-> +} __aligned(1);
-> +
-> +#define RMNET_MAP_DL_CSUM_VALID_FMASK	GENMASK(0, 0)
-> +#define RMNET_MAP_DL_RESERVED_FMASK	GENMASK(7, 1)
-> +
-> +#endif /* _LINUX_IF_RMNET_H_ */
-> -- 
-> 2.20.1
-> 
+>  drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+> index f70437aae8e0..df422440845b 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+> @@ -183,8 +183,8 @@ static bool calculate_fb_and_fractional_fb_divider(
+>  *RETURNS:
+>  * It fills the PLLSettings structure with PLL Dividers values
+>  * if calculated values are within required tolerance
+> -* It returns   - true if eror is within tolerance
+> -*              - false if eror is not within tolerance
+> +* It returns   - true if error is within tolerance
+> +*              - false if error is not within tolerance
+>  */
+>  static bool calc_fb_divider_checking_tolerance(
+>                 struct calc_pll_clock_source *calc_pll_cs,
+> --
+> 2.18.0
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
