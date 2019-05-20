@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4ADD23506
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E808123399
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390576AbfETMce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:32:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49442 "EHLO mail.kernel.org"
+        id S2387727AbfETMSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:18:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388240AbfETMca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:32:30 -0400
+        id S1733251AbfETMS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FA39204FD;
-        Mon, 20 May 2019 12:32:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2A0220815;
+        Mon, 20 May 2019 12:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355550;
-        bh=9w1eD9LOYu+B0ZhLMva+4PilKq5GI79QCCu43FAARhA=;
+        s=default; t=1558354708;
+        bh=GwKL8QXGzXncpLaeS1w+0jUMCaFA2lV7Bl/4RpPP5iQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C1TfCIaQw+pTftBdt65J88YUM6yNuPuwuabc+B7IHesrDBzcB9xNjlJPM4NaiZM3+
-         dYizlRTN1RbLY2Gnh4qaEvBxLWLwgbE3x8yUeFuKPkaw95t8YATMJTsSU964WGdDvn
-         ezIE+7WiC9g/GToh/FKI/zvznPMKem6kcnmA1wpY=
+        b=UBDtVIChqBLCqSRMxbpEH8uOggDXSOzunHELCdFhdaeBopvsZrdv6uQXPlMds2bsy
+         ri5MrZXWbI6wW/ob8JumT6twThqTunn5pI5/W8ip5BOPmqJzkdPJsyngkBWLC+cPak
+         /QhKv+v2hviXO9Jglb2Atefl0/C+sJqNH7vlDLm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.1 034/128] crypto: x86/crct10dif-pcl - fix use via crypto_shash_digest()
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 02/63] locking/rwsem: Prevent decrement of reader count before increment
 Date:   Mon, 20 May 2019 14:13:41 +0200
-Message-Id: <20190520115251.962802118@linuxfoundation.org>
+Message-Id: <20190520115231.459989564@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +51,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit a9e9bcb45b1525ba7aea26ed9441e8632aeeda58 ]
 
-commit dec3d0b1071a0f3194e66a83d26ecf4aa8c5910e upstream.
+During my rwsem testing, it was found that after a down_read(), the
+reader count may occasionally become 0 or even negative. Consequently,
+a writer may steal the lock at that time and execute with the reader
+in parallel thus breaking the mutual exclusion guarantee of the write
+lock. In other words, both readers and writer can become rwsem owners
+simultaneously.
 
-The ->digest() method of crct10dif-pclmul reads the current CRC value
-from the shash_desc context.  But this value is uninitialized, causing
-crypto_shash_digest() to compute the wrong result.  Fix it.
+The current reader wakeup code does it in one pass to clear waiter->task
+and put them into wake_q before fully incrementing the reader count.
+Once waiter->task is cleared, the corresponding reader may see it,
+finish the critical section and do unlock to decrement the count before
+the count is incremented. This is not a problem if there is only one
+reader to wake up as the count has been pre-incremented by 1.  It is
+a problem if there are more than one readers to be woken up and writer
+can steal the lock.
 
-Probably this wasn't noticed before because lib/crc-t10dif.c only uses
-crypto_shash_update(), not crypto_shash_digest().  Likewise,
-crypto_shash_digest() is not yet tested by the crypto self-tests because
-those only test the ahash API which only uses shash init/update/final.
+The wakeup was actually done in 2 passes before the following v4.9 commit:
 
-Fixes: 0b95a7f85718 ("crypto: crct10dif - Glue code to cast accelerated CRCT10DIF assembly as a crypto transform")
-Cc: <stable@vger.kernel.org> # v3.11+
+  70800c3c0cc5 ("locking/rwsem: Scan the wait_list for readers only once")
+
+To fix this problem, the wakeup is now done in two passes
+again. In the first pass, we collect the readers and count them.
+The reader count is then fully incremented. In the second pass, the
+waiter->task is then cleared and they are put into wake_q to be woken
+up later.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: huang ying <huang.ying.caritas@gmail.com>
+Fixes: 70800c3c0cc5 ("locking/rwsem: Scan the wait_list for readers only once")
+Link: http://lkml.kernel.org/r/20190428212557.13482-2-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/crypto/crct10dif-pclmul_glue.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ kernel/locking/rwsem-xadd.c | 44 +++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 14 deletions(-)
 
---- a/arch/x86/crypto/crct10dif-pclmul_glue.c
-+++ b/arch/x86/crypto/crct10dif-pclmul_glue.c
-@@ -70,15 +70,14 @@ static int chksum_final(struct shash_des
- 	return 0;
- }
- 
--static int __chksum_finup(__u16 *crcp, const u8 *data, unsigned int len,
--			u8 *out)
-+static int __chksum_finup(__u16 crc, const u8 *data, unsigned int len, u8 *out)
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index c75017326c37a..3f5be624c7649 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -130,6 +130,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
  {
- 	if (len >= 16 && irq_fpu_usable()) {
- 		kernel_fpu_begin();
--		*(__u16 *)out = crc_t10dif_pcl(*crcp, data, len);
-+		*(__u16 *)out = crc_t10dif_pcl(crc, data, len);
- 		kernel_fpu_end();
- 	} else
--		*(__u16 *)out = crc_t10dif_generic(*crcp, data, len);
-+		*(__u16 *)out = crc_t10dif_generic(crc, data, len);
- 	return 0;
- }
+ 	struct rwsem_waiter *waiter, *tmp;
+ 	long oldcount, woken = 0, adjustment = 0;
++	struct list_head wlist;
  
-@@ -87,15 +86,13 @@ static int chksum_finup(struct shash_des
- {
- 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
- 
--	return __chksum_finup(&ctx->crc, data, len, out);
-+	return __chksum_finup(ctx->crc, data, len, out);
- }
- 
- static int chksum_digest(struct shash_desc *desc, const u8 *data,
- 			 unsigned int length, u8 *out)
- {
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 	/*
+ 	 * Take a peek at the queue head waiter such that we can determine
+@@ -188,18 +189,42 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 	 * of the queue. We know that woken will be at least 1 as we accounted
+ 	 * for above. Note we increment the 'active part' of the count by the
+ 	 * number of readers before waking any processes up.
++	 *
++	 * We have to do wakeup in 2 passes to prevent the possibility that
++	 * the reader count may be decremented before it is incremented. It
++	 * is because the to-be-woken waiter may not have slept yet. So it
++	 * may see waiter->task got cleared, finish its critical section and
++	 * do an unlock before the reader count increment.
++	 *
++	 * 1) Collect the read-waiters in a separate list, count them and
++	 *    fully increment the reader count in rwsem.
++	 * 2) For each waiters in the new list, clear waiter->task and
++	 *    put them into wake_q to be woken up later.
+ 	 */
+-	list_for_each_entry_safe(waiter, tmp, &sem->wait_list, list) {
+-		struct task_struct *tsk;
 -
--	return __chksum_finup(&ctx->crc, data, length, out);
-+	return __chksum_finup(0, data, length, out);
++	list_for_each_entry(waiter, &sem->wait_list, list) {
+ 		if (waiter->type == RWSEM_WAITING_FOR_WRITE)
+ 			break;
+ 
+ 		woken++;
+-		tsk = waiter->task;
++	}
++	list_cut_before(&wlist, &sem->wait_list, &waiter->list);
++
++	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
++	if (list_empty(&sem->wait_list)) {
++		/* hit end of list above */
++		adjustment -= RWSEM_WAITING_BIAS;
++	}
++
++	if (adjustment)
++		atomic_long_add(adjustment, &sem->count);
++
++	/* 2nd pass */
++	list_for_each_entry_safe(waiter, tmp, &wlist, list) {
++		struct task_struct *tsk;
+ 
++		tsk = waiter->task;
+ 		get_task_struct(tsk);
+-		list_del(&waiter->list);
++
+ 		/*
+ 		 * Ensure calling get_task_struct() before setting the reader
+ 		 * waiter to nil such that rwsem_down_read_failed() cannot
+@@ -215,15 +240,6 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 		/* wake_q_add() already take the task ref */
+ 		put_task_struct(tsk);
+ 	}
+-
+-	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+-	if (list_empty(&sem->wait_list)) {
+-		/* hit end of list above */
+-		adjustment -= RWSEM_WAITING_BIAS;
+-	}
+-
+-	if (adjustment)
+-		atomic_long_add(adjustment, &sem->count);
  }
  
- static struct shash_alg alg = {
+ /*
+-- 
+2.20.1
+
 
 
