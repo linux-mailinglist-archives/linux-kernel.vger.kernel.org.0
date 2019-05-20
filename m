@@ -2,90 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5BB24237
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8815242B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfETUqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 16:46:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfETUqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 16:46:44 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA32428DE;
-        Mon, 20 May 2019 20:46:38 +0000 (UTC)
-Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B56F65C644;
-        Mon, 20 May 2019 20:46:36 +0000 (UTC)
-Subject: Re: Oops caused by race between livepatch and ftrace
-To:     Johannes Erdfelt <johannes@erdfelt.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190520194915.GB1646@sventech.com>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Message-ID: <90f78070-95ec-ce49-1641-19d061abecf4@redhat.com>
-Date:   Mon, 20 May 2019 16:46:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727174AbfETVUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:20:36 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44409 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbfETVUf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 17:20:35 -0400
+Received: by mail-lj1-f193.google.com with SMTP id e13so13815146ljl.11;
+        Mon, 20 May 2019 14:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eeXGl4OisvD9va1fGMuq+T3d0J26MMP0kgZu3foyCjo=;
+        b=OYoUqfsV7mnWmXy+IkWaJk4b+/wAkvrpvuM+z79nSyjzwjwcS6AbOID0/NRi0HEY/c
+         vrGdesXrxKXYljPfOXnKFv+7ZR9dlIDKxl3uwE+YUCimbotSmyNR6J02eiwvneuH31xk
+         2AVqmnjLPRb4k/vLeJAsZNbdPxTMqp0X+Y947Xs7Vd2p4HfUCsK0z1QMjP2ujrKc1rgA
+         5O++K6uhB1xVh7CdROgmc8FJVG1BJ6x1YKY9klnWLd82mQ2FO8/GkUhw0trQJMPmguVo
+         swQdsXmwhG6gynTTtXQp4Gtftjgi98VHaObRFRvLwXDhOP/flvotiFMMxVtxRJkJufIn
+         TRuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eeXGl4OisvD9va1fGMuq+T3d0J26MMP0kgZu3foyCjo=;
+        b=lANFTL0HwkftuZKtQ3rSsJYg9xD8uAadY9ZQIHG2zG0FRHFxqXTCUOHwdZm5gX6vX6
+         MN1gNXGUbRe84Y4g/n6KFQ/+yqRAjUd7vI/nQXgcUSn2KSkrg7oM/+RexHQgMXquRQGH
+         ghr3DPnp48WL7Nnvq/a6I5gGdCdu1NFhIY3qq3DeXmbmZinnLUXEVOC5y+R8I9xm4uu1
+         rPru/tE9TNAj7XZnLCg4pT1RjhLqT5/S1S6baq+b1wcVVQnRC3QtWks5V1kORLNYXnAs
+         rd8zjl6LoYIBiIAnWYWMRMQIH9UOY9pppJTCzfGdJ1j559Z52c7UpLGjvYYGoQsBwhx1
+         nnLg==
+X-Gm-Message-State: APjAAAXOE4drpxfkOsG5JOJpCT98W+D9xpAJanvHWkPiyLYlAXmATwD2
+        iDQEib32pnxPtbP/QhGcbt4=
+X-Google-Smtp-Source: APXvYqzxP/xb+w6wE/ZkGlf3K3toIPvyEsdt0fzUOzdIzNGu0FtAMPR2E1Ma/ja1p9A3sd6h2qEGRQ==
+X-Received: by 2002:a2e:8857:: with SMTP id z23mr38822150ljj.73.1558387233349;
+        Mon, 20 May 2019 14:20:33 -0700 (PDT)
+Received: from z50.gdansk-morena.vectranet.pl (109241207190.gdansk.vectranet.pl. [109.241.207.190])
+        by smtp.gmail.com with ESMTPSA id e12sm4149897lfb.70.2019.05.20.14.20.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 14:20:32 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH v7 0/3] media: v4l2-subdev: Verify arguments in  v4l2_subdev_call()
+Date:   Mon, 20 May 2019 22:50:19 +0200
+Message-Id: <20190520205022.8714-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190520194915.GB1646@sventech.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 20 May 2019 20:46:44 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ fixed jeyu's email address ]
+Correctness of format type (try or active) and pad ID parameters passed
+to subdevice operation callbacks is now verified only for IOCTL calls.
+However, those callbacks are also used by drivers, e.g., V4L2 host
+interfaces.
+    
+Since both subdev_do_ioctl() and drivers are using v4l2_subdev_call()
+macro while calling subdevice operations, move those parameter checks
+from subdev_do_ioctl() to v4l2_subdev_call().  Also, add check for
+non-NULL pointers, including pad config if V4L2_SUBDEV_FORMAT_TRY is
+requested.
 
-On 5/20/19 3:49 PM, Johannes Erdfelt wrote:
-> [ ... snip ... ]
-> 
-> I have put together a test case that can reproduce the crash using
-> KVM. The tarball includes a minimal kernel and initramfs, along with
-> a script to run qemu and the .config used to build the kernel. By
-> default it will attempt to reproduce by loading multiple livepatches
-> at the same time. Passing 'test=ftrace' to the script will attempt to
-> reproduce by racing with ftrace.
-> 
-> My test setup reproduces the race and oops more reliably by loading
-> multiple livepatches at the same time than with the ftrace method. It's
-> not 100% reproducible, so the test case may need to be run multiple
-> times.
-> 
-> It can be found here (not attached because of its size):
-> http://johannes.erdfelt.com/5.2.0-rc1-a188339ca5-livepatch-race.tar.gz
+Having that done, we can avoid taking care of those checks inside
+drivers.
 
-Hi Johannes,
+Janusz Krzysztofik (3):
+  media: v4l2-subdev: Verify arguments in v4l2_subdev_call()
+  media: v4l2-subdev: Verify v4l2_subdev_call() pointer arguments
+  media: v4l2-subdev: Verify v4l2_subdev_call() pad config argument
 
-This is cool way to distribute the repro kernel, modules, etc!
+ drivers/media/v4l2-core/v4l2-subdev.c | 268 +++++++++++++++++---------
+ include/media/v4l2-subdev.h           |   6 +
+ 2 files changed, 188 insertions(+), 86 deletions(-)
 
-These two testing scenarios might be interesting to add to our selftests 
-suite.  Can you post or add the source(s) to livepatch-test<n>.ko to the 
-tarball?
+Changelog:
+v6->v7:
+Changes suggested by Sakari - thanks!
+- never succeed pad check on media entities with pad_num == 0,
+- allow pad 0 on subdevies not registered as media entities.
 
-> The simple patch of extending the module_mutex lock over the entirety
-> of klp_init_object_loaded fixes it from the livepatch side. This
-> mostly works because set_all_modules_text_{rw,ro} acquires module_mutex
-> as well, but it still leaves a hole in the ftrace code. A lock should
-> probably be held over the entirety of remapping the text sections RW.
-> 
-> This is complicated by the fact that remapping the text section in
-> ftrace is handled by arch specific code. I'm not sure what a good
-> solution to this is yet.
+v5->v6:
+- rename wrappers to call_something() as suggested by Sakari - thanks!
+- make check_ functions inline - also on Sakari's suggestion, thanks!
+- drop patch 2/4 and remove WARN_ONs from remaining patches to avoid
+  kernel WARNs on non-kernel bugs - thanks Hans for pointing this out!
 
-A lock or some kind of referencing count..  I'll let other folks comment 
-on that side of the bug report.
+v4->v5:
+- a few coding style and code formatting changes,
+- require CONFIG_MEDIA_CONTROLLER, not CONFIG_VIDEO_V4L2_SUBDEV_API,
+  for a valid pad ID check,
+- perform pad ID check only if at least one pad is configured so
+  drivers which don't configure pads are not affected if built with
+  CONFIG_MEDIA_CONTROLLER defined,
+- issue kernel warnings on invalid parameters (new patch - 2/4),
+- validate pointers before using them (new patch - 3/4).
 
-Thanks,
+v3->v4:
+- fix 'struct' keyword missing from patch 2/2,
+- fix checkpatch reported style issue in patch 2/2
+Sorry for that.
 
--- Joe
+v2->v3:
+- add patch 2/2 with pad config check,
+- adjust continuation line alignments in patch 1/2 to match those
+  used in 2/2.
+
+v1->v2:
+- replace the horrible macro with a structure of wrapper functions;
+  inspired by Hans' and Sakari's comments - thanks!
+
+-- 
+2.21.0
+
