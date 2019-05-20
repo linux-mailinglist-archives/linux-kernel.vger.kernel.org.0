@@ -2,116 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF4F235CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E0A235D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391334AbfETMiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:38:55 -0400
-Received: from mga12.intel.com ([192.55.52.136]:15751 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390990AbfETMiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:38:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 05:38:51 -0700
-X-ExtLoop1: 1
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 20 May 2019 05:38:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8841E9B; Mon, 20 May 2019 15:38:49 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] device property: Add helpers to count items in an array
-Date:   Mon, 20 May 2019 15:38:48 +0300
-Message-Id: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S2390903AbfETMjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:39:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7663 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391027AbfETMjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:39:20 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BD55920955D48F696694;
+        Mon, 20 May 2019 20:39:17 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
+ 20:39:09 +0800
+Subject: Re: [PATCH] scsi: libsas: no need to join wide port again in
+ sas_ex_discover_dev()
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190518094057.18046-1-yanaijie@huawei.com>
+ <1860c624-1216-bb84-7091-d41a4d43f244@huawei.com>
+ <61b6d28d-7b5f-f078-c035-77e855fbe8bf@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        <hch@lst.de>, <huangdaode@hisilicon.com>,
+        <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
+        <zhaohongjiang@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <83a50fae-78f4-d236-a007-7e8d95553415@huawei.com>
+Date:   Mon, 20 May 2019 13:39:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <61b6d28d-7b5f-f078-c035-77e855fbe8bf@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usual pattern to allocate the necessary space for an array of properties is
-to count them fist using:
+On 20/05/2019 13:06, Jason Yan wrote:
+> OK.
+>
+>>
+>> In case of "second fanout expander...", before this, we don't attempt
+>> to discover, and just disable the PHY. In that case, is the log proper?
+>>
+>
+> In that case the log is not proper. I think we can directly return in
+> the case of "second fanout expander..."? Actually nothing to do after
+> the phy is disabled.
 
-  count = device_property_read_uXX_array(dev, propname, NULL, 0);
+Yeah, that looks fine.
 
-Introduce helpers device_property_count_uXX() to count items by supplying hard
-coded last two parameters to device_property_readXX_array().
+>
+>> And, if indeed proper, it would seem to merit a higher log level than
+>> debug, maybe notice is better.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/include/linux/property.h b/include/linux/property.h
-index a29369c89e6e..65e31c090f9f 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
- 	return device_property_read_u64_array(dev, propname, val, 1);
- }
- 
-+static inline int device_property_count_u8(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u8_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u16(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u16_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u32(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u32_array(dev, propname, NULL, 0);
-+}
-+
-+static inline int device_property_count_u64(struct device *dev, const char *propname)
-+{
-+	return device_property_read_u64_array(dev, propname, NULL, 0);
-+}
-+
- static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
- 					     const char *propname)
- {
-@@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
- 	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
- }
- 
-+static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
-+					   const char *propname)
-+{
-+	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
-+}
-+
-+static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
-+					    const char *propname)
-+{
-+	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
-+}
-+
- /**
-  * struct property_entry - "Built-in" device property representation.
-  * @name: Name of the property.
--- 
-2.20.1
 
