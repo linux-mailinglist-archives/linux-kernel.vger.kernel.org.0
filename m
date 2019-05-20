@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A1723CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C9F23CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:02:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389676AbfETQAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 12:00:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36032 "EHLO mail.kernel.org"
+        id S2389732AbfETQCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 12:02:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389376AbfETQAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 12:00:20 -0400
-Subject: Re: [GIT] Networking
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558368020;
-        bh=r1vRugFSCXlLxkpJKTjcWoL9vYTyIlJsjDIoSONWvKI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=hA1cUfO2k0UvtE5I0vBd91ZOSKxVA9I6mlT6GHvAZsJLmuiCe1F3rC2HgTPgHEjEh
-         8OvbzW+JeV0R3JKCuDUIUQ47NEdkE8Z66k8jRV91KB9zyREi9e9EXS4OijBSSs4u/V
-         Wpr8oQpssa26+Ek74tuEDsqrbKOdxHIPdyp4qLbQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190519.232805.495214807000862867.davem@davemloft.net>
-References: <20190519.232805.495214807000862867.davem@davemloft.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190519.232805.495214807000862867.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git refs/heads/master
-X-PR-Tracked-Commit-Id: 6a0a923dfa1480df41fb486323b8375e387d516f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 78e03651849fd3e8aa9ab3288bc1d3726c4c6129
-Message-Id: <155836802020.24165.10320170839771850110.pr-tracker-bot@kernel.org>
-Date:   Mon, 20 May 2019 16:00:20 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2387964AbfETQCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 12:02:15 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2E44D88311;
+        Mon, 20 May 2019 16:02:10 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 637F85D6A6;
+        Mon, 20 May 2019 16:02:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 20 May 2019 18:02:09 +0200 (CEST)
+Date:   Mon, 20 May 2019 18:02:05 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 4/5] x86: don't use asm-generic/ptrace.h
+Message-ID: <20190520160205.GD771@redhat.com>
+References: <20190520060018.25569-1-hch@lst.de>
+ <20190520060018.25569-5-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520060018.25569-5-hch@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 20 May 2019 16:02:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 19 May 2019 23:28:05 -0700 (PDT):
+On 05/20, Christoph Hellwig wrote:
+>
+> Doing the indirection through macros for the regs accessors just
+> makes them harder to read, so implement the helpers directly.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git refs/heads/master
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/78e03651849fd3e8aa9ab3288bc1d3726c4c6129
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
