@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAF823755
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E8DF236DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388826AbfETMYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39164 "EHLO mail.kernel.org"
+        id S2387580AbfETMRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:17:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388796AbfETMYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:24:21 -0400
+        id S2387561AbfETMRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:17:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F7BC20645;
-        Mon, 20 May 2019 12:24:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AED920815;
+        Mon, 20 May 2019 12:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355061;
-        bh=Sgs9qAY+GXEt6NrUStKP3nHLtpMEpO9pltJxRwNV2Ao=;
+        s=default; t=1558354650;
+        bh=udL3M1vP8B8S3V4S/JWx04LQMK+eLIfFE9fbigQye/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e13bgDR/xmQkjv0qw6CKF9Wx/j9bOx9Muk3O/Pb53AhAY9Z/T3T+IssoSuIVF9Jxa
-         bdiIB1tcpCwkXjT33ayDzLgaKmwGOYZuFu8qHPnT6TZrOaZtJM22O5X1P9jgD9R6Vv
-         3jpsyZREXYNfksqEMSYJ63zh/OnJ6YBCl0VBmatI=
+        b=sGjYFNxZXYYxYDC2Xh5KAhJ+4g6DyasTmpDU0o5eBjHfoDq9kEMXtRmzakfF3m36S
+         GePuXYBj9a2M9A8miFNUskbhjKzDpZyDDBZ64DqeLiMKqu60gwl0fvoeMvRAVa9FYy
+         Z+PK3Uo6sQ3nbClKLBCQvg4e0pGc/zMpmjAzoXuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kiran Kolukuluru <kirank@ami.com>,
-        Kamlakant Patel <kamlakantp@marvell.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.19 081/105] ipmi:ssif: compare block number correctly for multi-part return messages
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 38/44] fib_rules: fix error in backport of e9919a24d302 ("fib_rules: return 0...")
 Date:   Mon, 20 May 2019 14:14:27 +0200
-Message-Id: <20190520115252.857300093@linuxfoundation.org>
+Message-Id: <20190520115235.482112363@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +47,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamlakant Patel <kamlakantp@marvell.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 55be8658c7e2feb11a5b5b33ee031791dbd23a69 upstream.
+When commit e9919a24d302 ("fib_rules: return 0 directly if an exactly
+same rule exists when NLM_F_EXCL not supplied") was backported to 4.9.y,
+it changed the logic a bit as err should have been reset before exiting
+the test, like it happens in the original logic.
 
-According to ipmi spec, block number is a number that is incremented,
-starting with 0, for each new block of message data returned using the
-middle transaction.
+If this is not set, errors happen :(
 
-Here, the 'blocknum' is data[0] which always starts from zero(0) and
-'ssif_info->multi_pos' starts from 1.
-So, we need to add +1 to blocknum while comparing with multi_pos.
-
-Fixes: 7d6380cd40f79 ("ipmi:ssif: Fix handling of multi-part return messages").
-Reported-by: Kiran Kolukuluru <kirank@ami.com>
-Signed-off-by: Kamlakant Patel <kamlakantp@marvell.com>
-Message-Id: <1556106615-18722-1-git-send-email-kamlakantp@marvell.com>
-[Also added a debug log if the block numbers don't match.]
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Reported-by: David Ahern <dsahern@gmail.com>
+Reported-by: Florian Westphal <fw@strlen.de>
+Cc: Hangbin Liu <liuhangbin@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/ipmi/ipmi_ssif.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/core/fib_rules.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -688,12 +688,16 @@ static void msg_done_handler(struct ssif
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum != ssif_info->multi_pos) {
-+		} else if (blocknum + 1 != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
- 			 * but multi_pos starts at one, so the +1.
- 			 */
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				dev_dbg(&ssif_info->client->dev,
-+					"Received message out of sequence, expected %u, got %u\n",
-+					ssif_info->multi_pos - 1, blocknum);
- 			result = -EIO;
- 		} else {
- 			ssif_inc_stat(ssif_info, received_message_parts);
+--- a/net/core/fib_rules.c
++++ b/net/core/fib_rules.c
+@@ -430,6 +430,7 @@ int fib_nl_newrule(struct sk_buff *skb,
+ 		goto errout_free;
+ 
+ 	if (rule_exists(ops, frh, tb, rule)) {
++		err = 0;
+ 		if (nlh->nlmsg_flags & NLM_F_EXCL)
+ 			err = -EEXIST;
+ 		goto errout_free;
 
 
