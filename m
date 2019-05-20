@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBDE23360
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553C1234A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbfETMQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:16:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56888 "EHLO mail.kernel.org"
+        id S2389854AbfETM3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:29:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732794AbfETMQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:16:13 -0400
+        id S2389843AbfETM3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:29:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E92C20862;
-        Mon, 20 May 2019 12:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E98820645;
+        Mon, 20 May 2019 12:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354572;
-        bh=hSBsjb0qBcj82K4Q4as66E42q3kuDe2ckcAVEud7e94=;
+        s=default; t=1558355354;
+        bh=jS18uhjhZFB0J7GPa296xwoUoszjtacB5vvBJtErWs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4wrao6xPLWLrHsR1ptcdjSLujSlYkIbI1m0607WJlyZZKkjLJFYi3yqko2azmsRi
-         PS1wcR0LsHpUwUyLcEZEE6ywiem95V/Zm06HvAC+rF22M5dJ3VIUieshacWa5bGzDO
-         ukhqes/+gvJhF2hAJV93m6z/kKekTrZxe9EhBENI=
+        b=yTWndb4kDopFDVLmcwB1PffqwKgstb5BW6Gt484s9Xp9p7OHdCGTCnZKPQhnR7dVT
+         4+MiNy0qYHq6biWFMtZo62hX9dHu6OPFj/WHsASWuMIf6CnzgKprqgI0M1jBXIYIaj
+         MJng72E+DGPzBrL8HmiL7ZXX3jvdc1wH8BuA15cw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 11/44] sched/x86: Save [ER]FLAGS on context switch
+        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.0 060/123] crypto: ccree - dont map MAC key on stack
 Date:   Mon, 20 May 2019 14:14:00 +0200
-Message-Id: <20190520115232.329399629@linuxfoundation.org>
+Message-Id: <20190520115248.773914614@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,128 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-commit 6690e86be83ac75832e461c141055b5d601c0a6d upstream.
+commit 874e163759f27e0a9988c5d1f4605e3f25564fd2 upstream.
 
-Effectively reverts commit:
+The MAC hash key might be passed to us on stack. Copy it to
+a slab buffer before mapping to gurantee proper DMA mapping.
 
-  2c7577a75837 ("sched/x86_64: Don't save flags on context switch")
-
-Specifically because SMAP uses FLAGS.AC which invalidates the claim
-that the kernel has clean flags.
-
-In particular; while preemption from interrupt return is fine (the
-IRET frame on the exception stack contains FLAGS) it breaks any code
-that does synchonous scheduling, including preempt_enable().
-
-This has become a significant issue ever since commit:
-
-  5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
-
-provided for means of having 'normal' C code between STAC / CLAC,
-exposing the FLAGS.AC state. So far this hasn't led to trouble,
-however fix it before it comes apart.
-
-Reported-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@kernel.org
-Fixes: 5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_32.S        |    2 ++
- arch/x86/entry/entry_64.S        |    2 ++
- arch/x86/include/asm/switch_to.h |    1 +
- arch/x86/kernel/process_32.c     |    7 +++++++
- arch/x86/kernel/process_64.c     |    8 ++++++++
- 5 files changed, 20 insertions(+)
+ drivers/crypto/ccree/cc_hash.c |   24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -219,6 +219,7 @@ ENTRY(__switch_to_asm)
- 	pushl	%ebx
- 	pushl	%edi
- 	pushl	%esi
-+	pushfl
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -69,6 +69,7 @@ struct cc_hash_alg {
+ struct hash_key_req_ctx {
+ 	u32 keylen;
+ 	dma_addr_t key_dma_addr;
++	u8 *key;
+ };
  
- 	/* switch stack */
- 	movl	%esp, TASK_threadsp(%eax)
-@@ -241,6 +242,7 @@ ENTRY(__switch_to_asm)
- #endif
+ /* hash per-session context */
+@@ -730,13 +731,20 @@ static int cc_hash_setkey(struct crypto_
+ 	ctx->key_params.keylen = keylen;
+ 	ctx->key_params.key_dma_addr = 0;
+ 	ctx->is_hmac = true;
++	ctx->key_params.key = NULL;
  
- 	/* restore callee-saved registers */
-+	popfl
- 	popl	%esi
- 	popl	%edi
- 	popl	%ebx
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -313,6 +313,7 @@ ENTRY(__switch_to_asm)
- 	pushq	%r13
- 	pushq	%r14
- 	pushq	%r15
-+	pushfq
- 
- 	/* switch stack */
- 	movq	%rsp, TASK_threadsp(%rdi)
-@@ -335,6 +336,7 @@ ENTRY(__switch_to_asm)
- #endif
- 
- 	/* restore callee-saved registers */
-+	popfq
- 	popq	%r15
- 	popq	%r14
- 	popq	%r13
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -35,6 +35,7 @@ asmlinkage void ret_from_fork(void);
- 
- /* data that is pointed to by thread.sp */
- struct inactive_task_frame {
-+	unsigned long flags;
- #ifdef CONFIG_X86_64
- 	unsigned long r15;
- 	unsigned long r14;
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -129,6 +129,13 @@ int copy_thread_tls(unsigned long clone_
- 	struct task_struct *tsk;
- 	int err;
- 
-+	/*
-+	 * For a new task use the RESET flags value since there is no before.
-+	 * All the status flags are zero; DF and all the system flags must also
-+	 * be 0, specifically IF must be 0 because we context switch to the new
-+	 * task with interrupts disabled.
-+	 */
-+	frame->flags = X86_EFLAGS_FIXED;
- 	frame->bp = 0;
- 	frame->ret_addr = (unsigned long) ret_from_fork;
- 	p->thread.sp = (unsigned long) fork_frame;
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -268,6 +268,14 @@ int copy_thread_tls(unsigned long clone_
- 	childregs = task_pt_regs(p);
- 	fork_frame = container_of(childregs, struct fork_frame, regs);
- 	frame = &fork_frame->frame;
+ 	if (keylen) {
++		ctx->key_params.key = kmemdup(key, keylen, GFP_KERNEL);
++		if (!ctx->key_params.key)
++			return -ENOMEM;
 +
-+	/*
-+	 * For a new task use the RESET flags value since there is no before.
-+	 * All the status flags are zero; DF and all the system flags must also
-+	 * be 0, specifically IF must be 0 because we context switch to the new
-+	 * task with interrupts disabled.
-+	 */
-+	frame->flags = X86_EFLAGS_FIXED;
- 	frame->bp = 0;
- 	frame->ret_addr = (unsigned long) ret_from_fork;
- 	p->thread.sp = (unsigned long) fork_frame;
+ 		ctx->key_params.key_dma_addr =
+-			dma_map_single(dev, (void *)key, keylen, DMA_TO_DEVICE);
++			dma_map_single(dev, (void *)ctx->key_params.key, keylen,
++				       DMA_TO_DEVICE);
+ 		if (dma_mapping_error(dev, ctx->key_params.key_dma_addr)) {
+ 			dev_err(dev, "Mapping key va=0x%p len=%u for DMA failed\n",
+-				key, keylen);
++				ctx->key_params.key, keylen);
++			kzfree(ctx->key_params.key);
+ 			return -ENOMEM;
+ 		}
+ 		dev_dbg(dev, "mapping key-buffer: key_dma_addr=%pad keylen=%u\n",
+@@ -887,6 +895,9 @@ out:
+ 		dev_dbg(dev, "Unmapped key-buffer: key_dma_addr=%pad keylen=%u\n",
+ 			&ctx->key_params.key_dma_addr, ctx->key_params.keylen);
+ 	}
++
++	kzfree(ctx->key_params.key);
++
+ 	return rc;
+ }
+ 
+@@ -913,11 +924,16 @@ static int cc_xcbc_setkey(struct crypto_
+ 
+ 	ctx->key_params.keylen = keylen;
+ 
++	ctx->key_params.key = kmemdup(key, keylen, GFP_KERNEL);
++	if (!ctx->key_params.key)
++		return -ENOMEM;
++
+ 	ctx->key_params.key_dma_addr =
+-		dma_map_single(dev, (void *)key, keylen, DMA_TO_DEVICE);
++		dma_map_single(dev, ctx->key_params.key, keylen, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(dev, ctx->key_params.key_dma_addr)) {
+ 		dev_err(dev, "Mapping key va=0x%p len=%u for DMA failed\n",
+ 			key, keylen);
++		kzfree(ctx->key_params.key);
+ 		return -ENOMEM;
+ 	}
+ 	dev_dbg(dev, "mapping key-buffer: key_dma_addr=%pad keylen=%u\n",
+@@ -969,6 +985,8 @@ static int cc_xcbc_setkey(struct crypto_
+ 	dev_dbg(dev, "Unmapped key-buffer: key_dma_addr=%pad keylen=%u\n",
+ 		&ctx->key_params.key_dma_addr, ctx->key_params.keylen);
+ 
++	kzfree(ctx->key_params.key);
++
+ 	return rc;
+ }
+ 
 
 
