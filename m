@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8F523607
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B2AA2351F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390725AbfETMmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:42:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
+        id S2390676AbfETMdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:33:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390041AbfETMaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:30:10 -0400
+        id S1733069AbfETMdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:33:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E4A821479;
-        Mon, 20 May 2019 12:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C179C214DA;
+        Mon, 20 May 2019 12:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355410;
-        bh=W0oY8n1wZzk02zCfdndXOv6JwnP2410FS28E60iwQiE=;
+        s=default; t=1558355589;
+        bh=B9GtFRtEWiK9CJU4WrnSm69qgYni74dMOMcA3Fhh3K8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kIbrwc4aNosJEDhQUwF9C6ECglQ0YrqTr2WWK4shOxODHSUUnlOqPYoTEv88v2Twv
-         QL7CtaVmvNQmOcyen/+3+HaGhAgaLyR1xIIFOpDKzFcKpPjO9J4aeiRaJDtKufOh29
-         1aCc2BgVKzNts6Vi19/v9xLBB5L9gYiqAFsOI/LM=
+        b=FNrMsFpVgzd4i+zoU+IOCfSqGttFBAwNPVzWfatgyMqVR4EmC9Ax1AeSEB04UVERO
+         3D7qD3l0/LlBcdI7CX1tajGeHuyBAfysuWzlTRF/hqaAj3qOnWj+Uj60D/9Zrnfpr7
+         RVoR1x6MGGqyKtK8WWZeMgiePjJwWLs1ynlcqhaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 5.0 057/123] bpf, arm64: remove prefetch insn in xadd mapping
-Date:   Mon, 20 May 2019 14:13:57 +0200
-Message-Id: <20190520115248.555156585@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.1 051/128] ALSA: hda/hdmi - Consider eld_valid when reporting jack event
+Date:   Mon, 20 May 2019 14:13:58 +0200
+Message-Id: <20190520115253.224373942@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 8968c67a82ab7501bc3b9439c3624a49b42fe54c upstream.
+commit 7f641e26a6df9269cb25dd7a4b0a91d6586ed441 upstream.
 
-Prefetch-with-intent-to-write is currently part of the XADD mapping in
-the AArch64 JIT and follows the kernel's implementation of atomic_add.
-This may interfere with other threads executing the LDXR/STXR loop,
-leading to potential starvation and fairness issues. Drop the optional
-prefetch instruction.
+On the machines with AMD GPU or Nvidia GPU, we often meet this issue:
+after s3, there are 4 HDMI/DP audio devices in the gnome-sound-setting
+even there is no any monitors plugged.
 
-Fixes: 85f68fe89832 ("bpf, arm64: implement jiting of BPF_XADD")
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+When this problem happens, we check the /proc/asound/cardX/eld#N.M, we
+will find the monitor_present=1, eld_valid=0.
+
+The root cause is BIOS or GPU driver makes the PRESENCE valid even no
+monitor plugged, and of course the driver will not get the valid
+eld_data subsequently.
+
+In this situation, we should not report the jack_plugged event, to do
+so, let us change the function hdmi_present_sense_via_verbs(). In this
+function, it reads the pin_sense via snd_hda_pin_sense(), after
+calling this function, the jack_dirty is 0, and before exiting
+via_verbs(), we change the shadow pin_sense according to both
+monitor_present and eld_valid, then in the snd_hda_jack_report_sync(),
+since the jack_dirty is still 0, it will report jack event according
+to this modified shadow pin_sense.
+
+After this change, the driver will not report Jack_is_plugged event
+through hdmi_present_sense_via_verbs() if monitor_present is 1 and
+eld_valid is 0.
+
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/net/bpf_jit.h      |    6 ------
- arch/arm64/net/bpf_jit_comp.c |    1 -
- 2 files changed, 7 deletions(-)
+ sound/pci/hda/patch_hdmi.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/net/bpf_jit.h
-+++ b/arch/arm64/net/bpf_jit.h
-@@ -100,12 +100,6 @@
- #define A64_STXR(sf, Rt, Rn, Rs) \
- 	A64_LSX(sf, Rt, Rn, Rs, STORE_EX)
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1551,9 +1551,11 @@ static bool hdmi_present_sense_via_verbs
+ 	ret = !repoll || !eld->monitor_present || eld->eld_valid;
  
--/* Prefetch */
--#define A64_PRFM(Rn, type, target, policy) \
--	aarch64_insn_gen_prefetch(Rn, AARCH64_INSN_PRFM_TYPE_##type, \
--				  AARCH64_INSN_PRFM_TARGET_##target, \
--				  AARCH64_INSN_PRFM_POLICY_##policy)
+ 	jack = snd_hda_jack_tbl_get(codec, pin_nid);
+-	if (jack)
++	if (jack) {
+ 		jack->block_report = !ret;
 -
- /* Add/subtract (immediate) */
- #define A64_ADDSUB_IMM(sf, Rd, Rn, imm12, type) \
- 	aarch64_insn_gen_add_sub_imm(Rd, Rn, imm12, \
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -739,7 +739,6 @@ emit_cond_jmp:
- 	case BPF_STX | BPF_XADD | BPF_DW:
- 		emit_a64_mov_i(1, tmp, off, ctx);
- 		emit(A64_ADD(1, tmp, tmp, dst), ctx);
--		emit(A64_PRFM(tmp, PST, L1, STRM), ctx);
- 		emit(A64_LDXR(isdw, tmp2, tmp), ctx);
- 		emit(A64_ADD(isdw, tmp2, tmp2, src), ctx);
- 		emit(A64_STXR(isdw, tmp2, tmp, tmp3), ctx);
++		jack->pin_sense = (eld->monitor_present && eld->eld_valid) ?
++			AC_PINSENSE_PRESENCE : 0;
++	}
+ 	mutex_unlock(&per_pin->lock);
+ 	return ret;
+ }
 
 
