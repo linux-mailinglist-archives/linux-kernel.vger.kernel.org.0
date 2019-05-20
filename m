@@ -2,104 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9DB23F65
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A4123F69
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfETRta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:49:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45965 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfETRt3 (ORCPT
+        id S1726189AbfETRto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:49:44 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37570 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfETRtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:49:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i21so7109530pgi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:49:28 -0700 (PDT)
+        Mon, 20 May 2019 13:49:41 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p15so7054775pll.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:49:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=me1hOjgWTri45Cc6hO9sgRzbDQwaWnoPUzfvVUbP8Uw=;
-        b=d/QiLwSw40EjvxwHCoBy3JWseUPcQPvj4auj0c7ZAV6OKodF1NvnM2hOAOdrKopZjE
-         z1TqPkMCjHuXZYkHxVjL4TRbCv8RlImwtrVTHTaQggD5Cxo9AQHwpqNUyk9RusnPyO0F
-         3mU4YL7YU2vzL7rzy3003fROJc64CQMa7tAuUKK9CYwpGekMkMa20Lscc1Jz5OFTtdfj
-         29jjvyM7sJ7dzn129bnFYI0dKuAdoVmheVZc9iXFeOtqJLEN9CFeqtP6W66FfPgHb3O3
-         l5nF/Pt63UZNRclggayxHiMiul7NSEG7d1434MGHCWBdSMDu6YVqpR1CxE7E7wDl9R8k
-         0dyQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=85LlB19Vc5cB2RdwoS/XFiBS9Y2yPdZUMDTHransqEU=;
+        b=M4T/JeFeYhETklteIQoqkY1OMlNtx60WUK7i9jkUDx0NsFxRnEk2z818gYapQ115Dg
+         MlMB4xGBEj0Z2eb3rEv+4y60KPuTz35BkUjjh9AbkQaSzsAY0aegFqg9jLbJkhOipUER
+         /EAXGoNQJxMiZCYffPL1bh9Rt+F6JCx/p5wE3TTGrGDtjn497O1eYUyguSGTjoBhwtfD
+         bW++C0l/UPVtpgzBR8XCCfAOByEq6iZhBSbqasqyRlvY0c++qYMfAv7tTgHdugT6h/sN
+         R0rTcpMYqKYKXKtRth0V3HiwFfRl2ca5YqbdZYjSzkbfC/hOC76ANiQpXG9WYhi/ngHZ
+         OYAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=me1hOjgWTri45Cc6hO9sgRzbDQwaWnoPUzfvVUbP8Uw=;
-        b=s6mB6r50nwWduOb8hQ31cd8gMjLGBH50OW6vBe0e8caub/3Y0amTp4sqcd3wO3uv+7
-         fDNPXmDCkiUP+wnM3uBtDBunxoj18UqrO/q2M0WJPVYVtAQkDQNi/FXSW9c+yCRFSftw
-         9tSMZpFebPX6qziziZtVRTQU63vIqBdYxSQvS3WyViq93UGi9zzC1otnlZieLnCgNH0f
-         CUd4HiHYRsoZKJ78FjpYtgeeZnjP83T/QOdAja9Q2/Jodcj0yJa2hu1ycii8hEy3OHXl
-         nYSkAovol5g5rMZM0rcyKX9iwpAm+jlqcYBGHlkREDrOI6jm1eVx02ZgRUd89fpzl/aW
-         Tu0A==
-X-Gm-Message-State: APjAAAU1doPM4MJ/CAXhgWufhk8TEpONEgOluhyrAN1hRRuW+urnBE0x
-        s4Y8M+91z7KXOITrUSMBH1pZ8w==
-X-Google-Smtp-Source: APXvYqyk9OeosmdVRNKnZ4nmNCQduMXDaoErB894LgjM/sAuCd4TBUUogmj2zXI/rVGiZTJf8fb28A==
-X-Received: by 2002:a62:e10f:: with SMTP id q15mr81286283pfh.56.1558374568375;
-        Mon, 20 May 2019 10:49:28 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:e483:1cc0:e2c2:140d])
-        by smtp.googlemail.com with ESMTPSA id s12sm28713070pfd.152.2019.05.20.10.49.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 10:49:27 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] arm64: dts: meson: g12a: add ethernet support
-In-Reply-To: <20190520131401.11804-1-jbrunet@baylibre.com>
-References: <20190520131401.11804-1-jbrunet@baylibre.com>
-Date:   Mon, 20 May 2019 10:49:26 -0700
-Message-ID: <7himu58195.fsf@baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=85LlB19Vc5cB2RdwoS/XFiBS9Y2yPdZUMDTHransqEU=;
+        b=JJ9PVuEIIauXiJNKOkuDqcXtt7Eoic56+qWJUFqoN3PMf8ImBhcvAPBgiFkhu8FeYc
+         O5Gs1n6vfe3ctehzZjLEYvhXyMmng85fSQ7cHJRKKVyjrGhneFWzwMIQef7qVE5FaT2X
+         bT1m0ywUjsWR1hHr3j3aVueKV5jSd4pRQHgC14bRxpFbwcErpgg4TA+X+rzYKMpUOhdb
+         jAejymLRHHjSjK95hdyohhgZxKclDT/IpaUK/garMsJTxVUJBXZPA9y7FNq5UMkqUtJE
+         MqdNArweMKmDN2Jfadb7MSIGt4azefvf2FQvcsHb7DW59wAXgAhh/5I1msr1NeF5C3dz
+         wDcg==
+X-Gm-Message-State: APjAAAXgsMzSu8tg8PC2ooaYXZOY8qQDUEgdj0VwS/DjbqwYfdnOXFfS
+        dDU+QZrln0VmvZyNEcgn91k=
+X-Google-Smtp-Source: APXvYqw/Tc2BhexJJ/VaHspKMrSUOiagWwYFWZzcGth1XEGYdlqL5KAkr0H+8ZnNiosdBlddcxORvg==
+X-Received: by 2002:a17:902:5a47:: with SMTP id f7mr52105525plm.321.1558374580342;
+        Mon, 20 May 2019 10:49:40 -0700 (PDT)
+Received: from [10.67.49.52] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id a69sm48414380pfa.81.2019.05.20.10.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 10:49:39 -0700 (PDT)
+Subject: Re: [PATCH] MAINTAINERS: Update Stefan Wahren email address
+To:     Stefan Wahren <wahrenst@gmx.net>, linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org
+References: <1556740055-4962-1-git-send-email-wahrenst@gmx.net>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ mQGiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz7QnRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+iGYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSC5BA0ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU4hPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJ7kCDQRXG8fwARAA6q/pqBi5PjHcOAUgk2/2LR5LjjesK50bCaD4JuNc
+ YDhFR7Vs108diBtsho3w8WRd9viOqDrhLJTroVckkk74OY8r+3t1E0Dd4wHWHQZsAeUvOwDM
+ PQMqTUBFuMi6ydzTZpFA2wBR9x6ofl8Ax+zaGBcFrRlQnhsuXLnM1uuvS39+pmzIjasZBP2H
+ UPk5ifigXcpelKmj6iskP3c8QN6x6GjUSmYx+xUfs/GNVSU1XOZn61wgPDbgINJd/THGdqiO
+ iJxCLuTMqlSsmh1+E1dSdfYkCb93R/0ZHvMKWlAx7MnaFgBfsG8FqNtZu3PCLfizyVYYjXbV
+ WO1A23riZKqwrSJAATo5iTS65BuYxrFsFNPrf7TitM8E76BEBZk0OZBvZxMuOs6Z1qI8YKVK
+ UrHVGFq3NbuPWCdRul9SX3VfOunr9Gv0GABnJ0ET+K7nspax0xqq7zgnM71QEaiaH17IFYGS
+ sG34V7Wo3vyQzsk7qLf9Ajno0DhJ+VX43g8+AjxOMNVrGCt9RNXSBVpyv2AMTlWCdJ5KI6V4
+ KEzWM4HJm7QlNKE6RPoBxJVbSQLPd9St3h7mxLcne4l7NK9eNgNnneT7QZL8fL//s9K8Ns1W
+ t60uQNYvbhKDG7+/yLcmJgjF74XkGvxCmTA1rW2bsUriM533nG9gAOUFQjURkwI8jvMAEQEA
+ AYkCaAQYEQIACQUCVxvH8AIbAgIpCRBhV5kVtWN2DsFdIAQZAQIABgUCVxvH8AAKCRCH0Jac
+ RAcHBIkHD/9nmfog7X2ZXMzL9ktT++7x+W/QBrSTCTmq8PK+69+INN1ZDOrY8uz6htfTLV9+
+ e2W6G8/7zIvODuHk7r+yQ585XbplgP0V5Xc8iBHdBgXbqnY5zBrcH+Q/oQ2STalEvaGHqNoD
+ UGyLQ/fiKoLZTPMur57Fy1c9rTuKiSdMgnT0FPfWVDfpR2Ds0gpqWePlRuRGOoCln5GnREA/
+ 2MW2rWf+CO9kbIR+66j8b4RUJqIK3dWn9xbENh/aqxfonGTCZQ2zC4sLd25DQA4w1itPo+f5
+ V/SQxuhnlQkTOCdJ7b/mby/pNRz1lsLkjnXueLILj7gNjwTabZXYtL16z24qkDTI1x3g98R/
+ xunb3/fQwR8FY5/zRvXJq5us/nLvIvOmVwZFkwXc+AF+LSIajqQz9XbXeIP/BDjlBNXRZNdo
+ dVuSU51ENcMcilPr2EUnqEAqeczsCGpnvRCLfVQeSZr2L9N4svNhhfPOEscYhhpHTh0VPyxI
+ pPBNKq+byuYPMyk3nj814NKhImK0O4gTyCK9b+gZAVvQcYAXvSouCnTZeJRrNHJFTgTgu6E0
+ caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
+ 6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9Za0Dx0yyp44iD1OvHtkEI
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <dbe83727-ccf3-57f0-a30c-a8226e0fc6bb@gmail.com>
+Date:   Mon, 20 May 2019 10:49:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1556740055-4962-1-git-send-email-wahrenst@gmx.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On 5/1/19 12:47 PM, Stefan Wahren wrote:
+> I2SE has been acquired, so i decided to use my private address now.
+> 
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 
-> Add network support to the g12a SoC family
->
-> This is series is based on 5.2-rc1 and the patches I already sent last
-> week. If this is not convient for you, please let me know, I'll rebase.
-
-Could you apply this on top of the "consistently order nodes" patches
-that are already in my v5.3/dt64 branch?
-
-More specifically, if you rebase this onto this commit[1], I'll be able
-to easily replace the v1 of this series that's already in v5.3/dt64.
-
-Kevin
-
-[1] 5b9533f6de2a arm64: dts: meson: u200: consistently order nodes
-
-> Also, you will need to get the clk tag "clk-meson-5.3-1-fixes" (to get
-> the update MPLL50M id) from clk-meson [0].
->
-> Changes since v1: [1]
->  * rebased on v5.2-rc1
->  * s/eth_rmii_pins/eth_pins
->  * fix MPLL50M typo
->
-> [0]: git://github.com/BayLibre/clk-meson.git
-> [1]: https://lkml.kernel.org/r/20190510164940.13496-1-jbrunet@baylibre.com
->
-> Jerome Brunet (5):
->   arm64: dts: meson: g12a: add ethernet mac controller
->   arm64: dts: meson: g12a: add ethernet pinctrl definitions
->   arm64: dts: meson: g12a: add mdio multiplexer
->   arm64: dts: meson: u200: add internal network
->   arm64: dts: meson: sei510: add network support
->
->  .../boot/dts/amlogic/meson-g12a-sei510.dts    |  7 ++
->  .../boot/dts/amlogic/meson-g12a-u200.dts      |  7 ++
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   | 90 +++++++++++++++++++
->  3 files changed, 104 insertions(+)
->
-> -- 
-> 2.20.1
+Applied to maintainers-arm64/fixes, thanks!
+-- 
+Florian
