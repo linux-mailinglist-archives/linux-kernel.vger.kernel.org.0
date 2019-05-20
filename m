@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2389A233ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8F1234E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388157AbfETMVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:21:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34984 "EHLO mail.kernel.org"
+        id S2390347AbfETMbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:31:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388147AbfETMVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:21:22 -0400
+        id S2390331AbfETMb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:31:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62A8213F2;
-        Mon, 20 May 2019 12:21:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 305C020645;
+        Mon, 20 May 2019 12:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354882;
-        bh=any/DlHXg37Ff7AbRPFC1GetjoVK2j3ZkSLPNafzbrk=;
+        s=default; t=1558355487;
+        bh=ljhw1NtefORkXSEcsCILjXYghqr+KIzORm1z49WSosU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEj1lFCvBRj8g1BXD6J2fs6h2KSyQaRnSEPswQgEB8+Xo24s9SmBMX6Tlg37hYxwS
-         d8ouxJ1G/ySUeabvIB6xZy6Z3cRA/I93+kvXgCz2wOF7VYqhuXpSgYnrJpPZRDnw8L
-         tOMYm/cBTLrMXsP09LYIhVTgtTZEXhgtsLec0u90=
+        b=h5a+P1EvFnWbi5sTKJj4TKGf1Cz13Gm8x9zPHI56imDaM/x5qgNE9++5fpDv/wJlC
+         0DnzbQ2L8Jgjv/6Jwy9f2Qr7w5Je2Xrmf01Hk7a3sol57/eTaz+4Vx4Pyr8M9C627E
+         T7mMZDIwN+ydzWbscN3YXmnu65FVCocgt8BS9oDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 015/105] arm64: Clear OSDLR_EL1 on CPU boot
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 5.1 014/128] power: supply: axp288_fuel_gauge: Add ACEPC T8 and T11 mini PCs to the blacklist
 Date:   Mon, 20 May 2019 14:13:21 +0200
-Message-Id: <20190520115248.079427103@linuxfoundation.org>
+Message-Id: <20190520115250.424049155@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 6fda41bf12615ee7c3ddac88155099b1a8cf8d00 upstream.
+commit 9274c78305e12c5f461bec15f49c38e0f32ca705 upstream.
 
-Some firmwares may reboot CPUs with OS Double Lock set. Make sure that
-it is unlocked, in order to use debug exceptions.
+The ACEPC T8 and T11 Cherry Trail Z8350 mini PCs use an AXP288 and as PCs,
+rather then portables, they does not have a battery. Still for some
+reason the AXP288 not only thinks there is a battery, it actually
+thinks it is discharging while the PC is running, slowly going to
+0% full, causing userspace to shutdown the system due to the battery
+being critically low after a while.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+This commit adds the ACEPC T8 and T11 to the axp288 fuel-gauge driver
+blacklist, so that we stop reporting bogus battery readings on this device.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1690852
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/debug-monitors.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/axp288_fuel_gauge.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -135,6 +135,7 @@ NOKPROBE_SYMBOL(disable_debug_monitors);
+--- a/drivers/power/supply/axp288_fuel_gauge.c
++++ b/drivers/power/supply/axp288_fuel_gauge.c
+@@ -686,6 +686,26 @@ intr_failed:
   */
- static int clear_os_lock(unsigned int cpu)
- {
-+	write_sysreg(0, osdlr_el1);
- 	write_sysreg(0, oslar_el1);
- 	isb();
- 	return 0;
+ static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
+ 	{
++		/* ACEPC T8 Cherry Trail Z8350 mini PC */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T8"),
++			/* also match on somewhat unique bios-version */
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
++		},
++	},
++	{
++		/* ACEPC T11 Cherry Trail Z8350 mini PC */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T11"),
++			/* also match on somewhat unique bios-version */
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
++		},
++	},
++	{
+ 		/* Intel Cherry Trail Compute Stick, Windows version */
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Intel Corporation"),
 
 
