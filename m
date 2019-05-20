@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 222FD23420
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B454F23539
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388649AbfETMXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:23:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38132 "EHLO mail.kernel.org"
+        id S2390810AbfETMdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:33:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388637AbfETMXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:23:37 -0400
+        id S2390464AbfETMdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:33:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5162C20645;
-        Mon, 20 May 2019 12:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 858F3214DA;
+        Mon, 20 May 2019 12:33:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355016;
-        bh=L/Cv3EAR9jLgZ9/NL7/jp4JloC3gs6Kc1Nk8kU4hPu8=;
+        s=default; t=1558355629;
+        bh=Uw0pF31YOHlAKBRVzNCneThPQgBmKK3R8VVsUrLP+AI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZsbPERi01uLxASVFAAxMTj0jIdaSxxpKeRw0gs5oQnQR9tfiQTejzq+eHt0qwV12J
-         p1o1SPoBhQs6g5L9x/QkYdJR6qMVl8sP912ai4j7Go+tGnRNv8FZudeTvTfFmPq/HX
-         MX02rJUMzNJwu5tvLigxk00rPANaK1y+a3dvoi+M=
+        b=qb1Miz7DnCy45IpKju43H1zO9LCUOtBO4VY57sey63GJ0EHBEaq9pMBbkW/BLF/6p
+         zjfvsC918oPLW3XEzq/742C/FAiawp5cv3hTfhejt940dY02z2PhKCYfgA06csK2gK
+         W82Cn5xvEvXCRl5VfjlFc6gccl7ChYz7dd5Z6rYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Ren <renzhen@linux.alibaba.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.19 065/105] jbd2: check superblock mapped prior to committing
-Date:   Mon, 20 May 2019 14:14:11 +0200
-Message-Id: <20190520115251.665060078@linuxfoundation.org>
+        stable@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.1 065/128] crypto: ccree - pm resume first enable the source clk
+Date:   Mon, 20 May 2019 14:14:12 +0200
+Message-Id: <20190520115254.191615570@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Ofir Drang <ofir.drang@arm.com>
 
-commit 742b06b5628f2cd23cb51a034cb54dc33c6162c5 upstream.
+commit 7766dd774d80463cec7b81d90c8672af91de2da1 upstream.
 
-We hit a BUG at fs/buffer.c:3057 if we detached the nbd device
-before unmounting ext4 filesystem.
+On power management resume function first enable the device clk source
+to allow access to the device registers.
 
-The typical chain of events leading to the BUG:
-jbd2_write_superblock
-  submit_bh
-    submit_bh_wbc
-      BUG_ON(!buffer_mapped(bh));
-
-The block device is removed and all the pages are invalidated. JBD2
-was trying to write journal superblock to the block device which is
-no longer present.
-
-Fix this by checking the journal superblock's buffer head prior to
-submitting.
-
-Reported-by: Eric Ren <renzhen@linux.alibaba.com>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+Signed-off-by: Ofir Drang <ofir.drang@arm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/crypto/ccree/cc_pm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1366,6 +1366,10 @@ static int jbd2_write_superblock(journal
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -42,14 +42,15 @@ int cc_pm_resume(struct device *dev)
+ 	struct cc_drvdata *drvdata = dev_get_drvdata(dev);
  
-+	/* Buffer got discarded which means block device got invalidated */
-+	if (!buffer_mapped(bh))
-+		return -EIO;
+ 	dev_dbg(dev, "unset HOST_POWER_DOWN_EN\n");
+-	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_DISABLE);
+-
++	/* Enables the device source clk */
+ 	rc = cc_clk_on(drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "failed getting clock back on. We're toast.\n");
+ 		return rc;
+ 	}
+ 
++	cc_iowrite(drvdata, CC_REG(HOST_POWER_DOWN_EN), POWER_DOWN_DISABLE);
 +
- 	trace_jbd2_write_superblock(journal, write_flags);
- 	if (!(journal->j_flags & JBD2_BARRIER))
- 		write_flags &= ~(REQ_FUA | REQ_PREFLUSH);
+ 	rc = init_cc_regs(drvdata, false);
+ 	if (rc) {
+ 		dev_err(dev, "init_cc_regs (%x)\n", rc);
 
 
