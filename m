@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D74F23599
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B4C6235F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391216AbfETMgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:36:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55002 "EHLO mail.kernel.org"
+        id S2389377AbfETMa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391200AbfETMgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:36:03 -0400
+        id S2390171AbfETMav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:30:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECB2B20815;
-        Mon, 20 May 2019 12:36:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5EAF20815;
+        Mon, 20 May 2019 12:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355762;
-        bh=OY5qDbJG3cRSO+yxmiSW4AJSiJga1+mxbJUEfBPaWNs=;
+        s=default; t=1558355450;
+        bh=ZXVkfLk/ZylDjGcKc1UBt57K6WYRGjjsuXyokA4kBNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hoOAgfDhtUyLU0MHUy3Q/CyeTOzAc6oA4PhPlEM3NroGeRJMPnKpq3UzsZbk6hs++
-         hsqFK02W34Ph0BzljOQfl4FT8hLCt9lyAxhRLwEwIT5bjBkwPp8Wm5aRfnhBSJu2Af
-         HKOon2wQ7TID0E5jJ1q5bATo4URotlLJOTnM5nHE=
+        b=LWnldoyi+igcSSANVmPIA/ha3C5Xf8Xz5HgA4pRTVzWnGzqgKhZShaFvF4SUrooqL
+         gJSHQGFtozkcWi2UlNmMNGv6wMqB2m+OYoOaUjvzduYUc7vKUag9MpIxlZY6DWxOX3
+         qUE45Fb6+FOddDp4x0iIxdR6bE7xqisBnv7LVO44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hill <hilld@binarystorm.net>,
-        Saar Amar <saaramar@microsoft.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.1 115/128] Revert "KVM: nVMX: Expose RDPMC-exiting only when guest supports PMU"
-Date:   Mon, 20 May 2019 14:15:02 +0200
-Message-Id: <20190520115256.600424113@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 5.0 123/123] ext4: dont update s_rev_level if not required
+Date:   Mon, 20 May 2019 14:15:03 +0200
+Message-Id: <20190520115253.355001829@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,92 +43,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Andreas Dilger <adilger@dilger.ca>
 
-commit f93f7ede087f2edcc18e4b02310df5749a6b5a61 upstream.
+commit c9e716eb9b3455a83ed7c5f5a81256a3da779a95 upstream.
 
-The RDPMC-exiting control is dependent on the existence of the RDPMC
-instruction itself, i.e. is not tied to the "Architectural Performance
-Monitoring" feature.  For all intents and purposes, the control exists
-on all CPUs with VMX support since RDPMC also exists on all VCPUs with
-VMX supported.  Per Intel's SDM:
+Don't update the superblock s_rev_level during mount if it isn't
+actually necessary, only if superblock features are being set by
+the kernel.  This was originally added for ext3 since it always
+set the INCOMPAT_RECOVER and HAS_JOURNAL features during mount,
+but this is not needed since no journal mode was added to ext4.
 
-  The RDPMC instruction was introduced into the IA-32 Architecture in
-  the Pentium Pro processor and the Pentium processor with MMX technology.
-  The earlier Pentium processors have performance-monitoring counters, but
-  they must be read with the RDMSR instruction.
+That will allow Geert to mount his 20-year-old ext2 rev 0.0 m68k
+filesystem, as a testament of the backward compatibility of ext4.
 
-Because RDPMC-exiting always exists, KVM requires the control and refuses
-to load if it's not available.  As a result, hiding the PMU from a guest
-breaks nested virtualization if the guest attemts to use KVM.
-
-While it's not explicitly stated in the RDPMC pseudocode, the VM-Exit
-check for RDPMC-exiting follows standard fault vs. VM-Exit prioritization
-for privileged instructions, e.g. occurs after the CPL/CR0.PE/CR4.PCE
-checks, but before the counter referenced in ECX is checked for validity.
-
-In other words, the original KVM behavior of injecting a #GP was correct,
-and the KVM unit test needs to be adjusted accordingly, e.g. eat the #GP
-when the unit test guest (L3 in this case) executes RDPMC without
-RDPMC-exiting set in the unit test host (L2).
-
-This reverts commit e51bfdb68725dc052d16241ace40ea3140f938aa.
-
-Fixes: e51bfdb68725 ("KVM: nVMX: Expose RDPMC-exiting only when guest supports PMU")
-Reported-by: David Hill <hilld@binarystorm.net>
-Cc: Saar Amar <saaramar@microsoft.com>
-Cc: Mihai Carabas <mihai.carabas@oracle.com>
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 0390131ba84f ("ext4: Allow ext4 to run without a journal")
+Signed-off-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx/vmx.c |   25 -------------------------
- 1 file changed, 25 deletions(-)
+ fs/ext4/ext4.h  |    6 +++++-
+ fs/ext4/inode.c |    1 -
+ fs/ext4/super.c |    1 -
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6856,30 +6856,6 @@ static void nested_vmx_entry_exit_ctls_u
- 	}
- }
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1665,6 +1665,8 @@ static inline void ext4_clear_state_flag
+ #define EXT4_FEATURE_INCOMPAT_INLINE_DATA	0x8000 /* data in inode */
+ #define EXT4_FEATURE_INCOMPAT_ENCRYPT		0x10000
  
--static bool guest_cpuid_has_pmu(struct kvm_vcpu *vcpu)
--{
--	struct kvm_cpuid_entry2 *entry;
--	union cpuid10_eax eax;
--
--	entry = kvm_find_cpuid_entry(vcpu, 0xa, 0);
--	if (!entry)
--		return false;
--
--	eax.full = entry->eax;
--	return (eax.split.version_id > 0);
--}
--
--static void nested_vmx_procbased_ctls_update(struct kvm_vcpu *vcpu)
--{
--	struct vcpu_vmx *vmx = to_vmx(vcpu);
--	bool pmu_enabled = guest_cpuid_has_pmu(vcpu);
--
--	if (pmu_enabled)
--		vmx->nested.msrs.procbased_ctls_high |= CPU_BASED_RDPMC_EXITING;
--	else
--		vmx->nested.msrs.procbased_ctls_high &= ~CPU_BASED_RDPMC_EXITING;
--}
--
- static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -6968,7 +6944,6 @@ static void vmx_cpuid_update(struct kvm_
- 	if (nested_vmx_allowed(vcpu)) {
- 		nested_vmx_cr_fixed1_bits_update(vcpu);
- 		nested_vmx_entry_exit_ctls_update(vcpu);
--		nested_vmx_procbased_ctls_update(vcpu);
- 	}
++extern void ext4_update_dynamic_rev(struct super_block *sb);
++
+ #define EXT4_FEATURE_COMPAT_FUNCS(name, flagname) \
+ static inline bool ext4_has_feature_##name(struct super_block *sb) \
+ { \
+@@ -1673,6 +1675,7 @@ static inline bool ext4_has_feature_##na
+ } \
+ static inline void ext4_set_feature_##name(struct super_block *sb) \
+ { \
++	ext4_update_dynamic_rev(sb); \
+ 	EXT4_SB(sb)->s_es->s_feature_compat |= \
+ 		cpu_to_le32(EXT4_FEATURE_COMPAT_##flagname); \
+ } \
+@@ -1690,6 +1693,7 @@ static inline bool ext4_has_feature_##na
+ } \
+ static inline void ext4_set_feature_##name(struct super_block *sb) \
+ { \
++	ext4_update_dynamic_rev(sb); \
+ 	EXT4_SB(sb)->s_es->s_feature_ro_compat |= \
+ 		cpu_to_le32(EXT4_FEATURE_RO_COMPAT_##flagname); \
+ } \
+@@ -1707,6 +1711,7 @@ static inline bool ext4_has_feature_##na
+ } \
+ static inline void ext4_set_feature_##name(struct super_block *sb) \
+ { \
++	ext4_update_dynamic_rev(sb); \
+ 	EXT4_SB(sb)->s_es->s_feature_incompat |= \
+ 		cpu_to_le32(EXT4_FEATURE_INCOMPAT_##flagname); \
+ } \
+@@ -2675,7 +2680,6 @@ do {									\
  
- 	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
+ #endif
+ 
+-extern void ext4_update_dynamic_rev(struct super_block *sb);
+ extern int ext4_update_compat_feature(handle_t *handle, struct super_block *sb,
+ 					__u32 compat);
+ extern int ext4_update_rocompat_feature(handle_t *handle,
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5355,7 +5355,6 @@ static int ext4_do_update_inode(handle_t
+ 		err = ext4_journal_get_write_access(handle, EXT4_SB(sb)->s_sbh);
+ 		if (err)
+ 			goto out_brelse;
+-		ext4_update_dynamic_rev(sb);
+ 		ext4_set_feature_large_file(sb);
+ 		ext4_handle_sync(handle);
+ 		err = ext4_handle_dirty_super(handle, sb);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2259,7 +2259,6 @@ static int ext4_setup_super(struct super
+ 		es->s_max_mnt_count = cpu_to_le16(EXT4_DFL_MAX_MNT_COUNT);
+ 	le16_add_cpu(&es->s_mnt_count, 1);
+ 	ext4_update_tstamp(es, s_mtime);
+-	ext4_update_dynamic_rev(sb);
+ 	if (sbi->s_journal)
+ 		ext4_set_feature_journal_needs_recovery(sb);
+ 
 
 
