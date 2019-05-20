@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3B3234F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBFF23627
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390438AbfETMb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:31:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
+        id S2389759AbfETM2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:28:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390461AbfETMby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:31:54 -0400
+        id S2389349AbfETM0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:26:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7417921726;
-        Mon, 20 May 2019 12:31:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2677A21479;
+        Mon, 20 May 2019 12:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355513;
-        bh=34pvu7oNa5wqsc3tntV2i9diO3rjJi8DbuOwL65B550=;
+        s=default; t=1558355204;
+        bh=4CXJx8mG7PBQ+VliU1mAvTpPrbLkRKfqM+3TOBtjgf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iK7j9b9T/KxR9E7DjsGLB0SU8V5r51MPsfpmtByL2OLP3RIRJuKMpqQWZ201WFU+t
-         KYw4v5IX5sq3gITaVBp7FfI/2gvj4JtohSvDIWGNZ7i4o3Rpfwl69jStW26hKA28NA
-         5yH/CjGvh2HXVvRfpX2a8ciULMCVP0Dp+pPnp1bg=
+        b=Jw0JSLV1zJV7GUkzmZ+d8ACZM8qQzwvwVhS6qT6mgv7ngoEMCv6/bQK5OrXjtKvSy
+         du+YQlhmkMKfld2zZq6OJAVGSKxUeXYFTsJkeU5uD124ThlOGEJAuov0vtJGV6YpE+
+         N8hfe4DUiXv4TODj95txeuk792TunhpAp2PgWyAA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.1 023/128] crypto: crypto4xx - fix ctr-aes missing output IV
-Date:   Mon, 20 May 2019 14:13:30 +0200
-Message-Id: <20190520115251.121636001@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Gary Hook <gary.hook@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>
+Subject: [PATCH 5.0 031/123] crypto: ccp - Do not free psp_master when PLATFORM_INIT fails
+Date:   Mon, 20 May 2019 14:13:31 +0200
+Message-Id: <20190520115246.833094276@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,73 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Singh, Brijesh <brijesh.singh@amd.com>
 
-commit 25baaf8e2c93197d063b372ef7b62f2767c7ac0b upstream.
+commit f5a2aeb8b254c764772729a6e48d4e0c914bb56a upstream.
 
-Commit 8efd972ef96a ("crypto: testmgr - support checking skcipher output IV")
-caused the crypto4xx driver to produce the following error:
+Currently, we free the psp_master if the PLATFORM_INIT fails during the
+SEV FW probe. If psp_master is freed then driver does not invoke the PSP
+FW. As per SEV FW spec, there are several commands (PLATFORM_RESET,
+PLATFORM_STATUS, GET_ID etc) which can be executed in the UNINIT state
+We should not free the psp_master when PLATFORM_INIT fails.
 
-| ctr-aes-ppc4xx encryption test failed (wrong output IV)
-| on test vector 0, cfg="in-place"
-
-This patch fixes this by reworking the crypto4xx_setkey_aes()
-function to:
-
- - not save the iv for ECB (as per 18.2.38 CRYP0_SA_CMD_0:
-   "This bit mut be cleared for DES ECB mode or AES ECB mode,
-   when no IV is used.")
-
- - instruct the hardware to save the generated IV for all
-   other modes of operations that have IV and then supply
-   it back to the callee in pretty much the same way as we
-   do it for cbc-aes already.
-
- - make it clear that the DIR_(IN|OUT)BOUND is the important
-   bit that tells the hardware to encrypt or decrypt the data.
-   (this is cosmetic - but it hopefully prevents me from
-    getting confused again).
-
- - don't load any bogus hash when we don't use any hash
-   operation to begin with.
-
-Cc: stable@vger.kernel.org
-Fixes: f2a13e7cba9e ("crypto: crypto4xx - enable AES RFC3686, ECB, CFB and OFB offloads")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Fixes: 200664d5237f ("crypto: ccp: Add SEV support")
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Gary Hook <gary.hook@amd.com>
+Cc: stable@vger.kernel.org # 4.19.y
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/amcc/crypto4xx_alg.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/crypto/ccp/psp-dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/amcc/crypto4xx_alg.c
-+++ b/drivers/crypto/amcc/crypto4xx_alg.c
-@@ -141,9 +141,10 @@ static int crypto4xx_setkey_aes(struct c
- 	/* Setup SA */
- 	sa = ctx->sa_in;
+--- a/drivers/crypto/ccp/psp-dev.c
++++ b/drivers/crypto/ccp/psp-dev.c
+@@ -972,7 +972,7 @@ void psp_pci_init(void)
+ 	rc = sev_platform_init(&error);
+ 	if (rc) {
+ 		dev_err(sp->dev, "SEV: failed to INIT error %#x\n", error);
+-		goto err;
++		return;
+ 	}
  
--	set_dynamic_sa_command_0(sa, SA_NOT_SAVE_HASH, (cm == CRYPTO_MODE_CBC ?
--				 SA_SAVE_IV : SA_NOT_SAVE_IV),
--				 SA_LOAD_HASH_FROM_SA, SA_LOAD_IV_FROM_STATE,
-+	set_dynamic_sa_command_0(sa, SA_NOT_SAVE_HASH, (cm == CRYPTO_MODE_ECB ?
-+				 SA_NOT_SAVE_IV : SA_SAVE_IV),
-+				 SA_NOT_LOAD_HASH, (cm == CRYPTO_MODE_ECB ?
-+				 SA_LOAD_IV_FROM_SA : SA_LOAD_IV_FROM_STATE),
- 				 SA_NO_HEADER_PROC, SA_HASH_ALG_NULL,
- 				 SA_CIPHER_ALG_AES, SA_PAD_TYPE_ZERO,
- 				 SA_OP_GROUP_BASIC, SA_OPCODE_DECRYPT,
-@@ -162,6 +163,11 @@ static int crypto4xx_setkey_aes(struct c
- 	memcpy(ctx->sa_out, ctx->sa_in, ctx->sa_len * 4);
- 	sa = ctx->sa_out;
- 	sa->sa_command_0.bf.dir = DIR_OUTBOUND;
-+	/*
-+	 * SA_OPCODE_ENCRYPT is the same value as SA_OPCODE_DECRYPT.
-+	 * it's the DIR_(IN|OUT)BOUND that matters
-+	 */
-+	sa->sa_command_0.bf.opcode = SA_OPCODE_ENCRYPT;
- 
- 	return 0;
- }
+ 	dev_info(sp->dev, "SEV API:%d.%d build:%d\n", psp_master->api_major,
 
 
