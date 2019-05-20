@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A0A6232AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF4D9232AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733045AbfETLhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:37:47 -0400
+        id S1733069AbfETLhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:37:51 -0400
 Received: from mga04.intel.com ([192.55.52.120]:48121 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbfETLhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:37:46 -0400
+        id S1733038AbfETLhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:37:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:37:45 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:37:47 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:37:44 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:37:46 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/22] perf intel-pt: Fix itrace defaults for perf script intel-pt documentation
-Date:   Mon, 20 May 2019 14:37:09 +0300
-Message-Id: <20190520113728.14389-4-adrian.hunter@intel.com>
+Subject: [PATCH 04/22] perf intel-pt: Factor out intel_pt_update_sample_time
+Date:   Mon, 20 May 2019 14:37:10 +0300
+Message-Id: <20190520113728.14389-5-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190520113728.14389-1-adrian.hunter@intel.com>
 References: <20190520113728.14389-1-adrian.hunter@intel.com>
@@ -33,50 +33,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix intel-pt documentation to reflect the change of itrace defaults for
-perf script.
+To eliminate some duplication and make the code more understandable, factor
+out intel_pt_update_sample_time.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Fixes: 4eb068157121 ("perf script: Make itrace script default to all calls")
-Cc: stable@vger.kernel.org
 ---
- tools/perf/Documentation/intel-pt.txt | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ .../util/intel-pt-decoder/intel-pt-decoder.c   | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
-index 115eaacc455f..60d99e5e7921 100644
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -88,16 +88,16 @@ smaller.
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index f4c3c84b090f..1ab4070b5633 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -479,6 +479,12 @@ static int intel_pt_bad_packet(struct intel_pt_decoder *decoder)
+ 	return -EBADMSG;
+ }
  
- To represent software control flow, "branches" samples are produced.  By default
- a branch sample is synthesized for every single branch.  To get an idea what
--data is available you can use the 'perf script' tool with no parameters, which
--will list all the samples.
-+data is available you can use the 'perf script' tool with all itrace sampling
-+options, which will list all the samples.
++static inline void intel_pt_update_sample_time(struct intel_pt_decoder *decoder)
++{
++	decoder->sample_timestamp = decoder->timestamp;
++	decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
++}
++
+ static int intel_pt_get_data(struct intel_pt_decoder *decoder)
+ {
+ 	struct intel_pt_buffer buffer = { .buf = 0, };
+@@ -1319,8 +1325,7 @@ static int intel_pt_walk_tnt(struct intel_pt_decoder *decoder)
+ 			}
+ 			decoder->ip += intel_pt_insn.length;
+ 			if (!decoder->tnt.count) {
+-				decoder->sample_timestamp = decoder->timestamp;
+-				decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
++				intel_pt_update_sample_time(decoder);
+ 				return -EAGAIN;
+ 			}
+ 			decoder->tnt.payload <<= 1;
+@@ -2413,8 +2418,7 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder)
+ 	if (err) {
+ 		decoder->state.err = intel_pt_ext_err(err);
+ 		decoder->state.from_ip = decoder->ip;
+-		decoder->sample_timestamp = decoder->timestamp;
+-		decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
++		intel_pt_update_sample_time(decoder);
+ 	} else {
+ 		decoder->state.err = 0;
+ 		if (decoder->cbr != decoder->cbr_seen && decoder->state.type) {
+@@ -2422,10 +2426,8 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder)
+ 			decoder->state.type |= INTEL_PT_CBR_CHG;
+ 			decoder->state.cbr_payload = decoder->cbr_payload;
+ 		}
+-		if (intel_pt_sample_time(decoder->pkt_state)) {
+-			decoder->sample_timestamp = decoder->timestamp;
+-			decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
+-		}
++		if (intel_pt_sample_time(decoder->pkt_state))
++			intel_pt_update_sample_time(decoder);
+ 	}
  
- 	perf record -e intel_pt//u ls
--	perf script
-+	perf script --itrace=ibxwpe
- 
- An interesting field that is not printed by default is 'flags' which can be
- displayed as follows:
- 
--	perf script -Fcomm,tid,pid,time,cpu,event,trace,ip,sym,dso,addr,symoff,flags
-+	perf script --itrace=ibxwpe -F+flags
- 
- The flags are "bcrosyiABEx" which stand for branch, call, return, conditional,
- system, asynchronous, interrupt, transaction abort, trace begin, trace end, and
-@@ -713,7 +713,7 @@ Having no option is the same as
- 
- which, in turn, is the same as
- 
--	--itrace=ibxwpe
-+	--itrace=cepwx
- 
- The letters are:
- 
+ 	decoder->state.timestamp = decoder->sample_timestamp;
 -- 
 2.17.1
 
