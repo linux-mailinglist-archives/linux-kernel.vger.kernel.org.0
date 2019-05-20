@@ -2,73 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B30D623D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE4E0237D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392605AbfETQbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 12:31:33 -0400
-Received: from mail.kelantan.gov.my ([210.187.31.6]:54672 "EHLO
-        mail.kelantan.gov.my" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389524AbfETQbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 12:31:32 -0400
-X-Greylist: delayed 9673 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 12:31:31 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.kelantan.gov.my (Postfix) with ESMTP id 2E88BAA72A3;
-        Mon, 20 May 2019 21:10:39 +0800 (+08)
-Received: from mail.kelantan.gov.my ([127.0.0.1])
-        by localhost (mail.kelantan.gov.my [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 8S5F6H2QAfuZ; Mon, 20 May 2019 21:10:38 +0800 (+08)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.kelantan.gov.my (Postfix) with ESMTP id 7C999AA729E;
-        Mon, 20 May 2019 21:10:38 +0800 (+08)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.kelantan.gov.my 7C999AA729E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kelantan.gov.my;
-        s=2E4A83DC-38E1-11E8-8B9F-F555E2234FB1; t=1558357838;
-        bh=ZaR+42Sv4vIO8UyCnDH43lk1opt4cejyC+1u0qRyZ1Y=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=CDXoJdpJWKfh8+BsIVERBt6nU60Wxp6LA35x4w8qLVSFBlj18FcKfReujzit6K/xN
-         MDmMJEABAt/yGNwVJ8OHEc89eXChs1SBF1DCJU1y4O2Qpk4e0FSUqQshRconKgQGvn
-         knJFJdwxeQXlYfzfCZVyTQNo2t1A4jRKk460DsbVIKUs/tGiVQ8Gx6lYVx2JPTqkwL
-         YZEwiWB4VQzYKQrpwwWVxFme0WiNjVAuyqWE9KtR2k0Ry+/SULE7IMooN/ib7kxeH2
-         Cw68oUwMQfnc/91TjgME8ehhIvE02/WHtSPqYKjn7NXJb+vC5IcjGpp4gWZ/YpOzPH
-         +5mob0VY0zhBw==
-X-Virus-Scanned: amavisd-new at kelantan.gov.my
-Received: from mail.kelantan.gov.my ([127.0.0.1])
-        by localhost (mail.kelantan.gov.my [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2DSCjtPCSrUZ; Mon, 20 May 2019 21:10:38 +0800 (+08)
-Received: from [192.168.10.103] (unknown [160.152.49.36])
-        by mail.kelantan.gov.my (Postfix) with ESMTPSA id 9BDF5AA71A5;
-        Mon, 20 May 2019 21:10:29 +0800 (+08)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1731914AbfETNNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:13:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730458AbfETNNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 09:13:23 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1E9020815;
+        Mon, 20 May 2019 13:13:21 +0000 (UTC)
+Date:   Mon, 20 May 2019 09:13:20 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/4] x86/ftrace: Fix use of flags in
+ ftrace_replace_code()
+Message-ID: <20190520091320.01cdcfb7@gandalf.local.home>
+In-Reply-To: <e1429923d9eda92a3cf5ee9e33c7eacce539781d.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
+References: <cover.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
+        <e1429923d9eda92a3cf5ee9e33c7eacce539781d.1558115654.git.naveen.n.rao@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: HELLO.......
-To:     Recipients <ptjb@kelantan.gov.my>
-From:   " Pedro Lite" <ptjb@kelantan.gov.my>
-Date:   Mon, 20 May 2019 14:10:17 +0100
-Reply-To: pedroliteeuromega0@gmail.com
-Message-Id: <20190520131029.9BDF5AA71A5@mail.kelantan.gov.my>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am Pedro Lite,System Operation manager in charge of the Euro Millions Dra=
-ws.I have a confidential deal to discuss with you if only you will be inter=
-ested in the deal.
+On Sat, 18 May 2019 00:32:46 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-Thanks,
-Pedro Lite
+> In commit a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be
+> schedulable), the generic ftrace_replace_code() function was modified to
+> accept a flags argument in place of a single 'enable' flag. However, the
+> x86 version of this function was not updated. Fix the same.
+> 
+> Fixes: a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be schedulable")
+> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+> ---
+> I haven't yet tested this patch on x86, but this looked wrong so sending 
+> this as a RFC.
 
+This code has been through a bit of updates, and I need to go through
+and clean it up. I'll have to take a look and convert "int" to "bool"
+so that "enable" is not confusing.
 
+Thanks, I think I'll try to do a clean up first, and then this patch
+shouldn't "look wrong" after that.
 
+-- Steve
 
-
-
-
-
-
-
+> 
+> - Naveen
+> 
+> 
+>  arch/x86/kernel/ftrace.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 0caf8122d680..0c01b344ba16 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -554,8 +554,9 @@ static void run_sync(void)
+>  		local_irq_disable();
+>  }
+>  
+> -void ftrace_replace_code(int enable)
+> +void ftrace_replace_code(int mod_flags)
+>  {
+> +	int enable = mod_flags & FTRACE_MODIFY_ENABLE_FL;
+>  	struct ftrace_rec_iter *iter;
+>  	struct dyn_ftrace *rec;
+>  	const char *report = "adding breakpoints";
 
