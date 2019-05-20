@@ -2,99 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855A623C22
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1954123BFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388341AbfETP3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:29:32 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40042 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731262AbfETP3c (ORCPT
+        id S2392011AbfETPYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:24:52 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40586 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387783AbfETPYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:29:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h4so15117383wre.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:29:31 -0700 (PDT)
+        Mon, 20 May 2019 11:24:52 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u17so7393073pfn.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=R09/KmbxD/tQQhd6oxu0ukeGEfAA87AXC1YxNhNR3sU=;
-        b=aajAgIPwyYhsD+tdEyvZeY3SP+gY1IDYVhHL/ZjYBCwKrpyvhSF82VHrgf1kzEA0ky
-         L8+6Zh3cppRrcsHeWX6I9TpY57vYdCo9xbOddAtGjqArx5Bp06dzgTBCSwZoQQ4lgDrD
-         I+U8CqwC47LbRv8nyRJxWoe5xvSwinQUFQPGsU1gTagDCATwzkIDEGG6IYgJKJIqUUyf
-         oRLNJi5i0hW79Kxg0ZwAqism3tTA+ZNVbTQ4cDoE2VZPyFztciKpS4Oj1JOlhZq2hphU
-         72Romsq+woC+G8CP3B8RVzHkoRTMyXFnqEXXdKh7VmEFZS9KN/FGdMaBoJ7XFX78pxs+
-         K9Qg==
+        bh=uk849dcKmoqtNYZ7eIsEjVmGVspH3FFqGVpKFEH8i9o=;
+        b=ZZ8qMKt246wsD17eM1gv1+70aRKyqr1s8GR/CGTaqJyuEgSqrj3cRHAfkywZzXGN3w
+         pZfZrQ+kKUdjiI2RK8SpGtGITR3IjdgF0JwqClwVAtoCz5KiySr9Q3LwokSPXZ6y7RlA
+         e4htp38Cnz/o6UGAabOHWqUnV7pwCTyjSoseSq2YBoJ5XWo2bCOLhrRPldyxbGXrbE8P
+         EQjj0yl9NFx8eZI4M3WU7KdVhr9XcN6S+t55Rvn71AXom5U3qBg4OCHmU17j2XTi+oYV
+         YRhgZq69dy+LR/lCBUqiJzZZkvg3dUz2jrtopy4txrbgJmQS1CyeXCF8zPsCu6gX2LxH
+         EiRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=R09/KmbxD/tQQhd6oxu0ukeGEfAA87AXC1YxNhNR3sU=;
-        b=dAJjJEp9gUH0RJN7scIO+L/Ik+OoWZ3LvsuledcpayTvb4fye5a+9AEw2ksSDHm3D1
-         rmnSWYMgnf5wsPm5FLQJYrxAIPXWqnP4uUYMw8A1hTdH7hZrmi1EIqUZ8ZBrI8Z0D1mk
-         ybgNW97Iff7rRX1112WAUwhQlcH/bUneT/leDq0git5Ly1eXjl/Ft0r2Dk7HiYLy2gy6
-         e+MttPAZxfwJGVDxdh1lwtdxM9I3/nEtrkLrh48bJ4+qAZlueSxjit4VUbrXWazw1sbp
-         n8nRSWf/DewgE7xiTvG1zTu/6Zv6/lPNxTasjhpWqrgRKZHGXgtDOOxNAB/F+xlTL/Pi
-         qSiQ==
-X-Gm-Message-State: APjAAAWfYpZn9+1MnP8N+RdwfJECosCtyEwPJg2MtLOkv7JNQW0up0D/
-        yFcORV8f3Ige9lvfeGrY/zw=
-X-Google-Smtp-Source: APXvYqx2+r1DZV1br2Ag4BktpDHSY0O/7iWH1Zle1AkOcU4/LIyAOoVob07VTzqO5Ef967ldQR3WtA==
-X-Received: by 2002:adf:cf0e:: with SMTP id o14mr10373508wrj.230.1558366170546;
-        Mon, 20 May 2019 08:29:30 -0700 (PDT)
-Received: from lab-pc05.sra.uni-hannover.de (lab.sra.uni-hannover.de. [130.75.33.87])
-        by smtp.googlemail.com with ESMTPSA id y18sm14035176wmi.37.2019.05.20.08.29.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 08:29:29 -0700 (PDT)
-From:   Yannick Loeck <yannick.loeck@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de, Yannick Loeck <yannick.loeck@gmail.com>
-Subject: [PATCH] staging: pi433: fix misspelling of packet
-Date:   Mon, 20 May 2019 17:28:52 +0200
-Message-Id: <20190520152852.12420-1-yannick.loeck@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        bh=uk849dcKmoqtNYZ7eIsEjVmGVspH3FFqGVpKFEH8i9o=;
+        b=k9FldQUj6eursbf6uDt6pzLJ8f0n7Uyzyy3O2K10AYAYxdno9Xxnj69F/b5a4pf0k+
+         G5sXakKt1xiY5Iz5bUL3Zl9my3IqV8YWKsIZk1UEdfJV4xGPlykec3BAZ7dkAryJsn7X
+         Awv06V/Av0TFKw/MEpUkrVRPXu5bNYfWJLbnR/WfokbmcGtZs6ysUyQL1dy7sFWlRSS5
+         uycv2j1JRBn6iIRFE/WMekaORi/efKXJG2tqOxeOY8rWSC54tOBKONWs7WmEEBsU2q/Y
+         8Y8Y62jiyNmSKdKtb0euFTCBZKnA0MEMMagCW3rok+HhFUCESgpU7blvK7vfUr0KRjpn
+         eS0g==
+X-Gm-Message-State: APjAAAU3wn8Jb9z2yd3Dj76sKCZ3uOtmT/OiXtpmFFT0IeCHzpLtddtv
+        WSXAR5qrIeSKBZ4UeftzYNc=
+X-Google-Smtp-Source: APXvYqwyXn2QfIUSh4Bsml8Wczd1ITUi8sjw0fVBO5AhMEakb/0LrV0/oQ6eSKM8tB+PxEOC4Ou7gA==
+X-Received: by 2002:a65:6145:: with SMTP id o5mr76017985pgv.262.1558365891426;
+        Mon, 20 May 2019 08:24:51 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.19.216])
+        by smtp.gmail.com with ESMTPSA id h13sm21522895pfo.98.2019.05.20.08.24.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 08:24:50 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     miguel.ojeda.sandonis@gmail.com
+Cc:     linux-kernel@vger.kernel.org, willy@infradead.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH 1/2] auxdisplay/cfag12864bfb.c: Convert to use vm_map_pages_zero()
+Date:   Mon, 20 May 2019 20:58:56 +0530
+Message-Id: <1558366136-3765-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the misspelling of packet in
-<MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE>
+While using mmap, the incorrect value of length and vm_pgoff are
+ignored and this driver go ahead with mapping cfag12864b_buffer
+to user vma.
 
-Signed-off-by: Yannick Loeck <yannick.loeck@gmail.com>
+Convert vm_insert_pages() to use vm_map_pages_zero(). We could later
+"fix" these drivers to behave according to the normal vm_pgoff
+offsetting simply by removing the _zero suffix on the function name and
+if that causes regressions, it gives us an easy way to revert.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- drivers/staging/pi433/rf69.c           | 4 ++--
- drivers/staging/pi433/rf69_registers.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/auxdisplay/cfag12864bfb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 4cd16257f0aa..7d86bb8be245 100644
---- a/drivers/staging/pi433/rf69.c
-+++ b/drivers/staging/pi433/rf69.c
-@@ -722,10 +722,10 @@ int rf69_set_packet_format(struct spi_device *spi,
- 	switch (packet_format) {
- 	case packet_length_var:
- 		return rf69_set_bit(spi, REG_PACKETCONFIG1,
--				    MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
-+				    MASK_PACKETCONFIG1_PACKET_FORMAT_VARIABLE);
- 	case packet_length_fix:
- 		return rf69_clear_bit(spi, REG_PACKETCONFIG1,
--				      MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
-+				      MASK_PACKETCONFIG1_PACKET_FORMAT_VARIABLE);
- 	default:
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
-diff --git a/drivers/staging/pi433/rf69_registers.h b/drivers/staging/pi433/rf69_registers.h
-index f925a83c3247..be5497cdace0 100644
---- a/drivers/staging/pi433/rf69_registers.h
-+++ b/drivers/staging/pi433/rf69_registers.h
-@@ -395,7 +395,7 @@
- #define  MASK_SYNC_CONFIG_SYNC_TOLERANCE	0x07
+diff --git a/drivers/auxdisplay/cfag12864bfb.c b/drivers/auxdisplay/cfag12864bfb.c
+index 40c8a55..4074886 100644
+--- a/drivers/auxdisplay/cfag12864bfb.c
++++ b/drivers/auxdisplay/cfag12864bfb.c
+@@ -52,8 +52,9 @@
  
- /* RegPacketConfig1 */
--#define  MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE	0x80
-+#define  MASK_PACKETCONFIG1_PACKET_FORMAT_VARIABLE	0x80
- #define  MASK_PACKETCONFIG1_DCFREE			0x60
- #define  MASK_PACKETCONFIG1_CRC_ON			0x10 /* default */
- #define  MASK_PACKETCONFIG1_CRCAUTOCLEAR_OFF		0x08
+ static int cfag12864bfb_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ {
+-	return vm_insert_page(vma, vma->vm_start,
+-		virt_to_page(cfag12864b_buffer));
++	struct page *pages = virt_to_page(cfag12864b_buffer);
++
++	return vm_map_pages_zero(vma, &pages, 1);
+ }
+ 
+ static struct fb_ops cfag12864bfb_ops = {
 -- 
-2.17.1
+1.9.1
 
