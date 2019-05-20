@@ -2,77 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB210237C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC213237C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733200AbfETNIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:08:39 -0400
-Received: from sauhun.de ([88.99.104.3]:50804 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfETNIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:08:39 -0400
-Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
-        by pokefinder.org (Postfix) with ESMTPSA id CCA912C2761;
-        Mon, 20 May 2019 15:08:37 +0200 (CEST)
-Date:   Mon, 20 May 2019 15:08:37 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 1/2] eeprom: at24: use devm_i2c_new_dummy_device()
-Message-ID: <20190520130837.iglqohsyi5kyj55y@katana>
-References: <20190520071042.21072-1-brgl@bgdev.pl>
- <20190520071042.21072-2-brgl@bgdev.pl>
+        id S2387450AbfETNJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:09:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36277 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730570AbfETNJC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 09:09:02 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a17so16199743qth.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:09:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dFuLtne3guYuFwbHKpK48q543MOC/my0Y0MNbyUjuPE=;
+        b=ZY3myx134WpV0MDj+yzXlLAHHLDYBFPL59Jv1/uvsy0DijGI+qvjoAJ0dFEYf2GL6m
+         qFgNJeIHHYF3ziiu6bvOstuOOpEMzWwgvQ76IELgiHPEwtJD78/JfBih66kGLrISbIJ6
+         Zl5YSShRtu+/vfgpTk3JbN0hIlCbfndUkRk35985a6qkPgiNIYMCg/T/bUTvJqkEasGT
+         5tTj7+sEHnqxNpjamRsP0g5cZdeDEmKx8N3eb/77SIhm09iYmy823GiY9/vhwE06ktK5
+         jHzLuF2aNARvf21ou2bcOozALzr1eGOnj3gQIZTfriqysqN4mjgCJ5hMYLleeSCKJw/V
+         jVPA==
+X-Gm-Message-State: APjAAAXNzFD7YxuxZzGruSYd3a6/1o0M4sJeFBAs1c8dsH1A/I5VUSm8
+        gw3dSre28Ne5qh30hfCsrfOnuQ==
+X-Google-Smtp-Source: APXvYqxFmd0nNrX047VR0mRGjhNHl6yQJCi/WzEdlp1N5DlMzFNrD0wqdFlb4sI+QUnVeRVV7+bGMQ==
+X-Received: by 2002:a0c:af51:: with SMTP id j17mr38357606qvc.34.1558357741216;
+        Mon, 20 May 2019 06:09:01 -0700 (PDT)
+Received: from redhat.com (pool-173-76-105-71.bstnma.fios.verizon.net. [173.76.105.71])
+        by smtp.gmail.com with ESMTPSA id n190sm7929770qkb.83.2019.05.20.06.08.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 20 May 2019 06:08:59 -0700 (PDT)
+Date:   Mon, 20 May 2019 09:08:52 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Michael Roth <mdroth@linux.vnet.ibm.com>,
+        Mike Anderson <andmike@linux.ibm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190520090602-mutt-send-email-mst@kernel.org>
+References: <20190204144048-mutt-send-email-mst@kernel.org>
+ <87ef71seve.fsf@morokweng.localdomain>
+ <20190320171027-mutt-send-email-mst@kernel.org>
+ <87tvfvbwpb.fsf@morokweng.localdomain>
+ <20190323165456-mutt-send-email-mst@kernel.org>
+ <87a7go71hz.fsf@morokweng.localdomain>
+ <20190419190258-mutt-send-email-mst@kernel.org>
+ <875zr228zf.fsf@morokweng.localdomain>
+ <20190424210813-mutt-send-email-mst@kernel.org>
+ <871s1o1ft0.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ftlxdhkxnq557dwc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520071042.21072-2-brgl@bgdev.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <871s1o1ft0.fsf@morokweng.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 26, 2019 at 08:56:43PM -0300, Thiago Jung Bauermann wrote:
+> 
+> Michael S. Tsirkin <mst@redhat.com> writes:
+> 
+> > On Wed, Apr 24, 2019 at 10:01:56PM -0300, Thiago Jung Bauermann wrote:
+> >>
+> >> Michael S. Tsirkin <mst@redhat.com> writes:
+> >>
+> >> > On Wed, Apr 17, 2019 at 06:42:00PM -0300, Thiago Jung Bauermann wrote:
+> >> >>
+> >> >> Michael S. Tsirkin <mst@redhat.com> writes:
+> >> >>
+> >> >> > On Thu, Mar 21, 2019 at 09:05:04PM -0300, Thiago Jung Bauermann wrote:
+> >> >> >>
+> >> >> >> Michael S. Tsirkin <mst@redhat.com> writes:
+> >> >> >>
+> >> >> >> > On Wed, Mar 20, 2019 at 01:13:41PM -0300, Thiago Jung Bauermann wrote:
+> >> >> >> >> >From what I understand of the ACCESS_PLATFORM definition, the host will
+> >> >> >> >> only ever try to access memory addresses that are supplied to it by the
+> >> >> >> >> guest, so all of the secure guest memory that the host cares about is
+> >> >> >> >> accessible:
+> >> >> >> >>
+> >> >> >> >>     If this feature bit is set to 0, then the device has same access to
+> >> >> >> >>     memory addresses supplied to it as the driver has. In particular,
+> >> >> >> >>     the device will always use physical addresses matching addresses
+> >> >> >> >>     used by the driver (typically meaning physical addresses used by the
+> >> >> >> >>     CPU) and not translated further, and can access any address supplied
+> >> >> >> >>     to it by the driver. When clear, this overrides any
+> >> >> >> >>     platform-specific description of whether device access is limited or
+> >> >> >> >>     translated in any way, e.g. whether an IOMMU may be present.
+> >> >> >> >>
+> >> >> >> >> All of the above is true for POWER guests, whether they are secure
+> >> >> >> >> guests or not.
+> >> >> >> >>
+> >> >> >> >> Or are you saying that a virtio device may want to access memory
+> >> >> >> >> addresses that weren't supplied to it by the driver?
+> >> >> >> >
+> >> >> >> > Your logic would apply to IOMMUs as well.  For your mode, there are
+> >> >> >> > specific encrypted memory regions that driver has access to but device
+> >> >> >> > does not. that seems to violate the constraint.
+> >> >> >>
+> >> >> >> Right, if there's a pre-configured 1:1 mapping in the IOMMU such that
+> >> >> >> the device can ignore the IOMMU for all practical purposes I would
+> >> >> >> indeed say that the logic would apply to IOMMUs as well. :-)
+> >> >> >>
+> >> >> >> I guess I'm still struggling with the purpose of signalling to the
+> >> >> >> driver that the host may not have access to memory addresses that it
+> >> >> >> will never try to access.
+> >> >> >
+> >> >> > For example, one of the benefits is to signal to host that driver does
+> >> >> > not expect ability to access all memory. If it does, host can
+> >> >> > fail initialization gracefully.
+> >> >>
+> >> >> But why would the ability to access all memory be necessary or even
+> >> >> useful? When would the host access memory that the driver didn't tell it
+> >> >> to access?
+> >> >
+> >> > When I say all memory I mean even memory not allowed by the IOMMU.
+> >>
+> >> Yes, but why? How is that memory relevant?
+> >
+> > It's relevant when driver is not trusted to only supply correct
+> > addresses. The feature was originally designed to support userspace
+> > drivers within guests.
+> 
+> Ah, thanks for clarifying. I don't think that's a problem in our case.
+> If the guest provides an incorrect address, the hardware simply won't
+> allow the host to access it.
+> 
+> >> >> >> > Another idea is maybe something like virtio-iommu?
+> >> >> >>
+> >> >> >> You mean, have legacy guests use virtio-iommu to request an IOMMU
+> >> >> >> bypass? If so, it's an interesting idea for new guests but it doesn't
+> >> >> >> help with guests that are out today in the field, which don't have A
+> >> >> >> virtio-iommu driver.
+> >> >> >
+> >> >> > I presume legacy guests don't use encrypted memory so why do we
+> >> >> > worry about them at all?
+> >> >>
+> >> >> They don't use encrypted memory, but a host machine will run a mix of
+> >> >> secure and legacy guests. And since the hypervisor doesn't know whether
+> >> >> a guest will be secure or not at the time it is launched, legacy guests
+> >> >> will have to be launched with the same configuration as secure guests.
+> >> >
+> >> > OK and so I think the issue is that hosts generally fail if they set
+> >> > ACCESS_PLATFORM and guests do not negotiate it.
+> >> > So you can not just set ACCESS_PLATFORM for everyone.
+> >> > Is that the issue here?
+> >>
+> >> Yes, that is one half of the issue. The other is that even if hosts
+> >> didn't fail, existing legacy guests wouldn't "take the initiative" of
+> >> not negotiating ACCESS_PLATFORM to get the improved performance. They'd
+> >> have to be modified to do that.
+> >
+> > So there's a non-encrypted guest, hypervisor wants to set
+> > ACCESS_PLATFORM to allow encrypted guests but that will slow down legacy
+> > guests since their vIOMMU emulation is very slow.
+> 
+> Yes.
+> 
+> > So enabling support for encryption slows down non-encrypted guests. Not
+> > great but not the end of the world, considering even older guests that
+> > don't support ACCESS_PLATFORM are completely broken and you do not seem
+> > to be too worried by that.
+> 
+> Well, I guess that would be the third half of the issue. :-)
+> 
+> > For future non-encrypted guests, bypassing the emulated IOMMU for when
+> > that emulated IOMMU is very slow might be solvable in some other way,
+> > e.g. with virtio-iommu. Which reminds me, could you look at
+> > virtio-iommu as a solution for some of the issues?
+> > Review of that patchset from that POV would be appreciated.
+> 
+> Yes, I will have a look. As you mentioned already, virtio-iommu doesn't
+> define a way to request iommu bypass for a device so that would have to
+> be added.
 
---ftlxdhkxnq557dwc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think it does have a way for guest to request bypass:
+there's a feature bit which - if set - specifies that a device
+that is in no domain bypasses the iommu.
 
-On Mon, May 20, 2019 at 09:10:41AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> Now that it's upstream, use the resource managed version
-> of i2c_new_dummy_device().
->=20
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Though to be honest in practice I don't think such a feature in
+> virtio-iommu would make things easier for us, at least in the short
+> term. It would take the same effort to define a powerpc-specific
+> hypercall to accomplish the same thing (easier, in fact since we
+> wouldn't have to implement the rest of virtio-iommu). In fact, there
+> already is such hypercall, but it is only defined for VIO devices
+> (RTAS_IBM_SET_TCE_BYPASS in QEMU). We would have to make it work on
+> virtio devices as well.
 
-Looks good now (not tested, though):
+Now I'm a bit lost. Could you pls describe quickly what does it do?
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Thanks!
-
-
---ftlxdhkxnq557dwc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlziptAACgkQFA3kzBSg
-KbbRzg/+OYe+nhJHP0/DHkPXgudVkY1IXbpxlXsulCQTYA2pjj7d6oOnHrBKogGu
-Ytqw+1eCb358NeqOaTznJ0a7ZeB7aU9Wa3mznOxonqBJsARso8a42H+vm2JOauRR
-eOrPnd0zyBKpraW5GY9sVy7h/UGwRIyh44zOGMJJQFTwbG/Ynw0RB6Gfo+DlSW7l
-Uh8FY2rJFalSDr9bIAZ8bA3qt2gQwlmk+gv/cdQxMbqbSi9t4ygkJat9zVc+RcBg
-xpnrL4VFeLDCcEXh9+zg2mnZ7Ht+ykjPL7Q/I4W4TC+Eb1f/eshZ/1+j/9Ei+N6g
-3qLBPDrRTGi4U+MJG6vTQsYbc1X4i4jo+UlFJed8cUtd5BUo9b7TVKR3BKS8IIVW
-qjIIY9sx9OLddS3t/ElZG54kywAdh7d5yjWICNlX8m9h4icAqVwVevkX0yMaQHez
-KYpeFWShF1GEehPbxbI5VrFenH1fc4jzulLBzw07X+IpS9DZnBXLX3xcDp4UH50k
-h21y1+dlBg3cWpQXNSxlj8rnyb32H06F14sShi/bwAQGtuSN3z1pw2UShu9KcJH/
-37OZAo8aKwaR+K7+6vtLjipmtshGxMNZW8v1R6bn5nVLHfgMepbn++WhWSS+Wu3J
-+pBwnYJdlfcu1BiqzpQp7phvQYB5MAiTgAihtUXGBeVUulqOVKg=
-=hgjr
------END PGP SIGNATURE-----
-
---ftlxdhkxnq557dwc--
+> --
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
