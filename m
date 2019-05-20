@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2F623369
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 991D62376C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732999AbfETMQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:16:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
+        id S2391435AbfETMsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:48:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732945AbfETMQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:16:26 -0400
+        id S2388129AbfETMXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6842220863;
-        Mon, 20 May 2019 12:16:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EBBD21479;
+        Mon, 20 May 2019 12:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354585;
-        bh=RjfGTwubJ9rofGAXrt25Mfq6Oq61L+xelgbY4AQ5uRI=;
+        s=default; t=1558354998;
+        bh=cm3X3sPLFncga0AO6FdB7CwX0XUcBLx38ZGNlPvHQfM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hlTw9e4POw/2qG+FRGKXGVwIEI013Djy/IOhd8WGjMp/BMc4dTxTOhhH1yXHKLR0V
-         he9UW1VCmx9WY/rTpw+1UceDYOj0ECTxdYVbdrzXGOOqOBAQ55KD9+c8xeSD+LlYeH
-         DOwnfqor57RQ7/0j6+lyYWftynKpnE8UI3XO9U7o=
+        b=ERYY2z9wgAszGxTtv1RW/P0hG/cgmSWqP9m6P0xVJ+RjO9Y49Sz/5UrQNiXZjLGKU
+         ZPBTzQzvXvtvGYXUMKpdz2ZyT0jr1yuB601QjgGIW+tCJkSeQd240ARD4gRvv1Swxm
+         HEIdHwor0aOYOgepkTC360ELFsOz/lBjgRX2uOkQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 16/44] ALSA: usb-audio: Fix a memory leak bug
+        stable@vger.kernel.org, Rajat Jain <rajatja@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 059/105] ACPI: PM: Set enable_for_wake for wakeup GPEs during suspend-to-idle
 Date:   Mon, 20 May 2019 14:14:05 +0200
-Message-Id: <20190520115232.820086524@linuxfoundation.org>
+Message-Id: <20190520115251.197424915@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Rajat Jain <rajatja@google.com>
 
-commit cb5173594d50c72b7bfa14113dfc5084b4d2f726 upstream.
+commit 2f844b61db8297a1f7a06adf2eb5c43381f2c183 upstream.
 
-In parse_audio_selector_unit(), the string array 'namelist' is allocated
-through kmalloc_array(), and each string pointer in this array, i.e.,
-'namelist[]', is allocated through kmalloc() in the following for loop.
-Then, a control instance 'kctl' is created by invoking snd_ctl_new1(). If
-an error occurs during the creation process, the string array 'namelist',
-including all string pointers in the array 'namelist[]', should be freed,
-before the error code ENOMEM is returned. However, the current code does
-not free 'namelist[]', resulting in memory leaks.
+I noticed that recently multiple systems (chromebooks) couldn't wake
+from S0ix using LID or Keyboard after updating to a newer kernel. I
+bisected and it turned up commit f941d3e41da7 ("ACPI: EC / PM: Disable
+non-wakeup GPEs for suspend-to-idle"). I checked that the issue got
+fixed if that commit was reverted.
 
-To fix the above issue, free all string pointers 'namelist[]' in a loop.
+I debugged and found that although PNP0C0D:00 (representing the LID)
+is wake capable and should wakeup the system per the code in
+acpi_wakeup_gpe_init() and in drivers/acpi/button.c:
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+localhost /sys # cat /proc/acpi/wakeup
+Device  S-state   Status   Sysfs node
+LID0      S4    *enabled   platform:PNP0C0D:00
+CREC      S5    *disabled  platform:GOOG0004:00
+                *disabled  platform:cros-ec-dev.1.auto
+                *disabled  platform:cros-ec-accel.0
+                *disabled  platform:cros-ec-accel.1
+                *disabled  platform:cros-ec-gyro.0
+                *disabled  platform:cros-ec-ring.0
+                *disabled  platform:cros-usbpd-charger.2.auto
+                *disabled  platform:cros-usbpd-logger.3.auto
+D015      S3    *enabled   i2c:i2c-ELAN0000:00
+PENH      S3    *enabled   platform:PRP0001:00
+XHCI      S3    *enabled   pci:0000:00:14.0
+GLAN      S4    *disabled
+WIFI      S3    *disabled  pci:0000:00:14.3
+localhost /sys #
+
+On debugging, I found that its corresponding GPE is not being enabled.
+The particular GPE's "gpe_register_info->enable_for_wake" does not
+have any bits set when acpi_enable_all_wakeup_gpes() comes around to
+use it. I looked at code and could not find any other code path that
+should set the bits in "enable_for_wake" bitmask for the wake enabled
+devices for s2idle.  [I do see that it happens for S3 in
+acpi_sleep_prepare()].
+
+Thus I used the same call to enable the GPEs for wake enabled devices,
+and verified that this fixes the regression I was seeing on multiple
+of my devices.
+
+[ rjw: The problem is that commit f941d3e41da7 ("ACPI: EC / PM:
+  Disable non-wakeup GPEs for suspend-to-idle") forgot to add
+  the acpi_enable_wakeup_devices() call for s2idle along with
+  acpi_enable_all_wakeup_gpes(). ]
+
+Fixes: f941d3e41da7 ("ACPI: EC / PM: Disable non-wakeup GPEs for suspend-to-idle")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203579
+Signed-off-by: Rajat Jain <rajatja@google.com>
+[ rjw: Subject & changelog ]
+Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/sleep.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2178,6 +2178,8 @@ static int parse_audio_selector_unit(str
- 	kctl = snd_ctl_new1(&mixer_selectunit_ctl, cval);
- 	if (! kctl) {
- 		usb_audio_err(state->chip, "cannot malloc kcontrol\n");
-+		for (i = 0; i < desc->bNrInPins; i++)
-+			kfree(namelist[i]);
- 		kfree(namelist);
- 		kfree(cval);
- 		return -ENOMEM;
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -977,6 +977,8 @@ static int acpi_s2idle_prepare(void)
+ 	if (acpi_sci_irq_valid())
+ 		enable_irq_wake(acpi_sci_irq);
+ 
++	acpi_enable_wakeup_devices(ACPI_STATE_S0);
++
+ 	/* Change the configuration of GPEs to avoid spurious wakeup. */
+ 	acpi_enable_all_wakeup_gpes();
+ 	acpi_os_wait_events_complete();
+@@ -1026,6 +1028,8 @@ static void acpi_s2idle_restore(void)
+ {
+ 	acpi_enable_all_runtime_gpes();
+ 
++	acpi_disable_wakeup_devices(ACPI_STATE_S0);
++
+ 	if (acpi_sci_irq_valid())
+ 		disable_irq_wake(acpi_sci_irq);
+ 
 
 
