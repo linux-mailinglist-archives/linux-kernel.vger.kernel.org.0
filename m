@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3542E23B39
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE4B23B44
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389820AbfETOvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:51:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33970 "EHLO mail.kernel.org"
+        id S2392019AbfETOw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:52:28 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40524 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732283AbfETOvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:51:11 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BDAE21721;
-        Mon, 20 May 2019 14:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558363870;
-        bh=KxVzuRz+VMTUFhknDdKVGc3wrqC8JIymUA+D2BFiRnc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fhMCSaVq4D/iqwBFHFK2VQBG5q4sBcI7jYbwMkbFUGwdEOd4hIJEzim5k48Us29Vf
-         6ifK4tfZpmqc24N80eSlPhMb68GMek5D7avcpcuGKHm3beXUlN5UxrMLhBvBW8hbwh
-         C5IgqI/fqKKgXhbBSK3wrokub+f3hN6ArALnc73M=
-Content-Type: text/plain; charset="utf-8"
+        id S1732283AbfETOw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:52:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=OR15pTh8PFO24Zv20KODF6WGQGNAYqpGzpNwW8lu2Bo=; b=rH4MGkXJHTS2o50pH7iaU/CF3n
+        OO3sTW15OBk/JpauvSShmMxCoCseHm4wc8OxuD/+yA+uox2hXWGzxRU5iAFwgdjHyi/MEKqPCxzjp
+        +/8+/XKlMQ3OiFbXKT4o1BoTN4tHeU5+EEzKELb+FofkPr5CVj/Jk/BQIVIhEsH3NoTQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hSjeC-0000Cv-Td; Mon, 20 May 2019 16:52:16 +0200
+Date:   Mon, 20 May 2019 16:52:16 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
+        palmer@sifive.com, paul.walmsley@sifive.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] i2c-ocores: sifive: add polling mode workaround
+ for FU540-C000 SoC.
+Message-ID: <20190520145216.GD22024@lunn.ch>
+References: <1558361478-4381-1-git-send-email-sagar.kadam@sifive.com>
+ <1558361478-4381-4-git-send-email-sagar.kadam@sifive.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190520103435.30850-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190520103435.30850-1-jorge.ramirez-ortiz@linaro.org>
-Subject: Re: [PATCH] tty: serial: msm_serial: Fix XON/XOFF
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     jslaby@suse.com, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com,
-        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khasim.mohammed@linaro.org,
-        agsumit@qti.qualcomm.com
-To:     agross@kernel.org, david.brown@linaro.org,
-        gregkh@linuxfoundation.org, jorge.ramirez-ortiz@linaro.org
-User-Agent: alot/0.8.1
-Date:   Mon, 20 May 2019 07:51:09 -0700
-Message-Id: <20190520145110.7BDAE21721@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558361478-4381-4-git-send-email-sagar.kadam@sifive.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jorge Ramirez-Ortiz (2019-05-20 03:34:35)
-> When the tty layer requests the uart to throttle, the current code
-> executing in msm_serial will trigger "Bad mode in Error Handler" and
-> generate an invalid stack frame in pstore before rebooting (that is if
-> pstore is indeed configured: otherwise the user shall just notice a
-> reboot with no further information dumped to the console).
->=20
-> This patch replaces the PIO byte accessor with the word accessor
-> already used in PIO mode.
+On Mon, May 20, 2019 at 07:41:18PM +0530, Sagar Shrikant Kadam wrote:
+> The i2c-ocore driver already has a polling mode interface.But it needs
+> a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
+> There is an erratum in FU540 chip that prevents interrupt driven i2c
+> transfers from working, and also the I2C controller's interrupt bit
+> cannot be cleared if set, due to this the existing i2c polling mode
+> interface added in mainline earlier doesn't work, and CPU stall's
+> infinitely, when-ever i2c transfer is initiated.
+> 
+> Ref:previous polling mode support in mainline
+> 
+> 	commit 69c8c0c0efa8 ("i2c: ocores: add polling interface")
+> 
+> The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
+> FU540-COOO SoC.
+> 
+> Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
 
-Because the hardware only accepts word based accessors and fails
-otherwise? I can believe that.
+Much better, thanks.
 
-I wonder if the earlier UART hardware this driver used to support (i.e.
-pre-DM) would accept byte access to the registers. It's possible, but we
-don't really care because those boards aren't supported.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
->=20
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
->  drivers/tty/serial/msm_serial.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_ser=
-ial.c
-> index 109096033bb1..23833ad952ba 100644
-> --- a/drivers/tty/serial/msm_serial.c
-> +++ b/drivers/tty/serial/msm_serial.c
-> @@ -869,10 +870,12 @@ static void msm_handle_tx(struct uart_port *port)
->                 else
->                         tf =3D port->membase + UART_TF;
-> =20
-> +               buf[0] =3D port->x_char;
-> +
->                 if (msm_port->is_uartdm)
->                         msm_reset_dm_count(port, 1);
-> =20
-> -               iowrite8_rep(tf, &port->x_char, 1);
-> +               iowrite32_rep(tf, buf, 1);
-
-I suppose it's OK to write some extra zeroes here?
-
+    Andrew
