@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B2AA2351F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC0E23378
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390676AbfETMdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:33:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
+        id S2387456AbfETMRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:17:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733069AbfETMdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:33:09 -0400
+        id S2387446AbfETMRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:17:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C179C214DA;
-        Mon, 20 May 2019 12:33:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98AD320656;
+        Mon, 20 May 2019 12:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355589;
-        bh=B9GtFRtEWiK9CJU4WrnSm69qgYni74dMOMcA3Fhh3K8=;
+        s=default; t=1558354622;
+        bh=4s/pIXABEDSZVoKp7kapNJZleYdXNZPVMKYkWaXO+R4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNrMsFpVgzd4i+zoU+IOCfSqGttFBAwNPVzWfatgyMqVR4EmC9Ax1AeSEB04UVERO
-         3D7qD3l0/LlBcdI7CX1tajGeHuyBAfysuWzlTRF/hqaAj3qOnWj+Uj60D/9Zrnfpr7
-         RVoR1x6MGGqyKtK8WWZeMgiePjJwWLs1ynlcqhaY=
+        b=E1vTfquyjfrkI8uTppDPI8rWWoOsCwoDrT63Mi53DpeaABNWULq0mTNVM6j82tMKG
+         m1eG4xSh0XBU88+PdfwolIV+e0jiXQCntdqHBxpqoPE+WSQMabmE6RbkfrxVqJohAg
+         EHzi39t+B5DWjS/PFibV4Qbk9sAZnbjzT58wwIog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 051/128] ALSA: hda/hdmi - Consider eld_valid when reporting jack event
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>
+Subject: [PATCH 4.9 09/44] arm64: compat: Reduce address limit
 Date:   Mon, 20 May 2019 14:13:58 +0200
-Message-Id: <20190520115253.224373942@linuxfoundation.org>
+Message-Id: <20190520115232.082610551@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-commit 7f641e26a6df9269cb25dd7a4b0a91d6586ed441 upstream.
+commit d263119387de9975d2acba1dfd3392f7c5979c18 upstream.
 
-On the machines with AMD GPU or Nvidia GPU, we often meet this issue:
-after s3, there are 4 HDMI/DP audio devices in the gnome-sound-setting
-even there is no any monitors plugged.
+Currently, compat tasks running on arm64 can allocate memory up to
+TASK_SIZE_32 (UL(0x100000000)).
 
-When this problem happens, we check the /proc/asound/cardX/eld#N.M, we
-will find the monitor_present=1, eld_valid=0.
+This means that mmap() allocations, if we treat them as returning an
+array, are not compliant with the sections 6.5.8 of the C standard
+(C99) which states that: "If the expression P points to an element of
+an array object and the expression Q points to the last element of the
+same array object, the pointer expression Q+1 compares greater than P".
 
-The root cause is BIOS or GPU driver makes the PRESENCE valid even no
-monitor plugged, and of course the driver will not get the valid
-eld_data subsequently.
+Redefine TASK_SIZE_32 to address the issue.
 
-In this situation, we should not report the jack_plugged event, to do
-so, let us change the function hdmi_present_sense_via_verbs(). In this
-function, it reads the pin_sense via snd_hda_pin_sense(), after
-calling this function, the jack_dirty is 0, and before exiting
-via_verbs(), we change the shadow pin_sense according to both
-monitor_present and eld_valid, then in the snd_hda_jack_report_sync(),
-since the jack_dirty is still 0, it will report jack event according
-to this modified shadow pin_sense.
-
-After this change, the driver will not report Jack_is_plugged event
-through hdmi_present_sense_via_verbs() if monitor_present is 1 and
-eld_valid is 0.
-
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Jann Horn <jannh@google.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+[will: fixed typo in comment]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/processor.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1551,9 +1551,11 @@ static bool hdmi_present_sense_via_verbs
- 	ret = !repoll || !eld->monitor_present || eld->eld_valid;
- 
- 	jack = snd_hda_jack_tbl_get(codec, pin_nid);
--	if (jack)
-+	if (jack) {
- 		jack->block_report = !ret;
--
-+		jack->pin_sense = (eld->monitor_present && eld->eld_valid) ?
-+			AC_PINSENSE_PRESENCE : 0;
-+	}
- 	mutex_unlock(&per_pin->lock);
- 	return ret;
- }
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -49,7 +49,15 @@
+  * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
+  */
+ #ifdef CONFIG_COMPAT
++#ifdef CONFIG_ARM64_64K_PAGES
++/*
++ * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
++ * by the compat vectors page.
++ */
+ #define TASK_SIZE_32		UL(0x100000000)
++#else
++#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
++#endif /* CONFIG_ARM64_64K_PAGES */
+ #define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
+ 				TASK_SIZE_32 : TASK_SIZE_64)
+ #define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
 
 
