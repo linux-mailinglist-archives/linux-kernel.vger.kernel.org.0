@@ -2,163 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CB122FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D799922F9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbfETJIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:08:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46783 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfETJIK (ORCPT
+        id S1731523AbfETJDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:03:32 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51373 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbfETJDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:08:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y11so6891782pfm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iobrvkxDT6nYXsPnTycSKoAi+/ZUGwRhXcWR3t2hhKA=;
-        b=YGMFMvzmnYk0vgW+1qinWeqho4ZrFohDa91VmDHH0o1w7TGJiw9k3Uv7vQnjo6c6DE
-         +wAEgQCxg7/pT/3sX2p1y70F3SiL/Vb6nWGWHQTB1tfe3v0almhqdNOHCpJOEbIT5Dm8
-         Rm/nJSjTvc09FlYZ/xB3j0Fci3TvQU+Lwjnd0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iobrvkxDT6nYXsPnTycSKoAi+/ZUGwRhXcWR3t2hhKA=;
-        b=Uxsiq2Va6Q3FYWGkpWJhhA61MAcuhLsz9T1Bjm7wv+ejVVqFSS/XxSFYGzqye/thAs
-         VSOT1rXtIq7hBbOR1zl6zjiDn6EKgmlRAli00ufVU6h+pu5YT2rdIgw4gr4JxkZCUyai
-         bLjc4W/Fq6vxOAAFy4DL5JwPa1kZbDhylfwgIOrvBeZn5/tQVw/sbTMWCt2mzuK5PZhD
-         8bMPb53KXB1Z2lCwzGCVJAcNceCaCzNH0MR+dGgigPQHmWhMg4EYC7dMW6Q6n1Pd//u1
-         +yRVSZMEHbSsDR1XsAbXTtWTKJpq3AnBE35ZuGtmLoH1ehVw2RJIhP6nNgtytMsPiVUj
-         v3Ow==
-X-Gm-Message-State: APjAAAXRSeg+1xbSxBo++j97sD3jlqi4lJojfDDUOtlNDtQnt9U13Mdk
-        JQ4TP/jHaFgqML8Jyy4CmjVfLw==
-X-Google-Smtp-Source: APXvYqzDwmf2r63M8wJFjDamN8uTWypMZ/YvvCw1Tdx3AB1+JxAKjRinOny5iplJXhONAKLzQyVDGQ==
-X-Received: by 2002:a65:42cd:: with SMTP id l13mr21087709pgp.72.1558343289969;
-        Mon, 20 May 2019 02:08:09 -0700 (PDT)
-Received: from localhost.localdomain ([183.82.227.193])
-        by smtp.gmail.com with ESMTPSA id d15sm51671614pfm.186.2019.05.20.02.08.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 02:08:09 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     bshah@mykolab.com, Vasily Khoruzhick <anarsoul@gmail.com>,
-        powerpan@qq.com, michael@amarulasolutions.com,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [DO NOT MERGE] [PATCH v10 11/11] ARM: dts: sun8i: bananapi-m2m: Enable Bananapi S070WV20-CT16 DSI panel
-Date:   Mon, 20 May 2019 14:33:18 +0530
-Message-Id: <20190520090318.27570-12-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190520090318.27570-1-jagan@amarulasolutions.com>
-References: <20190520090318.27570-1-jagan@amarulasolutions.com>
+        Mon, 20 May 2019 05:03:32 -0400
+X-Originating-IP: 90.88.22.185
+Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 89B0960010;
+        Mon, 20 May 2019 09:03:27 +0000 (UTC)
+Date:   Mon, 20 May 2019 11:03:27 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/25] clk: sunxi-ng: clk parent rewrite part 1
+Message-ID: <20190520090327.iejd3q7c3iwomzlz@flea>
+References: <20190520080421.12575-1-wens@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2ypype76y25ofynl"
+Content-Disposition: inline
+In-Reply-To: <20190520080421.12575-1-wens@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support for Bananapi S070WV20-CT16 DSI panel to
-BPI-M2M board.
 
-DSI panel connected via board DSI port with,
-- DCDC1 as VCC-DSI supply
-- DLDO1 as VDD supply
-- PL5 gpio for lcd reset gpio pin
-- PB7 gpio for lcd enable gpio pin
-- PL4 gpio for backlight enable pin
+--2ypype76y25ofynl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts | 40 ++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+On Mon, May 20, 2019 at 04:03:56PM +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> Hi everyone,
+>
+> This is series is the first part of a large series (I haven't done the
+> rest) of patches to rewrite the clk parent relationship handling within
+> the sunxi-ng clk driver. This is based on Stephen's recent work allowing
+> clk drivers to specify clk parents using struct clk_hw * or parsing DT
+> phandles in the clk node.
+>
+> This series can be split into a few major parts:
+>
+> 1) The first patch is a small fix for clk debugfs representation. This
+>    was done before commit 1a079560b145 ("clk: Cache core in
+>    clk_fetch_parent_index() without names") was posted, so it might or
+>    might not be needed. Found this when checking my work using
+>    clk_possible_parents.
+>
+> 2) A bunch of CLK_HW_INIT_* helper macros are added. These cover the
+>    situations I encountered, or assume I will encounter, such as single
+>    internal (struct clk_hw *) parent, single DT (struct clk_parent_data
+>    .fw_name), multiple internal parents, and multiple mixed (internal +
+>    DT) parents. A special variant for just an internal single parent is
+>    added, CLK_HW_INIT_HWS, which lets the driver share the singular
+>    list, instead of having the compiler create a compound literal every
+>    time. It might even make sense to only keep this variant.
+>
+> 3) A bunch of CLK_FIXED_FACTOR_* helper macros are added. The rationale
+>    is the same as the single parent CLK_HW_INIT_* helpers.
+>
+> 4) Bulk conversion of CLK_FIXED_FACTOR to use local parent references,
+>    either struct clk_hw * or DT .fw_name types, whichever the hardware
+>    requires.
+>
+> 5) The beginning of SUNXI_CCU_GATE conversion to local parent
+>    references. This part is not done. They are included as justification
+>    and examples for the shared list of clk parents case.
 
-diff --git a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-index e1c75f7fa3ca..4e71e81d2bad 100644
---- a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-+++ b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-@@ -44,6 +44,7 @@
- #include "sun8i-a33.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "BananaPi M2 Magic";
-@@ -61,6 +62,14 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 255>;
-+		default-brightness-level = <8>;
-+		enable-gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PL4 */
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -122,6 +131,27 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dcdc1>;		/* VCC3V3-DSI */
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "bananapi,s070wv20-ct16-icn6211";
-+		reg = <0>;
-+		enable-gpios = <&pio 1 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN: PB7 */
-+		reset-gpios = <&r_pio 0 5 GPIO_ACTIVE_HIGH>; /* LCD-RST: PL5 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -157,6 +187,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm0_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -269,6 +305,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.18.0.321.gffc6fa0e3
+That series is pretty neat. As far as sunxi is concerned, you can add my
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
+> I realize this is going to be many patches every time I convert a clock
+> type. Going forward would the people involved prefer I send out
+> individual patches like this series, or squash them all together?
+
+For bisection, I guess it would be good to keep the approach you've
+had in this series. If this is really too much, I guess we can always
+change oru mind later on.
+
+Thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--2ypype76y25ofynl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOJtXgAKCRDj7w1vZxhR
+xQfkAQDQX2OO7NWM6Uc/mv7S2HQgLu755CMRobYRqL6EDMn5twD/WlNMYOlQibvH
+Kk0T6Z3CVuTDEoh9v+fpo5OUWhc1qw4=
+=G/SF
+-----END PGP SIGNATURE-----
+
+--2ypype76y25ofynl--
