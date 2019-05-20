@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A1B233CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 362CA234A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387941AbfETMUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33484 "EHLO mail.kernel.org"
+        id S2389867AbfETM3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:29:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733065AbfETMUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:08 -0400
+        id S2388060AbfETM3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:29:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74C9021743;
-        Mon, 20 May 2019 12:20:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD35720815;
+        Mon, 20 May 2019 12:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354807;
-        bh=fbDrKmoJeq3LGdRpsbWasrPH90UZ9UC8Et8HiConAWg=;
+        s=default; t=1558355359;
+        bh=jlAxy7qu2d/sHWB+iguW6FoOguS3pnhmvYhNhR0sF84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fYTwlw7Y3xmO73Ez05t57K2NTSS1ZjNHg5fBsBkzko09PI7+4EDpJFozeuLsfnvJg
-         1x+K3+BtT99XAMyHqxeyU8k85161kTPYxW8Zoby8ClMnRs7RGS+Vi3s2cMQUPuszm3
-         /8SkuJw6Ctm8CTxeeXsAs5qGkll5YvlIqp0oWMF8=
+        b=xNR8kJ1ZPKAeaSHjLMO7qxNTffbEthnz7pQqkM8tH9qN4pMgvZDzWp5YHv8zrrMKD
+         v4QlWp3NHaNjdBFgpXYhXqvzIkD0p/0wq46HOrsRcydg3AHPLI31717G3CqfFUUNXr
+         7YO/N6vo+HVchULJxp+dSMjGuEa/hq1iUJsPMRMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
         Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         stable@kernel.org
-Subject: [PATCH 4.14 49/63] ext4: actually request zeroing of inode table after grow
+Subject: [PATCH 5.0 088/123] ext4: fix ext4_show_options for file systems w/o journal
 Date:   Mon, 20 May 2019 14:14:28 +0200
-Message-Id: <20190520115236.465687677@linuxfoundation.org>
+Message-Id: <20190520115250.746339386@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-commit 310a997fd74de778b9a4848a64be9cda9f18764a upstream.
+commit 50b29d8f033a7c88c5bc011abc2068b1691ab755 upstream.
 
-It is never possible, that number of block groups decreases,
-since only online grow is supported.
+Instead of removing EXT4_MOUNT_JOURNAL_CHECKSUM from s_def_mount_opt as
+I assume was intended, all other options were blown away leading to
+_ext4_show_options() output being incorrect.
 
-But after a growing occured, we have to zero inode tables
-for just created new block groups.
-
-Fixes: 19c5246d2516 ("ext4: add new online resize interface")
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Fixes: 1e381f60dad9 ("ext4: do not allow journal_opts for fs w/o journal")
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ioctl.c |    2 +-
+ fs/ext4/super.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -918,7 +918,7 @@ group_add_out:
- 		if (err == 0)
- 			err = err2;
- 		mnt_drop_write_file(filp);
--		if (!err && (o_group > EXT4_SB(sb)->s_groups_count) &&
-+		if (!err && (o_group < EXT4_SB(sb)->s_groups_count) &&
- 		    ext4_has_group_desc_csum(sb) &&
- 		    test_opt(sb, INIT_INODE_TABLE))
- 			err = ext4_register_li_request(sb, o_group);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4270,7 +4270,7 @@ static int ext4_fill_super(struct super_
+ 				 "data=, fs mounted w/o journal");
+ 			goto failed_mount_wq;
+ 		}
+-		sbi->s_def_mount_opt &= EXT4_MOUNT_JOURNAL_CHECKSUM;
++		sbi->s_def_mount_opt &= ~EXT4_MOUNT_JOURNAL_CHECKSUM;
+ 		clear_opt(sb, JOURNAL_CHECKSUM);
+ 		clear_opt(sb, DATA_FLAGS);
+ 		sbi->s_journal = NULL;
 
 
