@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 853952385C
+	by mail.lfdr.de (Postfix) with ESMTP id EFE202385D
 	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388698AbfETNiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:38:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34265 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730555AbfETNiA (ORCPT
+        id S2388828AbfETNiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:38:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45574 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732514AbfETNiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:38:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f8so8259139wrt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:37:59 -0700 (PDT)
+        Mon, 20 May 2019 09:38:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b18so14604299wrq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:38:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RpTG3YqbycVwvduhkvFP3UiUhyHPdqI1e6sTfcjn1Gc=;
-        b=OlLRjGyRcvQIUG7tTn6GR1dQLGDeBIwQKVejCwIx8Fyt8+C+RokYrA071pNFZSodGB
-         29QqZi0fyspsOlPLX1n7dF+li//GwdYGtWaD1MVaw/HFPiflRJL2FDUVeiJx2W3B3GXK
-         bvyFi9zoFyf+vHXwXVM8goC/UGdY8q8QTyJqe5d+vnaTn3z29p+XfvzPGlY9+sdefT6t
-         NuJRkvDsp3a+ogTRzHArof9TCbGODUfomXkQGbOZGZz4Q8g4ZUwzrKw6/x2Ws1QSM5yJ
-         ZQTgQCzpTL/sYmQlKKQBAvK1sLqxCxkg7gMr0uQ/sFSJRcVYJh3tXeZnZg1FIPVKE0YF
-         v/Qw==
+        bh=WK3u8/ndCxq4jioi0PwfFEPZB+6Qz5E/d+j0WFTc0jY=;
+        b=j4uX6SCuV87+MjAHfij8Yg59JJHav72YCDp5eiEkuT+Nu01QY4pI8MU6LRjJyFRjYl
+         jCbkfPBb1oyu0D6ZoGWOiFGmqpk+EA67BqCO8TvPr4i17/FgiA7CV4uUdVRv8QavufmO
+         Tpquff/U2q2P2ptXoCrSSLSc7DgFJ8sbBmzRZpleZhB2sSBFlr49KNvN17ln99+nB0D4
+         KO8d+jcrBxyni4Kfd7CdHZD3QBknYuC36kfOJ3xKT3SeM99e802mY3xVAfW1wXgK9eJe
+         3I4xAsYSoO3I3235eXfnkGXfpjh3PHBzdjXOYBtPXTQFmBiQWJIuZYu08f7957Uzf03x
+         S7Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RpTG3YqbycVwvduhkvFP3UiUhyHPdqI1e6sTfcjn1Gc=;
-        b=C+E0Z7PsHdLL6ntV2kHGA2ovCTmMZIhVZDhIZSxLqVt/TZRNxhfG07keUj0vmipKcY
-         RbrZ3GfVdjvZ0dU6pyTHm1ZmMFR+WP1SXAaud9kmvtgg2JCbEL4dLMABFtF0XyXK+LJs
-         A41nhqOpgKFYB66JBKnUEECjTOsSIpe0kvS3F7SvCJGIM53F0gNvdtdxUPvI60jgkPG7
-         1YVI+xP3iNxRcHlMSzXPYaZOSLo+lBXQvC+Z+NEgf7ObfQK67wDyIM72goLTeVkVwlC+
-         s3pemk0tZu3JWoeqp+U0w1a7mXRqWQl86M8jrqxky4ddt3dplv960zgaDyzAfqae3eru
-         t6Eg==
-X-Gm-Message-State: APjAAAV/xlNDNe1KBPYjHIm9uPrPEv/9EqbqMSmMuODGgCwUMJypJRCf
-        iJxg0n3z3OcOezGuLoelNfHLYA==
-X-Google-Smtp-Source: APXvYqxonM/GOKU79P5eVOsqtwE35oRw5SktT2gEcdfcQ90Tlqo32JmglhRL7ss2QzUAHCMRfW8wlg==
-X-Received: by 2002:adf:e408:: with SMTP id g8mr13689365wrm.143.1558359478875;
-        Mon, 20 May 2019 06:37:58 -0700 (PDT)
+        bh=WK3u8/ndCxq4jioi0PwfFEPZB+6Qz5E/d+j0WFTc0jY=;
+        b=PUBgLi1ClUdEL9Xkf8FauEVGy5zhq5DvTezQoKAm1ssiDOs2PXZbhtZIWE/2HYODmz
+         TpEuquQBgMI0LyNwsYIVBux9crgWm89SM62nUG3mLB6iGGT/pUrr/lDF4P9HB6/kV/cm
+         vv0SsoHGhzbXATTihgPsavlu68njn4KXMGoX4Kw+iRQ+ixVmTB5dfllHY4yi8hfXaFIM
+         EHc4sylWf5eROcqbaPaNcE/bkN7vhp3QwZet1jpyegyNtD5soter1IEjy9eE1020pMZZ
+         hYLlgn90IvlDAG0jYBiZQDz17jH1QcgylU2XGwMnuhcdNRalNWhyqz4DeTk4OxT5li+p
+         vXfg==
+X-Gm-Message-State: APjAAAWHVQxty0Szg8JFCrgksTIxMKH+nMf7b7/H+0mJGdCacE7vJewb
+        ABsOMh/qihdQFDNpbHvzlorBYg==
+X-Google-Smtp-Source: APXvYqzUMHoSq9Wq79xRMpZ8XfEvh+NyiLctBUedlrZTgq0sEpkBGkE46QMIlYX5qWgsh1wLwlhF4A==
+X-Received: by 2002:adf:f041:: with SMTP id t1mr39880363wro.74.1558359479889;
+        Mon, 20 May 2019 06:37:59 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t19sm12167059wmi.42.2019.05.20.06.37.57
+        by smtp.gmail.com with ESMTPSA id t19sm12167059wmi.42.2019.05.20.06.37.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 06:37:58 -0700 (PDT)
+        Mon, 20 May 2019 06:37:59 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com
 Cc:     jonas@kwiboo.se, hverkuil@xs4all.nl,
@@ -52,9 +52,9 @@ Cc:     jonas@kwiboo.se, hverkuil@xs4all.nl,
         dri-devel@lists.freedesktop.org, jernej.skrabec@siol.net,
         heiko@sntech.de, maxime.ripard@bootlin.com, hjc@rock-chips.com,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] drm/bridge: add encoder support to specify bridge input format
-Date:   Mon, 20 May 2019 15:37:50 +0200
-Message-Id: <20190520133753.23871-3-narmstrong@baylibre.com>
+Subject: [PATCH 3/5] drm/bridge: dw-hdmi: Add support for dynamic output format setup
+Date:   Mon, 20 May 2019 15:37:51 +0200
+Message-Id: <20190520133753.23871-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520133753.23871-1-narmstrong@baylibre.com>
 References: <20190520133753.23871-1-narmstrong@baylibre.com>
@@ -65,108 +65,205 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new format_set() callback to the bridge ops permitting
-the encoder to specify the new input format and encoding.
+In order to support the HDMI2.0 YUV420, YUV422 and the 10bit, 12bit and
+16bits outpu use cases, add support for the recently introduced bridge
+callback format_set().
 
-This allows supporting the very specific HDMI2.0 YUV420 output mode
-when the bridge cannot convert from RGB or YUV444 to YUV420.
+This callback will setup the new input format and encoding from encoder,
+then these information will be used instead of the default ones
+in the dw_hdmi_setup() function.
 
-In this case, the encode must downsample before the bridge and must
-specify the bridge the new input bus format differs.
-
-This will also help supporting the YUV420 mode where the bridge cannot
-downsample, and also support 10bit, 12bit and 16bit output modes
-when the bridge cannot convert between different bit depths.
+To determine the output bus format, has been added :
+- support for the connector display_info bus_formats, where a fixed
+  output bus format can be enforced by the encoder
+- support for synami output bus format depending on the input format,
+  especially the YUV420 input bus format, enforcing YUV420 as output
+  with the correct bit depth
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 35 +++++++++++++++++++++++++++++++++++
- include/drm/drm_bridge.h     | 19 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 121 ++++++++++++++++++++--
+ 1 file changed, 112 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 138b2711d389..33be74a977f7 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -307,6 +307,41 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index b50c49caf7ae..284ce59be8f8 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -103,6 +103,8 @@ struct hdmi_vmode {
+ };
+ 
+ struct hdmi_data_info {
++	unsigned int bridge_in_bus_format;
++	unsigned int bridge_in_encoding;
+ 	unsigned int enc_in_bus_format;
+ 	unsigned int enc_out_bus_format;
+ 	unsigned int enc_in_encoding;
+@@ -1838,8 +1840,51 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
+ 		    HDMI_IH_MUTE_FC_STAT2);
  }
- EXPORT_SYMBOL(drm_bridge_mode_set);
  
-+/**
-+ * drm_bridge_format_set - setup with proposed input format and encoding for
-+ *			   all bridges in the encoder chain
-+ * @bridge: bridge control structure
-+ * @input_bus_format: proposed input bus format for the bridge
-+ * @input_encoding: proposed input encoding for this bridge
-+ *
-+ * Calls &drm_bridge_funcs.format_set op for all the bridges in the
-+ * encoder chain, starting from the first bridge to the last.
-+ *
-+ * Note: the bridge passed should be the one closest to the encoder
-+ *
-+ * RETURNS:
-+ * true on success, false if one of the bridge cannot handle the format
++/*
++ * The DW-HDMI CSC can only interpolate and decimate from 4:2:2 to 4:4:4/RGB
++ * and from 4:4:4/RGB to 4:2:2.
++ * Default to RGB output except if 4:2:0 as input, which CSC cannot convert.
 + */
-+bool drm_bridge_format_set(struct drm_bridge *bridge,
-+			   const u32 input_bus_format,
-+			   const u32 input_encoding)
++static unsigned long dw_hdmi_determine_output_bus_format(struct dw_hdmi *hdmi)
 +{
-+	bool ret = true;
++	unsigned int depth = hdmi_bus_fmt_color_depth(
++					hdmi->hdmi_data.enc_in_bus_format);
++	bool is_420 = hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_in_bus_format);
++	unsigned long fmt = MEDIA_BUS_FMT_RGB888_1X24;
 +
-+	if (!bridge)
-+		return true;
++	switch (depth) {
++	case 8:
++		if (is_420)
++			fmt = MEDIA_BUS_FMT_UYYVYY8_0_5X24;
++		else
++			fmt = MEDIA_BUS_FMT_RGB888_1X24;
++		break;
++	case 10:
++		if (is_420)
++			fmt = MEDIA_BUS_FMT_UYYVYY10_0_5X30;
++		else
++			fmt = MEDIA_BUS_FMT_RGB101010_1X30;
++		break;
++	case 12:
++		if (is_420)
++			fmt = MEDIA_BUS_FMT_UYYVYY12_0_5X36;
++		else
++			fmt = MEDIA_BUS_FMT_RGB121212_1X36;
++		break;
++	case 16:
++		if (is_420)
++			fmt = MEDIA_BUS_FMT_UYYVYY16_0_5X48;
++		else
++			fmt = MEDIA_BUS_FMT_RGB161616_1X48;
++		break;
++	}
 +
-+	if (bridge->funcs->format_set)
-+		ret = bridge->funcs->format_set(bridge, input_bus_format,
-+						input_encoding);
-+	if (!ret)
-+		return ret;
-+
-+	return drm_bridge_format_set(bridge->next, input_bus_format,
-+				     input_encoding);
++	return fmt;
 +}
-+EXPORT_SYMBOL(drm_bridge_format_set);
 +
- /**
-  * drm_bridge_pre_enable - prepares for enabling all
-  *			   bridges in the encoder chain
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index d4428913a4e1..7a79e61b7825 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -198,6 +198,22 @@ struct drm_bridge_funcs {
- 	void (*mode_set)(struct drm_bridge *bridge,
- 			 const struct drm_display_mode *mode,
- 			 const struct drm_display_mode *adjusted_mode);
-+
-+	/**
-+	 * @format_set:
-+	 *
-+	 * This callback should configure the bridge for the given input bus
-+	 * format and encoding. It is called after the @format_set callback
-+	 * for the preceding element in the display pipeline has been called
-+	 * already. If the bridge is the first element then this would be
-+	 * &drm_encoder_helper_funcs.format_set. The display pipe (i.e.
-+	 * clocks and timing signals) is off when this function is called.
-+	 *
-+	 * @returns: true in success, false is a bridge refuses the format
-+	 */
-+	bool (*format_set)(struct drm_bridge *bridge,
-+			   const u32 input_bus_format,
-+			   const u32 input_encoding);
- 	/**
- 	 * @pre_enable:
- 	 *
-@@ -311,6 +327,9 @@ void drm_bridge_post_disable(struct drm_bridge *bridge);
- void drm_bridge_mode_set(struct drm_bridge *bridge,
- 			 const struct drm_display_mode *mode,
- 			 const struct drm_display_mode *adjusted_mode);
-+bool drm_bridge_format_set(struct drm_bridge *bridge,
-+			   const u32 input_bus_format,
-+			   const u32 input_encoding);
- void drm_bridge_pre_enable(struct drm_bridge *bridge);
- void drm_bridge_enable(struct drm_bridge *bridge);
+ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ {
++	struct drm_display_info *display = &hdmi->connector.display_info;
+ 	int ret;
  
+ 	hdmi_disable_overflow_interrupts(hdmi);
+@@ -1853,9 +1898,9 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	}
+ 
+ 	if ((hdmi->vic == 6) || (hdmi->vic == 7) ||
+-	    (hdmi->vic == 21) || (hdmi->vic == 22) ||
+-	    (hdmi->vic == 2) || (hdmi->vic == 3) ||
+-	    (hdmi->vic == 17) || (hdmi->vic == 18))
++		 (hdmi->vic == 21) || (hdmi->vic == 22) ||
++		 (hdmi->vic == 2) || (hdmi->vic == 3) ||
++		 (hdmi->vic == 17) || (hdmi->vic == 18))
+ 		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_601;
+ 	else
+ 		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_709;
+@@ -1863,22 +1908,29 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	hdmi->hdmi_data.video_mode.mpixelrepetitionoutput = 0;
+ 	hdmi->hdmi_data.video_mode.mpixelrepetitioninput = 0;
+ 
+-	/* TOFIX: Get input format from plat data or fallback to RGB888 */
+-	if (hdmi->plat_data->input_bus_format)
++	if (hdmi->hdmi_data.bridge_in_bus_format)
++		hdmi->hdmi_data.enc_in_bus_format =
++			hdmi->hdmi_data.bridge_in_bus_format;
++	else if (hdmi->plat_data->input_bus_format)
+ 		hdmi->hdmi_data.enc_in_bus_format =
+ 			hdmi->plat_data->input_bus_format;
+ 	else
+ 		hdmi->hdmi_data.enc_in_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+ 
+-	/* TOFIX: Get input encoding from plat data or fallback to none */
+-	if (hdmi->plat_data->input_bus_encoding)
++	if (hdmi->hdmi_data.bridge_in_encoding)
++		hdmi->hdmi_data.enc_in_encoding =
++			hdmi->hdmi_data.bridge_in_encoding;
++	else if (hdmi->plat_data->input_bus_encoding)
+ 		hdmi->hdmi_data.enc_in_encoding =
+ 			hdmi->plat_data->input_bus_encoding;
+ 	else
+ 		hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_DEFAULT;
+ 
+-	/* TOFIX: Default to RGB888 output format */
+-	hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
++	if (display->num_bus_formats)
++		hdmi->hdmi_data.enc_out_bus_format = display->bus_formats[0];
++	else
++		hdmi->hdmi_data.enc_out_bus_format =
++				dw_hdmi_determine_output_bus_format(hdmi);
+ 
+ 	hdmi->hdmi_data.pix_repet_factor = 0;
+ 	hdmi->hdmi_data.hdcp_enable = 0;
+@@ -2150,6 +2202,56 @@ dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	return mode_status;
+ }
+ 
++static bool dw_hdmi_drm_bridge_format_set(struct drm_bridge *bridge,
++					 const u32 input_bus_format,
++					 const u32 input_encoding)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	/* Filter supported input bus formats */
++	switch (input_bus_format) {
++	case MEDIA_BUS_FMT_RGB888_1X24:
++	case MEDIA_BUS_FMT_RGB101010_1X30:
++	case MEDIA_BUS_FMT_RGB121212_1X36:
++	case MEDIA_BUS_FMT_RGB161616_1X48:
++	case MEDIA_BUS_FMT_YUV8_1X24:
++	case MEDIA_BUS_FMT_YUV10_1X30:
++	case MEDIA_BUS_FMT_YUV12_1X36:
++	case MEDIA_BUS_FMT_YUV16_1X48:
++	case MEDIA_BUS_FMT_UYVY8_1X16:
++	case MEDIA_BUS_FMT_UYVY10_1X20:
++	case MEDIA_BUS_FMT_UYVY12_1X24:
++	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
++	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
++	case MEDIA_BUS_FMT_UYYVYY12_0_5X36:
++	case MEDIA_BUS_FMT_UYYVYY16_0_5X48:
++		break;
++	default:
++		dev_dbg(hdmi->dev, "Unsupported Input bus format %x\n",
++			input_bus_format);
++		return false;
++	}
++
++	/* Filter supported input bus encoding */
++	switch (input_encoding) {
++	case V4L2_YCBCR_ENC_DEFAULT:
++	case V4L2_YCBCR_ENC_601:
++	case V4L2_YCBCR_ENC_709:
++	case V4L2_YCBCR_ENC_XV601:
++	case V4L2_YCBCR_ENC_XV709:
++		break;
++	default:
++		dev_dbg(hdmi->dev, "Unsupported Input encoding %x\n",
++			input_bus_format);
++		return false;
++	}
++
++	hdmi->hdmi_data.bridge_in_bus_format = input_bus_format;
++	hdmi->hdmi_data.bridge_in_encoding = input_encoding;
++
++	return true;
++}
++
+ static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+ 				    const struct drm_display_mode *orig_mode,
+ 				    const struct drm_display_mode *mode)
+@@ -2192,6 +2294,7 @@ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ 	.disable = dw_hdmi_bridge_disable,
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+ 	.mode_valid = dw_hdmi_bridge_mode_valid,
++	.format_set = dw_hdmi_drm_bridge_format_set,
+ };
+ 
+ static irqreturn_t dw_hdmi_i2c_irq(struct dw_hdmi *hdmi)
 -- 
 2.21.0
 
