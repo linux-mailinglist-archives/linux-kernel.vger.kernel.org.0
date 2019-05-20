@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6773C2348A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A08B237AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389591AbfETM17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:27:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43550 "EHLO mail.kernel.org"
+        id S2387865AbfETMx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:53:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388780AbfETM15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:27:57 -0400
+        id S1732115AbfETMQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:16:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3182C20675;
-        Mon, 20 May 2019 12:27:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AC60208C3;
+        Mon, 20 May 2019 12:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355276;
-        bh=AJzAOBfK+W+9PiPw6Q1YZyS50a4r863se8XmdD4S8UU=;
+        s=default; t=1558354616;
+        bh=oSL33nRfEDexHbU6H9ttwFQneATHUrvFkictUQE1daU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0m/YW/fmWA9HoEZZGPCtaZWLAiXw2tlv0hSP+kG8Zoq3TG4irPnMr+DjQms4UNTAo
-         fGGnKVYaqdWPTqpPdmIuYmGolBf380+zNhuiAR8F/R1ea9V928JRqyibxIME2/Lapa
-         UgYsmo0rcsY/FUizJGpkykQMqckkyqn0zW8/jC+Y=
+        b=d9nBlIsINf3z8e6zr8dK7wUH/N7U1eWVQ9u/Pz/7vB/OQvmMQR2X7uiO+VPaCi4v4
+         jaass0g7zEPBnFs4wjOCy7+Ave6YU7QnpCTatH7Zl2HI7fKngmZX41/pyKNLLYNQ/S
+         c6UTUYJHiCIC683WElXAEmzNJ/mu7UlyJR78d05g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.0 055/123] ASoC: fsl_esai: Fix missing break in switch statement
-Date:   Mon, 20 May 2019 14:13:55 +0200
-Message-Id: <20190520115248.402572864@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.9 07/44] ARM: exynos: Fix a leaked reference by adding missing of_node_put
+Date:   Mon, 20 May 2019 14:13:56 +0200
+Message-Id: <20190520115231.853415633@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: S.j. Wang <shengjiu.wang@nxp.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-commit 903c220b1ece12f17c868e43f2243b8f81ff2d4c upstream.
+commit 629266bf7229cd6a550075f5961f95607b823b59 upstream.
 
-case ESAI_HCKT_EXTAL and case ESAI_HCKR_EXTAL should be
-independent of each other, so replace fall-through with break.
+The call to of_get_next_child returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Fixes: 43d24e76b698 ("ASoC: fsl_esai: Add ESAI CPU DAI driver")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Detected by coccinelle with warnings like:
+    arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put;
+        acquired a node pointer with refcount incremented on line 193,
+        but without a corresponding object release within this function.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/fsl/fsl_esai.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-exynos/firmware.c |    1 +
+ arch/arm/mach-exynos/suspend.c  |    2 ++
+ 2 files changed, 3 insertions(+)
 
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -251,7 +251,7 @@ static int fsl_esai_set_dai_sysclk(struc
- 		break;
- 	case ESAI_HCKT_EXTAL:
- 		ecr |= ESAI_ECR_ETI;
--		/* fall through */
-+		break;
- 	case ESAI_HCKR_EXTAL:
- 		ecr |= ESAI_ECR_ERI;
- 		break;
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -205,6 +205,7 @@ void __init exynos_firmware_init(void)
+ 		return;
+ 
+ 	addr = of_get_address(nd, 0, NULL, NULL);
++	of_node_put(nd);
+ 	if (!addr) {
+ 		pr_err("%s: No address specified.\n", __func__);
+ 		return;
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -715,8 +715,10 @@ void __init exynos_pm_init(void)
+ 
+ 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
+ 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
++		of_node_put(np);
+ 		return;
+ 	}
++	of_node_put(np);
+ 
+ 	pm_data = (const struct exynos_pm_data *) match->data;
+ 
 
 
