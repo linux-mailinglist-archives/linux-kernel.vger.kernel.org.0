@@ -2,88 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5172823669
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C1C23784
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391494AbfETMpu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:45:50 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:48803 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388920AbfETMpr (ORCPT
+        id S2389108AbfETMu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:50:26 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40416 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730404AbfETMuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:45:47 -0400
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 6AD63100003;
-        Mon, 20 May 2019 12:45:43 +0000 (UTC)
-Date:   Mon, 20 May 2019 14:45:42 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Kamal Dasu <kdasu.kdev@gmail.com>
-Cc:     linux-mtd@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: mtd: brcmnand: Make nand-ecc-strength
- and nand-ecc-step-size optional
-Message-ID: <20190520144542.05d10e4b@xps13>
-In-Reply-To: <1558117914-35807-1-git-send-email-kdasu.kdev@gmail.com>
-References: <1558117914-35807-1-git-send-email-kdasu.kdev@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 20 May 2019 08:50:24 -0400
+Received: by mail-it1-f194.google.com with SMTP id h11so1244198itf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Qx87YI2gjVMlfmpnZTr12jvkaOAAGprsDuNFTZhY9mU=;
+        b=lIwpRk82jVA169lGfPnbVTNNmG3yENbUfBAKq+tGpn8kWVNVKBNmGTnXt301hGMoJS
+         kH+jQGss4CbbxeYSYpZ7IbzEbdhi/iFz0d2K65D9qCpunXtM+HlkmqnkJp9U4xI0H0iX
+         TcUtQoc2d81L3velqghzct5aupzuvpjfhjdAGRg3iGDNEcQIyqLjOaAlJeQM/E0utx7E
+         1QojRPlj2tRGEvHtWzXvlIr2jOH12LfYpfnuZfZ5OX6mNmfD/XhyOe5Va/hCr9O7J31h
+         kkFsMiS1/gTyAGrQJ17oKGupS8RVE2xFOX/J+AcpWiA0m3h9DnjVDvEjDF0zWYG0uh3u
+         DvPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Qx87YI2gjVMlfmpnZTr12jvkaOAAGprsDuNFTZhY9mU=;
+        b=VyewteQHnxfCWWm1MeGFNFr8T8BMcmSkWam+tcp90Ww1Nv8PTiMh8QNiXOpjDmqUAF
+         k5zanMhqnAYe9wNpiDPv6x6B7nfRYqD0g3MMn+L/5tRnjhZZX6sVdelhXIPErDqKhq1O
+         MtbJnj2Z78eKEXIEch0WJEe+eQXxjL1rJodIDJ+CZDe6JVgnEi0+pZqjqDm4mD58RyYr
+         JrGoMoBckRoD2C4sojvOWu9gvVSq+AwYEgzUKvtGJ1BSXhK6dRLotc71l7nFQdXfTGQ1
+         UrHRJ2O4wul/FSJG8m434T1ZSlCU+aupb0vXWufln181MOE2Y15jcTFvvh9ZqG741nkH
+         Q3Sg==
+X-Gm-Message-State: APjAAAXKJrR1//a255CDW0myqwK73j2Y1IE0tVIcIs+2GdJ/xoI8SmLr
+        jjamHmeqqOw/BgjoDenPHz9rgGX5jR8=
+X-Google-Smtp-Source: APXvYqw3eYQFmiU2P80F3YK/n1+jYIrr8BZKprDfqo6BJhP36N/o4ae7Go1mhoVwFjFPnHWLn0T0jA==
+X-Received: by 2002:a05:660c:6c8:: with SMTP id z8mr29501887itk.51.1558356622660;
+        Mon, 20 May 2019 05:50:22 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id 74sm4796440itk.3.2019.05.20.05.50.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 05:50:21 -0700 (PDT)
+Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190512012508.10608-1-elder@linaro.org>
+ <20190512012508.10608-10-elder@linaro.org>
+ <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com>
+ <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
+ <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
+ <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org>
+ <dcd648f2-5305-04dd-8997-be87a9961fd9@linaro.org>
+ <CAK8P3a0FfSvTF8kkQ8pyKFNX9-fSXvtEyMBYTjtM+VOPxMPkWg@mail.gmail.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <d3d4670f-eb8b-7dcf-f91a-1ec1d4d96f67@linaro.org>
+Date:   Mon, 20 May 2019 07:50:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAK8P3a0FfSvTF8kkQ8pyKFNX9-fSXvtEyMBYTjtM+VOPxMPkWg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamal,
-
-Kamal Dasu <kdasu.kdev@gmail.com> wrote on Fri, 17 May 2019 14:29:54
--0400:
-
-> nand-ecc-strength and nand-ecc-step-size can be made optional as
-> brcmanand driver can support using the nand_base driver detected
-
-      ^ typo                             raw NAND layer
-
-> values.
+On 5/20/19 4:25 AM, Arnd Bergmann wrote:
+> On Sun, May 19, 2019 at 7:11 PM Alex Elder <elder@linaro.org> wrote:
+>> On 5/17/19 1:44 PM, Alex Elder wrote:
+>>> On 5/17/19 1:33 PM, Arnd Bergmann wrote:
+>>>> On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org>
+>>
+>> So it seems that I must *not* apply a volatile qualifier,
+>> because doing so restricts the compiler from making the
+>> single instruction optimization.
 > 
-> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
-> ---
-
-With this addressed:
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
->  Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Right, I guess that makes sense.
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-> index bcda1df..29feaba 100644
-> --- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-> +++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-> @@ -101,10 +101,10 @@ Required properties:
->                                number (e.g., 0, 1, 2, etc.)
->  - #address-cells            : see partition.txt
->  - #size-cells               : see partition.txt
-> -- nand-ecc-strength         : see nand.txt
-> -- nand-ecc-step-size        : must be 512 or 1024. See nand.txt
->  
->  Optional properties:
-> +- nand-ecc-strength         : see nand.txt
-> +- nand-ecc-step-size        : must be 512 or 1024. See nand.txt
->  - nand-on-flash-bbt         : boolean, to enable the on-flash BBT for this
->                                chip-select. See nand.txt
->  - brcm,nand-oob-sector-size : integer, to denote the spare area sector size
+>> If I've missed something and you have another suggestion for
+>> me to try let me know and I'll try it.
+> 
+> A memcpy() might do the right thing as well. Another idea would
 
+I find memcpy() does the right thing.
 
-Thanks,
-Miquèl
+> be a cast to __int128 like
+
+I find that my environment supports 128 bit integers.  But...
+
+> #ifdef CONFIG_ARCH_SUPPORTS_INT128
+> typedef __int128 tre128_t;
+> #else
+> typedef struct { __u64 a; __u64 b; } tre128_t;
+> #else
+> 
+> static inline void set_tre(struct gsi_tre *dest_tre, struct gs_tre *src_tre)
+> {
+>      *(volatile tre128_t *)dest_tre = *(tre128_t *)src_tre;
+> }
+...this produces two 8-bit assignments.  Could it be because
+it's implemented as two 64-bit values?  I think so.  Dropping
+the volatile qualifier produces a single "stp" instruction.
+
+The only other thing I thought I could do to encourage
+the compiler to do the right thing is define the type (or
+variables) to have 128-bit alignment.  And doing that for
+the original simple assignment didn't change the (desirable)
+outcome, but I don't think it's really necessary in this
+case, considering the single instruction uses two 64-bit
+registers.
+
+I'm going to leave it as it was originally; it's the simplest:
+	*dest_tre = tre;
+
+I added a comment about structuring the code this way with
+the intention of getting the single instruction.  If a different
+compiler produces different result
+
+					-Alex
+
+> 
+>       Arnd
+> 
+
