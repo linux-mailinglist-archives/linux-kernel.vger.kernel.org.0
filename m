@@ -2,104 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303EC22EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86F922ECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731529AbfETIXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:23:09 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43033 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731500AbfETIXC (ORCPT
+        id S1731240AbfETIYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:24:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43806 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730599AbfETIYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:23:02 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w33so22506412edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:23:01 -0700 (PDT)
+        Mon, 20 May 2019 04:24:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r4so13462215wro.10
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
-        b=b8eSPbV0e6t58Jw8xSWXzI4Toz82FXOp3S4ZAblJvOrs+Gt0Ux6e3YwhDesaVOOpkg
-         quvfmJTaiU4sOLD2LY4AM7vikeJ5E/6iGKfh9/1ZXhc3ogcMwk4kajLiDJsyzcQzVsde
-         C/uOpN0XDilKwuLuB6fz8bZNEgU6tboLD/HoY=
+        d=linaro.org; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=epPY5Bbf3jlQHQ1elX7ZxYDeWhZe1GoHoXz/CRgYZZ8=;
+        b=UeIkx01rJ4VcMxjz2Y21og3CU6MQuV+e/9nd4BL7tIqeGspEPmEpMzsvEZCmVxmBYD
+         pT6eLSfPeDuAszsUTKRBXkvIEoz3tb/lXJJvTN7driv+BmqW2lEtyOodsWYV0dkbRzzw
+         si+YpgBkA0Ew9TU0CgweAsaRquS06okMruObO22qq4EheRLqL/WOHKC4om9bkIfO3PVX
+         SOnLiruvRU4dHAu0vXSFhr/Tp3fKDvOjZ2IoS/1TlcvFVz6Ab97IObJog9Qgw4EiXP/3
+         FflLqU9gl8whIY89OfMWg/Fdv/DtmA+a2yczaC7fxusYOsHFFg81/w9U88T/RniTD++S
+         z8Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
-        b=apt/NHhtYTl+metkmADryhVmIFEWBETw9et01ezVibl8SAz/I7gFTtxIWJfBztN432
-         y7CioUbQ2eLf1h0BvQJO9jA9mZp72lwMXt84cKp260V+SQjEfSrn3AAunuoSSX5KQvbW
-         4yuUuL4rV7MaYnPR7FlfhGyzQG+VUMAnfGmOyI/tC7EQycoQCMq7gATGKSvwv3Nl7T+A
-         LkHGFmCjLtQmkAU6S6tN2Y1aUnjAscHsZbwPW96Fk22apvkWzb580OjXdTKtO9qA63BT
-         eM7AErDFXw8YTq59hFBM8jSS4FCtwsAf22/UIVLMzU8Xk40n148zpwYmOMTSqaZ1plpx
-         IvZw==
-X-Gm-Message-State: APjAAAUvFCb3OV2eLOZ/CXQ8Ta0ZzCDyUNLWpMeJA5SiInQylEtijZq9
-        ch52pqINJnD4TiOnjfOFcKo5RQ==
-X-Google-Smtp-Source: APXvYqwmDqP5epoI370U4Hdjtba1pl90gO7hr4GVxPoRMkSWHnkec3B3NKvvhM8UDRNXGWDhP6Dyrg==
-X-Received: by 2002:a17:906:640b:: with SMTP id d11mr9277783ejm.58.1558340580671;
-        Mon, 20 May 2019 01:23:00 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id t25sm3021263ejx.8.2019.05.20.01.22.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 01:23:00 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>
-Subject: [PATCH 33/33] staging/olpc_dcon: Add drm conversion to TODO
-Date:   Mon, 20 May 2019 10:22:16 +0200
-Message-Id: <20190520082216.26273-34-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520082216.26273-1-daniel.vetter@ffwll.ch>
-References: <20190520082216.26273-1-daniel.vetter@ffwll.ch>
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=epPY5Bbf3jlQHQ1elX7ZxYDeWhZe1GoHoXz/CRgYZZ8=;
+        b=F/pDVr1oBUX4HgLt7PRxWQz6sBtsaV4mO7kZjYDznbmjdPSJtRTKAd6A6AxxfnFK2d
+         V8f4p/4slU0/OIC5SLYnOUpB6uCl7809STlLv+paU3CtpPYUBQVWQViEl1mHTTVRq+ha
+         oJOqY1pT7bza6bcZabGdBfFpfrV1iIHqYXBcDjLKkAX3xsH0N4NJ9M/u+he01gw0MNL8
+         WfDklXra6di8Jl2JsAlaJHQiDPbLayUTw0LJ9jeyYBZX/9aG6CMFUmzzh/tMZOl9lVln
+         ZCgzenWbmOrldA84EV09FRDCxt+sNKCVz0AsWvwkB10ETlCSbxIb76CzStuW10CVhrzj
+         zXPA==
+X-Gm-Message-State: APjAAAUC/3Fwo1IA48ES/04KFvVfRhHanmpur/30NTDJTivAtLN12GF0
+        25NcA9zzQemlHEjO3Izch5QSPw==
+X-Google-Smtp-Source: APXvYqw/gIHVanPpxFReieBgDWd8P/6U0dd79m/FYrPzXXxpVg9BPS+jlYTDR327JeSD694qD/k5Qg==
+X-Received: by 2002:adf:c601:: with SMTP id n1mr39963038wrg.49.1558340668405;
+        Mon, 20 May 2019 01:24:28 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id x64sm24928913wmg.17.2019.05.20.01.24.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 May 2019 01:24:09 -0700 (PDT)
+Date:   Mon, 20 May 2019 09:24:02 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Philippe Mazenauer <philippe.mazenauer@outlook.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ext4: Variable to signed to check return code
+Message-ID: <20190520082402.GZ4319@dell>
+References: <AM0PR07MB4417C1C3A4E55EFE47027CA2FD0B0@AM0PR07MB4417.eurprd07.prod.outlook.com>
+ <20190517102506.GU4319@dell>
+ <20190517202810.GA21961@mit.edu>
+ <20190518063834.GX4319@dell>
+ <20190518195424.GC14277@mit.edu>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190518195424.GC14277@mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-this driver is pretty horrible from a design pov, and needs a complete
-overhaul. Concrete thing that annoys me is that it looks at
-registered_fb, which is an internal thing to fbmem.c and fbcon.c. And
-ofc it gets the lifetime rules all wrong (it should at least use
-get/put_fb_info).
+On Sat, 18 May 2019, Theodore Ts'o wrote:
 
-Looking at the history, there's been an attempt at dropping this from
-staging in 2016, but that had to be reverted. Since then not real
-effort except the usual stream of trivial patches, and fbdev has been
-formally closed for any new hw support. Time to try again and drop
-this?
+> On Sat, May 18, 2019 at 07:38:34AM +0100, Lee Jones wrote:
+> >   "- Acked-by: indicates an agreement by another developer (often a
+> >      maintainer of the relevant code) that the patch is appropriate for
+> >      inclusion into the kernel."
+> > 
+> > And I, as a developer (and not a Maintainer in this case) do indicate
+> > that this patch is appropriate for inclusion into the kernel.
+> > 
+> > Reviewed-by has stronger connotations and implies I have in-depth
+> > knowledge of the subsystem/driver AND agree to the Reviewer's
+> > Statement.  I use Acked-by in this case as a weaker agreement after a
+> > shallow review of the patch based on its merits alone.
+> 
+> Note the "often a maintainer of the relevant code" bit.  And
 
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jens Frederich <jfrederich@gmail.com>
-Cc: Daniel Drake <dsd@laptop.org>
-Cc: Jon Nettleton <jon.nettleton@gmail.com>
----
- drivers/staging/olpc_dcon/TODO | 7 +++++++
- 1 file changed, 7 insertions(+)
+Exactly, with the *often* (but not always, right!) being the operative
+word in that sentence.  As much as I understand the meaning when used
+by a Maintainer when commenting on their own subsystem (I use it in
+this way a lot too), it doesn't always mean "it's okay for you to take
+this patch which usually comes under my jurisdiction".
 
-diff --git a/drivers/staging/olpc_dcon/TODO b/drivers/staging/olpc_dcon/TODO
-index 665a0b061719..fe09efbc7f77 100644
---- a/drivers/staging/olpc_dcon/TODO
-+++ b/drivers/staging/olpc_dcon/TODO
-@@ -1,4 +1,11 @@
- TODO:
-+	- complete rewrite:
-+	  1. The underlying fbdev drivers need to be converted into drm kernel
-+	     modesetting drivers.
-+	  2. The dcon low-power display mode can then be integrated using the
-+	     drm damage tracking and self-refresh helpers.
-+	  This bolted-on self-refresh support that digs around in fbdev
-+	  internals, but isn't properly integrated, is not the correct solution.
- 	- see if vx855 gpio API can be made similar enough to cs5535 so we can
- 	  share more code
- 	- convert all uses of the old GPIO API from <linux/gpio.h> to the
+I think you're missing and if () statement in your understanding:
+
+if (maintainer_of_patches'_subsystem)
+   apply_patch_with_supplied_ack();
+else
+   /* Where 'n' is the regard you hold for the ack supplier. */
+   add_n_units_to_patch_credibility(n);
+
+> "appropriate for inclusion into the kernel" means to me that you've
+> done the same level of review as Reviewed-by.  So I have very
+
+Actually it doesn't, or else the documentation text for Acked-by would
+be just as intense as it is for Reviewed-by.  Reviewed-by IMHO has a
+much stronger standing than an Acked-by (caveat: when not provided by
+a maintainer of the appropriate subsystem).
+
+> different understanding of how Acked-by and Reviewed-by than you do.
+
+Yes, this is seemingly the case.  It's apparent that the documentation
+is not a clear as perhaps it should be, else we wouldn't be having
+this conversation.  Maybe this is something which should be discussed
+a Kernel Summit.  The result being a patch or two which firms up the
+wording/explanation somewhat.
+
+> That being said, no offence to you, but any kind of Acked-by or
+> Reviewed-by from you is not going to have as much weight as say, a
+> Reviewed-by: from someone like Jan Kara.
+
+Seeing as Jan is a filesystem maintainer, this kind of goes without
+saying.  In fact, the only reason a person might have to take the time
+to write something like this is to attempt to belittle and cause
+offence.  I could be wrong, but probably not. :)
+
+> That's just because I don't have a good sense to your technical
+> ability
+
+I guess you could always use Git to gain a reasonable sense of my
+technical ability.  The 4,000 committed contributions and many more
+thousands of reviews on the mailing list(s), should give you a brief
+glimpse.
+
+> and so I'd be doing a full review myself
+
+I'd think a great deal less of you if you didn't.
+
+> and not rely on your review at all....
+
+"at all" - wow!  What kind of message do you think this gives to first
+time contributors (like Philippe here), or would-be reviewers?  That
+there isn't any point in attempting to review patches, since
+Maintainers are unlikely to take it into consideration "at all"?  I
+know that when I come to review a patch, if *any* contributor has
+taken the time to review a patch, it always plays an important role.
+
+> P.S.  And if I find a problem in the patch, and someone had attached
+> their Acked-by or Reviewed-by to it, it would have the same negative
+> hit to their reputation either way.  Not a big deal if it happens only
+> once, or it's an esepcially tricky issue, but it if happens more than
+> once or is really blatent, I as the maintainer definitely do remember.
+
+Again, not really sure of your intentions when you write this out, or
+what it has to do with this patch submission or the review there
+after, but IMHO this is sending the wrong message to new and would-be
+contributors.  As a community we're supposed to be providing a
+supportive, encouraging atmosphere.  This paragraph is likely to do
+nothing more than scare off people who would otherwise be willing
+to have a go [at submitting or reviewing a patch].
+
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
