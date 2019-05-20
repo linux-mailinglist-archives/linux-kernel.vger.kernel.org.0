@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0407C23A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3625923A96
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391909AbfETOl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:41:57 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45879 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388595AbfETOlX (ORCPT
+        id S2391852AbfETOlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:41:35 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41812 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387800AbfETOlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:41:23 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b18so14865704wrq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:22 -0700 (PDT)
+        Mon, 20 May 2019 10:41:24 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g12so14633683wro.8
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=30PJ+hCzDjQrVZsjGcZ/FXod6I84WDUG4kPyRzhauWE=;
-        b=EeFetSQar48eOERqadrJy/r1TMYWe3tvZZ9D73uAfTEe7xVlG9kEpGi8cKF+fZimcE
-         vm0msi4QvsnBhRfGIWhN5NNnIwMhd93/3iJtEhj5AL3iIQrATygF4+gQuTFsMqLYlFLN
-         K8lCV0yr+e+dSMqXTPM60wWxKOFL0s5xNJRlB/AXELJESu2AnSF2NWxHl/PjfcHkluhC
-         BRI320Yx0G12ddsNFsbrCxYlX3WgQFy9wj/vrNsVbEp4AfInuuV5cspNpMkKwhQHM4DR
-         PcO6080P3WqMfMpZxg0SuTR/h8UMnUQRpCWASqneD6F01V0xT4DLrhqhv9+ip0oEoCqT
-         OwLA==
+        bh=1us822oM0AhXAzcfAqzMQ3a5bieM7q3ASmOGadOuJBc=;
+        b=E1AMWXuy38k5enWVyxUIT/ZFjHFZOcLT7CtTfUN1RC08MO3lMPdlB9MZH6gbDpwXD5
+         sIKnvw6Pt9WOWPtKKFY5ZZBINljbEiv3mIAs3Zhvs18xzREQM10TX32ptwEB12C4QqgY
+         wQ4lwYft+xHb2ElPch/aLITUutJEdMrtuT37fdrqAKdcI2c5c79ymYkeg45++A6eV93b
+         JHs+yVdektui4T0pIf5OS1mtK+6pKlECHlMbVhcw/HI8lRo17pkA79XTzmrAuaPNECpq
+         O4TXt98WUPh9rzKjCQ5u6chtmr6HTFHcyANC1+0he2BUvbUwG18Rs6RReBGUMJ+J+z7o
+         LJOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=30PJ+hCzDjQrVZsjGcZ/FXod6I84WDUG4kPyRzhauWE=;
-        b=b8zTaWRML8MFJyj0OvOsdDbR6DRXlfd0GmUIfriyqS2r73+A6TqJ2NVz+LcCaHITwh
-         2msg7q1q2y+jmF3yJT5MXpZ3MXxdWZd2mOhqEnjWCEwNBQC263QFstvK20A38lX13Z7H
-         RztqrNTDan5ras6CxACu5VOhJl7pYY+NqmC23VfDaw8x9YYGE8eBOmFLqt8cWFSVjJfw
-         ltyAWkf3DCpXaKxdTywAbSudLPV2BimFXJgsnks5PowsU1cQthOZfW4eBkMSN/40UNwh
-         Xn3J4OfBY/p2scnXrjXG8Bw1TmdZ6e6grXnNJXj5VbfACT1a/8cGywYUwtmwl5NV9su0
-         Bmhw==
-X-Gm-Message-State: APjAAAXahiKBmlMsdhQVMcFKXEynoNiwO5yeZfTkHsLB6f0iHcJh5Njb
-        AW0fH9aKX+nbr0v+PK3Hgp+foA==
-X-Google-Smtp-Source: APXvYqwy0QdFmLf4P0q3Gllfwk9oesu78IlGZ97TtHhp2ZY2oBw/SZe5fTVEuzIPvAu1zn35uG6lRA==
-X-Received: by 2002:adf:c60e:: with SMTP id n14mr14278140wrg.255.1558363281892;
-        Mon, 20 May 2019 07:41:21 -0700 (PDT)
+        bh=1us822oM0AhXAzcfAqzMQ3a5bieM7q3ASmOGadOuJBc=;
+        b=EJd6ltGtGcphYe7l2rrq28ymehxtaTfvK0cUkz3wdGcPX3uSA/2f46GxkFj+abV/AA
+         UMjIkSAHgZRcptdfn6MAgxbZb5440tY2hkJpL4luI4xm5DzW1pvZm/mE96ZEAxFWOxcY
+         QGNzmA81IL6SrOMeXuFhy+1XgyQ3dBSZ3htANbrK5+vV4UNLe2UUIXq/qXBH6qSmta7a
+         dQGMOHDrIYXQ1d+2B2hqxNwp2YFFxzc2j8fWNfO8GpFI0+0Qo6yT5gvzsnIingxTGSdy
+         cdHFUpd6hqhQPYeX0JtckJxLOmqBy3somS/Ry+xGSUq6pB0pgNrqkfc6sJ4uWWA2Z6Np
+         gEAA==
+X-Gm-Message-State: APjAAAVZow3YVgtPdYokI+wkgpf5cn1AnkeUXLF0jFYSdgZUnpO1dkP1
+        8mKHEqwH7VEe2uWI3Aeoj+iAog==
+X-Google-Smtp-Source: APXvYqzBMSwJalhz2Y3RNdF8Ya61WL0sUiZ27ozMXzLdu3QUKt9tpH6yOyRHK1BjUf1IUkGmcdgesw==
+X-Received: by 2002:a5d:5283:: with SMTP id c3mr7135680wrv.268.1558363282687;
+        Mon, 20 May 2019 07:41:22 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
         by smtp.gmail.com with ESMTPSA id w3sm6743679wrv.25.2019.05.20.07.41.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:41:21 -0700 (PDT)
+        Mon, 20 May 2019 07:41:22 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 2/5] dt-bindings: gpio: meson-gxbb-gpio: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:41:05 +0200
-Message-Id: <20190520144108.3787-3-narmstrong@baylibre.com>
+Subject: [PATCH 3/5] dt-bindings: gpio: meson-gxl-gpio: update with SPDX Licence identifier
+Date:   Mon, 20 May 2019 16:41:06 +0200
+Message-Id: <20190520144108.3787-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520144108.3787-1-narmstrong@baylibre.com>
 References: <20190520144108.3787-1-narmstrong@baylibre.com>
@@ -65,17 +65,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- include/dt-bindings/gpio/meson-gxbb-gpio.h | 8 +-------
+ include/dt-bindings/gpio/meson-gxl-gpio.h | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/gpio/meson-gxbb-gpio.h b/include/dt-bindings/gpio/meson-gxbb-gpio.h
-index 43a68a1110f0..c93274d7e108 100644
---- a/include/dt-bindings/gpio/meson-gxbb-gpio.h
-+++ b/include/dt-bindings/gpio/meson-gxbb-gpio.h
+diff --git a/include/dt-bindings/gpio/meson-gxl-gpio.h b/include/dt-bindings/gpio/meson-gxl-gpio.h
+index 01f2a2abd35e..62417358f55b 100644
+--- a/include/dt-bindings/gpio/meson-gxl-gpio.h
++++ b/include/dt-bindings/gpio/meson-gxl-gpio.h
 @@ -1,15 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * GPIO definitions for Amlogic Meson GXBB SoCs
+  * GPIO definitions for Amlogic Meson GXL SoCs
   *
   * Copyright (C) 2016 Endless Mobile, Inc.
   * Author: Carlo Caione <carlo@endlessm.com>
@@ -88,7 +88,7 @@ index 43a68a1110f0..c93274d7e108 100644
 - * along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
- #ifndef _DT_BINDINGS_MESON_GXBB_GPIO_H
+ #ifndef _DT_BINDINGS_MESON_GXL_GPIO_H
 -- 
 2.21.0
 
