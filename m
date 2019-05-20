@@ -2,222 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F6124171
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A94A124198
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfETTpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:45:15 -0400
-Received: from mx.allycomm.com ([138.68.30.55]:63158 "EHLO mx.allycomm.com"
+        id S1726669AbfETT41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 15:56:27 -0400
+Received: from out.bound.email ([141.193.244.10]:40810 "EHLO out.bound.email"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbfETTpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:45:15 -0400
-Received: from allycomm.com (184-23-191-215.vpn.dynamic.sonic.net [184.23.191.215])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx.allycomm.com (Postfix) with ESMTPSA id 0F5D53BCD8;
-        Mon, 20 May 2019 12:45:13 -0700 (PDT)
-From:   Jeff Kletsky <lede@allycomm.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc:     Jeff Kletsky <git-commits@allycomm.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] mtd: spinand: Add support for GigaDevice GD5F1GQ4UFxxG
-Date:   Mon, 20 May 2019 12:44:54 -0700
-Message-Id: <20190520194454.32175-4-lede@allycomm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520194454.32175-1-lede@allycomm.com>
-References: <20190520194454.32175-1-lede@allycomm.com>
+        id S1725951AbfETT40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 15:56:26 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 15:56:25 EDT
+Received: from mail.sventech.com (localhost [127.0.0.1])
+        by out.bound.email (Postfix) with ESMTP id CE4718A0E7F;
+        Mon, 20 May 2019 12:49:15 -0700 (PDT)
+Received: by mail.sventech.com (Postfix, from userid 1000)
+        id AFFD41600410; Mon, 20 May 2019 12:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=erdfelt.com;
+        s=default; t=1558381755;
+        bh=oZso2p1ld/yWyzQANIKklBxHpoVt65FCEMCZ1z7xtQk=;
+        h=Date:From:To:Subject:From;
+        b=tQk3X2I4GZp9iWe9qCA8R6a2+xeow6B7LEofril0pQcBmeMDVWbZUf3EWA85YCCmb
+         rrtWhw2JcZLK5WgiUZ3ykNh+hGJEhPuF1NKOmUYqdqKZIf6/pYI6hRn5/510e1r+WM
+         t5l0w8tWM2yRz9ZGWUllj7tKTBaKkUmmmCHFeV/0=
+Date:   Mon, 20 May 2019 12:49:15 -0700
+From:   Johannes Erdfelt <johannes@erdfelt.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Oops caused by race between livepatch and ftrace
+Message-ID: <20190520194915.GB1646@sventech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Kletsky <git-commits@allycomm.com>
+There exists a race condition between livepatch and ftrace that can
+cause an oops similar to this one:
 
-The GigaDevice GD5F1GQ4UFxxG SPI NAND is in current production devices
-and, while it has the same logical layout as the E-series devices,
-it differs in the SPI interfacing in significant ways.
+  BUG: unable to handle page fault for address: ffffffffc005b1d9
+  #PF: supervisor write access in kernel mode
+  #PF: error_code(0x0003) - permissions violation
+  PGD 3ea0c067 P4D 3ea0c067 PUD 3ea0e067 PMD 3cc13067 PTE 3b8a1061
+  Oops: 0003 [#1] PREEMPT SMP PTI
+  CPU: 1 PID: 453 Comm: insmod Tainted: G           O  K   5.2.0-rc1-a188339ca5 #1
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
+  RIP: 0010:apply_relocate_add+0xbe/0x14c
+  Code: fa 0b 74 21 48 83 fa 18 74 38 48 83 fa 0a 75 40 eb 08 48 83 38 00 74 33 eb 53 83 38 00 75 4e 89 08 89 c8 eb 0a 83 38 00 75 43 <89> 08 48 63 c1 48 39 c8 74 2e eb 48 83 38 00 75 32 48 29 c1 89 08
+  RSP: 0018:ffffb223c00dbb10 EFLAGS: 00010246
+  RAX: ffffffffc005b1d9 RBX: 0000000000000000 RCX: ffffffff8b200060
+  RDX: 000000000000000b RSI: 0000004b0000000b RDI: ffff96bdfcd33000
+  RBP: ffffb223c00dbb38 R08: ffffffffc005d040 R09: ffffffffc005c1f0
+  R10: ffff96bdfcd33c40 R11: ffff96bdfcd33b80 R12: 0000000000000018
+  R13: ffffffffc005c1f0 R14: ffffffffc005e708 R15: ffffffff8b2fbc74
+  FS:  00007f5f447beba8(0000) GS:ffff96bdff900000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: ffffffffc005b1d9 CR3: 000000003cedc002 CR4: 0000000000360ea0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+   klp_init_object_loaded+0x10f/0x219
+   ? preempt_latency_start+0x21/0x57
+   klp_enable_patch+0x662/0x809
+   ? virt_to_head_page+0x3a/0x3c
+   ? kfree+0x8c/0x126
+   patch_init+0x2ed/0x1000 [livepatch_test02]
+   ? 0xffffffffc0060000
+   do_one_initcall+0x9f/0x1c5
+   ? kmem_cache_alloc_trace+0xc4/0xd4
+   ? do_init_module+0x27/0x210
+   do_init_module+0x5f/0x210
+   load_module+0x1c41/0x2290
+   ? fsnotify_path+0x3b/0x42
+   ? strstarts+0x2b/0x2b
+   ? kernel_read+0x58/0x65
+   __do_sys_finit_module+0x9f/0xc3
+   ? __do_sys_finit_module+0x9f/0xc3
+   __x64_sys_finit_module+0x1a/0x1c
+   do_syscall_64+0x52/0x61
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x7f5f44764881
+  Code: 0e 4c 8b 44 24 10 4d 8d 48 08 4c 89 4c 24 10 44 8b 4c 24 08 4d 8b 00 4c 01 c9 41 83 f9 2f 76 05 48 8b 4c 24 10 4c 8b 09 0f 05 <48> 89 c7 e8 f7 e9 fd ff 48 83 c4 58 c3 56 31 d2 be 02 00 08 00 bf
+  RSP: 002b:00007ffcf1e64b80 EFLAGS: 00000212 ORIG_RAX: 0000000000000139
+  RAX: ffffffffffffffda RBX: 00000000006229a0 RCX: 00007f5f44764881
+  RDX: 0000000000000000 RSI: 000000000041a506 RDI: 0000000000000003
+  RBP: 000000000041a506 R08: 0000000000000000 R09: 00007ffcf1e64c48
+  R10: 0000000000000003 R11: 0000000000000212 R12: 0000000000000000
+  R13: 00000000006228c0 R14: 0000000000000000 R15: 0000000000000000
+  Modules linked in: livepatch_test03(OK+) livepatch_test01(OK+) livepatch_test11(OK+) livepatch_test06(OK+) livepatch_test04(OK+) livepatch_test02(OK+) livepatch_test10(OK+) livepatch_test16(OK+) livepatch_test18(OK-) livepatch_test12(OK)
+  CR2: ffffffffc005b1d9
+  ---[ end trace 52fee0aa635dd5a1 ]---
 
-This support is contingent on previous commits to:
+The oops occurs because both livepatch and ftrace remap the module text
+section at the same. After ftrace is done, it can leave the module text
+text section mapped RO when the livepatch code is expecting it to be RW.
 
-  * Add support for two-byte device IDs
-  * Define macros for page-read ops with three-byte addresses
+CPU A			CPU B
+--------		--------
+			set_all_modules_text_rw		(module is now RW)
+module_disable_ro					(module is still RW)
+			set_all_modules_text_ro		(module is now RO)
+apply_relocate_add					(oops)
 
-http://www.gigadevice.com/datasheet/gd5f1gq4xfxxg/
+I've reproduced it from the latest code in git (a188339ca5a3), 5.0.17,
+4.19.44, 4.14.120, 4.9.177 and some kernels in between. I haven't tried
+reproducing on any kernel older than 4.9. From looking at the older
+versions in git, it will likely be harder to reproduce since the kernel
+switched in 4.5 to remapping RW once from remapping on every write.
 
-Signed-off-by: Jeff Kletsky <git-commits@allycomm.com>
+The oops will only occur if CONFIG_STRICT_MODULE_RWX is enabled
+(previously called CONFIG_DEBUG_SET_MODULE_RONX).
 
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- drivers/mtd/nand/spi/gigadevice.c | 79 +++++++++++++++++++++++++------
- 1 file changed, 64 insertions(+), 15 deletions(-)
+I've found two ways the race condition can be reproduced:
+1) loading multiple livepatches at the same time
+2) loading a livepatch at the same time ftrace is patching code
 
-diff --git a/drivers/mtd/nand/spi/gigadevice.c b/drivers/mtd/nand/spi/gigadevice.c
-index 0b49d8264bef..d6497ac4c5d8 100644
---- a/drivers/mtd/nand/spi/gigadevice.c
-+++ b/drivers/mtd/nand/spi/gigadevice.c
-@@ -9,11 +9,17 @@
- #include <linux/mtd/spinand.h>
- 
- #define SPINAND_MFR_GIGADEVICE			0xC8
-+
- #define GD5FXGQ4XA_STATUS_ECC_1_7_BITFLIPS	(1 << 4)
- #define GD5FXGQ4XA_STATUS_ECC_8_BITFLIPS	(3 << 4)
- 
- #define GD5FXGQ4UEXXG_REG_STATUS2		0xf0
- 
-+#define GD5FXGQ4UXFXXG_STATUS_ECC_MASK		(7 << 4)
-+#define GD5FXGQ4UXFXXG_STATUS_ECC_NO_BITFLIPS	(0 << 4)
-+#define GD5FXGQ4UXFXXG_STATUS_ECC_1_3_BITFLIPS	(1 << 4)
-+#define GD5FXGQ4UXFXXG_STATUS_ECC_UNCOR_ERROR	(7 << 4)
-+
- static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
-@@ -22,6 +28,14 @@ static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_OP(true, 0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_OP(false, 0, 1, NULL, 0));
- 
-+static SPINAND_OP_VARIANTS(read_cache_variants_f,
-+		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_X4_OP_3A(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_DUALIO_OP(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_X2_OP_3A(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_OP_3A(true, 0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_OP_3A(false, 0, 0, NULL, 0));
-+
- static SPINAND_OP_VARIANTS(write_cache_variants,
- 		SPINAND_PROG_LOAD_X4(true, 0, NULL, 0),
- 		SPINAND_PROG_LOAD(true, 0, NULL, 0));
-@@ -59,6 +73,11 @@ static int gd5fxgq4xa_ooblayout_free(struct mtd_info *mtd, int section,
- 	return 0;
- }
- 
-+static const struct mtd_ooblayout_ops gd5fxgq4xa_ooblayout = {
-+	.ecc = gd5fxgq4xa_ooblayout_ecc,
-+	.free = gd5fxgq4xa_ooblayout_free,
-+};
-+
- static int gd5fxgq4xa_ecc_get_status(struct spinand_device *spinand,
- 					 u8 status)
- {
-@@ -83,7 +102,7 @@ static int gd5fxgq4xa_ecc_get_status(struct spinand_device *spinand,
- 	return -EINVAL;
- }
- 
--static int gd5fxgq4uexxg_ooblayout_ecc(struct mtd_info *mtd, int section,
-+static int gd5fxgq4_variant2_ooblayout_ecc(struct mtd_info *mtd, int section,
- 				       struct mtd_oob_region *region)
- {
- 	if (section)
-@@ -95,7 +114,7 @@ static int gd5fxgq4uexxg_ooblayout_ecc(struct mtd_info *mtd, int section,
- 	return 0;
- }
- 
--static int gd5fxgq4uexxg_ooblayout_free(struct mtd_info *mtd, int section,
-+static int gd5fxgq4_variant2_ooblayout_free(struct mtd_info *mtd, int section,
- 					struct mtd_oob_region *region)
- {
- 	if (section)
-@@ -108,6 +127,11 @@ static int gd5fxgq4uexxg_ooblayout_free(struct mtd_info *mtd, int section,
- 	return 0;
- }
- 
-+static const struct mtd_ooblayout_ops gd5fxgq4_variant2_ooblayout = {
-+	.ecc = gd5fxgq4_variant2_ooblayout_ecc,
-+	.free = gd5fxgq4_variant2_ooblayout_free,
-+};
-+
- static int gd5fxgq4uexxg_ecc_get_status(struct spinand_device *spinand,
- 					u8 status)
- {
-@@ -150,15 +174,25 @@ static int gd5fxgq4uexxg_ecc_get_status(struct spinand_device *spinand,
- 	return -EINVAL;
- }
- 
--static const struct mtd_ooblayout_ops gd5fxgq4xa_ooblayout = {
--	.ecc = gd5fxgq4xa_ooblayout_ecc,
--	.free = gd5fxgq4xa_ooblayout_free,
--};
-+static int gd5fxgq4ufxxg_ecc_get_status(struct spinand_device *spinand,
-+					u8 status)
-+{
-+	switch (status & GD5FXGQ4UXFXXG_STATUS_ECC_MASK) {
-+	case GD5FXGQ4UXFXXG_STATUS_ECC_NO_BITFLIPS:
-+		return 0;
- 
--static const struct mtd_ooblayout_ops gd5fxgq4uexxg_ooblayout = {
--	.ecc = gd5fxgq4uexxg_ooblayout_ecc,
--	.free = gd5fxgq4uexxg_ooblayout_free,
--};
-+	case GD5FXGQ4UXFXXG_STATUS_ECC_1_3_BITFLIPS:
-+		return 3;
-+
-+	case GD5FXGQ4UXFXXG_STATUS_ECC_UNCOR_ERROR:
-+		return -EBADMSG;
-+
-+	default: /* (2 << 4) through (6 << 4) are 4-8 corrected errors */
-+		return ((status & GD5FXGQ4UXFXXG_STATUS_ECC_MASK) >> 4) + 2;
-+	}
-+
-+	return -EINVAL;
-+}
- 
- static const struct spinand_info gigadevice_spinand_table[] = {
- 	SPINAND_INFO("GD5F1GQ4xA", 0xF1,
-@@ -195,25 +229,40 @@ static const struct spinand_info gigadevice_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&gd5fxgq4uexxg_ooblayout,
-+		     SPINAND_ECCINFO(&gd5fxgq4_variant2_ooblayout,
- 				     gd5fxgq4uexxg_ecc_get_status)),
-+	SPINAND_INFO("GD5F1GQ4UFxxG", 0xb148,
-+		     NAND_MEMORG(1, 2048, 128, 64, 1024, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants_f,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&gd5fxgq4_variant2_ooblayout,
-+				     gd5fxgq4ufxxg_ecc_get_status)),
- };
- 
- static int gigadevice_spinand_detect(struct spinand_device *spinand)
- {
- 	u8 *id = spinand->id.data;
-+	u16 did;
- 	int ret;
- 
- 	/*
--	 * For GD NANDs, There is an address byte needed to shift in before IDs
--	 * are read out, so the first byte in raw_id is dummy.
-+	 * Earlier GDF5-series devices (A,E) return [0][MID][DID]
-+	 * Later (F) devices return [MID][DID1][DID2]
- 	 */
--	if (id[1] != SPINAND_MFR_GIGADEVICE)
-+
-+	if (id[0] == SPINAND_MFR_GIGADEVICE)
-+		did = (id[1] << 8) + id[2];
-+	else if (id[0] == 0 && id[1] == SPINAND_MFR_GIGADEVICE)
-+		did = id[2];
-+	else
- 		return 0;
- 
- 	ret = spinand_match_and_init(spinand, gigadevice_spinand_table,
- 				     ARRAY_SIZE(gigadevice_spinand_table),
--				     id[2]);
-+				     did);
- 	if (ret)
- 		return ret;
- 
--- 
-2.20.1
+They are both ultimately the same root cause since livepatch uses ftrace
+to perform the patching.
+
+I have put together a test case that can reproduce the crash using
+KVM. The tarball includes a minimal kernel and initramfs, along with
+a script to run qemu and the .config used to build the kernel. By
+default it will attempt to reproduce by loading multiple livepatches
+at the same time. Passing 'test=ftrace' to the script will attempt to
+reproduce by racing with ftrace.
+
+My test setup reproduces the race and oops more reliably by loading
+multiple livepatches at the same time than with the ftrace method. It's
+not 100% reproducible, so the test case may need to be run multiple
+times.
+
+It can be found here (not attached because of its size):
+http://johannes.erdfelt.com/5.2.0-rc1-a188339ca5-livepatch-race.tar.gz
+
+The simple patch of extending the module_mutex lock over the entirety
+of klp_init_object_loaded fixes it from the livepatch side. This
+mostly works because set_all_modules_text_{rw,ro} acquires module_mutex
+as well, but it still leaves a hole in the ftrace code. A lock should
+probably be held over the entirety of remapping the text sections RW.
+
+This is complicated by the fact that remapping the text section in
+ftrace is handled by arch specific code. I'm not sure what a good
+solution to this is yet.
+
+JE
 
