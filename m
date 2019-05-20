@@ -2,139 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C8622D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BF622D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:39:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbfETHh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 03:37:57 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43088 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfETHh5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 03:37:57 -0400
-Received: by mail-vs1-f66.google.com with SMTP id d128so8304606vsc.10;
-        Mon, 20 May 2019 00:37:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZzFqnIOsi8p6z+3XrmxUiH+3WXG0rfBF0N579QptVnw=;
-        b=XHlzanKfUZa49Qnj7RTchm/p+lSZvbWxzVhVGdoDtEEfmSlQnhMxXxtEMjbfIpOfQJ
-         cPK3Sf6EWE72eSHCTDJD6hWY/CC1gFkRNFwoWOhgUP69M3n6lJdCcyqc6QWN3h4fqxzg
-         IJnJM3S478GUZq1QwJn/TmjlJuAjz6tNiBm4VandNuz2qfnek2vSW4L2nvDLELzMFDrg
-         qMg4C5Bvpj9+QDDQq/GeZDCXxqyJB+HrTModIDBUeXKSBkWyhagZoBSQqPNsdJJYtTm/
-         K0ZV4Wi/EhAmQu9a6Ker0LLJUSr0cPbxo0wPo4yBm6Rc9tG0JUzYXF2WQFxDnhxarntK
-         qpnw==
-X-Gm-Message-State: APjAAAVFF04Nikw+/bnoHdVrVEO8xI2dnLQZXfuQYLo1/G7rilI4cDES
-        249i1nOnYzyG0CH4W4SCNyuI+U+QtHE/oICDB4o=
-X-Google-Smtp-Source: APXvYqyUussoat3RoiVGfWvPbqvmfPyaaXxlv6lPx8B2T1BSZy0HJO2KEIQH+Mu9ccoM18jhu0wEOGioz6Sr2M5lBWk=
-X-Received: by 2002:a67:fdd4:: with SMTP id l20mr28417242vsq.63.1558337876203;
- Mon, 20 May 2019 00:37:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190504004258.23574-1-erosca@de.adit-jv.com> <20190504004258.23574-3-erosca@de.adit-jv.com>
- <CAMuHMdWnuvQvugqfMjE1R_QDvf-Pma8POb1x5YjRr97+M-=HHg@mail.gmail.com>
- <20190506194233.GA32430@vmlxhi-102.adit-jv.com> <OSBPR01MB3174C93C0A49701EC72F9D82D8060@OSBPR01MB3174.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB3174C93C0A49701EC72F9D82D8060@OSBPR01MB3174.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 May 2019 09:37:43 +0200
-Message-ID: <CAMuHMdVR4idTqOiNWMi3GAS0D-V+SMsYSsukgEMYyz5zDcuPbw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] Revert "arm64: dts: renesas: r8a7796: Enable DMA for SCIF2"
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "REE erosca@DE.ADIT-JV.COM" <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "George G . Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1730445AbfETHjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 03:39:36 -0400
+Received: from mail-eopbgr140081.outbound.protection.outlook.com ([40.107.14.81]:62528
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726940AbfETHje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 03:39:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=77zTwIuPuuuKBpj8chyvnGVXgAxU/Dzl2XPvhGZ52kQ=;
+ b=V5BnSzhsPDglQyVlUL1lazzLGiV6YRFSXFnIzit0zMf+2S24brvz0u0jWMhaJBeaJcvfIaOZnqQ3rlSK5TUL65sWkxPLhMQya0PUhg/2bnt315im/st/T9PCJQu7mtm+1IHG8bPXRd8DbrtJu/GdnIwTvAd1oEwlbqf7G5YutOs=
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.44.16) by
+ AM5PR0402MB2769.eurprd04.prod.outlook.com (10.175.46.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Mon, 20 May 2019 07:39:29 +0000
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::d8ed:b418:4ee9:a51]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::d8ed:b418:4ee9:a51%9]) with mapi id 15.20.1900.020; Mon, 20 May 2019
+ 07:39:29 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Pavel Machek <pavel@denx.de>
+CC:     Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Rodin <mrodin@de.adit-jv.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] soc: fsl: add RCPM driver
+Thread-Topic: [PATCH v3 3/3] soc: fsl: add RCPM driver
+Thread-Index: AQHVDtkxsC35JTlHSUaXSC6F++m+MqZznP0AgAABClA=
+Date:   Mon, 20 May 2019 07:39:29 +0000
+Message-ID: <AM5PR0402MB2865E57004468965FF2003A2F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+References: <20190520065816.32360-1-ran.wang_1@nxp.com>
+ <20190520065816.32360-3-ran.wang_1@nxp.com> <20190520072630.GA3674@amd>
+In-Reply-To: <20190520072630.GA3674@amd>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ad2f9331-cc42-4956-765c-08d6dcf64aea
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM5PR0402MB2769;
+x-ms-traffictypediagnostic: AM5PR0402MB2769:
+x-microsoft-antispam-prvs: <AM5PR0402MB27696651D7F99F6A0D103932F1060@AM5PR0402MB2769.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 004395A01C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(346002)(376002)(189003)(199004)(8676002)(6116002)(81166006)(33656002)(81156014)(316002)(8936002)(14454004)(3846002)(54906003)(256004)(14444005)(478600001)(476003)(486006)(2906002)(52536014)(68736007)(446003)(26005)(102836004)(5660300002)(11346002)(6916009)(186003)(6506007)(99286004)(229853002)(7696005)(76176011)(9686003)(4326008)(7416002)(6246003)(53936002)(55016002)(6436002)(25786009)(74316002)(66066001)(71200400001)(66476007)(76116006)(73956011)(66946007)(305945005)(7736002)(86362001)(64756008)(66556008)(66446008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2769;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IxLiABcay4Wnda4BpGKbub9oBLyDcwYrRP0W+GmYtxJ3trxdfC7M7IJh0vxwTSgORGas3JBXzm79wZhEb0LPjKkjycnNNTcXbvC6u4s4azod69WYp/PNLWeFSyWC74X0NgKOYZFwadpg2vWwaoHzFwJ+RFhbaPVBYI1pKFQEFYy4kLAdrjbK4WpfEj9s3gVQNV7VBrD8bGB7C4tgujm602dI2Is6H4SgAcs00j73iBtH7cDn7hSpQbis+Zi/wMGr6Mc1rSACG2lsPOJkjWvhiizxcyTA3Zq2Y+iSE0KBoGfeGMO3p0RgLiLro6WzXqCBSE9r6lwv5rvaf3nSTW/EeD4q49M3MaYkurj+3pnub5b6uieIU7UtLSpQ2veIu/2Abmzh4fMggdi0fGYIWWvuf+F3XT/x70oXd+RKIHTktyM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad2f9331-cc42-4956-765c-08d6dcf64aea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 07:39:29.5598
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2769
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shimoda-san,
+Hi Pavel,
 
-Thanks for your analysis!
-
-On Mon, May 20, 2019 at 4:18 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > From: Eugeniu Rosca, Sent: Tuesday, May 7, 2019 4:43 AM
-> <snip>
-> > > > [0] v5.0-rc6 commit 97f26702bc95b5 ("arm64: dts: renesas: r8a7796: Enable DMA for SCIF2")
-> > > > [1] v4.14.106 commit 703db5d1b1759f ("arm64: dts: renesas: r8a7796: Enable DMA for SCIF2")
-> > > > [2] scif (DEBUG) and rcar-dmac logs:
-> > > >     https://gist.github.com/erosca/132cce76a619724a9e4fa61d1db88c66
-> <snip>
-> > Enabling DEBUG in drivers/dma/sh/rcar-dmac.c, I can notice that one of
-> > the symptoms is a NULL dst_addr revealed by:
+On Monday, May 20, 2019 15:27: Pavel Machek wrote:
+>=20
+> Hi!
+>=20
+> > The NXP's QorIQ Processors based on ARM Core have RCPM module (Run
+> > Control and Power Management), which performs all device-level tasks
+> > associated with power management such as wakeup source control.
 > >
-> > rcar-dmac e7300000.dma-controller: chan0: queue chunk (____ptrval____): 0@0xffff800639eb8090 -> 0x0000000000000000
+> > This driver depends on PM wakeup source framework which help to
+> > collect wake information.
 > >
-> > In working scenarios, dst_addr is never zero. Does it give any hints?
->
-> Thank you for the report! It's very helpful to me.
-> I think we should fix the sh-sci driver at least.
->
-> According to the [2] log above,
->
-> [    4.379716] sh-sci e6e88000.serial: sci_dma_tx_work_fn: ffff800639b55000: 0...0, cookie 126
->
-> This "0...0" means the s->tx_dma_len on the sci_dma_tx_work_fn will be zero. And,
+> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+>=20
+> > +// Copyright 2019 NXP
+> > +//
+> > +// Author: Ran Wang <ran.wang_1@nxp.com>,
+>=20
+> extra ,
 
-How can this happen? schedule_work(&s->work_tx) is called only if
-!uart_circ_empty(), and while holding the port lock? So the circular
-buffer must be made empty in between the call to schedule_work() and the
-work function sci_dma_tx_work_fn() being called.
+OK, will update.
 
-I think this can happen if uart_flush_buffer() is called at the right
-moment?
+> > +	rcpm =3D dev_get_drvdata(dev);
+> > +	if (!rcpm)
+> > +		return -EINVAL;
+> > +
+> > +	/* Begin with first registered wakeup source */
+> > +	ws =3D wakeup_source_get_next(NULL);
+> > +	while (ws) {
+>=20
+> while (ws =3D wakeup_source_get_next(NULL))
+>=20
+> ?
+I just answered this in v2 mail thread:=20
+"Actually, we only pass NULL to wakeup_source_get_next()
+at very first call to get 1st wakeup source. Then in the while
+loop, we will fetch next source but not 1st, that's different.
+I am afraid your suggestion is not quite correct."
 
-> > rcar-dmac e7300000.dma-controller: chan0: queue chunk (____ptrval____): 0@0xffff800639eb8090 -> 0x0000000000000000
->
-> This means the chunk->dst_addr is not set to the "dst_addr" for SCIF because the len on rcar_dmac_chan_prep_sg is zero.
-> So, I'm thinking:
->  - we have to fix the sh_sci driver to avoid "tx_dma_len = 0" transferring.
-
-That sounds like just a simple check for !s->tx_dma_len in
-sci_dma_tx_work_fn(), to return early, _and_ reset s->cookie_tx to
--EINVAL.
-
-However, uart_flush_buffer() may still be called in between the check
-and the calls to dmaengine_prep_slave_single() /
-dma_sync_single_for_device(), clearing s->tx_dma_len again.
-Unless something has changed recently, these two calls cannot be moved
-inside the spinlock-protected section?
-Using a cached value of s->tx_dma_len for the dmaengine calls might
-work, though.
-
-> and
->
->  - also we have to fix the rcar-dmac driver to avoid this issue because the DMA Engine API
->    guide doesn't prevent the len = 0.
-
-I guess returning an error makes most sense?
-Else we have to fix it deeper into the driver, where handling becomes
-more complex.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
+Ran
