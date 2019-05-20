@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FAA233E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB84E234DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbfETMVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:21:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34594 "EHLO mail.kernel.org"
+        id S2390312AbfETMbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:31:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388102AbfETMVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:21:06 -0400
+        id S2390284AbfETMbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:31:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34B1520656;
-        Mon, 20 May 2019 12:21:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C842D20645;
+        Mon, 20 May 2019 12:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354865;
-        bh=WqXVU298ghjn0eTgBxKUTiGOrwmB4Y3FBEDjgQl9Rhs=;
+        s=default; t=1558355474;
+        bh=GmTb07UMxQ8LwlQL7RhlNeNdc5N0RHqvgDWXvshl5g8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pOA5qxqdSJ9Ua3bwO2WKctBo8TFA3Lq2na0/E2b2b/XKqzg3/RDdPjjGvT/srFuXV
-         1ZQl2l+jlN/Sa57NUVj/q5HOLjZvl7x6PMgTQFhBBSw9hKJYuktuNF2DxOMjfvXQKX
-         5O6dnn6HxEX7bkameA6oRW9V7h/e2gvPythSJ+8Y=
+        b=bB5o+VZhcrESfxfHZTQ2Yf3/u4+PAjMpZwPu0sfPY/nybTZRKQdukQBbSSuWhdJw0
+         8UDQ9rfmIxREwxt1tp7XcjzJag+PJ9b6oY82+dzwZjGDMqPnAnq0TcsBjVAEGpP+ww
+         cWq5JQ8c2VMg9d9WwhsUYTLQt9wI+2kE0O+x8b3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Will Deacon <will.deacon@arm.com>,
         huang ying <huang.ying.caritas@gmail.com>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 001/105] locking/rwsem: Prevent decrement of reader count before increment
-Date:   Mon, 20 May 2019 14:13:07 +0200
-Message-Id: <20190520115247.158720523@linuxfoundation.org>
+Subject: [PATCH 5.1 001/128] locking/rwsem: Prevent decrement of reader count before increment
+Date:   Mon, 20 May 2019 14:13:08 +0200
+Message-Id: <20190520115249.551262196@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -95,12 +95,14 @@ Link: http://lkml.kernel.org/r/20190428212557.13482-2-longman@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c |   44 ++++++++++++++++++++++++++++++--------------
+ kernel/locking/rwsem-xadd.c | 44 +++++++++++++++++++++++++------------
  1 file changed, 30 insertions(+), 14 deletions(-)
 
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index fbe96341beeed..59b801de8dd5c 100644
 --- a/kernel/locking/rwsem-xadd.c
 +++ b/kernel/locking/rwsem-xadd.c
-@@ -130,6 +130,7 @@ static void __rwsem_mark_wake(struct rw_
+@@ -130,6 +130,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
  {
  	struct rwsem_waiter *waiter, *tmp;
  	long oldcount, woken = 0, adjustment = 0;
@@ -108,7 +110,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  
  	/*
  	 * Take a peek at the queue head waiter such that we can determine
-@@ -188,18 +189,42 @@ static void __rwsem_mark_wake(struct rw_
+@@ -188,18 +189,42 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
  	 * of the queue. We know that woken will be at least 1 as we accounted
  	 * for above. Note we increment the 'active part' of the count by the
  	 * number of readers before waking any processes up.
@@ -144,11 +146,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
 +
 +	if (adjustment)
 +		atomic_long_add(adjustment, &sem->count);
- 
++
 +	/* 2nd pass */
 +	list_for_each_entry_safe(waiter, tmp, &wlist, list) {
 +		struct task_struct *tsk;
-+
+ 
 +		tsk = waiter->task;
  		get_task_struct(tsk);
 -		list_del(&waiter->list);
@@ -156,9 +158,9 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  		/*
  		 * Ensure calling get_task_struct() before setting the reader
  		 * waiter to nil such that rwsem_down_read_failed() cannot
-@@ -215,15 +240,6 @@ static void __rwsem_mark_wake(struct rw_
- 		/* wake_q_add() already take the task ref */
- 		put_task_struct(tsk);
+@@ -213,15 +238,6 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 		 */
+ 		wake_q_add_safe(wake_q, tsk);
  	}
 -
 -	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
@@ -172,5 +174,8 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  }
  
  /*
+-- 
+2.20.1
+
 
 
