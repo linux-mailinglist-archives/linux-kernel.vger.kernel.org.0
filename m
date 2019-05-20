@@ -2,237 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA00423C5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2CA23C67
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392268AbfETPkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:40:43 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34357 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392253AbfETPkm (ORCPT
+        id S2392299AbfETPmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:42:13 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:51333 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388878AbfETPmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:40:42 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c13so6983090pgt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k/heyaUqeKgmsqNyqFuRQhrCnWAaJChzuChioekfYFU=;
-        b=szsaZEAWQZBAPa/oSIDZup6Sf3jSi3AJ76WcSsZC1BgEtPm2HRp1c+w0lJQChX3EX6
-         hX/GoTqMK+0+zx/9R5rDkf5m5aZmhpybbpZJQBdSeK5uTi3+UvGjBlOQcsZMpnKl4AzR
-         qlGDJn7Oq7xYDgi8LQsdENsNMpNdnWWnty6fDhrh/VjIO0o5tu81pgh8/DOF5kR34az6
-         KABjDG9DI7NtDSB5JsYly4sD4iTg3dk/qU8HG67UhbEngTVIYwRYPstU4hFei2dlyvNx
-         n7fhc7CgCLg7Z/rik+tGZirioJ5jwOUhd9dYcpPxgvLI1JGroSd3ozTGxA9XV5aVgnZs
-         VIJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k/heyaUqeKgmsqNyqFuRQhrCnWAaJChzuChioekfYFU=;
-        b=E4Cqb9+wR/WCTiUDodQ0w+0Z9AxaFnd9d46TpGX0d54cVWc90A9f6pHh0ITqFEvkUK
-         R3pWPd7c6oiZuBiNt/DT2VwRGZ8hiWWlbtKIL6z7FcV5Q6MVYHK6f7vxotq/ZoK/D5KL
-         k95RcIehTGzGgQGRP9GNlg29NDSDZaIo5V+bwrMzMLKvG+xb1JOGrb8bRgCvcS6ygcvo
-         7whXcf8z2IzCtqsLRRjOjkOzBuXEqfwQe7vxMXURiTTbFVxkpYGXNalIVJ6UP+Hsg/N4
-         4uvmtC0bqE2GFwt4uscDseQ6mpBqgekLlowrTn7C2rmDm+9u4S10LHiDo2Y9q84eWxo9
-         UsmQ==
-X-Gm-Message-State: APjAAAXDrLpNhVRcrlVa3udTrHbETqZDO/Que3tHN2+BB7/U5eytS/1c
-        UQy40LL2qVEhv8NbrKBrnoenV4bCBmU=
-X-Google-Smtp-Source: APXvYqzB4o9I2xZFF8x25ug5HF4C3D7MauyyGIjq+J9XrCQDbuj+gG89I5cVtID1X4Jo1vMXmLyuqA==
-X-Received: by 2002:aa7:9a8c:: with SMTP id w12mr80346129pfi.187.1558366841456;
-        Mon, 20 May 2019 08:40:41 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a69sm47830937pfa.81.2019.05.20.08.40.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 08:40:40 -0700 (PDT)
-Date:   Mon, 20 May 2019 08:41:08 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     arnd@arndb.de, subashab@codeaurora.org, david.brown@linaro.org,
-        agross@kernel.org, davem@davemloft.net,
-        ilias.apalodimas@linaro.org, cpratapa@codeaurora.org,
-        syadagir@codeaurora.org, evgreen@chromium.org, benchan@google.com,
-        ejcaruso@google.com, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] net: qualcomm: rmnet: kill RMNET_MAP_GET_*()
- accessor macros
-Message-ID: <20190520154108.GQ2085@tuxbook-pro>
-References: <20190520135354.18628-1-elder@linaro.org>
- <20190520135354.18628-3-elder@linaro.org>
+        Mon, 20 May 2019 11:42:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 3D67E3F7AC;
+        Mon, 20 May 2019 17:42:04 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9] autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id m4YrvbgMd1na; Mon, 20 May 2019 17:41:58 +0200 (CEST)
+Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
+        (Authenticated sender: mb547485)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 251973F7F2;
+        Mon, 20 May 2019 17:41:56 +0200 (CEST)
+Date:   Mon, 20 May 2019 17:41:56 +0200
+From:   Fredrik Noring <noring@nocrew.org>
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "marex@denx.de" <marex@denx.de>,
+        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>,
+        Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 0/3] prerequisites for device reserved local mem
+ rework
+Message-ID: <20190520154156.GA3664@sx9>
+References: <20190514143807.7745-1-laurentiu.tudor@nxp.com>
+ <9d34015d-c219-179b-3141-4b0de3530ac3@arm.com>
+ <20190514182931.GA2559@sx9>
+ <0e5f3b86-7a80-eec7-691b-34a123194208@nxp.com>
+ <20190515162858.GB17162@sx9>
+ <ed63c117-610c-ea49-f45e-727be220745f@nxp.com>
+ <20190516151548.GB53952@sx9>
+ <5fa97254-3038-6fe7-a7e7-a267262049c6@nxp.com>
+ <20190517174159.GA32450@sx9>
+ <3c8897e9-218e-3fff-1735-816ffd30e908@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190520135354.18628-3-elder@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <3c8897e9-218e-3fff-1735-816ffd30e908@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 20 May 06:53 PDT 2019, Alex Elder wrote:
+Hi Laurentiu,
 
-> The following macros, defined in "rmnet_map.h", assume a socket
-> buffer is provided as an argument without any real indication this
-> is the case.
->     RMNET_MAP_GET_MUX_ID()
->     RMNET_MAP_GET_CD_BIT()
->     RMNET_MAP_GET_PAD()
->     RMNET_MAP_GET_CMD_START()
->     RMNET_MAP_GET_LENGTH()
-> What they hide is pretty trivial accessing of fields in a structure,
-> and it's much clearer to see this if we do these accesses directly.
-> 
-> So rather than using these accessor macros, assign a local
-> variable of the map header pointer type to the socket buffer data
-> pointer, and derereference that pointer variable.
-> 
-> Use the network byte order macros (e.g., ntohs()), not the Linux
-> byte order functions (e.g. be_to_cpu16()) to convert the big-endian
-> packet length field, to match the convention used elswhere in the
-> driver.
-> 
-> There's no need to byte swap 0; it's all zeros irrespective of
-> endianness.
-> 
+> Wow, that's excellent news! Thanks a lot for looking into this.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+You are welcome!
 
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> ---
->  drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c |  9 +++++----
->  drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h      | 12 ------------
->  .../net/ethernet/qualcomm/rmnet/rmnet_map_command.c  | 11 ++++++++---
->  drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c |  4 ++--
->  4 files changed, 15 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> index 11167abe5934..4c1b62b72504 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
-> @@ -65,20 +65,21 @@ static void
->  __rmnet_map_ingress_handler(struct sk_buff *skb,
->  			    struct rmnet_port *port)
->  {
-> +	struct rmnet_map_header *map_header = (void *)skb->data;
->  	struct rmnet_endpoint *ep;
->  	u16 len, pad;
->  	u8 mux_id;
->  
-> -	if (RMNET_MAP_GET_CD_BIT(skb)) {
-> +	if (map_header->cd_bit) {
->  		if (port->data_format & RMNET_FLAGS_INGRESS_MAP_COMMANDS)
->  			return rmnet_map_command(skb, port);
->  
->  		goto free_skb;
->  	}
->  
-> -	mux_id = RMNET_MAP_GET_MUX_ID(skb);
-> -	pad = RMNET_MAP_GET_PAD(skb);
-> -	len = RMNET_MAP_GET_LENGTH(skb) - pad;
-> +	mux_id = map_header->mux_id;
-> +	pad = map_header->pad_len;
-> +	len = ntohs(map_header->pkt_len) - pad;
->  
->  	if (mux_id >= RMNET_MAX_LOGICAL_EP)
->  		goto free_skb;
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> index b1ae9499c0b2..a30a7b405a11 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map.h
-> @@ -63,18 +63,6 @@ struct rmnet_map_ul_csum_header {
->  	u16 csum_enabled:1;
->  } __aligned(1);
->  
-> -#define RMNET_MAP_GET_MUX_ID(Y) (((struct rmnet_map_header *) \
-> -				 (Y)->data)->mux_id)
-> -#define RMNET_MAP_GET_CD_BIT(Y) (((struct rmnet_map_header *) \
-> -				(Y)->data)->cd_bit)
-> -#define RMNET_MAP_GET_PAD(Y) (((struct rmnet_map_header *) \
-> -				(Y)->data)->pad_len)
-> -#define RMNET_MAP_GET_CMD_START(Y) ((struct rmnet_map_control_command *) \
-> -				    ((Y)->data + \
-> -				      sizeof(struct rmnet_map_header)))
-> -#define RMNET_MAP_GET_LENGTH(Y) (ntohs(((struct rmnet_map_header *) \
-> -					(Y)->data)->pkt_len))
-> -
->  #define RMNET_MAP_COMMAND_REQUEST     0
->  #define RMNET_MAP_COMMAND_ACK         1
->  #define RMNET_MAP_COMMAND_UNSUPPORTED 2
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> index f6cf59aee212..f675f47c3495 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c
-> @@ -20,12 +20,13 @@ static u8 rmnet_map_do_flow_control(struct sk_buff *skb,
->  				    struct rmnet_port *port,
->  				    int enable)
->  {
-> +	struct rmnet_map_header *map_header = (void *)skb->data;
->  	struct rmnet_endpoint *ep;
->  	struct net_device *vnd;
->  	u8 mux_id;
->  	int r;
->  
-> -	mux_id = RMNET_MAP_GET_MUX_ID(skb);
-> +	mux_id = map_header->mux_id;
->  
->  	if (mux_id >= RMNET_MAX_LOGICAL_EP) {
->  		kfree_skb(skb);
-> @@ -57,6 +58,7 @@ static void rmnet_map_send_ack(struct sk_buff *skb,
->  			       unsigned char type,
->  			       struct rmnet_port *port)
->  {
-> +	struct rmnet_map_header *map_header = (void *)skb->data;
->  	struct rmnet_map_control_command *cmd;
->  	struct net_device *dev = skb->dev;
->  
-> @@ -66,7 +68,8 @@ static void rmnet_map_send_ack(struct sk_buff *skb,
->  
->  	skb->protocol = htons(ETH_P_MAP);
->  
-> -	cmd = RMNET_MAP_GET_CMD_START(skb);
-> +	/* Command data immediately follows the header */
-> +	cmd = (struct rmnet_map_control_command *)(map_header + 1);
->  	cmd->cmd_type = type & 0x03;
->  
->  	netif_tx_lock(dev);
-> @@ -79,11 +82,13 @@ static void rmnet_map_send_ack(struct sk_buff *skb,
->   */
->  void rmnet_map_command(struct sk_buff *skb, struct rmnet_port *port)
->  {
-> +	struct rmnet_map_header *map_header = (void *)skb->data;
->  	struct rmnet_map_control_command *cmd;
->  	unsigned char command_name;
->  	unsigned char rc = 0;
->  
-> -	cmd = RMNET_MAP_GET_CMD_START(skb);
-> +	/* Command data immediately follows the header */
-> +	cmd = (struct rmnet_map_control_command *)(map_header + 1);
->  	command_name = cmd->command_name;
->  
->  	switch (command_name) {
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> index 57a9c314a665..498f20ba1826 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> @@ -323,7 +323,7 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff *skb,
->  		return NULL;
->  
->  	maph = (struct rmnet_map_header *)skb->data;
-> -	packet_len = ntohs(maph->pkt_len) + sizeof(struct rmnet_map_header);
-> +	packet_len = ntohs(maph->pkt_len) + sizeof(*maph);
->  
->  	if (port->data_format & RMNET_FLAGS_INGRESS_MAP_CKSUMV4)
->  		packet_len += sizeof(struct rmnet_map_dl_csum_trailer);
-> @@ -332,7 +332,7 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff *skb,
->  		return NULL;
->  
->  	/* Some hardware can send us empty frames. Catch them */
-> -	if (ntohs(maph->pkt_len) == 0)
-> +	if (!maph->pkt_len)
->  		return NULL;
->  
->  	skbn = alloc_skb(packet_len + RMNET_MAP_DEAGGR_SPACING, GFP_ATOMIC);
-> -- 
-> 2.20.1
-> 
+> Are you ok if I add your Signed-Off-by and maybe also Tested-by in the 
+> first patch of the series?
+
+Yes, but I have two comments:
+
+1. ohci_mem_init() allocates two DMA pools that are no longer relevant, so
+   it seems appropriate to assign NULL to ohci->td_cache and ohci->ed_cache,
+   and document this exception in struct ohci_hcd. Unless something more
+   elegant can be done, of course.
+
+2. A device address is supplied as phys_addr_t phys to gen_pool_add_virt().
+   This seems to work in this particular DMA application, but there will be
+   problems if someone does phys_to_virt() or suchlike. Can this be improved
+   or clearly explained? gen_pool_virt_to_phys() searches in address ranges,
+   for example, so it appears the implementation uses phys quite carefully.
+
+> As a side note, I plan to add a new HCD function and name it something 
+> like hcd_setup_local_mem() that would take care of setting up the 
+> genalloc for drivers.
+
+Good! Then I suppose the HCD_LOCAL_MEM assignment can be removed from the
+drivers too? Like this one:
+
+	ohci_ps2_hc_driver.flags |= HCD_LOCAL_MEM;
+
+Regarding the previous HCD IRQ question, lib/genalloc.c says that
+
+	It is safe to use the allocator in NMI handlers and other special
+	unblockable contexts that could otherwise deadlock on locks.  This
+	is implemented by using atomic operations and retries on any
+	conflicts.  The disadvantage is that there may be livelocks in
+	extreme cases.  For better scalability, one allocator can be used
+	for each CPU.
+
+so it appears to be good enough for USB purposes.
+
+> Yes, I think it would make sense to put the new API in a distinct patch. 
+> I think we can either include it in the next version of the patch series 
+> or you can submit separately and I'll mention it as dependency for this 
+> patch series, however you prefer.
+
+Please find the patch below and if possible include it in your patch series.
+
+Fredrik
+
+lib/genalloc.c: Add gen_pool_dma_zalloc() for zeroed DMA allocations
+
+gen_pool_dma_zalloc() is a zeroed memory variant of gen_pool_dma_alloc().
+Document return values of both, and indicate NULL as a "%NULL" constant.
+
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+
+--- a/include/linux/genalloc.h
++++ b/include/linux/genalloc.h
+@@ -121,6 +121,8 @@ extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
+ 		genpool_algo_t algo, void *data);
+ extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
+ 		dma_addr_t *dma);
++extern void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size,
++		dma_addr_t *dma);
+ extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
+ extern void gen_pool_for_each_chunk(struct gen_pool *,
+ 	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -337,12 +337,14 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
+  * gen_pool_dma_alloc - allocate special memory from the pool for DMA usage
+  * @pool: pool to allocate from
+  * @size: number of bytes to allocate from the pool
+- * @dma: dma-view physical address return value.  Use NULL if unneeded.
++ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
+  *
+  * Allocate the requested number of bytes from the specified pool.
+  * Uses the pool allocation function (with first-fit algorithm by default).
+  * Can not be used in NMI handler on architectures without
+  * NMI-safe cmpxchg implementation.
++ *
++ * Return: virtual address of the allocated memory, or %NULL on failure
+  */
+ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
+ {
+@@ -362,6 +364,30 @@ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
+ }
+ EXPORT_SYMBOL(gen_pool_dma_alloc);
+ 
++/**
++ * gen_pool_dma_zalloc - allocate special zeroed memory from the pool for DMA usage
++ * @pool: pool to allocate from
++ * @size: number of bytes to allocate from the pool
++ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
++ *
++ * Allocate the requested number of zeroed bytes from the specified pool.
++ * Uses the pool allocation function (with first-fit algorithm by default).
++ * Can not be used in NMI handler on architectures without
++ * NMI-safe cmpxchg implementation.
++ *
++ * Return: virtual address of the allocated zeroed memory, or %NULL on failure
++ */
++void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
++{
++	void *vaddr = gen_pool_dma_alloc(pool, size, dma);
++
++	if (vaddr)
++		memset(vaddr, 0, size);
++
++	return vaddr;
++}
++EXPORT_SYMBOL(gen_pool_dma_zalloc);
++
+ /**
+  * gen_pool_free - free allocated special memory back to the pool
+  * @pool: pool to free to
