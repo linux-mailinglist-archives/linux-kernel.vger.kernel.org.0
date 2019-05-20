@@ -2,102 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B7D23297
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94442232A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733007AbfETLdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:33:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46744 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732996AbfETLdL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:33:11 -0400
-Received: by mail-pl1-f195.google.com with SMTP id r18so6586142pls.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=kSx/2bQ8k2nUJmyS2liy45fCcO2iYHSDnrOKKw/RGV4=;
-        b=cPRtb7tQHJTTiLOHkiEpYP+wKGEqufi5OlZI8LAVDn750p0hkPo7BlZXT75VNfp9dR
-         bKCNesFU3UCDsME+gGsOPK0VHvOUsTWH5NPfg+xK8mJwmFd5vbJmaO0EKQMFmNQ+n19H
-         U8mqxoNBif5syGeoUe2lEXsWbDC1YB0BzSBgumFCN8STOyMNeJCtTeNLvgnvh10BAtQu
-         5J6eaQFuVUuyZhLT2t+Y0NRhAjRTWOVvbNG74UrINXey6BdbxtdfZyTEs6vh0o0X64Ku
-         AulkUGud8AZoQWHpwMC3klVwa3PQ8CDJYu9MkPTAavxbcDPzAhTfuFpg/fcSO03u0aXx
-         CAKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=kSx/2bQ8k2nUJmyS2liy45fCcO2iYHSDnrOKKw/RGV4=;
-        b=KqwuHo6Wj5/hwxgcdG9sk0hE6lPMrz/WWxxPfXqTxmetbt9MrKmmHSR3s3ganm9T0a
-         uRu4sGU80msZNGB9kNvdI7oDzVcRhLLUKRFYB+qjn0KmEu0YBJvKj4P+AwyvJ/2Kv8WL
-         7ZfpvfHnX7NjHhZqb4jwZMxuZKkLy3iBbK4SwlisM1fSiNSDC7JIzkue8u3yN/r9fMkh
-         i9Y2JjgovoLBnIP2e+2GCXVUb2ygwxlP+Y6DSoUS+g6I0iGrv7LR1+aZxJ+noukC0CED
-         AuHkV+0MFb+3y9afYm4wOTsqkLEoL5fzWC4R/gHffus/54vDML1ioixd8FpUg1Ldo4+k
-         CUgg==
-X-Gm-Message-State: APjAAAWJrF/nz4um7QNDDJPRqMZ7ZpKeg+GdLUKlZVVFZ+7dA5Gqvrza
-        uCdCVOKLE0efET1qi7j6dklwqA==
-X-Google-Smtp-Source: APXvYqxhkwURFkAYdOsYEFVXpnFbD8H/TQI0K1REXB9rdjkjQNCy7pJURAn59WPfwElP41gCPmfnxw==
-X-Received: by 2002:a17:902:18b:: with SMTP id b11mr50155937plb.264.1558351990778;
-        Mon, 20 May 2019 04:33:10 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id z124sm21310020pfz.116.2019.05.20.04.33.05
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 04:33:10 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     dan.j.williams@intel.com, vkoul@kernel.org
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, wsa+renesas@sang-engineering.com,
-        jroedel@suse.de, vincent.guittot@linaro.org,
-        baolin.wang@linaro.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 8/8] dmaengine: sh: usb-dmac: Let the core do the device node validation
-Date:   Mon, 20 May 2019 19:32:21 +0800
-Message-Id: <0b4418a1891261a6a4f8e8356b68e38f4ed6a1d5.1558351667.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1558351667.git.baolin.wang@linaro.org>
-References: <cover.1558351667.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1558351667.git.baolin.wang@linaro.org>
-References: <cover.1558351667.git.baolin.wang@linaro.org>
+        id S1732192AbfETLec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:34:32 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8222 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727626AbfETLeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:34:31 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 711B07BA39250D23F014;
+        Mon, 20 May 2019 19:34:29 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 20 May 2019 19:34:19 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2] intel_th: msu: Fix unused variable warning on arm64 platform
+Date:   Mon, 20 May 2019 19:32:53 +0800
+Message-ID: <1558351973-62643-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let the DMA engine core do the device node validation instead of drivers.
+drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
+drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’ [-Wunused-variable]
+  int ret = -ENOMEM, i;
+                     ^
+drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
+drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’ [-Wunused-variable]
+  int i;
+      ^
+Fix this compiler warning on arm64 platform.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
- drivers/dma/sh/usb-dmac.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/hwtracing/intel_th/msu.c | 40 +++++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 59403f6..0afabf3 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -636,9 +636,6 @@ static bool usb_dmac_chan_filter(struct dma_chan *chan, void *arg)
- 	struct usb_dmac_chan *uchan = to_usb_dmac_chan(chan);
- 	struct of_phandle_args *dma_spec = arg;
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index 81bb54fa3ce8..49e64ca760e6 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -767,6 +767,30 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
+ 	return -ENOMEM;
+ }
  
--	if (dma_spec->np != chan->device->dev->of_node)
--		return false;
++#ifdef CONFIG_X86
++static void msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks)
++{
++	int i;
++
++	for (i = 0; i < nr_blocks; i++)
++		/* Set the page as uncached */
++		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
++}
++
++static void msc_buffer_set_wb(struct msc_window *win)
++{
++	int i;
++
++	for (i = 0; i < win->nr_blocks; i++)
++		/* Reset the page to write-back */
++		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
++}
++#else /* !X86 */
++static inline void msc_buffer_set_uc(struct msc_window *win,
++				     unsigned int nr_blocks) {}
++static inline void msc_buffer_set_wb(struct msc_window *win) {}
++#endif /* CONFIG_X86 */
++
+ /**
+  * msc_buffer_win_alloc() - alloc a window for a multiblock mode
+  * @msc:	MSC device
+@@ -780,7 +804,7 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
+ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
+ {
+ 	struct msc_window *win;
+-	int ret = -ENOMEM, i;
++	int ret = -ENOMEM;
+ 
+ 	if (!nr_blocks)
+ 		return 0;
+@@ -811,11 +835,7 @@ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
+ 	if (ret < 0)
+ 		goto err_nomem;
+ 
+-#ifdef CONFIG_X86
+-	for (i = 0; i < ret; i++)
+-		/* Set the page as uncached */
+-		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
+-#endif
++	msc_buffer_set_uc(win, ret);
+ 
+ 	win->nr_blocks = ret;
+ 
+@@ -860,8 +880,6 @@ static void __msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+  */
+ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+ {
+-	int i;
 -
- 	/* USB-DMAC should be used with fixed usb controller's FIFO */
- 	if (uchan->index != dma_spec->args[0])
- 		return false;
-@@ -659,7 +656,8 @@ static struct dma_chan *usb_dmac_of_xlate(struct of_phandle_args *dma_spec,
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
+ 	msc->nr_pages -= win->nr_blocks;
  
--	chan = dma_request_channel(mask, usb_dmac_chan_filter, dma_spec);
-+	chan = __dma_request_channel(&mask, usb_dmac_chan_filter, dma_spec,
-+				     ofdma->of_node);
- 	if (!chan)
- 		return NULL;
+ 	list_del(&win->entry);
+@@ -870,11 +888,7 @@ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+ 		msc->base_addr = 0;
+ 	}
+ 
+-#ifdef CONFIG_X86
+-	for (i = 0; i < win->nr_blocks; i++)
+-		/* Reset the page to write-back */
+-		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
+-#endif
++	msc_buffer_set_wb(win);
+ 
+ 	__msc_buffer_win_free(msc, win);
  
 -- 
-1.7.9.5
+2.7.4
 
