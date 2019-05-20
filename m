@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D2323646
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8130723358
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389550AbfETM1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:27:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43284 "EHLO mail.kernel.org"
+        id S1732749AbfETMQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:16:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389171AbfETM1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:27:41 -0400
+        id S1731553AbfETMQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:16:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ED1920675;
-        Mon, 20 May 2019 12:27:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4563A20656;
+        Mon, 20 May 2019 12:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355260;
-        bh=ZcfGYjcTJYQ2Gn8coona0MK2VNNKyljTHwHSF+fKYWE=;
+        s=default; t=1558354567;
+        bh=2Y742oHnH+HGTWCwRcOZUm06XA9gz/E0XA7OEu+zDac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KwHhH/ny9NVpUM22YVcFPSul0jR4rsS4lBgm3Ndluw3W0cBhtJlAc6pj+Zsm7Ay4w
-         kiP511iwWzlFSZs3UqJKytseA2dggWnqBJ/J+xsSOY09oAfTpd1WN48GPZSsl5i5b2
-         jc46F2PQUfWpArJO1Snta6HuMeVWwPRuk3xwETJM=
+        b=WnGqP2CuxK66tz+AQ6P/4j3TUtGxsGXphUzv2W6nZj8AwUfEXrtNpTMNdEgnrRBvo
+         LafqO69AdsLGw6Inr4u5/r6NsaxEq9Ekm3fozHSrJY+iHUP3DdtCcwXLFn1/sJosBT
+         dbozyA63j1+7TSlV/9f9XUZyiKVmC/JbvzCayeiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.0 050/123] ALSA: hda/hdmi - Consider eld_valid when reporting jack event
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 01/44] net: core: another layer of lists, around PF_MEMALLOC skb handling
 Date:   Mon, 20 May 2019 14:13:50 +0200
-Message-Id: <20190520115248.060176587@linuxfoundation.org>
+Message-Id: <20190520115231.080664115@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,58 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+[ Upstream commit 78ed8cc25986ac5c21762eeddc1e86e94d422e36 ]
 
-commit 7f641e26a6df9269cb25dd7a4b0a91d6586ed441 upstream.
+First example of a layer splitting the list (rather than merely taking
+ individual packets off it).
+Involves new list.h function, list_cut_before(), like list_cut_position()
+ but cuts on the other side of the given entry.
 
-On the machines with AMD GPU or Nvidia GPU, we often meet this issue:
-after s3, there are 4 HDMI/DP audio devices in the gnome-sound-setting
-even there is no any monitors plugged.
-
-When this problem happens, we check the /proc/asound/cardX/eld#N.M, we
-will find the monitor_present=1, eld_valid=0.
-
-The root cause is BIOS or GPU driver makes the PRESENCE valid even no
-monitor plugged, and of course the driver will not get the valid
-eld_data subsequently.
-
-In this situation, we should not report the jack_plugged event, to do
-so, let us change the function hdmi_present_sense_via_verbs(). In this
-function, it reads the pin_sense via snd_hda_pin_sense(), after
-calling this function, the jack_dirty is 0, and before exiting
-via_verbs(), we change the shadow pin_sense according to both
-monitor_present and eld_valid, then in the snd_hda_jack_report_sync(),
-since the jack_dirty is still 0, it will report jack event according
-to this modified shadow pin_sense.
-
-After this change, the driver will not report Jack_is_plugged event
-through hdmi_present_sense_via_verbs() if monitor_present is 1 and
-eld_valid is 0.
-
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[sl: cut out non list.h bits, we only want list_cut_before]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_hdmi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/linux/list.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1548,9 +1548,11 @@ static bool hdmi_present_sense_via_verbs
- 	ret = !repoll || !eld->monitor_present || eld->eld_valid;
- 
- 	jack = snd_hda_jack_tbl_get(codec, pin_nid);
--	if (jack)
-+	if (jack) {
- 		jack->block_report = !ret;
--
-+		jack->pin_sense = (eld->monitor_present && eld->eld_valid) ?
-+			AC_PINSENSE_PRESENCE : 0;
-+	}
- 	mutex_unlock(&per_pin->lock);
- 	return ret;
+diff --git a/include/linux/list.h b/include/linux/list.h
+index 5809e9a2de5b2..6f935018ea056 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -271,6 +271,36 @@ static inline void list_cut_position(struct list_head *list,
+ 		__list_cut_position(list, head, entry);
  }
+ 
++/**
++ * list_cut_before - cut a list into two, before given entry
++ * @list: a new list to add all removed entries
++ * @head: a list with entries
++ * @entry: an entry within head, could be the head itself
++ *
++ * This helper moves the initial part of @head, up to but
++ * excluding @entry, from @head to @list.  You should pass
++ * in @entry an element you know is on @head.  @list should
++ * be an empty list or a list you do not care about losing
++ * its data.
++ * If @entry == @head, all entries on @head are moved to
++ * @list.
++ */
++static inline void list_cut_before(struct list_head *list,
++				   struct list_head *head,
++				   struct list_head *entry)
++{
++	if (head->next == entry) {
++		INIT_LIST_HEAD(list);
++		return;
++	}
++	list->next = head->next;
++	list->next->prev = list;
++	list->prev = entry->prev;
++	list->prev->next = list;
++	head->next = entry;
++	entry->prev = head;
++}
++
+ static inline void __list_splice(const struct list_head *list,
+ 				 struct list_head *prev,
+ 				 struct list_head *next)
+-- 
+2.20.1
+
 
 
