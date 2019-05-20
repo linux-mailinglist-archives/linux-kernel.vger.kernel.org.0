@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D899323482
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43D2C2340B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389518AbfETM1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:27:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43130 "EHLO mail.kernel.org"
+        id S2388485AbfETMWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389502AbfETM1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:27:33 -0400
+        id S2388474AbfETMWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:22:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1153720675;
-        Mon, 20 May 2019 12:27:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7460220656;
+        Mon, 20 May 2019 12:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355252;
-        bh=4mJ0ODamTguxNDF0yhcDtRfQZ1QX4p0KtjNL4DmrW2I=;
+        s=default; t=1558354961;
+        bh=aF7HKBpx3gAIndsX2zacYPEs1qyN60O2fhVkQ2N/6AQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p2q9fYjelGdCtu8cfer1nTJ8klVmFqwt/euKrIgN2aL0ejbPRZadJ0Q8tuj0k9MU8
-         96OQIdatCKzwaW/GPwgiHwmcIs+GIwSVly6TtX3ZfGP9aQ74WB2stkfaj53v3Zs80U
-         xJIQIULG39IkB/j7dAWhvqm87m4Yp6ctBoIfPyFY=
+        b=ZbXlO3klYGoB0qHuuzY4hjOXtXYDTw7CYAxtBVvNMMo340OafyL+wlZzXQgdrdTu+
+         mFSO1s3/8Wr5XXmk6HvK4PapJU84wVRAXbl+kAaZySI7K5c994ap8jIc27Bt7yhIqo
+         e3YcrIJsGN5DvNtBkJWZQkhHuFk6y0WGn97gBhTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a07d0142e74fdd595cfb@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.0 047/123] ALSA: line6: toneport: Fix broken usage of timer for delayed execution
-Date:   Mon, 20 May 2019 14:13:47 +0200
-Message-Id: <20190520115247.861946852@linuxfoundation.org>
+        stable@vger.kernel.org, Libin Yang <libin.yang@intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 042/105] ASoC: codec: hdac_hdmi add device_link to card device
+Date:   Mon, 20 May 2019 14:13:48 +0200
+Message-Id: <20190520115249.934598402@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Libin Yang <libin.yang@intel.com>
 
-commit 7f84ff68be05ec7a5d2acf8fdc734fe5897af48f upstream.
+commit 01c8327667c249818d3712c3e25c7ad2aca7f389 upstream.
 
-The line6 toneport driver has code for some delayed initialization,
-and this hits the kernel Oops because mutex and other sleepable
-functions are used in the timer callback.  Fix the abuse by a delayed
-work instead so that everything works gracefully.
+In resume from S3, HDAC HDMI codec driver dapm event callback may be
+operated before HDMI codec driver turns on the display audio power
+domain because of the contest between display driver and hdmi codec driver.
 
-Reported-by: syzbot+a07d0142e74fdd595cfb@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This patch adds the device_link between soc card device (consumer) and
+hdmi codec device (supplier) to make sure the sequence is always correct.
+
+Signed-off-by: Libin Yang <libin.yang@intel.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/toneport.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ sound/soc/codecs/hdac_hdmi.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/sound/usb/line6/toneport.c
-+++ b/sound/usb/line6/toneport.c
-@@ -54,8 +54,8 @@ struct usb_line6_toneport {
- 	/* Firmware version (x 100) */
- 	u8 firmware_version;
+--- a/sound/soc/codecs/hdac_hdmi.c
++++ b/sound/soc/codecs/hdac_hdmi.c
+@@ -1829,6 +1829,17 @@ static int hdmi_codec_probe(struct snd_s
+ 	hdmi->card = dapm->card->snd_card;
  
--	/* Timer for delayed PCM startup */
--	struct timer_list timer;
-+	/* Work for delayed PCM startup */
-+	struct delayed_work pcm_work;
- 
- 	/* Device type */
- 	enum line6_device_type type;
-@@ -241,9 +241,10 @@ static int snd_toneport_source_put(struc
- 	return 1;
- }
- 
--static void toneport_start_pcm(struct timer_list *t)
-+static void toneport_start_pcm(struct work_struct *work)
- {
--	struct usb_line6_toneport *toneport = from_timer(toneport, t, timer);
-+	struct usb_line6_toneport *toneport =
-+		container_of(work, struct usb_line6_toneport, pcm_work.work);
- 	struct usb_line6 *line6 = &toneport->line6;
- 
- 	line6_pcm_acquire(line6->line6pcm, LINE6_STREAM_MONITOR, true);
-@@ -393,7 +394,8 @@ static int toneport_setup(struct usb_lin
- 	if (toneport_has_led(toneport))
- 		toneport_update_led(toneport);
- 
--	mod_timer(&toneport->timer, jiffies + TONEPORT_PCM_DELAY * HZ);
-+	schedule_delayed_work(&toneport->pcm_work,
-+			      msecs_to_jiffies(TONEPORT_PCM_DELAY * 1000));
- 	return 0;
- }
- 
-@@ -405,7 +407,7 @@ static void line6_toneport_disconnect(st
- 	struct usb_line6_toneport *toneport =
- 		(struct usb_line6_toneport *)line6;
- 
--	del_timer_sync(&toneport->timer);
-+	cancel_delayed_work_sync(&toneport->pcm_work);
- 
- 	if (toneport_has_led(toneport))
- 		toneport_remove_leds(toneport);
-@@ -422,7 +424,7 @@ static int toneport_init(struct usb_line
- 	struct usb_line6_toneport *toneport =  (struct usb_line6_toneport *) line6;
- 
- 	toneport->type = id->driver_info;
--	timer_setup(&toneport->timer, toneport_start_pcm, 0);
-+	INIT_DELAYED_WORK(&toneport->pcm_work, toneport_start_pcm);
- 
- 	line6->disconnect = line6_toneport_disconnect;
- 
+ 	/*
++	 * Setup a device_link between card device and HDMI codec device.
++	 * The card device is the consumer and the HDMI codec device is
++	 * the supplier. With this setting, we can make sure that the audio
++	 * domain in display power will be always turned on before operating
++	 * on the HDMI audio codec registers.
++	 * Let's use the flag DL_FLAG_AUTOREMOVE_CONSUMER. This can make
++	 * sure the device link is freed when the machine driver is removed.
++	 */
++	device_link_add(component->card->dev, &hdev->dev, DL_FLAG_RPM_ACTIVE |
++			DL_FLAG_AUTOREMOVE_CONSUMER);
++	/*
+ 	 * hdac_device core already sets the state to active and calls
+ 	 * get_noresume. So enable runtime and set the device to suspend.
+ 	 */
 
 
