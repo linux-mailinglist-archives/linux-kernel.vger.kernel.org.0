@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9178B23785
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC06235BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391472AbfETMuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:50:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34262 "EHLO mail.kernel.org"
+        id S2391404AbfETMhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:37:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732569AbfETMUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:47 -0400
+        id S2403898AbfETMgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:36:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2AE2214AE;
-        Mon, 20 May 2019 12:20:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD714204FD;
+        Mon, 20 May 2019 12:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354847;
-        bh=QOAseeH2yv1IQXokjrSetFhF2bK4kHRU9OJPRZHBuFU=;
+        s=default; t=1558355802;
+        bh=vIMZwcspRXs6UE0wqwuiB7o5LD4AFYlbuJzRP06lmfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uF8kx5BdhNRLEy8v8Qo5bdy9B3td8z1MIlytRqz9buS2f0hGeQskf4Fr4fraH/Q0o
-         aH3WvwFpn3sfsgEmMyGa5K33KT4eEDL44AZsIGfIck0P/p1rE7ALKNI+3a9ZxuKSfh
-         1iZS9t0q7HOVle1Uni0g0ZeFMH/zo5ehscCPbikg=
+        b=w0RyGaW9iFVjNTynEbFsRWx9Z5Syqzsi1Z1J7DYD4KQbachxGnVKSz2OxFd+bw3KC
+         goB9UakYBvHcheswscMYP2MRH8K90R3U1+R6LkCfKusO3FCu6XS6A7rXVLrHJ/VfXS
+         ZnRzp02fNwHGsag/oXrPRhmx2Dj38yDgaaEhQE3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 58/63] ext4: fix data corruption caused by overlapping unaligned and aligned IO
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 5.1 090/128] ext4: actually request zeroing of inode table after grow
 Date:   Mon, 20 May 2019 14:14:37 +0200
-Message-Id: <20190520115237.335124529@linuxfoundation.org>
+Message-Id: <20190520115255.464349699@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit 57a0da28ced8707cb9f79f071a016b9d005caf5a upstream.
+commit 310a997fd74de778b9a4848a64be9cda9f18764a upstream.
 
-Unaligned AIO must be serialized because the zeroing of partial blocks
-of unaligned AIO can result in data corruption in case it's overlapping
-another in flight IO.
+It is never possible, that number of block groups decreases,
+since only online grow is supported.
 
-Currently we wait for all unwritten extents before we submit unaligned
-AIO which protects data in case of unaligned AIO is following overlapping
-IO. However if a unaligned AIO is followed by overlapping aligned AIO we
-can still end up corrupting data.
+But after a growing occured, we have to zero inode tables
+for just created new block groups.
 
-To fix this, we must make sure that the unaligned AIO is the only IO in
-flight by waiting for unwritten extents conversion not just before the
-IO submission, but right after it as well.
-
-This problem can be reproduced by xfstest generic/538
-
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Fixes: 19c5246d2516 ("ext4: add new online resize interface")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/file.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/ext4/ioctl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -262,6 +262,13 @@ ext4_file_write_iter(struct kiocb *iocb,
- 	}
- 
- 	ret = __generic_file_write_iter(iocb, from);
-+	/*
-+	 * Unaligned direct AIO must be the only IO in flight. Otherwise
-+	 * overlapping aligned IO after unaligned might result in data
-+	 * corruption.
-+	 */
-+	if (ret == -EIOCBQUEUED && unaligned_aio)
-+		ext4_unwritten_wait(inode);
- 	inode_unlock(inode);
- 
- 	if (ret > 0)
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -978,7 +978,7 @@ mext_out:
+ 		if (err == 0)
+ 			err = err2;
+ 		mnt_drop_write_file(filp);
+-		if (!err && (o_group > EXT4_SB(sb)->s_groups_count) &&
++		if (!err && (o_group < EXT4_SB(sb)->s_groups_count) &&
+ 		    ext4_has_group_desc_csum(sb) &&
+ 		    test_opt(sb, INIT_INODE_TABLE))
+ 			err = ext4_register_li_request(sb, o_group);
 
 
