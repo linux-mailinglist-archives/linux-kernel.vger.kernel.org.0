@@ -2,99 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DD123A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734BB23A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbfETOjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:39:51 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46654 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730904AbfETOjv (ORCPT
+        id S2391824AbfETOkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:40:05 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45239 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730904AbfETOkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:39:51 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z19so16494988qtz.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:39:50 -0700 (PDT)
+        Mon, 20 May 2019 10:40:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r76so12670263lja.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:40:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nnKagkhm5U6N7QSx0MOcmsmOUR9BRTPQzriDtjeS1mU=;
-        b=sz3KjvUigPLdigL93ki3l+n1mRYgH9ptIORkJMoSYQqpCam1Ln7TNTvTwCVzefXHih
-         sp5h9AJIdHh/qWPaddNgCmPr3PiO/AIe6RYIJmU6vHcSi7TEsXk7XetBhqKpQxsLQVDZ
-         8bi1iTunjFT27cJ1CcoywQPojN82mZXaaRElGkaixToWwyQTRUXHt+PwOzICRo4omkDV
-         EkqMdf9On3+bAQAxjENWlJlFhE8V5G4Kuu6Z62VwPxqj73tJGLxsFwUsTXLVa1SQkK+x
-         StgtTEDriJj1UjMgYas9HxZKI6aKMQCdsITFDO6TVfgHpidODclpoU3UqqJcRhz5gxxQ
-         FDUw==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=9Jupluo6BgmV8ERwMDVbIijp69X7k5zhTVNRH5lHiVw=;
+        b=GuZrQjKCOx6dC/GPpGeqNQAPZ2tL9jSTQP1LCaZrNz2bbbysAciSb+zXQDPx+EjRrB
+         RFi37uCJYoL5i3YMc64InmSmEEkrgs2NiyPDDlfNSVvNqAt/jhHopMhWgn1/XDV5611G
+         JyutLjTrq3hRE2lt4UulmQkgK7ZAB+j2ttG0U65t+VnM8XT7IN0kLv2PxNbTo4udcFXl
+         PabWsvDx7SPDNGF/0XMmA8OEwp3jNuWreVLCBSbWDL2OSddUngoaZwwuGr7Zmz2RrtAx
+         ev3Vg/Qb6EC+rZJ6HH6znFd+tNc7YSqka2bkHwqKwzuS/U/ozudxNPz6sU9HFekqEQjQ
+         URSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nnKagkhm5U6N7QSx0MOcmsmOUR9BRTPQzriDtjeS1mU=;
-        b=pPNQ+7lSLSM7K5O2s4wL32T4hhk/T1kF2SYql0VzUYErytvyUCrYA12QRzzlSmkjS9
-         W4TLzRV3yefKmns4Eek/PRVTaqylKBiMBa73e87hOtahbA716wUnFaxRdyx8TU7v9fXw
-         ZRd7OZKg4D98z1gU/pTvGHi+yNPEVrdIl8Ft6dHaBofihhyf40oxAZH1t49cDKZHRW8q
-         go2Tf1D5ojhDytI2y7NPDst2OYVzE+Cu2QQr/l28LHrQ9CZebXmr0Gxq2dYliCusJlI4
-         O8DlmQN9OidLbK5xqRcJ8lsDvRBNZUkK/nDiZci5deUoQQhvngCML0JI5F9isMfu0xz7
-         Wfrg==
-X-Gm-Message-State: APjAAAW3iZYm7PuHdZaReeqbYxewAKYv31dRsQ6NaRiOslknHk2icnaS
-        Ti0lFYibqRsOwJqq9VUjubk=
-X-Google-Smtp-Source: APXvYqwueDUwMebFGPpRSMD8a45iBen83s2up0ylCN+i6/Qj4hNrmmXUT5IqpWNvMPltuMg3hQtMYg==
-X-Received: by 2002:a0c:b6d8:: with SMTP id h24mr59992753qve.178.1558363190254;
-        Mon, 20 May 2019 07:39:50 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.215.206])
-        by smtp.gmail.com with ESMTPSA id b11sm8268479qtt.6.2019.05.20.07.39.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 07:39:49 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 37C8F404A1; Mon, 20 May 2019 11:39:43 -0300 (-03)
-Date:   Mon, 20 May 2019 11:39:43 -0300
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] perf scripts python: Support pyside2 and misc Intel
- PT
-Message-ID: <20190520143943.GK8945@kernel.org>
-References: <20190412113830.4126-1-adrian.hunter@intel.com>
- <10798ccb-7da8-1f29-2a75-bf3aeeb29c96@intel.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=9Jupluo6BgmV8ERwMDVbIijp69X7k5zhTVNRH5lHiVw=;
+        b=mruY2puQCVnpmbOz9/x+SyZzS1pO9SnIpV5fH4waJ1Dh63m/glJt+0zs7sf7HWWjhb
+         FbvVXFVvy73D1vIvq/FY7bxZqqmng759mob7cj2a39dVguILC48i+Ikc/EOPK64NxLAs
+         85mPAgO0RdVUugjIK4yxYiwJUzXes2xUBdQW2lDrsypYKVmNGAH2dGDylCrzZFr/Cm1u
+         mbkfHJoANCc9y+9Vx5qY2lVtZoANC5N1eyVeGD83M9GcVGEcStnrJ0JPqd2jzNeAByux
+         mPcSCt27X5VejmxWo1RjtRJZTfJELAM9UMOd7e2hILSGL9Hl3Sw/IYIimFtQI4a0FoLk
+         fbFw==
+X-Gm-Message-State: APjAAAXI6r0Fuo9HC0N3vrGw/TsEgrGOmJerks97Fh6/vzUUzIu9wARO
+        HYUnKAItWi2OHJIvluWFoG/At/qy1O9MFkeCCs0=
+X-Google-Smtp-Source: APXvYqxOn0vvx4oyoJ9HUtpk/i8KxFg0+1Q5HFZroVIMyn9GrC7hf1oQzzpOaw1CACHnvhJhsfa5fLL8xWWL5D0ESvo=
+X-Received: by 2002:a2e:380c:: with SMTP id f12mr893309lja.53.1558363202873;
+ Mon, 20 May 2019 07:40:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10798ccb-7da8-1f29-2a75-bf3aeeb29c96@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Received: by 2002:ac2:5192:0:0:0:0:0 with HTTP; Mon, 20 May 2019 07:40:02
+ -0700 (PDT)
+Reply-To: attorney.cavedo@gmail.com
+From:   John Cavedo <muleichristopher1@gmail.com>
+Date:   Mon, 20 May 2019 16:40:02 +0200
+Message-ID: <CA+zLT9Y+vsQSczfC6=U96JFXC6+f02id70hYS=opKJf8sQpA4A@mail.gmail.com>
+Subject: Very urgent AREAS OF INVESTMENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 29, 2019 at 10:28:20AM +0300, Adrian Hunter escreveu:
-> On 12/04/19 2:38 PM, Adrian Hunter wrote:
-> > Hi
-> > 
-> > Here are patches to add support for pyside2 to the db-export scripts,
-> > and a couple of Intel PT patches.
-> > 
-> > 
-> > Adrian Hunter (8):
-> >       perf scripts python: exported-sql-viewer.py: Change python2 to python
-> >       perf scripts python: exported-sql-viewer.py: Use argparse module for argument parsing
-> >       perf scripts python: exported-sql-viewer.py: Add support for pyside2
-> >       perf scripts python: export-to-sqlite.py: Add support for pyside2
-> >       perf scripts python: export-to-postgresql.py: Add support for pyside2
-> >       perf tools: perf-with-kcore.sh: Always allow fix_buildid_cache_permissions
-> >       perf intel-pt: Improve sync_switch
-> >       perf intel-pt: Rationalize intel_pt_sync_switch()'s use of next_tid
-> > 
-> >  tools/perf/perf-with-kcore.sh                     |  5 ---
-> >  tools/perf/scripts/python/export-to-postgresql.py | 43 +++++++++++++++----
-> >  tools/perf/scripts/python/export-to-sqlite.py     | 44 ++++++++++++++++---
-> >  tools/perf/scripts/python/exported-sql-viewer.py  | 51 ++++++++++++++++-------
-> >  tools/perf/util/intel-pt.c                        | 44 +++++++++++++++++--
-> >  5 files changed, 150 insertions(+), 37 deletions(-)
-> 
-> Are these ok?
-
-Thanks, applied.
-
-- Arnaldo
+Sir/madam,I humbly seek your consent for an investment in your
+country.I need to invest in the following areas by your candid advice
+and supervision; industrial, petroleum energy , land farming..More
+details of this will be sent following your INVESTMENT suggestion and
+interest. I am deeply sorry for disturbing your privacy Regards,John.
