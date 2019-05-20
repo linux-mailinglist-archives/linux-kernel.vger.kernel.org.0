@@ -2,80 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0444D22D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7106622D9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbfETHwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 03:52:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727733AbfETHwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 03:52:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4247CAF31;
-        Mon, 20 May 2019 07:52:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5D54B1E3ED6; Mon, 20 May 2019 09:52:32 +0200 (CEST)
-Date:   Mon, 20 May 2019 09:52:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Message-ID: <20190520075232.GA30972@quack2.suse.cz>
-References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190517084739.GB20550@quack2.suse.cz>
- <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
- <201905170855.8E2E1AC616@keescook>
- <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
- <201905171225.29F9564BA2@keescook>
- <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
+        id S1730549AbfETIDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:03:54 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39178 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfETIDy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:03:54 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e24so22444456edq.6;
+        Mon, 20 May 2019 01:03:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jiVgtLJVaSK+kBnj7Ae+LR1x0hOyccWrwqfEKZcrZlk=;
+        b=RIxtaAxaQX/+uUdcE71QpfR2HyBgnK5Mr0bj5/7vyq8NLekFSaOPwrcTQldOmx/wvm
+         6q5Xny9vkB05dxlOlFeXfU+3+kvbCdXE1BB5GGdC2gm0UpSnbFKvNU74gj+Q0f0DnzyZ
+         hHwXreebaNncBrruaT5y8SNJpPihArrYb2NTiz5W0qSR7EkDcT17ue5Wi58KifO7GSdi
+         SDPBeDJs8t/8ka3PsZyDmJscsiOMM8OJfblH+ZgPfWJNJXxIc4scIvDdNWS6NJnAb6If
+         GUsoZa66JVr5Pvb28hoJ7yh1GLUogY8JTupPs9PVXSt/PLRkO24k9cyNixUVMZjTK2ke
+         KKoA==
+X-Gm-Message-State: APjAAAWlPPHtuEjFARkyQqv+IPWFxnpugrq0uKjJm2VY7+GkD6+jjVWO
+        NoCGj/Oy9BFKK40EOUEL+5/RkDmHScM=
+X-Google-Smtp-Source: APXvYqxRFI05G003Nokm9VLzZDqyjqdh9m4BaMvaGzc2GgDxferoMzid2vsay8Sc8EUyvV3qlHSP7g==
+X-Received: by 2002:a50:87b5:: with SMTP id a50mr71788047eda.118.1558339432080;
+        Mon, 20 May 2019 01:03:52 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id r14sm3019734eja.77.2019.05.20.01.03.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 01:03:51 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id w8so13424030wrl.6;
+        Mon, 20 May 2019 01:03:51 -0700 (PDT)
+X-Received: by 2002:adf:dfc4:: with SMTP id q4mr41065855wrn.201.1558338984633;
+ Mon, 20 May 2019 00:56:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190516154943.239E668B05@newverein.lst.de> <20190516155139.E6EE568C65@newverein.lst.de>
+In-Reply-To: <20190516155139.E6EE568C65@newverein.lst.de>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 20 May 2019 15:56:13 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64xKk1r1iqSVm5pVvHVkyQ175MUFB7JPUkvQX9ecOZDDQ@mail.gmail.com>
+Message-ID: <CAGb2v64xKk1r1iqSVm5pVvHVkyQ175MUFB7JPUkvQX9ecOZDDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] arm64: DTS: allwinner: a64: Enable audio on Teres-I
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 18-05-19 21:46:03, Dan Williams wrote:
-> On Fri, May 17, 2019 at 12:25 PM Kees Cook <keescook@chromium.org> wrote:
-> > On Fri, May 17, 2019 at 10:28:48AM -0700, Dan Williams wrote:
-> > > It seems dax_iomap_actor() is not a path where we'd be worried about
-> > > needing hardened user copy checks.
-> >
-> > I would agree: I think the proposed patch makes sense. :)
-> 
-> Sounds like an acked-by to me.
+On Thu, May 16, 2019 at 11:52 PM Torsten Duwe <duwe@lst.de> wrote:
+>
+> From: Harald Geyer <harald@ccbib.org>
+>
+> The TERES-I has internal speakers (left, right), internal microphone
+> and a headset combo jack (headphones + mic), "CTIA" (android) pinout.
+>
+> The headphone and mic detect lines of the A64 are connected properly,
+> but AFAIK currently unsupported by the driver.
+>
+> Signed-off-by: Harald Geyer <harald@ccbib.org>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
 
-Yeah, if Kees agrees, I'm fine with skipping the checks as well. I just
-wanted that to be clarified. Also it helped me that you wrote:
+Looks good to me.
 
-That routine (dax_iomap_actor()) validates that the logical file offset is
-within bounds of the file, then it does a sector-to-pfn translation which
-validates that the physical mapping is within bounds of the block device.
-
-That is more specific than "dax_iomap_actor() takes care of necessary
-checks" which was in the changelog. And the above paragraph helped me
-clarify which checks in dax_iomap_actor() you think replace those usercopy
-checks. So I think it would be good to add that paragraph to those
-copy_from_pmem() functions as a comment just in case we are wondering in
-the future why we are skipping the checks... Also feel free to add:
-
-Acked-by: Jan Kara <jack@suse.cz>
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
