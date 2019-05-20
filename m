@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97CB232C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0A6232AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731282AbfETLjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:39:17 -0400
+        id S1733045AbfETLhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:37:47 -0400
 Received: from mga04.intel.com ([192.55.52.120]:48121 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732902AbfETLho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:37:44 -0400
+        id S1725601AbfETLhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:37:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:37:44 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:37:45 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:37:42 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:37:44 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/22] perf auxtrace: Fix itrace defaults for perf script
-Date:   Mon, 20 May 2019 14:37:08 +0300
-Message-Id: <20190520113728.14389-3-adrian.hunter@intel.com>
+Subject: [PATCH 03/22] perf intel-pt: Fix itrace defaults for perf script intel-pt documentation
+Date:   Mon, 20 May 2019 14:37:09 +0300
+Message-Id: <20190520113728.14389-4-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190520113728.14389-1-adrian.hunter@intel.com>
 References: <20190520113728.14389-1-adrian.hunter@intel.com>
@@ -33,47 +33,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4eb068157121 ("perf script: Make itrace script default to all
-calls") does not work for the case when '--itrace' only is used, because
-default_no_sample is not being passed.
-
-Example:
-
- Before:
-
-  $ perf record -e intel_pt/cyc/u ls
-  $ perf script --itrace > cmp1.txt
-  $ perf script --itrace=cepwx > cmp2.txt
-  $ diff -sq cmp1.txt cmp2.txt
-  Files cmp1.txt and cmp2.txt differ
-
- After:
-
-  $ perf script --itrace > cmp1.txt
-  $ perf script --itrace=cepwx > cmp2.txt
-  $ diff -sq cmp1.txt cmp2.txt
-  Files cmp1.txt and cmp2.txt are identical
+Fix intel-pt documentation to reflect the change of itrace defaults for
+perf script.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Fixes: 4eb068157121 ("perf script: Make itrace script default to all calls")
 Cc: stable@vger.kernel.org
 ---
- tools/perf/util/auxtrace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/intel-pt.txt | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index fb76b6b232d4..5dd9d1893b89 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1010,7 +1010,8 @@ int itrace_parse_synth_opts(const struct option *opt, const char *str,
- 	}
+diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
+index 115eaacc455f..60d99e5e7921 100644
+--- a/tools/perf/Documentation/intel-pt.txt
++++ b/tools/perf/Documentation/intel-pt.txt
+@@ -88,16 +88,16 @@ smaller.
  
- 	if (!str) {
--		itrace_synth_opts__set_default(synth_opts, false);
-+		itrace_synth_opts__set_default(synth_opts,
-+					       synth_opts->default_no_sample);
- 		return 0;
- 	}
+ To represent software control flow, "branches" samples are produced.  By default
+ a branch sample is synthesized for every single branch.  To get an idea what
+-data is available you can use the 'perf script' tool with no parameters, which
+-will list all the samples.
++data is available you can use the 'perf script' tool with all itrace sampling
++options, which will list all the samples.
+ 
+ 	perf record -e intel_pt//u ls
+-	perf script
++	perf script --itrace=ibxwpe
+ 
+ An interesting field that is not printed by default is 'flags' which can be
+ displayed as follows:
+ 
+-	perf script -Fcomm,tid,pid,time,cpu,event,trace,ip,sym,dso,addr,symoff,flags
++	perf script --itrace=ibxwpe -F+flags
+ 
+ The flags are "bcrosyiABEx" which stand for branch, call, return, conditional,
+ system, asynchronous, interrupt, transaction abort, trace begin, trace end, and
+@@ -713,7 +713,7 @@ Having no option is the same as
+ 
+ which, in turn, is the same as
+ 
+-	--itrace=ibxwpe
++	--itrace=cepwx
+ 
+ The letters are:
  
 -- 
 2.17.1
