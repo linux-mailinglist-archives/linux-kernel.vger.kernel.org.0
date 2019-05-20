@@ -2,75 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1522222D61
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA18722D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfETHuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 03:50:17 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:57579 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbfETHuQ (ORCPT
+        id S1730549AbfETHwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 03:52:33 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54799 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727319AbfETHwc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 03:50:16 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id CB6B320006;
-        Mon, 20 May 2019 07:50:06 +0000 (UTC)
-Date:   Mon, 20 May 2019 09:50:06 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: dts: sun8i-h3: Fix wifi in Beelink X2 DT
-Message-ID: <20190520075006.pwrsaytg57d44377@flea>
-References: <20190518154014.28998-1-jernej.skrabec@siol.net>
+        Mon, 20 May 2019 03:52:32 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4K7owVV024214;
+        Mon, 20 May 2019 09:52:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=AmLaTPn+4Y+PnO2cSAi1LC9tZLLiMimnsWha5pKlny8=;
+ b=zyzJqh5vP+aveI2mQhAv7Ag2QoFpavLrSaMApQZSN9cAxXZdhg6aeig49lB0g5BR8zOn
+ Rm6/+8XRMIhwB7oiEOgQeEqoW6mqADkW3HlYZVqyfaeMt4tnfH4p3FkTJhGJzGgKXRGQ
+ BXsjLEUtYHWxWiqnbrTNwB401MyI2ttSeqy+tXXbOyuHKagD6qf2gjEZIb8Dz64jpY43
+ 01QEPQ5yVxVANbsIOqBHkCUmTn9T4DUL7XvCBXwZufXbSG2sbnMOBw/CbSpXWvgWwrsb
+ I5MKAZ/vEsav5KYikZQlq1IAJvfDbvkw3j5wahF59uPByqIkQiGKTJ3/T8r2SFB52+TQ Ow== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2sj7ttt4nb-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 20 May 2019 09:52:18 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7A11E3A;
+        Mon, 20 May 2019 07:52:16 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 40E3C1557;
+        Mon, 20 May 2019 07:52:16 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 20 May
+ 2019 09:52:16 +0200
+Received: from localhost (10.201.20.5) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 20 May 2019 09:52:15 +0200
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kbuild-all@01.org>,
+        "Amelie Delaunay" <amelie.delaunay@st.com>
+Subject: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is not defined
+Date:   Mon, 20 May 2019 09:52:15 +0200
+Message-ID: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ccv2ztaysqwm5bmp"
-Content-Disposition: inline
-In-Reply-To: <20190518154014.28998-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When CONFIG_GPIO_OF is not defined, struct gpio_chip 'of_node' member does
+not exist:
+drivers/pinctrl/pinctrl-stmfx.c: In function 'stmfx_pinctrl_probe':
+drivers/pinctrl/pinctrl-stmfx.c:652:17: error: 'struct gpio_chip' has no member named 'of_node'
+     pctl->gpio_chip.of_node = np;
 
---ccv2ztaysqwm5bmp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/pinctrl/pinctrl-stmfx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Sat, May 18, 2019 at 05:40:14PM +0200, Jernej Skrabec wrote:
-> mmc1 node where wifi module is connected doesn't have properly defined
-> power supplies so wifi module is never powered up. Fix that by
-> specifying additional power supplies.
->
-> Additionally, this STB may have either Realtek or Broadcom based wifi
-> module. One based on Broadcom module also needs external clock to work
-> properly. Fix that by adding clock property to wifi_pwrseq node.
->
-> Fixes: e582b47a9252 ("ARM: dts: sun8i-h3: Add dts for the Beelink X2 STB")
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index eba872c..bb64aa0 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -648,7 +648,9 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
+ 	pctl->gpio_chip.base = -1;
+ 	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
+ 	pctl->gpio_chip.can_sleep = true;
++#ifdef CONFIG_OF_GPIO
+ 	pctl->gpio_chip.of_node = np;
++#endif
+ 	pctl->gpio_chip.need_valid_mask = true;
+ 
+ 	ret = devm_gpiochip_add_data(pctl->dev, &pctl->gpio_chip, pctl);
+-- 
+2.7.4
 
-Applied, thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ccv2ztaysqwm5bmp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOJcLgAKCRDj7w1vZxhR
-xektAP9SnxxVhsL3J9tjBeCsUfx6I7mOWHiMoulYMbgQCQtW1AD/VJuC+zZfSxgg
-QyXsTvQqjqBuraleNIOqwbIEAuz6ugI=
-=nQKm
------END PGP SIGNATURE-----
-
---ccv2ztaysqwm5bmp--
