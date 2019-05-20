@@ -2,68 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE9A22D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 09:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E681F230DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbfETHjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 03:39:33 -0400
-Received: from mail.tastiess.eu ([194.182.86.235]:39323 "EHLO mail.tastiess.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfETHjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 03:39:33 -0400
-X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 03:39:32 EDT
-Received: by mail.tastiess.eu (Postfix, from userid 1001)
-        id E106087947; Mon, 20 May 2019 09:31:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tastiess.eu; s=mail;
-        t=1558337504; bh=1wXsRnVQKyR5953v1mK5+VSjATpkqCFjMxx9a9NW6X4=;
-        h=Date:From:To:Subject:From;
-        b=E/1DgL22A4P94p1oKqgJ0oTRpdVZ+bD8FjKtUkiSLOdGqvMEaAQ7aZeiHc/OnmtV3
-         ol/kMDeAxQk9N0sEqumCOcUHQHa9I5p6n5xCT932Pf400MSqbsUmOPzKlLkUBahlPp
-         R/5Iujmi6/updeg4mrnfpKgNiknJw3Cccwq26qQI=
-Received: by mail.tastiess.eu for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:31:16 GMT
-Message-ID: <20190520084500-0.1.c.h1z.0.pdld7qyf68@tastiess.eu>
-Date:   Mon, 20 May 2019 07:31:16 GMT
-From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
-        <kapolcs.matyas@tastiess.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
-X-Mailer: mail.tastiess.eu
+        id S1732244AbfETKBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 06:01:17 -0400
+Received: from 8.mo68.mail-out.ovh.net ([46.105.74.219]:55632 "EHLO
+        8.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730146AbfETKBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 06:01:17 -0400
+X-Greylist: delayed 8825 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 06:01:16 EDT
+Received: from player760.ha.ovh.net (unknown [10.109.146.5])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id C4CD712E5F1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 09:34:09 +0200 (CEST)
+Received: from armadeus.com (lfbn-1-7591-179.w90-126.abo.wanadoo.fr [90.126.248.179])
+        (Authenticated sender: sebastien.szymanski@armadeus.com)
+        by player760.ha.ovh.net (Postfix) with ESMTPSA id 064FF5F24312;
+        Mon, 20 May 2019 07:33:54 +0000 (UTC)
+Subject: Re: [PATCH RE-RESEND 1/2] drm/panel: Add support for Armadeus ST0700
+ Adapt
+To:     Sam Ravnborg <sam@ravnborg.org>
+References: <20190507152713.27494-1-sebastien.szymanski@armadeus.com>
+ <CAOMZO5B2nMsVNO6O_D+YTSjux=-DjNPGxhkEi3AQquOZVODumA@mail.gmail.com>
+ <20190507161950.GA24879@ravnborg.org>
+ <20190508083303.GR17751@phenom.ffwll.local>
+ <20190508090612.GT17751@phenom.ffwll.local>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        stable <stable@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
+        <sebastien.szymanski@armadeus.com>
+Openpgp: preference=signencrypt
+Message-ID: <0c5d70db-e7c1-5d02-9c33-65dabd431a68@armadeus.com>
+Date:   Mon, 20 May 2019 09:34:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190508090612.GT17751@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 6372874948130854140
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtjedguddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C3=9Cdv=C3=B6zl=C3=B6m!
-=20
-2019 janu=C3=A1rt=C3=B3l v=C3=A1ltozik a nem b=C3=A9r jelleg=C5=B1 juttat=
-=C3=A1sok rendje.
-=20
-Egy kiv=C3=A1l=C3=B3 lehet=C5=91s=C3=A9ggel =C3=A9lehet, amennyiben a mi =
-k=C3=A1rty=C3=A1nkat v=C3=A1lasztja!
-=20
-Ez a k=C3=A1rtya:
-=20
-Korl=C3=A1tlanul felhaszn=C3=A1lhat=C3=B3:
-=20
-k=C3=A9szp=C3=A9nzfelv=C3=A9tel
-=C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1s
-eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s
-elektronikai term=C3=A9kek v=C3=A1s=C3=A1rl=C3=A1sa
-oktat=C3=A1s
-sz=C3=A1ll=C3=A1s
-=20
-K=C3=A1rty=C3=A1nk az egyetlen olyan val=C3=B3ban szabadfelhaszn=C3=A1l=C3=
-=A1s=C3=BA k=C3=A1rtya, melyet minden POS termin=C3=A1l elfogad!
-=20
-Amennyiben k=C3=A1rty=C3=A1nk felkeltette =C3=A9rdekl=C5=91d=C3=A9s=C3=A9=
-t, mint dolgoz=C3=B3i juttat=C3=A1s, k=C3=A9rem keressen fel a tov=C3=A1b=
-bi t=C3=A1j=C3=A9koztat=C3=A1s =C3=A9rdek=C3=A9ben!
-=20
-=C3=96r=C3=B6mmel =C3=A1llunk rendelkez=C3=A9s=C3=A9re mindenben!
+Hello Sam,
+
+On 5/8/19 11:06 AM, Daniel Vetter wrote:
+> On Wed, May 08, 2019 at 10:33:03AM +0200, Daniel Vetter wrote:
+>> On Tue, May 07, 2019 at 06:19:50PM +0200, Sam Ravnborg wrote:
+>>> Hi Fabio
+>>>
+>>> On Tue, May 07, 2019 at 12:33:39PM -0300, Fabio Estevam wrote:
+>>>> [Adding Sam, who is helping to review/collect panel-simple patches]
+>>>>
+>>>> On Tue, May 7, 2019 at 12:27 PM Sébastien Szymanski
+>>>> <sebastien.szymanski@armadeus.com> wrote:
+>>>>>
+>>>>> This patch adds support for the Armadeus ST0700 Adapt. It comes with a
+>>>>> Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT and an adapter board so
+>>>>> that it can be connected on the TFT header of Armadeus Dev boards.
+>>>>>
+>>>>> Cc: stable@vger.kernel.org # v4.19
+>>>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>>>> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+>>> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+>>>
+>>> If you wil lresend the patch I can apply it.
+>>> I have lost the original mail.
+>>
+>> Usually patchwork should have it already (and you can pipe the raw
+>> patchwork mbox into dim apply), but somehow it's not there either.
+>> Not sure why, sometimes this is because mails are stuck in moderation,
+>> sometimes because people do interesting things with their mails (e.g. smtp
+>> servers mangling formatting).
+> 
+> patchwork was just a bit slow, it's there now:
+> 
+> https://patchwork.freedesktop.org/series/60408/
+> 
+
+Will you take the patch from patchwork or should I resent it ?
+
+Regards,
+
+> Cheers, Daniel
+> 
 
 
-Kapolcs M=C3=A1ty=C3=A1s
-Hungary Team Leader
+-- 
+Sébastien Szymanski
+Software engineer, Armadeus Systems
+Tel: +33 (0)9 72 29 41 44
+Fax: +33 (0)9 72 28 79 26
