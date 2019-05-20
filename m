@@ -2,239 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A769239C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44ED1239BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391283AbfETOWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:22:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49042 "EHLO mail.kernel.org"
+        id S2387758AbfETOVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388913AbfETOWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:22:00 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1730819AbfETOVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:21:50 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C77BD21734;
-        Mon, 20 May 2019 14:21:59 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hSjAs-0003Ug-Oq; Mon, 20 May 2019 10:21:58 -0400
-Message-Id: <20190520142158.655759375@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Mon, 20 May 2019 10:20:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Frank Ch. Eigler" <fche@redhat.com>
-Subject: [RFC][PATCH 14/14 v2] function_graph: Add selftest for passing local variables
-References: <20190520142001.270067280@goodmis.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id D56DA214AE;
+        Mon, 20 May 2019 14:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558362110;
+        bh=aa4t8FWIBI8LerwyEIQ1gJt/Otl3c5xKW6xKXA8unDU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=CNpCwcHHQSE/1yTz1KVZBIAfIDw89RrtDsBeDiqtDOUYPRU/vWkx4gbky98w2yZxm
+         8uqkrxHivi6k56m7g/Ftk2J8z1DVJdWjFTUV8zzmx54nilMdNdLSPYYEolpovsom59
+         RWOjF5yFjXq1FhjGfY0VR0TD4bCX3NyTpup4PGDM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190516085018.2207-1-masneyb@onstation.org>
+References: <20190516085018.2207-1-masneyb@onstation.org>
+Subject: Re: [PATCH RESEND] ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for vibrator
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Brian Masney <masneyb@onstation.org>, agross@kernel.org,
+        david.brown@linaro.org
+User-Agent: alot/0.8.1
+Date:   Mon, 20 May 2019 07:21:49 -0700
+Message-Id: <20190520142149.D56DA214AE@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Quoting Brian Masney (2019-05-16 01:50:18)
+> @@ -306,6 +307,36 @@
+>                                 input-enable;
+>                         };
+>                 };
+> +
+> +               vibrator_pin: vibrator {
+> +                       pwm {
+> +                               pins =3D "gpio27";
+> +                               function =3D "gp1_clk";
+> +
+> +                               drive-strength =3D <6>;
+> +                               bias-disable;
+> +                       };
+> +
+> +                       enable {
+> +                               pins =3D "gpio60";
+> +                               function =3D "gpio";
+> +                       };
+> +               };
+> +       };
+> +
+> +       vibrator@fd8c3450 {
+> +               compatible =3D "qcom,msm8974-vibrator";
+> +               reg =3D <0xfd8c3450 0x400>;
 
-Add boot up selftest that passes variables from a function entry to a
-function exit, and make sure that they do get passed around.
+This is inside the multimedia clk controller. The resource reservation
+mechanism should be complaining loudly here. Is the driver writing
+directly into clk controller registers to adjust a duty cycle of the
+camera's general purpose clk?
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_selftest.c | 161 ++++++++++++++++++++++++++++++++++
- 1 file changed, 161 insertions(+)
-
-diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
-index facd5d1c05e7..9318677b5bf2 100644
---- a/kernel/trace/trace_selftest.c
-+++ b/kernel/trace/trace_selftest.c
-@@ -718,6 +718,165 @@ trace_selftest_startup_function(struct tracer *trace, struct trace_array *tr)
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+
-+#define BYTE_NUMBER 123
-+#define SHORT_NUMBER 12345
-+#define WORD_NUMBER 1234567890
-+#define LONG_NUMBER 1234567890123456789LL
-+
-+static int fgraph_store_size __initdata;
-+static const char *fgraph_store_type_name __initdata;
-+static char *fgraph_error_str __initdata;
-+static char fgraph_error_str_buf[128] __initdata;
-+
-+static __init int store_entry(struct ftrace_graph_ent *trace,
-+			      struct fgraph_ops *gops)
-+{
-+	const char *type = fgraph_store_type_name;
-+	int size = fgraph_store_size;
-+	void *p;
-+
-+	p = fgraph_reserve_data(size);
-+	if (!p) {
-+		snprintf(fgraph_error_str_buf, sizeof(fgraph_error_str_buf),
-+			 "Failed to reserve %s\n", type);
-+		fgraph_error_str = fgraph_error_str_buf;
-+		return 0;
-+	}
-+
-+	switch (fgraph_store_size) {
-+	case 1:
-+		*(char *)p = BYTE_NUMBER;
-+		break;
-+	case 2:
-+		*(short *)p = SHORT_NUMBER;
-+		break;
-+	case 4:
-+		*(int *)p = WORD_NUMBER;
-+		break;
-+	case 8:
-+		*(long long *)p = LONG_NUMBER;
-+		break;
-+	}
-+
-+	return 1;
-+}
-+
-+static __init void store_return(struct ftrace_graph_ret *trace,
-+				struct fgraph_ops *gops)
-+{
-+	const char *type = fgraph_store_type_name;
-+	long long expect = 0;
-+	long long found = -1;
-+	char *p;
-+
-+	p = fgraph_retrieve_data();
-+	if (!p) {
-+		snprintf(fgraph_error_str_buf, sizeof(fgraph_error_str_buf),
-+			 "Failed to retrieve %s\n", type);
-+		fgraph_error_str = fgraph_error_str_buf;
-+		return;
-+	}
-+
-+	switch (fgraph_store_size) {
-+	case 1:
-+		expect = BYTE_NUMBER;
-+		found = *(char *)p;
-+		break;
-+	case 2:
-+		expect = SHORT_NUMBER;
-+		found = *(short *)p;
-+		break;
-+	case 4:
-+		expect = WORD_NUMBER;
-+		found = *(int *)p;
-+		break;
-+	case 8:
-+		expect = LONG_NUMBER;
-+		found = *(long long *)p;
-+		break;
-+	}
-+
-+	if (found != expect) {
-+		snprintf(fgraph_error_str_buf, sizeof(fgraph_error_str_buf),
-+			 "%s returned not %lld but %lld\n", type, expect, found);
-+		fgraph_error_str = fgraph_error_str_buf;
-+		return;
-+	}
-+	fgraph_error_str = NULL;
-+}
-+
-+static struct fgraph_ops store_bytes __initdata = {
-+	.entryfunc		= store_entry,
-+	.retfunc		= store_return,
-+};
-+
-+static int __init test_graph_storage_type(const char *name, int size)
-+{
-+	char *func_name;
-+	int len;
-+	int ret;
-+
-+	fgraph_store_type_name = name;
-+	fgraph_store_size = size;
-+
-+	snprintf(fgraph_error_str_buf, sizeof(fgraph_error_str_buf),
-+		 "Failed to execute storage %s\n", name);
-+	fgraph_error_str = fgraph_error_str_buf;
-+
-+	printk(KERN_CONT "PASSED\n");
-+	pr_info("Testing fgraph storage of %d byte%s: ", size, size > 1 ? "s" : "");
-+
-+	func_name = "*" __stringify(DYN_FTRACE_TEST_NAME);
-+	len = strlen(func_name);
-+
-+	ret = ftrace_set_filter(&store_bytes.ops, func_name, len, 1);
-+	if (ret && ret != -ENODEV) {
-+		pr_cont("*Could not set filter* ");
-+		return -1;
-+	}
-+
-+	ret = register_ftrace_graph(&store_bytes);
-+	if (ret) {
-+		printk(KERN_WARNING "Failed to init store_bytes fgraph tracing\n");
-+		return -1;
-+	}
-+
-+	DYN_FTRACE_TEST_NAME();
-+
-+	unregister_ftrace_graph(&store_bytes);
-+
-+	if (fgraph_error_str) {
-+		printk(KERN_CONT "*** %s ***", fgraph_error_str);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+/* Test the storage passed across function_graph entry and return */
-+static __init int test_graph_storage(void)
-+{
-+	int ret;
-+
-+	ret = test_graph_storage_type("byte", 1);
-+	if (ret)
-+		return ret;
-+	ret = test_graph_storage_type("short", 2);
-+	if (ret)
-+		return ret;
-+	ret = test_graph_storage_type("word", 4);
-+	if (ret)
-+		return ret;
-+	ret = test_graph_storage_type("long long", 8);
-+	if (ret)
-+		return ret;
-+	return 0;
-+}
-+#else
-+static inline int test_graph_storage(void) { return 0; }
-+#endif /* CONFIG_DYNAMIC_FTRACE */
-+
- /* Maximum number of functions to trace before diagnosing a hang */
- #define GRAPH_MAX_FUNC_TEST	100000000
- 
-@@ -805,6 +964,8 @@ trace_selftest_startup_function_graph(struct tracer *trace,
- 		goto out;
- 	}
- 
-+	ret = test_graph_storage();
-+
- 	/* Don't test dynamic tracing, the function tracer already did */
- 
- out:
--- 
-2.20.1
-
+Can you add support for duty cycle to the qcom clk driver's RCGs and
+then write a generic clk duty cycle vibrator driver that adjusts the
+duty cycle of the clk? That would be better than reaching into the clk
+controller registers to do this.
 
