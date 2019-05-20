@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1C3C233B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B20B423374
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387898AbfETMTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:19:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33074 "EHLO mail.kernel.org"
+        id S2387431AbfETMQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:16:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387881AbfETMTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:50 -0400
+        id S2387413AbfETMQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:16:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 560BD20656;
-        Mon, 20 May 2019 12:19:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C41A820815;
+        Mon, 20 May 2019 12:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354789;
-        bh=m2voSuVvE1XFDGeDabAu20m7trhvVa9G2eC5AgnSOKU=;
+        s=default; t=1558354614;
+        bh=sL+t5AjFEQojtzLpmh7ftp1Yt8bKym9IQMcQwFTwJEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJmOsrS1hdOF3VLjRoKNNJUY4yegWD7m35TnbwPBKpxKF880EQgrfwdW+unzF/TRw
-         x0/Qs1gfvN1G7M0K2E8HgwdLQtox5I6RLVCsAcgIVDZxLcfhQiLnTOkMDIDWYsihYM
-         bhMWRJDbeIDL3a9pPN5eRSYjcSzKdemhpdxAEbY4=
+        b=TieKIfezVH7EIVwGo5Ui5Csvv2ILE7PuwD78gAN0SoMomt4bHYJwDBWEoJyM20bzV
+         ah/7QglKDvbX+pO6Dl+8MAgYjNidPD1FEzv5t1lXeAvGCLWQDXb81N9y/TfsCmG3HP
+         HYutiat/OcexqGcosn7qOEKr1MvJDxsw3MlFlOaA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 16/63] sched/x86: Save [ER]FLAGS on context switch
+Subject: [PATCH 4.9 06/44] objtool: Fix function fallthrough detection
 Date:   Mon, 20 May 2019 14:13:55 +0200
-Message-Id: <20190520115232.817430690@linuxfoundation.org>
+Message-Id: <20190520115231.784147525@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,128 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 6690e86be83ac75832e461c141055b5d601c0a6d upstream.
+commit e6f393bc939d566ce3def71232d8013de9aaadde upstream.
 
-Effectively reverts commit:
+When a function falls through to the next function due to a compiler
+bug, objtool prints some obscure warnings.  For example:
 
-  2c7577a75837 ("sched/x86_64: Don't save flags on context switch")
+  drivers/regulator/core.o: warning: objtool: regulator_count_voltages()+0x95: return with modified stack frame
+  drivers/regulator/core.o: warning: objtool: regulator_count_voltages()+0x0: stack state mismatch: cfa1=7+32 cfa2=7+8
 
-Specifically because SMAP uses FLAGS.AC which invalidates the claim
-that the kernel has clean flags.
+Instead it should be printing:
 
-In particular; while preemption from interrupt return is fine (the
-IRET frame on the exception stack contains FLAGS) it breaks any code
-that does synchonous scheduling, including preempt_enable().
+  drivers/regulator/core.o: warning: objtool: regulator_supply_is_couple() falls through to next function regulator_count_voltages()
 
-This has become a significant issue ever since commit:
+This used to work, but was broken by the following commit:
 
-  5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+  13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
 
-provided for means of having 'normal' C code between STAC / CLAC,
-exposing the FLAGS.AC state. So far this hasn't led to trouble,
-however fix it before it comes apart.
+The padding nops at the end of a function aren't actually part of the
+function, as defined by the symbol table.  So the 'func' variable in
+validate_branch() is getting cleared to NULL when a padding nop is
+encountered, breaking the fallthrough detection.
 
-Reported-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+If the current instruction doesn't have a function associated with it,
+just consider it to be part of the previously detected function by not
+overwriting the previous value of 'func'.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@kernel.org
-Fixes: 5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+Cc: <stable@vger.kernel.org>
+Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
+Link: http://lkml.kernel.org/r/546d143820cd08a46624ae8440d093dd6c902cae.1557766718.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_32.S        |    2 ++
- arch/x86/entry/entry_64.S        |    2 ++
- arch/x86/include/asm/switch_to.h |    1 +
- arch/x86/kernel/process_32.c     |    7 +++++++
- arch/x86/kernel/process_64.c     |    8 ++++++++
- 5 files changed, 20 insertions(+)
+ tools/objtool/check.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -234,6 +234,7 @@ ENTRY(__switch_to_asm)
- 	pushl	%ebx
- 	pushl	%edi
- 	pushl	%esi
-+	pushfl
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1779,7 +1779,8 @@ static int validate_branch(struct objtoo
+ 			return 1;
+ 		}
  
- 	/* switch stack */
- 	movl	%esp, TASK_threadsp(%eax)
-@@ -256,6 +257,7 @@ ENTRY(__switch_to_asm)
- #endif
+-		func = insn->func ? insn->func->pfunc : NULL;
++		if (insn->func)
++			func = insn->func->pfunc;
  
- 	/* restore callee-saved registers */
-+	popfl
- 	popl	%esi
- 	popl	%edi
- 	popl	%ebx
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -342,6 +342,7 @@ ENTRY(__switch_to_asm)
- 	pushq	%r13
- 	pushq	%r14
- 	pushq	%r15
-+	pushfq
- 
- 	/* switch stack */
- 	movq	%rsp, TASK_threadsp(%rdi)
-@@ -364,6 +365,7 @@ ENTRY(__switch_to_asm)
- #endif
- 
- 	/* restore callee-saved registers */
-+	popfq
- 	popq	%r15
- 	popq	%r14
- 	popq	%r13
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -41,6 +41,7 @@ asmlinkage void ret_from_fork(void);
-  * order of the fields must match the code in __switch_to_asm().
-  */
- struct inactive_task_frame {
-+	unsigned long flags;
- #ifdef CONFIG_X86_64
- 	unsigned long r15;
- 	unsigned long r14;
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -132,6 +132,13 @@ int copy_thread_tls(unsigned long clone_
- 	struct task_struct *tsk;
- 	int err;
- 
-+	/*
-+	 * For a new task use the RESET flags value since there is no before.
-+	 * All the status flags are zero; DF and all the system flags must also
-+	 * be 0, specifically IF must be 0 because we context switch to the new
-+	 * task with interrupts disabled.
-+	 */
-+	frame->flags = X86_EFLAGS_FIXED;
- 	frame->bp = 0;
- 	frame->ret_addr = (unsigned long) ret_from_fork;
- 	p->thread.sp = (unsigned long) fork_frame;
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -278,6 +278,14 @@ int copy_thread_tls(unsigned long clone_
- 	childregs = task_pt_regs(p);
- 	fork_frame = container_of(childregs, struct fork_frame, regs);
- 	frame = &fork_frame->frame;
-+
-+	/*
-+	 * For a new task use the RESET flags value since there is no before.
-+	 * All the status flags are zero; DF and all the system flags must also
-+	 * be 0, specifically IF must be 0 because we context switch to the new
-+	 * task with interrupts disabled.
-+	 */
-+	frame->flags = X86_EFLAGS_FIXED;
- 	frame->bp = 0;
- 	frame->ret_addr = (unsigned long) ret_from_fork;
- 	p->thread.sp = (unsigned long) fork_frame;
+ 		if (func && insn->ignore) {
+ 			WARN_FUNC("BUG: why am I validating an ignored function?",
 
 
