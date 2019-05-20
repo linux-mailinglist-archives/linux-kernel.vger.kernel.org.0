@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F692346A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DBD233F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389335AbfETM0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:26:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
+        id S2388233AbfETMVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:21:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389321AbfETM0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:26:32 -0400
+        id S2388205AbfETMVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:21:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C20C4214AE;
-        Mon, 20 May 2019 12:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5092E214AE;
+        Mon, 20 May 2019 12:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355191;
-        bh=6e8PlO5lwAHj8M3A4ZeTkocqPZqdI1Jv0XXMOD8pH0g=;
+        s=default; t=1558354897;
+        bh=SouYgWQauP5ZFkhFFMqWevfg1i6+eLajnGKQ+6SjZq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y64PHmu+9EuiEIPandSmgUtM4tHVJY3DxzLtYLCBDgXt2dQThzVxEt+nIhviLkmSX
-         hPJstxQsz3RolJKNRRX+t3rvzrnuhVU8m+4u5J0HK0e03b1mmD+mAiClmq6hxwrQPX
-         mV8t0BlFLV28jHIhrM+NHFwP4z4k+PvNKbDFwykE=
+        b=v/BppK2JRK043mTefbXqIBWGNH8xLMYujpLEl9q0gCxoMNKf14Pn6Db1ceaEoqhP8
+         9YHVEaZxUAGXQcXS1/F13Bcb6moDS1QRSrE8E1D08jDdQGCuJI8a6guuy5ZuP0IRTA
+         bFYgHKlLzT/2rzdTyK3/sTvhN9l3WSBWfsPegoMc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
+        Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 026/123] crypto: crypto4xx - fix cfb and ofb "overran dst buffer" issues
-Date:   Mon, 20 May 2019 14:13:26 +0200
-Message-Id: <20190520115246.540306148@linuxfoundation.org>
+Subject: [PATCH 4.19 021/105] crypto: chacha20poly1305 - set cra_name correctly
+Date:   Mon, 20 May 2019 14:13:27 +0200
+Message-Id: <20190520115248.489932254@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,128 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 7e92e1717e3eaf6b322c252947c696b3059f05be upstream.
+commit 5e27f38f1f3f45a0c938299c3a34a2d2db77165a upstream.
 
-Currently, crypto4xx CFB and OFB AES ciphers are
-failing testmgr's test vectors.
+If the rfc7539 template is instantiated with specific implementations,
+e.g. "rfc7539(chacha20-generic,poly1305-generic)" rather than
+"rfc7539(chacha20,poly1305)", then the implementation names end up
+included in the instance's cra_name.  This is incorrect because it then
+prevents all users from allocating "rfc7539(chacha20,poly1305)", if the
+highest priority implementations of chacha20 and poly1305 were selected.
+Also, the self-tests aren't run on an instance allocated in this way.
 
-|cfb-aes-ppc4xx encryption overran dst buffer on test vector 3, cfg="in-place"
-|ofb-aes-ppc4xx encryption overran dst buffer on test vector 1, cfg="in-place"
+Fix it by setting the instance's cra_name from the underlying
+algorithms' actual cra_names, rather than from the requested names.
+This matches what other templates do.
 
-This is because of a very subtile "bug" in the hardware that
-gets indirectly mentioned in 18.1.3.5 Encryption/Decryption
-of the hardware spec:
-
-the OFB and CFB modes for AES are listed there as operation
-modes for >>> "Block ciphers" <<<. Which kind of makes sense,
-but we would like them to be considered as stream ciphers just
-like the CTR mode.
-
-To workaround this issue and stop the hardware from causing
-"overran dst buffer" on crypttexts that are not a multiple
-of 16 (AES_BLOCK_SIZE), we force the driver to use the scatter
-buffers as the go-between.
-
-As a bonus this patch also kills redundant pd_uinfo->num_gd
-and pd_uinfo->num_sd setters since the value has already been
-set before.
-
-Cc: stable@vger.kernel.org
-Fixes: f2a13e7cba9e ("crypto: crypto4xx - enable AES RFC3686, ECB, CFB and OFB offloads")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Fixes: 71ebc4d1b27d ("crypto: chacha20poly1305 - Add a ChaCha20-Poly1305 AEAD construction, RFC7539")
+Cc: <stable@vger.kernel.org> # v4.2+
+Cc: Martin Willi <martin@strongswan.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Martin Willi <martin@strongswan.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/amcc/crypto4xx_core.c |   31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+ crypto/chacha20poly1305.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -712,7 +712,23 @@ int crypto4xx_build_pd(struct crypto_asy
- 	size_t offset_to_sr_ptr;
- 	u32 gd_idx = 0;
- 	int tmp;
--	bool is_busy;
-+	bool is_busy, force_sd;
-+
-+	/*
-+	 * There's a very subtile/disguised "bug" in the hardware that
-+	 * gets indirectly mentioned in 18.1.3.5 Encryption/Decryption
-+	 * of the hardware spec:
-+	 * *drum roll* the AES/(T)DES OFB and CFB modes are listed as
-+	 * operation modes for >>> "Block ciphers" <<<.
-+	 *
-+	 * To workaround this issue and stop the hardware from causing
-+	 * "overran dst buffer" on crypttexts that are not a multiple
-+	 * of 16 (AES_BLOCK_SIZE), we force the driver to use the
-+	 * scatter buffers.
-+	 */
-+	force_sd = (req_sa->sa_command_1.bf.crypto_mode9_8 == CRYPTO_MODE_CFB
-+		|| req_sa->sa_command_1.bf.crypto_mode9_8 == CRYPTO_MODE_OFB)
-+		&& (datalen % AES_BLOCK_SIZE);
+--- a/crypto/chacha20poly1305.c
++++ b/crypto/chacha20poly1305.c
+@@ -647,8 +647,8 @@ static int chachapoly_create(struct cryp
  
- 	/* figure how many gd are needed */
- 	tmp = sg_nents_for_len(src, assoclen + datalen);
-@@ -730,7 +746,7 @@ int crypto4xx_build_pd(struct crypto_asy
- 	}
- 
- 	/* figure how many sd are needed */
--	if (sg_is_last(dst)) {
-+	if (sg_is_last(dst) && force_sd == false) {
- 		num_sd = 0;
- 	} else {
- 		if (datalen > PPC4XX_SD_BUFFER_SIZE) {
-@@ -805,9 +821,10 @@ int crypto4xx_build_pd(struct crypto_asy
- 	pd->sa_len = sa_len;
- 
- 	pd_uinfo = &dev->pdr_uinfo[pd_entry];
--	pd_uinfo->async_req = req;
- 	pd_uinfo->num_gd = num_gd;
- 	pd_uinfo->num_sd = num_sd;
-+	pd_uinfo->dest_va = dst;
-+	pd_uinfo->async_req = req;
- 
- 	if (iv_len)
- 		memcpy(pd_uinfo->sr_va->save_iv, iv, iv_len);
-@@ -826,7 +843,6 @@ int crypto4xx_build_pd(struct crypto_asy
- 		/* get first gd we are going to use */
- 		gd_idx = fst_gd;
- 		pd_uinfo->first_gd = fst_gd;
--		pd_uinfo->num_gd = num_gd;
- 		gd = crypto4xx_get_gdp(dev, &gd_dma, gd_idx);
- 		pd->src = gd_dma;
- 		/* enable gather */
-@@ -863,17 +879,14 @@ int crypto4xx_build_pd(struct crypto_asy
- 		 * Indicate gather array is not used
- 		 */
- 		pd_uinfo->first_gd = 0xffffffff;
--		pd_uinfo->num_gd = 0;
- 	}
--	if (sg_is_last(dst)) {
-+	if (!num_sd) {
- 		/*
- 		 * we know application give us dst a whole piece of memory
- 		 * no need to use scatter ring.
- 		 */
- 		pd_uinfo->using_sd = 0;
- 		pd_uinfo->first_sd = 0xffffffff;
--		pd_uinfo->num_sd = 0;
--		pd_uinfo->dest_va = dst;
- 		sa->sa_command_0.bf.scatter = 0;
- 		pd->dest = (u32)dma_map_page(dev->core_dev->device,
- 					     sg_page(dst), dst->offset,
-@@ -887,9 +900,7 @@ int crypto4xx_build_pd(struct crypto_asy
- 		nbytes = datalen;
- 		sa->sa_command_0.bf.scatter = 1;
- 		pd_uinfo->using_sd = 1;
--		pd_uinfo->dest_va = dst;
- 		pd_uinfo->first_sd = fst_sd;
--		pd_uinfo->num_sd = num_sd;
- 		sd = crypto4xx_get_sdp(dev, &sd_dma, sd_idx);
- 		pd->dest = sd_dma;
- 		/* setup scatter descriptor */
+ 	err = -ENAMETOOLONG;
+ 	if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
+-		     "%s(%s,%s)", name, chacha_name,
+-		     poly_name) >= CRYPTO_MAX_ALG_NAME)
++		     "%s(%s,%s)", name, chacha->base.cra_name,
++		     poly->cra_name) >= CRYPTO_MAX_ALG_NAME)
+ 		goto out_drop_chacha;
+ 	if (snprintf(inst->alg.base.cra_driver_name, CRYPTO_MAX_ALG_NAME,
+ 		     "%s(%s,%s)", name, chacha->base.cra_driver_name,
 
 
