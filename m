@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959E32364A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C7123395
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389539AbfETM1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:27:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43232 "EHLO mail.kernel.org"
+        id S1733220AbfETMSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:18:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389512AbfETM1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:27:38 -0400
+        id S1733208AbfETMSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DD2820675;
-        Mon, 20 May 2019 12:27:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DCA920656;
+        Mon, 20 May 2019 12:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355258;
-        bh=6ZPD1QSHdzGTzkY0bnB7RTClmvWPiJlvDHS9dNTMtq0=;
+        s=default; t=1558354700;
+        bh=3zQ04bEawYHYY0E2jeNugRpJEMpBLaEKZZr/xCFaa1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fRdU42HZsVivLc8/UnikLyE8kTHPEvOVsnr2MZqXEWtEVpN+Y9KLW4xVS8xtGhU5k
-         5mMDNECtxA8ZaWcbcCi+p1DYOOsSQL11FTXlekG96a56LX0Mjq7zWyoJSkQJGVu4wD
-         VQN2U9uMOXyrV9MErErjq1pZW6cQTCNQ4Vpf2+88=
+        b=HZovlBnvu4AfCirL3JaDKqlPQbuPI4nfAliTXHe9lL7LNXQWoj456ocm6gvWicBoh
+         bSE+gsUYnSqlGqxdEkXzVjTchTo2xOxUO42Ls2iCZoKEGY/5TJZCZ2HYQrtufT7yfh
+         9kLNre4qjn9sN/3pBSiF4a4MG65SOr3OmvTL390c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.0 049/123] ALSA: hda/hdmi - Read the pin sense from register when repolling
+        stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.14 10/63] ARM: dts: exynos: Fix audio (microphone) routing on Odroid XU3
 Date:   Mon, 20 May 2019 14:13:49 +0200
-Message-Id: <20190520115247.991762078@linuxfoundation.org>
+Message-Id: <20190520115232.357472281@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-commit 8c2e6728c2bf95765b724e07d0278ae97cd1ee0d upstream.
+commit 9b23e1a3e8fde76e8cc0e366ab1ed4ffb4440feb upstream.
 
-The driver will check the monitor presence when resuming from suspend,
-starting poll or interrupt triggers. In these 3 situations, the
-jack_dirty will be set to 1 first, then the hda_jack.c reads the
-pin_sense from register, after reading the register, the jack_dirty
-will be set to 0. But hdmi_repoll_work() is enabled in these 3
-situations, It will read the pin_sense a couple of times subsequently,
-since the jack_dirty is 0 now, It does not read the register anymore,
-instead it uses the shadow pin_sense which is read at the first time.
+The name of CODEC input widget to which microphone is connected through
+the "Headphone" jack is "IN12" not "IN1". This fixes microphone support
+on Odroid XU3.
 
-It is meaningless to check the shadow pin_sense a couple of times,
-we need to read the register to check the real plugging state, so
-we set the jack_dirty to 1 in the hdmi_repoll_work().
-
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1660,6 +1660,11 @@ static void hdmi_repoll_eld(struct work_
- 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
- 	struct hda_codec *codec = per_pin->codec;
- 	struct hdmi_spec *spec = codec->spec;
-+	struct hda_jack_tbl *jack;
-+
-+	jack = snd_hda_jack_tbl_get(codec, per_pin->pin_nid);
-+	if (jack)
-+		jack->jack_dirty = 1;
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -23,7 +23,7 @@
+ 			"Headphone Jack", "HPL",
+ 			"Headphone Jack", "HPR",
+ 			"Headphone Jack", "MICBIAS",
+-			"IN1", "Headphone Jack",
++			"IN12", "Headphone Jack",
+ 			"Speakers", "SPKL",
+ 			"Speakers", "SPKR";
  
- 	if (per_pin->repoll_count++ > 6)
- 		per_pin->repoll_count = 0;
 
 
