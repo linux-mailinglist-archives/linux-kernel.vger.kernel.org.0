@@ -2,64 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E35112298F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 02:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A41E229A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 02:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbfETAeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 20:34:07 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39485 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727682AbfETAeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 20:34:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=QJ1zlmiUwkwG5fWJeQtvywIkCnEFUS1im+V7yvPnneo=; b=w07pfqMWRp5S6YyWg40sQaWds5
-        MpevLIUi3S0QIbW3VGyK0XeAGb9+EOFTwh+yaX+wP7NNdsuYR1KUhHodyKxyljCiNdk4Ob1Fi13Cx
-        04ti23myNThFJ1fYuKtr1YT9xXjAQEnhxbZ1efA1lhwzeyGDImLf+wvZ05j2B9V2aXGs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hSWFa-00019D-85; Mon, 20 May 2019 02:33:58 +0200
-Date:   Mon, 20 May 2019 02:33:58 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
-        Chuanhong Guo <gch981213@gmail.com>,
-        info@freifunk-bad-gandersheim.net
-Subject: Re: [PATCH v4 3/3] net: ethernet: add ag71xx driver
-Message-ID: <20190520003358.GB1695@lunn.ch>
-References: <20190519080304.5811-1-o.rempel@pengutronix.de>
- <20190519080304.5811-4-o.rempel@pengutronix.de>
+        id S1729675AbfETA6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 20:58:30 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:38615 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728931AbfETA6a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 20:58:30 -0400
+Received: by mail-ua1-f67.google.com with SMTP id r19so4074831uap.5
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2019 17:58:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iUpSk0u5fKNrtbowvgPCMeUohiETj5dnbtiTjnfmoSQ=;
+        b=ndTocvTfGGCMlMrb4iCQwCHUVsSdGuIiocTk5H7o65Yb6SS92Jqzw27dXrTLTIcEsQ
+         uVka+o94gmdsaQ5GLSRTnL+4GMB13c7MLe6ADwFJBrzYg8s0D21wVL0njfjUncvQa5fS
+         rC8xpHc6hjGXyZtx5KJi6HOvEIBkYVh9de29JSjrO+RkPZ7uaowZFxdTQuCxgY3DJyje
+         klGUeFsXZIRDOXaa0bOT1MGDpHWpdNb/n6V2CAQ9PNt4Ux5TXF+tImw25/5krzmL6Q4b
+         Lo0vwa/VFj42EvhmeQFn9BurBG6O01SrMa4AwwCXcUr1EGZbLnVDs75JiLSpS56XmeOX
+         X0dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iUpSk0u5fKNrtbowvgPCMeUohiETj5dnbtiTjnfmoSQ=;
+        b=NS2lKg9FOsoQlEUZJ7nMYaerdg6QKDTytcq3iAoRz0XQYKp1boSQjKVTqJPkXUgoFG
+         FCzf6+3ZF5+UnYqv5hZhW01NuVwAmbFZU6II3eAtpsaUeR1PJ24ppQzedvZ/8CdocBPa
+         o6glwTKhgtZPECIZXABljD4AQCs5IIHUR0RmQuEtLkAe57YGkCGnGLbylS/FMfzf0u8j
+         JOXRkmA4GRcqw2PbUdrsAQuH9sZYlb0zTOXuXZnDtxnqtfgRwIOyGGT8nJVcPxO0h5pf
+         dXTnbC/or/l4ze/1NYHFBRYWXvgXWAwMQxC4gSvbyQTMOOGYjtW6ficsyUGaLJV4ICC0
+         cj+w==
+X-Gm-Message-State: APjAAAXt3840prwk9GRydwyGq2PB8Q6DiMHwewhStLzvdXznf4FMM65m
+        mtz46+0Yi6y4WXqrKC4jF7NC1LlcaIgTOqfvZuU=
+X-Google-Smtp-Source: APXvYqxGEJ1+TX4APILyMUXhSvjAX1FQbtbcKC1ysdjajUbV2sHiu8j76mEpa+kR4zXTwRNM6EDpVrXtr8wiA2A5WtU=
+X-Received: by 2002:ab0:3406:: with SMTP id z6mr4044555uap.102.1558313909128;
+ Sun, 19 May 2019 17:58:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190519080304.5811-4-o.rempel@pengutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190315161142.23gfu32lueyqrmyq@smtp.gmail.com>
+In-Reply-To: <20190315161142.23gfu32lueyqrmyq@smtp.gmail.com>
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date:   Sun, 19 May 2019 21:58:17 -0300
+Message-ID: <CADKXj+4ixRrfZC9FRShEf7=L__0qk-uYNXvtwCs_tuUhgrQhEQ@mail.gmail.com>
+Subject: Re: [PATCH V2] drm/vkms: Remove useless call to drm_connector_register/unregister()
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +config AG71XX
-> +	tristate "Atheros AR7XXX/AR9XXX built-in ethernet mac support"
-> +	depends on ATH79
-> +	select PHYLIB
-> +	select MDIO_BITBANG
+Hi Daniel,
 
-I don't see any need for MDIO_BITBANG.
+I forgot to apply this patch. Is it ok for you if I apply it?
 
-  Andrew
+
+On Fri, Mar 15, 2019 at 1:11 PM Rodrigo Siqueira
+<rodrigosiqueiramelo@gmail.com> wrote:
+>
+> The function vkms_output_init() is invoked during the module
+> initialization, and it handles the creation/configuration of the vkms
+> essential elements (e.g., connectors, encoder, etc). Among the
+> initializations, this function tries to initialize a connector and
+> register it by calling drm_connector_register(). However, inside the
+> drm_connector_register(), at the beginning of this function there is the
+> following validation:
+>
+>  if (!connector->dev->registered)
+>    return 0;
+>
+> In this sense, invoke drm_connector_register() after initializing the
+> connector has no effect because the register field is false. The
+> connector register happens when drm_dev_register() is invoked; the same
+> issue exists with drm_connector_unregister(). Therefore, this commit
+> removes the unnecessary call to drm_connector_register() and
+> drm_connector_unregister().
+>
+> Changes since v2:
+> * Remove unnecessary call to drm_connector_unregister()
+> * Remove unused label
+>
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> Reviewed-by: Daniel Vetter <daniel@ffwll.ch>
+> ---
+>  drivers/gpu/drm/vkms/vkms_output.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 3b162b25312e..56fb5c2a2315 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -6,7 +6,6 @@
+>
+>  static void vkms_connector_destroy(struct drm_connector *connector)
+>  {
+> -       drm_connector_unregister(connector);
+>         drm_connector_cleanup(connector);
+>  }
+>
+> @@ -71,12 +70,6 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>
+>         drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+>
+> -       ret = drm_connector_register(connector);
+> -       if (ret) {
+> -               DRM_ERROR("Failed to register connector\n");
+> -               goto err_connector_register;
+> -       }
+> -
+>         ret = drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+>                                DRM_MODE_ENCODER_VIRTUAL, NULL);
+>         if (ret) {
+> @@ -99,9 +92,6 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>         drm_encoder_cleanup(encoder);
+>
+>  err_encoder:
+> -       drm_connector_unregister(connector);
+> -
+> -err_connector_register:
+>         drm_connector_cleanup(connector);
+>
+>  err_connector:
+> --
+> 2.21.0
+
+
+
+-- 
+
+Rodrigo Siqueira
+https://siqueira.tech
