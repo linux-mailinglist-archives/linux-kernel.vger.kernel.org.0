@@ -2,90 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CD623093
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D5823097
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbfETJln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:41:43 -0400
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:45263 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbfETJlm (ORCPT
+        id S1732323AbfETJmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:42:19 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:40301 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732151AbfETJmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:41:42 -0400
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=ian.jackson@citrix.com; spf=SoftFail smtp.mailfrom=Ian.Jackson@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL01.citrite.net
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  ian.jackson@citrix.com) identity=pra; client-ip=23.29.105.83;
-  receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Ian.Jackson@citrix.com";
-  x-sender="ian.jackson@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: SoftFail (esa3.hc3370-68.iphmx.com: domain of
-  Ian.Jackson@citrix.com is inclined to not designate
-  23.29.105.83 as permitted sender) identity=mailfrom;
-  client-ip=23.29.105.83; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Ian.Jackson@citrix.com";
-  x-sender="Ian.Jackson@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 include:spf.citrix.com
-  include:spf2.citrix.com include:ironport.citrix.com
-  exists:%{i}._spf.mta.salesforce.com ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@MIAPEX02MSOL01.citrite.net) identity=helo;
-  client-ip=23.29.105.83; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Ian.Jackson@citrix.com";
-  x-sender="postmaster@MIAPEX02MSOL01.citrite.net";
-  x-conformance=sidf_compatible
-IronPort-SDR: dnz1Zx+CAoiM3RfLC4Bmi/p8WvU7bajFuyeAs59B/Mn7RamN0mPE6Nb73DFK8O6GY+LUpRZdkC
- WkZDgDWgMV3uWeUdEuiU8nXB5qusrEtfKVkmYfsYNWJ79+eL4AbTv/WRIpdyeR0jluInvolqnT
- ZTqCo6geGsJjvUaizZw4CORi+J4Y3QWBJC246L21RuvgbZzhzOEUHeISQqBqgjWwiWuPmPvYI7
- a4oarXwDsbrPJ9EC2kR+PSXsByW6JXB2oPf7Hc6Fh4PXtlnv2Gx1C4GgWgkbr84k+o4hQTS6b3
- 6wY=
-X-SBRS: 2.7
-X-MesageID: 649610
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 23.29.105.83
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.60,491,1549947600"; 
-   d="scan'208";a="649610"
-From:   Ian Jackson <ian.jackson@citrix.com>
+        Mon, 20 May 2019 05:42:19 -0400
+Received: from aptenodytes (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 8254E100005;
+        Mon, 20 May 2019 09:42:15 +0000 (UTC)
+Message-ID: <5966b22a64602ce297f9a3b4bfd4ff7af72bab32.camel@bootlin.com>
+Subject: Re: [PATCH v3 1/7] drm/rockchip: Change the scl_vop_cal_scl_fac to
+ pass drm_format_info
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date:   Mon, 20 May 2019 11:42:14 +0200
+In-Reply-To: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
+References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Message-ID: <23778.30265.117488.781364@mariner.uk.xensource.com>
-Date:   Mon, 20 May 2019 10:41:13 +0100
-To:     Stephen Boyd <swboyd@chromium.org>
-CC:     Andy Gross <agross@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Julien Grall <julien.grall@arm.com>,
-        "Bjorn Andersson" <bjorn.andersson@linaro.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH 1/3] firmware: qcom_scm: Use proper types for dma mappings
-In-Reply-To: <20190517210923.202131-2-swboyd@chromium.org>
-References: <23774.56553.445601.436491@mariner.uk.xensource.com>
-        <20190517210923.202131-2-swboyd@chromium.org>
-X-Mailer: VM 8.2.0b under 24.5.1 (i686-pc-linux-gnu)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Boyd writes ("[PATCH 1/3] firmware: qcom_scm: Use proper types for dma mappings"):
-> We need to use the proper types and convert between physical addresses
-> and dma addresses here to avoid mismatch warnings. This is especially
-> important on systems with a different size for dma addresses and
-> physical addresses. Otherwise, we get the following warning:
+Hi,
 
-Thanks.  Do you expect this to be a backport candidate and if so how
-far back do you think it will go ?  To be honest, I am not really
-convinced that backporting this would be a service to users.  The
-situation I have, where I changed the compiler but kept the old kernel
-code and old configuration, is going to be fairly rare.
+On Thu, 2019-05-16 at 12:31 +0200, Maxime Ripard wrote:
+> The Rockchip VOP driver has a function, scl_vop_cal_scl_fac, that will
+> lookup the drm_format_info structure from the fourcc passed to it by its
+> caller.
+> 
+> However, its only caller already derefences the drm_format_info structure
+> it has access to to retrieve that fourcc. Change the prototype of that
+> function to pass the drm_format_info structure directly, removing the need
+> for an extra lookup.
+> 
+> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-I think I should probably therefore disable this driver in the config
-on stable branches of Linux, at least.
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Thanks,
-Ian.
+Cheers,
+
+Paul
+
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 20a9c296d027..9c0d6b367709 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -315,14 +315,13 @@ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
+>  
+>  static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+>  			     uint32_t src_w, uint32_t src_h, uint32_t dst_w,
+> -			     uint32_t dst_h, uint32_t pixel_format)
+> +			     uint32_t dst_h, const struct drm_format_info *info)
+>  {
+>  	uint16_t yrgb_hor_scl_mode, yrgb_ver_scl_mode;
+>  	uint16_t cbcr_hor_scl_mode = SCALE_NONE;
+>  	uint16_t cbcr_ver_scl_mode = SCALE_NONE;
+> -	int hsub = drm_format_horz_chroma_subsampling(pixel_format);
+> -	int vsub = drm_format_vert_chroma_subsampling(pixel_format);
+> -	const struct drm_format_info *info;
+> +	int hsub = drm_format_horz_chroma_subsampling(info->format);
+> +	int vsub = drm_format_vert_chroma_subsampling(info->format);
+>  	bool is_yuv = false;
+>  	uint16_t cbcr_src_w = src_w / hsub;
+>  	uint16_t cbcr_src_h = src_h / vsub;
+> @@ -331,8 +330,6 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+>  	uint32_t val;
+>  	int vskiplines;
+>  
+> -	info = drm_format_info(pixel_format);
+> -
+>  	if (info->is_yuv)
+>  		is_yuv = true;
+>  
+> @@ -856,7 +853,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+>  	if (win->phy->scl)
+>  		scl_vop_cal_scl_fac(vop, win, actual_w, actual_h,
+>  				    drm_rect_width(dest), drm_rect_height(dest),
+> -				    fb->format->format);
+> +				    fb->format);
+>  
+>  	VOP_WIN_SET(vop, win, act_info, act_info);
+>  	VOP_WIN_SET(vop, win, dsp_info, dsp_info);
+> 
+> base-commit: a802303934b3bd4df6e2fc8bf2e4ebced1c37556
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
