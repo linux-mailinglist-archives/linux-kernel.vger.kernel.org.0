@@ -2,118 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA99D22DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2598E22DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfETIFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:05:38 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38249 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfETIFg (ORCPT
+        id S1731142AbfETIGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:06:21 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42621 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730913AbfETIGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:36 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t5so10603428wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N5i7/XDpfm3fWH4Ml9uuxM88EMAgEyCkLNLDzAUDSZ0=;
-        b=aN7TKzswvueSwWlYr5KtwQEUDm4FwOzq19jE5z3pv8sUvOak2w8NcLvYczOR7mVdEC
-         P2S3uIzCkjtQ2aotwBcpbuqNF8Cw3Da3lTLAWb0zExra8L3o2umg7W9woO6Xc55C0ZcB
-         dQoN0Lb5efbJMs5Qne9S1n6yybhaXFZy5FvGFUeQ0PUlIm27zEYRMTTFWxf8hhSnqryF
-         9ceGvzS6/zQ0OevUJKDf/3nlg4O9TkUuEl4tQukvHwYnP5ncA78N8Ci4Z+1kJdbTYECf
-         8C5g//rspnOOH0eaE9czErhjwXHfKaf1FO3A6PMEj4quNFYDKeK9rEge9cGMmzlLLtBE
-         +8tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N5i7/XDpfm3fWH4Ml9uuxM88EMAgEyCkLNLDzAUDSZ0=;
-        b=Q3RYsQWciPlNoHMlclOGEpMk81jj5S3/Mzg+NSbCLrqTyXQROjV4NGIV5sBhcWRYsz
-         aCuEynS+0IZu954WR4aV6FxatxpYl9/xubWYG5ZpXrlTffMdVxcC8Feq5ocW037R2RcB
-         7r7cJp4B/NOvKBwHnj+zlNt2TPUeBYPkVtoREWfy8FZkeVuE9/ME42cvypnCXrWVerGA
-         +45OnKBZ3+bdQgQ/2c4Dqrd4QrS5GH6ELq4x+Zx9K1B/XcdM6pcQSKHxzB1AkZ3kmd6j
-         /O6pdZk73MLlT6lZi+/RBfZhkgmVaku+IdAqkJ/mqwrlkXzvNMtnmbdZi4mB1wJgLEzg
-         wiFQ==
-X-Gm-Message-State: APjAAAWyIcZRe/ZiF3Z38ShLgX8pylXJ1LFGZwPKGV/16HYKGBged/Rd
-        1ZCDGXMGcXE3onRbKFFHH8yCOYL0EyyLW2swqGstoA==
-X-Google-Smtp-Source: APXvYqz/x+wplnWtWRAm2caTMk28mJLp0zciA4G0yf9XqQh45uE9rk6iwDlg1+yyxEcWuqSPKpaVVr0N3xBRPIdMPI4=
-X-Received: by 2002:a7b:ce10:: with SMTP id m16mr1909247wmc.10.1558339533772;
- Mon, 20 May 2019 01:05:33 -0700 (PDT)
+        Mon, 20 May 2019 04:06:20 -0400
+X-Originating-IP: 90.88.22.185
+Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 51B4C60003;
+        Mon, 20 May 2019 08:06:17 +0000 (UTC)
+Date:   Mon, 20 May 2019 10:06:16 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     paul.kocialkowski@bootlin.com, mchehab@kernel.org,
+        hverkuil-cisco@xs4all.nl, gregkh@linuxfoundation.org,
+        wens@csie.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: cedrus: Allow different mod clock rates
+Message-ID: <20190520080616.qlkpru5ypmtsiob6@flea>
+References: <20190518174415.17795-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-References: <20190515063004.3466-1-anup.patel@wdc.com>
-In-Reply-To: <20190515063004.3466-1-anup.patel@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 20 May 2019 13:35:22 +0530
-Message-ID: <CAAhSdy3GqjS06QxCtY6OUkBZds4gygQsAkaoaa+sMj3z6qgUBQ@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: defconfig: Enable NO_HZ_IDLE and HIGH_RES_TIMERS
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z4svvflxvz3jxhmz"
+Content-Disposition: inline
+In-Reply-To: <20190518174415.17795-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 12:00 PM Anup Patel <Anup.Patel@wdc.com> wrote:
->
-> This patch enables NO_HZ_IDLE (idle dynamic ticks) and HIGH_RES_TIMERS
-> (hrtimers) in RV32 and RV64 defconfigs.
->
-> Both of the above options are enabled by default for architectures
-> such as x86, ARM, and ARM64.
->
-> The idle dynamic ticks helps use save power by stopping timer ticks
-> when the system is idle whereas hrtimers is a much improved timer
-> subsystem compared to the old "timer wheel" based system.
->
-> This patch is tested on SiFive Unleashed board and QEMU Virt machine.
->
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> ---
->  arch/riscv/configs/defconfig      | 2 ++
->  arch/riscv/configs/rv32_defconfig | 2 ++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 2fd3461e50ab..f254c352ec57 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -1,5 +1,7 @@
->  CONFIG_SYSVIPC=y
->  CONFIG_POSIX_MQUEUE=y
-> +CONFIG_NO_HZ_IDLE=y
-> +CONFIG_HIGH_RES_TIMERS=y
->  CONFIG_IKCONFIG=y
->  CONFIG_IKCONFIG_PROC=y
->  CONFIG_CGROUPS=y
-> diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_defconfig
-> index 1a911ed8e772..d5449ef805a3 100644
-> --- a/arch/riscv/configs/rv32_defconfig
-> +++ b/arch/riscv/configs/rv32_defconfig
-> @@ -1,5 +1,7 @@
->  CONFIG_SYSVIPC=y
->  CONFIG_POSIX_MQUEUE=y
-> +CONFIG_NO_HZ_IDLE=y
-> +CONFIG_HIGH_RES_TIMERS=y
->  CONFIG_IKCONFIG=y
->  CONFIG_IKCONFIG_PROC=y
->  CONFIG_CGROUPS=y
-> --
-> 2.17.1
->
 
-Hi All,
+--z4svvflxvz3jxhmz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Any comments on this one?
+On Sat, May 18, 2019 at 07:44:15PM +0200, Jernej Skrabec wrote:
+> Some VPU variants may run at higher clock speeds. They actually need
+> extra speed to be capable of decoding more complex codecs like HEVC or
+> bigger image sizes (4K).
+>
+> Expand variant structure with mod_rate information.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-@Palmer, It would be nice to have this in Linux-5.2
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Regards,
-Anup
+Thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--z4svvflxvz3jxhmz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOJf+AAKCRDj7w1vZxhR
+xYO1AP4hYgh/ydYRZ1dLOpWjomwTaBIE4ZTTvdBGUDoMiNB7vgD/TN9xyBUVpRON
+FUBwqbdUlEFesY7PSvrMnKR0eobJYwg=
+=1oN6
+-----END PGP SIGNATURE-----
+
+--z4svvflxvz3jxhmz--
