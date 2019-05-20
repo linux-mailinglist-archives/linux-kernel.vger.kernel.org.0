@@ -2,95 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 781D323356
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24EE52336C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732706AbfETMPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:15:51 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:56153 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732661AbfETMPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:15:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 456yXd5b41z9sDn;
-        Mon, 20 May 2019 22:15:45 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1558354548;
-        bh=ETBmQ+Y+GyGiALkiX0vj+AzC1DdCK5qfZ1pG+ZVbdpo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=mumQlepsUvLMzAtjAm0I8cqlF/WYBi67C4W3B8zJjHcy+EvQ0OYqJMzBe6oEayh9z
-         QW7ggmBIl5Tpi0T8cHMjqioPUcFB+LkKfNfUgy9ZW0cBuUBODEWWS14sgs8ZPdgVa9
-         P9oJ1ldnszoOiB9jiwLroNmB0yY1ce5IgJqiXaBqCpfuXi0N3S1kcIZ10Xjlc/5cg2
-         4aaaSJ4PJw81As14pe0Dwtw5Peaw8fsdqD8EwUZxO5N+XQYq22SS6asfgHkA+eHNJA
-         SKzpYH+Tmnyp1+xOuZgnoNwSLtHzUec2kO+iCFXUT79WuTRnxAJMQqcWZdR6Wa//8U
-         LjcgFReypfV7w==
-Date:   Mon, 20 May 2019 22:15:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: linux-next: Fixes tag needs some work in the drm-intel tree
-Message-ID: <20190520221526.0e103916@canb.auug.org.au>
+        id S1733139AbfETMQc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:16:32 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:34067 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732983AbfETMQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:16:29 -0400
+Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 42E9E100003;
+        Mon, 20 May 2019 12:16:20 +0000 (UTC)
+Date:   Mon, 20 May 2019 14:16:20 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jeff Kletsky <lede@allycomm.com>
+Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] mtd: spinand: Add #define-s for page-read ops
+ with three-byte addresses
+Message-ID: <20190520141620.52bb06d9@xps13>
+In-Reply-To: <d62d64a9-c7c3-3b0b-a3ba-71ab2a4f61e4@allycomm.com>
+References: <20190514215315.19228-1-lede@allycomm.com>
+        <20190514215315.19228-2-lede@allycomm.com>
+        <355bcf8d-bce6-1b82-0f57-539c8d9b6cac@gmail.com>
+        <efcbdd61-d60e-a5d1-9f91-f8f747fadecf@kontron.de>
+        <d62d64a9-c7c3-3b0b-a3ba-71ab2a4f61e4@allycomm.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/93.yJMrxB2DtnwT3NNY0Pe4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/93.yJMrxB2DtnwT3NNY0Pe4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Jeff,
 
-Hi all,
+Jeff Kletsky <lede@allycomm.com> wrote on Sun, 19 May 2019 13:27:58
+-0700:
 
-In commit
+> On 5/14/19 11:49 PM, Schrempf Frieder wrote:
+> 
+> > On 15.05.19 08:17, Marek Vasut wrote:  
+> >> On 5/14/19 11:53 PM, Jeff Kletsky wrote:  
+> >>> From: Jeff Kletsky <git-commits@allycomm.com>  
+> >> That #define in $subject is called a macro.
+> >>
+> >> Seems this patch adds a lot of almost duplicate code, can it be somehow
+> >> de-duplicated ?  
+> > We could add another parameter naddr or addrlen to the
+> > SPINAND_PAGE_READ_FROM_CACHE_XX_OPs and pass the value 2 for all
+> > existing chips except for GD5F1GQ4UFxxG which needs 3 bytes address length.
+> >
+> > This would cause one more argument to each of the macro calls in all
+> > chip drivers. As long as there are only two flavors (2 and 3 bytes) I'm
+> > not sure if this really would make things easier and also this is "only"
+> > preprocessor code.
+> >
+> > So anyways, I would be fine with both approaches, Jeff's current one or
+> > one with another parameter for the address length.
+> >
+> > By the way: Jeff, you didn't carry my Reviewed-by tag to v2. So I will
+> > just reply again to add the tags.
+> >  
+> >>> The GigaDevice GD5F1GQ4UFxxG SPI NAND utilizes three-byte addresses
+> >>> for its page-read ops.
+> >>>
+> >>> http://www.gigadevice.com/datasheet/gd5f1gq4xfxxg/
+> >>>
+> >>> Signed-off-by: Jeff Kletsky <git-commits@allycomm.com>
+> >>> ---
+> >>>    include/linux/mtd/spinand.h | 30 ++++++++++++++++++++++++++++++
+> >>>    1 file changed, 30 insertions(+)
+> >>>
+> >>> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+> >>> index b92e2aa955b6..05fe98eebe27 100644
+> >>> --- a/include/linux/mtd/spinand.h
+> >>> +++ b/include/linux/mtd/spinand.h
+> >>> @@ -68,30 +68,60 @@
+> >>>    		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
+> >>>    		   SPI_MEM_OP_DATA_IN(len, buf, 1))  
+> >>>    >>> +#define SPINAND_PAGE_READ_FROM_CACHE_OP_3A(fast, addr, ndummy, buf, len) \  
+> >>> +	SPI_MEM_OP(SPI_MEM_OP_CMD(fast ? 0x0b : 0x03, 1),		\
+> >>> +		   SPI_MEM_OP_ADDR(3, addr, 1),				\
+> >>> +		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
+> >>> +		   SPI_MEM_OP_DATA_IN(len, buf, 1))
+> >>> +
+> >>>    #define SPINAND_PAGE_READ_FROM_CACHE_X2_OP(addr, ndummy, buf, len)	\
+> >>>    	SPI_MEM_OP(SPI_MEM_OP_CMD(0x3b, 1),				\
+> >>>    		   SPI_MEM_OP_ADDR(2, addr, 1),				\
+> >>>    		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
+> >>>    		   SPI_MEM_OP_DATA_IN(len, buf, 2))  
+> >>>    >>> [ _3A addition repeated three more times for similar ops ... ]  
+> 
+> It's easy enough to change the wording, and will do so on the next revision.
+> 
+> However, it's not clear to me that there is consensus on if the present
+> set of macros is acceptable/preferred over definition of a set of ones
+> that accept an additional parameter.
+> 
+> At least from my perspective and as Schrempf Frieder has hinted at,
+> these macros are syntactic sugar and all result in equivalent C code.
+> 
+> Either should compile to the same run-time size and performance (assuming
+> reasonably that a construct like `true ? 0x0b : 0x03` is optimized out).
+> 
+> Adding an additional parameter, at least for me, wouldn't improve readability
+> of the code and is offset by the need to refactor four other files. Even
+> though it should be a simple/trivial refactor, I do not have any examples
+> of the four other manufacturers' chips to be able to confirm proper operation.
+> 
+> I'll prepare a reworded set of patches with the present macro structure.
+> 
+> If there is strong feeling for refactoring the macro set, please let me know.
 
-  0d90ccb70211 ("drm/i915: Delay semaphore submission until the start of th=
-e signaler")
-
-Fixes tag
-
-  Fixes: e88619646971 ("drm/i915: Use HW semaphores for inter-engine synchr=
-oni
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please don't split Fixes tags across more than one line.
+On my side I would rather not add this extra argument, I know it is not
+very conventional to add so much macros but once you've read one you
+read all of them and I think it improves the readability of the code
+using it.
 
 
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/93.yJMrxB2DtnwT3NNY0Pe4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzimmoACgkQAVBC80lX
-0GxWzwf+JJpeqte4AZNmzAlqyodr2d/yBI5DD7IxonPDxwoD/Ilm+eMpi0WIpLe7
-ZES0519Y1Q9WOZXLZyjwLcRyxXMZjBdCjtFsEqBXN76kv75lycG+36jLMRETIf/I
-oJ6cfDd1XPgvY08HvBvexcO9hfABtSWhOuOcN/h8AJBf8YG1nt2fTF4KERXQDLpw
-nvqwKEmaM3y/s8LTUx0oJnQxCUFrfRE1yq4S2M0Ga99Bho84Qvh+wo7I3EMa1HnG
-oOIo3vShLHmNoK4buX5kfqRJhgs/Cqn6P83KQvDcoUjJagEsuSnAqeUMO5y90jmZ
-I1E7mYfhYZpsnDyYGm5Q/srqj9PDjw==
-=vD+z
------END PGP SIGNATURE-----
-
---Sig_/93.yJMrxB2DtnwT3NNY0Pe4--
+Thanks,
+Miquèl
