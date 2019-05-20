@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26DF323430
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A892370A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388816AbfETMYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:24:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39116 "EHLO mail.kernel.org"
+        id S1732630AbfETMUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:20:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388789AbfETMYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:24:19 -0400
+        id S2387923AbfETMUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:20:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E4E20645;
-        Mon, 20 May 2019 12:24:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53E4C21734;
+        Mon, 20 May 2019 12:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355058;
-        bh=gDXp1YTVd1ZDb9dpxjABJtOXO5WdHbIWePTo2Hqkyqk=;
+        s=default; t=1558354802;
+        bh=4aaPn3LrBIPLPHNrCNB+LQSAkpLaxCb335jdyp1Sg18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ikncR1AqqQzb6ldWFWDGbBmx6Se1XRk73jLehGvtE5mqNiJ82yqxH9iJKM++KE0Ev
-         CxIvMxy6ORS+3SG0x7TxY1VvOnXOwmXJwlwel1OOcYC+pYJIVd9pzHWkJzYU0ncJSf
-         nno5eR2bq2lIFxopwzgXfAKwBcClQ8yR7GOVRypw=
+        b=HJYkpjU4grG0oEN4jdZi+UoVHayiwTaZbjA1Hq5jCHhs79t4xS3gRvW79gVQWh81v
+         LmCuJFQU0ck0jf5NeF/bKIWG6MdYFF/FdDZYzTr1GxS5kniFMj3mkgvgMrULrPtcPl
+         3zu2P+i0Z0WYS9f7mURtysLOJqc5OWBp7CsXFOSs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Coly Li <colyli@suse.de>,
         Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 080/105] bcache: never set KEY_PTRS of journal key to 0 in journal_reclaim()
+Subject: [PATCH 4.14 47/63] bcache: never set KEY_PTRS of journal key to 0 in journal_reclaim()
 Date:   Mon, 20 May 2019 14:14:26 +0200
-Message-Id: <20190520115252.795724367@linuxfoundation.org>
+Message-Id: <20190520115236.273590377@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -108,7 +108,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/md/bcache/journal.c
 +++ b/drivers/md/bcache/journal.c
-@@ -540,11 +540,11 @@ static void journal_reclaim(struct cache
+@@ -512,11 +512,11 @@ static void journal_reclaim(struct cache
  				  ca->sb.nr_this_dev);
  	}
  
@@ -124,7 +124,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  out:
  	if (!journal_full(&c->journal))
  		__closure_wake_up(&c->journal.wait);
-@@ -671,6 +671,9 @@ static void journal_write_unlocked(struc
+@@ -641,6 +641,9 @@ static void journal_write_unlocked(struc
  		ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
  	}
  
