@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B096A2351C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C3C233B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390659AbfETMdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:33:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50062 "EHLO mail.kernel.org"
+        id S2387898AbfETMTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:19:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390636AbfETMdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:33:02 -0400
+        id S2387881AbfETMTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:19:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B242204FD;
-        Mon, 20 May 2019 12:33:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 560BD20656;
+        Mon, 20 May 2019 12:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355581;
-        bh=4mJ0ODamTguxNDF0yhcDtRfQZ1QX4p0KtjNL4DmrW2I=;
+        s=default; t=1558354789;
+        bh=m2voSuVvE1XFDGeDabAu20m7trhvVa9G2eC5AgnSOKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MyRti2ybkDGeM5Z5DTHrJNBI91nHO3GF4SgwmCcl1TcoJJ8hyKPMCtw8giPblvWML
-         9CPHEI7sYKkVpY24rJHXhJM4FjhOkfLQ2AzTBP8o7+PtTeLr+Zmcb77WRRIST4eImk
-         LzR9P7w33aCc9wjPgOK50ucUNNw/+RRVogjK73Rw=
+        b=bJmOsrS1hdOF3VLjRoKNNJUY4yegWD7m35TnbwPBKpxKF880EQgrfwdW+unzF/TRw
+         x0/Qs1gfvN1G7M0K2E8HgwdLQtox5I6RLVCsAcgIVDZxLcfhQiLnTOkMDIDWYsihYM
+         bhMWRJDbeIDL3a9pPN5eRSYjcSzKdemhpdxAEbY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a07d0142e74fdd595cfb@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 048/128] ALSA: line6: toneport: Fix broken usage of timer for delayed execution
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 16/63] sched/x86: Save [ER]FLAGS on context switch
 Date:   Mon, 20 May 2019 14:13:55 +0200
-Message-Id: <20190520115253.014079061@linuxfoundation.org>
+Message-Id: <20190520115232.817430690@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +49,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 7f84ff68be05ec7a5d2acf8fdc734fe5897af48f upstream.
+commit 6690e86be83ac75832e461c141055b5d601c0a6d upstream.
 
-The line6 toneport driver has code for some delayed initialization,
-and this hits the kernel Oops because mutex and other sleepable
-functions are used in the timer callback.  Fix the abuse by a delayed
-work instead so that everything works gracefully.
+Effectively reverts commit:
 
-Reported-by: syzbot+a07d0142e74fdd595cfb@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+  2c7577a75837 ("sched/x86_64: Don't save flags on context switch")
+
+Specifically because SMAP uses FLAGS.AC which invalidates the claim
+that the kernel has clean flags.
+
+In particular; while preemption from interrupt return is fine (the
+IRET frame on the exception stack contains FLAGS) it breaks any code
+that does synchonous scheduling, including preempt_enable().
+
+This has become a significant issue ever since commit:
+
+  5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+
+provided for means of having 'normal' C code between STAC / CLAC,
+exposing the FLAGS.AC state. So far this hasn't led to trouble,
+however fix it before it comes apart.
+
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@kernel.org
+Fixes: 5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/toneport.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ arch/x86/entry/entry_32.S        |    2 ++
+ arch/x86/entry/entry_64.S        |    2 ++
+ arch/x86/include/asm/switch_to.h |    1 +
+ arch/x86/kernel/process_32.c     |    7 +++++++
+ arch/x86/kernel/process_64.c     |    8 ++++++++
+ 5 files changed, 20 insertions(+)
 
---- a/sound/usb/line6/toneport.c
-+++ b/sound/usb/line6/toneport.c
-@@ -54,8 +54,8 @@ struct usb_line6_toneport {
- 	/* Firmware version (x 100) */
- 	u8 firmware_version;
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -234,6 +234,7 @@ ENTRY(__switch_to_asm)
+ 	pushl	%ebx
+ 	pushl	%edi
+ 	pushl	%esi
++	pushfl
  
--	/* Timer for delayed PCM startup */
--	struct timer_list timer;
-+	/* Work for delayed PCM startup */
-+	struct delayed_work pcm_work;
+ 	/* switch stack */
+ 	movl	%esp, TASK_threadsp(%eax)
+@@ -256,6 +257,7 @@ ENTRY(__switch_to_asm)
+ #endif
  
- 	/* Device type */
- 	enum line6_device_type type;
-@@ -241,9 +241,10 @@ static int snd_toneport_source_put(struc
- 	return 1;
- }
+ 	/* restore callee-saved registers */
++	popfl
+ 	popl	%esi
+ 	popl	%edi
+ 	popl	%ebx
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -342,6 +342,7 @@ ENTRY(__switch_to_asm)
+ 	pushq	%r13
+ 	pushq	%r14
+ 	pushq	%r15
++	pushfq
  
--static void toneport_start_pcm(struct timer_list *t)
-+static void toneport_start_pcm(struct work_struct *work)
- {
--	struct usb_line6_toneport *toneport = from_timer(toneport, t, timer);
-+	struct usb_line6_toneport *toneport =
-+		container_of(work, struct usb_line6_toneport, pcm_work.work);
- 	struct usb_line6 *line6 = &toneport->line6;
+ 	/* switch stack */
+ 	movq	%rsp, TASK_threadsp(%rdi)
+@@ -364,6 +365,7 @@ ENTRY(__switch_to_asm)
+ #endif
  
- 	line6_pcm_acquire(line6->line6pcm, LINE6_STREAM_MONITOR, true);
-@@ -393,7 +394,8 @@ static int toneport_setup(struct usb_lin
- 	if (toneport_has_led(toneport))
- 		toneport_update_led(toneport);
+ 	/* restore callee-saved registers */
++	popfq
+ 	popq	%r15
+ 	popq	%r14
+ 	popq	%r13
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -41,6 +41,7 @@ asmlinkage void ret_from_fork(void);
+  * order of the fields must match the code in __switch_to_asm().
+  */
+ struct inactive_task_frame {
++	unsigned long flags;
+ #ifdef CONFIG_X86_64
+ 	unsigned long r15;
+ 	unsigned long r14;
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -132,6 +132,13 @@ int copy_thread_tls(unsigned long clone_
+ 	struct task_struct *tsk;
+ 	int err;
  
--	mod_timer(&toneport->timer, jiffies + TONEPORT_PCM_DELAY * HZ);
-+	schedule_delayed_work(&toneport->pcm_work,
-+			      msecs_to_jiffies(TONEPORT_PCM_DELAY * 1000));
- 	return 0;
- }
- 
-@@ -405,7 +407,7 @@ static void line6_toneport_disconnect(st
- 	struct usb_line6_toneport *toneport =
- 		(struct usb_line6_toneport *)line6;
- 
--	del_timer_sync(&toneport->timer);
-+	cancel_delayed_work_sync(&toneport->pcm_work);
- 
- 	if (toneport_has_led(toneport))
- 		toneport_remove_leds(toneport);
-@@ -422,7 +424,7 @@ static int toneport_init(struct usb_line
- 	struct usb_line6_toneport *toneport =  (struct usb_line6_toneport *) line6;
- 
- 	toneport->type = id->driver_info;
--	timer_setup(&toneport->timer, toneport_start_pcm, 0);
-+	INIT_DELAYED_WORK(&toneport->pcm_work, toneport_start_pcm);
- 
- 	line6->disconnect = line6_toneport_disconnect;
- 
++	/*
++	 * For a new task use the RESET flags value since there is no before.
++	 * All the status flags are zero; DF and all the system flags must also
++	 * be 0, specifically IF must be 0 because we context switch to the new
++	 * task with interrupts disabled.
++	 */
++	frame->flags = X86_EFLAGS_FIXED;
+ 	frame->bp = 0;
+ 	frame->ret_addr = (unsigned long) ret_from_fork;
+ 	p->thread.sp = (unsigned long) fork_frame;
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -278,6 +278,14 @@ int copy_thread_tls(unsigned long clone_
+ 	childregs = task_pt_regs(p);
+ 	fork_frame = container_of(childregs, struct fork_frame, regs);
+ 	frame = &fork_frame->frame;
++
++	/*
++	 * For a new task use the RESET flags value since there is no before.
++	 * All the status flags are zero; DF and all the system flags must also
++	 * be 0, specifically IF must be 0 because we context switch to the new
++	 * task with interrupts disabled.
++	 */
++	frame->flags = X86_EFLAGS_FIXED;
+ 	frame->bp = 0;
+ 	frame->ret_addr = (unsigned long) ret_from_fork;
+ 	p->thread.sp = (unsigned long) fork_frame;
 
 
