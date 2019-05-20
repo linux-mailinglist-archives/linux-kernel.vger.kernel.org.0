@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A749823628
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1462523429
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390614AbfETMnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:43:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44710 "EHLO mail.kernel.org"
+        id S2388736AbfETMYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389754AbfETM2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:48 -0400
+        id S2388715AbfETMXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F97C21479;
-        Mon, 20 May 2019 12:28:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98E89214AE;
+        Mon, 20 May 2019 12:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355328;
-        bh=+ahlxkje3y2jyBIvC2s6nmMIj2CEAeJyiNprwZ7zUu8=;
+        s=default; t=1558355035;
+        bh=jlAxy7qu2d/sHWB+iguW6FoOguS3pnhmvYhNhR0sF84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vEcUgFSAjmNcqzCDiSFP3tOJqU5fJHG3UjF+DU5fK2PG4uSC8Mhn6qwshc9VhPKl2
-         v2d0VgSe9jqOwURkv4a74gX8Ty3xZ05BKAL8oWlv0BtiAIBvCw/q0ePKN9Z1ZcRsEG
-         T4mKM8ZH4DCnxu9RBqwbKdyEP7cUDqnMoALNV9SQ=
+        b=QzZMDMhwdbCGn6y/+P+OT5Ut5ecQoX+4inE9LTMcDb55zZlYRjWvhODY8dsdJaeoe
+         bHetchECRq2sqjomBix9FXQ/DkOG6Zd1Kt+0oC2gPMhZ7JilA1D2w8237Up8cwTByd
+         JrYXVuX7UZHwW1jZgN+KRgFHWbfNDmRoG9jV1IjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.0 077/123] mtd: maps: physmap: Store gpio_values correctly
-Date:   Mon, 20 May 2019 14:14:17 +0200
-Message-Id: <20190520115249.972923357@linuxfoundation.org>
+        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 4.19 072/105] ext4: fix ext4_show_options for file systems w/o journal
+Date:   Mon, 20 May 2019 14:14:18 +0200
+Message-Id: <20190520115252.164850715@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Debabrata Banerjee <dbanerje@akamai.com>
 
-commit 64d14c6fe040361ff6aecb825e392cf97837cd9e upstream.
+commit 50b29d8f033a7c88c5bc011abc2068b1691ab755 upstream.
 
-When the gpio-addr-flash.c driver was merged with physmap-core.c the
-code to store the current gpio_values was lost. This meant that once a
-gpio was asserted it was never de-asserted. Fix this by storing the
-current offset in gpio_values like the old driver used to.
+Instead of removing EXT4_MOUNT_JOURNAL_CHECKSUM from s_def_mount_opt as
+I assume was intended, all other options were blown away leading to
+_ext4_show_options() output being incorrect.
 
-Fixes: commit ba32ce95cbd9 ("mtd: maps: Merge gpio-addr-flash.c into physmap-core.c")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Fixes: 1e381f60dad9 ("ext4: do not allow journal_opts for fs w/o journal")
+Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/maps/physmap-core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/maps/physmap-core.c
-+++ b/drivers/mtd/maps/physmap-core.c
-@@ -132,6 +132,8 @@ static void physmap_set_addr_gpios(struc
- 
- 		gpiod_set_value(info->gpios->desc[i], !!(BIT(i) & ofs));
- 	}
-+
-+	info->gpio_values = ofs;
- }
- 
- #define win_mask(order)		(BIT(order) - 1)
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4270,7 +4270,7 @@ static int ext4_fill_super(struct super_
+ 				 "data=, fs mounted w/o journal");
+ 			goto failed_mount_wq;
+ 		}
+-		sbi->s_def_mount_opt &= EXT4_MOUNT_JOURNAL_CHECKSUM;
++		sbi->s_def_mount_opt &= ~EXT4_MOUNT_JOURNAL_CHECKSUM;
+ 		clear_opt(sb, JOURNAL_CHECKSUM);
+ 		clear_opt(sb, DATA_FLAGS);
+ 		sbi->s_journal = NULL;
 
 
