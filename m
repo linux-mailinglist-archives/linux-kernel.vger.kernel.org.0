@@ -2,109 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEF123C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C10523C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392217AbfETPiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:38:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37630 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730766AbfETPiG (ORCPT
+        id S2392351AbfETPnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:43:03 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:48770 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388808AbfETPnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:38:06 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g3so7416116pfi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
-        b=igniLd0MBlYjxgzMR5kyXnl8VT8ZtjRPrKt7aUAacEDN/OkL9DAh4o+l/pKeqrh2lr
-         eazLg/XVLVN92cJwNeJ1uyI6xggkx6sPaD9q25GCBSuNHuBJWYH8kZE7Y/ZeQjZUQhI+
-         0Nv1nUmCeOYqS1ALsMqdADZig3yQcYNOlwRGTtolAXwu1raNQ4E/NLQJ74VGu7WkO3Du
-         R/iLAFIZxnFjll0A6PR6TQE7RaWbYQM05Jg7/zdl2nZcMNHit5Tc9/wItAOyecRQNATJ
-         sRL+cW/t2bQZqRIYKiBgAy5R1lFcBA2yhUo+Vb9wNAY2VBMuCmpnGk/S85cDKIOQrPJ7
-         VYWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
-        b=ON1lnvuwwFxJYxMYYXR0wz+B3tEjPT9f6TxGICP3g8cqvExSD9AdiTN72je8++cCQ4
-         E05GmeOyoX4Vv0NY3mtWiKqoOZkGN5HJrGaUzwzL/540PXTBrkhsDygY0/QfSXHqdEOr
-         LujVlfeD/BnhudXoVGw76CWfTBMbmDkfTGrXnykMsVr77UkSpge6omDaJJ9IGbJHCWye
-         x49P2AUm4K/KjKVC4WqMOQpvrI964mtpdJxNHKHWBDPbmIiDCMfTKwO5z/Rw0onhW4T4
-         MJbBEUO3BW+jatjaRA3kUkkvC85PDMD9xalEiftaWK2a6uDTA4dNCix4qVse5WCfKG3f
-         g8fw==
-X-Gm-Message-State: APjAAAWLpBEvKJvrqf4xwg34zZy5P59Sh6Xn7MEw8jJI6MRE4HD3ECSi
-        8TmwCPxBjHRNMwedJ+OgCYw=
-X-Google-Smtp-Source: APXvYqxDPl+B5/1wJyOPopG3XncxecQB7K5MLcwywRUNYTmdLcE6DD4ncAqutVAEsvnyk4pQ1XGeBQ==
-X-Received: by 2002:a63:5c5b:: with SMTP id n27mr76820777pgm.52.1558366685895;
-        Mon, 20 May 2019 08:38:05 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.19.216])
-        by smtp.gmail.com with ESMTPSA id s28sm28429620pgl.88.2019.05.20.08.38.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 08:38:04 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com, yao.jin@linux.intel.com,
-        eranian@google.com, linux-kernel@vger.kernel.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] perf: Remove duplicate headers
-Date:   Mon, 20 May 2019 21:12:43 +0530
-Message-Id: <1558366963-4163-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 20 May 2019 11:43:03 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KFbE8c006270;
+        Mon, 20 May 2019 10:42:46 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2sjefmtm2j-1;
+        Mon, 20 May 2019 10:42:46 -0500
+Received: from EDIEX02.ad.cirrus.com (ediex02.ad.cirrus.com [198.61.84.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id B8517611C8A7;
+        Mon, 20 May 2019 10:43:52 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 20 May
+ 2019 16:42:45 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Mon, 20 May 2019 16:42:45 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 0B02744;
+        Mon, 20 May 2019 16:42:45 +0100 (BST)
+Date:   Mon, 20 May 2019 16:42:45 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+CC:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 07/10] mfd: madera: point to the right pinctrl binding
+ file
+Message-ID: <20190520154244.GA99937@ediswmail.ad.cirrus.com>
+References: <cover.1558362030.git.mchehab+samsung@kernel.org>
+ <fb47879d405e624374d7d4e099988296ed2af668.1558362030.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <fb47879d405e624374d7d4e099988296ed2af668.1558362030.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905200101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed duplicate headers which are included twice.
+On Mon, May 20, 2019 at 11:47:36AM -0300, Mauro Carvalho Chehab wrote:
+> The reference to Documentation/pinctrl.txt doesn't exist, but
+> there is an specific binding for the madera driver.
+> 
+> So, point to it.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  include/linux/mfd/madera/pdata.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mfd/madera/pdata.h b/include/linux/mfd/madera/pdata.h
+> index 8dc852402dbb..c7e0658eb74b 100644
+> --- a/include/linux/mfd/madera/pdata.h
+> +++ b/include/linux/mfd/madera/pdata.h
+> @@ -34,7 +34,8 @@ struct madera_codec_pdata;
+>   * @micvdd:	    Substruct of pdata for the MICVDD regulator
+>   * @irq_flags:	    Mode for primary IRQ (defaults to active low)
+>   * @gpio_base:	    Base GPIO number
+> - * @gpio_configs:   Array of GPIO configurations (See Documentation/pinctrl.txt)
+> + * @gpio_configs:   Array of GPIO configurations
+> + *		    (See Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
----
- tools/perf/util/data.c                 | 1 -
- tools/perf/util/get_current_dir_name.c | 1 -
- tools/perf/util/stat-display.c         | 1 -
- 3 files changed, 3 deletions(-)
+I believe this is trying to point at the generic pinctrl docs
+which now live here:
 
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 6a64f71..509a41e 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -8,7 +8,6 @@
- #include <unistd.h>
- #include <string.h>
- #include <asm/bug.h>
--#include <sys/types.h>
- #include <dirent.h>
- 
- #include "data.h"
-diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
-index 267aa60..ebb80cd 100644
---- a/tools/perf/util/get_current_dir_name.c
-+++ b/tools/perf/util/get_current_dir_name.c
-@@ -5,7 +5,6 @@
- #include "util.h"
- #include <unistd.h>
- #include <stdlib.h>
--#include <stdlib.h>
- 
- /* Android's 'bionic' library, for one, doesn't have this */
- 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 6d043c7..7b3a16c 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -12,7 +12,6 @@
- #include "string2.h"
- #include "sane_ctype.h"
- #include "cgroup.h"
--#include <math.h>
- #include <api/fs/fs.h>
- 
- #define CNTR_NOT_SUPPORTED	"<not supported>"
--- 
-1.9.1
+Documentation/driver-api/pinctl.rst
 
+There is a patch to do this already:
+https://lkml.org/lkml/2019/1/9/853
+With the latest resend here:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2001752.html
+
+Thanks,
+Charles
+
+>   * @n_gpio_configs: Number of entries in gpio_configs
+>   * @gpsw:	    General purpose switch mode setting. Depends on the external
+>   *		    hardware connected to the switch. (See the SW1_MODE field
+> -- 
+> 2.21.0
+> 
