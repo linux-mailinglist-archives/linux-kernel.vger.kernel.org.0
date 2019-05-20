@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3389723437
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 793E123590
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388891AbfETMYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:24:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39496 "EHLO mail.kernel.org"
+        id S2391172AbfETMfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:35:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388878AbfETMYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:24:37 -0400
+        id S2391147AbfETMfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:35:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FBBF20645;
-        Mon, 20 May 2019 12:24:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B187204FD;
+        Mon, 20 May 2019 12:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355076;
-        bh=Y8pn0klUBCj5HAGh+Ju8aJxxSJY616eLJ6p9gRpf8b4=;
+        s=default; t=1558355751;
+        bh=gjf+mOszHMrKvbqtvIw9132vFb8gT0KeTwcDppoOEo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ojQ8q48SYqyDsOKPWeRbq2ROy3fh8Stf/0Pwc83Al2ZOjQsmjn0BO0s7ctXA8PIFc
-         eFJi3SDGgQbsEjg6+lD1sPi/5uRqKXKNusUlwow2AHyCA8um1WQUlymQ9L+uxmh4Ym
-         oQ3XlVEhvD712vzZXqpQ1wz4o+ZPuQhc6bCtsvNI=
+        b=AYIpfCmfiJbgnGbAjfB/EucQTGs70L0TXV83zLxs5vZROAZ56cBrrgmZc/Vryh0kf
+         RTMt8RnF6J1iN9Xr/DUcUm8HR6Qo7VAIq7aOUHmdO1gWO0QHxNSH2d/A8YjsmV7XXH
+         30Mqs6IPTtuRcMGPEv9bdgnSewhoqv1HkxMT0HnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 086/105] ext4: fix data corruption caused by overlapping unaligned and aligned IO
+Subject: [PATCH 5.1 085/128] ext4: make sanity check in mballoc more strict
 Date:   Mon, 20 May 2019 14:14:32 +0200
-Message-Id: <20190520115253.212480888@linuxfoundation.org>
+Message-Id: <20190520115255.270881756@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 57a0da28ced8707cb9f79f071a016b9d005caf5a upstream.
+commit 31562b954b60f02acb91b7349dc6432d3f8c3c5f upstream.
 
-Unaligned AIO must be serialized because the zeroing of partial blocks
-of unaligned AIO can result in data corruption in case it's overlapping
-another in flight IO.
+The sanity check in mb_find_extent() only checked that returned extent
+does not extend past blocksize * 8, however it should not extend past
+EXT4_CLUSTERS_PER_GROUP(sb). This can happen when clusters_per_group <
+blocksize * 8 and the tail of the bitmap is not properly filled by 1s
+which happened e.g. when ancient kernels have grown the filesystem.
 
-Currently we wait for all unwritten extents before we submit unaligned
-AIO which protects data in case of unaligned AIO is following overlapping
-IO. However if a unaligned AIO is followed by overlapping aligned AIO we
-can still end up corrupting data.
-
-To fix this, we must make sure that the unaligned AIO is the only IO in
-flight by waiting for unwritten extents conversion not just before the
-IO submission, but right after it as well.
-
-This problem can be reproduced by xfstest generic/538
-
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/file.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/ext4/mballoc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -264,6 +264,13 @@ ext4_file_write_iter(struct kiocb *iocb,
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -1539,7 +1539,7 @@ static int mb_find_extent(struct ext4_bu
+ 		ex->fe_len += 1 << order;
  	}
  
- 	ret = __generic_file_write_iter(iocb, from);
-+	/*
-+	 * Unaligned direct AIO must be the only IO in flight. Otherwise
-+	 * overlapping aligned IO after unaligned might result in data
-+	 * corruption.
-+	 */
-+	if (ret == -EIOCBQUEUED && unaligned_aio)
-+		ext4_unwritten_wait(inode);
- 	inode_unlock(inode);
- 
- 	if (ret > 0)
+-	if (ex->fe_start + ex->fe_len > (1 << (e4b->bd_blkbits + 3))) {
++	if (ex->fe_start + ex->fe_len > EXT4_CLUSTERS_PER_GROUP(e4b->bd_sb)) {
+ 		/* Should never happen! (but apparently sometimes does?!?) */
+ 		WARN_ON(1);
+ 		ext4_error(e4b->bd_sb, "corruption or bug in mb_find_extent "
 
 
