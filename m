@@ -2,66 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF4F230B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57AAD230AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:51:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732373AbfETJvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:51:25 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:43971
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732361AbfETJvZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:51:25 -0400
-X-IronPort-AV: E=Sophos;i="5.60,491,1549926000"; 
-   d="scan'208";a="306577628"
-Received: from unknown (HELO hadrien) ([163.173.90.196])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 11:51:23 +0200
-Date:   Mon, 20 May 2019 11:51:23 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Pavel Machek <pavel@ucw.cz>
-cc:     wen.yang99@zte.com.cn, Markus.Elfring@web.de,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        nicolas.palix@imag.fr
-Subject: Re: Coccinelle: semantic patch for missing of_node_put
-In-Reply-To: <20190520093303.GA9320@atrey.karlin.mff.cuni.cz>
-Message-ID: <alpine.DEB.2.21.1905201150440.2543@hadrien>
-References: <201905171432571474636@zte.com.cn> <alpine.DEB.2.20.1905170912590.4014@hadrien> <20190520093303.GA9320@atrey.karlin.mff.cuni.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1732266AbfETJvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:51:04 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38282 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730353AbfETJvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:51:03 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 483F120028A;
+        Mon, 20 May 2019 11:51:01 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4968320018B;
+        Mon, 20 May 2019 11:50:55 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E68B6402A2;
+        Mon, 20 May 2019 17:50:47 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH v4 1/3] PM: wakeup: Add routine to help fetch wakeup source object.
+Date:   Mon, 20 May 2019 17:52:36 +0800
+Message-Id: <20190520095238.29210-1-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some user might want to go through all registered wakeup sources
+and doing things accordingly. For example, SoC PM driver might need to
+do HW programming to prevent powering down specific IP which wakeup
+source depending on. And is user's responsibility to identify if this
+wakeup source he is interested in.
 
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+---
+Change in v4:
+	- None.
 
-On Mon, 20 May 2019, Pavel Machek wrote:
+Change in v3:
+	- Adjust indentation of *attached_dev;.
 
-> Hi!
->
-> > A semantic patch has no access to comments.  The only thing I can see to
-> > do is to use python to interact with some external tools.  For example,
-> > you could write some code to collect the comments in a file and the lines
-> > on which they occur, and then get the comment that most closely precedes
-> > the start of the function.
->
-> How dangerous is missing of_node_put? AFAICT it will only result into
-> very small, one-time memory leak, right?
->
-> Could we make sure these patches are _not_ going to stable? Leaking
-> few bytes once per boot is not really a serious bug.
+Change in v2:
+	- None.
 
-Agreed.  Just tell Sasha.
+ drivers/base/power/wakeup.c |   18 ++++++++++++++++++
+ include/linux/pm_wakeup.h   |    3 +++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
 
-julia
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 5b2b6a0..6904485 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -14,6 +14,7 @@
+ #include <linux/suspend.h>
+ #include <linux/seq_file.h>
+ #include <linux/debugfs.h>
++#include <linux/of_device.h>
+ #include <linux/pm_wakeirq.h>
+ #include <trace/events/power.h>
+ 
+@@ -226,6 +227,22 @@ void wakeup_source_unregister(struct wakeup_source *ws)
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(wakeup_source_unregister);
++/**
++ * wakeup_source_get_next - Get next wakeup source from the list
++ * @ws: Previous wakeup source object, null means caller want first one.
++ */
++struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws)
++{
++	struct list_head *ws_head = &wakeup_sources;
++
++	if (ws)
++		return list_next_or_null_rcu(ws_head, &ws->entry,
++				struct wakeup_source, entry);
++	else
++		return list_entry_rcu(ws_head->next,
++				struct wakeup_source, entry);
++}
++EXPORT_SYMBOL_GPL(wakeup_source_get_next);
+ 
+ /**
+  * device_wakeup_attach - Attach a wakeup source object to a device object.
+@@ -242,6 +259,7 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
+ 		return -EEXIST;
+ 	}
+ 	dev->power.wakeup = ws;
++	ws->attached_dev = dev;
+ 	if (dev->power.wakeirq)
+ 		device_wakeup_attach_irq(dev, dev->power.wakeirq);
+ 	spin_unlock_irq(&dev->power.lock);
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 0ff134d..913b2fb 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -50,6 +50,7 @@
+  * @wakeup_count: Number of times the wakeup source might abort suspend.
+  * @active: Status of the wakeup source.
+  * @has_timeout: The wakeup source has been activated with a timeout.
++ * @attached_dev: The device it attached to
+  */
+ struct wakeup_source {
+ 	const char 		*name;
+@@ -70,6 +71,7 @@ struct wakeup_source {
+ 	unsigned long		wakeup_count;
+ 	bool			active:1;
+ 	bool			autosleep_enabled:1;
++	struct device		*attached_dev;
+ };
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -101,6 +103,7 @@ static inline void device_set_wakeup_path(struct device *dev)
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+ extern struct wakeup_source *wakeup_source_register(const char *name);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
++extern struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws);
+ extern int device_wakeup_enable(struct device *dev);
+ extern int device_wakeup_disable(struct device *dev);
+ extern void device_set_wakeup_capable(struct device *dev, bool capable);
+-- 
+1.7.1
 
-> 									Pavel
->
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
->
