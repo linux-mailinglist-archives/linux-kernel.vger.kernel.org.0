@@ -2,144 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D497923081
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7339823095
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732255AbfETJhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:37:10 -0400
-Received: from mail-eopbgr140072.outbound.protection.outlook.com ([40.107.14.72]:6430
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727720AbfETJhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:37:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qo/4lm080txNdB8vZoo7pHmI2Q8NtdG6gVqwj+AIAIY=;
- b=BIhkYpEP7Iy57h06f/4qh2G9Y2wyw6Oygih6uZT/ZYjtA0kXsLUXySPFad8QNAkniOOd4bnzU44BEnX0c+hIO+ETbbFBCZexAq0HQ3z9p9bPxqoo7WYJ+KJfyygbKf+HPK1C1W20mnXAYnsJbNnhueVhetiUKZozkyaDDw+zQQ0=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6596.eurprd04.prod.outlook.com (20.179.255.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.18; Mon, 20 May 2019 09:37:05 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::3173:24:d401:2378]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::3173:24:d401:2378%6]) with mapi id 15.20.1900.020; Mon, 20 May 2019
- 09:37:04 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-CC:     "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC 1/2] dt-bindings: imx-ocotp: Add fusable-node property
-Thread-Topic: [RFC 1/2] dt-bindings: imx-ocotp: Add fusable-node property
-Thread-Index: AQHVDrkIcB6j+hDf/kC51b4HJvSviKZzwQ2A
-Date:   Mon, 20 May 2019 09:37:04 +0000
-Message-ID: <AM0PR04MB44813D1223FDB9266C9F90D388060@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <20190520032020.7920-1-peng.fan@nxp.com>
- <AM0PR04MB643466338B440374D97F2805EE060@AM0PR04MB6434.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB643466338B440374D97F2805EE060@AM0PR04MB6434.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fedb471d-2867-4ce1-f3f5-08d6dd06b839
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6596;
-x-ms-traffictypediagnostic: AM0PR04MB6596:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM0PR04MB6596AE3A5D9ABD804AA95EFB88060@AM0PR04MB6596.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 004395A01C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(366004)(39860400002)(189003)(199004)(305945005)(66476007)(64756008)(76116006)(66446008)(66946007)(66556008)(256004)(14444005)(73956011)(2906002)(186003)(316002)(71200400001)(71190400001)(66066001)(26005)(110136005)(7416002)(5660300002)(7736002)(33656002)(102836004)(11346002)(476003)(54906003)(3846002)(6116002)(99286004)(966005)(74316002)(9686003)(76176011)(44832011)(14454004)(486006)(7696005)(53546011)(6506007)(8936002)(68736007)(81166006)(81156014)(6436002)(6246003)(86362001)(8676002)(2201001)(478600001)(53936002)(6306002)(25786009)(52536014)(55016002)(2501003)(446003)(229853002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6596;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nAoXYNwnOcLA/ASD8hstzYykuYIyuFj4NnwIQYO+kkLv9R0Ja4PVGiDrtU1WK5CVutb4JZOebop3wGgp7Tajo8bkZOyCF7f6n+4awpYga6JSA9aky4mb1p0V25/JtpVmVwjjdsAL4VUP5YdNv6QAGjrgSNQmUBt5i4MiczpcT0qQElX+9+BBAjRU+HOW1ErI5nQF7svudm3wAlsMBjUdrmtawoQEJuYQgGJND+8t6qa/tmLvsnOZap2LWn3eReVduJNhmc7snfNDGbNdgEpnGMbsdSbu9hYzK9J/QM+rzLZMUyC+4HOlDdj5jvk/FaSFIOCCM04Ki1LfaJ+8n/XHhcK1oTKTYADci3Vv0R2QyKPFAvPVmYgR1ZkmaUasUjOp2/ZyMIQYybOa2j04sFcmXSv4X7++oTOeHBXn9glMvqI=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fedb471d-2867-4ce1-f3f5-08d6dd06b839
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 09:37:04.8992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6596
+        id S1732274AbfETJlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:41:51 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:32972 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfETJlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:41:50 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x4K9cIa4007978;
+        Mon, 20 May 2019 04:38:18 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x4K9cFlE007977;
+        Mon, 20 May 2019 04:38:15 -0500
+Date:   Mon, 20 May 2019 04:38:15 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190520093815.GA7187@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com> <20190514204527.GC1977@linux.intel.com> <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com> <20190515013031.GF1977@linux.intel.com> <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com> <alpine.LRH.2.21.1905160543070.19802@namei.org> <CALCETrX_Q6qwNRNF0TL2tgfm1j6DKLX7NVHHmWbMFtk3WnHDKw@mail.gmail.com> <alpine.LRH.2.21.1905160844130.29250@namei.org> <CALCETrX2ovRx3Rre+1_xC-q6CiybyLjQ-gmB4FZF_qCZ-Qd+4A@mail.gmail.com> <alpine.LRH.2.21.1905161716460.23647@namei.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1905161716460.23647@namei.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 20 May 2019 04:38:18 -0500 (CDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: Re: [RFC 1/2] dt-bindings: imx-ocotp: Add fusable-node property
->=20
-> On 20.05.2019 06:06, Peng Fan wrote:
-> > Introduce fusable-node property for i.MX OCOTP driver.
-> > The property will only be used by Firmware(eg. U-Boot) to runtime
-> > disable the nodes.
-> >
-> > Take i.MX6ULL for example, there are several parts that only have
-> > limited modules enabled controlled by OCOTP fuse. It is not flexible
-> > to provide several dts for the serval parts, instead we could provide
-> > one device tree and let Firmware to runtime disable the device tree
-> > nodes for those modules that are disable(fused).
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >
-> > Currently NXP vendor use U-Boot to set status to disabled for devices
-> > that could not function,
-> >
-> https://source.codeaurora.org/external/imx/uboot-imx/tree/arch/arm/mac
-> > h-imx/mx6/module_fuse.c?h=3Dimx_v2018.03_4.14.98_2.0.0_ga#n149
-> > But this approach is will not work if kernel dts node path changed.
-> >
-> > There are two approaches to resolve:
-> >
-> > 1. This patch is to add a fusable-node property, and Firmware will pars=
-e
-> >     the property and read fuse to decide whether to disable or keeep
-> enable
-> >     the nodes.
-> >
-> > 2. There is another approach is that add nvmem-cells for all nodes that
-> >     could be disabled(fused). Then in each linux driver to use nvmem
-> >     api to detect fused or not, or in linux driver common code to check
-> >     device functionable or not with nvmem API.
-> >
-> >
-> > To make it easy to work, we choose [1] here. Please advise whether it
-> > is acceptable, because the property is not used by linux driver in
-> > approach [1]. Or you prefer [2] or please advise if any better solution=
-.
->=20
-> Couldn't firmware parse nvmem-cells? Even without a full nvmem subsystem
-> it would be possible for imx-specific code to walk the entire device tree=
-, parse
-> nvmem-cells and disable nodes which are disabled by fuse.
+On Thu, May 16, 2019 at 05:24:33PM +1000, James Morris wrote:
 
-Firmware could parse nvmem-cells, but there are lots of modules that could
-be fused. If using nvmem-cells, that means need to add nvmem property
-for all the modules that could be fused. To make is looks cleaner, so intro=
-duced
-a fusable-node property.
+Good morning, I hope everyone had a pleasant weekend.
 
-Regards,
-Peng.
+James, I believe the last time our paths crossed was at the Linux
+Security Summit in Seattle, I trust you have been well since then.
 
->=20
-> --
-> Regards,
-> Leonard
+> On Wed, 15 May 2019, Andy Lutomirski wrote:
+> 
+> > On Wed, May 15, 2019 at 3:46 PM James Morris <jmorris@namei.org> wrote:
+> > >
+> > > You could try user.sigstruct, which does not require any privs.
+> > >
+> > 
+> > I don't think I understand your proposal.  What file would this
+> > attribute be on?  What would consume it?
+
+> It would be on the enclave file, so you keep the sigstruct bound to
+> it, rather than needing a separate file to manage.  It would
+> simplify any LSM policy check.
+>
+> It would be consumed by (I guess) the SGX_INIT_THE_ENCLAVE ioctl in your 
+> example, instead of having a 2nd fd.
+
+I've watched this discussion regarding LSM, sigstructs and file
+descriptors with some fascination, since all of this infrastructure
+already exists and should be well understood by anyone who has been
+active in SGX runtime development.  There would thus seem to be a
+disconnect between SGX driver developers and the consumers of the
+services of the driver.
+
+The existing enclave format, codified by the silo within Intel that is
+responsible for the existing SDK/PSW, implements a notes section
+stored inside a standard ELF shared library image.  The notes section
+contains a significant amount of metadata that is used to direct the
+instantiation of what will be the initialized enclave image.  Said
+metadata includes a copy of the sigstruct that was generated when the
+enclave was signed, which is the event that triggers metadata
+generation.
+
+All of this means that any enclave that gets loaded effectively
+triggers both LSM and IMA checks.
+
+James, if you remember, the paper that we presented in Seattle
+described the initial implementation of an extension to the Linux IMA
+infrastructure that tracks whether or not processes can be 'trusted'.
+That work has gone on to include running the trust modeling and
+disciplining engine inside of a namespace specific SGX enclave.  We
+would be happy to make available execution trajectory logs that
+clearly document IMA and LSM checks being conducted on enclaves.
+
+There is a strong probability that we will be maintaining and
+supporting a modified version of whatever driver that goes upstream.
+In support of this we are putting together a white paper discussing
+security architecture concerns inherent in an SGX driver.  With the
+intent of avoiding LKML verbosity we will post a URL to the paper when
+it is available if there is interest.
+
+The issue of EDMM has already come up, suffice it to say that EDMM
+makes LSM inspection of enclave content, while desirable, largely
+irrelevant from a security perspective.
+
+> James Morris
+
+Best wishes for a productive week.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686            EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"If you plugged up your nose and mouth right before you sneezed, would
+ the sneeze go out your ears or would your head explode?  Either way I'm
+ afraid to try."
+                                -- Nick Kean
