@@ -2,65 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF2823F70
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EF723315
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:55:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfETRvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:51:08 -0400
-Received: from 11.mo1.mail-out.ovh.net ([188.165.48.29]:44887 "EHLO
-        11.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfETRvH (ORCPT
+        id S1732157AbfETLzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:55:31 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:36588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730773AbfETLza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:51:07 -0400
-X-Greylist: delayed 19201 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 13:51:06 EDT
-Received: from player735.ha.ovh.net (unknown [10.109.159.62])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id EFCB617951F
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 13:53:30 +0200 (CEST)
-Received: from RCM-web1.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player735.ha.ovh.net (Postfix) with ESMTPSA id 541335F67566;
-        Mon, 20 May 2019 11:53:18 +0000 (UTC)
+        Mon, 20 May 2019 07:55:30 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id BB41725AEBF;
+        Mon, 20 May 2019 21:55:28 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id B6D159404D4; Mon, 20 May 2019 13:55:26 +0200 (CEST)
+Date:   Mon, 20 May 2019 13:55:26 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: Add vendor prefix for HopeRun
+Message-ID: <20190520115526.zhhinfb52szptrtl@verge.net.au>
+References: <1558085189-22061-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1558085189-22061-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAL_JsqJCJyRBX+08UriNeYZ01ow0yLv=VjK3sNbjVi1GB5=MQA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 20 May 2019 13:53:18 +0200
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Weitao Hou <houweitaoo@gmail.com>
-Cc:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wireless: fix typos in code comments
-In-Reply-To: <20190519032256.19346-1-houweitaoo@gmail.com>
-References: <20190519032256.19346-1-houweitaoo@gmail.com>
-Message-ID: <6cd5d69d936ba2a2033041bcddb206e0@milecki.pl>
-X-Sender: rafal@milecki.pl
-User-Agent: Roundcube Webmail/1.3.9
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-X-Ovh-Tracer-Id: 10752907064325344891
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtkedggeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenuc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJCJyRBX+08UriNeYZ01ow0yLv=VjK3sNbjVi1GB5=MQA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-19 05:22, Weitao Hou wrote:
-> fix lengh to length
+On Fri, May 17, 2019 at 08:38:14AM -0500, Rob Herring wrote:
+> On Fri, May 17, 2019 at 4:27 AM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> >
+> > Add "Jiangsu HopeRun Software Co., Ltd." to the list of devicetree
+> > vendor prefixes as "hoperun".
+> >
+> > Website: http://www.hoperun.com/en
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> >
+> > ---
+> > v2->v3:
+> > * Moved to vendor-prefixes.yaml
+> > * Dropped Reviewed-by Simon as this is a completely new patch and as
+> >   such it needs a brand new review
+> > v1->v2:
+> > * No change
+> > ---
+> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
 > 
-> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Please use:
-git log --oneline drivers/net/wireless/broadcom/brcm80211/brcmfmac/
-to see how patches for this drivers were subjected in the past.
-
-Please resend V2 with a proper prefix instead of "wireless: ".
+Thanks, applied for inclusion in v5.3 via the renesas tree.
