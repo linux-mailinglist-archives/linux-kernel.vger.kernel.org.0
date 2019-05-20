@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E1892337F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D5E23554
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387560AbfETMR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:17:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
+        id S2390942AbfETMeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387523AbfETMR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:17:26 -0400
+        id S2390932AbfETMe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:34:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2E1920815;
-        Mon, 20 May 2019 12:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65D3F204FD;
+        Mon, 20 May 2019 12:34:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354645;
-        bh=SJ3bvGNHGX5MTf8QAP45iUrPWgiuSOwtd791qLhdx14=;
+        s=default; t=1558355667;
+        bh=7msc1tKFakpzZ9gI2yrE7V/oN5Mph5vD65JhgljuaQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gy6HOmiLUgPH3WsM/dnjDNx2RpSLXAs/NRq183hLfNH4pTyhI4OLntcGLHsBiWG/B
-         zPeGyB0jhGnp8RhH7mxYQFgyKI2cY7LwKmaZXkjS8bkd/Wxrj+DvpZDgkvtSOon5k3
-         LwvRlf3ogMI8D+GSZh9QQ/pEn3qZVfihM7kevmOY=
+        b=QtWDhDxdtXUvrB7Bf2I+KU7oPhiXbJXb2hAMKMT0Ckffd9ObWwhqAcOZBnb4yi4he
+         bpT+JRhPsos4jI0todZJHDbrduSE/PbATV+n+2N6njaUR7BsnSNoVf0Cb4piOjr8fw
+         AZOhWypmL8DOWVl5I3cIk+hgwbG9GYgeBv9gIsdk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 36/44] crypto: salsa20 - dont access already-freed walk.iv
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5.1 078/128] mfd: max77620: Fix swapped FPS_PERIOD_MAX_US values
 Date:   Mon, 20 May 2019 14:14:25 +0200
-Message-Id: <20190520115235.316656833@linuxfoundation.org>
+Message-Id: <20190520115254.958067185@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit edaf28e996af69222b2cb40455dbb5459c2b875a upstream.
+commit ea611d1cc180fbb56982c83cd5142a2b34881f5c upstream.
 
-If the user-provided IV needs to be aligned to the algorithm's
-alignmask, then skcipher_walk_virt() copies the IV into a new aligned
-buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
-if the caller unconditionally accesses walk.iv, it's a use-after-free.
+The FPS_PERIOD_MAX_US definitions are swapped for MAX20024 and MAX77620,
+fix it.
 
-salsa20-generic doesn't set an alignmask, so currently it isn't affected
-by this despite unconditionally accessing walk.iv.  However this is more
-subtle than desired, and it was actually broken prior to the alignmask
-being removed by commit b62b3db76f73 ("crypto: salsa20-generic - cleanup
-and convert to skcipher API").
-
-Since salsa20-generic does not update the IV and does not need any IV
-alignment, update it to use req->iv instead of walk.iv.
-
-Fixes: 2407d60872dd ("[CRYPTO] salsa20: Salsa20 stream cipher")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- crypto/salsa20_generic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mfd/max77620.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/crypto/salsa20_generic.c
-+++ b/crypto/salsa20_generic.c
-@@ -186,7 +186,7 @@ static int encrypt(struct blkcipher_desc
- 	blkcipher_walk_init(&walk, dst, src, nbytes);
- 	err = blkcipher_walk_virt_block(desc, &walk, 64);
+--- a/include/linux/mfd/max77620.h
++++ b/include/linux/mfd/max77620.h
+@@ -136,8 +136,8 @@
+ #define MAX77620_FPS_PERIOD_MIN_US		40
+ #define MAX20024_FPS_PERIOD_MIN_US		20
  
--	salsa20_ivsetup(ctx, walk.iv);
-+	salsa20_ivsetup(ctx, desc->info);
+-#define MAX77620_FPS_PERIOD_MAX_US		2560
+-#define MAX20024_FPS_PERIOD_MAX_US		5120
++#define MAX20024_FPS_PERIOD_MAX_US		2560
++#define MAX77620_FPS_PERIOD_MAX_US		5120
  
- 	while (walk.nbytes >= 64) {
- 		salsa20_encrypt_bytes(ctx, walk.dst.virt.addr,
+ #define MAX77620_REG_FPS_GPIO1			0x54
+ #define MAX77620_REG_FPS_GPIO2			0x55
 
 
