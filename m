@@ -2,50 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A61F723542
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD392338E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390851AbfETMeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:34:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51224 "EHLO mail.kernel.org"
+        id S1733131AbfETMSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:18:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390837AbfETMeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:03 -0400
+        id S1730757AbfETMSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD0C320645;
-        Mon, 20 May 2019 12:34:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71DD820815;
+        Mon, 20 May 2019 12:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355642;
-        bh=FnOiAWCxbxKZVe4E+ZcIN19Am0EYnQ0noptC7Y+yIqM=;
+        s=default; t=1558354681;
+        bh=3cbeNFZjDYtiNUPJwWdnvJ2QlJeexinkSH9ggi0b/14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jwuuWxv01rWcHOdkONlQZP4x2WHQolFIxgV2ZcOtHZD9jCRaJS7mtzaG06OIOD4EB
-         wz6MokLQGvitvOnpMHfszhDYNFiCflCG6U87/oJqd0P7a1147NzmON+DISpquZxVbe
-         DW9qvbSPDCoF6M23VVbeSpvryG+49Hz717NnknGI=
+        b=u7NWRb/hV+JWwblpZ7Tm4C3DjD5RcfK5kvsD+A1vTfFdilYBy/tLUQr5emOnOiW+A
+         XIo3MefUPNOTPSIwxoXbmGcKdz4Wlxso43hCHy4ynJfRYzaWrnm6F+ZH33TXbPvC5F
+         XLEHoyQzfpCXrqnE39rXgc9+eEo0v2o0Bl+HIrro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Josh Snyder <joshs@netflix.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Subject: [PATCH 5.1 069/128] mm/mincore.c: make mincore() more conservative
+        stable@vger.kernel.org, Eric Ren <renzhen@linux.alibaba.com>,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 4.9 27/44] jbd2: check superblock mapped prior to committing
 Date:   Mon, 20 May 2019 14:14:16 +0200
-Message-Id: <20190520115254.464686198@linuxfoundation.org>
+Message-Id: <20190520115234.268070147@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,95 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
 
-commit 134fca9063ad4851de767d1768180e5dede9a881 upstream.
+commit 742b06b5628f2cd23cb51a034cb54dc33c6162c5 upstream.
 
-The semantics of what mincore() considers to be resident is not
-completely clear, but Linux has always (since 2.3.52, which is when
-mincore() was initially done) treated it as "page is available in page
-cache".
+We hit a BUG at fs/buffer.c:3057 if we detached the nbd device
+before unmounting ext4 filesystem.
 
-That's potentially a problem, as that [in]directly exposes
-meta-information about pagecache / memory mapping state even about
-memory not strictly belonging to the process executing the syscall,
-opening possibilities for sidechannel attacks.
+The typical chain of events leading to the BUG:
+jbd2_write_superblock
+  submit_bh
+    submit_bh_wbc
+      BUG_ON(!buffer_mapped(bh));
 
-Change the semantics of mincore() so that it only reveals pagecache
-information for non-anonymous mappings that belog to files that the
-calling process could (if it tried to) successfully open for writing;
-otherwise we'd be including shared non-exclusive mappings, which
+The block device is removed and all the pages are invalidated. JBD2
+was trying to write journal superblock to the block device which is
+no longer present.
 
- - is the sidechannel
+Fix this by checking the journal superblock's buffer head prior to
+submitting.
 
- - is not the usecase for mincore(), as that's primarily used for data,
-   not (shared) text
-
-[jkosina@suse.cz: v2]
-  Link: http://lkml.kernel.org/r/20190312141708.6652-2-vbabka@suse.cz
-[mhocko@suse.com: restructure can_do_mincore() conditions]
-Link: http://lkml.kernel.org/r/nycvar.YFH.7.76.1903062342020.19912@cbobk.fhfr.pm
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Josh Snyder <joshs@netflix.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Originally-by: Linus Torvalds <torvalds@linux-foundation.org>
-Originally-by: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Kevin Easton <kevin@guarana.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Cyril Hrubis <chrubis@suse.cz>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Daniel Gruss <daniel@gruss.cc>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Eric Ren <renzhen@linux.alibaba.com>
+Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/mincore.c |   23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ fs/jbd2/journal.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -169,6 +169,22 @@ out:
- 	return 0;
- }
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1339,6 +1339,10 @@ static int jbd2_write_superblock(journal
+ 	journal_superblock_t *sb = journal->j_superblock;
+ 	int ret;
  
-+static inline bool can_do_mincore(struct vm_area_struct *vma)
-+{
-+	if (vma_is_anonymous(vma))
-+		return true;
-+	if (!vma->vm_file)
-+		return false;
-+	/*
-+	 * Reveal pagecache information only for non-anonymous mappings that
-+	 * correspond to the files the calling process could (if tried) open
-+	 * for writing; otherwise we'd be including shared non-exclusive
-+	 * mappings, which opens a side channel.
-+	 */
-+	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
-+		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+}
++	/* Buffer got discarded which means block device got invalidated */
++	if (!buffer_mapped(bh))
++		return -EIO;
 +
- /*
-  * Do a chunk of "sys_mincore()". We've already checked
-  * all the arguments, we hold the mmap semaphore: we should
-@@ -189,8 +205,13 @@ static long do_mincore(unsigned long add
- 	vma = find_vma(current->mm, addr);
- 	if (!vma || addr < vma->vm_start)
- 		return -ENOMEM;
--	mincore_walk.mm = vma->vm_mm;
- 	end = min(vma->vm_end, addr + (pages << PAGE_SHIFT));
-+	if (!can_do_mincore(vma)) {
-+		unsigned long pages = DIV_ROUND_UP(end - addr, PAGE_SIZE);
-+		memset(vec, 1, pages);
-+		return pages;
-+	}
-+	mincore_walk.mm = vma->vm_mm;
- 	err = walk_page_range(addr, end, &mincore_walk);
- 	if (err < 0)
- 		return err;
+ 	trace_jbd2_write_superblock(journal, write_flags);
+ 	if (!(journal->j_flags & JBD2_BARRIER))
+ 		write_flags &= ~(REQ_FUA | REQ_PREFLUSH);
 
 
