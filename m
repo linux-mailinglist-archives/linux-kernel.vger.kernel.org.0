@@ -2,107 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F30238AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F9C2396C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389188AbfETNsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:48:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8224 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726169AbfETNsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:48:21 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9F584F835939B5E97F30;
-        Mon, 20 May 2019 21:48:17 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
- 21:48:10 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
-        <hch@lst.de>, <huangdaode@hisilicon.com>,
-        <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
-        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v2] scsi: libsas: no need to join wide port again in sas_ex_discover_dev()
-Date:   Mon, 20 May 2019 22:06:00 +0800
-Message-ID: <20190520140600.22861-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1732629AbfETOJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:09:44 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39213 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731235AbfETOJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:09:44 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n25so12795701wmk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:09:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lPfvXgySRybnahLKkw4smuzyEidEfCcqkiUhMgN/vwA=;
+        b=lPlm4Qca/C0ZrUNoW3wCXQXGIILzfI6JVejYY2swdE1KARX34kn/ccpTP2JxnymLrO
+         DalfJrywtEe8fts7xlCAE7UXk2YX8K5TD2C7ge0HpAo7T14w+1IWDQ9EQvdERA6EXO2S
+         quq88onV9y3SZCZGodOQfKcyMpO5eGou9Nv7uMo5juXHsu0MhpVm7XRuIo1HSfH1PF90
+         endI8Wlg/IxrBhqYLSjmB60S8e20yoW40RNy4gApX67HnbggHxhzGxE0/sUDAG/QkgHT
+         00rnBwvPjeWHcgTeKJowHfJj/3PEtBragUxmE5GpaH//kOWk34vuBrtsQCtioS01NPvM
+         jGMw==
+X-Gm-Message-State: APjAAAVGFYdxQxGHzBDLHF9UYW1GpAHEMe9FIW+ZiShR6rpg+SuJ3FsA
+        nEJ1chGrXa3fILVXlKHKcrWUCw==
+X-Google-Smtp-Source: APXvYqz5GtHhBy4enUvwmz8hwk6SwMqQAZEOLjJc2ksdwfdlVMTlaXmqw84HWQ8a69KXG5cbK4bQ/w==
+X-Received: by 2002:a1c:9904:: with SMTP id b4mr31424112wme.1.1558361381659;
+        Mon, 20 May 2019 07:09:41 -0700 (PDT)
+Received: from steredhat (host151-251-static.12-87-b.business.telecomitalia.it. [87.12.251.151])
+        by smtp.gmail.com with ESMTPSA id i18sm9268216wml.33.2019.05.20.07.09.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 May 2019 07:09:40 -0700 (PDT)
+Date:   Mon, 20 May 2019 16:09:38 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH v2 0/8] vsock/virtio: optimizations to increase the
+ throughput
+Message-ID: <20190520140938.f26g6jsepfpwspsy@steredhat>
+References: <20190510125843.95587-1-sgarzare@redhat.com>
+ <08c7e0aa-d90d-e0ff-a68c-0e182d077ab2@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08c7e0aa-d90d-e0ff-a68c-0e182d077ab2@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we are processing events synchronously now, the second call of
-sas_ex_join_wide_port() in sas_ex_discover_dev() is not needed. There
-will be no races with other works in disco workqueue. So remove the
-second sas_ex_join_wide_port().
+On Mon, May 13, 2019 at 05:33:40PM +0800, Jason Wang wrote:
+> 
+> On 2019/5/10 下午8:58, Stefano Garzarella wrote:
+> > While I was testing this new series (v2) I discovered an huge use of memory
+> > and a memory leak in the virtio-vsock driver in the guest when I sent
+> > 1-byte packets to the guest.
+> > 
+> > These issues are present since the introduction of the virtio-vsock
+> > driver. I added the patches 1 and 2 to fix them in this series in order
+> > to better track the performance trends.
+> > 
+> > v1: https://patchwork.kernel.org/cover/10885431/
+> > 
+> > v2:
+> > - Add patch 1 to limit the memory usage
+> > - Add patch 2 to avoid memory leak during the socket release
+> > - Add patch 3 to fix locking of fwd_cnt and buf_alloc
+> > - Patch 4: fix 'free_space' type (u32 instead of s64) [Stefan]
+> > - Patch 5: Avoid integer underflow of iov_len [Stefan]
+> > - Patch 5: Fix packet capture in order to see the exact packets that are
+> >             delivered. [Stefan]
+> > - Add patch 8 to make the RX buffer size tunable [Stefan]
+> > 
+> > Below are the benchmarks step by step. I used iperf3 [1] modified with VSOCK
+> > support.
+> > As Micheal suggested in the v1, I booted host and guest with 'nosmap', and I
+> > added a column with virtio-net+vhost-net performance.
+> > 
+> > A brief description of patches:
+> > - Patches 1+2: limit the memory usage with an extra copy and avoid memory leak
+> > - Patches 3+4: fix locking and reduce the number of credit update messages sent
+> >                 to the transmitter
+> > - Patches 5+6: allow the host to split packets on multiple buffers and use
+> >                 VIRTIO_VSOCK_MAX_PKT_BUF_SIZE as the max packet size allowed
+> > - Patches 7+8: increase RX buffer size to 64 KiB
+> > 
+> >                      host -> guest [Gbps]
+> > pkt_size before opt  p 1+2    p 3+4    p 5+6    p 7+8       virtio-net + vhost
+> >                                                                       TCP_NODELAY
+> > 64         0.068     0.063    0.130    0.131    0.128         0.188     0.187
+> > 256        0.274     0.236    0.392    0.338    0.282         0.749     0.654
+> > 512        0.531     0.457    0.862    0.725    0.602         1.419     1.414
+> > 1K         0.954     0.827    1.591    1.598    1.548         2.599     2.640
+> > 2K         1.783     1.543    3.731    3.637    3.469         4.530     4.754
+> > 4K         3.332     3.436    7.164    7.124    6.494         7.738     7.696
+> > 8K         5.792     5.530   11.653   11.787   11.444        12.307    11.850
+> > 16K        8.405     8.462   16.372   16.855   17.562        16.936    16.954
+> > 32K       14.208    13.669   18.945   20.009   23.128        21.980    23.015
+> > 64K       21.082    18.893   20.266   20.903   30.622        27.290    27.383
+> > 128K      20.696    20.148   20.112   21.746   32.152        30.446    30.990
+> > 256K      20.801    20.589   20.725   22.685   34.721        33.151    32.745
+> > 512K      21.220    20.465   20.432   22.106   34.496        36.847    31.096
+> > 
+> >                      guest -> host [Gbps]
+> > pkt_size before opt  p 1+2    p 3+4    p 5+6    p 7+8       virtio-net + vhost
+> >                                                                       TCP_NODELAY
+> > 64         0.089     0.091    0.120    0.115    0.117         0.274     0.272
+> > 256        0.352     0.354    0.452    0.445    0.451         1.085     1.136
+> > 512        0.705     0.704    0.893    0.858    0.898         2.131     1.882
+> > 1K         1.394     1.433    1.721    1.669    1.691         3.984     3.576
+> > 2K         2.818     2.874    3.316    3.249    3.303         6.719     6.359
+> > 4K         5.293     5.397    6.129    5.933    6.082        10.105     9.860
+> > 8K         8.890     9.151   10.990   10.545   10.519        15.239    14.868
+> > 16K       11.444    11.018   12.074   15.255   15.577        20.551    20.848
+> > 32K       11.229    10.875   10.857   24.401   25.227        26.294    26.380
+> > 64K       10.832    10.545   10.816   39.487   39.616        34.996    32.041
+> > 128K      10.435    10.241   10.500   39.813   40.012        38.379    35.055
+> > 256K      10.263     9.866    9.845   34.971   35.143        36.559    37.232
+> > 512K      10.224    10.060   10.092   35.469   34.627        34.963    33.401
+> > 
+> > As Stefan suggested in the v1, this time I measured also the efficiency in this
+> > way:
+> >      efficiency = Mbps / (%CPU_Host + %CPU_Guest)
+> > 
+> > The '%CPU_Guest' is taken inside the VM. I know that it is not the best way,
+> > but it's provided for free from iperf3 and could be an indication.
+> > 
+> >          host -> guest efficiency [Mbps / (%CPU_Host + %CPU_Guest)]
+> > pkt_size before opt  p 1+2    p 3+4    p 5+6    p 7+8       virtio-net + vhost
+> >                                                                       TCP_NODELAY
+> > 64          0.94      0.59     3.96     4.06     4.09          2.82      2.11
+> > 256         2.62      2.50     6.45     6.09     5.81          9.64      8.73
+> > 512         5.16      4.87    13.16    12.39    11.67         17.83     17.76
+> > 1K          9.16      8.85    24.98    24.97    25.01         32.57     32.04
+> > 2K         17.41     17.03    49.09    48.59    49.22         55.31     57.14
+> > 4K         32.99     33.62    90.80    90.98    91.72         91.79     91.40
+> > 8K         58.51     59.98   153.53   170.83   167.31        137.51    132.85
+> > 16K        89.32     95.29   216.98   264.18   260.95        176.05    176.05
+> > 32K       152.94    167.10   285.75   387.02   360.81        215.49    226.30
+> > 64K       250.38    307.20   317.65   489.53   472.70        238.97    244.27
+> > 128K      327.99    335.24   335.76   523.71   486.41        253.29    260.86
+> > 256K      327.06    334.24   338.64   533.76   509.85        267.78    266.22
+> > 512K      337.36    330.61   334.95   512.90   496.35        280.42    241.43
+> > 
+> >          guest -> host efficiency [Mbps / (%CPU_Host + %CPU_Guest)]
+> > pkt_size before opt  p 1+2    p 3+4    p 5+6    p 7+8       virtio-net + vhost
+> >                                                                       TCP_NODELAY
+> > 64          0.90      0.91     1.37     1.32     1.35          2.15      2.13
+> > 256         3.59      3.55     5.23     5.19     5.29          8.50      8.89
+> > 512         7.19      7.08    10.21     9.95    10.38         16.74     14.71
+> > 1K         14.15     14.34    19.85    19.06    19.33         31.44     28.11
+> > 2K         28.44     29.09    37.78    37.18    37.49         53.07     50.63
+> > 4K         55.37     57.60    71.02    69.27    70.97         81.56     79.32
+> > 8K        105.58    100.45   111.95   124.68   123.61        120.85    118.66
+> > 16K       141.63    138.24   137.67   187.41   190.20        160.43    163.00
+> > 32K       147.56    143.09   138.48   296.41   301.04        214.64    223.94
+> > 64K       144.81    143.27   138.49   433.98   462.26        298.86    269.71
+> > 128K      150.14    147.99   146.85   511.36   514.29        350.17    298.09
+> > 256K      156.69    152.25   148.69   542.19   549.97        326.42    333.32
+> > 512K      157.29    153.35   152.22   546.52   533.24        315.55    302.27
+> > 
+> > [1] https://github.com/stefano-garzarella/iperf/
+> 
+> 
+> Hi:
+> 
+> Do you have any explanation that vsock is better here? Is this because of
+> the mergeable buffer? If you, we need test with mrg_rxbuf=off.
+> 
 
-I did not change the return value of 'res' to error when discover failed
-because we need to continue to discover other phys if one phy discover
-failed. So let's keep that logic as before and just add a debug log to
-detect the failure. And directly return if second fanout expander
-attatched to the parent expander because it has nothing to do after the
-phy is disabled.
+Hi Jason,
+I tried to disable the mergeable buffer but I had even worst performance
+with virtio-net.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
+Do you think the differences could be related to the TCP/IP stack?
 
-v2: Directly return in the "second fanout expander" case and change the
-	log level to notice.
-
- drivers/scsi/libsas/sas_expander.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 83f2fd70ce76..a148be23ca09 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -1104,7 +1104,7 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
- 				 SAS_ADDR(dev->sas_addr),
- 				 phy_id);
- 			sas_ex_disable_phy(dev, phy_id);
--			break;
-+			return res;
- 		} else
- 			memcpy(dev->port->disc.fanout_sas_addr,
- 			       ex_phy->attached_sas_addr, SAS_ADDR_SIZE);
-@@ -1116,27 +1116,9 @@ static int sas_ex_discover_dev(struct domain_device *dev, int phy_id)
- 		break;
- 	}
- 
--	if (child) {
--		int i;
--
--		for (i = 0; i < ex->num_phys; i++) {
--			if (ex->ex_phy[i].phy_state == PHY_VACANT ||
--			    ex->ex_phy[i].phy_state == PHY_NOT_PRESENT)
--				continue;
--			/*
--			 * Due to races, the phy might not get added to the
--			 * wide port, so we add the phy to the wide port here.
--			 */
--			if (SAS_ADDR(ex->ex_phy[i].attached_sas_addr) ==
--			    SAS_ADDR(child->sas_addr)) {
--				ex->ex_phy[i].phy_state= PHY_DEVICE_DISCOVERED;
--				if (sas_ex_join_wide_port(dev, i))
--					pr_debug("Attaching ex phy%02d to wide port %016llx\n",
--						 i, SAS_ADDR(ex->ex_phy[i].attached_sas_addr));
--			}
--		}
--	}
--
-+	if (!child)
-+		pr_notice("ex %016llx phy%02d failed to discover\n",
-+			  SAS_ADDR(dev->sas_addr), phy_id);
- 	return res;
- }
- 
--- 
-2.17.2
-
+Thanks,
+Stefano
