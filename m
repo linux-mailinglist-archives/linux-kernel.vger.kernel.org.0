@@ -2,108 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 419F123806
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233B523975
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732724AbfETNaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:30:13 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37719 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732069AbfETNaM (ORCPT
+        id S1733002AbfETOLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:11:21 -0400
+Received: from 6.mo68.mail-out.ovh.net ([46.105.63.100]:40839 "EHLO
+        6.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732057AbfETOLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:30:12 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 7so13073037wmo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:30:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8jmGilw1nCQQmkBhHj38AiUSNpWBZe/sVuRM01rHJv0=;
-        b=FY+xDHdlrGHpESK8d3dY9mKd1ulBFHyvOVNM4E/E1imXiTfV0C2iFc0rfPluiYI9ti
-         MkuGQzvux2dG6tG1e+KiV4OUqVQT5Qm7Yy6WB3PkW8ZWeG7UB4NYbi7D93geMjs6ZkGo
-         Fx+yt0kZcrFZHxnA90yAfup2DJJZ8Dn6Y3K7hxCTFDbqFjRvkwbaSodfn5WtHGfthJDo
-         3PTdSyM8MM33ZMwBaxKztYfimViCP70xCgakknd24OaIpwTnAaIvV6iT+VaeivDs8E23
-         4PeY7+bjmcEHI+4pdtdPQ5ty1/iv+0HT0SoZnbwzxt+BwcB8hC4ZCUQeopMbZDFiDxOM
-         jy8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8jmGilw1nCQQmkBhHj38AiUSNpWBZe/sVuRM01rHJv0=;
-        b=F2l+BxZqc+0CUf9a0FkGqjnRR3wEjjCN7VwZ+KWVD1bZ7v8dZeSidHsqq2CMOX+Wzi
-         ZQuU3VsdKkkD6DwdGoTpbSAG4ufnlDGzNjINRsWtAAIvSCAFVlKkJeDj55hrrteA7TTb
-         XgXHnJBBfn+Mg/TTj9XYnkk4TrE+BvhbdmedHUYw3UE8SsWjo8uxqe7ke9HAgvk8edVE
-         nJrg7jndteHXDddiEBbbnCq84KC5hZ6oBqOk1RNyPapeYc+Y16e/Nl2lAng1qONAYGzJ
-         dXtj9UXDOsl1kDtrjMLvEoBfvmufnaTaHTT/9BcvF0X8rkLvZAspZQjfzMep3ZlAKFwi
-         CQrQ==
-X-Gm-Message-State: APjAAAXchUcLeSKDrO+iyWkFo5SELTsSw0uheqK21m8hWieUh++U1tHM
-        LOC6tSNlnMfIg2h+ohcGiW8WZw==
-X-Google-Smtp-Source: APXvYqx2txSUvSVKzjvZhfqtdeKg/VLHgRIYD6Rv9nUdsldKd1EgOPFxeK2Xh7cX5NLv9PmgcLKi1Q==
-X-Received: by 2002:a1c:7606:: with SMTP id r6mr11647224wmc.25.1558359009976;
-        Mon, 20 May 2019 06:30:09 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id y1sm15465215wma.14.2019.05.20.06.30.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 06:30:09 -0700 (PDT)
-Date:   Mon, 20 May 2019 14:30:07 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Brian Masney <masneyb@onstation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>, Jonathan Marek <jonathan@marek.ca>
-Subject: Re: [PATCH] dt-bindings: backlight: lm3630a: correct schema
- validation
-Message-ID: <20190520133007.gymbonmq635gp73b@holly.lan>
-References: <20190520085846.22320-1-masneyb@onstation.org>
- <CAL_JsqLcycH5e=YT-4AQFo-8O0bosjU7oagCRS5CMTfQNBLrcg@mail.gmail.com>
+        Mon, 20 May 2019 10:11:21 -0400
+X-Greylist: delayed 1805 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 10:11:20 EDT
+Received: from player718.ha.ovh.net (unknown [10.108.35.158])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id C8D1B1272B1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 15:31:34 +0200 (CEST)
+Received: from RCM-web1.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player718.ha.ovh.net (Postfix) with ESMTPSA id DD46C5E1B195;
+        Mon, 20 May 2019 13:31:21 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLcycH5e=YT-4AQFo-8O0bosjU7oagCRS5CMTfQNBLrcg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 20 May 2019 15:31:21 +0200
+From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To:     Weitao Hou <houweitaoo@gmail.com>
+Cc:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] brcmfmac: fix typos in code comments
+In-Reply-To: <20190520122825.981-1-houweitaoo@gmail.com>
+References: <20190520122825.981-1-houweitaoo@gmail.com>
+Message-ID: <c197d968f2a81325889be22e303d3dd0@milecki.pl>
+X-Sender: rafal@milecki.pl
+User-Agent: Roundcube Webmail/1.3.9
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+X-Ovh-Tracer-Id: 12409105824403590779
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtkedgieeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenuc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 08:14:03AM -0500, Rob Herring wrote:
-> On Mon, May 20, 2019 at 3:59 AM Brian Masney <masneyb@onstation.org> wrote:
-> >
-> > The '#address-cells' and '#size-cells' properties were not defined in
-> > the lm3630a bindings and would cause the following error when
-> > attempting to validate the examples against the schema:
-> >
-> > Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
-> > '#address-cells', '#size-cells' do not match any of the regexes:
-> > '^led@[01]$', 'pinctrl-[0-9]+'
-> >
-> > Correct this by adding those two properties.
-> >
-> > While we're here, move the ti,linear-mapping-mode property to the
-> > led@[01] child nodes to correct the following validation error:
-> >
-> > Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
-> > led@0: 'ti,linear-mapping-mode' does not match any of the regexes:
-> > 'pinctrl-[0-9]+'
-> >
-> > Fixes: 32fcb75c66a0 ("dt-bindings: backlight: Add lm3630a bindings")
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > Reported-by: Rob Herring <robh+dt@kernel.org>
-> > ---
-> >  .../leds/backlight/lm3630a-backlight.yaml     | 20 +++++++++++++------
-> >  1 file changed, 14 insertions(+), 6 deletions(-)
+On 2019-05-20 14:28, Weitao Hou wrote:
+> fix lengh to length
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+> ---
+> - fix prefix
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-
+Nice, thanks!
