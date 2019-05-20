@@ -2,63 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39AFB24106
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CABC2410C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfETTTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:19:02 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36120 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfETTTC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:19:02 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c3so14075806otr.3;
-        Mon, 20 May 2019 12:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ILhuswdCRnMUMBRmoi3Za/asPHf+23D/dshJBOh3X34=;
-        b=IRgkt9b9zjWY7xSWKf3ivsymx+TC/KfBZhHDWrkSWQqWt6cYLLu0r0mMd+cd1BFYUz
-         cK3qTiWLGAVnFU035zQqlNUcbIC17/XLJbfFmd74MeixlEr0o9e3+PtNAAqkTVN7zf2o
-         LeX6rTJy6W4L/MtBXIU5piiG5DlQKQnwFsRmpq96AC3IXTiqCTT5EEmqUNMDc7ON2FY2
-         tg8M4yNg4Z22Na3rD4AB3Ji5+OWe/fXvUxsy6HQ189KOgw6it7Zdiy7wFbDwJAow9sTk
-         NJ/2Czl6OhEa9KaxX5Wd9IWIQaeBy2w5I/VoAChefH6yUqlSfD4Yn2pn4wNHKuo9fkDX
-         WCBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ILhuswdCRnMUMBRmoi3Za/asPHf+23D/dshJBOh3X34=;
-        b=EryjcNzR3iVXbl30T3uR+IcwcMCtCuhuFbqAiiemNDbjIEXhXZ4TSHHorz9vJxfmam
-         sW+7dn2RLxNA1jTCpmRiVEJPW7tqqX2nzRGutZIpzXkaGQPiAK6YysUf1+P7ynTo/3F/
-         TFQCEExbIjOJOZXlEUysexRRI4W1dV8iMiXgBChb4NDgFRRJg61SFHPglgUXhDJlaaxY
-         J5PNIiH3VrcUBP2+Rno5COu6CF//BTQ5pBjAus1tY1v1CidxIszUXxZpY3pIqQCh0gpk
-         voFBQgEOE53t9UfDulfkgid9q490/9DRLtT9ZcSIZyx4vB+9T1teoxNsYnGbiVvW2zwU
-         Ivvw==
-X-Gm-Message-State: APjAAAUjgQOoBQ2jgJcIXc7KSmH6Lh0+DeCpYZlqP71cxi1GUqHDnzpU
-        4GCBqYii/WrZ4KcCfJevaJ7g9TUUYXORcjKtgzcvTpf8Or8=
-X-Google-Smtp-Source: APXvYqxOKdOcy+woeXdOWs7xjYQizw+lQeSDcB2n1Zo2IaRnDlaZSguwn9t7esINb/joJB11sVjoVDP/NqKnjOr2KuM=
-X-Received: by 2002:a9d:744d:: with SMTP id p13mr26102765otk.96.1558379940532;
- Mon, 20 May 2019 12:19:00 -0700 (PDT)
+        id S1726090AbfETTUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 15:20:34 -0400
+Received: from ms.lwn.net ([45.79.88.28]:35682 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfETTUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 15:20:34 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id C87AA6A2;
+        Mon, 20 May 2019 19:20:33 +0000 (UTC)
+Date:   Mon, 20 May 2019 13:20:32 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-iio@vger.kernel.org,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH -next] counter: fix Documentation build error due to
+ incorrect source file name
+Message-ID: <20190520132032.74912949@lwn.net>
+In-Reply-To: <b6475070-f336-1093-ff0f-6bc8d5fda35e@infradead.org>
+References: <b6475070-f336-1093-ff0f-6bc8d5fda35e@infradead.org>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <20190520140421.30074-1-narmstrong@baylibre.com>
-In-Reply-To: <20190520140421.30074-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 20 May 2019 21:18:49 +0200
-Message-ID: <CAFBinCBi_tSMMq9sUuGeTU8-KWDWczwJ=utAv4oARVTNgiDUJw@mail.gmail.com>
-Subject: Re: [PATCH] pwm: pwm-meson: update with SPDX Licence identifier
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 4:04 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Sat, 18 May 2019 21:29:58 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix kernel-doc build error in Documentation/driver-api/generic-counter.rst
+> of incorrect source file name.
+> Fixes this warning and error:
+> 
+> Error: Cannot open file ../drivers/counter/generic-counter.c
+> WARNING: kernel-doc '../scripts/kernel-doc -rst -enable-lineno -export ../drivers/counter/generic-counter.c' failed with return code 2
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Cc: linux-iio@vger.kernel.org
+> ---
+>  Documentation/driver-api/generic-counter.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-next-20190517.orig/Documentation/driver-api/generic-counter.rst
+> +++ linux-next-20190517/Documentation/driver-api/generic-counter.rst
+> @@ -251,7 +251,7 @@ for defining a counter device.
+>  .. kernel-doc:: include/linux/counter.h
+>     :internal:
+>  
+> -.. kernel-doc:: drivers/counter/generic-counter.c
+> +.. kernel-doc:: drivers/counter/counter.c
+>     :export:
+>  
+>  Implementation
+
+Applied, thanks.
+
+jon
