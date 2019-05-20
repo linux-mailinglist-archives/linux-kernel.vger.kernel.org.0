@@ -2,85 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD05E243F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74744243F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbfETXNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 19:13:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44282 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfETXNp (ORCPT
+        id S1727158AbfETXP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 19:15:29 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:37908 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfETXP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 19:13:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9F9AB8030E; Tue, 21 May 2019 01:13:32 +0200 (CEST)
-Date:   Tue, 21 May 2019 01:13:42 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Subject: Re: 5.2-rc0.8: emacs segfaults?! x220, with 32-bit userland
-Message-ID: <20190520231342.GA20835@amd>
-References: <20190519221700.GA7154@amd>
- <20190520160636.z6fpjiidc2d5ko5g@linutronix.de>
+        Mon, 20 May 2019 19:15:29 -0400
+Received: from [10.200.157.26] (unknown [131.107.160.154])
+        by linux.microsoft.com (Postfix) with ESMTPSA id AB7B620B7192;
+        Mon, 20 May 2019 16:15:28 -0700 (PDT)
+From:   Lakshmi <nramas@linux.microsoft.com>
+Subject: Re: [PATCH 0/2] public key: IMA signer logging: Log public key of IMA
+ Signature signer in IMA log
+To:     Ken Goldman <kgold@linux.ibm.com>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Balaji Balasubramanyan <balajib@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        jorhand@linux.microsoft.com
+References: <6b69f115-96cf-890a-c92b-0b2b05798357@linux.microsoft.com>
+ <750fdb9f-fc9b-24bf-42c3-32156ecdc16f@linux.ibm.com>
+ <9c944ba6-f520-96e1-3631-1e21bbc4c327@linux.microsoft.com>
+ <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
+Message-ID: <54663a75-a601-ae6c-8068-bc2c3923a948@linux.microsoft.com>
+Date:   Mon, 20 May 2019 16:15:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
-Content-Disposition: inline
-In-Reply-To: <20190520160636.z6fpjiidc2d5ko5g@linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/17/19 7:41 AM, Ken Goldman wrote:
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ken,
 
-Hi!
+Apologize for the delay in responding.
 
-> > emacs segfaults... when I attempt to exit it. And that did not use to
-> > be the case. Nothing suspect in the dmesg. Rest of the machine seems
-> > to work ok.
-> =E2=80=A6
-> > Ideas welcome...
->=20
-> I assume that this happens with -rc1, too. Could you please check if
-> emacs still segfaults with commit
->=20
->   d9c9ce34ed5c8 ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigfram=
-e() fails")
->=20
-> and commit
->=20
->   89833fab15d60 ("x86/fpu: Fix __user annotations")
->=20
-> ?
+> Since a platform typically uses only a few signing keys, 4 bytes makes 
+> the chance of a collision quite small.  The collision would have to be 
+> within the same log, not global.
+> 
+> In that worst case, the verifier would have to try two keys.  It's a
+> slight performance penalty, but does anything break?
 
-I don't have reproducible test case :-(. I had two or three failures
-so far.
+Problem Statement:
+- If the attestation service has to re-validate the signature reported 
+in the IMA log, the service has to maintain the hash\signature of all 
+the binaries deployed on all the client nodes. This approach will not 
+scale for large cloud deployments.
+- Possibility of collision of "Key Ids" is non-zero
+- In the service if the "Key Id" alone is used to verify using a map of
+"Key Id" to "Signing Key(s)", the service cannot determine if the 
+trusted signing key was indeed used by the client for signature 
+validation (Due to "Key Id" collision issue or malicious signature).
 
-Best regards,
+Proposed Solution:
+- The service receives known\trusted signing key(s) from a trusted 
+source (that is different from the client machines)
+- The clients measure the keys in key rings such as IMA, Platform, 
+BuiltIn Trusted, etc. as early as possible in the boot sequence.
+- Leave all IMA measurements the same - i.e., we don't log public keys 
+in the IMA log for each file, but just use what is currently available 
+in IMA.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Impact:
+- The service can verify that the keyrings have only known\trusted keys.
+- The service can cross check the "key id" with the key rings measured.
+- The look up of keys using the key id would be simpler and faster on 
+the service side.
+- It can also handle collision of Key Ids.
 
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Note that the following is a key assumption:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+- Only keys signed by a key in the "BuiltIn Trusted Keyring" can be 
+added to IMA\Platform keyrings.
 
-iEYEARECAAYFAlzjNKYACgkQMOfwapXb+vIbQgCdGpLb+RiI8xUDh9JkMjagiEYK
-MZYAnia/9SFoppzCNtLy3IGeCfzdKtvU
-=ZjfV
------END PGP SIGNATURE-----
 
---3MwIy2ne0vdjdPXF--
+Thanks,
+  -lakshmi
