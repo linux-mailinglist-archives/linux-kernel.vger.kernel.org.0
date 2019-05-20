@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17E9233E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6A22344A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388106AbfETMVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:21:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34564 "EHLO mail.kernel.org"
+        id S2389084AbfETMZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:25:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388092AbfETMVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:21:03 -0400
+        id S2389059AbfETMZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:25:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 978BF213F2;
-        Mon, 20 May 2019 12:21:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E287320675;
+        Mon, 20 May 2019 12:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354863;
-        bh=QzXMABAp5useRBARdCL6vnv7ldSqL36jJR/3j27x2Ok=;
+        s=default; t=1558355125;
+        bh=s0RGvyqC7nuSJTpCF2VB3TyaIORNOqn0wLd18iuFbGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wjmz4oLSVKueXoT2linGF7/e9cihKmxczCLGowupARVjLh3/p+Wi2ICHxpdLZLC7j
-         6820g4CB/plMhyBRHJxqQHSbXJkL1wQfdUupn8lG6QPUiVH3Cbox0slKIdji4J07aJ
-         GCFkT+67TPUjud43NyFX+XXhOqPyYyi0refY1FM4=
+        b=CEsncRtyCC1VP87d5vLlR4s+AcHuQvgLb6AlY3zekuw3jfQJMV0cvDQLKbmGcNQQs
+         i6l84fAWdsD8AsucU6fZhxB2Tfbrg8bOj5/EQ6G0ixmAVLFw/IoV+B8CDyUbhmLMwV
+         6jcnOc43uc+7XjxF/GQV+ICaCtlM4Scvm0g1O4hQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 56/63] fs/writeback.c: use rcu_barrier() to wait for inflight wb switches going into workqueue when umount
-Date:   Mon, 20 May 2019 14:14:35 +0200
-Message-Id: <20190520115237.198784160@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 090/105] ALSA: hda/realtek - Fixup headphone noise via runtime suspend
+Date:   Mon, 20 May 2019 14:14:36 +0200
+Message-Id: <20190520115253.495222002@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,75 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit ec084de929e419e51bcdafaafe567d9e7d0273b7 upstream.
+commit dad3197da7a3817f27bb24f7fd3c135ffa707202 upstream.
 
-synchronize_rcu() didn't wait for call_rcu() callbacks, so inode wb
-switch may not go to the workqueue after synchronize_rcu().  Thus
-previous scheduled switches was not finished even flushing the
-workqueue, which will cause a NULL pointer dereferenced followed below.
+Dell platform with ALC298.
+system enter to runtime suspend. Headphone had noise.
+Let Headset Mic not shutup will solve this issue.
 
-  VFS: Busy inodes after unmount of vdd. Self-destruct in 5 seconds.  Have a nice day...
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000278
-    evict+0xb3/0x180
-    iput+0x1b0/0x230
-    inode_switch_wbs_work_fn+0x3c0/0x6a0
-    worker_thread+0x4e/0x490
-    ? process_one_work+0x410/0x410
-    kthread+0xe6/0x100
-    ret_from_fork+0x39/0x50
+[ Fixed minor coding style issues by tiwai ]
 
-Replace the synchronize_rcu() call with a rcu_barrier() to wait for all
-pending callbacks to finish.  And inc isw_nr_in_flight after call_rcu()
-in inode_switch_wbs() to make more sense.
-
-Link: http://lkml.kernel.org/r/20190429024108.54150-1-jiufei.xue@linux.alibaba.com
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fs-writeback.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ sound/pci/hda/patch_realtek.c |   59 ++++++++++++++++++++++++------------------
+ 1 file changed, 35 insertions(+), 24 deletions(-)
 
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -530,8 +530,6 @@ static void inode_switch_wbs(struct inod
- 
- 	isw->inode = inode;
- 
--	atomic_inc(&isw_nr_in_flight);
--
- 	/*
- 	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
- 	 * the RCU protected stat update paths to grab the mapping's
-@@ -539,6 +537,9 @@ static void inode_switch_wbs(struct inod
- 	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
- 	 */
- 	call_rcu(&isw->rcu_head, inode_switch_wbs_rcu_fn);
-+
-+	atomic_inc(&isw_nr_in_flight);
-+
- 	goto out_unlock;
- 
- out_free:
-@@ -908,7 +909,11 @@ restart:
- void cgroup_writeback_umount(void)
- {
- 	if (atomic_read(&isw_nr_in_flight)) {
--		synchronize_rcu();
-+		/*
-+		 * Use rcu_barrier() to wait for all pending callbacks to
-+		 * ensure that all in-flight wb switches are in the workqueue.
-+		 */
-+		rcu_barrier();
- 		flush_workqueue(isw_wq);
- 	}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -477,12 +477,45 @@ static void alc_auto_setup_eapd(struct h
+ 		set_eapd(codec, *p, on);
  }
+ 
++static int find_ext_mic_pin(struct hda_codec *codec);
++
++static void alc_headset_mic_no_shutup(struct hda_codec *codec)
++{
++	const struct hda_pincfg *pin;
++	int mic_pin = find_ext_mic_pin(codec);
++	int i;
++
++	/* don't shut up pins when unloading the driver; otherwise it breaks
++	 * the default pin setup at the next load of the driver
++	 */
++	if (codec->bus->shutdown)
++		return;
++
++	snd_array_for_each(&codec->init_pins, i, pin) {
++		/* use read here for syncing after issuing each verb */
++		if (pin->nid != mic_pin)
++			snd_hda_codec_read(codec, pin->nid, 0,
++					AC_VERB_SET_PIN_WIDGET_CONTROL, 0);
++	}
++
++	codec->pins_shutup = 1;
++}
++
+ static void alc_shutup_pins(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+ 
+-	if (!spec->no_shutup_pins)
+-		snd_hda_shutup_pins(codec);
++	switch (codec->core.vendor_id) {
++	case 0x10ec0286:
++	case 0x10ec0288:
++	case 0x10ec0298:
++		alc_headset_mic_no_shutup(codec);
++		break;
++	default:
++		if (!spec->no_shutup_pins)
++			snd_hda_shutup_pins(codec);
++		break;
++	}
+ }
+ 
+ /* generic shutup callback;
+@@ -2923,27 +2956,6 @@ static int alc269_parse_auto_config(stru
+ 	return alc_parse_auto_config(codec, alc269_ignore, ssids);
+ }
+ 
+-static int find_ext_mic_pin(struct hda_codec *codec);
+-
+-static void alc286_shutup(struct hda_codec *codec)
+-{
+-	const struct hda_pincfg *pin;
+-	int i;
+-	int mic_pin = find_ext_mic_pin(codec);
+-	/* don't shut up pins when unloading the driver; otherwise it breaks
+-	 * the default pin setup at the next load of the driver
+-	 */
+-	if (codec->bus->shutdown)
+-		return;
+-	snd_array_for_each(&codec->init_pins, i, pin) {
+-		/* use read here for syncing after issuing each verb */
+-		if (pin->nid != mic_pin)
+-			snd_hda_codec_read(codec, pin->nid, 0,
+-					AC_VERB_SET_PIN_WIDGET_CONTROL, 0);
+-	}
+-	codec->pins_shutup = 1;
+-}
+-
+ static void alc269vb_toggle_power_output(struct hda_codec *codec, int power_up)
+ {
+ 	alc_update_coef_idx(codec, 0x04, 1 << 11, power_up ? (1 << 11) : 0);
+@@ -7611,7 +7623,6 @@ static int patch_alc269(struct hda_codec
+ 	case 0x10ec0286:
+ 	case 0x10ec0288:
+ 		spec->codec_variant = ALC269_TYPE_ALC286;
+-		spec->shutup = alc286_shutup;
+ 		break;
+ 	case 0x10ec0298:
+ 		spec->codec_variant = ALC269_TYPE_ALC298;
 
 
