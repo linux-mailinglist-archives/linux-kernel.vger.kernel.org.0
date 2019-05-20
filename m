@@ -2,170 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CE7722BAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 08:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2862B22BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 08:02:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730618AbfETGBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 02:01:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48340 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730616AbfETGBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 02:01:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jCHCj8thrsJTzY11GNQdV/BpGObDl9t7BMLGP0aHNVc=; b=T9FAw6UW04yQbfxvJRwdeLH167
-        OINqToo6YaiQ9NZoZdqOILwIkZBoiOfUaZsYhCDJ5qUA+f4BodFXBfNiRDm8u5UE7DIoL/+u2qUgR
-        n0bocAsnZFpk3a4oszqZjMKxXxtyjtmvZ0+2bTNXzccBSyY+CrnmiASGkoCyxWxWgE8DdEjCftuhV
-        DtRwSJMEoV3gT2TQ8S1SKJmmEoBtCMdO61y8WL1jTM+CoKuKRoHcWqW8Gu1bRer7j99fPjtpBnpRx
-        M8zeDgU14LAilwFj5wjCM3HeD94lPM9fjbnBfPl7VkFVpt/50eyWJ8m/iwBge7iw4zuhOiO+RcHP4
-        ksBxqSiQ==;
-Received: from 089144206147.atnat0015.highway.bob.at ([89.144.206.147] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hSbMS-0001gK-2x; Mon, 20 May 2019 06:01:24 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] asm-generic: remove ptrace.h
-Date:   Mon, 20 May 2019 08:00:18 +0200
-Message-Id: <20190520060018.25569-6-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520060018.25569-1-hch@lst.de>
-References: <20190520060018.25569-1-hch@lst.de>
+        id S1730653AbfETGCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 02:02:09 -0400
+Received: from mail-eopbgr140041.outbound.protection.outlook.com ([40.107.14.41]:47870
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728619AbfETGCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 02:02:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=izGjinr7pKrb/qL+eP2aMK3XxZzrnl7BtqT6bn9OMzo=;
+ b=SfxFmR39kr7XlrxuC/DOTYyXs3NBDR5osI2hWcu2W5321hDrlKpQFIn0QwWTOBHp+vi1wbm5qK+NJerD2aA3MrxVV49vhacXBEL7u+6XnqQMB+6QNxYMXlQgUVhoWPulm8arZpM5FW87An8VkSDzxb1w4kuz+ym17RM1ZHhLD5Q=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4719.eurprd08.prod.outlook.com (10.255.115.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Mon, 20 May 2019 06:02:04 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358%7]) with mapi id 15.20.1900.020; Mon, 20 May 2019
+ 06:02:04 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        nd <nd@arm.com>
+Subject: Re: [v2] drm/komeda: fixing of DMA mapping sg segment warning
+Thread-Topic: [v2] drm/komeda: fixing of DMA mapping sg segment warning
+Thread-Index: AQHVDtGMYTV2kzYsOkmwOrRFiUsaNg==
+Date:   Mon, 20 May 2019 06:02:04 +0000
+Message-ID: <20190520060158.GA2547@james-ThinkStation-P300>
+References: <1554971813-22049-1-git-send-email-lowry.li@arm.com>
+In-Reply-To: <1554971813-22049-1-git-send-email-lowry.li@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.9.4 (2018-02-28)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR01CA0007.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::19) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 07946016-880c-4ce9-6237-08d6dce8aecf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4719;
+x-ms-traffictypediagnostic: VE1PR08MB4719:
+x-ms-exchange-purlcount: 4
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VE1PR08MB47192351F5CCCFB570830AA4B3060@VE1PR08MB4719.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3276;
+x-forefront-prvs: 004395A01C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(396003)(346002)(376002)(366004)(39860400002)(199004)(189003)(71200400001)(9686003)(71190400001)(6512007)(14444005)(256004)(6636002)(58126008)(26005)(229853002)(11346002)(476003)(2906002)(486006)(6486002)(54906003)(6436002)(6306002)(33716001)(53936002)(8936002)(6116002)(66066001)(66946007)(66476007)(7736002)(64756008)(3846002)(102836004)(305945005)(66556008)(55236004)(99286004)(52116002)(33656002)(316002)(6862004)(8676002)(6246003)(446003)(66446008)(73956011)(5660300002)(25786009)(4326008)(14454004)(86362001)(76176011)(186003)(81166006)(1076003)(386003)(6506007)(966005)(478600001)(81156014)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4719;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: r6zUFDGEzwJvwIqgq+aKYrPWyX9e0Zyd/iLvLu1Kq+0roWMPkGSMUwMdFxgNiNFv4zMZVP8ZCXEogoAi/BYLG2wdZMyuUXy6SKaIt/Ex3eGCZaei/O/rMeXjKP2oSaPDRyfM/Akk8r9LJ08v8Kk64pTi9t3SjpsNZ92y5O41hgu0BwD39dHnKcYPeB3y0tVpgOUPICchc/+ugmYawuPJ3MgN5O+qbpsW1DgGedog4+5HnrYfYc3DFLtNnisE2dMMqgaiwA2bwh9q7ApnXIQ4rv3ebOFd4Id6KVrxS7f1ZW6vdsjzC9R0+9YRGQfphjRwGhda1lO1uJ0vx7lhAk2TT6bPIHOzAK998JEwTkTMXJKHhFmIubSbbwmP5KwUsbsCxxa6uGeXLCA2gPSl5eZC3vcoPRxtaz9RQcPQCtasFyU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D20C1DA5A994F84B8FE9744CA37FBE88@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07946016-880c-4ce9-6237-08d6dce8aecf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 06:02:04.5412
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4719
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No one is using this header anymore.
+On Thu, Apr 11, 2019 at 08:37:13AM +0000, Lowry Li (Arm Technology China) w=
+rote:
+> Fixing the DMA mapping sg segment warning, which shows "DMA-API: mapping
+> sg segment longer than device claims to support [len=3D921600] [max=3D655=
+36]".
+> Fixed by setting the max segment size at Komeda driver.
+>=20
+> This patch depends on:
+> - https://patchwork.freedesktop.org/series/54448/
+> - https://patchwork.freedesktop.org/series/54449/
+> - https://patchwork.freedesktop.org/series/54450/
+> - https://patchwork.freedesktop.org/series/58976/
+>=20
+> Changes since v1:
+> - Adds member description
+> - Adds patch denpendency in the comment
+>=20
+> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 4 ++++
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 2 ++
+>  2 files changed, 6 insertions(+)
+>=20
+> --=20
+> 1.9.1
+>=20
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gp=
+u/drm/arm/display/komeda/komeda_dev.c
+> index 7f25e6a..b4902ae 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_graph.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/dma-iommu.h>
+>  #ifdef CONFIG_DEBUG_FS
+>  #include <linux/debugfs.h>
+>  #include <linux/seq_file.h>
+> @@ -245,6 +246,9 @@ struct komeda_dev *komeda_dev_create(struct device *d=
+ev)
+>  		goto err_cleanup;
+>  	}
+> =20
+> +	dev->dma_parms =3D &mdev->dma_parms;
+> +	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+> +
+>  	err =3D sysfs_create_group(&dev->kobj, &komeda_sysfs_attr_group);
+>  	if (err) {
+>  		DRM_ERROR("create sysfs group failed.\n");
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gp=
+u/drm/arm/display/komeda/komeda_dev.h
+> index 29e03c4..83ace71 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> @@ -149,6 +149,8 @@ struct komeda_dev {
+>  	struct device *dev;
+>  	/** @reg_base: the base address of komeda io space */
+>  	u32 __iomem   *reg_base;
+> +	/** @dma_parms: the dma parameters of komeda */
+> +	struct device_dma_parameters dma_parms;
+> =20
+>  	/** @chip: the basic chip information */
+>  	struct komeda_chip_info chip;
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- MAINTAINERS                    |  1 -
- arch/mips/include/asm/ptrace.h |  5 ---
- include/asm-generic/ptrace.h   | 74 ----------------------------------
- 3 files changed, 80 deletions(-)
- delete mode 100644 include/asm-generic/ptrace.h
+Looks good to me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5cfbea4ce575..f3392488ffaf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12769,7 +12769,6 @@ F:	include/linux/regset.h
- F:	include/linux/tracehook.h
- F:	include/uapi/linux/ptrace.h
- F:	include/uapi/linux/ptrace.h
--F:	include/asm-generic/ptrace.h
- F:	kernel/ptrace.c
- F:	arch/*/ptrace*.c
- F:	arch/*/*/ptrace*.c
-diff --git a/arch/mips/include/asm/ptrace.h b/arch/mips/include/asm/ptrace.h
-index b6578611dddb..1e76774b36dd 100644
---- a/arch/mips/include/asm/ptrace.h
-+++ b/arch/mips/include/asm/ptrace.h
-@@ -56,11 +56,6 @@ static inline unsigned long kernel_stack_pointer(struct pt_regs *regs)
- 	return regs->regs[31];
- }
- 
--/*
-- * Don't use asm-generic/ptrace.h it defines FP accessors that don't make
-- * sense on MIPS.  We rather want an error if they get invoked.
-- */
--
- static inline void instruction_pointer_set(struct pt_regs *regs,
-                                            unsigned long val)
- {
-diff --git a/include/asm-generic/ptrace.h b/include/asm-generic/ptrace.h
-deleted file mode 100644
-index 82e674f6b337..000000000000
---- a/include/asm-generic/ptrace.h
-+++ /dev/null
-@@ -1,74 +0,0 @@
--/*
-- * Common low level (register) ptrace helpers
-- *
-- * Copyright 2004-2011 Analog Devices Inc.
-- *
-- * Licensed under the GPL-2 or later.
-- */
--
--#ifndef __ASM_GENERIC_PTRACE_H__
--#define __ASM_GENERIC_PTRACE_H__
--
--#ifndef __ASSEMBLY__
--
--/* Helpers for working with the instruction pointer */
--#ifndef GET_IP
--#define GET_IP(regs) ((regs)->pc)
--#endif
--#ifndef SET_IP
--#define SET_IP(regs, val) (GET_IP(regs) = (val))
--#endif
--
--static inline unsigned long instruction_pointer(struct pt_regs *regs)
--{
--	return GET_IP(regs);
--}
--static inline void instruction_pointer_set(struct pt_regs *regs,
--                                           unsigned long val)
--{
--	SET_IP(regs, val);
--}
--
--#ifndef profile_pc
--#define profile_pc(regs) instruction_pointer(regs)
--#endif
--
--/* Helpers for working with the user stack pointer */
--#ifndef GET_USP
--#define GET_USP(regs) ((regs)->usp)
--#endif
--#ifndef SET_USP
--#define SET_USP(regs, val) (GET_USP(regs) = (val))
--#endif
--
--static inline unsigned long user_stack_pointer(struct pt_regs *regs)
--{
--	return GET_USP(regs);
--}
--static inline void user_stack_pointer_set(struct pt_regs *regs,
--                                          unsigned long val)
--{
--	SET_USP(regs, val);
--}
--
--/* Helpers for working with the frame pointer */
--#ifndef GET_FP
--#define GET_FP(regs) ((regs)->fp)
--#endif
--#ifndef SET_FP
--#define SET_FP(regs, val) (GET_FP(regs) = (val))
--#endif
--
--static inline unsigned long frame_pointer(struct pt_regs *regs)
--{
--	return GET_FP(regs);
--}
--static inline void frame_pointer_set(struct pt_regs *regs,
--                                     unsigned long val)
--{
--	SET_FP(regs, val);
--}
--
--#endif /* __ASSEMBLY__ */
--
--#endif
--- 
-2.20.1
-
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
+m>
