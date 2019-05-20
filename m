@@ -2,60 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233B523975
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD9824223
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbfETOLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:11:21 -0400
-Received: from 6.mo68.mail-out.ovh.net ([46.105.63.100]:40839 "EHLO
-        6.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732057AbfETOLV (ORCPT
+        id S1726669AbfETUdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 16:33:36 -0400
+Received: from [159.89.172.223] ([159.89.172.223]:38710 "EHLO
+        mail.boombf2am.ga" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfETUdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:11:21 -0400
-X-Greylist: delayed 1805 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 10:11:20 EDT
-Received: from player718.ha.ovh.net (unknown [10.108.35.158])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id C8D1B1272B1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 15:31:34 +0200 (CEST)
-Received: from RCM-web1.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player718.ha.ovh.net (Postfix) with ESMTPSA id DD46C5E1B195;
-        Mon, 20 May 2019 13:31:21 +0000 (UTC)
+        Mon, 20 May 2019 16:33:35 -0400
+Received: by mail.boombf2am.ga (Postfix, from userid 48)
+        id EF6044A6FBA; Mon, 20 May 2019 13:31:35 +0000 (UTC)
+To:     linux-kernel@vger.kernel.org
+Subject: Inquiry 20/May/2019
+X-PHP-Originating-Script: 0:nfhdgeds.php
+From:   Daniel Murray <sinara-group@bk.ru>
+Reply-To: sinara-group@list.ru
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 20 May 2019 15:31:21 +0200
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Weitao Hou <houweitaoo@gmail.com>
-Cc:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] brcmfmac: fix typos in code comments
-In-Reply-To: <20190520122825.981-1-houweitaoo@gmail.com>
-References: <20190520122825.981-1-houweitaoo@gmail.com>
-Message-ID: <c197d968f2a81325889be22e303d3dd0@milecki.pl>
-X-Sender: rafal@milecki.pl
-User-Agent: Roundcube Webmail/1.3.9
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-X-Ovh-Tracer-Id: 12409105824403590779
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtkedgieeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenuc
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20190520143647.EF6044A6FBA@mail.boombf2am.ga>
+Date:   Mon, 20 May 2019 13:31:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-20 14:28, Weitao Hou wrote:
-> fix lengh to length
-> 
-> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
-> ---
-> - fix prefix
+Hi,friend,
 
-Nice, thanks!
+This is Daniel Murray and i am from Sinara Group Co.Ltd in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
+
+Best Regards,
+
+Daniel Murray
+Purchasing Manager
+
+
